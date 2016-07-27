@@ -1,0 +1,15 @@
+{namespace publish=In2code\In2publishCore\ViewHelpers}
+<f:if condition="{publish:Condition.IsCompatVersion(versionNumber:'7.6')}">
+	<f:else>
+		<link rel="stylesheet" href="../../../../typo3conf/ext/in2publish_core/Resources/Public/Css/Bootstrap.css" media="all" />
+	</f:else>
+</f:if>
+<link rel="stylesheet" href="../../../../typo3conf/ext/in2publish_core/Resources/Public/Css/PageModule.css" media="all" />
+<script type="text/javascript" src="../../../../typo3conf/ext/in2publish_core/Resources/Public/JavaScripts/Libraries/pikaday.js"></script>
+<script type="text/javascript" src="../../../../typo3conf/ext/in2publish_core/Resources/Public/JavaScripts/In2publish/PageModuleJquery.js"></script>
+<script type="text/javascript" src="../../../../typo3conf/ext/in2publish_core/Resources/Public/JavaScripts/In2publish/PageModule.js"></script>
+<script type="text/javascript" src="../../../../typo3conf/ext/in2publish_core/Resources/Public/JavaScripts/In2publish/DateTimePicker.js"></script>
+<script type="text/javascript" src="../../../../typo3conf/ext/in2publish_core/Resources/Public/JavaScripts/In2publish/Overall.js"></script>
+
+<f:render section="content" />
+<f:render partial="Typo3Version" />

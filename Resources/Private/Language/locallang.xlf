@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2015-01-20T12:00:00Z" product-name="in2publish_core">
+		<header/>
+		<body>
+			<trans-unit id="submit">
+				<source>Submit</source>
+			</trans-unit>
+
+			<trans-unit id="module_main_title">
+				<source>TYPO3 Content Publisher</source>
+			</trans-unit>
+			<trans-unit id="module_m1_title">
+				<source>publish pages and records overview</source>
+			</trans-unit>
+			<trans-unit id="module_m3_title">
+				<source>publish files</source>
+			</trans-unit>
+			<trans-unit id="module_m4_title">
+				<source>administration tools</source>
+			</trans-unit>
+
+			<trans-unit id="tx_in2code_in2publish_log.time">
+				<source>Date/Time</source>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.component">
+				<source>Component</source>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.level">
+				<source>Level</source>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.message">
+				<source>Message</source>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.message.publishedPage">
+				<source>Page "%s" was published.</source>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.message.publishedFile">
+				<source>File "%s" was published.</source>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.message.skippedFile">
+				<source>File "%s" was skipped because it does not contain any changes.</source>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.message.deletedFolder">
+				<source>The folder "%s" and all contained files were deleted</source>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.data">
+				<source>Data</source>
+			</trans-unit>
+
+			<trans-unit id="label_stage">
+				<source>Stage System</source>
+			</trans-unit>
+			<trans-unit id="label_production">
+				<source>Production System</source>
+			</trans-unit>
+			<trans-unit id="error_not_connected">
+				<source>Error: Could not connect to production database!</source>
+			</trans-unit>
+			<trans-unit id="record_published">
+				<source>The selected record has been published successfully.</source>
+			</trans-unit>
+			<trans-unit id="folder_created">
+				<source>The selected folder has been created successfully.</source>
+			</trans-unit>
+			<trans-unit id="folder_creation_failed">
+				<source>The selected folder could not be created.</source>
+			</trans-unit>
+			<trans-unit id="folder_removed">
+				<source>The selected folder has been removed successfully.</source>
+			</trans-unit>
+			<trans-unit id="folder_removal_failed">
+				<source>The selected folder could not be removed.</source>
+			</trans-unit>
+			<trans-unit id="folder_retrieving_failed">
+				<source>in2publish failed to retrieve information about the folder %s or any of it's subfolders. Please verify that is in2publish is working properly by running the tests.</source>
+			</trans-unit>
+			<trans-unit id="label_publish_all_pages">
+				<source>Publish page "%s" and its subpages.</source>
+			</trans-unit>
+			<trans-unit id="confirm_publish_all_pages">
+				<source>Do you really want to publish all pages?</source>
+			</trans-unit>
+			<trans-unit id="confirm_publish_pages">
+				<source>Do you really want to publish this page?</source>
+			</trans-unit>
+			<trans-unit id="publish_pages">
+				<source>Publish this page</source>
+			</trans-unit>
+			<trans-unit id="label_publish_all_files">
+				<source>Publish all files within folder "%s".</source>
+			</trans-unit>
+			<trans-unit id="confirm_publish_all_files">
+				<source>Do you really want to publish all files?</source>
+			</trans-unit>
+			<trans-unit id="confirm_publish_file">
+				<source>Do you really want to publish this file?</source>
+			</trans-unit>
+			<trans-unit id="dirty_properties_preview_page">
+				<source>Preview</source>
+			</trans-unit>
+			<trans-unit id="dirty_properties_preview_compare">
+				<source>Compare</source>
+			</trans-unit>
+			<trans-unit id="dirty_properties_history_page">
+				<source>History</source>
+			</trans-unit>
+			<trans-unit id="dirty_properties_preview_file">
+				<source>File preview</source>
+			</trans-unit>
+			<trans-unit id="dirty_properties_edit_main">
+				<source>Edit</source>
+			</trans-unit>
+			<trans-unit id="dirty_properties_pageproperties">
+				<source>%s properties</source>
+			</trans-unit>
+			<trans-unit id="dirty_properties_fileproperties">
+				<source>Page properties</source>
+			</trans-unit>
+			<trans-unit id="dirty_properties_undo">
+				<source>Record history</source>
+			</trans-unit>
+			<trans-unit id="dirty_properties_edit">
+				<source>Edit record</source>
+			</trans-unit>
+			<trans-unit id="related_records">
+				<source>Related Records</source>
+			</trans-unit>
+
+			<trans-unit id="configuration.loaded">
+				<source>The Configuration was loaded successfully.</source>
+			</trans-unit>
+			<trans-unit id="configuration.not_loaded">
+				<source>The Configuration was not loaded yet.</source>
+			</trans-unit>
+			<trans-unit id="configuration.ext_conf_not_available">
+				<source>in2publish extension configuration is not available. Please configure in2publish in the Extension Manager.</source>
+			</trans-unit>
+			<trans-unit id="configuration.configuration_file_missing">
+				<source>The configuration file path of in2publish is wrong, because no matching configuration file was found.</source>
+			</trans-unit>
+			<trans-unit id="configuration.configuration_file_not_readable">
+				<source>The given configuration file is not readable. Please check file permissions.</source>
+			</trans-unit>
+			<trans-unit id="configuration.configuration_path_not_existing">
+				<source>The given configuration path does not exist.</source>
+			</trans-unit>
+
+			<trans-unit id="moduleselector.index">
+				<source>Introduction</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.configuration">
+				<source>Show configuration</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.configuration.description">
+				<source>Display the local configuration of in2publish from LocalConfiguration.yaml</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.show_logs">
+				<source>Show logs</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.show_logs.description">
+				<source>Show logfiles of in2publish</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.test">
+				<source>Tests</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.test.description">
+				<source>Run some function test of in2publish</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.tca">
+				<source>Inspect TCA</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.tca.description">
+				<source>See which parts of the TCA are processed, and the reason why others are not.</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.flush_tca">
+				<source>Flush TCA cache</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.flush_tca.description">
+				<source>Flush all cached TCA entries of in2publish on local.</source>
+			</trans-unit>
+
+			<trans-unit id="publishing.publish_file_success">
+				<source>The File "%s" was successful published.</source>
+			</trans-unit>
+			<trans-unit id="publishing.physical_file_deleted_success">
+				<source>The File "%s" has been successfully deleted.</source>
+			</trans-unit>
+			<trans-unit id="publishing.physical_file_deleted_failure">
+				<source>The File "%s" could not be deleted.</source>
+			</trans-unit>
+			<trans-unit id="publishing.physical_file_add_failure">
+				<source>Can not publish a file wihout a sys_file record. Open this folder in the Filelist module once before publishing.</source>
+			</trans-unit>
+
+			<trans-unit id="record.state.unchanged">
+				<source>Record unchanged</source>
+			</trans-unit>
+			<trans-unit id="record.state.changed">
+				<source>Record changed</source>
+			</trans-unit>
+			<trans-unit id="record.state.added">
+				<source>New record</source>
+			</trans-unit>
+			<trans-unit id="record.state.deleted">
+				<source>Record deleted</source>
+			</trans-unit>
+			<trans-unit id="record.state.moved">
+				<source>Record moved</source>
+			</trans-unit>
+
+			<trans-unit id="module.m4.logs">
+				<source>Logs</source>
+			</trans-unit>
+			<trans-unit id="module.m4.configuration">
+				<source>Configuration</source>
+			</trans-unit>
+			<trans-unit id="module.m4.overview">
+				<source>Overview</source>
+			</trans-unit>
+			<trans-unit id="module.m4.overview.label">
+				<source>Label</source>
+			</trans-unit>
+			<trans-unit id="module.m4.overview.value">
+				<source>Value</source>
+			</trans-unit>
+			<trans-unit id="module.m4.overview.overall">
+				<source>Overall entries</source>
+			</trans-unit>
+			<trans-unit id="module.m4.overview.logLevel">
+				<source>Loglevel</source>
+			</trans-unit>
+			<trans-unit id="module.m4.filter">
+				<source>Filter</source>
+			</trans-unit>
+			<trans-unit id="module.m4.filter.log_level">
+				<source>Loglevel / Results per page</source>
+			</trans-unit>
+			<trans-unit id="module.m4.logs.flush">
+				<source>Flush all logs</source>
+			</trans-unit>
+			<trans-unit id="module.m4.logs.page">
+				<source>Page</source>
+			</trans-unit>
+			<trans-unit id="module.m4.tca">
+				<source>TCA inspection</source>
+			</trans-unit>
+			<trans-unit id="module.m4.tca.compatible">
+				<source>Compatible TCA</source>
+			</trans-unit>
+			<trans-unit id="module.m4.tca.incompatible">
+				<source>Incompatible TCA</source>
+			</trans-unit>
+			<trans-unit id="module.m4.tca.controls">
+				<source>Controls</source>
+			</trans-unit>
+			<trans-unit id="module.m4.tca.navigate.to_incompatible">
+				<source>Navigate to incompatible TCA</source>
+			</trans-unit>
+			<trans-unit id="module.m4.tca.navigate.to_compatible">
+				<source>Navigate to compatible TCA</source>
+			</trans-unit>
+			<trans-unit id="module.m4.tca.navigate.to_controls">
+				<source>Navigate to controls</source>
+			</trans-unit>
+
+			<trans-unit id="test_state_error">
+				<source>In2publish might not work as expected.</source>
+			</trans-unit>
+			<trans-unit id="test_state_error.tests_never_ran">
+				<source>The In2publish tests were never executed.</source>
+			</trans-unit>
+			<trans-unit id="test_state_error.tests_failing">
+				<source>Some In2publish tests are failing.</source>
+			</trans-unit>
+			<trans-unit id="test_state_error.environment_changed">
+				<source>Your TYPO3 installation changed.</source>
+			</trans-unit>
+			<trans-unit id="test_state_error.configuration_changed">
+				<source>The In2publish configuration has changed.</source>
+			</trans-unit>
+
+			<trans-unit id="frontend.compare.selection.alignment.vertical">
+				<source>Vertical</source>
+			</trans-unit>
+			<trans-unit id="frontend.compare.selection.alignment.horizontal">
+				<source>Horizontal</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

@@ -1,0 +1,29 @@
+
+<div class="in2publish-container">
+	<div class="in2publish-container-50">
+		<f:if condition="{localDatabaseConnectionAvailable}">
+			<f:then>
+				<f:image src="{f:uri.resource(path:'Images/server_green.png')}" alt="local" title="Serverstatus: OK" />
+			</f:then>
+			<f:else>
+				<f:image src="{f:uri.resource(path:'Images/server_red.png')}" alt="local" title="Serverstatus: Error" />
+			</f:else>
+		</f:if>
+		<p>
+			<f:translate key="label_stage">Stage System</f:translate>
+		</p>
+	</div>
+	<div class="in2publish-container-50 in2publish-icon-loop-alt4{f:if(condition:publishingAvailable,else:' in2publish-connection-error')}{f:if(condition:testStatus,else:' in2publish-warning')}">
+		<f:if condition="{foreignDatabaseConnectionAvailable}">
+			<f:then>
+				<f:image src="{f:uri.resource(path:'Images/server_green.png')}" alt="foreign" title="Serverstatus: OK" />
+			</f:then>
+			<f:else>
+				<f:image src="{f:uri.resource(path:'Images/server_red.png')}" alt="foreign" title="Serverstatus: Error" />
+			</f:else>
+		</f:if>
+		<p>
+			<f:translate key="label_production">Production System</f:translate>
+		</p>
+	</div>
+</div>

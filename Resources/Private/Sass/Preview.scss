@@ -1,0 +1,64 @@
+@import "Settings";
+
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  overflow-y: hidden;
+}
+
+.preview_header {
+  background: url('../Images/in2code_circle.svg') 102% 10px no-repeat $nightrider;
+  background-size: 100px 100px;
+  height: 60px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.preview_selection_alignment {
+  position: absolute;
+  top: 18px;
+  right: 50px;
+  width: 150px;
+}
+
+iframe {
+  border: none;
+}
+
+.preview_wrap {
+  padding-top: 60px;
+  height: 100%;
+}
+
+.preview_wrap_vertical {
+  .preview_stage,
+  .preview_production {
+    width: 50%;
+    height: 100%;
+    float: left;
+  }
+  .preview_stage {
+    box-shadow: inset -1px 0 0 0 $nightrider;
+  }
+}
+
+.preview_wrap_horizontal {
+  .preview_stage,
+  .preview_production {
+    width: 100%;
+    height: 50%;
+  }
+  .preview_stage {
+    box-shadow: inset 0 -1px 0 0 $nightrider;
+  }
+}

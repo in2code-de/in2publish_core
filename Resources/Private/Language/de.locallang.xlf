@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2015-01-20T12:00:00Z" product-name="in2publish_core">
+		<header/>
+		<body>
+			<trans-unit id="submit">
+				<source>Submit</source>
+				<target state="translated">Senden</target>
+			</trans-unit>
+
+			<trans-unit id="module_main_title">
+				<source>TYPO3 Content Publisher</source>
+				<target state="translated">TYPO3 Content Publisher</target>
+			</trans-unit>
+			<trans-unit id="module_m1_title">
+				<source>publish pages and records overview</source>
+				<target state="translated">Übersicht Seiten und Datensätze veröffentlichen</target>
+			</trans-unit>
+			<trans-unit id="module_m3_title">
+				<source>publish files</source>
+				<target state="translated">Dateien veröffentlichen</target>
+			</trans-unit>
+			<trans-unit id="module_m4_title">
+				<source>administration tools</source>
+				<target state="translated">Tools für Administratoren</target>
+			</trans-unit>
+
+			<trans-unit id="tx_in2code_in2publish_log.time">
+				<source>Date/Time</source>
+				<target state="translated">Zeitpunkt</target>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.component">
+				<source>Component</source>
+				<target state="translated">Komponente</target>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.level">
+				<source>Level</source>
+				<target state="translated">Ebene</target>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.message">
+				<source>Message</source>
+				<target state="translated">Nachricht</target>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.message.publishedPage">
+				<source>Page "%s" was published.</source>
+				<target state="translated">Seite "%s" wurde publiziert.</target>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.message.publishedFile">
+				<source>File "%s" was published.</source>
+				<target state="translated">Datei "%s" wurde publiziert.</target>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.message.skippedFile">
+				<source>File "%s" was skipped because it does not contain any changes.</source>
+				<target state="translated">Datei "%s" wurde übersprungen da sie nicht verändert wurde.</target>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.message.deletedFolder">
+				<source>The folder "%s" and all contained files were deleted</source>
+				<target state="translated">Der Ordner "%s" und alle darin entahltenen Dateien wurden gelöscht.</target>
+			</trans-unit>
+			<trans-unit id="tx_in2code_in2publish_log.data">
+				<source>Data</source>
+				<target state="translated">Daten</target>
+			</trans-unit>
+
+			<trans-unit id="label_stage">
+				<source>Stage System</source>
+				<target state="translated">Stage System</target>
+			</trans-unit>
+			<trans-unit id="label_production">
+				<source>Production System</source>
+				<target state="translated">Production System</target>
+			</trans-unit>
+			<trans-unit id="error_not_connected">
+				<source>Error: Could not connect to production database!</source>
+				<target state="translated">Fehler: Konnte nicht mit Datenbank auf Produktionssystem verbinden!</target>
+			</trans-unit>
+			<trans-unit id="record_published">
+				<source>The selected record has been published successfully.</source>
+				<target state="translated">Der ausgewählte Datensatz wurde erfolgreich veröffentlicht.</target>
+			</trans-unit>
+			<trans-unit id="folder_created">
+				<source>The selected folder has been created successfully.</source>
+				<target state="translated">Der ausgewählte Ordner wurde erfolgreich angelegt.</target>
+			</trans-unit>
+			<trans-unit id="folder_creation_failed">
+				<source>The selected folder could not be created.</source>
+				<target state="translated">Der ausgewählte Ordner konnte nicht engelegt werden.</target>
+			</trans-unit>
+			<trans-unit id="folder_removed">
+				<source>The selected folder has been removed successfully.</source>
+				<target state="translated">Der ausgewählte Ordner wurde erfolgreich gelöscht.</target>
+			</trans-unit>
+			<trans-unit id="folder_removal_failed">
+				<source>The selected folder could not be removed.</source>
+				<target state="translated">Der ausgewählte Ordner konnte nicht gelöscht werden.</target>
+			</trans-unit>
+			<trans-unit id="folder_retrieving_failed">
+				<source>in2publish failed to retrieve information about the folder %s or any of it's subfolders. Please verify that is in2publish is working properly by running the tests.</source>
+				<target state="translated">in2publish konnte keine Informationen über den Ordner %s oder einen seiner Unterordner auslesen. Bitte überprüfen Sie ob in2publish korrekt eingerichtet ist, indem Sie die Tests durchführen.</target>
+			</trans-unit>
+			<trans-unit id="label_publish_all_pages">
+				<source>Publish page "%s" and its subpages.</source>
+				<target state="translated">Veröffentlichen der Seite "%s" und ihrer Unterseiten</target>
+			</trans-unit>
+			<trans-unit id="confirm_publish_all_pages">
+				<source>Do you really want to publish all pages?</source>
+				<target state="translated">Möchten Sie wirklich alle Seiten veröffentlichen?</target>
+			</trans-unit>
+			<trans-unit id="confirm_publish_pages">
+				<source>Do you really want to publish this page?</source>
+				<target state="translated">Möchten Sie diese Seite wirklich veröffentlichen?</target>
+			</trans-unit>
+			<trans-unit id="publish_pages">
+				<source>Publish this page</source>
+				<target state="translated">Diese Seite publizieren</target>
+			</trans-unit>
+			<trans-unit id="label_publish_all_files">
+				<source>Publish all files within folder "%s".</source>
+				<target state="translated">Veröffentlichen aller Dateien innerhalb von "%s"</target>
+			</trans-unit>
+			<trans-unit id="confirm_publish_all_files">
+				<source>Do you really want to publish all files?</source>
+				<target state="translated">Möchten Sie wirklich alle Dateien veröffentlichen?</target>
+			</trans-unit>
+			<trans-unit id="confirm_publish_file">
+				<source>Do you really want to publish this file?</source>
+				<target state="translated">Möchten Sie diese Datei wirklich veröffentlichen?</target>
+			</trans-unit>
+			<trans-unit id="dirty_properties_preview_page">
+				<source>Preview</source>
+				<target state="translated">Vorschau</target>
+			</trans-unit>
+			<trans-unit id="dirty_properties_preview_compare">
+				<source>Compare</source>
+				<target state="translated">Vergleichsansicht</target>
+			</trans-unit>
+			<trans-unit id="dirty_properties_history_page">
+				<source>History</source>
+				<target state="translated">Historie</target>
+			</trans-unit>
+			<trans-unit id="dirty_properties_preview_file">
+				<source>File preview</source>
+				<target state="translated">Dateivorschau</target>
+			</trans-unit>
+			<trans-unit id="dirty_properties_edit_main">
+				<source>Edit</source>
+				<target state="translated">Bearbeiten</target>
+			</trans-unit>
+			<trans-unit id="dirty_properties_pageproperties">
+				<source>%s properties</source>
+				<target state="translated">Eigenschaften von %s</target>
+			</trans-unit>
+			<trans-unit id="dirty_properties_fileproperties">
+				<source>Page properties</source>
+				<target state="translated">Seiteneigenschaften</target>
+			</trans-unit>
+			<trans-unit id="dirty_properties_undo">
+				<source>Record history</source>
+				<target state="translated">Datensatz Historie</target>
+			</trans-unit>
+			<trans-unit id="dirty_properties_edit">
+				<source>Edit record</source>
+				<target state="translated">Datensatz bearbeiten</target>
+			</trans-unit>
+			<trans-unit id="related_records">
+				<source>Related Records</source>
+				<target state="translated">Verknüpfte Datensätze</target>
+			</trans-unit>
+
+			<trans-unit id="configuration.loaded">
+				<source>The Configuration was loaded successfully.</source>
+				<target state="translated">Die Konfiguration wurde erfolgreich geladen.</target>
+			</trans-unit>
+			<trans-unit id="configuration.not_loaded">
+				<source>The Configuration was not loaded yet.</source>
+				<target state="translated">Die Konfiguration wurde noch nicht geladen.</target>
+			</trans-unit>
+			<trans-unit id="configuration.ext_conf_not_available">
+				<source>in2publish extension configuration is not available. Please configure in2publish in the Extension Manager.</source>
+				<target state="translated">Die Konfiguration von in2publish ist nicht verfügbar. Bitte Konfigurieren sie in2publish im Extension Manager.</target>
+			</trans-unit>
+			<trans-unit id="configuration.configuration_file_missing">
+				<source>The configuration file path of in2publish is wrong, because no matching configuration file was found.</source>
+				<target state="translated">Der angegebene Konfigurationspfad ist falsch, da keine passende Konfigurationsdatei gefunden werden konnte.</target>
+			</trans-unit>
+			<trans-unit id="configuration.configuration_file_not_readable">
+				<source>The given configuration file is not readable. Please check file permissions.</source>
+				<target state="translated">Die angegebene Konfigurationsdatei ist nicht lesbar. Bitte überprüfen sie die Dateirechte.</target>
+			</trans-unit>
+			<trans-unit id="configuration.configuration_path_not_existing">
+				<source>The given configuration path does not exist.</source>
+				<target state="translated">Die angegebene Konfigurationspfad existiert nicht.</target>
+			</trans-unit>
+
+			<trans-unit id="moduleselector.index">
+				<source>Introduction</source>
+				<target state="translated">Übersicht</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.configuration">
+				<source>Show configuration</source>
+				<target state="translated">Konfigurationsübersicht</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.configuration.description">
+				<source>Display the local configuration of in2publish from LocalConfiguration.yaml</source>
+				<target state="translated">Zeige die aktuelle Konfiguration von in2publish von der LocalConfiguration.yaml Datei</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.show_logs">
+				<source>Show logs</source>
+				<target state="translated">Logs anzeigen</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.show_logs.description">
+				<source>Show logfiles of in2publish</source>
+				<target state="translated">Zeige Logfiles der Erweiterung in2publish</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.test">
+				<source>Tests</source>
+				<target state="translated">Tests</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.test.description">
+				<source>Run some function test of in2publish</source>
+				<target state="translated">Teste in2publish auf Funktionsfähigkeit</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.tca">
+				<source>Inspect TCA</source>
+				<target state="translated">TCA inspection</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.tca.description">
+				<source>See which parts of the TCA are processed, and the reason why others are not.</source>
+				<target state="translated">Zeige die Teile des TCA die verwendet werden und alle anderen mit der Begründung warum sie nicht verwendet werden.</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.flush_tca">
+				<source>Flush TCA cache</source>
+				<target state="translated">TCA Caches leeren</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.flush_tca.description">
+				<source>Flush all cached TCA entries of in2publish on local.</source>
+				<target state="translated">Löscht alle TCA Einträge im Cache von in2publish in der lokalen Datenbank.</target>
+			</trans-unit>
+
+			<trans-unit id="publishing.publish_file_success">
+				<source>The File "%s" was successful published.</source>
+				<target state="translated">Die Datei "%s" wurde erfolgreich veröffentlicht.</target>
+			</trans-unit>
+			<trans-unit id="publishing.physical_file_deleted_success">
+				<source>The File "%s" has been successfully deleted.</source>
+				<target state="translated">Die Datei "%s" wurde erfolgreich gelöscht.</target>
+			</trans-unit>
+			<trans-unit id="publishing.physical_file_deleted_failure">
+				<source>The File "%s" could not be deleted.</source>
+				<target state="translated">Die Datei "%s" konnte nicht gelöscht werden.</target>
+			</trans-unit>
+			<trans-unit id="publishing.physical_file_add_failure">
+				<source>Can not publish a file wihout a sys_file record. Open this folder in the Filelist module once before publishing.</source>
+				<target state="translated">Die Datei kann nicht ohne sys_file Datensatz publiziert werden. Öffnen sie diesen Ordner einmalig im Filelist Modul damit der Datensatz angelegt wird.</target>
+			</trans-unit>
+
+			<trans-unit id="record.state.unchanged">
+				<source>Record unchanged</source>
+				<target state="translated">Unverändert</target>
+			</trans-unit>
+			<trans-unit id="record.state.changed">
+				<source>Record changed</source>
+				<target state="translated">Datensatz geändert</target>
+			</trans-unit>
+			<trans-unit id="record.state.added">
+				<source>New record</source>
+				<target state="translated">Neuer Datensatz</target>
+			</trans-unit>
+			<trans-unit id="record.state.deleted">
+				<source>Record deleted</source>
+				<target state="translated">Gelöschter Datensatz</target>
+			</trans-unit>
+			<trans-unit id="record.state.moved">
+				<source>Record moved</source>
+				<target state="translated">Datensatz verschoben</target>
+			</trans-unit>
+
+			<trans-unit id="module.m4.logs">
+				<source>Logs</source>
+				<target state="translated">Logs</target>
+			</trans-unit>
+			<trans-unit id="module.m4.configuration">
+				<source>Configuration</source>
+				<target state="translated">Konfiguration</target>
+			</trans-unit>
+			<trans-unit id="module.m4.overview">
+				<source>Overview</source>
+				<target state="translated">Übersicht</target>
+			</trans-unit>
+			<trans-unit id="module.m4.overview.label">
+				<source>Label</source>
+				<target state="translated">Bezeichnung</target>
+			</trans-unit>
+			<trans-unit id="module.m4.overview.value">
+				<source>Value</source>
+				<target state="translated">Wert</target>
+			</trans-unit>
+			<trans-unit id="module.m4.overview.overall">
+				<source>Overall entries</source>
+				<target state="translated">Anzahl Logs</target>
+			</trans-unit>
+			<trans-unit id="module.m4.overview.logLevel">
+				<source>Loglevel</source>
+				<target state="translated">Logging Ebene</target>
+			</trans-unit>
+			<trans-unit id="module.m4.filter">
+				<source>Filter</source>
+				<target state="translated">Filter</target>
+			</trans-unit>
+			<trans-unit id="module.m4.filter.log_level">
+				<source>Loglevel / Results per page</source>
+				<target state="translated">Logging Ebene / Ergebnisse auf dieser Seite</target>
+			</trans-unit>
+			<trans-unit id="module.m4.logs.flush">
+				<source>Flush all logs</source>
+				<target state="translated">Alle Logs löschen</target>
+			</trans-unit>
+			<trans-unit id="module.m4.logs.page">
+				<source>Page</source>
+				<target state="translated">Seite</target>
+			</trans-unit>
+			<trans-unit id="module.m4.tca">
+				<source>TCA inspection</source>
+				<target state="translated">TCA Inspizieren</target>
+			</trans-unit>
+			<trans-unit id="module.m4.tca.compatible">
+				<source>Compatible TCA</source>
+				<target state="translated">Kompatibles TCA</target>
+			</trans-unit>
+			<trans-unit id="module.m4.tca.incompatible">
+				<source>Incompatible TCA</source>
+				<target state="translated">Inkompatibles TCA</target>
+			</trans-unit>
+			<trans-unit id="module.m4.tca.controls">
+				<source>Controls</source>
+				<target state="translated">Controls</target>
+			</trans-unit>
+			<trans-unit id="module.m4.tca.navigate.to_incompatible">
+				<source>Navigate to incompatible TCA</source>
+				<target state="translated">Zu inkompatiblem TCA springen</target>
+			</trans-unit>
+			<trans-unit id="module.m4.tca.navigate.to_compatible">
+				<source>Navigate to compatible TCA</source>
+				<target state="translated">Zu kompatiblem TCA springen</target>
+			</trans-unit>
+			<trans-unit id="module.m4.tca.navigate.to_controls">
+				<source>Navigate to controls</source>
+				<target state="translated">Zu controls springen</target>
+			</trans-unit>
+
+			<trans-unit id="test_state_error">
+				<source>In2publish might not work as expected.</source>
+				<target state="translated">In2publish könnte vom erwarteten Verhalten abweichen.</target>
+			</trans-unit>
+			<trans-unit id="test_state_error.tests_never_ran">
+				<source>The In2publish tests were never executed.</source>
+				<target state="translated">Die In2publish Tests wurde noch nie ausgeführt.</target>
+			</trans-unit>
+			<trans-unit id="test_state_error.tests_failing">
+				<source>Some In2publish tests are failing.</source>
+				<target state="translated">Einige Tests von in2publish schlagen fehl.</target>
+			</trans-unit>
+			<trans-unit id="test_state_error.environment_changed">
+				<source>Your TYPO3 installation changed.</source>
+				<target state="translated">Ihre TYPO3 Installtion hat sich verändert.</target>
+			</trans-unit>
+			<trans-unit id="test_state_error.configuration_changed">
+				<source>The In2publish configuration has changed.</source>
+				<target state="translated">Die In2publish Konfiguration wurde verändert.</target>
+			</trans-unit>
+
+			<trans-unit id="frontend.compare.selection.alignment.vertical">
+				<source>Vertical</source>
+				<target state="translated">Vertikal</target>
+			</trans-unit>
+			<trans-unit id="frontend.compare.selection.alignment.horizontal">
+				<source>Horizontal</source>
+				<target state="translated">Horizontal</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

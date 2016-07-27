@@ -1,0 +1,972 @@
+// TYPO3 Fix (to show var_dump() output)
+div.typo3-fullDoc {
+  height: auto;
+}
+
+// Hide text
+.in2publish-hide-text {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+
+.in2publish-clearfix {
+  zoom: 1; // For IE 6/7 (trigger hasLayout)
+  &:after {
+    clear: both;
+  }
+  &:before,
+  &:after {
+    content: "";
+    display: table;
+  }
+}
+
+.in2publish-icon-small {
+  &:before {
+    font-size: 16px;
+  }
+}
+
+.in2publish-unstyledlist {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+[data-action] {
+  cursor: pointer;
+}
+
+.in2publish-inline-block {
+  display: inline-block;
+}
+
+.in2publish-backend {
+  color: $white;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  legend {
+    color: $white;
+  }
+  select {
+    color: $tundora;
+  }
+}
+
+.in2publish-backend *,
+.in2publish-backend *:before,
+.in2publish-backend *:after {
+  @include box-sizing(border-box);
+
+}
+
+.in2publish-backend ul {
+  margin: 0;
+  padding: 0;
+}
+
+.in2publish-module > section {
+  margin: 15px 0;
+  > h3 {
+    margin-bottom: 10px;
+  }
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: $scorpion;
+  font-size: $defaultFontSize;
+  &[class^="in2publish-module-"], &[class*=" in2publish-module-"] {
+    background: $scorpion;
+  }
+
+
+  &.in2publish-module-m1 {
+    &:after {
+      content: ' ';
+      background-image: url("../Images/in2code_circle.svg");
+      width: 600px;
+      height: 600px;
+      display: block;
+      position: absolute;
+      bottom: -300px;
+      left: -300px;
+      opacity: 0.3;
+
+    }
+  }
+  &.in2publish-module-m2 {
+    @include stripes($scorpion, $white, 0.03, 20px, $important:'');
+    // --- TYPO3 7.x fix
+    #typo3-docbody {
+      @include stripes($scorpion, $white, 0.03, 20px, $important:'');
+    }
+  }
+
+}
+
+legend {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 18px;
+  font-size: inherit;
+  line-height: inherit;
+  color: currentColor;
+  border-style: none;
+}
+
+label {
+  font-weight: normal;
+}
+
+a.in2publish-notextdecoration {
+  text-decoration: none;
+}
+
+.in2publish-main {
+  margin-top: 40px;
+  overflow: hidden;
+}
+
+.in2publish-container {
+  overflow: hidden;
+  margin: 0 0 30px;
+}
+
+.in2publish-container-50 {
+  position: relative;
+  width: 50%;
+  float: left;
+  text-align: center;
+  img {
+    width: 90px;
+    height: auto;
+  }
+}
+
+.in2publish-stagelisting {
+
+}
+
+.in2publish-stagelisting__item {
+  //position: relative;
+  //top: 0;
+  //left: 0;
+  //padding: 0;
+  //margin-bottom: 10px;
+}
+
+.in2publish-stagelisting__item__column {
+  background-color: $dovegray;
+  width: 50%;
+  float: left;
+  height: 30px;
+  line-height: 30px;
+  position: relative;
+  top: 0;
+  left: 0;
+
+  a {
+    color: $white;
+  }
+
+  .in2publish-stagelisting__item--added & {
+    background-color: $forestgreen;
+
+    .in2publish-icon-folder {
+      @extend .icon-folder-plus;
+    }
+
+    .in2publish-icon-file {
+      @extend .icon-file-add;
+    }
+  }
+
+  .in2publish-stagelisting__item--deleted & {
+    background-color: $appleblossom;
+    .in2publish-icon-folder {
+      @extend .icon-folder-minus;
+    }
+
+    .in2publish-icon-file {
+      @extend .icon-file-broken;
+    }
+  }
+
+  .in2publish-stagelisting__item--changed & {
+    background-color: $goldentainoi;
+    color: $scorpion;
+    .in2publish-icon-folder {
+      @extend .icon-folder-open;
+    }
+
+    .in2publish-icon-file {
+      @extend .icon-file-settings;
+    }
+
+    .in2publish-icon-publish {
+      color: $scorpion;
+    }
+  }
+
+  .in2publish-stagelisting__item--moved & {
+    background-color: $mariner;
+
+    .in2publish-icon-folder {
+      @extend .icon-folder-download;
+    }
+  }
+
+  .in2publish-stagelisting__item--workflowState & {
+    background-color: $dovegray;
+    color: $white;
+    //margin-bottom: 15px;
+
+    .in2publish-icon-publish {
+      color: currentColor;
+    }
+  }
+}
+
+.in2publish-stagelisting__item--wrap {
+  clear: both;
+}
+
+.in2publish-stagelisting__item--workflowState {
+  margin-bottom: 15px;
+
+  &:before {
+    content: '';
+    display: block;
+    position: relative;
+    left: 0;
+    right: 0;
+    top: 35px;
+    height: 5px;
+    z-index: 1;
+  }
+}
+
+.in2publish-stagelisting__item--workflowState1 {
+  &:before {
+    @include stripes($apple, $alto, 0.3);
+  }
+}
+
+.in2publish-stagelisting__item--workflowState2 {
+  &:before {
+    @include stripes($salomie, $tundora, 0.5);
+  }
+}
+
+@for $n from 3 through 8 {
+  .in2publish-stagelisting__item--workflowState#{$n} {
+    &:before {
+      @include stripes($mariner, $alto);
+    }
+  }
+}
+
+// ----- Listlevel -----
+
+@for $n from 1 through 5 {
+  .in2publish-list-level--#{$n} {
+    .in2publish-icon-info {
+      right: 25px + (12 * $n);
+    }
+
+    .in2publish-icon-publish {
+      right: 12px * $n;
+    }
+
+    .in2publish-stagelisting__item__column--right {
+      .in2publish-icon-folder {
+        margin-left: 15px + (12 * $n);
+      }
+    }
+
+  }
+}
+
+.in2publish-backend .in2publish-list-level {
+  margin: 0 0 0 $listSpacer;
+
+  > li {
+    border-top: 1px solid $scorpion;
+  }
+}
+
+
+// ----- Workflow Module -----
+
+.in2publish-module-m2 {
+  .in2publish-stagelisting__item__column--left {
+    width: 75%;
+    @media only screen and (min-width: 1200px) {
+      width: 85%;
+    }
+  }
+  .in2publish-stagelisting__item__column--right {
+    width: 25%;
+    padding-left: 20px;
+
+    @media only screen and (min-width: 1200px) {
+      width: 15%;
+    }
+  }
+}
+
+.in2publish-stagelisting--workflowform {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  right: 70px;
+
+  > select {
+    width: 160px;
+  }
+}
+
+.in2publish-stagelisting__item__path {
+  font-size: 0.8em;
+  margin: 0 0 0 15px;
+}
+
+// hide publish button per default
+.in2publish-stagelisting__item__publish {
+  display: none;
+}
+
+.in2publish__workflowbutton {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.in2publish__workflowbutton > .in2publish__workflowbutton__primary,
+.in2publish__workflowbutton > .in2publish__workflowbutton__secondary {
+  padding: 3px 10px;
+}
+
+// ----- Icon
+
+// ----- start the dropdown -----
+
+.in2publish-stagelisting__dropdown {
+  display: none;
+  overflow: hidden;
+  background-color: $alto;
+  color: $scorpion;
+  border: 10px solid $dovegray;
+  // word-break: break-all;
+
+  a {
+    color: currentColor;
+  }
+
+  h3 {
+    background-color: $scorpion;
+    font-weight: normal;
+    font-size: 1em;
+    padding: 0 15px;
+    margin-top: 0;
+  }
+
+  h4 {
+    background-color: $dovegray;
+    font-style: italic;
+    padding: 3px 15px;
+  }
+
+  li {
+    list-style-type: none;
+    padding: 0 0 0 $leftSpacer;
+    word-break: break-all;
+  }
+
+  [class^="in2publish-icon-"],
+  [class*=" in2publish-icon-"] {
+    padding: 0 10px 0 0;
+  }
+
+  .in2publish-stagelisting__item--added & {
+    border-color: $forestgreen;
+  }
+
+  .in2publish-stagelisting__item--deleted & {
+    border-color: $appleblossom;
+  }
+
+  .in2publish-stagelisting__item--changed & {
+    border-color: $goldentainoi;
+  }
+
+  .in2publish-stagelisting__item--moved & {
+    border-color: $mariner;
+  }
+
+}
+
+.in2publish-stagelisting__dropdown--open {
+  //position: relative;
+  //top: -8px;
+  margin-bottom: 10px;
+}
+
+.in2publish-stagelisting__dropdown__item {
+  width: 50%;
+  float: left;
+  line-height: 30px;
+  padding: 0px;
+
+  &--full {
+    width: 100%;
+  }
+
+  h3 {
+    line-height: 30px;
+  }
+}
+
+.in2publish-backend .in2publish-stagelisting__dropdown__item__list > li {
+  border-style: none;
+  position: relative;
+}
+
+.in2publish-stagelisting__dropdown__actions {
+  padding: 0 $leftSpacer;
+  background-color: $silverchalice;
+  color: $white;
+
+  > a {
+    margin-right: 20px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  .in2publish-stagelisting__item--added & {
+    background-color: $apple;
+  }
+
+  .in2publish-stagelisting__item--deleted & {
+    background-color: $fuzzywuzzybrown;
+  }
+
+  .in2publish-stagelisting__item--changed & {
+    background-color: $salomie;
+    color: currentColor;
+  }
+
+  .in2publish-stagelisting__item--moved & {
+    background-color: $pictonblue;
+    color: $white;
+  }
+}
+
+.in2publish-stagelisting__dropdown__page {
+  background-color: $white;
+}
+
+.in2publish-backend .in2publish-related {
+  &__title {
+    font-style: normal;
+    line-height: 30px;
+    padding: 0 15px;
+    margin: 0;
+    background-color: $salomie;
+    color: $tundora;
+  }
+  &__list {
+    margin: 12px 0 15px;
+    li {
+      font-size: 14px;
+    }
+  }
+}
+
+.in2publish-backend .in2publish-stagelisting__dropdown__item__list {
+  margin-bottom: 12px;
+}
+
+// ----- Footer -----
+
+.in2publish-footer {
+  margin: 20px 0;
+  color: $silverchalice;
+  font-size: 80%;
+  .in2publish-logo {
+    float: right;
+    width: 160px;
+    height: 48px;
+  }
+}
+
+.in2publish-functions-bar {
+  background-color: $dovegray;
+  margin: 20px 0;
+  text-align: center;
+  position: relative;
+  padding: 15px;
+  min-height: 73px;
+}
+
+.in2publish-functions-bar__filter {
+  position: absolute;
+  right: 20px;
+  top: 22px;
+
+  i {
+    &:before {
+      font-size: 30px;
+    }
+  }
+
+  .in2publish-functions-bar__filter__link {
+    display: inline-block;
+    margin: 0 0 0 10px;
+    color: $white;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .in2publish-functions-bar--active {
+    border-bottom: 2px solid $white;
+
+    &.in2publish-icon-status-changed {
+      border-color: $goldentainoi;
+    }
+
+    &.in2publish-icon-status-added {
+      border-color: $apple;
+    }
+
+    &.in2publish-icon-status-deleted {
+      border-color: $appleblossom;
+    }
+
+    &.in2publish-icon-status-moved {
+      border-color: $pictonblue;
+    }
+  }
+
+}
+
+// ----- Buttons -----
+
+.in2publish-btn,
+a.in2publish-btn {
+  padding: 10px;
+  display: inline-block;
+  background-color: $alto;
+  color: $dovegray;
+
+  &:hover {
+    text-decoration: none;
+    background-color: $silverchalice;
+    color: $alto;
+  }
+
+  &.in2publish-btn-warning {
+    color: $white;
+    background-color: $appleblossom;
+
+    &:hover {
+      background-color: $fuzzywuzzybrown;
+    }
+  }
+
+  &.in2publish-btn-ok {
+    color: $white;
+    background-color: $forestgreen;
+
+    &:hover {
+      background-color: $apple;
+    }
+  }
+}
+
+.filter_select {
+  padding: 8px;
+}
+
+// ----- Table -----
+
+.in2publish-tableview {
+  border: 1px solid $dovegray;
+  th, td {
+    padding: 5px;
+  }
+  th {
+    text-align: left;
+    background-color: $salomie;
+    color: $tundora;
+  }
+  td {
+    border-top: 1px solid $dovegray;
+  }
+  tr {
+    &:hover {
+      background-color: $dovegray;
+    }
+  }
+}
+
+.in2publish-tableview-viewarray {
+  table {
+    background: $dovegray;
+    td {
+      padding: 3px 10px;
+      font {
+        font-size: 16px;
+        &[color="red"] {
+          color: $fuzzywuzzybrown;
+        }
+      }
+    }
+  }
+}
+
+.in2publish-tableview--fullwidth {
+  width: 100%;
+}
+
+// ----- Messages -----
+.in2publish-messages {
+  z-index: 10;
+  left: 20px;
+  right: 20px;
+  margin-top: 20px;
+
+  .alert,
+  .typo3-message {
+    display: none;
+    padding: 20px;
+    margin: 0 0 10px 0;
+    border-style: none;
+    color: $tundora;
+    position: relative;
+
+    h4 {
+      font-weight: bold;
+    }
+
+    background: {
+      color: $alto;
+      image: none;
+    }
+
+    &:last-child {
+      margin: 0;
+    }
+
+    &.alert-info,
+    &.message-information {
+      background-color: $pictonblue;
+      color: $white;
+    }
+
+    &.alert-success,
+    &.message-ok {
+      background-color: $apple;
+      color: $white;
+    }
+
+    &.alert-danger,
+    &.message-error {
+      background-color: $fuzzywuzzybrown;
+      color: $white;
+    }
+
+    &.alert-warning,
+    &.message-warning {
+      background-color: $salomie;
+    }
+
+  }
+
+  ul {
+    margin: 10px 0;
+  }
+
+  .alert {
+    ul {
+      margin-left: 20px;
+    }
+  }
+
+  li {
+    margin: 0;
+  }
+}
+
+.in2publish-messages--removeable {
+  position: absolute;
+
+  .alert,
+  .typo3-message {
+    > span {
+      cursor: pointer;
+      top: 10px;
+      right: 10px;
+      position: absolute;
+    }
+  }
+}
+
+.in2publish-preloader {
+  background-color: $scorpion;
+  height: 100%;
+  position: fixed;
+  z-index: 100000;
+  text-align: center;
+  opacity: 0.9;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.in2publish-preloader--hidden {
+  display: none;
+}
+
+.in2publish-preloader--spinner {
+  position: relative;
+  top: 30%;
+  margin: 100px auto;
+  width: 50px;
+  height: 30px;
+  text-align: center;
+  font-size: 10px;
+
+  > div {
+    background-color: $white;
+    height: 100%;
+    width: 6px;
+    display: inline-block;
+
+    -webkit-animation: stretchdelay 1.2s infinite ease-in-out;
+    animation: stretchdelay 1.2s infinite ease-in-out;
+  }
+
+  .rect2 {
+    -webkit-animation-delay: -1.1s;
+    animation-delay: -1.1s;
+  }
+
+  .rect3 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+  }
+
+  .rect4 {
+    -webkit-animation-delay: -0.9s;
+    animation-delay: -0.9s;
+  }
+
+  .rect5 {
+    -webkit-animation-delay: -0.8s;
+    animation-delay: -0.8s;
+  }
+}
+
+div#typo3-docbody.stopScrolling {
+  transform: none;
+}
+
+@-webkit-keyframes stretchdelay {
+  0%, 40%, 100% {
+    -webkit-transform: scaleY(0.4)
+  }
+  20% {
+    -webkit-transform: scaleY(1.0)
+  }
+}
+
+@keyframes stretchdelay {
+  0%, 40%, 100% {
+    transform: scaleY(0.4);
+    -webkit-transform: scaleY(0.4);
+  }
+  20% {
+    transform: scaleY(1.0);
+    -webkit-transform: scaleY(1.0);
+  }
+}
+
+.in2publish-icon-messages {
+  background-image: url("../Images/message.svg");
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 9px;
+  right: 44px;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
+
+.in2publish-stagelisting__messages {
+  display: none;
+  overflow: hidden;
+  background-color: $dovegray;
+  border: 10px solid $dovegray;
+
+  > form {
+    display: flex;
+
+    #typo3-docbody & {
+      margin-bottom: 0;
+    }
+  }
+
+  .in2publish-stagelisting__item--added & {
+    border-color: $forestgreen;
+  }
+
+  .in2publish-stagelisting__item--deleted & {
+    border-color: $appleblossom;
+  }
+
+  .in2publish-stagelisting__item--changed & {
+    border: 10px solid $goldentainoi;
+  }
+
+  .in2publish-stagelisting__item--moved & {
+    border: 10px solid $mariner;
+  }
+
+  fieldset {
+    border: none;
+  }
+
+  .in2publish__messagelist__item__username {
+    margin-right: 10px !important;
+  }
+
+  .in2publish__messagelist__itemcontainer {
+    padding-left: 20px;
+  }
+}
+
+.in2publish__workflowcontainer__field {
+  margin: 10px 0;
+  position: relative;
+
+  &--scrollable {
+    max-height: 500px;
+  }
+}
+
+.in2publish-backend {
+  .in2publish__workflowcontainer__field {
+    input,
+    textarea {
+      padding: 10px;
+    }
+  }
+}
+
+.in2publish-stagelisting__new-messages {
+  display: none;
+  overflow: hidden;
+  background-color: $alto;
+  color: $scorpion;
+  border: 10px solid $dovegray;
+  padding: 7px;
+  textarea {
+    resize: none;
+    width: 100%;
+  }
+}
+
+.in2publish-stagelisting__messages--open {
+  position: relative;
+  top: -10px;
+}
+
+.in2publish-stagelisting__new-messages--open {
+  position: fixed;
+  z-index: 44;
+  margin-top: 5px;
+}
+
+.in2publish-stagelisting__messages__left {
+  width: 50%;
+  float: left;
+  padding: 10px;
+  border-right: 1px solid $alto;
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 5px;
+    color: $black;
+  }
+
+  .in2publish-removevalue:before {
+    right: 10px;
+    bottom: 14px;
+  }
+
+}
+
+.in2publish-stagelisting__messages__right {
+  width: 50%;
+  float: left;
+  padding: 10px 10px 10px 15px;
+  border-left: 1px solid $alto;
+
+  ol {
+    list-style-type: none;
+  }
+}
+
+.in2publish-removevalue:before {
+  right: 4px;
+  bottom: 4px;
+}
+
+.pika-single {
+  top: inherit;
+  bottom: 20px;
+  left: 80px !important;
+}
+
+.in2publish-btn {
+  display: inline-block;
+  color: $nightrider;
+  padding: 4px 4px;
+  font-size: 11px;
+  line-height: 1.5;
+  border-radius: 2px;
+  background-color: $whitesmoke;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid #bbbbbb;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  &:hover {
+    background-color: $lightgrey;
+    border-color: $nobel;
+    color: $nightrider;
+  }
+}

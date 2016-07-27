@@ -1,0 +1,25 @@
+{namespace publish=In2code\In2publishCore\ViewHelpers}
+<f:layout name="Record" />
+
+	Index
+
+<f:section name="content">
+	<h2 data-module="m1">
+		<f:translate key="module_main_title">Publish Content</f:translate> -
+		<f:translate key="module_m1_title">publish pages and records</f:translate>
+	</h2>
+
+	<div class="in2publish-main">
+		<f:render partial="Server" arguments="{_all}" />
+		<div class="in2publish-stagelisting{f:if(condition:configuration.factory.simpleOverviewAndAjax,then:' simpleOverviewAndAjax')}">
+			<f:render partial="Record/Index/PageList" arguments="{_all}" />
+		</div>
+	</div>
+
+	<f:if condition="{record}">
+		<f:render partial="Record/Index/FunctionBar" arguments="{_all}" />
+	</f:if>
+	<f:alias map="{moduleName: 'record'}">
+		<f:render partial="Footer" arguments="{_all}" />
+	</f:alias>
+</f:section>

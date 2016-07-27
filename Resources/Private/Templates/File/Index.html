@@ -1,0 +1,39 @@
+{namespace publish=In2code\In2publishCore\ViewHelpers}
+<f:layout name="File"/>
+
+Index
+
+<f:section name="content">
+	<h2>
+		<f:translate key="module_main_title">Publish Content</f:translate> -
+		<f:translate key="module_m3_title">publish files</f:translate>
+	</h2>
+
+	<div class="in2publish-main">
+		<f:render partial="Server" arguments="{_all}" />
+		<div class="in2publish-stagelisting">
+			<f:render partial="File/Index/FolderList" arguments="{_all}" />
+
+			<f:if condition="{record.relatedRecords}">
+				<ul class="in2publish-unstyledlist in2publish-list-level in2publish-list-level--{record.additionalProperties.depth}">
+					<f:for each="{record.relatedRecords.sys_file}" as="fileRecord">
+						<li>
+							<f:render partial="File/Index/FileList" arguments="{record:fileRecord, showRecordDepth:showRecordDepth}" />
+						</li>
+					</f:for>
+					<f:for each="{record.relatedRecords.physical_file}" as="physicalFileRecord">
+						<li>
+							<f:render partial="File/Index/PhysicalFileList" arguments="{record:physicalFileRecord, showRecordDepth:showRecordDepth}" />
+						</li>
+					</f:for>
+				</ul>
+			</f:if>
+		</div>
+	</div>
+	<f:if condition="{record}">
+		<f:render partial="File/Index/FunctionBar" arguments="{_all}" />
+	</f:if>
+	<f:alias map="{moduleName: 'file'}">
+		<f:render partial="Footer" arguments="{_all}" />
+	</f:alias>
+</f:section>

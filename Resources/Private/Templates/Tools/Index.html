@@ -1,0 +1,63 @@
+<f:layout name="Tools"/>
+
+Index - Information and Stuff
+
+<f:section name="content">
+	<f:if condition="{configurationExists}">
+		<div class="in2publish-module">
+			<div class="row">
+				<h2>
+					<f:translate key="module_main_title">Publish Content</f:translate> -
+					<f:translate key="module_m4_title">Tools</f:translate>
+				</h2>
+
+				<p><f:translate key="module_m3_index_content">The Tools Module</f:translate></p>
+
+				<section class="nav-pills-container">
+					<ul class="nav nav-pills nav-stacked">
+						<li class="active">
+							<f:link.action action="index">
+								<f:translate key="moduleselector.introduction">Introduction</f:translate>:
+								<f:translate key="moduleselector.introduction.description">Small tools description</f:translate>
+							</f:link.action>
+						</li>
+						<li>
+							<f:link.action action="test">
+								<f:translate key="moduleselector.test">Tests</f:translate>:
+								<f:translate key="moduleselector.test.description">Run some function test of in2publish</f:translate>
+							</f:link.action>
+						</li>
+						<li>
+							<f:link.action action="configuration">
+								<f:translate key="moduleselector.configuration">Show configuration</f:translate>:
+								<f:translate key="moduleselector.configuration.description">Display the local configuration of in2publish from LocalConfiguration.yaml</f:translate>
+							</f:link.action>
+						</li>
+						<li>
+							<f:link.action action="showLogs">
+								<f:translate key="moduleselector.show_logs">Show logs</f:translate>:
+								<f:translate key="moduleselector.show_logs.description">Show logfiles of in2publish</f:translate>
+							</f:link.action>
+						</li>
+						<li>
+							<f:link.action action="tca">
+								<f:translate key="moduleselector.tca">Inspect TCA</f:translate>:
+								<f:translate key="moduleselector.tca.description">See which parts of the TCA are processed, and the reason why others are not.</f:translate>
+							</f:link.action>
+						</li>
+						<li>
+							<f:link.action action="clearTcaCaches">
+								<f:translate key="moduleselector.flush_tca">Flush TCA cache</f:translate>:
+								<f:translate key="moduleselector.flush_tca.description">Immediately flush all cached TCA entries.</f:translate>
+							</f:link.action>
+						</li>
+					</ul>
+				</section>
+			</div>
+		</div>
+	</f:if>
+	<f:alias map="{moduleName: 'tools'}">
+		<f:render partial="Footer" arguments="{_all}" />
+	</f:alias>
+</f:section>
+

@@ -1,0 +1,63 @@
+{namespace publish=In2code\In2publishCore\ViewHelpers}
+
+<f:if condition="{record}">
+	<div class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.stateRecursive} in2publish-clearfix">
+		<f:comment>
+			Left
+		</f:comment>
+		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--left">
+			<i class="in2publish-icon-folder" title="{f:translate(key:'record.state.{record.stateRecursive}',default:record.stateRecursive)}"></i><f:if condition="{showRecordDepth}">[{record.additionalProperties.depth}] </f:if><publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="title" stagingLevel="local" />
+			<i class="in2publish-icon-info"{publish:Attribute.DirtyPropertiesIconDataAttributes(record:record)}></i>
+			<f:if condition="{record.changedRecursive}">
+				<f:if condition="{publish:Condition.IsUserAllowedToPublish()}">
+					<f:link.action
+							action="publishRecord"
+							arguments="{identifier:record.identifier}"
+							title="{f:translate(key:'publish_pages', default:'Publish this page')}"
+							additionalAttributes="{publish:Attribute.PublishingDataAttributes()}">
+						<i class="in2publish-icon-publish"></i>
+					</f:link.action>
+				</f:if>
+			</f:if>
+		</div>
+
+		<f:comment>
+			Right
+		</f:comment>
+		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--right">
+			<i class="in2publish-icon-folder" title="{f:translate(key:'record.state.{record.stateRecursive}',default:record.stateRecursive)}"></i><publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="title" stagingLevel="foreign" />
+		</div>
+
+		<f:if condition="{configuration.factory.simpleOverviewAndAjax}">
+			<f:else>
+				<f:if condition="{publish:miscellaneous.getConfiguration(configurationPath:'debug.allInformation')}">
+					<f:then>
+						<f:comment>Difference View</f:comment>
+						<f:render partial="Record/Index/AllPropertiesList" arguments="{_all}" />
+					</f:then>
+					<f:else>
+						<f:comment>Difference View</f:comment>
+						<f:render partial="Record/Index/DirtyPropertiesList" arguments="{_all}" />
+					</f:else>
+				</f:if>
+			</f:else>
+			<f:then>
+				<div class="simpleOverviewAndAjaxContainerForRecord{record.tableName}{record.identifier}">
+					<f:comment>
+						Container for AJAX request results: Difference View
+					</f:comment>
+				</div>
+			</f:then>
+		</f:if>
+	</div>
+
+	<f:if condition="{record.relatedRecords.pages}">
+		<ul class="in2publish-unstyledlist in2publish-list-level in2publish-list-level--{record.additionalProperties.depth}">
+			<f:for each="{record.relatedRecords.pages}" as="pageRecord">
+				<li>
+					<f:render partial="Record/Index/PageList" arguments="{record:pageRecord, showRecordDepth:showRecordDepth, configuration:configuration}" />
+				</li>
+			</f:for>
+		</ul>
+	</f:if>
+</f:if>

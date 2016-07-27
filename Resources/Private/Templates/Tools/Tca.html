@@ -1,0 +1,38 @@
+{namespace publish=In2code\In2publishCore\ViewHelpers}
+<f:layout name="Tools" />
+
+	Configuration overview
+
+<f:section name="content">
+	<div class="in2publish-module">
+		<h2>
+			<f:translate key="module_main_title">Publish Content</f:translate>
+			-
+			<f:translate key="module.m4.tca">TCA</f:translate>
+		</h2>
+
+		<section class="in2publish-tableview-viewarray">
+			<h3><a id="in2publish--compatible-tca"><f:translate key="module.m4.tca.compatible">Compatible TCA</f:translate></a></h3>
+			<a href="#in2publish--incompatible-tca"><f:translate key="module.m4.tca.navigate.to_incompatible">To incompatbile TCA</f:translate></a>
+			<a href="#in2publish--controls"><f:translate key="module.m4.tca.navigate.to_controls">To controls</f:translate></a>
+			<publish:String.ViewArray array="{compatibleTca}" title="{f:translate(key:'module.m4.tca.compatible')}" />
+		</section>
+
+		<section class="in2publish-tableview-viewarray">
+			<h3><a id="in2publish--incompatible-tca"><f:translate key="module.m4.tca.incompatible">Inompatible TCA</f:translate></a></h3>
+			<a href="#in2publish--compatible-tca"><f:translate key="module.m4.tca.navigate.to_compatible">To compatbile TCA</f:translate></a>
+			<a href="#in2publish--controls"><f:translate key="module.m4.tca.navigate.to_controls">To controls</f:translate></a>
+			<publish:String.ViewArray array="{incompatibleTca}" title="{f:translate(key:'module.m4.tca.incompatible')}" />
+		</section>
+
+		<section class="in2publish-tableview-viewarray">
+			<h3><a id="in2publish--controls"><f:translate key="module.m4.tca.controls">Controls</f:translate></a></h3>
+			<a href="#in2publish--controls"><f:translate key="module.m4.tca.navigate.to_compatible">To compatbile TCA</f:translate></a>
+			<a href="#in2publish--incompatible-tca"><f:translate key="module.m4.tca.navigate.to_incompatible">To incompatbile TCA</f:translate></a>
+			<publish:String.ViewArray array="{controls}" title="{f:translate(key:'module.m4.tca.controls')}" />
+		</section>
+	</div>
+	<f:alias map="{moduleName: 'tools'}">
+		<f:render partial="Footer" arguments="{_all}" />
+	</f:alias>
+</f:section>

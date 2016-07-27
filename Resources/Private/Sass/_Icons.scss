@@ -1,0 +1,131 @@
+@import "Settings";
+
+// ----- Icons ------
+
+.in2publish-icon-circle-o {
+  @extend .icon-circle-o;
+}
+
+.in2publish-icon-circle {
+  @extend .icon-circle;
+}
+
+.in2publish-icon-blocked {
+  @extend .icon-blocked;
+}
+
+.in2publish-icon-x-altx-alt {
+  @extend .icon-x-altx-alt;
+}
+
+.in2publish-icon-folder-download {
+  @extend .icon-folder-download;
+}
+
+.in2publish-icon-history {
+  @extend .icon-history;
+  @extend .in2publish-icon-small;
+}
+
+.in2publish-icon-info {
+  position: absolute;
+  top: 1px;
+  right: 25px;
+
+  @extend .icon-info;
+  @extend .in2publish-icon-small;
+}
+
+.in2publish-icon-loop-alt4 {
+  @extend .icon-loop-alt4;
+  &:before {
+    font-size: 90px !important;
+    color: $apple;
+    position: absolute;
+    top: 25px;
+    left: -45px;
+  }
+
+  &.in2publish-warning {
+    &:before {
+      color: $goldentainoi;
+    }
+  }
+
+  &.in2publish-connection-error {
+    &:before {
+      color: $appleblossom;
+    }
+  }
+}
+
+// ----- Folder
+
+.in2publish-icon-folder {
+  margin: 0 $leftSpacer !important;
+  position: relative;
+  top: 3px;
+  @extend .icon-folder;
+}
+
+.in2publish-icon-folder-open {
+  @extend .icon-folder-open;
+}
+
+.in2publish-icon-folder-plus {
+  @extend .icon-folder-plus;
+}
+
+.in2publish-icon-folder-minus {
+  @extend .icon-folder-minus;
+}
+
+.in2publish-icon-eye {
+  @extend .icon-eye;
+  @extend .in2publish-icon-small;
+}
+
+.in2publish-icon-file-delete {
+  @extend .icon-file-broken;
+}
+
+.in2publish-icon-file-add {
+  @extend .icon-file-add;
+}
+
+.in2publish-icon-file-changed {
+  @extend .icon-file-settings;
+}
+
+.in2publish-icon-file {
+  margin: 0 $leftSpacer;
+  position: relative;
+  top: 3px;
+  @extend .icon-align-justify;
+}
+
+.in2publish-icon-clock2 {
+  @extend .icon-clock2;
+}
+
+.in2publish-icon-edit {
+  @extend .icon-edit;
+  @extend .in2publish-icon-small;
+}
+
+.in2publish-icon-publish {
+  position: absolute;
+  right: 0;
+  top: 1px;
+
+  @extend .icon-arrow-right;
+  @extend .in2publish-icon-small;
+
+  .in2publish-stagelisting__item__publish--blocked & {
+    right: 1px;
+    cursor: not-allowed;
+    &:before {
+      content: "\e60a";
+    }
+  }
+}

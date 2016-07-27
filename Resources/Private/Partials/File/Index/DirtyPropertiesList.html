@@ -1,0 +1,75 @@
+{namespace publish=In2code\In2publishCore\ViewHelpers}
+
+<div class="in2publish-stagelisting__dropdown in2publish-stagelisting__dropdown--close in2publish-clearfix">
+	<div class="in2publish-stagelisting__dropdown__item in2publish-stagelisting__dropdown__item--left">
+		<div class="in2publish-stagelisting__dropdown__actions">
+			<f:if condition="{record.state} != 'deleted'">
+				<f:then>
+
+					<f:link.external
+							uri="{publish:File.BuildResourcePath(record:record,stagingLevel:'local')}"
+							target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_file">Preview</f:translate></f:link.external>
+				</f:then>
+				<f:else>
+					&nbsp;
+				</f:else>
+			</f:if>
+		</div>
+
+		<f:if condition="{record.changedRecursive">
+
+			<f:comment>Show File properties only if they have changed</f:comment>
+			<f:if condition="{record.state} == 'changed'">
+				<f:if condition="{record.dirtyProperties}">
+					<h3><f:translate key="dirty_properties_fileproperties">File properties</f:translate></h3>
+					<ul class="in2publish-stagelisting__dropdown__page in2publish-stagelisting__dropdown__item__list">
+						<f:for each="{record.dirtyProperties}" as="fieldName">
+							<li>
+								<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.tableName}" />
+								<publish:Tca.FormatPropertyByTcaDefinition fieldName="{dirtyProperty}" tableName="{record.tableName}">
+									<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{fieldName}" stagingLevel="local" />
+								</publish:Tca.FormatPropertyByTcaDefinition>
+							</li>
+						</f:for>
+					</ul>
+				</f:if>
+			</f:if>
+		</f:if>
+	</div>
+
+	<div class="in2publish-stagelisting__dropdown__item in2publish-stagelisting__dropdown__item--right">
+		<div class="in2publish-stagelisting__dropdown__actions">
+			<f:if condition="{record.state} != 'added'">
+				<f:then>
+					<f:link.external
+							uri="{publish:File.BuildResourcePath(record:record,stagingLevel:'foreign')}"
+							target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_file">Preview</f:translate></f:link.external>
+				</f:then>
+				<f:else>
+					&nbsp;
+				</f:else>
+			</f:if>
+		</div>
+
+		<f:if condition="{record.changedRecursive">
+
+			<f:comment>Show File properties only if they have changed</f:comment>
+			<f:if condition="{record.state} == 'changed'">
+				<f:if condition="{record.dirtyProperties}">
+					<h3><f:translate key="dirty_properties_fileproperties">File properties</f:translate></h3>
+					<ul class="in2publish-stagelisting__dropdown__page in2publish-stagelisting__dropdown__item__list">
+						<f:for each="{record.dirtyProperties}" as="fieldName">
+							<li>
+								<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.tableName}" />
+								<publish:Tca.FormatPropertyByTcaDefinition fieldName="{dirtyProperty}" tableName="{record.tableName}">
+									<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{fieldName}" stagingLevel="foreign" />
+								</publish:Tca.FormatPropertyByTcaDefinition>
+							</li>
+						</f:for>
+					</ul>
+				</f:if>
+			</f:if>
+
+		</f:if>
+	</div>
+</div>

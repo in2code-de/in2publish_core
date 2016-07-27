@@ -1,0 +1,2 @@
+# cat=basic//010; type=string; label= Path to configuration files: See EXT:in2publish/Configuration/Yaml/ForeignConfiguration.yaml.example and LocalConfiguration.yaml.example for example configuration. Path to both files can be absolute or relative beginning at the document root.
+pathToConfiguration = typo3conf/AdditionalConfiguration/

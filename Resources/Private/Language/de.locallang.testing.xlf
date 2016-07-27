@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="de" product-name="in2publish_core">
+		<header/>
+		<body>
+			<trans-unit id="test_skipped">
+				<source>The test %s was skipped because other tests failed or were skipped.</source>
+				<target state="translated">Der Test %s wurde übersprungen, weil andere Tests fehlschlugen oder übersprungen wurden.</target>
+			</trans-unit>
+			<trans-unit id="dependency_failed">
+				<source>Following dependencies failed: %s</source>
+				<target state="translated">Folgende Tests schlugen fehl: %s.</target>
+			</trans-unit>
+			<trans-unit id="dependency_skipped">
+				<source>Following dependencies skipped: %s</source>
+				<target state="translated">Folgende Tests wurden übersprungen: %s.</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationIsAvailableTest -->
+
+			<trans-unit id="configuration.available">
+				<source>The configuration could be loaded.</source>
+				<target state="translated">Die Konfigurationsdatei konnte geladen werden.</target>
+			</trans-unit>
+			<trans-unit id="configuration.not_available">
+				<source>The configuration could not be loaded.</source>
+				<target state="translated">Die Konfigurationsdatei konnte nicht geladen werden.</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest -->
+
+			<trans-unit id="configuration.format_okay">
+				<source>The configuration file is well formated and holds all required options.</source>
+				<target state="translated">Die Konfiguration ist gültig formatiert und enthält alle Optionen.</target>
+			</trans-unit>
+
+			<trans-unit id="configuration.missing_keys">
+				<source>The configuration file is missing required options.</source>
+				<target state="translated">Die Konfiguration enthält nicht alle notwendigen Optionen.</target>
+			</trans-unit>
+			<trans-unit id="configuration.keys_missing">
+				<source>These configuration values are missing: %s</source>
+				<target state="translated">Diese Optionen fehlen in der Konfiguration: %s</target>
+			</trans-unit>
+
+			<trans-unit id="configuration.superfluous_keys">
+				<source>The configuration file contains unused options.</source>
+				<target state="translated">Die Konfiguration enthält nicht genutzte Optionen.</target>
+			</trans-unit>
+			<trans-unit id="configuration.keys_superfluous">
+				<source>These configuration options are not used: %s</source>
+				<target state="translated">Diese Optionen sind überflüssig: %s</target>
+			</trans-unit>
+
+			<trans-unit id="configuration.mismatching_keys">
+				<source>Some options to not match the expected variable type.</source>
+				<target state="translated">Einige optionen entsprechen nicht dem erwarteten Variablentyp.</target>
+			</trans-unit>
+			<trans-unit id="configuration.keys_mismatching">
+				<source>Following options do not respect the format: %s</source>
+				<target state="translated">Diese Optionen entsprechen nicht dem Format: %s</target>
+			</trans-unit>
+
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseAccessTest
+				 && \In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest -->
+
+			<trans-unit id="database.missing_important_tables">
+				<source>These tables are missing: %s</source>
+				<target state="translated">Diese Tabellen fehlen: %s</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseAccessTest -->
+
+			<trans-unit id="database.local_accessible_and_tables_present">
+				<source>The local database is accessible and contains all required tables.</source>
+				<target state="translated">Die lokale Datenbank ist erreichbar und enthält alle notwendigen Tabellen.</target>
+			</trans-unit>
+
+			<trans-unit id="database.local_inaccessible">
+				<source>The local database is inaccessible.</source>
+				<target state="translated">Es kann nicht auf die lokale Datenbank zugegriffen werden.</target>
+			</trans-unit>
+			<trans-unit id="database.local_offline">
+				<source>The local database seems to be offline.</source>
+				<target state="translated">Die lokale Datenbank scheint offline zu sein.</target>
+			</trans-unit>
+			<trans-unit id="database.local_tables_missing">
+				<source>The local database misses important tables.</source>
+				<target state="translated">In der lokalen Datenbank fehlen wichtige Tabellen.</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest -->
+
+			<trans-unit id="database.foreign_accessible_and_tables_present">
+				<source>The foreign database is accessible and contains all required tables.</source>
+				<target state="translated">Die entfernte Datenbank ist erreichbar und enthält alle notwendigen Tabellen.</target>
+			</trans-unit>
+
+			<trans-unit id="database.foreign_inaccessible">
+				<source>The foreign database is inaccessible.</source>
+				<target state="translated">Es kann nicht auf die entfernte Datenbank zugegriffen werden.</target>
+			</trans-unit>
+			<trans-unit id="database.foreign_offline">
+				<source>The foreign database seems to be offline.</source>
+				<target state="translated">Die entfernte Datenbank scheint offline zu sein.</target>
+			</trans-unit>
+			<trans-unit id="database.foreign_tables_missing">
+				<source>The foreign database misses important tables.</source>
+				<target state="translated">In der entfernte Datenbank fehlen wichtige Tabellen.</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Database\DatabaseDifferencesTest -->
+
+			<trans-unit id="database.local_and_foreign_identical">
+				<source>The local database is the same as the foreign database.</source>
+				<target state="translated">Die lokale datenbank ist die gleiche wie die entfernte datenbank.</target>
+			</trans-unit>
+
+			<trans-unit id="database.no_differences">
+				<source>The schema of the local and foreign database is identical.</source>
+				<target state="translated">Das Schema der lokalen und entfernten Datenbank ist identisch.</target>
+			</trans-unit>
+
+			<trans-unit id="database.tables_missing_on_other_side">
+				<source>The databases have different tables.</source>
+				<target state="translated">Die Datenbanken haben unterschiedliche Tabellen.</target>
+			</trans-unit>
+			<trans-unit id="database.missing_tables">
+				<source>Following tables only exist on local: %sFollowing tables only exist on foreign: %s</source>
+				<target state="translated">Folgende Tabellen exitsieren nur lokal: %sFolgende Tabellen existieren nur in der entfernten Datebank: %s</target>
+			</trans-unit>
+
+			<trans-unit id="database.field_differences">
+				<source>Field differences between your databases have been detected.</source>
+				<target state="translated">Es wurden Unterschiede in den Feldern der lokalen und entfernten Datenbank festgestellt.</target>
+			</trans-unit>
+			<trans-unit id="database.different_fields">
+				<source>These fields differ: %s</source>
+				<target state="translated">Diese Felder haben Unterschiede: %s</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest -->
+
+			<trans-unit id="ssh_connection.full_availability">
+				<source>All required and optional PHP SSH2 functions are available.</source>
+				<target state="translated">Alle benötigten und optionalen PHP SSH2 Funktionen sind vorhanden.</target>
+			</trans-unit>
+
+			<trans-unit id="ssh_connection.functions_missing">
+				<source>PHP SSH functions are missing. Install the PHP ssh2 library.</source>
+				<target state="translated">PHP SSH Funktionen fehlen. Installieren Sie die php ssh2 Bibliothek.</target>
+			</trans-unit>
+			<trans-unit id="ssh_connection.chmod_missing">
+				<source>The function "ssh2_sftp_chmod" is missing. Permissions will be set on CLI level, but will not report any error!</source>
+				<target state="translated">Die Funktion "ssh2_sftp_chmod" fehlt. Die Dateiberechtigungen werden über Shell-Befehle gesetzt aber es gibt keine Fehlerbehandlung!</target>
+			</trans-unit>
+			<trans-unit id="ssh_connection.chmod_description">
+				<source>The function "ssh2_sftp_chmod" is available since php_ssh2 0.12. Either upgrade or ignore this message.</source>
+				<target state="translated">Die Funktion "ssh2_sftp_chmod" steht ab der Version 0.12 von php_ssh2 zu Verfügung. Upgraden Sie php_ssh2 oder ignorieren Sie diese Meldung.</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest -->
+
+			<trans-unit id="ssh_connection.connection_successful">
+				<source>The SSH connection to the foreign host was successful and all options are correct.</source>
+				<target state="translated">Die SSH Verbindung auf das entfernte System war erfolgreich und alle Optionen sind korrekt.</target>
+			</trans-unit>
+
+			<trans-unit id="ssh_connection.connection_failed">
+				<source>The SSH connection to the foreign host failed.</source>
+				<target state="translated">Die SSH Verbindung zum entfernte System schlug fehl.</target>
+			</trans-unit>
+			<trans-unit id="ssh_connection.connection_failure_message">
+				<source>The following error was returned by the ssh connection: "%s"</source>
+				<target state="translated">Der folgende Fehler wurde von der SSH Verbindung gemeldet: "%s"</target>
+			</trans-unit>
+			<trans-unit id="ssh_connection.invalid_php">
+				<source>The path to php seems to be wrong (option: sshConnection.pathToPhp).</source>
+				<target state="translated">Der Pfad zu PHP stimmt möglicherweise nicht (Option: sshConnection.pathToPhp).</target>
+			</trans-unit>
+			<trans-unit id="ssh_connection.php_test_error_message">
+				<source>The test returned following error message: %s</source>
+				<target state="translated">Der Test hat folgende Fehlermeldung zurück gegeben: %s</target>
+			</trans-unit>
+			<trans-unit id="ssh_connection.foreign_document_root_wrong">
+				<source>The foreign document root could not be validated, because typical TYPO3 folders are missing (option: sshConnection.foreignRootPath).</source>
+				<target state="translated">Das Webverzeichnis des entfernten Systems konnte nicht verifiziert werden, da typische TYPO3-Verzeichnisse fehlen (Option: sshConnection.foreignRootPath).</target>
+			</trans-unit>
+			<trans-unit id="ssh_connection.foreign_document_validation_error">
+				<source>Could not validate the foreign document root for other reasons.</source>
+				<target state="translated">Das Webverzeichnis des entfernten Systems konnte aus anderen Gründen nicht verifiziert werden.</target>
+			</trans-unit>
+			<trans-unit id="ssh_connection.foreign_document_validation_error_reason">
+				<source>The command returned following message: %s</source>
+				<target state="translated">Der Befehl gab folgende Nachricht zurück: %s.</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Application\LocalInstanceTest
+				 && \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest -->
+
+			<trans-unit id="application.utf8_fs_errors">
+				<source>UTF8 file and folder names will break the publishing process, because special UTF8 characters are detected as malicious on the CLI.</source>
+				<target state="translated">UTF8 Datei- und Verzeichnisnamen führen zu Fehlern im Publizierungsprozess, da spezielle Zeichen als bösartige Zeichen auf dem CLI gelten.</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Application\LocalInstanceTest -->
+
+			<trans-unit id="application.local_instance_validated">
+				<source>The local environment was validated successfully.</source>
+				<target state="translated">Die lokale Instanz wurde erfolgreich validiert.</target>
+			</trans-unit>
+			<trans-unit id="application.local_sys_domain_missing">
+				<source>No valid sys_domain entry has been be found on the local system.</source>
+				<target state="translated">Es wurde kein gültiger sys_domain Eintrag im lokalen System gefunden.</target>
+			</trans-unit>
+			<trans-unit id="application.local_utf8_fs">
+				<source>UTF8 filesystem configured for the local system, please disable this configuration in Install tool.</source>
+				<target state="translated">Lokal ist UTF8 Dateisystem konfiguriert. Bitte deaktivieren sie diese Option im Install Tool.</target>
+			</trans-unit>
+			<trans-unit id="application.superfluous_excluded_tables_detected">
+				<source>Some tables in "excludeRelatedTables" do not exist in the local database.</source>
+				<target state="translated">Einige Tabellen aus der Option "excludeRelatedTables" existieren nicht in der lokalen Datenbank.</target>
+			</trans-unit>
+			<trans-unit id="application.superfluous_excluded_tables">
+				<source>Following tables are configured but do not exist: %s</source>
+				<target state="translated">Folgende Tabellen wurden konfiguriert, existieren aber nicht: %s</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest -->
+
+			<trans-unit id="application.foreign_system_validated">
+				<source>The foreign environment was validated successfully.</source>
+				<target state="translated">Die entfernte Instanz wurde erfolgreich validiert.</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_sys_domain_missing">
+				<source>No valid sys_domain entry has been be found on the foreign system.</source>
+				<target state="translated">Es wurde kein gültiger sys_domain Eintrag im entfernte System gefunden.</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_cli_lowlevel_user_missing">
+				<source>Could not call the CLI dispatcher on foreign because the backend user "_cli_lowlevel" is missing there.</source>
+				<target state="translated">Der CLI dispatcher konnte auf dem entfernten System nicht aufgerufen werden, da dort der Backend User "_cli_lowlevel" fehlt.</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_cli_lowlevel_user_missing_message">
+				<source>The call to the dispatcher returned following error: %s</source>
+				<target state="translated">Der Aufruf des Dispatcher gab folgenden Fehler zurück: %s</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_cli_dispatcher_not_callable">
+				<source>Could not call the CLI dispatcher on foreign because of an unexpected error.</source>
+				<target state="translated">Der CLI dispatcher konnte auf dem entfernten System aufgrund eines unbekannten Fehlers nicht aufgerufen werden.</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_cli_dispatcher_error_message">
+				<source>The call to the dispatcher returned following message: %s</source>
+				<target state="translated">Der Aufruf des Dispatcher gab folgenden Nachricht zurück: %s</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_version_differs">
+				<source>The installed versions on the local and foreign system are different.</source>
+				<target state="translated">Auf dem lokalen und dem entfernten System sind unterschiedliche Versionen von in2publish installiert.</target>
+			</trans-unit>
+			<trans-unit id="application.versions">
+				<source>Local version: %s. Foreign Version: %s</source>
+				<target state="translated">Lokale Version: %s. Entfernte Version: %s.</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_configuration_not_loaded">
+				<source>The configuration could not be loaded on the foreign system.</source>
+				<target state="translated">Die Konfiguration auf dem entfernten System konnte nicht geladen werden.</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_configuration_loading_state">
+				<source>The confguration utility has following loading state: "%s"</source>
+				<target state="translated">Das Konfiguraionswerkzeug hat folgenden Ladestatus: "%s"</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_utf8_fs">
+				<source>UTF8 filesystem configured for the foreign system, please disable this configuration in Install tool.</source>
+				<target state="translated">Auf dem entfernten System ist TYPO3 mit dem UTF8 Dateisystem konfiguriert. Bitte deaktivieren Sie diese Option im Install Tool.</target>
+			</trans-unit>
+			<trans-unit id="application.different_t3_versions">
+				<source>The TYPO3 versions of the local and the foreign instance differ.</source>
+				<target state="translated">Die TYPO3 Version der lokalen und entfernten Instanz ist unterschiedlich.</target>
+			</trans-unit>
+			<trans-unit id="application.t3_versions">
+				<source>Local TYPO3 Version: %s. Foreign TYPO3 Version: %s.</source>
+				<target state="translated">Lokale TYPO3 Version: %s. Entfernte TYPO3 Version: %s.</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

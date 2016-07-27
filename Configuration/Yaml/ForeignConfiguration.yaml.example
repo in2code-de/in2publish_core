@@ -1,0 +1,43 @@
+#
+#    Example Configuration for in2publish
+#
+
+---
+
+# Logger configuration
+log:
+
+  # 0:Emergency, 1:Alert, 2:Critical, 3:Error, 4:Warning, 5:Notice, 6:Info, 7:Debug (int)
+  logLevel: 5
+
+  # Enable or disable File Logger (0/1)
+  useFileLogger: 0
+
+  # Path of the File Logger logfile (string)
+  logfilePath: 'typo3temp/in2publish/log.log'
+
+  # Enable or disable Database Logger (0/1)
+  useDatabaseLogger: 1
+
+  # DatabaseLogger Table to use "tx_in2code_in2publish_log" or "sys_log" (string)
+  logTable: 'tx_in2code_in2publish_log'
+
+# Backup configuration
+backup:
+
+  # Backup settings for table publishing
+  publishTableCommand:
+
+    # The number of backups to keep. 0 : no backups are made; 1 : one backup, keep none;
+    # greater than 1: keep the specified number of backups
+    keepBackups: 2
+
+    # Specify the location where table backups should be stored (absolute & writable).
+    backupLocation: /Users/simpleAccount/Projects/Websites/foreign.publishing.dev_Backups
+
+    # Adds a "DROP TABLE {tablename} IF EXISTS" statement to the backup.
+    addDropTable: TRUE
+
+    # If TRUE, backups of tables will be stored in ZIP files instead of plain sql file.
+    # saves a lot of disc space.
+    zipBackup: TRUE

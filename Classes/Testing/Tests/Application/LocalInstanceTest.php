@@ -1,0 +1,87 @@
+<?php
+namespace In2code\In2publishCore\Testing\Tests\Application;
+
+/***************************************************************
+ * Copyright notice
+ *
+ * (c) 2016 in2code.de and the following authors:
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
+ *
+ * All rights reserved
+ *
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ *
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
+
+use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
+use In2code\In2publishCore\Testing\Tests\TestResult;
+use In2code\In2publishCore\Utility\ConfigurationUtility;
+use In2code\In2publishCore\Utility\DatabaseUtility;
+
+/**
+ * Class LocalInstanceTest
+ */
+class LocalInstanceTest implements TestCaseInterface
+{
+    /**
+     * @return TestResult
+     * @SuppressWarnings("PHPMD.Superglobals")
+     */
+    public function run()
+    {
+        $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
+
+        if ($localDatabase->exec_SELECTcountRows('*', 'sys_domain', 'hidden=0') === 0) {
+            return new TestResult('application.local_sys_domain_missing', TestResult::ERROR);
+        }
+
+        if (!empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'])) {
+            return new TestResult('application.local_utf8_fs', TestResult::ERROR, 'application.utf8_fs_errors');
+        }
+
+        $excludedTables = ConfigurationUtility::getConfiguration('excludeRelatedTables');
+        $localTables = $localDatabase->admin_get_tables();
+
+        $missingTables = array();
+
+        foreach ($excludedTables as $table) {
+            if (!isset($localTables[$table])) {
+                $missingTables[] = $table;
+            }
+        }
+
+        if (!empty($missingTables)) {
+            return new TestResult(
+                'application.superfluous_excluded_tables_detected',
+                TestResult::WARNING,
+                'application.superfluous_excluded_tables',
+                array(PHP_EOL . implode(PHP_EOL, $missingTables))
+            );
+        }
+
+        return new TestResult('application.local_instance_validated');
+    }
+
+    /**
+     * @return array
+     */
+    public function getDependencies()
+    {
+        return array(
+            'In2code\\In2publishCore\\Testing\\Tests\\Database\\LocalDatabaseTest',
+        );
+    }
+}

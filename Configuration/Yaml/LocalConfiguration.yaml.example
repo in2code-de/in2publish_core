@@ -1,0 +1,283 @@
+#
+#    Example Configuration for in2publish
+#
+
+---
+
+# Database access
+database:
+  # Set your live systems database credentials here. If you use port forwarding to
+  # the server where the database is
+  # installed, the host is localhost and the port is your forwarded port.
+  foreign:
+    # name of the foreign database
+    name: 'database_123'
+    # name of the foreign mysql user
+    username: 'username_123'
+    # password of the foreign user above
+    password: 'Password_123'
+    # hostname of the database to connect to.
+    hostname: 'localhost'
+    # default: 3306
+    port: 3306
+
+
+# Exclude tables from publishing
+excludeRelatedTables:
+  be_groups
+  be_users
+  sys_domain
+  sys_history
+  sys_log
+  sys_note
+  tx_extensionmanager_domain_model_extension
+  tx_extensionmanager_domain_model_repository
+  tx_rsaauth_keys
+
+
+# Ignore this fields for DIFF view
+ignoreFieldsForDifferenceView:
+  pages:
+    pid
+    uid
+    t3ver_oid
+    t3ver_id
+    t3ver_wsid
+    t3ver_label
+    t3ver_state
+    t3ver_stage
+    t3ver_count
+    t3ver_tstamp
+    t3ver_move_id
+    t3_origuid
+    tstamp
+    sorting
+    perms_userid
+    perms_groupid
+    perms_user
+    perms_group
+    perms_everybody
+    crdate
+    cruser_id
+    SYS_LASTCHANGED
+    l18n_cfg
+  sys_folder:
+    absolutePath
+    dev
+    ino
+    mode
+    nlink
+    uid
+    gid
+    rdev
+    size
+    atime
+    mtime
+    ctime
+    blksize
+    blocks
+  physical_file:
+    absolutePath
+    dev
+    ino
+    mode
+    nlink
+    uid
+    gid
+    rdev
+    size
+    atime
+    mtime
+    ctime
+    blksize
+    blocks
+  physical_folder:
+    absolutePath
+    ino
+    mode
+    nlink
+    uid
+    gid
+    rdev
+    size
+    atime
+    mtime
+    ctime
+    blksize
+    blocks
+
+
+# factory settings (configuration about building relations in in2publish)
+factory:
+
+  # [Performance]
+  # depth of pages to fetch in hierarchy
+  maximumPageRecursion: 2
+
+  # maximum number of relations in one chain
+  maximumContentRecursion: 6
+
+  # maximum number of instance creation recursion.
+  # Minimum: maximumPageRecursion + maximumContentRecursion. Will be ignored if lower.
+  maximumOverallRecursion: 8
+
+  # Resolve properties of records (and pages) which target records from "pages" table
+  # Use with care: Related pages will be published through the relation chain, too
+  resolvePageRelations: FALSE
+
+  # [Performance]
+  # Overview output will be build mainly from information of the local system. Status will be guessed by simple queries.
+  # Details are available through an AJAX request and comparison with the foreign system.
+  # Warning: Overview does not include everything (e.g. file records) and is not as robust as on default mode
+  simpleOverviewAndAjax: TRUE
+
+# Set domain names for file preview without leading protocol (e.g. www.domain.org)
+filePreviewDomainName:
+  local: stage.publishing.localhost.de
+  foreign: prod.publishing.localhost.de
+
+# Logger configuration
+log:
+  # 0:Emergency, 1:Alert, 2:Critical, 3:Error, 4:Warning, 5:Notice, 6:Info, 7:Debug (int)
+  # - All levels smaller or equal to this value will be stored.
+  logLevel: 5
+
+
+# Manipulate view
+view:
+  # Backend module Publish records
+  records:
+    # Activate Filter buttons
+    filterButtons: TRUE
+
+    # show record connection to root record as breadcrumb in overview module. Applies only when debug.allInformation = FALSE.
+    breadcrumb: FALSE
+
+  # Backend module Publish files
+  files:
+    # Activate Filter buttons
+    filterButtons: TRUE
+
+
+# SSH and transfer settings for foreign ssh connection (file and commands)
+sshConnection:
+
+  # Hostname of the foreign server for SSH connection
+  host: live.domain.tld
+
+  # Default: 22, change if necessary
+  port: 22
+
+  # username of user on the foreign server
+  username: simpleAccount
+
+  # full path to local ssh key (rsa/dsa/..)
+  privateKeyFileAndPathName: /full/path/to/private/ssh/key/id_rsa
+
+  # full path to local ssh key belonging to the private above
+  publicKeyFileAndPathName: /full/path/to/public/ssh/key/id_rsa.pub
+
+  # private key password, NULL if none set
+  privateKeyPassphrase: NULL
+
+  # Key Fingerprint of the Live Server for authentication check
+  foreignKeyFingerprint: 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
+
+  # Method modification: one of SSH2_FINGERPRINT_MD5 or SSH2_FINGERPRINT_SHA1
+  foreignKeyFingerprintHashingMethod: SSH2_FINGERPRINT_MD5
+
+  # root path of the foreign TYPO3 CMS instance
+  foreignRootPath: /Users/simpleAccount/Projects/Websites/foreign.publishing.dev
+
+  # path to php binary
+  pathToPhp: /usr/bin/env php
+
+  # ignore if chmod fails. prevents exception
+  ignoreChmodFail: FALSE
+
+
+# module settings
+module:
+  # Enable/Disable Publishing overview module
+  m1: TRUE
+
+  # Enable/Disable File Publishing module
+  m3: TRUE
+
+  # Enable/Disable Function Publishing module
+  m4: TRUE
+
+# Debug settings
+debug:
+
+  # if set to TRUE, parentRecord will not be set for records
+  disableParentRecords: FALSE
+
+  # Show foreign key fingerprint instead of throwing an exception.
+  showForeignKeyFingerprint: FALSE
+
+  # Show depth of records in publishing view.
+  showRecordDepth: FALSE
+
+  # show execution time in backend modules in footer
+  showExecutionTime: TRUE
+
+  # show all information in publishing overview module (which records are related to the current page)
+  allInformation: FALSE
+
+# Configuration for tasks
+tasks:
+
+  # Task name
+  realUrl:
+
+    # Exclude pages with these dokTypes from realUrl generation.
+    excludedDokTypes: [254]
+
+    # Create a web request for the published page.
+    requestFrontend: FALSE
+
+  # Task name
+  solr:
+
+    # enable or disable solr integration
+    enable: FALSE
+
+
+# Set to TRUE if User TSconfig shall not be merged into this configuration file.
+disableUserConfig: FALSE
+
+# Backup configuration
+backup:
+
+  # Backup settings for table publishing
+  publishTableCommand:
+
+    # The number of backups to keep. 0 : no backups are made; 1 : one backup, keep none;
+    # greater than 1: keep the specified number of backups
+    keepBackups: 2
+
+    # Specify the location where table backups should be stored (absolute & writable).
+    backupLocation: /Users/simpleAccount/Projects/Websites/foreign.publishing.dev_Backups
+
+    # Adds a "DROP TABLE {tablename} IF EXISTS" statement to the backup.
+    addDropTable: TRUE
+
+    # If TRUE, backups of tables will be stored in ZIP files instead of plain sql file.
+    # saves a lot of disc space.
+    zipBackup: TRUE
+
+tca:
+  processor:
+    check: 'In2code\In2publishCore\Domain\Service\Processor\CheckProcessor'
+    flex: 'In2code\In2publishCore\Domain\Service\Processor\FlexProcessor'
+    group: 'In2code\In2publishCore\Domain\Service\Processor\GroupProcessor'
+    inline: 'In2code\In2publishCore\Domain\Service\Processor\InlineProcessor'
+    input: 'In2code\In2publishCore\Domain\Service\Processor\InputProcessor'
+    none: 'In2code\In2publishCore\Domain\Service\Processor\NoneProcessor'
+    passthrough: 'In2code\In2publishCore\Domain\Service\Processor\PassthroughProcessor'
+    radio: 'In2code\In2publishCore\Domain\Service\Processor\RadioProcessor'
+    select: 'In2code\In2publishCore\Domain\Service\Processor\SelectProcessor'
+    text: 'In2code\In2publishCore\Domain\Service\Processor\TextProcessor'
+    user: 'In2code\In2publishCore\Domain\Service\Processor\UserProcessor'
+    imageManipulation: 'In2code\In2publishCore\Domain\Service\Processor\ImageManipulationProcessor'

@@ -1,0 +1,21 @@
+@import "../../Settings";
+
+.in2publish__pagetreenode {
+  &--status {
+    &2 {
+      @include pagetreenodesstripes(rgba(255, 219, 136, 0.4));
+    }
+
+    &3 {
+      @include pagetreenodesstripes(rgba(66, 94, 161, 0.4));
+    }
+
+    &1 {
+      @include pagetreenodesstripes(rgba(93, 154, 70, 0.4));
+    }
+
+  }
+  &--containsotherworkflow {
+    @include pagetreenodesstripes(rgba(0, 0, 0, 0.1), 0.6);
+  }
+}
