@@ -13,8 +13,8 @@ call_user_func(
             require_once($file);
         }
 
-        // Caching for TCA preprocessors.
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$extKey] = array();
+        // Enable caching
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'] = array();
     },
     $_EXTKEY
 );

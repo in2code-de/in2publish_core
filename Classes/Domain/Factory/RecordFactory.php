@@ -30,8 +30,8 @@ namespace In2code\In2publishCore\Domain\Factory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
-use In2code\In2publishCore\Utility\TableConfigurationArrayUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -139,11 +139,17 @@ class RecordFactory
     protected $resolvePageRelations = true;
 
     /**
+     * @var TcaService
+     */
+    protected $tcaService = null;
+
+    /**
      * Creates the logger and sets any required configuration
      */
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->tcaService = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService');
         $this->maximumPageRecursion = ConfigurationUtility::getConfiguration('factory.maximumPageRecursion');
         $this->maximumContentRecursion = ConfigurationUtility::getConfiguration('factory.maximumContentRecursion');
         $this->maximumOverallRecursion = ConfigurationUtility::getConfiguration('factory.maximumOverallRecursion');
@@ -208,7 +214,7 @@ class RecordFactory
                 $instanceTableName,
                 $localProperties,
                 $foreignProperties,
-                (array)TableConfigurationArrayUtility::getTableConfigurationArray($instanceTableName),
+                (array)$this->tcaService->getConfigurationArrayForTable($instanceTableName),
                 $additionalProperties
             );
 
@@ -221,7 +227,7 @@ class RecordFactory
              *      sys_file_processedfile:
              *          needed for RTE magic images - relation to original image
              */
-            $tableConfiguration = TableConfigurationArrayUtility::getTableConfigurationArray($instanceTableName);
+            $tableConfiguration = $this->tcaService->getConfigurationArrayForTable($instanceTableName);
             if (empty($tableConfiguration)) {
                 switch ($instanceTableName) {
                     case 'sys_file_processedfile':
@@ -291,8 +297,8 @@ class RecordFactory
             $tableNamesToExclude =
                 array_merge(
                     array_diff(
-                        TableConfigurationArrayUtility::getAllTableNames(),
-                        TableConfigurationArrayUtility::getAllTableNamesAllowedOnRootLevel()
+                        $this->tcaService->getAllTableNames(),
+                        $this->tcaService->getAllTableNamesAllowedOnRootLevel()
                     ),
                     $this->excludedTableNames,
                     array('sys_file', 'sys_file_metadata')

@@ -2,7 +2,7 @@
 namespace In2code\In2publishCore\Domain\Service\TableConfiguration;
 
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Utility\TableConfigurationArrayUtility;
+use In2code\In2publishCore\Service\Configuration\TcaService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
@@ -18,16 +18,16 @@ class LabelService
     protected $emptyFieldValue = '---';
 
     /**
-     * @var array
+     * @var TcaService
      */
-    protected $tca = array();
+    protected $tcaService = null;
 
     /**
      * LabelService constructor.
      */
     public function __construct()
     {
-        $this->tca = TableConfigurationArrayUtility::getTableConfigurationArray();
+        $this->tcaService = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService');
     }
 
     /**
@@ -57,14 +57,17 @@ class LabelService
      */
     protected function getLabelFieldsFromTableConfiguration($tableName)
     {
+        $labelField = $this->tcaService->getLabelFieldFromTable($tableName);
+        $labelAltField = $this->tcaService->getLabelAltFieldFromTable($tableName);
+
         $labelFields = array();
-        if (!empty($this->tca[$tableName]['ctrl']['label'])) {
-            $labelFields[] = $this->tca[$tableName]['ctrl']['label'];
+        if (!empty($labelField)) {
+            $labelFields[] = $labelField;
         }
-        if (!empty($this->tca[$tableName]['ctrl']['label_alt'])) {
+        if (!empty($labelAltField)) {
             $labelFields = array_merge(
                 $labelFields,
-                GeneralUtility::trimExplode(',', $this->tca[$tableName]['ctrl']['label_alt'], true)
+                GeneralUtility::trimExplode(',', $labelAltField, true)
             );
         }
         return array_unique($labelFields);

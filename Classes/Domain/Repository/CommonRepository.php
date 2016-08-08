@@ -30,11 +30,11 @@ namespace In2code\In2publishCore\Domain\Repository;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
+use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\FileUtility;
-use In2code\In2publishCore\Utility\TableConfigurationArrayUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
@@ -453,7 +453,7 @@ class CommonRepository extends BaseRepository
             return $record;
         }
         $recordIdentifier = $record->getIdentifier();
-        foreach (TableConfigurationArrayUtility::getAllTableNames($excludedTableNames) as $tableName) {
+        foreach ($this->tcaService->getAllTableNames($excludedTableNames) as $tableName) {
             if (!$this->skipRecordRelation($tableName, $record)) {
                 if ($this->shouldSkipSearchingForRelatedRecordByTable($record, $tableName)) {
                     continue;

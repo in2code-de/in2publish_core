@@ -29,10 +29,10 @@ namespace In2code\In2publishCore\Domain\Factory;
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use In2code\In2publishCore\Utility\TableConfigurationArrayUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -62,12 +62,18 @@ class FakeRecordFactory
     protected $tableCacheRepository = null;
 
     /**
+     * @var TcaService
+     */
+    protected $tcaService = null;
+
+    /**
      * FakeRepository constructor.
      */
     public function __construct()
     {
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
+        $this->tcaService = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService');
     }
 
     /**
@@ -191,7 +197,7 @@ class FakeRecordFactory
      */
     protected function isRecordDeleted($pageIdentifier, $databaseName, $tableName = self::PAGE_TABLE_NAME)
     {
-        $tcaTable = TableConfigurationArrayUtility::getTableConfigurationArray($tableName);
+        $tcaTable = $this->tcaService->getConfigurationArrayForTable($tableName);
         if (!empty($tcaTable['ctrl']['delete'])) {
             $properties = $this->tableCacheRepository->findByUid($tableName, $pageIdentifier, $databaseName);
             return $properties[$tcaTable['ctrl']['delete']] === '1';
@@ -265,7 +271,7 @@ class FakeRecordFactory
      */
     protected function pageContentRecordsHasChanged(Record $record)
     {
-        $tables = TableConfigurationArrayUtility::getAllTableNamesWithPidProperty(
+        $tables = $this->tcaService->getAllTableNamesWithPidField(
             array_merge(ConfigurationUtility::getConfiguration('excludeRelatedTables'), array('pages'))
         );
         foreach ($tables as $table) {

@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Domain\Repository;
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use In2code\In2publishCore\Utility\TableConfigurationArrayUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -65,6 +64,11 @@ abstract class BaseRepository
      * @var Logger
      */
     protected $logger = null;
+
+    /**
+     * @var TcaService
+     */
+    protected $tcaService = null;
 
     /**
      * Fetches an array of properties from the given database where the
@@ -111,7 +115,7 @@ abstract class BaseRepository
         if (!empty($this->tableName)) {
             $propertyNameQuoted = $this->quoteString($propertyName);
             $propertyValueQuoted = $this->quoteString($propertyValue);
-            $sortingField = TableConfigurationArrayUtility::getSortingField($this->tableName);
+            $sortingField = $this->tcaService->getSortingField($this->tableName);
             if (empty($orderBy) && !empty($sortingField) && stripos($additionalWhere, 'ORDER BY') === false) {
                 $orderBy = $sortingField . ' ASC';
             }
@@ -350,5 +354,6 @@ abstract class BaseRepository
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->tcaService = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService');
     }
 }

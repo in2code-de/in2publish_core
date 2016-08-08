@@ -27,7 +27,8 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Utility\TableConfigurationArrayUtility;
+use In2code\In2publishCore\Service\Configuration\TcaService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -40,6 +41,19 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 class GetTableLabelFromLocallangViewHelper extends AbstractViewHelper
 {
     /**
+     * @var TcaService
+     */
+    protected $tcaService = null;
+
+    /**
+     * GetTableLabelFromLocallangViewHelper constructor.
+     */
+    public function __construct()
+    {
+        $this->tcaService = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService');
+    }
+
+    /**
      * Get tablename from locallang and TCA definition
      *
      * @param string $tableName
@@ -47,6 +61,6 @@ class GetTableLabelFromLocallangViewHelper extends AbstractViewHelper
      */
     public function render($tableName)
     {
-        return TableConfigurationArrayUtility::getTableLabel($tableName);
+        return $this->tcaService->getTableLabel($tableName);
     }
 }

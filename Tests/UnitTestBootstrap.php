@@ -6,6 +6,8 @@ if (!file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {
     throw new \LogicException('Use this bootstrap file only when you installed in2publish via composer as dependency');
 }
 
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'] = array();
+
 $coreBootstrap = __DIR__ . '/../../../../typo3/sysext/core/Build/UnitTestsBootstrap.php';
 
 if (!file_exists($coreBootstrap)) {
