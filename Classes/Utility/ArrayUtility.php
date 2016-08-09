@@ -34,7 +34,7 @@ use TYPO3\CMS\Core\Utility\MathUtility;
  *
  * @package In2code\In2publish\Utility
  */
-class ArrayUtility extends \TYPO3\CMS\Extbase\Utility\ArrayUtility
+class ArrayUtility
 {
     /**
      * Remove from array by its given key

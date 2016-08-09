@@ -26,10 +26,12 @@ namespace In2code\In2publishCore\Utility;
  ***************************************************************/
 
 use In2code\In2publishCore\Service\Context\ContextService;
+use In2code\In2publishCore\Utility\ArrayUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility as BackendUtilityCore;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\ArrayUtility as ExtbaseArrayUtility;
 
 /**
  * ConfigurationUtility
@@ -115,7 +117,7 @@ class ConfigurationUtility
         $configuration = $this->getMergedConfiguration();
 
         if (!empty($configurationPath)) {
-            return ArrayUtility::getValueByPath($configuration, $configurationPath);
+            return ExtbaseArrayUtility::getValueByPath($configuration, $configurationPath);
         }
         return $configuration;
     }
@@ -304,7 +306,7 @@ class ConfigurationUtility
      */
     protected function merge(array $configuration, array $overwrite)
     {
-        return ArrayUtility::arrayMergeRecursiveOverrule(
+        return ExtbaseArrayUtility::arrayMergeRecursiveOverrule(
             $configuration,
             ArrayUtility::removeFromArrayByKey($overwrite, self::$privateConfiguration),
             true
