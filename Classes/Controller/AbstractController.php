@@ -33,11 +33,9 @@ use In2code\In2publishCore\Utility\BackendUserUtility;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use In2code\In2publishCore\Utility\EnvironmentUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -197,7 +195,8 @@ class AbstractController extends ActionController
     {
         $localDatabaseOn = $this->localDatabase !== null;
         $foreignDatabaseOn = $this->foreignDatabase !== null;
-        $testStatus = EnvironmentUtility::getTestStatus();
+        $testStatus = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Environment\\EnvironmentService')
+                                    ->getTestStatus();
         $this->view->assignMultiple(
             array(
                 'localDatabaseConnectionAvailable' => $localDatabaseOn,
@@ -296,7 +295,8 @@ class AbstractController extends ActionController
      */
     protected function checkTestStatus()
     {
-        $testStates = EnvironmentUtility::getTestStatus();
+        $testStates = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Environment\\EnvironmentService')
+                                    ->getTestStatus();
         if (!empty($testStates)) {
             $messages = array();
             foreach ($testStates as $testState) {

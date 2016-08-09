@@ -57,20 +57,6 @@ class ToolsController extends AbstractController
     protected $tests = array();
 
     /**
-     * @var Registry
-     */
-    protected $registry = null;
-
-    /**
-     * @return ToolsController
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->registry = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Registry');
-    }
-
-    /**
      * @return void
      */
     public function indexAction()
@@ -97,16 +83,10 @@ class ToolsController extends AbstractController
             }
         }
 
+        GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Environment\\EnvironmentService')
+                      ->setTestResult($success);
+
         $this->view->assign('testingResults', $testingResults);
-        $this->registry->set(
-            'tx_in2publish',
-            'test_result',
-            array(
-                'success' => $success,
-                'packages_hash' => EnvironmentUtility::getPackagesHash(),
-                'configuration_hash' => EnvironmentUtility::getConfigurationHash(),
-            )
-        );
     }
 
     /**
