@@ -26,8 +26,7 @@ namespace In2code\In2publishCore\Utility;
  ***************************************************************/
 
 use In2code\In2publishCore\Service\Context\ContextService;
-use In2code\In2publishCore\Utility\ArrayUtility;
-use TYPO3\CMS\Backend\Utility\BackendUtility as BackendUtilityCore;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -155,7 +154,7 @@ class ConfigurationUtility
     protected $contextService = null;
 
     /**
-     * @return ConfigurationUtility
+     * ConfigurationUtility constructor.
      */
     private function __construct()
     {
@@ -258,7 +257,7 @@ class ConfigurationUtility
             // try merge userTS the first time BE_USER is available
             if ($this->isBackendUserInitialized()) {
                 if ($this->isUserTsConfigEnabled()) {
-                    $userTs = GeneralUtility::removeDotsFromTS(BackendUtilityCore::getModtsConfig(0, 'tx_in2publish'));
+                    $userTs = GeneralUtility::removeDotsFromTS(BackendUtility::getModTSconfig(0, 'tx_in2publish'));
                     $userTs = ArrayUtility::normalizeArray((array)$userTs['properties']);
                     $configuration = $this->merge($configuration, $userTs);
                 }
@@ -282,7 +281,7 @@ class ConfigurationUtility
     {
         if ($this->configurationCache[self::CACHE_KEY_PAGE] === null) {
             // if the page is initialized (so pageTS is available)
-            if (($pid = BackendUtility::getPageIdentifier()) !== null) {
+            if (($pid = \In2code\In2publishCore\Utility\BackendUtility::getPageIdentifier()) !== null) {
                 // get the pageTS
                 $pageTs = BackendUtility::getPagesTSconfig($pid);
 

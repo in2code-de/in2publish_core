@@ -3,9 +3,9 @@ namespace In2code\In2publishCore\Domain\Service;
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
-use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
@@ -99,7 +99,7 @@ class DomainService
                 }
             }
         }
-        return;
+        return '';
     }
 
     /**

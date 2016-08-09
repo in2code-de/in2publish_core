@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Controller;
 
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Security\SshConnection;
-use In2code\In2publishCore\Utility\BackendUserUtility;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -234,7 +233,7 @@ class AbstractController extends ActionController
      * Check if user is allowed to publish
      *
      * @throws \Exception
-     * @return void
+     * @return bool
      */
     protected function checkUserAllowedToPublish()
     {
@@ -247,8 +246,6 @@ class AbstractController extends ActionController
      * When extending from this class and using an own constructor
      * don't forget to call this constructor method at the end
      * of your onw implementation
-     *
-     * @return AbstractController
      */
     public function __construct()
     {

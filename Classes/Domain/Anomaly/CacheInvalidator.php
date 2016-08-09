@@ -30,7 +30,8 @@ namespace In2code\In2publishCore\Domain\Anomaly;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\Task\FlushFrontendPageCacheTask;
 use In2code\In2publishCore\Domain\Model\Task\FlushNewsCacheTask;
-use In2code\In2publishCore\Utility\BackendUtility;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -161,7 +162,8 @@ class CacheInvalidator implements SingletonInterface
         if ($tableName === 'pages') {
             $pid = (int)$record->getIdentifier();
         } elseif ($record->hasLocalProperty('pid')) {
-            // \In2code\In2publishCore\Domain\Anomaly\CacheInvalidator::flushPageCache for info about the above condition
+            // \In2code\In2publishCore\Domain\Anomaly\CacheInvalidator::flushPageCache
+            // for info about the above condition
             $pid = (int)$record->getLocalProperty('pid');
         } else {
             $pid = null;

@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\Utility;
  ***************************************************************/
 
 use TYPO3\CMS\Backend\Utility\BackendUtility as BackendUtilityCore;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -34,7 +35,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *
  * @package In2code\In2publish\Utility
  */
-class BackendUtility extends BackendUtilityCore
+class BackendUtility
 {
     /**
      * Get current page uid (normally from ?id=123)
@@ -46,29 +47,32 @@ class BackendUtility extends BackendUtilityCore
     public static function getPageIdentifier($identifier = null, $table = null)
     {
         // get id from given identifier
-        if (is_numeric($identifier) && $table === 'pages') {
+        if ('pages' === $table && is_numeric($identifier)) {
             return (int)$identifier;
         }
+
         // get id from ?id=123
-        if (GeneralUtility::_GP('id') !== null) {
-            return (int)GeneralUtility::_GP('id');
+        if (null !== ($identifier = GeneralUtility::_GP('id'))) {
+            return (int)$identifier;
         }
+
         // get id from ?cmd[pages][123][delete]=1
-        if (GeneralUtility::_GP('cmd') !== null) {
-            $cmd = GeneralUtility::_GP('cmd');
+        if (null !== ($cmd = GeneralUtility::_GP('cmd'))) {
             if (is_array($cmd['pages'])) {
                 foreach (array_keys($cmd['pages']) as $pid) {
                     return (int)$pid;
                 }
             }
         }
+
         // get id from ?popViewId=123
-        if (GeneralUtility::_GP('popViewId') !== null) {
-            return (int)GeneralUtility::_GP('popViewId');
+        if (null !== ($popViewId = GeneralUtility::_GP('popViewId'))) {
+            return (int)$popViewId;
         }
+
         // get id from ?redirect=script.php?param1=a&id=123&param2=2
-        if (GeneralUtility::_GP('redirect') !== null) {
-            $urlParts = parse_url(GeneralUtility::_GP('redirect'));
+        if (null !== ($redirect = GeneralUtility::_GP('redirect'))) {
+            $urlParts = parse_url($redirect);
             if (!empty($urlParts['query']) && stristr($urlParts['query'], 'id=')) {
                 parse_str($urlParts['query'], $parameters);
                 if (!empty($parameters['id'])) {
@@ -76,70 +80,36 @@ class BackendUtility extends BackendUtilityCore
                 }
             }
         }
-        return self::tryGetPidFromAlternatives();
-    }
 
-    /**
-     * @return int
-     */
-    protected static function tryGetPidFromAlternatives()
-    {
-        $pid = self::getPidFromRecord();
-        if (null === $pid) {
-            $pid = self::getPidFromRollback();
-        }
-        if (null === $pid) {
-            $pid = 0;
-        }
-        return $pid;
-    }
-
-    /**
-     * Get pid from Record
-     *
-     * @return int|null
-     */
-    protected static function getPidFromRecord()
-    {
-        $pid = null;
-        $data = GeneralUtility::_GP('data');
-        if (is_array($data)) {
+        // get id from record ?data[tt_content][13]=foo
+        if (null !== ($data = GeneralUtility::_GP('data')) && is_array($data)) {
             $table = key($data);
-            $pid = self::getPidByTableAndUid($table, key($data[$table]));
-        }
-        return $pid;
-    }
-
-    /**
-     * @return int|null
-     */
-    protected static function getPidFromRollback()
-    {
-        $pid = null;
-        $rollbackFields = GeneralUtility::_GP('element');
-        if (is_string($rollbackFields)) {
-            $rollbackData = explode(':', $rollbackFields);
-            if (count($rollbackData) > 1) {
-                $pid = self::getPidByTableAndUid($rollbackData[0], $rollbackData[1]);
+            $result = self::getDatabaseConnection()->exec_SELECTgetSingleRow(
+                'pid',
+                $table,
+                'uid=' . (int)key($data[$table])
+            );
+            if (false !== $result && isset($result['pid'])) {
+                return (int)$result['pid'];
             }
         }
-        return $pid;
-    }
 
-    /**
-     * @param string $table
-     * @param int $uid
-     * @return int|null
-     */
-    protected static function getPidByTableAndUid($table, $uid)
-    {
-        $pid = null;
-        $database = DatabaseUtility::buildLocalDatabaseConnection();
-        $result = $database->exec_SELECTgetSingleRow('pid', $table, 'uid=' . (int)$uid);
-        if (false !== $result && isset($result['pid'])) {
-            $pid = (int)$result['pid'];
+        // get id from rollback ?element=tt_content:42
+        if (null !== ($rollbackFields = GeneralUtility::_GP('element')) && is_string($rollbackFields)) {
+            $rollbackData = explode(':', $rollbackFields);
+            if (count($rollbackData) > 1) {
+                $result = self::getDatabaseConnection()->exec_SELECTgetSingleRow(
+                    'pid',
+                    $rollbackData[0],
+                    'uid=' . (int)$rollbackData[1]
+                );
+                if (false !== $result && isset($result['pid'])) {
+                    return (int)$result['pid'];
+                }
+            }
         }
-        return $pid;
+
+        return 0;
     }
 
     /**
@@ -303,9 +273,19 @@ class BackendUtility extends BackendUtilityCore
     protected static function getIgnoreKeysForCurrentParameters()
     {
         if (isset($GLOBALS['in2publish_core']['backend_utility']['ignored_keys_of_parameters'])
-            && is_array($GLOBALS['in2publish_core']['backend_utility']['ignored_keys_of_parameters'])) {
+            && is_array($GLOBALS['in2publish_core']['backend_utility']['ignored_keys_of_parameters'])
+        ) {
             return $GLOBALS['in2publish_core']['backend_utility']['ignored_keys_of_parameters'];
         }
         return array();
+    }
+
+    /**
+     * @return DatabaseConnection
+     * @SuppressWarnings("PHPMD.Superglobals")
+     */
+    protected function getDatabaseConnection()
+    {
+        return $GLOBALS['TYPO3_DB'];
     }
 }
