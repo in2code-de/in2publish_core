@@ -27,7 +27,6 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Utility\BackendUserUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -64,6 +63,15 @@ class GetFilterStatusViewHelper extends AbstractViewHelper
      */
     public function initialize()
     {
-        $this->backendUser = BackendUserUtility::getBackendUser();
+        $this->backendUser = $this->getBackendUser();
+    }
+
+    /**
+     * @return BackendUserAuthentication
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    protected function getBackendUser()
+    {
+        return $GLOBALS['BE_USER'];
     }
 }

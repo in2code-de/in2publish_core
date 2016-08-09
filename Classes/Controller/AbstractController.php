@@ -34,6 +34,7 @@ use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\EnvironmentUtility;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -286,7 +287,7 @@ class AbstractController extends ActionController
         if ($pid !== null) {
             $this->pid = $pid;
         }
-        $this->backendUser = BackendUserUtility::getBackendUser();
+        $this->backendUser = $this->getBackendUser();
         $this->commonRepository = CommonRepository::getDefaultInstance();
     }
 
@@ -330,5 +331,14 @@ class AbstractController extends ActionController
                 )
             );
         }
+    }
+
+    /**
+     * @return BackendUserAuthentication
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    protected function getBackendUser()
+    {
+        return $GLOBALS['BE_USER'];
     }
 }

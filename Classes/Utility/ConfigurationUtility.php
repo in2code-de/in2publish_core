@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Utility;
 
 use In2code\In2publishCore\Service\Context\ContextService;
 use TYPO3\CMS\Backend\Utility\BackendUtility as BackendUtilityCore;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -253,7 +254,7 @@ class ConfigurationUtility
     {
         if ($this->configurationCache[self::CACHE_KEY_USER] === null) {
             // try merge userTS the first time BE_USER is available
-            if (BackendUserUtility::isBackendUserInitialized()) {
+            if ($this->isBackendUserInitialized()) {
                 if ($this->isUserTsConfigEnabled()) {
                     $userTs = GeneralUtility::removeDotsFromTS(BackendUtilityCore::getModtsConfig(0, 'tx_in2publish'));
                     $userTs = ArrayUtility::normalizeArray((array)$userTs['properties']);
@@ -403,5 +404,14 @@ class ConfigurationUtility
     protected function getIn2publishCoreVersion()
     {
         return ExtensionManagementUtility::getExtensionVersion('in2publish_core');
+    }
+
+    /**
+     * @return bool
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    protected function isBackendUserInitialized()
+    {
+        return ($GLOBALS['BE_USER'] instanceof BackendUserAuthentication);
     }
 }
