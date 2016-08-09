@@ -213,29 +213,6 @@ class BackendUtility extends BackendUtilityCore
     }
 
     /**
-     * Workarround to get treelist with deleted pages
-     *        see \TYPO3\CMS\Backend\Utility\BackendUtility::deleteClause() for details
-     *
-     * @return void
-     */
-    public static function enableDeletedPagesForBackendRepository()
-    {
-        self::$tcaDeletePages = $GLOBALS['TCA']['pages']['ctrl']['delete'];
-        $GLOBALS['TCA']['pages']['ctrl']['delete'] = false;
-    }
-
-    /**
-     * Restore correct deletion TCA for pages
-     *        should be called after enableDeletedPagesForBackendRepository()
-     *
-     * @return void
-     */
-    public static function restoreDeletedPagesForBackendRepository()
-    {
-        $GLOBALS['TCA']['pages']['ctrl']['delete'] = self::$tcaDeletePages;
-    }
-
-    /**
      * Get return URL from current request
      *
      * @return string

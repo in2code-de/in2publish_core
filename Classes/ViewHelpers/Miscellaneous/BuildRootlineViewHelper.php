@@ -27,7 +27,6 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility as BackendUtilityCore;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -46,12 +45,17 @@ class BuildRootlineViewHelper extends AbstractViewHelper
      *
      * @param int $pageIdentifier
      * @return string
+     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function render($pageIdentifier = 0)
     {
-        BackendUtility::enableDeletedPagesForBackendRepository();
+        $originalDeleteValue = $GLOBALS['TCA']['pages']['ctrl']['delete'];
+        $GLOBALS['TCA']['pages']['ctrl']['delete'] = false;
+
         $rootline = BackendUtilityCore::BEgetRootLine($pageIdentifier);
-        BackendUtility::restoreDeletedPagesForBackendRepository();
+
+        $GLOBALS['TCA']['pages']['ctrl']['delete'] = $originalDeleteValue;
+
         $rootline = array_reverse((array)$rootline);
         $rootlineString = '';
         foreach ($rootline as $pageAttributes) {
