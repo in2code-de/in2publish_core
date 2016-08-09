@@ -237,8 +237,18 @@ class AbstractController extends ActionController
      */
     protected function checkUserAllowedToPublish()
     {
-        // TODO: API for VGV
-        return true;
+        $votes = array('yes' => 0, 'no' => 0);
+        $votingResult = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher')->dispatch(
+            __CLASS__,
+            __FUNCTION__,
+            array($votes)
+        );
+        if (isset($votingResult[0])) {
+            $votes = $votingResult[0];
+        }
+        if ($votes['no'] > $votes['yes']) {
+            throw new \Exception('You are not allowed to publish', 1435306780);
+        }
     }
 
     /**
