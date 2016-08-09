@@ -37,11 +37,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class BackendUtility extends BackendUtilityCore
 {
     /**
-     * @var string
-     */
-    protected static $tcaDeletePages;
-
-    /**
      * Get current page uid (normally from ?id=123)
      *
      * @param mixed $identifier
