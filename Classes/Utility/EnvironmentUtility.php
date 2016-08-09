@@ -78,18 +78,4 @@ class EnvironmentUtility
     {
         return ConfigurationUtility::getFileConfigurationHash();
     }
-
-    /**
-     * Return "http://" or "https://" - depending on current URI
-     *
-     * @return string
-     */
-    public static function getCurrentProtocol()
-    {
-        $protocol = 'http://';
-        if (GeneralUtility::getIndpEnv('TYPO3_SSL')) {
-            $protocol = 'https://';
-        }
-        return $protocol;
-    }
 }
