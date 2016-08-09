@@ -93,6 +93,7 @@ excludeRelatedTables:
   tx_extensionmanager_domain_model_extension
   tx_extensionmanager_domain_model_repository
   tx_rsaauth_keys
+  cache_treelist
 
 
 # Ignore this fields for DIFF view
