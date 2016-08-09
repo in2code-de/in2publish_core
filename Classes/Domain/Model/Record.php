@@ -28,8 +28,8 @@ namespace In2code\In2publishCore\Domain\Model;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Service\TcaService;
-use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
+use TYPO3\CMS\Extbase\Utility\ArrayUtility;
 
 /**
  * The most important class of this application. A Record is a Database

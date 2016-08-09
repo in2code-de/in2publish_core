@@ -27,7 +27,7 @@ namespace In2code\In2publishCore\Domain\Model\Task;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Utility\ArrayUtility;
+use TYPO3\CMS\Extbase\Utility\ArrayUtility;
 
 /**
  * Any Task must inherit from this class. This AbstractTask works like a Template
