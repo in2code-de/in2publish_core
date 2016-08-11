@@ -1,0 +1,23 @@
+# Preview
+in2publish_preview = PAGE
+in2publish_preview {
+	typeNum = 9815
+	includeCSS.preview = EXT:in2publish_core/Resources/Public/Css/Preview.css
+
+	config {
+		disablePrefixComment = 1
+		xhtml_cleaning = 0
+		admPanel = 0
+	}
+
+	10  = USER
+	10 {
+		userFunc = TYPO3\CMS\Extbase\Core\Bootstrap->run
+		extensionName = In2publishCore
+		pluginName = Pi1
+		vendorName = In2code
+		controller = Frontend
+		action = preview
+		switchableControllerActions.Frontend.1 = preview
+	}
+}
