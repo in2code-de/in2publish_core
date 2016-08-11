@@ -40,10 +40,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * This class is called recursively for the record, any related
  * records and any of the related records related records and so on to the extend
  * of the setting maximumRecursionDepth
- *
- * @package in2publish
- * @license http://www.gnu.org/licenses/lgpl.html
- *            GNU Lesser General Public License, version 3 or later
  */
 class RecordFactory
 {
@@ -193,8 +189,7 @@ class RecordFactory
 
         // internal cache: if the record has been instantiated already
         // it will set in here. This ensures a singleton
-        if (
-            ($instanceTableName === 'pages' || $mergedIdentifier > 0)
+        if (($instanceTableName === 'pages' || $mergedIdentifier > 0)
             && !empty($this->runtimeCache[$instanceTableName][$mergedIdentifier])
         ) {
             $instance = $this->runtimeCache[$instanceTableName][$mergedIdentifier];

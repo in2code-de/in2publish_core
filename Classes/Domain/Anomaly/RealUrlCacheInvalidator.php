@@ -36,8 +36,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class RealUrlCacheInvalidator
- *
- * @package In2code\In2publish\Domain\Anomaly
  */
 class RealUrlCacheInvalidator
 {

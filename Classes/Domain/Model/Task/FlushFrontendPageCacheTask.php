@@ -32,8 +32,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class FlushFrontendPageCacheTask
- *
- * @package In2code\In2publish\Domain\Model\Task
  */
 class FlushFrontendPageCacheTask extends AbstractTask
 {
@@ -80,7 +78,7 @@ class FlushFrontendPageCacheTask extends AbstractTask
     protected function getDataHandler()
     {
         /** @var DataHandler $dataHandler */
-        $dataHandler = GeneralUtility::makeInstance('TYPO3\CMS\Core\DataHandling\DataHandler');
+        $dataHandler = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\DataHandling\\DataHandler');
         $dataHandler->BE_USER = $GLOBALS['BE_USER'];
         $dataHandler->admin = true;
         return $dataHandler;

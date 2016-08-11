@@ -31,8 +31,6 @@ use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 
 /**
  * Class PublishTasksRunnerCommandController (enabled on foreign)
- *
- * @package In2code\In2publish\Command
  */
 class PublishTasksRunnerCommandController extends AbstractCommandController
 {

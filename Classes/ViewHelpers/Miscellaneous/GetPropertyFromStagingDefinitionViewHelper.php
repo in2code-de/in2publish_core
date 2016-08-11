@@ -8,8 +8,6 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  *  Alex Kellner <alexander.kellner@in2code.de>,
  *  Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  All rights reserved
- *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -33,11 +31,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * GetPropertyFromArrayViewHelper
- *
- * @package In2publish
- * @license http://www.gnu.org/licenses/lgpl.html
- *            GNU Lesser General Public License, version 3 or later
+ * Class GetPropertyFromStagingDefinitionViewHelper
  */
 class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
 {

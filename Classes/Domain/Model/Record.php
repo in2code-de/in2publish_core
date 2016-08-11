@@ -38,10 +38,6 @@ use TYPO3\CMS\Extbase\Utility\ArrayUtility;
  * considered a singleton automatically. The RecordFactory takes care of
  * the singleton "implementation". The Pattern will break when a Record
  * gets instantiated without the use of the Factory
- *
- * @package in2publish
- * @license http://www.gnu.org/licenses/lgpl.html
- *            GNU Lesser General Public License, version 3 or later
  */
 class Record implements RecordInterface
 {
@@ -409,8 +405,7 @@ class Record implements RecordInterface
     public function addRelatedRecord(Record $record)
     {
         if (!$record->isParentRecordLocked()) {
-            if (
-                !($this->tableName === 'pages' && $record->getTableName() === 'pages')
+            if (!($this->tableName === 'pages' && $record->getTableName() === 'pages')
                 || (((int)$record->getMergedProperty('pid')) === ((int)$this->getIdentifier()))
             ) {
                 if (!ConfigurationUtility::getConfiguration('debug.disableParentRecords')) {
@@ -814,9 +809,8 @@ class Record implements RecordInterface
         }
         if (empty($properties) || (array_key_exists(0, $properties) && $properties[0] === false)) {
             return false;
-        } elseif (
-            (isset($properties['uid']) && $properties['uid'] > 0)
-            || (!empty($properties['uid_local']) && !empty($properties['uid_foreign']))
+        } elseif ((isset($properties['uid']) && $properties['uid'] > 0)
+                  || (!empty($properties['uid_local']) && !empty($properties['uid_foreign']))
         ) {
             return true;
         }

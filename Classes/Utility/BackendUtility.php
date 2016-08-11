@@ -32,8 +32,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class BackendUtility
- *
- * @package In2code\In2publish\Utility
  */
 class BackendUtility
 {

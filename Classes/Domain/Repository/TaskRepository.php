@@ -35,8 +35,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class TaskRepository
- *
- * @package In2code\In2publish\Domain\Repository
  */
 class TaskRepository
 {

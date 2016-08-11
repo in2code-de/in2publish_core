@@ -31,13 +31,10 @@ use In2code\In2publishCore\Security\SshConnection;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
-use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class TableCommandController (enabled on local and foreign)
- *
- * @package In2code\In2publish\Command
  */
 class TableCommandController extends AbstractCommandController
 {

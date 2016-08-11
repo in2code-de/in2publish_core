@@ -8,8 +8,6 @@ namespace In2code\In2publishCore\ViewHelpers\Attribute;
  *  Alex Kellner <alexander.kellner@in2code.de>,
  *  Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  All rights reserved
- *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -33,7 +31,6 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Class PublishingDataAttributesViewHelper
- * @package In2code\In2publish\ViewHelpers\Attribute
  */
 class PublishingDataAttributesViewHelper extends AbstractViewHelper
 {
@@ -45,7 +42,10 @@ class PublishingDataAttributesViewHelper extends AbstractViewHelper
      */
     public function render(array $attributes = array())
     {
-        $attributes['data-in2publish-confirm'] = LocalizationUtility::translate('confirm_publish_pages', 'in2publish_core');
+        $attributes['data-in2publish-confirm'] = LocalizationUtility::translate(
+            'confirm_publish_pages',
+            'in2publish_core'
+        );
         if (ConfigurationUtility::getConfiguration('features.publish.fireAndForget.enable') !== true) {
             $attributes['data-in2publish-overlay'] = 'TRUE';
         } else {

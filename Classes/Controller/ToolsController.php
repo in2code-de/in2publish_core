@@ -31,17 +31,10 @@ use In2code\In2publishCore\Domain\Service\TcaService;
 use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
-use In2code\In2publishCore\Utility\EnvironmentUtility;
-use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * The ToolsController is the controller of the
- * Backend Module "Publish Tools" "m3".
- *
- * @package in2publish
- * @license http://www.gnu.org/licenses/lgpl.html
- *          GNU Lesser General Public License, version 3 or later
+ * The ToolsController is the controller of the Backend Module "Publish Tools" "m3"
  */
 class ToolsController extends AbstractController
 {

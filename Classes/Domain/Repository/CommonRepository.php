@@ -67,10 +67,6 @@ use TYPO3\CMS\Extbase\Utility\ArrayUtility as ExtbaseArrayUtility;
  *                '- continue as long as depth < maxDepth
  *
  *  this loop breaks in the factory when maximumRecursionDepth is reached
- *
- * @package in2publish
- * @license http://www.gnu.org/licenses/lgpl.html
- *          GNU Lesser General Public License, version 3 or later
  */
 class CommonRepository extends BaseRepository
 {

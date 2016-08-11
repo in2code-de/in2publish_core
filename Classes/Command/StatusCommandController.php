@@ -69,7 +69,7 @@ class StatusCommandController extends AbstractCommandController
     {
         $EM_CONF = array();
         $_EXTKEY = 'in2publish_core';
-        require_once(ExtensionManagementUtility::extPath($_EXTKEY) . 'ext_emconf.php');
+        require_once(ExtensionManagementUtility::extPath($_EXTKEY, 'ext_emconf.php'));
         $this->outputLine('Version: ' . $EM_CONF[$_EXTKEY]['version']);
     }
 
@@ -136,9 +136,7 @@ class StatusCommandController extends AbstractCommandController
 
     /**
      * Prints TYPO3 version
-     * NOTE: This command is used for internal operations in in2publish
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
+     * NOTE: This command is used for internal operations in in2publish_core
      */
     public function typo3VersionCommand()
     {

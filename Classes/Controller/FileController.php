@@ -31,7 +31,6 @@ use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Security\Exceptions\CommandFailedException;
 use In2code\In2publishCore\Security\SshConnection;
-use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -39,10 +38,6 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * The FileController is responsible for the "Publish Files" Backend module "m2"
- *
- * @package in2publish
- * @license http://www.gnu.org/licenses/lgpl.html
- *          GNU Lesser General Public License, version 3 or later
  */
 class FileController extends AbstractController
 {
@@ -67,13 +62,16 @@ class FileController extends AbstractController
      */
     public function indexAction()
     {
-        $this->logger->notice('Yoooo');
         $this->assignServerAndPublishingStatus();
         try {
             $this->view->assign('record', $this->folderRecordFactory->makeInstance($this->folderIdentifier));
         } catch (CommandFailedException $exception) {
             $this->addFailureFlashMessage(
-                LocalizationUtility::translate('folder_retrieving_failed', 'in2publish_core', array($this->folderIdentifier))
+                LocalizationUtility::translate(
+                    'folder_retrieving_failed',
+                    'in2publish_core',
+                    array($this->folderIdentifier)
+                )
             );
         }
     }
@@ -136,7 +134,6 @@ class FileController extends AbstractController
     /**
      * @param string $identifier
      * @param int $uid
-     * @return void
      */
     public function publishPhysicalRecordAction($identifier, $uid)
     {
@@ -170,9 +167,7 @@ class FileController extends AbstractController
             case RecordInterface::RECORD_STATE_ADDED:
                 $this->logger->error(
                     'Can not publish a file to foreign without sys_file record',
-                    array(
-                        'identifier' => $identifier,
-                    )
+                    array('identifier' => $identifier)
                 );
                 $this->addFailureFlashMessage(
                     LocalizationUtility::translate('publishing.physical_file_add_failure', 'in2publish_core')
@@ -181,27 +176,21 @@ class FileController extends AbstractController
             case RecordInterface::RECORD_STATE_MOVED:
                 $this->logger->error(
                     'Can not move a file on foreign without sys_file record',
-                    array(
-                        'identifier' => $identifier,
-                    )
+                    array('identifier' => $identifier)
                 );
                 $this->addFailureFlashMessage('Something went wrong. Please contact your admin.');
                 break;
             case RecordInterface::RECORD_STATE_CHANGED:
                 $this->logger->error(
                     'Can not change a file on foreign without sys_file record',
-                    array(
-                        'identifier' => $identifier,
-                    )
+                    array('identifier' => $identifier)
                 );
                 $this->addFailureFlashMessage('Something went wrong. Please contact your admin.');
                 break;
             case RecordInterface::RECORD_STATE_UNCHANGED:
                 $this->logger->emergency(
                     'Detected physical file without sys_file record which is unchanged',
-                    array(
-                        'identifier' => $identifier,
-                    )
+                    array('identifier' => $identifier)
                 );
                 $this->addFailureFlashMessage('Something went wrong. Please contact your admin.');
                 break;
@@ -290,14 +279,5 @@ class FileController extends AbstractController
     {
         parent::initializeAction();
         $this->commonRepository->setTableName('sys_file');
-    }
-
-    /**
-     * @return BackendUserAuthentication
-     * @SuppressWarnings("PHPMD.Superglobals")
-     */
-    protected function getBackendUser()
-    {
-        return $GLOBALS['BE_USER'];
     }
 }

@@ -44,10 +44,6 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * class AbstractController
- *
- * @package in2publish
- * @license http://www.gnu.org/licenses/lgpl.html
- *          GNU Lesser General Public License, version 3 or later
  */
 class AbstractController extends ActionController
 {
@@ -62,7 +58,7 @@ class AbstractController extends ActionController
      * @var \In2code\In2publishCore\Domain\Repository\PageRepository
      * @inject
      */
-    protected $pageRepositoy = null;
+    protected $pageRepository = null;
 
     /**
      * @var DatabaseConnection
@@ -255,7 +251,7 @@ class AbstractController extends ActionController
      * Creates a logger for the instantiated controller object.
      * When extending from this class and using an own constructor
      * don't forget to call this constructor method at the end
-     * of your onw implementation
+     * of your own implementation
      */
     public function __construct()
     {
@@ -275,7 +271,7 @@ class AbstractController extends ActionController
     }
 
     /**
-     * Initializes both Database connections, sets the pid of the current
+     * Initializes both database connections, sets the pid of the current
      * selected page, the current backend user and an instance of CommonRepository
      * responsible for pages handling
      *
@@ -318,8 +314,7 @@ class AbstractController extends ActionController
     }
 
     /**
-     * Gets in instance of SSH Connection
-     * to execute Tasks on the foreign system
+     * Gets an instance of SshConnection to execute tasks on Foreign
      *
      * @return void
      */

@@ -42,8 +42,6 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Class SshConnection
- *
- * @package In2code\In2publish\Security
  */
 class SshConnection
 {

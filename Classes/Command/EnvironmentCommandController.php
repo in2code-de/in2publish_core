@@ -26,12 +26,11 @@ namespace In2code\In2publishCore\Command;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use In2code\In2publishCore\Domain\Service\Environment\FileStorageService;
 
 /**
  * Class EnvironmentCommandController (always enabled)
- *
- * @package In2code\In2publish\Command
  */
 class EnvironmentCommandController extends AbstractCommandController
 {

@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Domain\Repository;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
@@ -37,8 +38,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Class BaseRepository. Inherit from this repository to execute methods
  * on a specific database connection. this repository does not
  * own a database connection.
- *
- * @package In2code\In2publish\Domain\Repository
  */
 abstract class BaseRepository
 {
@@ -69,6 +68,15 @@ abstract class BaseRepository
      * @var TcaService
      */
     protected $tcaService = null;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->tcaService = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService');
+    }
 
     /**
      * Fetches an array of properties from the given database where the
@@ -346,14 +354,5 @@ abstract class BaseRepository
     public function getIdentifierFieldName()
     {
         return $this->identifierFieldName;
-    }
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
-        $this->tcaService = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService');
     }
 }

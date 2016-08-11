@@ -8,8 +8,6 @@ namespace In2code\In2publishCore\ViewHelpers\Be;
  *  Alex Kellner <alexander.kellner@in2code.de>,
  *  Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  All rights reserved
- *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -31,8 +29,6 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Class GetClassNameOnActionViewHelper
- *
- * @package In2code\In2publish\ViewHelpers\Be
  */
 class GetClassNameOnActionViewHelper extends AbstractViewHelper
 {

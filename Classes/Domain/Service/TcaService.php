@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Domain\Service;
 use In2code\In2publishCore\Domain\Service\Processor\AbstractProcessor;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
+use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -118,7 +119,7 @@ class TcaService
     }
 
     /**
-     * @return TcaService
+     * TcaService constructor.
      */
     protected function __construct()
     {

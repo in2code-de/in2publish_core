@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Command;
 
 use In2code\In2publishCore\Service\Context\ContextService;
 use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 

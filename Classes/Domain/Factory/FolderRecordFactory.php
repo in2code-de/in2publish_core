@@ -39,8 +39,6 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class FolderRecordFactory
- *
- * @package In2code\In2publish\Domain\Factory
  */
 class FolderRecordFactory
 {

@@ -38,8 +38,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class FakeRecordFactory to fake a record tree with just the information from local and just the pages
- *
- * @package In2code\In2publish\Domain\Repository
  */
 class FakeRecordFactory
 {

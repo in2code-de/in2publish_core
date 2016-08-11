@@ -37,8 +37,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class PhysicalFilePublisher
- *
- * @package In2code\In2publish\Domain\Model\Anomaly
  */
 class CacheInvalidator implements SingletonInterface
 {

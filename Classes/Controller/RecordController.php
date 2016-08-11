@@ -32,12 +32,7 @@ use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
- * Content publishing Controller. Any action is for the "Publish Records"
- * Backend module "m1"
- *
- * @package in2publish
- * @license http://www.gnu.org/licenses/lgpl.html
- *          GNU Lesser General Public License, version 3 or later
+ * Content publishing Controller. Any action is for the "Publish Records" Backend module "m1"
  */
 class RecordController extends AbstractController
 {

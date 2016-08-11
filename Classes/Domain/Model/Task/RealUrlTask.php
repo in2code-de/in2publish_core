@@ -38,8 +38,6 @@ use TYPO3\CMS\Frontend\Utility\EidUtility;
 
 /**
  * Class RealUrlTask
- *
- * @package In2code\In2publish\Domain\Model\Task
  */
 class RealUrlTask extends AbstractTask
 {
@@ -134,13 +132,13 @@ class RealUrlTask extends AbstractTask
      */
     protected function cleanAllRealUrlCachesForPageIdentifier($pageUid)
     {
-        $realurlTables = array(
+        $realUrlTables = array(
             'tx_realurl_pathcache', // realurl 1.x and 2.x
             'tx_realurl_urlencodecache', // realurl 1.x
             'tx_realurl_urldecodecache', // realurl 1.x
             'tx_realurl_urlcache' // realurl 2.x
         );
-        foreach ($realurlTables as $table) {
+        foreach ($realUrlTables as $table) {
             if (DatabaseUtility::isTableExistingOnLocal($table)) {
                 $this->databaseConnection->exec_DELETEquery($table, 'page_id=' . (int)$pageUid);
             }

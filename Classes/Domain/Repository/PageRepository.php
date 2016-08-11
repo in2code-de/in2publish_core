@@ -31,8 +31,6 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 
 /**
  * Class PageRepository
- *
- * @package In2code\In2publish\Domain\Repository
  */
 class PageRepository
 {

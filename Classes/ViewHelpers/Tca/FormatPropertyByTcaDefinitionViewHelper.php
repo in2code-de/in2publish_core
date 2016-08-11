@@ -8,8 +8,6 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
  *  Alex Kellner <alexander.kellner@in2code.de>,
  *  Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  All rights reserved
- *
  *  This script is part of the TYPO3 project. The TYPO3 project is
  *  free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -31,11 +29,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * FormatPropertyByTcaDefinitionViewHelper
- *
- * @package In2publish
- * @license http://www.gnu.org/licenses/lgpl.html
- *            GNU Lesser General Public License, version 3 or later
+ * Class FormatPropertyByTcaDefinitionViewHelper
  */
 class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
 {
@@ -50,6 +44,7 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
      * @param string $fieldName
      * @param string $tableName
      * @return string
+     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function render($fieldName, $tableName)
     {
@@ -80,8 +75,7 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
      */
     protected function changeValueForTypeInput(&$value)
     {
-        if (
-            GeneralUtility::inList($this->tableConfiguration['config']['eval'], 'datetime')
+        if (GeneralUtility::inList($this->tableConfiguration['config']['eval'], 'datetime')
             || GeneralUtility::inList($this->tableConfiguration['config']['eval'], 'date')
         ) {
             if ($value !== '0') {

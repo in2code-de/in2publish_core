@@ -31,8 +31,6 @@ use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 
 /**
  * converts database rows from tx_in2code_in2publish_task into Task objects
- *
- * @package In2code\In2publish\Domain\Factory
  */
 class TaskFactory
 {

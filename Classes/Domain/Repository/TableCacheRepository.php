@@ -33,7 +33,6 @@ use TYPO3\CMS\Core\SingletonInterface;
 
 /**
  * Class TableCacheRepository can save table values to runtime. So another db query may not needed
- * @package In2code\In2publish\Domain\Repository
  */
 class TableCacheRepository implements SingletonInterface
 {

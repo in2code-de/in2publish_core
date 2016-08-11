@@ -32,8 +32,6 @@ use In2code\In2publishCore\Utility\FolderUtility;
 
 /**
  * Class FilesystemCommandController (enabled on foreign)
- *
- * @package In2code\In2publish\Command
  */
 class FilesystemCommandController extends AbstractCommandController
 {

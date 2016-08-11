@@ -41,8 +41,6 @@ use TYPO3\CMS\Extbase\Service\FlexFormService;
 
 /**
  * Class PhysicalFilePublisher
- *
- * @package In2code\In2publish\Domain\Model\Anomaly
  */
 class PhysicalFilePublisher implements SingletonInterface
 {

@@ -29,8 +29,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class FolderUtility
- *
- * @package In2code\In2publish\Utility
  */
 class FolderUtility
 {

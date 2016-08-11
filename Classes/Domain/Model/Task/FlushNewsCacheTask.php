@@ -32,8 +32,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class FlushNewsCacheTask
- *
- * @package In2code\In2publish\Domain\Model\Task
  */
 class FlushNewsCacheTask extends AbstractTask
 {

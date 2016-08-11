@@ -29,8 +29,6 @@ namespace In2code\In2publishCore\Domain\Model\Task;
 
 /**
  * Interface TaskInterface
- *
- * @package In2code\In2publish\Domain\Model
  */
 interface TaskInterface
 {

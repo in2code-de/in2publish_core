@@ -32,8 +32,6 @@ use TYPO3\CMS\Core\Database\DatabaseConnection;
 
 /**
  * Class LogEntryRepository
- *
- * @package In2code\In2publish\Domain\Repository
  */
 class LogEntryRepository
 {

@@ -32,8 +32,6 @@ use TYPO3\CMS\Extbase\Utility\ArrayUtility;
 /**
  * Any Task must inherit from this class. This AbstractTask works like a Template
  * for Task execution strategy
- *
- * @package In2code\In2publish\Domain\Model
  */
 abstract class AbstractTask implements TaskInterface
 {

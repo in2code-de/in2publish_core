@@ -37,8 +37,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class SysLogPublisher
- *
- * @package In2code\In2publish\Domain\Anomaly
  */
 class SysLogPublisher
 {
