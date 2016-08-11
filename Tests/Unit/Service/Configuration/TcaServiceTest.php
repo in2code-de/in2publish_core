@@ -36,20 +36,6 @@ class TcaServiceTest extends UnitTestCase
 {
     /**
      * @covers ::__construct
-     * @covers ::getLanguageService
-     */
-    public function testLanguageServiceIsInjectedUponConstruction()
-    {
-        $fakeLanguageService = new \stdClass();
-        $this->setLanguageService($fakeLanguageService);
-
-        $tcaService = new TcaService();
-
-        $this->markTestIncomplete('Implement test that tests taht lang sv is set correctly');
-    }
-
-    /**
-     * @covers ::__construct
      * @covers ::getAllTableNames
      * @covers ::getTca
      */
