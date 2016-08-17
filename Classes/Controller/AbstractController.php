@@ -284,10 +284,7 @@ class AbstractController extends ActionController
         );
         $executionTimeService->start();
         $this->initializeDatabaseConnections();
-        $pid = BackendUtility::getPageIdentifier();
-        if ($pid !== null) {
-            $this->pid = $pid;
-        }
+        $this->pid = BackendUtility::getPageIdentifier();
         $this->backendUser = $this->getBackendUser();
         $this->commonRepository = CommonRepository::getDefaultInstance();
     }
