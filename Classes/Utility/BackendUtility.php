@@ -56,7 +56,7 @@ class BackendUtility
 
         // get id from ?cmd[pages][123][delete]=1
         if (null !== ($cmd = GeneralUtility::_GP('cmd'))) {
-            if (is_array($cmd['pages'])) {
+            if (isset($cmd['pages']) && is_array($cmd['pages'])) {
                 foreach (array_keys($cmd['pages']) as $pid) {
                     return (int)$pid;
                 }
@@ -282,7 +282,7 @@ class BackendUtility
      * @return DatabaseConnection
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    protected function getDatabaseConnection()
+    protected static function getDatabaseConnection()
     {
         return $GLOBALS['TYPO3_DB'];
     }
