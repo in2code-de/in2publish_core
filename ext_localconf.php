@@ -2,9 +2,7 @@
 
 call_user_func(
     function () {
-        /**
-         * Manually load Spy YAML parser
-         */
+        // Manually load Spy YAML parser
         if (!class_exists('\Spyc')) {
             $file = TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath(
                 'in2publish_core',
@@ -16,16 +14,15 @@ call_user_func(
         // Enable caching
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'] = array();
 
+        // register preview plugin
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
             'In2code.in2publishCore',
             'Pi1',
             array(
                 'Frontend' => 'preview',
-                'Notification' => 'getNotifications',
             ),
             array(
                 'Frontend' => 'preview',
-                'Notification' => 'getNotifications',
             )
         );
     }
