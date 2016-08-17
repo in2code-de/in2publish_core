@@ -78,6 +78,7 @@ class RecordController extends AbstractController
         $this->commonRepository->disablePageRecursion();
         $record = $this->commonRepository->findByIdentifier($identifier, $tableName);
         $this->view->assign('record', $record);
+        $this->view->assign('configuration', ConfigurationUtility::getConfiguration());
     }
 
     /**
