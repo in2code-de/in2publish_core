@@ -276,18 +276,17 @@ class ConfigurationUtility
     protected function mergePageTs(array $configuration)
     {
         if ($this->configurationCache[self::CACHE_KEY_PAGE] === null) {
-            // if the page is initialized (so pageTS is available)
-            if (($pid = \In2code\In2publishCore\Utility\BackendUtility::getPageIdentifier()) !== null) {
-                // get the pageTS
-                $pageTs = BackendUtility::getPagesTSconfig($pid);
+            // get the pageTS
+            $pageTs = BackendUtility::getPagesTSconfig(
+                \In2code\In2publishCore\Utility\BackendUtility::getPageIdentifier()
+            );
 
-                // if there is any in2publish config in the pageTS
-                if (!empty($pageTs['tx_in2publish.'])) {
-                    $pageTs = ArrayUtility::normalizeArray(GeneralUtility::removeDotsFromTS($pageTs['tx_in2publish.']));
-                    $configuration = $this->merge($configuration, $pageTs);
-                }
-                $this->configurationCache[self::CACHE_KEY_PAGE] = $configuration;
+            // if there is any in2publish config in the pageTS
+            if (!empty($pageTs['tx_in2publish.'])) {
+                $pageTs = ArrayUtility::normalizeArray(GeneralUtility::removeDotsFromTS($pageTs['tx_in2publish.']));
+                $configuration = $this->merge($configuration, $pageTs);
             }
+            $this->configurationCache[self::CACHE_KEY_PAGE] = $configuration;
         } else {
             $configuration = $this->configurationCache[self::CACHE_KEY_PAGE];
         }
