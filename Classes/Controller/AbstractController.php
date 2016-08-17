@@ -229,7 +229,6 @@ class AbstractController extends ActionController
      * Check if user is allowed to publish
      *
      * @throws \Exception
-     * @return bool
      */
     protected function checkUserAllowedToPublish()
     {
