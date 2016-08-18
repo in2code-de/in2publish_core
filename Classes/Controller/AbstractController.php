@@ -45,7 +45,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 /**
  * class AbstractController
  */
-class AbstractController extends ActionController
+abstract class AbstractController extends ActionController
 {
     const BLANK_ACTION = 'blankAction';
 
