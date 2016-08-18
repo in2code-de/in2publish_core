@@ -187,10 +187,13 @@ class Record implements RecordInterface
      *        Show changed status even if parent is
      *        unchanged but if children has changed
      *
+     * Notice: This method does not returns RECORD_STATE_CHANGED
+     * even if the first changed related record is added or deleted
+     *
      * @param array $alreadyVisited
      * @return string
      */
-    public function getStateRecursive(array $alreadyVisited = array())
+    public function getStateRecursive(array &$alreadyVisited = array())
     {
         if (!empty($alreadyVisited[$this->tableName])) {
             if (in_array($this->getIdentifier(), $alreadyVisited[$this->tableName])) {
@@ -222,7 +225,7 @@ class Record implements RecordInterface
      * @param array $alreadyVisited
      * @return bool
      */
-    public function isChangedRecursive(array $alreadyVisited = array())
+    public function isChangedRecursive(array &$alreadyVisited = array())
     {
         if ($this->getStateRecursive($alreadyVisited) !== self::RECORD_STATE_UNCHANGED) {
             return true;

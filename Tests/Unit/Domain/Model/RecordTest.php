@@ -824,4 +824,103 @@ class RecordTest extends UnitTestCase
         $stub->__construct('tt_content', [], ['uid' => 1], [], []);
         $this->assertTrue($stub->isChanged());
     }
+
+    /**
+     * @covers ::getRelatedRecords
+     */
+    public function testGetRelatedRecordsReturnsRelatedRecords()
+    {
+        $root = $this->getRecordStub([]);
+        $root->__construct('pages', [], [], [], []);
+        $sub = $this->getRecordStub([]);
+        $sub->__construct('tt_content', [], [], [], []);
+
+        $root->addRelatedRecord($sub);
+
+        $this->assertSame(
+            [
+                'tt_content' => [
+                    0 => $sub,
+                ],
+            ],
+            $root->getRelatedRecords()
+        );
+    }
+
+    /**
+     * @covers ::getStateRecursive
+     * @depends testIsChangedReturnsTrueForAnyOtherStateThanChanged
+     * @depends testIsChangedReturnsFalseForUnchangedState
+     * @depends testGetRelatedRecordsReturnsRelatedRecords
+     */
+    public function testGetStateRecursiveReturnsRootStateIfRootIsNotUnchanged()
+    {
+        $root = $this->getRecordStub([]);
+        $root->__construct('pages', ['uid' => 1, 'foo' => 1], ['uid' => 1, 'foo' => 2], [], []);
+        $sub = $this->getRecordStub([]);
+        $sub->__construct('tt_content', [], ['uid' => 1], [], []);
+
+        $root->addRelatedRecord($sub);
+
+        $this->assertSame(Record::RECORD_STATE_CHANGED, $root->getStateRecursive());
+    }
+
+    /**
+     * @covers ::getStateRecursive
+     * @depends testIsChangedReturnsTrueForAnyOtherStateThanChanged
+     * @depends testIsChangedReturnsFalseForUnchangedState
+     * @depends testGetRelatedRecordsReturnsRelatedRecords
+     */
+    public function testGetStateRecursiveReturnsRelatedRecordsStateIfRootIsUnchanged()
+    {
+        $root = $this->getRecordStub([]);
+        $root->__construct('pages', ['uid' => 1], ['uid' => 1], [], []);
+        $sub = $this->getRecordStub([]);
+        $sub->__construct('tt_content', ['uid' => 1], [], [], []);
+
+        $root->addRelatedRecord($sub);
+
+        $this->assertSame(Record::RECORD_STATE_CHANGED, $root->getStateRecursive());
+    }
+
+    /**
+     * @covers ::getStateRecursive
+     * @depends testIsChangedReturnsTrueForAnyOtherStateThanChanged
+     * @depends testIsChangedReturnsFalseForUnchangedState
+     * @depends testGetRelatedRecordsReturnsRelatedRecords
+     */
+    public function testGetStateRecursiveChecksEachRecordOnce()
+    {
+        $root = $this->getRecordStub([]);
+        $root->__construct('pages', ['uid' => 1], ['uid' => 1], [], []);
+
+        /** @var Record|\PHPUnit_Framework_MockObject_MockObject $stub1 */
+        $stub1 = $this->getMockBuilder(Record::class)
+                     ->setMethods(['getIgnoreFields', 'isParentRecordDisabled', 'isChanged'])
+                     ->disableOriginalConstructor()
+                     ->getMock();
+        $stub1->method('getIgnoreFields')->will($this->returnValue([]));
+        $stub1->method('isParentRecordDisabled')->will($this->returnValue(false));
+        $stub1->__construct('tt_content', ['uid' => 1], ['uid' => 1], [], []);
+
+        $stub1->expects($this->once())->method('isChanged');
+
+        /** @var Record|\PHPUnit_Framework_MockObject_MockObject $stub2 */
+        $stub2 = $this->getMockBuilder(Record::class)
+                      ->setMethods(['getIgnoreFields', 'isParentRecordDisabled', 'isChanged'])
+                      ->disableOriginalConstructor()
+                      ->getMock();
+        $stub2->method('getIgnoreFields')->will($this->returnValue([]));
+        $stub2->method('isParentRecordDisabled')->will($this->returnValue(false));
+        $stub2->__construct('tt_content', ['uid' => 2], ['uid' => 2], [], []);
+
+        $stub2->expects($this->once())->method('isChanged');
+
+        $stub2->addRelatedRecord($stub1);
+
+        $root->addRelatedRecord($stub1);
+        $root->addRelatedRecord($stub2);
+
+        $root->getStateRecursive();
+    }
 }
