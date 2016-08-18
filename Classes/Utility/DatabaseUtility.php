@@ -53,7 +53,7 @@ class DatabaseUtility
         if (self::$foreignDatabase === null) {
             $configuration = ConfigurationUtility::getConfiguration('database.foreign');
             /** @var DatabaseConnection $foreignDatabase */
-            self::$foreignDatabase = GeneralUtility::makeInstance('TYPO3\CMS\Core\Database\DatabaseConnection');
+            self::$foreignDatabase = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Database\\DatabaseConnection');
             self::$foreignDatabase->setDatabaseHost($configuration['hostname']);
             self::$foreignDatabase->setDatabaseName($configuration['name']);
             self::$foreignDatabase->setDatabasePassword($configuration['password']);
