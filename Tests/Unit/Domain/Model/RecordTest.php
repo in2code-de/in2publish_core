@@ -923,4 +923,23 @@ class RecordTest extends UnitTestCase
 
         $root->getStateRecursive();
     }
+
+    /**
+     * @covers ::getStateRecursive
+     * @depends testIsChangedReturnsTrueForAnyOtherStateThanChanged
+     * @depends testIsChangedReturnsFalseForUnchangedState
+     * @depends testGetRelatedRecordsReturnsRelatedRecords
+     */
+    public function testGetStateRecursiveIgnoredRelatedPageRecords()
+    {
+        $root = $this->getRecordStub([]);
+        $root->__construct('pages', ['uid' => 1], ['uid' => 1], [], []);
+
+        $sub = $this->getRecordStub([]);
+        $sub->__construct('pages', ['uid' => 1], [], [], []);
+
+        $root->addRelatedRecord($sub);
+
+        $this->assertSame(Record::RECORD_STATE_UNCHANGED, $root->getStateRecursive());
+    }
 }
