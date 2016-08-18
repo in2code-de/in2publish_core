@@ -120,6 +120,11 @@ class Record implements RecordInterface
     protected $parentRecordIsLocked = false;
 
     /**
+     * @var bool
+     */
+    protected $isParentRecordDisabled = false;
+
+    /**
      * @return string
      */
     public function getTableName()
@@ -408,7 +413,7 @@ class Record implements RecordInterface
             if (!($this->tableName === 'pages' && $record->getTableName() === 'pages')
                 || (((int)$record->getMergedProperty('pid')) === ((int)$this->getIdentifier()))
             ) {
-                if (!ConfigurationUtility::getConfiguration('debug.disableParentRecords')) {
+                if (!$this->isParentRecordDisabled) {
                     $record->setParentRecord($this);
                 }
                 $this->relatedRecords[$record->getTableName()][$record->getIdentifier()] = $record;
@@ -570,6 +575,7 @@ class Record implements RecordInterface
         $this->tableConfigurationArray = $tableConfigurationArray;
         $this->setDirtyProperties();
         $this->calculateState();
+        $this->isParentRecordDisabled = $this->isParentRecordDisabled();
     }
 
     /**
@@ -924,5 +930,14 @@ class Record implements RecordInterface
     protected function getIgnoreFields()
     {
         return (array)ConfigurationUtility::getConfiguration('ignoreFieldsForDifferenceView.' . $this->tableName);
+    }
+
+    /**
+     * @return bool
+     * @codeCoverageIgnore
+     */
+    protected function isParentRecordDisabled()
+    {
+        return (bool)ConfigurationUtility::getConfiguration('debug.disableParentRecords');
     }
 }

@@ -38,14 +38,15 @@ class RecordTest extends UnitTestCase
      * @param mixed $getIgnoreFields
      * @return Record
      */
-    protected function getRecordStub($getIgnoreFields)
+    protected function getRecordStub($getIgnoreFields, $isParentRecordDisabled = false)
     {
         $stub = $this->getMockBuilder(Record::class)
-                     ->setMethods(['getIgnoreFields'])
+                     ->setMethods(['getIgnoreFields', 'isParentRecordDisabled'])
                      ->disableOriginalConstructor()
                      ->getMock();
 
         $stub->method('getIgnoreFields')->will($this->returnValue($getIgnoreFields));
+        $stub->method('isParentRecordDisabled')->will($this->returnValue($isParentRecordDisabled));
 
         return $stub;
     }
