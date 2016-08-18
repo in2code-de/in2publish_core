@@ -36,7 +36,6 @@ use TYPO3\CMS\Core\SingletonInterface;
  */
 class TableCacheRepository implements SingletonInterface
 {
-
     /**
      * Hold table values from local database
      *  [
@@ -81,7 +80,7 @@ class TableCacheRepository implements SingletonInterface
     public function __construct()
     {
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-        $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
+        $this->foreignDatabase = $this->getForeignDatabaseConnection();
     }
 
     /**
@@ -98,15 +97,20 @@ class TableCacheRepository implements SingletonInterface
         if (!empty($cache[$tableName][$uniqueIdentifier])) {
             return $cache[$tableName][$uniqueIdentifier];
         }
-        $row = (array)$this->getDatabase($databaseName)->exec_SELECTgetSingleRow(
-            '*',
-            $tableName,
-            'uid=' . (int)$uniqueIdentifier
-        );
-        if (isset($row[0]) && $row[0] === false) {
-            return array();
+        $database = $this->getDatabase($databaseName);
+        if ($database instanceof DatabaseConnection) {
+            $row = (array)$database->exec_SELECTgetSingleRow(
+                '*',
+                $tableName,
+                'uid=' . (int)$uniqueIdentifier
+            );
+            if (isset($row[0]) && $row[0] === false) {
+                return array();
+            }
+            $this->cacheSingleRecord($tableName, $uniqueIdentifier, $row, $databaseName);
+        } else {
+            $row = array();
         }
-        $this->cacheSingleRecord($tableName, $uniqueIdentifier, $row, $databaseName);
         return $row;
     }
 
@@ -120,14 +124,19 @@ class TableCacheRepository implements SingletonInterface
      */
     public function findByPid($tableName, $pageIdentifier, $databaseName = 'local')
     {
-        $rows = (array)$this->getDatabase($databaseName)->exec_SELECTgetRows(
-            '*',
-            $tableName,
-            'pid=' . (int)$pageIdentifier,
-            '',
-            'uid'
-        );
-        $this->cacheRecords($tableName, $rows, $databaseName);
+        $database = $this->getDatabase($databaseName);
+        if ($database instanceof DatabaseConnection) {
+            $rows = (array)$database->exec_SELECTgetRows(
+                '*',
+                $tableName,
+                'pid=' . (int)$pageIdentifier,
+                '',
+                'uid'
+            );
+            $this->cacheRecords($tableName, $rows, $databaseName);
+        } else {
+            $rows = array();
+        }
         return $rows;
     }
 
@@ -188,5 +197,14 @@ class TableCacheRepository implements SingletonInterface
             $cache = $this->foreignCache;
         }
         return $cache;
+    }
+
+    /**
+     * @return DatabaseConnection
+     * @codeCoverageIgnore
+     */
+    protected function getForeignDatabaseConnection()
+    {
+        return DatabaseUtility::buildForeignDatabaseConnection();
     }
 }
