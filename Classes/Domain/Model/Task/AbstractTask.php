@@ -33,7 +33,7 @@ use TYPO3\CMS\Extbase\Utility\ArrayUtility;
  * Any Task must inherit from this class. This AbstractTask works like a Template
  * for Task execution strategy
  */
-abstract class AbstractTask implements TaskInterface
+abstract class AbstractTask
 {
     /**
      * @var int
@@ -79,6 +79,11 @@ abstract class AbstractTask implements TaskInterface
     }
 
     /**
+     * @return void
+     */
+    abstract public function modifyConfiguration();
+
+    /**
      * Implement this in your Task
      *
      * @return bool
@@ -104,7 +109,6 @@ abstract class AbstractTask implements TaskInterface
     /**
      * @param array $configuration
      * @param int $uid
-     * @return AbstractTask
      */
     final public function __construct(array $configuration, $uid = 0)
     {
