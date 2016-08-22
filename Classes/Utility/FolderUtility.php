@@ -148,7 +148,7 @@ class FolderUtility
         $testHost = null,
         $testUrl = null
     ) {
-        $subfolder = '';
+        $subFolder = '';
         $typo3RequestHost = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
         if ($testHost) {
             $typo3RequestHost = $testHost;
@@ -158,16 +158,16 @@ class FolderUtility
             $typo3SiteUrl = $testUrl;
         }
 
-        // if subfolder
+        // if subFolder
         if ($typo3RequestHost . '/' !== $typo3SiteUrl) {
-            $subfolder = substr(str_replace($typo3RequestHost . '/', '', $typo3SiteUrl), 0, -1);
+            $subFolder = substr(str_replace($typo3RequestHost . '/', '', $typo3SiteUrl), 0, -1);
         }
-        if ($trailingSlash && substr($subfolder, 0, -1) !== '/') {
-            $subfolder .= '/';
+        if ($trailingSlash && substr($subFolder, 0, -1) !== '/') {
+            $subFolder .= '/';
         }
-        if ($leadingSlash && $subfolder[0] !== '/') {
-            $subfolder = '/' . $subfolder;
+        if ($leadingSlash && $subFolder[0] !== '/') {
+            $subFolder = '/' . $subFolder;
         }
-        return $subfolder;
+        return $subFolder;
     }
 }

@@ -43,7 +43,7 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
     protected $languageService = null;
 
     /**
-     * Get fieldame from locallang and TCA definition
+     * Get field name from locallang and TCA definition
      *
      * @param string $fieldName
      * @param string $tableName

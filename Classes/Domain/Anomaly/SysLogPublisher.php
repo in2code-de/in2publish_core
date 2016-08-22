@@ -119,7 +119,7 @@ class SysLogPublisher
      */
     protected function getLastLocalSysLogProperties(Record $record, array $removeProperties = array())
     {
-        $row = $this->commonRepository->findLastPropertiesByPropertyAndTablename(
+        $row = $this->commonRepository->findLastPropertiesByPropertyAndTableName(
             $this->localDatabase,
             $this->sysLogTableName,
             'event_pid',

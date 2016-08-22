@@ -125,7 +125,7 @@ class RealUrlTask extends AbstractTask
     }
 
     /**
-     * Clean all realurl cachetables for a defined pageUid
+     * Clean all RealUrl cache tables for a defined pageUid
      *
      * @param int $pageUid
      * @return void

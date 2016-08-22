@@ -42,7 +42,7 @@ class GetIdentifierNameByJsonDataViewHelper extends AbstractViewHelper
 
     /**
      * Get identifier name from json data
-     *        could be a pagename or a string
+     *        could be a page name or a string
      *        from given data
      *
      * @param string $data

@@ -36,8 +36,8 @@ class GetClassNameOnActionViewHelper extends AbstractViewHelper
      * Return className if actionName fits to current action
      *
      * @param string $actionName action name to compare with current action
-     * @param string $className classname that should be returned if action fits
-     * @param string $fallbackClassName fallback classname if action does not fit
+     * @param string $className class name that should be returned if action fits
+     * @param string $fallbackClassName fallback class name if action does not fit
      * @return string
      */
     public function render($actionName, $className = ' btn-primary', $fallbackClassName = ' btn-default')

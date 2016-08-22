@@ -87,7 +87,7 @@ class CacheInvalidator implements SingletonInterface
     public function registerClearCacheTasks($tableName, Record $record)
     {
         $this->flushPageCache($tableName, $record);
-        $this->flushPageCacheByClearCacheComand($tableName, $record);
+        $this->flushPageCacheByClearCacheCommand($tableName, $record);
         $this->flushNewsCache($tableName, $record);
     }
 
@@ -155,7 +155,7 @@ class CacheInvalidator implements SingletonInterface
      * @param Record $record
      * @return void
      */
-    protected function flushPageCacheByClearCacheComand($tableName, Record $record)
+    protected function flushPageCacheByClearCacheCommand($tableName, Record $record)
     {
         if ($tableName === 'pages') {
             $pid = (int)$record->getIdentifier();

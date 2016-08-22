@@ -167,7 +167,7 @@ class CommonRepository extends BaseRepository
      * Fetches an array of property arrays (plural !!!) from
      * the given database connection where the column
      * "$propertyName" equals $propertyValue
-     * Add tablename
+     * Add table name
      *
      * @param DatabaseConnection $databaseConnection
      * @param string $tableName
@@ -191,7 +191,7 @@ class CommonRepository extends BaseRepository
         $limit = '',
         $indexField = 'uid'
     ) {
-        $currentTablename = $this->tableName;
+        $currentTableName = $this->tableName;
         $this->tableName = $tableName;
         $properties = $this->findPropertiesByProperty(
             $databaseConnection,
@@ -203,12 +203,12 @@ class CommonRepository extends BaseRepository
             $limit,
             $indexField
         );
-        $this->tableName = $currentTablename;
+        $this->tableName = $currentTableName;
         return $properties;
     }
 
     /**
-     * Find the last record by property and tablename
+     * Find the last record by property and table name
      *
      * @param DatabaseConnection $databaseConnection
      * @param string $tableName
@@ -216,7 +216,7 @@ class CommonRepository extends BaseRepository
      * @param mixed $propertyValue
      * @return array
      */
-    public function findLastPropertiesByPropertyAndTablename(
+    public function findLastPropertiesByPropertyAndTableName(
         DatabaseConnection $databaseConnection,
         $tableName,
         $propertyName,
@@ -483,13 +483,13 @@ class CommonRepository extends BaseRepository
         ) {
             // check if this test wasn't done before
             if (!array_key_exists($record->getIdentifier(), $this->skipRecords)) {
-                $localLog = $this->findLastPropertiesByPropertyAndTablename(
+                $localLog = $this->findLastPropertiesByPropertyAndTableName(
                     $this->localDatabase,
                     'sys_log',
                     'event_pid',
                     $record->getIdentifier()
                 );
-                $foreignLog = $this->findLastPropertiesByPropertyAndTablename(
+                $foreignLog = $this->findLastPropertiesByPropertyAndTableName(
                     $this->foreignDatabase,
                     'sys_log',
                     'event_pid',
@@ -615,7 +615,7 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * Simplyfy flexform definition
+     * Simplify flexform definition
      *
      *      'sDEF' => array(
      *          'ROOT' => array(
@@ -666,7 +666,7 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * Simplyfy flexform definition for a single field
+     * Simplify flexform definition for a single field
      *
      *      'key' => array(
      *          'TCEforms' => array(
@@ -1138,18 +1138,18 @@ class CommonRepository extends BaseRepository
     {
         $uploadFolder = FileUtility::getCleanFolder($columnConfiguration['uploadfolder']);
         if (empty($flexFormData)) {
-            $filenames = GeneralUtility::trimExplode(',', $record->getLocalProperty($propertyName), true);
+            $fileNames = GeneralUtility::trimExplode(',', $record->getLocalProperty($propertyName), true);
         } else {
-            $filenames = GeneralUtility::trimExplode(',', $flexFormData, true);
+            $fileNames = GeneralUtility::trimExplode(',', $flexFormData, true);
         }
-        foreach ($filenames as $key => $filename) {
-            $filenames[$key] = $uploadFolder . $filename;
+        foreach ($fileNames as $key => $filename) {
+            $fileNames[$key] = $uploadFolder . $filename;
 
             // Force indexing of the record
             GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Resource\\ResourceFactory')
-                          ->getFileObjectFromCombinedIdentifier($filenames[$key]);
+                          ->getFileObjectFromCombinedIdentifier($fileNames[$key]);
         }
-        return $filenames;
+        return $fileNames;
     }
 
     /**

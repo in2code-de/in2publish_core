@@ -131,9 +131,9 @@ class FileStorageService extends AbstractService
     {
         $newPathAndFilename = $this->recommendedFileName($pathAndFilename);
         if (is_file($newPathAndFilename)) {
-            $pathinfo = pathinfo($pathAndFilename);
-            $newPathAndFilename = $pathinfo['dirname'] . '/'
-                . uniqid() . '.' . $pathinfo['extension'];
+            $pathInfo = pathinfo($pathAndFilename);
+            $newPathAndFilename = $pathInfo['dirname'] . '/'
+                . uniqid() . '.' . $pathInfo['extension'];
         }
         return $newPathAndFilename;
     }
@@ -242,7 +242,7 @@ class FileStorageService extends AbstractService
     }
 
     /**
-     * Rename fileOrFolder if parentpath was already renamed
+     * Rename fileOrFolder if parent path was already renamed
      *
      * @param $fileOrFolder
      * @return mixed

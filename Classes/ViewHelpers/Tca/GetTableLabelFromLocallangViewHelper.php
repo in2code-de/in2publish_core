@@ -48,7 +48,7 @@ class GetTableLabelFromLocallangViewHelper extends AbstractViewHelper
     }
 
     /**
-     * Get tablename from locallang and TCA definition
+     * Get table name from locallang and TCA definition
      *
      * @param string $tableName
      * @return string
