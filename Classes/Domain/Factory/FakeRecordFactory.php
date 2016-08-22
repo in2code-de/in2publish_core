@@ -117,7 +117,7 @@ class FakeRecordFactory
         $propertiesLocal = $this->tableCacheRepository->findByUid(self::PAGE_TABLE_NAME, $identifier, 'local');
         $propertiesForeign = $this->tableCacheRepository->findByUid(self::PAGE_TABLE_NAME, $identifier, 'foreign');
         $record = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager')->get(
-            'In2code\\In2publish\\Domain\\Model\\Record',
+            'In2code\\In2publishCore\\Domain\\Model\\Record',
             'pages',
             $propertiesLocal,
             $propertiesForeign,
