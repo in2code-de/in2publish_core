@@ -36,6 +36,7 @@ class RecordTest extends UnitTestCase
 {
     /**
      * @param mixed $getIgnoreFields
+     * @param bool $isParentRecordDisabled
      * @return Record
      */
     protected function getRecordStub($getIgnoreFields, $isParentRecordDisabled = false)

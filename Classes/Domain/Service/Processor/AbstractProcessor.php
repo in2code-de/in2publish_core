@@ -51,8 +51,8 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     /**
      * Overwrite this in your Processor if canHoldRelations is TRUE!
-     * Fields that are forbidden for the processor type, indexed by the reasong
-     *    e.g. "itemsProcfunc is not supported by in2publish" => "itemsProcFunc"
+     * Fields that are forbidden for the processor type, indexed by the reason
+     *    e.g. "itemsProcFunc is not supported by in2publish" => "itemsProcFunc"
      *
      * @var array
      */
