@@ -205,12 +205,11 @@ class FolderRecordFactory
                                         $sysFile->setState(RecordInterface::RECORD_STATE_DELETED);
                                     } elseif (!empty($mergedFile['local']) && empty($mergedFile['foreign'])) {
                                         $sysFile->setState(RecordInterface::RECORD_STATE_ADDED);
-                                    } elseif (
-                                        isset($mergedFile[$side]['hash']) && isset($mergedFile[$reverseSide]['hash'])
+                                    } elseif (isset($mergedFile[$side]['hash'])
+                                              && isset($mergedFile[$reverseSide]['hash'])
+                                              && $mergedFile[$side]['hash'] !== $mergedFile[$reverseSide]['hash']
                                     ) {
-                                        if ($mergedFile[$side]['hash'] !== $mergedFile[$reverseSide]['hash']) {
-                                            $sysFile->setState(RecordInterface::RECORD_STATE_CHANGED);
-                                        }
+                                        $sysFile->setState(RecordInterface::RECORD_STATE_CHANGED);
                                     }
                                 }
                             }
