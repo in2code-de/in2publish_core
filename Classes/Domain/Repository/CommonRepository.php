@@ -1886,7 +1886,6 @@ class CommonRepository extends BaseRepository
      * @param DatabaseConnection $foreignDatabase
      * @param string $tableName
      * @param string $identifierFieldName
-     * @return CommonRepository
      */
     public function __construct(
         DatabaseConnection $localDatabase,

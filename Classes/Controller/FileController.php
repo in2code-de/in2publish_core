@@ -199,7 +199,7 @@ class FileController extends AbstractController
     }
 
     /**
-     * @return FileController
+     * FileController constructor.
      */
     public function __construct()
     {

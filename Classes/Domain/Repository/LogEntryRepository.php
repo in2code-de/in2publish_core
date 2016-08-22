@@ -137,7 +137,7 @@ class LogEntryRepository
     }
 
     /**
-     * @return LogEntryRepository
+     * LogEntryRepository constructor.
      */
     public function __construct()
     {

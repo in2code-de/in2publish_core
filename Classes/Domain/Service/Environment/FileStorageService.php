@@ -106,8 +106,6 @@ class FileStorageService extends AbstractService
 
     /**
      * Get a list of non allowed files and folders
-     *
-     * @return array
      */
     protected function setNonAllowedFilesAndFolders()
     {

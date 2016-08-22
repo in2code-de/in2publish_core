@@ -57,7 +57,7 @@ class TaskRepository
     protected $contextService = null;
 
     /**
-     * @return TaskRepository
+     * TaskRepository constructor.
      */
     public function __construct()
     {

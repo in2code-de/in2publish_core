@@ -1015,7 +1015,6 @@ class SshConnection
      * If you need an instance of this class you have to use
      * SshConnection::makeInstance()
      *
-     * @return SshConnection
      * @throws \Exception
      */
     final protected function __construct()

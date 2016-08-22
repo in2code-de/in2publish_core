@@ -48,13 +48,12 @@ class LocalRepository extends BaseRepository
 
     /**
      * @param string $tableName
-     * @param string $identifierFieldname
-     * @return LocalRepository
+     * @param string $identifierFieldName
      */
-    public function __construct($tableName, $identifierFieldname = 'uid')
+    public function __construct($tableName, $identifierFieldName = 'uid')
     {
         parent::__construct();
-        $this->identifierFieldName = $identifierFieldname;
+        $this->identifierFieldName = $identifierFieldName;
         $this->localDatabase = &DatabaseUtility::buildLocalDatabaseConnection();
         $this->setTableName($tableName);
     }

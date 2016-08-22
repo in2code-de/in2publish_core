@@ -399,7 +399,7 @@ class FolderRecordFactory
     }
 
     /**
-     * @return FolderRecordFactory
+     * FolderRecordFactory constructor.
      */
     public function __construct()
     {

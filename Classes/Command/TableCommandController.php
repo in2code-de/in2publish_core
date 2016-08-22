@@ -58,7 +58,6 @@ class TableCommandController extends AbstractCommandController
     protected $contextService = null;
 
     /**
-     * @return TableCommandController
      * @throws \Exception
      */
     public function __construct()
