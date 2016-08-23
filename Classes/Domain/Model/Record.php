@@ -125,6 +125,30 @@ class Record implements RecordInterface
     protected $isParentRecordDisabled = false;
 
     /**
+     * @param string $tableName
+     * @param array $localProperties
+     * @param array $foreignProperties
+     * @param array $tableConfigurationArray
+     * @param array $additionalProperties
+     */
+    public function __construct(
+        $tableName,
+        array $localProperties,
+        array $foreignProperties,
+        array $tableConfigurationArray,
+        array $additionalProperties
+    ) {
+        $this->setTableName($tableName);
+        $this->additionalProperties = $additionalProperties;
+        $this->localProperties = $localProperties;
+        $this->foreignProperties = $foreignProperties;
+        $this->tableConfigurationArray = $tableConfigurationArray;
+        $this->setDirtyProperties();
+        $this->calculateState();
+        $this->isParentRecordDisabled = $this->isParentRecordDisabled();
+    }
+
+    /**
      * @return string
      */
     public function getTableName()
@@ -555,30 +579,6 @@ class Record implements RecordInterface
     public function isParentRecordLocked()
     {
         return $this->parentRecordIsLocked;
-    }
-
-    /**
-     * @param string $tableName
-     * @param array $localProperties
-     * @param array $foreignProperties
-     * @param array $tableConfigurationArray
-     * @param array $additionalProperties
-     */
-    public function __construct(
-        $tableName,
-        array $localProperties,
-        array $foreignProperties,
-        array $tableConfigurationArray,
-        array $additionalProperties
-    ) {
-        $this->setTableName($tableName);
-        $this->additionalProperties = $additionalProperties;
-        $this->localProperties = $localProperties;
-        $this->foreignProperties = $foreignProperties;
-        $this->tableConfigurationArray = $tableConfigurationArray;
-        $this->setDirtyProperties();
-        $this->calculateState();
-        $this->isParentRecordDisabled = $this->isParentRecordDisabled();
     }
 
     /**

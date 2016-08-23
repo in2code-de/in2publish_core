@@ -61,6 +61,23 @@ class FolderRecordFactory
     protected $logger = null;
 
     /**
+     * FolderRecordFactory constructor.
+     */
+    public function __construct()
+    {
+        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->sshConnection = SshConnection::makeInstance();
+        /** @var ObjectManager $objectManager */
+        $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+        $this->commonRepository = $objectManager->get(
+            'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
+            DatabaseUtility::buildLocalDatabaseConnection(),
+            DatabaseUtility::buildForeignDatabaseConnection(),
+            'sys_file'
+        );
+    }
+
+    /**
      * @param string $folderIdentifier
      * @return Record
      */
@@ -394,23 +411,6 @@ class FolderRecordFactory
             $foreignProperties,
             array(),
             $additionalProperties
-        );
-    }
-
-    /**
-     * FolderRecordFactory constructor.
-     */
-    public function __construct()
-    {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
-        $this->sshConnection = SshConnection::makeInstance();
-        /** @var ObjectManager $objectManager */
-        $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-        $this->commonRepository = $objectManager->get(
-            'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
-            DatabaseUtility::buildLocalDatabaseConnection(),
-            DatabaseUtility::buildForeignDatabaseConnection(),
-            'sys_file'
         );
     }
 }

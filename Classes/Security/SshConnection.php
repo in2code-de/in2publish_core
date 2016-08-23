@@ -987,30 +987,6 @@ class SshConnection
     private static $instance = null;
 
     /**
-     * creates an instance of this class and saves
-     * and returns the reference to the created object.
-     * if already instantiated only the reference is returned
-     *
-     * @return SshConnection
-     */
-    public static function makeInstance()
-    {
-        if (self::$instance === null) {
-            self::$instance = new self;
-        }
-        return self::$instance;
-    }
-
-    /**
-     * Prohibit cloning
-     *
-     * @return void
-     */
-    final protected function __clone()
-    {
-    }
-
-    /**
      * Prohibit the use of "new" to create an instance.
      * If you need an instance of this class you have to use
      * SshConnection::makeInstance()
@@ -1033,6 +1009,30 @@ class SshConnection
                 1428492639
             );
         }
+    }
+
+    /**
+     * creates an instance of this class and saves
+     * and returns the reference to the created object.
+     * if already instantiated only the reference is returned
+     *
+     * @return SshConnection
+     */
+    public static function makeInstance()
+    {
+        if (self::$instance === null) {
+            self::$instance = new self;
+        }
+        return self::$instance;
+    }
+
+    /**
+     * Prohibit cloning
+     *
+     * @return void
+     */
+    final protected function __clone()
+    {
     }
 
     /**

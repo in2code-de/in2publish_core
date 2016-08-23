@@ -119,6 +119,28 @@ class CommonRepository extends BaseRepository
     protected $skipRecords = array();
 
     /**
+     * @param DatabaseConnection $localDatabase
+     * @param DatabaseConnection $foreignDatabase
+     * @param string $tableName
+     * @param string $identifierFieldName
+     */
+    public function __construct(
+        DatabaseConnection $localDatabase,
+        DatabaseConnection $foreignDatabase,
+        $tableName,
+        $identifierFieldName = 'uid'
+    ) {
+        parent::__construct();
+        $this->identifierFieldName = $identifierFieldName;
+        $this->localDatabase = $localDatabase;
+        $this->foreignDatabase = $foreignDatabase;
+        if ($foreignDatabase === null || !$foreignDatabase->isConnected()) {
+            $this->foreignDatabase = $localDatabase;
+        }
+        $this->setTableName($tableName);
+    }
+
+    /**
      * Find and create a Record where the Records identifier equals $identifier
      * Returns exactly one Record.
      *
@@ -1879,28 +1901,6 @@ class CommonRepository extends BaseRepository
             array(array('yes' => 0, 'no' => 0), $this, $arguments)
         );
         return $signalArguments[0]['yes'] > $signalArguments[0]['no'];
-    }
-
-    /**
-     * @param DatabaseConnection $localDatabase
-     * @param DatabaseConnection $foreignDatabase
-     * @param string $tableName
-     * @param string $identifierFieldName
-     */
-    public function __construct(
-        DatabaseConnection $localDatabase,
-        DatabaseConnection $foreignDatabase,
-        $tableName,
-        $identifierFieldName = 'uid'
-    ) {
-        parent::__construct();
-        $this->identifierFieldName = $identifierFieldName;
-        $this->localDatabase = $localDatabase;
-        $this->foreignDatabase = $foreignDatabase;
-        if ($foreignDatabase === null || !$foreignDatabase->isConnected()) {
-            $this->foreignDatabase = $localDatabase;
-        }
-        $this->setTableName($tableName);
     }
 
     /**

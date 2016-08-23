@@ -66,6 +66,16 @@ abstract class AbstractTask
     private $messages = array();
 
     /**
+     * @param array $configuration
+     * @param int $uid
+     */
+    final public function __construct(array $configuration, $uid = 0)
+    {
+        $this->configuration = $configuration;
+        $this->uid = $uid;
+    }
+
+    /**
      * Template "execution" Method
      *
      * @return bool
@@ -104,16 +114,6 @@ abstract class AbstractTask
     final protected function afterExecute()
     {
         $this->executionEnd = new \DateTime();
-    }
-
-    /**
-     * @param array $configuration
-     * @param int $uid
-     */
-    final public function __construct(array $configuration, $uid = 0)
-    {
-        $this->configuration = $configuration;
-        $this->uid = $uid;
     }
 
     /**

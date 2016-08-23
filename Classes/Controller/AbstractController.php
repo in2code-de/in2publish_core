@@ -89,6 +89,18 @@ abstract class AbstractController extends ActionController
     protected $pid = 0;
 
     /**
+     * Creates a logger for the instantiated controller object.
+     * When extending from this class and using an own constructor
+     * don't forget to call this constructor method at the end
+     * of your own implementation
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+    }
+
+    /**
      * Create the controller context. Do NOT call this Method
      * before $this->initializeAction() is going to be executed
      * because it relies on $this->request and $this->response to be set
@@ -242,18 +254,6 @@ abstract class AbstractController extends ActionController
         if ($votes['no'] > $votes['yes']) {
             throw new \Exception('You are not allowed to publish', 1435306780);
         }
-    }
-
-    /**
-     * Creates a logger for the instantiated controller object.
-     * When extending from this class and using an own constructor
-     * don't forget to call this constructor method at the end
-     * of your own implementation
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
     }
 
     /**

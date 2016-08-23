@@ -107,18 +107,6 @@ class TcaService
     protected $cache = null;
 
     /**
-     * @return TcaService
-     */
-    public static function getInstance()
-    {
-        if (self::$instance === null) {
-            self::$instance = new self;
-            self::$instance->preProcessTca();
-        }
-        return self::$instance;
-    }
-
-    /**
      * TcaService constructor.
      */
     protected function __construct()
@@ -141,6 +129,18 @@ class TcaService
                 $this->processors[$type] = new $class();
             }
         }
+    }
+
+    /**
+     * @return TcaService
+     */
+    public static function getInstance()
+    {
+        if (self::$instance === null) {
+            self::$instance = new self;
+            self::$instance->preProcessTca();
+        }
+        return self::$instance;
     }
 
     /**

@@ -91,6 +91,14 @@ class LogEntryRepository
     );
 
     /**
+     * LogEntryRepository constructor.
+     */
+    public function __construct()
+    {
+        $this->databaseConnection = DatabaseUtility::buildLocalDatabaseConnection();
+    }
+
+    /**
      * @return array
      */
     public function getPropertyNames()
@@ -134,14 +142,6 @@ class LogEntryRepository
             $logLevels[$result['level']] = $result['level'];
         }
         return $logLevels;
-    }
-
-    /**
-     * LogEntryRepository constructor.
-     */
-    public function __construct()
-    {
-        $this->databaseConnection = DatabaseUtility::buildLocalDatabaseConnection();
     }
 
     /**

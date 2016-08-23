@@ -53,6 +53,30 @@ class FileController extends AbstractController
     protected $folderRecordFactory = null;
 
     /**
+     * FileController constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $combinedIdentifier = GeneralUtility::_GP('id');
+        if ($combinedIdentifier !== null) {
+            $this->folderIdentifier = str_replace('1:/', 'fileadmin/', $combinedIdentifier);
+        } else {
+            $fileStorages = $this->getBackendUser()->getFileStorages();
+            $fileStorage = reset($fileStorages);
+            // Assume that the storage with uid 1 is always fileadmin.
+            // This is really bad, but we don't want to break this assumption at this point.
+            // Will be changed when this module is refactored to be based completely on FAL
+            if (false !== $fileStorage && 1 === $fileStorage->getUid()) {
+                $folderObject = $fileStorage->getRootLevelFolder();
+                if ($folderObject instanceof Folder) {
+                    $this->folderIdentifier = 'fileadmin/' . ltrim($folderObject->getIdentifier(), '/');
+                }
+            }
+        }
+    }
+
+    /**
      * Assigns all Files of the current folder to the view.
      * any other folder, sibling - parent - child, is ignored
      *
@@ -196,30 +220,6 @@ class FileController extends AbstractController
                 break;
         }
         $this->redirect('index');
-    }
-
-    /**
-     * FileController constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $combinedIdentifier = GeneralUtility::_GP('id');
-        if ($combinedIdentifier !== null) {
-            $this->folderIdentifier = str_replace('1:/', 'fileadmin/', $combinedIdentifier);
-        } else {
-            $fileStorages = $this->getBackendUser()->getFileStorages();
-            $fileStorage = reset($fileStorages);
-            // Assume that the storage with uid 1 is always fileadmin.
-            // This is really bad, but we don't want to break this assumption at this point.
-            // Will be changed when this module is refactored to be based completely on FAL
-            if (false !== $fileStorage && 1 === $fileStorage->getUid()) {
-                $folderObject = $fileStorage->getRootLevelFolder();
-                if ($folderObject instanceof Folder) {
-                    $this->folderIdentifier = 'fileadmin/' . ltrim($folderObject->getIdentifier(), '/');
-                }
-            }
-        }
     }
 
     /**
