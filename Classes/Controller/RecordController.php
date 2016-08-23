@@ -151,15 +151,11 @@ class RecordController extends AbstractController
     /**
      * Add success message and redirect to indexAction
      *
-     * @param array $additionalMessages
      * @return void
      */
-    protected function addSuccessFlashMessageAndRedirectToIndex(array $additionalMessages = array())
+    protected function addSuccessFlashMessageAndRedirectToIndex()
     {
         $this->addFlashMessage(LocalizationUtility::translate('record_published', 'in2publish_core'));
-        foreach ($additionalMessages as $message) {
-            $this->addFlashMessage($message['body'], $message['title'], $message['severity']);
-        }
         $this->redirect('index');
     }
 
