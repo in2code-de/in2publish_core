@@ -759,23 +759,6 @@ class Record implements RecordInterface
     }
 
     /**
-     * @return void
-     */
-    public function refreshDirtyPropertiesAndState()
-    {
-        if (!empty($this->runtimeCache['foreignRecordExists'])) {
-            unset($this->runtimeCache['foreignRecordExists']);
-        }
-        if (!empty($this->runtimeCache['localRecordExists'])) {
-            unset($this->runtimeCache['localRecordExists']);
-        }
-        $this->state = RecordInterface::RECORD_STATE_UNCHANGED;
-        $this->dirtyProperties = array();
-        $this->setDirtyProperties();
-        $this->calculateState();
-    }
-
-    /**
      * Check if there is a foreign record
      *
      * @return bool
