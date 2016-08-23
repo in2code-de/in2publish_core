@@ -164,25 +164,6 @@ abstract class BaseRepository
     /**
      * TODO: check if $this->identifierFieldName could be used instead
      *
-     * counts rows from the database. This method
-     * will return either 0 or 1 or it's broken
-     *
-     * @param DatabaseConnection $databaseConnection
-     * @param int $identifier
-     * @return int
-     */
-    protected function countRecords(DatabaseConnection $databaseConnection, $identifier)
-    {
-        $result = $databaseConnection->exec_SELECTcountRows('uid', $this->tableName, 'uid=' . (int)$identifier);
-        if ($result === false) {
-            $this->logFailedQuery(__METHOD__, $databaseConnection);
-        }
-        return (int)$result;
-    }
-
-    /**
-     * TODO: check if $this->identifierFieldName could be used instead
-     *
      * Executes an UPDATE query on the given database connection. This method will
      * overwrite any value given in $properties where uid = $identifier
      *
