@@ -1740,27 +1740,6 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * Delegates the deletion of a local record to the BaseRepository.
-     *
-     * Since this action is highly destructive, it
-     * must be enabled in the Configuration
-     *
-     * @param int $identifier
-     * @return void
-     */
-    protected function deleteLocalRecord($identifier)
-    {
-        $this->logger->notice(
-            'Deleting local record',
-            array(
-                'tableName' => $this->tableName,
-                'identifier' => $identifier,
-            )
-        );
-        $this->deleteRecord($this->localDatabase, $identifier);
-    }
-
-    /**
      * Get local field for mm tables (and switch name if "MM_opposite_field" is set)
      *
      * @param array $columnConfiguration
