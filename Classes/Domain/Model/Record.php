@@ -528,16 +528,6 @@ class Record implements RecordInterface
     }
 
     /**
-     * @param array $tableConfigurationArray
-     * @return Record
-     */
-    public function setTableConfigurationArray(array $tableConfigurationArray)
-    {
-        $this->tableConfigurationArray = $tableConfigurationArray;
-        return $this;
-    }
-
-    /**
      * @return Record
      */
     public function getParentRecord()

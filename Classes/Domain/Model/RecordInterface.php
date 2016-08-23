@@ -90,10 +90,4 @@ interface RecordInterface
      * @return array
      */
     public function getTableConfigurationArray();
-
-    /**
-     * @param array $tableConfigurationArray
-     * @return RecordInterface
-     */
-    public function setTableConfigurationArray(array $tableConfigurationArray);
 }
