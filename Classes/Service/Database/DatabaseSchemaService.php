@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Service\Database;
 
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class DatabaseSchemaService
@@ -35,18 +36,29 @@ use TYPO3\CMS\Core\SingletonInterface;
 class DatabaseSchemaService implements SingletonInterface
 {
     /**
-     * @var array
+     * @var \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
      */
-    protected $cache = array();
+    protected $cache = null;
 
     /**
-     * TODO: evaluate if caching via caching framework would speed this up
-     *
+     * DatabaseSchemaService constructor.
+     */
+    public function __construct()
+    {
+        $this->cache = $this->getCache();
+    }
+
+    /**
      * @return array
      */
     public function getDatabaseSchema()
     {
-        if (!isset($this->cache[__FUNCTION__])) {
+        $schema = false;
+        if ($this->cache->has('database_schema')) {
+            $schema = $this->cache->get('database_schema');
+        }
+
+        if (false === $schema) {
             $database = $this->getDatabase();
 
             $schema = array();
@@ -56,10 +68,19 @@ class DatabaseSchemaService implements SingletonInterface
                     $schema[$tableName][$fieldName] = $fieldInfo;
                 }
             }
-            $this->cache[__FUNCTION__] = $schema;
+            $this->cache->set('database_schema', $schema);
         }
 
-        return $this->cache[__FUNCTION__];
+        return $schema;
+    }
+
+    /**
+     * @return \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+     * @codeCoverageIgnore
+     */
+    protected function getCache()
+    {
+        return GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('in2publish_core');
     }
 
     /**

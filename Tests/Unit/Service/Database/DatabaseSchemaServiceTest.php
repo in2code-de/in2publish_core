@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Tests\Unit\Service\Database;
  ***************************************************************/
 
 use In2code\In2publishCore\Service\Database\DatabaseSchemaService;
+use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 
@@ -36,6 +37,7 @@ use TYPO3\CMS\Core\Tests\UnitTestCase;
 class DatabaseSchemaServiceTest extends UnitTestCase
 {
     /**
+     * @covers ::__construct
      * @covers ::getDatabaseSchema
      * @covers ::getDatabase
      */
@@ -54,7 +56,22 @@ class DatabaseSchemaServiceTest extends UnitTestCase
             ],
         ];
 
-        $schemaService = new DatabaseSchemaService();
+        /** @var VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheFrontend */
+        $cacheFrontend = $this->getMockBuilder(VariableFrontend::class)
+                              ->setMethods(['has', 'get', 'set'])
+                              ->disableOriginalConstructor()
+                              ->getMock();
+        $cacheFrontend->method('has')->willReturn(true);
+        $cacheFrontend->method('get')->willReturn(false);
+
+        /** @var DatabaseSchemaService|\PHPUnit_Framework_MockObject_MockObject $schemaService */
+        $schemaService = $this->getMockBuilder(DatabaseSchemaService::class)
+                              ->setMethods(['getCache'])
+                              ->disableOriginalConstructor()
+                              ->getMock();
+        $schemaService->method('getCache')->willReturn($cacheFrontend);
+        $schemaService->__construct();
+
         $this->assertSame($expected, $schemaService->getDatabaseSchema());
     }
 
