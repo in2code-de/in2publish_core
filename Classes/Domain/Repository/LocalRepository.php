@@ -54,7 +54,7 @@ class LocalRepository extends BaseRepository
     {
         parent::__construct();
         $this->identifierFieldName = $identifierFieldName;
-        $this->localDatabase = &DatabaseUtility::buildLocalDatabaseConnection();
+        $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->setTableName($tableName);
     }
 
