@@ -38,8 +38,7 @@ class ExecutionTimeViewHelper extends AbstractViewHelper
      */
     public function render()
     {
-        /** @var \In2code\In2publishCore\Domain\Service\ExecutionTimeService $etService2 */
-        $etService2 = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Service\\ExecutionTimeService');
-        return $etService2->getExecutionTime();
+        return GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Service\\ExecutionTimeService')
+                             ->getExecutionTime();
     }
 }

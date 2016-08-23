@@ -51,6 +51,9 @@ class ExecutionTimeService implements SingletonInterface
         $this->startTime = -microtime(true);
     }
 
+    /**
+     * @return float
+     */
     public function getExecutionTime()
     {
         $this->stop();
