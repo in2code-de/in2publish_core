@@ -239,21 +239,6 @@ class FolderRecordFactory
     }
 
     /**
-     * Get filename from local otherwise foreign
-     *
-     * @param Record $sysFile
-     * @return string|null
-     */
-    protected function getFileName(Record $sysFile)
-    {
-        $sysFileName = $sysFile->getLocalProperty('name');
-        if ($sysFileName === null) {
-            $sysFileName = $sysFile->getForeignProperty('name');
-        }
-        return $sysFileName;
-    }
-
-    /**
      * Create mergeFiles array out of local files
      *      array(
      *          89787079498 => array(
