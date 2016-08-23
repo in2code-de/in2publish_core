@@ -55,10 +55,7 @@ class BackendUserProcessor extends AbstractProcessor
      */
     public function processLogRecord(LogRecord $logRecord)
     {
-        $data = $logRecord->getData();
-        $data['be_user'] = $this->backendUserUid;
-        $logRecord->setData($data);
-        return $logRecord;
+        return $logRecord->addData(array('be_user' => $this->backendUserUid));
     }
 
     /**
