@@ -55,12 +55,6 @@ abstract class AbstractController extends ActionController
     protected $commonRepository = null;
 
     /**
-     * @var \In2code\In2publishCore\Domain\Repository\PageRepository
-     * @inject
-     */
-    protected $pageRepository = null;
-
-    /**
      * @var DatabaseConnection
      */
     protected $localDatabase = null;
