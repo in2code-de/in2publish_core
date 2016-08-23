@@ -41,11 +41,11 @@ class BackendUserProcessor extends AbstractProcessor
     protected $backendUserUid = 0;
 
     /**
-     * BackendUserProcessor constructor.
+     * {@inheritdoc}
      */
-    public function __construct()
+    public function __construct(array $options = array())
     {
-        parent::__construct();
+        parent::__construct($options);
         $this->backendUserUid = $this->getBackendUser()->user['uid'];
     }
 
