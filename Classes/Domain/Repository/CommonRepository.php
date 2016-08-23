@@ -499,10 +499,7 @@ class CommonRepository extends BaseRepository
      */
     protected function skipRecordRelation($tableName, Record $record)
     {
-        if (ConfigurationUtility::getConfiguration('factory.skipRecordsIfNoPageChange')
-            && $record->isPagesTable()
-            && $tableName !== 'pages'
-        ) {
+        if ($record->isPagesTable() && $tableName !== 'pages') {
             // check if this test wasn't done before
             if (!array_key_exists($record->getIdentifier(), $this->skipRecords)) {
                 $localLog = $this->findLastPropertiesByPropertyAndTableName(
