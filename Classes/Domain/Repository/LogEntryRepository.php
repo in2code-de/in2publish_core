@@ -222,14 +222,4 @@ class LogEntryRepository
     {
         $this->databaseConnection->exec_DELETEquery($this->tableName, 'component LIKE "In2code.In2publishCore.%"');
     }
-
-    /**
-     * Need for tests
-     *
-     * @param string $tableName
-     */
-    public function setTableName($tableName)
-    {
-        $this->tableName = $tableName;
-    }
 }
