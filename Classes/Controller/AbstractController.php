@@ -98,7 +98,7 @@ abstract class AbstractController extends ActionController
     protected function buildControllerContextIfNecessary()
     {
         if ($this->controllerContext === null) {
-            $this->logger->debug('Building ControllerContext');
+            $this->logger->debug('Prematurely building ControllerContext');
             $this->controllerContext = $this->buildControllerContext();
         }
     }
@@ -134,8 +134,6 @@ abstract class AbstractController extends ActionController
             );
             $this->actionMethodName = self::BLANK_ACTION;
             $this->logger->error('Could not load Configuration');
-        } else {
-            $this->logger->debug('Configuration loaded successfully');
         }
     }
 
