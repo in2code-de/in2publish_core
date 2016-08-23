@@ -132,4 +132,27 @@ class ContextServiceTest extends UnitTestCase
         $contextService = new ContextService();
         $this->assertFalse($contextService->isForeign());
     }
+
+    /**
+     * @covers ::isContextDefined
+     */
+    public function testIsContextDefinedReturnsFalseIfContextIsNotDefined()
+    {
+        TestingHelper::setIn2publishContext(null);
+
+        $contextService = new ContextService();
+        $this->assertFalse($contextService->isContextDefined());
+    }
+
+    /**
+     * @covers ::isContextDefined
+     */
+    public function testIsContextDefinedReturnsTrueIfContextIsDefined()
+    {
+        TestingHelper::setIn2publishContext(ContextService::LOCAL);
+
+        $contextService = new ContextService();
+        $this->assertTrue($contextService->isContextDefined());
+    }
+
 }

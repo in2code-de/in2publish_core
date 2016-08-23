@@ -46,23 +46,28 @@ abstract class AbstractCommandController extends CommandController
     protected $logger = null;
 
     /**
+     * @var ContextService
+     */
+    protected $contextService = null;
+
+    /**
      * AbstractCommandController constructor.
      */
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->contextService = GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Service\\Context\\ContextService'
+        );
     }
 
     /**
      * Checks if the IN2PUBLISH_CONTEXT environment variable has been set
-     *
-     * @SuppressWarnings(PHPMD.ExitExpression)
      */
     protected function callCommandMethod()
     {
-        $context = getenv(ContextService::ENV_VAR_NAME);
-        if (empty($context)) {
-            $this->logger->notice(
+        if (!$this->contextService->isContextDefined()) {
+            $this->logger->error(
                 'The command controller ' . get_class($this) . ' was called over '
                 . php_sapi_name() . ' without the IN2PUBLISH_CONTEXT environment variable'
             );

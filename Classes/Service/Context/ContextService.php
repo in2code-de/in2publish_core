@@ -64,7 +64,7 @@ class ContextService implements SingletonInterface
      */
     protected function determineContext()
     {
-        if (false === ($environmentVariable = getenv(self::ENV_VAR_NAME))) {
+        if (false === ($environmentVariable = getenv(static::ENV_VAR_NAME))) {
             return static::FOREIGN;
         } elseif (in_array($environmentVariable, array(static::LOCAL, static::FOREIGN))) {
             return $environmentVariable;
@@ -80,7 +80,7 @@ class ContextService implements SingletonInterface
      */
     public function isForeign()
     {
-        return self::FOREIGN === $this->context;
+        return static::FOREIGN === $this->context;
     }
 
     /**
@@ -88,6 +88,14 @@ class ContextService implements SingletonInterface
      */
     public function isLocal()
     {
-        return self::LOCAL === $this->context;
+        return static::LOCAL === $this->context;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isContextDefined()
+    {
+        return false !== getenv(static::ENV_VAR_NAME);
     }
 }

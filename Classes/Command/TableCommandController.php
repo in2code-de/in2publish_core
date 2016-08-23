@@ -28,10 +28,8 @@ namespace In2code\In2publishCore\Command;
  ***************************************************************/
 
 use In2code\In2publishCore\Security\SshConnection;
-use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class TableCommandController (enabled on local and foreign)
@@ -53,19 +51,11 @@ class TableCommandController extends AbstractCommandController
     protected $foreignDatabase = null;
 
     /**
-     * @var ContextService
-     */
-    protected $contextService = null;
-
-    /**
      * @throws \Exception
      */
     public function __construct()
     {
         parent::__construct();
-        $this->contextService = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Service\\Context\\ContextService'
-        );
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
     }
