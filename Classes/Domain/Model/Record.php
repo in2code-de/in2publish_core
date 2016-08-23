@@ -490,20 +490,6 @@ class Record implements RecordInterface
     }
 
     /**
-     * Get a part of the records TCA entry.
-     *
-     * @param string $path
-     * @return mixed
-     */
-    public function getTableConfigurationArray($path = '')
-    {
-        if ($path) {
-            return ArrayUtility::getValueByPath($this->tableConfigurationArray, $path);
-        }
-        return $this->tableConfigurationArray;
-    }
-
-    /**
      * @return array
      */
     public function hasDeleteField()

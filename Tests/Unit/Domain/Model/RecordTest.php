@@ -762,28 +762,6 @@ class RecordTest extends UnitTestCase
     }
 
     /**
-     * @covers ::getTableConfigurationArray
-     */
-    public function testGetTableConfigurationArrayReturnsWholeTcaIfNoArgumentIsGiven()
-    {
-        $stub = $this->getRecordStub([]);
-        $stub->__construct('pages', [], [], ['foo' => 'foo', 'bar' => 'baz'], []);
-
-        $this->assertSame(['foo' => 'foo', 'bar' => 'baz'], $stub->getTableConfigurationArray());
-    }
-
-    /**
-     * @covers ::getTableConfigurationArray
-     */
-    public function testGetTableConfigurationArrayReturnsSubpartOfTcaDefinedByArgument()
-    {
-        $stub = $this->getRecordStub([]);
-        $stub->__construct('pages', [], [], ['foo' => 'foo', 'bar' => ['baz' => 'boo']], []);
-
-        $this->assertSame(['baz' => 'boo'], $stub->getTableConfigurationArray('bar'));
-    }
-
-    /**
      * @covers ::isChanged
      * @covers ::getState
      * @depends testSysFileRecordsAreTreatedAsNormalRecordsIfIdentifierPropertiesDoNotDiffer

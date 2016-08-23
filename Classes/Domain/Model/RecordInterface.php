@@ -85,9 +85,4 @@ interface RecordInterface
      * @return RecordInterface
      */
     public function setForeignProperties(array $foreignProperties);
-
-    /**
-     * @return array
-     */
-    public function getTableConfigurationArray();
 }
