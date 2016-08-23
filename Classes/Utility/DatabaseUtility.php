@@ -140,8 +140,10 @@ class DatabaseUtility
     {
 
         $fileName = time() . '_' . $tableName . '.sql';
-        $addDropTable = ConfigurationUtility::getConfiguration('backup.publishTableCommand.addDropTable');
-        $zipBackup = ConfigurationUtility::getConfiguration('backup.publishTableCommand.zipBackup');
+
+        $publishTableSettings = ConfigurationUtility::getConfiguration('backup.publishTableCommand');
+        $addDropTable = $publishTableSettings['addDropTable'];
+        $zipBackup = $publishTableSettings['zipBackup'];
 
         self::$logger->notice(
             'Creating a backup for "' . $tableName . '"',

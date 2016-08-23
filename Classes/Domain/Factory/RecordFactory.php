@@ -146,10 +146,13 @@ class RecordFactory
     {
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
         $this->tcaService = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService');
-        $this->maximumPageRecursion = ConfigurationUtility::getConfiguration('factory.maximumPageRecursion');
-        $this->maximumContentRecursion = ConfigurationUtility::getConfiguration('factory.maximumContentRecursion');
-        $this->maximumOverallRecursion = ConfigurationUtility::getConfiguration('factory.maximumOverallRecursion');
-        $this->resolvePageRelations = ConfigurationUtility::getConfiguration('factory.resolvePageRelations');
+
+        $factorySettings = ConfigurationUtility::getConfiguration('factory');
+        $this->maximumPageRecursion = $factorySettings['maximumPageRecursion'];
+        $this->maximumContentRecursion = $factorySettings['maximumContentRecursion'];
+        $this->maximumOverallRecursion = $factorySettings['maximumOverallRecursion'];
+        $this->resolvePageRelations = $factorySettings['resolvePageRelations'];
+
         $minimumRecursionDepth = $this->maximumPageRecursion + $this->maximumContentRecursion;
         if ($this->maximumOverallRecursion < $minimumRecursionDepth) {
             $this->maximumOverallRecursion = $minimumRecursionDepth;
