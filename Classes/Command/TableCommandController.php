@@ -72,7 +72,7 @@ class TableCommandController extends AbstractCommandController
     {
         if (!$this->contextService->isLocal()) {
             $this->outputLine('This command is available on Local only');
-            $this->sendAndExit(4);
+            $this->sendAndExit(self::EXIT_WRONG_CONTEXT);
         }
         $this->logger->notice('Called Publish Table Command for table name "' . $tableName . '"');
         $backupResults = SshConnection::makeInstance()->backupRemoteTable($tableName);
@@ -96,7 +96,7 @@ class TableCommandController extends AbstractCommandController
     {
         if (!$this->contextService->isLocal()) {
             $this->outputLine('This command is available on Local only');
-            $this->sendAndExit(4);
+            $this->sendAndExit(self::EXIT_WRONG_CONTEXT);
         }
         $this->logger->notice('Called Import Table Command for table "' . $tableName . '"');
         DatabaseUtility::backupTable($this->localDatabase, $tableName);
