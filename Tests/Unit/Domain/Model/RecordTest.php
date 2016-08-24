@@ -806,8 +806,9 @@ class RecordTest extends UnitTestCase
 
     /**
      * @covers ::getRelatedRecords
+     * @covers ::addRelatedRecord
      */
-    public function testGetRelatedRecordsReturnsRelatedRecords()
+    public function testAddAndGetRelatedRecordsSetsAndReturnsRelatedRecords()
     {
         $root = $this->getRecordStub([]);
         $root->__construct('pages', [], [], [], []);
@@ -827,10 +828,45 @@ class RecordTest extends UnitTestCase
     }
 
     /**
+     * @covers ::addRelatedRecord
+     * @covers ::setParentRecord
+     * @covers ::getParentRecord
+     */
+    public function testAddRelatedRecordsSetsParentRecord()
+    {
+        $root = $this->getRecordStub([]);
+        $root->__construct('pages', [], [], [], []);
+
+        $sub = $this->getRecordStub([]);
+        $sub->__construct('tt_content', [], [], [], []);
+
+        $root->addRelatedRecord($sub);
+
+        $this->assertSame($root, $sub->getParentRecord());
+    }
+
+    /**
+     * @covers ::addRelatedRecord
+     * @depends testAddAndGetRelatedRecordsSetsAndReturnsRelatedRecords
+     */
+    public function testAddRelatedRecordDoesNotAddPageToPageRecord()
+    {
+        $root = $this->getRecordStub([]);
+        $root->__construct('pages', ['uid' => 1], ['uid' => 1], [], []);
+
+        $sub = $this->getRecordStub([]);
+        $sub->__construct('pages', ['uid' => 1], [], [], []);
+
+        $root->addRelatedRecord($sub);
+
+        $this->assertSame([], $root->getRelatedRecords());
+    }
+
+    /**
      * @covers ::getStateRecursive
      * @depends testIsChangedReturnsTrueForAnyOtherStateThanChanged
      * @depends testIsChangedReturnsFalseForUnchangedState
-     * @depends testGetRelatedRecordsReturnsRelatedRecords
+     * @depends testAddAndGetRelatedRecordsSetsAndReturnsRelatedRecords
      */
     public function testGetStateRecursiveReturnsRootStateIfRootIsNotUnchanged()
     {
@@ -849,7 +885,7 @@ class RecordTest extends UnitTestCase
      * @covers ::isChangedRecursive
      * @depends testIsChangedReturnsTrueForAnyOtherStateThanChanged
      * @depends testIsChangedReturnsFalseForUnchangedState
-     * @depends testGetRelatedRecordsReturnsRelatedRecords
+     * @depends testAddAndGetRelatedRecordsSetsAndReturnsRelatedRecords
      */
     public function testGetStateRecursiveReturnsRelatedRecordsStateIfRootIsUnchanged()
     {
@@ -868,7 +904,7 @@ class RecordTest extends UnitTestCase
      * @covers ::isChangedRecursive
      * @depends testIsChangedReturnsTrueForAnyOtherStateThanChanged
      * @depends testIsChangedReturnsFalseForUnchangedState
-     * @depends testGetRelatedRecordsReturnsRelatedRecords
+     * @depends testAddAndGetRelatedRecordsSetsAndReturnsRelatedRecords
      */
     public function testGetStateRecursiveChecksEachRecordOnce()
     {
@@ -877,9 +913,9 @@ class RecordTest extends UnitTestCase
 
         /** @var Record|\PHPUnit_Framework_MockObject_MockObject $stub1 */
         $stub1 = $this->getMockBuilder(Record::class)
-                     ->setMethods(['getIgnoreFields', 'isParentRecordDisabled', 'isChanged'])
-                     ->disableOriginalConstructor()
-                     ->getMock();
+                      ->setMethods(['getIgnoreFields', 'isParentRecordDisabled', 'isChanged'])
+                      ->disableOriginalConstructor()
+                      ->getMock();
         $stub1->method('getIgnoreFields')->will($this->returnValue([]));
         $stub1->method('isParentRecordDisabled')->will($this->returnValue(false));
         $stub1->__construct('tt_content', ['uid' => 1], ['uid' => 1], [], []);
@@ -906,26 +942,10 @@ class RecordTest extends UnitTestCase
     }
 
     /**
-     * @covers ::addRelatedRecord
-     */
-    public function testAddRelatedRecordDoesNotAddPageToPageRecord()
-    {
-        $root = $this->getRecordStub([]);
-        $root->__construct('pages', ['uid' => 1], ['uid' => 1], [], []);
-
-        $sub = $this->getRecordStub([]);
-        $sub->__construct('pages', ['uid' => 1], [], [], []);
-
-        $root->addRelatedRecord($sub);
-
-        $this->assertSame([], $root->getRelatedRecords());
-    }
-
-    /**
      * @covers ::getStateRecursive
      * @depends testIsChangedReturnsTrueForAnyOtherStateThanChanged
      * @depends testIsChangedReturnsFalseForUnchangedState
-     * @depends testGetRelatedRecordsReturnsRelatedRecords
+     * @depends testAddAndGetRelatedRecordsSetsAndReturnsRelatedRecords
      * @depends testAddRelatedRecordDoesNotAddPageToPageRecord
      */
     public function testGetStateRecursiveIgnoresRelatedPageRecords()
@@ -939,5 +959,251 @@ class RecordTest extends UnitTestCase
         $root->addRelatedRecord($sub);
 
         $this->assertSame(Record::RECORD_STATE_UNCHANGED, $root->getStateRecursive());
+    }
+
+    /**
+     * @covers ::getAdditionalProperties
+     */
+    public function testGetAdditionalPropertiesReturnsAdditionalProperties()
+    {
+        $record = $this->getRecordStub([]);
+        $expectedProperties = ['foo' => 'bar'];
+        $record->__construct('pages', [], [], [], $expectedProperties);
+        $this->assertSame($expectedProperties, $record->getAdditionalProperties());
+    }
+
+    /**
+     * @covers ::getAdditionalProperty
+     */
+    public function testGetAdditionalPropertyReturnsDesiredAdditionalProperties()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], ['foo' => 'bar']);
+        $this->assertSame('bar', $record->getAdditionalProperty('foo'));
+    }
+
+    /**
+     * @covers ::setAdditionalProperties
+     * @depends testGetAdditionalPropertiesReturnsAdditionalProperties
+     */
+    public function testGetAdditionalPropertiesSetsThemAndAllowsChaining()
+    {
+        $record = $this->getRecordStub([]);
+        $this->assertSame($record, $record->setAdditionalProperties(['foo']));
+        $this->assertSame(['foo'], $record->getAdditionalProperties());
+    }
+
+    /**
+     * @covers ::addAdditionalProperty
+     * @depends testGetAdditionalPropertyReturnsDesiredAdditionalProperties
+     */
+    public function testAddAdditionalPropertySetsNewProperty()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+        $record->addAdditionalProperty('foo', 'bar');
+        $this->assertSame('bar', $record->getAdditionalProperty('foo'));
+    }
+
+    /**
+     * @covers ::addAdditionalProperty
+     * @depends testGetAdditionalPropertyReturnsDesiredAdditionalProperties
+     */
+    public function testAddAdditionalPropertyOverwritesExistingProperty()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], ['foo' => 'baz']);
+        $this->assertSame('baz', $record->getAdditionalProperty('foo'));
+        $record->addAdditionalProperty('foo', 'bar');
+        $this->assertSame('bar', $record->getAdditionalProperty('foo'));
+    }
+
+    /**
+     * @covers ::addRelatedRecordRaw
+     */
+    public function testAddRelatedRecordRawAddsRecordToDefinedTableIndex()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], ['foo' => 'baz']);
+
+        $related = $this->getRecordStub([]);
+        $related->__construct('tt_content', [], [], [], ['foo' => 'baz']);
+
+        $record->addRelatedRecordRaw($related, 'bazinga');
+
+        $this->assertSame(
+            [
+                'bazinga' => [
+                    0 => $related,
+                ],
+            ],
+            $record->getRelatedRecords()
+        );
+    }
+
+    /**
+     * @covers ::addRelatedRecordRaw
+     */
+    public function testAddRelatedRecordRawCanAddRecordTwice()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], ['foo' => 'baz']);
+
+        $related = $this->getRecordStub([]);
+        $related->__construct('tt_content', [], [], [], ['foo' => 'baz']);
+
+        $record->addRelatedRecordRaw($related, 'bazinga');
+        $record->addRelatedRecordRaw($related, 'bazinga');
+
+        $this->assertSame(
+            [
+                'bazinga' => [
+                    0 => $related,
+                    1 => $related,
+                ],
+            ],
+            $record->getRelatedRecords()
+        );
+    }
+
+    /**
+     * @covers ::addRelatedRecordRaw
+     * @depends testSetParentRecordNotSetsParentRecordIfParentRecordIsLocked
+     */
+    public function testAddRelatedRecordRawIgnoresParentRecordLockedAndRecordUid()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $related = $this->getRecordStub([]);
+        $related->__construct('tt_content', ['uid' => 3], ['uid' => 3], [], []);
+
+        $related->lockParentRecord();
+
+        $record->addRelatedRecordRaw($related, 'bazinga');
+
+        $this->assertSame(
+            [
+                'bazinga' => [
+                    0 => $related,
+                ],
+            ],
+            $record->getRelatedRecords()
+        );
+    }
+
+    /**
+     * @covers ::addRelatedRecords
+     * @depends testSetParentRecordNotSetsParentRecordIfParentRecordIsLocked
+     */
+    public function testAddRelatedRecordsAddsArrayOfRelatedRecordsAndAllowsChaining()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $related1 = $this->getRecordStub([]);
+        $related1->__construct('tt_content', ['uid' => 1], ['uid' => 1], [], []);
+
+        $related2 = $this->getRecordStub([]);
+        $related2->__construct('tt_content', ['uid' => 2], ['uid' => 2], [], []);
+
+        $this->assertSame($record, $record->addRelatedRecords([$related1, $related2]));
+
+        $this->assertSame(
+            [
+                'tt_content' => [
+                    1 => $related1,
+                    2 => $related2,
+                ],
+            ],
+            $record->getRelatedRecords()
+        );
+    }
+
+    /**
+     * @covers ::removeRelatedRecord
+     * @depends testAddRelatedRecordsAddsArrayOfRelatedRecordsAndAllowsChaining
+     */
+    public function testRemoveRelatedRecordRemvoesPreviouslyAddedRecord()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $related1 = $this->getRecordStub([]);
+        $related1->__construct('tt_content', ['uid' => 1], ['uid' => 1], [], []);
+
+        $related2 = $this->getRecordStub([]);
+        $related2->__construct('tt_content', ['uid' => 2], ['uid' => 2], [], []);
+
+        $record->addRelatedRecords([$related1, $related2]);
+
+        $record->removeRelatedRecord($related1);
+
+        $this->assertSame(
+            [
+                'tt_content' => [
+                    2 => $related2,
+                ],
+            ],
+            $record->getRelatedRecords()
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function propertiesDataProvider()
+    {
+        // @formatter:off
+        // @codingStandardsIgnoreStart
+        return [
+            'none' => [[], [], null],
+            'only_local' => [['foo' => 'bar'], [], 'bar'],
+            'only_foreign' => [[], ['foo' => 'baz'], 'baz'],
+            'both_same' => [['foo' => 'boo'], ['foo' => 'boo'], 'boo'],
+            'different_strings' => [['foo' => 'faz'], ['foo' => 'baz'], 'faz,baz'],
+            'different_integers' => [['foo' => 2], ['foo' => 4], 2],
+            'only_local_array' => [['foo' => ['baz' => 2]], [], ['baz' => 2]],
+            'only_foreign_array' => [[], ['foo' => ['baz' => 2]], ['baz' => 2]],
+            'both_same_array' => [['foo' => ['baz' => 2]], ['foo' => ['baz' => 2]], ['baz' => 2]],
+            'different_array' => [['foo' => ['bar' => 'foo']], ['foo' => ['baz' => 'faz']], ['bar' => 'foo', 'baz' => 'faz']],
+            'local_array_foreign_string' => [['foo' => ['bar' => 'foo']], ['foo' => 'faz'], ['bar' => 'foo', 'faz']],
+            'foreign_array_local_string' => [['foo' => 'faz'], ['foo' => ['bar' => 'foo']], ['faz', 'bar' => 'foo']],
+            'only_local_list' => [['foo' => '2,3'], [], '2,3'],
+            'only_foreign_list' => [[], ['foo' => '2,3'], '2,3'],
+            'both_list' => [['foo' => '2,3'], ['foo' => '2,3'], '2,3'],
+            'different_list' => [['foo' => '2,3'], ['foo' => '4,5'], '2,3,4,5'],
+            'local_zero' => [['foo' => '0'], ['foo' => '1'], '1'],
+            'foreign_zero' => [['foo' => '2'], ['foo' => '0'], '2'],
+            'local_true' => [['foo' => true], [], true],
+            'local_false' => [['foo' => false], [], false],
+            'foreign_true' => [[], ['foo' => true], true],
+            // Hmm, that might not be the expected return value for "foreign_false"...
+            'foreign_false' => [[], ['foo' => false], null],
+            'both_true' => [['foo' => true], ['foo' => true], true],
+            'both_false' => [['foo' => false], ['foo' => false], false],
+            'different_true' => [['foo' => true], ['foo' => false], true],
+            'different_false' => [['foo' => false], ['foo' => true], true],
+        ];
+        // @codingStandardsIgnoreEnd
+        // @formatter:on
+    }
+
+    /**
+     * @covers ::getMergedProperty
+     * @dataProvider propertiesDataProvider
+     *
+     * @param array $localProperties
+     * @param array $foreignProperties
+     * @param mixed $expectedProperty
+     */
+    public function testGetMergedPropertyReturnsExpectedValue(
+        array $localProperties,
+        array $foreignProperties,
+        $expectedProperty
+    ) {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', $localProperties, $foreignProperties, [], []);
+        $this->assertSame($expectedProperty, $record->getMergedProperty('foo'));
     }
 }

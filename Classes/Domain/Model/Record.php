@@ -490,6 +490,7 @@ class Record implements RecordInterface
 
     /**
      * @return array
+     * @codeCoverageIgnore
      */
     public function hasDeleteField()
     {
@@ -498,6 +499,7 @@ class Record implements RecordInterface
 
     /**
      * @return array
+     * @codeCoverageIgnore
      */
     public function getDeleteField()
     {
@@ -506,6 +508,7 @@ class Record implements RecordInterface
 
     /**
      * @return mixed
+     * @codeCoverageIgnore
      */
     public function getColumnsTca()
     {
@@ -604,7 +607,7 @@ class Record implements RecordInterface
                 if (strpos($localValue, ',') !== false || strpos($foreignValue, ',') !== false) {
                     $localValueArray = explode(',', $localValue);
                     $foreignValueArray = explode(',', $foreignValue);
-                    $value = implode(',', array_merge($localValueArray, $foreignValueArray));
+                    $value = implode(',', array_filter(array_merge($localValueArray, $foreignValueArray)));
                 } else {
                     if ($localValue === '0' && $foreignValue !== '0') {
                         $value = $foreignValue;
