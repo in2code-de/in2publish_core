@@ -62,7 +62,7 @@ abstract class AbstractService
         'Ä' => 'Ae',
         'Ö' => 'Oe',
         'Ü' => 'Ue',
-        'ß' => 'ss'
+        'ß' => 'ss',
     );
 
     /**
