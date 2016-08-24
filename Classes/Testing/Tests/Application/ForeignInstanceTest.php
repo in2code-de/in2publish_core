@@ -56,8 +56,7 @@ class ForeignInstanceTest implements TestCaseInterface
             return new TestResult(
                 'application.foreign_cli_lowlevel_user_missing',
                 TestResult::ERROR,
-                'application.foreign_cli_lowlevel_user_missing_message',
-                array(PHP_EOL . $dispatcherResult['stdOut'])
+                array('application.foreign_cli_lowlevel_user_missing_message', $dispatcherResult['stdOut'])
             );
         }
 
@@ -65,8 +64,11 @@ class ForeignInstanceTest implements TestCaseInterface
             return new TestResult(
                 'application.foreign_cli_dispatcher_not_callable',
                 TestResult::ERROR,
-                'application.foreign_cli_dispatcher_error_message',
-                array(PHP_EOL . $dispatcherResult['stdOut'] . PHP_EOL . $dispatcherResult['stdErr'])
+                array(
+                    'application.foreign_cli_dispatcher_error_message',
+                    $dispatcherResult['stdOut'],
+                    $dispatcherResult['stdErr'],
+                )
             );
         }
 
@@ -78,8 +80,7 @@ class ForeignInstanceTest implements TestCaseInterface
             return new TestResult(
                 'application.foreign_version_differs',
                 TestResult::ERROR,
-                'application.versions',
-                array($localVersion, $foreignVersion)
+                array('application.local_version', $localVersion, 'application.foreign_version', $foreignVersion)
             );
         }
 
@@ -89,8 +90,10 @@ class ForeignInstanceTest implements TestCaseInterface
             return new TestResult(
                 'application.foreign_configuration_not_loaded',
                 TestResult::ERROR,
-                'application.foreign_configuration_loading_state',
-                array(LocalizationUtility::translate($foreignConfigState, 'in2publish_core'))
+                array(
+                    'application.foreign_configuration_loading_state',
+                    LocalizationUtility::translate($foreignConfigState, 'in2publish_core'),
+                )
             );
         }
 
@@ -99,13 +102,21 @@ class ForeignInstanceTest implements TestCaseInterface
             return new TestResult(
                 'application.different_t3_versions',
                 TestResult::ERROR,
-                'application.t3_versions',
-                array($foreignVersion, TYPO3_version)
+                array(
+                    'application.local_t3_versions',
+                    TYPO3_version,
+                    'application.foreign_t3_versions',
+                    $foreignVersion,
+                )
             );
         }
 
         if ($sshConnection->getForeignGlobalConfiguration() === 'Utf8Filesystem: 1') {
-            return new TestResult('application.foreign_utf8_fs', TestResult::ERROR, 'application.utf8_fs_errors');
+            return new TestResult(
+                'application.foreign_utf8_fs',
+                TestResult::ERROR,
+                array('application.utf8_fs_errors')
+            );
         }
 
         return new TestResult('application.foreign_system_validated');

@@ -177,6 +177,7 @@ call_user_func(
                 $GLOBALS['in2publish_core']['tests'] = array(
                     'In2code\\In2publishCore\\Testing\\Tests\\Configuration\\ConfigurationIsAvailableTest',
                     'In2code\\In2publishCore\\Testing\\Tests\\Configuration\\ConfigurationFormatTest',
+                    'In2code\\In2publishCore\\Testing\\Tests\\Configuration\\ConfigurationValuesTest',
                     'In2code\\In2publishCore\\Testing\\Tests\\Database\\LocalDatabaseTest',
                     'In2code\\In2publishCore\\Testing\\Tests\\Database\\ForeignDatabaseTest',
                     'In2code\\In2publishCore\\Testing\\Tests\\Database\\DatabaseDifferencesTest',

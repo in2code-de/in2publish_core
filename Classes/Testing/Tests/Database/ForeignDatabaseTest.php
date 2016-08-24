@@ -68,8 +68,7 @@ class ForeignDatabaseTest implements TestCaseInterface
             return new TestResult(
                 'database.foreign_tables_missing',
                 TestResult::ERROR,
-                'database.missing_important_tables',
-                array(PHP_EOL . implode(PHP_EOL, $missingTables))
+                array_merge(array('database.missing_important_tables'), $missingTables)
             );
         }
 

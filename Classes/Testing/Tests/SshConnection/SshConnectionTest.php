@@ -48,8 +48,7 @@ class SshConnectionTest implements TestCaseInterface
                 return new TestResult(
                     'ssh_connection.invalid_php',
                     TestResult::ERROR,
-                    'ssh_connection.php_test_error_message',
-                    array($phpVersion['stdErr'])
+                    array('ssh_connection.php_test_error_message', $phpVersion['stdErr'])
                 );
             }
 
@@ -72,19 +71,18 @@ class SshConnectionTest implements TestCaseInterface
                 return new TestResult(
                     'ssh_connection.foreign_document_validation_error',
                     TestResult::ERROR,
-                    'ssh_connection.foreign_document_validation_error_reason',
-                    array(PHP_EOL . $result['stdOut'] . PHP_EOL . $result['stdErr'])
+                    array(
+                        'ssh_connection.foreign_document_validation_error_reason',
+                        $result['stdOut'],
+                        $result['stdErr'],
+                    )
                 );
             }
-
-            // für foreignENVtest
-            //            preg_match('~PHP (?P<version>\d\.\d+\.\d+)~', implode(PHP_EOL, $phpVersionInfo), $matches);
         } catch (\Exception $exception) {
             return new TestResult(
                 'ssh_connection.connection_failed',
                 TestResult::ERROR,
-                'ssh_connection.connection_failure_message',
-                array($exception->getMessage())
+                array('ssh_connection.connection_failure_message', $exception->getMessage())
             );
         }
 
@@ -97,7 +95,6 @@ class SshConnectionTest implements TestCaseInterface
     public function getDependencies()
     {
         return array(
-            'In2code\\In2publishCore\\Testing\\Tests\\Configuration\\ConfigurationFormatTest',
             'In2code\\In2publishCore\\Testing\\Tests\\SshConnection\\SshFunctionAvailabilityTest',
         );
     }

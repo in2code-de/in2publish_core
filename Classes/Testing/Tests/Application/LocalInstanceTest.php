@@ -49,7 +49,7 @@ class LocalInstanceTest implements TestCaseInterface
         }
 
         if (!empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'])) {
-            return new TestResult('application.local_utf8_fs', TestResult::ERROR, 'application.utf8_fs_errors');
+            return new TestResult('application.local_utf8_fs', TestResult::ERROR, array('application.utf8_fs_errors'));
         }
 
         $excludedTables = ConfigurationUtility::getConfiguration('excludeRelatedTables');
@@ -67,8 +67,7 @@ class LocalInstanceTest implements TestCaseInterface
             return new TestResult(
                 'application.superfluous_excluded_tables_detected',
                 TestResult::WARNING,
-                'application.superfluous_excluded_tables',
-                array(PHP_EOL . implode(PHP_EOL, $missingTables))
+                array_merge(array('application.superfluous_excluded_tables'), $missingTables)
             );
         }
 

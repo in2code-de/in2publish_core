@@ -62,7 +62,7 @@ class SshFunctionAvailabilityTest implements TestCaseInterface
             return new TestResult(
                 'ssh_connection.chmod_missing',
                 TestResult::WARNING,
-                'ssh_connection.chmod_description'
+                array('ssh_connection.chmod_description')
             );
         }
 
@@ -74,6 +74,8 @@ class SshFunctionAvailabilityTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return array();
+        return array(
+            'In2code\\In2publishCore\\Testing\\Tests\\Configuration\\ConfigurationValuesTest',
+        );
     }
 }

@@ -94,10 +94,11 @@ class DatabaseDifferencesTest implements TestCaseInterface
             return new TestResult(
                 'database.tables_missing_on_other_side',
                 TestResult::ERROR,
-                'database.missing_tables',
-                array(
-                    PHP_EOL . implode(PHP_EOL, $tablesOnlyOnLocal) . PHP_EOL,
-                    PHP_EOL . implode(PHP_EOL, $tablesOnlyOnForeign) . PHP_EOL,
+                array_merge(
+                    array('database.tables_only_on_local'),
+                    $tablesOnlyOnLocal,
+                    array('database.tables_only_on_foreign'),
+                    $tablesOnlyOnForeign
                 )
             );
         }
@@ -141,8 +142,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
             return new TestResult(
                 'database.field_differences',
                 TestResult::ERROR,
-                'database.different_fields',
-                array(PHP_EOL . implode(PHP_EOL, $differences))
+                array_merge(array('database.different_fields'), $differences)
             );
         }
 

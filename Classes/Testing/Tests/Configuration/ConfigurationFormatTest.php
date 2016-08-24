@@ -66,8 +66,7 @@ class ConfigurationFormatTest implements TestCaseInterface
             return new TestResult(
                 'configuration.superfluous_keys',
                 TestResult::ERROR,
-                'configuration.keys_superfluous',
-                array(PHP_EOL . implode(PHP_EOL, $superfluousKeys))
+                array_merge(array('configuration.keys_superfluous'), $superfluousKeys)
             );
         }
 
@@ -77,8 +76,7 @@ class ConfigurationFormatTest implements TestCaseInterface
             return new TestResult(
                 'configuration.missing_keys',
                 TestResult::ERROR,
-                'configuration.keys_missing',
-                array(PHP_EOL . implode(PHP_EOL, $missingKeys))
+                array_merge(array('configuration.keys_missing'), $missingKeys)
             );
         }
 
@@ -88,8 +86,7 @@ class ConfigurationFormatTest implements TestCaseInterface
             return new TestResult(
                 'configuration.mismatching_keys',
                 TestResult::ERROR,
-                'configuration.keys_mismatching',
-                array(PHP_EOL . implode(PHP_EOL, $mismatchingKeys))
+                array_merge(array('configuration.keys_mismatching'), $mismatchingKeys)
             );
         }
 

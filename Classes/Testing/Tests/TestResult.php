@@ -51,12 +51,7 @@ class TestResult
     /**
      * @var string
      */
-    protected $message = '';
-
-    /**
-     * @var array|null
-     */
-    protected $arguments = null;
+    protected $messages = '';
 
     /**
      * @var array|null
@@ -68,21 +63,19 @@ class TestResult
      *
      * @param string $label Key of the label for headline. Only used when $severity !== OK
      * @param string $severity
-     * @param string $message Key of the label for explanation what went wrong.
-     * @param array|null $arguments
+     * @param array $messages Keys of labels for explanations what went wrong.
      * @param array|null $labelArguments
+     * @internal param array|null $arguments
      */
     public function __construct(
         $label,
         $severity = self::OK,
-        $message = '',
-        array $arguments = null,
+        array $messages = array(),
         array $labelArguments = null
     ) {
         $this->severity = $severity;
         $this->label = $label;
-        $this->message = $message;
-        $this->arguments = $arguments;
+        $this->messages = $messages;
         $this->labelArguments = $labelArguments;
     }
 
@@ -126,40 +119,28 @@ class TestResult
     /**
      * @return string
      */
-    public function getMessage()
+    public function getMessages()
     {
-        return $this->message;
+        return $this->messages;
     }
 
     /**
-     * @param string $message
+     * @param string $messages
      */
-    public function setMessage($message)
+    public function setMessages($messages)
     {
-        $this->message = $message;
+        $this->messages = $messages;
     }
 
     /**
      * @return string
      */
-    public function getTranslatedMessage()
+    public function getTranslatedMessages()
     {
-        return TestLabelLocalizer::translate($this->message, $this->arguments);
-    }
-
-    /**
-     * @return array|null
-     */
-    public function getArguments()
-    {
-        return $this->arguments;
-    }
-
-    /**
-     * @param array|null $arguments
-     */
-    public function setArguments(array $arguments = null)
-    {
-        $this->arguments = $arguments;
+        $translatedMessages = array();
+        foreach ($this->messages as $message) {
+            $translatedMessages[] = TestLabelLocalizer::translate($message);
+        }
+        return implode(PHP_EOL, $translatedMessages);
     }
 }

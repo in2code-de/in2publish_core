@@ -8,12 +8,12 @@
 				<target state="translated">Der Test %s wurde übersprungen, weil andere Tests fehlschlugen oder übersprungen wurden.</target>
 			</trans-unit>
 			<trans-unit id="dependency_failed">
-				<source>Following dependencies failed: %s</source>
-				<target state="translated">Folgende Tests schlugen fehl: %s.</target>
+				<source>Following dependencies failed:</source>
+				<target state="translated">Folgende Tests schlugen fehl:</target>
 			</trans-unit>
 			<trans-unit id="dependency_skipped">
-				<source>Following dependencies skipped: %s</source>
-				<target state="translated">Folgende Tests wurden übersprungen: %s.</target>
+				<source>Following dependencies skipped:</source>
+				<target state="translated">Folgende Tests wurden übersprungen:</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationIsAvailableTest -->
@@ -25,6 +25,45 @@
 			<trans-unit id="configuration.not_available">
 				<source>The configuration could not be loaded.</source>
 				<target state="translated">Die Konfigurationsdatei konnte nicht geladen werden.</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest -->
+
+			<trans-unit id="configuration.options_valid">
+				<source>The tested configration options are valid.</source>
+				<target state="translated">Die getesteten Konfigurationsoptionen sind gültig.</target>
+			</trans-unit>
+			<trans-unit id="configuration.options_invalid">
+				<source>Some tested configuration options are invalid.</source>
+				<target state="translated">Einige der getesteten Konfigurationsoptionen sind ungültig.</target>
+			</trans-unit>
+			<trans-unit id="configuration.loglevel_too_high">
+				<source>The configured log level is too high. Maximum is 7.</source>
+				<target state="translated">Das eingestellte LogLevel ist zu hoch. Das Maximum beträgt 7.</target>
+			</trans-unit>
+			<trans-unit id="configuration.loglevel_too_low">
+				<source>The configured log level is too low. The log level must be at least 0.</source>
+				<target state="translated">Das eingestellte LogLevel ist zu niedrig. Das LogLevel muss mindestens 0 sein.</target>
+			</trans-unit>
+			<trans-unit id="configuration.private_key_invalid">
+				<source>The given SSH private key file can not be found.</source>
+				<target state="translated">Der angegebene SSH Private Key konnte nicht gefunden werden.</target>
+			</trans-unit>
+			<trans-unit id="configuration.public_key_invalid">
+				<source>The given SSH public key file can not be found.</source>
+				<target state="translated">Der angegebene SSH Public Key konnte nicht gefunden werden.</target>
+			</trans-unit>
+			<trans-unit id="configuration.breadcrumb_and_disable_parents_active">
+				<source>view.record.breadcrumb and debug.disableParentRecords are both enabled. Breadcrumbs will not be displayed correctly.</source>
+				<target state="translated">view.record.breadcrumb und debug.disableParentRecords sind beide aktiviert. Breadcrumbs werden nicht korrekt dargestellt.</target>
+			</trans-unit>
+			<trans-unit id="configuration.backup_folder_invalid">
+				<source>The configured backup folder does not exist.</source>
+				<target state="translated">Das Verzeichnis für Backups existiert nicht.</target>
+			</trans-unit>
+			<trans-unit id="configuration.zip_extension_not_installed">
+				<source>The compression of backups is enabled, but the zip extension for PHP is not installed or activated.</source>
+				<target state="translated">Die komprimierung für Backups ist aktiviert, die PHP Extension zip ist aber nicht installiert oder aktivier.</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest -->
@@ -39,8 +78,8 @@
 				<target state="translated">Die Konfiguration enthält nicht alle notwendigen Optionen.</target>
 			</trans-unit>
 			<trans-unit id="configuration.keys_missing">
-				<source>These configuration values are missing: %s</source>
-				<target state="translated">Diese Optionen fehlen in der Konfiguration: %s</target>
+				<source>These configuration values are missing:</source>
+				<target state="translated">Diese Optionen fehlen in der Konfiguration:</target>
 			</trans-unit>
 
 			<trans-unit id="configuration.superfluous_keys">
@@ -48,8 +87,8 @@
 				<target state="translated">Die Konfiguration enthält nicht genutzte Optionen.</target>
 			</trans-unit>
 			<trans-unit id="configuration.keys_superfluous">
-				<source>These configuration options are not used: %s</source>
-				<target state="translated">Diese Optionen sind überflüssig: %s</target>
+				<source>These configuration options are not used:</source>
+				<target state="translated">Diese Optionen werden nicht genutzt:</target>
 			</trans-unit>
 
 			<trans-unit id="configuration.mismatching_keys">
@@ -57,8 +96,8 @@
 				<target state="translated">Einige optionen entsprechen nicht dem erwarteten Variablentyp.</target>
 			</trans-unit>
 			<trans-unit id="configuration.keys_mismatching">
-				<source>Following options do not respect the format: %s</source>
-				<target state="translated">Diese Optionen entsprechen nicht dem Format: %s</target>
+				<source>Following options do not respect the format:</source>
+				<target state="translated">Diese Optionen entsprechen nicht dem Format:</target>
 			</trans-unit>
 
 
@@ -66,8 +105,8 @@
 				 && \In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest -->
 
 			<trans-unit id="database.missing_important_tables">
-				<source>These tables are missing: %s</source>
-				<target state="translated">Diese Tabellen fehlen: %s</target>
+				<source>These tables are missing:</source>
+				<target state="translated">Diese Tabellen fehlen:</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseAccessTest -->
@@ -126,9 +165,13 @@
 				<source>The databases have different tables.</source>
 				<target state="translated">Die Datenbanken haben unterschiedliche Tabellen.</target>
 			</trans-unit>
-			<trans-unit id="database.missing_tables">
-				<source>Following tables only exist on local: %sFollowing tables only exist on foreign: %s</source>
-				<target state="translated">Folgende Tabellen exitsieren nur lokal: %sFolgende Tabellen existieren nur in der entfernten Datebank: %s</target>
+			<trans-unit id="database.tables_only_on_local">
+				<source>Following tables only exist on local:</source>
+				<target state="translated">Folgende Tabellen exitsieren nur lokal:</target>
+			</trans-unit>
+			<trans-unit id="database.tables_only_on_foreign">
+				<source>Following tables only exist on foreign:</source>
+				<target state="translated">Folgende Tabellen existieren nur in der entfernten Datebank:</target>
 			</trans-unit>
 
 			<trans-unit id="database.field_differences">
@@ -136,8 +179,8 @@
 				<target state="translated">Es wurden Unterschiede in den Feldern der lokalen und entfernten Datenbank festgestellt.</target>
 			</trans-unit>
 			<trans-unit id="database.different_fields">
-				<source>These fields differ: %s</source>
-				<target state="translated">Diese Felder haben Unterschiede: %s</target>
+				<source>These fields differ:</source>
+				<target state="translated">Diese Felder haben Unterschiede:</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest -->
@@ -172,16 +215,16 @@
 				<target state="translated">Die SSH Verbindung zum entfernte System schlug fehl.</target>
 			</trans-unit>
 			<trans-unit id="ssh_connection.connection_failure_message">
-				<source>The following error was returned by the ssh connection: "%s"</source>
-				<target state="translated">Der folgende Fehler wurde von der SSH Verbindung gemeldet: "%s"</target>
+				<source>The following error was returned by the ssh connection:</source>
+				<target state="translated">Der folgende Fehler wurde von der SSH Verbindung gemeldet:</target>
 			</trans-unit>
 			<trans-unit id="ssh_connection.invalid_php">
 				<source>The path to php seems to be wrong (option: sshConnection.pathToPhp).</source>
 				<target state="translated">Der Pfad zu PHP stimmt möglicherweise nicht (Option: sshConnection.pathToPhp).</target>
 			</trans-unit>
 			<trans-unit id="ssh_connection.php_test_error_message">
-				<source>The test returned following error message: %s</source>
-				<target state="translated">Der Test hat folgende Fehlermeldung zurück gegeben: %s</target>
+				<source>The test returned following error message:</source>
+				<target state="translated">Der Test hat folgende Fehlermeldung zurück gegeben:</target>
 			</trans-unit>
 			<trans-unit id="ssh_connection.foreign_document_root_wrong">
 				<source>The foreign document root could not be validated, because typical TYPO3 folders are missing (option: sshConnection.foreignRootPath).</source>
@@ -192,8 +235,8 @@
 				<target state="translated">Das Webverzeichnis des entfernten Systems konnte aus anderen Gründen nicht verifiziert werden.</target>
 			</trans-unit>
 			<trans-unit id="ssh_connection.foreign_document_validation_error_reason">
-				<source>The command returned following message: %s</source>
-				<target state="translated">Der Befehl gab folgende Nachricht zurück: %s.</target>
+				<source>The command returned following message:</source>
+				<target state="translated">Der Befehl gab folgende Nachricht zurück:</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\LocalInstanceTest
@@ -223,8 +266,8 @@
 				<target state="translated">Einige Tabellen aus der Option "excludeRelatedTables" existieren nicht in der lokalen Datenbank.</target>
 			</trans-unit>
 			<trans-unit id="application.superfluous_excluded_tables">
-				<source>Following tables are configured but do not exist: %s</source>
-				<target state="translated">Folgende Tabellen wurden konfiguriert, existieren aber nicht: %s</target>
+				<source>Following tables are configured but do not exist:</source>
+				<target state="translated">Folgende Tabellen wurden konfiguriert, existieren aber nicht:</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest -->
@@ -242,32 +285,36 @@
 				<target state="translated">Der CLI dispatcher konnte auf dem entfernten System nicht aufgerufen werden, da dort der Backend User "_cli_lowlevel" fehlt.</target>
 			</trans-unit>
 			<trans-unit id="application.foreign_cli_lowlevel_user_missing_message">
-				<source>The call to the dispatcher returned following error: %s</source>
-				<target state="translated">Der Aufruf des Dispatcher gab folgenden Fehler zurück: %s</target>
+				<source>The call to the dispatcher returned following error:</source>
+				<target state="translated">Der Aufruf des Dispatcher gab folgenden Fehler zurück:</target>
 			</trans-unit>
 			<trans-unit id="application.foreign_cli_dispatcher_not_callable">
 				<source>Could not call the CLI dispatcher on foreign because of an unexpected error.</source>
 				<target state="translated">Der CLI dispatcher konnte auf dem entfernten System aufgrund eines unbekannten Fehlers nicht aufgerufen werden.</target>
 			</trans-unit>
 			<trans-unit id="application.foreign_cli_dispatcher_error_message">
-				<source>The call to the dispatcher returned following message: %s</source>
-				<target state="translated">Der Aufruf des Dispatcher gab folgenden Nachricht zurück: %s</target>
+				<source>The call to the dispatcher returned following message:</source>
+				<target state="translated">Der Aufruf des Dispatcher gab folgenden Nachricht zurück:</target>
 			</trans-unit>
 			<trans-unit id="application.foreign_version_differs">
 				<source>The installed versions on the local and foreign system are different.</source>
 				<target state="translated">Auf dem lokalen und dem entfernten System sind unterschiedliche Versionen von in2publish installiert.</target>
 			</trans-unit>
-			<trans-unit id="application.versions">
-				<source>Local version: %s. Foreign Version: %s</source>
-				<target state="translated">Lokale Version: %s. Entfernte Version: %s.</target>
+			<trans-unit id="application.local_version">
+				<source>Local version:</source>
+				<target state="translated">Lokale Version:</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_version">
+				<source>Foreign Version:</source>
+				<target state="translated">Entfernte Version:</target>
 			</trans-unit>
 			<trans-unit id="application.foreign_configuration_not_loaded">
 				<source>The configuration could not be loaded on the foreign system.</source>
 				<target state="translated">Die Konfiguration auf dem entfernten System konnte nicht geladen werden.</target>
 			</trans-unit>
 			<trans-unit id="application.foreign_configuration_loading_state">
-				<source>The confguration utility has following loading state: "%s"</source>
-				<target state="translated">Das Konfiguraionswerkzeug hat folgenden Ladestatus: "%s"</target>
+				<source>The confguration utility has following loading state:</source>
+				<target state="translated">Das Konfiguraionswerkzeug hat folgenden Ladestatus:</target>
 			</trans-unit>
 			<trans-unit id="application.foreign_utf8_fs">
 				<source>UTF8 filesystem configured for the foreign system, please disable this configuration in Install tool.</source>
@@ -277,9 +324,13 @@
 				<source>The TYPO3 versions of the local and the foreign instance differ.</source>
 				<target state="translated">Die TYPO3 Version der lokalen und entfernten Instanz ist unterschiedlich.</target>
 			</trans-unit>
-			<trans-unit id="application.t3_versions">
-				<source>Local TYPO3 Version: %s. Foreign TYPO3 Version: %s.</source>
-				<target state="translated">Lokale TYPO3 Version: %s. Entfernte TYPO3 Version: %s.</target>
+			<trans-unit id="application.local_t3_versions">
+				<source>Local TYPO3 Version:</source>
+				<target state="translated">Lokale TYPO3 Version:</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_t3_versions">
+				<source>Foreign TYPO3 Version:</source>
+				<target state="translated">Entfernte TYPO3 Version:</target>
 			</trans-unit>
 		</body>
 	</file>

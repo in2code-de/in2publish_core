@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
-	<file source-language="en" target-language="de" product-name="in2publish_core">
+	<file source-language="en" product-name="in2publish_core">
 		<header/>
 		<body>
 			<trans-unit id="test_skipped">
 				<source>The test %s was skipped because other tests failed or were skipped.</source>
 			</trans-unit>
 			<trans-unit id="dependency_failed">
-				<source>Following dependencies failed: %s</source>
+				<source>Following dependencies failed:</source>
 			</trans-unit>
 			<trans-unit id="dependency_skipped">
-				<source>Following dependencies skipped: %s</source>
+				<source>Following dependencies skipped:</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationIsAvailableTest -->
@@ -20,6 +20,36 @@
 			</trans-unit>
 			<trans-unit id="configuration.not_available">
 				<source>The configuration could not be loaded.</source>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest -->
+
+			<trans-unit id="configuration.options_valid">
+				<source>The tested configration options are valid.</source>
+			</trans-unit>
+			<trans-unit id="configuration.options_invalid">
+				<source>Some tested configuration options are invalid.</source>
+			</trans-unit>
+			<trans-unit id="configuration.loglevel_too_high">
+				<source>The configured log level is too high. Maximum is 7.</source>
+			</trans-unit>
+			<trans-unit id="configuration.loglevel_too_low">
+				<source>The configured log level is too low. The log level must be at least 0.</source>
+			</trans-unit>
+			<trans-unit id="configuration.private_key_invalid">
+				<source>The given SSH private key file can not be found.</source>
+			</trans-unit>
+			<trans-unit id="configuration.public_key_invalid">
+				<source>The given SSH public key file can not be found.</source>
+			</trans-unit>
+			<trans-unit id="configuration.breadcrumb_and_disable_parents_active">
+				<source>view.record.breadcrumb and debug.disableParentRecords are both enabled. Breadcrumbs will not be displayed correctly.</source>
+			</trans-unit>
+			<trans-unit id="configuration.backup_folder_invalid">
+				<source>The configured backup folder does not exist.</source>
+			</trans-unit>
+			<trans-unit id="configuration.zip_extension_not_installed">
+				<source>The compression of backups is enabled, but the zip extension for PHP is not installed or activated.</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest -->
@@ -32,21 +62,21 @@
 				<source>The configuration file is missing required options.</source>
 			</trans-unit>
 			<trans-unit id="configuration.keys_missing">
-				<source>These configuration values are missing: %s</source>
+				<source>These configuration values are missing:</source>
 			</trans-unit>
 
 			<trans-unit id="configuration.superfluous_keys">
 				<source>The configuration file contains unused options.</source>
 			</trans-unit>
 			<trans-unit id="configuration.keys_superfluous">
-				<source>These configuration options are not used: %s</source>
+				<source>These configuration options are not used:</source>
 			</trans-unit>
 
 			<trans-unit id="configuration.mismatching_keys">
 				<source>Some options to not match the expected variable type.</source>
 			</trans-unit>
 			<trans-unit id="configuration.keys_mismatching">
-				<source>Following options do not respect the format: %s</source>
+				<source>Following options do not respect the format:</source>
 			</trans-unit>
 
 
@@ -54,7 +84,7 @@
 				 && \In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest -->
 
 			<trans-unit id="database.missing_important_tables">
-				<source>These tables are missing: %s</source>
+				<source>These tables are missing:</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseAccessTest -->
@@ -102,15 +132,19 @@
 			<trans-unit id="database.tables_missing_on_other_side">
 				<source>The databases have different tables.</source>
 			</trans-unit>
-			<trans-unit id="database.missing_tables">
-				<source>Following tables only exist on local: %sFollowing tables only exist on foreign: %s</source>
+			<trans-unit id="database.tables_only_on_local">
+				<source>Following tables only exist on local:</source>
+			</trans-unit>
+			<trans-unit id="database.tables_only_on_foreign">
+				<source>Following tables only exist on foreign:</source>
 			</trans-unit>
 
 			<trans-unit id="database.field_differences">
 				<source>Field differences between your databases have been detected.</source>
 			</trans-unit>
 			<trans-unit id="database.different_fields">
-				<source>These fields differ: %s</source>
+				<source>These fields differ:</source>
+				<target state="translated">Diese Felder haben Unterschiede:</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest -->
@@ -139,13 +173,13 @@
 				<source>The SSH connection to the foreign host failed.</source>
 			</trans-unit>
 			<trans-unit id="ssh_connection.connection_failure_message">
-				<source>The following error was returned by the ssh connection: "%s"</source>
+				<source>The following error was returned by the ssh connection:</source>
 			</trans-unit>
 			<trans-unit id="ssh_connection.invalid_php">
 				<source>The path to php seems to be wrong (option: sshConnection.pathToPhp).</source>
 			</trans-unit>
 			<trans-unit id="ssh_connection.php_test_error_message">
-				<source>The test returned following error message: %s</source>
+				<source>The test returned following error message:</source>
 			</trans-unit>
 			<trans-unit id="ssh_connection.foreign_document_root_wrong">
 				<source>The foreign document root could not be validated, because typical TYPO3 folders are missing (option: sshConnection.foreignRootPath).</source>
@@ -154,7 +188,7 @@
 				<source>Could not validate the foreign document root for other reasons.</source>
 			</trans-unit>
 			<trans-unit id="ssh_connection.foreign_document_validation_error_reason">
-				<source>The command returned following message: %s</source>
+				<source>The command returned following message:</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\LocalInstanceTest
@@ -179,7 +213,7 @@
 				<source>Some tables in "excludeRelatedTables" do not exist in the local database.</source>
 			</trans-unit>
 			<trans-unit id="application.superfluous_excluded_tables">
-				<source>Following tables are configured but do not exist: %s</source>
+				<source>Following tables are configured but do not exist:</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest -->
@@ -194,25 +228,28 @@
 				<source>Could not call the CLI dispatcher on foreign because the backend user "_cli_lowlevel" is missing there.</source>
 			</trans-unit>
 			<trans-unit id="application.foreign_cli_lowlevel_user_missing_message">
-				<source>The call to the dispatcher returned following error: %s</source>
+				<source>The call to the dispatcher returned following error:</source>
 			</trans-unit>
 			<trans-unit id="application.foreign_cli_dispatcher_not_callable">
 				<source>Could not call the CLI dispatcher on foreign because of an unexpected error.</source>
 			</trans-unit>
 			<trans-unit id="application.foreign_cli_dispatcher_error_message">
-				<source>The call to the dispatcher returned following message: %s</source>
+				<source>The call to the dispatcher returned following message:</source>
 			</trans-unit>
 			<trans-unit id="application.foreign_version_differs">
 				<source>The installed versions on the local and foreign system are different.</source>
 			</trans-unit>
-			<trans-unit id="application.versions">
-				<source>Local version: %s. Foreign Version: %s</source>
+			<trans-unit id="application.local_version">
+				<source>Local version:</source>
+			</trans-unit>
+			<trans-unit id="application.foreign_version">
+				<source>Foreign Version:</source>
 			</trans-unit>
 			<trans-unit id="application.foreign_configuration_not_loaded">
 				<source>The configuration could not be loaded on the foreign system.</source>
 			</trans-unit>
 			<trans-unit id="application.foreign_configuration_loading_state">
-				<source>The confguration utility has following loading state: "%s"</source>
+				<source>The confguration utility has following loading state:</source>
 			</trans-unit>
 			<trans-unit id="application.foreign_utf8_fs">
 				<source>UTF8 filesystem configured for the foreign system, please disable this configuration in Install tool.</source>
@@ -220,8 +257,11 @@
 			<trans-unit id="application.different_t3_versions">
 				<source>The TYPO3 versions of the local and the foreign instance differ.</source>
 			</trans-unit>
-			<trans-unit id="application.t3_versions">
-				<source>Local TYPO3 Version: %s. Foreign TYPO3 Version: %s.</source>
+			<trans-unit id="application.local_t3_versions">
+				<source>Local TYPO3 Version:</source>
+			</trans-unit>
+			<trans-unit id="application.foreign_t3_versions">
+				<source>Foreign TYPO3 Version:</source>
 			</trans-unit>
 		</body>
 	</file>
