@@ -1209,6 +1209,7 @@ class RecordTest extends UnitTestCase
 
     /**
      * @covers ::sortRelatedRecords
+     * @depends testAddRelatedRecordsAddsArrayOfRelatedRecordsAndAllowsChaining
      */
     public function testSortRelatedRecordsSortsRecordsOfTableWithGivenFunctionAndKeepsIndexes()
     {
@@ -1244,5 +1245,40 @@ class RecordTest extends UnitTestCase
             ],
             $record->getRelatedRecords()
         );
+    }
+
+    /**
+     * @covers ::getChangedRelatedRecordsFlat
+     * @covers ::addChangedRelatedRecordsRecursive
+     * @depends testAddRelatedRecordsAddsArrayOfRelatedRecordsAndAllowsChaining
+     */
+    public function testGetChangedRelatedRecordsFlatReturnsFlatArrayOfChangedRelatedRecords()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $related1 = $this->getRecordStub([]);
+        $related1->__construct('tt_content', ['uid' => 1, 'foo' => 'bar'], ['uid' => 1], [], []);
+
+        $related2 = $this->getRecordStub([]);
+        $related2->__construct('tt_content', [], ['uid' => 2], [], []);
+
+        $related3 = $this->getRecordStub([]);
+        $related3->__construct('tt_content', ['uid' => 6], ['uid' => 6], [], []);
+
+        $record->addRelatedRecords([$related1, $related2, $related3]);
+
+        $this->assertSame([$related1, $related2], $record->getChangedRelatedRecordsFlat());
+    }
+
+    /**
+     * @covers ::getChangedRelatedRecordsFlat
+     */
+    public function testGetChangedRelatedRecordsAddsRootRecordIfChanged()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], ['uid' => 2], [], []);
+
+        $this->assertSame([$record], $record->getChangedRelatedRecordsFlat());
     }
 }
