@@ -1206,4 +1206,43 @@ class RecordTest extends UnitTestCase
         $record->__construct('pages', $localProperties, $foreignProperties, [], []);
         $this->assertSame($expectedProperty, $record->getMergedProperty('foo'));
     }
+
+    /**
+     * @covers ::sortRelatedRecords
+     */
+    public function testSortRelatedRecordsSortsRecordsOfTableWithGivenFunctionAndKeepsIndexes()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $related1 = $this->getRecordStub([]);
+        $related1->__construct('tt_content', ['uid' => 1], ['uid' => 1], [], []);
+
+        $related2 = $this->getRecordStub([]);
+        $related2->__construct('tt_content', ['uid' => 2], ['uid' => 2], [], []);
+
+        $record->addRelatedRecords([$related1, $related2]);
+
+        $record->sortRelatedRecords(
+            'tt_content',
+            function ($rel1, $rel2) {
+                /**
+                 * @var Record $rel1
+                 * @var Record $rel2
+                 */
+                // sort "reverse" order
+                return -strcmp($rel1->getIdentifier(), $rel2->getIdentifier());
+            }
+        );
+
+        $this->assertSame(
+            [
+                'tt_content' => [
+                    2 => $related2,
+                    1 => $related1,
+                ],
+            ],
+            $record->getRelatedRecords()
+        );
+    }
 }

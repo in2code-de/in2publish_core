@@ -827,7 +827,7 @@ class Record implements RecordInterface
     public function sortRelatedRecords($tableName, $compareFunction)
     {
         if (!empty($this->relatedRecords[$tableName]) && is_array($this->relatedRecords[$tableName])) {
-            usort($this->relatedRecords[$tableName], $compareFunction);
+            uasort($this->relatedRecords[$tableName], $compareFunction);
         }
     }
 
