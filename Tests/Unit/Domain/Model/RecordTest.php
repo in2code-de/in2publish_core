@@ -846,6 +846,7 @@ class RecordTest extends UnitTestCase
 
     /**
      * @covers ::getStateRecursive
+     * @covers ::isChangedRecursive
      * @depends testIsChangedReturnsTrueForAnyOtherStateThanChanged
      * @depends testIsChangedReturnsFalseForUnchangedState
      * @depends testGetRelatedRecordsReturnsRelatedRecords
@@ -864,6 +865,7 @@ class RecordTest extends UnitTestCase
 
     /**
      * @covers ::getStateRecursive
+     * @covers ::isChangedRecursive
      * @depends testIsChangedReturnsTrueForAnyOtherStateThanChanged
      * @depends testIsChangedReturnsFalseForUnchangedState
      * @depends testGetRelatedRecordsReturnsRelatedRecords
@@ -904,15 +906,32 @@ class RecordTest extends UnitTestCase
     }
 
     /**
+     * @covers ::addRelatedRecord
+     */
+    public function testAddRelatedRecordDoesNotAddPageToPageRecord()
+    {
+        $root = $this->getRecordStub([]);
+        $root->__construct('pages', ['uid' => 1], ['uid' => 1], [], []);
+
+        $sub = $this->getRecordStub([]);
+        $sub->__construct('pages', ['uid' => 1], [], [], []);
+
+        $root->addRelatedRecord($sub);
+
+        $this->assertSame([], $root->getRelatedRecords());
+    }
+
+    /**
      * @covers ::getStateRecursive
      * @depends testIsChangedReturnsTrueForAnyOtherStateThanChanged
      * @depends testIsChangedReturnsFalseForUnchangedState
      * @depends testGetRelatedRecordsReturnsRelatedRecords
+     * @depends testAddRelatedRecordDoesNotAddPageToPageRecord
      */
-    public function testGetStateRecursiveIgnoredRelatedPageRecords()
+    public function testGetStateRecursiveIgnoresRelatedPageRecords()
     {
         $root = $this->getRecordStub([]);
-        $root->__construct('pages', ['uid' => 1], ['uid' => 1], [], []);
+        $root->__construct('tt_content', ['uid' => 1], ['uid' => 1], [], []);
 
         $sub = $this->getRecordStub([]);
         $sub->__construct('pages', ['uid' => 1], [], [], []);
