@@ -49,6 +49,16 @@ class DatabaseSchemaService implements SingletonInterface
     }
 
     /**
+     * @param string $tableName
+     * @return bool
+     */
+    public function tableExists($tableName)
+    {
+        $schema = $this->getDatabaseSchema();
+        return isset($schema[$tableName]);
+    }
+
+    /**
      * @return array
      */
     public function getDatabaseSchema()

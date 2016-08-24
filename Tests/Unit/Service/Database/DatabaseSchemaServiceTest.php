@@ -61,6 +61,7 @@ class DatabaseSchemaServiceTest extends UnitTestCase
                               ->setMethods(['has', 'get', 'set'])
                               ->disableOriginalConstructor()
                               ->getMock();
+        // set return value to true to execute the cache->get() lines
         $cacheFrontend->method('has')->willReturn(true);
         $cacheFrontend->method('get')->willReturn(false);
 
@@ -73,6 +74,52 @@ class DatabaseSchemaServiceTest extends UnitTestCase
         $schemaService->__construct();
 
         $this->assertSame($expected, $schemaService->getDatabaseSchema());
+    }
+
+    /**
+     * @covers ::tableExists
+     */
+    public function testTableExistsReturnsTrueIfTableExistsInSchema()
+    {
+        /** @var VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheFrontend */
+        $cacheFrontend = $this->getMockBuilder(VariableFrontend::class)
+                              ->setMethods(['has', 'get', 'set'])
+                              ->disableOriginalConstructor()
+                              ->getMock();
+        $cacheFrontend->method('has')->willReturn(false);
+
+        /** @var DatabaseSchemaService|\PHPUnit_Framework_MockObject_MockObject $schemaService */
+        $schemaService = $this->getMockBuilder(DatabaseSchemaService::class)
+                              ->setMethods(['getCache', 'getDatabaseSchema'])
+                              ->disableOriginalConstructor()
+                              ->getMock();
+        $schemaService->method('getCache')->willReturn($cacheFrontend);
+        $schemaService->method('getDatabaseSchema')->willReturn(['foo' => []]);
+        $schemaService->__construct();
+        $this->assertTrue($schemaService->tableExists('foo'));
+    }
+
+    /**
+     * @covers ::tableExists
+     */
+    public function testTableExistsReturnsFalseIfTableDoesNotExist()
+    {
+        /** @var VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheFrontend */
+        $cacheFrontend = $this->getMockBuilder(VariableFrontend::class)
+                              ->setMethods(['has', 'get', 'set'])
+                              ->disableOriginalConstructor()
+                              ->getMock();
+        $cacheFrontend->method('has')->willReturn(false);
+
+        /** @var DatabaseSchemaService|\PHPUnit_Framework_MockObject_MockObject $schemaService */
+        $schemaService = $this->getMockBuilder(DatabaseSchemaService::class)
+                              ->setMethods(['getCache', 'getDatabaseSchema'])
+                              ->disableOriginalConstructor()
+                              ->getMock();
+        $schemaService->method('getCache')->willReturn($cacheFrontend);
+        $schemaService->method('getDatabaseSchema')->willReturn(['boo' => []]);
+        $schemaService->__construct();
+        $this->assertFalse($schemaService->tableExists('foo'));
     }
 
     /**

@@ -28,8 +28,10 @@ namespace In2code\In2publishCore\Command;
  ***************************************************************/
 
 use In2code\In2publishCore\Security\SshConnection;
+use In2code\In2publishCore\Service\Database\DatabaseSchemaService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class TableCommandController (enabled on local and foreign)
@@ -39,6 +41,7 @@ class TableCommandController extends AbstractCommandController
     const PUBLISH_COMMAND = 'table:publish --table-name=%s';
     const IMPORT_COMMAND = 'table:import --table-name=%s';
     const BACKUP_COMMAND = 'table:backup --table-name=%s';
+    const EXIT_INVALID_TABLE =  2200;
 
     /**
      * @var DatabaseConnection
@@ -51,6 +54,11 @@ class TableCommandController extends AbstractCommandController
     protected $foreignDatabase = null;
 
     /**
+     * @var DatabaseSchemaService
+     */
+    protected $databaseSchemaService = null;
+
+    /**
      * @throws \Exception
      */
     public function __construct()
@@ -58,6 +66,9 @@ class TableCommandController extends AbstractCommandController
         parent::__construct();
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
+        $this->databaseSchemaService = GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Service\\Database\\DatabaseSchemaService'
+        );
     }
 
     /**
@@ -74,6 +85,12 @@ class TableCommandController extends AbstractCommandController
             $this->outputLine('This command is available on Local only');
             $this->sendAndExit(self::EXIT_WRONG_CONTEXT);
         }
+
+        if (!$this->databaseSchemaService->tableExists($tableName)) {
+            $this->outputLine('The table does not exist');
+            $this->sendAndExit(self::EXIT_INVALID_TABLE);
+        }
+
         $this->logger->notice('Called Publish Table Command for table name "' . $tableName . '"');
         $backupResults = SshConnection::makeInstance()->backupRemoteTable($tableName);
         $this->logger->info('Backup results from foreign system:', array('backupResults' => $backupResults));
@@ -98,6 +115,12 @@ class TableCommandController extends AbstractCommandController
             $this->outputLine('This command is available on Local only');
             $this->sendAndExit(self::EXIT_WRONG_CONTEXT);
         }
+
+        if (!$this->databaseSchemaService->tableExists($tableName)) {
+            $this->outputLine('The table does not exist');
+            $this->sendAndExit(self::EXIT_INVALID_TABLE);
+        }
+
         $this->logger->notice('Called Import Table Command for table "' . $tableName . '"');
         DatabaseUtility::backupTable($this->localDatabase, $tableName);
         if ($this->copyTableContents($this->foreignDatabase, $this->localDatabase, $tableName)) {
