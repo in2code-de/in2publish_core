@@ -65,14 +65,20 @@ class TestingService
                 $skippedTests[$testClass] = new TestResult(
                     'test_skipped',
                     TestResult::SKIPPED,
-                    array_merge(array('dependency_failed'), $testCase->getDependencies()),
+                    array_merge(
+                        array('dependency_failed'),
+                        array_intersect($testCase->getDependencies(), array_keys($failedTests))
+                    ),
                     array($testClass)
                 );
             } elseif ($this->hasDependencyFailed($testCase->getDependencies(), $skippedTests)) {
                 $skippedTests[$testClass] = new TestResult(
                     'test_skipped',
                     TestResult::SKIPPED,
-                    array_merge(array('dependency_skipped'), $testCase->getDependencies()),
+                    array_merge(
+                        array('dependency_skipped'),
+                        array_intersect($testCase->getDependencies(), array_keys($skippedTests))
+                    ),
                     array($testClass)
                 );
             } else {
