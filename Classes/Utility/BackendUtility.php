@@ -54,6 +54,11 @@ class BackendUtility
             return (int)$identifier;
         }
 
+        // get id from AJAX request
+        if (null !== GeneralUtility::_GP('pageId')) {
+            return (int)GeneralUtility::_GP('pageId');
+        }
+
         // get id from ?cmd[pages][123][delete]=1
         if (null !== ($cmd = GeneralUtility::_GP('cmd'))) {
             if (isset($cmd['pages']) && is_array($cmd['pages'])) {
