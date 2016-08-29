@@ -27,7 +27,7 @@ namespace In2code\In2publishCore\Domain\Anomaly;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publish\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
