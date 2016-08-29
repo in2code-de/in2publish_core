@@ -56,13 +56,13 @@ class ConfigurationValuesTest implements TestCaseInterface
     {
         $errors = array();
 
+        // test the settings
         if ($this->configuration['log']['logLevel'] > 7) {
             $errors[] = 'configuration.loglevel_too_high';
         }
         if ($this->configuration['log']['logLevel'] < 0) {
             $errors[] = 'configuration.loglevel_too_low';
         }
-
         if (!is_file($this->configuration['sshConnection']['privateKeyFileAndPathName'])) {
             $errors[] = 'configuration.private_key_invalid';
         }
@@ -82,12 +82,21 @@ class ConfigurationValuesTest implements TestCaseInterface
         ) {
             $errors[] = 'configuration.zip_extension_not_installed';
         }
+        $missingProcessors = array();
+        foreach ($this->configuration['tca']['processor'] as $processorClass) {
+            if (!class_exists($processorClass)) {
+                $missingProcessors[] = $processorClass;
+            }
+        }
+        if (!empty($missingProcessors)) {
+            $errors = array_merge($errors, array('configuration.tca_processor_missing'), $missingProcessors);
+        }
 
+        // construct TestResult
         if (!empty($errors)) {
             return new TestResult('configuration.options_invalid', TestResult::ERROR, $errors);
         }
         return new TestResult('configuration.options_valid');
-
     }
 
     /**

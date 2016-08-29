@@ -63,7 +63,11 @@
 			</trans-unit>
 			<trans-unit id="configuration.zip_extension_not_installed">
 				<source>The compression of backups is enabled, but the zip extension for PHP is not installed or activated.</source>
-				<target state="translated">Die komprimierung für Backups ist aktiviert, die PHP Extension zip ist aber nicht installiert oder aktivier.</target>
+				<target state="translated">Die komprimierung für Backups ist aktiviert, die PHP Extension zip ist aber nicht installiert oder aktiviert.</target>
+			</trans-unit>
+			<trans-unit id="configuration.tca_processor_missing">
+				<source>Following TCA Processors are missing (they could not be found):</source>
+				<target state="translated">Folgende TCA Prozessoren fehlen (Sie konnten nicht geladen werden):</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest -->
