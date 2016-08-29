@@ -275,11 +275,10 @@ class ConfigurationUtility
      */
     protected function mergePageTs(array $configuration)
     {
+        $uid = \In2code\In2publishCore\Utility\BackendUtility::getPageIdentifier();
         if ($this->configurationCache[self::CACHE_KEY_PAGE] === null) {
-            // get the pageTS
-            $pageTs = BackendUtility::getPagesTSconfig(
-                \In2code\In2publishCore\Utility\BackendUtility::getPageIdentifier()
-            );
+            // get the pageTS | Manually pass rootline to disable caching.
+            $pageTs = BackendUtility::getPagesTSconfig($uid, BackendUtility::BEgetRootLine($uid));
 
             // if there is any in2publish config in the pageTS
             if (!empty($pageTs['tx_in2publish.'])) {
