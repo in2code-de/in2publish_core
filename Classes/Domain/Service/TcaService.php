@@ -119,6 +119,12 @@ class TcaService
         $configuredProcessor = ConfigurationUtility::getConfiguration('tca.processor');
         if (is_array($configuredProcessor)) {
             foreach ($configuredProcessor as $type => $class) {
+                if (!class_exists($class)) {
+                    $this->logger->critical(
+                        'TCA processor "' . $class . '" not found. Using default processor for type "' . $type . '"'
+                    );
+                    $class = $this->defaultProcessor[$type];
+                }
                 $this->processors[$type] = new $class();
             }
         } else {
