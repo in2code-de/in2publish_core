@@ -54,6 +54,9 @@
 			<trans-unit id="configuration.tca_processor_missing">
 				<source>Following TCA Processors are missing (they could not be found):</source>
 			</trans-unit>
+			<trans-unit id="configuration.tca_processor_implementation_missing">
+				<source>Following TCA Processors do not implement the ProcessorInterface:</source>
+			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest -->
 

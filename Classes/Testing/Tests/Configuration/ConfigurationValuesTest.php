@@ -36,6 +36,8 @@ use In2code\In2publishCore\Utility\ConfigurationUtility;
  */
 class ConfigurationValuesTest implements TestCaseInterface
 {
+    const PROCESSOR_INTERFACE = 'In2code\\In2publishCore\\Domain\\Service\\Processor\\ProcessorInterface';
+
     /**
      * @var array
      */
@@ -83,13 +85,21 @@ class ConfigurationValuesTest implements TestCaseInterface
             $errors[] = 'configuration.zip_extension_not_installed';
         }
         $missingProcessors = array();
+        $missingInterface = array();
         foreach ($this->configuration['tca']['processor'] as $processorClass) {
             if (!class_exists($processorClass)) {
                 $missingProcessors[] = $processorClass;
+            } elseif (!is_subclass_of($processorClass, static::PROCESSOR_INTERFACE)) {
+                $missingInterface[] = $processorClass;
             }
         }
         if (!empty($missingProcessors)) {
-            $errors = array_merge($errors, array('configuration.tca_processor_missing'), $missingProcessors);
+            $errors[] = 'configuration.tca_processor_missing';
+            $errors = array_merge($errors, $missingProcessors);
+        }
+        if (!empty($missingInterface)) {
+            $errors[] = 'configuration.tca_processor_implementation_missing';
+            $errors = array_merge($errors, $missingInterface);
         }
 
         // construct TestResult

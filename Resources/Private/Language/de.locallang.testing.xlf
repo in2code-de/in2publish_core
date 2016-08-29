@@ -69,6 +69,10 @@
 				<source>Following TCA Processors are missing (they could not be found):</source>
 				<target state="translated">Folgende TCA Prozessoren fehlen (Sie konnten nicht geladen werden):</target>
 			</trans-unit>
+			<trans-unit id="configuration.tca_processor_implementation_missing">
+				<source>Following TCA Processors do not implement the ProcessorInterface:</source>
+				<target state="translated">Folgende TCA Prozessoren implementieren nicht das ProcessorInterface:</target>
+			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest -->
 
