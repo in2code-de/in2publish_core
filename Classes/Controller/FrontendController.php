@@ -32,8 +32,6 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 /**
  * Class FrontendController
- *
- * @package In2code\In2publish\Controller
  */
 class FrontendController extends ActionController
 {

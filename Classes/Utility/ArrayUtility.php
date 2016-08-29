@@ -31,8 +31,6 @@ use TYPO3\CMS\Core\Utility\MathUtility;
 
 /**
  * Class ArrayUtility
- *
- * @package In2code\In2publish\Utility
  */
 class ArrayUtility
 {
