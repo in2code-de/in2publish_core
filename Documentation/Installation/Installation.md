@@ -3,7 +3,7 @@
 The installation boils down to three simple steps on both Local and Foreign:
 
 1. Copy the source code to typo3conf/ext/in2publish (Please see the in2code GitHub tutorial for more details).
-2. Install the Extension via Extension Manager
+2. Activate the Extension via Extension Manager
 3. Open the in2publish extension configuration and set the path to your **Configuration.yaml** files (see next chapter for details).
 
 ## New modules on local
