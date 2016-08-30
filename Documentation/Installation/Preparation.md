@@ -5,17 +5,18 @@
 in2publish requires some functions that are not commonly available on many servers
 as well as some minimum server software versions.
 
-|--------|--------|
-| PHP    | >= 5.4 |
-| Apache | >= 2.2 |
-| MySQL  | >= 5.6 |
-| TYPO3  | >= 6.2 |
+| Dependency | Version |
+|------------|--------|
+| PHP        | >= 5.4 |
+| Apache     | >= 2.2 |
+| MySQL      | >= 5.6 |
+| TYPO3      | >= 6.2 |
 
 Additional PHP extensions:
 
-
-|---------|---------|
-| libssh2 | >= 0.11 |
+| Dependency | Version |
+|------------|---------|
+| libssh2    | >= 0.11 |
 
 
 Hint:
@@ -34,15 +35,13 @@ These requirements are on top of the basic requirements of TYPO3 CMS 6.2 - 7.6
 
 **Local:**
 
+| Value   | Description                                                                                                     |
 |---------|-----------------------------------------------------------------------------------------------------------------|
 | SSH2    | the libssh2 library, which is used by the php-extension php_ssh2                                                |
 | Keypair | A public and private key pair to authenticate the Webprocess User on Foreign (crypted and uncrypted rsa tested) |
 | Envvar  | in2publish requires `SetEnv IN2PUBLISH_CONTEXT Local` to be set in the virtual host or (if allowed) .htaccess   |
 
-If Foreign's database is not on the same server (not recommended!):
-
-|------------------------|--------------------------------------------------------------------|
-| Static port forwarding | A static port forwarding from any port on Local to 3306 on Foreign |
+If Foreign's database is not on the same server (not recommended!) you will need a Static port forwarding (from any port on Local to 3306 on Foreign)
 
 Hint:
 
@@ -60,6 +59,7 @@ Hint:
 
 **Foreign:**
 
+| Value         | Description                                                                                                                                   |
 |---------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
 | SSHD          | An active SSH2 server which allows incoming connections from Local                                                                            |
 | Shell Apache2 | The user which apache2 is running must have a shell (e.g. Bash) and must be allowed to log in via SSH2 from Local with pubkey authentication. |
