@@ -4,7 +4,7 @@
 
 
 |Settings|Type|Default|Description|
-|--|--|--|--|
+|---|---|---|---|
 |database.foreign.name|string|'database_123'|Name of the foreign database|
 |database.foreign.username|string|'username_123'|Username to the foreign database|
 |database.foreign.password|string|'Password_123'|Password to the foreign database|
