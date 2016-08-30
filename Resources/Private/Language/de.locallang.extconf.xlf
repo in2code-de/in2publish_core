@@ -4,8 +4,20 @@
 		<header/>
 		<body>
 			<trans-unit id="path_to_configuration">
-				<source>Folder where the configuration file is located. Path can be absolute or relative beginning at the document root.</source>
-				<target state="translated">Pfad zur Konfigurationsdatei. Der Pfad kann absolut or relativ beginnend beim DocumentRoot sein.</target>
+				<source>
+					Folder where the configuration file is located.:
+					Possible paths:
+					1) Absolute (/var/www/shared/in2publish/),
+					2) Relative (typo3conf/AdditionalConfiguration/)
+					3) Extension source (EXT:in2publish_conf/Resources/Private/Config/)
+				</source>
+				<target state="translated">
+					Pfad in dem die Konfigurationsdatei liegt.:
+					Mögliche Pfade:
+					1) Absolut (/var/www/shared/in2publish/),
+					2) Relativ (typo3conf/AdditionalConfiguration/)
+					3) Extension (EXT:in2publish_conf/Resources/Private/Config/)
+				</target>
 			</trans-unit>
 		</body>
 	</file>
