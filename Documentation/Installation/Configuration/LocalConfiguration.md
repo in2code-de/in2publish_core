@@ -25,16 +25,16 @@
 |view.records.filterButtons|bool|TRUE|Activate filter buttons in publishing module|
 |view.records.breadcrumb|bool|FALSE|Displays a list of all records that are related to the selected page and are changed in the overview module and show the relation path to the root. The list will not be shown when debug.allInformation is enabled. The connection to the root record will not be shown when debug.disableParentRecords is TRUE.|
 |view.files.filterButtons|bool|TRUE|Activate filter buttons in file module|
-|sshConnection.host|string|live.domain.tld|SSH and transfer settings. Hostname of the foreign server for SSH connection|
-|sshConnection.port|int|22|SSH and transfer settings. Default port 22, change if necessary|
-|sshConnection.username|string|simpleAccount|SSH and transfer settings. Username of user on the foreign server|
-|sshConnection.privateKeyFileAndPathName|string|/full/path/to/private/ssh/key/id_rsa|SSH and transfer settings. Full path to private ssh key from local system (rsa/dsa/..)|
-|sshConnection.publicKeyFileAndPathName|string|/full/path/to/public/ssh/key/id_rsa.pub|SSH and transfer settings. Full path to public ssh key from local system (rsa/dsa/..)|
+|sshConnection.host|string|live.domain.tld|Hostname of the foreign server for SSH connection|
+|sshConnection.port|int|22|Default port 22, change if necessary|
+|sshConnection.username|string|simpleAccount|Username of user on the foreign server|
+|sshConnection.privateKeyFileAndPathName|string|/full/path/to/private/ssh/key/id_rsa|Full path to private ssh key from local system (rsa/dsa/..)|
+|sshConnection.publicKeyFileAndPathName|string|/full/path/to/public/ssh/key/id_rsa.pub|Full path to public ssh key from local system (rsa/dsa/..)|
 |sshConnection.privateKeyPassphrase|null/string|NULL|SSH and transfer settings. Private key password for the given private key (see above), NULL if none set|
-|sshConnection.foreignKeyFingerprintHashingMethod|string|SSH2_FINGERPRINT_MD5|SSH and transfer settings. Choose SSH2_FINGERPRINT_MD5 or SSH2_FINGERPRINT_SHA1 for the fingerprint tests|
-|sshConnection.foreignRootPath|string|/Users/simpleAccount/Projects/Websites/foreign.publishing.dev|SSH and transfer settings. Root path of the foreign TYPO3 CMS instance|
-|sshConnection.pathToPhp|string|/usr/bin/env php|SSH and transfer settings. Path to php binary on foreign|
 |sshConnection.foreignKeyFingerprint|string|00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00|Key fingerprint of the Live Server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection.|
+|sshConnection.foreignKeyFingerprintHashingMethod|string|SSH2_FINGERPRINT_MD5|Choose SSH2_FINGERPRINT_MD5 or SSH2_FINGERPRINT_SHA1 for the fingerprint tests|
+|sshConnection.foreignRootPath|string|/Users/simpleAccount/Projects/Websites/foreign.publishing.dev|Root path of the foreign TYPO3 CMS instance|
+|sshConnection.pathToPhp|string|/usr/bin/env php|Path to php binary on foreign|
 |sshConnection.ignoreChmodFail|bool|FALSE|SSH and transfer settings. Ignore if chmod fails. Prevents exception.|
 |module.m1|bool|TRUE|Enable or disable publishing overview module in general|
 |module.m3|bool|TRUE|Enable or disable file publishing module in general|
