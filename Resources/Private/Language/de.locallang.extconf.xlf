@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="de" datatype="plaintext" product-name="in2publish_core">
+		<header/>
+		<body>
+			<trans-unit id="path_to_configuration">
+				<source>Folder where the configuration file is located. Path can be absolute or relative beginning at the document root.</source>
+				<target state="translated">Pfad zur Konfigurationsdatei. Der Pfad kann absolut or relativ beginnend beim DocumentRoot sein.</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
