@@ -31,10 +31,10 @@
 |sshConnection.privateKeyFileAndPathName|string|/full/path/to/private/ssh/key/id_rsa|SSH and transfer settings. Full path to private ssh key from local system (rsa/dsa/..)|
 |sshConnection.publicKeyFileAndPathName|string|/full/path/to/public/ssh/key/id_rsa.pub|SSH and transfer settings. Full path to public ssh key from local system (rsa/dsa/..)|
 |sshConnection.privateKeyPassphrase|null/string|NULL|SSH and transfer settings. Private key password for the given private key (see above), NULL if none set|
-|sshConnection.foreignKeyFingerprint|string|00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00|SSH and transfer settings. Key fingerprint of the Live Server for authentication check|
 |sshConnection.foreignKeyFingerprintHashingMethod|string|SSH2_FINGERPRINT_MD5|SSH and transfer settings. Choose SSH2_FINGERPRINT_MD5 or SSH2_FINGERPRINT_SHA1 for the fingerprint tests|
 |sshConnection.foreignRootPath|string|/Users/simpleAccount/Projects/Websites/foreign.publishing.dev|SSH and transfer settings. Root path of the foreign TYPO3 CMS instance|
 |sshConnection.pathToPhp|string|/usr/bin/env php|SSH and transfer settings. Path to php binary on foreign|
+|sshConnection.foreignKeyFingerprint|string|00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00|Key fingerprint of the Live Server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection.|
 |sshConnection.ignoreChmodFail|bool|FALSE|SSH and transfer settings. Ignore if chmod fails. Prevents exception.|
 |module.m1|bool|TRUE|Enable or disable publishing overview module in general|
 |module.m3|bool|TRUE|Enable or disable file publishing module in general|
@@ -240,7 +240,7 @@ sshConnection:
   # private key password, NULL if none set
   privateKeyPassphrase: NULL
 
-  # Key Fingerprint of the Live Server for authentication check
+  # Key fingerprint of the Live Server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection.
   foreignKeyFingerprint: 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
 
   # Method modification: one of SSH2_FINGERPRINT_MD5 or SSH2_FINGERPRINT_SHA1

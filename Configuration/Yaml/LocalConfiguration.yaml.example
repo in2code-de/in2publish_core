@@ -181,7 +181,7 @@ sshConnection:
   # private key password, NULL if none set
   privateKeyPassphrase: NULL
 
-  # Key Fingerprint of the Live Server for authentication check
+  # Key fingerprint of the Live Server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection.
   foreignKeyFingerprint: 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
 
   # Method modification: one of SSH2_FINGERPRINT_MD5 or SSH2_FINGERPRINT_SHA1
