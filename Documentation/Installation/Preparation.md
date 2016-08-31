@@ -35,11 +35,11 @@ These requirements are on top of the basic requirements of TYPO3 CMS 6.2 - 7.6
 
 **Local:**
 
-| Value   | Description                                                                                                     |
-|---------|-----------------------------------------------------------------------------------------------------------------|
-| SSH2    | the libssh2 library, which is used by the php-extension php_ssh2                                                |
-| Keypair | A public and private key pair to authenticate the Webprocess User on Foreign (crypted and uncrypted rsa tested) |
-| Envvar  | in2publish requires `SetEnv IN2PUBLISH_CONTEXT Local` to be set in the virtual host or (if allowed) .htaccess   |
+| Value                 | Description                                                                                                     |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------|
+| SSH2                  | the libssh2 library, which is used by the php-extension php_ssh2                                                |
+| Keypair               | A public and private key pair to authenticate the Webprocess User on Foreign (crypted and uncrypted rsa tested) |
+| Environment variable  | in2publish requires `SetEnv IN2PUBLISH_CONTEXT Local` to be set in the virtual host or (if allowed) .htaccess   |
 
 If Foreign's database is not on the same server (not recommended!) you will need a Static port forwarding (from any port on Local to 3306 on Foreign)
 
@@ -59,11 +59,11 @@ Hint:
 
 **Foreign:**
 
-| Value         | Description                                                                                                                                   |
-|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| SSHD          | An active SSH2 server which allows incoming connections from Local                                                                            |
-| Shell Apache2 | The user which apache2 is running must have a shell (e.g. Bash) and must be allowed to log in via SSH2 from Local with pubkey authentication. |
-| Envvar        | in2publish requires `SetEnv IN2PUBLISH_CONTEXT Foreign` to be set in the virtual host or (if allowed) .htaccess.                              |
+| Value                 | Description                                                                                                                                   |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| SSHD                  | An active SSH2 server which allows incoming connections from Local                                                                            |
+| Shell Apache2         | The user which apache2 is running must have a shell (e.g. Bash) and must be allowed to log in via SSH2 from Local with pubkey authentication. |
+| Environment variable  | in2publish requires `SetEnv IN2PUBLISH_CONTEXT Foreign` to be set in the virtual host or (if allowed) .htaccess.                              |
 
 Appendix to `Shell Apache2`:
     
@@ -72,7 +72,7 @@ Appendix to `Shell Apache2`:
 >     1. Both users are able to read/write directories and files written by the other one.
 >     2. libssh2 >= 0.12 for ``ssh2_sftp_chmod`` support
 
-Appendix to `Envvar`:
+Appendix to `Environment variable`:
     
 > This line is optional (on foreign), since `IN2PUBLISH_CONTEXT` defaults to `Foreign`
 

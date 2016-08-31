@@ -28,10 +28,10 @@
 |sshConnection.host|string|live.domain.tld|Hostname of the foreign server for SSH connection|
 |sshConnection.port|int|22|Default port 22, change if necessary|
 |sshConnection.username|string|simpleAccount|Username of user on the foreign server|
-|sshConnection.privateKeyFileAndPathName|string|/full/path/to/private/ssh/key/id_rsa|Full path to private ssh key from local system (rsa/dsa/..)|
-|sshConnection.publicKeyFileAndPathName|string|/full/path/to/public/ssh/key/id_rsa.pub|Full path to public ssh key from local system (rsa/dsa/..)|
+|sshConnection.privateKeyFileAndPathName|string|/full/path/to/private/ssh/key/id_rsa|Absolute path to private ssh key from local system (rsa/dsa/..)|
+|sshConnection.publicKeyFileAndPathName|string|/full/path/to/public/ssh/key/id_rsa.pub|Absolute path to public ssh key from local system (rsa/dsa/..)|
 |sshConnection.privateKeyPassphrase|null/string|NULL|SSH and transfer settings. Private key password for the given private key (see above), NULL if none set|
-|sshConnection.foreignKeyFingerprint|string|00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00|Key fingerprint of the Live Server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection.|
+|sshConnection.foreignKeyFingerprint|string|00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00|Key fingerprint of the Live Server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection. [How to get the Foreign Key Fingerprint](#how-to-get-the-foreign-key-fingerprint) |
 |sshConnection.foreignKeyFingerprintHashingMethod|string|SSH2_FINGERPRINT_MD5|Choose SSH2_FINGERPRINT_MD5 or SSH2_FINGERPRINT_SHA1 for the fingerprint tests|
 |sshConnection.foreignRootPath|string|/Users/simpleAccount/Projects/Websites/foreign.publishing.dev|Root path of the foreign TYPO3 CMS instance|
 |sshConnection.pathToPhp|string|/usr/bin/env php|Path to php binary on foreign|
@@ -52,6 +52,16 @@
 |backup.publishTableCommand.zipBackup|bool|TRUE|Backup configuration for Backuptable Command Controller: If TRUE, backups of tables will be stored in ZIP files instead of plain sql file. Saves a lot of disc space.|
 |tca.processor.[type]|array|_cropped. See example file_|Processors to handle table relations|
 
+## How to get the Foreign Key Fingerprint
+
+Since this topic has produced some irritations this will be clarified here.
+
+The Foreign Key Fingerprint is, as the name states, a hash of the public ssh key from the foreign systems ssh daemon.
+You can generate the hash with following command on your foreign server (exmaple command!): `ssh-keygen -E md5 -lf /etc/ssh/ssh_host_rsa_key.pub`
+
+Hint:
+
+> You can omit the colons of the hash.
 
 ## Example File
 
@@ -231,10 +241,10 @@ sshConnection:
   # username of user on the foreign server
   username: simpleAccount
 
-  # full path to local ssh key (rsa/dsa/..)
+  # absolute path to local ssh key (rsa/dsa/..)
   privateKeyFileAndPathName: /full/path/to/private/ssh/key/id_rsa
 
-  # full path to local ssh key belonging to the private above
+  # absolute path to local ssh key belonging to the private above
   publicKeyFileAndPathName: /full/path/to/public/ssh/key/id_rsa.pub
 
   # private key password, NULL if none set

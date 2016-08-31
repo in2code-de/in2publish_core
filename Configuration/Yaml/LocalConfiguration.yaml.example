@@ -172,10 +172,10 @@ sshConnection:
   # username of user on the foreign server
   username: simpleAccount
 
-  # full path to local ssh key (rsa/dsa/..)
+  # absolute path to local ssh key (rsa/dsa/..)
   privateKeyFileAndPathName: /full/path/to/private/ssh/key/id_rsa
 
-  # full path to local ssh key belonging to the private above
+  # absolute path to local ssh key belonging to the private above
   publicKeyFileAndPathName: /full/path/to/public/ssh/key/id_rsa.pub
 
   # private key password, NULL if none set

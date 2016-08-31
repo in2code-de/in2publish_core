@@ -27,3 +27,19 @@ You have to add the environment variable for all CLI calls of commandControllers
 Example call with environment variable (for the stage system):
 
     IN2PUBLISH_CONTEXT=Local ./typo3/cli_dispatch.phpsh extbase status:version
+
+Where can i get the Foreign Key Fingerprint
+-------------------------------------------
+
+Have a look here: [How to get the foreign key fingerprint](Installation/Configuration/LocalConfiguration.md#how-to-get-the-foreign-key-fingerprint) 
+
+How do i enable SSH Daemon on my Mac?
+-------------------------------------
+
+Enable login for all users (not recommended) or just the user you configured in sshConnection.username
+
+Newer versions of OS X:
+Got to "System Preferences" -> "Sharing" -> enable "Remote Login"
+
+Older versions of OS X:
+Go to "System Preferences" -> "Internet & Networking" -> "Sharing" -> enable "Remote Login"
