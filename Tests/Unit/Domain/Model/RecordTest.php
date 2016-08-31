@@ -1281,4 +1281,70 @@ class RecordTest extends UnitTestCase
 
         $this->assertSame([$record], $record->getChangedRelatedRecordsFlat());
     }
+
+
+    /**
+     * @covers ::isLocalPreviewAvailable
+     */
+    public function testIsLocalPreviewAvailableReturnsTrueIfPageCanBeRendered()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', ['doktype' => 2], ['doktype' => 223], [], []);
+        $this->assertTrue($record->isLocalPreviewAvailable());
+    }
+
+
+    /**
+     * @covers ::isLocalPreviewAvailable
+     */
+    public function testIsLocalPreviewAvailableReturnsFalseForHighDoktypes()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', ['doktype' => 201], ['doktype' => 201], [], []);
+        $this->assertFalse($record->isLocalPreviewAvailable());
+    }
+
+
+    /**
+     * @covers ::isLocalPreviewAvailable
+     */
+    public function testIsLocalPreviewAvailableReturnsFalseForOtherTablesThanPages()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('bar', ['doktype' => 2], ['doktype' => 2], [], []);
+        $this->assertFalse($record->isLocalPreviewAvailable());
+    }
+
+
+    /**
+     * @covers ::isForeignPreviewAvailable
+     */
+    public function testIsForeignPreviewAvailableReturnsTrueIfPageCanBeRendered()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', ['doktype' => 211], ['doktype' => 2], [], []);
+        $this->assertTrue($record->isForeignPreviewAvailable());
+    }
+
+
+    /**
+     * @covers ::isForeignPreviewAvailable
+     */
+    public function testIsForeignPreviewAvailableReturnsFalseForHighDoktypes()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', ['doktype' => 2], ['doktype' => 222], [], []);
+        $this->assertFalse($record->isForeignPreviewAvailable());
+    }
+
+
+    /**
+     * @covers ::isForeignPreviewAvailable
+     */
+    public function testIsForeignPreviewAvailableReturnsFalseForOtherTablesThanPages()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('foo', ['doktype' => 2], ['doktype' => 100], [], []);
+        $this->assertFalse($record->isForeignPreviewAvailable());
+    }
 }

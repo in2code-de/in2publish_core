@@ -869,6 +869,22 @@ class Record implements RecordInterface
     }
 
     /**
+     * @return bool True if this record represents a page that can be viewed in the frontend
+     */
+    public function isLocalPreviewAvailable()
+    {
+        return $this->tableName === 'pages' && $this->getLocalProperty('doktype') < 200;
+    }
+
+    /**
+     * @return bool True if this record represents a page that can be viewed in the frontend
+     */
+    public function isForeignPreviewAvailable()
+    {
+        return $this->tableName === 'pages' && $this->getForeignProperty('doktype') < 200;
+    }
+
+    /**
      * @param Record[] $relatedRecordsFlat
      * @return Record[]
      */
