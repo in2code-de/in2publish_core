@@ -101,7 +101,7 @@
 					<f:if condition="{record.tableName} == 'pages'">
 						<f:then>
 							<f:link.external
-									uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local')}/index.php?id={record.identifier}&tx_in2publish_pi1[identifier]={record.identifier}&type=9815"
+									uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local')}/index.php?id={record.identifier}&tx_in2publishcore_pi1[identifier]={record.identifier}&type=9815"
 									target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_compare">Compare</f:translate></f:link.external>
 							<f:link.external
 									uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'foreign')}/index.php?id={record.identifier}"
