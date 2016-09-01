@@ -38,11 +38,10 @@ class EditRecordViewHelper extends AbstractViewHelper
      *
      * @param string $table
      * @param int $identifier
-     * @param bool $addReturnUrl
      * @return string
      */
-    public function render($table, $identifier, $addReturnUrl = true)
+    public function render($table, $identifier)
     {
-        return BackendUtility::buildEditUri($table, $identifier, $addReturnUrl);
+        return BackendUtility::buildEditUri($table, $identifier);
     }
 }

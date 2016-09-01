@@ -120,11 +120,10 @@ class BackendUtility
      *
      * @param string $tableName
      * @param int $identifier
-     * @param bool $addReturnUrl
      * @return string
      * @todo Remove outdated URI generation for TYPO3 6.2 in upcoming major version
      */
-    public static function buildEditUri($tableName, $identifier, $addReturnUrl = true)
+    public static function buildEditUri($tableName, $identifier)
     {
         // use new link generation in backend for TYPO3 7.2 or newer
         if (GeneralUtility::compat_version('7.2')) {
@@ -134,17 +133,13 @@ class BackendUtility
                         $identifier => 'edit',
                     ),
                 ),
+                'returnUrl' => BackendUtilityCore::getModuleUrl('web_In2publishCoreM1'),
             );
-            if ($addReturnUrl) {
-                $uriParameters['returnUrl'] = self::getCurrentReturnUrl();
-            }
             $editUri = BackendUtilityCore::getModuleUrl('record_edit', $uriParameters);
         } else {
             $editUri = FolderUtility::getSubFolderOfCurrentUrl();
             $editUri .= 'typo3/alt_doc.php?edit[' . $tableName . '][' . $identifier . ']=edit';
-            if ($addReturnUrl) {
-                $editUri .= '&returnUrl=' . self::getCurrentReturnUrl();
-            }
+            $editUri .= '&returnUrl=' . BackendUtilityCore::getModuleUrl('web_In2publishCoreM1');
         }
         return $editUri;
     }
@@ -152,135 +147,28 @@ class BackendUtility
     /**
      * Create an URI to undo a record
      *
-     * @param string $tableName
+     * @param string $table
      * @param int $identifier
      * @param bool $addReturnUrl
      * @return string
      * @todo Remove outdated URI generation for TYPO3 6.2 in upcoming major version
      */
-    public static function buildUndoUri($tableName, $identifier, $addReturnUrl = true)
+    public static function buildUndoUri($table, $identifier)
     {
         // use new link generation in backend for TYPO3 7.2 or newer
         if (GeneralUtility::compat_version('7.2')) {
             $uriParameters = array(
-                'element' => $tableName . ':' . $identifier,
+                'element' => $table . ':' . $identifier,
+                'returnUrl' => BackendUtilityCore::getModuleUrl('web_In2publishCoreM1'),
             );
-            if ($addReturnUrl) {
-                $uriParameters['returnUrl'] = self::getCurrentReturnUrl();
-            }
             $undoUri = BackendUtilityCore::getModuleUrl('record_history', $uriParameters);
         } else {
             $undoUri = FolderUtility::getSubFolderOfCurrentUrl();
-            $undoUri .= 'typo3/mod.php?M=record_history&element=' . $tableName . ':' . $identifier;
+            $undoUri .= 'typo3/mod.php?M=record_history&element=' . $table . ':' . $identifier;
             $undoUri .= '&moduleToken=' . FormProtectionFactory::get()->generateToken('moduleCall', 'record_history');
-            if ($addReturnUrl) {
-                $undoUri .= '&returnUrl=' . self::getCurrentReturnUrl();
-            }
+            $undoUri .= '&returnUrl=' . BackendUtilityCore::getModuleUrl('web_In2publishCoreM1');
         }
         return $undoUri;
-    }
-
-    /**
-     * Get return URL from current request
-     *
-     * @return string
-     * @todo Remove outdated edit URI for TYPO3 6.2 in upcoming major version
-     */
-    public static function getCurrentReturnUrl()
-    {
-        if (GeneralUtility::compat_version('7.2')) {
-            $uri = BackendUtilityCore::getModuleUrl(
-                GeneralUtility::_GET('M'),
-                self::getCurrentParameters()
-            );
-        } else {
-            $uri = self::getDeprecatedModuleUrl();
-        }
-        return $uri;
-    }
-
-    /**
-     * Build URI to current module for TYPO3 < 7.2
-     *
-     * @param bool $rawUrlEncode
-     * @return string
-     */
-    protected static function getDeprecatedModuleUrl($rawUrlEncode = true)
-    {
-        $uri = GeneralUtility::getIndpEnv('SCRIPT_NAME');
-        $uri .= '?' . self::buildParametersStringFromParameters(self::getCurrentParameters(false));
-
-        if ($rawUrlEncode) {
-            $uri = urlencode($uri);
-        }
-        return $uri;
-    }
-
-    /**
-     * Build parameters string for a uri
-     *
-     *      array(
-     *          'id' => 123,
-     *          'param' => 'abc'
-     *      )
-     *
-     *     =>
-     *
-     *      &id=123&param=abc
-     *
-     * @param array $parameters
-     * @return string
-     */
-    protected static function buildParametersStringFromParameters(array $parameters)
-    {
-        $parameterString = '';
-        foreach ($parameters as $key => $value) {
-            $parameterString .= '&' . $key . '=' . $value;
-        }
-        return $parameterString;
-    }
-
-    /**
-     * Get all GET/POST params without module name and token
-     *
-     *  array(
-     *      'id' => '123',
-     *      'param' => 'abc'
-     *  )
-     *
-     * @param bool $removeModuleParameters
-     * @return array
-     */
-    protected static function getCurrentParameters($removeModuleParameters = true)
-    {
-        $parameters = array();
-        $moduleParameterKeys = array(
-            'M',
-            'moduleToken',
-        );
-        $ignoreKeys = self::getIgnoreKeysForCurrentParameters();
-
-        foreach ((array)GeneralUtility::_GET() as $key => $value) {
-            if (in_array($key, $ignoreKeys) || (in_array($key, $moduleParameterKeys) && $removeModuleParameters)) {
-                continue;
-            }
-            $parameters[$key] = $value;
-        }
-        return $parameters;
-    }
-
-    /**
-     * @return array
-     * @SuppressWarnings("PHPMD.Superglobals")
-     */
-    protected static function getIgnoreKeysForCurrentParameters()
-    {
-        if (isset($GLOBALS['in2publish_core']['backend_utility']['ignored_keys_of_parameters'])
-            && is_array($GLOBALS['in2publish_core']['backend_utility']['ignored_keys_of_parameters'])
-        ) {
-            return $GLOBALS['in2publish_core']['backend_utility']['ignored_keys_of_parameters'];
-        }
-        return array();
     }
 
     /**
