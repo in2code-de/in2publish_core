@@ -27,7 +27,6 @@ namespace In2code\In2publishCore\ViewHelpers\Attribute;
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -74,16 +73,14 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
      */
     protected function getAjaxUri(Record $record)
     {
-        $actionViewHelper = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager')->get(
-            'TYPO3\\CMS\\Fluid\\ViewHelpers\\Uri\\ActionViewHelper'
-        );
-        $actionViewHelper->controllerContext = $this->controllerContext;
-        $uri = $actionViewHelper->render(
-            'detail',
-            array('identifier' => $record->getIdentifier(), 'tableName' => $record->getTableName()),
-            'Record'
-        );
-        return $uri;
+        return $this
+            ->controllerContext
+            ->getUriBuilder()
+            ->uriFor(
+                'detail',
+                array('identifier' => $record->getIdentifier(), 'tableName' => $record->getTableName()),
+                'Record'
+            );
     }
 
     /**
