@@ -36,6 +36,11 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
 {
     /**
+     * @var bool
+     */
+    protected $escapeOutput = false;
+
+    /**
      * Get data attributes for i-icon
      *
      * @param Record $record
