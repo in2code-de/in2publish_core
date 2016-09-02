@@ -42,7 +42,7 @@ class GetLabelFieldFromRecordViewHelper extends AbstractViewHelper
      * @param string $stagingLevel "local" or "foreign"
      * @return string
      */
-    public function render($record, $stagingLevel = 'local')
+    public function render(Record $record, $stagingLevel = 'local')
     {
         /** @var LabelService $labelService */
         $labelService = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager')->get(
