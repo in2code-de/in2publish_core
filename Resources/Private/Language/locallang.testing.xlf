@@ -280,7 +280,7 @@
 			<trans-unit id="application.foreign_sys_domain_missing">
 				<source>No valid sys_domain entry has been found on the foreign system.</source>
 			</trans-unit>
-			<trans-unit id="application.foreign_sys_domain_present">
+			<trans-unit id="application.foreign_sys_domain_configured">
 				<source>A valid sys_domain entry has been found on the foreign system.</source>
 			</trans-unit>
 		</body>

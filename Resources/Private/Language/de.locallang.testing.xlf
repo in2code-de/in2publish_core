@@ -350,7 +350,7 @@
 				<source>No valid sys_domain entry has been found on the foreign system.</source>
 				<target state="translated">Es wurde kein gültiger sys_domain Eintrag im entfernte System gefunden.</target>
 			</trans-unit>
-			<trans-unit id="application.foreign_sys_domain_present">
+			<trans-unit id="application.foreign_sys_domain_configured">
 				<source>A valid sys_domain entry has been found on the foreign system.</source>
 				<target state="translated">Es wurde ein gültiger sys_domain Eintrag im entfernte System gefunden.</target>
 			</trans-unit>
