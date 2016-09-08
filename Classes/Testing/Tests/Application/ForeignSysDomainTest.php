@@ -28,46 +28,24 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
 
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 
 /**
- * Class LocalInstanceTest
+ * Class ForeignSysDomainTest
  */
-class LocalInstanceTest implements TestCaseInterface
+class ForeignSysDomainTest implements TestCaseInterface
 {
     /**
      * @return TestResult
-     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function run()
     {
-        $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
+        $foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
 
-        if (!empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'])) {
-            return new TestResult('application.local_utf8_fs', TestResult::ERROR, array('application.utf8_fs_errors'));
+        if ($foreignDatabase->exec_SELECTcountRows('*', 'sys_domain', 'hidden=0') === 0) {
+            return new TestResult('application.foreign_sys_domain_missing', TestResult::ERROR);
         }
-
-        $excludedTables = ConfigurationUtility::getConfiguration('excludeRelatedTables');
-        $localTables = $localDatabase->admin_get_tables();
-
-        $missingTables = array();
-
-        foreach ($excludedTables as $table) {
-            if (!isset($localTables[$table])) {
-                $missingTables[] = $table;
-            }
-        }
-
-        if (!empty($missingTables)) {
-            return new TestResult(
-                'application.superfluous_excluded_tables_detected',
-                TestResult::WARNING,
-                array_merge(array('application.superfluous_excluded_tables'), $missingTables)
-            );
-        }
-
-        return new TestResult('application.local_instance_validated');
+        return new TestResult('application.foreign_sys_domain_configured');
     }
 
     /**
@@ -76,7 +54,7 @@ class LocalInstanceTest implements TestCaseInterface
     public function getDependencies()
     {
         return array(
-            'In2code\\In2publishCore\\Testing\\Tests\\Database\\LocalDatabaseTest',
+            'In2code\\In2publishCore\\Testing\\Tests\\SshConnection\\SshConnectionTest',
         );
     }
 }

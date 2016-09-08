@@ -30,7 +30,6 @@ use In2code\In2publishCore\Security\SshConnection;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -45,11 +44,6 @@ class ForeignInstanceTest implements TestCaseInterface
     public function run()
     {
         $sshConnection = SshConnection::makeInstance();
-        $foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
-
-        if ($foreignDatabase->exec_SELECTcountRows('*', 'sys_domain', 'hidden=0') === 0) {
-            return new TestResult('application.foreign_sys_domain_missing', TestResult::ERROR);
-        }
         $dispatcherResult = $sshConnection->callForeignCliDispatcherCallable();
 
         if (false !== strpos($dispatcherResult['stdOut'], '_cli_lowlevel')) {

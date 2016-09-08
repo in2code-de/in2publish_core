@@ -261,10 +261,6 @@
 				<source>The local environment was validated successfully.</source>
 				<target state="translated">Die lokale Instanz wurde erfolgreich validiert.</target>
 			</trans-unit>
-			<trans-unit id="application.local_sys_domain_missing">
-				<source>No valid sys_domain entry has been be found on the local system.</source>
-				<target state="translated">Es wurde kein gültiger sys_domain Eintrag im lokalen System gefunden.</target>
-			</trans-unit>
 			<trans-unit id="application.local_utf8_fs">
 				<source>UTF8 filesystem configured for the local system, please disable this configuration in Install tool.</source>
 				<target state="translated">Lokal ist UTF8 Dateisystem konfiguriert. Bitte deaktivieren sie diese Option im Install Tool.</target>
@@ -278,15 +274,22 @@
 				<target state="translated">Folgende Tabellen wurden konfiguriert, existieren aber nicht:</target>
 			</trans-unit>
 
+			<!-- \In2code\In2publishCore\Testing\Tests\Application\LocalSysDomainTest -->
+
+			<trans-unit id="application.local_sys_domain_missing">
+				<source>No valid sys_domain entry has been on the local system.</source>
+				<target state="translated">Es wurde kein gültiger sys_domain Eintrag im lokalen System gefunden.</target>
+			</trans-unit>
+			<trans-unit id="application.local_sys_domain_configured">
+				<source>A valid sys_domain entry has been found on the local system.</source>
+				<target state="translated">Es wurde ein gültiger sys_domain Eintrag im lokalen System gefunden.</target>
+			</trans-unit>
+
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest -->
 
 			<trans-unit id="application.foreign_system_validated">
 				<source>The foreign environment was validated successfully.</source>
 				<target state="translated">Die entfernte Instanz wurde erfolgreich validiert.</target>
-			</trans-unit>
-			<trans-unit id="application.foreign_sys_domain_missing">
-				<source>No valid sys_domain entry has been be found on the foreign system.</source>
-				<target state="translated">Es wurde kein gültiger sys_domain Eintrag im entfernte System gefunden.</target>
 			</trans-unit>
 			<trans-unit id="application.foreign_cli_lowlevel_user_missing">
 				<source>Could not call the CLI dispatcher on foreign because the backend user "_cli_lowlevel" is missing there.</source>
@@ -339,6 +342,17 @@
 			<trans-unit id="application.foreign_t3_versions">
 				<source>Foreign TYPO3 Version:</source>
 				<target state="translated">Entfernte TYPO3 Version:</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignSysDomainTest -->
+
+			<trans-unit id="application.foreign_sys_domain_missing">
+				<source>No valid sys_domain entry has been found on the foreign system.</source>
+				<target state="translated">Es wurde kein gültiger sys_domain Eintrag im entfernte System gefunden.</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_sys_domain_present">
+				<source>A valid sys_domain entry has been found on the foreign system.</source>
+				<target state="translated">Es wurde ein gültiger sys_domain Eintrag im entfernte System gefunden.</target>
 			</trans-unit>
 		</body>
 	</file>

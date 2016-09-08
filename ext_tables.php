@@ -184,7 +184,9 @@ call_user_func(
                     'In2code\\In2publishCore\\Testing\\Tests\\SshConnection\\SshFunctionAvailabilityTest',
                     'In2code\\In2publishCore\\Testing\\Tests\\SshConnection\\SshConnectionTest',
                     'In2code\\In2publishCore\\Testing\\Tests\\Application\\LocalInstanceTest',
+                    'In2code\\In2publishCore\\Testing\\Tests\\Application\\LocalSysDomainTest',
                     'In2code\\In2publishCore\\Testing\\Tests\\Application\\ForeignInstanceTest',
+                    'In2code\\In2publishCore\\Testing\\Tests\\Application\\ForeignSysDomainTest',
                 );
             }
         }
