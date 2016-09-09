@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Domain\Repository;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
-use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\FileUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
@@ -471,57 +470,15 @@ class CommonRepository extends BaseRepository
         }
         $recordIdentifier = $record->getIdentifier();
         foreach ($this->tcaService->getAllTableNames($excludedTableNames) as $tableName) {
-            if (!$this->skipRecordRelation($tableName, $record)) {
-                if ($this->shouldSkipSearchingForRelatedRecordByTable($record, $tableName)) {
-                    continue;
-                }
-                $previousTableName = $this->replaceTableName($tableName);
-                $record->addRelatedRecords($this->findByProperty('pid', $recordIdentifier));
-                $this->tableName = $previousTableName;
-            } else {
-                $this->logger->debug(
-                    'Records in this page skipped because of "skipRecordsIfNoPageChange"',
-                    array('page' => $recordIdentifier, 'tableName' => $tableName)
-                );
+            if ($this->shouldSkipSearchingForRelatedRecordByTable($record, $tableName)) {
+                continue;
             }
+            $previousTableName = $this->replaceTableName($tableName);
+            $relatedRecords = $this->findByProperty('pid', $recordIdentifier);
+            $record->addRelatedRecords($relatedRecords);
+            $this->tableName = $previousTableName;
         }
         return $record;
-    }
-
-    /**
-     * Check if this content relation could be skipped by looking into the last sys_log entry for the current page and
-     * compare local and foreign. If there are no differences, relation could be skipped
-     *
-     * @param string $tableName
-     * @param Record $record
-     * @return bool
-     */
-    protected function skipRecordRelation($tableName, Record $record)
-    {
-        if ($record->isPagesTable() && $tableName !== 'pages') {
-            // check if this test wasn't done before
-            if (!array_key_exists($record->getIdentifier(), $this->skipRecords)) {
-                $localLog = $this->findLastPropertiesByPropertyAndTableName(
-                    $this->localDatabase,
-                    'sys_log',
-                    'event_pid',
-                    $record->getIdentifier()
-                );
-                $foreignLog = $this->findLastPropertiesByPropertyAndTableName(
-                    $this->foreignDatabase,
-                    'sys_log',
-                    'event_pid',
-                    $record->getIdentifier()
-                );
-                $differences = ArrayUtility::compareArrays($localLog, $foreignLog, array('uid'));
-                $result = empty($differences);
-                $this->skipRecords[$record->getIdentifier()] = $result;
-                return $result;
-            } else {
-                return $this->skipRecords[$record->getIdentifier()];
-            }
-        }
-        return false;
     }
 
     /**
