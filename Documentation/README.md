@@ -10,6 +10,6 @@
 | Email          | alexander.kellner@in2code.de, oliver.eglseder@in2code.de, thomas.scheibitz@in2code.de |
 
 * [Introduction](Documentation/Introduction.md)
-* [Installation](Installation/)
-* [Use](Use/Index.md)
-* [FAQ](FAQ.md)
+* [Installation](Documentation/Installation/)
+* [Use](Documentation/Use/Index.md)
+* [FAQ](Documentation/FAQ.md)
