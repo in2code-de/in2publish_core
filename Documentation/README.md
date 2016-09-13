@@ -9,7 +9,7 @@
 | Author         | Alex Kellner, Oliver Eglseder, Thomas Scheibitz                                       |
 | Email          | alexander.kellner@in2code.de, oliver.eglseder@in2code.de, thomas.scheibitz@in2code.de |
 
-* [Introduction](Documentation/Introduction.md)
-* [Installation](Documentation/Installation/)
-* [Use](Documentation/Use/README.md)
-* [FAQ](Documentation/FAQ.md)
+* [Introduction](Introduction.md)
+* [Installation](Installation/)
+* [Use](Use/)
+* [FAQ](FAQ.md)
