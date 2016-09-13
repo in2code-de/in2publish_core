@@ -183,7 +183,7 @@ class TableCommandController extends AbstractCommandController
     }
 
     /**
-     * Stores a backup of a complete table into the configured directory
+     * Stores a backup of the complete local table into the configured directory
      *
      * @param string $tableName
      * @return void

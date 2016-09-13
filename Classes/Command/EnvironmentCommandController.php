@@ -35,7 +35,7 @@ use In2code\In2publishCore\Domain\Service\Environment\FileStorageService;
 class EnvironmentCommandController extends AbstractCommandController
 {
     /**
-     * Rewrite not allowed characters in folders (and also in sys_file)
+     * Rewrite not allowed characters in folders (and also in 'sys_file' database records)
      *
      *  This command rewrites not allowed characters in your file storage (e.g. fileadmin) for folders
      *  and also in their related sys_file records. German umlauts will be replaced (ä => ae).
@@ -58,7 +58,7 @@ class EnvironmentCommandController extends AbstractCommandController
     }
 
     /**
-     * Rewrite not allowed characters in files (and also in sys_file)
+     * Rewrite not allowed characters in files (and also in 'sys_file' database records)
      *
      *  This command rewrites not allowed characters in your file storage (e.g. fileadmin) for files
      *  and also in their related sys_file records. German umlauts will be replaced (ä => ae).

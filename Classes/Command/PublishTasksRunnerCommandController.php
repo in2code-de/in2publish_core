@@ -47,10 +47,10 @@ class PublishTasksRunnerCommandController extends AbstractCommandController
      * one after another.
      * The success of a Task is outputted to the console or scheduler
      * backend module, including any error message of failed tasks
-     * NOTE: This command is used for internal operations in in2publish
-     *
+     * NOTE: This command is used for internal operations in in2publish_core
      *
      * @return void
+     * @internal
      */
     public function runTasksInQueueCommand()
     {

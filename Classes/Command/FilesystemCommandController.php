@@ -50,10 +50,11 @@ class FilesystemCommandController extends AbstractCommandController
 
     /**
      * CommandController to show folders in a given folder
-     * NOTE: This command is used for internal operations in in2publish
+     * NOTE: This command is used for internal operations in in2publish_core
      *
      * @param string $relativePath
      * @return void
+     * @internal
      */
     public function getFoldersInFolderCommand($relativePath)
     {
@@ -62,10 +63,11 @@ class FilesystemCommandController extends AbstractCommandController
 
     /**
      * CommandController to get folder information
-     * NOTE: This command is used for internal operations in in2publish
+     * NOTE: This command is used for internal operations in in2publish_core
      *
      * @param string $relativePath
      * @return void
+     * @internal
      */
     public function getFolderInformationCommand($relativePath)
     {
@@ -74,10 +76,11 @@ class FilesystemCommandController extends AbstractCommandController
 
     /**
      * CommandController to get files in a given folder
-     * NOTE: This command is used for internal operations in in2publish
+     * NOTE: This command is used for internal operations in in2publish_core
      *
      * @param string $relativePath
      * @return void
+     * @internal
      */
     public function getFilesInFolderCommand($relativePath)
     {
@@ -86,10 +89,11 @@ class FilesystemCommandController extends AbstractCommandController
 
     /**
      * CommandController to remove folders
-     * NOTE: This command is used for internal operations in in2publish
+     * NOTE: This command is used for internal operations in in2publish_core
      *
      * @param string $relativePath
      * @return void
+     * @internal
      */
     public function removeFolderRecursiveCommand($relativePath)
     {
@@ -105,11 +109,12 @@ class FilesystemCommandController extends AbstractCommandController
 
     /**
      * CommandController to rename files
-     * NOTE: This command is used for internal operations in in2publish
+     * NOTE: This command is used for internal operations in in2publish_core
      *
      * @param string $oldFileIdentifier
      * @param string $newFileIdentifier
      * @return void
+     * @internal
      */
     public function renameFileCommand($oldFileIdentifier, $newFileIdentifier)
     {
@@ -118,10 +123,11 @@ class FilesystemCommandController extends AbstractCommandController
 
     /**
      * Get md5 hash of relative file
-     * NOTE: This command is used for internal operations in in2publish
+     * NOTE: This command is used for internal operations in in2publish_core
      *
      * @param string $relativePathAndFile
      * @return void
+     * @internal
      */
     public function fileMd5Command($relativePathAndFile)
     {
@@ -131,6 +137,7 @@ class FilesystemCommandController extends AbstractCommandController
     /**
      * @param array $results
      * @return void
+     * @internal
      */
     public function outputResults($results = array())
     {

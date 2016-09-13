@@ -47,9 +47,10 @@ class StatusCommandController extends AbstractCommandController
 
     /**
      * Prints all information about the in2publish system
-     * NOTE: This command is used for internal operations in in2publish
+     * NOTE: This command is used for internal operations in in2publish_core
      *
      * @return void
+     * @internal
      */
     public function allCommand()
     {
@@ -60,10 +61,11 @@ class StatusCommandController extends AbstractCommandController
 
     /**
      * Prints the current version of in2publish
-     * NOTE: This command is used for internal operations in in2publish
+     * NOTE: This command is used for internal operations in in2publish_core
      *
      * @throws \TYPO3\CMS\Core\Package\Exception
      * @SuppressWarnings(PHPMD.CamelCaseVariableName)
+     * @internal
      */
     public function versionCommand()
     {
@@ -75,7 +77,9 @@ class StatusCommandController extends AbstractCommandController
 
     /**
      * Prints if the configuration was loaded successfully
-     * NOTE: This command is used for internal operations in in2publish
+     * NOTE: This command is used for internal operations in in2publish_core
+     *
+     * @internal
      */
     public function configurationCommand()
     {
@@ -87,7 +91,9 @@ class StatusCommandController extends AbstractCommandController
 
     /**
      * Prints the configuration state as it was received by the condigfuration utility
-     * NOTE: This command is used for internal operations in in2publish
+     * NOTE: This command is used for internal operations in in2publish_core
+     *
+     * @internal
      */
     public function configurationRawCommand()
     {
@@ -98,9 +104,10 @@ class StatusCommandController extends AbstractCommandController
 
     /**
      * Prints the configured fileCreateMask and folderCreateMask
-     * NOTE: This command is used for internal operations in in2publish
+     * NOTE: This command is used for internal operations in in2publish_core
      *
      * @SuppressWarnings(PHPMD.Superglobals)
+     * @internal
      */
     public function createMasksCommand()
     {
@@ -119,9 +126,10 @@ class StatusCommandController extends AbstractCommandController
 
     /**
      * Prints global configuration values
-     * NOTE: This command is used for internal operations in in2publish
+     * NOTE: This command is used for internal operations in in2publish_core
      *
      * @SuppressWarnings(PHPMD.Superglobals)
+     * @internal
      */
     public function globalConfigurationCommand()
     {
@@ -137,6 +145,8 @@ class StatusCommandController extends AbstractCommandController
     /**
      * Prints TYPO3 version
      * NOTE: This command is used for internal operations in in2publish_core
+     *
+     * @internal
      */
     public function typo3VersionCommand()
     {
