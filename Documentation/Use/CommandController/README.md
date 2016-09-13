@@ -3,8 +3,7 @@
 Command controller provide information about the system, are used for scheduled publishing and much more.
 Some command controllers are intended for CLI usage, some as scheduler tasks. This document describes how, when and where to use them.
 
-
-**The following pages describe how command controllers can should used**:
+**The following pages describe how command controllers can be used**:
 
 * [Filesystem](Filesystem.md) 
 * [PublishTasksRunner](PublishTasksRunner.md) 
@@ -37,3 +36,9 @@ The example command will boot in2publish with the local configuration and print 
 Hint:
 
 > The version number may differ depending on your copy of in2publish_core.
+
+Hint:
+
+> If you have conflicting CommandController names you can add the extension name to clarify which one should be called:
+
+    IN2PUBLISH_CONTEXT=Local ./typo3/cli_dispatch.phpsh extbase in2publish_core:status:configuration
