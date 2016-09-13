@@ -7,11 +7,11 @@ There is a single folder structure that compares folders with files on both serv
 
 ## Color Coding
 
-* Any color: The page or a record on this page is different on stage and production
-* Yellow: There is a change on this page.
-* Green: This is a new page.
-* Red: This page was deleted.
-* Blue: This page has been moved within the pagetree.
+* Grey: The file or folder has not changed
+* Yellow: There is a change in this folder/file.
+* Green: This is a new folder/file.
+* Red: This folder/file was deleted.
+* Blue: This folder/file has been moved within the folder structure.
 
 ## Filtering
 

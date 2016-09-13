@@ -7,7 +7,7 @@ There is a single page tree that compares records on both servers.
 
 ## Color Coding
 
-* Any color: The page or a record on this page is different on stage and production
+* Grey: The page or a record on this page does not differ between stage and production
 * Yellow: There is a change on this page.
 * Green: This is a new page.
 * Red: This page was deleted.
