@@ -492,7 +492,7 @@ class CommonRepository extends BaseRepository
         $pointerFields = GeneralUtility::trimExplode(',', $columnConfiguration['ds_pointerField']);
         $pointerFieldsCount = count($pointerFields);
         if ($pointerFieldsCount === 2) {
-            // Stage wins! Only use local properties.
+            // stage wins! Only use local properties.
             // Usually "list_type"
             $firstPointerValue = $record->getLocalProperty($pointerFields[0]);
             // Usually "CType"

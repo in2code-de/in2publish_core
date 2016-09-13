@@ -4,7 +4,7 @@ If configured, a page can enter the workflow process automatically as soon as so
 
 In this case it does not matter in which state the page is. If there is a new change, the workflow will begin anew.
 
-Clicking on the workflow button will open the workflow menu. Clicking on the arrow within the workflow button will publish the page to the live system.
+Clicking on the workflow button will open the workflow menu. Clicking on the arrow within the workflow button will publish the page to the production system.
 
 ![Workflow](_img/icon_workflow.png) 
 

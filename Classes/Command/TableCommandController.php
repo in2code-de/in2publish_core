@@ -72,9 +72,9 @@ class TableCommandController extends AbstractCommandController
     }
 
     /**
-     * Copies a table from Stage to Live
+     * Copies a table from stage to production
      *
-     *      Copies a complete table from stage to live and overwrites all old entries!
+     *      Copies a complete table from stage to production and overwrites all old entries!
      *
      * @param string $tableName
      * @return void
@@ -102,9 +102,9 @@ class TableCommandController extends AbstractCommandController
     }
 
     /**
-     * Copies a table from Live to Stage
+     * Copies a table from production to stage
      *
-     *      Copies a complete table from live to stage and overwrites all old entries!
+     *      Copies a complete table from production to stage and overwrites all old entries!
      *
      * @param string $tableName
      * @return void

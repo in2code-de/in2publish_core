@@ -4,7 +4,7 @@ All pages which are in a workflow can be viewed in a list in the workflow module
 
 ![Workflow module](_img/module_detail_workflow.png)
 
-Clicking on the workflow button will open the workflow menu. Clicking on the arrow within the workflow button will publish the page to live system.
+Clicking on the workflow button will open the workflow menu. Clicking on the arrow within the workflow button will publish the page to production system.
 
 ![Workflow button](_img/icon_workflow.png)
 

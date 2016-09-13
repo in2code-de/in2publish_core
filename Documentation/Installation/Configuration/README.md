@@ -2,8 +2,8 @@
 
 The configuration is split into two parts:
 
-* **[LocalConfiguration.yaml](LocalConfiguration.md)** configuration on stage to connect to the Live server.
-* **[ForeignConfiguration.yaml](ForeignConfiguration.md)** for the configuration on live to receive information from the Stage server.
+* **[LocalConfiguration.yaml](LocalConfiguration.md)** configuration on stage to connect to the production server.
+* **[ForeignConfiguration.yaml](ForeignConfiguration.md)** for the configuration on production to receive information from the stage server.
 
 Please take the two example files from EXT:in2publish/Configuration/Yaml/, move them to a folder above the webroot (e.g. /var/www/PublishConfiguration/) and modify them.
 

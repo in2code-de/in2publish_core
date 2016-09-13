@@ -6,7 +6,7 @@
 
 # Database access
 database:
-  # Set your live systems database credentials here. If you use port forwarding to
+  # Set your production systems database credentials here. If you use port forwarding to
   # the server where the database is
   # installed, the host is localhost and the port is your forwarded port.
   foreign:
@@ -164,7 +164,7 @@ view:
 sshConnection:
 
   # Hostname of the foreign server for SSH connection
-  host: live.domain.tld
+  host: production.domain.tld
 
   # Default: 22, change if necessary
   port: 22
@@ -181,7 +181,7 @@ sshConnection:
   # private key password, NULL if none set
   privateKeyPassphrase: NULL
 
-  # Key fingerprint of the Live Server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection.
+  # Key fingerprint of the production server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection.
   foreignKeyFingerprint: 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
 
   # Method modification: one of SSH2_FINGERPRINT_MD5 or SSH2_FINGERPRINT_SHA1

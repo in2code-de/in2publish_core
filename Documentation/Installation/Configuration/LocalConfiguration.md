@@ -25,13 +25,13 @@
 |view.records.filterButtons|bool|TRUE|Activate filter buttons in publishing module|
 |view.records.breadcrumb|bool|FALSE|Displays a list of all records that are related to the selected page and are changed in the overview module and show the relation path to the root. The list will not be shown when debug.allInformation is enabled. The connection to the root record will not be shown when debug.disableParentRecords is TRUE.|
 |view.files.filterButtons|bool|TRUE|Activate filter buttons in file module|
-|sshConnection.host|string|live.domain.tld|Hostname of the foreign server for SSH connection|
+|sshConnection.host|string|production.domain.tld|Hostname of the foreign server for SSH connection|
 |sshConnection.port|int|22|Default port 22, change if necessary|
 |sshConnection.username|string|simpleAccount|Username of user on the foreign server|
 |sshConnection.privateKeyFileAndPathName|string|/full/path/to/private/ssh/key/id_rsa|Absolute path to private ssh key from local system (rsa/dsa/..)|
 |sshConnection.publicKeyFileAndPathName|string|/full/path/to/public/ssh/key/id_rsa.pub|Absolute path to public ssh key from local system (rsa/dsa/..)|
 |sshConnection.privateKeyPassphrase|null/string|NULL|SSH and transfer settings. Private key password for the given private key (see above), NULL if none set|
-|sshConnection.foreignKeyFingerprint|string|00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00|Key fingerprint of the Live Server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection. [How to get the Foreign Key Fingerprint](#how-to-get-the-foreign-key-fingerprint) |
+|sshConnection.foreignKeyFingerprint|string|00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00|Key fingerprint of the production server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection. [How to get the Foreign Key Fingerprint](#how-to-get-the-foreign-key-fingerprint) |
 |sshConnection.foreignKeyFingerprintHashingMethod|string|SSH2_FINGERPRINT_MD5|Choose SSH2_FINGERPRINT_MD5 or SSH2_FINGERPRINT_SHA1 for the fingerprint tests|
 |sshConnection.foreignRootPath|string|/Users/simpleAccount/Projects/Websites/foreign.publishing.dev|Root path of the foreign TYPO3 CMS instance|
 |sshConnection.pathToPhp|string|/usr/bin/env php|Path to php binary on foreign|
@@ -76,7 +76,7 @@ Filename: `LocalConfigurtion.yaml`
 
 # Database access
 database:
-  # Set your live systems database credentials here. If you use port forwarding to
+  # Set your production systems database credentials here. If you use port forwarding to
   # the server where the database is
   # installed, the host is localhost and the port is your forwarded port.
   foreign:
@@ -233,7 +233,7 @@ view:
 sshConnection:
 
   # Hostname of the foreign server for SSH connection
-  host: live.domain.tld
+  host: production.domain.tld
 
   # Default: 22, change if necessary
   port: 22
@@ -250,7 +250,7 @@ sshConnection:
   # private key password, NULL if none set
   privateKeyPassphrase: NULL
 
-  # Key fingerprint of the Live Server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection.
+  # Key fingerprint of the production server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection.
   foreignKeyFingerprint: 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
 
   # Method modification: one of SSH2_FINGERPRINT_MD5 or SSH2_FINGERPRINT_SHA1

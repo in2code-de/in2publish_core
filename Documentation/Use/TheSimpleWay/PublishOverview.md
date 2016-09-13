@@ -1,13 +1,13 @@
 # Publish Overview Module
 
-Opening the **Publish Overview** module allows editors and administrators see live changes between the stage and live system.
+Opening the **Publish Overview** module allows editors and administrators see live changes between the stage and production system.
 There is a single page tree that compares records on both servers.
 
 ![Module Overview details](_img/module_detail_overview.png) 
 
 ## Color Coding
 
-* Any color: The page or a record on this page is different on Stage and Live
+* Any color: The page or a record on this page is different on stage and production
 * Yellow: There is a change on this page.
 * Green: This is a new page.
 * Red: This page was deleted.
@@ -31,7 +31,7 @@ If there are fields with different content, it will be shown for the related rec
 
 ![Module Overview details open](_img/module_detail_overview_open.png)
 
-* Page preview: Opens a new browser tab with the selected page on Stage or Live.
+* Page preview: Opens a new browser tab with the selected page on stage or production.
 * Page history: Opens the TYPO3 history of the selected page.
 * [Tablename] [HistoryIcon]: Opens the TYPO3 history of the selected record.
 * [Tablename] [EditIcon]: Opens the TYPO3 edit view of the selected record.
@@ -39,7 +39,7 @@ If there are fields with different content, it will be shown for the related rec
 ## Publish
 
 Pages with all related records can be published simply by clicking the arrow icon.
-This triggers that this page on the live system gets the same records as the stage system.
+This triggers that this page on the production system gets the same records as the stage system.
 
 ![Arrow](_img/icon_arrow.png)
 

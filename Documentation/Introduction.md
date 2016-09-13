@@ -56,15 +56,15 @@ for easy, intuitive and daily usage focused on editors' daily business.
 
 * Security
   * Any connection between servers and databases is secured by SSH2. All internal methods to create such a connection are based on Private/Public keys. Password authentication is not supported intentionally, but the Private Key may be encrypted using a password.
-  * Eliminates the need for backend users on the Live server, as well as image processors like ImageMagick or GraphicsMagick.
-  * The *Production* server is not able to connect to *Stage* server.
+  * Eliminates the need for backend users on the production server.
+  * The *production* server is not able to connect to *stage* server.
   * The configuration file can be stored outside of the webroot.
 
 ## Environment
 
 in2publish deals with exactly two servers:
 
-* The first one, where editors write content and upload images, is called "Local" or "Stage".
-  The second, where visitors open the Frontend and no BE Login exists, is called "Foreign" or "Production".
+* The first one, where editors write content and upload images, is called "local" or "stage".
+  The second, where visitors open the Frontend and no BE Login exists, is called "foreign" or "production".
 * Any connection between those Servers is controlled by the Local side. Foreign is not able
   to connect itself to Local and send or receive data or commands actively.
