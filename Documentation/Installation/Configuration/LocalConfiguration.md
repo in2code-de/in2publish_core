@@ -57,7 +57,7 @@
 Since this topic has produced some irritations this will be clarified here.
 
 The Foreign Key Fingerprint is, as the name states, a hash of the public ssh key from the foreign systems ssh daemon.
-You can generate the hash with following command on your foreign server (exmaple command!): `ssh-keygen -E md5 -lf /etc/ssh/ssh_host_rsa_key.pub`
+You can generate the hash with following command on your foreign server (example command!): `ssh-keygen -E md5 -lf /etc/ssh/ssh_host_rsa_key.pub`
 
 Hint:
 
