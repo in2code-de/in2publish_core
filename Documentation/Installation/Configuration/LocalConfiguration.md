@@ -15,7 +15,7 @@
 |ignoreFieldsForDifferenceView.physical_file|array|_cropped. See example file_|Don't show a difference if there is a difference by comparing files between local and foreign (All settings of php function stat() are possible.)|
 |ignoreFieldsForDifferenceView.physical_folder|array|_cropped. See example file_|Don't show a difference if there is a difference by comparing folders between Local and Foreign (All settings of  php function stat() are possible.)|
 |factory.maximumPageRecursion|int|3|Depth of pages to fetch in hierarchy|
-|factory.maximumContentRecursion|int|4|Maximum number of relations in one chain|
+|factory.maximumContentRecursion|int|6|Maximum number of relations in one relation chain. For example: a value of "3" would stop after `tt_content` > `sys_file_reference` > `sys_file`. Therefor `sys_file_metadata` will not be included. |
 |factory.maximumOverallRecursion|int|12|Maximum number of instance creation recursion. Minimum: maximumPageRecursion + maximumContentRecursion. Will be ignored if lower.|
 |factory.resolvePageRelations|bool|FALSE|Resolve properties of records which target records from "pages" table. Use with care: Related pages will be published through the relation chain, too. Content records are ALL records, even pages and MM Records.|
 |factory.simpleOverviewAndAjax|bool|TRUE|_cropped. See example file_|
