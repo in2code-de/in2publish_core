@@ -11,5 +11,5 @@
 
 * [Introduction](Documentation/Introduction.md)
 * [Installation](Documentation/Installation/)
-* [Use](Documentation/Use/Index.md)
+* [Use](Documentation/Use/README.md)
 * [FAQ](Documentation/FAQ.md)
