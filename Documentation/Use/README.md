@@ -1,5 +1,5 @@
 # Usage
 
-* [The Simple Way](TheSimpleWay/Index.md)
-* [CommandController](CommandController/Index.md)
-* [Workflow](Workflow/Index.md)
+* [The Simple Way](TheSimpleWay/)
+* [CommandController](CommandController/)
+* [Workflow](Workflow/)
