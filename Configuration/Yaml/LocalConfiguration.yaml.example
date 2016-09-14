@@ -126,11 +126,11 @@ factory:
   # Use with care: Related pages will be published through the relation chain, too
   resolvePageRelations: FALSE
 
-  # [Performance]
+  # [Performance] [BETA]
   # Overview output will be build mainly from information of the local system. Status will be guessed by simple queries.
   # Details are available through an AJAX request and comparison with the foreign system.
   # Warning: Overview does not include everything (e.g. file records) and is not as robust as on default mode
-  simpleOverviewAndAjax: TRUE
+  simpleOverviewAndAjax: FALSE
 
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
 filePreviewDomainName:
