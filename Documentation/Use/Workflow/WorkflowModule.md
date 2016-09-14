@@ -1,4 +1,4 @@
-# Workflow module
+# Publish Workflow module
 
 All pages which are in a workflow can be viewed in a list in the workflow module.
 
