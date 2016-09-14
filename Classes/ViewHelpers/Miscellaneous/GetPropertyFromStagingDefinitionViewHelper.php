@@ -69,7 +69,7 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
     {
         if ($record->getTableName() === 'pages' && $record->getIdentifier() === 0 && $propertyName === 'title') {
             if ($stagingLevel === 'local') {
-                return LocalizationUtility::translate('label_stage', 'in2publish_core');
+                return $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];
             } else {
                 return LocalizationUtility::translate('label_production', 'in2publish_core');
             }
