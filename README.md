@@ -6,8 +6,7 @@ Content Publishing in TYPO3 - the easy way
 - High Security
 - Futureproof
 
-<img src="https://contentpublisher.in2code.de/Images/content_publisher_typo3_module_overview_prev.png" alt="Example overview module" width="400" />
-
+![Example overview module](Documentation/_img/index_publisher_screen.png) 
 
 ## Version changelog
 
