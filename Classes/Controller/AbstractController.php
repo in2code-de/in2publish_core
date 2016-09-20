@@ -95,21 +95,6 @@ abstract class AbstractController extends ActionController
     }
 
     /**
-     * Create the controller context. Do NOT call this Method
-     * before $this->initializeAction() is going to be executed
-     * because it relies on $this->request and $this->response to be set
-     *
-     * @return void
-     */
-    protected function buildControllerContextIfNecessary()
-    {
-        if ($this->controllerContext === null) {
-            $this->logger->debug('Prematurely building ControllerContext');
-            $this->controllerContext = $this->buildControllerContext();
-        }
-    }
-
-    /**
      * Sets the local and foreign Database Connections after checking
      * all configuration
      *
@@ -168,6 +153,10 @@ abstract class AbstractController extends ActionController
      * Decorates the original addFlashMessage Method.
      * If the controller context was not built yet it will be initialized
      *
+     * Additionally creates the controller context if not done yet.
+     * Do NOT call this Method before $this->initializeAction() is going to be executed
+     * because it relies on $this->request and $this->response to be set
+     *
      * @param string $messageBody
      * @param string $messageTitle
      * @param int $severity
@@ -180,7 +169,10 @@ abstract class AbstractController extends ActionController
         $severity = AbstractMessage::OK,
         $storeInSession = true
     ) {
-        $this->buildControllerContextIfNecessary();
+        if ($this->controllerContext === null) {
+            $this->logger->debug('Prematurely building ControllerContext');
+            $this->controllerContext = $this->buildControllerContext();
+        }
         parent::addFlashMessage($messageBody, $messageTitle, $severity, $storeInSession);
     }
 
