@@ -217,7 +217,6 @@ abstract class AbstractController extends ActionController
      */
     protected function getErrorFlashMessage()
     {
-        $this->logger->debug('Called ' . __FUNCTION__);
         return false;
     }
 
