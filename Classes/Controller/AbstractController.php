@@ -92,6 +92,8 @@ abstract class AbstractController extends ActionController
     {
         parent::__construct();
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->pid = BackendUtility::getPageIdentifier();
+        $this->backendUser = $this->getBackendUser();
     }
 
     /**
@@ -267,8 +269,6 @@ abstract class AbstractController extends ActionController
         );
         $executionTimeService->start();
         $this->initializeDatabaseConnections();
-        $this->pid = BackendUtility::getPageIdentifier();
-        $this->backendUser = $this->getBackendUser();
         $this->commonRepository = CommonRepository::getDefaultInstance();
     }
 
