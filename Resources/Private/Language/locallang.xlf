@@ -7,6 +7,10 @@
 				<source>Submit</source>
 			</trans-unit>
 
+			<trans-unit id="web_In2publishCoreM1">
+				<source>Publish Overview</source>
+			</trans-unit>
+
 			<trans-unit id="module_main_title">
 				<source>TYPO3 Content Publisher</source>
 			</trans-unit>

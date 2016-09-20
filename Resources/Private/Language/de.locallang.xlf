@@ -8,6 +8,11 @@
 				<target state="translated">Senden</target>
 			</trans-unit>
 
+			<trans-unit id="web_In2publishCoreM1">
+				<source>Publish Overview</source>
+				<target state="translated">Publisher Übersicht</target>
+			</trans-unit>
+
 			<trans-unit id="module_main_title">
 				<source>TYPO3 Content Publisher</source>
 				<target state="translated">TYPO3 Content Publisher</target>
