@@ -184,6 +184,7 @@ class TcaService
             foreach ($tableConfiguration[self::COLUMNS] as $column => $columnConfiguration) {
                 // if the column has no config section like sys_file_metadata[columns][height]
                 if (!isset($columnConfiguration[self::CONFIG])) {
+                    $this->incompatibleTca[$table][$column] = 'Columns without config section can not hold relations';
                     continue;
                 }
 
