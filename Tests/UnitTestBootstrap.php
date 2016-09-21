@@ -1,14 +1,20 @@
 <?php
 
-putenv('TYPO3_PATH_WEB=' . realpath(__DIR__ . '/../../../../'));
+if (!($webRoot = getenv('TYPO3_PATH_WEB'))) {
+    $webRoot = realpath(__DIR__ . '/../../../../') . '/';
 
-if (!file_exists(__DIR__ . '/../../../../vendor/autoload.php')) {
-    throw new \LogicException('Use this bootstrap file only when you installed in2publish via composer as dependency');
+    putenv('TYPO3_PATH_WEB=' . $webRoot);
+
+    if (!file_exists($webRoot . 'vendor/autoload.php')) {
+        throw new \LogicException(
+            'Use this bootstrap file only when you installed in2publish via composer as dependency or predefine TYPO3_PATH_WEB'
+        );
+    }
 }
 
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'] = array();
 
-$coreBootstrap = __DIR__ . '/../../../../typo3/sysext/core/Build/UnitTestsBootstrap.php';
+$coreBootstrap = $webRoot . '/typo3/sysext/core/Build/UnitTestsBootstrap.php';
 
 if (!file_exists($coreBootstrap)) {
     throw new \LogicException('Can not find core unit test bootstrap. Is TYPO3 installed correctly?');
@@ -30,6 +36,6 @@ $classLoader->addPsr4(
 );
 $classLoader->addPsr4(
     'TYPO3\\CMS\\Core\\Tests\\',
-    __DIR__ . '/../../../../typo3/sysext/core/Tests/',
+    $webRoot . '/typo3/sysext/core/Tests/',
     true
 );
