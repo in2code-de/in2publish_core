@@ -354,6 +354,33 @@
 				<source>A valid sys_domain entry has been found on the foreign system.</source>
 				<target state="translated">Es wurde ein gültiger sys_domain Eintrag im entfernte System gefunden.</target>
 			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\ResourceStorageTest -->
+
+			<trans-unit id="fal.storage_okay">
+				<source>All FAL Storages are okay.</source>
+				<target state="translated">Alle FAL Storages sind okay.</target>
+			</trans-unit>
+			<trans-unit id="fal.storage_errors">
+				<source>Fal Storages are missing. This might lead to publishing errors.</source>
+				<target state="translated">Es fehlen FAL Storages. Dies kann zu Fehlern beim Dateipublishing führen.</target>
+			</trans-unit>
+			<trans-unit id="fal.missing_on_local">
+				<source>Following FAL Storages are missing on Local:</source>
+				<target state="translated">Folgende FAL Storages fehlen Lokal:</target>
+			</trans-unit>
+			<trans-unit id="fal.missing_on_foreign">
+				<source>Following FAL Storages are missing on Foreign:</source>
+				<target state="translated">Folgende FAL Storages fehlen auf dem entfernten System:</target>
+			</trans-unit>
+			<trans-unit id="fal.different_storage_drivers">
+				<source>Following FAL Storages have different drivers.</source>
+				<target state="translated">Folgende FAL Storages haben unterschiedliche Treiber:</target>
+			</trans-unit>
+			<trans-unit id="fal.xsp_premium_notice">
+				<source>In this community version changes between FAL storages will be simply overwritten. Allowing different FAL drivers hence allowing Cross-Storage-Publishing (XSP) is an enterprise version.</source>
+				<target state="translated">In dieser Community Version werden unterschiede zwischen FAL Storages überschrieben. Cross-Storage-Publishing (XSP) ist ein Feature der Enterprise Version von in2publish. </target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

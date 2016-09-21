@@ -283,6 +283,27 @@
 			<trans-unit id="application.foreign_sys_domain_configured">
 				<source>A valid sys_domain entry has been found on the foreign system.</source>
 			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\ResourceStorageTest -->
+
+			<trans-unit id="fal.storage_okay">
+				<source>All FAL Storages are okay.</source>
+			</trans-unit>
+			<trans-unit id="fal.storage_errors">
+				<source>Fal Storages are missing. This might lead to publishing errors.</source>
+			</trans-unit>
+			<trans-unit id="fal.missing_on_local">
+				<source>Following FAL Storages are missing on Local:</source>
+			</trans-unit>
+			<trans-unit id="fal.missing_on_foreign">
+				<source>Following FAL Storages are missing on Foreign:</source>
+			</trans-unit>
+			<trans-unit id="fal.different_storage_drivers">
+				<source>Following FAL Storages have different drivers.</source>
+			</trans-unit>
+			<trans-unit id="fal.xsp_premium_notice">
+				<source>In this community version changes between FAL storages will be simply overwritten. Allowing different FAL drivers hence allowing Cross-Storage-Publishing (XSP) is an enterprise version.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
