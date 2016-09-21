@@ -350,7 +350,6 @@ class SshConnection
         return $this->executeRawCommand($command);
     }
 
-
     /**
      * @return array
      * @throws \Exception
