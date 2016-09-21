@@ -896,6 +896,10 @@ class SshConnection
     }
 
     /**
+     * Do not offer to not set create masks, because if this is
+     * called in first place all other requests, even if they
+     * need it, will not have the createMasks set and fail.
+     *
      * @throws \Exception
      */
     private function connectIfNecessary()
