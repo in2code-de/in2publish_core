@@ -51,6 +51,14 @@ Index - Information and Stuff
 								<f:translate key="moduleselector.flush_tca.description">Immediately flush all cached TCA entries.</f:translate>
 							</f:link.action>
 						</li>
+						<f:if condition="{canFlushEnvelopes}">
+							<li>
+								<f:link.action action="flushEnvelopes">
+									<f:translate key="moduleselector.flush_envelopes">Remove superfluous envelopes</f:translate>:
+									<f:translate key="moduleselector.flush_envelopes.description">Deletes all envelopes which were already used (envelopes are one-way records).</f:translate>
+								</f:link.action>
+							</li>
+						</f:if>
 					</ul>
 				</section>
 			</div>

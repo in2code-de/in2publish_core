@@ -119,4 +119,31 @@ class Letterbox
         }
         return $envelope;
     }
+
+    /**
+     * @return false|int
+     */
+    public function hasUnAnsweredEnvelopes()
+    {
+        if ($this->contextService->isLocal()) {
+            $database = DatabaseUtility::buildForeignDatabaseConnection();
+        } else {
+            $database = DatabaseUtility::buildLocalDatabaseConnection();
+        }
+
+        return $database->exec_SELECTcountRows('uid', static::TABLE, 'response IS NOT NULL');
+    }
+
+    /**
+     *
+     */
+    public function removeAnsweredEnvelopes()
+    {
+        if ($this->contextService->isLocal()) {
+            $database = DatabaseUtility::buildForeignDatabaseConnection();
+        } else {
+            $database = DatabaseUtility::buildLocalDatabaseConnection();
+        }
+        $database->exec_DELETEquery(static::TABLE, 'response IS NOT NULL');
+    }
 }

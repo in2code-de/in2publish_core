@@ -241,6 +241,14 @@
 				<source>Flush all cached TCA entries of in2publish on local.</source>
 				<target state="translated">Löscht alle TCA Einträge im Cache von in2publish in der lokalen Datenbank.</target>
 			</trans-unit>
+			<trans-unit id="moduleselector.flush_envelopes">
+				<source>Remove superfluous envelopes</source>
+				<target state="translated">Löscht alle nicht mehr benötigten Envelopes.</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.flush_envelopes.description">
+				<source>Deletes all envelopes (remote procedure call database entries) which were already used (envelopes are one-way records).</source>
+				<target state="translated">Löscht alle Envelopes  ("Remote Procedure Call"-Datenbankeinträge) die bereits genutzt wurden (Diese sind Einweg-Einträge)</target>
+			</trans-unit>
 
 			<trans-unit id="publishing.publish_file_success">
 				<source>The File "%s" was successful published.</source>

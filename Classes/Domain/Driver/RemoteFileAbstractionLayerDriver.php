@@ -72,7 +72,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     {
         parent::__construct($configuration);
         $this->sshConnection = SshConnection::makeInstance();
-        $this->letterBox = new Letterbox();
+        $this->letterBox = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\Rpc\\Letterbox');
     }
 
     /**

@@ -27,11 +27,13 @@ namespace In2code\In2publishCore\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
 use In2code\In2publishCore\Domain\Service\TcaService;
 use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 
 /**
  * The ToolsController is the controller of the Backend Module "Publish Tools" "m3"
@@ -48,6 +50,17 @@ class ToolsController extends AbstractController
      * @var array
      */
     protected $tests = array();
+
+    /**
+     * @param ViewInterface $view
+     * @return void
+     */
+    protected function initializeView(ViewInterface $view)
+    {
+        parent::initializeView($view);
+        $letterbox = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\Rpc\\Letterbox');
+        $this->view->assign('canFlushEnvelopes', $letterbox->hasUnAnsweredEnvelopes());
+    }
 
     /**
      * @return void
@@ -180,6 +193,16 @@ class ToolsController extends AbstractController
     public function clearTcaCachesAction()
     {
         TcaService::getInstance()->flushCaches();
+        $this->redirect('index');
+    }
+
+    /**
+     *
+     */
+    public function flushEnvelopesAction()
+    {
+        $letterbox = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\Rpc\\Letterbox');
+        $letterbox->removeAnsweredEnvelopes();
         $this->redirect('index');
     }
 }

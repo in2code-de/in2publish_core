@@ -33,6 +33,11 @@
 						<f:link.action action="clearTcaCaches" controller="Tools" class="btn btn-xs{publish:Be.GetClassNameOnAction(actionName:'clearTcaCaches')}">
 							<f:translate key="moduleselector.flush_tca">TCA flush</f:translate>
 						</f:link.action>
+						<f:if condition="{canFlushEnvelopes}">
+							<f:link.action action="flushEnvelopes" controller="Tools" class="btn btn-xs{publish:Be.GetClassNameOnAction(actionName:'flushEnvelopes')}">
+								<f:translate key="moduleselector.flush_envelopes">Remove superfluous envelopes</f:translate>
+							</f:link.action>
+						</f:if>
 					</f:if>
 				</div>
 			</div>
