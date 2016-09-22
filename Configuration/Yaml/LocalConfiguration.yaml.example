@@ -24,88 +24,87 @@ database:
 
 # Exclude tables from publishing
 excludeRelatedTables:
-  be_groups
-  be_users
-  sys_domain
-  sys_history
-  sys_log
-  sys_note
-  tx_extensionmanager_domain_model_extension
-  tx_extensionmanager_domain_model_repository
-  tx_rsaauth_keys
-  cache_treelist
-
+  - be_groups
+  - be_users
+  - sys_domain
+  - sys_history
+  - sys_log
+  - sys_note
+  - tx_extensionmanager_domain_model_extension
+  - tx_extensionmanager_domain_model_repository
+  - tx_rsaauth_keys
+  - cache_treelist
 
 # Ignore this fields for DIFF view
 ignoreFieldsForDifferenceView:
   pages:
-    pid
-    uid
-    t3ver_oid
-    t3ver_id
-    t3ver_wsid
-    t3ver_label
-    t3ver_state
-    t3ver_stage
-    t3ver_count
-    t3ver_tstamp
-    t3ver_move_id
-    t3_origuid
-    tstamp
-    sorting
-    perms_userid
-    perms_groupid
-    perms_user
-    perms_group
-    perms_everybody
-    crdate
-    cruser_id
-    SYS_LASTCHANGED
-    l18n_cfg
+    - pid
+    - uid
+    - t3ver_oid
+    - t3ver_id
+    - t3ver_wsid
+    - t3ver_label
+    - t3ver_state
+    - t3ver_stage
+    - t3ver_count
+    - t3ver_tstamp
+    - t3ver_move_id
+    - t3_origuid
+    - tstamp
+    - sorting
+    - perms_userid
+    - perms_groupid
+    - perms_user
+    - perms_group
+    - perms_everybody
+    - crdate
+    - cruser_id
+    - SYS_LASTCHANGED
+    - l18n_cfg
   sys_folder:
-    absolutePath
-    dev
-    ino
-    mode
-    nlink
-    uid
-    gid
-    rdev
-    size
-    atime
-    mtime
-    ctime
-    blksize
-    blocks
+    - absolutePath
+    - dev
+    - ino
+    - mode
+    - nlink
+    - uid
+    - gid
+    - rdev
+    - size
+    - atime
+    - mtime
+    - ctime
+    - blksize
+    - blocks
   physical_file:
-    absolutePath
-    dev
-    ino
-    mode
-    nlink
-    uid
-    gid
-    rdev
-    size
-    atime
-    mtime
-    ctime
-    blksize
-    blocks
+    - absolutePath
+    - dev
+    - ino
+    - mode
+    - nlink
+    - uid
+    - gid
+    - rdev
+    - size
+    - atime
+    - mtime
+    - ctime
+    - blksize
+    - blocks
   physical_folder:
-    absolutePath
-    ino
-    mode
-    nlink
-    uid
-    gid
-    rdev
-    size
-    atime
-    mtime
-    ctime
-    blksize
-    blocks
+    - absolutePath
+    - ino
+    - mode
+    - nlink
+    - uid
+    - gid
+    - rdev
+    - size
+    - atime
+    - mtime
+    - ctime
+    - blksize
+    - blocks
 
 
 # factory settings (configuration about building relations in in2publish)
