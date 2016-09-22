@@ -137,6 +137,15 @@ class Record implements RecordInterface
         array $tableConfigurationArray,
         array $additionalProperties
     ) {
+        // Normalize the storage property to be always int, because FAL is inconsistent in this point
+        if ('physical_folder' === $tableName) {
+            if (isset($localProperties['storage'])) {
+                $localProperties['storage'] = (int)$localProperties['storage'];
+            }
+            if (isset($foreignProperties['storage'])) {
+                $foreignProperties['storage'] = (int)$foreignProperties['storage'];
+            }
+        }
         $this->tableName = $tableName;
         $this->additionalProperties = $additionalProperties;
         $this->localProperties = $localProperties;
