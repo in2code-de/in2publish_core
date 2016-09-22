@@ -137,7 +137,7 @@ class Record implements RecordInterface
         array $tableConfigurationArray,
         array $additionalProperties
     ) {
-        $this->setTableName($tableName);
+        $this->tableName = $tableName;
         $this->additionalProperties = $additionalProperties;
         $this->localProperties = $localProperties;
         $this->foreignProperties = $foreignProperties;
