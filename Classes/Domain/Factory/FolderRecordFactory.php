@@ -2,59 +2,45 @@
 namespace In2code\In2publishCore\Domain\Factory;
 
 /***************************************************************
- *  Copyright notice
+ * Copyright notice
  *
- *  (c) 2015 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>,
- *  Oliver Eglseder <oliver.eglseder@in2code.de>
+ * (c) 2016 in2code.de and the following authors:
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  All rights reserved
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
+ * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
-use In2code\In2publishCore\Security\SshConnection;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use In2code\In2publishCore\Utility\FolderUtility;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
+use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Extbase\Reflection\PropertyReflection;
 
 /**
  * Class FolderRecordFactory
  */
 class FolderRecordFactory
 {
-    const TABLE_NAME_PHYSICAL_FOLDER = 'physical_folder';
-    const TABLE_NAME_PHYSICAL_FILE = 'physical_file';
-
-    /**
-     * @var SshConnection
-     */
-    protected $sshConnection = null;
-
-    /**
-     * @var CommonRepository
-     */
-    protected $commonRepository = null;
-
     /**
      * @var Logger
      */
@@ -66,336 +52,150 @@ class FolderRecordFactory
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
-        $this->sshConnection = SshConnection::makeInstance();
-        /** @var ObjectManager $objectManager */
-        $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-        $this->commonRepository = $objectManager->get(
+    }
+
+    /**
+     * Only work with drivers so we don't "accidentally" index files...
+     *
+     * @param string|null $identifier
+     * @return Record
+     */
+    public function makeInstance($identifier)
+    {
+        /*
+         * IMPORTANT NOTICES (a.k.a "never forget about this"-Notices):
+         *  1. The local folder always exist, because it's the one which has been selected (or the default)
+         *  2. The foreign folder might not exist
+         *  3. NEVER USE THE STORAGE, it might create new file index entries
+         *  4. Blame FAL. Always.
+         */
+        $resourceFactory = ResourceFactory::getInstance();
+
+        if (null === $identifier) {
+            $localStorage = $resourceFactory->getDefaultStorage();
+            $localFolder = $localStorage->getRootLevelFolder();
+        } else {
+            $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
+            $localStorage = $localFolder->getStorage();
+        }
+
+        $localDriver = $this->getLocalDriver($localStorage);
+        $foreignDriver = $this->getForeignDriver($localStorage);
+
+        $identifier = $localFolder->getIdentifier();
+        $localFolderInfo = $localDriver->getFolderInfoByIdentifier($identifier);
+        $localFolderInfo['uid'] = $this->createCombinedIdentifier($localFolderInfo);
+
+        $localSubFolders = $localDriver->getFoldersInFolder($identifier);
+
+        if ($foreignDriver->folderExists($localFolder->getIdentifier())) {
+            $foreignFolderInfo = $foreignDriver->getFolderInfoByIdentifier($localFolder->getIdentifier());
+            $foreignFolderInfo['uid'] = $this->createCombinedIdentifier($foreignFolderInfo);
+            $remoteSubFolders = $foreignDriver->getFoldersInFolder($identifier);
+        } else {
+            $foreignFolderInfo = array();
+            $remoteSubFolders = array();
+        }
+
+        $record = GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Domain\\Model\\Record',
+            'physical_folder',
+            $localFolderInfo,
+            $foreignFolderInfo,
+            array(),
+            array('depth' => 1)
+        );
+
+        $subFolders = $this->getSubFolders(
+            array_merge($localSubFolders, $remoteSubFolders),
+            $localDriver,
+            $foreignDriver
+        );
+
+        $record->addRelatedRecords($subFolders);
+
+        $commonRepository = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager')->get(
             'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
             DatabaseUtility::buildLocalDatabaseConnection(),
             DatabaseUtility::buildForeignDatabaseConnection(),
             'sys_file'
         );
-    }
 
-    /**
-     * @param string $folderIdentifier
-     * @return Record
-     */
-    public function makeInstance($folderIdentifier)
-    {
-        $record = $this->createFolderRecordInstance($folderIdentifier);
-        $record = $this->setRelatedPhysicalFolders($record);
-        $record = $this->setRelatedDatabaseFiles($record);
-        $record = $this->setRelatedPhysicalFiles($record);
-        $record->sortRelatedRecords(
-            'sys_file',
-            function ($recordA, $recordB) {
-                /** @var Record $recordA */
-                /** @var Record $recordB */
-                return strcmp(
-                    $recordA->getMergedProperty('name'),
-                    $recordB->getMergedProperty('name')
-                );
-            }
-        );
+        $files = $commonRepository->findByProperty('folder_hash', $localFolder->getHashedIdentifier());
+
+        $record->addRelatedRecords($files);
+
         return $record;
     }
 
     /**
-     * @param Record $record
-     * @return Record
+     * @param array $info
+     * @return string
      */
-    protected function setRelatedPhysicalFolders(Record $record)
+    protected function createCombinedIdentifier(array $info)
     {
-        $relativePath = $record->getLocalProperty('relativePath');
-        $localFolders = FolderUtility::getFoldersInFolder($relativePath);
-        $foreignFolders = $this->sshConnection->getFoldersInRemoteFolder($relativePath);
-
-        $mergedFolders = array();
-        foreach ($localFolders as $localFolder) {
-            $mergedFolders[$localFolder['uid']]['local'] = $localFolder;
+        $identifier = $info['identifier'];
+        if (isset($info['folder'])) {
+            $identifier = $info['folder'] . '/' . $identifier;
         }
-        foreach ($foreignFolders as $foreignFolder) {
-            $mergedFolders[$foreignFolder['uid']]['foreign'] = $foreignFolder;
-        }
-        foreach ($mergedFolders as $mergedFolder) {
-            $record->addRelatedRecord($this->createFolderRecordInstanceFromMergedFolder($mergedFolder));
-        }
-        return $record;
+        return sprintf('%d:%s', $info['storage'], $identifier);
     }
 
     /**
-     * @param array $mergedFolder
-     * @return Record
+     * @param ResourceStorage $localStorage
+     * @return DriverInterface
      */
-    protected function createFolderRecordInstanceFromMergedFolder(array $mergedFolder)
+    protected function getLocalDriver(ResourceStorage $localStorage)
     {
-        $localProperties = array();
-        if (!empty($mergedFolder['local'])) {
-            $localProperties = $mergedFolder['local'];
-        }
-        $foreignProperties = array();
-        if (!empty($mergedFolder['foreign'])) {
-            $foreignProperties = $mergedFolder['foreign'];
-        }
-        return GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Model\\Record',
-            self::TABLE_NAME_PHYSICAL_FOLDER,
-            $localProperties,
-            $foreignProperties,
-            array(),
-            array()
-        );
+        $driverProperty = new PropertyReflection(get_class($localStorage), 'driver');
+        $driverProperty->setAccessible(true);
+        return $driverProperty->getValue($localStorage);
     }
 
     /**
-     * @param Record $record
-     * @return Record
+     * @param ResourceStorage $localStorage
+     * @return DriverInterface
      */
-    protected function setRelatedDatabaseFiles(Record $record)
+    protected function getForeignDriver(ResourceStorage $localStorage)
     {
-        $relativePath = $record->getLocalProperty('relativePath');
-        if (strpos($relativePath, 'fileadmin') === 0) {
-            $relativePath = substr($relativePath, 9);
-        }
-        $relativePath = rtrim($relativePath, '/');
-        if ($relativePath === '') {
-            $relativePath = '/';
-        }
-        foreach ($this->commonRepository->findByProperty('folder_hash', sha1($relativePath)) as $relatedRecord) {
-            $record->addRelatedRecord($relatedRecord);
-        }
-        return $record;
+        $foreignDriver = new RemoteFileAbstractionLayerDriver();
+        $foreignDriver->setStorageUid($localStorage->getUid());
+        $foreignDriver->initialize();
+        return $foreignDriver;
     }
 
     /**
-     * @param Record $record
-     * @return Record
-     */
-    protected function setRelatedPhysicalFiles(Record $record)
-    {
-        $relativePath = $record->getLocalProperty('relativePath');
-        $localFiles = FolderUtility::getFilesInFolder($relativePath);
-        $foreignFiles = $this->sshConnection->getFilesInRemoteFolder($relativePath);
-        $mergedFiles = $this->initializeMergedFiles($localFiles);
-        $mergedFiles = $this->enrichMergedFilesWithForeignFiles($mergedFiles, $foreignFiles);
-
-        $mergedFiles = $this->setHasSysFilesForPhysicalFiles($mergedFiles, $record);
-
-        foreach ($mergedFiles as $mergedFile) {
-            $record->addRelatedRecord($this->createFileRecordInstanceFromMergedFile($mergedFile));
-        }
-        return $record;
-    }
-
-    /**
-     * Enrich merged files with sys files
-     *
-     * @param array $mergedFiles
-     * @param Record $record
+     * @param $subFolderIdentifiers
+     * @param $localDriver
+     * @param $foreignDriver
      * @return array
      */
-    protected function setHasSysFilesForPhysicalFiles(array $mergedFiles, Record $record)
+    protected function getSubFolders($subFolderIdentifiers, $localDriver, $foreignDriver)
     {
-        $relatedRecords = $record->getRelatedRecords();
-        if (!empty($relatedRecords['sys_file'])) {
-            /** @var Record $sysFile */
-            foreach ($relatedRecords['sys_file'] as $sysFile) {
-                $sides = array(
-                    'local' => $sysFile->getLocalProperty('name'),
-                    'foreign' => $sysFile->getForeignProperty('name'),
-                );
-                foreach ($sides as $side => $sysFileName) {
-                    if (empty($sysFileName)) {
-                        continue;
-                    }
-                    foreach ($mergedFiles as $key => $mergedFile) {
-                        if (empty($mergedFile[$side]) || true === $mergedFiles[$key]['has_sys_file']) {
-                            continue;
-                        }
-                        if ($sysFileName === $mergedFile[$side]['name']) {
-                            $mergedFiles[$key]['has_sys_file'] = true;
-                            if (!$sysFile->isChanged()) {
-                                $reverseSide = ($side === 'local' ? 'foreign' : $side);
-                                if (isset($mergedFile[$side]) && isset($mergedFile[$reverseSide])) {
-                                    if (empty($mergedFile['local']) && !empty($mergedFile['foreign'])) {
-                                        $sysFile->setState(RecordInterface::RECORD_STATE_DELETED);
-                                    } elseif (!empty($mergedFile['local']) && empty($mergedFile['foreign'])) {
-                                        $sysFile->setState(RecordInterface::RECORD_STATE_ADDED);
-                                    } elseif (isset($mergedFile[$side]['hash'])
-                                              && isset($mergedFile[$reverseSide]['hash'])
-                                              && $mergedFile[$side]['hash'] !== $mergedFile[$reverseSide]['hash']
-                                    ) {
-                                        $sysFile->setState(RecordInterface::RECORD_STATE_CHANGED);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+        $subFolders = array();
+        foreach ($subFolderIdentifiers as $subFolderIdentifier) {
+            if ($localDriver->folderExists($subFolderIdentifier)) {
+                $localFolderInfo = $localDriver->getFolderInfoByIdentifier($subFolderIdentifier);
+                $localFolderInfo['uid'] = $this->createCombinedIdentifier($localFolderInfo);
+            } else {
+                $localFolderInfo = array();
             }
-        }
-        return $mergedFiles;
-    }
-
-    /**
-     * Create mergeFiles array out of local files
-     *      array(
-     *          89787079498 => array(
-     *              has_sys_file => false,
-     *              local => array(...),
-     *              foreign => array()
-     *          )
-     *      )
-     *
-     * @param array $localFiles
-     * @return array
-     */
-    protected function initializeMergedFiles(array $localFiles)
-    {
-        $mergedFiles = array();
-        foreach ($localFiles as $localFile) {
-            $mergedFiles[$localFile['uid']]['has_sys_file'] = false;
-            $mergedFiles[$localFile['uid']]['local'] = $localFile;
-            $mergedFiles[$localFile['uid']]['foreign'] = array();
-        }
-        return $mergedFiles;
-    }
-
-    /**
-     * Enrich merged files with foreign files
-     *
-     * @param array $mergedFiles
-     * @param array $foreignFiles
-     * @return array
-     */
-    protected function enrichMergedFilesWithForeignFiles(array $mergedFiles, array $foreignFiles)
-    {
-        foreach ($foreignFiles as $foreignFile) {
-            $mergedFiles[$foreignFile['uid']]['has_sys_file'] = false;
-            $mergedFiles[$foreignFile['uid']]['foreign'] = $foreignFile;
-            if (!isset($mergedFiles[$foreignFile['uid']]['local'])) {
-                $mergedFiles[$foreignFile['uid']]['local'] = array();
+            if ($foreignDriver->folderExists($subFolderIdentifier)) {
+                $foreignFolderInfo = $foreignDriver->getFolderInfoByIdentifier($subFolderIdentifier);
+                $foreignFolderInfo['uid'] = $this->createCombinedIdentifier($foreignFolderInfo);
+            } else {
+                $foreignFolderInfo = array();
             }
-        }
-        return $mergedFiles;
-    }
 
-    /**
-     * @param Record $record
-     * @return Record
-     */
-    public function addInformationAboutPhysicalFile(Record $record)
-    {
-        $identifier = null;
-        if ($record->localRecordExists()) {
-            $identifier = $record->getLocalProperty('identifier');
-            $localName = $record->getLocalProperty('name');
-        } else {
-            $localName = null;
-        }
-        if ($record->foreignRecordExists()) {
-            $identifier = $record->getForeignProperty('identifier');
-            $foreignName = $record->getLocalProperty('name');
-        } else {
-            $foreignName = null;
-        }
-        if ($identifier === null) {
-            $this->logger->error(
-                'Tried to set physical information for a record but it neither exists local nor on foreign',
-                array(
-                    'record' => $record,
-                )
+            $subFolders[] = GeneralUtility::makeInstance(
+                'In2code\\In2publishCore\\Domain\\Model\\Record',
+                'physical_folder',
+                $localFolderInfo,
+                $foreignFolderInfo,
+                array(),
+                array('depth' => 1)
             );
-            return $record;
         }
-        $relativePath = 'fileadmin' . dirname($identifier) . DIRECTORY_SEPARATOR;
-        $localPhysicalFile = null;
-        if ($localName !== null) {
-            $localFiles = FolderUtility::getFilesInFolder($relativePath);
-            foreach ($localFiles as $localFile) {
-                if ($localFile['name'] === $localName) {
-                    $localPhysicalFile = $localFile;
-                    break;
-                }
-            }
-        }
-        $foreignPhysicalFile = null;
-        if ($foreignName !== null) {
-            $foreignFiles = $this->sshConnection->getFilesInRemoteFolder($relativePath);
-            foreach ($foreignFiles as $foreignFile) {
-                if ($foreignFile['name'] === $foreignName) {
-                    $foreignPhysicalFile = $foreignFile;
-                    break;
-                }
-            }
-        }
-
-        // if the local file does not exist, but the remote file does, the record has to be marked as deleted
-        if ((null === $localPhysicalFile && null !== $foreignPhysicalFile)
-            && (empty($localPhysicalFile['hash']) && !empty($foreignPhysicalFile['hash']))
-        ) {
-            $record->setState(RecordInterface::RECORD_STATE_DELETED);
-        } elseif (($localPhysicalFile === null || $foreignPhysicalFile === null)
-                  || ($localPhysicalFile['hash'] !== $foreignPhysicalFile['hash'])
-        ) {
-            $record->setState(RecordInterface::RECORD_STATE_CHANGED);
-        }
-        return $record;
-    }
-
-    /**
-     * @param array $mergedFile
-     * @return Record
-     */
-    protected function createFileRecordInstanceFromMergedFile(array $mergedFile)
-    {
-        $localProperties = array();
-        if (!empty($mergedFile['local'])) {
-            $localProperties = $mergedFile['local'];
-        }
-        $foreignProperties = array();
-        if (!empty($mergedFile['foreign'])) {
-            $foreignProperties = $mergedFile['foreign'];
-        }
-        $additionalProperties = array(
-            'hasSysFile' => $mergedFile['has_sys_file'],
-            'identifier' =>
-                (!empty($mergedFile['local']['identifier'])
-                    ?
-                    $mergedFile['local']['identifier']
-                    :
-                    $mergedFile['foreign']['identifier']
-                ),
-        );
-        return GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Model\\Record',
-            self::TABLE_NAME_PHYSICAL_FILE,
-            $localProperties,
-            $foreignProperties,
-            array(),
-            $additionalProperties
-        );
-    }
-
-    /**
-     * @param string $folderIdentifier
-     * @return Record
-     */
-    protected function createFolderRecordInstance($folderIdentifier)
-    {
-        $localProperties = FolderUtility::getFolderInformation($folderIdentifier);
-        $foreignProperties = $this->sshConnection->getRemoteFolderInformation($folderIdentifier);
-        $additionalProperties = array(
-            'absoluteDepth' => count(GeneralUtility::trimExplode('/', $folderIdentifier, true)),
-        );
-        return GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Model\\Record',
-            self::TABLE_NAME_PHYSICAL_FOLDER,
-            $localProperties,
-            $foreignProperties,
-            array(),
-            $additionalProperties
-        );
+        return $subFolders;
     }
 }

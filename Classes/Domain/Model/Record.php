@@ -574,7 +574,9 @@ class Record implements RecordInterface
     public function getIdentifier()
     {
         $uid = 0;
-        if ($this->hasLocalProperty('uid')) {
+        if ('physical_folder' === $this->tableName) {
+            return $this->getMergedProperty('uid');
+        } elseif ($this->hasLocalProperty('uid')) {
             $uid = $this->getLocalProperty('uid');
         } elseif ($this->hasForeignProperty('uid')) {
             $uid = $this->getForeignProperty('uid');
