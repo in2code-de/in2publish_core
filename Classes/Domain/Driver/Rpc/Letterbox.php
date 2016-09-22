@@ -68,6 +68,9 @@ class Letterbox
 
         if (0 === $uid || 0 === $database->exec_SELECTcountRows('uid', static::TABLE, 'uid=' . $uid)) {
             if (true === $database->exec_INSERTquery(static::TABLE, $envelope->toArray())) {
+                if ($uid > 0) {
+                    return $uid;
+                }
                 $uid = $database->sql_insert_id();
                 $envelope->setUid($uid);
                 return $uid;
@@ -80,9 +83,10 @@ class Letterbox
 
     /**
      * @param int $uid
+     * @param bool $burnAfterReading
      * @return bool|Envelope
      */
-    public function receiveEnvelope($uid)
+    public function receiveEnvelope($uid, $burnAfterReading = true)
     {
         $uid = (int)$uid;
 
@@ -100,8 +104,9 @@ class Letterbox
 
         if (is_array($envelopeData)) {
             $envelope = Envelope::fromArray($envelopeData);
-            // Burn after reading
-            $database->exec_DELETEquery(static::TABLE, 'uid=' . $uid);
+            if ($burnAfterReading) {
+                $database->exec_DELETEquery(static::TABLE, 'uid=' . $uid);
+            }
         } else {
             $envelope = false;
         }

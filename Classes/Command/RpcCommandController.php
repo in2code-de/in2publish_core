@@ -80,7 +80,7 @@ class RpcCommandController extends AbstractCommandController
             $this->sendAndExit(self::EXIT_UID_MISSING);
         }
 
-        $envelope = $this->letterbox->receiveEnvelope($uid);
+        $envelope = $this->letterbox->receiveEnvelope($uid, false);
 
         if (false === $envelope) {
             $this->logger->error('The requested envelope could not be received', array('uid' => $uid));
