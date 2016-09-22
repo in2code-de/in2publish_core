@@ -75,11 +75,20 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
     {
         if ($record->getTableName() === 'pages' && $record->getIdentifier() === 0 && $propertyName === 'title') {
             if ($stagingLevel === 'local') {
-                return $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];
+                return $this->getSiteName();
             } else {
                 return LocalizationUtility::translate('label_production', 'in2publish_core');
             }
         }
         return $this->emptyFieldValue;
+    }
+
+    /**
+     * @return string
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    protected function getSiteName()
+    {
+        return $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];
     }
 }
