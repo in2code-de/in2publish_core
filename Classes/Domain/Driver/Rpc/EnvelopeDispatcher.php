@@ -78,11 +78,14 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     * @return array
      */
     protected function getFoldersInFolders(array $request)
     {
         $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
-        // TODO
+        unset($request['storage']);
+        $driver = $this->getStorageDriver($storage);
+        return call_user_func_array(array($driver, 'getFoldersInFolder'), $request);
     }
 
     /**
