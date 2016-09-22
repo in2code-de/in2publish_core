@@ -84,6 +84,8 @@ class Letterbox
      */
     public function receiveEnvelope($uid)
     {
+        $uid = (int)$uid;
+
         if ($this->contextService->isForeign()) {
             $database = DatabaseUtility::buildLocalDatabaseConnection();
         } else {
@@ -93,11 +95,13 @@ class Letterbox
         $envelopeData = $database->exec_SELECTgetSingleRow(
             'command,request,response,uid',
             static::TABLE,
-            'uid=' . (int)$uid
+            'uid=' . $uid
         );
 
         if (is_array($envelopeData)) {
             $envelope = Envelope::fromArray($envelopeData);
+            // Burn after reading
+            $database->exec_DELETEquery(static::TABLE, 'uid=' . $uid);
         } else {
             $envelope = false;
         }
