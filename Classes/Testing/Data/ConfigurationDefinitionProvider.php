@@ -124,6 +124,7 @@ class ConfigurationDefinitionProvider implements SingletonInterface
                     'showRecordDepth' => 'boolean',
                     'showExecutionTime' => 'boolean',
                     'allInformation' => 'boolean',
+                    'keepEnvelopes' => 'boolean',
                 ),
                 'tasks' => array(
                     '*:string' => array(

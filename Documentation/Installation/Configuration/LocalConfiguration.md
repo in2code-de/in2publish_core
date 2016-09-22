@@ -43,6 +43,7 @@
 |debug.showForeignKeyFingerprint|bool|FALSE|Debug settings: Show foreign key fingerprint instead of throwing an exception if keyprint does not match with configuration|
 |debug.showRecordDepth|bool|FALSE|Debug settings: Show depth of records in publishing view|
 |debug.allInformation|bool|FALSE|Debug settings: Show all information in publishing overview module (which records are related to the current page)|
+|debug.keepEnvelopes|bool|FALSE|Do not delete Envelope entries after they fulfilled their purpose. Enable to keep all Envelopes. Overrules method level burnEnvelopes setting.|
 |tasks.realUrl.excludedDokTypes|array|[254]|Exclude pages with these dokTypes from realUrl generation|
 |tasks.realUrl.requestFrontend|bool|FALSE|Create a web request for the published page|
 |disableUserConfig|bool|FALSE|Set to TRUE if User TSconfig should not be merged into this configuration file|
@@ -294,6 +295,9 @@ debug:
 
   # show all information in publishing overview module (which records are related to the current page)
   allInformation: FALSE
+
+  # Do not delete Envelope entries after they fulfilled their purpose. Enable to keep all Envelopes. Overrules method level burnEnvelopes setting.
+  keepEnvelopes: FALSE
 
 # Configuration for tasks
 tasks:

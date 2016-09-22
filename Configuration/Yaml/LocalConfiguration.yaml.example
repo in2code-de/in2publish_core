@@ -226,6 +226,9 @@ debug:
   # show all information in publishing overview module (which records are related to the current page)
   allInformation: FALSE
 
+  # Do not delete Envelope entries after they fulfilled their purpose
+  keepEnvelopes: FALSE
+
 # Configuration for tasks
 tasks:
 

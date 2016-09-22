@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Domain\Driver\Rpc;
  ***************************************************************/
 
 use In2code\In2publishCore\Service\Context\ContextService;
+use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -43,6 +44,11 @@ class Letterbox
     protected $contextService = null;
 
     /**
+     * @var bool
+     */
+    protected $keepEnvelopes = true;
+
+    /**
      * Letterbox constructor.
      */
     public function __construct()
@@ -50,6 +56,7 @@ class Letterbox
         $this->contextService = GeneralUtility::makeInstance(
             'In2code\\In2publishCore\\Service\\Context\\ContextService'
         );
+        $this->keepEnvelopes = (bool)ConfigurationUtility::getConfiguration('debug.keepEnvelopes');
     }
 
     /**
@@ -83,10 +90,10 @@ class Letterbox
 
     /**
      * @param int $uid
-     * @param bool $burnAfterReading
+     * @param bool $burnEnvelope a.k.a. burn after reading, overridden by global debug setting
      * @return bool|Envelope
      */
-    public function receiveEnvelope($uid, $burnAfterReading = true)
+    public function receiveEnvelope($uid, $burnEnvelope = true)
     {
         $uid = (int)$uid;
 
@@ -104,7 +111,7 @@ class Letterbox
 
         if (is_array($envelopeData)) {
             $envelope = Envelope::fromArray($envelopeData);
-            if ($burnAfterReading) {
+            if (!$this->keepEnvelopes && $burnEnvelope) {
                 $database->exec_DELETEquery(static::TABLE, 'uid=' . $uid);
             }
         } else {
