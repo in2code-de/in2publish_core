@@ -18,12 +18,12 @@ Index
 				<ul class="in2publish-unstyledlist in2publish-list-level in2publish-list-level--{record.additionalProperties.depth}">
 					<f:for each="{record.relatedRecords.sys_file}" as="fileRecord">
 						<li>
-							<f:render partial="File/Index/FileList" arguments="{record:fileRecord, showRecordDepth:showRecordDepth}" />
+							<f:render partial="File/Index/FileList" arguments="{record:fileRecord, configuration:configuration}" />
 						</li>
 					</f:for>
 					<f:for each="{record.relatedRecords.physical_file}" as="physicalFileRecord">
 						<li>
-							<f:render partial="File/Index/PhysicalFileList" arguments="{record:physicalFileRecord, showRecordDepth:showRecordDepth}" />
+							<f:render partial="File/Index/PhysicalFileList" arguments="{record:physicalFileRecord, configuration:configuration}" />
 						</li>
 					</f:for>
 				</ul>

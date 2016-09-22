@@ -250,8 +250,15 @@ abstract class AbstractController extends ActionController
     protected function initializeView(ViewInterface $view)
     {
         parent::initializeView($view);
-        $this->view->assign('extensionVersion', ExtensionManagementUtility::getExtensionVersion('in2publish_core'));
-        $this->view->assign('configurationExists', $this->actionMethodName !== self::BLANK_ACTION);
+        $this->view->assignMultiple(
+            array(
+                'extensionVersion' => ExtensionManagementUtility::getExtensionVersion('in2publish_core'),
+                'configurationExists' => $this->actionMethodName !== self::BLANK_ACTION,
+            )
+        );
+        if (ConfigurationUtility::isConfigurationLoadedSuccessfully()) {
+            $this->view->assign('configuration', ConfigurationUtility::getConfiguration());
+        }
     }
 
     /**

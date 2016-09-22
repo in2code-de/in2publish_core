@@ -54,13 +54,7 @@ class RecordController extends AbstractController
                 'In2code\\In2publishCore\\Domain\\Factory\\FakeRecordFactory'
             )->buildFromStartPage($this->pid);
         }
-        $this->view->assignMultiple(
-            array(
-                'record' => $record,
-                'showRecordDepth' => ConfigurationUtility::getConfiguration('debug.showRecordDepth'),
-                'configuration' => ConfigurationUtility::getConfiguration(),
-            )
-        );
+        $this->view->assign('record', $record);
         $this->assignServerAndPublishingStatus();
     }
 
