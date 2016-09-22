@@ -26,3 +26,14 @@ CREATE TABLE tx_in2code_in2publish_task (
 
   PRIMARY KEY (uid)
 ) ENGINE=InnoDB;
+
+
+CREATE TABLE tx_in2code_in2publish_envelope (
+  uid int(11) unsigned NOT NULL auto_increment,
+
+  command varchar(255) DEFAULT '' NOT NULL,
+  request text,
+  response text,
+
+  PRIMARY KEY (uid)
+) ENGINE=InnoDB;

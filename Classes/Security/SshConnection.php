@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Security;
 
 use In2code\In2publishCore\Command\FilesystemCommandController;
 use In2code\In2publishCore\Command\PublishTasksRunnerCommandController;
+use In2code\In2publishCore\Command\RpcCommandController;
 use In2code\In2publishCore\Command\StatusCommandController;
 use In2code\In2publishCore\Command\TableCommandController;
 use In2code\In2publishCore\Domain\Model\Record;
@@ -368,6 +369,25 @@ class SshConnection
     {
         $command = 'cd ' . $this->foreignRootPath . ' && ls';
         return $this->executeRawCommand($command);
+    }
+
+    /**
+     * @param int $uid Envelope uid
+     * @return array|mixed
+     */
+    public function executeRpc($uid)
+    {
+        $command =
+            'cd ' . $this->foreignRootPath . ' && '
+            . $this->pathToPhp . ' '
+            . self::TYPO3_CLI_EXTBASE_DISPATCHER . RpcCommandController::EXECUTE_COMMAND . ' '
+            . (int)$uid;
+        $returnValues = $this->executeRemoteCommand($command);
+        $result = json_decode(reset($returnValues), true);
+        if ($result === null) {
+            return (array)$returnValues;
+        }
+        return $result;
     }
 
     /***************************************************

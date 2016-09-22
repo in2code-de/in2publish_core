@@ -68,6 +68,8 @@ call_user_func(
                     'In2code\\In2publishCore\\Command\\PublishTasksRunnerCommandController';
                 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
                     'In2code\\In2publishCore\\Command\\FilesystemCommandController';
+                $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
+                    'In2code\\In2publishCore\\Command\\RpcCommandController';
             }
 
             /**
