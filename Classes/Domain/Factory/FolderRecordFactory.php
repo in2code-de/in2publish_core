@@ -135,21 +135,99 @@ class FolderRecordFactory
          *  Prefer $localDriver over $foreignDriver where applicable, because it will be faster.
          */
         foreach ($files as $index => $file) {
-            switch ($file->getState()) {
-                case RecordInterface::RECORD_STATE_ADDED:
-                    // Only in LDB, therefore not publishable
-                    if (!$localDriver->fileExists($file->getLocalProperty('identifier'))) {
-                        unset($files[$index]);
-                        continue;
-                    }
-                    break;
-                case RecordInterface::RECORD_STATE_DELETED:
-                    // Only in FDB, therefore not publishable
-                    if (!$foreignDriver->fileExists($file->getForeignProperty('identifier'))) {
-                        unset($files[$index]);
-                        continue;
-                    }
-                    break;
+            $fdb = $file->foreignRecordExists();
+            $ldb = $file->localRecordExists();
+            $lfs = $localDriver->fileExists($file->getLocalProperty('identifier'));
+            $ffs = $foreignDriver->fileExists($file->getForeignProperty('identifier'));
+
+            if ($ldb && !$lfs && !$ffs && !$fdb) {
+                // CODE: [0] OLDB
+                // The file exists only in the local database. Ignore the orphaned DB record.
+                unset($files[$index]);
+                continue;
+            } elseif (!$ldb && $lfs && !$ffs && !$fdb) {
+                // CODE: [1] OLFS
+                // TODO
+                // Create the local database entry by indexing the file
+                // Assign the new information to the file and diff again
+                // We end up in [4] OL
+            } elseif (!$ldb && !$lfs && $ffs && !$fdb) {
+                // CODE: [2] OFFS
+                // TODO
+                // Try to index the file on foreign and reassign the foreign info.
+                // Diff again and end up in [9] OF
+            } elseif (!$ldb && !$lfs && !$ffs && $fdb) {
+                // CODE: [3] OFDB
+                // The file exists only in the foreign database. Ignore the orphaned DB record.
+                unset($files[$index]);
+                continue;
+            } elseif ($ldb && $lfs && !$ffs && !$fdb) {
+                // CODE: [4] OL
+                // Nothing to do here. The record exists only on local and will be displayed correctly.
+                // The file and database record will be copied to the remote system when published.
+            } elseif ($ldb && !$lfs && $ffs && !$fdb) {
+                // CODE: [5] LDFF
+                // TODO
+                // Okay i currently don't know how to handle this.
+                // I think the best solution would be indexing the file on
+                // foreign with the UID from the local database record.
+                // That would lead us to [12] NLFS so at least it's one case less.
+            } elseif ($ldb && !$lfs && !$ffs && $fdb) {
+                // CODE: [6] ODB
+                // TODO
+                // So there are two orphans (db without fs). we could diff them, but there's no file to publish.
+                // TODO consider ignoring this
+            } elseif (!$ldb && $lfs && $ffs && !$fdb) {
+                // CODE: [7] OFS
+                // TODO
+                // We have the files on both sides.
+                // Index them on both sides with the same UID for the sys_file and add that info to the record
+                // Conveniently we end up in [14] ALL. Yai!
+            } elseif (!$ldb && $lfs && !$ffs && $fdb) {
+                // CODE: [8] LFFD
+                // TODO
+                // This might be one of the most strange setups.
+                // Maybe the local file was deleted but write permissions blocked the deletion, but the database record
+                // was deleted and not restored after failure. And the foreign database record? God knows...
+                // Concrete: Index the local file and add that info to the record, diff again and go to [11] NFFS
+            } elseif (!$ldb && !$lfs && $ffs && $fdb) {
+                // CODE: [9] OF
+                // Nothing to do here. The record exists only on local and will be displayed correctly.
+                // The publish command removes the foreign file and database record
+            } elseif ($ldb && $lfs && $ffs && !$fdb) {
+                // CODE: [10] NFDB
+                // TODO
+                // Index the foreign file. Make sure the UID is the same as local's one.
+                // Go to [14] ALL afterwards
+            } elseif ($ldb && $lfs && !$ffs && $fdb) {
+                // CODE: [11] NFFS
+                // TODO
+                // The foreign database record is orphaned.
+                // The file was clearly deleted on foreign or the database record was prematurely published
+                // TODO determine if this is to be displayed as NEW or CHANGED
+            } elseif ($ldb && !$lfs && $ffs && $fdb) {
+                // CODE: [12] NLFS
+                // TODO
+                // The local database record is orphaned.
+                // On foreign everything is okay.
+                // Two cases: either the UID was assigned independent or the local file was removed
+                // In both cases we will remove the remote file, because stage always wins
+            } elseif (!$ldb && $lfs && $ffs && $fdb) {
+                // CODE: [13] NLDB
+                // TODO
+                // Create local database record by indexing the file.
+                // Then add the created information to the record and diff again.
+                // We will end up in [14]
+            } elseif ($ldb && $lfs && $ffs && $fdb) {
+                // CODE: [14] ALL
+                // TODO DFS
+            } elseif (!$ldb && !$lfs && !$ffs && !$fdb) {
+                // CODE: [15] NONE
+                // The file exists nowhere. Ignore it.
+                unset($files[$index]);
+                continue;
+            } else {
+                throw new \LogicException('This combination is not possible!', 1475065059);
             }
         }
 
