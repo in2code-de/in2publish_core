@@ -166,7 +166,7 @@ class CommonRepository extends BaseRepository
      *
      * @param string $propertyName
      * @param mixed $propertyValue
-     * @return array
+     * @return Record[]
      */
     public function findByProperty($propertyName, $propertyValue)
     {
@@ -275,7 +275,7 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
-     * @return array
+     * @return Record[]
      */
     protected function convertPropertyArraysToRecords(array $localProperties, array $foreignProperties)
     {
