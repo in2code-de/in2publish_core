@@ -68,35 +68,49 @@ class FolderRecordFactory
          *  2. The foreign folder might not exist
          *  3. NEVER USE THE STORAGE, it might create new file index entries
          *  4. Blame FAL. Always.
+         *  5. Lead the readers through this hell with a lot of comments ;)
          */
         $resourceFactory = ResourceFactory::getInstance();
 
+        // determine the current folder
         if (null === $identifier) {
+            // Special case: The module was opened, but no storage/folder has been selected
             $localStorage = $resourceFactory->getDefaultStorage();
+            // root level folder is the "real" default and respects mount points
             $localFolder = $localStorage->getRootLevelFolder();
         } else {
             $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
             $localStorage = $localFolder->getStorage();
         }
 
+        // get the storages driver to prevent unintentional indexing
         $localDriver = $this->getLocalDriver($localStorage);
         $foreignDriver = $this->getForeignDriver($localStorage);
 
+        // fetch all information regarding the folder on this side
         $identifier = $localFolder->getIdentifier();
         $localFolderInfo = $localDriver->getFolderInfoByIdentifier($identifier);
+        // add the "uid" property, which is largely exclusive set for Record::isRecordRepresentByProperties
+        // but additionally a good place to store the "combined identifier"
         $localFolderInfo['uid'] = $this->createCombinedIdentifier($localFolderInfo);
 
+        // retrieve all local sub folder identifiers (no recursion! no database!)
+        // these are not Record instances, yet!
         $localSubFolders = $localDriver->getFoldersInFolder($identifier);
 
+        // do the same on foreign, if the currently selected folder exists on foreign
         if ($foreignDriver->folderExists($localFolder->getIdentifier())) {
+            // as you can see these lines are the same as above, the driver is just another one
             $foreignFolderInfo = $foreignDriver->getFolderInfoByIdentifier($localFolder->getIdentifier());
             $foreignFolderInfo['uid'] = $this->createCombinedIdentifier($foreignFolderInfo);
             $remoteSubFolders = $foreignDriver->getFoldersInFolder($identifier);
         } else {
+            // otherwise just set "empty" values to flag the folder "record" as non existent
             $foreignFolderInfo = array();
             $remoteSubFolders = array();
         }
 
+        // finally create a Record instance representing the selected folder
         $record = GeneralUtility::makeInstance(
             'In2code\\In2publishCore\\Domain\\Model\\Record',
             'physical_folder',
@@ -113,8 +127,21 @@ class FolderRecordFactory
             $foreignDriver
         );
 
+        // add all sub folder Records
         $record->addRelatedRecords($subFolders);
 
+        // clean up a bit
+        unset($resourceFactory);
+        unset($identifier);
+        unset($localStorage);
+        unset($localFolderInfo);
+        unset($localSubFolders);
+        unset($foreignFolderInfo);
+        unset($remoteSubFolders);
+        unset($subFolders);
+
+        // Now let's find all files in the selected folder
+        // Get the Repo first
         $commonRepository = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager')->get(
             'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
             DatabaseUtility::buildLocalDatabaseConnection(),
@@ -122,8 +149,11 @@ class FolderRecordFactory
             'sys_file'
         );
 
+        // find all file database entries in the current folder by the folder's hash
+        // (be sure to only use FAL methods for hashing)
         $files = $commonRepository->findByProperty('folder_hash', $localFolder->getHashedIdentifier());
 
+        // list all identifiers of database entry files in the current folder
         $identifierList = $this->buildIdentifiersList($files);
 
         // get all file identifiers of files actually existing in the current folder but not in the database
