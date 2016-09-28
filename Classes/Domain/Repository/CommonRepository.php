@@ -295,6 +295,24 @@ class CommonRepository extends BaseRepository
                     $propertyArray = $this->findPropertiesByProperty($this->foreignDatabase, 'uid', $key);
                     if (!empty($propertyArray[$key])) {
                         $foreignProperties[$key] = $propertyArray[$key];
+                        if ('sys_file_metadata' === $this->tableName
+                            && isset($localProperties[$key]['file'])
+                            && isset($foreignProperties[$key]['file'])
+                            && (int)$localProperties[$key]['file'] !== (int)$foreignProperties[$key]['file']
+                        ) {
+                            // If the fixing of this relation results in a different related
+                            // record we log it because it is very very very unlikely for
+                            // sys_file_metadata to change their target sys_file entry
+                            $this->logger->warning(
+                                'Fixed possibly broken relation by replacing it with another possibly broken relation',
+                                array(
+                                    'table' => $this->tableName,
+                                    'key (UID)' => $key,
+                                    'file_local' => $localProperties[$key]['file'],
+                                    'file_foreign' => $foreignProperties[$key]['file'],
+                                )
+                            );
+                        }
                     }
                 }
             }
