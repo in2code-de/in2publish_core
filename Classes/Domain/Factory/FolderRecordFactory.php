@@ -106,7 +106,8 @@ class FolderRecordFactory
             array('depth' => 1)
         );
 
-        $subFolders = $this->getSubFolders(
+        // create Record instances from the sub folder identifier lists
+        $subFolders = $this->getSubFolderRecordInstances(
             array_merge($localSubFolders, $remoteSubFolders),
             $localDriver,
             $foreignDriver
@@ -122,6 +123,27 @@ class FolderRecordFactory
         );
 
         $files = $commonRepository->findByProperty('folder_hash', $localFolder->getHashedIdentifier());
+
+        $identifierList = $this->buildIdentifiersList($files);
+
+        // get all file identifiers of files actually existing in the current folder but not in the database
+        $localFileIdentifiers = array_values($localDriver->getFilesInFolder($localFolder->getIdentifier()));
+
+        // find all files which are not indexed (don't care of files in DB but not in FS)
+        $additionalLocalFileIdentifiers = array_diff($localFileIdentifiers, $identifierList);
+
+        // the chance is vanishing low to find a file by its identifier in the database
+        // because they should have been found by the folder hash already, but i'm a
+        // generous developer and allow FAL to completely fuck up the folder hash
+        // TODO
+//        $foundAdditionalLocalFiles = array();
+//        foreach ($additionalLocalFileIdentifiers as $additionalLocalFileIdentifier) {
+//            $foundAdditionalLocalFiles[] = $commonRepository->findByProperty('identifier', $additionalLocalFileIdentifier);
+//        }
+
+        // clean up again
+        unset($localFolder);
+        unset($localFileIdentifiers);
 
         /*
          * Filtering:
@@ -275,12 +297,14 @@ class FolderRecordFactory
     }
 
     /**
+     * Factory method to create Record instances from a list of folder identifier
+     *
      * @param array $subFolderIdentifiers
      * @param DriverInterface $localDriver
      * @param DriverInterface $foreignDriver
      * @return array
      */
-    protected function getSubFolders(
+    protected function getSubFolderRecordInstances(
         array $subFolderIdentifiers,
         DriverInterface $localDriver,
         DriverInterface $foreignDriver
@@ -310,5 +334,40 @@ class FolderRecordFactory
             );
         }
         return $subFolders;
+    }
+
+    /**
+     * @param Record[] $files
+     * @return array of file identifiers in the current folder taken from the database
+     * @throws \Exception
+     */
+    protected function buildIdentifiersList(array $files)
+    {
+        $identifierList = array();
+        foreach ($files as $file) {
+            $localIdentifier = null;
+            if ($file->hasLocalProperty('identifier')) {
+                $localIdentifier = $file->getLocalProperty('identifier');
+            }
+
+            $foreignIdentifier = null;
+            if ($file->hasForeignProperty('identifier')) {
+                $foreignIdentifier = $file->getForeignProperty('identifier');
+            }
+
+            if (null === $localIdentifier && null === $foreignIdentifier) {
+                throw new \LogicException(
+                    'A sys_file record must have at least a local or foreign identifier',
+                    1475077830
+                );
+            }
+
+            if (null !== $localIdentifier && $localIdentifier !== $foreignIdentifier && null !== $foreignIdentifier) {
+                throw new \Exception('DEVELOPMENT EXCEPTION: Renamed? ' . $localIdentifier . ' ' . $foreignIdentifier);
+            }
+
+            $identifierList[] = null !== $localIdentifier ? $localIdentifier : $foreignIdentifier;
+        }
+        return $identifierList;
     }
 }
