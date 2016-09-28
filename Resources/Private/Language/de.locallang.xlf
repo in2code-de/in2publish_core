@@ -243,7 +243,7 @@
 			</trans-unit>
 			<trans-unit id="moduleselector.flush_envelopes">
 				<source>Remove superfluous envelopes</source>
-				<target state="translated">Löscht alle nicht mehr benötigten Envelopes.</target>
+				<target state="translated">Überflüssige Envelopes löschen</target>
 			</trans-unit>
 			<trans-unit id="moduleselector.flush_envelopes.description">
 				<source>Deletes all envelopes (remote procedure call database entries) which were already used (envelopes are one-way records).</source>
