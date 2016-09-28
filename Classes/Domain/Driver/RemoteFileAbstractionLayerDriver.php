@@ -222,7 +222,23 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      */
     public function fileExists($fileIdentifier)
     {
-        xdebug_break();
+        return $this->cache(
+            __FUNCTION__ . $fileIdentifier,
+            function () use ($fileIdentifier) {
+                $uid = $this->letterBox->sendEnvelope(
+                    new Envelope(
+                        EnvelopeDispatcher::CMD_FILE_EXISTS,
+                        array('storage' => $this->storageUid, 'fileIdentifier' => $fileIdentifier)
+                    )
+                );
+
+                if (false === $uid) {
+                    throw new \Exception('Could not send "fileExists" request to remote system', 1475058957);
+                }
+
+                return $this->executeEnvelopeAndReceiveResponse($uid);
+            }
+        );
     }
 
     /**

@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Domain\Factory;
 
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
@@ -122,6 +123,35 @@ class FolderRecordFactory
         );
 
         $files = $commonRepository->findByProperty('folder_hash', $localFolder->getHashedIdentifier());
+
+        /*
+         * Filtering:
+         *  Notation:
+         *      FFS = Foreign File System
+         *      FDB = Foreign Database
+         *      LFS = Local File System
+         *      LDB = Local Database
+         *  These filters files and entries we do not want to consider, because they do not represent an actual file.
+         *  Prefer $localDriver over $foreignDriver where applicable, because it will be faster.
+         */
+        foreach ($files as $index => $file) {
+            switch ($file->getState()) {
+                case RecordInterface::RECORD_STATE_ADDED:
+                    // Only in LDB, therefore not publishable
+                    if (!$localDriver->fileExists($file->getLocalProperty('identifier'))) {
+                        unset($files[$index]);
+                        continue;
+                    }
+                    break;
+                case RecordInterface::RECORD_STATE_DELETED:
+                    // Only in FDB, therefore not publishable
+                    if (!$foreignDriver->fileExists($file->getForeignProperty('identifier'))) {
+                        unset($files[$index]);
+                        continue;
+                    }
+                    break;
+            }
+        }
 
         $record->addRelatedRecords($files);
 

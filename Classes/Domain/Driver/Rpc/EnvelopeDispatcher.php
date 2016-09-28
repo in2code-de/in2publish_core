@@ -36,6 +36,7 @@ use TYPO3\CMS\Core\Resource\ResourceStorage;
 class EnvelopeDispatcher
 {
     const CMD_FOLDER_EXISTS = 'folderExists';
+    const CMD_FILE_EXISTS = 'fileExists';
     const CMD_GET_PERMISSIONS = 'getPermissions';
     const CMD_GET_FOLDERS_IN_FOLDERS = 'getFoldersInFolders';
 
@@ -86,6 +87,16 @@ class EnvelopeDispatcher
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
         return call_user_func_array(array($driver, 'getFoldersInFolder'), $request);
+    }
+
+    /**
+     * @param array $request
+     * @return bool
+     */
+    protected function fileExists(array $request)
+    {
+        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        return $this->getStorageDriver($storage)->fileExists($request['fileIdentifier']);
     }
 
     /**
