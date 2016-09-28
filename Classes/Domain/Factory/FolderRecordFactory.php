@@ -174,9 +174,11 @@ class FolderRecordFactory
                 // That would lead us to [12] NLFS so at least it's one case less.
             } elseif ($ldb && !$lfs && !$ffs && $fdb) {
                 // CODE: [6] ODB
-                // TODO
                 // So there are two orphans (db without fs). we could diff them, but there's no file to publish.
-                // TODO consider ignoring this
+                // I've decided to just ignore this case, since publishing  would not have an effect on the file system
+                // and additionally i consider these files deleted, as this is a result of [12] NLFS
+                unset($files[$index]);
+                continue;
             } elseif (!$ldb && $lfs && $ffs && !$fdb) {
                 // CODE: [7] OFS
                 // TODO
@@ -211,7 +213,8 @@ class FolderRecordFactory
                 // The local database record is orphaned.
                 // On foreign everything is okay.
                 // Two cases: either the UID was assigned independent or the local file was removed
-                // In both cases we will remove the remote file, because stage always wins
+                // In both cases we will remove the remote file, because stage always wins.
+                // CARE: This will create the [6] ODB state.
             } elseif (!$ldb && $lfs && $ffs && $fdb) {
                 // CODE: [13] NLDB
                 // TODO
