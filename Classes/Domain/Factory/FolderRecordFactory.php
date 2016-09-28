@@ -28,7 +28,6 @@ namespace In2code\In2publishCore\Domain\Factory;
 
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
@@ -276,13 +275,16 @@ class FolderRecordFactory
     }
 
     /**
-     * @param $subFolderIdentifiers
-     * @param $localDriver
-     * @param $foreignDriver
+     * @param array $subFolderIdentifiers
+     * @param DriverInterface $localDriver
+     * @param DriverInterface $foreignDriver
      * @return array
      */
-    protected function getSubFolders($subFolderIdentifiers, $localDriver, $foreignDriver)
-    {
+    protected function getSubFolders(
+        array $subFolderIdentifiers,
+        DriverInterface $localDriver,
+        DriverInterface $foreignDriver
+    ) {
         $subFolders = array();
         foreach ($subFolderIdentifiers as $subFolderIdentifier) {
             if ($localDriver->folderExists($subFolderIdentifier)) {
