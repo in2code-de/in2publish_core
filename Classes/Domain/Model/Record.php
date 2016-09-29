@@ -303,6 +303,7 @@ class Record implements RecordInterface
     public function setLocalProperties(array $localProperties)
     {
         $this->localProperties = $localProperties;
+        $this->runtimeCache = array();
         return $this;
     }
 
@@ -344,6 +345,7 @@ class Record implements RecordInterface
     public function setForeignProperties(array $foreignProperties)
     {
         $this->foreignProperties = $foreignProperties;
+        $this->runtimeCache = array();
         return $this;
     }
 

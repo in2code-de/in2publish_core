@@ -1341,4 +1341,34 @@ class RecordTest extends UnitTestCase
         $record->__construct('foo', ['doktype' => 2], ['doktype' => 100], [], []);
         $this->assertFalse($record->isForeignPreviewAvailable());
     }
+
+    /**
+     * @covers ::setForeignProperties
+     * @covers ::foreignRecordExists
+     * @depends testStateOfRecordIsAddedIfOnlyLocalPropertiesAreSet
+     * @depends testStateOfRecordIsDeletedIfOnlyForeignPropertiesAreSet
+     */
+    public function testRuntimeCacheIsResetIfForeignPropertiesChange()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('foo', ['uid' => 2], ['uid' => 100], [], []);
+        $this->assertTrue($record->foreignRecordExists());
+        $record->setForeignProperties([]);
+        $this->assertFalse($record->foreignRecordExists());
+    }
+
+    /**
+     * @covers ::setLocalProperties
+     * @covers ::localRecordExists
+     * @depends testStateOfRecordIsAddedIfOnlyLocalPropertiesAreSet
+     * @depends testStateOfRecordIsDeletedIfOnlyForeignPropertiesAreSet
+     */
+    public function testRuntimeCacheIsResetIfLocalPropertiesChange()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('foo', ['uid' => 2], ['uid' => 100], [], []);
+        $this->assertTrue($record->localRecordExists());
+        $record->setLocalProperties([]);
+        $this->assertFalse($record->localRecordExists());
+    }
 }
