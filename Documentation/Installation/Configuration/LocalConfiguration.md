@@ -20,6 +20,7 @@
 |factory.resolvePageRelations|bool|FALSE|Resolve properties of records which target records from "pages" table. Use with care: Related pages will be published through the relation chain, too. Content records are ALL records, even pages and MM Records.|
 |factory.simpleOverviewAndAjax|bool|FALSE|_cropped. See example file_|
 |factory.fal.reclaimSysFileEntries|bool|FALSE|_cropped. See example file_|
+|factory.fal.autoRepairFolderHash|bool|FALSE|_cropped. See example file_|
 |filePreviewDomainName.local|string|stage.publishing.localhost.de|Domain prefix for local instance. This is needed for the preview links.|
 |filePreviewDomainName.foreign|string|prod.publishing.localhost.de|Domain prefix for the foreign instance. This is needed for the preview links.|
 |log.logLevel|int|5|0:Emergency, 1:Alert, 2:Critical, 3:Error, 4:Warning, 5:Notice, 6:Info, 7:Debug (int) - All levels smaller or equal to this value will be stored.|
@@ -210,6 +211,11 @@ factory:
     # This setting will enable a sys_file lookup based on the file identifier of files which were found in the storage
     # but not in the database. (Database files are found by their folder hash)
     reclaimSysFileEntries: FALSE
+
+    # Only in combination with factory.fal.reclaimSysFileEntries enabled.
+    # While reclaimSysFileEntries is consuming some additional performance this setting autoRepairFolderHash
+    # will automatically repair database entries and increase relation consistency
+    autoRepairFolderHash: FALSE
 
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
 filePreviewDomainName:

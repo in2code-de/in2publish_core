@@ -139,6 +139,11 @@ factory:
     # but not in the database. (Database files are found by their folder hash)
     reclaimSysFileEntries: FALSE
 
+    # Only in combination with factory.fal.reclaimSysFileEntries enabled.
+    # While reclaimSysFileEntries is consuming some additional performance this setting autoRepairFolderHash
+    # will automatically repair database entries and increase relation consistency
+    autoRepairFolderHash: FALSE
+
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
 filePreviewDomainName:
   local: stage.publishing.localhost.de
