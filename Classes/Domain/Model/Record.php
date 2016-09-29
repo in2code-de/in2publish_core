@@ -682,7 +682,7 @@ class Record implements RecordInterface
      */
     public function isForeignRecordDeleted()
     {
-        if (empty($this->runtimeCache[__FUNCTION__])) {
+        if (!isset($this->runtimeCache[__FUNCTION__])) {
             $this->runtimeCache[__FUNCTION__] = $this->isRecordMarkedAsDeletedByProperties($this->foreignProperties);
         }
         return $this->runtimeCache[__FUNCTION__];
@@ -693,7 +693,7 @@ class Record implements RecordInterface
      */
     public function isLocalRecordDeleted()
     {
-        if (empty($this->runtimeCache[__FUNCTION__])) {
+        if (!isset($this->runtimeCache[__FUNCTION__])) {
             $this->runtimeCache[__FUNCTION__] = $this->isRecordMarkedAsDeletedByProperties($this->localProperties);
         }
         return $this->runtimeCache[__FUNCTION__];
@@ -719,7 +719,7 @@ class Record implements RecordInterface
      */
     public function isLocalRecordDisabled()
     {
-        if (empty($this->runtimeCache[__FUNCTION__])) {
+        if (!isset($this->runtimeCache[__FUNCTION__])) {
             $this->runtimeCache[__FUNCTION__] = $this->isRecordMarkedAsDisabledByProperties($this->localProperties);
         }
         return $this->runtimeCache[__FUNCTION__];
@@ -730,7 +730,7 @@ class Record implements RecordInterface
      */
     public function isForeignRecordDisabled()
     {
-        if (empty($this->runtimeCache[__FUNCTION__])) {
+        if (!isset($this->runtimeCache[__FUNCTION__])) {
             $this->runtimeCache[__FUNCTION__] = $this->isRecordMarkedAsDisabledByProperties($this->foreignProperties);
         }
         return $this->runtimeCache[__FUNCTION__];
@@ -756,7 +756,7 @@ class Record implements RecordInterface
      */
     public function foreignRecordExists()
     {
-        if (empty($this->runtimeCache[__FUNCTION__])) {
+        if (!isset($this->runtimeCache[__FUNCTION__])) {
             if (isset($this->additionalProperties['foreignRecordExistsTemporary'])) {
                 $this->runtimeCache[__FUNCTION__] = (bool)$this->additionalProperties['foreignRecordExistsTemporary'];
             } else {
@@ -773,7 +773,7 @@ class Record implements RecordInterface
      */
     public function localRecordExists()
     {
-        if (empty($this->runtimeCache[__FUNCTION__])) {
+        if (!isset($this->runtimeCache[__FUNCTION__])) {
             if (isset($this->additionalProperties['localRecordExistsTemporary'])) {
                 $this->runtimeCache[__FUNCTION__] = (bool)$this->additionalProperties['localRecordExistsTemporary'];
             } else {
