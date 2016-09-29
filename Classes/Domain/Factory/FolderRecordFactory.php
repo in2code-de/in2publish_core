@@ -326,10 +326,11 @@ class FolderRecordFactory
                 // Go to [14] ALL afterwards
             } elseif ($ldb && $lfs && !$ffs && $fdb) {
                 // CODE: [11] NFFS
-                // TODO
                 // The foreign database record is orphaned.
                 // The file was clearly deleted on foreign or the database record was prematurely published
                 // Display this record as NEW (act like fdb would not exist, therefore like [4] OL
+                // To achieve this we simply "unset" the foreign properties. Done.
+                $file->setForeignProperties(array())->setDirtyProperties()->calculateState();
             } elseif ($ldb && !$lfs && $ffs && $fdb) {
                 // CODE: [12] NLFS
                 // TODO
