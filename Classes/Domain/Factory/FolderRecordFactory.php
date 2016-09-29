@@ -31,9 +31,11 @@ use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
+use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Reflection\PropertyReflection;
 
 /**
@@ -151,7 +153,8 @@ class FolderRecordFactory
 
         // find all file database entries in the current folder by the folder's hash
         // (be sure to only use FAL methods for hashing)
-        $files = $commonRepository->findByProperty('folder_hash', $localFolder->getHashedIdentifier());
+        $folderHash = $localFolder->getHashedIdentifier();
+        $files = $commonRepository->findByProperty('folder_hash', $folderHash);
 
         // list all identifiers of database entry files in the current folder
         $identifierList = $this->buildIdentifiersList($files);
@@ -160,16 +163,38 @@ class FolderRecordFactory
         $localFileIdentifiers = array_values($localDriver->getFilesInFolder($localFolder->getIdentifier()));
 
         // find all files which are not indexed (don't care of files in DB but not in FS)
-        $additionalLocalFileIdentifiers = array_diff($localFileIdentifiers, $identifierList);
+        $onlyLocalFileSystemFileIdentifiers = array_diff($localFileIdentifiers, $identifierList);
 
-        // the chance is vanishing low to find a file by its identifier in the database
-        // because they should have been found by the folder hash already, but i'm a
-        // generous developer and allow FAL to completely fuck up the folder hash
-        // TODO
-//        $foundAdditionalLocalFiles = array();
-//        foreach ($additionalLocalFileIdentifiers as $additionalLocalFileIdentifier) {
-//            $foundAdditionalLocalFiles[] = $commonRepository->findByProperty('identifier', $additionalLocalFileIdentifier);
-//        }
+
+        if (!empty($onlyLocalFileSystemFileIdentifiers)) {
+            // iterate through all files found on disc but not in the database
+            foreach ($onlyLocalFileSystemFileIdentifiers as $index => $identifier) {
+                static $tcaService = null;
+                if (null === $tcaService) {
+                    $tcaService = GeneralUtility::makeInstance(
+                        'In2code\\In2publishCore\\Service\\Configuration\\TcaService'
+                    );
+                }
+                $temporarySysFile = GeneralUtility::makeInstance(
+                    'In2code\\In2publishCore\\Domain\\Model\\Record',
+                    'sys_file',
+                    // create a temporary sys_file entry for the current
+                    // identifier, since none was found nor could be reclaimed
+                    // if persistTemporaryIndexing is enabled the entry is not temporary
+                    // but this does not matter for the following code
+                    $this->getFileInformation($identifier, $localDriver),
+                    array(),
+                    $tcaService->getConfigurationArrayForTable('sys_file'),
+                    array()
+                );
+                $files[] = $temporarySysFile;
+                unset($onlyLocalFileSystemFileIdentifiers[$index]);
+            }
+        }
+
+        if (!empty($onlyLocalFileSystemFileIdentifiers)) {
+            throw new \RuntimeException('Failed to convert all files from disc to records', 1475177184);
+        }
 
         // clean up again
         unset($localFolder);
@@ -400,5 +425,59 @@ class FolderRecordFactory
             $identifierList[] = null !== $localIdentifier ? $localIdentifier : $foreignIdentifier;
         }
         return $identifierList;
+    }
+
+    /**
+     * This method is mostly a copy of an indexer method
+     * @see \TYPO3\CMS\Core\Resource\Index\Indexer::gatherFileInformationArray
+     *
+     * @param string $identifier
+     * @param DriverInterface $driver
+     * @param bool $allowIndexing
+     * @return array
+     */
+    protected function getFileInformation($identifier, DriverInterface $driver, $allowIndexing = true)
+    {
+        $fileInfo = $driver->getFileInfoByIdentifier($identifier);
+
+        $mappingInfo = array(
+            'mtime' => 'modification_date',
+            'ctime' => 'creation_date',
+            'mimetype' => 'mime_type',
+        );
+
+        unset($fileInfo['atime']);
+        foreach ($mappingInfo as $fileInfoKey => $sysFileRecordKey) {
+            $fileInfo[$sysFileRecordKey] = $fileInfo[$fileInfoKey];
+            unset($fileInfo[$fileInfoKey]);
+        }
+
+        list($fileType) = explode('/', $fileInfo['mime_type']);
+        switch (strtolower($fileType)) {
+            case 'text':
+                $type = File::FILETYPE_TEXT;
+                break;
+            case 'image':
+                $type = File::FILETYPE_IMAGE;
+                break;
+            case 'audio':
+                $type = File::FILETYPE_AUDIO;
+                break;
+            case 'video':
+                $type = File::FILETYPE_VIDEO;
+                break;
+            case 'application':
+            case 'software':
+                $type = File::FILETYPE_APPLICATION;
+                break;
+            default:
+                $type = File::FILETYPE_UNKNOWN;
+        }
+
+        $fileInfo['type'] = $type;
+        $fileInfo['sha1'] = $driver->hash($identifier, 'sha1');
+        $fileInfo['extension'] = PathUtility::pathinfo($fileInfo['name'], PATHINFO_EXTENSION);
+        $fileInfo['missing'] = 0;
+        return $fileInfo;
     }
 }
