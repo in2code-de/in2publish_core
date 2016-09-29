@@ -1401,4 +1401,32 @@ class RecordTest extends UnitTestCase
         $record->setAdditionalProperties(array('foreignRecordExistsTemporary' => true));
         $this->assertTrue($record->foreignRecordExists());
     }
+
+    /**
+     * @covers ::setAdditionalProperties
+     * @depends testAdditionalPropertyForeignRecordExistsTemporaryMarksRecordAsExistentOnForeign
+     */
+    public function testSettingAdditionalPropertiesResetsRuntimeCaches()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('foo', ['uid' => 100], [], [], []);
+        $this->assertFalse($record->foreignRecordExists());
+        $record->setAdditionalProperties(array('foreignRecordExistsTemporary' => true));
+        $this->assertTrue($record->foreignRecordExists());
+        $record->setAdditionalProperties(array());
+        $this->assertFalse($record->foreignRecordExists());
+    }
+
+    /**
+     * @covers ::addAdditionalProperty
+     * @depends testAdditionalPropertyForeignRecordExistsTemporaryMarksRecordAsExistentOnForeign
+     */
+    public function testAddingAdditionalPropertiesResetsRuntimeCaches()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('foo', ['uid' => 100], [], [], []);
+        $this->assertFalse($record->foreignRecordExists());
+        $record->addAdditionalProperty('foreignRecordExistsTemporary', true);
+        $this->assertTrue($record->foreignRecordExists());
+    }
 }

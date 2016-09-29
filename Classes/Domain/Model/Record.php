@@ -406,6 +406,7 @@ class Record implements RecordInterface
     public function setAdditionalProperties(array $additionalProperties)
     {
         $this->additionalProperties = $additionalProperties;
+        $this->runtimeCache = array();
         return $this;
     }
 
@@ -426,6 +427,7 @@ class Record implements RecordInterface
     public function addAdditionalProperty($propertyName, $propertyValue)
     {
         $this->additionalProperties[$propertyName] = $propertyValue;
+        $this->runtimeCache = array();
         return $this;
     }
 
