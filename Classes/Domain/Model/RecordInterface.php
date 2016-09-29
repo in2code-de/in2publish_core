@@ -85,4 +85,14 @@ interface RecordInterface
      * @return RecordInterface
      */
     public function setForeignProperties(array $foreignProperties);
+
+    /**
+     * @return RecordInterface
+     */
+    public function setDirtyProperties();
+
+    /**
+     * @return RecordInterface
+     */
+    public function calculateState();
 }
