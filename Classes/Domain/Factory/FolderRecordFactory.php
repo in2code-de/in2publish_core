@@ -33,6 +33,7 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\File;
+use TYPO3\CMS\Core\Resource\Index\FileIndexRepository;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -524,6 +525,14 @@ class FolderRecordFactory
         $fileInfo['sha1'] = $driver->hash($identifier, 'sha1');
         $fileInfo['extension'] = PathUtility::pathinfo($fileInfo['name'], PATHINFO_EXTENSION);
         $fileInfo['missing'] = 0;
+
+        if (true === $this->configuration['persistTemporaryIndexing'] && true === $allowIndexing) {
+            static $fileIndexRepository = null;
+            if (null === $fileIndexRepository) {
+                $fileIndexRepository = FileIndexRepository::getInstance();
+            }
+            $fileInfo = $fileIndexRepository->addRaw($fileInfo);
+        }
         return $fileInfo;
     }
 }

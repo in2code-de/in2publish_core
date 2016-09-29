@@ -21,6 +21,7 @@
 |factory.simpleOverviewAndAjax|bool|FALSE|_cropped. See example file_|
 |factory.fal.reclaimSysFileEntries|bool|FALSE|_cropped. See example file_|
 |factory.fal.autoRepairFolderHash|bool|FALSE|_cropped. See example file_|
+|factory.fal.persistTemporaryIndexing|bool|FALSE|_cropped. See example file_|
 |filePreviewDomainName.local|string|stage.publishing.localhost.de|Domain prefix for local instance. This is needed for the preview links.|
 |filePreviewDomainName.foreign|string|prod.publishing.localhost.de|Domain prefix for the foreign instance. This is needed for the preview links.|
 |log.logLevel|int|5|0:Emergency, 1:Alert, 2:Critical, 3:Error, 4:Warning, 5:Notice, 6:Info, 7:Debug (int) - All levels smaller or equal to this value will be stored.|
@@ -216,6 +217,12 @@ factory:
     # While reclaimSysFileEntries is consuming some additional performance this setting autoRepairFolderHash
     # will automatically repair database entries and increase relation consistency
     autoRepairFolderHash: FALSE
+
+    # Given a file exists but not the sys_file entry, the sys_file information will be created on the fly.
+    # This is done the same way as FAL would do it by indexing the file.
+    # You can choose if you want in2publish_core to create indexes for files. (Otherwise they would only be created
+    # by proper usage of the FAL API or browsing the file list backend module)
+    persistTemporaryIndexing: FALSE
 
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
 filePreviewDomainName:

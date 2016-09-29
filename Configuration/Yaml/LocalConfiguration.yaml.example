@@ -144,6 +144,12 @@ factory:
     # will automatically repair database entries and increase relation consistency
     autoRepairFolderHash: FALSE
 
+    # Given a file exists but not the sys_file entry, the sys_file information will be created on the fly.
+    # This is done the same way as FAL would do it by indexing the file.
+    # You can choose if you want in2publish_core to create indexes for files. (Otherwise they would only be created
+    # by proper usage of the FAL API or browsing the file list backend module)
+    persistTemporaryIndexing: FALSE
+
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
 filePreviewDomainName:
   local: stage.publishing.localhost.de
