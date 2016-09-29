@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Domain\Factory;
 
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
@@ -49,11 +50,17 @@ class FolderRecordFactory
     protected $logger = null;
 
     /**
+     * @var array
+     */
+    protected $configuration = array();
+
+    /**
      * FolderRecordFactory constructor.
      */
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->configuration = ConfigurationUtility::getConfiguration('factory.fal');
     }
 
     /**
@@ -165,6 +172,24 @@ class FolderRecordFactory
         // find all files which are not indexed (don't care of files in DB but not in FS)
         $onlyLocalFileSystemFileIdentifiers = array_diff($localFileIdentifiers, $identifierList);
 
+        // Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
+        // the folder hash is broken
+        if (true === $this->configuration['reclaimSysFileEntries']) {
+            // the chance is vanishing low to find a file by its identifier in the database
+            // because they should have been found by the folder hash already, but i'm a
+            // generous developer and allow FAL to completely fuck up the folder hash
+            foreach ($onlyLocalFileSystemFileIdentifiers as $index => $identifier) {
+                $disconnectedSysFile = $commonRepository->findByProperty('identifier', $identifier);
+                // if a sys_file record could be reclaimed use it
+                if (!empty($disconnectedSysFile)) {
+                    // add the reclaimed sys_file record to the list of files
+                    $files = array_merge($files, $disconnectedSysFile);
+                    // remove the identifier from the list of missing database record identifiers
+                    // so we can deal with them later
+                    unset($onlyLocalFileSystemFileIdentifiers[$index]);
+                }
+            }
+        }
 
         if (!empty($onlyLocalFileSystemFileIdentifiers)) {
             // iterate through all files found on disc but not in the database

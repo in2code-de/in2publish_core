@@ -132,6 +132,13 @@ factory:
   # Warning: Overview does not include everything (e.g. file records) and is not as robust as on default mode
   simpleOverviewAndAjax: FALSE
 
+  # only FAL related settings
+  fal:
+
+    # This setting will enable a sys_file lookup based on the file identifier of files which were found in the storage
+    # but not in the database. (Database files are found by their folder hash)
+    reclaimSysFileEntries: FALSE
+
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
 filePreviewDomainName:
   local: stage.publishing.localhost.de
