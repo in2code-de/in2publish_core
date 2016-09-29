@@ -757,7 +757,11 @@ class Record implements RecordInterface
     public function foreignRecordExists()
     {
         if (empty($this->runtimeCache[__FUNCTION__])) {
-            $this->runtimeCache[__FUNCTION__] = $this->isRecordRepresentByProperties($this->foreignProperties);
+            if (isset($this->additionalProperties['foreignRecordExistsTemporary'])) {
+                $this->runtimeCache[__FUNCTION__] = (bool)$this->additionalProperties['foreignRecordExistsTemporary'];
+            } else {
+                $this->runtimeCache[__FUNCTION__] = $this->isRecordRepresentByProperties($this->foreignProperties);
+            }
         }
         return $this->runtimeCache[__FUNCTION__];
     }
@@ -770,7 +774,11 @@ class Record implements RecordInterface
     public function localRecordExists()
     {
         if (empty($this->runtimeCache[__FUNCTION__])) {
-            $this->runtimeCache[__FUNCTION__] = $this->isRecordRepresentByProperties($this->localProperties);
+            if (isset($this->additionalProperties['localRecordExistsTemporary'])) {
+                $this->runtimeCache[__FUNCTION__] = (bool)$this->additionalProperties['localRecordExistsTemporary'];
+            } else {
+                $this->runtimeCache[__FUNCTION__] = $this->isRecordRepresentByProperties($this->localProperties);
+            }
         }
         return $this->runtimeCache[__FUNCTION__];
     }

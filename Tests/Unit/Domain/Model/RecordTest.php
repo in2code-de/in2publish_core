@@ -1371,4 +1371,34 @@ class RecordTest extends UnitTestCase
         $record->setLocalProperties([]);
         $this->assertFalse($record->localRecordExists());
     }
+
+    /**
+     * @covers ::localRecordExists
+     * @covers ::setAdditionalProperties
+     * @depends testStateOfRecordIsAddedIfOnlyLocalPropertiesAreSet
+     * @depends testStateOfRecordIsDeletedIfOnlyForeignPropertiesAreSet
+     */
+    public function testAdditionalPropertyLocalRecordExistsTemporaryMarksRecordAsExistentOnLocal()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('foo', [], ['uid' => 100], [], []);
+        $this->assertFalse($record->localRecordExists());
+        $record->setAdditionalProperties(array('localRecordExistsTemporary' => true));
+        $this->assertTrue($record->localRecordExists());
+    }
+
+    /**
+     * @covers ::foreignRecordExists
+     * @covers ::setAdditionalProperties
+     * @depends testStateOfRecordIsAddedIfOnlyLocalPropertiesAreSet
+     * @depends testStateOfRecordIsDeletedIfOnlyForeignPropertiesAreSet
+     */
+    public function testAdditionalPropertyForeignRecordExistsTemporaryMarksRecordAsExistentOnForeign()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('foo', ['uid' => 100], [], [], []);
+        $this->assertFalse($record->foreignRecordExists());
+        $record->setAdditionalProperties(array('foreignRecordExistsTemporary' => true));
+        $this->assertTrue($record->foreignRecordExists());
+    }
 }
