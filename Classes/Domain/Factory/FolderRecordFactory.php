@@ -257,7 +257,7 @@ class FolderRecordFactory
                 // TODO
                 // The foreign database record is orphaned.
                 // The file was clearly deleted on foreign or the database record was prematurely published
-                // TODO determine if this is to be displayed as NEW or CHANGED
+                // Display this record as NEW (act like fdb would not exist, therefore like [4] OL
             } elseif ($ldb && !$lfs && $ffs && $fdb) {
                 // CODE: [12] NLFS
                 // TODO
@@ -265,6 +265,7 @@ class FolderRecordFactory
                 // On foreign everything is okay.
                 // Two cases: either the UID was assigned independent or the local file was removed
                 // In both cases we will remove the remote file, because stage always wins.
+                // No need to review this decision. LDB is orphaned, ognore it, act like it would be [9] OF
                 // CARE: This will create the [6] ODB state.
             } elseif (!$ldb && $lfs && $ffs && $fdb) {
                 // CODE: [13] NLDB
