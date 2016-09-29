@@ -1282,7 +1282,6 @@ class RecordTest extends UnitTestCase
         $this->assertSame([$record], $record->getChangedRelatedRecordsFlat());
     }
 
-
     /**
      * @covers ::isLocalPreviewAvailable
      */
@@ -1292,7 +1291,6 @@ class RecordTest extends UnitTestCase
         $record->__construct('pages', ['doktype' => 2], ['doktype' => 223], [], []);
         $this->assertTrue($record->isLocalPreviewAvailable());
     }
-
 
     /**
      * @covers ::isLocalPreviewAvailable
@@ -1304,7 +1302,6 @@ class RecordTest extends UnitTestCase
         $this->assertFalse($record->isLocalPreviewAvailable());
     }
 
-
     /**
      * @covers ::isLocalPreviewAvailable
      */
@@ -1314,7 +1311,6 @@ class RecordTest extends UnitTestCase
         $record->__construct('bar', ['doktype' => 2], ['doktype' => 2], [], []);
         $this->assertFalse($record->isLocalPreviewAvailable());
     }
-
 
     /**
      * @covers ::isForeignPreviewAvailable
@@ -1326,7 +1322,6 @@ class RecordTest extends UnitTestCase
         $this->assertTrue($record->isForeignPreviewAvailable());
     }
 
-
     /**
      * @covers ::isForeignPreviewAvailable
      */
@@ -1336,7 +1331,6 @@ class RecordTest extends UnitTestCase
         $record->__construct('pages', ['doktype' => 2], ['doktype' => 222], [], []);
         $this->assertFalse($record->isForeignPreviewAvailable());
     }
-
 
     /**
      * @covers ::isForeignPreviewAvailable
