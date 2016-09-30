@@ -38,7 +38,7 @@ class EnvelopeDispatcher
     const CMD_FOLDER_EXISTS = 'folderExists';
     const CMD_FILE_EXISTS = 'fileExists';
     const CMD_GET_PERMISSIONS = 'getPermissions';
-    const CMD_GET_FOLDERS_IN_FOLDERS = 'getFoldersInFolders';
+    const CMD_GET_FOLDERS_IN_FOLDER = 'getFoldersInFolder';
 
     /**
      * @param Envelope $envelope
@@ -81,7 +81,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function getFoldersInFolders(array $request)
+    protected function getFoldersInFolder(array $request)
     {
         $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
         unset($request['storage']);
