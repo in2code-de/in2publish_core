@@ -39,6 +39,9 @@ class EnvelopeDispatcher
     const CMD_FILE_EXISTS = 'fileExists';
     const CMD_GET_PERMISSIONS = 'getPermissions';
     const CMD_GET_FOLDERS_IN_FOLDER = 'getFoldersInFolder';
+    const CMD_GET_FILES_IN_FOLDER = 'getFilesInFolder';
+    const CMD_GET_FILE_INFO_BY_IDENTIFIER = 'getFileInfoByIdentifier';
+    const CMD_GET_HASH = 'hash';
 
     /**
      * @param Envelope $envelope
@@ -97,6 +100,42 @@ class EnvelopeDispatcher
     {
         $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
         return $this->getStorageDriver($storage)->fileExists($request['fileIdentifier']);
+    }
+
+    /**
+     * @param array $request
+     * @return array
+     */
+    protected function getFilesInFolder(array $request)
+    {
+        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        unset($request['storage']);
+        $driver = $this->getStorageDriver($storage);
+        return call_user_func_array(array($driver, 'getFilesInFolder'), $request);
+    }
+
+    /**
+     * @param array $request
+     * @return array
+     */
+    protected function getFileInfoByIdentifier(array $request)
+    {
+        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        unset($request['storage']);
+        $driver = $this->getStorageDriver($storage);
+        return call_user_func_array(array($driver, 'getFileInfoByIdentifier'), $request);
+    }
+
+    /**
+     * @param array $request
+     * @return array
+     */
+    protected function hash(array $request)
+    {
+        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        unset($request['storage']);
+        $driver = $this->getStorageDriver($storage);
+        return call_user_func_array(array($driver, 'hash'), $request);
     }
 
     /**

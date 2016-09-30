@@ -371,7 +371,27 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      */
     public function hash($fileIdentifier, $hashAlgorithm)
     {
-        xdebug_break();
+        return $this->cache(
+            __FUNCTION__ . $fileIdentifier,
+            function () use ($fileIdentifier, $hashAlgorithm) {
+                $uid = $this->letterBox->sendEnvelope(
+                    new Envelope(
+                        EnvelopeDispatcher::CMD_GET_HASH,
+                        array(
+                            'storage' => $this->storageUid,
+                            'identifier' => $fileIdentifier,
+                            'hashAlgorithm' => $hashAlgorithm,
+                        )
+                    )
+                );
+
+                if (false === $uid) {
+                    throw new \Exception('Could not send "hash" request to remote system', 1475229789);
+                }
+
+                return $this->executeEnvelopeAndReceiveResponse($uid);
+            }
+        );
     }
 
     /**
@@ -554,7 +574,27 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      */
     public function getFileInfoByIdentifier($fileIdentifier, array $propertiesToExtract = array())
     {
-        xdebug_break();
+        return $this->cache(
+            __FUNCTION__ . $fileIdentifier,
+            function () use ($fileIdentifier, $propertiesToExtract) {
+                $uid = $this->letterBox->sendEnvelope(
+                    new Envelope(
+                        EnvelopeDispatcher::CMD_GET_PERMISSIONS,
+                        array(
+                            'storage' => $this->storageUid,
+                            'fileIdentifier' => $fileIdentifier,
+                            'propertiesToExtract' => $propertiesToExtract,
+                        )
+                    )
+                );
+
+                if (false === $uid) {
+                    throw new \Exception('Could not send "getPermissions" request to remote system', 1474460823);
+                }
+
+                return $this->executeEnvelopeAndReceiveResponse($uid);
+            }
+        );
     }
 
     /**
@@ -624,7 +664,40 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         $sort = '',
         $sortRev = false
     ) {
-        xdebug_break();
+        return $this->cache(
+            __FUNCTION__ . md5(json_encode(func_get_args())),
+            function () use (
+                $folderIdentifier,
+                $start,
+                $numberOfItems,
+                $recursive,
+                $filenameFilterCallbacks,
+                $sort,
+                $sortRev
+            ) {
+                $uid = $this->letterBox->sendEnvelope(
+                    new Envelope(
+                        EnvelopeDispatcher::CMD_GET_FILES_IN_FOLDER,
+                        array(
+                            'folderIdentifier' => $folderIdentifier,
+                            'start' => $start,
+                            'numberOfItems' => $numberOfItems,
+                            'recursive' => $recursive,
+                            'filenameFilterCallbacks' => $filenameFilterCallbacks,
+                            'sort' => $sort,
+                            'sortRev' => $sortRev,
+                            'storage' => $this->storageUid,
+                        )
+                    )
+                );
+
+                if (false === $uid) {
+                    throw new \Exception('Could not send "getFilesInFolder" request to remote system', 1475229150);
+                }
+
+                return $this->executeEnvelopeAndReceiveResponse($uid);
+            }
+        );
     }
 
     /**
