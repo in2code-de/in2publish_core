@@ -65,6 +65,10 @@ class FolderRecordFactory
     }
 
     /**
+     * Creates a Record instance representing the current chosen folder in the
+     * backend module and attaches all sub folders and files as related records.
+     * Also takes care of files that have not been indexed yet by FAL.
+     *
      * Only work with drivers so we don't "accidentally" index files...
      *
      * Variable naming rules:
