@@ -30,10 +30,10 @@ use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\File;
-use TYPO3\CMS\Core\Resource\Index\FileIndexRepository;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -262,10 +262,6 @@ class FolderRecordFactory
             }
         }
 
-        // no need to access the databases anymore
-        unset($localDatabase);
-        unset($foreignDatabase);
-
         if (!empty($onlyLocalFileSystemFileIdentifiers)) {
             // iterate through all files found on disc but not in the database
             foreach ($onlyLocalFileSystemFileIdentifiers as $index => $localFileSystemFileIdentifier) {
@@ -282,7 +278,7 @@ class FolderRecordFactory
                     // identifier, since none was found nor could be reclaimed
                     // if persistTemporaryIndexing is enabled the entry is not temporary
                     // but this does not matter for the following code
-                    $this->getFileInformation($localFileSystemFileIdentifier, $localDriver),
+                    $this->getFileInformation($localFileSystemFileIdentifier, $localDriver, $localDatabase),
                     array(),
                     $tcaService->getConfigurationArrayForTable('sys_file'),
                     array('localRecordExistsTemporary' => true)
@@ -313,7 +309,7 @@ class FolderRecordFactory
                     // if persistTemporaryIndexing is enabled the entry is not temporary
                     // but this does not matter for the following code
                     array(),
-                    $this->getFileInformation($foreignFileSystemFileIdentifier, $foreignDriver),
+                    $this->getFileInformation($foreignFileSystemFileIdentifier, $foreignDriver, $foreignDatabase),
                     $tcaService->getConfigurationArrayForTable('sys_file'),
                     array('foreignRecordExistsTemporary' => true)
                 );
@@ -327,6 +323,8 @@ class FolderRecordFactory
         }
 
         // clean up again
+        unset($localDatabase);
+        unset($foreignDatabase);
         unset($localFolder);
         unset($localFileIdentifiers);
         unset($foreignFileIdentifiers);
@@ -573,11 +571,14 @@ class FolderRecordFactory
      *
      * @param string $identifier
      * @param DriverInterface $driver
-     * @param bool $allowIndexing
+     * @param DatabaseConnection $databaseConnection If null the sys_file record will not be persisted
      * @return array
      */
-    protected function getFileInformation($identifier, DriverInterface $driver, $allowIndexing = true)
-    {
+    protected function getFileInformation(
+        $identifier,
+        DriverInterface $driver,
+        DatabaseConnection $databaseConnection = null
+    ) {
         $fileInfo = $driver->getFileInfoByIdentifier($identifier);
 
         $mappingInfo = array(
@@ -619,13 +620,48 @@ class FolderRecordFactory
         $fileInfo['extension'] = PathUtility::pathinfo($fileInfo['name'], PATHINFO_EXTENSION);
         $fileInfo['missing'] = 0;
 
-        if (true === $this->configuration['persistTemporaryIndexing'] && true === $allowIndexing) {
-            static $fileIndexRepository = null;
-            if (null === $fileIndexRepository) {
-                $fileIndexRepository = FileIndexRepository::getInstance();
-            }
-            $fileInfo = $fileIndexRepository->addRaw($fileInfo);
+        if (true === $this->configuration['persistTemporaryIndexing'] && null !== $databaseConnection) {
+            $fileInfo = $this->persistFileIndexRecord($fileInfo, $databaseConnection);
         }
         return $fileInfo;
+    }
+
+    /**
+     * This method is mostly a copy of an indexer method
+     * @see \TYPO3\CMS\Core\Resource\Index\FileIndexRepository::insertRecord
+     * but it will not trigger refindex updates (yet?)
+     *
+     * @param array $data
+     * @param DatabaseConnection $databaseConnection
+     * @return array
+     *
+     * @TODO check if the created uid is already taken on the other side and set auto_increment
+     */
+    protected function persistFileIndexRecord(array $data, DatabaseConnection $databaseConnection)
+    {
+        $data = array_intersect_key(
+            $data,
+            array(
+                'uid' => '',
+                'pid' => '',
+                'missing' => '',
+                'type' => '',
+                'storage' => '',
+                'identifier' => '',
+                'identifier_hash' => '',
+                'extension' => '',
+                'mime_type' => '',
+                'name' => '',
+                'sha1' => '',
+                'size' => '',
+                'creation_date' => '',
+                'modification_date' => '',
+                'folder_hash' => '',
+            )
+        );
+        $data['tstamp'] = time();
+        $databaseConnection->exec_INSERTquery('sys_file', $data);
+        $data['uid'] = $databaseConnection->sql_insert_id();
+        return $data;
     }
 }
