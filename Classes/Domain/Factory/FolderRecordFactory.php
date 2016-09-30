@@ -496,7 +496,7 @@ class FolderRecordFactory
                 // On foreign everything is okay.
                 // Two cases: either the UID was assigned independent or the local file was removed
                 // In both cases we will remove the remote file, because stage always wins.
-                // No need to review this decision. LDB is orphaned, ognore it, act like it would be [9] OF
+                // No need to review this decision. LDB is orphaned, ignore it, act like it would be [9] OF
                 // CARE: This will create the [6] ODB state.
             } elseif (!$ldb && $lfs && $ffs && $fdb) {
                 // CODE: [13] NLDB
