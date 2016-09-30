@@ -218,6 +218,10 @@ class FolderRecordFactory
             }
         }
 
+        // no need to access the databases anymore
+        unset($localDatabase);
+        unset($foreignDatabase);
+
         if (!empty($onlyLocalFileSystemFileIdentifiers)) {
             // iterate through all files found on disc but not in the database
             foreach ($onlyLocalFileSystemFileIdentifiers as $index => $localFileSystemFileIdentifier) {
