@@ -380,9 +380,15 @@ class FolderRecordFactory
                 );
             } elseif (!$ldb && !$lfs && $ffs && !$fdb) {
                 // CODE: [2] OFFS
-                // TODO
                 // Try to index the file on foreign and reassign the foreign info.
                 // Diff again and end up in [9] OF
+
+                // Since a (temporary) sys_file entry will be created for each file on disk
+                // we will never end up in this case, but it's left here for documentary purposes
+                throw new \LogicException(
+                    'The FAL case OFFS is impossible due to prior record transformation',
+                    1475250513
+                );
             } elseif (!$ldb && !$lfs && !$ffs && $fdb) {
                 // CODE: [3] OFDB
                 // The file exists only in the foreign database. Ignore the orphaned DB record.
