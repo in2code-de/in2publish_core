@@ -274,6 +274,13 @@ class FolderRecordFactory
                 // Create the local database entry by indexing the file
                 // Assign the new information to the file and diff again
                 // We end up in [4] OL
+
+                // Since a (temporary) sys_file entry will be created for each file on disk
+                // we will never end up in this case, but it's left here for documentary purposes
+                throw new \LogicException(
+                    'The FAL case OLFS is impossible due to prior record transformation',
+                    1475178450
+                );
             } elseif (!$ldb && !$lfs && $ffs && !$fdb) {
                 // CODE: [2] OFFS
                 // TODO
