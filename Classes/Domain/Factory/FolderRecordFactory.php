@@ -282,7 +282,12 @@ class FolderRecordFactory
                     // identifier, since none was found nor could be reclaimed
                     // if persistTemporaryIndexing is enabled the entry is not temporary
                     // but this does not matter for the following code
-                    $this->getFileInformation($localFileSystemFileIdentifier, $localDriver, $localDatabase),
+                    $this->getFileInformation(
+                        $localFileSystemFileIdentifier,
+                        $localDriver,
+                        $foreignDatabase,
+                        $localDatabase
+                    ),
                     array(),
                     $tcaService->getConfigurationArrayForTable('sys_file'),
                     array('localRecordExistsTemporary' => true)
@@ -313,7 +318,12 @@ class FolderRecordFactory
                     // if persistTemporaryIndexing is enabled the entry is not temporary
                     // but this does not matter for the following code
                     array(),
-                    $this->getFileInformation($foreignFileSystemFileIdentifier, $foreignDriver, $foreignDatabase),
+                    $this->getFileInformation(
+                        $foreignFileSystemFileIdentifier,
+                        $foreignDriver,
+                        $localDatabase,
+                        $foreignDatabase
+                    ),
                     $tcaService->getConfigurationArrayForTable('sys_file'),
                     array('foreignRecordExistsTemporary' => true)
                 );
@@ -575,13 +585,15 @@ class FolderRecordFactory
      *
      * @param string $identifier
      * @param DriverInterface $driver
-     * @param DatabaseConnection $databaseConnection If null the sys_file record will not be persisted
+     * @param DatabaseConnection $oppositeDatabase
+     * @param DatabaseConnection $targetDatabase If null the sys_file record will not be persisted
      * @return array
      */
     protected function getFileInformation(
         $identifier,
         DriverInterface $driver,
-        DatabaseConnection $databaseConnection = null
+        DatabaseConnection $oppositeDatabase = null,
+        DatabaseConnection $targetDatabase = null
     ) {
         $fileInfo = $driver->getFileInfoByIdentifier($identifier);
 
@@ -624,24 +636,143 @@ class FolderRecordFactory
         $fileInfo['extension'] = PathUtility::pathinfo($fileInfo['name'], PATHINFO_EXTENSION);
         $fileInfo['missing'] = 0;
 
-        if (true === $this->configuration['persistTemporaryIndexing'] && null !== $databaseConnection) {
-            $fileInfo = $this->persistFileIndexRecord($fileInfo, $databaseConnection);
+        if (true === $this->configuration['persistTemporaryIndexing']
+            && null !== $oppositeDatabase
+            && null !== $targetDatabase
+        ) {
+            $fileInfo = $this->persistFileIndexRecord($fileInfo, $targetDatabase, $oppositeDatabase);
         }
         return $fileInfo;
     }
 
     /**
-     * This method is mostly a copy of an indexer method
+     * This method was mostly a copy of an indexer method
      * @see \TYPO3\CMS\Core\Resource\Index\FileIndexRepository::insertRecord
-     * but it will not trigger refindex updates (yet?)
+     * It will not trigger refindex updates (yet?)
+     * The Database where the sys_file record is stored is determined by target/opposite database
      *
      * @param array $data
-     * @param DatabaseConnection $databaseConnection
-     * @return array
-     *
-     * @TODO check if the created uid is already taken on the other side and set auto_increment
+     * @param DatabaseConnection $targetDatabase
+     * @param DatabaseConnection $oppositeDatabase
+     * @return array Data with updated UID
      */
-    protected function persistFileIndexRecord(array $data, DatabaseConnection $databaseConnection)
+    protected function persistFileIndexRecord(
+        array $data,
+        DatabaseConnection $targetDatabase,
+        DatabaseConnection $oppositeDatabase
+    ) {
+        $data = $this->prepareAndFilterSysFileDataForPersistence($data);
+
+        $data['uid'] = $this->getReservedUid($targetDatabase, $oppositeDatabase);
+
+        $targetDatabase->exec_INSERTquery('sys_file', $data);
+
+        return $data;
+    }
+
+    /**
+     * Increases the auto increment value on both databases until it is two higher than the highest taken uid.
+     *
+     * @param DatabaseConnection $leftDatabase
+     * @param DatabaseConnection $rightDatabase
+     * @return int
+     */
+    protected function getReservedUid(DatabaseConnection $leftDatabase, DatabaseConnection $rightDatabase)
+    {
+        // get the current auto increment of both databases
+        $localAutoIncrement = $this->fetchSysFileAutoIncrementFromDatabase($leftDatabase);
+        $foreignAutoIncrement = $this->fetchSysFileAutoIncrementFromDatabase($rightDatabase);
+
+        // determine highest auto increment value from both databases
+        $possibleUid = (int)max($localAutoIncrement, $foreignAutoIncrement);
+
+        // initialize the variable holding the next higher auto increment value
+        $nextAutoIncrement = $possibleUid;
+
+        do {
+            // increase the auto increment to "reserve" the previous integer
+            $nextAutoIncrement++;
+            $possibleUid = $nextAutoIncrement - 1;
+
+            // apply the new auto increment on both databases
+            $this->setAutoIncrement($leftDatabase, $nextAutoIncrement);
+            $this->setAutoIncrement($rightDatabase, $nextAutoIncrement);
+        } while (!$this->isUidFree($leftDatabase, $rightDatabase, $possibleUid));
+
+        // return the free integer
+        return $possibleUid;
+    }
+
+    /**
+     * @param DatabaseConnection $leftDatabase
+     * @param DatabaseConnection $rightDatabase
+     * @param int $uid
+     * @return bool
+     */
+    protected function isUidFree(DatabaseConnection $leftDatabase, DatabaseConnection $rightDatabase, $uid)
+    {
+        return 0 === $leftDatabase->exec_SELECTcountRows('uid', 'sys_file', 'uid=' . (int)$uid)
+               && 0 === $rightDatabase->exec_SELECTcountRows('uid', 'sys_file', 'uid=' . (int)$uid);
+    }
+
+    /**
+     * @param DatabaseConnection $databaseConnection
+     * @param $autoIncrement
+     */
+    protected function setAutoIncrement(DatabaseConnection $databaseConnection, $autoIncrement)
+    {
+        $success = $databaseConnection->admin_query(
+            'ALTER TABLE sys_file AUTO_INCREMENT = ' . (int)$autoIncrement
+        );
+        if (false === $success) {
+            throw new \RuntimeException('Failed to increase auto_increment on sys_file', 1475248851);
+        }
+    }
+
+    /**
+     * @param DatabaseConnection $databaseConnection
+     * @return int
+     */
+    protected function fetchSysFileAutoIncrementFromDatabase(DatabaseConnection $databaseConnection)
+    {
+        $queryResult = $databaseConnection->admin_query(
+            'SHOW TABLE STATUS FROM '
+            . $this->determineDatabaseOfConnection($databaseConnection)
+            . ' WHERE name LIKE "sys_file";'
+        );
+        if (false === $queryResult) {
+            throw new \RuntimeException('Could not select table status from database', 1475242494);
+        }
+        $resultData = $queryResult->fetch_assoc();
+        if (!isset($resultData['Auto_increment'])) {
+            throw new \RuntimeException('Could not fetch Auto_increment value from query result', 1475242706);
+        }
+        return (int)$resultData['Auto_increment'];
+    }
+
+    /**
+     * @param DatabaseConnection $databaseConnection
+     * @return string
+     */
+    protected function determineDatabaseOfConnection(DatabaseConnection $databaseConnection)
+    {
+        $queryResult = $databaseConnection->admin_query('SELECT DATABASE() as db_name;');
+        if (false === $queryResult) {
+            throw new \RuntimeException('Could not select database name from target database', 1475242213);
+        }
+        $resultData = $queryResult->fetch_assoc();
+        if (!isset($resultData['db_name'])) {
+            throw new \RuntimeException('Could not fetch database name from query result', 1475242337);
+        }
+        $queryResult->free();
+        return $resultData['db_name'];
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    protected function prepareAndFilterSysFileDataForPersistence(array $data)
     {
         $data = array_intersect_key(
             $data,
@@ -664,8 +795,6 @@ class FolderRecordFactory
             )
         );
         $data['tstamp'] = time();
-        $databaseConnection->exec_INSERTquery('sys_file', $data);
-        $data['uid'] = $databaseConnection->sql_insert_id();
         return $data;
     }
 }
