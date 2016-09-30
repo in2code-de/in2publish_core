@@ -67,6 +67,9 @@ class FolderRecordFactory
     /**
      * Only work with drivers so we don't "accidentally" index files...
      *
+     * Variable naming rules:
+     *  $identifier is the identifier of the chosen folder and must not be used for any other purpose
+     *
      * @param string|null $identifier
      * @return Record
      */
