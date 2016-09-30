@@ -579,7 +579,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             function () use ($fileIdentifier, $propertiesToExtract) {
                 $uid = $this->letterBox->sendEnvelope(
                     new Envelope(
-                        EnvelopeDispatcher::CMD_GET_PERMISSIONS,
+                        EnvelopeDispatcher::CMD_GET_FILE_INFO_BY_IDENTIFIER,
                         array(
                             'storage' => $this->storageUid,
                             'fileIdentifier' => $fileIdentifier,
@@ -589,7 +589,10 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                 );
 
                 if (false === $uid) {
-                    throw new \Exception('Could not send "getPermissions" request to remote system', 1474460823);
+                    throw new \Exception(
+                        'Could not send "getFileInfoByIdentifier" request to remote system',
+                        1474460823
+                    );
                 }
 
                 return $this->executeEnvelopeAndReceiveResponse($uid);
