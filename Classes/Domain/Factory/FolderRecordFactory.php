@@ -358,8 +358,20 @@ class FolderRecordFactory
         foreach ($files as $index => $file) {
             $fdb = $file->foreignRecordExists();
             $ldb = $file->localRecordExists();
-            $lfs = $localDriver->fileExists($file->getLocalProperty('identifier'));
-            $ffs = $foreignDriver->fileExists($file->getForeignProperty('identifier'));
+
+            if ($file->hasLocalProperty('identifier')) {
+                $localFileIdentifier = $file->getLocalProperty('identifier');
+            } else {
+                $localFileIdentifier = $file->getForeignProperty('identifier');
+            }
+            if ($file->hasForeignProperty('identifier')) {
+                $foreignFileIdentifier = $file->getForeignProperty('identifier');
+            } else {
+                $foreignFileIdentifier = $file->getLocalProperty('identifier');
+            }
+
+            $lfs = $localDriver->fileExists($localFileIdentifier);
+            $ffs = $foreignDriver->fileExists($foreignFileIdentifier);
 
             if ($ldb && !$lfs && !$ffs && !$fdb) {
                 // CODE: [0] OLDB
