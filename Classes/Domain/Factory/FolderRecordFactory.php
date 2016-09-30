@@ -224,6 +224,42 @@ class FolderRecordFactory
                     unset($onlyLocalFileSystemFileIdentifiers[$index]);
                 }
             }
+
+            foreach ($onlyForeignFileSystemFileIdentifiers as $index => $foreignFileSystemFileIdentifier) {
+                $disconnectedSysFile = $commonRepository->findByProperty(
+                    'identifier',
+                    $foreignFileSystemFileIdentifier
+                );
+                // if a sys_file record could be reclaimed use it
+                if (!empty($disconnectedSysFile)) {
+                    // repair the entry a.k.a reconnect it by updating the folder hash
+                    if (true === $this->configuration['autoRepairFolderHash']) {
+                        foreach ($disconnectedSysFile as $sysFileEntry) {
+                            // No need to check if this entry belongs to another file, since the folder hash was wrong
+                            // but the identifier was 100% correct
+                            $uid = $sysFileEntry->getIdentifier();
+                            // update on the local side if record has been found on the local side.
+                            // Hint: Do *not* update foreign. The folder hash on foreign might be correctly different
+                            // e.g. in case the file was moved
+                            if ($sysFileEntry->hasForeignProperty('folder_hash')) {
+                                $foreignDatabase->exec_UPDATEquery(
+                                    'sys_file',
+                                    'uid=' . $uid,
+                                    array('folder_hash' => $folderHash)
+                                );
+                                $localProperties = $sysFileEntry->getForeignProperties();
+                                $localProperties['folder_hash'] = $folderHash;
+                                $sysFileEntry->setForeignProperties($localProperties);
+                            }
+                        }
+                    }
+                    // add the reclaimed sys_file record to the list of files
+                    $files = array_merge($files, $disconnectedSysFile);
+                    // remove the identifier from the list of missing database record identifiers
+                    // so we can deal with them later
+                    unset($onlyForeignFileSystemFileIdentifiers[$index]);
+                }
+            }
         }
 
         // no need to access the databases anymore
