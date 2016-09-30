@@ -175,6 +175,14 @@ class FolderRecordFactory
         // get all file identifiers of files actually existing in the current folder but not in the database
         $localFileIdentifiers = array_values($localDriver->getFilesInFolder($identifier));
 
+        if ($foreignDriver->folderExists($identifier)) {
+            $foreignFileIdentifiers = array_values($foreignDriver->getFilesInFolder($identifier));
+            $onlyForeignFileSystemFileIdentifiers = array_diff($foreignFileIdentifiers, $identifierList);
+        } else {
+            $foreignFileIdentifiers = array();
+            $onlyForeignFileSystemFileIdentifiers = array();
+        }
+
         // find all files which are not indexed (don't care of files in DB but not in FS)
         $onlyLocalFileSystemFileIdentifiers = array_diff($localFileIdentifiers, $identifierList);
 
@@ -249,12 +257,45 @@ class FolderRecordFactory
         }
 
         if (!empty($onlyLocalFileSystemFileIdentifiers)) {
-            throw new \RuntimeException('Failed to convert all files from disc to records', 1475177184);
+            throw new \RuntimeException('Failed to convert all local files from disc to records', 1475177184);
+        }
+
+        if (!empty($onlyForeignFileSystemFileIdentifiers)) {
+            // iterate through all files found on disc but not in the database
+            foreach ($onlyForeignFileSystemFileIdentifiers as $index => $foreignFileSystemFileIdentifier) {
+                static $tcaService = null;
+                if (null === $tcaService) {
+                    $tcaService = GeneralUtility::makeInstance(
+                        'In2code\\In2publishCore\\Service\\Configuration\\TcaService'
+                    );
+                }
+                $temporarySysFile = GeneralUtility::makeInstance(
+                    'In2code\\In2publishCore\\Domain\\Model\\Record',
+                    'sys_file',
+                    // create a temporary sys_file entry for the current
+                    // identifier, since none was found nor could be reclaimed
+                    // if persistTemporaryIndexing is enabled the entry is not temporary
+                    // but this does not matter for the following code
+                    array(),
+                    $this->getFileInformation($foreignFileSystemFileIdentifier, $foreignDriver),
+                    $tcaService->getConfigurationArrayForTable('sys_file'),
+                    array('foreignRecordExistsTemporary' => true)
+                );
+                $files[] = $temporarySysFile;
+                unset($onlyForeignFileSystemFileIdentifiers[$index]);
+            }
+        }
+
+        if (!empty($onlyForeignFileSystemFileIdentifiers)) {
+            throw new \RuntimeException('Failed to convert all foreign files from disc to records', 1475236166);
         }
 
         // clean up again
         unset($localFolder);
         unset($localFileIdentifiers);
+        unset($foreignFileIdentifiers);
+        unset($onlyLocalFileSystemFileIdentifiers);
+        unset($onlyForeignFileSystemFileIdentifiers);
 
         /*
          * Filtering:
