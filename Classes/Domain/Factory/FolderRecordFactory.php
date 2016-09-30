@@ -142,7 +142,6 @@ class FolderRecordFactory
 
         // clean up a bit
         unset($resourceFactory);
-        unset($identifier);
         unset($localStorage);
         unset($localFolderInfo);
         unset($localSubFolders);
