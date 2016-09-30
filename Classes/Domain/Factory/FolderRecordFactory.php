@@ -150,12 +150,15 @@ class FolderRecordFactory
         unset($remoteSubFolders);
         unset($subFolders);
 
+        $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
+        $foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
+
         // Now let's find all files in the selected folder
         // Get the Repo first
         $commonRepository = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager')->get(
             'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
-            DatabaseUtility::buildLocalDatabaseConnection(),
-            DatabaseUtility::buildForeignDatabaseConnection(),
+            $localDatabase,
+            $foreignDatabase,
             'sys_file'
         );
 
@@ -193,7 +196,7 @@ class FolderRecordFactory
                             // Hint: Do *not* update foreign. The folder hash on foreign might be correctly different
                             // e.g. in case the file was moved
                             if ($sysFileEntry->hasLocalProperty('folder_hash')) {
-                                DatabaseUtility::buildLocalDatabaseConnection()->exec_UPDATEquery(
+                                $localDatabase->exec_UPDATEquery(
                                     'sys_file',
                                     'uid=' . $uid,
                                     array('folder_hash' => $folderHash)
