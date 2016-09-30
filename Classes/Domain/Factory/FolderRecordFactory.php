@@ -232,7 +232,7 @@ class FolderRecordFactory
                     $this->getFileInformation($identifier, $localDriver),
                     array(),
                     $tcaService->getConfigurationArrayForTable('sys_file'),
-                    array()
+                    array('localRecordExistsTemporary' => true)
                 );
                 $files[] = $temporarySysFile;
                 unset($onlyLocalFileSystemFileIdentifiers[$index]);
