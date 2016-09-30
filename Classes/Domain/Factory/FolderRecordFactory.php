@@ -279,7 +279,6 @@ class FolderRecordFactory
                 continue;
             } elseif (!$ldb && $lfs && !$ffs && !$fdb) {
                 // CODE: [1] OLFS
-                // TODO
                 // Create the local database entry by indexing the file
                 // Assign the new information to the file and diff again
                 // We end up in [4] OL
