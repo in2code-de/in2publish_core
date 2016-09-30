@@ -320,7 +320,7 @@ class FolderRecordFactory
                     $tcaService->getConfigurationArrayForTable('sys_file'),
                     array('localRecordExistsTemporary' => true)
                 );
-                $files[] = $temporarySysFile;
+                $files[uniqid('NEW_')] = $temporarySysFile;
                 unset($onlyLocalFileSystemFileIdentifiers[$index]);
             }
         }
@@ -355,7 +355,7 @@ class FolderRecordFactory
                     $tcaService->getConfigurationArrayForTable('sys_file'),
                     array('foreignRecordExistsTemporary' => true)
                 );
-                $files[] = $temporarySysFile;
+                $files[uniqid('NEW_')] = $temporarySysFile;
                 unset($onlyForeignFileSystemFileIdentifiers[$index]);
             }
         }
