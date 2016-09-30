@@ -667,6 +667,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         $sort = '',
         $sortRev = false
     ) {
+        if (!$this->folderExists($folderIdentifier)) {
+            throw new \InvalidArgumentException(
+                'Cannot list items in directory ' . $folderIdentifier . ' - does not exist or is no directory',
+                1475235331
+            );
+        }
         return $this->cache(
             __FUNCTION__ . md5(json_encode(func_get_args())),
             function () use (
