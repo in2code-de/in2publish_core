@@ -640,34 +640,11 @@ class FolderRecordFactory
             && null !== $oppositeDatabase
             && null !== $targetDatabase
         ) {
-            $fileInfo = $this->persistFileIndexRecord($fileInfo, $targetDatabase, $oppositeDatabase);
+            $fileInfo['uid'] = $this->getReservedUid($targetDatabase, $oppositeDatabase);
+            $targetDatabase->exec_INSERTquery('sys_file', $this->prepareAndFilterSysFileDataForPersistence($fileInfo));
         }
+
         return $fileInfo;
-    }
-
-    /**
-     * This method was mostly a copy of an indexer method
-     * @see \TYPO3\CMS\Core\Resource\Index\FileIndexRepository::insertRecord
-     * It will not trigger refindex updates (yet?)
-     * The Database where the sys_file record is stored is determined by target/opposite database
-     *
-     * @param array $data
-     * @param DatabaseConnection $targetDatabase
-     * @param DatabaseConnection $oppositeDatabase
-     * @return array Data with updated UID
-     */
-    protected function persistFileIndexRecord(
-        array $data,
-        DatabaseConnection $targetDatabase,
-        DatabaseConnection $oppositeDatabase
-    ) {
-        $data = $this->prepareAndFilterSysFileDataForPersistence($data);
-
-        $data['uid'] = $this->getReservedUid($targetDatabase, $oppositeDatabase);
-
-        $targetDatabase->exec_INSERTquery('sys_file', $data);
-
-        return $data;
     }
 
     /**
