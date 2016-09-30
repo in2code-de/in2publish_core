@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Domain\Factory;
 
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
@@ -185,6 +186,33 @@ class FolderRecordFactory
         } else {
             $foreignFileIdentifiers = array();
             $onlyForeignFileSystemFileIdentifiers = array();
+        }
+
+        // PRE-FIX for LDFF case, where the file was found on foreign's disk and the local database
+        // Short: Removes LDB but adds FDB instead. Results in OF
+        $fileRecordsToRecheck = array_intersect($identifierList, $foreignFileIdentifiers);
+        foreach ($fileRecordsToRecheck as $fileRecordUid => $reCheckIdentifier) {
+            $reCheckFile = $files[$fileRecordUid];
+            // The database record is technically added, but the file was removed. Since the file publishing is the
+            // main domain of this class the state of the file on disk has precedence
+            if (RecordInterface::RECORD_STATE_ADDED === $reCheckFile->getState()) {
+                if (!$localDriver->fileExists($reCheckIdentifier)) {
+                    // remove all local properties to "ignore" the local database record
+                    $reCheckFile->setLocalProperties(array());
+                    // add foreign file information instead
+                    $reCheckFile->setForeignProperties(
+                        $this->getFileInformation(
+                            $reCheckIdentifier,
+                            $foreignDriver,
+                            $localDatabase,
+                            $foreignDatabase
+                        )
+                    );
+                    $reCheckFile->addAdditionalProperty('foreignRecordExistsTemporary', true);
+                    // TODO: trigger the follwoing inside the record itself so it can't be forgot
+                    $reCheckFile->setDirtyProperties()->calculateState();
+                }
+            }
         }
 
         // find all files which are not indexed (don't care of files in DB but not in FS)
@@ -412,11 +440,19 @@ class FolderRecordFactory
                 // The file and database record will be copied to the remote system when published.
             } elseif ($ldb && !$lfs && $ffs && !$fdb) {
                 // CODE: [5] LDFF
-                // TODO
-                // Okay i currently don't know how to handle this.
+                // Okay i currently don't know how to handle this, because on a record level this file
+                // has been added, but on disk level the file was removed.
                 // I think the best solution would be indexing the file on
                 // foreign with the UID from the local database record.
                 // That would lead us to [12] NLFS so at least it's one case less.
+
+                // Since a (temporary) sys_file entry will be created for the foreign disk file and the
+                // local database record will be ignored by overwriting it with an empty array we will
+                // never end up in this case. It's still here for documentation
+                throw new \LogicException(
+                    'The FAL case LDFF is impossible due to prior record transformation',
+                    1475252172
+                );
             } elseif ($ldb && !$lfs && !$ffs && $fdb) {
                 // CODE: [6] ODB
                 // So there are two orphans (db without fs). we could diff them, but there's no file to publish.
@@ -592,7 +628,7 @@ class FolderRecordFactory
                 throw new \Exception('DEVELOPMENT EXCEPTION: Renamed? ' . $localIdentifier . ' ' . $foreignIdentifier);
             }
 
-            $identifierList[] = null !== $localIdentifier ? $localIdentifier : $foreignIdentifier;
+            $identifierList[$file->getIdentifier()] = null !== $localIdentifier ? $localIdentifier : $foreignIdentifier;
         }
         return $identifierList;
     }
