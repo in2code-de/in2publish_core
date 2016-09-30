@@ -173,7 +173,7 @@ class FolderRecordFactory
         $identifierList = $this->buildIdentifiersList($files);
 
         // get all file identifiers of files actually existing in the current folder but not in the database
-        $localFileIdentifiers = array_values($localDriver->getFilesInFolder($localFolder->getIdentifier()));
+        $localFileIdentifiers = array_values($localDriver->getFilesInFolder($identifier));
 
         // find all files which are not indexed (don't care of files in DB but not in FS)
         $onlyLocalFileSystemFileIdentifiers = array_diff($localFileIdentifiers, $identifierList);
@@ -184,8 +184,8 @@ class FolderRecordFactory
             // the chance is vanishing low to find a file by its identifier in the database
             // because they should have been found by the folder hash already, but i'm a
             // generous developer and allow FAL to completely fuck up the folder hash
-            foreach ($onlyLocalFileSystemFileIdentifiers as $index => $identifier) {
-                $disconnectedSysFile = $commonRepository->findByProperty('identifier', $identifier);
+            foreach ($onlyLocalFileSystemFileIdentifiers as $index => $localFileSystemFileIdentifier) {
+                $disconnectedSysFile = $commonRepository->findByProperty('identifier', $localFileSystemFileIdentifier);
                 // if a sys_file record could be reclaimed use it
                 if (!empty($disconnectedSysFile)) {
                     // repair the entry a.k.a reconnect it by updating the folder hash
@@ -220,7 +220,7 @@ class FolderRecordFactory
 
         if (!empty($onlyLocalFileSystemFileIdentifiers)) {
             // iterate through all files found on disc but not in the database
-            foreach ($onlyLocalFileSystemFileIdentifiers as $index => $identifier) {
+            foreach ($onlyLocalFileSystemFileIdentifiers as $index => $localFileSystemFileIdentifier) {
                 static $tcaService = null;
                 if (null === $tcaService) {
                     $tcaService = GeneralUtility::makeInstance(
@@ -234,7 +234,7 @@ class FolderRecordFactory
                     // identifier, since none was found nor could be reclaimed
                     // if persistTemporaryIndexing is enabled the entry is not temporary
                     // but this does not matter for the following code
-                    $this->getFileInformation($identifier, $localDriver),
+                    $this->getFileInformation($localFileSystemFileIdentifier, $localDriver),
                     array(),
                     $tcaService->getConfigurationArrayForTable('sys_file'),
                     array('localRecordExistsTemporary' => true)
