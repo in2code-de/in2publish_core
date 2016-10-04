@@ -612,9 +612,15 @@ class FolderRecordFactory
                 // The publish command removes the foreign file and database record
             } elseif ($ldb && $lfs && $ffs && !$fdb) {
                 // CODE: [10] NFDB
-                // TODO
                 // Index the foreign file. Make sure the UID is the same as local's one.
                 // Go to [14] ALL afterwards
+
+                // Hint: This is done by the PRE-FIX for [10] NFDB.
+                // This Exception is rather for documentation purposes than functional.
+                throw new \LogicException(
+                    'The FAL case NFDB is impossible due to prior record transformation',
+                    1475576764
+                );
             } elseif ($ldb && $lfs && !$ffs && $fdb) {
                 // CODE: [11] NFFS
                 // The foreign database record is orphaned.
