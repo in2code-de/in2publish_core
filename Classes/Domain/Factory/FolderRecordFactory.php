@@ -198,7 +198,7 @@ class FolderRecordFactory
         $onlyForeignFileSystemFileIdentifiers = array_diff($onlyForeignFileSystemFileIdentifiers, $onlyFileSystemEntries);
 
         if (!empty($onlyFileSystemEntries)) {
-            // iterate through all files found on disc but not in the database
+            // iterate through all files found on the local and foreign disk but not in the database
             foreach ($onlyFileSystemEntries as $index => $fileSystemEntryIdentifier) {
                 static $tcaService = null;
                 if (null === $tcaService) {
@@ -346,7 +346,7 @@ class FolderRecordFactory
         }
 
         if (!empty($onlyLocalFileSystemFileIdentifiers)) {
-            // iterate through all files found on disc but not in the database
+            // iterate through all files found on disk but not in the database
             foreach ($onlyLocalFileSystemFileIdentifiers as $index => $localFileSystemFileIdentifier) {
                 static $tcaService = null;
                 if (null === $tcaService) {
@@ -377,7 +377,7 @@ class FolderRecordFactory
         }
 
         if (!empty($onlyLocalFileSystemFileIdentifiers)) {
-            throw new \RuntimeException('Failed to convert all local files from disc to records', 1475177184);
+            throw new \RuntimeException('Failed to convert all local files from disk to records', 1475177184);
         }
 
         if (!empty($onlyForeignFileSystemFileIdentifiers)) {
@@ -412,7 +412,7 @@ class FolderRecordFactory
         }
 
         if (!empty($onlyForeignFileSystemFileIdentifiers)) {
-            throw new \RuntimeException('Failed to convert all foreign files from disc to records', 1475236166);
+            throw new \RuntimeException('Failed to convert all foreign files from disk to records', 1475236166);
         }
 
         // clean up again
