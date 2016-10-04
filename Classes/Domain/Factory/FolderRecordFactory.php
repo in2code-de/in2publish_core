@@ -193,9 +193,15 @@ class FolderRecordFactory
 
         // PRE-FIX for [7] OFS case. Files exist on both disks, but in neither of the databases.
         // Move those entries to a third array to deal with them separately
-        $onlyFileSystemEntries = array_intersect($onlyLocalFileSystemFileIdentifiers, $onlyForeignFileSystemFileIdentifiers);
+        $onlyFileSystemEntries = array_intersect(
+            $onlyLocalFileSystemFileIdentifiers,
+            $onlyForeignFileSystemFileIdentifiers
+        );
         $onlyLocalFileSystemFileIdentifiers = array_diff($onlyLocalFileSystemFileIdentifiers, $onlyFileSystemEntries);
-        $onlyForeignFileSystemFileIdentifiers = array_diff($onlyForeignFileSystemFileIdentifiers, $onlyFileSystemEntries);
+        $onlyForeignFileSystemFileIdentifiers = array_diff(
+            $onlyForeignFileSystemFileIdentifiers,
+            $onlyFileSystemEntries
+        );
 
         // TODO determine if this has to be done before or after the reclaimSysFileEntries feature
         if (!empty($onlyFileSystemEntries)) {
@@ -237,7 +243,6 @@ class FolderRecordFactory
         if (!empty($onlyFileSystemEntries)) {
             throw new \RuntimeException('Failed to convert all disk-only files to records', 1475253143);
         }
-
 
         // PRE-FIX for [5] LDFF case, where the file was found on foreign's disk and the local database
         // Short: Removes LDB but adds FDB instead. Results in OF
