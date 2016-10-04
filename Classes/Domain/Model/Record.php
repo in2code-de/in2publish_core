@@ -364,6 +364,8 @@ class Record implements RecordInterface
      */
     public function setDirtyProperties()
     {
+        // reset dirty properties first
+        $this->dirtyProperties = array();
         $ignoreFields = $this->getIgnoreFields();
         if (!is_array($ignoreFields)) {
             $ignoreFields = array();

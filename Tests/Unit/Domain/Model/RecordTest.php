@@ -1429,4 +1429,18 @@ class RecordTest extends UnitTestCase
         $record->addAdditionalProperty('foreignRecordExistsTemporary', true);
         $this->assertTrue($record->foreignRecordExists());
     }
+
+    /**
+     * @covers ::setDirtyProperties
+     */
+    public function testSetDirtyPropertiesResetsOldDirtyProperties()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('foo', ['uid' => 100, 'foo' => 'baz'], ['uid' => 200, 'bar' => 'bem'], [], []);
+        $record->setDirtyProperties();
+        $this->assertSame(['uid', 'foo', 'bar'], $record->getDirtyProperties());
+        $record->setForeignProperties(['uid' => 200, 'foo' => 'baz', 'bar' => 'bem']);
+        $record->setDirtyProperties();
+        $this->assertSame(['uid', 'bar'], $record->getDirtyProperties());
+    }
 }
