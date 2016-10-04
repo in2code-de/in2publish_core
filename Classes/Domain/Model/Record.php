@@ -708,11 +708,15 @@ class Record implements RecordInterface
                 $this->setState(RecordInterface::RECORD_STATE_DELETED);
             } elseif (count($this->dirtyProperties) > 0) {
                 $this->setState(RecordInterface::RECORD_STATE_CHANGED);
+            } else {
+                $this->setState(RecordInterface::RECORD_STATE_UNCHANGED);
             }
         } elseif ($this->localRecordExists() && !$this->foreignRecordExists()) {
             $this->setState(RecordInterface::RECORD_STATE_ADDED);
         } elseif (!$this->localRecordExists() && $this->foreignRecordExists()) {
             $this->setState(RecordInterface::RECORD_STATE_DELETED);
+        } else {
+            $this->setState(RecordInterface::RECORD_STATE_UNCHANGED);
         }
     }
 
