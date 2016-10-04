@@ -209,7 +209,7 @@ class FolderRecordFactory
                         )
                     );
                     $reCheckFile->addAdditionalProperty('foreignRecordExistsTemporary', true);
-                    // TODO: trigger the follwoing inside the record itself so it can't be forgot
+                    // TODO: trigger the following inside the record itself so it can't be forgotten
                     $reCheckFile->setDirtyProperties()->calculateState();
                 }
             }
