@@ -197,6 +197,7 @@ class FolderRecordFactory
         $onlyLocalFileSystemFileIdentifiers = array_diff($onlyLocalFileSystemFileIdentifiers, $onlyFileSystemEntries);
         $onlyForeignFileSystemFileIdentifiers = array_diff($onlyForeignFileSystemFileIdentifiers, $onlyFileSystemEntries);
 
+        // TODO determine if this has to be done before or after the reclaimSysFileEntries feature
         if (!empty($onlyFileSystemEntries)) {
             // iterate through all files found on the local and foreign disk but not in the database
             foreach ($onlyFileSystemEntries as $index => $fileSystemEntryIdentifier) {
