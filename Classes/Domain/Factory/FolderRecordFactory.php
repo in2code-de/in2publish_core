@@ -256,29 +256,36 @@ class FolderRecordFactory
         $foreignFileRecordsToRecheck = array_diff($foreignFileRecordsToRecheck, $fileIdentifiersOnBothSides);
         $localFileRecordsToRecheck = array_diff($localFileRecordsToRecheck, $fileIdentifiersOnBothSides);
 
-        // PRE-FIX for [5] LDFF case, where the file was found on foreign's disk and the local database
-        // Short: Removes LDB but adds FDB instead. Results in OF
         foreach ($foreignFileRecordsToRecheck as $fileRecordUid => $reCheckIdentifier) {
             $reCheckFile = $files[$fileRecordUid];
-            // The database record is technically added, but the file was removed. Since the file publishing is the
-            // main domain of this class the state of the file on disk has precedence
-            if (RecordInterface::RECORD_STATE_ADDED === $reCheckFile->getState()) {
-                if (!$localDriver->fileExists($reCheckIdentifier)) {
-                    // remove all local properties to "ignore" the local database record
-                    $reCheckFile->setLocalProperties(array());
-                    // add foreign file information instead
-                    $reCheckFile->setForeignProperties(
-                        $this->getFileInformation(
-                            $reCheckIdentifier,
-                            $foreignDriver,
-                            $localDatabase,
-                            $foreignDatabase
-                        )
-                    );
-                    $reCheckFile->addAdditionalProperty('foreignRecordExistsTemporary', true);
-                    // TODO: trigger the following inside the record itself so it can't be forgotten
-                    $reCheckFile->setDirtyProperties()->calculateState();
-                }
+            $recordState = $reCheckFile->getState();
+            if (RecordInterface::RECORD_STATE_ADDED === $recordState) {
+                // PRE-FIX for [5] LDFF case, where the file was found on foreign's disk and the local database
+                // Short: Removes LDB but adds FDB instead. Results in OF
+                // The database record is technically added, but the file was removed. Since the file publishing is the
+                // main domain of this class the state of the file on disk has precedence
+                // remove all local properties to "ignore" the local database record
+                $reCheckFile->setLocalProperties(array());
+                // add foreign file information instead
+                $reCheckFile->setForeignProperties(
+                    $this->getFileInformation(
+                        $reCheckIdentifier,
+                        $foreignDriver,
+                        $localDatabase,
+                        $foreignDatabase
+                    )
+                );
+                $reCheckFile->addAdditionalProperty('foreignRecordExistsTemporary', true);
+                // TODO: trigger the following inside the record itself so it can't be forgotten
+                $reCheckFile->setDirtyProperties()->calculateState();
+            } elseif (RecordInterface::RECORD_STATE_UNCHANGED === $recordState
+                      || RecordInterface::RECORD_STATE_CHANGED === $recordState
+            ) {
+                // PRE-FIX [12] NLFS
+                // The database record is unchanged or changed, because it exists on both sides,
+                // the file in return was only found on foreign (the identifier is in $foreignFileRecordsToRecheck)
+                $reCheckFile->setLocalProperties(array());
+                $reCheckFile->setDirtyProperties()->calculateState();
             }
         }
 
@@ -567,6 +574,8 @@ class FolderRecordFactory
                 // foreign with the UID from the local database record.
                 // That would lead us to [12] NLFS so at least it's one case less.
 
+                // Edit: [12] NLFS has also received a PRE-FIX. The resulting case is [9] OF
+
                 // Since a (temporary) sys_file entry will be created for the foreign disk file and the
                 // local database record will be ignored by overwriting it with an empty array we will
                 // never end up in this case. It's still here for documentation
@@ -630,13 +639,19 @@ class FolderRecordFactory
                 $file->setForeignProperties(array())->setDirtyProperties()->calculateState();
             } elseif ($ldb && !$lfs && $ffs && $fdb) {
                 // CODE: [12] NLFS
-                // TODO
                 // The local database record is orphaned.
                 // On foreign everything is okay.
                 // Two cases: either the UID was assigned independent or the local file was removed
                 // In both cases we will remove the remote file, because stage always wins.
                 // No need to review this decision. LDB is orphaned, ignore it, act like it would be [9] OF
                 // CARE: This will create the [6] ODB state.
+
+                // Hint: This is done by a PRE-FIX.
+                // This Exception is rather for documentation purposes than functional.
+                throw new \LogicException(
+                    'The FAL case NLFS is impossible due to prior record transformation',
+                    1475576764
+                );
             } elseif (!$ldb && $lfs && $ffs && $fdb) {
                 // CODE: [13] NLDB
                 // TODO
