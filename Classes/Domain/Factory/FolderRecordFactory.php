@@ -556,11 +556,17 @@ class FolderRecordFactory
                 );
             } elseif (!$ldb && $lfs && !$ffs && $fdb) {
                 // CODE: [8] LFFD
-                // TODO
                 // This might be one of the most strange setups.
                 // Maybe the local file was deleted but write permissions blocked the deletion, but the database record
                 // was deleted and not restored after failure. And the foreign database record? God knows...
                 // Concrete: Index the local file and add that info to the record, diff again and go to [11] NFFS
+
+                // Hint: This is done by the PRE-FIX for [8] LFFD.
+                // This Exception is rather for documentation purposes than functional.
+                throw new \LogicException(
+                    'The FAL case LFFD is impossible due to prior record transformation',
+                    1475573724
+                );
             } elseif (!$ldb && !$lfs && $ffs && $fdb) {
                 // CODE: [9] OF
                 // Nothing to do here. The record exists only on local and will be displayed correctly.
