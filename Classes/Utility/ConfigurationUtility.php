@@ -26,7 +26,7 @@ namespace In2code\In2publishCore\Utility;
  ***************************************************************/
 
 use In2code\In2publishCore\Service\Context\ContextService;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Backend\Utility\BackendUtility as CoreBackendUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -253,7 +253,7 @@ class ConfigurationUtility
             // try merge userTS the first time BE_USER is available
             if ($this->isBackendUserInitialized()) {
                 if ($this->isUserTsConfigEnabled()) {
-                    $userTs = GeneralUtility::removeDotsFromTS(BackendUtility::getModTSconfig(0, 'tx_in2publish'));
+                    $userTs = GeneralUtility::removeDotsFromTS(CoreBackendUtility::getModTSconfig(0, 'tx_in2publish'));
                     $userTs = ArrayUtility::normalizeArray((array)$userTs['properties']);
                     $configuration = $this->merge($configuration, $userTs);
                 }
@@ -278,7 +278,7 @@ class ConfigurationUtility
         $uid = \In2code\In2publishCore\Utility\BackendUtility::getPageIdentifier();
         if ($this->configurationCache[self::CACHE_KEY_PAGE] === null) {
             // get the pageTS | Manually pass rootline to disable caching.
-            $pageTs = BackendUtility::getPagesTSconfig($uid, BackendUtility::BEgetRootLine($uid));
+            $pageTs = CoreBackendUtility::getPagesTSconfig($uid, CoreBackendUtility::BEgetRootLine($uid));
 
             // if there is any in2publish config in the pageTS
             if (!empty($pageTs['tx_in2publish.'])) {
