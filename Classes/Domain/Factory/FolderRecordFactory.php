@@ -191,12 +191,12 @@ class FolderRecordFactory
             $onlyForeignFileSystemFileIdentifiers = array();
         }
 
-        // PRE-FIX for [7] OFS case. Files exist on both disks, but in neither of the databases.
-        // Move those entries to a third array to deal with them separately
+        // Move files existing on both disks but not in any database to a third array.
         $onlyFileSystemEntries = array_intersect(
             $onlyLocalFileSystemFileIdentifiers,
             $onlyForeignFileSystemFileIdentifiers
         );
+        // Remove OF case files from the other file identifier lists
         $onlyLocalFileSystemFileIdentifiers = array_diff($onlyLocalFileSystemFileIdentifiers, $onlyFileSystemEntries);
         $onlyForeignFileSystemFileIdentifiers = array_diff(
             $onlyForeignFileSystemFileIdentifiers,
@@ -204,6 +204,7 @@ class FolderRecordFactory
         );
 
         // TODO determine if this has to be done before or after the reclaimSysFileEntries feature
+        // PRE-FIX for [7] OFS case.
         if (!empty($onlyFileSystemEntries)) {
             // iterate through all files found on the local and foreign disk but not in the database
             foreach ($onlyFileSystemEntries as $index => $fileSystemEntryIdentifier) {
