@@ -56,33 +56,26 @@ class FileController extends AbstractController
      */
     public function publishFolderAction($identifier)
     {
-        $record = $this
-            ->objectManager
-            ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
-            ->makeInstance($identifier);
-
-        $originalState = $record->getState();
-
         $success = $this
             ->objectManager
             ->get('In2code\\In2publishCore\\Domain\\Service\\Publishing\\FolderPublisherService')
-            ->publish($record);
+            ->publish($identifier);
 
         if ($success) {
             $this->addFlashMessage(
                 LocalizationUtility::translate(
-                    'file_publishing.folder.' . $originalState,
+                    'file_publishing.folder',
                     'in2publish_core',
-                    array($record->getMergedProperty('identifier'))
+                    array($identifier)
                 ),
                 LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
             );
         } else {
             $this->addFlashMessage(
                 LocalizationUtility::translate(
-                    'file_publishing.failure.folder.' . $originalState,
+                    'file_publishing.failure.folder',
                     'in2publish_core',
-                    array($record->getMergedProperty('identifier'))
+                    array($identifier)
                 ),
                 LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
                 AbstractMessage::ERROR

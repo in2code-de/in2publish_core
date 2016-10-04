@@ -29,9 +29,8 @@ namespace In2code\In2publishCore\Domain\Service\Publishing;
 use In2code\In2publishCore\Domain\Driver\Rpc\Envelope;
 use In2code\In2publishCore\Domain\Driver\Rpc\EnvelopeDispatcher;
 use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
-use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Security\SshConnection;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -55,62 +54,41 @@ class FolderPublisherService
     }
 
     /**
-     * @param Record $record
+     * @param string $identifier
      * @return bool
      */
-    public function publish(Record $record)
+    public function publish($identifier)
     {
-        switch ($record->getState()) {
-            case RecordInterface::RECORD_STATE_CHANGED:
-                throw new \LogicException(
-                    'The given folder is flagged as changed, but this case is currently not implemented',
-                    1475584313
-                );
-                break;
-            case RecordInterface::RECORD_STATE_UNCHANGED:
-                throw new \LogicException(
-                    'The given folder is unchanged but you should not be able to force the publishing',
-                    1475583117
-                );
-                break;
-            case RecordInterface::RECORD_STATE_ADDED:
-                $identifier = $record->getLocalProperty('identifier');
-                $parentIdentifier = dirname($identifier);
-                if (empty($parentIdentifier)) {
-                    $parentIdentifier = '/';
-                }
-                $envelope = new Envelope(
-                    EnvelopeDispatcher::CMD_CREATE_FOLDER,
-                    array(
-                        'storage' => $record->getLocalProperty('storage'),
-                        'newFolderName' => basename($identifier),
-                        'parentFolderIdentifier' => $parentIdentifier,
-                        'recursive' => true,
-                    )
-                );
-                break;
-            case RecordInterface::RECORD_STATE_DELETED:
-                break;
-            case RecordInterface::RECORD_STATE_MOVED:
-                throw new \LogicException(
-                    'The given folder is flagged as moved, but this case is currently not implemented',
-                    1475583059
-                );
-                break;
-            default:
-                throw new \LogicException(
-                    'The given folder record has no valid state',
-                    1475583031
-                );
+        list($storage, $folderIdentifier) = GeneralUtility::trimExplode(':', $identifier);
+
+        $fileExists = ResourceFactory::getInstance()->getStorageObject($storage)->hasFolder($folderIdentifier);
+        // determine if the folder should get published or deleted.
+        // if it exists locally then create it on foreign, else delete it.
+        if ($fileExists) {
+            $envelope = new Envelope(
+                EnvelopeDispatcher::CMD_CREATE_FOLDER,
+                array(
+                    'storage' => $storage,
+                    'newFolderName' => basename($folderIdentifier),
+                    'parentFolderIdentifier' => dirname($folderIdentifier),
+                    'recursive' => true,
+                )
+            );
+        } else {
+            $envelope = new Envelope(
+                EnvelopeDispatcher::CMD_DELETE_FOLDER,
+                array(
+                    'storage' => $storage,
+                    'folderIdentifier' => $folderIdentifier,
+                    'deleteRecursively' => true,
+                )
+            );
         }
+
         $uid = $this->letterbox->sendEnvelope($envelope);
         SshConnection::makeInstance()->executeRpc($uid);
         $responseEnvelope = $this->letterbox->receiveEnvelope($uid);
         $response = $responseEnvelope->getResponse();
-        if ($response === $identifier) {
-            $record->setState(RecordInterface::RECORD_STATE_UNCHANGED);
-            return true;
-        }
-        return false;
+        return $fileExists ? $response === $folderIdentifier : $response;
     }
 }

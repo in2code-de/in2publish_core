@@ -382,13 +382,13 @@
 				<source>Something went wrong.</source>
 				<target state="translated">Ein Fehler ist aufgetreten.</target>
 			</trans-unit>
-			<trans-unit id="file_publishing.folder.added">
-				<source>The selected folder %s has been created at the foreign system.</source>
-				<target state="translated">Das Verzeichnis %s wurde im entfernten System erfolgreich angelegt.</target>
+			<trans-unit id="file_publishing.folder">
+				<source>The selected folder %s has been published to the foreign system.</source>
+				<target state="translated">Das Verzeichnis %s wurde zum entfernten System publiziert.</target>
 			</trans-unit>
-			<trans-unit id="file_publishing.failure.folder.added">
-				<source>The selected folder %s could not be created on the foreign system.</source>
-				<target state="translated">Das Verzeichnis %s konnte im entfernten System nicht angelegt werden.</target>
+			<trans-unit id="file_publishing.failure.folder">
+				<source>The selected folder %s could not be published.</source>
+				<target state="translated">Das Verzeichnis %s konnte nicht publiziert werden.</target>
 			</trans-unit>
 		</body>
 	</file>

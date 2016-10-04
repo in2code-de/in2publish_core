@@ -290,11 +290,11 @@
 			<trans-unit id="file_publishing.failure">
 				<source>Something went wrong.</source>
 			</trans-unit>
-			<trans-unit id="file_publishing.folder.added">
-				<source>The selected folder %s has been created at the foreign system.</source>
+			<trans-unit id="file_publishing.folder">
+				<source>The selected folder %s has been published to the foreign system.</source>
 			</trans-unit>
-			<trans-unit id="file_publishing.failure.folder.added">
-				<source>The selected folder %s could not be created on the foreign system.</source>
+			<trans-unit id="file_publishing.failure.folder">
+				<source>The selected folder %s could not be published.</source>
 			</trans-unit>
 		</body>
 	</file>
