@@ -24,14 +24,4 @@
 		<f:comment>Difference View</f:comment>
 		<f:render partial="File/Index/DirtyPropertiesList" arguments="{_all}" />
 	</div>
-
-	<f:if condition="{record.relatedRecords}">
-		<ul class="in2publish-unstyledlist in2publish-list-level in2publish-list-level--{record.additionalProperties.depth}">
-			<f:for each="{record.relatedRecords.physical_file}" as="fileRecord">
-				<li>
-					<f:render partial="File/Index/FileList" arguments="{record:fileRecord, configuration:configuration}" />
-				</li>
-			</f:for>
-		</ul>
-	</f:if>
 </f:if>

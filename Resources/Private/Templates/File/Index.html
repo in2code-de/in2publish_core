@@ -21,11 +21,6 @@ Index
 							<f:render partial="File/Index/FileList" arguments="{record:fileRecord, configuration:configuration}" />
 						</li>
 					</f:for>
-					<f:for each="{record.relatedRecords.physical_file}" as="physicalFileRecord">
-						<li>
-							<f:render partial="File/Index/PhysicalFileList" arguments="{record:physicalFileRecord, configuration:configuration}" />
-						</li>
-					</f:for>
 				</ul>
 			</f:if>
 		</div>

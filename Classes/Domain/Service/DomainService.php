@@ -87,7 +87,6 @@ class DomainService
                 }
                 break;
 
-            case 'physical_file':
             case 'sys_file':
                 $domainName = ConfigurationUtility::getConfiguration('filePreviewDomainName.' . $this->stagingLevel);
                 break;

@@ -12,7 +12,6 @@
 |database.foreign.port|int|3306|Port to the foreign database|
 |excludeRelatedTables|array|_cropped. See example file_|Tables that are excluded from publishing|
 |ignoreFieldsForDifferenceView.[tableName]|array|_depends on table, tables defined by default: pages, sys_folder_|Don't show a difference if there is a difference in this table.field|
-|ignoreFieldsForDifferenceView.physical_file|array|_cropped. See example file_|Don't show a difference if there is a difference by comparing files between local and foreign (All settings of php function stat() are possible.)|
 |ignoreFieldsForDifferenceView.physical_folder|array|_cropped. See example file_|Don't show a difference if there is a difference by comparing folders between Local and Foreign (All settings of  php function stat() are possible.)|
 |factory.maximumPageRecursion|int|3|Depth of pages to fetch in hierarchy|
 |factory.maximumContentRecursion|int|6|Maximum number of relations in one relation chain. For example: a value of "3" would stop after `tt_content` > `sys_file_reference` > `sys_file`. Therefor `sys_file_metadata` will not be included. |
@@ -136,21 +135,6 @@ ignoreFieldsForDifferenceView:
     - SYS_LASTCHANGED
     - l18n_cfg
   sys_folder:
-    - absolutePath
-    - dev
-    - ino
-    - mode
-    - nlink
-    - uid
-    - gid
-    - rdev
-    - size
-    - atime
-    - mtime
-    - ctime
-    - blksize
-    - blocks
-  physical_file:
     - absolutePath
     - dev
     - ino

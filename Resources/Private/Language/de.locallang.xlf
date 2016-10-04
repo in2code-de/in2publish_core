@@ -250,23 +250,6 @@
 				<target state="translated">Löscht alle Envelopes  ("Remote Procedure Call"-Datenbankeinträge) die bereits genutzt wurden (Diese sind Einweg-Einträge)</target>
 			</trans-unit>
 
-			<trans-unit id="publishing.publish_file_success">
-				<source>The File "%s" was successful published.</source>
-				<target state="translated">Die Datei "%s" wurde erfolgreich veröffentlicht.</target>
-			</trans-unit>
-			<trans-unit id="publishing.physical_file_deleted_success">
-				<source>The File "%s" has been successfully deleted.</source>
-				<target state="translated">Die Datei "%s" wurde erfolgreich gelöscht.</target>
-			</trans-unit>
-			<trans-unit id="publishing.physical_file_deleted_failure">
-				<source>The File "%s" could not be deleted.</source>
-				<target state="translated">Die Datei "%s" konnte nicht gelöscht werden.</target>
-			</trans-unit>
-			<trans-unit id="publishing.physical_file_add_failure">
-				<source>Can not publish a file wihout a sys_file record. Open this folder in the Filelist module once before publishing.</source>
-				<target state="translated">Die Datei kann nicht ohne sys_file Datensatz publiziert werden. Öffnen sie diesen Ordner einmalig im Filelist Modul damit der Datensatz angelegt wird.</target>
-			</trans-unit>
-
 			<trans-unit id="record.state.unchanged">
 				<source>Record unchanged</source>
 				<target state="translated">Unverändert</target>
