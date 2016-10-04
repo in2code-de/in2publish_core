@@ -983,6 +983,35 @@ class RecordTest extends UnitTestCase
     }
 
     /**
+     * @covers ::getAdditionalProperty
+     */
+    public function testAdditionalPropertyReturnsNullIfPropertyIsNotSet()
+    {
+        $record = $this->getRecordStub([]);
+        $this->assertNull($record->getAdditionalProperty('foo'));
+    }
+
+    /**
+     * @covers ::hasAdditionalProperty
+     */
+    public function testHasAdditionalPropertyReturnsTrueIfAdditionalPropertyIsSet()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], ['foo' => 'bar']);
+        $this->assertTrue($record->hasAdditionalProperty('foo'));
+    }
+
+    /**
+     * @covers ::hasAdditionalProperty
+     */
+    public function testHasAdditionalPropertyReturnsFalseIfPropertyIsNotSet()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+        $this->assertFalse($record->hasAdditionalProperty('foo'));
+    }
+
+    /**
      * @covers ::setAdditionalProperties
      * @depends testGetAdditionalPropertiesReturnsAdditionalProperties
      */

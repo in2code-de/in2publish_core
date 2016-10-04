@@ -418,7 +418,19 @@ class Record implements RecordInterface
      */
     public function getAdditionalProperty($propertyName)
     {
-        return $this->additionalProperties[$propertyName];
+        if ($this->hasAdditionalProperty($propertyName)) {
+            return $this->additionalProperties[$propertyName];
+        }
+        return null;
+    }
+
+    /**
+     * @param string $propertyName
+     * @return bool
+     */
+    public function hasAdditionalProperty($propertyName)
+    {
+        return isset($this->additionalProperties[$propertyName]);
     }
 
     /**
