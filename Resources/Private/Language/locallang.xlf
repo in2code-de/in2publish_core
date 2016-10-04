@@ -283,6 +283,19 @@
 			<trans-unit id="frontend.compare.selection.alignment.horizontal">
 				<source>Horizontal</source>
 			</trans-unit>
+
+			<trans-unit id="file_publishing.success">
+				<source>Successful published.</source>
+			</trans-unit>
+			<trans-unit id="file_publishing.failure">
+				<source>Something went wrong.</source>
+			</trans-unit>
+			<trans-unit id="file_publishing.folder.added">
+				<source>The selected folder %s has been created at the foreign system.</source>
+			</trans-unit>
+			<trans-unit id="file_publishing.failure.folder.added">
+				<source>The selected folder %s could not be created on the foreign system.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

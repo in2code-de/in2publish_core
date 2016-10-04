@@ -27,7 +27,9 @@ namespace In2code\In2publishCore\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * The FileController is responsible for the "Publish Files" Backend module "m2"
@@ -47,5 +49,45 @@ class FileController extends AbstractController
             ->makeInstance(GeneralUtility::_GP('id'));
 
         $this->view->assign('record', $record);
+    }
+
+    /**
+     * @param string $identifier
+     */
+    public function publishFolderAction($identifier)
+    {
+        $record = $this
+            ->objectManager
+            ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
+            ->makeInstance($identifier);
+
+        $originalState = $record->getState();
+
+        $success = $this
+            ->objectManager
+            ->get('In2code\\In2publishCore\\Domain\\Service\\Publishing\\FolderPublisherService')
+            ->publish($record);
+
+        if ($success) {
+            $this->addFlashMessage(
+                LocalizationUtility::translate(
+                    'file_publishing.folder.' . $originalState,
+                    'in2publish_core',
+                    array($record->getMergedProperty('identifier'))
+                ),
+                LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
+            );
+        } else {
+            $this->addFlashMessage(
+                LocalizationUtility::translate(
+                    'file_publishing.failure.folder.' . $originalState,
+                    'in2publish_core',
+                    array($record->getMergedProperty('identifier'))
+                ),
+                LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
+                AbstractMessage::ERROR
+            );
+        }
+        $this->redirect('index');
     }
 }

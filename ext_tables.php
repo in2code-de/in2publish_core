@@ -103,7 +103,7 @@ call_user_func(
                         'm3',
                         '',
                         array(
-                            'File' => 'index,publishRecord,publishFolder,publishPhysicalRecord,toggleFilterStatusAndRedirectToIndex',
+                            'File' => 'index,publishFolder',
                         ),
                         array(
                             'access' => 'user,group',

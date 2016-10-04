@@ -42,6 +42,7 @@ class EnvelopeDispatcher
     const CMD_GET_FILES_IN_FOLDER = 'getFilesInFolder';
     const CMD_GET_FILE_INFO_BY_IDENTIFIER = 'getFileInfoByIdentifier';
     const CMD_GET_HASH = 'hash';
+    const CMD_CREATE_FOLDER = 'createFolder';
 
     /**
      * @param Envelope $envelope
@@ -136,6 +137,18 @@ class EnvelopeDispatcher
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
         return call_user_func_array(array($driver, 'hash'), $request);
+    }
+
+    /**
+     * @param array $request
+     * @return mixed
+     */
+    protected function createFolder(array $request)
+    {
+        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        unset($request['storage']);
+        $driver = $this->getStorageDriver($storage);
+        return call_user_func_array(array($driver, 'createFolder'), $request);
     }
 
     /**

@@ -9,7 +9,7 @@
 			<f:if condition="{record.changed}">
 				<f:link.action
 						action="publishFolder"
-						arguments="{identifier:'{publish:record.GetMergedProperty(record:record, propertyName:\'relativePath\')}'}"
+						arguments="{identifier:record.identifier}"
 						additionalAttributes="{data-in2publish-overlay: 'TRUE', data-in2publish-confirm: '{f:translate(key:\'confirm_publish_pages\', default:\'Are you sure?\')}'}">
 					<i class="in2publish-icon-publish"></i>
 				</f:link.action>
