@@ -163,7 +163,10 @@ ignoreFieldsForDifferenceView:
     - ctime
     - blksize
     - blocks
-
+  sys_file:
+    - modification_date
+    - creation_date
+    - tstamp
 
 # factory settings (configuration about building relations in in2publish)
 factory:
