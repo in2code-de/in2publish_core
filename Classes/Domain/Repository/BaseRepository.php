@@ -265,6 +265,27 @@ abstract class BaseRepository
     }
 
     /**
+     * Does not support identifier array!
+     *
+     * @param DatabaseConnection $databaseConnection
+     * @param string|int $identifier
+     * @return bool|int
+     */
+    protected function countRecord(DatabaseConnection $databaseConnection, $identifier)
+    {
+        $result = $databaseConnection->exec_SELECTcountRows(
+            '*',
+            $this->tableName,
+            $this->identifierFieldName . ' LIKE ' . $databaseConnection->fullQuoteStr($identifier, $this->tableName)
+        );
+        if (false === $result) {
+            $this->logFailedQuery(__METHOD__, $databaseConnection);
+            return false;
+        }
+        return (int)$result;
+    }
+
+    /**
      * Quote string: escapes bad characters
      *
      * @param string $string

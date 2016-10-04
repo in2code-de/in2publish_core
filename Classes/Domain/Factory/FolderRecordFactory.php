@@ -894,6 +894,7 @@ class FolderRecordFactory
         $fileInfo['last_indexed'] = 0;
         $fileInfo['metadata'] = 0;
         $fileInfo['tstamp'] = time();
+        $fileInfo['pid'] = 0;
         if ($uid > 0) {
             $fileInfo['uid'] = $uid;
         } else {

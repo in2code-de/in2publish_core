@@ -8,8 +8,10 @@
 			<i class="in2publish-icon-info" data-action="opendirtypropertieslistcontainer"></i>
 			<f:if condition="{record.changedRecursive}">
 				<f:link.action
-						action="publishRecord"
-						arguments="{identifier:record.identifier}"
+						action="publishFile"
+						arguments="{
+						    identifier:'{publish:record.getMergedProperty(record:record, propertyName: \'identifier\')}',
+						    storage:'{publish:record.getMergedProperty(record:record, propertyName: \'storage\')}'}"
 						additionalAttributes="{data-in2publish-overlay: 'TRUE', data-in2publish-confirm: '{f:translate(key:\'confirm_publish_file\', default:\'Are you sure?\')}'}">
 					<i class="in2publish-icon-publish"></i>
 				</f:link.action>

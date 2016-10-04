@@ -296,6 +296,9 @@
 			<trans-unit id="file_publishing.failure.folder">
 				<source>The selected folder %s could not be published.</source>
 			</trans-unit>
+			<trans-unit id="file_publishing.file">
+				<source>The selected file %s has been published to the foreign system.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

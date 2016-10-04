@@ -1583,6 +1583,14 @@ class CommonRepository extends BaseRepository
             array($tableName, $record, $this)
         );
 
+        // Special case: the new FAL publishing creates temporary sys_file entries.
+        // These entries may be created for local, foreign or both sides. They will mostly lead to "changed" states,
+        // but they must be equal after publishing. So persistence on publish is mandatory for these.
+        // Even for local records.
+        if ('sys_file' === $record->getTableName()) {
+            $this->updateLocalRecord($record);
+        }
+
         /*
          * For Records shown as moved:
          * Since moved pages only get published explicitly, they will
@@ -1708,6 +1716,42 @@ class CommonRepository extends BaseRepository
         $previousTableName = $this->replaceTableName($record->getTableName());
         $this->deleteRecord($this->foreignDatabase, $record->getIdentifier());
         $this->setTableName($previousTableName);
+    }
+
+    /**
+     * @param Record $record
+     */
+    protected function updateLocalRecord(Record $record)
+    {
+        if ($record->hasAdditionalProperty('localRecordExistsTemporary')
+            && true === $record->getAdditionalProperty('localRecordExistsTemporary')
+        ) {
+            $previousTableName = $this->replaceTableName($record->getTableName());
+
+            $recordCount = $this->countRecord($this->localDatabase, $record->getIdentifier());
+            if (false === $recordCount) {
+                // an error occurred while counting the local database records.
+                $this->logger->error(
+                    'Could not count number of records when updating a local record',
+                    array(
+                        'tableName' => $this->tableName,
+                        'identifier' => $record->getIdentifier(),
+                    )
+                );
+                return;
+            } elseif (1 === $recordCount) {
+                // The local record exists already, because it was inserted by the
+                // persistTemporaryIndexing feature or it was simply flagged wrong
+                return;
+            } else {
+                // TODO: implement this case...
+
+                // either insert the temporary local or the foreign record.
+                // either merge the values before inserting or just use one side.
+            }
+
+            $this->setTableName($previousTableName);
+        }
     }
 
     /**

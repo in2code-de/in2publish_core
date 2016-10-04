@@ -384,11 +384,15 @@
 			</trans-unit>
 			<trans-unit id="file_publishing.folder">
 				<source>The selected folder %s has been published to the foreign system.</source>
-				<target state="translated">Das Verzeichnis %s wurde zum entfernten System publiziert.</target>
+				<target state="translated">Das Verzeichnis %s wurde erfolgreich publiziert.</target>
 			</trans-unit>
 			<trans-unit id="file_publishing.failure.folder">
 				<source>The selected folder %s could not be published.</source>
 				<target state="translated">Das Verzeichnis %s konnte nicht publiziert werden.</target>
+			</trans-unit>
+			<trans-unit id="file_publishing.file">
+				<source>The selected file %s has been published to the foreign system.</source>
+				<target state="translated">Die Datei %s wurde erfolgreich publiziert.</target>
 			</trans-unit>
 		</body>
 	</file>

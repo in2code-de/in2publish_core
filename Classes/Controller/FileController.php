@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -81,6 +82,49 @@ class FileController extends AbstractController
                 AbstractMessage::ERROR
             );
         }
+        $this->redirect('index');
+    }
+
+    /**
+     * @param string $identifier
+     * @param int $storage
+     */
+    public function publishFileAction($identifier, $storage)
+    {
+        $record = $this
+            ->objectManager
+            ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
+            ->makeInstance($storage . ':/' . ltrim(dirname($identifier), '/'));
+
+        $relatedRecords = $record->getRelatedRecordByTableAndProperty('sys_file', 'identifier', $identifier);
+
+        if (count($relatedRecords) !== 1) {
+            throw new \RuntimeException(
+                'Did not find exactly one record that matches the publishing arguments',
+                1475588793
+            );
+        }
+        $relatedRecord = reset($relatedRecords);
+
+        $this
+            ->objectManager
+            ->get(
+                'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
+                DatabaseUtility::buildLocalDatabaseConnection(),
+                DatabaseUtility::buildForeignDatabaseConnection(),
+                'sys_file'
+            )
+            ->publishRecordRecursive($relatedRecord);
+
+        $this->addFlashMessage(
+            LocalizationUtility::translate(
+                'file_publishing.file',
+                'in2publish_core',
+                array($identifier)
+            ),
+            LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
+        );
+
         $this->redirect('index');
     }
 }
