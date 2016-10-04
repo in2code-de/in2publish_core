@@ -265,6 +265,33 @@ class FolderRecordFactory
             }
         }
 
+        // PRE-FIX for [8] LFFD case, where the file was found on local's disc
+        // and the foreign database (like [5] LDFF inverted)
+        $fileRecordsToRecheck = array_intersect($identifierList, $localFileIdentifiers);
+        foreach ($fileRecordsToRecheck as $fileRecordUid => $reCheckIdentifier) {
+            $reCheckFile = $files[$fileRecordUid];
+            // The database record is technically deleted, but the file was added. Since the file publishing is the
+            // main domain of this class the state of the file on disk has precedence
+            if (RecordInterface::RECORD_STATE_DELETED === $reCheckFile->getState()) {
+                if (!$foreignDriver->fileExists($reCheckIdentifier)) {
+                    // remove all foreign properties to "ignore" the foreign database record
+                    $reCheckFile->setForeignProperties(array());
+                    // add local file information instead
+                    $reCheckFile->setLocalProperties(
+                        $this->getFileInformation(
+                            $reCheckIdentifier,
+                            $localDriver,
+                            $foreignDatabase,
+                            $localDatabase
+                        )
+                    );
+                    $reCheckFile->addAdditionalProperty('localRecordExistsTemporary', true);
+                    // TODO: trigger the following inside the record itself so it can't be forgotten
+                    $reCheckFile->setDirtyProperties()->calculateState();
+                }
+            }
+        }
+
         // Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
         // the folder hash is broken
         if (true === $this->configuration['reclaimSysFileEntries']) {
