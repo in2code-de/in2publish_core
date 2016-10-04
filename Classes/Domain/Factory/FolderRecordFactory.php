@@ -472,16 +472,32 @@ class FolderRecordFactory
         // PRE-FIXES
         foreach ($fileIdentifiersOnBothSides as $index => $fileIdentifierOnBothSides) {
             $reCheckFile = $files[$index];
-            // PRE-FIX for the [10] NFDB case
-            // The file has been found on both file systems but only in the local database
-            // create a temporary counterpart for the local database entry, so we end up in [14] ALL
-            if (RecordInterface::RECORD_STATE_ADDED === $reCheckFile->getState()) {
+            $recordState = $reCheckFile->getState();
+            if (RecordInterface::RECORD_STATE_ADDED === $recordState) {
+                // PRE-FIX for the [10] NFDB case
+                // The file has been found on both file systems but only in the local database.
+                // create a temporary counterpart for the local database entry, so we end up in [14] ALL
                 $reCheckFile->setForeignProperties(
                     $this->getFileInformation(
                         $fileIdentifierOnBothSides,
                         $foreignDriver,
                         $localDatabase,
                         $foreignDatabase,
+                        $reCheckFile->getIdentifier()
+                    )
+                );
+                $reCheckFile->setDirtyProperties()->calculateState();
+            } elseif (RecordInterface::RECORD_STATE_DELETED === $recordState) {
+                // PRE-FIX for [13] NLDB
+                // The file has been found on both file systems but not in the local database.
+                // create a temporary local database entry with the uid of the existing foreign database entry.
+                // Resulting case is [14] ALL
+                $reCheckFile->setLocalProperties(
+                    $this->getFileInformation(
+                        $fileIdentifierOnBothSides,
+                        $localDriver,
+                        $foreignDatabase,
+                        $localDatabase,
                         $reCheckFile->getIdentifier()
                     )
                 );
@@ -654,10 +670,16 @@ class FolderRecordFactory
                 );
             } elseif (!$ldb && $lfs && $ffs && $fdb) {
                 // CODE: [13] NLDB
-                // TODO
                 // Create local database record by indexing the file.
                 // Then add the created information to the record and diff again.
                 // We will end up in [14]
+
+                // Hint: This is done by a PRE-FIX.
+                // This Exception is rather for documentation purposes than functional.
+                throw new \LogicException(
+                    'The FAL case NLDB is impossible due to prior record transformation',
+                    1475578482
+                );
             } elseif ($ldb && $lfs && $ffs && $fdb) {
                 // CODE: [14] ALL
                 // TODO DFS
