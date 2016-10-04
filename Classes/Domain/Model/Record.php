@@ -79,7 +79,7 @@ class Record implements RecordInterface
     /**
      * records which are related to this record.
      *
-     * @var array
+     * @var Record[][]
      */
     protected $relatedRecords = array();
 
@@ -439,6 +439,29 @@ class Record implements RecordInterface
     public function getRelatedRecords()
     {
         return $this->relatedRecords;
+    }
+
+    /**
+     * @param string $table
+     * @param string $property
+     * @param mixed $value
+     * @return Record[]
+     */
+    public function getRelatedRecordByTableAndProperty($table, $property, $value)
+    {
+        $relatedRecords = array();
+        if (isset($this->relatedRecords[$table]) && is_array($this->relatedRecords[$table])) {
+            foreach ($this->relatedRecords[$table] as $record) {
+                if (($record->hasLocalProperty($property)
+                    && $record->getLocalProperty($property) === $value)
+                    || ($record->hasForeignProperty($property)
+                       && $record->getForeignProperty($property) === $value)
+                ) {
+                    $relatedRecords[$record->getIdentifier()] = $record;
+                }
+            }
+        }
+        return $relatedRecords;
     }
 
     /**

@@ -1443,4 +1443,59 @@ class RecordTest extends UnitTestCase
         $record->setDirtyProperties();
         $this->assertSame(['uid', 'bar'], $record->getDirtyProperties());
     }
+
+    /**
+     * @covers ::getRelatedRecord
+     * @depends testGetChangedRelatedRecordsFlatReturnsFlatArrayOfChangedRelatedRecords
+     */
+    public function testGetRelatedRecordByPropertyReturnsEmptyArrayForNonExistingRecord()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $related1 = $this->getRecordStub([]);
+        $related1->__construct('tt_content', ['uid' => 1, 'foo' => 'bar'], ['uid' => 1], [], []);
+
+        $related2 = $this->getRecordStub([]);
+        $related2->__construct('sys_file', [], ['uid' => 2], [], []);
+
+        $record->addRelatedRecords([$related1, $related2]);
+
+        $this->assertSame([], $record->getRelatedRecordByTableAndProperty('tt_content', 'boo', 'foo'));
+    }
+
+    /**
+     * @covers ::getRelatedRecord
+     * @depends testGetChangedRelatedRecordsFlatReturnsFlatArrayOfChangedRelatedRecords
+     */
+    public function testGetRelatedRecordByPropertyReturnsEmptyArrayForNonExistingTable()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $this->assertSame([], $record->getRelatedRecordByTableAndProperty('tt_content', 'boo', 'foo'));
+    }
+
+    /**
+     * @covers ::getRelatedRecord
+     * @depends testGetChangedRelatedRecordsFlatReturnsFlatArrayOfChangedRelatedRecords
+     */
+    public function testGetRelatedRecordByPropertyReturnsExpectedPropertyInArray()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $related1 = $this->getRecordStub([]);
+        $related1->__construct('tt_content', ['uid' => 1, 'foo' => 'bar'], ['uid' => 1], [], []);
+
+        $related2 = $this->getRecordStub([]);
+        $related2->__construct('sys_file', [], ['uid' => 2], [], []);
+
+        $record->addRelatedRecords([$related1, $related2]);
+
+        $this->assertSame(
+            [$related1->getIdentifier() => $related1],
+            $record->getRelatedRecordByTableAndProperty('tt_content', 'foo', 'bar')
+        );
+    }
 }
