@@ -712,6 +712,7 @@ class FolderRecordFactory
             } else {
                 throw new \LogicException('This combination is not possible!', 1475065059);
             }
+            $file->addAdditionalProperty('depth', 2);
         }
 
         $record->addRelatedRecords($files);
@@ -789,7 +790,7 @@ class FolderRecordFactory
                 $localFolderInfo,
                 $foreignFolderInfo,
                 array(),
-                array('depth' => 1)
+                array('depth' => 2)
             );
         }
         return $subFolders;
