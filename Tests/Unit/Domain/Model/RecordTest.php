@@ -986,7 +986,7 @@ class RecordTest extends UnitTestCase
      * @covers ::setAdditionalProperties
      * @depends testGetAdditionalPropertiesReturnsAdditionalProperties
      */
-    public function testGetAdditionalPropertiesSetsThemAndAllowsChaining()
+    public function testSetAdditionalPropertiesSetsThemAndAllowsChaining()
     {
         $record = $this->getRecordStub([]);
         $this->assertSame($record, $record->setAdditionalProperties(['foo']));
