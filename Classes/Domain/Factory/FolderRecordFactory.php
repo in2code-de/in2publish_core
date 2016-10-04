@@ -487,6 +487,7 @@ class FolderRecordFactory
                         $reCheckFile->getIdentifier()
                     )
                 );
+                $reCheckFile->addAdditionalProperty('foreignRecordExistsTemporary', true);
                 $reCheckFile->setDirtyProperties()->calculateState();
             } elseif (RecordInterface::RECORD_STATE_DELETED === $recordState) {
                 // PRE-FIX for [13] NLDB
@@ -502,6 +503,7 @@ class FolderRecordFactory
                         $reCheckFile->getIdentifier()
                     )
                 );
+                $reCheckFile->addAdditionalProperty('localRecordExistsTemporary', true);
                 $reCheckFile->setDirtyProperties()->calculateState();
             }
         }
