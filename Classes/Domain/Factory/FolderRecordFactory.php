@@ -513,10 +513,16 @@ class FolderRecordFactory
                 continue;
             } elseif (!$ldb && $lfs && $ffs && !$fdb) {
                 // CODE: [7] OFS
-                // TODO
                 // We have the files on both sides.
                 // Index them on both sides with the same UID for the sys_file and add that info to the record
                 // Conveniently we end up in [14] ALL. Yai!
+
+                // This case is handled by its PRE-FIX above. The if for this case must never be true.
+                // This Exception is rather for documentation purposes than functional.
+                throw new \LogicException(
+                    'The FAL case OFS is impossible due to prior record transformation',
+                    1475572486
+                );
             } elseif (!$ldb && $lfs && !$ffs && $fdb) {
                 // CODE: [8] LFFD
                 // TODO
