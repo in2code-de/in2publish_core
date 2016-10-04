@@ -244,10 +244,21 @@ class FolderRecordFactory
             throw new \RuntimeException('Failed to convert all disk-only files to records', 1475253143);
         }
 
+        // determine file identifier of files which are found in at least one database and at least on one disk
+        $foreignFileRecordsToRecheck = array_intersect($identifierList, $foreignFileIdentifiers);
+        $localFileRecordsToRecheck = array_intersect($identifierList, $localFileIdentifiers);
+
+        // determine identifiers on both local ond foreign disk and at least one database
+        $fileIdentifiersOnBothSides = array_intersect($localFileRecordsToRecheck, $foreignFileRecordsToRecheck);
+
+        // remove identifier entries from the arrays when the file was found on both sides.
+        // this results in arrays that contain only file identifiers that occur on exactly one side.
+        $foreignFileRecordsToRecheck = array_diff($foreignFileRecordsToRecheck, $fileIdentifiersOnBothSides);
+        $localFileRecordsToRecheck = array_diff($localFileRecordsToRecheck, $fileIdentifiersOnBothSides);
+
         // PRE-FIX for [5] LDFF case, where the file was found on foreign's disk and the local database
         // Short: Removes LDB but adds FDB instead. Results in OF
-        $fileRecordsToRecheck = array_intersect($identifierList, $foreignFileIdentifiers);
-        foreach ($fileRecordsToRecheck as $fileRecordUid => $reCheckIdentifier) {
+        foreach ($foreignFileRecordsToRecheck as $fileRecordUid => $reCheckIdentifier) {
             $reCheckFile = $files[$fileRecordUid];
             // The database record is technically added, but the file was removed. Since the file publishing is the
             // main domain of this class the state of the file on disk has precedence
@@ -273,8 +284,7 @@ class FolderRecordFactory
 
         // PRE-FIX for [8] LFFD case, where the file was found on local's disc
         // and the foreign database (like [5] LDFF inverted)
-        $fileRecordsToRecheck = array_intersect($identifierList, $localFileIdentifiers);
-        foreach ($fileRecordsToRecheck as $fileRecordUid => $reCheckIdentifier) {
+        foreach ($localFileRecordsToRecheck as $fileRecordUid => $reCheckIdentifier) {
             $reCheckFile = $files[$fileRecordUid];
             // The database record is technically deleted, but the file was added. Since the file publishing is the
             // main domain of this class the state of the file on disk has precedence
@@ -452,6 +462,26 @@ class FolderRecordFactory
             throw new \RuntimeException('Failed to convert all foreign files from disk to records', 1475236166);
         }
 
+        // PRE-FIXES
+        foreach ($fileIdentifiersOnBothSides as $index => $fileIdentifierOnBothSides) {
+            $reCheckFile = $files[$index];
+            // PRE-FIX for the [10] NFDB case
+            // The file has been found on both file systems but only in the local database
+            // create a temporary counterpart for the local database entry, so we end up in [14] ALL
+            if (RecordInterface::RECORD_STATE_ADDED === $reCheckFile->getState()) {
+                $reCheckFile->setForeignProperties(
+                    $this->getFileInformation(
+                        $fileIdentifierOnBothSides,
+                        $foreignDriver,
+                        $localDatabase,
+                        $foreignDatabase,
+                        $reCheckFile->getIdentifier()
+                    )
+                );
+                $reCheckFile->setDirtyProperties()->calculateState();
+            }
+        }
+
         // clean up again
         unset($localDatabase);
         unset($foreignDatabase);
@@ -460,6 +490,9 @@ class FolderRecordFactory
         unset($foreignFileIdentifiers);
         unset($onlyLocalFileSystemFileIdentifiers);
         unset($onlyForeignFileSystemFileIdentifiers);
+        unset($localFileRecordsToRecheck);
+        unset($foreignFileRecordsToRecheck);
+        unset($fileIdentifiersOnBothSides);
 
         /*
          * Filtering:
