@@ -225,12 +225,12 @@ class FolderRecordFactory
             // because they should have been found by the folder hash already, but i'm a
             // generous developer and allow FAL to completely fuck up the folder hash
             foreach ($onlyLocalFileSystemFileIdentifiers as $index => $localFileSystemFileIdentifier) {
-                $disconnectedSysFile = $commonRepository->findByProperty('identifier', $localFileSystemFileIdentifier);
+                $disconnectedSysFiles = $commonRepository->findByProperty('identifier', $localFileSystemFileIdentifier);
                 // if a sys_file record could be reclaimed use it
-                if (!empty($disconnectedSysFile)) {
+                if (!empty($disconnectedSysFiles)) {
                     // repair the entry a.k.a reconnect it by updating the folder hash
                     if (true === $this->configuration['autoRepairFolderHash']) {
-                        foreach ($disconnectedSysFile as $sysFileEntry) {
+                        foreach ($disconnectedSysFiles as $sysFileEntry) {
                             // No need to check if this entry belongs to another file, since the folder hash was wrong
                             // but the identifier was 100% correct
                             $uid = $sysFileEntry->getIdentifier();
@@ -250,7 +250,9 @@ class FolderRecordFactory
                         }
                     }
                     // add the reclaimed sys_file record to the list of files
-                    $files = array_merge($files, $disconnectedSysFile);
+                    foreach ($disconnectedSysFiles as $disconnectedSysFile) {
+                        $files[$disconnectedSysFile->getIdentifier()] = $disconnectedSysFile;
+                    }
                     // remove the identifier from the list of missing database record identifiers
                     // so we can deal with them later
                     unset($onlyLocalFileSystemFileIdentifiers[$index]);
@@ -258,15 +260,15 @@ class FolderRecordFactory
             }
 
             foreach ($onlyForeignFileSystemFileIdentifiers as $index => $foreignFileSystemFileIdentifier) {
-                $disconnectedSysFile = $commonRepository->findByProperty(
+                $disconnectedSysFiles = $commonRepository->findByProperty(
                     'identifier',
                     $foreignFileSystemFileIdentifier
                 );
                 // if a sys_file record could be reclaimed use it
-                if (!empty($disconnectedSysFile)) {
+                if (!empty($disconnectedSysFiles)) {
                     // repair the entry a.k.a reconnect it by updating the folder hash
                     if (true === $this->configuration['autoRepairFolderHash']) {
-                        foreach ($disconnectedSysFile as $sysFileEntry) {
+                        foreach ($disconnectedSysFiles as $sysFileEntry) {
                             // No need to check if this entry belongs to another file, since the folder hash was wrong
                             // but the identifier was 100% correct
                             $uid = $sysFileEntry->getIdentifier();
@@ -286,7 +288,9 @@ class FolderRecordFactory
                         }
                     }
                     // add the reclaimed sys_file record to the list of files
-                    $files = array_merge($files, $disconnectedSysFile);
+                    foreach ($disconnectedSysFiles as $disconnectedSysFile) {
+                        $files[$disconnectedSysFile->getIdentifier()] = $disconnectedSysFile;
+                    }
                     // remove the identifier from the list of missing database record identifiers
                     // so we can deal with them later
                     unset($onlyForeignFileSystemFileIdentifiers[$index]);
@@ -320,7 +324,7 @@ class FolderRecordFactory
                     $tcaService->getConfigurationArrayForTable('sys_file'),
                     array('localRecordExistsTemporary' => true)
                 );
-                $files[uniqid('NEW_')] = $temporarySysFile;
+                $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
                 unset($onlyLocalFileSystemFileIdentifiers[$index]);
             }
         }
@@ -355,7 +359,7 @@ class FolderRecordFactory
                     $tcaService->getConfigurationArrayForTable('sys_file'),
                     array('foreignRecordExistsTemporary' => true)
                 );
-                $files[uniqid('NEW_')] = $temporarySysFile;
+                $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
                 unset($onlyForeignFileSystemFileIdentifiers[$index]);
             }
         }
@@ -641,13 +645,15 @@ class FolderRecordFactory
      * @param DriverInterface $driver
      * @param DatabaseConnection $oppositeDatabase
      * @param DatabaseConnection $targetDatabase If null the sys_file record will not be persisted
+     * @param int $uid Predefined UID
      * @return array
      */
     protected function getFileInformation(
         $identifier,
         DriverInterface $driver,
         DatabaseConnection $oppositeDatabase = null,
-        DatabaseConnection $targetDatabase = null
+        DatabaseConnection $targetDatabase = null,
+        $uid = 0
     ) {
         $fileInfo = $driver->getFileInfoByIdentifier($identifier);
 
@@ -689,12 +695,16 @@ class FolderRecordFactory
         $fileInfo['sha1'] = $driver->hash($identifier, 'sha1');
         $fileInfo['extension'] = PathUtility::pathinfo($fileInfo['name'], PATHINFO_EXTENSION);
         $fileInfo['missing'] = 0;
+        if ($uid > 0) {
+            $fileInfo['uid'] = $uid;
+        } else {
+            $fileInfo['uid'] = $this->getReservedUid($targetDatabase, $oppositeDatabase);
+        }
 
         if (true === $this->configuration['persistTemporaryIndexing']
             && null !== $oppositeDatabase
             && null !== $targetDatabase
         ) {
-            $fileInfo['uid'] = $this->getReservedUid($targetDatabase, $oppositeDatabase);
             $targetDatabase->exec_INSERTquery('sys_file', $this->prepareAndFilterSysFileDataForPersistence($fileInfo));
         }
 
