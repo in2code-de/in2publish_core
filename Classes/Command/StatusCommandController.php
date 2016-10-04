@@ -60,7 +60,7 @@ class StatusCommandController extends AbstractCommandController
     }
 
     /**
-     * Prints the current version of in2publish
+     * Prints the version number of the currently installed in2publish_core extension
      * NOTE: This command is used for internal operations in in2publish_core
      *
      * @throws \TYPO3\CMS\Core\Package\Exception

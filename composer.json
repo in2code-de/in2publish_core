@@ -7,7 +7,19 @@
         "publishing",
         "publisher",
         "stage",
-        "content"
+        "content",
+        "multiserver",
+        "workflow",
+        "workspace",
+        "security",
+        "publish",
+        "synchronization",
+        "stage",
+        "staging",
+        "contentstaging",
+        "headless",
+        "bodyless",
+        "deployment"
     ],
     "authors": [
         {
