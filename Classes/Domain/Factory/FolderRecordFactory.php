@@ -791,10 +791,18 @@ class FolderRecordFactory
         $fileInfo['sha1'] = $driver->hash($identifier, 'sha1');
         $fileInfo['extension'] = PathUtility::pathinfo($fileInfo['name'], PATHINFO_EXTENSION);
         $fileInfo['missing'] = 0;
+        $fileInfo['last_indexed'] = 0;
+        $fileInfo['metadata'] = 0;
+        $fileInfo['tstamp'] = time();
         if ($uid > 0) {
             $fileInfo['uid'] = $uid;
         } else {
             $fileInfo['uid'] = $this->getReservedUid($targetDatabase, $oppositeDatabase);
+        }
+
+        // convert all values to string to match the resulting types of a database select query result
+        foreach ($fileInfo as $index => $value) {
+            $fileInfo[$index] = (string)$value;
         }
 
         if (true === $this->configuration['persistTemporaryIndexing']
