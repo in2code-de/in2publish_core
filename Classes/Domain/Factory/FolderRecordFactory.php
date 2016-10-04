@@ -180,6 +180,9 @@ class FolderRecordFactory
         // get all file identifiers of files actually existing in the current folder but not in the database
         $localFileIdentifiers = array_values($localDriver->getFilesInFolder($identifier));
 
+        // find all files which are not indexed (don't care of files in DB but not in FS)
+        $onlyLocalFileSystemFileIdentifiers = array_diff($localFileIdentifiers, $identifierList);
+
         if ($foreignDriver->folderExists($identifier)) {
             $foreignFileIdentifiers = array_values($foreignDriver->getFilesInFolder($identifier));
             $onlyForeignFileSystemFileIdentifiers = array_diff($foreignFileIdentifiers, $identifierList);
@@ -187,6 +190,53 @@ class FolderRecordFactory
             $foreignFileIdentifiers = array();
             $onlyForeignFileSystemFileIdentifiers = array();
         }
+
+        // PRE-FIX for OFS case. Files exist on both disks, but in neither of the databases.
+        // Move those entries to a third array to deal with them separately
+        $onlyFileSystemEntries = array_intersect($onlyLocalFileSystemFileIdentifiers, $onlyForeignFileSystemFileIdentifiers);
+        $onlyLocalFileSystemFileIdentifiers = array_diff($onlyLocalFileSystemFileIdentifiers, $onlyFileSystemEntries);
+        $onlyForeignFileSystemFileIdentifiers = array_diff($onlyForeignFileSystemFileIdentifiers, $onlyFileSystemEntries);
+
+        if (!empty($onlyFileSystemEntries)) {
+            // iterate through all files found on disc but not in the database
+            foreach ($onlyFileSystemEntries as $index => $fileSystemEntryIdentifier) {
+                static $tcaService = null;
+                if (null === $tcaService) {
+                    $tcaService = GeneralUtility::makeInstance(
+                        'In2code\\In2publishCore\\Service\\Configuration\\TcaService'
+                    );
+                }
+                // fetch the file information with a reserved uid
+                $localFileInformation = $this->getFileInformation(
+                    $fileSystemEntryIdentifier,
+                    $localDriver,
+                    $foreignDatabase,
+                    $localDatabase
+                );
+                $temporarySysFile = GeneralUtility::makeInstance(
+                    'In2code\\In2publishCore\\Domain\\Model\\Record',
+                    'sys_file',
+                    $localFileInformation,
+                    // assign the already reserved uid to the foreignFileInformation
+                    $this->getFileInformation(
+                        $fileSystemEntryIdentifier,
+                        $foreignDriver,
+                        $localDatabase,
+                        $foreignDatabase,
+                        $localFileInformation['uid']
+                    ),
+                    $tcaService->getConfigurationArrayForTable('sys_file'),
+                    array('localRecordExistsTemporary' => true, 'foreignRecordExistsTemporary' => true)
+                );
+                $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
+                unset($onlyFileSystemEntries[$index]);
+            }
+        }
+
+        if (!empty($onlyFileSystemEntries)) {
+            throw new \RuntimeException('Failed to convert all disk-only files to records', 1475253143);
+        }
+
 
         // PRE-FIX for LDFF case, where the file was found on foreign's disk and the local database
         // Short: Removes LDB but adds FDB instead. Results in OF
@@ -214,9 +264,6 @@ class FolderRecordFactory
                 }
             }
         }
-
-        // find all files which are not indexed (don't care of files in DB but not in FS)
-        $onlyLocalFileSystemFileIdentifiers = array_diff($localFileIdentifiers, $identifierList);
 
         // Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
         // the folder hash is broken
