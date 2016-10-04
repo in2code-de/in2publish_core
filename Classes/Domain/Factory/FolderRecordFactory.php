@@ -507,8 +507,6 @@ class FolderRecordFactory
         }
 
         // clean up again
-        unset($localDatabase);
-        unset($foreignDatabase);
         unset($localFolder);
         unset($localFileIdentifiers);
         unset($foreignFileIdentifiers);
@@ -683,7 +681,29 @@ class FolderRecordFactory
                 );
             } elseif ($ldb && $lfs && $ffs && $fdb) {
                 // CODE: [14] ALL
-                // TODO DFS
+                if (RecordInterface::RECORD_STATE_UNCHANGED === $file->getState()) {
+                    // the database records are identical, but this does not necessarily reflect the truth,
+                    // because files might have changed in the file system without FAL noticing these changes.
+                    $file->setLocalProperties(
+                        $this->getFileInformation(
+                            $localFileIdentifier,
+                            $localDriver,
+                            $foreignDatabase,
+                            $localDatabase,
+                            $file->getIdentifier()
+                        )
+                    );
+                    $file->setForeignProperties(
+                        $this->getFileInformation(
+                            $foreignFileIdentifier,
+                            $foreignDriver,
+                            $localDatabase,
+                            $foreignDatabase,
+                            $file->getIdentifier()
+                        )
+                    );
+                    $file->setDirtyProperties()->calculateState();
+                }
             } elseif (!$ldb && !$lfs && !$ffs && !$fdb) {
                 // CODE: [15] NONE
                 // The file exists nowhere. Ignore it.
