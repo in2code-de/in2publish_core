@@ -54,12 +54,12 @@ class FolderPublisherService
     }
 
     /**
-     * @param string $identifier
+     * @param string $combinedIdentifier
      * @return bool
      */
-    public function publish($identifier)
+    public function publish($combinedIdentifier)
     {
-        list($storage, $folderIdentifier) = GeneralUtility::trimExplode(':', $identifier);
+        list($storage, $folderIdentifier) = GeneralUtility::trimExplode(':', $combinedIdentifier);
 
         $fileExists = ResourceFactory::getInstance()->getStorageObject($storage)->hasFolder($folderIdentifier);
         // determine if the folder should get published or deleted.
