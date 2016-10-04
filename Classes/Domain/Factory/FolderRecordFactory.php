@@ -191,7 +191,7 @@ class FolderRecordFactory
             $onlyForeignFileSystemFileIdentifiers = array();
         }
 
-        // PRE-FIX for OFS case. Files exist on both disks, but in neither of the databases.
+        // PRE-FIX for [7] OFS case. Files exist on both disks, but in neither of the databases.
         // Move those entries to a third array to deal with them separately
         $onlyFileSystemEntries = array_intersect($onlyLocalFileSystemFileIdentifiers, $onlyForeignFileSystemFileIdentifiers);
         $onlyLocalFileSystemFileIdentifiers = array_diff($onlyLocalFileSystemFileIdentifiers, $onlyFileSystemEntries);
@@ -238,7 +238,7 @@ class FolderRecordFactory
         }
 
 
-        // PRE-FIX for LDFF case, where the file was found on foreign's disk and the local database
+        // PRE-FIX for [5] LDFF case, where the file was found on foreign's disk and the local database
         // Short: Removes LDB but adds FDB instead. Results in OF
         $fileRecordsToRecheck = array_intersect($identifierList, $foreignFileIdentifiers);
         foreach ($fileRecordsToRecheck as $fileRecordUid => $reCheckIdentifier) {
@@ -345,6 +345,8 @@ class FolderRecordFactory
             }
         }
 
+        // PRE-FIX for the [1] OLFS case
+        // create temporary sys_file entries for all files on the local disk
         if (!empty($onlyLocalFileSystemFileIdentifiers)) {
             // iterate through all files found on disk but not in the database
             foreach ($onlyLocalFileSystemFileIdentifiers as $index => $localFileSystemFileIdentifier) {
@@ -380,6 +382,8 @@ class FolderRecordFactory
             throw new \RuntimeException('Failed to convert all local files from disk to records', 1475177184);
         }
 
+        // PRE-FIX for the [2] OFFS case
+        // create temporary sys_file entries for all files on the foreign disk
         if (!empty($onlyForeignFileSystemFileIdentifiers)) {
             // iterate through all files found on disc but not in the database
             foreach ($onlyForeignFileSystemFileIdentifiers as $index => $foreignFileSystemFileIdentifier) {
