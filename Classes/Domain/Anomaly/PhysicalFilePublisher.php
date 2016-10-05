@@ -105,7 +105,7 @@ class PhysicalFilePublisher implements SingletonInterface
      */
     public function publishPhysicalFileOfSysFile($tableName, Record $record)
     {
-        if ($this->isSupportedTable($tableName)) {
+        if (in_array($tableName, array('sys_file_processedfile', 'sys_file'))) {
             $cacheIdentifier = md5($record->getMergedProperty('storage') . $record->getMergedProperty('identifier'));
 
             // We cache the result of previous file publishing, because it
@@ -114,7 +114,38 @@ class PhysicalFilePublisher implements SingletonInterface
                 return null;
             }
 
-            $fileInfo = $this->getFileInfo($record);
+            // we check the two identities because of probably broken relation
+            $localIdentifier = $record->getLocalProperty('identifier');
+            $foreignIdentifier = $record->getForeignProperty('identifier');
+
+            $fileInfo = false;
+
+            // absolute special nearly impossible case first. Both identifiers
+            // are null, hence the files do not exist or can not get published
+            if (null === $localIdentifier && null === $foreignIdentifier) {
+                $this->logger->critical(
+                    'A file record does neither contain a local nor a foreign identifier',
+                    array('tableName' => $record->getTableName(), 'identifier' => $record->getIdentifier())
+                );
+            } elseif (null === $localIdentifier && null !== $foreignIdentifier) {
+                // in case the local identifier's null but foreign isn't check
+                // if it is a static resource. If not retrieve all information
+                if (!$this->containsStaticResource($foreignIdentifier)) {
+                    $fileInfo = array($this->gatherFileInformation(self::FOREIGN, $record), array());
+                }
+            } elseif (null === $foreignIdentifier && null !== $localIdentifier) {
+                // same goes for the local identifier. If it's representing an
+                // identifier of a static resource, we skip this file relation
+                if (!$this->containsStaticResource($localIdentifier)) {
+                    $fileInfo = array(array(), $this->gatherFileInformation(self::LOCAL, $record));
+                }
+            } else {
+                // If both identifiers exist, gather all information from them
+                $fileInfo = array(
+                    $this->gatherFileInformation(self::FOREIGN, $record),
+                    $this->gatherFileInformation(self::LOCAL, $record),
+                );
+            }
 
             // in case the file info equals false we were not able to read
             // the required information from the rows and we can't publish
@@ -140,7 +171,27 @@ class PhysicalFilePublisher implements SingletonInterface
             // as well (the foreign record pointing to the foreign file is
             // deleted, so we remove the physical file on foreign as well)
             if (RecordInterface::RECORD_STATE_DELETED === $record->getState()) {
-                $result = $this->removeFile($foreignFileInfo);
+                // The hash is exclusively set if the actual file exists on remote
+                if (empty($foreignFileInfo['hash'])) {
+                    $this->logger->error(
+                        'Tried to delete a non existent foreign file',
+                        array('fileInfo' => $foreignFileInfo)
+                    );
+                } else {
+                    if ($this->sshConnection->removeRemoteFile($foreignFileInfo['relativePath'])) {
+                        $this->logger->warning(
+                            'Deleted physical file on foreign',
+                            array('fileInfo' => $foreignFileInfo)
+                        );
+                        $result = true;
+                    } else {
+                        $this->logger->error(
+                            'Failed to delete foreign physical file',
+                            array('fileInfo' => $foreignFileInfo)
+                        );
+                    }
+                }
+                $result = false;
             } else {
                 // Otherwise the file gains some special treatment through
                 // a logic that keep's the remote physical file up to date
@@ -160,10 +211,29 @@ class PhysicalFilePublisher implements SingletonInterface
                             $result = 'no-changes';
                         } else {
                             // Rename the remote file to the new file name
-                            $result = $this->renameFile(
-                                $foreignFileInfo['relativePath'],
-                                $localFileInfo['relativePath']
+                            $newIdentifier = $localFileInfo['relativePath'];
+                            $oldIdentifier = $foreignFileInfo['relativePath'];
+
+                            $targetedRemoteFolder = dirname($newIdentifier);
+                            $logData = array(
+                                'oldIdentifier' => $oldIdentifier,
+                                'newIdentifier' => $newIdentifier,
+                                'targetedRemoteFolder' => $targetedRemoteFolder,
                             );
+                            // Ensure the existence of all parent folders on the remote system
+                            // because the file might not just get renamed but also moved into
+                            // another newly created folder. We know it works but still log it
+                            if ($this->sshConnection->createFolderByIdentifierOnRemote($targetedRemoteFolder)) {
+                                if ($this->sshConnection->renameRemoteFile($oldIdentifier, $newIdentifier)) {
+                                    $this->logger->notice('Renamed remote file', array($logData));
+                                    $result = true;
+                                } else {
+                                    $this->logger->error('Failed to rename remote file', array($logData));
+                                }
+                            } else {
+                                $this->logger->error('Failed to create targeted remote folder', array($logData));
+                            }
+                            $result = false;
                         }
                     } else {
                         // The contents do not match but the file names do
@@ -189,55 +259,6 @@ class PhysicalFilePublisher implements SingletonInterface
     }
 
     /**
-     * @param string $oldIdentifier
-     * @param string $newIdentifier
-     * @return bool
-     */
-    protected function renameFile($oldIdentifier, $newIdentifier)
-    {
-        $targetedRemoteFolder = dirname($newIdentifier);
-        $logData = array(
-            'oldIdentifier' => $oldIdentifier,
-            'newIdentifier' => $newIdentifier,
-            'targetedRemoteFolder' => $targetedRemoteFolder,
-        );
-        // Ensure the existence of all parent folders on the remote system
-        // because the file might not just get renamed but also moved into
-        // another newly created folder. We know it works but still log it
-        if ($this->sshConnection->createFolderByIdentifierOnRemote($targetedRemoteFolder)) {
-            if ($this->sshConnection->renameRemoteFile($oldIdentifier, $newIdentifier)) {
-                $this->logger->notice('Renamed remote file', array($logData));
-                return true;
-            } else {
-                $this->logger->error('Failed to rename remote file', array($logData));
-            }
-        } else {
-            $this->logger->error('Failed to create targeted remote folder', array($logData));
-        }
-        return false;
-    }
-
-    /**
-     * @param array $foreignFileInfo
-     * @return bool
-     */
-    protected function removeFile(array $foreignFileInfo)
-    {
-        // The hash is exclusively set if the actual file exists on remote
-        if (empty($foreignFileInfo['hash'])) {
-            $this->logger->error('Tried to delete a non existent foreign file', array('fileInfo' => $foreignFileInfo));
-        } else {
-            if ($this->sshConnection->removeRemoteFile($foreignFileInfo['relativePath'])) {
-                $this->logger->warning('Deleted physical file on foreign', array('fileInfo' => $foreignFileInfo));
-                return true;
-            } else {
-                $this->logger->error('Failed to delete foreign physical file', array('fileInfo' => $foreignFileInfo));
-            }
-        }
-        return false;
-    }
-
-    /**
      * @param string $localFileInfo
      * @return bool
      * @throws \Exception
@@ -260,24 +281,6 @@ class PhysicalFilePublisher implements SingletonInterface
     /**
      * @param string $side
      * @param Record $record
-     * @param array $fileInformation
-     * @return array
-     */
-    protected function addFileInformationByRecord($side, Record $record, array $fileInformation)
-    {
-        if (self::LOCAL === $side) {
-            $fileInformation['storage'] = (int)$record->getLocalProperty('storage');
-            $fileInformation['identifier'] = $record->getLocalProperty('identifier');
-        } elseif (self::FOREIGN === $side) {
-            $fileInformation['storage'] = (int)$record->getForeignProperty('storage');
-            $fileInformation['identifier'] = $record->getForeignProperty('identifier');
-        }
-        return $fileInformation;
-    }
-
-    /**
-     * @param string $side
-     * @param Record $record
      * @return bool
      */
     protected function gatherFileInformation($side, Record $record)
@@ -288,18 +291,33 @@ class PhysicalFilePublisher implements SingletonInterface
             'storage' => '',
             'identifier' => '',
         );
-        $fileInformation = $this->addFileInformationByRecord($side, $record, $fileInformation);
+
+        if (self::LOCAL === $side) {
+            $fileInformation['storage'] = (int)$record->getLocalProperty('storage');
+            $fileInformation['identifier'] = $record->getLocalProperty('identifier');
+        } elseif (self::FOREIGN === $side) {
+            $fileInformation['storage'] = (int)$record->getForeignProperty('storage');
+            $fileInformation['identifier'] = $record->getForeignProperty('identifier');
+        }
+
         $storages = $this->storages[$side];
         $identifier = $fileInformation['identifier'];
 
         // Fallback mode: The storage is zero, which means that the record
         // reference to the file isn't FAL enabled (mostly TCA type group)
         if (0 === $fileInformation['storage']) {
-            if (!$this->isLegacyResource($identifier)) {
+            if (!(0 === strpos($identifier, '/uploads/')
+                  || 0 === strpos($identifier, '/typo3temp/')
+                  || 0 === strpos($identifier, '/fileadmin/'))
+            ) {
                 // If there is no configured storage and the file does not
                 // represent a legacy resource and is neither a static one
                 // we can not resolve the correct file's relative location
-                $this->logUnsupportedRelationAndExit($side, $identifier);
+                $this->logger->error('Unsupported relation!', array('identifier' => $identifier, 'side' => $side));
+                throw new \RuntimeException(
+                    'File [' . $identifier . '] has neither a storage nor a recognized file identifier!',
+                    1461664911
+                );
             } else {
                 // This is definitely TCA type group or an image thumbnail
                 // Assumed this, the identifier reflects the relative path
@@ -310,20 +328,41 @@ class PhysicalFilePublisher implements SingletonInterface
             // If a sys_file_storage exists for the given storage uid from
             // the supported file information row, we can extract the base
             // path of that storage, given it's powered by the LocalDriver
-            if (!$this->hasConfiguredStorage($fileInformation, $storages)) {
+            if (!array_key_exists($fileInformation['storage'], $storages)) {
                 // Log and skip the sys_file_storage can not be determined
-                $this->logMissingStorageAndExit($fileInformation);
+                $this->logger->emergency(
+                    'Detected a file with missing file storage!',
+                    array('fileInfo' => $fileInformation)
+                );
+                throw new \RuntimeException(
+                    'Detected a file [' . $fileInformation['identifier'] . '] with non existent file storage ['
+                    . $fileInformation['storage'] . ']!',
+                    1461610653
+                );
             } else {
                 $storage = $storages[$fileInformation['storage']];
-                if (!$this->isSupportedStorage($storage)) {
+                if (!'Local' === $storage['driver']) {
                     // Log and skip this file if the Driver is unsupported
-                    $this->logUnsupportedStorageAndExit($fileInformation);
+                    $this->logger->error(
+                        'Only LocalDriver is supported for publishing!',
+                        array('fileInfo' => $fileInformation)
+                    );
+                    throw new \RuntimeException(
+                        'File [' . $fileInformation['identifier'] . '] uses a non LocalDriver enabled Storage ['
+                        . $fileInformation['storage'] . ']!',
+                        1461610848
+                    );
                 } else {
                     // Convert the storage's FlexForm configuration values
                     // to an array to extract the base path. The base path
                     // will be prepend to the file's identifier to get the
                     // complete path relative to the TYPO3's document root
-                    $basePath = $this->getStorageBasePath($storage);
+
+                    $configuration = $this->flexFormService->convertFlexFormContentToArray(
+                        $storage['configuration']
+                    );
+
+                    $basePath = $configuration['basePath'];
                     $fileInformation = $this->addFileInformationByRelativeIdentifier(
                         $side,
                         $basePath . $identifier,
@@ -333,48 +372,6 @@ class PhysicalFilePublisher implements SingletonInterface
             }
         }
         return $fileInformation;
-    }
-
-    /**
-     * @param array $storage
-     * @return string
-     */
-    protected function getStorageBasePath(array $storage)
-    {
-        $configuration = $this->getStorageConfiguration($storage);
-        return $configuration['basePath'];
-    }
-
-    /**
-     * Retrieve a storage's configuration as array with internal caching
-     *
-     * @param array $storage The sys_file_storage_row
-     * @return array
-     */
-    protected function getStorageConfiguration(array $storage)
-    {
-        $cacheIdentifier = md5($storage['configuration']);
-        if (!array_key_exists($cacheIdentifier, $this->cache)) {
-            $this->cache[$cacheIdentifier] = $this->flexFormService->convertFlexFormContentToArray(
-                $storage['configuration']
-            );
-        }
-        return $this->cache[$cacheIdentifier];
-    }
-
-    /**
-     * @param string $side
-     * @param string $relativeIdentifier
-     * @return bool|string
-     */
-    protected function getFileHash($side, $relativeIdentifier)
-    {
-        if (self::LOCAL === $side && FileUtility::fileExists($relativeIdentifier)) {
-            return FileUtility::hash($relativeIdentifier);
-        } elseif (self::FOREIGN === $side && $this->sshConnection->isRemoteFileExisting($relativeIdentifier)) {
-            return $this->sshConnection->remoteFileHash($relativeIdentifier);
-        }
-        return false;
     }
 
     /**
@@ -396,47 +393,6 @@ class PhysicalFilePublisher implements SingletonInterface
     }
 
     /**
-     * @param string $tableName
-     * @return bool
-     */
-    protected function isSupportedTable($tableName)
-    {
-        return in_array($tableName, array('sys_file_processedfile', 'sys_file'));
-    }
-
-    /**
-     * Also treat fileadmin resources as legacy resources (depends on previous storage === 0 check)
-     *
-     * @param string $identifier
-     * @return bool
-     */
-    protected function isLegacyResource($identifier)
-    {
-        return 0 === strpos($identifier, '/uploads/')
-               || 0 === strpos($identifier, '/typo3temp/')
-               || 0 === strpos($identifier, '/fileadmin/');
-    }
-
-    /**
-     * @param $fileInformation
-     * @param $storages
-     * @return bool
-     */
-    protected function hasConfiguredStorage($fileInformation, $storages)
-    {
-        return array_key_exists($fileInformation['storage'], $storages);
-    }
-
-    /**
-     * @param $storage
-     * @return bool
-     */
-    protected function isSupportedStorage($storage)
-    {
-        return 'Local' === $storage['driver'];
-    }
-
-    /**
      * @param $side
      * @param $relativeIdentifier
      * @param $fileInformation
@@ -445,87 +401,17 @@ class PhysicalFilePublisher implements SingletonInterface
     protected function addFileInformationByRelativeIdentifier($side, $relativeIdentifier, $fileInformation)
     {
         $fileInformation['relativePath'] = $relativeIdentifier;
-        $fileInformation['hash'] = $this->getFileHash($side, $relativeIdentifier);
-        return $fileInformation;
-    }
 
-    /**
-     * @param $fileInformation
-     */
-    protected function logUnsupportedStorageAndExit($fileInformation)
-    {
-        $this->logger->error('Only LocalDriver is supported for publishing!', array('fileInfo' => $fileInformation));
-        throw new \RuntimeException(
-            'File [' . $fileInformation['identifier'] . '] uses a non LocalDriver enabled Storage ['
-            . $fileInformation['storage'] . ']!',
-            1461610848
-        );
-    }
-
-    /**
-     * @param $side
-     * @param $identifier
-     */
-    protected function logUnsupportedRelationAndExit($side, $identifier)
-    {
-        $this->logger->error('Unsupported relation!', array('identifier' => $identifier, 'side' => $side));
-        throw new \RuntimeException(
-            'File [' . $identifier . '] has neither a storage nor a recognized file identifier!',
-            1461664911
-        );
-    }
-
-    /**
-     * @param $fileInformation
-     */
-    protected function logMissingStorageAndExit($fileInformation)
-    {
-        $this->logger->emergency('Detected a file with missing file storage!', array('fileInfo' => $fileInformation));
-        throw new \RuntimeException(
-            'Detected a file [' . $fileInformation['identifier'] . '] with non existent file storage ['
-            . $fileInformation['storage'] . ']!',
-            1461610653
-        );
-    }
-
-    /**
-     * @param Record $record
-     * @return array|bool
-     */
-    protected function getFileInfo(Record $record)
-    {
-        // we check the two identities because of probably broken relation
-        $localIdentifier = $record->getLocalProperty('identifier');
-        $foreignIdentifier = $record->getForeignProperty('identifier');
-
-        $result = false;
-
-        // absolute special nearly impossible case first. Both identifiers
-        // are null, hence the files do not exist or can not get published
-        if (null === $localIdentifier && null === $foreignIdentifier) {
-            $this->logger->critical(
-                'A file record does neither contain a local nor a foreign identifier',
-                array('tableName' => $record->getTableName(), 'identifier' => $record->getIdentifier())
-            );
-        } elseif (null === $localIdentifier && null !== $foreignIdentifier) {
-            // in case the local identifier's null but foreign isn't check
-            // if it is a static resource. If not retrieve all information
-            if (!$this->containsStaticResource($foreignIdentifier)) {
-                $result = array($this->gatherFileInformation(self::FOREIGN, $record), array());
-            }
-        } elseif (null === $foreignIdentifier && null !== $localIdentifier) {
-            // same goes for the local identifier. If it's representing an
-            // identifier of a static resource, we skip this file relation
-            if (!$this->containsStaticResource($localIdentifier)) {
-                $result = array(array(), $this->gatherFileInformation(self::LOCAL, $record));
-            }
+        if (self::LOCAL === $side && FileUtility::fileExists($relativeIdentifier)) {
+            $hash = FileUtility::hash($relativeIdentifier);
+        } elseif (self::FOREIGN === $side && $this->sshConnection->isRemoteFileExisting($relativeIdentifier)) {
+            $hash = $this->sshConnection->remoteFileHash($relativeIdentifier);
         } else {
-            // If both identifiers exist, gather all information from them
-            $result = array(
-                $this->gatherFileInformation(self::FOREIGN, $record),
-                $this->gatherFileInformation(self::LOCAL, $record),
-            );
+            $hash = false;
         }
-        return $result;
+
+        $fileInformation['hash'] = $hash;
+
+        return $fileInformation;
     }
 }
