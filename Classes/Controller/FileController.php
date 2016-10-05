@@ -106,15 +106,7 @@ class FileController extends AbstractController
         }
         $relatedRecord = reset($relatedRecords);
 
-        $this
-            ->objectManager
-            ->get(
-                'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
-                DatabaseUtility::buildLocalDatabaseConnection(),
-                DatabaseUtility::buildForeignDatabaseConnection(),
-                'sys_file'
-            )
-            ->publishRecordRecursive($relatedRecord);
+        CommonRepository::getDefaultInstance('sys_file')->publishRecordRecursive($relatedRecord);
 
         $this->addFlashMessage(
             LocalizationUtility::translate(

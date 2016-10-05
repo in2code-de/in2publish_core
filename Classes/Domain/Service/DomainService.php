@@ -59,12 +59,7 @@ class DomainService
      */
     public function __construct()
     {
-        $this->commonRepository = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager')->get(
-            'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
-            DatabaseUtility::buildLocalDatabaseConnection(),
-            DatabaseUtility::buildForeignDatabaseConnection(),
-            self::TABLE_NAME
-        );
+        $this->commonRepository = CommonRepository::getDefaultInstance(self::TABLE_NAME);
     }
 
     /**

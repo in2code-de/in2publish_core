@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Domain\Factory;
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
@@ -162,12 +163,7 @@ class FolderRecordFactory
 
         // Now let's find all files in the selected folder
         // Get the Repo first
-        $commonRepository = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager')->get(
-            'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
-            $localDatabase,
-            $foreignDatabase,
-            'sys_file'
-        );
+        $commonRepository = CommonRepository::getDefaultInstance('sys_file');
 
         // find all file database entries in the current folder by the folder's hash
         // (be sure to only use FAL methods for hashing)
