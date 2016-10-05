@@ -106,11 +106,17 @@ class PhysicalFilePublisher implements SingletonInterface
     public function publishPhysicalFileOfSysFile($tableName, Record $record)
     {
         if (in_array($tableName, array('sys_file_processedfile', 'sys_file'))) {
-            $cacheIdentifier = md5($record->getMergedProperty('storage') . $record->getMergedProperty('identifier'));
+            // create a combined identifier, which is unique among all files
+            // and might hence be used as cache identifier or similar
+            $combinedIdentifier = $this->createCombinedIdentifier(
+                array(
+                    $record->getMergedProperty('storage'),
+                    $record->getMergedProperty('identifier'),
+                )
+            );
 
-            // We cache the result of previous file publishing, because it
-            // is very common that a resource is referenced multiple times
-            if (isset($this->cache[$tableName][$cacheIdentifier])) {
+            // If the combined identifier already passed this method is was published, so we can skip it
+            if (isset($this->cache[$tableName][$combinedIdentifier])) {
                 return null;
             }
 
@@ -150,7 +156,7 @@ class PhysicalFilePublisher implements SingletonInterface
             // in case the file info equals false we were not able to read
             // the required information from the rows and we can't publish
             if (false === $fileInfo) {
-                $this->cache[$tableName][$cacheIdentifier] = false;
+                $this->cache[$tableName][$combinedIdentifier] = false;
                 return null;
             }
 
@@ -253,7 +259,7 @@ class PhysicalFilePublisher implements SingletonInterface
             if (false === $result) {
                 $this->logger->error('Notice: Publishing file failed. See previous message');
             }
-            $this->cache[$tableName][$cacheIdentifier] = $result;
+            $this->cache[$tableName][$combinedIdentifier] = $result;
         }
         return null;
     }
@@ -413,5 +419,19 @@ class PhysicalFilePublisher implements SingletonInterface
         $fileInformation['hash'] = $hash;
 
         return $fileInformation;
+    }
+
+    /**
+     * @see \In2code\In2publishCore\Domain\Factory\FolderRecordFactory::createCombinedIdentifier
+     * @param array $info
+     * @return string
+     */
+    protected function createCombinedIdentifier(array $info)
+    {
+        $identifier = $info['identifier'];
+        if (isset($info['folder'])) {
+            $identifier = $info['folder'] . '/' . $identifier;
+        }
+        return sprintf('%d:%s', $info['storage'], $identifier);
     }
 }
