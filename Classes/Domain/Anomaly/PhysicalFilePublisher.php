@@ -98,168 +98,236 @@ class PhysicalFilePublisher implements SingletonInterface
      *  * Update the remote file
      *  * Rename the remote file
      *
-     * @param string $tableName
+     * @param string $table
      * @param Record $record
      * @return null Returns always null, because slot return values (arrays) are remapped and booleans are not allowed
      * @throws \Exception
      */
-    public function publishPhysicalFileOfSysFile($tableName, Record $record)
+    public function publishPhysicalFileOfSysFile($table, Record $record)
     {
-        if (in_array($tableName, array('sys_file_processedfile', 'sys_file'))) {
+        if (in_array($table, array('sys_file_processedfile', 'sys_file'))) {
             // create a combined identifier, which is unique among all files
             // and might hence be used as cache identifier or similar
+            // TODO evaluate if the merged property also works for renamed files
+            $storage = $record->getMergedProperty('storage');
+            $identifier = $record->getMergedProperty('identifier');
+
+            if (strpos($identifier, ',')) {
+                list($identifier) = GeneralUtility::trimExplode(',', $identifier);
+            }
+
             $combinedIdentifier = $this->createCombinedIdentifier(
                 array(
-                    $record->getMergedProperty('storage'),
-                    $record->getMergedProperty('identifier'),
+                    'storage' => $storage,
+                    'identifier' => $identifier,
                 )
             );
 
+            $data = array(
+                'table' => $table,
+                'uid' => $record->getIdentifier(),
+                'storage' => $storage,
+                'identifier' => $identifier,
+            );
+
             // If the combined identifier already passed this method is was published, so we can skip it
-            if (isset($this->cache[$tableName][$combinedIdentifier])) {
+            if (isset($this->cache[$table][$combinedIdentifier])) {
                 return null;
             }
 
-            // we check the two identities because of probably broken relation
-            $localIdentifier = $record->getLocalProperty('identifier');
-            $foreignIdentifier = $record->getForeignProperty('identifier');
-
-            $fileInfo = false;
-
-            // absolute special nearly impossible case first. Both identifiers
-            // are null, hence the files do not exist or can not get published
-            if (null === $localIdentifier && null === $foreignIdentifier) {
-                $this->logger->critical(
-                    'A file record does neither contain a local nor a foreign identifier',
-                    array('tableName' => $record->getTableName(), 'identifier' => $record->getIdentifier())
+            // The new full FAL support implementation provides us with a sys_file record
+            // which comprises all information, given it was created by the FolderRecordFactory
+            // if that's the case we can rely on the records state to decide on the action to take.
+            if (true === $record->getAdditionalProperty('isAuthoritative')) {
+                $filePublisherService = GeneralUtility::makeInstance(
+                    'In2code\\In2publishCore\\Domain\\Service\\Publishing\\FilePublisherService'
                 );
-            } elseif (null === $localIdentifier && null !== $foreignIdentifier) {
-                // in case the local identifier's null but foreign isn't check
-                // if it is a static resource. If not retrieve all information
-                if (!$this->containsStaticResource($foreignIdentifier)) {
-                    $fileInfo = array($this->gatherFileInformation(self::FOREIGN, $record), array());
-                }
-            } elseif (null === $foreignIdentifier && null !== $localIdentifier) {
-                // same goes for the local identifier. If it's representing an
-                // identifier of a static resource, we skip this file relation
-                if (!$this->containsStaticResource($localIdentifier)) {
-                    $fileInfo = array(array(), $this->gatherFileInformation(self::LOCAL, $record));
-                }
-            } else {
-                // If both identifiers exist, gather all information from them
-                $fileInfo = array(
-                    $this->gatherFileInformation(self::FOREIGN, $record),
-                    $this->gatherFileInformation(self::LOCAL, $record),
-                );
-            }
 
-            // in case the file info equals false we were not able to read
-            // the required information from the rows and we can't publish
-            if (false === $fileInfo) {
-                $this->cache[$tableName][$combinedIdentifier] = false;
-                return null;
-            }
-
-            // If we've got at least one file info we can publish the file
-            list($foreignFileInfo, $localFileInfo) = $fileInfo;
-
-            $result = null;
-
-            // At this point we are certain, that at least one file exists
-            // and we have already fetched the required information around
-            // the file's identifier with the early retrieved FAL Storages
-
-            // No we decide based on the record state which action we take
-
-            // In case the record representing the file on the file system
-            // has been deleted the related file was also deleted by TYPO3
-            // To avoid obsolete files on the remote system we delete them
-            // as well (the foreign record pointing to the foreign file is
-            // deleted, so we remove the physical file on foreign as well)
-            if (RecordInterface::RECORD_STATE_DELETED === $record->getState()) {
-                // The hash is exclusively set if the actual file exists on remote
-                if (empty($foreignFileInfo['hash'])) {
-                    $this->logger->error(
-                        'Tried to delete a non existent foreign file',
-                        array('fileInfo' => $foreignFileInfo)
-                    );
-                } else {
-                    if ($this->sshConnection->removeRemoteFile($foreignFileInfo['relativePath'])) {
-                        $this->logger->warning(
-                            'Deleted physical file on foreign',
-                            array('fileInfo' => $foreignFileInfo)
-                        );
+                switch ($record->getState()) {
+                    case RecordInterface::RECORD_STATE_DELETED:
+                        if (true === $result = $filePublisherService->removeForeignFile($storage, $identifier)) {
+                            $this->logger->info('Removed remote file', $data);
+                        } else {
+                            $this->logger->error('Failed to remove remote file', $data);
+                        }
+                        break;
+                    case RecordInterface::RECORD_STATE_ADDED:
+                        if (true === $result = $filePublisherService->addFileToForeign($storage, $identifier)) {
+                            $this->logger->info('Added file to foreign', $data);
+                        } else {
+                            $this->logger->error('Failed to add file to foreign', $data);
+                        }
+                        break;
+                    case RecordInterface::RECORD_STATE_CHANGED:
+                        if (true === $result = $filePublisherService->updateFileOnForeign($storage, $identifier)) {
+                            $this->logger->info('Updated file on foreign', $data);
+                        } else {
+                            $this->logger->error('Failed to update file to foreign', $data);
+                        }
+                        break;
+                    case RecordInterface::RECORD_STATE_MOVED:
+                        $old = $record->getForeignProperty('identifier');
+                        $new = basename($record->getLocalProperty('identifier'));
+                        if (true === $result = $filePublisherService->renameForeignFile($storage, $old, $new)) {
+                            $this->logger->info('Updated file on foreign', $data);
+                        } else {
+                            $this->logger->error('Failed to update file to foreign', $data);
+                        }
+                        break;
+                    case RecordInterface::RECORD_STATE_UNCHANGED:
+                        // Do nothing, because there are definitely no changes
+                        // between the files since it's state is authoritative
+                        // and this case is not reachable by normal operations
                         $result = true;
-                    } else {
+                        break;
+                    default:
+                        $result = false;
+                        throw new \Exception(
+                            'DEVELOPMENT EXCEPTION: implement publish case for record state ' . $record->getState(),
+                            1475677190
+                        );
+                }
+            } else {
+                // we check the two identities because of probably broken relation
+                $localIdentifier = $record->getLocalProperty('identifier');
+                $foreignIdentifier = $record->getForeignProperty('identifier');
+
+                $fileInfo = false;
+
+                // absolute special nearly impossible case first. Both identifiers
+                // are null, hence the files do not exist or can not get published
+                if (null === $localIdentifier && null === $foreignIdentifier) {
+                    $this->logger->critical(
+                        'A file record does neither contain a local nor a foreign identifier',
+                        array('tableName' => $record->getTableName(), 'identifier' => $record->getIdentifier())
+                    );
+                } elseif (null === $localIdentifier && null !== $foreignIdentifier) {
+                    // in case the local identifier's null but foreign isn't check
+                    // if it is a static resource. If not retrieve all information
+                    if (!$this->containsStaticResource($foreignIdentifier)) {
+                        $fileInfo = array($this->gatherFileInformation(self::FOREIGN, $record), array());
+                    }
+                } elseif (null === $foreignIdentifier && null !== $localIdentifier) {
+                    // same goes for the local identifier. If it's representing an
+                    // identifier of a static resource, we skip this file relation
+                    if (!$this->containsStaticResource($localIdentifier)) {
+                        $fileInfo = array(array(), $this->gatherFileInformation(self::LOCAL, $record));
+                    }
+                } else {
+                    // If both identifiers exist, gather all information from them
+                    $fileInfo = array(
+                        $this->gatherFileInformation(self::FOREIGN, $record),
+                        $this->gatherFileInformation(self::LOCAL, $record),
+                    );
+                }
+
+                // in case the file info equals false we were not able to read
+                // the required information from the rows and we can't publish
+                if (false === $fileInfo) {
+                    $this->cache[$table][$combinedIdentifier] = false;
+                    return null;
+                }
+
+                // If we've got at least one file info we can publish the file
+                list($foreignFileInfo, $localFileInfo) = $fileInfo;
+
+                // At this point we are certain, that at least one file exists
+                // and we have already fetched the required information around
+                // the file's identifier with the early retrieved FAL Storages
+
+                // No we decide based on the record state which action we take
+
+                // In case the record representing the file on the file system
+                // has been deleted the related file was also deleted by TYPO3
+                // To avoid obsolete files on the remote system we delete them
+                // as well (the foreign record pointing to the foreign file is
+                // deleted, so we remove the physical file on foreign as well)
+                if (RecordInterface::RECORD_STATE_DELETED === $record->getState()) {
+                    // The hash is exclusively set if the actual file exists on remote
+                    if (empty($foreignFileInfo['hash'])) {
                         $this->logger->error(
-                            'Failed to delete foreign physical file',
+                            'Tried to delete a non existent foreign file',
                             array('fileInfo' => $foreignFileInfo)
                         );
-                    }
-                }
-                $result = false;
-            } else {
-                // Otherwise the file gains some special treatment through
-                // a logic that keep's the remote physical file up to date
-
-                // If the foreign file hash does not exist, the file needs
-                // to be published. Write it to the target remote location
-                if (empty($foreignFileInfo['hash'])) {
-                    $result = $this->publishFile($localFileInfo);
-                } else {
-                    // Assuming the physical file exists on both local and
-                    // foreign it requires either to be updated or renamed
-                    if ($localFileInfo['hash'] === $foreignFileInfo['hash']) {
-                        // The contents are identical, no update is needed
-                        if ($localFileInfo['relativePath'] === $foreignFileInfo['relativePath']) {
-                            // The path and name is identical, too. We can
-                            // return at this point, no action is required
-                            $result = 'no-changes';
-                        } else {
-                            // Rename the remote file to the new file name
-                            $newIdentifier = $localFileInfo['relativePath'];
-                            $oldIdentifier = $foreignFileInfo['relativePath'];
-
-                            $targetedRemoteFolder = dirname($newIdentifier);
-                            $logData = array(
-                                'oldIdentifier' => $oldIdentifier,
-                                'newIdentifier' => $newIdentifier,
-                                'targetedRemoteFolder' => $targetedRemoteFolder,
-                            );
-                            // Ensure the existence of all parent folders on the remote system
-                            // because the file might not just get renamed but also moved into
-                            // another newly created folder. We know it works but still log it
-                            if ($this->sshConnection->createFolderByIdentifierOnRemote($targetedRemoteFolder)) {
-                                if ($this->sshConnection->renameRemoteFile($oldIdentifier, $newIdentifier)) {
-                                    $this->logger->notice('Renamed remote file', array($logData));
-                                    $result = true;
-                                } else {
-                                    $this->logger->error('Failed to rename remote file', array($logData));
-                                }
-                            } else {
-                                $this->logger->error('Failed to create targeted remote folder', array($logData));
-                            }
-                            $result = false;
-                        }
                     } else {
-                        // The contents do not match but the file names do
-                        // therefore simply publish the file to transcribe
-                        if ($localFileInfo['relativePath'] === $foreignFileInfo['relativePath']) {
-                            $result = $this->publishFile($localFileInfo);
+                        if ($this->sshConnection->removeRemoteFile($foreignFileInfo['relativePath'])) {
+                            $this->logger->warning(
+                                'Deleted physical file on foreign',
+                                array('fileInfo' => $foreignFileInfo)
+                            );
+                            $result = true;
                         } else {
-                            // The files are completely different. Neither
-                            // file contents nor identifiers are equal. We
-                            // will not take any action because this in an
-                            // edge case that will likely not arise. Abort
-                            $result = 'too-different';
+                            $this->logger->error(
+                                'Failed to delete foreign physical file',
+                                array('fileInfo' => $foreignFileInfo)
+                            );
+                        }
+                    }
+                    $result = false;
+                } else {
+                    // Otherwise the file gains some special treatment through
+                    // a logic that keep's the remote physical file up to date
+
+                    // If the foreign file hash does not exist, the file needs
+                    // to be published. Write it to the target remote location
+                    if (empty($foreignFileInfo['hash'])) {
+                        $result = $this->publishFile($localFileInfo);
+                    } else {
+                        // Assuming the physical file exists on both local and
+                        // foreign it requires either to be updated or renamed
+                        if ($localFileInfo['hash'] === $foreignFileInfo['hash']) {
+                            // The contents are identical, no update is needed
+                            if ($localFileInfo['relativePath'] === $foreignFileInfo['relativePath']) {
+                                // The path and name is identical, too. We can
+                                // return at this point, no action is required
+                                $result = 'no-changes';
+                            } else {
+                                // Rename the remote file to the new file name
+                                $newIdentifier = $localFileInfo['relativePath'];
+                                $oldIdentifier = $foreignFileInfo['relativePath'];
+
+                                $targetedRemoteFolder = dirname($newIdentifier);
+                                $logData = array(
+                                    'oldIdentifier' => $oldIdentifier,
+                                    'newIdentifier' => $newIdentifier,
+                                    'targetedRemoteFolder' => $targetedRemoteFolder,
+                                );
+                                // Ensure the existence of all parent folders on the remote system
+                                // because the file might not just get renamed but also moved into
+                                // another newly created folder. We know it works but still log it
+                                if ($this->sshConnection->createFolderByIdentifierOnRemote($targetedRemoteFolder)) {
+                                    if ($this->sshConnection->renameRemoteFile($oldIdentifier, $newIdentifier)) {
+                                        $this->logger->notice('Renamed remote file', array($logData));
+                                        $result = true;
+                                    } else {
+                                        $this->logger->error('Failed to rename remote file', array($logData));
+                                    }
+                                } else {
+                                    $this->logger->error('Failed to create targeted remote folder', array($logData));
+                                }
+                                $result = false;
+                            }
+                        } else {
+                            // The contents do not match but the file names do
+                            // therefore simply publish the file to transcribe
+                            if ($localFileInfo['relativePath'] === $foreignFileInfo['relativePath']) {
+                                $result = $this->publishFile($localFileInfo);
+                            } else {
+                                // The files are completely different. Neither
+                                // file contents nor identifiers are equal. We
+                                // will not take any action because this in an
+                                // edge case that will likely not arise. Abort
+                                $result = 'too-different';
+                            }
                         }
                     }
                 }
             }
+
             if (false === $result) {
                 $this->logger->error('Notice: Publishing file failed. See previous message');
             }
-            $this->cache[$tableName][$combinedIdentifier] = $result;
+            $this->cache[$table][$combinedIdentifier] = $result;
         }
         return null;
     }

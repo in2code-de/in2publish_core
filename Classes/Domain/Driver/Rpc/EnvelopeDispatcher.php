@@ -44,6 +44,10 @@ class EnvelopeDispatcher
     const CMD_GET_HASH = 'hash';
     const CMD_CREATE_FOLDER = 'createFolder';
     const CMD_DELETE_FOLDER = 'deleteFolder';
+    const CMD_DELETE_FILE = 'deleteFile';
+    const CMD_ADD_FILE = 'addFile';
+    const CMD_REPLACE_FILE = 'replaceFile';
+    const CMD_RENAME_FILE = 'renameFile';
 
     /**
      * @param Envelope $envelope
@@ -162,6 +166,54 @@ class EnvelopeDispatcher
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
         return call_user_func_array(array($driver, 'deleteFolder'), $request);
+    }
+
+    /**
+     * @param array $request
+     * @return mixed
+     */
+    protected function deleteFile(array $request)
+    {
+        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        unset($request['storage']);
+        $driver = $this->getStorageDriver($storage);
+        return call_user_func_array(array($driver, 'deleteFile'), $request);
+    }
+
+    /**
+     * @param array $request
+     * @return mixed
+     */
+    protected function addFile(array $request)
+    {
+        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        unset($request['storage']);
+        $driver = $this->getStorageDriver($storage);
+        return call_user_func_array(array($driver, 'addFile'), $request);
+    }
+
+    /**
+     * @param array $request
+     * @return mixed
+     */
+    protected function replaceFile(array $request)
+    {
+        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        unset($request['storage']);
+        $driver = $this->getStorageDriver($storage);
+        return call_user_func_array(array($driver, 'replaceFile'), $request);
+    }
+
+    /**
+     * @param array $request
+     * @return mixed
+     */
+    protected function renameFile(array $request)
+    {
+        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        unset($request['storage']);
+        $driver = $this->getStorageDriver($storage);
+        return call_user_func_array(array($driver, 'renameFile'), $request);
     }
 
     /**

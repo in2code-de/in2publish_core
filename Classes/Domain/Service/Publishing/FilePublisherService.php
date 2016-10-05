@@ -1,5 +1,6 @@
 <?php
 namespace In2code\In2publishCore\Domain\Service\Publishing;
+
 /***************************************************************
  * Copyright notice
  *
@@ -25,12 +26,17 @@ namespace In2code\In2publishCore\Domain\Service\Publishing;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Driver\Rpc\Envelope;
+use In2code\In2publishCore\Domain\Driver\Rpc\EnvelopeDispatcher;
 use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
+use In2code\In2publishCore\Security\SshConnection;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-
 
 /**
  * Class FilePublisherService
+ *
+ * TODO replace Letterbox/Envelope with RFALD
  */
 class FilePublisherService
 {
@@ -50,10 +56,100 @@ class FilePublisherService
     }
 
     /**
-     * @param string $combinedIdentifier
+     * Removes a file from a foreign storage
+     *
+     * @param int $storage
+     * @param string $fileIdentifier
+     * @return bool
      */
-    public function publish($combinedIdentifier)
+    public function removeForeignFile($storage, $fileIdentifier)
     {
-        \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($combinedIdentifier, __FILE__ . '@' . __LINE__, 20, false, true, false, array());die;
+        $uid = $this->letterbox->sendEnvelope(
+            new Envelope(
+                EnvelopeDispatcher::CMD_DELETE_FILE,
+                array('storage' => $storage, 'fileIdentifier' => $fileIdentifier)
+            )
+        );
+
+        SshConnection::makeInstance()->executeRpc($uid);
+        $envelope = $this->letterbox->receiveEnvelope($uid);
+        return true === $envelope->getResponse();
+    }
+
+    /**
+     * Adds a file to a foreign storage
+     *
+     * @param int $storage
+     * @param string $fileIdentifier
+     * @return bool
+     */
+    public function addFileToForeign($storage, $fileIdentifier)
+    {
+        $file = ResourceFactory::getInstance()->getStorageObject($storage)->getFile($fileIdentifier);
+        $readablePath = $file->getForLocalProcessing(false);
+
+        $temporaryIdentifier = SshConnection::makeInstance()->transferTemporaryFile($readablePath);
+
+        $request = [
+            'storage' => $storage,
+            'localFilePath' => $temporaryIdentifier,
+            'targetFolderIdentifier' => dirname($fileIdentifier),
+            'newFileName' => basename($fileIdentifier),
+            'removeOriginal' => true,
+        ];
+
+        $uid = $this->letterbox->sendEnvelope(new Envelope(EnvelopeDispatcher::CMD_ADD_FILE, $request));
+
+        SshConnection::makeInstance()->executeRpc($uid);
+        $envelope = $this->letterbox->receiveEnvelope($uid);
+        return $fileIdentifier === $envelope->getResponse();
+    }
+
+    /**
+     * @param string $storage
+     * @param string $fileIdentifier
+     * @return bool
+     */
+    public function updateFileOnForeign($storage, $fileIdentifier)
+    {
+        $file = ResourceFactory::getInstance()->getStorageObject($storage)->getFile($fileIdentifier);
+        $readablePath = $file->getForLocalProcessing(false);
+
+        $temporaryIdentifier = SshConnection::makeInstance()->transferTemporaryFile($readablePath);
+
+        $request = [
+            'storage' => $storage,
+            'fileIdentifier' => $fileIdentifier,
+            'localFilePath' => $temporaryIdentifier,
+        ];
+
+        $uid = $this->letterbox->sendEnvelope(new Envelope(EnvelopeDispatcher::CMD_REPLACE_FILE, $request));
+
+        SshConnection::makeInstance()->executeRpc($uid);
+        $envelope = $this->letterbox->receiveEnvelope($uid);
+        return true === $envelope->getResponse();
+    }
+
+    /**
+     * @param int $storage
+     * @param string $fileIdentifier
+     * @param string $newName
+     * @return bool
+     */
+    public function renameForeignFile($storage, $fileIdentifier, $newName)
+    {
+        $expectedResult = rtrim(dirname($fileIdentifier), '/') . '/' . $newName;
+
+        $request = [
+            'storage' => $storage,
+            'fileIdentifier' => $fileIdentifier,
+            'newName' => $newName,
+        ];
+
+        $uid = $this->letterbox->sendEnvelope(new Envelope(EnvelopeDispatcher::CMD_RENAME_FILE, $request));
+
+        SshConnection::makeInstance()->executeRpc($uid);
+        $envelope = $this->letterbox->receiveEnvelope($uid);
+        return $expectedResult === $envelope->getResponse();
     }
 }
