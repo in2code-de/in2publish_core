@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Domain\Repository;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
+use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\FileUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
@@ -1725,15 +1726,17 @@ class CommonRepository extends BaseRepository
         if (true === $record->getAdditionalProperty('localRecordExistsTemporary')) {
             $previousTableName = $this->replaceTableName($record->getTableName());
 
+            $data = array(
+                'tableName' => $this->tableName,
+                'identifier' => $record->getIdentifier(),
+            );
+
             $recordCount = $this->countRecord($this->localDatabase, $record->getIdentifier());
             if (false === $recordCount) {
                 // an error occurred while counting the local database records.
                 $this->logger->error(
                     'Could not count number of records when updating a local record',
-                    array(
-                        'tableName' => $this->tableName,
-                        'identifier' => $record->getIdentifier(),
-                    )
+                    $data
                 );
                 return;
             } elseif (1 === $recordCount) {
@@ -1741,7 +1744,28 @@ class CommonRepository extends BaseRepository
                 // persistTemporaryIndexing feature or it was simply flagged wrong
                 return;
             } else {
-                // TODO: implement this case...
+                // The file will be published to foreign.
+                // To ensure the sys_file record has the same uid on both sides from now on
+                // a new index will be written to the local database.
+                // BTW: In this case it does not matter if the foreign record existed or not,
+                // because the uid is either reserved or occupied by the foreign record.
+                if (RecordInterface::RECORD_STATE_ADDED === $record->getState()) {
+                    if (0 === $this->countRecord($this->localDatabase, $record->getIdentifier())) {
+                        if (true === $this->addRecord($this->localDatabase, $record->getLocalProperties())) {
+                            $this->logger->info('Created local file index record', $data);
+                        } else {
+                            $this->logger->error('Failed to create local file index record', $data);
+                        }
+                    } else {
+                        if (false === ConfigurationUtility::getConfiguration('factory.fal.persistTemporaryIndexing')) {
+                            $this->logger->error('The uid of the temporary index entry was already taken', $data);
+                        } else {
+                            $this->logger->debug('persistTemporaryIndexing is enabled. Index was already saved', $data);
+                        }
+                    }
+                } else {
+                    // TODO: implement this case...
+                }
 
                 // either insert the temporary local or the foreign record.
                 // either merge the values before inserting or just use one side.
