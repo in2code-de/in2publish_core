@@ -1674,7 +1674,6 @@ class CommonRepository extends BaseRepository
     {
         $previousTableName = $this->replaceTableName($record->getTableName());
         $this->updateRecord($this->foreignDatabase, $record->getIdentifier(), $record->getLocalProperties());
-        $record->setForeignProperties($record->getLocalProperties());
         $this->setTableName($previousTableName);
     }
 
