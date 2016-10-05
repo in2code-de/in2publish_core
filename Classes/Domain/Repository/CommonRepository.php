@@ -1723,9 +1723,7 @@ class CommonRepository extends BaseRepository
      */
     protected function updateLocalRecord(Record $record)
     {
-        if ($record->hasAdditionalProperty('localRecordExistsTemporary')
-            && true === $record->getAdditionalProperty('localRecordExistsTemporary')
-        ) {
+        if (true === $record->getAdditionalProperty('localRecordExistsTemporary')) {
             $previousTableName = $this->replaceTableName($record->getTableName());
 
             $recordCount = $this->countRecord($this->localDatabase, $record->getIdentifier());

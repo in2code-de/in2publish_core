@@ -548,8 +548,7 @@ class FolderRecordFactory
                     && isset($identifierList[$file->getLocalProperty('identifier')])
                     && !isset($identifierList[$file->getLocalProperty('identifier')][$file->getIdentifier()])
                     && (!$file->foreignRecordExists()
-                        || ($file->hasAdditionalProperty('foreignRecordExistsTemporary')
-                            || true === $file->hasAdditionalProperty('foreignRecordExistsTemporary')))
+                        || true === $file->hasAdditionalProperty('foreignRecordExistsTemporary'))
                     && (!$file->hasAdditionalProperty('localRecordExistsTemporary')
                         || false === $file->hasAdditionalProperty('localRecordExistsTemporary'))
                 ) {
