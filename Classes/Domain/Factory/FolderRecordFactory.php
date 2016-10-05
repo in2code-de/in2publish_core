@@ -868,6 +868,7 @@ class FolderRecordFactory
                 throw new \LogicException('This combination is not possible!', 1475065059);
             }
             $file->addAdditionalProperty('depth', 2);
+            $file->addAdditionalProperty('isAuthoritative', true);
         }
 
         $record->addRelatedRecords($files);
