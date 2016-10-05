@@ -150,6 +150,18 @@ factory:
     # Hence it's mostly worth the risk and relatively stable
     mergeSysFileByIdentifier: FALSE
 
+    # [BETA]
+    #
+    # CAUTION: This feature disables the integrity check of the mergeSysFileByIdentifier feature. USE WITH CARE!
+    #
+    # DISCLAIMER:
+    #   This feature is distributed WITHOUT ANY WARRANTY;
+    #   without even the implied warranty of merchantability or fitness for a particular purpose.
+    #
+    # Disables the mergeSysFileByIdentifier integrity protection to allow you to update a sys_file's uid on foreign
+    # along with all associated sys_file_reference entries.
+    enableSysFileReferenceUpdate: FALSE
+
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
 filePreviewDomainName:
   local: stage.publishing.localhost.de

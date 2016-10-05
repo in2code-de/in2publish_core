@@ -573,15 +573,20 @@ class FolderRecordFactory
                     $localFile = array_pop($fileEntries);
                     $oldUid = $foreignFile->getForeignProperty('uid');
                     $newUid = $localFile->getLocalProperty('uid');
-                    // check if the sys_file was not referenced yet
-                    $count = $foreignDatabase->exec_SELECTcountRows(
-                        'uid',
-                        'sys_file_reference',
-                        'table_local LIKE "sys_file" AND uid_local=' . (int)$oldUid
-                    );
-                    // if a sys_file_record record has been found abort here, because it's unsafe to overwrite the uid
-                    if (0 !== $count) {
-                        break;
+
+                    // run the integrity test when enableSysFileReferenceUpdate is not enabled
+                    if (true !== $this->configuration['enableSysFileReferenceUpdate']) {
+                        // check if the sys_file was not referenced yet
+                        $count = $foreignDatabase->exec_SELECTcountRows(
+                            'uid',
+                            'sys_file_reference',
+                            'table_local LIKE "sys_file" AND uid_local=' . (int)$oldUid
+                        );
+                        // if a sys_file_record record has been found abort here,
+                        // because it's unsafe to overwrite the uid
+                        if (0 !== $count) {
+                            break;
+                        }
                     }
                     // check if the "new" uid is not taken yet
                     $count = $foreignDatabase->exec_SELECTcountRows(
@@ -593,12 +598,12 @@ class FolderRecordFactory
                     if (0 !== $count) {
                         break;
                     }
-                    $success = $foreignDatabase->exec_UPDATEquery(
+                    $uidUpdateSuccess = $foreignDatabase->exec_UPDATEquery(
                         'sys_file',
                         'uid=' . (int)$oldUid,
                         array('uid' => $newUid)
                     );
-                    if (true === $success) {
+                    if (true === $uidUpdateSuccess) {
                         $this->logger->notice(
                             'Rewrote a sys_file uid by the mergeSysFileByIdentifier feature',
                             array(
@@ -607,6 +612,35 @@ class FolderRecordFactory
                                 'identifier' => $identifierString,
                             )
                         );
+
+                        if (true === $this->configuration['enableSysFileReferenceUpdate']) {
+                            $referenceUpdateSuccess = $foreignDatabase->exec_UPDATEquery(
+                                'sys_file_reference',
+                                'table_local LIKE "sys_file" AND uid_local=' . (int)$oldUid,
+                                array('uid_local' => $newUid)
+                            );
+                            if ($referenceUpdateSuccess) {
+                                $this->logger->notice(
+                                    'Rewrote sys_file_reference by the enableSysFileReferenceUpdate feature',
+                                    array(
+                                        'old' => $oldUid,
+                                        'new' => $newUid,
+                                        'identifier' => $identifierString,
+                                    )
+                                );
+                            } else {
+                                $this->logger->error(
+                                    'Failed to rewrite sys_file_reference by the enableSysFileReferenceUpdate feature',
+                                    array(
+                                        'old' => $oldUid,
+                                        'new' => $newUid,
+                                        'identifier' => $identifierString,
+                                        'error' => $foreignDatabase->sql_error(),
+                                        'errno' => $foreignDatabase->sql_errno(),
+                                    )
+                                );
+                            }
+                        }
 
                         // copy the foreign's properties with the new uid to the local record (merge)
                         $foreignProperties = $foreignFile->getForeignProperties();

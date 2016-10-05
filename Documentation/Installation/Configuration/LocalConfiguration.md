@@ -22,6 +22,7 @@
 |factory.fal.autoRepairFolderHash|bool|FALSE|_cropped. See example file_|
 |factory.fal.persistTemporaryIndexing|bool|FALSE|_cropped. See example file_|
 |factory.fal.mergeSysFileByIdentifier|bool|FALSE|_cropped. See example file_|
+|factory.fal.enableSysFileReferenceUpdate|bool|FALSE|_cropped. See example file_|
 |filePreviewDomainName.local|string|stage.publishing.localhost.de|Domain prefix for local instance. This is needed for the preview links.|
 |filePreviewDomainName.foreign|string|prod.publishing.localhost.de|Domain prefix for the foreign instance. This is needed for the preview links.|
 |log.logLevel|int|5|0:Emergency, 1:Alert, 2:Critical, 3:Error, 4:Warning, 5:Notice, 6:Info, 7:Debug (int) - All levels smaller or equal to this value will be stored.|
@@ -223,6 +224,18 @@ factory:
     # overwrite the foreign UID to prevent severe damage or missing images on the foreign's frontend.
     # Hence it's mostly worth the risk and relatively stable
     mergeSysFileByIdentifier: FALSE
+
+    # [BETA]
+    #
+    # CAUTION: This feature disables the integrity check of the mergeSysFileByIdentifier feature. USE WITH CARE!
+    #
+    # DISCLAIMER:
+    #   This feature is distributed WITHOUT ANY WARRANTY;
+    #   without even the implied warranty of merchantability or fitness for a particular purpose.
+    #
+    # Disables the mergeSysFileByIdentifier integrity protection to allow you to update a sys_file's uid on foreign
+    # along with all associated sys_file_reference entries.
+    enableSysFileReferenceUpdate: FALSE
 
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
 filePreviewDomainName:

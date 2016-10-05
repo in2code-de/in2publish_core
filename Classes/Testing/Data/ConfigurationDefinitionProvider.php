@@ -88,6 +88,7 @@ class ConfigurationDefinitionProvider implements SingletonInterface
                         'autoRepairFolderHash' => 'boolean',
                         'persistTemporaryIndexing' => 'boolean',
                         'mergeSysFileByIdentifier' => 'boolean',
+                        'enableSysFileReferenceUpdate' => 'boolean',
                     ),
                 ),
                 'filePreviewDomainName' => array(
