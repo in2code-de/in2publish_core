@@ -85,6 +85,13 @@ class FileController extends AbstractController
      */
     public function publishFileAction($uid, $identifier, $storage)
     {
+        // Special case: The file was moved hence the identifier is a merged one
+        if (strpos($identifier, ',')) {
+            // Just take the local part of the file identifier.
+            // We need the local folder identifier to instantiate the folder record.
+            list($identifier) = GeneralUtility::trimExplode(',', $identifier);
+        }
+
         $record = $this
             ->objectManager
             ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
