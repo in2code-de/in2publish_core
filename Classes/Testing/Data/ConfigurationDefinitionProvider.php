@@ -87,6 +87,7 @@ class ConfigurationDefinitionProvider implements SingletonInterface
                         'reclaimSysFileEntries' => 'boolean',
                         'autoRepairFolderHash' => 'boolean',
                         'persistTemporaryIndexing' => 'boolean',
+                        'mergeSysFileByIdentifier' => 'boolean',
                     ),
                 ),
                 'filePreviewDomainName' => array(

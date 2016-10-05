@@ -21,6 +21,7 @@
 |factory.fal.reclaimSysFileEntries|bool|FALSE|_cropped. See example file_|
 |factory.fal.autoRepairFolderHash|bool|FALSE|_cropped. See example file_|
 |factory.fal.persistTemporaryIndexing|bool|FALSE|_cropped. See example file_|
+|factory.fal.mergeSysFileByIdentifier|bool|FALSE|_cropped. See example file_|
 |filePreviewDomainName.local|string|stage.publishing.localhost.de|Domain prefix for local instance. This is needed for the preview links.|
 |filePreviewDomainName.foreign|string|prod.publishing.localhost.de|Domain prefix for the foreign instance. This is needed for the preview links.|
 |log.logLevel|int|5|0:Emergency, 1:Alert, 2:Critical, 3:Error, 4:Warning, 5:Notice, 6:Info, 7:Debug (int) - All levels smaller or equal to this value will be stored.|
@@ -209,6 +210,19 @@ factory:
     # You can choose if you want in2publish_core to create indexes for files. (Otherwise they would only be created
     # by proper usage of the FAL API or browsing the file list backend module)
     persistTemporaryIndexing: FALSE
+
+    # [BETA]
+    # It is possible for sys_file records to have different UIDs on local and foreign while referencing the same file
+    # due to the indexing behaviour of FAL. If this setting is set to FALSE you might see duplicate file entries in the
+    # publish files module. Enable this feature to merge the sys_files by identifier before showing them.
+    #
+    # WARNING: This feature will overwrite the UID of the foreign sys_file record if there are no references in the
+    # table sys_file_reference. No other table or relation will be checked.
+    #
+    # IMPORTANT: If the UID of the foreign sys_file entry is already used in sys_file_reference this feature will not
+    # overwrite the foreign UID to prevent severe damage or missing images on the foreign's frontend.
+    # Hence it's mostly worth the risk and relatively stable
+    mergeSysFileByIdentifier: FALSE
 
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
 filePreviewDomainName:
