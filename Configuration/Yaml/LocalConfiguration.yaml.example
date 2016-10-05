@@ -119,7 +119,7 @@ factory:
   # Warning: Overview does not include everything (e.g. file records) and is not as robust as on default mode
   simpleOverviewAndAjax: FALSE
 
-  # only FAL related settings
+  # FAL related settings
   fal:
 
     # This setting will enable a sys_file lookup based on the file identifier of files which were found in the storage
@@ -129,12 +129,20 @@ factory:
     # Only in combination with factory.fal.reclaimSysFileEntries enabled.
     # While reclaimSysFileEntries is consuming some additional performance this setting autoRepairFolderHash
     # will automatically repair database entries and increase relation consistency
+    #
+    # WARNING: This feature changes sys_file entries on live without opt-in or asking for permission.
+    #   There is no preview of the changes which are going to be made.
+    #   Changes are persisted immediately before the publish file module is rendered.
     autoRepairFolderHash: FALSE
 
     # Given a file exists but not the sys_file entry, the sys_file information will be created on the fly.
     # This is done the same way as FAL would do it by indexing the file.
     # You can choose if you want in2publish_core to create indexes for files. (Otherwise they would only be created
     # by proper usage of the FAL API or browsing the file list backend module)
+    #
+    # WARNING: This feature changes sys_file entries on live without opt-in or asking for permission.
+    #   There is no preview of the changes which are going to be made.
+    #   Changes are persisted immediately before the publish file module is rendered.
     persistTemporaryIndexing: FALSE
 
     # [BETA]
@@ -143,12 +151,15 @@ factory:
     # publish files module. Enable this feature to merge the sys_files by identifier before showing them.
     #
     # WARNING: This feature will overwrite the UID of the foreign sys_file record if there are no references in the
-    # table sys_file_reference. No other table or relation will be checked.
+    #   table sys_file_reference. No other table or relation will be checked.
+    #   This feature changes sys_file_reference entries on live without opt-in or asking for permission.
+    #   There is no preview of the changes which are going to be made.
+    #   Changes are persisted immediately before the publish file module is rendered.
     #
     # IMPORTANT: If the UID of the foreign sys_file entry is already used in sys_file_reference this feature will not
-    # overwrite the foreign UID to prevent severe damage or missing images on the foreign's frontend.
-    # Hence it's mostly worth the risk and relatively stable
-    mergeSysFileByIdentifier: FALSE
+    #   overwrite the foreign UID to prevent severe damage or missing images on the foreign's frontend.
+    #   Hence it's mostly worth the risk and relatively stable.
+    mergeSysFileByIdentifier: TRUE
 
     # [BETA]
     #
@@ -158,9 +169,13 @@ factory:
     #   This feature is distributed WITHOUT ANY WARRANTY;
     #   without even the implied warranty of merchantability or fitness for a particular purpose.
     #
-    # Disables the mergeSysFileByIdentifier integrity protection to allow you to update a sys_file's uid on foreign
+    # Disables the mergeSysFileByIdentifier integrity protection to allow you to update a sys_file's UID on foreign
     # along with all associated sys_file_reference entries.
-    enableSysFileReferenceUpdate: FALSE
+    #
+    # WARNING: This feature changes sys_file_reference entries on live without opt-in or asking for permission.
+    #   There is no preview of the changes which are going to be made.
+    #   Changes are persisted immediately before the publish file module is rendered.
+    enableSysFileReferenceUpdate: TRUE
 
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
 filePreviewDomainName:
