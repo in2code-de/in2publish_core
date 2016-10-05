@@ -90,6 +90,8 @@ class PhysicalFilePublisher implements SingletonInterface
     }
 
     /**
+     * TODO: check if the sys_file_processedfile file will be published
+     *
      * Check both files and apply the appropriate action:
      *  * Delete the remote file
      *  * Publish the local file
