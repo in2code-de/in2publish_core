@@ -261,17 +261,18 @@ class FolderRecordFactory
                 // Short: Removes LDB but adds FDB instead. Results in OF
                 // The database record is technically added, but the file was removed. Since the file publishing is the
                 // main domain of this class the state of the file on disk has precedence
-                // remove all local properties to "ignore" the local database record
-                $reCheckFile->setLocalProperties(array());
                 // add foreign file information instead
                 $reCheckFile->setForeignProperties(
                     $this->getFileInformation(
                         $reCheckIdentifier,
                         $foreignDriver,
                         $localDatabase,
-                        $foreignDatabase
+                        $foreignDatabase,
+                        $reCheckFile->getLocalProperty('uid')
                     )
                 );
+                // remove all local properties to "ignore" the local database record
+                $reCheckFile->setLocalProperties(array());
                 $reCheckFile->addAdditionalProperty('foreignRecordExistsTemporary', true);
                 // TODO: trigger the following inside the record itself so it can't be forgotten
                 $reCheckFile->setDirtyProperties()->calculateState();
@@ -294,17 +295,18 @@ class FolderRecordFactory
             // main domain of this class the state of the file on disk has precedence
             if (RecordInterface::RECORD_STATE_DELETED === $reCheckFile->getState()) {
                 if (!$foreignDriver->fileExists($reCheckIdentifier)) {
-                    // remove all foreign properties to "ignore" the foreign database record
-                    $reCheckFile->setForeignProperties(array());
                     // add local file information instead
                     $reCheckFile->setLocalProperties(
                         $this->getFileInformation(
                             $reCheckIdentifier,
                             $localDriver,
                             $foreignDatabase,
-                            $localDatabase
+                            $localDatabase,
+                            $reCheckFile->getForeignProperty('uid')
                         )
                     );
+                    // remove all foreign properties to "ignore" the foreign database record
+                    $reCheckFile->setForeignProperties(array());
                     $reCheckFile->addAdditionalProperty('localRecordExistsTemporary', true);
                     // TODO: trigger the following inside the record itself so it can't be forgotten
                     $reCheckFile->setDirtyProperties()->calculateState();
