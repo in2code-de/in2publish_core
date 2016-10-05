@@ -28,7 +28,6 @@ namespace In2code\In2publishCore\Controller;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
