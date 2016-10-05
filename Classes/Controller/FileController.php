@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -64,32 +65,26 @@ class FileController extends AbstractController
 
         if ($success) {
             $this->addFlashMessage(
-                LocalizationUtility::translate(
-                    'file_publishing.folder',
-                    'in2publish_core',
-                    array($identifier)
-                ),
+                LocalizationUtility::translate('file_publishing.folder', 'in2publish_core', array($identifier)),
                 LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
             );
         } else {
             $this->addFlashMessage(
-                LocalizationUtility::translate(
-                    'file_publishing.failure.folder',
-                    'in2publish_core',
-                    array($identifier)
-                ),
+                LocalizationUtility::translate('file_publishing.failure.folder', 'in2publish_core', array($identifier)),
                 LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
                 AbstractMessage::ERROR
             );
         }
+
         $this->redirect('index');
     }
 
     /**
+     * @param int $uid
      * @param string $identifier
      * @param int $storage
      */
-    public function publishFileAction($identifier, $storage)
+    public function publishFileAction($uid, $identifier, $storage)
     {
         $record = $this
             ->objectManager
@@ -98,22 +93,20 @@ class FileController extends AbstractController
 
         $relatedRecords = $record->getRelatedRecordByTableAndProperty('sys_file', 'identifier', $identifier);
 
-        if (count($relatedRecords) !== 1) {
-            throw new \RuntimeException(
-                'Did not find exactly one record that matches the publishing arguments',
-                1475588793
-            );
+        if (0 === ($recordsCount = count($relatedRecords))) {
+            throw new \RuntimeException('Did not find any record that matches the publishing arguments', 1475656572);
+        } elseif (1 === $recordsCount) {
+            $relatedRecord = reset($relatedRecords);
+        } elseif (isset($relatedRecords[$uid])) {
+            $relatedRecord = $relatedRecords[$uid];
+        } else {
+            throw new \RuntimeException('Did not find an exact record match for the given arguments', 1475588793);
         }
-        $relatedRecord = reset($relatedRecords);
 
         CommonRepository::getDefaultInstance('sys_file')->publishRecordRecursive($relatedRecord);
 
         $this->addFlashMessage(
-            LocalizationUtility::translate(
-                'file_publishing.file',
-                'in2publish_core',
-                array($identifier)
-            ),
+            LocalizationUtility::translate('file_publishing.file', 'in2publish_core', array($identifier)),
             LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
         );
 
