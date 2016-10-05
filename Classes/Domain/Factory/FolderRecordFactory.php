@@ -533,10 +533,8 @@ class FolderRecordFactory
                     continue;
                 }
 
-                if ($file->hasAdditionalProperty('foreignRecordExistsTemporary')) {
-                    if (true === $file->hasAdditionalProperty('foreignRecordExistsTemporary')) {
-                        continue;
-                    }
+                if (true === $file->getAdditionalProperty('foreignRecordExistsTemporary')) {
+                    continue;
                 }
 
                 $identifierList[$file->getForeignProperty('identifier')][$file->getIdentifier()] = $file;
