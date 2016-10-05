@@ -170,18 +170,39 @@ class FolderRecordFactory
         $folderHash = $localFolder->getHashedIdentifier();
         $files = $commonRepository->findByProperty('folder_hash', $folderHash);
 
-        // list all identifiers of database entry files in the current folder
-        $identifierList = $this->buildIdentifiersList($files);
+        // Builds a list of all file identifiers on local and foreign that are indexed in the database,
+        // so files only existing on disk can be determined by diff-ing against this list
+        $localIndexedIdentifiers = array();
+        $foreignIndexedIdentifiers = array();
+        foreach ($files as $file) {
+            if ($file->hasLocalProperty('identifier')) {
+                $localIndexedIdentifiers[$file->getIdentifier()] = $file->getLocalProperty('identifier');
+            }
+            if ($file->hasForeignProperty('identifier')) {
+                $foreignIndexedIdentifiers[$file->getIdentifier()] = $file->getForeignProperty('identifier');
+            }
+        }
 
         // get all file identifiers of files actually existing in the current folder but not in the database
         $localFileIdentifiers = array_values($localDriver->getFilesInFolder($identifier));
 
         // find all files which are not indexed (don't care of files in DB but not in FS)
-        $onlyLocalFileSystemFileIdentifiers = array_diff($localFileIdentifiers, $identifierList);
+        // diff against both local and foreign indexed files. This will identify all files
+        // that are not represented by a sys_file on any side.
+        // local files on disk indexed on foreign are handled by LFFD
+        $onlyLocalFileSystemFileIdentifiers = array_diff(
+            $localFileIdentifiers,
+            $localIndexedIdentifiers,
+            $foreignIndexedIdentifiers
+        );
 
         if ($foreignDriver->folderExists($identifier)) {
             $foreignFileIdentifiers = array_values($foreignDriver->getFilesInFolder($identifier));
-            $onlyForeignFileSystemFileIdentifiers = array_diff($foreignFileIdentifiers, $identifierList);
+            $onlyForeignFileSystemFileIdentifiers = array_diff(
+                $foreignFileIdentifiers,
+                $localIndexedIdentifiers,
+                $foreignIndexedIdentifiers
+            );
         } else {
             $foreignFileIdentifiers = array();
             $onlyForeignFileSystemFileIdentifiers = array();
@@ -193,7 +214,10 @@ class FolderRecordFactory
             $onlyForeignFileSystemFileIdentifiers
         );
         // Remove OF case files from the other file identifier lists
-        $onlyLocalFileSystemFileIdentifiers = array_diff($onlyLocalFileSystemFileIdentifiers, $onlyFileSystemEntries);
+        $onlyLocalFileSystemFileIdentifiers = array_diff(
+            $onlyLocalFileSystemFileIdentifiers,
+            $onlyFileSystemEntries
+        );
         $onlyForeignFileSystemFileIdentifiers = array_diff(
             $onlyForeignFileSystemFileIdentifiers,
             $onlyFileSystemEntries
@@ -241,11 +265,14 @@ class FolderRecordFactory
             throw new \RuntimeException('Failed to convert all disk-only files to records', 1475253143);
         }
 
-        // determine file identifier of files which are found in at least one database and at least on one disk
-        $foreignFileRecordsToRecheck = array_intersect($identifierList, $foreignFileIdentifiers);
-        $localFileRecordsToRecheck = array_intersect($identifierList, $localFileIdentifiers);
+        // Determine file identifier of files which are found in one database and the opposite disk.
+        // Files which exist on one side on disk and in the database are already filtered.
+        // This builds the list for the LFFD and LDFF case
+        $foreignFileRecordsToRecheck = array_intersect($localIndexedIdentifiers, $foreignFileIdentifiers);
+        $localFileRecordsToRecheck = array_intersect($foreignIndexedIdentifiers, $localFileIdentifiers);
 
         // determine identifiers on both local ond foreign disk and at least one database
+        // This builds the list for the NFDB and NLDB case
         $fileIdentifiersOnBothSides = array_intersect($localFileRecordsToRecheck, $foreignFileRecordsToRecheck);
 
         // remove identifier entries from the arrays when the file was found on both sides.
@@ -949,41 +976,6 @@ class FolderRecordFactory
             );
         }
         return $subFolders;
-    }
-
-    /**
-     * @param Record[] $files
-     * @return array of file identifiers in the current folder taken from the database
-     * @throws \Exception
-     */
-    protected function buildIdentifiersList(array $files)
-    {
-        $identifierList = array();
-        foreach ($files as $file) {
-            $localIdentifier = null;
-            if ($file->hasLocalProperty('identifier')) {
-                $localIdentifier = $file->getLocalProperty('identifier');
-            }
-
-            $foreignIdentifier = null;
-            if ($file->hasForeignProperty('identifier')) {
-                $foreignIdentifier = $file->getForeignProperty('identifier');
-            }
-
-            if (null === $localIdentifier && null === $foreignIdentifier) {
-                throw new \LogicException(
-                    'A sys_file record must have at least a local or foreign identifier',
-                    1475077830
-                );
-            }
-
-            if (null !== $localIdentifier && $localIdentifier !== $foreignIdentifier && null !== $foreignIdentifier) {
-                throw new \Exception('DEVELOPMENT EXCEPTION: Renamed? ' . $localIdentifier . ' ' . $foreignIdentifier);
-            }
-
-            $identifierList[$file->getIdentifier()] = null !== $localIdentifier ? $localIdentifier : $foreignIdentifier;
-        }
-        return $identifierList;
     }
 
     /**
