@@ -1607,4 +1607,47 @@ class RecordTest extends UnitTestCase
 
         $stub->setPropertiesBySideIdentifier('foo', []);
     }
+
+    /**
+     * @covers ::getPropertiesBySideIdentifier
+     * @depends testGetLocalPropertiesReturnsAllLocalProperties
+     */
+    public function getPropertiesBySideIdentifierReturnsLocalPropertiesForLocalSide()
+    {
+        $record = $this->getRecordStub([]);
+
+        $properties = ['foo' => 'bar'];
+        $record->__construct('pages', $properties, [], [], []);
+
+        $this->assertSame($properties, $record->getPropertiesBySideIdentifier('local'));
+    }
+
+    /**
+     * @covers ::getPropertiesBySideIdentifier
+     * @depends testGetForeignPropertiesReturnsAllForeignProperties
+     */
+    public function getPropertiesBySideIdentifierReturnsForeignPropertiesForForeignSide()
+    {
+        $record = $this->getRecordStub([]);
+
+        $properties = ['foo' => 'bar'];
+        $record->__construct('pages', [], $properties, [], []);
+
+        $this->assertSame($properties, $record->getPropertiesBySideIdentifier('foreign'));
+    }
+
+    /**
+     * @covers ::getPropertiesBySideIdentifier
+     */
+    public function getPropertiesBySideIdentifierThrowsExceptionIfSideIsUndefined()
+    {
+        $stub = $this->getRecordStub([]);
+        $stub->__construct('pages', [], [], [], []);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionCode(1475858502);
+        $this->expectExceptionMessage('Can not get Properties from undefined side "foo"');
+
+        $stub->getPropertiesBySideIdentifier('foo');
+    }
 }

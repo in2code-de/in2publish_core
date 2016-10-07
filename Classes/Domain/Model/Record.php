@@ -339,6 +339,24 @@ class Record implements RecordInterface
     }
 
     /**
+     * @param string $side
+     * @return array
+     */
+    public function getPropertiesBySideIdentifier($side)
+    {
+        switch ($side) {
+            case 'local':
+                return $this->getLocalProperties();
+                break;
+            case 'foreign':
+                return $this->getForeignProperties();
+                break;
+            default:
+                throw new \LogicException('Can not get Properties from undefined side "' . $side . '"', 1475858502);
+        }
+    }
+
+    /**
      * @param array $foreignProperties
      * @return RecordInterface
      */
