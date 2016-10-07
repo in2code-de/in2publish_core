@@ -138,53 +138,7 @@ class PhysicalFilePublisher implements SingletonInterface
             // which comprises all information, given it was created by the FolderRecordFactory
             // if that's the case we can rely on the records state to decide on the action to take.
             if (true === $record->getAdditionalProperty('isAuthoritative')) {
-                $filePublisherService = GeneralUtility::makeInstance(
-                    'In2code\\In2publishCore\\Domain\\Service\\Publishing\\FilePublisherService'
-                );
-
-                switch ($record->getState()) {
-                    case RecordInterface::RECORD_STATE_DELETED:
-                        if (true === $result = $filePublisherService->removeForeignFile($storage, $identifier)) {
-                            $this->logger->info('Removed remote file', $data);
-                        } else {
-                            $this->logger->error('Failed to remove remote file', $data);
-                        }
-                        break;
-                    case RecordInterface::RECORD_STATE_ADDED:
-                        if (true === $result = $filePublisherService->addFileToForeign($storage, $identifier)) {
-                            $this->logger->info('Added file to foreign', $data);
-                        } else {
-                            $this->logger->error('Failed to add file to foreign', $data);
-                        }
-                        break;
-                    case RecordInterface::RECORD_STATE_CHANGED:
-                        if (true === $result = $filePublisherService->updateFileOnForeign($storage, $identifier)) {
-                            $this->logger->info('Updated file on foreign', $data);
-                        } else {
-                            $this->logger->error('Failed to update file to foreign', $data);
-                        }
-                        break;
-                    case RecordInterface::RECORD_STATE_MOVED:
-                        $old = $record->getForeignProperty('identifier');
-                        $new = basename($record->getLocalProperty('identifier'));
-                        if (true === $result = $filePublisherService->renameForeignFile($storage, $old, $new)) {
-                            $this->logger->info('Updated file on foreign', $data);
-                        } else {
-                            $this->logger->error('Failed to update file to foreign', $data);
-                        }
-                        break;
-                    case RecordInterface::RECORD_STATE_UNCHANGED:
-                        // Do nothing, because there are definitely no changes
-                        // between the files since it's state is authoritative
-                        // and this case is not reachable by normal operations
-                        $result = true;
-                        break;
-                    default:
-                        throw new \Exception(
-                            'DEVELOPMENT EXCEPTION: implement publish case for record state ' . $record->getState(),
-                            1475677190
-                        );
-                }
+                $result = $this->publishFullFalSupportedRecord($record, $storage, $identifier, $data);
             } else {
                 // we check the two identities because of probably broken relation
                 $localIdentifier = $record->getLocalProperty('identifier');
@@ -501,5 +455,58 @@ class PhysicalFilePublisher implements SingletonInterface
             $identifier = $info['folder'] . '/' . $identifier;
         }
         return sprintf('%d:%s', $info['storage'], $identifier);
+    }
+
+    /**
+     * @param Record $record
+     * @param $storage
+     * @param $identifier
+     * @param $data
+     * @return bool
+     * @throws \Exception
+     */
+    protected function publishFullFalSupportedRecord(Record $record, $storage, $identifier, $data)
+    {
+        $filePublisherService = GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Domain\\Service\\Publishing\\FilePublisherService'
+        );
+
+        switch ($record->getState()) {
+            case RecordInterface::RECORD_STATE_DELETED:
+                if (true === $result = $filePublisherService->removeForeignFile($storage, $identifier)) {
+                    $this->logger->info('Removed remote file', $data);
+                } else {
+                    $this->logger->error('Failed to remove remote file', $data);
+                }
+                break;
+            case RecordInterface::RECORD_STATE_ADDED:
+                if (true === $result = $filePublisherService->addFileToForeign($storage, $identifier)) {
+                    $this->logger->info('Added file to foreign', $data);
+                } else {
+                    $this->logger->error('Failed to add file to foreign', $data);
+                }
+                break;
+            case RecordInterface::RECORD_STATE_CHANGED:
+                if (true === $result = $filePublisherService->updateFileOnForeign($storage, $identifier)) {
+                    $this->logger->info('Updated file on foreign', $data);
+                } else {
+                    $this->logger->error('Failed to update file to foreign', $data);
+                }
+                break;
+            case RecordInterface::RECORD_STATE_MOVED:
+                $old = $record->getForeignProperty('identifier');
+                $new = basename($record->getLocalProperty('identifier'));
+                if (true === $result = $filePublisherService->renameForeignFile($storage, $old, $new)) {
+                    $this->logger->info('Updated file on foreign', $data);
+                } else {
+                    $this->logger->error('Failed to update file to foreign', $data);
+                }
+                break;
+            default:
+                // this state includes RecordInterface::RECORD_STATE_UNCHANGED
+                // and any impossible state, which will be ignored
+                $result = true;
+        }
+        return $result;
     }
 }
