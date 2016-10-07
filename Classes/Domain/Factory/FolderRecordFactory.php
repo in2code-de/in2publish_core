@@ -179,38 +179,7 @@ class FolderRecordFactory
             'foreign' => $this->getFilesIdentifiersInFolder($identifier, $foreignDriver),
         );
 
-        $onlyFileSystemIdentifiers = array();
-
-        $onlyFileSystemIdentifiers['foreign'] = array_diff(
-            $diskIdentifiers['foreign'],
-            $indexedIdentifiers['local'],
-            $indexedIdentifiers['foreign']
-        );
-
-        // find all files which are not indexed (don't care of files in DB but not in FS)
-        // diff against both local and foreign indexed files. This will identify all files
-        // that are not represented by a sys_file on any side.
-        // local files on disk indexed on foreign are handled by LFFD
-        $onlyFileSystemIdentifiers['local'] = array_diff(
-            $diskIdentifiers['local'],
-            $indexedIdentifiers['local'],
-            $indexedIdentifiers['foreign']
-        );
-
-        // Move files existing on both disks but not in any database to a third array.
-        $onlyFileSystemIdentifiers['both'] = array_intersect(
-            $onlyFileSystemIdentifiers['local'],
-            $onlyFileSystemIdentifiers['foreign']
-        );
-        // Remove OF case files from the other file identifier lists
-        $onlyFileSystemIdentifiers['local'] = array_diff(
-            $onlyFileSystemIdentifiers['local'],
-            $onlyFileSystemIdentifiers['both']
-        );
-        $onlyFileSystemIdentifiers['foreign'] = array_diff(
-            $onlyFileSystemIdentifiers['foreign'],
-            $onlyFileSystemIdentifiers['both']
-        );
+        $onlyFileSystemIdentifiers = $this->determineIdentifiersOnlyOnDisk($diskIdentifiers, $indexedIdentifiers);
 
         // TODO determine if this has to be done before or after the reclaimSysFileEntries feature
         // PRE-FIX for [7] OFS case.
@@ -1250,5 +1219,47 @@ class FolderRecordFactory
             $identifierList = array();
         }
         return $identifierList;
+    }
+
+    /**
+     * @param array $diskIdentifiers
+     * @param array $indexedIdentifiers
+     * @return array
+     */
+    protected function determineIdentifiersOnlyOnDisk(array $diskIdentifiers, array $indexedIdentifiers)
+    {
+        $onlyDiskIdentifiers = array();
+
+        // find all files which are not indexed (don't care of files in DB but not in FS)
+        // diff against both local and foreign indexed files. This will identify all files
+        // that are not represented by a sys_file on any side.
+        // local files on disk indexed on foreign are handled by LFFD
+        $onlyDiskIdentifiers['local'] = array_diff(
+            $diskIdentifiers['local'],
+            $indexedIdentifiers['local'],
+            $indexedIdentifiers['foreign']
+        );
+
+        // get all disk identifiers not occurring in any of the database identifiers
+        $onlyDiskIdentifiers['foreign'] = array_diff(
+            $diskIdentifiers['foreign'],
+            $indexedIdentifiers['local'],
+            $indexedIdentifiers['foreign']
+        );
+
+        // Move files existing on both disks but not in any database to a third array.
+        $onlyDiskIdentifiers['both'] = array_intersect(
+            $onlyDiskIdentifiers['local'],
+            $onlyDiskIdentifiers['foreign']
+        );
+        $onlyDiskIdentifiers['local'] = array_diff(
+            $onlyDiskIdentifiers['local'],
+            $onlyDiskIdentifiers['both']
+        );
+        $onlyDiskIdentifiers['foreign'] = array_diff(
+            $onlyDiskIdentifiers['foreign'],
+            $onlyDiskIdentifiers['both']
+        );
+        return $onlyDiskIdentifiers;
     }
 }
