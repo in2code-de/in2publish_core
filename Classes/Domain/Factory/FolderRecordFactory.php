@@ -173,14 +173,14 @@ class FolderRecordFactory
 
         // Builds a list of all file identifiers on local and foreign that are indexed in the database,
         // so files only existing on disk can be determined by diff-ing against this list
-        $localIndexedIdentifiers = array();
-        $foreignIndexedIdentifiers = array();
+        $indexedIdentifiers = array();
+
         foreach ($files as $file) {
             if ($file->hasLocalProperty('identifier')) {
-                $localIndexedIdentifiers[$file->getIdentifier()] = $file->getLocalProperty('identifier');
+                $indexedIdentifiers['local'][$file->getIdentifier()] = $file->getLocalProperty('identifier');
             }
             if ($file->hasForeignProperty('identifier')) {
-                $foreignIndexedIdentifiers[$file->getIdentifier()] = $file->getForeignProperty('identifier');
+                $indexedIdentifiers['foreign'][$file->getIdentifier()] = $file->getForeignProperty('identifier');
             }
         }
 
@@ -193,16 +193,16 @@ class FolderRecordFactory
         // local files on disk indexed on foreign are handled by LFFD
         $onlyLocalFileSystemFileIdentifiers = array_diff(
             $localFileIdentifiers,
-            $localIndexedIdentifiers,
-            $foreignIndexedIdentifiers
+            $indexedIdentifiers['local'],
+            $indexedIdentifiers['foreign']
         );
 
         if ($foreignDriver->folderExists($identifier)) {
             $foreignFileIdentifiers = array_values($foreignDriver->getFilesInFolder($identifier));
             $onlyForeignFileSystemFileIdentifiers = array_diff(
                 $foreignFileIdentifiers,
-                $localIndexedIdentifiers,
-                $foreignIndexedIdentifiers
+                $indexedIdentifiers['local'],
+                $indexedIdentifiers['foreign']
             );
         } else {
             $foreignFileIdentifiers = array();
@@ -269,9 +269,10 @@ class FolderRecordFactory
         // Determine file identifier of files which are found in one database and the opposite disk.
         // Files which exist on one side on disk and in the database are already filtered.
         // This builds the list for the LFFD and LDFF case
-        $foreignFileRecordsToRecheck = array_intersect($localIndexedIdentifiers, $foreignFileIdentifiers);
-        $localFileRecordsToRecheck = array_intersect($foreignIndexedIdentifiers, $localFileIdentifiers);
+        $foreignFileRecordsToRecheck = array_intersect($indexedIdentifiers['local'], $foreignFileIdentifiers);
+        $localFileRecordsToRecheck = array_intersect($indexedIdentifiers['foreign'], $localFileIdentifiers);
 
+        unset($indexedIdentifiers);
         unset($localFileIdentifiers);
         unset($foreignFileIdentifiers);
 
