@@ -174,16 +174,14 @@ class FolderRecordFactory
         // get all occurring identifiers indexed by side in one array
         $indexedIdentifiers = $this->buildIndexedIdentifiersList($files);
 
-        $foreignFileIdentifiers = $this->getForeignFileIdentifiers($identifier, $foreignDriver);
+        $localFileIdentifiers = $this->getFilesIdentifiersInFolder($identifier, $localDriver);
+        $foreignFileIdentifiers = $this->getFilesIdentifiersInFolder($identifier, $foreignDriver);
 
         $onlyForeignFileSystemFileIdentifiers = array_diff(
             $foreignFileIdentifiers,
             $indexedIdentifiers['local'],
             $indexedIdentifiers['foreign']
         );
-
-        // get all file identifiers of files actually existing in the current folder but not in the database
-        $localFileIdentifiers = array_values($localDriver->getFilesInFolder($identifier));
 
         // find all files which are not indexed (don't care of files in DB but not in FS)
         // diff against both local and foreign indexed files. This will identify all files
@@ -1240,13 +1238,13 @@ class FolderRecordFactory
 
     /**
      * @param string $identifier
-     * @param DriverInterface $foreignDriver
+     * @param DriverInterface $driver
      * @return array
      */
-    protected function getForeignFileIdentifiers($identifier, DriverInterface $foreignDriver)
+    protected function getFilesIdentifiersInFolder($identifier, DriverInterface $driver)
     {
-        if ($foreignDriver->folderExists($identifier)) {
-            $identifierList = array_values($foreignDriver->getFilesInFolder($identifier));
+        if ($driver->folderExists($identifier)) {
+            $identifierList = array_values($driver->getFilesInFolder($identifier));
         } else {
             $identifierList = array();
         }
