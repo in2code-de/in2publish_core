@@ -108,10 +108,7 @@ class FolderRecordFactory
 
         // fetch all information regarding the folder on this side
         $identifier = $localFolder->getIdentifier();
-        $localFolderInfo = $localDriver->getFolderInfoByIdentifier($identifier);
-        // add the "uid" property, which is largely exclusive set for Record::isRecordRepresentByProperties
-        // but additionally a good place to store the "combined identifier"
-        $localFolderInfo['uid'] = $this->createCombinedIdentifier($localFolderInfo);
+        $localFolderInfo = $this->getFolderInfoByIdentifierAndDriver($identifier, $localDriver);
 
         // retrieve all local sub folder identifiers (no recursion! no database!)
         // these are not Record instances, yet!
@@ -120,8 +117,7 @@ class FolderRecordFactory
         // do the same on foreign, if the currently selected folder exists on foreign
         if ($foreignDriver->folderExists($localFolder->getIdentifier())) {
             // as you can see these lines are the same as above, the driver is just another one
-            $foreignFolderInfo = $foreignDriver->getFolderInfoByIdentifier($localFolder->getIdentifier());
-            $foreignFolderInfo['uid'] = $this->createCombinedIdentifier($foreignFolderInfo);
+            $foreignFolderInfo = $this->getFolderInfoByIdentifierAndDriver($identifier, $foreignDriver);
             $remoteSubFolders = $foreignDriver->getFoldersInFolder($identifier);
         } else {
             // otherwise just set "empty" values to flag the folder "record" as non existent
@@ -1203,5 +1199,20 @@ class FolderRecordFactory
             $file->addAdditionalProperty('isAuthoritative', true);
         }
         return $files;
+    }
+
+    /**
+     * @param string $identifier
+     * @param DriverInterface $localDriver
+     * @return array
+     */
+    protected function getFolderInfoByIdentifierAndDriver($identifier, DriverInterface $localDriver)
+    {
+        // fetch all information regarding the folder
+        $localFolderInfo = $localDriver->getFolderInfoByIdentifier($identifier);
+        // add the "uid" property, which is largely exclusive set for Record::isRecordRepresentByProperties
+        // but additionally a good place to store the "combined identifier"
+        $localFolderInfo['uid'] = $this->createCombinedIdentifier($localFolderInfo);
+        return $localFolderInfo;
     }
 }
