@@ -377,17 +377,13 @@ class FolderRecordFactory
                 // PRE-FIX for the [10] NFDB case
                 // The file has been found on both file systems but only in the local database.
                 // create a temporary counterpart for the local database entry, so we end up in [14] ALL
-                $reCheckFile->setForeignProperties(
-                    $this->getFileInformation(
-                        $fileIdentifierOnBothSides,
-                        $foreignDriver,
-                        $localDatabase,
-                        $foreignDatabase,
-                        $reCheckFile->getIdentifier()
-                    )
+                $this->createAndAddTemporaryForeignIndexInformationToRecord(
+                    $reCheckFile,
+                    $fileIdentifierOnBothSides,
+                    $foreignDriver,
+                    $localDatabase,
+                    $foreignDatabase
                 );
-                $reCheckFile->addAdditionalProperty('foreignRecordExistsTemporary', true);
-                $reCheckFile->setDirtyProperties()->calculateState();
             } elseif (RecordInterface::RECORD_STATE_DELETED === $recordState) {
                 // PRE-FIX for [13] NLDB
                 // The file has been found on both file systems but not in the local database.
