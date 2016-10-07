@@ -179,13 +179,13 @@ class FolderRecordFactory
             'foreign' => $this->getFilesIdentifiersInFolder($identifier, $foreignDriver),
         );
 
-        $onlyFileSystemIdentifiers = $this->determineIdentifiersOnlyOnDisk($diskIdentifiers, $indexedIdentifiers);
+        $onlyDiskIdentifiers = $this->determineIdentifiersOnlyOnDisk($diskIdentifiers, $indexedIdentifiers);
 
         // TODO determine if this has to be done before or after the reclaimSysFileEntries feature
         // PRE-FIX for [7] OFS case.
-        if (!empty($onlyFileSystemIdentifiers['both'])) {
+        if (!empty($onlyDiskIdentifiers['both'])) {
             // iterate through all files found on the local and foreign disk but not in the database
-            foreach ($onlyFileSystemIdentifiers['both'] as $index => $fileSystemEntryIdentifier) {
+            foreach ($onlyDiskIdentifiers['both'] as $index => $fileSystemEntryIdentifier) {
                 static $tcaService = null;
                 if (null === $tcaService) {
                     $tcaService = GeneralUtility::makeInstance(
@@ -215,11 +215,11 @@ class FolderRecordFactory
                     array('localRecordExistsTemporary' => true, 'foreignRecordExistsTemporary' => true)
                 );
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
-                unset($onlyFileSystemIdentifiers['both'][$index]);
+                unset($onlyDiskIdentifiers['both'][$index]);
             }
         }
 
-        if (!empty($onlyFileSystemIdentifiers['both'])) {
+        if (!empty($onlyDiskIdentifiers['both'])) {
             throw new \RuntimeException('Failed to convert all disk-only files to records', 1475253143);
         }
 
@@ -312,7 +312,7 @@ class FolderRecordFactory
             // the chance is vanishing low to find a file by its identifier in the database
             // because they should have been found by the folder hash already, but i'm a
             // generous developer and allow FAL to completely fuck up the folder hash
-            foreach ($onlyFileSystemIdentifiers['local'] as $index => $localFileSystemFileIdentifier) {
+            foreach ($onlyDiskIdentifiers['local'] as $index => $localFileSystemFileIdentifier) {
                 $disconnectedSysFiles = $commonRepository->findByProperty('identifier', $localFileSystemFileIdentifier);
                 // if a sys_file record could be reclaimed use it
                 if (!empty($disconnectedSysFiles)) {
@@ -343,11 +343,11 @@ class FolderRecordFactory
                     }
                     // remove the identifier from the list of missing database record identifiers
                     // so we can deal with them later
-                    unset($onlyFileSystemIdentifiers['local'][$index]);
+                    unset($onlyDiskIdentifiers['local'][$index]);
                 }
             }
 
-            foreach ($onlyFileSystemIdentifiers['foreign'] as $index => $foreignFileSystemFileIdentifier) {
+            foreach ($onlyDiskIdentifiers['foreign'] as $index => $foreignFileSystemFileIdentifier) {
                 $disconnectedSysFiles = $commonRepository->findByProperty(
                     'identifier',
                     $foreignFileSystemFileIdentifier
@@ -381,16 +381,16 @@ class FolderRecordFactory
                     }
                     // remove the identifier from the list of missing database record identifiers
                     // so we can deal with them later
-                    unset($onlyFileSystemIdentifiers['foreign'][$index]);
+                    unset($onlyDiskIdentifiers['foreign'][$index]);
                 }
             }
         }
 
         // PRE-FIX for the [1] OLFS case
         // create temporary sys_file entries for all files on the local disk
-        if (!empty($onlyFileSystemIdentifiers['local'])) {
+        if (!empty($onlyDiskIdentifiers['local'])) {
             // iterate through all files found on disk but not in the database
-            foreach ($onlyFileSystemIdentifiers['local'] as $index => $localFileSystemFileIdentifier) {
+            foreach ($onlyDiskIdentifiers['local'] as $index => $localFileSystemFileIdentifier) {
                 static $tcaService = null;
                 if (null === $tcaService) {
                     $tcaService = GeneralUtility::makeInstance(
@@ -415,19 +415,19 @@ class FolderRecordFactory
                     array('localRecordExistsTemporary' => true)
                 );
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
-                unset($onlyFileSystemIdentifiers['local'][$index]);
+                unset($onlyDiskIdentifiers['local'][$index]);
             }
         }
 
-        if (!empty($onlyFileSystemIdentifiers['local'])) {
+        if (!empty($onlyDiskIdentifiers['local'])) {
             throw new \RuntimeException('Failed to convert all local files from disk to records', 1475177184);
         }
 
         // PRE-FIX for the [2] OFFS case
         // create temporary sys_file entries for all files on the foreign disk
-        if (!empty($onlyFileSystemIdentifiers['foreign'])) {
+        if (!empty($onlyDiskIdentifiers['foreign'])) {
             // iterate through all files found on disc but not in the database
-            foreach ($onlyFileSystemIdentifiers['foreign'] as $index => $foreignFileSystemFileIdentifier) {
+            foreach ($onlyDiskIdentifiers['foreign'] as $index => $foreignFileSystemFileIdentifier) {
                 static $tcaService = null;
                 if (null === $tcaService) {
                     $tcaService = GeneralUtility::makeInstance(
@@ -452,15 +452,15 @@ class FolderRecordFactory
                     array('foreignRecordExistsTemporary' => true)
                 );
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
-                unset($onlyFileSystemIdentifiers['foreign'][$index]);
+                unset($onlyDiskIdentifiers['foreign'][$index]);
             }
         }
 
-        if (!empty($onlyFileSystemIdentifiers['foreign'])) {
+        if (!empty($onlyDiskIdentifiers['foreign'])) {
             throw new \RuntimeException('Failed to convert all foreign files from disk to records', 1475236166);
         }
 
-        unset($onlyFileSystemIdentifiers);
+        unset($onlyDiskIdentifiers);
 
         // PRE-FIXES
         foreach ($fileIdentifiersOnBothSides as $index => $fileIdentifierOnBothSides) {
