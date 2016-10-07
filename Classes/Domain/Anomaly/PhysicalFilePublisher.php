@@ -181,7 +181,6 @@ class PhysicalFilePublisher implements SingletonInterface
                         $result = true;
                         break;
                     default:
-                        $result = false;
                         throw new \Exception(
                             'DEVELOPMENT EXCEPTION: implement publish case for record state ' . $record->getState(),
                             1475677190
