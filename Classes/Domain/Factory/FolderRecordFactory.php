@@ -171,18 +171,8 @@ class FolderRecordFactory
         // (be sure to only use FAL methods for hashing)
         $files = $commonRepository->findByProperty('folder_hash', $hashedIdentifier);
 
-        // Builds a list of all file identifiers on local and foreign that are indexed in the database,
-        // so files only existing on disk can be determined by diff-ing against this list
-        $indexedIdentifiers = array();
-
-        foreach ($files as $file) {
-            if ($file->hasLocalProperty('identifier')) {
-                $indexedIdentifiers['local'][$file->getIdentifier()] = $file->getLocalProperty('identifier');
-            }
-            if ($file->hasForeignProperty('identifier')) {
-                $indexedIdentifiers['foreign'][$file->getIdentifier()] = $file->getForeignProperty('identifier');
-            }
-        }
+        // get all occurring identifiers indexed by side in one array
+        $indexedIdentifiers = $this->buildIndexedIdentifiersList($files);
 
         // get all file identifiers of files actually existing in the current folder but not in the database
         $localFileIdentifiers = array_values($localDriver->getFilesInFolder($identifier));
@@ -1225,5 +1215,30 @@ class FolderRecordFactory
         // but additionally a good place to store the "combined identifier"
         $localFolderInfo['uid'] = $this->createCombinedIdentifier($localFolderInfo);
         return $localFolderInfo;
+    }
+
+    /**
+     * Builds a list of all file identifiers on local and foreign that are indexed in the database,
+     * so files only existing on disk can be determined by diff-ing against this list
+     *
+     * @param Record[] $files
+     * @return array
+     */
+    protected function buildIndexedIdentifiersList(array $files)
+    {
+        $indexedIdentifiers = array(
+            'local' => array(),
+            'foreign' => array(),
+        );
+
+        foreach ($files as $file) {
+            if ($file->hasLocalProperty('identifier')) {
+                $indexedIdentifiers['local'][$file->getIdentifier()] = $file->getLocalProperty('identifier');
+            }
+            if ($file->hasForeignProperty('identifier')) {
+                $indexedIdentifiers['foreign'][$file->getIdentifier()] = $file->getForeignProperty('identifier');
+            }
+        }
+        return $indexedIdentifiers;
     }
 }
