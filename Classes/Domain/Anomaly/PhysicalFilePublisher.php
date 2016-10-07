@@ -300,11 +300,12 @@ class PhysicalFilePublisher implements SingletonInterface
                                         $result = true;
                                     } else {
                                         $this->logger->error('Failed to rename remote file', array($logData));
+                                        $result = false;
                                     }
                                 } else {
                                     $this->logger->error('Failed to create targeted remote folder', array($logData));
+                                    $result = false;
                                 }
-                                $result = false;
                             }
                         } else {
                             // The contents do not match but the file names do
