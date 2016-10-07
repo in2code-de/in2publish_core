@@ -696,206 +696,7 @@ class FolderRecordFactory
                 }
             }
         }
-
-        /*
-         * Filtering:
-         *  Notation:
-         *      FFS = Foreign File System
-         *      FDB = Foreign Database
-         *      LFS = Local File System
-         *      LDB = Local Database
-         *  These filters files and entries we do not want to consider, because they do not represent an actual file.
-         *  Prefer $localDriver over $foreignDriver where applicable, because it will be faster.
-         */
-        foreach ($files as $index => $file) {
-            $fdb = $file->foreignRecordExists();
-            $ldb = $file->localRecordExists();
-
-            if ($file->hasLocalProperty('identifier')) {
-                $localFileIdentifier = $file->getLocalProperty('identifier');
-            } else {
-                $localFileIdentifier = $file->getForeignProperty('identifier');
-            }
-            if ($file->hasForeignProperty('identifier')) {
-                $foreignFileIdentifier = $file->getForeignProperty('identifier');
-            } else {
-                $foreignFileIdentifier = $file->getLocalProperty('identifier');
-            }
-
-            $lfs = $localDriver->fileExists($localFileIdentifier);
-            $ffs = $foreignDriver->fileExists($foreignFileIdentifier);
-
-            if ($ldb && !$lfs && !$ffs && !$fdb) {
-                // CODE: [0] OLDB
-                // The file exists only in the local database. Ignore the orphaned DB record.
-                unset($files[$index]);
-                continue;
-            } elseif (!$ldb && $lfs && !$ffs && !$fdb) {
-                // CODE: [1] OLFS
-                // Create the local database entry by indexing the file
-                // Assign the new information to the file and diff again
-                // We end up in [4] OL
-
-                // Since a (temporary) sys_file entry will be created for each file on disk
-                // we will never end up in this case, but it's left here for documentary purposes
-                throw new \LogicException(
-                    'The FAL case OLFS is impossible due to prior record transformation',
-                    1475178450
-                );
-            } elseif (!$ldb && !$lfs && $ffs && !$fdb) {
-                // CODE: [2] OFFS
-                // Try to index the file on foreign and reassign the foreign info.
-                // Diff again and end up in [9] OF
-
-                // Since a (temporary) sys_file entry will be created for each file on disk
-                // we will never end up in this case, but it's left here for documentary purposes
-                throw new \LogicException(
-                    'The FAL case OFFS is impossible due to prior record transformation',
-                    1475250513
-                );
-            } elseif (!$ldb && !$lfs && !$ffs && $fdb) {
-                // CODE: [3] OFDB
-                // The file exists only in the foreign database. Ignore the orphaned DB record.
-                unset($files[$index]);
-                continue;
-            } elseif ($ldb && $lfs && !$ffs && !$fdb) {
-                // CODE: [4] OL
-                // Nothing to do here. The record exists only on local and will be displayed correctly.
-                // The file and database record will be copied to the remote system when published.
-            } elseif ($ldb && !$lfs && $ffs && !$fdb) {
-                // CODE: [5] LDFF
-                // Okay i currently don't know how to handle this, because on a record level this file
-                // has been added, but on disk level the file was removed.
-                // I think the best solution would be indexing the file on
-                // foreign with the UID from the local database record.
-                // That would lead us to [12] NLFS so at least it's one case less.
-
-                // Edit: [12] NLFS has also received a PRE-FIX. The resulting case is [9] OF
-
-                // Since a (temporary) sys_file entry will be created for the foreign disk file and the
-                // local database record will be ignored by overwriting it with an empty array we will
-                // never end up in this case. It's still here for documentation
-                throw new \LogicException(
-                    'The FAL case LDFF is impossible due to prior record transformation',
-                    1475252172
-                );
-            } elseif ($ldb && !$lfs && !$ffs && $fdb) {
-                // CODE: [6] ODB
-                // So there are two orphans (db without fs). we could diff them, but there's no file to publish.
-                // I've decided to just ignore this case, since publishing  would not have an effect on the file system
-                // and additionally i consider these files deleted, as this is a result of [12] NLFS
-                unset($files[$index]);
-                continue;
-            } elseif (!$ldb && $lfs && $ffs && !$fdb) {
-                // CODE: [7] OFS
-                // We have the files on both sides.
-                // Index them on both sides with the same UID for the sys_file and add that info to the record
-                // Conveniently we end up in [14] ALL. Yai!
-
-                // This case is handled by its PRE-FIX above. The if for this case must never be true.
-                // This Exception is rather for documentation purposes than functional.
-                throw new \LogicException(
-                    'The FAL case OFS is impossible due to prior record transformation',
-                    1475572486
-                );
-            } elseif (!$ldb && $lfs && !$ffs && $fdb) {
-                // CODE: [8] LFFD
-                // This might be one of the most strange setups.
-                // Maybe the local file was deleted but write permissions blocked the deletion, but the database record
-                // was deleted and not restored after failure. And the foreign database record? God knows...
-                // Concrete: Index the local file and add that info to the record, diff again and go to [11] NFFS
-
-                // Hint: This is done by the PRE-FIX for [8] LFFD.
-                // This Exception is rather for documentation purposes than functional.
-                throw new \LogicException(
-                    'The FAL case LFFD is impossible due to prior record transformation',
-                    1475573724
-                );
-            } elseif (!$ldb && !$lfs && $ffs && $fdb) {
-                // CODE: [9] OF
-                // Nothing to do here. The record exists only on local and will be displayed correctly.
-                // The publish command removes the foreign file and database record
-            } elseif ($ldb && $lfs && $ffs && !$fdb) {
-                // CODE: [10] NFDB
-                // Index the foreign file. Make sure the UID is the same as local's one.
-                // Go to [14] ALL afterwards
-
-                // Hint: This is done by the PRE-FIX for [10] NFDB.
-                // This Exception is rather for documentation purposes than functional.
-                throw new \LogicException(
-                    'The FAL case NFDB is impossible due to prior record transformation',
-                    1475576764
-                );
-            } elseif ($ldb && $lfs && !$ffs && $fdb) {
-                // CODE: [11] NFFS
-                // The foreign database record is orphaned.
-                // The file was clearly deleted on foreign or the database record was prematurely published
-                // Display this record as NEW (act like fdb would not exist, therefore like [4] OL
-                // To achieve this we simply "unset" the foreign properties. Done.
-                $file->setForeignProperties(array())->setDirtyProperties()->calculateState();
-            } elseif ($ldb && !$lfs && $ffs && $fdb) {
-                // CODE: [12] NLFS
-                // The local database record is orphaned.
-                // On foreign everything is okay.
-                // Two cases: either the UID was assigned independent or the local file was removed
-                // In both cases we will remove the remote file, because stage always wins.
-                // No need to review this decision. LDB is orphaned, ignore it, act like it would be [9] OF
-                // CARE: This will create the [6] ODB state.
-
-                // Hint: This is done by a PRE-FIX.
-                // This Exception is rather for documentation purposes than functional.
-                throw new \LogicException(
-                    'The FAL case NLFS is impossible due to prior record transformation',
-                    1475576764
-                );
-            } elseif (!$ldb && $lfs && $ffs && $fdb) {
-                // CODE: [13] NLDB
-                // Create local database record by indexing the file.
-                // Then add the created information to the record and diff again.
-                // We will end up in [14]
-
-                // Hint: This is done by a PRE-FIX.
-                // This Exception is rather for documentation purposes than functional.
-                throw new \LogicException(
-                    'The FAL case NLDB is impossible due to prior record transformation',
-                    1475578482
-                );
-            } elseif ($ldb && $lfs && $ffs && $fdb) {
-                // CODE: [14] ALL
-                if (RecordInterface::RECORD_STATE_UNCHANGED === $file->getState()) {
-                    // the database records are identical, but this does not necessarily reflect the truth,
-                    // because files might have changed in the file system without FAL noticing these changes.
-                    $file->setLocalProperties(
-                        $this->getFileInformation(
-                            $localFileIdentifier,
-                            $localDriver,
-                            $foreignDatabase,
-                            $localDatabase,
-                            $file->getIdentifier()
-                        )
-                    );
-                    $file->setForeignProperties(
-                        $this->getFileInformation(
-                            $foreignFileIdentifier,
-                            $foreignDriver,
-                            $localDatabase,
-                            $foreignDatabase,
-                            $file->getIdentifier()
-                        )
-                    );
-                    $file->setDirtyProperties()->calculateState();
-                }
-            } elseif (!$ldb && !$lfs && !$ffs && !$fdb) {
-                // CODE: [15] NONE
-                // The file exists nowhere. Ignore it.
-                unset($files[$index]);
-                continue;
-            } else {
-                throw new \LogicException('This combination is not possible!', 1475065059);
-            }
-            $file->addAdditionalProperty('depth', 2);
-            $file->addAdditionalProperty('isAuthoritative', true);
-        }
+        $files = $this->filterFileRecords($files, $localDriver, $foreignDriver, $foreignDatabase, $localDatabase);
 
         $record->addRelatedRecords($files);
 
@@ -1187,5 +988,220 @@ class FolderRecordFactory
         );
         $data['tstamp'] = time();
         return $data;
+    }
+
+    /**
+     * Filtering:
+     *  Notation:
+     *      FFS = Foreign File System
+     *      FDB = Foreign Database
+     *      LFS = Local File System
+     *      LDB = Local Database
+     *  These filters files and entries we do not want to consider, because they do not represent an actual file.
+     *  Prefer $localDriver over $foreignDriver where applicable, because it will be faster.
+     *
+     * @param Record[] $files
+     * @param DriverInterface $localDriver
+     * @param DriverInterface $foreignDriver
+     * @param DatabaseConnection $foreignDatabase
+     * @param DatabaseConnection $localDatabase
+     */
+    protected function filterFileRecords(
+        array $files,
+        DriverInterface $localDriver,
+        DriverInterface $foreignDriver,
+        DatabaseConnection $foreignDatabase,
+        DatabaseConnection $localDatabase
+    ) {
+        foreach ($files as $index => $file) {
+            $fdb = $file->foreignRecordExists();
+            $ldb = $file->localRecordExists();
+
+            if ($file->hasLocalProperty('identifier')) {
+                $localFileIdentifier = $file->getLocalProperty('identifier');
+            } else {
+                $localFileIdentifier = $file->getForeignProperty('identifier');
+            }
+            if ($file->hasForeignProperty('identifier')) {
+                $foreignFileIdentifier = $file->getForeignProperty('identifier');
+            } else {
+                $foreignFileIdentifier = $file->getLocalProperty('identifier');
+            }
+
+            $lfs = $localDriver->fileExists($localFileIdentifier);
+            $ffs = $foreignDriver->fileExists($foreignFileIdentifier);
+
+            if ($ldb && !$lfs && !$ffs && !$fdb) {
+                // CODE: [0] OLDB
+                // The file exists only in the local database. Ignore the orphaned DB record.
+                unset($files[$index]);
+                continue;
+            } elseif (!$ldb && $lfs && !$ffs && !$fdb) {
+                // CODE: [1] OLFS
+                // Create the local database entry by indexing the file
+                // Assign the new information to the file and diff again
+                // We end up in [4] OL
+
+                // Since a (temporary) sys_file entry will be created for each file on disk
+                // we will never end up in this case, but it's left here for documentary purposes
+                throw new \LogicException(
+                    'The FAL case OLFS is impossible due to prior record transformation',
+                    1475178450
+                );
+            } elseif (!$ldb && !$lfs && $ffs && !$fdb) {
+                // CODE: [2] OFFS
+                // Try to index the file on foreign and reassign the foreign info.
+                // Diff again and end up in [9] OF
+
+                // Since a (temporary) sys_file entry will be created for each file on disk
+                // we will never end up in this case, but it's left here for documentary purposes
+                throw new \LogicException(
+                    'The FAL case OFFS is impossible due to prior record transformation',
+                    1475250513
+                );
+            } elseif (!$ldb && !$lfs && !$ffs && $fdb) {
+                // CODE: [3] OFDB
+                // The file exists only in the foreign database. Ignore the orphaned DB record.
+                unset($files[$index]);
+                continue;
+            } elseif ($ldb && $lfs && !$ffs && !$fdb) {
+                // CODE: [4] OL
+                // Nothing to do here. The record exists only on local and will be displayed correctly.
+                // The file and database record will be copied to the remote system when published.
+            } elseif ($ldb && !$lfs && $ffs && !$fdb) {
+                // CODE: [5] LDFF
+                // Okay i currently don't know how to handle this, because on a record level this file
+                // has been added, but on disk level the file was removed.
+                // I think the best solution would be indexing the file on
+                // foreign with the UID from the local database record.
+                // That would lead us to [12] NLFS so at least it's one case less.
+
+                // Edit: [12] NLFS has also received a PRE-FIX. The resulting case is [9] OF
+
+                // Since a (temporary) sys_file entry will be created for the foreign disk file and the
+                // local database record will be ignored by overwriting it with an empty array we will
+                // never end up in this case. It's still here for documentation
+                throw new \LogicException(
+                    'The FAL case LDFF is impossible due to prior record transformation',
+                    1475252172
+                );
+            } elseif ($ldb && !$lfs && !$ffs && $fdb) {
+                // CODE: [6] ODB
+                // So there are two orphans (db without fs). we could diff them, but there's no file to publish.
+                // I've decided to just ignore this case, since publishing  would not have an effect on the file system
+                // and additionally i consider these files deleted, as this is a result of [12] NLFS
+                unset($files[$index]);
+                continue;
+            } elseif (!$ldb && $lfs && $ffs && !$fdb) {
+                // CODE: [7] OFS
+                // We have the files on both sides.
+                // Index them on both sides with the same UID for the sys_file and add that info to the record
+                // Conveniently we end up in [14] ALL. Yai!
+
+                // This case is handled by its PRE-FIX above. The if for this case must never be true.
+                // This Exception is rather for documentation purposes than functional.
+                throw new \LogicException(
+                    'The FAL case OFS is impossible due to prior record transformation',
+                    1475572486
+                );
+            } elseif (!$ldb && $lfs && !$ffs && $fdb) {
+                // CODE: [8] LFFD
+                // This might be one of the most strange setups.
+                // Maybe the local file was deleted but write permissions blocked the deletion, but the database record
+                // was deleted and not restored after failure. And the foreign database record? God knows...
+                // Concrete: Index the local file and add that info to the record, diff again and go to [11] NFFS
+
+                // Hint: This is done by the PRE-FIX for [8] LFFD.
+                // This Exception is rather for documentation purposes than functional.
+                throw new \LogicException(
+                    'The FAL case LFFD is impossible due to prior record transformation',
+                    1475573724
+                );
+            } elseif (!$ldb && !$lfs && $ffs && $fdb) {
+                // CODE: [9] OF
+                // Nothing to do here. The record exists only on local and will be displayed correctly.
+                // The publish command removes the foreign file and database record
+            } elseif ($ldb && $lfs && $ffs && !$fdb) {
+                // CODE: [10] NFDB
+                // Index the foreign file. Make sure the UID is the same as local's one.
+                // Go to [14] ALL afterwards
+
+                // Hint: This is done by the PRE-FIX for [10] NFDB.
+                // This Exception is rather for documentation purposes than functional.
+                throw new \LogicException(
+                    'The FAL case NFDB is impossible due to prior record transformation',
+                    1475576764
+                );
+            } elseif ($ldb && $lfs && !$ffs && $fdb) {
+                // CODE: [11] NFFS
+                // The foreign database record is orphaned.
+                // The file was clearly deleted on foreign or the database record was prematurely published
+                // Display this record as NEW (act like fdb would not exist, therefore like [4] OL
+                // To achieve this we simply "unset" the foreign properties. Done.
+                $file->setForeignProperties(array())->setDirtyProperties()->calculateState();
+            } elseif ($ldb && !$lfs && $ffs && $fdb) {
+                // CODE: [12] NLFS
+                // The local database record is orphaned.
+                // On foreign everything is okay.
+                // Two cases: either the UID was assigned independent or the local file was removed
+                // In both cases we will remove the remote file, because stage always wins.
+                // No need to review this decision. LDB is orphaned, ignore it, act like it would be [9] OF
+                // CARE: This will create the [6] ODB state.
+
+                // Hint: This is done by a PRE-FIX.
+                // This Exception is rather for documentation purposes than functional.
+                throw new \LogicException(
+                    'The FAL case NLFS is impossible due to prior record transformation',
+                    1475576764
+                );
+            } elseif (!$ldb && $lfs && $ffs && $fdb) {
+                // CODE: [13] NLDB
+                // Create local database record by indexing the file.
+                // Then add the created information to the record and diff again.
+                // We will end up in [14]
+
+                // Hint: This is done by a PRE-FIX.
+                // This Exception is rather for documentation purposes than functional.
+                throw new \LogicException(
+                    'The FAL case NLDB is impossible due to prior record transformation',
+                    1475578482
+                );
+            } elseif ($ldb && $lfs && $ffs && $fdb) {
+                // CODE: [14] ALL
+                if (RecordInterface::RECORD_STATE_UNCHANGED === $file->getState()) {
+                    // the database records are identical, but this does not necessarily reflect the truth,
+                    // because files might have changed in the file system without FAL noticing these changes.
+                    $file->setLocalProperties(
+                        $this->getFileInformation(
+                            $localFileIdentifier,
+                            $localDriver,
+                            $foreignDatabase,
+                            $localDatabase,
+                            $file->getIdentifier()
+                        )
+                    );
+                    $file->setForeignProperties(
+                        $this->getFileInformation(
+                            $foreignFileIdentifier,
+                            $foreignDriver,
+                            $localDatabase,
+                            $foreignDatabase,
+                            $file->getIdentifier()
+                        )
+                    );
+                    $file->setDirtyProperties()->calculateState();
+                }
+            } elseif (!$ldb && !$lfs && !$ffs && !$fdb) {
+                // CODE: [15] NONE
+                // The file exists nowhere. Ignore it.
+                unset($files[$index]);
+                continue;
+            } else {
+                throw new \LogicException('This combination is not possible!', 1475065059);
+            }
+            $file->addAdditionalProperty('depth', 2);
+            $file->addAdditionalProperty('isAuthoritative', true);
+        }
+        return $files;
     }
 }
