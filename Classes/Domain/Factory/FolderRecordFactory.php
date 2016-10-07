@@ -174,10 +174,10 @@ class FolderRecordFactory
         // get all occurring identifiers indexed by side in one array
         $indexedIdentifiers = $this->buildIndexedIdentifiersList($files);
 
-        $diskIdentifiers = array();
-
-        $diskIdentifiers['local'] = $this->getFilesIdentifiersInFolder($identifier, $localDriver);
-        $diskIdentifiers['foreign'] = $this->getFilesIdentifiersInFolder($identifier, $foreignDriver);
+        $diskIdentifiers = array(
+            'local' => $this->getFilesIdentifiersInFolder($identifier, $localDriver),
+            'foreign' => $this->getFilesIdentifiersInFolder($identifier, $foreignDriver),
+        );
 
         $onlyForeignFileSystemFileIdentifiers = array_diff(
             $diskIdentifiers['foreign'],
