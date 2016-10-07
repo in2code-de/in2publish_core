@@ -352,7 +352,7 @@ class Record implements RecordInterface
                 return $this->getForeignProperties();
                 break;
             default:
-                throw new \LogicException('Can not get Properties from undefined side "' . $side . '"', 1475858502);
+                throw new \LogicException('Can not get properties from undefined side "' . $side . '"', 1475858502);
         }
     }
 
@@ -403,7 +403,7 @@ class Record implements RecordInterface
                 $this->setForeignProperties($properties);
                 break;
             default:
-                throw new \LogicException('Can not set Properties for undefined side "' . $side . '"', 1475857626);
+                throw new \LogicException('Can not set properties for undefined side "' . $side . '"', 1475857626);
         }
         return $this;
     }
