@@ -115,12 +115,7 @@ class PhysicalFilePublisher implements SingletonInterface
                 list($identifier) = GeneralUtility::trimExplode(',', $identifier);
             }
 
-            $combinedIdentifier = $this->createCombinedIdentifier(
-                array(
-                    'storage' => $storage,
-                    'identifier' => $identifier,
-                )
-            );
+            $combinedIdentifier = sprintf('%d:%s', $storage, $identifier);
 
             $data = array(
                 'table' => $table,
@@ -441,20 +436,6 @@ class PhysicalFilePublisher implements SingletonInterface
         $fileInformation['hash'] = $hash;
 
         return $fileInformation;
-    }
-
-    /**
-     * @see \In2code\In2publishCore\Domain\Factory\FolderRecordFactory::createCombinedIdentifier
-     * @param array $info
-     * @return string
-     */
-    protected function createCombinedIdentifier(array $info)
-    {
-        $identifier = $info['identifier'];
-        if (isset($info['folder'])) {
-            $identifier = $info['folder'] . '/' . $identifier;
-        }
-        return sprintf('%d:%s', $info['storage'], $identifier);
     }
 
     /**
