@@ -524,9 +524,9 @@ class Record implements RecordInterface
         if (isset($this->relatedRecords[$table]) && is_array($this->relatedRecords[$table])) {
             foreach ($this->relatedRecords[$table] as $record) {
                 if (($record->hasLocalProperty($property)
-                    && $record->getLocalProperty($property) === $value)
+                     && $record->getLocalProperty($property) === $value)
                     || ($record->hasForeignProperty($property)
-                       && $record->getForeignProperty($property) === $value)
+                        && $record->getForeignProperty($property) === $value)
                 ) {
                     $relatedRecords[$record->getIdentifier()] = $record;
                 }
