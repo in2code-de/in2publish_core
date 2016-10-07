@@ -1223,12 +1223,7 @@ class FolderRecordFactory
                     array('localRecordExistsTemporary' => true, 'foreignRecordExistsTemporary' => true)
                 );
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
-                unset($onlyDiskIdentifiers['both'][$index]);
             }
-        }
-
-        if (!empty($onlyDiskIdentifiers['both'])) {
-            throw new \RuntimeException('Failed to convert all disk-only files to records', 1475253143);
         }
 
         return $files;
@@ -1279,12 +1274,7 @@ class FolderRecordFactory
                     array('localRecordExistsTemporary' => true)
                 );
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
-                unset($onlyDiskIdentifiers['local'][$index]);
             }
-        }
-
-        if (!empty($onlyDiskIdentifiers['local'])) {
-            throw new \RuntimeException('Failed to convert all local files from disk to records', 1475177184);
         }
 
         return $files;
@@ -1335,12 +1325,7 @@ class FolderRecordFactory
                     array('foreignRecordExistsTemporary' => true)
                 );
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
-                unset($onlyDiskIdentifiers['foreign'][$index]);
             }
-        }
-
-        if (!empty($onlyDiskIdentifiers['foreign'])) {
-            throw new \RuntimeException('Failed to convert all foreign files from disk to records', 1475236166);
         }
 
         return $files;
