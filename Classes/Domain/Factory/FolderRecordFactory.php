@@ -262,20 +262,15 @@ class FolderRecordFactory
             if (RecordInterface::RECORD_STATE_DELETED === $reCheckFile->getState()) {
                 if (!$foreignDriver->fileExists($reCheckIdentifier)) {
                     // add local file information instead
-                    $reCheckFile->setLocalProperties(
-                        $this->getFileInformation(
-                            $reCheckIdentifier,
-                            $localDriver,
-                            $foreignDatabase,
-                            $localDatabase,
-                            $reCheckFile->getForeignProperty('uid')
-                        )
+                    $this->createAndAddTemporaryLocalIndexInformationToRecord(
+                        $reCheckFile,
+                        $reCheckIdentifier,
+                        $localDriver,
+                        $foreignDatabase,
+                        $localDatabase
                     );
                     // remove all foreign properties to "ignore" the foreign database record
                     $reCheckFile->setForeignProperties(array());
-                    $reCheckFile->addAdditionalProperty('localRecordExistsTemporary', true);
-                    // TODO: trigger the following inside the record itself so it can't be forgotten
-                    $reCheckFile->setDirtyProperties()->calculateState();
                 }
             }
         }
@@ -402,17 +397,13 @@ class FolderRecordFactory
                 // The file has been found on both file systems but not in the local database.
                 // create a temporary local database entry with the uid of the existing foreign database entry.
                 // Resulting case is [14] ALL
-                $reCheckFile->setLocalProperties(
-                    $this->getFileInformation(
-                        $fileIdentifierOnBothSides,
-                        $localDriver,
-                        $foreignDatabase,
-                        $localDatabase,
-                        $reCheckFile->getIdentifier()
-                    )
+                $this->createAndAddTemporaryLocalIndexInformationToRecord(
+                    $reCheckFile,
+                    $fileIdentifierOnBothSides,
+                    $localDriver,
+                    $foreignDatabase,
+                    $localDatabase
                 );
-                $reCheckFile->addAdditionalProperty('localRecordExistsTemporary', true);
-                $reCheckFile->setDirtyProperties()->calculateState();
             }
         }
 
@@ -1318,5 +1309,32 @@ class FolderRecordFactory
         }
 
         return $files;
+    }
+
+    /**
+     * @param Record $reCheckFile
+     * @param string $identifier
+     * @param DriverInterface $localDriver
+     * @param DatabaseConnection $foreignDatabase
+     * @param DatabaseConnection $localDatabase
+     */
+    protected function createAndAddTemporaryLocalIndexInformationToRecord(
+        Record $reCheckFile,
+        $identifier,
+        DriverInterface $localDriver,
+        DatabaseConnection $foreignDatabase,
+        DatabaseConnection $localDatabase
+    ) {
+        $reCheckFile->setLocalProperties(
+            $this->getFileInformation(
+                $identifier,
+                $localDriver,
+                $foreignDatabase,
+                $localDatabase,
+                $reCheckFile->getIdentifier()
+            )
+        );
+        $reCheckFile->addAdditionalProperty('localRecordExistsTemporary', true);
+        $reCheckFile->setDirtyProperties()->calculateState();
     }
 }
