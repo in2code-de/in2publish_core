@@ -58,12 +58,19 @@ class FolderRecordFactory
     protected $configuration = array();
 
     /**
+     * @var array
+     */
+    protected $sysFileTca = array();
+
+    /**
      * FolderRecordFactory constructor.
      */
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
         $this->configuration = ConfigurationUtility::getConfiguration('factory.fal');
+        $this->sysFileTca = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService')
+                                          ->getConfigurationArrayForTable('sys_file');
     }
 
     /**
@@ -1194,12 +1201,6 @@ class FolderRecordFactory
         if (!empty($onlyDiskIdentifiers['both'])) {
             // iterate through all files found on the local and foreign disk but not in the database
             foreach ($onlyDiskIdentifiers['both'] as $index => $onlyDiskIdentifier) {
-                static $tcaService = null;
-                if (null === $tcaService) {
-                    $tcaService = GeneralUtility::makeInstance(
-                        'In2code\\In2publishCore\\Service\\Configuration\\TcaService'
-                    );
-                }
                 // fetch the file information with a reserved uid
                 $localFileInformation = $this->getFileInformation(
                     $onlyDiskIdentifier,
@@ -1219,7 +1220,7 @@ class FolderRecordFactory
                         $foreignDatabase,
                         $localFileInformation['uid']
                     ),
-                    $tcaService->getConfigurationArrayForTable('sys_file'),
+                    $this->sysFileTca,
                     array('localRecordExistsTemporary' => true, 'foreignRecordExistsTemporary' => true)
                 );
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
@@ -1250,12 +1251,6 @@ class FolderRecordFactory
         if (!empty($onlyDiskIdentifiers['local'])) {
             // iterate through all files found on disk but not in the database
             foreach ($onlyDiskIdentifiers['local'] as $index => $fileOnlyOnLocal) {
-                static $tcaService = null;
-                if (null === $tcaService) {
-                    $tcaService = GeneralUtility::makeInstance(
-                        'In2code\\In2publishCore\\Service\\Configuration\\TcaService'
-                    );
-                }
                 $temporarySysFile = GeneralUtility::makeInstance(
                     'In2code\\In2publishCore\\Domain\\Model\\Record',
                     'sys_file',
@@ -1270,7 +1265,7 @@ class FolderRecordFactory
                         $localDatabase
                     ),
                     array(),
-                    $tcaService->getConfigurationArrayForTable('sys_file'),
+                    $this->sysFileTca,
                     array('localRecordExistsTemporary' => true)
                 );
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
@@ -1301,12 +1296,6 @@ class FolderRecordFactory
         if (!empty($onlyDiskIdentifiers['foreign'])) {
             // iterate through all files found on disc but not in the database
             foreach ($onlyDiskIdentifiers['foreign'] as $index => $fileOnlyOnForeign) {
-                static $tcaService = null;
-                if (null === $tcaService) {
-                    $tcaService = GeneralUtility::makeInstance(
-                        'In2code\\In2publishCore\\Service\\Configuration\\TcaService'
-                    );
-                }
                 $temporarySysFile = GeneralUtility::makeInstance(
                     'In2code\\In2publishCore\\Domain\\Model\\Record',
                     'sys_file',
@@ -1321,7 +1310,7 @@ class FolderRecordFactory
                         $localDatabase,
                         $foreignDatabase
                     ),
-                    $tcaService->getConfigurationArrayForTable('sys_file'),
+                    $this->sysFileTca,
                     array('foreignRecordExistsTemporary' => true)
                 );
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
