@@ -108,6 +108,8 @@ class FolderRecordFactory
 
         // fetch all information regarding the folder on this side
         $identifier = $localFolder->getIdentifier();
+        $hashedIdentifier = $localFolder->getHashedIdentifier();
+
         $localFolderInfo = $this->getFolderInfoByIdentifierAndDriver($identifier, $localDriver);
 
         // retrieve all local sub folder identifiers (no recursion! no database!)
@@ -163,8 +165,7 @@ class FolderRecordFactory
 
         // find all file database entries in the current folder by the folder's hash
         // (be sure to only use FAL methods for hashing)
-        $folderHash = $localFolder->getHashedIdentifier();
-        $files = $commonRepository->findByProperty('folder_hash', $folderHash);
+        $files = $commonRepository->findByProperty('folder_hash', $hashedIdentifier);
 
         // Builds a list of all file identifiers on local and foreign that are indexed in the database,
         // so files only existing on disk can be determined by diff-ing against this list
@@ -360,10 +361,10 @@ class FolderRecordFactory
                                 $localDatabase->exec_UPDATEquery(
                                     'sys_file',
                                     'uid=' . $uid,
-                                    array('folder_hash' => $folderHash)
+                                    array('folder_hash' => $hashedIdentifier)
                                 );
                                 $localProperties = $sysFileEntry->getLocalProperties();
-                                $localProperties['folder_hash'] = $folderHash;
+                                $localProperties['folder_hash'] = $hashedIdentifier;
                                 $sysFileEntry->setLocalProperties($localProperties);
                             }
                         }
@@ -398,10 +399,10 @@ class FolderRecordFactory
                                 $foreignDatabase->exec_UPDATEquery(
                                     'sys_file',
                                     'uid=' . $uid,
-                                    array('folder_hash' => $folderHash)
+                                    array('folder_hash' => $hashedIdentifier)
                                 );
                                 $localProperties = $sysFileEntry->getForeignProperties();
-                                $localProperties['folder_hash'] = $folderHash;
+                                $localProperties['folder_hash'] = $hashedIdentifier;
                                 $sysFileEntry->setForeignProperties($localProperties);
                             }
                         }
