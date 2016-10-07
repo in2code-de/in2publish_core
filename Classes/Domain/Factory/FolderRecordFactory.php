@@ -1323,7 +1323,7 @@ class FolderRecordFactory
                 $localDriver,
                 $foreignDatabase,
                 $localDatabase,
-                $reCheckFile->getIdentifier()
+                $reCheckFile->getForeignProperty('uid')
             )
         );
         $reCheckFile->addAdditionalProperty('localRecordExistsTemporary', true);
