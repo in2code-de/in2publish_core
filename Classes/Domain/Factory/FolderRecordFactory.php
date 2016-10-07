@@ -1330,7 +1330,7 @@ class FolderRecordFactory
                 $driver,
                 $oppositeDatabase,
                 $targetDatabase,
-                $record->getPropertyBySideIdentifier($side, 'uid')
+                $record->getPropertyBySideIdentifier($side === 'local' ?: 'foreign', 'uid')
             )
         );
         $record->addAdditionalProperty($side . 'RecordExistsTemporary', true);
