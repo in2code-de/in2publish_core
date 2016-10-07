@@ -466,6 +466,20 @@ class RecordTest extends UnitTestCase
     }
 
     /**
+     * @covers ::setForeignProperties
+     * @covers ::getForeignProperties
+     */
+    public function testSetForeignPropertiesSetsForeignProperties()
+    {
+        $stub = $this->getRecordStub([]);
+        $stub->__construct('pages', [], ['foo' => 'boo'], [], []);
+
+        $stub->setForeignProperties(['baz' => 'inga']);
+
+        $this->assertSame(['baz' => 'inga'], $stub->getForeignProperties());
+    }
+
+    /**
      * @covers ::setLocalProperties
      */
     public function testSetLocalPropertiesAllowsChaining()
@@ -1526,5 +1540,71 @@ class RecordTest extends UnitTestCase
             [$related1->getIdentifier() => $related1],
             $record->getRelatedRecordByTableAndProperty('tt_content', 'foo', 'bar')
         );
+    }
+
+    /**
+     * @covers ::setPropertiesBySideIdentifier
+     * @depends testSetLocalPropertiesSetsLocalProperties
+     * @depends testGetLocalPropertiesReturnsAllLocalProperties
+     */
+    public function testSetPropertiesBySideSetsPropertiesForLocalSide()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $properties = ['foo' => 'bar'];
+        $record->setPropertiesBySideIdentifier('local', $properties);
+
+        $this->assertSame($properties, $record->getLocalProperties());
+    }
+
+    /**
+     * @covers ::setPropertiesBySideIdentifier
+     * @depends testSetForeignPropertiesSetsForeignProperties
+     * @depends testGetForeignPropertiesReturnsAllForeignProperties
+     */
+    public function testSetPropertiesBySideSetsPropertiesForForeignSide()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $properties = ['foo' => 'bar'];
+        $record->setPropertiesBySideIdentifier('local', $properties);
+
+        $this->assertSame($properties, $record->getLocalProperties());
+    }
+
+    /**
+     * @covers ::setPropertiesBySideIdentifier
+     * @depends testSetForeignPropertiesSetsForeignProperties
+     * @depends testGetForeignPropertiesReturnsAllForeignProperties
+     */
+    public function testSetPropertiesBySideAllowsChaining()
+    {
+        $stub = $this->getRecordStub([]);
+        $stub->__construct('pages', [], [], [], []);
+
+        $this->assertSame(
+            $stub,
+            $stub->setPropertiesBySideIdentifier('local', []),
+            '[!!!] \In2code\In2publishCore\Domain\Model\Record::setPropertiesBySideIdentifier must allow chaining'
+        );
+    }
+
+    /**
+     * @covers ::setPropertiesBySideIdentifier
+     * @depends testSetForeignPropertiesSetsForeignProperties
+     * @depends testGetForeignPropertiesReturnsAllForeignProperties
+     */
+    public function testSetPropertiesBySideThrowsExceptionForUndefinedSide()
+    {
+        $stub = $this->getRecordStub([]);
+        $stub->__construct('pages', [], [], [], []);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionCode(1475857626);
+        $this->expectExceptionMessage('Can not set Properties for undefined side "foo"');
+
+        $stub->setPropertiesBySideIdentifier('foo', []);
     }
 }
