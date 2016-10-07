@@ -1010,6 +1010,7 @@ class FolderRecordFactory
      * @param DriverInterface $foreignDriver
      * @param DatabaseConnection $foreignDatabase
      * @param DatabaseConnection $localDatabase
+     * @return Record[]
      */
     protected function filterFileRecords(
         array $files,
