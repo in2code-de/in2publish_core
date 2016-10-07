@@ -1306,23 +1306,24 @@ class FolderRecordFactory
     /**
      * @param Record $reCheckFile
      * @param string $identifier
-     * @param DriverInterface $localDriver
-     * @param DatabaseConnection $foreignDatabase
-     * @param DatabaseConnection $localDatabase
+     * @param DriverInterface $driver
+     * @param DatabaseConnection $oppositeDatabase
+     * @param DatabaseConnection $targetDatabase
      */
     protected function createAndAddTemporaryLocalIndexInformationToRecord(
         Record $reCheckFile,
         $identifier,
-        DriverInterface $localDriver,
-        DatabaseConnection $foreignDatabase,
-        DatabaseConnection $localDatabase
+        DriverInterface $driver,
+        DatabaseConnection $oppositeDatabase,
+        DatabaseConnection $targetDatabase
     ) {
-        $reCheckFile->setLocalProperties(
+        $reCheckFile->setPropertiesBySideIdentifier(
+            'local',
             $this->getFileInformation(
                 $identifier,
-                $localDriver,
-                $foreignDatabase,
-                $localDatabase,
+                $driver,
+                $oppositeDatabase,
+                $targetDatabase,
                 $reCheckFile->getForeignProperty('uid')
             )
         );
@@ -1333,23 +1334,24 @@ class FolderRecordFactory
     /**
      * @param Record $reCheckFile
      * @param string $identifier
-     * @param DriverInterface $foreignDriver
-     * @param DatabaseConnection $localDatabase
-     * @param DatabaseConnection $foreignDatabase
+     * @param DriverInterface $driver
+     * @param DatabaseConnection $oppositeDatabase
+     * @param DatabaseConnection $targetDatabase
      */
     protected function createAndAddTemporaryForeignIndexInformationToRecord(
         Record $reCheckFile,
         $identifier,
-        DriverInterface $foreignDriver,
-        DatabaseConnection $localDatabase,
-        DatabaseConnection $foreignDatabase
+        DriverInterface $driver,
+        DatabaseConnection $oppositeDatabase,
+        DatabaseConnection $targetDatabase
     ) {
-        $reCheckFile->setForeignProperties(
+        $reCheckFile->setPropertiesBySideIdentifier(
+            'foreign',
             $this->getFileInformation(
                 $identifier,
-                $foreignDriver,
-                $localDatabase,
-                $foreignDatabase,
+                $driver,
+                $oppositeDatabase,
+                $targetDatabase,
                 $reCheckFile->getLocalProperty('uid')
             )
         );
