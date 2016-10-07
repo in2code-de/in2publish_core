@@ -182,46 +182,14 @@ class FolderRecordFactory
         $onlyDiskIdentifiers = $this->determineIdentifiersOnlyOnDisk($diskIdentifiers, $indexedIdentifiers);
 
         // TODO determine if this has to be done before or after the reclaimSysFileEntries feature
-        // PRE-FIX for [7] OFS case.
-        if (!empty($onlyDiskIdentifiers['both'])) {
-            // iterate through all files found on the local and foreign disk but not in the database
-            foreach ($onlyDiskIdentifiers['both'] as $index => $fileSystemEntryIdentifier) {
-                static $tcaService = null;
-                if (null === $tcaService) {
-                    $tcaService = GeneralUtility::makeInstance(
-                        'In2code\\In2publishCore\\Service\\Configuration\\TcaService'
-                    );
-                }
-                // fetch the file information with a reserved uid
-                $localFileInformation = $this->getFileInformation(
-                    $fileSystemEntryIdentifier,
-                    $localDriver,
-                    $foreignDatabase,
-                    $localDatabase
-                );
-                $temporarySysFile = GeneralUtility::makeInstance(
-                    'In2code\\In2publishCore\\Domain\\Model\\Record',
-                    'sys_file',
-                    $localFileInformation,
-                    // assign the already reserved uid to the foreignFileInformation
-                    $this->getFileInformation(
-                        $fileSystemEntryIdentifier,
-                        $foreignDriver,
-                        $localDatabase,
-                        $foreignDatabase,
-                        $localFileInformation['uid']
-                    ),
-                    $tcaService->getConfigurationArrayForTable('sys_file'),
-                    array('localRecordExistsTemporary' => true, 'foreignRecordExistsTemporary' => true)
-                );
-                $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
-                unset($onlyDiskIdentifiers['both'][$index]);
-            }
-        }
-
-        if (!empty($onlyDiskIdentifiers['both'])) {
-            throw new \RuntimeException('Failed to convert all disk-only files to records', 1475253143);
-        }
+        $files = $this->convertAndAddFilesOnBothDisksToRecordList(
+            $onlyDiskIdentifiers,
+            $localDriver,
+            $foreignDatabase,
+            $localDatabase,
+            $foreignDriver,
+            $files
+        );
 
         // Determine file identifier of files which are found in one database and the opposite disk.
         // Files which exist on one side on disk and in the database are already filtered.
@@ -1261,5 +1229,67 @@ class FolderRecordFactory
             $onlyDiskIdentifiers['both']
         );
         return $onlyDiskIdentifiers;
+    }
+
+    /**
+     * PRE-FIX for [7] OFS case.
+     *
+     * @param array $onlyDiskIdentifiers
+     * @param DriverInterface $localDriver
+     * @param DatabaseConnection $foreignDatabase
+     * @param DatabaseConnection $localDatabase
+     * @param DriverInterface $foreignDriver
+     * @param Record[] $files
+     * @return Record[]
+     */
+    protected function convertAndAddFilesOnBothDisksToRecordList(
+        array $onlyDiskIdentifiers,
+        DriverInterface $localDriver,
+        DatabaseConnection $foreignDatabase,
+        DatabaseConnection $localDatabase,
+        DriverInterface $foreignDriver,
+        array $files
+    ) {
+        if (!empty($onlyDiskIdentifiers['both'])) {
+            // iterate through all files found on the local and foreign disk but not in the database
+            foreach ($onlyDiskIdentifiers['both'] as $index => $onlyDiskIdentifier) {
+                static $tcaService = null;
+                if (null === $tcaService) {
+                    $tcaService = GeneralUtility::makeInstance(
+                        'In2code\\In2publishCore\\Service\\Configuration\\TcaService'
+                    );
+                }
+                // fetch the file information with a reserved uid
+                $localFileInformation = $this->getFileInformation(
+                    $onlyDiskIdentifier,
+                    $localDriver,
+                    $foreignDatabase,
+                    $localDatabase
+                );
+                $temporarySysFile = GeneralUtility::makeInstance(
+                    'In2code\\In2publishCore\\Domain\\Model\\Record',
+                    'sys_file',
+                    $localFileInformation,
+                    // assign the already reserved uid to the foreignFileInformation
+                    $this->getFileInformation(
+                        $onlyDiskIdentifier,
+                        $foreignDriver,
+                        $localDatabase,
+                        $foreignDatabase,
+                        $localFileInformation['uid']
+                    ),
+                    $tcaService->getConfigurationArrayForTable('sys_file'),
+                    array('localRecordExistsTemporary' => true, 'foreignRecordExistsTemporary' => true)
+                );
+                $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
+                unset($onlyDiskIdentifiers['both'][$index]);
+            }
+        }
+
+        if (!empty($onlyDiskIdentifiers['both'])) {
+            throw new \RuntimeException('Failed to convert all disk-only files to records', 1475253143);
+        }
+
+        return $files;
     }
 }
