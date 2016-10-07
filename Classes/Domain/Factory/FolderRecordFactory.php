@@ -174,11 +174,13 @@ class FolderRecordFactory
         // get all occurring identifiers indexed by side in one array
         $indexedIdentifiers = $this->buildIndexedIdentifiersList($files);
 
-        $localFileIdentifiers = $this->getFilesIdentifiersInFolder($identifier, $localDriver);
-        $foreignFileIdentifiers = $this->getFilesIdentifiersInFolder($identifier, $foreignDriver);
+        $diskIdentifiers = array();
+
+        $diskIdentifiers['local'] = $this->getFilesIdentifiersInFolder($identifier, $localDriver);
+        $diskIdentifiers['foreign'] = $this->getFilesIdentifiersInFolder($identifier, $foreignDriver);
 
         $onlyForeignFileSystemFileIdentifiers = array_diff(
-            $foreignFileIdentifiers,
+            $diskIdentifiers['foreign'],
             $indexedIdentifiers['local'],
             $indexedIdentifiers['foreign']
         );
@@ -188,7 +190,7 @@ class FolderRecordFactory
         // that are not represented by a sys_file on any side.
         // local files on disk indexed on foreign are handled by LFFD
         $onlyLocalFileSystemFileIdentifiers = array_diff(
-            $localFileIdentifiers,
+            $diskIdentifiers['local'],
             $indexedIdentifiers['local'],
             $indexedIdentifiers['foreign']
         );
@@ -253,12 +255,11 @@ class FolderRecordFactory
         // Determine file identifier of files which are found in one database and the opposite disk.
         // Files which exist on one side on disk and in the database are already filtered.
         // This builds the list for the LFFD and LDFF case
-        $foreignFileRecordsToRecheck = array_intersect($indexedIdentifiers['local'], $foreignFileIdentifiers);
-        $localFileRecordsToRecheck = array_intersect($indexedIdentifiers['foreign'], $localFileIdentifiers);
+        $foreignFileRecordsToRecheck = array_intersect($indexedIdentifiers['local'], $diskIdentifiers['foreign']);
+        $localFileRecordsToRecheck = array_intersect($indexedIdentifiers['foreign'], $diskIdentifiers['local']);
 
         unset($indexedIdentifiers);
-        unset($localFileIdentifiers);
-        unset($foreignFileIdentifiers);
+        unset($diskIdentifiers);
 
         // determine identifiers on both local ond foreign disk and at least one database
         // This builds the list for the NFDB and NLDB case
