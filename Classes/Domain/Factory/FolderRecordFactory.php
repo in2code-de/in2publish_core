@@ -1324,7 +1324,7 @@ class FolderRecordFactory
                 $driver,
                 $oppositeDatabase,
                 $targetDatabase,
-                $reCheckFile->getForeignProperty('uid')
+                $reCheckFile->getPropertyBySideIdentifier('local', 'uid')
             )
         );
         $reCheckFile->addAdditionalProperty('localRecordExistsTemporary', true);
@@ -1352,7 +1352,7 @@ class FolderRecordFactory
                 $driver,
                 $oppositeDatabase,
                 $targetDatabase,
-                $reCheckFile->getLocalProperty('uid')
+                $reCheckFile->getPropertyBySideIdentifier('foreign', 'uid')
             )
         );
         $reCheckFile->addAdditionalProperty('foreignRecordExistsTemporary', true);
