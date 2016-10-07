@@ -1200,7 +1200,7 @@ class FolderRecordFactory
     ) {
         if (!empty($onlyDiskIdentifiers['both'])) {
             // iterate through all files found on the local and foreign disk but not in the database
-            foreach ($onlyDiskIdentifiers['both'] as $index => $onlyDiskIdentifier) {
+            foreach ($onlyDiskIdentifiers['both'] as $onlyDiskIdentifier) {
                 // fetch the file information with a reserved uid
                 $localFileInformation = $this->getFileInformation(
                     $onlyDiskIdentifier,
@@ -1250,7 +1250,7 @@ class FolderRecordFactory
     ) {
         if (!empty($onlyDiskIdentifiers['local'])) {
             // iterate through all files found on disk but not in the database
-            foreach ($onlyDiskIdentifiers['local'] as $index => $fileOnlyOnLocal) {
+            foreach ($onlyDiskIdentifiers['local'] as $fileOnlyOnLocal) {
                 $temporarySysFile = GeneralUtility::makeInstance(
                     'In2code\\In2publishCore\\Domain\\Model\\Record',
                     'sys_file',
@@ -1295,7 +1295,7 @@ class FolderRecordFactory
     ) {
         if (!empty($onlyDiskIdentifiers['foreign'])) {
             // iterate through all files found on disc but not in the database
-            foreach ($onlyDiskIdentifiers['foreign'] as $index => $fileOnlyOnForeign) {
+            foreach ($onlyDiskIdentifiers['foreign'] as $fileOnlyOnForeign) {
                 $temporarySysFile = GeneralUtility::makeInstance(
                     'In2code\\In2publishCore\\Domain\\Model\\Record',
                     'sys_file',
