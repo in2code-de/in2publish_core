@@ -248,6 +248,7 @@ class PhysicalFilePublisher implements SingletonInterface
                             'Tried to delete a non existent foreign file',
                             array('fileInfo' => $foreignFileInfo)
                         );
+                        $result = false;
                     } else {
                         if ($this->sshConnection->removeRemoteFile($foreignFileInfo['relativePath'])) {
                             $this->logger->warning(
@@ -260,9 +261,9 @@ class PhysicalFilePublisher implements SingletonInterface
                                 'Failed to delete foreign physical file',
                                 array('fileInfo' => $foreignFileInfo)
                             );
+                            $result = false;
                         }
                     }
-                    $result = false;
                 } else {
                     // Otherwise the file gains some special treatment through
                     // a logic that keep's the remote physical file up to date
