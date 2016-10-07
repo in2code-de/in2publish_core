@@ -108,7 +108,6 @@ class PhysicalFilePublisher implements SingletonInterface
         if (in_array($table, array('sys_file_processedfile', 'sys_file'))) {
             // create a combined identifier, which is unique among all files
             // and might hence be used as cache identifier or similar
-            // TODO evaluate if the merged property also works for renamed files
             $storage = $record->getMergedProperty('storage');
             $identifier = $record->getMergedProperty('identifier');
 
