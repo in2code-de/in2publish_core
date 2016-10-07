@@ -102,11 +102,15 @@ class FolderRecordFactory
             $localStorage = $localFolder->getStorage();
         }
 
+        unset($resourceFactory);
+
         // get the storages driver to prevent unintentional indexing
         $localDriver = $this->getLocalDriver($localStorage);
         $foreignDriver = $this->getForeignDriver($localStorage);
 
-        // fetch all information regarding the folder on this side
+        unset($localStorage);
+
+        // get the FAL-cleaned folder identifier
         $identifier = $localFolder->getIdentifier();
         $hashedIdentifier = $localFolder->getHashedIdentifier();
 
@@ -116,9 +120,10 @@ class FolderRecordFactory
         // these are not Record instances, yet!
         $localSubFolders = $localDriver->getFoldersInFolder($identifier);
 
+        unset($localFolder);
+
         // do the same on foreign, if the currently selected folder exists on foreign
-        if ($foreignDriver->folderExists($localFolder->getIdentifier())) {
-            // as you can see these lines are the same as above, the driver is just another one
+        if ($foreignDriver->folderExists($identifier)) {
             $foreignFolderInfo = $this->getFolderInfoByIdentifierAndDriver($identifier, $foreignDriver);
             $remoteSubFolders = $foreignDriver->getFoldersInFolder($identifier);
         } else {
@@ -137,6 +142,9 @@ class FolderRecordFactory
             array('depth' => 1)
         );
 
+        unset($localFolderInfo);
+        unset($foreignFolderInfo);
+
         // create Record instances from the sub folder identifier lists
         $subFolders = $this->getSubFolderRecordInstances(
             array_merge($localSubFolders, $remoteSubFolders),
@@ -144,16 +152,12 @@ class FolderRecordFactory
             $foreignDriver
         );
 
+        unset($remoteSubFolders);
+        unset($localSubFolders);
+
         // add all sub folder Records
         $record->addRelatedRecords($subFolders);
 
-        // clean up a bit
-        unset($resourceFactory);
-        unset($localStorage);
-        unset($localFolderInfo);
-        unset($localSubFolders);
-        unset($foreignFolderInfo);
-        unset($remoteSubFolders);
         unset($subFolders);
 
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
@@ -268,6 +272,9 @@ class FolderRecordFactory
         $foreignFileRecordsToRecheck = array_intersect($localIndexedIdentifiers, $foreignFileIdentifiers);
         $localFileRecordsToRecheck = array_intersect($foreignIndexedIdentifiers, $localFileIdentifiers);
 
+        unset($localFileIdentifiers);
+        unset($foreignFileIdentifiers);
+
         // determine identifiers on both local ond foreign disk and at least one database
         // This builds the list for the NFDB and NLDB case
         $fileIdentifiersOnBothSides = array_intersect($localFileRecordsToRecheck, $foreignFileRecordsToRecheck);
@@ -311,6 +318,8 @@ class FolderRecordFactory
             }
         }
 
+        unset($foreignFileRecordsToRecheck);
+
         // PRE-FIX for [8] LFFD case, where the file was found on local's disc
         // and the foreign database (like [5] LDFF inverted)
         foreach ($localFileRecordsToRecheck as $fileRecordUid => $reCheckIdentifier) {
@@ -337,6 +346,8 @@ class FolderRecordFactory
                 }
             }
         }
+
+        unset($localFileRecordsToRecheck);
 
         // Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
         // the folder hash is broken
@@ -455,6 +466,8 @@ class FolderRecordFactory
             throw new \RuntimeException('Failed to convert all local files from disk to records', 1475177184);
         }
 
+        unset($onlyLocalFileSystemFileIdentifiers);
+
         // PRE-FIX for the [2] OFFS case
         // create temporary sys_file entries for all files on the foreign disk
         if (!empty($onlyForeignFileSystemFileIdentifiers)) {
@@ -491,6 +504,8 @@ class FolderRecordFactory
         if (!empty($onlyForeignFileSystemFileIdentifiers)) {
             throw new \RuntimeException('Failed to convert all foreign files from disk to records', 1475236166);
         }
+
+        unset($onlyForeignFileSystemFileIdentifiers);
 
         // PRE-FIXES
         foreach ($fileIdentifiersOnBothSides as $index => $fileIdentifierOnBothSides) {
@@ -531,13 +546,6 @@ class FolderRecordFactory
         }
 
         // clean up again
-        unset($localFolder);
-        unset($localFileIdentifiers);
-        unset($foreignFileIdentifiers);
-        unset($onlyLocalFileSystemFileIdentifiers);
-        unset($onlyForeignFileSystemFileIdentifiers);
-        unset($localFileRecordsToRecheck);
-        unset($foreignFileRecordsToRecheck);
         unset($fileIdentifiersOnBothSides);
 
         // mergeSysFileByIdentifier feature: find sys_file duplicates and "merge" them.
