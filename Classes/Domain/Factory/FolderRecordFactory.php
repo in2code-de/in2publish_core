@@ -174,6 +174,14 @@ class FolderRecordFactory
         // get all occurring identifiers indexed by side in one array
         $indexedIdentifiers = $this->buildIndexedIdentifiersList($files);
 
+        $foreignFileIdentifiers = $this->getForeignFileIdentifiers($identifier, $foreignDriver);
+
+        $onlyForeignFileSystemFileIdentifiers = array_diff(
+            $foreignFileIdentifiers,
+            $indexedIdentifiers['local'],
+            $indexedIdentifiers['foreign']
+        );
+
         // get all file identifiers of files actually existing in the current folder but not in the database
         $localFileIdentifiers = array_values($localDriver->getFilesInFolder($identifier));
 
@@ -186,18 +194,6 @@ class FolderRecordFactory
             $indexedIdentifiers['local'],
             $indexedIdentifiers['foreign']
         );
-
-        if ($foreignDriver->folderExists($identifier)) {
-            $foreignFileIdentifiers = array_values($foreignDriver->getFilesInFolder($identifier));
-            $onlyForeignFileSystemFileIdentifiers = array_diff(
-                $foreignFileIdentifiers,
-                $indexedIdentifiers['local'],
-                $indexedIdentifiers['foreign']
-            );
-        } else {
-            $foreignFileIdentifiers = array();
-            $onlyForeignFileSystemFileIdentifiers = array();
-        }
 
         // Move files existing on both disks but not in any database to a third array.
         $onlyFileSystemEntries = array_intersect(
@@ -1240,5 +1236,20 @@ class FolderRecordFactory
             }
         }
         return $indexedIdentifiers;
+    }
+
+    /**
+     * @param string $identifier
+     * @param DriverInterface $foreignDriver
+     * @return array
+     */
+    protected function getForeignFileIdentifiers($identifier, DriverInterface $foreignDriver)
+    {
+        if ($foreignDriver->folderExists($identifier)) {
+            $identifierList = array_values($foreignDriver->getFilesInFolder($identifier));
+        } else {
+            $identifierList = array();
+        }
+        return $identifierList;
     }
 }
