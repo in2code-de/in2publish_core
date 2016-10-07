@@ -226,20 +226,16 @@ class FolderRecordFactory
                 // The database record is technically added, but the file was removed. Since the file publishing is the
                 // main domain of this class the state of the file on disk has precedence
                 // add foreign file information instead
-                $reCheckFile->setForeignProperties(
-                    $this->getFileInformation(
-                        $reCheckIdentifier,
-                        $foreignDriver,
-                        $localDatabase,
-                        $foreignDatabase,
-                        $reCheckFile->getLocalProperty('uid')
-                    )
+                $this->createAndAddTemporaryForeignIndexInformationToRecord(
+                    $reCheckFile,
+                    $reCheckIdentifier,
+                    $foreignDriver,
+                    $localDatabase,
+                    $foreignDatabase
                 );
+
                 // remove all local properties to "ignore" the local database record
                 $reCheckFile->setLocalProperties(array());
-                $reCheckFile->addAdditionalProperty('foreignRecordExistsTemporary', true);
-                // TODO: trigger the following inside the record itself so it can't be forgotten
-                $reCheckFile->setDirtyProperties()->calculateState();
             } elseif (RecordInterface::RECORD_STATE_UNCHANGED === $recordState
                       || RecordInterface::RECORD_STATE_CHANGED === $recordState
             ) {
@@ -1335,6 +1331,33 @@ class FolderRecordFactory
             )
         );
         $reCheckFile->addAdditionalProperty('localRecordExistsTemporary', true);
+        $reCheckFile->setDirtyProperties()->calculateState();
+    }
+
+    /**
+     * @param Record $reCheckFile
+     * @param string $identifier
+     * @param DriverInterface $foreignDriver
+     * @param DatabaseConnection $localDatabase
+     * @param DatabaseConnection $foreignDatabase
+     */
+    protected function createAndAddTemporaryForeignIndexInformationToRecord(
+        Record $reCheckFile,
+        $identifier,
+        DriverInterface $foreignDriver,
+        DatabaseConnection $localDatabase,
+        DatabaseConnection $foreignDatabase
+    ) {
+        $reCheckFile->setForeignProperties(
+            $this->getFileInformation(
+                $identifier,
+                $foreignDriver,
+                $localDatabase,
+                $foreignDatabase,
+                $reCheckFile->getLocalProperty('uid')
+            )
+        );
+        $reCheckFile->addAdditionalProperty('foreignRecordExistsTemporary', true);
         $reCheckFile->setDirtyProperties()->calculateState();
     }
 }
