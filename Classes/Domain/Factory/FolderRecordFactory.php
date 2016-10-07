@@ -198,25 +198,25 @@ class FolderRecordFactory
         );
 
         // Move files existing on both disks but not in any database to a third array.
-        $onlyFileSystemEntries = array_intersect(
+        $onlyFileSystemIdentifiers['both'] = array_intersect(
             $onlyFileSystemIdentifiers['local'],
             $onlyFileSystemIdentifiers['foreign']
         );
         // Remove OF case files from the other file identifier lists
         $onlyFileSystemIdentifiers['local'] = array_diff(
             $onlyFileSystemIdentifiers['local'],
-            $onlyFileSystemEntries
+            $onlyFileSystemIdentifiers['both']
         );
         $onlyFileSystemIdentifiers['foreign'] = array_diff(
             $onlyFileSystemIdentifiers['foreign'],
-            $onlyFileSystemEntries
+            $onlyFileSystemIdentifiers['both']
         );
 
         // TODO determine if this has to be done before or after the reclaimSysFileEntries feature
         // PRE-FIX for [7] OFS case.
-        if (!empty($onlyFileSystemEntries)) {
+        if (!empty($onlyFileSystemIdentifiers['both'])) {
             // iterate through all files found on the local and foreign disk but not in the database
-            foreach ($onlyFileSystemEntries as $index => $fileSystemEntryIdentifier) {
+            foreach ($onlyFileSystemIdentifiers['both'] as $index => $fileSystemEntryIdentifier) {
                 static $tcaService = null;
                 if (null === $tcaService) {
                     $tcaService = GeneralUtility::makeInstance(
@@ -246,11 +246,11 @@ class FolderRecordFactory
                     array('localRecordExistsTemporary' => true, 'foreignRecordExistsTemporary' => true)
                 );
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
-                unset($onlyFileSystemEntries[$index]);
+                unset($onlyFileSystemIdentifiers['both'][$index]);
             }
         }
 
-        if (!empty($onlyFileSystemEntries)) {
+        if (!empty($onlyFileSystemIdentifiers['both'])) {
             throw new \RuntimeException('Failed to convert all disk-only files to records', 1475253143);
         }
 
