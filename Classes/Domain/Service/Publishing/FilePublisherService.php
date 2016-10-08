@@ -26,32 +26,28 @@ namespace In2code\In2publishCore\Domain\Service\Publishing;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Driver\Rpc\Envelope;
-use In2code\In2publishCore\Domain\Driver\Rpc\EnvelopeDispatcher;
-use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
+use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Security\SshConnection;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class FilePublisherService
- *
- * TODO replace Letterbox/Envelope with RFALD
  */
 class FilePublisherService
 {
     /**
-     * @var Letterbox
+     * @var RemoteFileAbstractionLayerDriver
      */
-    protected $letterbox = null;
+    protected $remoteFalDriver = null;
 
     /**
      * FolderPublisherService constructor.
      */
     public function __construct()
     {
-        $this->letterbox = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Driver\\Rpc\\Letterbox'
+        $this->remoteFalDriver = GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Domain\\Driver\\RemoteFileAbstractionLayerDriver'
         );
     }
 
@@ -64,16 +60,8 @@ class FilePublisherService
      */
     public function removeForeignFile($storage, $fileIdentifier)
     {
-        $uid = $this->letterbox->sendEnvelope(
-            new Envelope(
-                EnvelopeDispatcher::CMD_DELETE_FILE,
-                array('storage' => $storage, 'fileIdentifier' => $fileIdentifier)
-            )
-        );
-
-        SshConnection::makeInstance()->executeRpc($uid);
-        $envelope = $this->letterbox->receiveEnvelope($uid);
-        return true === $envelope->getResponse();
+        $this->remoteFalDriver->setStorageUid($storage);
+        return $this->remoteFalDriver->deleteFile($fileIdentifier);
     }
 
     /**
@@ -85,24 +73,15 @@ class FilePublisherService
      */
     public function addFileToForeign($storage, $fileIdentifier)
     {
-        $file = ResourceFactory::getInstance()->getStorageObject($storage)->getFile($fileIdentifier);
-        $readablePath = $file->getForLocalProcessing(false);
+        $temporaryIdentifier = $this->transferTemporaryFile($storage, $fileIdentifier);
 
-        $temporaryIdentifier = SshConnection::makeInstance()->transferTemporaryFile($readablePath);
-
-        $request = [
-            'storage' => $storage,
-            'localFilePath' => $temporaryIdentifier,
-            'targetFolderIdentifier' => dirname($fileIdentifier),
-            'newFileName' => basename($fileIdentifier),
-            'removeOriginal' => true,
-        ];
-
-        $uid = $this->letterbox->sendEnvelope(new Envelope(EnvelopeDispatcher::CMD_ADD_FILE, $request));
-
-        SshConnection::makeInstance()->executeRpc($uid);
-        $envelope = $this->letterbox->receiveEnvelope($uid);
-        return $fileIdentifier === $envelope->getResponse();
+        $this->remoteFalDriver->setStorageUid($storage);
+        return $this->remoteFalDriver->addFile(
+            $temporaryIdentifier,
+            dirname($fileIdentifier),
+            basename($fileIdentifier),
+            true
+        );
     }
 
     /**
@@ -112,22 +91,10 @@ class FilePublisherService
      */
     public function updateFileOnForeign($storage, $fileIdentifier)
     {
-        $file = ResourceFactory::getInstance()->getStorageObject($storage)->getFile($fileIdentifier);
-        $readablePath = $file->getForLocalProcessing(false);
+        $temporaryIdentifier = $this->transferTemporaryFile($storage, $fileIdentifier);
 
-        $temporaryIdentifier = SshConnection::makeInstance()->transferTemporaryFile($readablePath);
-
-        $request = [
-            'storage' => $storage,
-            'fileIdentifier' => $fileIdentifier,
-            'localFilePath' => $temporaryIdentifier,
-        ];
-
-        $uid = $this->letterbox->sendEnvelope(new Envelope(EnvelopeDispatcher::CMD_REPLACE_FILE, $request));
-
-        SshConnection::makeInstance()->executeRpc($uid);
-        $envelope = $this->letterbox->receiveEnvelope($uid);
-        return true === $envelope->getResponse();
+        $this->remoteFalDriver->setStorageUid($storage);
+        return $this->remoteFalDriver->replaceFile($fileIdentifier, $temporaryIdentifier);
     }
 
     /**
@@ -138,18 +105,32 @@ class FilePublisherService
      */
     public function renameForeignFile($storage, $fileIdentifier, $newName)
     {
-        $expectedResult = rtrim(dirname($fileIdentifier), '/') . '/' . $newName;
+        $this->remoteFalDriver->setStorageUid($storage);
+        return $this->remoteFalDriver->renameFile($fileIdentifier, $newName);
+    }
 
-        $request = [
-            'storage' => $storage,
-            'fileIdentifier' => $fileIdentifier,
-            'newName' => $newName,
-        ];
+    /**
+     * @param int $storage
+     * @param string $fileIdentifier
+     * @return string
+     */
+    protected function transferTemporaryFile($storage, $fileIdentifier)
+    {
+        return SshConnection::makeInstance()->transferTemporaryFile(
+            $this->getLocalReadableFilePathForIdentifier($storage, $fileIdentifier)
+        );
+    }
 
-        $uid = $this->letterbox->sendEnvelope(new Envelope(EnvelopeDispatcher::CMD_RENAME_FILE, $request));
-
-        SshConnection::makeInstance()->executeRpc($uid);
-        $envelope = $this->letterbox->receiveEnvelope($uid);
-        return $expectedResult === $envelope->getResponse();
+    /**
+     * @param int $storage
+     * @param string $fileIdentifier
+     * @return string
+     */
+    protected function getLocalReadableFilePathForIdentifier($storage, $fileIdentifier)
+    {
+        return ResourceFactory::getInstance()
+                              ->getStorageObject($storage)
+                              ->getFile($fileIdentifier)
+                              ->getForLocalProcessing(false);
     }
 }

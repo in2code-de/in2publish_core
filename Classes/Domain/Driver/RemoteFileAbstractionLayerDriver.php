@@ -295,7 +295,29 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      */
     public function addFile($localFilePath, $targetFolderIdentifier, $newFileName = '', $removeOriginal = true)
     {
-        xdebug_break();
+        return $this->cache(
+            __FUNCTION__ . $localFilePath . '|' . $targetFolderIdentifier . '|' . $newFileName,
+            function () use ($localFilePath, $targetFolderIdentifier, $newFileName, $removeOriginal) {
+                $uid = $this->letterBox->sendEnvelope(
+                    new Envelope(
+                        EnvelopeDispatcher::CMD_ADD_FILE,
+                        array(
+                            'storage' => $this->storageUid,
+                            'localFilePath' => $localFilePath,
+                            'targetFolderIdentifier' => $targetFolderIdentifier,
+                            'newFileName' => $newFileName,
+                            'removeOriginal' => $removeOriginal,
+                        )
+                    )
+                );
+
+                if (false === $uid) {
+                    throw new \Exception('Could not send "addFile" request to remote system', 1475932227);
+                }
+
+                return $this->executeEnvelopeAndReceiveResponse($uid);
+            }
+        );
     }
 
     /**
@@ -334,7 +356,27 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      */
     public function renameFile($fileIdentifier, $newName)
     {
-        xdebug_break();
+        return $this->cache(
+            __FUNCTION__ . $fileIdentifier . '|' . $newName,
+            function () use ($fileIdentifier, $newName) {
+                $uid = $this->letterBox->sendEnvelope(
+                    new Envelope(
+                        EnvelopeDispatcher::CMD_RENAME_FILE,
+                        array(
+                            'storage' => $this->storageUid,
+                            'fileIdentifier' => $fileIdentifier,
+                            'newName' => $newName,
+                        )
+                    )
+                );
+
+                if (false === $uid) {
+                    throw new \Exception('Could not send "renameFile" request to remote system', 1475932033);
+                }
+
+                return $this->executeEnvelopeAndReceiveResponse($uid);
+            }
+        );
     }
 
     /**
@@ -346,7 +388,27 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      */
     public function replaceFile($fileIdentifier, $localFilePath)
     {
-        xdebug_break();
+        return $this->cache(
+            __FUNCTION__ . $fileIdentifier . '|' . $localFilePath,
+            function () use ($fileIdentifier, $localFilePath) {
+                $uid = $this->letterBox->sendEnvelope(
+                    new Envelope(
+                        EnvelopeDispatcher::CMD_REPLACE_FILE,
+                        array(
+                            'storage' => $this->storageUid,
+                            'fileIdentifier' => $fileIdentifier,
+                            'localFilePath' => $localFilePath,
+                        )
+                    )
+                );
+
+                if (false === $uid) {
+                    throw new \Exception('Could not send "replaceFile" request to remote system', 1475930835);
+                }
+
+                return $this->executeEnvelopeAndReceiveResponse($uid);
+            }
+        );
     }
 
     /**
@@ -359,7 +421,23 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      */
     public function deleteFile($fileIdentifier)
     {
-        xdebug_break();
+        return $this->cache(
+            __FUNCTION__ . $fileIdentifier,
+            function () use ($fileIdentifier) {
+                $uid = $this->letterBox->sendEnvelope(
+                    new Envelope(
+                        EnvelopeDispatcher::CMD_DELETE_FILE,
+                        array('storage' => $this->storageUid, 'fileIdentifier' => $fileIdentifier)
+                    )
+                );
+
+                if (false === $uid) {
+                    throw new \Exception('Could not send "deleteFile" request to remote system', 1475930502);
+                }
+
+                return $this->executeEnvelopeAndReceiveResponse($uid);
+            }
+        );
     }
 
     /**
