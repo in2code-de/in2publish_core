@@ -1106,7 +1106,7 @@ class FolderRecordFactory
                 $indexedIdentifiers['local'][$identifier] = $localIdentifier;
             } elseif (!$isLocal && $isForeign) {
                 // only foreign
-                $indexedIdentifiers['foreign'][$identifier] = $localIdentifier;
+                $indexedIdentifiers['foreign'][$identifier] = $foreignIdentifier;
             }
         }
         return $indexedIdentifiers;
