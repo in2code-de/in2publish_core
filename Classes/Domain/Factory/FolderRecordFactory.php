@@ -126,57 +126,11 @@ class FolderRecordFactory
         // Also get the hashed identifier, which will be used later for temporary index creation and record searching.
         $hashedIdentifier = $localFolder->getHashedIdentifier();
 
-        // Fetch the local folder information which will be used for the selected folders local record properties
-        $localFolderInfo = $this->getFolderInfoByIdentifierAndDriver($identifier, $localDriver);
-
-        // Retrieve all local sub folder identifiers (no recursion! no database!)
-        // These are not record instances, yet!
-        $localSubFolders = $localDriver->getFoldersInFolder($identifier);
-
         // Remove the reference to the local folder FAL object.
         // It's useless now, because i've got its identifiers and sub folders.
         unset($localFolder);
 
-        // Do the same on foreign (fetching folder information), if the currently selected folder exists on foreign.
-        if ($foreignDriver->folderExists($identifier)) {
-            $foreignFolderInfo = $this->getFolderInfoByIdentifierAndDriver($identifier, $foreignDriver);
-            $remoteSubFolders = $foreignDriver->getFoldersInFolder($identifier);
-        } else {
-            // Otherwise just set "empty" values to flag the folder "record" as non existent.
-            $foreignFolderInfo = array();
-            $remoteSubFolders = array();
-        }
-
-        // Finally create a record instance representing the selected folder.
-        $record = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Model\\Record',
-            'physical_folder',
-            $localFolderInfo,
-            $foreignFolderInfo,
-            array(),
-            array('depth' => 1)
-        );
-
-        // Remove the folder information variables. They will not be used anymore.
-        unset($localFolderInfo);
-        unset($foreignFolderInfo);
-
-        // Create record instances from the sub folder identifier lists we retrieved earlier.
-        $subFolders = $this->getSubFolderRecordInstances(
-            array_merge($localSubFolders, $remoteSubFolders),
-            $localDriver,
-            $foreignDriver
-        );
-
-        // Remove the sub folder identifiers list, since all folders were converted to record instances.
-        unset($remoteSubFolders);
-        unset($localSubFolders);
-
-        // Add all converted sub folder records to the selected folder.
-        $record->addRelatedRecords($subFolders);
-
-        // Remove the variable. Sub folders will not be touched anymore until rendering the view.
-        unset($subFolders);
+        $record = $this->createRecordForSelectedFolderAndRelatedSubFolders($identifier, $foreignDriver, $localDriver);
 
         // Get the database connections to be able to pass them around
         // as target/opposite database e.g. for following purposes:
@@ -630,16 +584,19 @@ class FolderRecordFactory
     /**
      * Factory method to create Record instances from a list of folder identifier
      *
-     * @param array $subFolderIdentifiers
+     * @param array $localSubFolders
+     * @param array $foreignSubFolders
      * @param DriverInterface $localDriver
      * @param DriverInterface $foreignDriver
      * @return array
      */
     protected function getSubFolderRecordInstances(
-        array $subFolderIdentifiers,
+        array $localSubFolders,
+        array $foreignSubFolders,
         DriverInterface $localDriver,
         DriverInterface $foreignDriver
     ) {
+        $subFolderIdentifiers = array_merge($localSubFolders, $foreignSubFolders);
         $subFolders = array();
         foreach ($subFolderIdentifiers as $subFolderIdentifier) {
             if ($localDriver->folderExists($subFolderIdentifier)) {
@@ -1399,5 +1356,40 @@ class FolderRecordFactory
         $diskIdentifiers['foreign'] = array_diff($diskIdentifiers['foreign'], $diskIdentifiers['both']);
 
         return $diskIdentifiers;
+    }
+
+    /**
+     * @param string $identifier
+     * @param DriverInterface $foreignDriver
+     * @param DriverInterface $localDriver
+     * @return Record
+     */
+    protected function createRecordForSelectedFolderAndRelatedSubFolders(
+        $identifier,
+        DriverInterface $foreignDriver,
+        DriverInterface $localDriver
+    ) {
+        $foreignFolderExists = $foreignDriver->folderExists($identifier);
+
+        $record = GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Domain\\Model\\Record',
+            'physical_folder',
+            $this->getFolderInfoByIdentifierAndDriver($identifier, $localDriver),
+            $foreignFolderExists ? $this->getFolderInfoByIdentifierAndDriver($identifier, $foreignDriver) : array(),
+            array(),
+            array('depth' => 1)
+        );
+
+        // Add all converted sub folder records to the selected folder.
+        $record->addRelatedRecords(
+            $this->getSubFolderRecordInstances(
+                $localDriver->getFoldersInFolder($identifier),
+                $foreignFolderExists ? $foreignDriver->getFoldersInFolder($identifier) : array(),
+                $localDriver,
+                $foreignDriver
+            )
+        );
+
+        return $record;
     }
 }
