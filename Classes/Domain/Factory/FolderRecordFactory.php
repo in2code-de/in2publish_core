@@ -26,7 +26,6 @@ namespace In2code\In2publishCore\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
@@ -596,7 +595,9 @@ class FolderRecordFactory
      */
     protected function getForeignDriver(ResourceStorage $localStorage)
     {
-        $foreignDriver = new RemoteFileAbstractionLayerDriver();
+        $foreignDriver = GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Domain\\Driver\\RemoteFileAbstractionLayerDriver'
+        );
         $foreignDriver->setStorageUid($localStorage->getUid());
         $foreignDriver->initialize();
         return $foreignDriver;
