@@ -158,9 +158,8 @@ class FolderRecordFactory
         // This list is important for any OxFS case. (local = OLFS; foreign = OFFS, both = OFS)
         $onlyDiskIdentifiers = $this->determineIdentifiersOnlyOnDisk($diskIdentifiers, $indexedIdentifiers);
 
-        // TODO determine if this has to be done before or after the reclaimSysFileEntries feature
         // Create temporary indices for files existing on local and foreign but in neither database (OFS)
-        $files = $this->convertAndAddFilesOnBothDisksToRecordList(
+        $files = $this->convertAndAddUnIndexedFilesOnBothDisksToRecordList(
             $onlyDiskIdentifiers,
             $localDriver,
             $foreignDatabase,
@@ -169,88 +168,49 @@ class FolderRecordFactory
             $files
         );
 
+        // Create temporary indices for files existing on the local disk and foreign database
+        $files = $this->fixAndConvertIntersectingIdentifiersIntoRecords(
+            $diskIdentifiers,
+            $indexedIdentifiers,
+            $files,
+            $foreignDriver,
+            $localDriver,
+            $foreignDatabase,
+            $localDatabase,
+            'local'
+        );
+
+        // Create temporary indices for files existing on the foreign disk and local database
+        $files = $this->fixAndConvertIntersectingIdentifiersIntoRecords(
+            $diskIdentifiers,
+            $indexedIdentifiers,
+            $files,
+            $foreignDriver,
+            $localDriver,
+            $localDatabase,
+            $foreignDatabase,
+            'foreign'
+        );
+
         /************************************
          *
          *        REVIEWED UNTIL HERE
          *
          ***********************************/
 
-        // Determine file identifier of files which are found in one database and the opposite disk.
-        // Files which exist on one side on disk and in the database are already filtered.
-        // This builds the list for the LFFD and LDFF case
-        $foreignFileRecordsToRecheck = array_intersect($indexedIdentifiers['local'], $diskIdentifiers['foreign']);
-        $localFileRecordsToRecheck = array_intersect($indexedIdentifiers['foreign'], $diskIdentifiers['local']);
-
-        unset($indexedIdentifiers);
-        unset($diskIdentifiers);
-
-        // determine identifiers on both local ond foreign disk and at least one database
-        // This builds the list for the NFDB and NLDB case
-        $fileIdentifiersOnBothSides = array_intersect($localFileRecordsToRecheck, $foreignFileRecordsToRecheck);
-
-        // remove identifier entries from the arrays when the file was found on both sides.
-        // this results in arrays that contain only file identifiers that occur on exactly one side.
-        $localFileRecordsToRecheck = array_diff($localFileRecordsToRecheck, $fileIdentifiersOnBothSides);
-
-        $foreignFileRecordsToRecheck = array_diff($foreignFileRecordsToRecheck, $fileIdentifiersOnBothSides);
-
-        foreach ($foreignFileRecordsToRecheck as $fileRecordUid => $reCheckIdentifier) {
-            $reCheckFile = $files[$fileRecordUid];
-            $recordState = $reCheckFile->getState();
-            if (RecordInterface::RECORD_STATE_ADDED === $recordState) {
-                // PRE-FIX for [5] LDFF case, where the file was found on foreign's disk and the local database
-                // Short: Removes LDB but adds FDB instead. Results in OF
-                // The database record is technically added, but the file was removed. Since the file publishing is the
-                // main domain of this class the state of the file on disk has precedence
-                // add foreign file information instead
-                $this->createAndAddTemporaryIndexInformationToRecordForSide(
-                    $reCheckFile,
-                    $reCheckIdentifier,
-                    $foreignDriver,
-                    $localDatabase,
-                    $foreignDatabase,
-                    'foreign'
-                );
-
-                // remove all local properties to "ignore" the local database record
-                $reCheckFile->setLocalProperties(array());
-            } elseif (RecordInterface::RECORD_STATE_UNCHANGED === $recordState
-                      || RecordInterface::RECORD_STATE_CHANGED === $recordState
-            ) {
-                // PRE-FIX [12] NLFS
-                // The database record is unchanged or changed, because it exists on both sides,
-                // the file in return was only found on foreign (the identifier is in $foreignFileRecordsToRecheck)
-                $reCheckFile->setLocalProperties(array());
-                $reCheckFile->setDirtyProperties()->calculateState();
-            }
-        }
-
-        unset($foreignFileRecordsToRecheck);
-
-        // PRE-FIX for [8] LFFD case, where the file was found on local's disc
-        // and the foreign database (like [5] LDFF inverted)
-        foreach ($localFileRecordsToRecheck as $fileRecordUid => $reCheckIdentifier) {
-            $reCheckFile = $files[$fileRecordUid];
-            // The database record is technically deleted, but the file was added. Since the file publishing is the
-            // main domain of this class the state of the file on disk has precedence
-            if (RecordInterface::RECORD_STATE_DELETED === $reCheckFile->getState()) {
-                if (!$foreignDriver->fileExists($reCheckIdentifier)) {
-                    // add local file information instead
-                    $this->createAndAddTemporaryIndexInformationToRecordForSide(
-                        $reCheckFile,
-                        $reCheckIdentifier,
-                        $localDriver,
-                        $foreignDatabase,
-                        $localDatabase,
-                        'local'
-                    );
-                    // remove all foreign properties to "ignore" the foreign database record
-                    $reCheckFile->setForeignProperties(array());
-                }
-            }
-        }
-
-        unset($localFileRecordsToRecheck);
+        /**
+         * TODO: reimplement this
+         * TAKE CARE: following implementation is currently missing: PRE-FIX [12] NLFS
+         */
+        //    elseif (RecordInterface::RECORD_STATE_UNCHANGED === $recordState
+        //            || RecordInterface::RECORD_STATE_CHANGED === $recordState
+        //    ) {
+        //        // PRE-FIX [12] NLFS
+        //        // The database record is unchanged or changed, because it exists on both sides,
+        //        // the file in return was only found on foreign (the identifier is in $foreignFileRecordsToRecheck)
+        //    $reCheckFile->setLocalProperties(array());
+        //        $reCheckFile->setDirtyProperties()->calculateState();
+        //    }
 
         // Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
         // the folder hash is broken
@@ -1169,7 +1129,7 @@ class FolderRecordFactory
      * @param Record[] $files
      * @return Record[]
      */
-    protected function convertAndAddFilesOnBothDisksToRecordList(
+    protected function convertAndAddUnIndexedFilesOnBothDisksToRecordList(
         array $onlyDiskIdentifiers,
         DriverInterface $localDriver,
         DatabaseConnection $foreignDatabase,
@@ -1323,7 +1283,7 @@ class FolderRecordFactory
                 $driver,
                 $oppositeDatabase,
                 $targetDatabase,
-                $record->getPropertyBySideIdentifier($side === 'local' ?: 'foreign', 'uid')
+                $record->getPropertyBySideIdentifier($side === 'local' ? 'foreign' : 'local', 'uid')
             )
         );
         $record->addAdditionalProperty($side . 'RecordExistsTemporary', true);
@@ -1391,5 +1351,83 @@ class FolderRecordFactory
         );
 
         return $record;
+    }
+
+    /**
+     * @param array $diskIdentifiers
+     * @param array $indexedIdentifiers
+     * @param Record[] $files
+     * @param DriverInterface $foreignDriver
+     * @param DriverInterface $localDriver
+     * @param DatabaseConnection $foreignDatabase
+     * @param DatabaseConnection $localDatabase
+     * @param string $diskSide
+     * @return Record[]
+     */
+    protected function fixAndConvertIntersectingIdentifiersIntoRecords(
+        array $diskIdentifiers,
+        array $indexedIdentifiers,
+        array $files,
+        DriverInterface $foreignDriver,
+        DriverInterface $localDriver,
+        DatabaseConnection $foreignDatabase,
+        DatabaseConnection $localDatabase,
+        $diskSide
+    ) {
+        // Find intersecting identifiers. These are identifiers of files on the local disk and foreign database
+        // or vice versa.
+        // The resulting lists are important for the
+        // LFFD (local file foreign database) and LDFF (local database foreign file) case.
+        $indexSide = $diskSide === 'foreign' ? 'local' : 'foreign';
+        $diskNotIndexedHere = array_diff(
+            $diskIdentifiers[$diskSide],
+            $indexedIdentifiers[$diskSide],
+            $indexedIdentifiers['both']
+        );
+        $oppositeIndexedIdentifiers = array_intersect($indexedIdentifiers[$indexSide], $diskNotIndexedHere);
+
+        foreach ($oppositeIndexedIdentifiers as $fileRecordUid => $reCheckIdentifier) {
+            $reCheckFile = $files[$fileRecordUid];
+            $state = $reCheckFile->getState();
+            if ($diskSide === 'foreign' && RecordInterface::RECORD_STATE_ADDED === $state) {
+                // PRE-FIX for [5] LDFF case, where the file was found on foreign's disk and the local database
+                // and the foreign database (like [8] LFFD inverted)
+                // Short: Removes LDB but adds FDB instead. Results in OF
+                // The database record is technically added, but the file was removed. Since the file publishing is the
+                // main domain of this class the state of the file on disk has precedence
+                // add foreign file information instead
+                $this->createAndAddTemporaryIndexInformationToRecordForSide(
+                    $reCheckFile,
+                    $reCheckIdentifier,
+                    $foreignDriver,
+                    $localDatabase,
+                    $foreignDatabase,
+                    'foreign'
+                );
+
+                // remove all local properties to "ignore" the local database record
+                $reCheckFile->setLocalProperties(array());
+                $reCheckFile->setDirtyProperties()->calculateState();
+            } elseif ($diskSide === 'local' && RecordInterface::RECORD_STATE_DELETED === $state) {
+                if (!$foreignDriver->fileExists($reCheckIdentifier)) {
+                    // PRE-FIX for [8] LFFD case, where the file was found on local's disc
+                    // and the foreign database (like [5] LDFF inverted).
+                    // The database record is technically deleted, but the file was added. Since the file
+                    // publishing is the main domain of this class the state of the file on disk has precedence
+                    $this->createAndAddTemporaryIndexInformationToRecordForSide(
+                        $reCheckFile,
+                        $reCheckIdentifier,
+                        $localDriver,
+                        $foreignDatabase,
+                        $localDatabase,
+                        'local'
+                    );
+                    // remove all foreign properties to "ignore" the foreign database record
+                    $reCheckFile->setForeignProperties(array());
+                    $reCheckFile->setDirtyProperties()->calculateState();
+                }
+            }
+        }
+        return $files;
     }
 }
