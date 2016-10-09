@@ -269,36 +269,6 @@ class FolderRecordFactory
         // Remove these indices
         unset($indicesToRecheck);
 
-        /*
-         * Up to this point following cases have been fixed
-         *      [X] = Fixed
-         *      [O] = No need to fix
-         *      [ ] = TBD
-         *
-         * [ ] [0] OLDB
-         * [X] [1] OLFS
-         * [X] [2] OFFS
-         * [ ] [3] OFDB
-         * [ ] [4] OL
-         * [X] [5] LDFF
-         * [ ] [6] ODB
-         * [X] [7] OFS
-         * [X] [8] LFFD
-         * [ ] [9] OF
-         * [X] [10] NFDB
-         * [ ] [11] NFFS
-         * [ ] [12] NLFS
-         * [X] [13] NLDB
-         * [ ] [14] ALL
-         * [ ] [15] NONE
-         */
-
-        /************************************
-         *
-         *        REVIEWED UNTIL HERE
-         *
-         ***********************************/
-
         // mergeSysFileByIdentifier feature: find sys_file duplicates and "merge" them.
         // If the foreign sys_file was not referenced in the foreign's sys_file_reference table the the
         // uid of the foreign record can be overwritten to restore a consistent state
