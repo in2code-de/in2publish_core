@@ -303,155 +303,9 @@ class FolderRecordFactory
         // If the foreign sys_file was not referenced in the foreign's sys_file_reference table the the
         // uid of the foreign record can be overwritten to restore a consistent state
         if (true === $this->configuration['mergeSysFileByIdentifier']) {
-            /** @var Record[][] $identifierList */
-            $identifierList = array();
-            // get all foreign file identifiers to match again
-            foreach ($files as $file) {
-                if (!$file->hasForeignProperty('identifier') || !$file->hasForeignProperty('uid')) {
-                    continue;
-                }
-
-                if ($file->localRecordExists()
-                    && (!$file->hasAdditionalProperty('localRecordExistsTemporary')
-                        || true !== $file->getAdditionalProperty('localRecordExistsTemporary'))
-                ) {
-                    continue;
-                }
-
-                if (true === $file->getAdditionalProperty('foreignRecordExistsTemporary')) {
-                    continue;
-                }
-
-                $identifierList[$file->getForeignProperty('identifier')][$file->getIdentifier()] = $file;
-            }
-            // find all matches
-            foreach ($files as $file) {
-                // condition: the sys_file exists on local, matches the identifier but is not the already added file
-                // (UIDs are different, identifier is the same, record is not temporary)
-                if ($file->hasLocalProperty('identifier')
-                    && $file->hasLocalProperty('uid')
-                    && isset($identifierList[$file->getLocalProperty('identifier')])
-                    && !isset($identifierList[$file->getLocalProperty('identifier')][$file->getIdentifier()])
-                    && (!$file->foreignRecordExists()
-                        || true === $file->hasAdditionalProperty('foreignRecordExistsTemporary'))
-                    && (!$file->hasAdditionalProperty('localRecordExistsTemporary')
-                        || false === $file->hasAdditionalProperty('localRecordExistsTemporary'))
-                ) {
-                    $identifierList[$file->getLocalProperty('identifier')][$file->getIdentifier()] = $file;
-                }
-            }
-            // filter the entries
-            foreach ($identifierList as $identifierString => $fileEntries) {
-                // only support sys_files with exactly one duplicate
-                if (2 !== count($fileEntries)) {
-                    unset($identifierList[$identifierString]);
-                }
-            }
-            // if there are records "to be merged"
-            if (!empty($identifierList)) {
-                foreach ($identifierList as $identifierString => $fileEntries) {
-                    // the first file is always the foreign file.
-                    $foreignFile = array_shift($fileEntries);
-                    $localFile = array_pop($fileEntries);
-                    $oldUid = $foreignFile->getForeignProperty('uid');
-                    $newUid = $localFile->getLocalProperty('uid');
-
-                    // run the integrity test when enableSysFileReferenceUpdate is not enabled
-                    if (true !== $this->configuration['enableSysFileReferenceUpdate']) {
-                        // check if the sys_file was not referenced yet
-                        $count = $foreignDatabase->exec_SELECTcountRows(
-                            'uid',
-                            'sys_file_reference',
-                            'table_local LIKE "sys_file" AND uid_local=' . (int)$oldUid
-                        );
-                        // if a sys_file_record record has been found abort here,
-                        // because it's unsafe to overwrite the uid
-                        if (0 !== $count) {
-                            break;
-                        }
-                    }
-                    // check if the "new" uid is not taken yet
-                    $count = $foreignDatabase->exec_SELECTcountRows(
-                        'uid',
-                        'sys_file',
-                        'uid=' . (int)$newUid
-                    );
-                    // if a sys_file record with the "new" uid has been found abort immediately
-                    if (0 !== $count) {
-                        break;
-                    }
-                    $uidUpdateSuccess = $foreignDatabase->exec_UPDATEquery(
-                        'sys_file',
-                        'uid=' . (int)$oldUid,
-                        array('uid' => $newUid)
-                    );
-                    if (true === $uidUpdateSuccess) {
-                        $this->logger->notice(
-                            'Rewrote a sys_file uid by the mergeSysFileByIdentifier feature',
-                            array(
-                                'old' => $oldUid,
-                                'new' => $newUid,
-                                'identifier' => $identifierString,
-                            )
-                        );
-
-                        if (true === $this->configuration['enableSysFileReferenceUpdate']) {
-                            $referenceUpdateSuccess = $foreignDatabase->exec_UPDATEquery(
-                                'sys_file_reference',
-                                'table_local LIKE "sys_file" AND uid_local=' . (int)$oldUid,
-                                array('uid_local' => $newUid)
-                            );
-                            if ($referenceUpdateSuccess) {
-                                $this->logger->notice(
-                                    'Rewrote sys_file_reference by the enableSysFileReferenceUpdate feature',
-                                    array(
-                                        'old' => $oldUid,
-                                        'new' => $newUid,
-                                        'identifier' => $identifierString,
-                                    )
-                                );
-                            } else {
-                                $this->logger->error(
-                                    'Failed to rewrite sys_file_reference by the enableSysFileReferenceUpdate feature',
-                                    array(
-                                        'old' => $oldUid,
-                                        'new' => $newUid,
-                                        'identifier' => $identifierString,
-                                        'error' => $foreignDatabase->sql_error(),
-                                        'errno' => $foreignDatabase->sql_errno(),
-                                    )
-                                );
-                            }
-                        }
-
-                        // copy the foreign's properties with the new uid to the local record (merge)
-                        $foreignProperties = $foreignFile->getForeignProperties();
-                        $foreignProperties['uid'] = $newUid;
-                        $localFile->setForeignProperties($foreignProperties);
-                        $localFile->setDirtyProperties()->calculateState();
-
-                        // remove the foreign file from the list
-                        foreach ($files as $index => $file) {
-                            if ($file === $foreignFile) {
-                                unset($files[$index]);
-                                break;
-                            }
-                        }
-                    } else {
-                        $this->logger->error(
-                            'Failed to rewrite a sys_file uid by the mergeSysFileByIdentifier feature',
-                            array(
-                                'old' => $oldUid,
-                                'new' => $newUid,
-                                'identifier' => $identifierString,
-                                'error' => $foreignDatabase->sql_error(),
-                                'errno' => $foreignDatabase->sql_errno(),
-                            )
-                        );
-                    }
-                }
-            }
+            $files = $this->mergeSysFileByIdentifier($files, $foreignDatabase);
         }
+
         $files = $this->filterFileRecords($files, $localDriver, $foreignDriver, $foreignDatabase, $localDatabase);
 
         $record->addRelatedRecords($files);
@@ -1434,5 +1288,164 @@ class FolderRecordFactory
             }
         }
         return array($onlyDiskIdentifiers, $files);
+    }
+
+    /**
+     * @param Record[] $files
+     * @param DatabaseConnection $foreignDatabase
+     * @return Record[]
+     */
+    protected function mergeSysFileByIdentifier(array $files, DatabaseConnection $foreignDatabase)
+    {
+        /** @var Record[][] $identifierList */
+        $identifierList = array();
+        // get all foreign file identifiers to match again
+        foreach ($files as $file) {
+            if (!$file->hasForeignProperty('identifier') || !$file->hasForeignProperty('uid')) {
+                continue;
+            }
+
+            if ($file->localRecordExists()
+                && (!$file->hasAdditionalProperty('localRecordExistsTemporary')
+                    || true !== $file->getAdditionalProperty('localRecordExistsTemporary'))
+            ) {
+                continue;
+            }
+
+            if (true === $file->getAdditionalProperty('foreignRecordExistsTemporary')) {
+                continue;
+            }
+
+            $identifierList[$file->getForeignProperty('identifier')][$file->getIdentifier()] = $file;
+        }
+        // find all matches
+        foreach ($files as $file) {
+            // condition: the sys_file exists on local, matches the identifier but is not the already added file
+            // (UIDs are different, identifier is the same, record is not temporary)
+            if ($file->hasLocalProperty('identifier')
+                && $file->hasLocalProperty('uid')
+                && isset($identifierList[$file->getLocalProperty('identifier')])
+                && !isset($identifierList[$file->getLocalProperty('identifier')][$file->getIdentifier()])
+                && (!$file->foreignRecordExists()
+                    || true === $file->hasAdditionalProperty('foreignRecordExistsTemporary'))
+                && (!$file->hasAdditionalProperty('localRecordExistsTemporary')
+                    || false === $file->hasAdditionalProperty('localRecordExistsTemporary'))
+            ) {
+                $identifierList[$file->getLocalProperty('identifier')][$file->getIdentifier()] = $file;
+            }
+        }
+        // filter the entries
+        foreach ($identifierList as $identifierString => $fileEntries) {
+            // only support sys_files with exactly one duplicate
+            if (2 !== count($fileEntries)) {
+                unset($identifierList[$identifierString]);
+            }
+        }
+        // if there are records "to be merged"
+        if (!empty($identifierList)) {
+            foreach ($identifierList as $identifierString => $fileEntries) {
+                // the first file is always the foreign file.
+                $foreignFile = array_shift($fileEntries);
+                $localFile = array_pop($fileEntries);
+                $oldUid = $foreignFile->getForeignProperty('uid');
+                $newUid = $localFile->getLocalProperty('uid');
+
+                // run the integrity test when enableSysFileReferenceUpdate is not enabled
+                if (true !== $this->configuration['enableSysFileReferenceUpdate']) {
+                    // check if the sys_file was not referenced yet
+                    $count = $foreignDatabase->exec_SELECTcountRows(
+                        'uid',
+                        'sys_file_reference',
+                        'table_local LIKE "sys_file" AND uid_local=' . (int)$oldUid
+                    );
+                    // if a sys_file_record record has been found abort here,
+                    // because it's unsafe to overwrite the uid
+                    if (0 !== $count) {
+                        break;
+                    }
+                }
+                // check if the "new" uid is not taken yet
+                $count = $foreignDatabase->exec_SELECTcountRows(
+                    'uid',
+                    'sys_file',
+                    'uid=' . (int)$newUid
+                );
+                // if a sys_file record with the "new" uid has been found abort immediately
+                if (0 !== $count) {
+                    break;
+                }
+                $uidUpdateSuccess = $foreignDatabase->exec_UPDATEquery(
+                    'sys_file',
+                    'uid=' . (int)$oldUid,
+                    array('uid' => $newUid)
+                );
+                if (true === $uidUpdateSuccess) {
+                    $this->logger->notice(
+                        'Rewrote a sys_file uid by the mergeSysFileByIdentifier feature',
+                        array(
+                            'old' => $oldUid,
+                            'new' => $newUid,
+                            'identifier' => $identifierString,
+                        )
+                    );
+
+                    if (true === $this->configuration['enableSysFileReferenceUpdate']) {
+                        $referenceUpdateSuccess = $foreignDatabase->exec_UPDATEquery(
+                            'sys_file_reference',
+                            'table_local LIKE "sys_file" AND uid_local=' . (int)$oldUid,
+                            array('uid_local' => $newUid)
+                        );
+                        if ($referenceUpdateSuccess) {
+                            $this->logger->notice(
+                                'Rewrote sys_file_reference by the enableSysFileReferenceUpdate feature',
+                                array(
+                                    'old' => $oldUid,
+                                    'new' => $newUid,
+                                    'identifier' => $identifierString,
+                                )
+                            );
+                        } else {
+                            $this->logger->error(
+                                'Failed to rewrite sys_file_reference by the enableSysFileReferenceUpdate feature',
+                                array(
+                                    'old' => $oldUid,
+                                    'new' => $newUid,
+                                    'identifier' => $identifierString,
+                                    'error' => $foreignDatabase->sql_error(),
+                                    'errno' => $foreignDatabase->sql_errno(),
+                                )
+                            );
+                        }
+                    }
+
+                    // copy the foreign's properties with the new uid to the local record (merge)
+                    $foreignProperties = $foreignFile->getForeignProperties();
+                    $foreignProperties['uid'] = $newUid;
+                    $localFile->setForeignProperties($foreignProperties);
+                    $localFile->setDirtyProperties()->calculateState();
+
+                    // remove the foreign file from the list
+                    foreach ($files as $index => $file) {
+                        if ($file === $foreignFile) {
+                            unset($files[$index]);
+                            break;
+                        }
+                    }
+                } else {
+                    $this->logger->error(
+                        'Failed to rewrite a sys_file uid by the mergeSysFileByIdentifier feature',
+                        array(
+                            'old' => $oldUid,
+                            'new' => $newUid,
+                            'identifier' => $identifierString,
+                            'error' => $foreignDatabase->sql_error(),
+                            'errno' => $foreignDatabase->sql_errno(),
+                        )
+                    );
+                }
+            }
+        }
+
+        return $files;
     }
 }
