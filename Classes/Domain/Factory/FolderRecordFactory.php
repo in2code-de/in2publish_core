@@ -192,93 +192,49 @@ class FolderRecordFactory
             'foreign'
         );
 
+        // Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
+        // the folder hash is broken
+        if (true === $this->configuration['reclaimSysFileEntries']) {
+            list($files, $onlyDiskIdentifiers) = $this->reclaimIndexEntries(
+                $onlyDiskIdentifiers,
+                $commonRepository,
+                $localDatabase,
+                $hashedIdentifier,
+                $files,
+                $foreignDatabase
+            );
+        }
+
+        /*
+         * Up to this point following cases have been fixed
+         *      [X] = Fixed
+         *      [O] = No need to fix
+         *      [ ] = TBD
+         *
+         * [ ] [0] OLDB
+         * [ ] [1] OLFS
+         * [ ] [2] OFFS
+         * [ ] [3] OFDB
+         * [ ] [4] OL
+         * [X] [5] LDFF
+         * [ ] [6] ODB
+         * [X] [7] OFS
+         * [X] [8] LFFD
+         * [ ] [9] OF
+         * [ ] [10] NFDB
+         * [ ] [11] NFFS
+         * [ ] [12] NLFS
+         * [ ] [13] NLDB
+         * [ ] [14] ALL
+         * [ ] [15] NONE
+         */
+
         /************************************
          *
          *        REVIEWED UNTIL HERE
          *
          ***********************************/
 
-         */
-
-        // Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
-        // the folder hash is broken
-        if (true === $this->configuration['reclaimSysFileEntries']) {
-            // the chance is vanishing low to find a file by its identifier in the database
-            // because they should have been found by the folder hash already, but i'm a
-            // generous developer and allow FAL to completely fuck up the folder hash
-            foreach ($onlyDiskIdentifiers['local'] as $index => $localFileSystemFileIdentifier) {
-                $disconnectedSysFiles = $commonRepository->findByProperty('identifier', $localFileSystemFileIdentifier);
-                // if a sys_file record could be reclaimed use it
-                if (!empty($disconnectedSysFiles)) {
-                    // repair the entry a.k.a reconnect it by updating the folder hash
-                    if (true === $this->configuration['autoRepairFolderHash']) {
-                        foreach ($disconnectedSysFiles as $sysFileEntry) {
-                            // No need to check if this entry belongs to another file, since the folder hash was wrong
-                            // but the identifier was 100% correct
-                            $uid = $sysFileEntry->getIdentifier();
-                            // update on the local side if record has been found on the local side.
-                            // Hint: Do *not* update foreign. The folder hash on foreign might be correctly different
-                            // e.g. in case the file was moved
-                            if ($sysFileEntry->hasLocalProperty('folder_hash')) {
-                                $localDatabase->exec_UPDATEquery(
-                                    'sys_file',
-                                    'uid=' . $uid,
-                                    array('folder_hash' => $hashedIdentifier)
-                                );
-                                $localProperties = $sysFileEntry->getLocalProperties();
-                                $localProperties['folder_hash'] = $hashedIdentifier;
-                                $sysFileEntry->setLocalProperties($localProperties);
-                            }
-                        }
-                    }
-                    // add the reclaimed sys_file record to the list of files
-                    foreach ($disconnectedSysFiles as $disconnectedSysFile) {
-                        $files[$disconnectedSysFile->getIdentifier()] = $disconnectedSysFile;
-                    }
-                    // remove the identifier from the list of missing database record identifiers
-                    // so i can deal with them later
-                    unset($onlyDiskIdentifiers['local'][$index]);
-                }
-            }
-
-            foreach ($onlyDiskIdentifiers['foreign'] as $index => $foreignFileSystemFileIdentifier) {
-                $disconnectedSysFiles = $commonRepository->findByProperty(
-                    'identifier',
-                    $foreignFileSystemFileIdentifier
-                );
-                // if a sys_file record could be reclaimed use it
-                if (!empty($disconnectedSysFiles)) {
-                    // repair the entry a.k.a reconnect it by updating the folder hash
-                    if (true === $this->configuration['autoRepairFolderHash']) {
-                        foreach ($disconnectedSysFiles as $sysFileEntry) {
-                            // No need to check if this entry belongs to another file, since the folder hash was wrong
-                            // but the identifier was 100% correct
-                            $uid = $sysFileEntry->getIdentifier();
-                            // update on the local side if record has been found on the local side.
-                            // Hint: Do *not* update foreign. The folder hash on foreign might be correctly different
-                            // e.g. in case the file was moved
-                            if ($sysFileEntry->hasForeignProperty('folder_hash')) {
-                                $foreignDatabase->exec_UPDATEquery(
-                                    'sys_file',
-                                    'uid=' . $uid,
-                                    array('folder_hash' => $hashedIdentifier)
-                                );
-                                $localProperties = $sysFileEntry->getForeignProperties();
-                                $localProperties['folder_hash'] = $hashedIdentifier;
-                                $sysFileEntry->setForeignProperties($localProperties);
-                            }
-                        }
-                    }
-                    // add the reclaimed sys_file record to the list of files
-                    foreach ($disconnectedSysFiles as $disconnectedSysFile) {
-                        $files[$disconnectedSysFile->getIdentifier()] = $disconnectedSysFile;
-                    }
-                    // remove the identifier from the list of missing database record identifiers
-                    // so i can deal with them later
-                    unset($onlyDiskIdentifiers['foreign'][$index]);
-                }
-            }
-        }
         $files = $this->convertAndAddOnlyLocalDiskIdentifiersToFileRecords(
             $onlyDiskIdentifiers,
             $localDriver,
@@ -1412,5 +1368,100 @@ class FolderRecordFactory
             }
         }
         return $files;
+    }
+
+    /**
+     * @param array $onlyDiskIdentifiers
+     * @param CommonRepository $commonRepository
+     * @param DatabaseConnection $localDatabase
+     * @param string $hashedIdentifier
+     * @param Record[] $files
+     * @param DatabaseConnection $foreignDatabase
+     * @return Record[]
+     */
+    protected function reclaimIndexEntries(
+        array $onlyDiskIdentifiers,
+        CommonRepository $commonRepository,
+        DatabaseConnection $localDatabase,
+        $hashedIdentifier,
+        array $files,
+        DatabaseConnection $foreignDatabase
+    ) {
+        list($onlyDiskIdentifiers, $files) = $this->reclaimSysFileEntriesBySide(
+            $onlyDiskIdentifiers,
+            $commonRepository,
+            $localDatabase,
+            $hashedIdentifier,
+            $files,
+            'local'
+        );
+        list($onlyDiskIdentifiers, $files) = $this->reclaimSysFileEntriesBySide(
+            $onlyDiskIdentifiers,
+            $commonRepository,
+            $foreignDatabase,
+            $hashedIdentifier,
+            $files,
+            'foreign'
+        );
+
+        return array($files, $onlyDiskIdentifiers);
+    }
+
+    /**
+     * @param array $onlyDiskIdentifiers
+     * @param CommonRepository $commonRepository
+     * @param DatabaseConnection $targetDatabase
+     * @param $hashedIdentifier
+     * @param array $files
+     * @param $side
+     * @return array
+     */
+    protected function reclaimSysFileEntriesBySide(
+        array $onlyDiskIdentifiers,
+        CommonRepository $commonRepository,
+        DatabaseConnection $targetDatabase,
+        $hashedIdentifier,
+        array $files,
+        $side
+    ) {
+        // the chance is vanishing low to find a file by its identifier in the database
+        // because they should have been found by the folder hash already, but i'm a
+        // generous developer and allow FAL to completely fuck up the folder hash
+        foreach ($onlyDiskIdentifiers[$side] as $index => $onlyDiskIdentifier) {
+            $disconnectedSysFiles = $commonRepository->findByProperty('identifier', $onlyDiskIdentifier);
+            // if a sys_file record could be reclaimed use it
+            if (!empty($disconnectedSysFiles)) {
+                // repair the entry a.k.a reconnect it by updating the folder hash
+                if (true === $this->configuration['autoRepairFolderHash']) {
+                    foreach ($disconnectedSysFiles as $sysFileEntry) {
+                        // No need to check if this entry belongs to another file, since the folder hash was wrong
+                        // but the identifier was 100% correct
+                        $uid = $sysFileEntry->getIdentifier();
+                        // update on the local side if record has been found on the local side.
+                        // Hint: Do *not* update foreign. The folder hash on foreign might be correctly different
+                        // e.g. in case the file was moved
+                        $property = $sysFileEntry->getPropertyBySideIdentifier($side, 'folder_hash');
+                        if (null !== $property) {
+                            $targetDatabase->exec_UPDATEquery(
+                                'sys_file',
+                                'uid=' . $uid,
+                                array('folder_hash' => $hashedIdentifier)
+                            );
+                            $properties = $sysFileEntry->getPropertiesBySideIdentifier($side);
+                            $properties['folder_hash'] = $hashedIdentifier;
+                            $sysFileEntry->setPropertiesBySideIdentifier($side, $properties);
+                        }
+                    }
+                }
+                // add the reclaimed sys_file record to the list of files
+                foreach ($disconnectedSysFiles as $disconnectedSysFile) {
+                    $files[$disconnectedSysFile->getIdentifier()] = $disconnectedSysFile;
+                }
+                // remove the identifier from the list of missing database record identifiers
+                // so i can deal with them later
+                unset($onlyDiskIdentifiers[$side][$index]);
+            }
+        }
+        return array($onlyDiskIdentifiers, $files);
     }
 }
