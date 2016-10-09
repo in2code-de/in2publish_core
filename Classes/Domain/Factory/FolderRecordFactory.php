@@ -230,6 +230,45 @@ class FolderRecordFactory
         // remove OxFS identifiers, they have all been converted to records.
         unset($onlyDiskIdentifiers);
 
+        // Get a list of all identifiers that exist on both disks bot only in one database
+        $indicesToRecheck = array_intersect($indexedIdentifiers['local'], $diskIdentifiers['both'])
+                            + array_intersect($indexedIdentifiers['foreign'], $diskIdentifiers['both']);
+
+        // PRE-FIXES
+        foreach ($indicesToRecheck as $index => $diskIdentifierOnBoth) {
+            $reCheckFile = $files[$index];
+            $recordState = $reCheckFile->getState();
+            if (RecordInterface::RECORD_STATE_ADDED === $recordState) {
+                // PRE-FIX for the [10] NFDB case
+                // The file has been found on both file systems but only in the local database.
+                // create a temporary counterpart for the local database entry, so we end up in [14] ALL
+                $this->createAndAddTemporaryIndexInformationToRecordForSide(
+                    $reCheckFile,
+                    $diskIdentifierOnBoth,
+                    $foreignDriver,
+                    $localDatabase,
+                    $foreignDatabase,
+                    'foreign'
+                );
+            } elseif (RecordInterface::RECORD_STATE_DELETED === $recordState) {
+                // PRE-FIX for [13] NLDB
+                // The file has been found on both file systems but not in the local database.
+                // create a temporary local database entry with the uid of the existing foreign database entry.
+                // Resulting case is [14] ALL
+                $this->createAndAddTemporaryIndexInformationToRecordForSide(
+                    $reCheckFile,
+                    $diskIdentifierOnBoth,
+                    $localDriver,
+                    $foreignDatabase,
+                    $localDatabase,
+                    'local'
+                );
+            }
+        }
+
+        // Remove these indices
+        unset($indicesToRecheck);
+
         /*
          * Up to this point following cases have been fixed
          *      [X] = Fixed
@@ -246,10 +285,10 @@ class FolderRecordFactory
          * [X] [7] OFS
          * [X] [8] LFFD
          * [ ] [9] OF
-         * [ ] [10] NFDB
+         * [X] [10] NFDB
          * [ ] [11] NFFS
          * [ ] [12] NLFS
-         * [ ] [13] NLDB
+         * [X] [13] NLDB
          * [ ] [14] ALL
          * [ ] [15] NONE
          */
@@ -259,41 +298,6 @@ class FolderRecordFactory
          *        REVIEWED UNTIL HERE
          *
          ***********************************/
-
-        // PRE-FIXES
-        foreach ($fileIdentifiersOnBothSides as $index => $fileIdentifierOnBothSides) {
-            $reCheckFile = $files[$index];
-            $recordState = $reCheckFile->getState();
-            if (RecordInterface::RECORD_STATE_ADDED === $recordState) {
-                // PRE-FIX for the [10] NFDB case
-                // The file has been found on both file systems but only in the local database.
-                // create a temporary counterpart for the local database entry, so we end up in [14] ALL
-                $this->createAndAddTemporaryIndexInformationToRecordForSide(
-                    $reCheckFile,
-                    $fileIdentifierOnBothSides,
-                    $foreignDriver,
-                    $localDatabase,
-                    $foreignDatabase,
-                    'foreign'
-                );
-            } elseif (RecordInterface::RECORD_STATE_DELETED === $recordState) {
-                // PRE-FIX for [13] NLDB
-                // The file has been found on both file systems but not in the local database.
-                // create a temporary local database entry with the uid of the existing foreign database entry.
-                // Resulting case is [14] ALL
-                $this->createAndAddTemporaryIndexInformationToRecordForSide(
-                    $reCheckFile,
-                    $fileIdentifierOnBothSides,
-                    $localDriver,
-                    $foreignDatabase,
-                    $localDatabase,
-                    'local'
-                );
-            }
-        }
-
-        // clean up again
-        unset($fileIdentifiersOnBothSides);
 
         // mergeSysFileByIdentifier feature: find sys_file duplicates and "merge" them.
         // If the foreign sys_file was not referenced in the foreign's sys_file_reference table the the
