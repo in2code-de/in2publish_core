@@ -198,19 +198,7 @@ class FolderRecordFactory
          *
          ***********************************/
 
-        /**
-         * TODO: reimplement this
-         * TAKE CARE: following implementation is currently missing: PRE-FIX [12] NLFS
          */
-        //    elseif (RecordInterface::RECORD_STATE_UNCHANGED === $recordState
-        //            || RecordInterface::RECORD_STATE_CHANGED === $recordState
-        //    ) {
-        //        // PRE-FIX [12] NLFS
-        //        // The database record is unchanged or changed, because it exists on both sides,
-        //        // the file in return was only found on foreign (the identifier is in $foreignFileRecordsToRecheck)
-        //    $reCheckFile->setLocalProperties(array());
-        //        $reCheckFile->setDirtyProperties()->calculateState();
-        //    }
 
         // Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
         // the folder hash is broken
@@ -952,14 +940,9 @@ class FolderRecordFactory
                 // Two cases: either the UID was assigned independent or the local file was removed
                 // In both cases we will remove the remote file, because stage always wins.
                 // No need to review this decision. LDB is orphaned, ignore it, act like it would be [9] OF
-                // CARE: This will create the [6] ODB state.
-
-                // Hint: This is done by a PRE-FIX.
-                // This Exception is rather for documentation purposes than functional.
-                throw new \LogicException(
-                    'The FAL case NLFS is impossible due to prior record transformation',
-                    1475576764
-                );
+                // EDIT: This will not create the [6] ODB state through a PRE-FIX
+                // On the fly removal of the local properties is way more efficient.
+                $file->setLocalProperties(array())->setDirtyProperties()->calculateState();
             } elseif (!$ldb && $lfs && $ffs && $fdb) {
                 // CODE: [13] NLDB
                 // Create local database record by indexing the file.
