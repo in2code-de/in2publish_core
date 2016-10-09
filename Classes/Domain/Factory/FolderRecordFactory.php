@@ -205,6 +205,31 @@ class FolderRecordFactory
             );
         }
 
+        // PRE-FIX for the [1] OLFS case
+        // create temporary sys_file entries for all files on the local disk
+        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(
+            $onlyDiskIdentifiers,
+            $localDriver,
+            $foreignDatabase,
+            $localDatabase,
+            $files,
+            'local'
+        );
+
+        // PRE-FIX for the [2] OFFS case
+        // create temporary sys_file entries for all files on the foreign disk
+        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(
+            $onlyDiskIdentifiers,
+            $foreignDriver,
+            $localDatabase,
+            $foreignDatabase,
+            $files,
+            'foreign'
+        );
+
+        // remove OxFS identifiers, they have all been converted to records.
+        unset($onlyDiskIdentifiers);
+
         /*
          * Up to this point following cases have been fixed
          *      [X] = Fixed
@@ -212,8 +237,8 @@ class FolderRecordFactory
          *      [ ] = TBD
          *
          * [ ] [0] OLDB
-         * [ ] [1] OLFS
-         * [ ] [2] OFFS
+         * [X] [1] OLFS
+         * [X] [2] OFFS
          * [ ] [3] OFDB
          * [ ] [4] OL
          * [X] [5] LDFF
@@ -234,23 +259,6 @@ class FolderRecordFactory
          *        REVIEWED UNTIL HERE
          *
          ***********************************/
-
-        $files = $this->convertAndAddOnlyLocalDiskIdentifiersToFileRecords(
-            $onlyDiskIdentifiers,
-            $localDriver,
-            $foreignDatabase,
-            $localDatabase,
-            $files
-        );
-        $files = $this->convertAndAddOnlyForeignDiskIdentifiersToFileRecords(
-            $onlyDiskIdentifiers,
-            $foreignDriver,
-            $localDatabase,
-            $foreignDatabase,
-            $files
-        );
-
-        unset($onlyDiskIdentifiers);
 
         // PRE-FIXES
         foreach ($fileIdentifiersOnBothSides as $index => $fileIdentifierOnBothSides) {
@@ -1110,88 +1118,47 @@ class FolderRecordFactory
     }
 
     /**
-     * PRE-FIX for the [1] OLFS case
-     * create temporary sys_file entries for all files on the local disk
-     *
-     * @param array $onlyDiskIdentifiers
-     * @param DriverInterface $localDriver
-     * @param DatabaseConnection $foreignDatabase
-     * @param DatabaseConnection $localDatabase
-     * @param Record[] $files
-     * @return array
-     */
-    protected function convertAndAddOnlyLocalDiskIdentifiersToFileRecords(
-        array $onlyDiskIdentifiers,
-        DriverInterface $localDriver,
-        DatabaseConnection $foreignDatabase,
-        DatabaseConnection $localDatabase,
-        array $files
-    ) {
-        if (!empty($onlyDiskIdentifiers['local'])) {
-            // iterate through all files found on disk but not in the database
-            foreach ($onlyDiskIdentifiers['local'] as $fileOnlyOnLocal) {
-                $temporarySysFile = GeneralUtility::makeInstance(
-                    'In2code\\In2publishCore\\Domain\\Model\\Record',
-                    'sys_file',
-                    // create a temporary sys_file entry for the current
-                    // identifier, since none was found nor could be reclaimed
-                    // if persistTemporaryIndexing is enabled the entry is not temporary
-                    // but this does not matter for the following code
-                    $this->getFileInformation(
-                        $fileOnlyOnLocal,
-                        $localDriver,
-                        $foreignDatabase,
-                        $localDatabase
-                    ),
-                    array(),
-                    $this->sysFileTca,
-                    array('localRecordExistsTemporary' => true)
-                );
-                $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
-            }
-        }
-
-        return $files;
-    }
-
-    /**
-     * PRE-FIX for the [2] OFFS case
-     * create temporary sys_file entries for all files on the foreign disk
-     *
      * @param $onlyDiskIdentifiers
-     * @param $foreignDriver
-     * @param $localDatabase
-     * @param $foreignDatabase
+     * @param $driver
+     * @param $oppositeDatabase
+     * @param $targetDatabase
      * @param $files
+     * @param $side
      * @return array
      */
-    protected function convertAndAddOnlyForeignDiskIdentifiersToFileRecords(
+    protected function convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(
         $onlyDiskIdentifiers,
-        $foreignDriver,
-        $localDatabase,
-        $foreignDatabase,
-        $files
+        $driver,
+        $oppositeDatabase,
+        $targetDatabase,
+        $files,
+        $side
     ) {
-        if (!empty($onlyDiskIdentifiers['foreign'])) {
+        if (!empty($onlyDiskIdentifiers[$side])) {
             // iterate through all files found on disc but not in the database
-            foreach ($onlyDiskIdentifiers['foreign'] as $fileOnlyOnForeign) {
+            foreach ($onlyDiskIdentifiers[$side] as $onlyDiskIdentifier) {
+                // create a temporary sys_file entry for the current
+                // identifier, since none was found nor could be reclaimed
+                // if persistTemporaryIndexing is enabled the entry is not temporary
+                // but this does not matter for the following code
                 $temporarySysFile = GeneralUtility::makeInstance(
                     'In2code\\In2publishCore\\Domain\\Model\\Record',
                     'sys_file',
-                    // create a temporary sys_file entry for the current
-                    // identifier, since none was found nor could be reclaimed
-                    // if persistTemporaryIndexing is enabled the entry is not temporary
-                    // but this does not matter for the following code
                     array(),
-                    $this->getFileInformation(
-                        $fileOnlyOnForeign,
-                        $foreignDriver,
-                        $localDatabase,
-                        $foreignDatabase
-                    ),
+                    array(),
                     $this->sysFileTca,
-                    array('foreignRecordExistsTemporary' => true)
+                    array($side . 'RecordExistsTemporary' => true)
                 );
+                $temporarySysFile->setPropertiesBySideIdentifier(
+                    $side,
+                    $this->getFileInformation(
+                        $onlyDiskIdentifier,
+                        $driver,
+                        $oppositeDatabase,
+                        $targetDatabase
+                    )
+                );
+                $temporarySysFile->setDirtyProperties()->calculateState();
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
             }
         }
