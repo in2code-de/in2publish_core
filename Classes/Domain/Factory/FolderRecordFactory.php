@@ -182,16 +182,9 @@ class FolderRecordFactory
         $onlyDiskIdentifiers = $this->determineIdentifiersOnlyOnDisk($diskIdentifiers, $indexedIdentifiers);
 
         // Create temporary indices for files existing on local and foreign but in neither database (OFS)
-        $files = $this->convertAndAddUnIndexedFilesOnBothDisksToRecordList(
-            $onlyDiskIdentifiers,
-            $files
-        );
+        $files = $this->convertAndAddUnIndexedFilesOnBothDisksToRecordList($onlyDiskIdentifiers, $files);
 
-        $files = $this->fixAndConvertIntersectingIdentifiers(
-            $diskIdentifiers,
-            $indexedIdentifiers,
-            $files
-        );
+        $files = $this->fixAndConvertIntersectingIdentifiers($diskIdentifiers, $indexedIdentifiers, $files);
 
         // Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
         // the folder hash is broken
@@ -203,19 +196,12 @@ class FolderRecordFactory
             );
         }
 
-        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecords(
-            $onlyDiskIdentifiers,
-            $files
-        );
+        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecords($onlyDiskIdentifiers, $files);
 
         // remove OxFS identifiers, they have all been converted to records.
         unset($onlyDiskIdentifiers);
 
-        $files = $this->indexFilesWithMissingIndexOnOneSide(
-            $indexedIdentifiers,
-            $diskIdentifiers,
-            $files
-        );
+        $files = $this->indexFilesWithMissingIndexOnOneSide($indexedIdentifiers, $diskIdentifiers, $files);
 
         // mergeSysFileByIdentifier feature: find sys_file duplicates and "merge" them.
         // If the foreign sys_file was not referenced in the foreign's sys_file_reference table the the
@@ -224,13 +210,9 @@ class FolderRecordFactory
             $files = $this->mergeSysFileByIdentifier($files);
         }
 
-        $files = $this->filterFileRecords(
-            $files
-        );
+        $files = $this->filterFileRecords($files);
 
-        $record->addRelatedRecords($files);
-
-        return $record;
+        return $record->addRelatedRecords($files);
     }
 
     /**
@@ -315,11 +297,7 @@ class FolderRecordFactory
     ) {
         $fileInfo = $driver->getFileInfoByIdentifier($identifier);
 
-        $mappingInfo = array(
-            'mtime' => 'modification_date',
-            'ctime' => 'creation_date',
-            'mimetype' => 'mime_type',
-        );
+        $mappingInfo = array('mtime' => 'modification_date', 'ctime' => 'creation_date', 'mimetype' => 'mime_type');
 
         unset($fileInfo['atime']);
         foreach ($mappingInfo as $fileInfoKey => $sysFileRecordKey) {
@@ -1038,9 +1016,6 @@ class FolderRecordFactory
                 // repair the entry a.k.a reconnect it by updating the folder hash
                 if (true === $this->configuration['autoRepairFolderHash']) {
                     foreach ($disconnectedSysFiles as $sysFileEntry) {
-                        // No need to check if this entry belongs to another file, since the folder hash was wrong
-                        // but the identifier was 100% correct
-                        $uid = $sysFileEntry->getIdentifier();
                         // update on the local side if record has been found on the local side.
                         // Hint: Do *not* update foreign. The folder hash on foreign might be correctly different
                         // e.g. in case the file was moved
@@ -1048,7 +1023,7 @@ class FolderRecordFactory
                         if (null !== $property) {
                             $targetDatabase->exec_UPDATEquery(
                                 'sys_file',
-                                'uid=' . $uid,
+                                'uid=' . $sysFileEntry->getIdentifier(),
                                 array('folder_hash' => $hashedIdentifier)
                             );
                             $properties = $sysFileEntry->getPropertiesBySideIdentifier($side);
@@ -1109,11 +1084,7 @@ class FolderRecordFactory
                 $oldUid = (int)$foreignFile->getForeignProperty('uid');
                 $newUid = (int)$localFile->getLocalProperty('uid');
 
-                $logData = array(
-                    'old' => $oldUid,
-                    'new' => $newUid,
-                    'identifier' => $identifierString,
-                );
+                $logData = array('old' => $oldUid, 'new' => $newUid, 'identifier' => $identifierString);
 
                 // Run the integrity test when enableSysFileReferenceUpdate (ESFRU) is not enabled
                 if (true !== $this->configuration['enableSysFileReferenceUpdate']) {
@@ -1285,10 +1256,7 @@ class FolderRecordFactory
     {
         return array_merge(
             $logData,
-            array(
-                'error' => $this->foreignDatabase->sql_error(),
-                'errno' => $this->foreignDatabase->sql_errno(),
-            )
+            array('error' => $this->foreignDatabase->sql_error(), 'errno' => $this->foreignDatabase->sql_errno())
         );
     }
 
@@ -1343,11 +1311,7 @@ class FolderRecordFactory
      */
     protected function countForeignIndices($newUid)
     {
-        $count = $this->foreignDatabase->exec_SELECTcountRows(
-            'uid',
-            'sys_file',
-            'uid=' . $newUid
-        );
+        $count = $this->foreignDatabase->exec_SELECTcountRows('uid', 'sys_file', 'uid=' . $newUid);
         if (false === $count) {
             $this->logger->critical(
                 'Could not count foreign indices by uid',
