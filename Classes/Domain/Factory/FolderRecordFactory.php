@@ -176,14 +176,7 @@ class FolderRecordFactory
         $files = $this->commonRepository->findByProperty('folder_hash', $hashedIdentifier);
 
         $indexedIdentifiers = $this->buildIndexedIdentifiersList($files);
-
-        // Get all occurring identifiers of files in the current folder.
-        // This array has the three keys local, foreign and both, too. Therefore we know where the files were found.
         $diskIdentifiers = $this->buildDiskIdentifiersList($identifier);
-
-        // Remove all identifiers found in the databases from the disk identifiers list.
-        // These identifiers do only occur on the local and/or foreign disk.
-        // This list is important for any OxFS case. (local = OLFS; foreign = OFFS, both = OFS)
         $onlyDiskIdentifiers = $this->determineIdentifiersOnlyOnDisk($diskIdentifiers, $indexedIdentifiers);
 
         // [5] LDFF and [8] LFFD
@@ -411,6 +404,9 @@ class FolderRecordFactory
     }
 
     /**
+     * Remove all identifiers found in the databases from the disk identifiers list to get the "disk only identifiers".
+     * This list is important for any OxFS case. (local = OLFS; foreign = OFFS, both = OFS)
+     *
      * @param array $diskIdentifiers
      * @param array $indices
      * @return array
@@ -451,6 +447,8 @@ class FolderRecordFactory
      * Search on the disk for all files in the current folder and build a list of file identifiers
      * for each local and foreign, so i can identify e.g. not indexed files.
      * Move all entries occurring on both sides to the "both" index afterwards.
+     *
+     * The resulting array has the three keys: local, foreign and both. Therefore i know where the files were found.
      *
      * @param string $identifier
      * @return array
