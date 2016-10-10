@@ -73,11 +73,6 @@ class FolderRecordFactory
     protected $configuration = array();
 
     /**
-     * @var array
-     */
-    protected $sysFileTca = array();
-
-    /**
      * @var DriverInterface
      */
     protected $localDriver;
@@ -86,6 +81,11 @@ class FolderRecordFactory
      * @var DriverInterface
      */
     protected $foreignDriver;
+
+    /**
+     * @var FileIndexFactory
+     */
+    protected $fileIndexFactory = null;
 
     /**
      * FolderRecordFactory constructor.
@@ -97,8 +97,6 @@ class FolderRecordFactory
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->configuration = ConfigurationUtility::getConfiguration('factory.fal');
-        $this->sysFileTca = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService')
-                                          ->getConfigurationArrayForTable('sys_file');
     }
 
     /**
@@ -127,6 +125,12 @@ class FolderRecordFactory
         // Get the storages driver to prevent unintentional indexing by using storage methods.
         $this->localDriver = $this->getLocalDriver($localStorage);
         $this->foreignDriver = $this->getForeignDriver($localStorage);
+
+        $this->fileIndexFactory = GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Domain\\Factory\\FileIndexFactory',
+            $this->localDriver,
+            $this->foreignDriver
+        );
 
         // Drop the reference to the local storage, since i've got the driver objects for both sides now.
         return $localFolder;
@@ -742,22 +746,14 @@ class FolderRecordFactory
                     $this->foreignDatabase,
                     $this->localDatabase
                 );
-                // Instantiate the temporary index of the file
-                $temporarySysFile = GeneralUtility::makeInstance(
-                    'In2code\\In2publishCore\\Domain\\Model\\Record',
-                    'sys_file',
-                    $localFileInformation,
-                    // Get the index information for the foreign file with the already reserved UID
-                    $this->getFileInformation(
-                        $onlyDiskIdentifier,
-                        $this->foreignDriver,
-                        $this->localDatabase,
-                        $this->foreignDatabase,
-                        $localFileInformation['uid']
-                    ),
-                    $this->sysFileTca,
-                    array('localRecordExistsTemporary' => true, 'foreignRecordExistsTemporary' => true)
+                $foreignFileInfo = $this->getFileInformation(
+                    $onlyDiskIdentifier,
+                    $this->foreignDriver,
+                    $this->localDatabase,
+                    $this->foreignDatabase,
+                    $localFileInformation['uid']
                 );
+                $temporarySysFile = $this->fileIndexFactory->makeInstance($localFileInformation, $foreignFileInfo);
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
             }
         }
@@ -791,23 +787,13 @@ class FolderRecordFactory
                 // identifier, since none was found nor could be reclaimed
                 // if persistTemporaryIndexing is enabled the entry is not temporary
                 // but this does not matter for the following code
-                $temporarySysFile = GeneralUtility::makeInstance(
-                    'In2code\\In2publishCore\\Domain\\Model\\Record',
-                    'sys_file',
-                    array(),
-                    array(),
-                    $this->sysFileTca,
-                    array($side . 'RecordExistsTemporary' => true)
+                $properties = $this->getFileInformation(
+                    $onlyDiskIdentifier,
+                    $driver,
+                    $oppositeDatabase,
+                    $targetDatabase
                 );
-                $temporarySysFile->setPropertiesBySideIdentifier(
-                    $side,
-                    $this->getFileInformation(
-                        $onlyDiskIdentifier,
-                        $driver,
-                        $oppositeDatabase,
-                        $targetDatabase
-                    )
-                );
+                $temporarySysFile = $this->fileIndexFactory->makeInstanceForSide($side, $properties);
                 $temporarySysFile->setDirtyProperties()->calculateState();
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
             }
