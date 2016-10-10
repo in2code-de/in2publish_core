@@ -527,15 +527,12 @@ class FolderRecordFactory
         foreach ($files as $file) {
             $identifier = $file->getIdentifier();
 
-            $isLocal = $file->hasLocalProperty('identifier');
-            $isForeign = $file->hasForeignProperty('identifier');
-
             // hint: not existing properties will just return null
             $localIdentifier = $file->getLocalProperty('identifier');
             $foreignIdentifier = $file->getForeignProperty('identifier');
 
             // if the record was indexed on both sides
-            if ($isLocal && $isForeign) {
+            if (null !== $localIdentifier && null !== $foreignIdentifier) {
                 if ($localIdentifier === $foreignIdentifier) {
                     // if the identifiers are the same: mark the as "indexed on both sides"
                     $indexedIdentifiers['both'][$identifier] = $localIdentifier;
@@ -544,10 +541,10 @@ class FolderRecordFactory
                     $indexedIdentifiers['local'][$identifier] = $localIdentifier;
                     $indexedIdentifiers['foreign'][$identifier] = $foreignIdentifier;
                 }
-            } elseif ($isLocal && !$isForeign) {
+            } elseif (null !== $localIdentifier && null === $foreignIdentifier) {
                 // only local
                 $indexedIdentifiers['local'][$identifier] = $localIdentifier;
-            } elseif (!$isLocal && $isForeign) {
+            } elseif (null === $localIdentifier && null !== $foreignIdentifier) {
                 // only foreign
                 $indexedIdentifiers['foreign'][$identifier] = $foreignIdentifier;
             }
