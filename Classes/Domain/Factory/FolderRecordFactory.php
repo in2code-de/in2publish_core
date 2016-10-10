@@ -192,9 +192,7 @@ class FolderRecordFactory
         $files = $this->convertAndAddUnIndexedFilesOnBothDisksToRecordList($onlyDiskIdentifiers, $files);
 
         // [5] LDFF AND [8] LFFD
-        foreach (array('local', 'foreign') as $side) {
-            $this->fixIntersectingIdentifiersAndUpdateRecords($diskIdentifiers, $indexedIdentifiers, $files, $side);
-        }
+        $this->fixIntersectingIdentifiers($diskIdentifiers, $indexedIdentifiers, $files);
 
         // Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
         // the folder hash is broken
@@ -559,44 +557,26 @@ class FolderRecordFactory
      * @param array $diskIdentifiers
      * @param array $indexedIdentifiers
      * @param Record[] $files
-     * @param string $diskSide
-     * @return Record[]
      */
-    protected function fixIntersectingIdentifiersAndUpdateRecords(
-        array $diskIdentifiers,
-        array $indexedIdentifiers,
-        array $files,
-        $diskSide
-    ) {
-        // Find intersecting identifiers. These are identifiers of files on the local disk and foreign database
-        // or vice versa.
-        // The resulting lists are important for the
-        // LFFD (local file foreign database) and LDFF (local database foreign file) case.
-        $indexSide = $diskSide === 'foreign' ? 'local' : 'foreign';
-        $diskNotIndexedHere = array_diff(
-            $diskIdentifiers[$diskSide],
-            $indexedIdentifiers[$diskSide],
-            $indexedIdentifiers['both']
-        );
-        $intersectingIdentifiers = array_intersect($indexedIdentifiers[$indexSide], $diskNotIndexedHere);
+    protected function fixIntersectingIdentifiers(array $diskIdentifiers, array $indexedIdentifiers, array $files)
+    {
+        foreach (array('local' => 'foreign', 'foreign' => 'local') as $diskSide => $indexSide) {
+            // Find intersecting identifiers. These are identifiers only on one disk and teh opposite database.
+            $notIndexedIdentifier = array_diff(
+                $diskIdentifiers[$diskSide],
+                $indexedIdentifiers[$diskSide],
+                $indexedIdentifiers['both']
+            );
+            $intersecting = array_intersect($indexedIdentifiers[$indexSide], $notIndexedIdentifier);
 
-        foreach ($intersectingIdentifiers as $fileRecordUid => $identifier) {
-            $file = $files[$fileRecordUid];
-            $state = $file->getState();
-            if ($diskSide === 'foreign' && RecordInterface::RECORD_STATE_ADDED === $state) {
-                // PRE-FIX for [5] LDFF case, where the file was found on foreign's disk and the local database
-                // and the foreign database (like [8] LFFD inverted)
-                // Short: Removes LDB but adds FDB instead. Results in OF
-                // The database record is technically added, but the file was removed. Since the file publishing is the
-                // main domain of this class the state of the file on disk has precedence
-                // add foreign file information instead
-                $this->fileIndexFactory->updateFileIndexInfoBySide($file, $identifier, 'foreign', true);
-            } elseif ($diskSide === 'local' && RecordInterface::RECORD_STATE_DELETED === $state) {
-                if (!$this->foreignDriver->fileExists($identifier)) {
-                    // PRE-FIX for [8] LFFD case, where the file was found on local's disc
-                    // and the foreign database (like [5] LDFF inverted).
-                    // The database record is technically deleted, but the file was added. Since the file
-                    // publishing is the main domain of this class the state of the file on disk has precedence
+            foreach ($intersecting as $fileRecordUid => $identifier) {
+                $file = $files[$fileRecordUid];
+                $state = $file->getState();
+                if ('foreign' === $diskSide && RecordInterface::RECORD_STATE_ADDED === $state) {
+                    // PRE-FIX for [5] LDFF case; The file was found on the foreign disk and the local database.
+                    $this->fileIndexFactory->updateFileIndexInfoBySide($file, $identifier, 'foreign', true);
+                } elseif ('local' === $diskSide && RecordInterface::RECORD_STATE_DELETED === $state) {
+                    // PRE-FIX for [8] LFFD case; The file exists on the local disk and the foreign database.
                     $this->fileIndexFactory->updateFileIndexInfoBySide($file, $identifier, 'local', true);
                 }
             }
