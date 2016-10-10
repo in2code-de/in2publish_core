@@ -858,8 +858,7 @@ class FolderRecordFactory
      */
     protected function countForeignIndices($newUid)
     {
-        $count = $this->foreignDatabase->exec_SELECTcountRows('uid', 'sys_file', 'uid=' . $newUid);
-        if (false === $count) {
+        if (false === ($count = $this->foreignDatabase->exec_SELECTcountRows('uid', 'sys_file', 'uid=' . $newUid))) {
             $this->logger->critical(
                 'Could not count foreign indices by uid',
                 $this->enrichWithForeignDatabaseErrorInformation(array('uid', $newUid))
