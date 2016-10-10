@@ -102,4 +102,18 @@ interface RecordInterface
      * @return @return int|string
      */
     public function getIdentifier();
+
+    /**
+     * @param string $side
+     * @param array $properties
+     * @return $this
+     */
+    public function setPropertiesBySideIdentifier($side, array $properties);
+
+    /**
+     * @param string $side
+     * @param string $propertyName
+     * @return array
+     */
+    public function getPropertyBySideIdentifier($side, $propertyName);
 }

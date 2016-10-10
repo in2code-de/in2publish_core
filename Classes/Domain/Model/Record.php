@@ -358,6 +358,7 @@ class Record implements RecordInterface
 
     /**
      * @param string $side
+     * @param string $propertyName
      * @return array
      */
     public function getPropertyBySideIdentifier($side, $propertyName)
