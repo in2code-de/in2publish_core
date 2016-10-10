@@ -471,13 +471,8 @@ class FolderRecordFactory
         if (!empty($diskIdentifiers[$side])) {
             // iterate through all files found on disc but not in the database
             foreach ($diskIdentifiers[$side] as $onlyDiskIdentifier) {
-                // create a temporary sys_file entry for the current
-                // identifier, since none was found nor could be reclaimed
-                // if persistTemporaryIndexing is enabled the entry is not temporary
-                // but this does not matter for the following code
-                $properties = $this->fileIndexFactory->getFileIndexArray($onlyDiskIdentifier, $side);
-                $temporarySysFile = $this->fileIndexFactory->makeInstanceForSide($side, $properties);
-                $temporarySysFile->setDirtyProperties()->calculateState();
+                // create a temporary sys_file entry for the current identifier, since none was found or reclaimed.
+                $temporarySysFile = $this->fileIndexFactory->makeInstanceForSide($side, $onlyDiskIdentifier);
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
             }
         }

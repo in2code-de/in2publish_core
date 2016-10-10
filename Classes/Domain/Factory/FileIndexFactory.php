@@ -103,16 +103,16 @@ class FileIndexFactory
 
     /**
      * @param string $side
-     * @param array $properties
+     * @param string $identifier
      * @return RecordInterface
      */
-    public function makeInstanceForSide($side, array $properties)
+    public function makeInstanceForSide($side, $identifier)
     {
         return GeneralUtility::makeInstance(
             'In2code\\In2publishCore\\Domain\\Model\\Record',
             'sys_file',
-            $side === 'local' ? $properties : array(),
-            $side === 'foreign' ? $properties : array(),
+            $side === 'local' ? $this->getFileIndexArray($identifier, $side) : array(),
+            $side === 'foreign' ? $this->getFileIndexArray($identifier, $side) : array(),
             $this->sysFileTca,
             array($side . 'RecordExistsTemporary' => true)
         );
