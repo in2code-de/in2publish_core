@@ -176,7 +176,12 @@ class FolderRecordFactory
         // It's useless now, because i've got its identifiers and sub folders.
         unset($localFolder);
 
-        $record = $this->createRecordForSelectedFolderAndRelatedSubFolders($identifier);
+        // Create the main record instance. This respresent the selected folder.
+        $record = $this->makePhysicalFolderInstance($identifier, 1);
+
+        // Add all related sub folders
+        $subFolders = $this->getSubFolderRecordInstances($identifier);
+        $record->addRelatedRecords($subFolders);
 
         // Now let's find all files inside of the selected folder by the folders hash.
         $files = $this->commonRepository->findByProperty('folder_hash', $hashedIdentifier);
@@ -264,30 +269,6 @@ class FolderRecordFactory
         $this->foreignDriver->setStorageUid($localStorage->getUid());
         $this->foreignDriver->initialize();
         return $this->foreignDriver;
-    }
-
-    /**
-     * Factory method to create Record instances from a list of folder identifier
-     *
-     * @param array $localSubFolders
-     * @param array $foreignSubFolders
-     * @return array
-     */
-    protected function getSubFolderRecordInstances(array $localSubFolders, array $foreignSubFolders)
-    {
-        $subFolderIdentifiers = array_merge($localSubFolders, $foreignSubFolders);
-        $subFolders = array();
-        foreach ($subFolderIdentifiers as $subFolderIdentifier) {
-            $subFolders[] = GeneralUtility::makeInstance(
-                'In2code\\In2publishCore\\Domain\\Model\\Record',
-                'physical_folder',
-                $this->getFolderInfoByDriverAndIdentifier($this->localDriver, $subFolderIdentifier),
-                $this->getFolderInfoByDriverAndIdentifier($this->foreignDriver, $subFolderIdentifier),
-                array(),
-                array('depth' => 2)
-            );
-        }
-        return $subFolders;
     }
 
     /**
@@ -533,20 +514,6 @@ class FolderRecordFactory
     }
 
     /**
-     * @param string $identifier
-     * @return array
-     */
-    protected function getFolderInfoByIdentifierAndDriver($identifier)
-    {
-        // fetch all information regarding the folder
-        $localFolderInfo = $this->localDriver->getFolderInfoByIdentifier($identifier);
-        // add the "uid" property, which is largely exclusive set for Record::isRecordRepresentByProperties
-        // but additionally a good place to store the "combined identifier"
-        $localFolderInfo['uid'] = $this->createCombinedIdentifier($localFolderInfo);
-        return $localFolderInfo;
-    }
-
-    /**
      * Builds a list of all file identifiers on local and foreign that are indexed in the database,
      * so files only existing on disk can be determined by diff-ing against this list
      *
@@ -600,11 +567,9 @@ class FolderRecordFactory
     protected function getFilesIdentifiersInFolder($identifier, DriverInterface $driver)
     {
         if ($driver->folderExists($identifier)) {
-            $identifierList = array_values($driver->getFilesInFolder($identifier));
-        } else {
-            $identifierList = array();
+            return array_values($driver->getFilesInFolder($identifier));
         }
-        return $identifierList;
+        return array();
     }
 
     /**
@@ -769,31 +734,70 @@ class FolderRecordFactory
     }
 
     /**
+     * Factory method to create Record instances from a list of folder identifier
+     *
      * @param string $identifier
+     * @return array
+     */
+    protected function getSubFolderRecordInstances($identifier)
+    {
+        $subFolderIdentifiers = array_merge(
+            $this->getSubFolderIdentifiers($this->localDriver, $identifier),
+            $this->getSubFolderIdentifiers($this->foreignDriver, $identifier)
+        );
+        $subFolders = array();
+        foreach ($subFolderIdentifiers as $subFolderIdentifier) {
+            $subFolders[] = $this->makePhysicalFolderInstance($subFolderIdentifier, 2);
+        }
+        return $subFolders;
+    }
+
+    /**
+     * @param string $identifier
+     * @param int $depth
      * @return Record
      */
-    protected function createRecordForSelectedFolderAndRelatedSubFolders($identifier)
+    protected function makePhysicalFolderInstance($identifier, $depth)
     {
-        $foreignFolderExists = $this->foreignDriver->folderExists($identifier);
-
-        $record = GeneralUtility::makeInstance(
+        return GeneralUtility::makeInstance(
             'In2code\\In2publishCore\\Domain\\Model\\Record',
             'physical_folder',
-            $this->getFolderInfoByIdentifierAndDriver($identifier),
-            $foreignFolderExists ? $this->getFolderInfoByIdentifierAndDriver($identifier) : array(),
+            $this->getFolderInfoByIdentifier($this->localDriver, $identifier),
+            $this->getFolderInfoByIdentifier($this->foreignDriver, $identifier),
             array(),
-            array('depth' => 1)
+            array('depth' => $depth)
         );
+    }
 
-        // Add all converted sub folder records to the selected folder.
-        $record->addRelatedRecords(
-            $this->getSubFolderRecordInstances(
-                $this->localDriver->getFoldersInFolder($identifier),
-                $foreignFolderExists ? $this->foreignDriver->getFoldersInFolder($identifier) : array()
-            )
-        );
+    /**
+     * @param DriverInterface $driver
+     * @param string $identifier
+     * @return array
+     */
+    protected function getSubFolderIdentifiers(DriverInterface $driver, $identifier)
+    {
+        if ($driver->folderExists($identifier)) {
+            return $driver->getFoldersInFolder($identifier);
+        }
+        return array();
+    }
 
-        return $record;
+    /**
+     * Fetches all information regarding the folder and sets the combined identifier as uid
+     *
+     * @param DriverInterface $driver
+     * @param string $identifier
+     * @return array
+     */
+    protected function getFolderInfoByIdentifier(DriverInterface $driver, $identifier)
+    {
+        if ($driver->folderExists($identifier)) {
+            $info = $driver->getFolderInfoByIdentifier($identifier);
+            $info['uid'] = sprintf('%d:%s', $info['storage'], $info['identifier']);
+        } else {
+            $info = array();
+        }
+        return $info;
     }
 
     /**
@@ -1214,21 +1218,5 @@ class FolderRecordFactory
             $identifierList[$foreignIdentifier][$file->getIdentifier()] = $file;
         }
         return $identifierList;
-    }
-
-    /**
-     * @param DriverInterface $driver
-     * @param string $subFolderIdentifier
-     * @return array
-     */
-    protected function getFolderInfoByDriverAndIdentifier(DriverInterface $driver, $subFolderIdentifier)
-    {
-        if ($driver->folderExists($subFolderIdentifier)) {
-            $folderInfo = $driver->getFolderInfoByIdentifier($subFolderIdentifier);
-            $folderInfo['uid'] = $this->createCombinedIdentifier($folderInfo);
-        } else {
-            $folderInfo = array();
-        }
-        return $folderInfo;
     }
 }
