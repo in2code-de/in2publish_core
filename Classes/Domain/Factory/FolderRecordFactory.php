@@ -35,6 +35,7 @@ use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\File;
+use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -46,6 +47,16 @@ use TYPO3\CMS\Extbase\Reflection\PropertyReflection;
  */
 class FolderRecordFactory
 {
+    /**
+     * @var DriverInterface
+     */
+    protected $localDriver;
+
+    /**
+     * @var DriverInterface
+     */
+    protected $foreignDriver;
+
     /**
      * @var DatabaseConnection
      */
@@ -85,6 +96,37 @@ class FolderRecordFactory
     }
 
     /**
+     * @param string $identifier
+     * @return Folder
+     */
+    protected function initializeDependenciesAndGetFolder($identifier)
+    {
+        // Grab the resource factory to get the FAL driver of the selected folder "FAL style"
+        $resourceFactory = ResourceFactory::getInstance();
+
+        // Determine the current folder. If the identifier is NULL there was no folder selected.
+        if (null === $identifier) {
+            // Special case: The module was opened, but no storage/folder has been selected.
+            // Get the default storage and the default folder to show.
+            $localStorage = $resourceFactory->getDefaultStorage();
+            // Notice: ->getDefaultFolder does not return the default folder to show, but to upload files to.
+            // The root level folder is the "real" default and also respects mount points of the current user.
+            $localFolder = $localStorage->getRootLevelFolder();
+        } else {
+            // This is the normal case. The identifier identifies the folder inclusive its storage.
+            $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
+            $localStorage = $localFolder->getStorage();
+        }
+
+        // Get the storages driver to prevent unintentional indexing by using storage methods.
+        $this->localDriver = $this->getLocalDriver($localStorage);
+        $this->foreignDriver = $this->getForeignDriver($localStorage);
+
+        // Drop the reference to the local storage, since i've got the driver objects for both sides now.
+        return $localFolder;
+    }
+
+    /**
      * Creates a Record instance representing the current chosen folder in the
      * backend module and attaches all sub folders and files as related records.
      * Also takes care of files that have not been indexed yet by FAL.
@@ -104,34 +146,7 @@ class FolderRecordFactory
          *  4. Blame FAL. Always.
          *  5. Lead the readers through this hell with a lot of comments ;)
          */
-
-        // Grab the resource factory to get the FAL driver of the selected folder "FAL style"
-        $resourceFactory = ResourceFactory::getInstance();
-
-        // Determine the current folder. If the identifier is NULL there was no folder selected.
-        if (null === $identifier) {
-            // Special case: The module was opened, but no storage/folder has been selected.
-            // Get the default storage and the default folder to show.
-            $localStorage = $resourceFactory->getDefaultStorage();
-            // Notice: ->getDefaultFolder does not return the default folder to show, but to upload files to.
-            // The root level folder is the "real" default and also respects mount points of the current user.
-            $localFolder = $localStorage->getRootLevelFolder();
-        } else {
-            // This is the normal case. The identifier identifies the folder inclusive its storage.
-            $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
-            $localStorage = $localFolder->getStorage();
-        }
-
-        // Remove the record factory instance (at least the pointer).
-        // I don't need the local one anymore, since i've got the storage object.
-        unset($resourceFactory);
-
-        // Get the storages driver to prevent unintentional indexing by using storage methods.
-        $localDriver = $this->getLocalDriver($localStorage);
-        $foreignDriver = $this->getForeignDriver($localStorage);
-
-        // Drop the reference to the local storage, since i've got the driver objects for both sides now.
-        unset($localStorage);
+        $localFolder = $this->initializeDependenciesAndGetFolder($identifier);
 
         // Get the FAL-cleaned folder identifier (this should not be necessary, but i mistrust FAL)
         $identifier = $localFolder->getIdentifier();
@@ -142,7 +157,7 @@ class FolderRecordFactory
         // It's useless now, because i've got its identifiers and sub folders.
         unset($localFolder);
 
-        $record = $this->createRecordForSelectedFolderAndRelatedSubFolders($identifier, $foreignDriver, $localDriver);
+        $record = $this->createRecordForSelectedFolderAndRelatedSubFolders($identifier);
 
         // Get a CommonRepository instance for the sys_file table as master to fetch the related indices.
         $commonRepository = CommonRepository::getDefaultInstance('sys_file');
@@ -156,7 +171,7 @@ class FolderRecordFactory
 
         // Get all occurring identifiers of files in the current folder.
         // This array has the three keys local, foreign and both, too. Therefore we know where the files were found.
-        $diskIdentifiers = $this->buildDiskIdentifiersList($identifier, $localDriver, $foreignDriver);
+        $diskIdentifiers = $this->buildDiskIdentifiersList($identifier);
 
         // Remove all identifiers found in the databases from the disk identifiers list.
         // These identifiers do only occur on the local and/or foreign disk.
@@ -166,17 +181,13 @@ class FolderRecordFactory
         // Create temporary indices for files existing on local and foreign but in neither database (OFS)
         $files = $this->convertAndAddUnIndexedFilesOnBothDisksToRecordList(
             $onlyDiskIdentifiers,
-            $localDriver,
-            $foreignDriver,
             $files
         );
 
         $files = $this->fixAndConvertIntersectingIdentifiers(
             $diskIdentifiers,
             $indexedIdentifiers,
-            $files,
-            $foreignDriver,
-            $localDriver
+            $files
         );
 
         // Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
@@ -192,9 +203,7 @@ class FolderRecordFactory
 
         $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecords(
             $onlyDiskIdentifiers,
-            $localDriver,
-            $files,
-            $foreignDriver
+            $files
         );
 
         // remove OxFS identifiers, they have all been converted to records.
@@ -203,9 +212,7 @@ class FolderRecordFactory
         $files = $this->indexFilesWithMissingIndexOnOneSide(
             $indexedIdentifiers,
             $diskIdentifiers,
-            $files,
-            $foreignDriver,
-            $localDriver
+            $files
         );
 
         // mergeSysFileByIdentifier feature: find sys_file duplicates and "merge" them.
@@ -216,9 +223,7 @@ class FolderRecordFactory
         }
 
         $files = $this->filterFileRecords(
-            $files,
-            $localDriver,
-            $foreignDriver
+            $files
         );
 
         $record->addRelatedRecords($files);
@@ -256,12 +261,12 @@ class FolderRecordFactory
      */
     protected function getForeignDriver(ResourceStorage $localStorage)
     {
-        $foreignDriver = GeneralUtility::makeInstance(
+        $this->foreignDriver = GeneralUtility::makeInstance(
             'In2code\\In2publishCore\\Domain\\Driver\\RemoteFileAbstractionLayerDriver'
         );
-        $foreignDriver->setStorageUid($localStorage->getUid());
-        $foreignDriver->initialize();
-        return $foreignDriver;
+        $this->foreignDriver->setStorageUid($localStorage->getUid());
+        $this->foreignDriver->initialize();
+        return $this->foreignDriver;
     }
 
     /**
@@ -269,27 +274,21 @@ class FolderRecordFactory
      *
      * @param array $localSubFolders
      * @param array $foreignSubFolders
-     * @param DriverInterface $localDriver
-     * @param DriverInterface $foreignDriver
      * @return array
      */
-    protected function getSubFolderRecordInstances(
-        array $localSubFolders,
-        array $foreignSubFolders,
-        DriverInterface $localDriver,
-        DriverInterface $foreignDriver
-    ) {
+    protected function getSubFolderRecordInstances(array $localSubFolders, array $foreignSubFolders)
+    {
         $subFolderIdentifiers = array_merge($localSubFolders, $foreignSubFolders);
         $subFolders = array();
         foreach ($subFolderIdentifiers as $subFolderIdentifier) {
-            if ($localDriver->folderExists($subFolderIdentifier)) {
-                $localFolderInfo = $localDriver->getFolderInfoByIdentifier($subFolderIdentifier);
+            if ($this->localDriver->folderExists($subFolderIdentifier)) {
+                $localFolderInfo = $this->localDriver->getFolderInfoByIdentifier($subFolderIdentifier);
                 $localFolderInfo['uid'] = $this->createCombinedIdentifier($localFolderInfo);
             } else {
                 $localFolderInfo = array();
             }
-            if ($foreignDriver->folderExists($subFolderIdentifier)) {
-                $foreignFolderInfo = $foreignDriver->getFolderInfoByIdentifier($subFolderIdentifier);
+            if ($this->foreignDriver->folderExists($subFolderIdentifier)) {
+                $foreignFolderInfo = $this->foreignDriver->getFolderInfoByIdentifier($subFolderIdentifier);
                 $foreignFolderInfo['uid'] = $this->createCombinedIdentifier($foreignFolderInfo);
             } else {
                 $foreignFolderInfo = array();
@@ -526,18 +525,13 @@ class FolderRecordFactory
      *      LFS = Local File System
      *      LDB = Local Database
      *  These filters files and entries i do not consider, because they do not represent an actual file.
-     *  Prefer $localDriver over $foreignDriver where applicable, because it will be faster.
+     *  Prefer $this->localDriver over $foreignDriver where applicable, because it will be faster.
      *
      * @param Record[] $files
-     * @param DriverInterface $localDriver
-     * @param DriverInterface $foreignDriver
      * @return Record[]
      */
-    protected function filterFileRecords(
-        array $files,
-        DriverInterface $localDriver,
-        DriverInterface $foreignDriver
-    ) {
+    protected function filterFileRecords(array $files)
+    {
         foreach ($files as $index => $file) {
             $fdb = $file->foreignRecordExists();
             $ldb = $file->localRecordExists();
@@ -553,8 +547,8 @@ class FolderRecordFactory
                 $foreignFileIdentifier = $file->getLocalProperty('identifier');
             }
 
-            $lfs = $localDriver->fileExists($localFileIdentifier);
-            $ffs = $foreignDriver->fileExists($foreignFileIdentifier);
+            $lfs = $this->localDriver->fileExists($localFileIdentifier);
+            $ffs = $this->foreignDriver->fileExists($foreignFileIdentifier);
 
             if ($ldb && !$lfs && !$ffs && !$fdb) {
                 // CODE: [0] OLDB
@@ -694,7 +688,7 @@ class FolderRecordFactory
                     $file->setLocalProperties(
                         $this->getFileInformation(
                             $localFileIdentifier,
-                            $localDriver,
+                            $this->localDriver,
                             $this->foreignDatabase,
                             $this->localDatabase,
                             $file->getIdentifier()
@@ -703,7 +697,7 @@ class FolderRecordFactory
                     $file->setForeignProperties(
                         $this->getFileInformation(
                             $foreignFileIdentifier,
-                            $foreignDriver,
+                            $this->foreignDriver,
                             $this->localDatabase,
                             $this->foreignDatabase,
                             $file->getIdentifier()
@@ -727,13 +721,12 @@ class FolderRecordFactory
 
     /**
      * @param string $identifier
-     * @param DriverInterface $localDriver
      * @return array
      */
-    protected function getFolderInfoByIdentifierAndDriver($identifier, DriverInterface $localDriver)
+    protected function getFolderInfoByIdentifierAndDriver($identifier)
     {
         // fetch all information regarding the folder
-        $localFolderInfo = $localDriver->getFolderInfoByIdentifier($identifier);
+        $localFolderInfo = $this->localDriver->getFolderInfoByIdentifier($identifier);
         // add the "uid" property, which is largely exclusive set for Record::isRecordRepresentByProperties
         // but additionally a good place to store the "combined identifier"
         $localFolderInfo['uid'] = $this->createCombinedIdentifier($localFolderInfo);
@@ -836,24 +829,18 @@ class FolderRecordFactory
      * PRE-FIX for [7] OFS case.
      *
      * @param array $onlyDiskIdentifiers
-     * @param DriverInterface $localDriver
-     * @param DriverInterface $foreignDriver
      * @param Record[] $files
      * @return Record[]
      */
-    protected function convertAndAddUnIndexedFilesOnBothDisksToRecordList(
-        array $onlyDiskIdentifiers,
-        DriverInterface $localDriver,
-        DriverInterface $foreignDriver,
-        array $files
-    ) {
+    protected function convertAndAddUnIndexedFilesOnBothDisksToRecordList(array $onlyDiskIdentifiers, array $files)
+    {
         if (!empty($onlyDiskIdentifiers['both'])) {
             // Iterate through all files found on the local and foreign disk but not in the database.
             foreach ($onlyDiskIdentifiers['both'] as $onlyDiskIdentifier) {
                 // Fetch the file information with a (on the fly) reserved uid.
                 $localFileInformation = $this->getFileInformation(
                     $onlyDiskIdentifier,
-                    $localDriver,
+                    $this->localDriver,
                     $this->foreignDatabase,
                     $this->localDatabase
                 );
@@ -865,7 +852,7 @@ class FolderRecordFactory
                     // Get the index information for the foreign file with the already reserved UID
                     $this->getFileInformation(
                         $onlyDiskIdentifier,
-                        $foreignDriver,
+                        $this->foreignDriver,
                         $this->localDatabase,
                         $this->foreignDatabase,
                         $localFileInformation['uid']
@@ -965,18 +952,13 @@ class FolderRecordFactory
      * Move all entries occurring on both sides to the "both" index afterwards.
      *
      * @param string $identifier
-     * @param DriverInterface $localDriver
-     * @param DriverInterface $foreignDriver
      * @return array
      */
-    protected function buildDiskIdentifiersList(
-        $identifier,
-        DriverInterface $localDriver,
-        DriverInterface $foreignDriver
-    ) {
+    protected function buildDiskIdentifiersList($identifier)
+    {
         $diskIdentifiers = array(
-            'local' => $this->getFilesIdentifiersInFolder($identifier, $localDriver),
-            'foreign' => $this->getFilesIdentifiersInFolder($identifier, $foreignDriver),
+            'local' => $this->getFilesIdentifiersInFolder($identifier, $this->localDriver),
+            'foreign' => $this->getFilesIdentifiersInFolder($identifier, $this->foreignDriver),
             'both' => array(),
         );
 
@@ -989,22 +971,17 @@ class FolderRecordFactory
 
     /**
      * @param string $identifier
-     * @param DriverInterface $foreignDriver
-     * @param DriverInterface $localDriver
      * @return Record
      */
-    protected function createRecordForSelectedFolderAndRelatedSubFolders(
-        $identifier,
-        DriverInterface $foreignDriver,
-        DriverInterface $localDriver
-    ) {
-        $foreignFolderExists = $foreignDriver->folderExists($identifier);
+    protected function createRecordForSelectedFolderAndRelatedSubFolders($identifier)
+    {
+        $foreignFolderExists = $this->foreignDriver->folderExists($identifier);
 
         $record = GeneralUtility::makeInstance(
             'In2code\\In2publishCore\\Domain\\Model\\Record',
             'physical_folder',
-            $this->getFolderInfoByIdentifierAndDriver($identifier, $localDriver),
-            $foreignFolderExists ? $this->getFolderInfoByIdentifierAndDriver($identifier, $foreignDriver) : array(),
+            $this->getFolderInfoByIdentifierAndDriver($identifier),
+            $foreignFolderExists ? $this->getFolderInfoByIdentifierAndDriver($identifier) : array(),
             array(),
             array('depth' => 1)
         );
@@ -1012,10 +989,8 @@ class FolderRecordFactory
         // Add all converted sub folder records to the selected folder.
         $record->addRelatedRecords(
             $this->getSubFolderRecordInstances(
-                $localDriver->getFoldersInFolder($identifier),
-                $foreignFolderExists ? $foreignDriver->getFoldersInFolder($identifier) : array(),
-                $localDriver,
-                $foreignDriver
+                $this->localDriver->getFoldersInFolder($identifier),
+                $foreignFolderExists ? $this->foreignDriver->getFoldersInFolder($identifier) : array()
             )
         );
 
@@ -1026,8 +1001,6 @@ class FolderRecordFactory
      * @param array $diskIdentifiers
      * @param array $indexedIdentifiers
      * @param Record[] $files
-     * @param DriverInterface $foreignDriver
-     * @param DriverInterface $localDriver
      * @param string $diskSide
      * @return Record[]
      */
@@ -1035,8 +1008,6 @@ class FolderRecordFactory
         array $diskIdentifiers,
         array $indexedIdentifiers,
         array $files,
-        DriverInterface $foreignDriver,
-        DriverInterface $localDriver,
         $diskSide
     ) {
         // Find intersecting identifiers. These are identifiers of files on the local disk and foreign database
@@ -1064,7 +1035,7 @@ class FolderRecordFactory
                 $this->createAndAddTemporaryIndexInformationToRecordForSide(
                     $reCheckFile,
                     $reCheckIdentifier,
-                    $foreignDriver,
+                    $this->foreignDriver,
                     $this->localDatabase,
                     $this->foreignDatabase,
                     'foreign'
@@ -1074,7 +1045,7 @@ class FolderRecordFactory
                 $reCheckFile->setLocalProperties(array());
                 $reCheckFile->setDirtyProperties()->calculateState();
             } elseif ($diskSide === 'local' && RecordInterface::RECORD_STATE_DELETED === $state) {
-                if (!$foreignDriver->fileExists($reCheckIdentifier)) {
+                if (!$this->foreignDriver->fileExists($reCheckIdentifier)) {
                     // PRE-FIX for [8] LFFD case, where the file was found on local's disc
                     // and the foreign database (like [5] LDFF inverted).
                     // The database record is technically deleted, but the file was added. Since the file
@@ -1082,7 +1053,7 @@ class FolderRecordFactory
                     $this->createAndAddTemporaryIndexInformationToRecordForSide(
                         $reCheckFile,
                         $reCheckIdentifier,
-                        $localDriver,
+                        $this->localDriver,
                         $this->foreignDatabase,
                         $this->localDatabase,
                         'local'
@@ -1349,24 +1320,18 @@ class FolderRecordFactory
      * @param array $diskIdentifiers
      * @param array $indexedIdentifiers
      * @param Record[] $files
-     * @param DriverInterface $foreignDriver
-     * @param DriverInterface $localDriver
      * @return Record[]
      */
     protected function fixAndConvertIntersectingIdentifiers(
         array $diskIdentifiers,
         array $indexedIdentifiers,
-        array $files,
-        DriverInterface $foreignDriver,
-        DriverInterface $localDriver
+        array $files
     ) {
         // Create temporary indices for files existing on the local disk and foreign database
         $files = $this->fixAndConvertIntersectingIdentifiersIntoRecords(
             $diskIdentifiers,
             $indexedIdentifiers,
             $files,
-            $foreignDriver,
-            $localDriver,
             'local'
         );
 
@@ -1375,8 +1340,6 @@ class FolderRecordFactory
             $diskIdentifiers,
             $indexedIdentifiers,
             $files,
-            $foreignDriver,
-            $localDriver,
             'foreign'
         );
         return $files;
@@ -1384,22 +1347,16 @@ class FolderRecordFactory
 
     /**
      * @param array $onlyDiskIdentifiers
-     * @param DriverInterface $localDriver
      * @param Record[] $files
-     * @param DriverInterface $foreignDriver
      * @return Record[]
      */
-    protected function convertAndAddOnlyDiskIdentifiersToFileRecords(
-        array $onlyDiskIdentifiers,
-        DriverInterface $localDriver,
-        array $files,
-        DriverInterface $foreignDriver
-    ) {
+    protected function convertAndAddOnlyDiskIdentifiersToFileRecords(array $onlyDiskIdentifiers, array $files)
+    {
         // PRE-FIX for the [1] OLFS case
         // create temporary sys_file entries for all files on the local disk
         $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(
             $onlyDiskIdentifiers,
-            $localDriver,
+            $this->localDriver,
             $this->foreignDatabase,
             $this->localDatabase,
             $files,
@@ -1410,7 +1367,7 @@ class FolderRecordFactory
         // create temporary sys_file entries for all files on the foreign disk
         $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(
             $onlyDiskIdentifiers,
-            $foreignDriver,
+            $this->foreignDriver,
             $this->localDatabase,
             $this->foreignDatabase,
             $files,
@@ -1423,16 +1380,12 @@ class FolderRecordFactory
      * @param array $indexedIdentifiers
      * @param array $diskIdentifiers
      * @param Record[] $files
-     * @param DriverInterface $foreignDriver
-     * @param DriverInterface $localDriver
      * @return Record[]
      */
     protected function indexFilesWithMissingIndexOnOneSide(
         array $indexedIdentifiers,
         array $diskIdentifiers,
-        array $files,
-        DriverInterface $foreignDriver,
-        DriverInterface $localDriver
+        array $files
     ) {
         // Get a list of all identifiers that exist on both disks bot only in one database
         $indicesToRecheck = array_intersect($indexedIdentifiers['local'], $diskIdentifiers['both'])
@@ -1449,7 +1402,7 @@ class FolderRecordFactory
                 $this->createAndAddTemporaryIndexInformationToRecordForSide(
                     $reCheckFile,
                     $diskIdentifierOnBoth,
-                    $foreignDriver,
+                    $this->foreignDriver,
                     $this->localDatabase,
                     $this->foreignDatabase,
                     'foreign'
@@ -1462,7 +1415,7 @@ class FolderRecordFactory
                 $this->createAndAddTemporaryIndexInformationToRecordForSide(
                     $reCheckFile,
                     $diskIdentifierOnBoth,
-                    $localDriver,
+                    $this->localDriver,
                     $this->foreignDatabase,
                     $this->localDatabase,
                     'local'
