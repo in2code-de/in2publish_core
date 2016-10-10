@@ -664,29 +664,11 @@ class FolderRecordFactory
     }
 
     /**
-     * condition: the sys_file exists on local, matches the identifier but is not the already added file
-     * (UIDs are different, identifier is the same, record is not temporary)
+     * mergeSysFileByIdentifier feature: Finds sys_file duplicates and "merges" them.
      *
-     * @param array $identifierList
-     * @param Record $file
-     * @return bool
-     */
-    protected function isLocalIndexWithMatchingDuplicateIndexOnForeign(array $identifierList, Record $file)
-    {
-        return null !== ($localIdentifier = $file->getLocalProperty('identifier'))
-               && null !== ($localUid = $file->getLocalProperty('uid'))
-               // There is a foreign record with the same identifier
-               && isset($identifierList[$localIdentifier])
-               // But there is no foreign record with the same identifier AND the same uid
-               && !isset($identifierList[$localIdentifier][$localUid])
-               // The foreign part of the local record does not exists OR is temporary (= Not index for a remote file)
-               && (!$file->foreignRecordExists()
-                   || true === $file->getAdditionalProperty('foreignRecordExistsTemporary'))
-               // The local record is not temporary (= he local record is persisted)
-               && true !== $file->getAdditionalProperty('localRecordExistsTemporary');
-    }
-
-    /**
+     * If the foreign sys_file was not referenced in the foreign's sys_file_reference table the the
+     * UID of the foreign record can be overwritten to restore a consistent state.
+     *
      * @param Record[] $files
      * @return Record[]
      */
@@ -762,6 +744,30 @@ class FolderRecordFactory
         }
 
         return $files;
+    }
+
+    /**
+     * Condition method:
+     *  The sys_file exists on local, matches any identifier from the list but is not the already persisted.
+     *  (UIDs are different, identifier is the same, record is not temporary)
+     *
+     * @param array $identifierList
+     * @param Record $file
+     * @return bool
+     */
+    protected function isLocalIndexWithMatchingDuplicateIndexOnForeign(array $identifierList, Record $file)
+    {
+        return null !== ($localIdentifier = $file->getLocalProperty('identifier'))
+               && null !== ($localUid = $file->getLocalProperty('uid'))
+               // There is a foreign record with the same identifier
+               && isset($identifierList[$localIdentifier])
+               // But there is no foreign record with the same identifier AND the same uid
+               && !isset($identifierList[$localIdentifier][$localUid])
+               // The foreign part of the local record does not exists OR is temporary (= Not index for a remote file)
+               && (!$file->foreignRecordExists()
+                   || true === $file->getAdditionalProperty('foreignRecordExistsTemporary'))
+               // The local record is not temporary (= he local record is persisted)
+               && true !== $file->getAdditionalProperty('localRecordExistsTemporary');
     }
 
     /**
