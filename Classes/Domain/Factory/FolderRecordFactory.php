@@ -774,24 +774,20 @@ class FolderRecordFactory
         array $diskIdentifiers,
         array $files
     ) {
-        // Get a list of all identifiers that exist on both disks bot only in one database
+        // Get a list of all identifiers that exist on both disks but only in one database
         $indicesToRecheck = array_intersect($indexedIdentifiers['local'], $diskIdentifiers['both'])
                             + array_intersect($indexedIdentifiers['foreign'], $diskIdentifiers['both']);
 
-        // PRE-FIXES
         foreach ($indicesToRecheck as $index => $identifier) {
             $file = $files[$index];
             $recordState = $file->getState();
             if (RecordInterface::RECORD_STATE_ADDED === $recordState) {
-                // PRE-FIX for the [10] NFDB case
-                // The file has been found on both file systems but only in the local database.
-                // create a temporary counterpart for the local database entry, so we end up in [14] ALL
+                // PRE-FIX for [10] NFDB; The file has been found on both file systems but not in the foreign database.
+                // Create a temporary counterpart for the local index, so we end up in [14] ALL
                 $this->fileIndexFactory->updateFileIndexInfoBySide($file, $identifier, 'foreign');
             } elseif (RecordInterface::RECORD_STATE_DELETED === $recordState) {
-                // PRE-FIX for [13] NLDB
-                // The file has been found on both file systems but not in the local database.
-                // create a temporary local database entry with the uid of the existing foreign database entry.
-                // Resulting case is [14] ALL
+                // PRE-FIX for [13] NLDB; The file has been found on both file systems but not in the local database.
+                // Create a temporary local index with the uid of the existing foreign index. Results is [14] ALL
                 $this->fileIndexFactory->updateFileIndexInfoBySide($file, $identifier, 'local');
             }
         }
