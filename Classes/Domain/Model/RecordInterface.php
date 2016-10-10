@@ -116,4 +116,11 @@ interface RecordInterface
      * @return array
      */
     public function getPropertyBySideIdentifier($side, $propertyName);
+
+    /**
+     * @param string $propertyName
+     * @param mixed $propertyValue
+     * @return RecordInterface
+     */
+    public function addAdditionalProperty($propertyName, $propertyValue);
 }
