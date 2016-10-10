@@ -276,19 +276,26 @@ class FolderRecordFactory
      * @see \TYPO3\CMS\Core\Resource\Index\Indexer::gatherFileInformationArray
      *
      * @param string $identifier
-     * @param DriverInterface $driver
-     * @param DatabaseConnection $oppositeDatabase
-     * @param DatabaseConnection $targetDatabase If null the sys_file record will not be persisted
+     * @param $side
      * @param int $uid Predefined UID
      * @return array
+     * @internal param DatabaseConnection $oppositeDatabase
+     * @internal param DatabaseConnection $targetDatabase If null the sys_file record will not be persisted
+     * @internal param DriverInterface $driver
      */
-    protected function getFileInformation(
-        $identifier,
-        DriverInterface $driver,
-        DatabaseConnection $oppositeDatabase = null,
-        DatabaseConnection $targetDatabase = null,
-        $uid = 0
-    ) {
+    protected function getFileInformation($identifier, $side, $uid = 0)
+    {
+        if ($side === 'local') {
+            $driver = $this->localDriver;
+            $targetDatabase = $this->localDatabase;
+            $oppositeDatabase = $this->foreignDatabase;
+        } elseif ($side === 'foreign') {
+            $driver = $this->foreignDriver;
+            $targetDatabase = $this->foreignDatabase;
+            $oppositeDatabase = $this->localDatabase;
+        } else {
+            throw new \LogicException('Unsupported side "' . $side . '"', 1476106674);
+        }
         $fileInfo = $driver->getFileInfoByIdentifier($identifier);
 
         $mappingInfo = array('mtime' => 'modification_date', 'ctime' => 'creation_date', 'mimetype' => 'mime_type');
@@ -483,22 +490,10 @@ class FolderRecordFactory
                     // the database records are identical, but this does not necessarily reflect the truth,
                     // because files might have changed in the file system without FAL noticing these changes.
                     $file->setLocalProperties(
-                        $this->getFileInformation(
-                            $localFileIdentifier,
-                            $this->localDriver,
-                            $this->foreignDatabase,
-                            $this->localDatabase,
-                            $file->getIdentifier()
-                        )
+                        $this->getFileInformation($localFileIdentifier, 'local', $file->getIdentifier())
                     );
                     $file->setForeignProperties(
-                        $this->getFileInformation(
-                            $foreignFileIdentifier,
-                            $this->foreignDriver,
-                            $this->localDatabase,
-                            $this->foreignDatabase,
-                            $file->getIdentifier()
-                        )
+                        $this->getFileInformation($foreignFileIdentifier, 'foreign', $file->getIdentifier())
                     );
                     $file->setDirtyProperties()->calculateState();
                 }
@@ -579,20 +574,11 @@ class FolderRecordFactory
             // Iterate through all files found on the local and foreign disk but not in the database.
             foreach ($onlyDiskIdentifiers['both'] as $onlyDiskIdentifier) {
                 // Fetch the file information with a (on the fly) reserved uid.
-                $localFileInformation = $this->getFileInformation(
-                    $onlyDiskIdentifier,
-                    $this->localDriver,
-                    $this->foreignDatabase,
-                    $this->localDatabase
-                );
-                $foreignFileInfo = $this->getFileInformation(
-                    $onlyDiskIdentifier,
-                    $this->foreignDriver,
-                    $this->localDatabase,
-                    $this->foreignDatabase,
-                    $localFileInformation['uid']
-                );
-                $temporarySysFile = $this->fileIndexFactory->makeInstance($localFileInformation, $foreignFileInfo);
+                $localFileInfo = $this->getFileInformation($onlyDiskIdentifier, 'local');
+                $foreignFileInfo = $this->getFileInformation($onlyDiskIdentifier, 'foreign', $localFileInfo['uid']);
+
+                $temporarySysFile = $this->fileIndexFactory->makeInstance($localFileInfo, $foreignFileInfo);
+
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
             }
         }
@@ -608,17 +594,6 @@ class FolderRecordFactory
      */
     protected function convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(array $diskIdentifiers, array $files, $side)
     {
-        if ($side === 'local') {
-            $driver = $this->localDriver;
-            $targetDatabase = $this->localDatabase;
-            $oppositeDatabase = $this->foreignDatabase;
-        } elseif ($side === 'foreign') {
-            $driver = $this->foreignDriver;
-            $targetDatabase = $this->foreignDatabase;
-            $oppositeDatabase = $this->localDatabase;
-        } else {
-            throw new \LogicException('Unsupported side "' . $side . '"', 1476101719);
-        }
         if (!empty($diskIdentifiers[$side])) {
             // iterate through all files found on disc but not in the database
             foreach ($diskIdentifiers[$side] as $onlyDiskIdentifier) {
@@ -626,12 +601,7 @@ class FolderRecordFactory
                 // identifier, since none was found nor could be reclaimed
                 // if persistTemporaryIndexing is enabled the entry is not temporary
                 // but this does not matter for the following code
-                $properties = $this->getFileInformation(
-                    $onlyDiskIdentifier,
-                    $driver,
-                    $oppositeDatabase,
-                    $targetDatabase
-                );
+                $properties = $this->getFileInformation($onlyDiskIdentifier, $side);
                 $temporarySysFile = $this->fileIndexFactory->makeInstanceForSide($side, $properties);
                 $temporarySysFile->setDirtyProperties()->calculateState();
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
@@ -648,24 +618,11 @@ class FolderRecordFactory
      */
     protected function createAndAddTemporaryIndexInformationToRecordForSide(Record $record, $identifier, $side)
     {
-        if ($side === 'local') {
-            $driver = $this->localDriver;
-            $targetDatabase = $this->localDatabase;
-            $oppositeDatabase = $this->foreignDatabase;
-        } elseif ($side === 'foreign') {
-            $driver = $this->foreignDriver;
-            $targetDatabase = $this->foreignDatabase;
-            $oppositeDatabase = $this->localDatabase;
-        } else {
-            throw new \LogicException('Unsupported side "' . $side . '"', 1476101470);
-        }
         $record->setPropertiesBySideIdentifier(
             $side,
             $this->getFileInformation(
                 $identifier,
-                $driver,
-                $oppositeDatabase,
-                $targetDatabase,
+                $side,
                 $record->getPropertyBySideIdentifier($side === 'local' ? 'foreign' : 'local', 'uid')
             )
         );
