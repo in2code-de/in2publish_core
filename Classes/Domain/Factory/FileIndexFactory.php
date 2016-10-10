@@ -142,7 +142,6 @@ class FileIndexFactory
      * @param RecordInterface $record
      * @param string $localIdentifier
      * @param string $foreignIdentifier
-     * @return RecordInterface
      */
     public function updateFileIndexInfo(RecordInterface $record, $localIdentifier, $foreignIdentifier)
     {
