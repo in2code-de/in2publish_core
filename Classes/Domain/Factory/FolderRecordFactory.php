@@ -826,7 +826,7 @@ class FolderRecordFactory
     {
         return (bool)$this->foreignDatabase->exec_UPDATEquery(
             'sys_file_reference',
-            'table_local LIKE "sys_file" AND uid_local=' . (int)$oldUid,
+            'table_local LIKE "sys_file" AND uid_local=' . $oldUid,
             array('uid_local' => $newUid)
         );
     }
