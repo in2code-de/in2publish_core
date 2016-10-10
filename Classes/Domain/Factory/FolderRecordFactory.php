@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Domain\Factory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Service\Database\UidReservationService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
@@ -88,6 +89,11 @@ class FolderRecordFactory
     protected $fileIndexFactory = null;
 
     /**
+     * @var UidReservationService
+     */
+    protected $uidReservationService = null;
+
+    /**
      * FolderRecordFactory constructor.
      */
     public function __construct()
@@ -97,6 +103,9 @@ class FolderRecordFactory
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->configuration = ConfigurationUtility::getConfiguration('factory.fal');
+        $this->uidReservationService = GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Service\\Database\\UidReservationService'
+        );
     }
 
     /**
@@ -342,7 +351,7 @@ class FolderRecordFactory
         if ($uid > 0) {
             $fileInfo['uid'] = $uid;
         } else {
-            $fileInfo['uid'] = $this->getReservedUid($targetDatabase, $oppositeDatabase);
+            $fileInfo['uid'] = $this->uidReservationService->getReservedUid();
         }
 
         // convert all values to string to match the resulting types of a database select query result
@@ -358,104 +367,6 @@ class FolderRecordFactory
         }
 
         return $fileInfo;
-    }
-
-    /**
-     * Increases the auto increment value on both databases until it is two higher than the highest taken uid.
-     *
-     * @param DatabaseConnection $leftDatabase
-     * @param DatabaseConnection $rightDatabase
-     * @return int
-     */
-    protected function getReservedUid(DatabaseConnection $leftDatabase, DatabaseConnection $rightDatabase)
-    {
-        // get the current auto increment of both databases
-        $localAutoIncrement = $this->fetchSysFileAutoIncrementFromDatabase($leftDatabase);
-        $foreignAutoIncrement = $this->fetchSysFileAutoIncrementFromDatabase($rightDatabase);
-
-        // determine highest auto increment value from both databases
-        $possibleUid = (int)max($localAutoIncrement, $foreignAutoIncrement);
-
-        // initialize the variable holding the next higher auto increment value
-        $nextAutoIncrement = $possibleUid;
-
-        do {
-            // increase the auto increment to "reserve" the previous integer
-            $nextAutoIncrement++;
-            $possibleUid = $nextAutoIncrement - 1;
-
-            // apply the new auto increment on both databases
-            $this->setAutoIncrement($leftDatabase, $nextAutoIncrement);
-            $this->setAutoIncrement($rightDatabase, $nextAutoIncrement);
-        } while (!$this->isUidFree($leftDatabase, $rightDatabase, $possibleUid));
-
-        // return the free integer
-        return $possibleUid;
-    }
-
-    /**
-     * @param DatabaseConnection $leftDatabase
-     * @param DatabaseConnection $rightDatabase
-     * @param int $uid
-     * @return bool
-     */
-    protected function isUidFree(DatabaseConnection $leftDatabase, DatabaseConnection $rightDatabase, $uid)
-    {
-        return 0 === $leftDatabase->exec_SELECTcountRows('uid', 'sys_file', 'uid=' . (int)$uid)
-               && 0 === $rightDatabase->exec_SELECTcountRows('uid', 'sys_file', 'uid=' . (int)$uid);
-    }
-
-    /**
-     * @param DatabaseConnection $databaseConnection
-     * @param $autoIncrement
-     */
-    protected function setAutoIncrement(DatabaseConnection $databaseConnection, $autoIncrement)
-    {
-        $success = $databaseConnection->admin_query(
-            'ALTER TABLE sys_file AUTO_INCREMENT = ' . (int)$autoIncrement
-        );
-        if (false === $success) {
-            throw new \RuntimeException('Failed to increase auto_increment on sys_file', 1475248851);
-        }
-    }
-
-    /**
-     * @param DatabaseConnection $databaseConnection
-     * @return int
-     */
-    protected function fetchSysFileAutoIncrementFromDatabase(DatabaseConnection $databaseConnection)
-    {
-        $queryResult = $databaseConnection->admin_query(
-            'SHOW TABLE STATUS FROM '
-            . $this->determineDatabaseOfConnection($databaseConnection)
-            . ' WHERE name LIKE "sys_file";'
-        );
-        if (false === $queryResult) {
-            throw new \RuntimeException('Could not select table status from database', 1475242494);
-        }
-        $resultData = $queryResult->fetch_assoc();
-        if (!isset($resultData['Auto_increment'])) {
-            throw new \RuntimeException('Could not fetch Auto_increment value from query result', 1475242706);
-        }
-        return (int)$resultData['Auto_increment'];
-    }
-
-    /**
-     * @param DatabaseConnection $databaseConnection
-     * @return string
-     */
-    protected function determineDatabaseOfConnection(DatabaseConnection $databaseConnection)
-    {
-        $queryResult = $databaseConnection->admin_query('SELECT DATABASE() as db_name;');
-        if (false === $queryResult) {
-            throw new \RuntimeException('Could not select database name from target database', 1475242213);
-        }
-        $resultData = $queryResult->fetch_assoc();
-        if (!isset($resultData['db_name'])) {
-            throw new \RuntimeException('Could not fetch database name from query result', 1475242337);
-        }
-        $queryResult->free();
-        return $resultData['db_name'];
     }
 
     /**
