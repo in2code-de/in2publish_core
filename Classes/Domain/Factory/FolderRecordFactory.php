@@ -447,12 +447,7 @@ class FolderRecordFactory
         if (!empty($onlyDiskIdentifiers['both'])) {
             // Iterate through all files found on the local and foreign disk but not in the database.
             foreach ($onlyDiskIdentifiers['both'] as $identifier) {
-                // Fetch the file information with a (on the fly) reserved uid.
-                $localInfo = $this->fileIndexFactory->getFileIndexArray($identifier, 'local');
-                $foreignInfo = $this->fileIndexFactory->getFileIndexArray($identifier, 'foreign', $localInfo['uid']);
-
-                $temporarySysFile = $this->fileIndexFactory->makeInstance($localInfo, $foreignInfo);
-
+                $temporarySysFile = $this->fileIndexFactory->makeInstance($identifier);
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
             }
         }
