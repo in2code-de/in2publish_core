@@ -95,4 +95,11 @@ interface RecordInterface
      * @return RecordInterface
      */
     public function calculateState();
+
+    /**
+     * Returns an identifier unique in the records table.
+     *
+     * @return @return int|string
+     */
+    public function getIdentifier();
 }
