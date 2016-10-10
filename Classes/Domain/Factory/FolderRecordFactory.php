@@ -48,14 +48,14 @@ use TYPO3\CMS\Extbase\Reflection\PropertyReflection;
 class FolderRecordFactory
 {
     /**
-     * @var DriverInterface
+     * @var Logger
      */
-    protected $localDriver;
+    protected $logger = null;
 
     /**
-     * @var DriverInterface
+     * @var CommonRepository
      */
-    protected $foreignDriver;
+    protected $commonRepository;
 
     /**
      * @var DatabaseConnection
@@ -68,11 +68,6 @@ class FolderRecordFactory
     protected $foreignDatabase;
 
     /**
-     * @var Logger
-     */
-    protected $logger = null;
-
-    /**
      * @var array
      */
     protected $configuration = array();
@@ -83,13 +78,24 @@ class FolderRecordFactory
     protected $sysFileTca = array();
 
     /**
+     * @var DriverInterface
+     */
+    protected $localDriver;
+
+    /**
+     * @var DriverInterface
+     */
+    protected $foreignDriver;
+
+    /**
      * FolderRecordFactory constructor.
      */
     public function __construct()
     {
-        $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
-        $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->commonRepository = CommonRepository::getDefaultInstance('sys_file');
+        $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
+        $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->configuration = ConfigurationUtility::getConfiguration('factory.fal');
         $this->sysFileTca = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService')
                                           ->getConfigurationArrayForTable('sys_file');
@@ -159,11 +165,8 @@ class FolderRecordFactory
 
         $record = $this->createRecordForSelectedFolderAndRelatedSubFolders($identifier);
 
-        // Get a CommonRepository instance for the sys_file table as master to fetch the related indices.
-        $commonRepository = CommonRepository::getDefaultInstance('sys_file');
-
         // Now let's find all files inside of the selected folder by the folders hash.
-        $files = $commonRepository->findByProperty('folder_hash', $hashedIdentifier);
+        $files = $this->commonRepository->findByProperty('folder_hash', $hashedIdentifier);
 
         // Build a list of all file identifiers found in both databases.
         // The resulting array has the keys local, foreign and both to indicate where the identifier was indexed.
@@ -195,7 +198,6 @@ class FolderRecordFactory
         if (true === $this->configuration['reclaimSysFileEntries']) {
             list($files, $onlyDiskIdentifiers) = $this->reclaimIndexEntries(
                 $onlyDiskIdentifiers,
-                $commonRepository,
                 $hashedIdentifier,
                 $files
             );
@@ -1000,20 +1002,14 @@ class FolderRecordFactory
 
     /**
      * @param array $onlyDiskIdentifiers
-     * @param CommonRepository $commonRepository
      * @param string $hashedIdentifier
      * @param Record[] $files
      * @return Record[]
      */
-    protected function reclaimIndexEntries(
-        array $onlyDiskIdentifiers,
-        CommonRepository $commonRepository,
-        $hashedIdentifier,
-        array $files
-    ) {
+    protected function reclaimIndexEntries(array $onlyDiskIdentifiers, $hashedIdentifier, array $files)
+    {
         list($onlyDiskIdentifiers, $files) = $this->reclaimSysFileEntriesBySide(
             $onlyDiskIdentifiers,
-            $commonRepository,
             $this->localDatabase,
             $hashedIdentifier,
             $files,
@@ -1021,7 +1017,6 @@ class FolderRecordFactory
         );
         list($onlyDiskIdentifiers, $files) = $this->reclaimSysFileEntriesBySide(
             $onlyDiskIdentifiers,
-            $commonRepository,
             $this->foreignDatabase,
             $hashedIdentifier,
             $files,
@@ -1033,7 +1028,6 @@ class FolderRecordFactory
 
     /**
      * @param array $onlyDiskIdentifiers
-     * @param CommonRepository $commonRepository
      * @param DatabaseConnection $targetDatabase
      * @param $hashedIdentifier
      * @param Record[] $files
@@ -1042,7 +1036,6 @@ class FolderRecordFactory
      */
     protected function reclaimSysFileEntriesBySide(
         array $onlyDiskIdentifiers,
-        CommonRepository $commonRepository,
         DatabaseConnection $targetDatabase,
         $hashedIdentifier,
         array $files,
@@ -1052,7 +1045,7 @@ class FolderRecordFactory
         // because they should have been found by the folder hash already, but i'm a
         // generous developer and allow FAL to completely fuck up the folder hash
         foreach ($onlyDiskIdentifiers[$side] as $index => $onlyDiskIdentifier) {
-            $disconnectedSysFiles = $commonRepository->findByProperty('identifier', $onlyDiskIdentifier);
+            $disconnectedSysFiles = $this->commonRepository->findByProperty('identifier', $onlyDiskIdentifier);
             // if a sys_file record could be reclaimed use it
             if (!empty($disconnectedSysFiles)) {
                 // repair the entry a.k.a reconnect it by updating the folder hash
