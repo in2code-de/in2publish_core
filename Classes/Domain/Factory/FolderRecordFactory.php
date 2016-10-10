@@ -175,8 +175,6 @@ class FolderRecordFactory
         // Now let's find all files inside of the selected folder by the folders hash.
         $files = $this->commonRepository->findByProperty('folder_hash', $hashedIdentifier);
 
-        // Build a list of all file identifiers found in both databases.
-        // The resulting array has the keys local, foreign and both to indicate where the identifier was indexed.
         $indexedIdentifiers = $this->buildIndexedIdentifiersList($files);
 
         // Get all occurring identifiers of files in the current folder.
@@ -214,6 +212,7 @@ class FolderRecordFactory
             $files = $this->mergeSysFileByIdentifier($files);
         }
 
+        // [0] OLDB, [3] OFDB, [6] ODB, [9] OF, [11] NFFS, [12] NLFS, [14] ALL and [15] NONE
         $files = $this->filterFileRecords($files);
 
         return $record->addRelatedRecords($files);
@@ -373,7 +372,7 @@ class FolderRecordFactory
     }
 
     /**
-     * Builds a list of all file identifiers on local and foreign that are indexed in the database,
+     * Builds a list of all index identifiers of local and foreign,
      * so files only existing on disk can be determined by diff-ing against this list
      *
      * @param Record[] $files
