@@ -85,37 +85,35 @@ class FileIndexFactory
     }
 
     /**
-     * @param string $identifier
-     * @return RecordInterface
-     */
-    public function makeInstance($identifier)
-    {
-        $localInfo = $this->getFileIndexArray($identifier, 'local');
-
-        return GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Model\\Record',
-            'sys_file',
-            $localInfo,
-            $this->getFileIndexArray($identifier, 'foreign', $localInfo['uid']),
-            $this->sysFileTca,
-            array('localRecordExistsTemporary' => true, 'foreignRecordExistsTemporary' => true)
-        );
-    }
-
-    /**
      * @param string $side
      * @param string $identifier
      * @return RecordInterface
      */
     public function makeInstanceForSide($side, $identifier)
     {
+        $additionalProperties = array();
+        $foreignProperties = array();
+        $localProperties = array();
+        $uid = 0;
+
+        if ('both' === $side || 'local' === $side) {
+            $localProperties = $this->getFileIndexArray($identifier, 'local');
+            $additionalProperties['localRecordExistsTemporary'] = true;
+            $uid = $localProperties['uid'];
+        }
+
+        if ('both' === $side || 'foreign' === $side) {
+            $foreignProperties = $this->getFileIndexArray($identifier, 'foreign', $uid);
+            $additionalProperties['foreignRecordExistsTemporary'] = true;
+        }
+
         return GeneralUtility::makeInstance(
             'In2code\\In2publishCore\\Domain\\Model\\Record',
             'sys_file',
-            $side === 'local' ? $this->getFileIndexArray($identifier, $side) : array(),
-            $side === 'foreign' ? $this->getFileIndexArray($identifier, $side) : array(),
+            $localProperties,
+            $foreignProperties,
             $this->sysFileTca,
-            array($side . 'RecordExistsTemporary' => true)
+            $additionalProperties
         );
     }
 
