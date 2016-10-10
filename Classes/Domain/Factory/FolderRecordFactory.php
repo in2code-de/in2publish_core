@@ -205,19 +205,6 @@ class FolderRecordFactory
     }
 
     /**
-     * @param array $info
-     * @return string
-     */
-    protected function createCombinedIdentifier(array $info)
-    {
-        $identifier = $info['identifier'];
-        if (isset($info['folder'])) {
-            $identifier = $info['folder'] . '/' . $identifier;
-        }
-        return sprintf('%d:%s', $info['storage'], $identifier);
-    }
-
-    /**
      * @param ResourceStorage $localStorage
      * @return DriverInterface
      */
