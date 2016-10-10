@@ -569,39 +569,40 @@ class FolderRecordFactory
      */
     protected function reclaimIndexEntries(array $onlyDiskIdentifiers, $hashedIdentifier, array $files)
     {
-        list($onlyDiskIdentifiers, $files) = $this->reclaimSysFileEntriesBySide(
-            $onlyDiskIdentifiers,
-            $this->localDatabase,
-            $hashedIdentifier,
-            $files,
-            'local'
-        );
-        list($onlyDiskIdentifiers, $files) = $this->reclaimSysFileEntriesBySide(
-            $onlyDiskIdentifiers,
-            $this->foreignDatabase,
-            $hashedIdentifier,
-            $files,
-            'foreign'
-        );
+        foreach (array('local', 'foreign') as $side) {
+            list($onlyDiskIdentifiers, $files) = $this->reclaimSysFileEntriesBySide(
+                $onlyDiskIdentifiers,
+                $hashedIdentifier,
+                $files,
+                $side
+            );
+        }
 
         return array($files, $onlyDiskIdentifiers);
     }
 
     /**
      * @param array $onlyDiskIdentifiers
-     * @param DatabaseConnection $targetDatabase
      * @param $hashedIdentifier
      * @param Record[] $files
      * @param string $side
      * @return array
+     * @internal param DatabaseConnection $targetDatabase
      */
     protected function reclaimSysFileEntriesBySide(
         array $onlyDiskIdentifiers,
-        DatabaseConnection $targetDatabase,
         $hashedIdentifier,
         array $files,
         $side
     ) {
+        if ($side === 'local') {
+            $targetDatabase = $this->localDatabase;
+        } elseif ($side === 'foreign') {
+            $targetDatabase = $this->foreignDatabase;
+        } else {
+            throw new \LogicException('Unsupported side "' . $side . '"', 1476117740);
+        }
+
         // the chance is vanishing low to find a file by its identifier in the database
         // because they should have been found by the folder hash already, but i'm a
         // generous developer and allow FAL to completely fuck up the folder hash
