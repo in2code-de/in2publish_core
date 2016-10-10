@@ -165,7 +165,7 @@ class FolderRecordFactory
         // It's useless now, because i've got its identifiers and sub folders.
         unset($localFolder);
 
-        // Create the main record instance. This respresent the selected folder.
+        // Create the main record instance. This represent the selected folder.
         $record = $this->makePhysicalFolderInstance($identifier, 1);
 
         // Add all related sub folders
@@ -205,7 +205,7 @@ class FolderRecordFactory
             $files = $this->mergeSysFileByIdentifier($files);
         }
 
-        // [0] OLDB, [3] OFDB, [6] ODB, [9] OF, [11] NFFS, [12] NLFS, [14] ALL and [15] NONE
+        // [0] OLDB, [3] OFDB, [4] OL, [6] ODB, [9] OF, [11] NFFS, [12] NLFS, [14] ALL and [15] NONE
         $files = $this->filterFileRecords($files);
 
         return $record->addRelatedRecords($files);
