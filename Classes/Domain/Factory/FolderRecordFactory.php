@@ -180,11 +180,14 @@ class FolderRecordFactory
 
         // FEATURE: reclaimSysFileEntries
         if (true === $this->configuration['reclaimSysFileEntries']) {
-            list($files, $onlyDiskIdentifiers) = $this->reclaimIndexEntries(
-                $onlyDiskIdentifiers,
-                $hashedIdentifier,
-                $files
-            );
+            foreach (array('local', 'foreign') as $side) {
+                list($onlyDiskIdentifiers, $files) = $this->reclaimSysFileEntriesBySide(
+                    $onlyDiskIdentifiers,
+                    $hashedIdentifier,
+                    $files,
+                    $side
+                );
+            }
         }
 
         // [1] OLFS, [2] OFFS and [7] OFS
@@ -559,29 +562,9 @@ class FolderRecordFactory
     }
 
     /**
-     * Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
-     * the folder hash is broken
+     * Reconnect sys_file entries that definitely belong to the files found
+     * on disk but were not found because the folder hash is broken
      *
-     * @param array $onlyDiskIdentifiers
-     * @param string $hashedIdentifier
-     * @param Record[] $files
-     * @return Record[]
-     */
-    protected function reclaimIndexEntries(array $onlyDiskIdentifiers, $hashedIdentifier, array $files)
-    {
-        foreach (array('local', 'foreign') as $side) {
-            list($onlyDiskIdentifiers, $files) = $this->reclaimSysFileEntriesBySide(
-                $onlyDiskIdentifiers,
-                $hashedIdentifier,
-                $files,
-                $side
-            );
-        }
-
-        return array($files, $onlyDiskIdentifiers);
-    }
-
-    /**
      * @param array $onlyDiskIdentifiers
      * @param $hashedIdentifier
      * @param Record[] $files
@@ -589,12 +572,8 @@ class FolderRecordFactory
      * @return array
      * @internal param DatabaseConnection $targetDatabase
      */
-    protected function reclaimSysFileEntriesBySide(
-        array $onlyDiskIdentifiers,
-        $hashedIdentifier,
-        array $files,
-        $side
-    ) {
+    protected function reclaimSysFileEntriesBySide(array $onlyDiskIdentifiers, $hashedIdentifier, array $files, $side)
+    {
         if ($side === 'local') {
             $targetDatabase = $this->localDatabase;
         } elseif ($side === 'foreign') {
