@@ -766,25 +766,27 @@ class FolderRecordFactory
     }
 
     /**
-     * @param $onlyDiskIdentifiers
-     * @param $driver
-     * @param $oppositeDatabase
-     * @param $targetDatabase
-     * @param $files
-     * @param $side
+     * @param array $diskIdentifiers
+     * @param array $files
+     * @param string $side
      * @return array
      */
-    protected function convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(
-        $onlyDiskIdentifiers,
-        $driver,
-        $oppositeDatabase,
-        $targetDatabase,
-        $files,
-        $side
-    ) {
-        if (!empty($onlyDiskIdentifiers[$side])) {
+    protected function convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(array $diskIdentifiers, array $files, $side)
+    {
+        if ($side === 'local') {
+            $driver = $this->localDriver;
+            $targetDatabase = $this->localDatabase;
+            $oppositeDatabase = $this->foreignDatabase;
+        } elseif ($side === 'foreign') {
+            $driver = $this->foreignDriver;
+            $targetDatabase = $this->foreignDatabase;
+            $oppositeDatabase = $this->localDatabase;
+        } else {
+            throw new \LogicException('Unsupported side "' . $side . '"', 1476101719);
+        }
+        if (!empty($diskIdentifiers[$side])) {
             // iterate through all files found on disc but not in the database
-            foreach ($onlyDiskIdentifiers[$side] as $onlyDiskIdentifier) {
+            foreach ($diskIdentifiers[$side] as $onlyDiskIdentifier) {
                 // create a temporary sys_file entry for the current
                 // identifier, since none was found nor could be reclaimed
                 // if persistTemporaryIndexing is enabled the entry is not temporary
@@ -1169,27 +1171,11 @@ class FolderRecordFactory
      */
     protected function convertAndAddOnlyDiskIdentifiersToFileRecords(array $onlyDiskIdentifiers, array $files)
     {
-        // PRE-FIX for the [1] OLFS case
-        // create temporary sys_file entries for all files on the local disk
-        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(
-            $onlyDiskIdentifiers,
-            $this->localDriver,
-            $this->foreignDatabase,
-            $this->localDatabase,
-            $files,
-            'local'
-        );
+        // PRE-FIX for the [1] OLFS case; Create temporary sys_file entries for all files on the local disk
+        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide($onlyDiskIdentifiers, $files, 'local');
 
-        // PRE-FIX for the [2] OFFS case
-        // create temporary sys_file entries for all files on the foreign disk
-        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(
-            $onlyDiskIdentifiers,
-            $this->foreignDriver,
-            $this->localDatabase,
-            $this->foreignDatabase,
-            $files,
-            'foreign'
-        );
+        // PRE-FIX for the [2] OFFS case; Create temporary sys_file entries for all files on the foreign disk
+        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide($onlyDiskIdentifiers, $files, 'foreign');
         return $files;
     }
 
