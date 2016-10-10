@@ -161,10 +161,6 @@ class FolderRecordFactory
         // Also get the hashed identifier, which will be used later for temporary index creation and record searching.
         $hashedIdentifier = $localFolder->getHashedIdentifier();
 
-        // Remove the reference to the local folder FAL object.
-        // It's useless now, because i've got its identifiers and sub folders.
-        unset($localFolder);
-
         // Create the main record instance. This represent the selected folder.
         $record = $this->makePhysicalFolderInstance($identifier, 1);
 
@@ -193,9 +189,6 @@ class FolderRecordFactory
 
         // [1] OLFS, [2] OFFS and [7] OFS
         $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecords($onlyDiskIdentifiers, $files);
-
-        // remove OxFS identifiers, they have all been converted to records.
-        unset($onlyDiskIdentifiers);
 
         // [10] NFDB and [13] NLDB
         $this->updateFilesWithMissingIndices($indexedIdentifiers, $diskIdentifiers, $files);
