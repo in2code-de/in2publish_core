@@ -522,11 +522,7 @@ class FolderRecordFactory
      */
     protected function buildIndexedIdentifiersList(array $files)
     {
-        $indexedIdentifiers = array(
-            'local' => array(),
-            'foreign' => array(),
-            'both' => array(),
-        );
+        $indexedIdentifiers = array('local' => array(), 'foreign' => array(), 'both' => array());
 
         foreach ($files as $file) {
             $identifier = $file->getIdentifier();
