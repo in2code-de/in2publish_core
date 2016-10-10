@@ -1150,7 +1150,11 @@ class RecordTest extends UnitTestCase
         $related2 = $this->getRecordStub([]);
         $related2->__construct('tt_content', ['uid' => 2], ['uid' => 2], [], []);
 
-        $this->assertSame($record, $record->addRelatedRecords([$related1, $related2]));
+        $this->assertSame(
+            $record,
+            $record->addRelatedRecords([$related1, $related2]),
+            '[!!!] \In2code\In2publishCore\Domain\Model\Record::addRelatedRecords must allow chaining'
+        );
 
         $this->assertSame(
             [
