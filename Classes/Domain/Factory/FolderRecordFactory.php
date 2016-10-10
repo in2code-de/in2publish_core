@@ -283,24 +283,11 @@ class FolderRecordFactory
         $subFolderIdentifiers = array_merge($localSubFolders, $foreignSubFolders);
         $subFolders = array();
         foreach ($subFolderIdentifiers as $subFolderIdentifier) {
-            if ($this->localDriver->folderExists($subFolderIdentifier)) {
-                $localFolderInfo = $this->localDriver->getFolderInfoByIdentifier($subFolderIdentifier);
-                $localFolderInfo['uid'] = $this->createCombinedIdentifier($localFolderInfo);
-            } else {
-                $localFolderInfo = array();
-            }
-            if ($this->foreignDriver->folderExists($subFolderIdentifier)) {
-                $foreignFolderInfo = $this->foreignDriver->getFolderInfoByIdentifier($subFolderIdentifier);
-                $foreignFolderInfo['uid'] = $this->createCombinedIdentifier($foreignFolderInfo);
-            } else {
-                $foreignFolderInfo = array();
-            }
-
             $subFolders[] = GeneralUtility::makeInstance(
                 'In2code\\In2publishCore\\Domain\\Model\\Record',
                 'physical_folder',
-                $localFolderInfo,
-                $foreignFolderInfo,
+                $this->getFolderInfoByDriverAndIdentifier($this->localDriver, $subFolderIdentifier),
+                $this->getFolderInfoByDriverAndIdentifier($this->foreignDriver, $subFolderIdentifier),
                 array(),
                 array('depth' => 2)
             );
@@ -1401,5 +1388,21 @@ class FolderRecordFactory
             $identifierList[$file->getForeignProperty('identifier')][$file->getIdentifier()] = $file;
         }
         return $identifierList;
+    }
+
+    /**
+     * @param DriverInterface $driver
+     * @param string $subFolderIdentifier
+     * @return array
+     */
+    protected function getFolderInfoByDriverAndIdentifier(DriverInterface $driver, $subFolderIdentifier)
+    {
+        if ($driver->folderExists($subFolderIdentifier)) {
+            $folderInfo = $driver->getFolderInfoByIdentifier($subFolderIdentifier);
+            $folderInfo['uid'] = $this->createCombinedIdentifier($folderInfo);
+        } else {
+            $folderInfo = array();
+        }
+        return $folderInfo;
     }
 }
