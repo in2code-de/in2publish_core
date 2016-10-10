@@ -578,8 +578,8 @@ class FolderRecordFactory
                 if (true === $this->configuration['autoRepairFolderHash']) {
                     foreach ($disconnectedSysFiles as $sysFileEntry) {
                         // update on the local side if record has been found on the local side.
-                        // Hint: Do *not* update foreign. The folder hash on foreign might be correctly different
-                        // e.g. in case the file was moved
+                        // Hint: Do *not* update the foreign index with the local folder hash.
+                        // The folder hash on foreign might be correctly different e.g. in case the file was moved!
                         $property = $sysFileEntry->getPropertyBySideIdentifier($side, 'folder_hash');
                         if (null !== $property) {
                             DatabaseUtility::buildDatabaseConnectionForSide($side)->exec_UPDATEquery(
