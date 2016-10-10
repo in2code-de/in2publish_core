@@ -47,6 +47,16 @@ use TYPO3\CMS\Extbase\Reflection\PropertyReflection;
 class FolderRecordFactory
 {
     /**
+     * @var DatabaseConnection
+     */
+    protected $localDatabase;
+
+    /**
+     * @var DatabaseConnection
+     */
+    protected $foreignDatabase;
+
+    /**
      * @var Logger
      */
     protected $logger = null;
@@ -66,6 +76,8 @@ class FolderRecordFactory
      */
     public function __construct()
     {
+        $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
+        $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
         $this->configuration = ConfigurationUtility::getConfiguration('factory.fal');
         $this->sysFileTca = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService')
@@ -132,13 +144,6 @@ class FolderRecordFactory
 
         $record = $this->createRecordForSelectedFolderAndRelatedSubFolders($identifier, $foreignDriver, $localDriver);
 
-        // Get the database connections to be able to pass them around
-        // as target/opposite database e.g. for following purposes:
-        //  * Reserve UIDs
-        //  * persist temporary indices if enabled
-        $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-        $foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
-
         // Get a CommonRepository instance for the sys_file table as master to fetch the related indices.
         $commonRepository = CommonRepository::getDefaultInstance('sys_file');
 
@@ -162,8 +167,6 @@ class FolderRecordFactory
         $files = $this->convertAndAddUnIndexedFilesOnBothDisksToRecordList(
             $onlyDiskIdentifiers,
             $localDriver,
-            $foreignDatabase,
-            $localDatabase,
             $foreignDriver,
             $files
         );
@@ -173,9 +176,7 @@ class FolderRecordFactory
             $indexedIdentifiers,
             $files,
             $foreignDriver,
-            $localDriver,
-            $foreignDatabase,
-            $localDatabase
+            $localDriver
         );
 
         // Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
@@ -184,18 +185,14 @@ class FolderRecordFactory
             list($files, $onlyDiskIdentifiers) = $this->reclaimIndexEntries(
                 $onlyDiskIdentifiers,
                 $commonRepository,
-                $localDatabase,
                 $hashedIdentifier,
-                $files,
-                $foreignDatabase
+                $files
             );
         }
 
         $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecords(
             $onlyDiskIdentifiers,
             $localDriver,
-            $foreignDatabase,
-            $localDatabase,
             $files,
             $foreignDriver
         );
@@ -208,8 +205,6 @@ class FolderRecordFactory
             $diskIdentifiers,
             $files,
             $foreignDriver,
-            $localDatabase,
-            $foreignDatabase,
             $localDriver
         );
 
@@ -217,10 +212,14 @@ class FolderRecordFactory
         // If the foreign sys_file was not referenced in the foreign's sys_file_reference table the the
         // uid of the foreign record can be overwritten to restore a consistent state
         if (true === $this->configuration['mergeSysFileByIdentifier']) {
-            $files = $this->mergeSysFileByIdentifier($files, $foreignDatabase);
+            $files = $this->mergeSysFileByIdentifier($files);
         }
 
-        $files = $this->filterFileRecords($files, $localDriver, $foreignDriver, $foreignDatabase, $localDatabase);
+        $files = $this->filterFileRecords(
+            $files,
+            $localDriver,
+            $foreignDriver
+        );
 
         $record->addRelatedRecords($files);
 
@@ -532,16 +531,12 @@ class FolderRecordFactory
      * @param Record[] $files
      * @param DriverInterface $localDriver
      * @param DriverInterface $foreignDriver
-     * @param DatabaseConnection $foreignDatabase
-     * @param DatabaseConnection $localDatabase
      * @return Record[]
      */
     protected function filterFileRecords(
         array $files,
         DriverInterface $localDriver,
-        DriverInterface $foreignDriver,
-        DatabaseConnection $foreignDatabase,
-        DatabaseConnection $localDatabase
+        DriverInterface $foreignDriver
     ) {
         foreach ($files as $index => $file) {
             $fdb = $file->foreignRecordExists();
@@ -700,8 +695,8 @@ class FolderRecordFactory
                         $this->getFileInformation(
                             $localFileIdentifier,
                             $localDriver,
-                            $foreignDatabase,
-                            $localDatabase,
+                            $this->foreignDatabase,
+                            $this->localDatabase,
                             $file->getIdentifier()
                         )
                     );
@@ -709,8 +704,8 @@ class FolderRecordFactory
                         $this->getFileInformation(
                             $foreignFileIdentifier,
                             $foreignDriver,
-                            $localDatabase,
-                            $foreignDatabase,
+                            $this->localDatabase,
+                            $this->foreignDatabase,
                             $file->getIdentifier()
                         )
                     );
@@ -842,8 +837,6 @@ class FolderRecordFactory
      *
      * @param array $onlyDiskIdentifiers
      * @param DriverInterface $localDriver
-     * @param DatabaseConnection $foreignDatabase
-     * @param DatabaseConnection $localDatabase
      * @param DriverInterface $foreignDriver
      * @param Record[] $files
      * @return Record[]
@@ -851,8 +844,6 @@ class FolderRecordFactory
     protected function convertAndAddUnIndexedFilesOnBothDisksToRecordList(
         array $onlyDiskIdentifiers,
         DriverInterface $localDriver,
-        DatabaseConnection $foreignDatabase,
-        DatabaseConnection $localDatabase,
         DriverInterface $foreignDriver,
         array $files
     ) {
@@ -863,8 +854,8 @@ class FolderRecordFactory
                 $localFileInformation = $this->getFileInformation(
                     $onlyDiskIdentifier,
                     $localDriver,
-                    $foreignDatabase,
-                    $localDatabase
+                    $this->foreignDatabase,
+                    $this->localDatabase
                 );
                 // Instantiate the temporary index of the file
                 $temporarySysFile = GeneralUtility::makeInstance(
@@ -875,8 +866,8 @@ class FolderRecordFactory
                     $this->getFileInformation(
                         $onlyDiskIdentifier,
                         $foreignDriver,
-                        $localDatabase,
-                        $foreignDatabase,
+                        $this->localDatabase,
+                        $this->foreignDatabase,
                         $localFileInformation['uid']
                     ),
                     $this->sysFileTca,
@@ -1037,8 +1028,6 @@ class FolderRecordFactory
      * @param Record[] $files
      * @param DriverInterface $foreignDriver
      * @param DriverInterface $localDriver
-     * @param DatabaseConnection $foreignDatabase
-     * @param DatabaseConnection $localDatabase
      * @param string $diskSide
      * @return Record[]
      */
@@ -1048,8 +1037,6 @@ class FolderRecordFactory
         array $files,
         DriverInterface $foreignDriver,
         DriverInterface $localDriver,
-        DatabaseConnection $foreignDatabase,
-        DatabaseConnection $localDatabase,
         $diskSide
     ) {
         // Find intersecting identifiers. These are identifiers of files on the local disk and foreign database
@@ -1078,8 +1065,8 @@ class FolderRecordFactory
                     $reCheckFile,
                     $reCheckIdentifier,
                     $foreignDriver,
-                    $localDatabase,
-                    $foreignDatabase,
+                    $this->localDatabase,
+                    $this->foreignDatabase,
                     'foreign'
                 );
 
@@ -1096,8 +1083,8 @@ class FolderRecordFactory
                         $reCheckFile,
                         $reCheckIdentifier,
                         $localDriver,
-                        $foreignDatabase,
-                        $localDatabase,
+                        $this->foreignDatabase,
+                        $this->localDatabase,
                         'local'
                     );
                     // remove all foreign properties to "ignore" the foreign database record
@@ -1112,24 +1099,20 @@ class FolderRecordFactory
     /**
      * @param array $onlyDiskIdentifiers
      * @param CommonRepository $commonRepository
-     * @param DatabaseConnection $localDatabase
      * @param string $hashedIdentifier
      * @param Record[] $files
-     * @param DatabaseConnection $foreignDatabase
      * @return Record[]
      */
     protected function reclaimIndexEntries(
         array $onlyDiskIdentifiers,
         CommonRepository $commonRepository,
-        DatabaseConnection $localDatabase,
         $hashedIdentifier,
-        array $files,
-        DatabaseConnection $foreignDatabase
+        array $files
     ) {
         list($onlyDiskIdentifiers, $files) = $this->reclaimSysFileEntriesBySide(
             $onlyDiskIdentifiers,
             $commonRepository,
-            $localDatabase,
+            $this->localDatabase,
             $hashedIdentifier,
             $files,
             'local'
@@ -1137,7 +1120,7 @@ class FolderRecordFactory
         list($onlyDiskIdentifiers, $files) = $this->reclaimSysFileEntriesBySide(
             $onlyDiskIdentifiers,
             $commonRepository,
-            $foreignDatabase,
+            $this->foreignDatabase,
             $hashedIdentifier,
             $files,
             'foreign'
@@ -1206,10 +1189,9 @@ class FolderRecordFactory
 
     /**
      * @param Record[] $files
-     * @param DatabaseConnection $foreignDatabase
      * @return Record[]
      */
-    protected function mergeSysFileByIdentifier(array $files, DatabaseConnection $foreignDatabase)
+    protected function mergeSysFileByIdentifier(array $files)
     {
         /** @var Record[][] $identifierList */
         $identifierList = array();
@@ -1267,7 +1249,7 @@ class FolderRecordFactory
                 // run the integrity test when enableSysFileReferenceUpdate is not enabled
                 if (true !== $this->configuration['enableSysFileReferenceUpdate']) {
                     // check if the sys_file was not referenced yet
-                    $count = $foreignDatabase->exec_SELECTcountRows(
+                    $count = $this->foreignDatabase->exec_SELECTcountRows(
                         'uid',
                         'sys_file_reference',
                         'table_local LIKE "sys_file" AND uid_local=' . (int)$oldUid
@@ -1279,7 +1261,7 @@ class FolderRecordFactory
                     }
                 }
                 // check if the "new" uid is not taken yet
-                $count = $foreignDatabase->exec_SELECTcountRows(
+                $count = $this->foreignDatabase->exec_SELECTcountRows(
                     'uid',
                     'sys_file',
                     'uid=' . (int)$newUid
@@ -1288,7 +1270,7 @@ class FolderRecordFactory
                 if (0 !== $count) {
                     break;
                 }
-                $uidUpdateSuccess = $foreignDatabase->exec_UPDATEquery(
+                $uidUpdateSuccess = $this->foreignDatabase->exec_UPDATEquery(
                     'sys_file',
                     'uid=' . (int)$oldUid,
                     array('uid' => $newUid)
@@ -1304,7 +1286,7 @@ class FolderRecordFactory
                     );
 
                     if (true === $this->configuration['enableSysFileReferenceUpdate']) {
-                        $referenceUpdateSuccess = $foreignDatabase->exec_UPDATEquery(
+                        $referenceUpdateSuccess = $this->foreignDatabase->exec_UPDATEquery(
                             'sys_file_reference',
                             'table_local LIKE "sys_file" AND uid_local=' . (int)$oldUid,
                             array('uid_local' => $newUid)
@@ -1325,8 +1307,8 @@ class FolderRecordFactory
                                     'old' => $oldUid,
                                     'new' => $newUid,
                                     'identifier' => $identifierString,
-                                    'error' => $foreignDatabase->sql_error(),
-                                    'errno' => $foreignDatabase->sql_errno(),
+                                    'error' => $this->foreignDatabase->sql_error(),
+                                    'errno' => $this->foreignDatabase->sql_errno(),
                                 )
                             );
                         }
@@ -1352,8 +1334,8 @@ class FolderRecordFactory
                             'old' => $oldUid,
                             'new' => $newUid,
                             'identifier' => $identifierString,
-                            'error' => $foreignDatabase->sql_error(),
-                            'errno' => $foreignDatabase->sql_errno(),
+                            'error' => $this->foreignDatabase->sql_error(),
+                            'errno' => $this->foreignDatabase->sql_errno(),
                         )
                     );
                 }
@@ -1369,8 +1351,6 @@ class FolderRecordFactory
      * @param Record[] $files
      * @param DriverInterface $foreignDriver
      * @param DriverInterface $localDriver
-     * @param DatabaseConnection $foreignDatabase
-     * @param DatabaseConnection $localDatabase
      * @return Record[]
      */
     protected function fixAndConvertIntersectingIdentifiers(
@@ -1378,9 +1358,7 @@ class FolderRecordFactory
         array $indexedIdentifiers,
         array $files,
         DriverInterface $foreignDriver,
-        DriverInterface $localDriver,
-        DatabaseConnection $foreignDatabase,
-        DatabaseConnection $localDatabase
+        DriverInterface $localDriver
     ) {
         // Create temporary indices for files existing on the local disk and foreign database
         $files = $this->fixAndConvertIntersectingIdentifiersIntoRecords(
@@ -1389,8 +1367,6 @@ class FolderRecordFactory
             $files,
             $foreignDriver,
             $localDriver,
-            $foreignDatabase,
-            $localDatabase,
             'local'
         );
 
@@ -1401,8 +1377,6 @@ class FolderRecordFactory
             $files,
             $foreignDriver,
             $localDriver,
-            $localDatabase,
-            $foreignDatabase,
             'foreign'
         );
         return $files;
@@ -1411,8 +1385,6 @@ class FolderRecordFactory
     /**
      * @param array $onlyDiskIdentifiers
      * @param DriverInterface $localDriver
-     * @param DatabaseConnection $foreignDatabase
-     * @param DatabaseConnection $localDatabase
      * @param Record[] $files
      * @param DriverInterface $foreignDriver
      * @return Record[]
@@ -1420,8 +1392,6 @@ class FolderRecordFactory
     protected function convertAndAddOnlyDiskIdentifiersToFileRecords(
         array $onlyDiskIdentifiers,
         DriverInterface $localDriver,
-        DatabaseConnection $foreignDatabase,
-        DatabaseConnection $localDatabase,
         array $files,
         DriverInterface $foreignDriver
     ) {
@@ -1430,8 +1400,8 @@ class FolderRecordFactory
         $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(
             $onlyDiskIdentifiers,
             $localDriver,
-            $foreignDatabase,
-            $localDatabase,
+            $this->foreignDatabase,
+            $this->localDatabase,
             $files,
             'local'
         );
@@ -1441,8 +1411,8 @@ class FolderRecordFactory
         $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(
             $onlyDiskIdentifiers,
             $foreignDriver,
-            $localDatabase,
-            $foreignDatabase,
+            $this->localDatabase,
+            $this->foreignDatabase,
             $files,
             'foreign'
         );
@@ -1454,8 +1424,6 @@ class FolderRecordFactory
      * @param array $diskIdentifiers
      * @param Record[] $files
      * @param DriverInterface $foreignDriver
-     * @param DatabaseConnection $localDatabase
-     * @param DatabaseConnection $foreignDatabase
      * @param DriverInterface $localDriver
      * @return Record[]
      */
@@ -1464,8 +1432,6 @@ class FolderRecordFactory
         array $diskIdentifiers,
         array $files,
         DriverInterface $foreignDriver,
-        DatabaseConnection $localDatabase,
-        DatabaseConnection $foreignDatabase,
         DriverInterface $localDriver
     ) {
         // Get a list of all identifiers that exist on both disks bot only in one database
@@ -1484,8 +1450,8 @@ class FolderRecordFactory
                     $reCheckFile,
                     $diskIdentifierOnBoth,
                     $foreignDriver,
-                    $localDatabase,
-                    $foreignDatabase,
+                    $this->localDatabase,
+                    $this->foreignDatabase,
                     'foreign'
                 );
             } elseif (RecordInterface::RECORD_STATE_DELETED === $recordState) {
@@ -1497,8 +1463,8 @@ class FolderRecordFactory
                     $reCheckFile,
                     $diskIdentifierOnBoth,
                     $localDriver,
-                    $foreignDatabase,
-                    $localDatabase,
+                    $this->foreignDatabase,
+                    $this->localDatabase,
                     'local'
                 );
             }
