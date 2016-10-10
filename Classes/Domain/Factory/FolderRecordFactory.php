@@ -1153,7 +1153,7 @@ class FolderRecordFactory
      * @param $hashedIdentifier
      * @param Record[] $files
      * @param string $side
-     * @return Record[]
+     * @return array
      */
     protected function reclaimSysFileEntriesBySide(
         array $onlyDiskIdentifiers,
