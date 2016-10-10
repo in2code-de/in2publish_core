@@ -951,9 +951,9 @@ class FolderRecordFactory
             $indexedIdentifiers[$diskSide],
             $indexedIdentifiers['both']
         );
-        $oppositeIndexedIdentifiers = array_intersect($indexedIdentifiers[$indexSide], $diskNotIndexedHere);
+        $intersectingIdentifiers = array_intersect($indexedIdentifiers[$indexSide], $diskNotIndexedHere);
 
-        foreach ($oppositeIndexedIdentifiers as $fileRecordUid => $reCheckIdentifier) {
+        foreach ($intersectingIdentifiers as $fileRecordUid => $reCheckIdentifier) {
             $reCheckFile = $files[$fileRecordUid];
             $state = $reCheckFile->getState();
             if ($diskSide === 'foreign' && RecordInterface::RECORD_STATE_ADDED === $state) {
@@ -1095,27 +1095,8 @@ class FolderRecordFactory
      */
     protected function mergeSysFileByIdentifier(array $files)
     {
-        /** @var Record[][] $identifierList */
-        $identifierList = array();
-        // get all foreign file identifiers to match again
-        foreach ($files as $file) {
-            if (!$file->hasForeignProperty('identifier') || !$file->hasForeignProperty('uid')) {
-                continue;
-            }
+        $identifierList = $this->buildFileListOfMissingLocalIndices($files);
 
-            if ($file->localRecordExists()
-                && (!$file->hasAdditionalProperty('localRecordExistsTemporary')
-                    || true !== $file->getAdditionalProperty('localRecordExistsTemporary'))
-            ) {
-                continue;
-            }
-
-            if (true === $file->getAdditionalProperty('foreignRecordExistsTemporary')) {
-                continue;
-            }
-
-            $identifierList[$file->getForeignProperty('identifier')][$file->getIdentifier()] = $file;
-        }
         // find all matches
         foreach ($files as $file) {
             // condition: the sys_file exists on local, matches the identifier but is not the already added file
@@ -1145,73 +1126,38 @@ class FolderRecordFactory
                 // the first file is always the foreign file.
                 $foreignFile = array_shift($fileEntries);
                 $localFile = array_pop($fileEntries);
-                $oldUid = $foreignFile->getForeignProperty('uid');
-                $newUid = $localFile->getLocalProperty('uid');
+                $oldUid = (int)$foreignFile->getForeignProperty('uid');
+                $newUid = (int)$localFile->getLocalProperty('uid');
 
-                // run the integrity test when enableSysFileReferenceUpdate is not enabled
+                $logData = array(
+                    'old' => $oldUid,
+                    'new' => $newUid,
+                    'identifier' => $identifierString,
+                );
+
+                // Run the integrity test when enableSysFileReferenceUpdate (ESFRU) is not enabled
                 if (true !== $this->configuration['enableSysFileReferenceUpdate']) {
-                    // check if the sys_file was not referenced yet
-                    $count = $this->foreignDatabase->exec_SELECTcountRows(
-                        'uid',
-                        'sys_file_reference',
-                        'table_local LIKE "sys_file" AND uid_local=' . (int)$oldUid
-                    );
-                    // if a sys_file_record record has been found abort here,
-                    // because it's unsafe to overwrite the uid
-                    if (0 !== $count) {
+                    // If the sys_file was referenced abort here, because it's unsafe to overwrite the uid
+                    if (0 !== $this->countForeignReferences($oldUid)) {
                         break;
                     }
                 }
-                // check if the "new" uid is not taken yet
-                $count = $this->foreignDatabase->exec_SELECTcountRows(
-                    'uid',
-                    'sys_file',
-                    'uid=' . (int)$newUid
-                );
-                // if a sys_file record with the "new" uid has been found abort immediately
-                if (0 !== $count) {
+                // If a sys_file record with the "new" uid has been found abort immediately
+                if (0 !== $this->countForeignIndices($newUid)) {
                     break;
                 }
-                $uidUpdateSuccess = $this->foreignDatabase->exec_UPDATEquery(
-                    'sys_file',
-                    'uid=' . (int)$oldUid,
-                    array('uid' => $newUid)
-                );
-                if (true === $uidUpdateSuccess) {
-                    $this->logger->notice(
-                        'Rewrote a sys_file uid by the mergeSysFileByIdentifier feature',
-                        array(
-                            'old' => $oldUid,
-                            'new' => $newUid,
-                            'identifier' => $identifierString,
-                        )
-                    );
+                // Rewrite the foreign UID of the foreign index.
+                if (true === $this->updateForeignIndex($oldUid, $newUid)) {
+                    $this->logger->notice('Rewrote a sys_file uid by the mergeSysFileByIdentifier feature', $logData);
 
                     if (true === $this->configuration['enableSysFileReferenceUpdate']) {
-                        $referenceUpdateSuccess = $this->foreignDatabase->exec_UPDATEquery(
-                            'sys_file_reference',
-                            'table_local LIKE "sys_file" AND uid_local=' . (int)$oldUid,
-                            array('uid_local' => $newUid)
-                        );
-                        if ($referenceUpdateSuccess) {
-                            $this->logger->notice(
-                                'Rewrote sys_file_reference by the enableSysFileReferenceUpdate feature',
-                                array(
-                                    'old' => $oldUid,
-                                    'new' => $newUid,
-                                    'identifier' => $identifierString,
-                                )
-                            );
+                        // Rewrite all occurrences of the old uid by the new uid in all references on foreign
+                        if (true === $this->updateForeignReference($oldUid, $newUid)) {
+                            $this->logger->notice('Rewrote sys_file_reference by the ESFRU feature', $logData);
                         } else {
                             $this->logger->error(
-                                'Failed to rewrite sys_file_reference by the enableSysFileReferenceUpdate feature',
-                                array(
-                                    'old' => $oldUid,
-                                    'new' => $newUid,
-                                    'identifier' => $identifierString,
-                                    'error' => $this->foreignDatabase->sql_error(),
-                                    'errno' => $this->foreignDatabase->sql_errno(),
-                                )
+                                'Failed to rewrite sys_file_reference by the ESFRU feature',
+                                $this->enrichWithForeignDatabaseErrorInformation($logData)
                             );
                         }
                     }
@@ -1232,13 +1178,7 @@ class FolderRecordFactory
                 } else {
                     $this->logger->error(
                         'Failed to rewrite a sys_file uid by the mergeSysFileByIdentifier feature',
-                        array(
-                            'old' => $oldUid,
-                            'new' => $newUid,
-                            'identifier' => $identifierString,
-                            'error' => $this->foreignDatabase->sql_error(),
-                            'errno' => $this->foreignDatabase->sql_errno(),
-                        )
+                        $this->enrichWithForeignDatabaseErrorInformation($logData)
                     );
                 }
             }
@@ -1355,5 +1295,118 @@ class FolderRecordFactory
         }
 
         return $files;
+    }
+
+    /**
+     * @param array $logData
+     * @return array
+     */
+    protected function enrichWithForeignDatabaseErrorInformation(array $logData)
+    {
+        return array_merge(
+            $logData,
+            array(
+                'error' => $this->foreignDatabase->sql_error(),
+                'errno' => $this->foreignDatabase->sql_errno(),
+            )
+        );
+    }
+
+    /**
+     * @param int $oldUid
+     * @param int $newUid
+     * @return bool
+     */
+    protected function updateForeignIndex($oldUid, $newUid)
+    {
+        return (bool)$this->foreignDatabase->exec_UPDATEquery('sys_file', 'uid=' . $oldUid, array('uid' => $newUid));
+    }
+
+    /**
+     * @param int $oldUid
+     * @param int $newUid
+     * @return bool
+     */
+    protected function updateForeignReference($oldUid, $newUid)
+    {
+        return (bool)$this->foreignDatabase->exec_UPDATEquery(
+            'sys_file_reference',
+            'table_local LIKE "sys_file" AND uid_local=' . (int)$oldUid,
+            array('uid_local' => $newUid)
+        );
+    }
+
+    /**
+     * @param int $oldUid
+     * @return int
+     */
+    protected function countForeignReferences($oldUid)
+    {
+        $count = $this->foreignDatabase->exec_SELECTcountRows(
+            'uid',
+            'sys_file_reference',
+            'table_local LIKE "sys_file" AND uid_local=' . $oldUid
+        );
+        if (false === $count) {
+            $this->logger->critical(
+                'Could not count foreign references by uid',
+                $this->enrichWithForeignDatabaseErrorInformation(array('uid', $oldUid))
+            );
+            throw new \RuntimeException('Could not count foreign references by uid', 1476097402);
+        }
+        return (int)$count;
+    }
+
+    /**
+     * @param int $newUid
+     * @return int
+     */
+    protected function countForeignIndices($newUid)
+    {
+        $count = $this->foreignDatabase->exec_SELECTcountRows(
+            'uid',
+            'sys_file',
+            'uid=' . $newUid
+        );
+        if (false === $count) {
+            $this->logger->critical(
+                'Could not count foreign indices by uid',
+                $this->enrichWithForeignDatabaseErrorInformation(array('uid', $newUid))
+            );
+            throw new \RuntimeException('Could not count foreign indices by uid', 1476097373);
+        }
+        return (int)$count;
+    }
+
+    /**
+     * @param Record[] $files
+     * @return Record[][]
+     */
+    protected function buildFileListOfMissingLocalIndices(array $files)
+    {
+        $identifierList = array();
+        // Get all foreign file identifiers to match again
+        foreach ($files as $file) {
+            // IF the file only exist local skip it.
+            if (!$file->hasForeignProperty('identifier') || !$file->hasForeignProperty('uid')) {
+                continue;
+            }
+
+            // If the local record exists AND is not temporary skip this file.
+            if ($file->localRecordExists()
+                && (!$file->hasAdditionalProperty('localRecordExistsTemporary')
+                    || true !== $file->getAdditionalProperty('localRecordExistsTemporary'))
+            ) {
+                continue;
+            }
+
+            // If the foreign record is temporary skip this file.
+            if (true === $file->getAdditionalProperty('foreignRecordExistsTemporary')) {
+                continue;
+            }
+
+            $identifierList[$file->getForeignProperty('identifier')][$file->getIdentifier()] = $file;
+        }
+        return $identifierList;
     }
 }
