@@ -188,7 +188,7 @@ class FolderRecordFactory
         // This list is important for any OxFS case. (local = OLFS; foreign = OFFS, both = OFS)
         $onlyDiskIdentifiers = $this->determineIdentifiersOnlyOnDisk($diskIdentifiers, $indexedIdentifiers);
 
-        // Create temporary indices for files existing on local and foreign but in neither database (OFS)
+        // [7] OFS
         $files = $this->convertAndAddUnIndexedFilesOnBothDisksToRecordList($onlyDiskIdentifiers, $files);
 
         // [5] LDFF AND [8] LFFD
@@ -432,6 +432,7 @@ class FolderRecordFactory
 
     /**
      * PRE-FIX for [7] OFS case.
+     * Create temporary indices for files existing on local and foreign but in neither database (OFS)
      *
      * @param array $onlyDiskIdentifiers
      * @param Record[] $files
