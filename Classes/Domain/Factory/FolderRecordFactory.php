@@ -191,8 +191,7 @@ class FolderRecordFactory
         // [5] LDFF and [8] LFFD
         $this->fixIntersectingIdentifiers($diskIdentifiers, $indexedIdentifiers, $files);
 
-        // Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
-        // the folder hash is broken
+        // FEATURE: reclaimSysFileEntries
         if (true === $this->configuration['reclaimSysFileEntries']) {
             list($files, $onlyDiskIdentifiers) = $this->reclaimIndexEntries(
                 $onlyDiskIdentifiers,
@@ -207,11 +206,10 @@ class FolderRecordFactory
         // remove OxFS identifiers, they have all been converted to records.
         unset($onlyDiskIdentifiers);
 
+        // [10] NFDB and [13] NLDB
         $this->updateFilesWithMissingIndices($indexedIdentifiers, $diskIdentifiers, $files);
 
-        // mergeSysFileByIdentifier feature: find sys_file duplicates and "merge" them.
-        // If the foreign sys_file was not referenced in the foreign's sys_file_reference table the the
-        // uid of the foreign record can be overwritten to restore a consistent state
+        // FEATURE: mergeSysFileByIdentifier and enableSysFileReferenceUpdate
         if (true === $this->configuration['mergeSysFileByIdentifier']) {
             $files = $this->mergeSysFileByIdentifier($files);
         }
@@ -584,6 +582,9 @@ class FolderRecordFactory
     }
 
     /**
+     * Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
+     * the folder hash is broken
+     *
      * @param array $onlyDiskIdentifiers
      * @param string $hashedIdentifier
      * @param Record[] $files
