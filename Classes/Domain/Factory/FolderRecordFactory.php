@@ -168,28 +168,14 @@ class FolderRecordFactory
             $files
         );
 
-        // Create temporary indices for files existing on the local disk and foreign database
-        $files = $this->fixAndConvertIntersectingIdentifiersIntoRecords(
+        $files = $this->fixAndConvertIntersectingIdentifiers(
             $diskIdentifiers,
             $indexedIdentifiers,
             $files,
             $foreignDriver,
             $localDriver,
             $foreignDatabase,
-            $localDatabase,
-            'local'
-        );
-
-        // Create temporary indices for files existing on the foreign disk and local database
-        $files = $this->fixAndConvertIntersectingIdentifiersIntoRecords(
-            $diskIdentifiers,
-            $indexedIdentifiers,
-            $files,
-            $foreignDriver,
-            $localDriver,
-            $localDatabase,
-            $foreignDatabase,
-            'foreign'
+            $localDatabase
         );
 
         // Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
@@ -205,26 +191,13 @@ class FolderRecordFactory
             );
         }
 
-        // PRE-FIX for the [1] OLFS case
-        // create temporary sys_file entries for all files on the local disk
-        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(
+        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecords(
             $onlyDiskIdentifiers,
             $localDriver,
             $foreignDatabase,
             $localDatabase,
             $files,
-            'local'
-        );
-
-        // PRE-FIX for the [2] OFFS case
-        // create temporary sys_file entries for all files on the foreign disk
-        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(
-            $onlyDiskIdentifiers,
-            $foreignDriver,
-            $localDatabase,
-            $foreignDatabase,
-            $files,
-            'foreign'
+            $foreignDriver
         );
 
         // remove OxFS identifiers, they have all been converted to records.
@@ -1416,6 +1389,92 @@ class FolderRecordFactory
             }
         }
 
+        return $files;
+    }
+
+    /**
+     * @param $diskIdentifiers
+     * @param $indexedIdentifiers
+     * @param $files
+     * @param $foreignDriver
+     * @param $localDriver
+     * @param $foreignDatabase
+     * @param $localDatabase
+     * @return Record[]
+     */
+    protected function fixAndConvertIntersectingIdentifiers(
+        $diskIdentifiers,
+        $indexedIdentifiers,
+        $files,
+        $foreignDriver,
+        $localDriver,
+        $foreignDatabase,
+        $localDatabase
+    ) {
+        // Create temporary indices for files existing on the local disk and foreign database
+        $files = $this->fixAndConvertIntersectingIdentifiersIntoRecords(
+            $diskIdentifiers,
+            $indexedIdentifiers,
+            $files,
+            $foreignDriver,
+            $localDriver,
+            $foreignDatabase,
+            $localDatabase,
+            'local'
+        );
+
+        // Create temporary indices for files existing on the foreign disk and local database
+        $files = $this->fixAndConvertIntersectingIdentifiersIntoRecords(
+            $diskIdentifiers,
+            $indexedIdentifiers,
+            $files,
+            $foreignDriver,
+            $localDriver,
+            $localDatabase,
+            $foreignDatabase,
+            'foreign'
+        );
+        return $files;
+    }
+
+    /**
+     * @param $onlyDiskIdentifiers
+     * @param $localDriver
+     * @param $foreignDatabase
+     * @param $localDatabase
+     * @param $files
+     * @param $foreignDriver
+     * @return array
+     */
+    protected function convertAndAddOnlyDiskIdentifiersToFileRecords(
+        $onlyDiskIdentifiers,
+        $localDriver,
+        $foreignDatabase,
+        $localDatabase,
+        $files,
+        $foreignDriver
+    ) {
+        // PRE-FIX for the [1] OLFS case
+        // create temporary sys_file entries for all files on the local disk
+        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(
+            $onlyDiskIdentifiers,
+            $localDriver,
+            $foreignDatabase,
+            $localDatabase,
+            $files,
+            'local'
+        );
+
+        // PRE-FIX for the [2] OFFS case
+        // create temporary sys_file entries for all files on the foreign disk
+        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(
+            $onlyDiskIdentifiers,
+            $foreignDriver,
+            $localDatabase,
+            $foreignDatabase,
+            $files,
+            'foreign'
+        );
         return $files;
     }
 }
