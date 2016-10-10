@@ -159,8 +159,7 @@ class FolderRecordFactory
         $record = $this->makePhysicalFolderInstance($identifier, 1);
 
         // Add all related sub folders
-        $subFolders = $this->getSubFolderRecordInstances($identifier);
-        $record->addRelatedRecords($subFolders);
+        $record->addRelatedRecords($this->getSubFolderRecordInstances($identifier));
 
         // Now let's find all files inside of the selected folder by the folders hash.
         $files = $this->commonRepository->findByProperty('folder_hash', $hashedIdentifier);
