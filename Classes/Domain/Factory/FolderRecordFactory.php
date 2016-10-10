@@ -58,11 +58,6 @@ class FolderRecordFactory
     /**
      * @var DatabaseConnection
      */
-    protected $localDatabase;
-
-    /**
-     * @var DatabaseConnection
-     */
     protected $foreignDatabase;
 
     /**
@@ -92,7 +87,6 @@ class FolderRecordFactory
     {
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
         $this->commonRepository = CommonRepository::getDefaultInstance('sys_file');
-        $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->configuration = ConfigurationUtility::getConfiguration('factory.fal');
     }
@@ -574,14 +568,6 @@ class FolderRecordFactory
      */
     protected function reclaimSysFileEntriesBySide(array $onlyDiskIdentifiers, $hashedIdentifier, array $files, $side)
     {
-        if ($side === 'local') {
-            $targetDatabase = $this->localDatabase;
-        } elseif ($side === 'foreign') {
-            $targetDatabase = $this->foreignDatabase;
-        } else {
-            throw new \LogicException('Unsupported side "' . $side . '"', 1476117740);
-        }
-
         // the chance is vanishing low to find a file by its identifier in the database
         // because they should have been found by the folder hash already, but i'm a
         // generous developer and allow FAL to completely fuck up the folder hash
@@ -597,7 +583,7 @@ class FolderRecordFactory
                         // e.g. in case the file was moved
                         $property = $sysFileEntry->getPropertyBySideIdentifier($side, 'folder_hash');
                         if (null !== $property) {
-                            $targetDatabase->exec_UPDATEquery(
+                            DatabaseUtility::buildDatabaseConnectionForSide($side)->exec_UPDATEquery(
                                 'sys_file',
                                 'uid=' . $sysFileEntry->getIdentifier(),
                                 array('folder_hash' => $hashedIdentifier)

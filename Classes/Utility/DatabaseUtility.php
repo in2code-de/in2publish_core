@@ -90,6 +90,21 @@ class DatabaseUtility
     }
 
     /**
+     * @param string $side
+     * @return DatabaseConnection
+     */
+    public static function buildDatabaseConnectionForSide($side)
+    {
+        if ($side === 'local') {
+            return static::buildLocalDatabaseConnection();
+        } elseif ($side === 'foreign') {
+            return static::buildForeignDatabaseConnection();
+        } else {
+            throw new \LogicException('Unsupported side "' . $side . '"', 1476118055);
+        }
+    }
+
+    /**
      * @param DatabaseConnection $databaseConnection
      * @param string $tableName
      * @throws \Exception

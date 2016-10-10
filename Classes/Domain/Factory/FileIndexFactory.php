@@ -284,14 +284,6 @@ class FileIndexFactory
             )
         );
 
-        if ($side === 'local') {
-            $database = DatabaseUtility::buildLocalDatabaseConnection();
-        } elseif ($side === 'foreign') {
-            $database = DatabaseUtility::buildForeignDatabaseConnection();
-        } else {
-            throw new \LogicException('Unsupported side "' . $side . '"', 1476108347);
-        }
-
-        $database->exec_INSERTquery('sys_file', $fileInfo);
+        DatabaseUtility::buildDatabaseConnectionForSide($side)->exec_INSERTquery('sys_file', $fileInfo);
     }
 }
