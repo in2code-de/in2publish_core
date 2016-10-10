@@ -449,26 +449,6 @@ class FolderRecordFactory
     }
 
     /**
-     * @param array $diskIdentifiers
-     * @param array $files
-     * @param string $side
-     * @return array
-     */
-    protected function convertAndAddOnlyDiskIdentifiersToFileRecordsBySide(array $diskIdentifiers, array $files, $side)
-    {
-        if (!empty($diskIdentifiers[$side])) {
-            // iterate through all files found on disc but not in the database
-            foreach ($diskIdentifiers[$side] as $onlyDiskIdentifier) {
-                // create a temporary sys_file entry for the current identifier, since none was found or reclaimed.
-                $temporarySysFile = $this->fileIndexFactory->makeInstanceForSide($side, $onlyDiskIdentifier);
-                $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
-            }
-        }
-
-        return $files;
-    }
-
-    /**
      * Search on the disk for all files in the current folder and build a list of file identifiers
      * for each local and foreign, so i can identify e.g. not indexed files.
      * Move all entries occurring on both sides to the "both" index afterwards.
@@ -830,17 +810,25 @@ class FolderRecordFactory
     }
 
     /**
+     * PRE-FIX for the [1] OLFS case and [2] OFFS case; Creates temporary sys_file
+     * entries for all files found on exactly one disk an in none database
+     *
      * @param array $onlyDiskIdentifiers
      * @param Record[] $files
      * @return Record[]
      */
     protected function convertAndAddOnlyDiskIdentifiersToFileRecords(array $onlyDiskIdentifiers, array $files)
     {
-        // PRE-FIX for the [1] OLFS case; Create temporary sys_file entries for all files on the local disk
-        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide($onlyDiskIdentifiers, $files, 'local');
-
-        // PRE-FIX for the [2] OFFS case; Create temporary sys_file entries for all files on the foreign disk
-        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecordsBySide($onlyDiskIdentifiers, $files, 'foreign');
+        foreach (array('local', 'foreign') as $side) {
+            if (!empty($onlyDiskIdentifiers[$side])) {
+                // iterate through all files found on exactly one disc but not in the database
+                foreach ($onlyDiskIdentifiers[$side] as $onlyDiskIdentifier) {
+                    // create a temporary sys_file entry for the current identifier, since none was found or reclaimed.
+                    $temporarySysFile = $this->fileIndexFactory->makeInstanceForSide($side, $onlyDiskIdentifier);
+                    $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
+                }
+            }
+        }
         return $files;
     }
 
