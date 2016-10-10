@@ -207,7 +207,7 @@ class FolderRecordFactory
         // remove OxFS identifiers, they have all been converted to records.
         unset($onlyDiskIdentifiers);
 
-        $files = $this->indexFilesWithMissingIndexOnOneSide($indexedIdentifiers, $diskIdentifiers, $files);
+        $this->updateFilesWithMissingIndices($indexedIdentifiers, $diskIdentifiers, $files);
 
         // mergeSysFileByIdentifier feature: find sys_file duplicates and "merge" them.
         // If the foreign sys_file was not referenced in the foreign's sys_file_reference table the the
@@ -767,13 +767,9 @@ class FolderRecordFactory
      * @param array $indexedIdentifiers
      * @param array $diskIdentifiers
      * @param Record[] $files
-     * @return Record[]
      */
-    protected function indexFilesWithMissingIndexOnOneSide(
-        array $indexedIdentifiers,
-        array $diskIdentifiers,
-        array $files
-    ) {
+    protected function updateFilesWithMissingIndices(array $indexedIdentifiers, array $diskIdentifiers, array $files)
+    {
         // Get a list of all identifiers that exist on both disks but only in one database
         $indicesToRecheck = array_intersect($indexedIdentifiers['local'], $diskIdentifiers['both'])
                             + array_intersect($indexedIdentifiers['foreign'], $diskIdentifiers['both']);
@@ -791,8 +787,6 @@ class FolderRecordFactory
                 $this->fileIndexFactory->updateFileIndexInfoBySide($file, $identifier, 'local');
             }
         }
-
-        return $files;
     }
 
     /**
