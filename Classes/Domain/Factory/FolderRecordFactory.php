@@ -29,18 +29,15 @@ namespace In2code\In2publishCore\Domain\Factory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
-use In2code\In2publishCore\Service\Database\UidReservationService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
-use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Reflection\PropertyReflection;
 
 /**
@@ -89,11 +86,6 @@ class FolderRecordFactory
     protected $fileIndexFactory = null;
 
     /**
-     * @var UidReservationService
-     */
-    protected $uidReservationService = null;
-
-    /**
      * FolderRecordFactory constructor.
      */
     public function __construct()
@@ -103,9 +95,6 @@ class FolderRecordFactory
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->configuration = ConfigurationUtility::getConfiguration('factory.fal');
-        $this->uidReservationService = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Service\\Database\\UidReservationService'
-        );
     }
 
     /**
@@ -272,122 +261,6 @@ class FolderRecordFactory
     }
 
     /**
-     * This method is mostly a copy of an indexer method
-     * @see \TYPO3\CMS\Core\Resource\Index\Indexer::gatherFileInformationArray
-     *
-     * @param string $identifier
-     * @param $side
-     * @param int $uid Predefined UID
-     * @return array
-     * @internal param DatabaseConnection $oppositeDatabase
-     * @internal param DatabaseConnection $targetDatabase If null the sys_file record will not be persisted
-     * @internal param DriverInterface $driver
-     */
-    protected function getFileInformation($identifier, $side, $uid = 0)
-    {
-        if ($side === 'local') {
-            $driver = $this->localDriver;
-            $targetDatabase = $this->localDatabase;
-            $oppositeDatabase = $this->foreignDatabase;
-        } elseif ($side === 'foreign') {
-            $driver = $this->foreignDriver;
-            $targetDatabase = $this->foreignDatabase;
-            $oppositeDatabase = $this->localDatabase;
-        } else {
-            throw new \LogicException('Unsupported side "' . $side . '"', 1476106674);
-        }
-        $fileInfo = $driver->getFileInfoByIdentifier($identifier);
-
-        $mappingInfo = array('mtime' => 'modification_date', 'ctime' => 'creation_date', 'mimetype' => 'mime_type');
-
-        unset($fileInfo['atime']);
-        foreach ($mappingInfo as $fileInfoKey => $sysFileRecordKey) {
-            $fileInfo[$sysFileRecordKey] = $fileInfo[$fileInfoKey];
-            unset($fileInfo[$fileInfoKey]);
-        }
-
-        list($fileType) = explode('/', $fileInfo['mime_type']);
-        switch (strtolower($fileType)) {
-            case 'text':
-                $type = File::FILETYPE_TEXT;
-                break;
-            case 'image':
-                $type = File::FILETYPE_IMAGE;
-                break;
-            case 'audio':
-                $type = File::FILETYPE_AUDIO;
-                break;
-            case 'video':
-                $type = File::FILETYPE_VIDEO;
-                break;
-            case 'application':
-            case 'software':
-                $type = File::FILETYPE_APPLICATION;
-                break;
-            default:
-                $type = File::FILETYPE_UNKNOWN;
-        }
-
-        $fileInfo['type'] = $type;
-        $fileInfo['sha1'] = $driver->hash($identifier, 'sha1');
-        $fileInfo['extension'] = PathUtility::pathinfo($fileInfo['name'], PATHINFO_EXTENSION);
-        $fileInfo['missing'] = 0;
-        $fileInfo['last_indexed'] = 0;
-        $fileInfo['metadata'] = 0;
-        $fileInfo['tstamp'] = time();
-        $fileInfo['pid'] = 0;
-        if ($uid > 0) {
-            $fileInfo['uid'] = $uid;
-        } else {
-            $fileInfo['uid'] = $this->uidReservationService->getReservedUid();
-        }
-
-        // convert all values to string to match the resulting types of a database select query result
-        foreach ($fileInfo as $index => $value) {
-            $fileInfo[$index] = (string)$value;
-        }
-
-        if (true === $this->configuration['persistTemporaryIndexing']
-            && null !== $oppositeDatabase
-            && null !== $targetDatabase
-        ) {
-            $targetDatabase->exec_INSERTquery('sys_file', $this->prepareAndFilterSysFileDataForPersistence($fileInfo));
-        }
-
-        return $fileInfo;
-    }
-
-    /**
-     * @param array $data
-     * @return array
-     */
-    protected function prepareAndFilterSysFileDataForPersistence(array $data)
-    {
-        $data = array_intersect_key(
-            $data,
-            array(
-                'uid' => '',
-                'pid' => '',
-                'missing' => '',
-                'type' => '',
-                'storage' => '',
-                'identifier' => '',
-                'identifier_hash' => '',
-                'extension' => '',
-                'mime_type' => '',
-                'name' => '',
-                'sha1' => '',
-                'size' => '',
-                'creation_date' => '',
-                'modification_date' => '',
-                'folder_hash' => '',
-            )
-        );
-        $data['tstamp'] = time();
-        return $data;
-    }
-
-    /**
      * Filtering:
      *  Notation:
      *      FFS = Foreign File System
@@ -489,11 +362,12 @@ class FolderRecordFactory
                 if (RecordInterface::RECORD_STATE_UNCHANGED === $file->getState()) {
                     // the database records are identical, but this does not necessarily reflect the truth,
                     // because files might have changed in the file system without FAL noticing these changes.
+                    $uid = $file->getIdentifier();
                     $file->setLocalProperties(
-                        $this->getFileInformation($localFileIdentifier, 'local', $file->getIdentifier())
+                        $this->fileIndexFactory->getFileIndexArray($localFileIdentifier, 'local', $uid)
                     );
                     $file->setForeignProperties(
-                        $this->getFileInformation($foreignFileIdentifier, 'foreign', $file->getIdentifier())
+                        $this->fileIndexFactory->getFileIndexArray($foreignFileIdentifier, 'foreign', $uid)
                     );
                     $file->setDirtyProperties()->calculateState();
                 }
@@ -572,12 +446,12 @@ class FolderRecordFactory
     {
         if (!empty($onlyDiskIdentifiers['both'])) {
             // Iterate through all files found on the local and foreign disk but not in the database.
-            foreach ($onlyDiskIdentifiers['both'] as $onlyDiskIdentifier) {
+            foreach ($onlyDiskIdentifiers['both'] as $identifier) {
                 // Fetch the file information with a (on the fly) reserved uid.
-                $localFileInfo = $this->getFileInformation($onlyDiskIdentifier, 'local');
-                $foreignFileInfo = $this->getFileInformation($onlyDiskIdentifier, 'foreign', $localFileInfo['uid']);
+                $localInfo = $this->fileIndexFactory->getFileIndexArray($identifier, 'local');
+                $foreignInfo = $this->fileIndexFactory->getFileIndexArray($identifier, 'foreign', $localInfo['uid']);
 
-                $temporarySysFile = $this->fileIndexFactory->makeInstance($localFileInfo, $foreignFileInfo);
+                $temporarySysFile = $this->fileIndexFactory->makeInstance($localInfo, $foreignInfo);
 
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
             }
@@ -601,7 +475,7 @@ class FolderRecordFactory
                 // identifier, since none was found nor could be reclaimed
                 // if persistTemporaryIndexing is enabled the entry is not temporary
                 // but this does not matter for the following code
-                $properties = $this->getFileInformation($onlyDiskIdentifier, $side);
+                $properties = $this->fileIndexFactory->getFileIndexArray($onlyDiskIdentifier, $side);
                 $temporarySysFile = $this->fileIndexFactory->makeInstanceForSide($side, $properties);
                 $temporarySysFile->setDirtyProperties()->calculateState();
                 $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
@@ -620,7 +494,7 @@ class FolderRecordFactory
     {
         $record->setPropertiesBySideIdentifier(
             $side,
-            $this->getFileInformation(
+            $this->fileIndexFactory->getFileIndexArray(
                 $identifier,
                 $side,
                 $record->getPropertyBySideIdentifier($side === 'local' ? 'foreign' : 'local', 'uid')
