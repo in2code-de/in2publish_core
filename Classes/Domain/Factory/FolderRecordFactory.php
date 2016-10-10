@@ -191,7 +191,10 @@ class FolderRecordFactory
         // Create temporary indices for files existing on local and foreign but in neither database (OFS)
         $files = $this->convertAndAddUnIndexedFilesOnBothDisksToRecordList($onlyDiskIdentifiers, $files);
 
-        $files = $this->fixAndConvertIntersectingIdentifiers($diskIdentifiers, $indexedIdentifiers, $files);
+        // [5] LDFF AND [8] LFFD
+        foreach (array('local', 'foreign') as $side) {
+            $this->fixIntersectingIdentifiersAndUpdateRecords($diskIdentifiers, $indexedIdentifiers, $files, $side);
+        }
 
         // Reconnect sys_file entries that definitely belong to the files found on disk but were not found because
         // the folder hash is broken
@@ -203,6 +206,7 @@ class FolderRecordFactory
             );
         }
 
+        // [1] OLFS AND [2] OFFS
         $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecords($onlyDiskIdentifiers, $files);
 
         // remove OxFS identifiers, they have all been converted to records.
@@ -558,7 +562,7 @@ class FolderRecordFactory
      * @param string $diskSide
      * @return Record[]
      */
-    protected function fixAndConvertIntersectingIdentifiersIntoRecords(
+    protected function fixIntersectingIdentifiersAndUpdateRecords(
         array $diskIdentifiers,
         array $indexedIdentifiers,
         array $files,
@@ -597,7 +601,6 @@ class FolderRecordFactory
                 }
             }
         }
-        return $files;
     }
 
     /**
@@ -777,35 +780,6 @@ class FolderRecordFactory
             }
         }
 
-        return $files;
-    }
-
-    /**
-     * @param array $diskIdentifiers
-     * @param array $indexedIdentifiers
-     * @param Record[] $files
-     * @return Record[]
-     */
-    protected function fixAndConvertIntersectingIdentifiers(
-        array $diskIdentifiers,
-        array $indexedIdentifiers,
-        array $files
-    ) {
-        // Create temporary indices for files existing on the local disk and foreign database
-        $files = $this->fixAndConvertIntersectingIdentifiersIntoRecords(
-            $diskIdentifiers,
-            $indexedIdentifiers,
-            $files,
-            'local'
-        );
-
-        // Create temporary indices for files existing on the foreign disk and local database
-        $files = $this->fixAndConvertIntersectingIdentifiersIntoRecords(
-            $diskIdentifiers,
-            $indexedIdentifiers,
-            $files,
-            'foreign'
-        );
         return $files;
     }
 
