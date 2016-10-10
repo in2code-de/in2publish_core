@@ -553,19 +553,6 @@ class FolderRecordFactory
     }
 
     /**
-     * @param string $identifier
-     * @param DriverInterface $driver
-     * @return array
-     */
-    protected function getFilesIdentifiersInFolder($identifier, DriverInterface $driver)
-    {
-        if ($driver->folderExists($identifier)) {
-            return array_values($driver->getFilesInFolder($identifier));
-        }
-        return array();
-    }
-
-    /**
      * @param array $diskIdentifiers
      * @param array $indexedIdentifiers
      * @return array
@@ -724,6 +711,19 @@ class FolderRecordFactory
         $diskIdentifiers['foreign'] = array_diff($diskIdentifiers['foreign'], $diskIdentifiers['both']);
 
         return $diskIdentifiers;
+    }
+
+    /**
+     * @param string $identifier
+     * @param DriverInterface $driver
+     * @return array
+     */
+    protected function getFilesIdentifiersInFolder($identifier, DriverInterface $driver)
+    {
+        if ($driver->folderExists($identifier)) {
+            return array_values($driver->getFilesInFolder($identifier));
+        }
+        return array();
     }
 
     /**
