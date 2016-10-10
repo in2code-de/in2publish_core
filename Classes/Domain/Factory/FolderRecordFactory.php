@@ -554,32 +554,15 @@ class FolderRecordFactory
 
     /**
      * @param array $diskIdentifiers
-     * @param array $indexedIdentifiers
+     * @param array $indices
      * @return array
      */
-    protected function determineIdentifiersOnlyOnDisk(array $diskIdentifiers, array $indexedIdentifiers)
+    protected function determineIdentifiersOnlyOnDisk(array $diskIdentifiers, array $indices)
     {
-        $diskIdentifiers['local'] = array_diff(
-            $diskIdentifiers['local'],
-            $indexedIdentifiers['local'],
-            $indexedIdentifiers['foreign'],
-            $indexedIdentifiers['both']
-        );
-
-        $diskIdentifiers['foreign'] = array_diff(
-            $diskIdentifiers['foreign'],
-            $indexedIdentifiers['local'],
-            $indexedIdentifiers['foreign'],
-            $indexedIdentifiers['both']
-        );
-
-        $diskIdentifiers['both'] = array_diff(
-            $diskIdentifiers['both'],
-            $indexedIdentifiers['local'],
-            $indexedIdentifiers['foreign'],
-            $indexedIdentifiers['both']
-        );
-
+        $allIndices = array_merge($indices['local'], $indices['foreign'], $indices['both']);
+        $diskIdentifiers['local'] = array_diff($diskIdentifiers['local'], $allIndices);
+        $diskIdentifiers['foreign'] = array_diff($diskIdentifiers['foreign'], $allIndices);
+        $diskIdentifiers['both'] = array_diff($diskIdentifiers['both'], $allIndices);
         return $diskIdentifiers;
     }
 
