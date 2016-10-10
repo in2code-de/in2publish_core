@@ -360,16 +360,9 @@ class FolderRecordFactory
             } elseif ($ldb && $lfs && $ffs && $fdb) {
                 // CODE: [14] ALL
                 if (RecordInterface::RECORD_STATE_UNCHANGED === $file->getState()) {
-                    // the database records are identical, but this does not necessarily reflect the truth,
+                    // The database records are identical, but this does not necessarily reflect the reality on disk,
                     // because files might have changed in the file system without FAL noticing these changes.
-                    $uid = $file->getIdentifier();
-                    $file->setLocalProperties(
-                        $this->fileIndexFactory->getFileIndexArray($localFileIdentifier, 'local', $uid)
-                    );
-                    $file->setForeignProperties(
-                        $this->fileIndexFactory->getFileIndexArray($foreignFileIdentifier, 'foreign', $uid)
-                    );
-                    $file->setDirtyProperties()->calculateState();
+                    $this->fileIndexFactory->updateFileIndexInfo($file, $localFileIdentifier, $foreignFileIdentifier);
                 }
             } elseif (!$ldb && !$lfs && !$ffs && !$fdb) {
                 // CODE: [15] NONE; The file exists nowhere. Ignore it.
@@ -473,25 +466,6 @@ class FolderRecordFactory
         }
 
         return $files;
-    }
-
-    /**
-     * @param Record $record
-     * @param string $identifier
-     * @param string $side
-     */
-    protected function createAndAddTemporaryIndexInformationToRecordForSide(Record $record, $identifier, $side)
-    {
-        $record->setPropertiesBySideIdentifier(
-            $side,
-            $this->fileIndexFactory->getFileIndexArray(
-                $identifier,
-                $side,
-                $record->getPropertyBySideIdentifier($side === 'local' ? 'foreign' : 'local', 'uid')
-            )
-        );
-        $record->addAdditionalProperty($side . 'RecordExistsTemporary', true);
-        $record->setDirtyProperties()->calculateState();
     }
 
     /**
@@ -632,21 +606,14 @@ class FolderRecordFactory
                 // The database record is technically added, but the file was removed. Since the file publishing is the
                 // main domain of this class the state of the file on disk has precedence
                 // add foreign file information instead
-                $this->createAndAddTemporaryIndexInformationToRecordForSide($file, $identifier, 'foreign');
-
-                // remove all local properties to "ignore" the local database record
-                $file->setLocalProperties(array());
-                $file->setDirtyProperties()->calculateState();
+                $this->fileIndexFactory->updateFileIndexInfoBySide($file, $identifier, 'foreign', true);
             } elseif ($diskSide === 'local' && RecordInterface::RECORD_STATE_DELETED === $state) {
                 if (!$this->foreignDriver->fileExists($identifier)) {
                     // PRE-FIX for [8] LFFD case, where the file was found on local's disc
                     // and the foreign database (like [5] LDFF inverted).
                     // The database record is technically deleted, but the file was added. Since the file
                     // publishing is the main domain of this class the state of the file on disk has precedence
-                    $this->createAndAddTemporaryIndexInformationToRecordForSide($file, $identifier, 'local');
-                    // remove all foreign properties to "ignore" the foreign database record
-                    $file->setForeignProperties(array());
-                    $file->setDirtyProperties()->calculateState();
+                    $this->fileIndexFactory->updateFileIndexInfoBySide($file, $identifier, 'local', true);
                 }
             }
         }
@@ -900,13 +867,13 @@ class FolderRecordFactory
                 // PRE-FIX for the [10] NFDB case
                 // The file has been found on both file systems but only in the local database.
                 // create a temporary counterpart for the local database entry, so we end up in [14] ALL
-                $this->createAndAddTemporaryIndexInformationToRecordForSide($file, $identifier, 'foreign');
+                $this->fileIndexFactory->updateFileIndexInfoBySide($file, $identifier, 'foreign');
             } elseif (RecordInterface::RECORD_STATE_DELETED === $recordState) {
                 // PRE-FIX for [13] NLDB
                 // The file has been found on both file systems but not in the local database.
                 // create a temporary local database entry with the uid of the existing foreign database entry.
                 // Resulting case is [14] ALL
-                $this->createAndAddTemporaryIndexInformationToRecordForSide($file, $identifier, 'local');
+                $this->fileIndexFactory->updateFileIndexInfoBySide($file, $identifier, 'local');
             }
         }
 

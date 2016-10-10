@@ -120,6 +120,41 @@ class FileIndexFactory
     }
 
     /**
+     * @param RecordInterface $record
+     * @param string $identifier
+     * @param string $side
+     * @param bool $clearOpposite Set to true if you want to remove all properties from the "opposite" side
+     */
+    public function updateFileIndexInfoBySide(RecordInterface $record, $identifier, $side, $clearOpposite = false)
+    {
+        $oppositeSide = ($side === 'local' ? 'foreign' : 'local');
+        $uid = $record->getPropertyBySideIdentifier($oppositeSide, 'uid');
+
+        $record->setPropertiesBySideIdentifier($side, $this->getFileIndexArray($identifier, $side, $uid));
+        $record->addAdditionalProperty($side . 'RecordExistsTemporary', true);
+
+        if ($clearOpposite) {
+            $record->setPropertiesBySideIdentifier($oppositeSide, array());
+        }
+
+        $record->setDirtyProperties()->calculateState();
+    }
+
+    /**
+     * @param RecordInterface $record
+     * @param string $localIdentifier
+     * @param string $foreignIdentifier
+     * @return RecordInterface
+     */
+    public function updateFileIndexInfo(RecordInterface $record, $localIdentifier, $foreignIdentifier)
+    {
+        $uid = $record->getIdentifier();
+        $record->setLocalProperties($this->getFileIndexArray($localIdentifier, 'local', $uid));
+        $record->setForeignProperties($this->getFileIndexArray($foreignIdentifier, 'foreign', $uid));
+        $record->setDirtyProperties()->calculateState();
+    }
+
+    /**
      * This method is mostly a copy of an indexer method
      * @see \TYPO3\CMS\Core\Resource\Index\Indexer::gatherFileInformationArray
      *
