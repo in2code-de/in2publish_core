@@ -676,70 +676,59 @@ class FolderRecordFactory
     {
         $identifierList = $this->buildFileListOfMissingLocalIndices($files);
 
-        foreach ($files as $file) {
-            if ($this->isLocalIndexWithMatchingDuplicateIndexOnForeign($identifierList, $file)) {
-                $identifierList[$file->getLocalProperty('identifier')][$file->getLocalProperty('uid')] = $file;
-            }
-        }
+        foreach ($files as $localFile) {
+            if ($this->isLocalIndexWithMatchingDuplicateIndexOnForeign($identifierList, $localFile)) {
+                $identifier = $localFile->getLocalProperty('identifier');
+                $foreignFile = array_shift($identifierList[$identifier]);
 
-        // only support sys_files with exactly one duplicate
-        foreach ($identifierList as $identifierString => $fileEntries) {
-            if (2 !== count($fileEntries)) {
-                unset($identifierList[$identifierString]);
-            }
-        }
+                $oldUid = (int)$foreignFile->getForeignProperty('uid');
+                $newUid = (int)$localFile->getLocalProperty('uid');
 
-        foreach ($identifierList as $identifierString => $fileEntries) {
-            // the first file is always the foreign file.
-            $foreignFile = array_shift($fileEntries);
-            $localFile = array_pop($fileEntries);
-            $oldUid = (int)$foreignFile->getForeignProperty('uid');
-            $newUid = (int)$localFile->getLocalProperty('uid');
+                $logData = array('old' => $oldUid, 'new' => $newUid, 'identifier' => $identifier);
 
-            $logData = array('old' => $oldUid, 'new' => $newUid, 'identifier' => $identifierString);
-
-            // Run the integrity test when enableSysFileReferenceUpdate (ESFRU) is not enabled
-            if (true !== $this->configuration['enableSysFileReferenceUpdate']) {
-                // If the sys_file was referenced abort here, because it's unsafe to overwrite the uid
-                if (0 !== $this->countForeignReferences($oldUid)) {
-                    break;
-                }
-            }
-
-            // If a sys_file record with the "new" uid has been found abort immediately
-            if (0 !== $this->countForeignIndices($newUid)) {
-                break;
-            }
-
-            // Rewrite the foreign UID of the foreign index.
-            if (true === $this->updateForeignIndex($oldUid, $newUid)) {
-                $this->logger->notice('Rewrote a sys_file uid by the mergeSysFileByIdentifier feature', $logData);
-
-                // Rewrite all occurrences of the old uid by the new in all references on foreign if SFRU is enabled
-                if (true === $this->configuration['enableSysFileReferenceUpdate']) {
-                    if (true === $this->updateForeignReference($oldUid, $newUid)) {
-                        $this->logger->notice('Rewrote sys_file_reference by the SFRU feature', $logData);
-                    } else {
-                        $this->logger->error(
-                            'Failed to rewrite sys_file_reference by the SFRU feature',
-                            $this->enrichWithForeignDatabaseErrorInformation($logData)
-                        );
+                // Run the integrity test when enableSysFileReferenceUpdate (ESFRU) is not enabled
+                if (true !== $this->configuration['enableSysFileReferenceUpdate']) {
+                    // If the sys_file was referenced abort here, because it's unsafe to overwrite the uid
+                    if (0 !== $this->countForeignReferences($oldUid)) {
+                        break;
                     }
                 }
 
-                // copy the foreign's properties with the new uid to the local record (merge)
-                $foreignProperties = $foreignFile->getForeignProperties();
-                $foreignProperties['uid'] = $newUid;
-                $localFile->setForeignProperties($foreignProperties);
-                $localFile->setDirtyProperties()->calculateState();
+                // If a sys_file record with the "new" uid has been found abort immediately
+                if (0 !== $this->countForeignIndices($newUid)) {
+                    break;
+                }
 
-                // remove the (old) foreign file from the list
-                unset($files[$oldUid]);
-            } else {
-                $this->logger->error(
-                    'Failed to rewrite a sys_file uid by the mergeSysFileByIdentifier feature',
-                    $this->enrichWithForeignDatabaseErrorInformation($logData)
-                );
+                // Rewrite the foreign UID of the foreign index.
+                if (true === $this->updateForeignIndex($oldUid, $newUid)) {
+                    $this->logger->notice('Rewrote a sys_file uid by the mergeSysFileByIdentifier feature', $logData);
+
+                    // Rewrite all occurrences of the old uid by the new in all references on foreign if SFRU is enabled
+                    if (true === $this->configuration['enableSysFileReferenceUpdate']) {
+                        if (true === $this->updateForeignReference($oldUid, $newUid)) {
+                            $this->logger->notice('Rewrote sys_file_reference by the SFRU feature', $logData);
+                        } else {
+                            $this->logger->error(
+                                'Failed to rewrite sys_file_reference by the SFRU feature',
+                                $this->enrichWithForeignDatabaseErrorInformation($logData)
+                            );
+                        }
+                    }
+
+                    // copy the foreign's properties with the new uid to the local record (merge)
+                    $foreignProperties = $foreignFile->getForeignProperties();
+                    $foreignProperties['uid'] = $newUid;
+                    $localFile->setForeignProperties($foreignProperties);
+                    $localFile->setDirtyProperties()->calculateState();
+
+                    // remove the (old) foreign file from the list
+                    unset($files[$oldUid]);
+                } else {
+                    $this->logger->error(
+                        'Failed to rewrite a sys_file uid by the mergeSysFileByIdentifier feature',
+                        $this->enrichWithForeignDatabaseErrorInformation($logData)
+                    );
+                }
             }
         }
 
