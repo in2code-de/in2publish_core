@@ -1045,6 +1045,29 @@ class FolderRecordFactory
     }
 
     /**
+     * condition: the sys_file exists on local, matches the identifier but is not the already added file
+     * (UIDs are different, identifier is the same, record is not temporary)
+     *
+     * @param array $identifierList
+     * @param Record $file
+     * @return bool
+     */
+    protected function isLocalIndexWithMatchingDuplicateIndexOnForeign(array $identifierList, Record $file)
+    {
+        return null !== ($localIdentifier = $file->getLocalProperty('identifier'))
+               && null !== ($localUid = $file->getLocalProperty('uid'))
+               // There is a foreign record with the same identifier
+               && isset($identifierList[$localIdentifier])
+               // But there is no foreign record with the same identifier AND the same uid
+               && !isset($identifierList[$localIdentifier][$localUid])
+               // The foreign part of the local record does not exists OR is temporary (= Not index for a remote file)
+               && (!$file->foreignRecordExists()
+                   || true === $file->getAdditionalProperty('foreignRecordExistsTemporary'))
+               // The local record is not temporary (= he local record is persisted)
+               && true !== $file->getAdditionalProperty('localRecordExistsTemporary');
+    }
+
+    /**
      * @param Record[] $files
      * @return Record[]
      */
@@ -1052,86 +1075,70 @@ class FolderRecordFactory
     {
         $identifierList = $this->buildFileListOfMissingLocalIndices($files);
 
-        // find all matches
         foreach ($files as $file) {
-            // condition: the sys_file exists on local, matches the identifier but is not the already added file
-            // (UIDs are different, identifier is the same, record is not temporary)
-            if ($file->hasLocalProperty('identifier')
-                && $file->hasLocalProperty('uid')
-                && isset($identifierList[$file->getLocalProperty('identifier')])
-                && !isset($identifierList[$file->getLocalProperty('identifier')][$file->getIdentifier()])
-                && (!$file->foreignRecordExists()
-                    || true === $file->hasAdditionalProperty('foreignRecordExistsTemporary'))
-                && (!$file->hasAdditionalProperty('localRecordExistsTemporary')
-                    || false === $file->hasAdditionalProperty('localRecordExistsTemporary'))
-            ) {
-                $identifierList[$file->getLocalProperty('identifier')][$file->getIdentifier()] = $file;
+            if ($this->isLocalIndexWithMatchingDuplicateIndexOnForeign($identifierList, $file)) {
+                $identifierList[$file->getLocalProperty('identifier')][$file->getLocalProperty('uid')] = $file;
             }
         }
-        // filter the entries
+
+        // only support sys_files with exactly one duplicate
         foreach ($identifierList as $identifierString => $fileEntries) {
-            // only support sys_files with exactly one duplicate
             if (2 !== count($fileEntries)) {
                 unset($identifierList[$identifierString]);
             }
         }
-        // if there are records "to be merged"
-        if (!empty($identifierList)) {
-            foreach ($identifierList as $identifierString => $fileEntries) {
-                // the first file is always the foreign file.
-                $foreignFile = array_shift($fileEntries);
-                $localFile = array_pop($fileEntries);
-                $oldUid = (int)$foreignFile->getForeignProperty('uid');
-                $newUid = (int)$localFile->getLocalProperty('uid');
 
-                $logData = array('old' => $oldUid, 'new' => $newUid, 'identifier' => $identifierString);
+        foreach ($identifierList as $identifierString => $fileEntries) {
+            // the first file is always the foreign file.
+            $foreignFile = array_shift($fileEntries);
+            $localFile = array_pop($fileEntries);
+            $oldUid = (int)$foreignFile->getForeignProperty('uid');
+            $newUid = (int)$localFile->getLocalProperty('uid');
 
-                // Run the integrity test when enableSysFileReferenceUpdate (ESFRU) is not enabled
-                if (true !== $this->configuration['enableSysFileReferenceUpdate']) {
-                    // If the sys_file was referenced abort here, because it's unsafe to overwrite the uid
-                    if (0 !== $this->countForeignReferences($oldUid)) {
-                        break;
-                    }
-                }
-                // If a sys_file record with the "new" uid has been found abort immediately
-                if (0 !== $this->countForeignIndices($newUid)) {
+            $logData = array('old' => $oldUid, 'new' => $newUid, 'identifier' => $identifierString);
+
+            // Run the integrity test when enableSysFileReferenceUpdate (ESFRU) is not enabled
+            if (true !== $this->configuration['enableSysFileReferenceUpdate']) {
+                // If the sys_file was referenced abort here, because it's unsafe to overwrite the uid
+                if (0 !== $this->countForeignReferences($oldUid)) {
                     break;
                 }
-                // Rewrite the foreign UID of the foreign index.
-                if (true === $this->updateForeignIndex($oldUid, $newUid)) {
-                    $this->logger->notice('Rewrote a sys_file uid by the mergeSysFileByIdentifier feature', $logData);
+            }
 
-                    if (true === $this->configuration['enableSysFileReferenceUpdate']) {
-                        // Rewrite all occurrences of the old uid by the new uid in all references on foreign
-                        if (true === $this->updateForeignReference($oldUid, $newUid)) {
-                            $this->logger->notice('Rewrote sys_file_reference by the ESFRU feature', $logData);
-                        } else {
-                            $this->logger->error(
-                                'Failed to rewrite sys_file_reference by the ESFRU feature',
-                                $this->enrichWithForeignDatabaseErrorInformation($logData)
-                            );
-                        }
+            // If a sys_file record with the "new" uid has been found abort immediately
+            if (0 !== $this->countForeignIndices($newUid)) {
+                break;
+            }
+
+            // Rewrite the foreign UID of the foreign index.
+            if (true === $this->updateForeignIndex($oldUid, $newUid)) {
+                $this->logger->notice('Rewrote a sys_file uid by the mergeSysFileByIdentifier feature', $logData);
+
+                // Rewrite all occurrences of the old uid by the new in all references on foreign if SFRU is enabled
+                if (true === $this->configuration['enableSysFileReferenceUpdate']) {
+                    if (true === $this->updateForeignReference($oldUid, $newUid)) {
+                        $this->logger->notice('Rewrote sys_file_reference by the SFRU feature', $logData);
+                    } else {
+                        $this->logger->error(
+                            'Failed to rewrite sys_file_reference by the SFRU feature',
+                            $this->enrichWithForeignDatabaseErrorInformation($logData)
+                        );
                     }
-
-                    // copy the foreign's properties with the new uid to the local record (merge)
-                    $foreignProperties = $foreignFile->getForeignProperties();
-                    $foreignProperties['uid'] = $newUid;
-                    $localFile->setForeignProperties($foreignProperties);
-                    $localFile->setDirtyProperties()->calculateState();
-
-                    // remove the foreign file from the list
-                    foreach ($files as $index => $file) {
-                        if ($file === $foreignFile) {
-                            unset($files[$index]);
-                            break;
-                        }
-                    }
-                } else {
-                    $this->logger->error(
-                        'Failed to rewrite a sys_file uid by the mergeSysFileByIdentifier feature',
-                        $this->enrichWithForeignDatabaseErrorInformation($logData)
-                    );
                 }
+
+                // copy the foreign's properties with the new uid to the local record (merge)
+                $foreignProperties = $foreignFile->getForeignProperties();
+                $foreignProperties['uid'] = $newUid;
+                $localFile->setForeignProperties($foreignProperties);
+                $localFile->setDirtyProperties()->calculateState();
+
+                // remove the (old) foreign file from the list
+                unset($files[$oldUid]);
+            } else {
+                $this->logger->error(
+                    'Failed to rewrite a sys_file uid by the mergeSysFileByIdentifier feature',
+                    $this->enrichWithForeignDatabaseErrorInformation($logData)
+                );
             }
         }
 
@@ -1331,16 +1338,14 @@ class FolderRecordFactory
         $identifierList = array();
         // Get all foreign file identifiers to match again
         foreach ($files as $file) {
-            // IF the file only exist local skip it.
-            if (!$file->hasForeignProperty('identifier') || !$file->hasForeignProperty('uid')) {
+            // If the file only exist local skip it.
+            $foreignIdentifier = $file->getForeignProperty('identifier');
+            if (null === $foreignIdentifier || !$file->hasForeignProperty('uid')) {
                 continue;
             }
 
-            // If the local record exists AND is not temporary skip this file.
-            if ($file->localRecordExists()
-                && (!$file->hasAdditionalProperty('localRecordExistsTemporary')
-                    || true !== $file->getAdditionalProperty('localRecordExistsTemporary'))
-            ) {
+            // If the local record exists AND is not temporary skip this file. (= Does not index a local file)
+            if ($file->localRecordExists() && true !== $file->getAdditionalProperty('localRecordExistsTemporary')) {
                 continue;
             }
 
@@ -1349,7 +1354,7 @@ class FolderRecordFactory
                 continue;
             }
 
-            $identifierList[$file->getForeignProperty('identifier')][$file->getIdentifier()] = $file;
+            $identifierList[$foreignIdentifier][$file->getIdentifier()] = $file;
         }
         return $identifierList;
     }
