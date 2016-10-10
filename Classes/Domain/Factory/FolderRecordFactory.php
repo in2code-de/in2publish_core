@@ -1151,9 +1151,9 @@ class FolderRecordFactory
      * @param CommonRepository $commonRepository
      * @param DatabaseConnection $targetDatabase
      * @param $hashedIdentifier
-     * @param array $files
-     * @param $side
-     * @return array
+     * @param Record[] $files
+     * @param string $side
+     * @return Record[]
      */
     protected function reclaimSysFileEntriesBySide(
         array $onlyDiskIdentifiers,
@@ -1364,23 +1364,23 @@ class FolderRecordFactory
     }
 
     /**
-     * @param $diskIdentifiers
-     * @param $indexedIdentifiers
-     * @param $files
-     * @param $foreignDriver
-     * @param $localDriver
-     * @param $foreignDatabase
-     * @param $localDatabase
+     * @param array $diskIdentifiers
+     * @param array $indexedIdentifiers
+     * @param Record[] $files
+     * @param DriverInterface $foreignDriver
+     * @param DriverInterface $localDriver
+     * @param DatabaseConnection $foreignDatabase
+     * @param DatabaseConnection $localDatabase
      * @return Record[]
      */
     protected function fixAndConvertIntersectingIdentifiers(
-        $diskIdentifiers,
-        $indexedIdentifiers,
-        $files,
-        $foreignDriver,
-        $localDriver,
-        $foreignDatabase,
-        $localDatabase
+        array $diskIdentifiers,
+        array $indexedIdentifiers,
+        array $files,
+        DriverInterface $foreignDriver,
+        DriverInterface $localDriver,
+        DatabaseConnection $foreignDatabase,
+        DatabaseConnection $localDatabase
     ) {
         // Create temporary indices for files existing on the local disk and foreign database
         $files = $this->fixAndConvertIntersectingIdentifiersIntoRecords(
@@ -1409,21 +1409,21 @@ class FolderRecordFactory
     }
 
     /**
-     * @param $onlyDiskIdentifiers
-     * @param $localDriver
-     * @param $foreignDatabase
-     * @param $localDatabase
-     * @param $files
-     * @param $foreignDriver
-     * @return array
+     * @param array $onlyDiskIdentifiers
+     * @param DriverInterface $localDriver
+     * @param DatabaseConnection $foreignDatabase
+     * @param DatabaseConnection $localDatabase
+     * @param Record[] $files
+     * @param DriverInterface $foreignDriver
+     * @return Record[]
      */
     protected function convertAndAddOnlyDiskIdentifiersToFileRecords(
-        $onlyDiskIdentifiers,
-        $localDriver,
-        $foreignDatabase,
-        $localDatabase,
-        $files,
-        $foreignDriver
+        array $onlyDiskIdentifiers,
+        DriverInterface $localDriver,
+        DatabaseConnection $foreignDatabase,
+        DatabaseConnection $localDatabase,
+        array $files,
+        DriverInterface $foreignDriver
     ) {
         // PRE-FIX for the [1] OLFS case
         // create temporary sys_file entries for all files on the local disk
