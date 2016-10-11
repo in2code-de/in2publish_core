@@ -54,6 +54,9 @@ class RecordController extends AbstractController
                 'In2code\\In2publishCore\\Domain\\Factory\\FakeRecordFactory'
             )->buildFromStartPage($this->pid);
         }
+
+        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeViewRender', array($this, $record));
+
         $this->view->assign('record', $record);
         $this->assignServerAndPublishingStatus();
     }

@@ -34,6 +34,7 @@ use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 /**
  * RecordFactory: This class is responsible for create instances of Record.
@@ -140,12 +141,19 @@ class RecordFactory
     protected $tcaService = null;
 
     /**
+     * @var Dispatcher
+     */
+    protected $signalSlotDispatcher;
+
+    /**
      * Creates the logger and sets any required configuration
      */
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
         $this->tcaService = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService');
+        $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+        $this->signalSlotDispatcher = $objectManager->get('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
 
         $factorySettings = ConfigurationUtility::getConfiguration('factory');
         $this->maximumPageRecursion = $factorySettings['maximumPageRecursion'];
@@ -219,6 +227,8 @@ class RecordFactory
             if ($hasBeenMoved && !$instance->isChanged()) {
                 $instance->setState(RecordInterface::RECORD_STATE_MOVED);
             }
+
+            $this->signalSlotDispatcher->dispatch(__CLASS__, 'instanceCreated', array($this, $instance));
 
             /* special case of tables without TCA (currently only sys_file_processedfile).
              * Normally we would just ignore them, but:
