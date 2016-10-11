@@ -477,9 +477,10 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
 
             $files = $this->executeEnvelopeAndReceiveResponse($uid);
 
-            foreach ($files as $file => $hash) {
+            foreach ($files as $file => $values) {
                 $this->cache[$this->getFileExistsCacheIdentifier($file)] = true;
-                $this->cache[$this->getHashCacheIdentifier($file, 'sha1')] = $hash;
+                $this->cache[$this->getHashCacheIdentifier($file, 'sha1')] = $values['hash'];
+                $this->cache[$this->getGetFileInfoByIdentifierCacheIdentifier($file)] = $values['info'];
             }
 
             return array_keys($files);

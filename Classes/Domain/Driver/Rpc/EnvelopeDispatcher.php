@@ -120,7 +120,9 @@ class EnvelopeDispatcher
         $files = call_user_func_array(array($driver, 'getFilesInFolder'), $request);
 
         foreach ($files as $file) {
-            $files[$file] = $driver->hash($file, 'sha1');
+            $files[$file] = array();
+            $files[$file]['hash'] = $driver->hash($file, 'sha1');
+            $files[$file]['info'] = $driver->getFileInfoByIdentifier($file);
         }
         return $files;
     }
