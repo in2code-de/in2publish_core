@@ -164,6 +164,10 @@ class FileIndexFactory
     {
         $fileInfo = $this->getDriverSpecificFileInfo($identifier, $side);
 
+        if (empty($fileInfo)) {
+            return $fileInfo;
+        }
+
         $remapKeys = array(
             'mtime' => 'modification_date',
             'ctime' => 'creation_date',
@@ -249,10 +253,13 @@ class FileIndexFactory
             throw new \LogicException('Unsupported side "' . $side . '"', 1476106674);
         }
 
-        $fileInfo = $driver->getFileInfoByIdentifier($identifier);
-        unset($fileInfo['atime']);
-        $fileInfo['sha1'] = $driver->hash($identifier, 'sha1');
-        return $fileInfo;
+        if ($driver->fileExists($identifier)) {
+            $fileInfo = $driver->getFileInfoByIdentifier($identifier);
+            unset($fileInfo['atime']);
+            $fileInfo['sha1'] = $driver->hash($identifier, 'sha1');
+            return $fileInfo;
+        }
+        return array();
     }
 
     /**
