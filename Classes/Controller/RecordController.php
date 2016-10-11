@@ -55,7 +55,7 @@ class RecordController extends AbstractController
             )->buildFromStartPage($this->pid);
         }
 
-        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeViewRender', array($this, $record));
+        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeIndexViewRender', array($this, $record));
 
         $this->view->assign('record', $record);
         $this->assignServerAndPublishingStatus();
@@ -74,6 +74,9 @@ class RecordController extends AbstractController
         $this->logger->debug('Called ' . __FUNCTION__);
         $this->commonRepository->disablePageRecursion();
         $record = $this->commonRepository->findByIdentifier($identifier, $tableName);
+
+        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeDetailViewRender', array($this, $record));
+
         $this->view->assign('record', $record);
         $this->view->assign('configuration', ConfigurationUtility::getConfiguration());
     }
@@ -138,8 +141,12 @@ class RecordController extends AbstractController
      */
     protected function publishRecord($identifier, array $exceptTableNames = array())
     {
+        $record = $this->commonRepository->findByIdentifier($identifier);
+
+        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforePublishing', array($this, $record));
+
         $this->commonRepository->publishRecordRecursive(
-            $this->commonRepository->findByIdentifier($identifier),
+            $record,
             array_merge(ConfigurationUtility::getConfiguration('excludeRelatedTables'), $exceptTableNames)
         );
         $this->runTasks();
