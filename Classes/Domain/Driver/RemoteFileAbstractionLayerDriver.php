@@ -327,7 +327,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             return $this->executeEnvelopeAndReceiveResponse($uid);
         };
 
-        return $this->cache(__FUNCTION__ . $fileIdentifier, $callback);
+        return $this->cache($this->getHashCacheIdentifier($fileIdentifier), $callback);
     }
 
     /**
@@ -961,5 +961,14 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     protected function getGetFolderInfoByIdentifierCacheIdentifier($folderIdentifier)
     {
         return 'getFolderInfoByIdentifier' . $folderIdentifier;
+    }
+
+    /**
+     * @param $fileIdentifier
+     * @return string
+     */
+    protected function getHashCacheIdentifier($fileIdentifier)
+    {
+        return 'hash' . $fileIdentifier;
     }
 }
