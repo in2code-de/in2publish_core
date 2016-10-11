@@ -66,14 +66,35 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
-     * @return bool
+     * @return array
      */
     protected function folderExists(array $request)
     {
-        return ResourceFactory
-            ::getInstance()
-            ->getStorageObject($request['storage'])
-            ->hasFolder($request['folderIdentifier']);
+        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $driver = $this->getStorageDriver($storage);
+        $folderIdentifier = $request['folderIdentifier'];
+
+        if ($driver->folderExists($folderIdentifier)) {
+            $files = $driver->getFilesInFolder($folderIdentifier);
+
+            foreach ($files as $file) {
+                $files[$file] = array();
+                $files[$file]['hash'] = $driver->hash($file, 'sha1');
+                $files[$file]['info'] = $driver->getFileInfoByIdentifier($file);
+            }
+
+            return array(
+                'exists' => true,
+                'folders' => $driver->getFoldersInFolder($folderIdentifier),
+                'files' => $files,
+            );
+        }
+
+        return array(
+            'exists' => false,
+            'folders' => array(),
+            'files' => array(),
+        );
     }
 
     /**

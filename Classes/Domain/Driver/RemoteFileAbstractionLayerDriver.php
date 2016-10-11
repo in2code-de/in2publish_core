@@ -165,7 +165,23 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                 throw new \Exception('Could not send "folderExists" request to remote system', 1474458299);
             }
 
-            return $this->executeEnvelopeAndReceiveResponse($uid);
+            $response = $this->executeEnvelopeAndReceiveResponse($uid);
+
+            $this->cache[$this->getGetFilesInFolderCacheIdentifier($folderIdentifier)] = array_keys($response['files']);
+
+            foreach ($response['files'] as $file => $values) {
+                $this->cache[$this->getFileExistsCacheIdentifier($file)] = true;
+                $this->cache[$this->getHashCacheIdentifier($file, 'sha1')] = $values['hash'];
+                $this->cache[$this->getGetFileInfoByIdentifierCacheIdentifier($file)] = $values['info'];
+            }
+
+            $this->cache[$this->getGetFoldersInFolderCacheIdentifier($folderIdentifier)] = $response['folders'];
+
+            foreach ($response['folders'] as $folder) {
+                $this->cache[$this->getFolderExistsCacheIdentifier($folder)] = true;
+            }
+
+            return $response['exists'];
         };
 
         return $this->cache($this->getFolderExistsCacheIdentifier($folderIdentifier), $callback);
