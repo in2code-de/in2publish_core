@@ -478,7 +478,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             return $this->executeEnvelopeAndReceiveResponse($uid);
         };
 
-        return $this->cache($this->getGetFilesInFolderCacheIdentifier(func_get_args()), $callback);
+        return $this->cache($this->getGetFilesInFolderCacheIdentifier($folderIdentifier), $callback);
     }
 
     /**
