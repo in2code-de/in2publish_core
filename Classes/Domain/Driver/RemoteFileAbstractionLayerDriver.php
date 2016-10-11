@@ -141,7 +141,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             return $this->executeEnvelopeAndReceiveResponse($uid);
         };
 
-        return $this->cache(__FUNCTION__ . $fileIdentifier, $callback);
+        return $this->cache($this->getFileExistsCacheIdentifier($fileIdentifier), $callback);
     }
 
     /**
@@ -358,7 +358,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             return $this->executeEnvelopeAndReceiveResponse($uid);
         };
 
-        return $this->cache(__FUNCTION__ . $identifier, $callback);
+        return $this->cache($this->getGetPermissionsCacheIdentifier($identifier), $callback);
     }
 
     /**
@@ -397,7 +397,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             }
         };
 
-        return $this->cache(__FUNCTION__ . $fileIdentifier, $callback);
+        return $this->cache($this->getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier), $callback);
     }
 
     /**
@@ -426,7 +426,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             );
         };
 
-        return $this->cache(__FUNCTION__ . $folderIdentifier, $callback);
+        return $this->cache($this->getGetFolderInfoByIdentifierCacheIdentifier($folderIdentifier), $callback);
     }
 
     /**
@@ -913,5 +913,41 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function getRootLevelFolder()
     {
         throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201635);
+    }
+
+    /**
+     * @param $fileIdentifier
+     * @return string
+     */
+    protected function getFileExistsCacheIdentifier($fileIdentifier)
+    {
+        return 'fileExists' . $fileIdentifier;
+    }
+
+    /**
+     * @param $identifier
+     * @return string
+     */
+    protected function getGetPermissionsCacheIdentifier($identifier)
+    {
+        return 'getPermissions' . $identifier;
+    }
+
+    /**
+     * @param $fileIdentifier
+     * @return string
+     */
+    protected function getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier)
+    {
+        return 'getFileInfoByIdentifier' . $fileIdentifier;
+    }
+
+    /**
+     * @param $folderIdentifier
+     * @return string
+     */
+    protected function getGetFolderInfoByIdentifierCacheIdentifier($folderIdentifier)
+    {
+        return 'getFolderInfoByIdentifier' . $folderIdentifier;
     }
 }
