@@ -162,4 +162,18 @@ interface RecordInterface
      * @return string
      */
     public function getTableName();
+
+    /**
+     * Get a property from both local and foreign of this Record.
+     * 1. If a property does not exist on local, foreign is used and vice versa
+     * 2. If a property exists on both sides and is the same the property is returned
+     * 3. If local and foreign properties differ they are returned based on var type
+     *      INT: local is returned
+     *      ARRAY: both arrays merged
+     *      STRING: strings concatenated with a comma
+     *
+     * @param $propertyName
+     * @return mixed
+     */
+    public function getMergedProperty($propertyName);
 }
