@@ -327,7 +327,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             return $this->executeEnvelopeAndReceiveResponse($uid);
         };
 
-        return $this->cache($this->getHashCacheIdentifier($fileIdentifier), $callback);
+        return $this->cache($this->getHashCacheIdentifier($fileIdentifier, $hashAlgorithm), $callback);
     }
 
     /**
@@ -567,7 +567,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     }
 
     /**
-     * @param $folderIdentifier
+     * @param string $folderIdentifier
      * @return string
      */
     protected function getFolderExistsCacheIdentifier($folderIdentifier)
@@ -591,6 +591,52 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     protected function getGetFilesInFolderCacheIdentifier($folderIdentifier)
     {
         return 'getFilesInFolder|' . $folderIdentifier;
+    }
+
+    /**
+     * @param string $fileIdentifier
+     * @return string
+     */
+    protected function getFileExistsCacheIdentifier($fileIdentifier)
+    {
+        return 'fileExists|' . $fileIdentifier;
+    }
+
+    /**
+     * @param string $identifier
+     * @return string
+     */
+    protected function getGetPermissionsCacheIdentifier($identifier)
+    {
+        return 'getPermissions|' . $identifier;
+    }
+
+    /**
+     * @param string $fileIdentifier
+     * @return string
+     */
+    protected function getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier)
+    {
+        return 'getFileInfoByIdentifier|' . $fileIdentifier;
+    }
+
+    /**
+     * @param string $folderIdentifier
+     * @return string
+     */
+    protected function getGetFolderInfoByIdentifierCacheIdentifier($folderIdentifier)
+    {
+        return 'getFolderInfoByIdentifier|' . $folderIdentifier;
+    }
+
+    /**
+     * @param string $fileIdentifier
+     * @param string $hashAlgorithm
+     * @return string
+     */
+    protected function getHashCacheIdentifier($fileIdentifier, $hashAlgorithm)
+    {
+        return 'hash|' . $fileIdentifier . '|' . $hashAlgorithm;
     }
 
     /****************************************************************
@@ -925,50 +971,5 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function getRootLevelFolder()
     {
         throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201635);
-    }
-
-    /**
-     * @param $fileIdentifier
-     * @return string
-     */
-    protected function getFileExistsCacheIdentifier($fileIdentifier)
-    {
-        return 'fileExists' . $fileIdentifier;
-    }
-
-    /**
-     * @param $identifier
-     * @return string
-     */
-    protected function getGetPermissionsCacheIdentifier($identifier)
-    {
-        return 'getPermissions' . $identifier;
-    }
-
-    /**
-     * @param $fileIdentifier
-     * @return string
-     */
-    protected function getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier)
-    {
-        return 'getFileInfoByIdentifier' . $fileIdentifier;
-    }
-
-    /**
-     * @param $folderIdentifier
-     * @return string
-     */
-    protected function getGetFolderInfoByIdentifierCacheIdentifier($folderIdentifier)
-    {
-        return 'getFolderInfoByIdentifier' . $folderIdentifier;
-    }
-
-    /**
-     * @param $fileIdentifier
-     * @return string
-     */
-    protected function getHashCacheIdentifier($fileIdentifier)
-    {
-        return 'hash' . $fileIdentifier;
     }
 }
