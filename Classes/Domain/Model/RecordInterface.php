@@ -123,4 +123,9 @@ interface RecordInterface
      * @return RecordInterface
      */
     public function addAdditionalProperty($propertyName, $propertyValue);
+
+    /**
+     * @return string
+     */
+    public function getTableName();
 }
