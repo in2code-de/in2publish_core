@@ -467,7 +467,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             $uid = $this->letterBox->sendEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_GET_FILES_IN_FOLDER,
-                    array('folderIdentifier' => $folderIdentifier)
+                    array('storage' => $this->storageUid, 'folderIdentifier' => $folderIdentifier)
                 )
             );
 
@@ -514,7 +514,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             $uid = $this->letterBox->sendEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_GET_FOLDERS_IN_FOLDER,
-                    array('folderIdentifier' => $folderIdentifier)
+                    array('storage' => $this->storageUid, 'folderIdentifier' => $folderIdentifier)
                 )
             );
 
