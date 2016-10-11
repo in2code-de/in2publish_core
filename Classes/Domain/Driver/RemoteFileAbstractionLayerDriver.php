@@ -434,9 +434,9 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      *
      * @param string $folderIdentifier
      * @param int $start
-     * @param int $numberOfItems
+     * @param int $max
      * @param bool $recursive
-     * @param array $filenameFilterCallbacks callbacks for filtering the items
+     * @param array $fnFc callbacks for filtering the items
      * @param string $sort Property name used to sort the items.
      *                     Among them may be: '' (empty, no sorting), name,
      *                     fileext, size, tstamp and rw.
@@ -448,21 +448,16 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function getFilesInFolder(
         $folderIdentifier,
         $start = 0,
-        $numberOfItems = 0,
+        $max = 0,
         $recursive = false,
-        array $filenameFilterCallbacks = array(),
+        array $fnFc = array(),
         $sort = '',
         $sortRev = false
     ) {
-        $callback = function () use (
-            $folderIdentifier,
-            $start,
-            $numberOfItems,
-            $recursive,
-            $filenameFilterCallbacks,
-            $sort,
-            $sortRev
-        ) {
+        if (0 !== $start || 0 !== $max || false !== $recursive || !empty($fnFc) || '' !== $sort || false !== $sortRev) {
+            throw new \InvalidArgumentException('This Driver does not support optional arguments', 1476202118);
+        }
+        $callback = function () use ($folderIdentifier) {
             if (!$this->folderExists($folderIdentifier)) {
                 throw new \InvalidArgumentException(
                     'Cannot list items in directory ' . $folderIdentifier . ' - does not exist or is no directory',
@@ -472,16 +467,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             $uid = $this->letterBox->sendEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_GET_FILES_IN_FOLDER,
-                    array(
-                        'folderIdentifier' => $folderIdentifier,
-                        'start' => $start,
-                        'numberOfItems' => $numberOfItems,
-                        'recursive' => $recursive,
-                        'filenameFilterCallbacks' => $filenameFilterCallbacks,
-                        'sort' => $sort,
-                        'sortRev' => $sortRev,
-                        'storage' => $this->storageUid,
-                    )
+                    array('folderIdentifier' => $folderIdentifier)
                 )
             );
 
@@ -500,9 +486,9 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      *
      * @param string $folderIdentifier
      * @param int $start
-     * @param int $numberOfItems
+     * @param int $max
      * @param bool $recursive
-     * @param array $folderNameFilterCallbacks callbacks for filtering the items
+     * @param array $fnFc callbacks for filtering the items
      * @param string $sort Property name used to sort the items.
      *                     Among them may be: '' (empty, no sorting), name,
      *                     fileext, size, tstamp and rw.
@@ -514,34 +500,21 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function getFoldersInFolder(
         $folderIdentifier,
         $start = 0,
-        $numberOfItems = 0,
+        $max = 0,
         $recursive = false,
-        array $folderNameFilterCallbacks = array(),
+        array $fnFc = array(),
         $sort = '',
         $sortRev = false
     ) {
-        $callback = function () use (
-            $folderIdentifier,
-            $start,
-            $numberOfItems,
-            $recursive,
-            $folderNameFilterCallbacks,
-            $sort,
-            $sortRev
-        ) {
+        if (0 !== $start || 0 !== $max || false !== $recursive || !empty($fnFc) || '' !== $sort || false !== $sortRev) {
+            throw new \InvalidArgumentException('This Driver does not support optional arguments', 1476201945);
+        }
+
+        $callback = function () use ($folderIdentifier) {
             $uid = $this->letterBox->sendEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_GET_FOLDERS_IN_FOLDER,
-                    array(
-                        'folderIdentifier' => $folderIdentifier,
-                        'start' => $start,
-                        'numberOfItems' => $numberOfItems,
-                        'recursive' => $recursive,
-                        'folderNameFilterCallbacks' => $folderNameFilterCallbacks,
-                        'sort' => $sort,
-                        'sortRev' => $sortRev,
-                        'storage' => $this->storageUid,
-                    )
+                    array('folderIdentifier' => $folderIdentifier)
                 )
             );
 
