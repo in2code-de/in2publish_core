@@ -475,7 +475,13 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                 throw new \Exception('Could not send "getFilesInFolder" request to remote system', 1475229150);
             }
 
-            return $this->executeEnvelopeAndReceiveResponse($uid);
+            $files = $this->executeEnvelopeAndReceiveResponse($uid);
+
+            foreach ($files as $file) {
+                $this->cache[$this->getFileExistsCacheIdentifier($file)] = true;
+            }
+
+            return $files;
         };
 
         return $this->cache($this->getGetFilesInFolderCacheIdentifier($folderIdentifier), $callback);
