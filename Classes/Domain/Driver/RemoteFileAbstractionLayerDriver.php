@@ -79,15 +79,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     }
 
     /**
-     * Never called
-     *
-     * @return void
-     */
-    public function processConfiguration()
-    {
-    }
-
-    /**
      * Sets the storage uid the driver belongs to
      *
      * @param int $storageUid
@@ -120,101 +111,11 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     }
 
     /**
-     * Not required
-     *
-     * @param int $capabilities
-     * @return int
-     */
-    public function mergeConfigurationCapabilities($capabilities)
-    {
-    }
-
-    /**
-     * Not required
-     *
-     * @param int $capability
-     * @return bool
-     */
-    public function hasCapability($capability)
-    {
-        return true;
-    }
-
-    /**
      * @return bool
      */
     public function isCaseSensitiveFileSystem()
     {
         return $this->configuration['caseSensitive'];
-    }
-
-    /**
-     * Not required
-     *
-     * @return string
-     */
-    public function getRootLevelFolder()
-    {
-        return '/';
-    }
-
-    /**
-     * Not required
-     *
-     * @return string
-     */
-    public function getDefaultFolder()
-    {
-    }
-
-    /**
-     * Returns the public URL to a file.
-     * Either fully qualified URL or relative to PATH_site (rawurlencoded).
-     *
-     * @param string $identifier
-     * @return string
-     */
-    public function getPublicUrl($identifier)
-    {
-        xdebug_break();
-    }
-
-    /**
-     * Creates a folder, within a parent folder.
-     * If no parent folder is given, a root level folder will be created
-     *
-     * @param string $newFolderName
-     * @param string $parentFolderIdentifier
-     * @param bool $recursive
-     * @return string the Identifier of the new folder
-     */
-    public function createFolder($newFolderName, $parentFolderIdentifier = '', $recursive = false)
-    {
-        xdebug_break();
-    }
-
-    /**
-     * Renames a folder in this storage.
-     *
-     * @param string $folderIdentifier
-     * @param string $newName
-     * @return array A map of old to new file identifiers of all affected resources
-     */
-    public function renameFolder($folderIdentifier, $newName)
-    {
-        xdebug_break();
-    }
-
-    /**
-     * Removes a folder in filesystem.
-     *
-     * @param string $folderIdentifier
-     * @param bool $deleteRecursively
-     * @return bool
-     */
-    public function deleteFolder($folderIdentifier, $deleteRecursively = false)
-    {
-        xdebug_break();
     }
 
     /**
@@ -271,17 +172,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     }
 
     /**
-     * Checks if a folder contains files and (if supported) other folders.
-     *
-     * @param string $folderIdentifier
-     * @return bool TRUE if there are no files and folders within $folder
-     */
-    public function isFolderEmpty($folderIdentifier)
-    {
-        xdebug_break();
-    }
-
-    /**
      * Adds a file from the local server hard disk to a given path in TYPO3s
      * virtual file system. This assumes that the local file exists, so no
      * further check is done here! After a successful the original file must
@@ -317,33 +207,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             return $this->executeEnvelopeAndReceiveResponse($uid);
         };
         return $this->cache('addFile' . $localFilePath . '|' . $targetFolderIdentifier . '|' . $newFileName, $callback);
-    }
-
-    /**
-     * Creates a new (empty) file and returns the identifier.
-     *
-     * @param string $fileName
-     * @param string $parentFolderIdentifier
-     * @return string
-     */
-    public function createFile($fileName, $parentFolderIdentifier)
-    {
-        xdebug_break();
-    }
-
-    /**
-     * Copies a file *within* the current storage.
-     * Note that this is only about an inner storage copy action,
-     * where a file is just copied to another folder in the same storage.
-     *
-     * @param string $fileIdentifier
-     * @param string $targetFolderIdentifier
-     * @param string $fileName
-     * @return string the Identifier of the new file
-     */
-    public function copyFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $fileName)
-    {
-        xdebug_break();
     }
 
     /**
@@ -468,113 +331,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     }
 
     /**
-     * Moves a file *within* the current storage.
-     * Note that this is only about an inner-storage move action,
-     * where a file is just moved to another folder in the same storage.
-     *
-     * @param string $fileIdentifier
-     * @param string $targetFolderIdentifier
-     * @param string $newFileName
-     * @return string
-     */
-    public function moveFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $newFileName)
-    {
-        xdebug_break();
-    }
-
-    /**
-     * Folder equivalent to moveFileWithinStorage().
-     *
-     * @param string $sourceFolderIdentifier
-     * @param string $targetFolderIdentifier
-     * @param string $newFolderName
-     * @return array All files which are affected, map of old => new file identifiers
-     */
-    public function moveFolderWithinStorage($sourceFolderIdentifier, $targetFolderIdentifier, $newFolderName)
-    {
-        xdebug_break();
-    }
-
-    /**
-     * Folder equivalent to copyFileWithinStorage().
-     *
-     * @param string $sourceFolderIdentifier
-     * @param string $targetFolderIdentifier
-     * @param string $newFolderName
-     * @return bool
-     */
-    public function copyFolderWithinStorage($sourceFolderIdentifier, $targetFolderIdentifier, $newFolderName)
-    {
-        xdebug_break();
-    }
-
-    /**
-     * Returns the contents of a file. Beware that this requires to load the
-     * complete file into memory and also may require fetching the file from an
-     * external location. So this might be an expensive operation (both in terms
-     * of processing resources and money) for large files.
-     *
-     * @param string $fileIdentifier
-     * @return string The file contents
-     */
-    public function getFileContents($fileIdentifier)
-    {
-        xdebug_break();
-    }
-
-    /**
-     * Sets the contents of a file to the specified value.
-     *
-     * @param string $fileIdentifier
-     * @param string $contents
-     * @return int The number of bytes written to the file
-     */
-    public function setFileContents($fileIdentifier, $contents)
-    {
-        xdebug_break();
-    }
-
-    /**
-     * Checks if a file inside a folder exists
-     *
-     * @param string $fileName
-     * @param string $folderIdentifier
-     * @return bool
-     */
-    public function fileExistsInFolder($fileName, $folderIdentifier)
-    {
-        xdebug_break();
-    }
-
-    /**
-     * Checks if a folder inside a folder exists.
-     *
-     * @param string $folderName
-     * @param string $folderIdentifier
-     * @return bool
-     */
-    public function folderExistsInFolder($folderName, $folderIdentifier)
-    {
-        xdebug_break();
-    }
-
-    /**
-     * Returns a path to a local copy of a file for processing it. When changing the
-     * file, you have to take care of replacing the current version yourself!
-     *
-     * @param string $fileIdentifier
-     * @param bool $writable Set this to FALSE if you only need the file for read
-     *                       operations. This might speed up things, e.g. by using
-     *                       a cached local version. Never modify the file if you
-     *                       have set this flag!
-     * @return string The path to the file on the local disk
-     */
-    public function getFileForLocalProcessing($fileIdentifier, $writable = true)
-    {
-        xdebug_break();
-    }
-
-    /**
      *
      * Returns the permissions of a file/folder as an array
      * (keys r, w) of boolean flags
@@ -603,37 +359,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         };
 
         return $this->cache(__FUNCTION__ . $identifier, $callback);
-    }
-
-    /**
-     * Directly output the contents of the file to the output
-     * buffer. Should not take care of header files or flushing
-     * buffer before. Will be taken care of by the Storage.
-     *
-     * @param string $identifier
-     * @return void
-     */
-    public function dumpFileContents($identifier)
-    {
-        xdebug_break();
-    }
-
-    /**
-     * Checks if a given identifier is within a container, e.g. if
-     * a file or folder is within another folder.
-     * This can e.g. be used to check for web-mounts.
-     *
-     * Hint: this also needs to return TRUE if the given identifier
-     * matches the container identifier to allow access to the root
-     * folder of a filemount.
-     *
-     * @param string $folderIdentifier
-     * @param string $identifier identifier to be checked against $folderIdentifier
-     * @return bool TRUE if $content is within or matches $folderIdentifier
-     */
-    public function isWithin($folderIdentifier, $identifier)
-    {
-        xdebug_break();
     }
 
     /**
@@ -705,18 +430,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     }
 
     /**
-     * Returns the identifier of a file inside the folder
-     *
-     * @param string $fileName
-     * @param string $folderIdentifier
-     * @return string file identifier
-     */
-    public function getFileInFolder($fileName, $folderIdentifier)
-    {
-        xdebug_break();
-    }
-
-    /**
      * Returns a list of files inside the specified path
      *
      * @param string $folderIdentifier
@@ -783,18 +496,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     }
 
     /**
-     * Returns the identifier of a folder inside the folder
-     *
-     * @param string $folderName The name of the target folder
-     * @param string $folderIdentifier
-     * @return string folder identifier
-     */
-    public function getFolderInFolder($folderName, $folderIdentifier)
-    {
-        xdebug_break();
-    }
-
-    /**
      * Returns a list of folders inside the specified path
      *
      * @param string $folderIdentifier
@@ -855,35 +556,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     }
 
     /**
-     * Returns the number of files inside the specified path
-     *
-     * @param string $folderIdentifier
-     * @param bool $recursive
-     * @param array $filenameFilterCallbacks callbacks for filtering the items
-     * @return int Number of files in folder
-     */
-    public function countFilesInFolder($folderIdentifier, $recursive = false, array $filenameFilterCallbacks = array())
-    {
-        xdebug_break();
-    }
-
-    /**
-     * Returns the number of folders inside the specified path
-     *
-     * @param string $folderIdentifier
-     * @param bool $recursive
-     * @param array $folderNameFilterCallbacks callbacks for filtering the items
-     * @return int Number of folders in folder
-     */
-    public function countFoldersInFolder(
-        $folderIdentifier,
-        $recursive = false,
-        array $folderNameFilterCallbacks = array()
-    ) {
-        xdebug_break();
-    }
-
-    /**
      * @param int $uid
      * @return array
      */
@@ -934,5 +606,339 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     protected function getGetFilesInFolderCacheIdentifier($folderIdentifier)
     {
         return 'getFilesInFolder|' . $folderIdentifier;
+    }
+
+    /****************************************************************
+     *
+     *              NOT IMPLEMENTED; NOT NEEDED
+     *
+     ****************************************************************/
+
+    /**
+     * Not required
+     *
+     * @return string
+     */
+    public function getDefaultFolder()
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201277);
+    }
+
+    /**
+     * Returns the public URL to a file.
+     * Either fully qualified URL or relative to PATH_site (rawurlencoded).
+     *
+     * @param string $identifier
+     * @return string
+     */
+    public function getPublicUrl($identifier)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201288);
+    }
+
+    /**
+     * Creates a folder, within a parent folder.
+     * If no parent folder is given, a root level folder will be created
+     *
+     * @param string $newFolderName
+     * @param string $parentFolderIdentifier
+     * @param bool $recursive
+     * @return string the Identifier of the new folder
+     */
+    public function createFolder($newFolderName, $parentFolderIdentifier = '', $recursive = false)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201291);
+    }
+
+    /**
+     * Renames a folder in this storage.
+     *
+     * @param string $folderIdentifier
+     * @param string $newName
+     * @return array A map of old to new file identifiers of all affected resources
+     */
+    public function renameFolder($folderIdentifier, $newName)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201295);
+    }
+
+    /**
+     * Removes a folder in filesystem.
+     *
+     * @param string $folderIdentifier
+     * @param bool $deleteRecursively
+     * @return bool
+     */
+    public function deleteFolder($folderIdentifier, $deleteRecursively = false)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201298);
+    }
+
+    /**
+     * Returns the number of files inside the specified path
+     *
+     * @param string $folderIdentifier
+     * @param bool $recursive
+     * @param array $filenameFilterCallbacks callbacks for filtering the items
+     * @return int Number of files in folder
+     */
+    public function countFilesInFolder($folderIdentifier, $recursive = false, array $filenameFilterCallbacks = array())
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201312);
+    }
+
+    /**
+     * Returns the number of folders inside the specified path
+     *
+     * @param string $folderIdentifier
+     * @param bool $recursive
+     * @param array $fnFc callbacks for filtering the items
+     * @return int Number of folders in folder
+     */
+    public function countFoldersInFolder($folderIdentifier, $recursive = false, array $fnFc = array())
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201325);
+    }
+
+    /**
+     * Returns the identifier of a folder inside the folder
+     *
+     * @param string $folderName The name of the target folder
+     * @param string $folderIdentifier
+     * @return string folder identifier
+     */
+    public function getFolderInFolder($folderName, $folderIdentifier)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201370);
+    }
+
+    /**
+     * Returns the identifier of a file inside the folder
+     *
+     * @param string $fileName
+     * @param string $folderIdentifier
+     * @return string file identifier
+     */
+    public function getFileInFolder($fileName, $folderIdentifier)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201421);
+    }
+
+    /**
+     * Directly output the contents of the file to the output
+     * buffer. Should not take care of header files or flushing
+     * buffer before. Will be taken care of by the Storage.
+     *
+     * @param string $identifier
+     * @return void
+     */
+    public function dumpFileContents($identifier)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201434);
+    }
+
+    /**
+     * Checks if a given identifier is within a container, e.g. if
+     * a file or folder is within another folder.
+     * This can e.g. be used to check for web-mounts.
+     *
+     * Hint: this also needs to return TRUE if the given identifier
+     * matches the container identifier to allow access to the root
+     * folder of a filemount.
+     *
+     * @param string $folderIdentifier
+     * @param string $identifier identifier to be checked against $folderIdentifier
+     * @return bool TRUE if $content is within or matches $folderIdentifier
+     */
+    public function isWithin($folderIdentifier, $identifier)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201437);
+    }
+
+    /**
+     * Returns the contents of a file. Beware that this requires to load the
+     * complete file into memory and also may require fetching the file from an
+     * external location. So this might be an expensive operation (both in terms
+     * of processing resources and money) for large files.
+     *
+     * @param string $fileIdentifier
+     * @return string The file contents
+     */
+    public function getFileContents($fileIdentifier)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201459);
+    }
+
+    /**
+     * Sets the contents of a file to the specified value.
+     *
+     * @param string $fileIdentifier
+     * @param string $contents
+     * @return int The number of bytes written to the file
+     */
+    public function setFileContents($fileIdentifier, $contents)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201462);
+    }
+
+    /**
+     * Checks if a file inside a folder exists
+     *
+     * @param string $fileName
+     * @param string $folderIdentifier
+     * @return bool
+     */
+    public function fileExistsInFolder($fileName, $folderIdentifier)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201464);
+    }
+
+    /**
+     * Checks if a folder inside a folder exists.
+     *
+     * @param string $folderName
+     * @param string $folderIdentifier
+     * @return bool
+     */
+    public function folderExistsInFolder($folderName, $folderIdentifier)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201467);
+    }
+
+    /**
+     * Returns a path to a local copy of a file for processing it. When changing the
+     * file, you have to take care of replacing the current version yourself!
+     *
+     * @param string $fileIdentifier
+     * @param bool $writable Set this to FALSE if you only need the file for read
+     *                       operations. This might speed up things, e.g. by using
+     *                       a cached local version. Never modify the file if you
+     *                       have set this flag!
+     * @return string The path to the file on the local disk
+     */
+    public function getFileForLocalProcessing($fileIdentifier, $writable = true)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201472);
+    }
+
+    /**
+     * Moves a file *within* the current storage.
+     * Note that this is only about an inner-storage move action,
+     * where a file is just moved to another folder in the same storage.
+     *
+     * @param string $fileIdentifier
+     * @param string $targetFolderIdentifier
+     * @param string $newFileName
+     * @return string
+     */
+    public function moveFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $newFileName)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201491);
+    }
+
+    /**
+     * Folder equivalent to moveFileWithinStorage().
+     *
+     * @param string $sourceFolderIdentifier
+     * @param string $targetFolderIdentifier
+     * @param string $newFolderName
+     * @return array All files which are affected, map of old => new file identifiers
+     */
+    public function moveFolderWithinStorage($sourceFolderIdentifier, $targetFolderIdentifier, $newFolderName)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201494);
+    }
+
+    /**
+     * Folder equivalent to copyFileWithinStorage().
+     *
+     * @param string $sourceFolderIdentifier
+     * @param string $targetFolderIdentifier
+     * @param string $newFolderName
+     * @return bool
+     */
+    public function copyFolderWithinStorage($sourceFolderIdentifier, $targetFolderIdentifier, $newFolderName)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201496);
+    }
+
+    /**
+     * Creates a new (empty) file and returns the identifier.
+     *
+     * @param string $fileName
+     * @param string $parentFolderIdentifier
+     * @return string
+     */
+    public function createFile($fileName, $parentFolderIdentifier)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201512);
+    }
+
+    /**
+     * Copies a file *within* the current storage.
+     * Note that this is only about an inner storage copy action,
+     * where a file is just copied to another folder in the same storage.
+     *
+     * @param string $fileIdentifier
+     * @param string $targetFolderIdentifier
+     * @param string $fileName
+     * @return string the Identifier of the new file
+     */
+    public function copyFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $fileName)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201516);
+    }
+
+    /**
+     * Checks if a folder contains files and (if supported) other folders.
+     *
+     * @param string $folderIdentifier
+     * @return bool TRUE if there are no files and folders within $folder
+     */
+    public function isFolderEmpty($folderIdentifier)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201527);
+    }
+
+    /**
+     * Not required
+     *
+     * @param int $capabilities
+     * @return int
+     */
+    public function mergeConfigurationCapabilities($capabilities)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201544);
+    }
+
+    /**
+     * Never called
+     *
+     * @return void
+     */
+    public function processConfiguration()
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201555);
+    }
+
+    /**
+     * Not required
+     *
+     * @param int $capability
+     * @return bool
+     */
+    public function hasCapability($capability)
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201628);
+    }
+
+    /**
+     * Not required
+     *
+     * @return string
+     */
+    public function getRootLevelFolder()
+    {
+        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201635);
     }
 }
