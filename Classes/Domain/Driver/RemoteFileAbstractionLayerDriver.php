@@ -658,25 +658,29 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         return $this->cache(
             __FUNCTION__ . $fileIdentifier,
             function () use ($fileIdentifier, $propertiesToExtract) {
-                $uid = $this->letterBox->sendEnvelope(
-                    new Envelope(
-                        EnvelopeDispatcher::CMD_GET_FILE_INFO_BY_IDENTIFIER,
-                        array(
-                            'storage' => $this->storageUid,
-                            'fileIdentifier' => $fileIdentifier,
-                            'propertiesToExtract' => $propertiesToExtract,
+                if (!$this->fileExists($fileIdentifier)) {
+                    throw new \InvalidArgumentException('File ' . $fileIdentifier . ' does not exist.', 1476199721);
+                } else {
+                    $uid = $this->letterBox->sendEnvelope(
+                        new Envelope(
+                            EnvelopeDispatcher::CMD_GET_FILE_INFO_BY_IDENTIFIER,
+                            array(
+                                'storage' => $this->storageUid,
+                                'fileIdentifier' => $fileIdentifier,
+                                'propertiesToExtract' => $propertiesToExtract,
+                            )
                         )
-                    )
-                );
-
-                if (false === $uid) {
-                    throw new \Exception(
-                        'Could not send "getFileInfoByIdentifier" request to remote system',
-                        1474460823
                     );
-                }
 
-                return $this->executeEnvelopeAndReceiveResponse($uid);
+                    if (false === $uid) {
+                        throw new \Exception(
+                            'Could not send "getFileInfoByIdentifier" request to remote system',
+                            1474460823
+                        );
+                    }
+
+                    return $this->executeEnvelopeAndReceiveResponse($uid);
+                }
             }
         );
     }
