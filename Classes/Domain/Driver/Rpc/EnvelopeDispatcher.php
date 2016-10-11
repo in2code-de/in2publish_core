@@ -117,7 +117,12 @@ class EnvelopeDispatcher
         $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
-        return call_user_func_array(array($driver, 'getFilesInFolder'), $request);
+        $files = call_user_func_array(array($driver, 'getFilesInFolder'), $request);
+
+        foreach ($files as $file) {
+            $files[$file] = $driver->hash($file, 'sha1');
+        }
+        return $files;
     }
 
     /**
