@@ -147,6 +147,12 @@ interface RecordInterface
 
     /**
      * @param string $propertyName
+     * @return mixed
+     */
+    public function getAdditionalProperty($propertyName);
+
+    /**
+     * @param string $propertyName
      * @param mixed $propertyValue
      * @return RecordInterface
      */
