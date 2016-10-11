@@ -70,6 +70,20 @@ interface RecordInterface
     public function getLocalProperties();
 
     /**
+     * @param string $propertyName
+     * @return bool
+     */
+    public function hasLocalProperty($propertyName);
+
+    /**
+     * Returns a specific local property by name or NULL if it is not set
+     *
+     * @param string $propertyName
+     * @return mixed
+     */
+    public function getLocalProperty($propertyName);
+
+    /**
      * @param array $localProperties
      * @return RecordInterface
      */
@@ -79,6 +93,20 @@ interface RecordInterface
      * @return array
      */
     public function getForeignProperties();
+
+    /**
+     * @param string $propertyName
+     * @return bool
+     */
+    public function hasForeignProperty($propertyName);
+
+    /**
+     * Returns a specific foreign property by name or NULL if it is not set
+     *
+     * @param string $propertyName
+     * @return mixed
+     */
+    public function getForeignProperty($propertyName);
 
     /**
      * @param array $foreignProperties
