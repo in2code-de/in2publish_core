@@ -622,6 +622,37 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     }
 
     /**
+     * Removes a folder in filesystem.
+     *
+     * @param string $folderIdentifier
+     * @param bool $deleteRecursively
+     * @return bool
+     */
+    public function deleteFolder($folderIdentifier, $deleteRecursively = false)
+    {
+        $callback = function () use ($folderIdentifier, $deleteRecursively) {
+            $uid = $this->letterBox->sendEnvelope(
+                new Envelope(
+                    EnvelopeDispatcher::CMD_DELETE_FOLDER,
+                    array(
+                        'storage' => $this->storageUid,
+                        'folderIdentifier' => $folderIdentifier,
+                        'deleteRecursively' => $deleteRecursively,
+                    )
+                )
+            );
+
+            if (false === $uid) {
+                throw new \Exception('Could not send "deleteFolder" request to remote system', 1476289359);
+            }
+
+            return $this->executeEnvelopeAndReceiveResponse($uid);
+        };
+
+        return $this->cache('createFolder|' . $folderIdentifier, $callback);
+    }
+
+    /**
      * @param int $uid
      * @return array
      */
@@ -761,18 +792,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function renameFolder($folderIdentifier, $newName)
     {
         throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201295);
-    }
-
-    /**
-     * Removes a folder in filesystem.
-     *
-     * @param string $folderIdentifier
-     * @param bool $deleteRecursively
-     * @return bool
-     */
-    public function deleteFolder($folderIdentifier, $deleteRecursively = false)
-    {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201298);
     }
 
     /**
