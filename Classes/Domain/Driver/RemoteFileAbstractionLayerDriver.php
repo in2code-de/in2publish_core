@@ -127,18 +127,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function fileExists($fileIdentifier)
     {
         $callback = function () use ($fileIdentifier) {
-            $uid = $this->letterBox->sendEnvelope(
+            return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_FILE_EXISTS,
                     array('storage' => $this->storageUid, 'fileIdentifier' => $fileIdentifier)
                 )
             );
-
-            if (false === $uid) {
-                throw new \Exception('Could not send "fileExists" request to remote system', 1475058957);
-            }
-
-            return $this->executeEnvelopeAndReceiveResponse($uid);
         };
 
         return $this->cache($this->getFileExistsCacheIdentifier($fileIdentifier), $callback);
@@ -154,18 +148,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function folderExists($folderIdentifier)
     {
         $callback = function () use ($folderIdentifier) {
-            $uid = $this->letterBox->sendEnvelope(
+            $response = $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_FOLDER_EXISTS,
                     array('storage' => $this->storageUid, 'folderIdentifier' => $folderIdentifier)
                 )
             );
-
-            if (false === $uid) {
-                throw new \Exception('Could not send "folderExists" request to remote system', 1474458299);
-            }
-
-            $response = $this->executeEnvelopeAndReceiveResponse($uid);
 
             $this->cache[$this->getGetFilesInFolderCacheIdentifier($folderIdentifier)] = array_keys($response['files']);
 
@@ -204,7 +192,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function addFile($localFilePath, $targetFolderIdentifier, $newFileName = '', $removeOriginal = true)
     {
         $callback = function () use ($localFilePath, $targetFolderIdentifier, $newFileName, $removeOriginal) {
-            $uid = $this->letterBox->sendEnvelope(
+            return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_ADD_FILE,
                     array(
@@ -216,12 +204,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                     )
                 )
             );
-
-            if (false === $uid) {
-                throw new \Exception('Could not send "addFile" request to remote system', 1475932227);
-            }
-
-            return $this->executeEnvelopeAndReceiveResponse($uid);
         };
         return $this->cache('addFile' . $localFilePath . '|' . $targetFolderIdentifier . '|' . $newFileName, $callback);
     }
@@ -236,7 +218,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function renameFile($fileIdentifier, $newName)
     {
         $callback = function () use ($fileIdentifier, $newName) {
-            $uid = $this->letterBox->sendEnvelope(
+            return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_RENAME_FILE,
                     array(
@@ -246,12 +228,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                     )
                 )
             );
-
-            if (false === $uid) {
-                throw new \Exception('Could not send "renameFile" request to remote system', 1475932033);
-            }
-
-            return $this->executeEnvelopeAndReceiveResponse($uid);
         };
 
         return $this->cache(__FUNCTION__ . $fileIdentifier . '|' . $newName, $callback);
@@ -267,7 +243,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function replaceFile($fileIdentifier, $localFilePath)
     {
         $callback = function () use ($fileIdentifier, $localFilePath) {
-            $uid = $this->letterBox->sendEnvelope(
+            return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_REPLACE_FILE,
                     array(
@@ -277,12 +253,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                     )
                 )
             );
-
-            if (false === $uid) {
-                throw new \Exception('Could not send "replaceFile" request to remote system', 1475930835);
-            }
-
-            return $this->executeEnvelopeAndReceiveResponse($uid);
         };
 
         return $this->cache(__FUNCTION__ . $fileIdentifier . '|' . $localFilePath, $callback);
@@ -299,18 +269,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function deleteFile($fileIdentifier)
     {
         $callback = function () use ($fileIdentifier) {
-            $uid = $this->letterBox->sendEnvelope(
+            return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_DELETE_FILE,
                     array('storage' => $this->storageUid, 'fileIdentifier' => $fileIdentifier)
                 )
             );
-
-            if (false === $uid) {
-                throw new \Exception('Could not send "deleteFile" request to remote system', 1475930502);
-            }
-
-            return $this->executeEnvelopeAndReceiveResponse($uid);
         };
 
         return $this->cache(__FUNCTION__ . $fileIdentifier, $callback);
@@ -326,7 +290,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function hash($fileIdentifier, $hashAlgorithm)
     {
         $callback = function () use ($fileIdentifier, $hashAlgorithm) {
-            $uid = $this->letterBox->sendEnvelope(
+            return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_GET_HASH,
                     array(
@@ -336,12 +300,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                     )
                 )
             );
-
-            if (false === $uid) {
-                throw new \Exception('Could not send "hash" request to remote system', 1475229789);
-            }
-
-            return $this->executeEnvelopeAndReceiveResponse($uid);
         };
 
         return $this->cache($this->getHashCacheIdentifier($fileIdentifier, $hashAlgorithm), $callback);
@@ -361,18 +319,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function getPermissions($identifier)
     {
         $callback = function () use ($identifier) {
-            $uid = $this->letterBox->sendEnvelope(
+            return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_GET_PERMISSIONS,
                     array('storage' => $this->storageUid, 'identifier' => $identifier)
                 )
             );
-
-            if (false === $uid) {
-                throw new \Exception('Could not send "getPermissions" request to remote system', 1474460823);
-            }
-
-            return $this->executeEnvelopeAndReceiveResponse($uid);
         };
 
         return $this->cache($this->getGetPermissionsCacheIdentifier($identifier), $callback);
@@ -392,7 +344,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             if (!$this->fileExists($fileIdentifier)) {
                 throw new \InvalidArgumentException('File ' . $fileIdentifier . ' does not exist.', 1476199721);
             } else {
-                $uid = $this->letterBox->sendEnvelope(
+                return $this->executeEnvelope(
                     new Envelope(
                         EnvelopeDispatcher::CMD_GET_FILE_INFO_BY_IDENTIFIER,
                         array(
@@ -402,15 +354,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                         )
                     )
                 );
-
-                if (false === $uid) {
-                    throw new \Exception(
-                        'Could not send "getFileInfoByIdentifier" request to remote system',
-                        1474460823
-                    );
-                }
-
-                return $this->executeEnvelopeAndReceiveResponse($uid);
             }
         };
 
@@ -481,18 +424,13 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                     1475235331
                 );
             }
-            $uid = $this->letterBox->sendEnvelope(
+
+            $files = $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_GET_FILES_IN_FOLDER,
                     array('storage' => $this->storageUid, 'folderIdentifier' => $folderIdentifier)
                 )
             );
-
-            if (false === $uid) {
-                throw new \Exception('Could not send "getFilesInFolder" request to remote system', 1475229150);
-            }
-
-            $files = $this->executeEnvelopeAndReceiveResponse($uid);
 
             foreach ($files as $file => $values) {
                 $this->cache[$this->getFileExistsCacheIdentifier($file)] = true;
@@ -537,18 +475,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         }
 
         $callback = function () use ($folderIdentifier) {
-            $uid = $this->letterBox->sendEnvelope(
+            $folders = $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_GET_FOLDERS_IN_FOLDER,
                     array('storage' => $this->storageUid, 'folderIdentifier' => $folderIdentifier)
                 )
             );
-
-            if (false === $uid) {
-                throw new \Exception('Could not send "getFoldersInFolder" request to remote system', 1474475092);
-            }
-
-            $folders = $this->executeEnvelopeAndReceiveResponse($uid);
 
             foreach ($folders as $folder) {
                 $this->cache[$this->getFolderExistsCacheIdentifier($folder)] = true;
@@ -570,18 +502,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function getPublicUrl($identifier)
     {
         $callback = function () use ($identifier) {
-            $uid = $this->letterBox->sendEnvelope(
+            return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_GET_PUBLIC_URL,
                     array('storage' => $this->storageUid, 'identifier' => $identifier)
                 )
             );
-
-            if (false === $uid) {
-                throw new \Exception('Could not send "getPublicUrl" request to remote system', 1476279679);
-            }
-
-            return $this->executeEnvelopeAndReceiveResponse($uid);
         };
 
         return $this->cache($this->getGetPublicUrlCacheIdentifier($identifier), $callback);
@@ -599,7 +525,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function createFolder($newFolderName, $parentFolderIdentifier = '', $recursive = false)
     {
         $callback = function () use ($newFolderName, $parentFolderIdentifier, $recursive) {
-            $uid = $this->letterBox->sendEnvelope(
+            return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_CREATE_FOLDER,
                     array(
@@ -610,12 +536,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                     )
                 )
             );
-
-            if (false === $uid) {
-                throw new \Exception('Could not send "createFolder" request to remote system', 1476288587);
-            }
-
-            return $this->executeEnvelopeAndReceiveResponse($uid);
         };
 
         return $this->cache('createFolder|' . $newFolderName . $parentFolderIdentifier, $callback);
@@ -631,7 +551,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function deleteFolder($folderIdentifier, $deleteRecursively = false)
     {
         $callback = function () use ($folderIdentifier, $deleteRecursively) {
-            $uid = $this->letterBox->sendEnvelope(
+            return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_DELETE_FOLDER,
                     array(
@@ -641,24 +561,26 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                     )
                 )
             );
-
-            if (false === $uid) {
-                throw new \Exception('Could not send "deleteFolder" request to remote system', 1476289359);
-            }
-
-            return $this->executeEnvelopeAndReceiveResponse($uid);
         };
 
         return $this->cache('createFolder|' . $folderIdentifier, $callback);
     }
 
     /**
-     * @param int $uid
-     * @return array
+     * @param Envelope $envelope
+     * @return mixed
+     * @throws \Exception
      */
-    protected function executeEnvelopeAndReceiveResponse($uid)
+    protected function executeEnvelope(Envelope $envelope)
     {
+        $uid = $this->letterBox->sendEnvelope($envelope);
+
+        if (false === $uid) {
+            throw new \Exception('Could not send ' . $envelope->getCommand() . ' request to remote system', 1476296011);
+        }
+
         $executionResult = $this->sshConnection->executeRpc($uid);
+
         if (!empty($executionResult)) {
             throw new \RuntimeException(
                 'Could not execute RPC. An error occurred on foreign: ' . implode(',', $executionResult),
