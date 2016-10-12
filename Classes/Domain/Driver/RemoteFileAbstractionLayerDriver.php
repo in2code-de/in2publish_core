@@ -564,7 +564,13 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      */
     protected function executeEnvelopeAndReceiveResponse($uid)
     {
-        $this->sshConnection->executeRpc($uid);
+        $executionResult = $this->sshConnection->executeRpc($uid);
+        if (!empty($executionResult)) {
+            throw new \RuntimeException(
+                'Could not execute RPC. An error occurred on foreign: ' . implode(',', $executionResult),
+                1476281965
+            );
+        }
         return $this->letterBox->receiveEnvelope($uid)->getResponse();
     }
 
