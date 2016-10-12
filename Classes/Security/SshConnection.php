@@ -202,9 +202,16 @@ class SshConnection
             $temporaryIdentifier = $this->foreignRootPath . 'typo3temp/' . uniqid('tx_in2publish_temp_');
             if ($this->writeRemoteFile($absoluteSourceFile, $temporaryIdentifier)) {
                 return $temporaryIdentifier;
+            } else {
+                throw new \RuntimeException(
+                    'Could not transfer ' . $absoluteSourceFile . ' to the foreign system',
+                    1476272902
+                );
             }
         } else {
-            throw new \InvalidArgumentException('The file ' . $absoluteSourceFile . ' does not exist');
+            throw new \InvalidArgumentException(
+                'The source file ' . $absoluteSourceFile . ' does not exist', 1476272905
+            );
         }
     }
 
