@@ -559,6 +559,33 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     }
 
     /**
+     * Returns the public URL to a file.
+     * Either fully qualified URL or relative to PATH_site (rawurlencoded).
+     *
+     * @param string $identifier
+     * @return string
+     */
+    public function getPublicUrl($identifier)
+    {
+        $callback = function () use ($identifier) {
+            $uid = $this->letterBox->sendEnvelope(
+                new Envelope(
+                    EnvelopeDispatcher::CMD_GET_PUBLIC_URL,
+                    array('storage' => $this->storageUid, 'identifier' => $identifier)
+                )
+            );
+
+            if (false === $uid) {
+                throw new \Exception('Could not send "getPublicUrl" request to remote system', 1476279679);
+            }
+
+            return $this->executeEnvelopeAndReceiveResponse($uid);
+        };
+
+        return $this->cache($this->getGetPublicUrlCacheIdentifier($identifier), $callback);
+    }
+
+    /**
      * @param int $uid
      * @return array
      */
@@ -663,6 +690,15 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         return 'hash|' . $fileIdentifier . '|' . $hashAlgorithm;
     }
 
+    /**
+     * @param string $identifier
+     * @return string
+     */
+    protected function getGetPublicUrlCacheIdentifier($identifier)
+    {
+        return 'getPublicUrl|' . $identifier;
+    }
+
     /****************************************************************
      *
      *              NOT IMPLEMENTED; NOT NEEDED
@@ -677,18 +713,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function getDefaultFolder()
     {
         throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201277);
-    }
-
-    /**
-     * Returns the public URL to a file.
-     * Either fully qualified URL or relative to PATH_site (rawurlencoded).
-     *
-     * @param string $identifier
-     * @return string
-     */
-    public function getPublicUrl($identifier)
-    {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201288);
     }
 
     /**

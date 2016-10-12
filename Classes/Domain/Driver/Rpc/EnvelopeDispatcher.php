@@ -48,6 +48,7 @@ class EnvelopeDispatcher
     const CMD_ADD_FILE = 'addFile';
     const CMD_REPLACE_FILE = 'replaceFile';
     const CMD_RENAME_FILE = 'renameFile';
+    const CMD_GET_PUBLIC_URL = 'getPublicUrl';
 
     /**
      * @param Envelope $envelope
@@ -242,6 +243,16 @@ class EnvelopeDispatcher
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
         return call_user_func_array(array($driver, 'renameFile'), $request);
+    }
+
+    /**
+     * @param array $request
+     * @return mixed
+     */
+    protected function getPublicUrl(array $request)
+    {
+        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        return $storage->getPublicUrl($storage->getFile($request['identifier']));
     }
 
     /**
