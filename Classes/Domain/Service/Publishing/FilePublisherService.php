@@ -75,10 +75,15 @@ class FilePublisherService
     {
         $temporaryIdentifier = $this->transferTemporaryFile($storage, $fileIdentifier);
 
+        $folderIdentifier = dirname($fileIdentifier);
+        if (!$this->remoteFalDriver->folderExists($folderIdentifier)) {
+            $this->remoteFalDriver->createFolder(basename($folderIdentifier), dirname($folderIdentifier), true);
+        }
+
         $this->remoteFalDriver->setStorageUid($storage);
         return $this->remoteFalDriver->addFile(
             $temporaryIdentifier,
-            dirname($fileIdentifier),
+            $folderIdentifier,
             basename($fileIdentifier),
             true
         );
