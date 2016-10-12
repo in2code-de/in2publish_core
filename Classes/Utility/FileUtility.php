@@ -26,20 +26,13 @@ namespace In2code\In2publishCore\Utility;
  ***************************************************************/
 
 use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Domain\Model\File;
 
 /**
  * Class FileUtility
  */
 class FileUtility
 {
-    /**
-     * @var string
-     */
-    protected static $defaultStorage = 'fileadmin/';
-
     /**
      * @var Logger
      */
@@ -55,44 +48,6 @@ class FileUtility
                 get_called_class()
             );
         }
-    }
-
-    /**
-     * @param string $relativePath
-     * @return array
-     */
-    public static function getFileInformation($relativePath)
-    {
-        $identifier = PATH_site . $relativePath;
-        if (!is_file($identifier)) {
-            return array();
-        }
-        $results = stat($identifier);
-        foreach (array_keys($results) as $key) {
-            if (is_int($key)) {
-                unset($results[$key]);
-            }
-        }
-        $relativeFolder = FolderUtility::getSanitizedFolderName(dirname($relativePath));
-
-        $results['uid'] = base_convert(hexdec(md5($relativePath)), 8, 10);
-        $results['name'] = basename($relativePath);
-        $results['relativeParent'] = dirname($relativeFolder);
-        $results['relativePath'] = $relativeFolder;
-        $results['absolutePath'] = $identifier;
-        $results['folderHash'] = FolderUtility::hashFolderIdentifier($relativeFolder);
-        $results['identifier'] = $results['relativePath'] . $results['name'];
-        $results['hash'] = self::hash($relativePath);
-        return $results;
-    }
-
-    /**
-     * @param string $relativePath
-     * @return string
-     */
-    public static function hash($relativePath)
-    {
-        return md5_file(PATH_site . $relativePath);
     }
 
     /**
@@ -128,24 +83,6 @@ class FileUtility
                 );
             }
         }
-    }
-
-    /**
-     * @param string $relativePath beginning with fileadmin
-     * @return bool
-     */
-    public static function fileExists($relativePath)
-    {
-        return is_file(PATH_site . $relativePath);
-    }
-
-    /**
-     * @param string $path
-     * @return void
-     */
-    public static function createDirectoryRecursively($path)
-    {
-        GeneralUtility::mkdir_deep(PATH_site . ltrim($path, '/') . '/');
     }
 
     /**
