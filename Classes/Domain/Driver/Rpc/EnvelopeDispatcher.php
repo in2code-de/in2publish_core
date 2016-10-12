@@ -27,8 +27,10 @@ namespace In2code\In2publishCore\Domain\Driver\Rpc;
  ***************************************************************/
 
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
+use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class EnvelopeDispatcher
@@ -252,7 +254,10 @@ class EnvelopeDispatcher
     protected function getPublicUrl(array $request)
     {
         $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
-        return $storage->getPublicUrl($storage->getFile($request['identifier']));
+        $driver = $this->getStorageDriver($storage);
+        $identifier = $request['identifier'];
+        $file = $this->getFileObjectWithoutIndexing($driver, $identifier, $storage);
+        return $storage->getPublicUrl($file);
     }
 
     /**
@@ -265,5 +270,28 @@ class EnvelopeDispatcher
         $driverReflection->setAccessible(true);
         /** @var DriverInterface $driver */
         return $driverReflection->getValue($storage);
+    }
+
+    /**
+     * @param $driver
+     * @param $identifier
+     * @param $storage
+     * @return File
+     */
+    protected function getFileObjectWithoutIndexing($driver, $identifier, $storage)
+    {
+        $fileIndexFactory = GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Domain\\Factory\\FileIndexFactory',
+            $driver,
+            $driver
+        );
+
+        /** @var File $file */
+        $file = GeneralUtility::makeInstance(
+            'TYPO3\\CMS\\Core\\Resource\\File',
+            $fileIndexFactory->getFileIndexArray($identifier, 'local'),
+            $storage
+        );
+        return $file;
     }
 }

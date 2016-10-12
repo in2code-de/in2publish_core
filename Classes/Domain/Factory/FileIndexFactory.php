@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Domain\Factory;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Service\Database\UidReservationService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -66,6 +67,11 @@ class FileIndexFactory
     protected $persistTemporaryIndexing = false;
 
     /**
+     * @var ContextService
+     */
+    protected $contextService;
+
+    /**
      * FileIndexFactory constructor.
      * @param DriverInterface $localDriver
      * @param DriverInterface $foreignDriver
@@ -81,6 +87,9 @@ class FileIndexFactory
                                           ->getConfigurationArrayForTable('sys_file');
         $this->persistTemporaryIndexing = (bool)ConfigurationUtility::getConfiguration(
             'factory.fal.persistTemporaryIndexing'
+        );
+        $this->contextService = GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Service\\Context\\ContextService'
         );
     }
 
@@ -189,8 +198,10 @@ class FileIndexFactory
 
         if ($uid > 0) {
             $fileInfo['uid'] = $uid;
-        } else {
+        } elseif ($this->contextService->isLocal()) {
             $fileInfo['uid'] = $this->uidReservationService->getReservedUid();
+        } else {
+            $fileInfo['uid'] = $uid;
         }
 
         // convert all values to string to match the resulting types of a database select query result
