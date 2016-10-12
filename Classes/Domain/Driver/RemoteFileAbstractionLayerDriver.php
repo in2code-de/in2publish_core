@@ -205,6 +205,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                 )
             );
         };
+
         return $this->cache('addFile' . $localFilePath . '|' . $targetFolderIdentifier . '|' . $newFileName, $callback);
     }
 
@@ -587,6 +588,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                 1476281965
             );
         }
+
         return $this->letterBox->receiveEnvelope($uid)->getResponse();
     }
 
@@ -603,6 +605,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         if (!isset($this->cache[$identifier])) {
             $this->cache[$identifier] = $callback();
         }
+
         return $this->cache[$identifier];
     }
 
