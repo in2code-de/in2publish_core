@@ -81,9 +81,11 @@ class EnvelopeDispatcher
             $files = $driver->getFilesInFolder($folderIdentifier);
 
             foreach ($files as $file) {
+                $fileObject = $this->getFileObjectWithoutIndexing($driver, $file, $storage);
                 $files[$file] = array();
                 $files[$file]['hash'] = $driver->hash($file, 'sha1');
                 $files[$file]['info'] = $driver->getFileInfoByIdentifier($file);
+                $files[$file]['publicUrl'] = $storage->getPublicUrl($fileObject);
             }
 
             return array(
@@ -144,9 +146,11 @@ class EnvelopeDispatcher
         $files = call_user_func_array(array($driver, 'getFilesInFolder'), $request);
 
         foreach ($files as $file) {
+            $fileObject = $this->getFileObjectWithoutIndexing($driver, $file, $storage);
             $files[$file] = array();
             $files[$file]['hash'] = $driver->hash($file, 'sha1');
             $files[$file]['info'] = $driver->getFileInfoByIdentifier($file);
+            $files[$file]['publicUrl'] = $storage->getPublicUrl($fileObject);
         }
         return $files;
     }

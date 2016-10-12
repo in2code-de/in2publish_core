@@ -173,6 +173,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                 $this->cache[$this->getFileExistsCacheIdentifier($file)] = true;
                 $this->cache[$this->getHashCacheIdentifier($file, 'sha1')] = $values['hash'];
                 $this->cache[$this->getGetFileInfoByIdentifierCacheIdentifier($file)] = $values['info'];
+                $this->cache[$this->getGetPublicUrlCacheIdentifier($file)] = $values['publicUrl'];
             }
 
             $this->cache[$this->getGetFoldersInFolderCacheIdentifier($folderIdentifier)] = $response['folders'];
@@ -497,6 +498,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                 $this->cache[$this->getFileExistsCacheIdentifier($file)] = true;
                 $this->cache[$this->getHashCacheIdentifier($file, 'sha1')] = $values['hash'];
                 $this->cache[$this->getGetFileInfoByIdentifierCacheIdentifier($file)] = $values['info'];
+                $this->cache[$this->getGetPublicUrlCacheIdentifier($file)] = $values['publicUrl'];
             }
 
             return array_keys($files);
