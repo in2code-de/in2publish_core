@@ -26,7 +26,10 @@ namespace In2code\In2publishCore\ViewHelpers\File;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Utility\FileUtility;
+use In2code\In2publishCore\Domain\Service\DomainService;
+use TYPO3\CMS\Core\Resource\File;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -35,16 +38,17 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 class BuildResourcePathViewHelper extends AbstractViewHelper
 {
     /**
-     * @var \In2code\In2publishCore\ViewHelpers\Miscellaneous\GetFirstDomainFromRootlineViewHelper
-     * @inject
+     * @var DomainService
      */
-    protected $getFirstDomainFromRootlineViewHelper = null;
+    protected $domainService = null;
 
     /**
-     * @var \In2code\In2publishCore\ViewHelpers\Miscellaneous\GetPropertyFromStagingDefinitionViewHelper
-     * @inject
+     * BuildResourcePathViewHelper constructor.
      */
-    protected $getPropertyFromStagingDefinitionViewHelper = null;
+    public function initialize()
+    {
+        $this->domainService = $this->objectManager->get('In2code\\In2publishCore\\Domain\\Service\\DomainService');
+    }
 
     /**
      * @param Record $record
@@ -53,10 +57,29 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
      */
     public function render(Record $record, $stagingLevel = 'local')
     {
-        $string = $this->getFirstDomainFromRootlineViewHelper->render($record, $stagingLevel);
-        $string .= '/';
-        $string .= rtrim(FileUtility::getStorageBasePath(1), '/');
-        $string .= $this->getPropertyFromStagingDefinitionViewHelper->render($record, 'identifier', $stagingLevel);
-        return $string;
+        $resourceUrl = '';
+        if ('sys_file' === $record->getTableName()) {
+            if ('local' === $stagingLevel && $record->localRecordExists()) {
+                $storage = $record->getPropertyBySideIdentifier($stagingLevel, 'storage');
+                $identifier = $record->getPropertyBySideIdentifier($stagingLevel, 'identifier');
+
+                $resourceFactory = ResourceFactory::getInstance();
+                /** @var File $file Keep this annotation for the correct method return type generation */
+                $file = $resourceFactory->getFileObjectByStorageAndIdentifier($storage, $identifier);
+                $resourceUrl = $file->getPublicUrl();
+            } elseif ('foreign' === $stagingLevel && $record->foreignRecordExists()) {
+                $storage = $record->getPropertyBySideIdentifier($stagingLevel, 'storage');
+                $identifier = $record->getPropertyBySideIdentifier($stagingLevel, 'identifier');
+
+                $remoteFalDriver = GeneralUtility::makeInstance(
+                    'In2code\\In2publishCore\\Domain\\Driver\\RemoteFileAbstractionLayerDriver'
+                );
+                $remoteFalDriver->setStorageUid($storage);
+                $remoteFalDriver->initialize();
+                $resourceUrl = $remoteFalDriver->getPublicUrl($identifier);
+            }
+        }
+
+        return $this->domainService->getFirstDomain($record, $stagingLevel, true) . '/' . $resourceUrl;
     }
 }

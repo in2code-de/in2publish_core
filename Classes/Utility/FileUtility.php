@@ -58,51 +58,6 @@ class FileUtility
     }
 
     /**
-     * Get Storage from Uid
-     *
-     * @param $storageUid
-     * @return ResourceStorage
-     */
-    public static function getStorage($storageUid)
-    {
-        /** @var \TYPO3\CMS\Core\Resource\ResourceFactory $fileFactory */
-        $fileFactory = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Resource\\ResourceFactory');
-        return $fileFactory->getStorageObject($storageUid);
-    }
-
-    /**
-     * Get storage from uid
-     *
-     * @param int $storageUid
-     * @return string
-     */
-    public static function getStorageBasePath($storageUid)
-    {
-        $storageName = self::$defaultStorage;
-        $storage = self::getStorage($storageUid);
-        if ($storage !== null) {
-            $properties = $storage->getConfiguration();
-            $storageName = $properties['basePath'];
-        }
-        return $storageName;
-    }
-
-    /**
-     * If an Extbase\File is given, a Core\Resource\File will be returned,
-     * otherwise the return value is the argument
-     *
-     * @param $file
-     * @return \TYPO3\CMS\Core\Resource\File
-     */
-    public static function unDecorateFile($file)
-    {
-        if ($file instanceof File) {
-            $file = $file->getOriginalResource();
-        }
-        return $file;
-    }
-
-    /**
      * @param string $relativePath
      * @return array
      */
