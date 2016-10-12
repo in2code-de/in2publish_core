@@ -322,6 +322,21 @@ abstract class AbstractController extends ActionController
     }
 
     /**
+     * @param string $filterName
+     * @param string $status
+     * @param string $action
+     */
+    protected function toggleFilterStatusAndRedirect($filterName, $status, $action)
+    {
+        $currentStatus = $this->backendUser->getSessionData($filterName . $status);
+        if (!is_bool($currentStatus)) {
+            $currentStatus = false;
+        }
+        $this->backendUser->setAndSaveSessionData($filterName . $status, !$currentStatus);
+        $this->redirect($action);
+    }
+
+    /**
      * @return BackendUserAuthentication
      * @SuppressWarnings(PHPMD.Superglobals)
      */

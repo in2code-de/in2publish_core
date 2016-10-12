@@ -101,7 +101,7 @@ call_user_func(
                         'm3',
                         '',
                         array(
-                            'File' => 'index,publishFolder,publishFile',
+                            'File' => 'index,publishFolder,publishFile,toggleFilterStatusAndRedirectToIndex',
                         ),
                         array(
                             'access' => 'user,group',

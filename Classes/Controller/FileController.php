@@ -118,4 +118,15 @@ class FileController extends AbstractController
 
         $this->redirect('index');
     }
+
+    /**
+     * toggle filter status and save the filter status in the current backendUser's session.
+     *
+     * @param string $filter "changed", "added", "deleted"
+     * @return void
+     */
+    public function toggleFilterStatusAndRedirectToIndexAction($filter)
+    {
+        $this->toggleFilterStatusAndRedirect('in2publish_filter_files_', $filter,'index');
+    }
 }

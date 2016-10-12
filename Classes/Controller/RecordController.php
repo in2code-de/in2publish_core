@@ -121,17 +121,7 @@ class RecordController extends AbstractController
      */
     public function toggleFilterStatusAndRedirectToIndexAction($filter)
     {
-        $this->logger->debug('Called ' . __FUNCTION__, array('filter', $filter));
-        $currentStatus = $this->backendUser->getSessionData('in2publish_filter_records_' . $filter);
-        $this->logger->debug(
-            'Retrieved currentStatus from filter records session',
-            array('currentStatus' => $currentStatus)
-        );
-        if (!is_bool($currentStatus)) {
-            $currentStatus = false;
-        }
-        $this->backendUser->setAndSaveSessionData('in2publish_filter_records_' . $filter, !$currentStatus);
-        $this->redirect('index');
+        $this->toggleFilterStatusAndRedirect('in2publish_filter_records_', $filter,'index');
     }
 
     /**
