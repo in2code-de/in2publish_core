@@ -588,6 +588,40 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     }
 
     /**
+     * Creates a folder, within a parent folder.
+     * If no parent folder is given, a root level folder will be created
+     *
+     * @param string $newFolderName
+     * @param string $parentFolderIdentifier
+     * @param bool $recursive
+     * @return string the Identifier of the new folder
+     */
+    public function createFolder($newFolderName, $parentFolderIdentifier = '', $recursive = false)
+    {
+        $callback = function () use ($newFolderName, $parentFolderIdentifier, $recursive) {
+            $uid = $this->letterBox->sendEnvelope(
+                new Envelope(
+                    EnvelopeDispatcher::CMD_CREATE_FOLDER,
+                    array(
+                        'storage' => $this->storageUid,
+                        '$newFolderName' => $newFolderName,
+                        '$parentFolderIdentifier' => $parentFolderIdentifier,
+                        '$recursive' => $recursive,
+                    )
+                )
+            );
+
+            if (false === $uid) {
+                throw new \Exception('Could not send "createFolder" request to remote system', 1476288587);
+            }
+
+            return $this->executeEnvelopeAndReceiveResponse($uid);
+        };
+
+        return $this->cache('createFolder|' . $newFolderName . $parentFolderIdentifier, $callback);
+    }
+
+    /**
      * @param int $uid
      * @return array
      */
@@ -715,20 +749,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function getDefaultFolder()
     {
         throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201277);
-    }
-
-    /**
-     * Creates a folder, within a parent folder.
-     * If no parent folder is given, a root level folder will be created
-     *
-     * @param string $newFolderName
-     * @param string $parentFolderIdentifier
-     * @param bool $recursive
-     * @return string the Identifier of the new folder
-     */
-    public function createFolder($newFolderName, $parentFolderIdentifier = '', $recursive = false)
-    {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201291);
     }
 
     /**
