@@ -34,6 +34,7 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
+use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
@@ -110,7 +111,13 @@ class FolderRecordFactory
             $localFolder = $localStorage->getRootLevelFolder();
         } else {
             // This is the normal case. The identifier identifies the folder inclusive its storage.
-            $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
+            try {
+                $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
+            } catch(FolderDoesNotExistException $exception) {
+                list($storage) = GeneralUtility::trimExplode(':', $identifier);
+                $localStorage = $resourceFactory->getStorageObject($storage);
+                $localFolder = $localStorage->getRootLevelFolder();
+            }
             $localStorage = $localFolder->getStorage();
         }
 
