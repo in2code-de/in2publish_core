@@ -1607,7 +1607,7 @@ class RecordTest extends UnitTestCase
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionCode(1475857626);
-        $this->expectExceptionMessage('Can not set Properties for undefined side "foo"');
+        $this->expectExceptionMessage('Can not set properties for undefined side "foo"');
 
         $stub->setPropertiesBySideIdentifier('foo', []);
     }
