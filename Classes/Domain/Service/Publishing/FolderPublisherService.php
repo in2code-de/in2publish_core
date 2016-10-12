@@ -26,10 +26,6 @@ namespace In2code\In2publishCore\Domain\Service\Publishing;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Driver\Rpc\Envelope;
-use In2code\In2publishCore\Domain\Driver\Rpc\EnvelopeDispatcher;
-use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
-use In2code\In2publishCore\Security\SshConnection;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -39,21 +35,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class FolderPublisherService
 {
     /**
-     * @var Letterbox
-     */
-    protected $letterbox = null;
-
-    /**
-     * FolderPublisherService constructor.
-     */
-    public function __construct()
-    {
-        $this->letterbox = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Driver\\Rpc\\Letterbox'
-        );
-    }
-
-    /**
      * @param string $combinedIdentifier
      * @return bool
      */
@@ -61,34 +42,19 @@ class FolderPublisherService
     {
         list($storage, $folderIdentifier) = GeneralUtility::trimExplode(':', $combinedIdentifier);
 
-        $fileExists = ResourceFactory::getInstance()->getStorageObject($storage)->hasFolder($folderIdentifier);
-        // determine if the folder should get published or deleted.
-        // if it exists locally then create it on foreign, else delete it.
-        if ($fileExists) {
-            $envelope = new Envelope(
-                EnvelopeDispatcher::CMD_CREATE_FOLDER,
-                array(
-                    'storage' => $storage,
-                    'newFolderName' => basename($folderIdentifier),
-                    'parentFolderIdentifier' => dirname($folderIdentifier),
-                    'recursive' => true,
-                )
-            );
-        } else {
-            $envelope = new Envelope(
-                EnvelopeDispatcher::CMD_DELETE_FOLDER,
-                array(
-                    'storage' => $storage,
-                    'folderIdentifier' => $folderIdentifier,
-                    'deleteRecursively' => true,
-                )
-            );
-        }
+        $remoteFalDriver = GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Domain\\Driver\\RemoteFileAbstractionLayerDriver'
+        );
+        $remoteFalDriver->setStorageUid($storage);
+        $remoteFalDriver->initialize();
 
-        $uid = $this->letterbox->sendEnvelope($envelope);
-        SshConnection::makeInstance()->executeRpc($uid);
-        $responseEnvelope = $this->letterbox->receiveEnvelope($uid);
-        $response = $responseEnvelope->getResponse();
-        return $fileExists ? $response === $folderIdentifier : $response;
+        // Determine if the folder should get published or deleted.
+        // If it exists locally then create it on foreign else remove it.
+        if (ResourceFactory::getInstance()->getStorageObject($storage)->hasFolder($folderIdentifier)) {
+            $success = $remoteFalDriver->createFolder(basename($folderIdentifier, dirname($folderIdentifier)));
+        } else {
+            $success = $remoteFalDriver->deleteFolder($folderIdentifier, true);
+        }
+        return $success;
     }
 }
