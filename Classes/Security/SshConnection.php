@@ -27,17 +27,12 @@ namespace In2code\In2publishCore\Security;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Command\FilesystemCommandController;
 use In2code\In2publishCore\Command\PublishTasksRunnerCommandController;
 use In2code\In2publishCore\Command\RpcCommandController;
 use In2code\In2publishCore\Command\StatusCommandController;
 use In2code\In2publishCore\Command\TableCommandController;
-use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Security\Exceptions\CommandFailedException;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
-use In2code\In2publishCore\Utility\FolderUtility;
-use TYPO3\CMS\Core\Resource\AbstractFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 

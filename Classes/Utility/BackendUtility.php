@@ -149,7 +149,6 @@ class BackendUtility
      *
      * @param string $table
      * @param int $identifier
-     * @param bool $addReturnUrl
      * @return string
      * @todo Remove outdated URI generation for TYPO3 6.2 in upcoming major version
      */
