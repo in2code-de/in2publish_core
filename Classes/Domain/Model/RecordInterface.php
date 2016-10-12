@@ -141,7 +141,7 @@ interface RecordInterface
     /**
      * @param string $side
      * @param string $propertyName
-     * @return array
+     * @return mixed
      */
     public function getPropertyBySideIdentifier($side, $propertyName);
 
