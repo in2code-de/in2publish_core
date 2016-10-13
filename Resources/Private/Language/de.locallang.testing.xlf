@@ -175,7 +175,7 @@
 			</trans-unit>
 			<trans-unit id="database.tables_only_on_local">
 				<source>Following tables only exist on local:</source>
-				<target state="translated">Folgende Tabellen exitsieren nur lokal:</target>
+				<target state="translated">Folgende Tabellen existieren nur lokal:</target>
 			</trans-unit>
 			<trans-unit id="database.tables_only_on_foreign">
 				<source>Following tables only exist on foreign:</source>
