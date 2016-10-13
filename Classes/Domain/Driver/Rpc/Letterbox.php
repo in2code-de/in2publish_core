@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Domain\Driver\Rpc;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -131,7 +132,10 @@ class Letterbox
             $database = DatabaseUtility::buildLocalDatabaseConnection();
         }
 
-        return $database->exec_SELECTcountRows('uid', static::TABLE, 'response IS NOT NULL');
+        if ($database instanceof DatabaseConnection) {
+            return $database->exec_SELECTcountRows('uid', static::TABLE, 'response IS NOT NULL');
+        }
+        return false;
     }
 
     /**
