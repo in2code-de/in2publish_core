@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Domain\Factory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Service\Database\UidReservationService;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\File;
@@ -62,11 +61,6 @@ class FileIndexFactory
     protected $sysFileTca = array();
 
     /**
-     * @var bool
-     */
-    protected $persistTemporaryIndexing = false;
-
-    /**
      * @var ContextService
      */
     protected $contextService;
@@ -85,9 +79,6 @@ class FileIndexFactory
         );
         $this->sysFileTca = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService')
                                           ->getConfigurationArrayForTable('sys_file');
-        $this->persistTemporaryIndexing = (bool)ConfigurationUtility::getConfiguration(
-            'factory.fal.persistTemporaryIndexing'
-        );
         $this->contextService = GeneralUtility::makeInstance(
             'In2code\\In2publishCore\\Service\\Context\\ContextService'
         );
@@ -100,20 +91,17 @@ class FileIndexFactory
      */
     public function makeInstanceForSide($side, $identifier)
     {
-        $additionalProperties = array();
         $foreignProperties = array();
         $localProperties = array();
         $uid = 0;
 
         if ('both' === $side || 'local' === $side) {
             $localProperties = $this->getFileIndexArray($identifier, 'local');
-            $additionalProperties['localRecordExistsTemporary'] = true;
             $uid = $localProperties['uid'];
         }
 
         if ('both' === $side || 'foreign' === $side) {
             $foreignProperties = $this->getFileIndexArray($identifier, 'foreign', $uid);
-            $additionalProperties['foreignRecordExistsTemporary'] = true;
         }
 
         return GeneralUtility::makeInstance(
@@ -122,7 +110,7 @@ class FileIndexFactory
             $localProperties,
             $foreignProperties,
             $this->sysFileTca,
-            $additionalProperties
+            array()
         );
     }
 
@@ -138,7 +126,6 @@ class FileIndexFactory
         $uid = $record->getPropertyBySideIdentifier($oppositeSide, 'uid');
 
         $record->setPropertiesBySideIdentifier($side, $this->getFileIndexArray($identifier, $side, $uid));
-        $record->addAdditionalProperty($side . 'RecordExistsTemporary', true);
 
         if ($clearOpposite) {
             $record->setPropertiesBySideIdentifier($oppositeSide, array());
@@ -203,14 +190,43 @@ class FileIndexFactory
         } else {
             $fileInfo['uid'] = $uid;
         }
+        $uid = (int)$fileInfo['uid'];
+
+        $fileInfo = array_intersect_key(
+            $fileInfo,
+            array(
+                'uid' => '',
+                'pid' => '',
+                'missing' => '',
+                'type' => '',
+                'storage' => '',
+                'identifier' => '',
+                'identifier_hash' => '',
+                'extension' => '',
+                'mime_type' => '',
+                'name' => '',
+                'sha1' => '',
+                'size' => '',
+                'creation_date' => '',
+                'modification_date' => '',
+                'folder_hash' => '',
+                'tstamp' => '',
+            )
+        );
 
         // convert all values to string to match the resulting types of a database select query result
         foreach ($fileInfo as $index => $value) {
             $fileInfo[$index] = (string)$value;
         }
 
-        if (true === $this->persistTemporaryIndexing) {
-            $this->persistFileInfo($fileInfo, $side);
+        if ($this->contextService->isLocal()) {
+            $databaseConnection = DatabaseUtility::buildDatabaseConnectionForSide($side);
+
+            if (0 === $count = $databaseConnection->exec_SELECTcountRows('uid', 'sys_file', 'uid='. $uid)) {
+                $databaseConnection->exec_INSERTquery('sys_file', $fileInfo);
+            } elseif($count > 0) {
+                $databaseConnection->exec_UPDATEquery('sys_file', 'uid='. $uid, $fileInfo);
+            }
         }
 
         return $fileInfo;
@@ -271,36 +287,5 @@ class FileIndexFactory
             return $fileInfo;
         }
         return array();
-    }
-
-    /**
-     * @param array $fileInfo
-     * @param string $side
-     */
-    protected function persistFileInfo(array $fileInfo, $side)
-    {
-        $fileInfo = array_intersect_key(
-            $fileInfo,
-            array(
-                'uid' => '',
-                'pid' => '',
-                'missing' => '',
-                'type' => '',
-                'storage' => '',
-                'identifier' => '',
-                'identifier_hash' => '',
-                'extension' => '',
-                'mime_type' => '',
-                'name' => '',
-                'sha1' => '',
-                'size' => '',
-                'creation_date' => '',
-                'modification_date' => '',
-                'folder_hash' => '',
-                'tstamp' => '',
-            )
-        );
-
-        DatabaseUtility::buildDatabaseConnectionForSide($side)->exec_INSERTquery('sys_file', $fileInfo);
     }
 }

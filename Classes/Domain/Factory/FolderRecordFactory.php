@@ -625,6 +625,10 @@ class FolderRecordFactory
     {
         $identifierList = $this->buildFileListOfMissingLocalIndices($files);
 
+        if (empty($identifierList)) {
+            return $files;
+        }
+
         foreach ($files as $localFile) {
             if ($this->isLocalIndexWithMatchingDuplicateIndexOnForeign($identifierList, $localFile)) {
                 $identifier = $localFile->getLocalProperty('identifier');
@@ -702,10 +706,7 @@ class FolderRecordFactory
                // But there is no foreign record with the same identifier AND the same uid
                && !isset($identifierList[$localIdentifier][$localUid])
                // The foreign part of the local record does not exists OR is temporary (= Not index for a remote file)
-               && (!$file->foreignRecordExists()
-                   || true === $file->getAdditionalProperty('foreignRecordExistsTemporary'))
-               // The local record is not temporary (= he local record is persisted)
-               && true !== $file->getAdditionalProperty('localRecordExistsTemporary');
+               && !$file->foreignRecordExists();
     }
 
     /**
@@ -822,13 +823,8 @@ class FolderRecordFactory
                 continue;
             }
 
-            // If the local record exists AND is not temporary skip this file. (= Does not index a local file)
-            if ($file->localRecordExists() && true !== $file->getAdditionalProperty('localRecordExistsTemporary')) {
-                continue;
-            }
-
-            // If the foreign record is temporary skip this file.
-            if (true === $file->getAdditionalProperty('foreignRecordExistsTemporary')) {
+            // If the local record exists skip this file. (= Does not index a local file)
+            if ($file->localRecordExists()) {
                 continue;
             }
 

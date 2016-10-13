@@ -20,7 +20,6 @@
 |factory.simpleOverviewAndAjax|bool|FALSE|_cropped. See example file_|
 |factory.fal.reclaimSysFileEntries|bool|FALSE|_cropped. See example file_|
 |factory.fal.autoRepairFolderHash|bool|FALSE|_cropped. See example file_|
-|factory.fal.persistTemporaryIndexing|bool|FALSE|_cropped. See example file_|
 |factory.fal.mergeSysFileByIdentifier|bool|FALSE|_cropped. See example file_|
 |factory.fal.enableSysFileReferenceUpdate|bool|FALSE|_cropped. See example file_|
 |filePreviewDomainName.local|string|stage.publishing.localhost.de|Domain prefix for local instance. This is needed for the preview links.|
@@ -209,16 +208,6 @@ factory:
     #   There is no preview of the changes which are going to be made.
     #   Changes are persisted immediately before the publish file module is rendered.
     autoRepairFolderHash: FALSE
-
-    # Given a file exists but not the sys_file entry, the sys_file information will be created on the fly.
-    # This is done the same way as FAL would do it by indexing the file.
-    # You can choose if you want in2publish_core to create indexes for files. (Otherwise they would only be created
-    # by proper usage of the FAL API or browsing the file list backend module)
-    #
-    # WARNING: This feature changes sys_file entries on live without opt-in or asking for permission.
-    #   There is no preview of the changes which are going to be made.
-    #   Changes are persisted immediately before the publish file module is rendered.
-    persistTemporaryIndexing: FALSE
 
     # [BETA]
     # It is possible for sys_file records to have different UIDs on local and foreign while referencing the same file

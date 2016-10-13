@@ -1584,14 +1584,6 @@ class CommonRepository extends BaseRepository
             array($tableName, $record, $this)
         );
 
-        // Special case: the new FAL publishing creates temporary sys_file entries.
-        // These entries may be created for local, foreign or both sides. They will mostly lead to "changed" states,
-        // but they must be equal after publishing. So persistence on publish is mandatory for these.
-        // Even for local records.
-        if ('sys_file' === $record->getTableName()) {
-            $this->updateLocalRecord($record);
-        }
-
         /*
          * For Records shown as moved:
          * Since moved pages only get published explicitly, they will
@@ -1716,63 +1708,6 @@ class CommonRepository extends BaseRepository
         $previousTableName = $this->replaceTableName($record->getTableName());
         $this->deleteRecord($this->foreignDatabase, $record->getIdentifier());
         $this->setTableName($previousTableName);
-    }
-
-    /**
-     * @param Record $record
-     */
-    protected function updateLocalRecord(Record $record)
-    {
-        if (true === $record->getAdditionalProperty('localRecordExistsTemporary')) {
-            $previousTableName = $this->replaceTableName($record->getTableName());
-
-            $data = array(
-                'tableName' => $this->tableName,
-                'identifier' => $record->getIdentifier(),
-            );
-
-            $recordCount = $this->countRecord($this->localDatabase, $record->getIdentifier());
-            if (false === $recordCount) {
-                // an error occurred while counting the local database records.
-                $this->logger->error(
-                    'Could not count number of records when updating a local record',
-                    $data
-                );
-                return;
-            } elseif (1 === $recordCount) {
-                // The local record exists already, because it was inserted by the
-                // persistTemporaryIndexing feature or it was simply flagged wrong
-                return;
-            } else {
-                // The file will be published to foreign.
-                // To ensure the sys_file record has the same uid on both sides from now on
-                // a new index will be written to the local database.
-                // BTW: In this case it does not matter if the foreign record existed or not,
-                // because the uid is either reserved or occupied by the foreign record.
-                if (RecordInterface::RECORD_STATE_ADDED === $record->getState()) {
-                    if (0 === $this->countRecord($this->localDatabase, $record->getIdentifier())) {
-                        if (true === $this->addRecord($this->localDatabase, $record->getLocalProperties())) {
-                            $this->logger->info('Created local file index record', $data);
-                        } else {
-                            $this->logger->error('Failed to create local file index record', $data);
-                        }
-                    } else {
-                        if (false === ConfigurationUtility::getConfiguration('factory.fal.persistTemporaryIndexing')) {
-                            $this->logger->error('The uid of the temporary index entry was already taken', $data);
-                        } else {
-                            $this->logger->debug('persistTemporaryIndexing is enabled. Index was already saved', $data);
-                        }
-                    }
-                } else {
-                    // TODO: implement this case...
-                }
-
-                // either insert the temporary local or the foreign record.
-                // either merge the values before inserting or just use one side.
-            }
-
-            $this->setTableName($previousTableName);
-        }
     }
 
     /**
