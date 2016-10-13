@@ -171,6 +171,11 @@ class FolderRecordFactory
         // Now let's find all files inside of the selected folder by the folders hash.
         $files = $this->commonRepository->findByProperty('folder_hash', $hashedIdentifier);
 
+        // FEATURE: mergeSysFileByIdentifier and enableSysFileReferenceUpdate
+        if (true === $this->configuration['mergeSysFileByIdentifier']) {
+            $files = $this->mergeSysFileByIdentifier($files);
+        }
+
         $indexedIdentifiers = $this->buildIndexedIdentifiersList($files);
         $diskIdentifiers = $this->buildDiskIdentifiersList($identifier);
         $onlyDiskIdentifiers = $this->determineIdentifiersOnlyOnDisk($diskIdentifiers, $indexedIdentifiers);
@@ -195,11 +200,6 @@ class FolderRecordFactory
 
         // [10] NFDB and [13] NLDB
         $this->updateFilesWithMissingIndices($indexedIdentifiers, $diskIdentifiers, $files);
-
-        // FEATURE: mergeSysFileByIdentifier and enableSysFileReferenceUpdate
-        if (true === $this->configuration['mergeSysFileByIdentifier']) {
-            $files = $this->mergeSysFileByIdentifier($files);
-        }
 
         // [0] OLDB, [3] OFDB, [4] OL, [6] ODB, [9] OF, [11] NFFS, [12] NLFS, [14] ALL and [15] NONE
         $files = $this->filterFileRecords($files);
@@ -625,65 +625,75 @@ class FolderRecordFactory
      */
     protected function mergeSysFileByIdentifier(array $files)
     {
-        $identifierList = $this->buildFileListOfMissingLocalIndices($files);
+        $identifierList = array();
 
-        if (empty($identifierList)) {
-            return $files;
+        foreach ($files as $file) {
+            $identifier = $file->getIdentifier();
+            if (null !== $localIdentifier = $file->getLocalProperty('identifier')) {
+                $identifierList[$localIdentifier]['local'] = $identifier;
+            }
+            if (null !== $foreignIdentifier = $file->getForeignProperty('identifier')) {
+                $identifierList[$foreignIdentifier]['foreign'] = $identifier;
+            }
         }
 
-        foreach ($files as $localFile) {
-            if ($this->isLocalIndexWithMatchingDuplicateIndexOnForeign($identifierList, $localFile)) {
-                $identifier = $localFile->getLocalProperty('identifier');
-                $foreignFile = array_shift($identifierList[$identifier]);
+        foreach ($identifierList as $identifier => $uidArray) {
+            if (!isset($uidArray['local'], $uidArray['foreign']) || $uidArray['local'] === $uidArray['foreign']) {
+                continue;
+            }
 
-                $oldUid = (int)$foreignFile->getForeignProperty('uid');
-                $newUid = (int)$localFile->getLocalProperty('uid');
+            $foreignFile = $files[$uidArray['foreign']];
+            $localFile = $files[$uidArray['local']];
 
-                $logData = array('old' => $oldUid, 'new' => $newUid, 'identifier' => $identifier);
+            $logData = array(
+                'local|new' => $uidArray['local'],
+                'foreign|old' => $uidArray['foreign'],
+                'identifier' => $identifier,
+            );
 
-                // Run the integrity test when enableSysFileReferenceUpdate (ESFRU) is not enabled
-                if (true !== $this->configuration['enableSysFileReferenceUpdate']) {
-                    // If the sys_file was referenced abort here, because it's unsafe to overwrite the uid
-                    if (0 !== $this->countForeignReferences($oldUid)) {
-                        break;
+            // Run the integrity test when enableSysFileReferenceUpdate (ESFRU) is not enabled
+            if (true !== $this->configuration['enableSysFileReferenceUpdate']) {
+                // If the sys_file was referenced abort here, because it's unsafe to overwrite the uid
+                if (0 !== $this->countForeignReferences($uidArray['foreign'])) {
+                    continue;
+                }
+            }
+
+            // If a sys_file record with the "new" uid has been found abort immediately
+            if (0 !== $this->countForeignIndices($uidArray['local'])) {
+                // TODO: UID FLIP CANDIDATES
+                continue;
+            }
+
+            // Rewrite the foreign UID of the foreign index.
+            if (true === $this->updateForeignIndex($uidArray['foreign'], $uidArray['local'])) {
+                $this->logger->notice('Rewrote a sys_file uid by the mergeSysFileByIdentifier feature', $logData);
+
+                // Rewrite all occurrences of the old uid by the new in all references on foreign if SFRU is enabled
+                if (true === $this->configuration['enableSysFileReferenceUpdate']) {
+                    if (true === $this->updateForeignReference($uidArray['foreign'], $uidArray['local'])) {
+                        $this->logger->notice('Rewrote sys_file_reference by the SFRU feature', $logData);
+                    } else {
+                        $this->logger->error(
+                            'Failed to rewrite sys_file_reference by the SFRU feature',
+                            $this->enrichWithForeignDatabaseErrorInformation($logData)
+                        );
                     }
                 }
 
-                // If a sys_file record with the "new" uid has been found abort immediately
-                if (0 !== $this->countForeignIndices($newUid)) {
-                    break;
-                }
+                // copy the foreign's properties with the new uid to the local record (merge)
+                $foreignProperties = $foreignFile->getForeignProperties();
+                $foreignProperties['uid'] = (string)$uidArray['local'];
+                $localFile->setForeignProperties($foreignProperties);
+                $localFile->setDirtyProperties()->calculateState();
 
-                // Rewrite the foreign UID of the foreign index.
-                if (true === $this->updateForeignIndex($oldUid, $newUid)) {
-                    $this->logger->notice('Rewrote a sys_file uid by the mergeSysFileByIdentifier feature', $logData);
-
-                    // Rewrite all occurrences of the old uid by the new in all references on foreign if SFRU is enabled
-                    if (true === $this->configuration['enableSysFileReferenceUpdate']) {
-                        if (true === $this->updateForeignReference($oldUid, $newUid)) {
-                            $this->logger->notice('Rewrote sys_file_reference by the SFRU feature', $logData);
-                        } else {
-                            $this->logger->error(
-                                'Failed to rewrite sys_file_reference by the SFRU feature',
-                                $this->enrichWithForeignDatabaseErrorInformation($logData)
-                            );
-                        }
-                    }
-
-                    // copy the foreign's properties with the new uid to the local record (merge)
-                    $foreignProperties = $foreignFile->getForeignProperties();
-                    $foreignProperties['uid'] = $newUid;
-                    $localFile->setForeignProperties($foreignProperties);
-                    $localFile->setDirtyProperties()->calculateState();
-
-                    // remove the (old) foreign file from the list
-                    unset($files[$oldUid]);
-                } else {
-                    $this->logger->error(
-                        'Failed to rewrite a sys_file uid by the mergeSysFileByIdentifier feature',
-                        $this->enrichWithForeignDatabaseErrorInformation($logData)
-                    );
-                }
+                // remove the (old) foreign file from the list
+                unset($files[$uidArray['foreign']]);
+            } else {
+                $this->logger->error(
+                    'Failed to rewrite a sys_file uid by the mergeSysFileByIdentifier feature',
+                    $this->enrichWithForeignDatabaseErrorInformation($logData)
+                );
             }
         }
 
@@ -808,31 +818,6 @@ class FolderRecordFactory
             throw new \RuntimeException('Could not count foreign indices by uid', 1476097373);
         }
         return (int)$count;
-    }
-
-    /**
-     * @param Record[] $files
-     * @return Record[][]
-     */
-    protected function buildFileListOfMissingLocalIndices(array $files)
-    {
-        $identifierList = array();
-        // Get all foreign file identifiers to match again
-        foreach ($files as $file) {
-            // If the file only exist local skip it.
-            $foreignIdentifier = $file->getForeignProperty('identifier');
-            if (null === $foreignIdentifier || !$file->hasForeignProperty('uid')) {
-                continue;
-            }
-
-            // If the local record exists skip this file. (= Does not index a local file)
-            if ($file->localRecordExists()) {
-                continue;
-            }
-
-            $identifierList[$foreignIdentifier][$file->getIdentifier()] = $file;
-        }
-        return $identifierList;
     }
 
     /**
