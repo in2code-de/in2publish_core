@@ -113,7 +113,7 @@ class FolderRecordFactory
             // This is the normal case. The identifier identifies the folder inclusive its storage.
             try {
                 $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
-            } catch(FolderDoesNotExistException $exception) {
+            } catch (FolderDoesNotExistException $exception) {
                 list($storage) = GeneralUtility::trimExplode(':', $identifier);
                 $localStorage = $resourceFactory->getStorageObject($storage);
                 $localFolder = $localStorage->getRootLevelFolder();
@@ -459,7 +459,8 @@ class FolderRecordFactory
     protected function getFilesIdentifiersInFolder($identifier, DriverInterface $driver)
     {
         if ($driver->folderExists($identifier)) {
-            return array_values($driver->getFilesInFolder($identifier));
+            $identifierList = array_values($driver->getFilesInFolder($identifier));
+            return $this->convertIdentifiers($driver, $identifierList);
         }
         return array();
     }
@@ -508,7 +509,8 @@ class FolderRecordFactory
     protected function getSubFolderIdentifiers(DriverInterface $driver, $identifier)
     {
         if ($driver->folderExists($identifier)) {
-            return $driver->getFoldersInFolder($identifier);
+            $identifierList = $driver->getFoldersInFolder($identifier);
+            return $this->convertIdentifiers($driver, $identifierList);
         }
         return array();
     }
@@ -829,6 +831,25 @@ class FolderRecordFactory
             }
 
             $identifierList[$foreignIdentifier][$file->getIdentifier()] = $file;
+        }
+        return $identifierList;
+    }
+
+    /**
+     * @param DriverInterface $driver
+     * @param array $identifierList
+     * @return array
+     */
+    protected function convertIdentifiers(DriverInterface $driver, array $identifierList)
+    {
+        if (!$driver->isCaseSensitiveFileSystem()) {
+            $identifierList = array_map(
+                function ($identifier) {
+                    return strtolower($identifier);
+                },
+                $identifierList
+            );
+            return $identifierList;
         }
         return $identifierList;
     }

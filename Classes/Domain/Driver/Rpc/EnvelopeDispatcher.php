@@ -78,19 +78,21 @@ class EnvelopeDispatcher
         $folderIdentifier = $request['folderIdentifier'];
 
         if ($driver->folderExists($folderIdentifier)) {
-            $files = $driver->getFilesInFolder($folderIdentifier);
+            $files = array();
 
-            foreach ($files as $file) {
-                $fileObject = $this->getFileObjectWithoutIndexing($driver, $file, $storage);
-                $files[$file] = array();
-                $files[$file]['hash'] = $driver->hash($file, 'sha1');
-                $files[$file]['info'] = $driver->getFileInfoByIdentifier($file);
-                $files[$file]['publicUrl'] = $storage->getPublicUrl($fileObject);
+            $fileIdentifiers = $this->convertIdentifiers($driver, $driver->getFilesInFolder($folderIdentifier));
+
+            foreach ($fileIdentifiers as $fileIdentifier) {
+                $fileObject = $this->getFileObjectWithoutIndexing($driver, $fileIdentifier, $storage);
+                $files[$fileIdentifier] = array();
+                $files[$fileIdentifier]['hash'] = $driver->hash($fileIdentifier, 'sha1');
+                $files[$fileIdentifier]['info'] = $driver->getFileInfoByIdentifier($fileIdentifier);
+                $files[$fileIdentifier]['publicUrl'] = $storage->getPublicUrl($fileObject);
             }
 
             return array(
                 'exists' => true,
-                'folders' => $driver->getFoldersInFolder($folderIdentifier),
+                'folders' => $this->convertIdentifiers($driver, $driver->getFoldersInFolder($folderIdentifier)),
                 'files' => $files,
             );
         }
@@ -121,7 +123,7 @@ class EnvelopeDispatcher
         $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
-        return call_user_func_array(array($driver, 'getFoldersInFolder'), $request);
+        return $this->convertIdentifiers($driver, call_user_func_array(array($driver, 'getFoldersInFolder'), $request));
     }
 
     /**
@@ -143,7 +145,7 @@ class EnvelopeDispatcher
         $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
-        $files = call_user_func_array(array($driver, 'getFilesInFolder'), $request);
+        $files = $this->convertIdentifiers($driver, call_user_func_array(array($driver, 'getFilesInFolder'), $request));
 
         foreach ($files as $file) {
             $fileObject = $this->getFileObjectWithoutIndexing($driver, $file, $storage);
@@ -297,5 +299,23 @@ class EnvelopeDispatcher
             $storage
         );
         return $file;
+    }
+
+    /**
+     * @param DriverInterface $driver
+     * @param array $identifierList
+     * @return array
+     */
+    protected function convertIdentifiers(DriverInterface $driver, array $identifierList)
+    {
+        if (!$driver->isCaseSensitiveFileSystem()) {
+            $identifierList = array_map(
+                function ($identifier) {
+                    return strtolower($identifier);
+                },
+                $identifierList
+            );
+        }
+        return $identifierList;
     }
 }
