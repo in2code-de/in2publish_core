@@ -190,6 +190,10 @@
 				<source>These fields differ:</source>
 				<target state="translated">Diese Felder haben Unterschiede:</target>
 			</trans-unit>
+			<trans-unit id="database.different_tables">
+				<source>These tables differ:</source>
+				<target state="translated">Diese Tabellen haben Unterschiede:</target>
+			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest -->
 
