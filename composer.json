@@ -67,7 +67,8 @@
             "web-dir": ".Build/Web"
         },
         "branch-alias": {
-            "dev-master": "5.0.x-dev"
+            "dev-master": "5.0.x-dev",
+            "dev-feature/ffs": "5.1.x-dev"
         }
     }
 }
