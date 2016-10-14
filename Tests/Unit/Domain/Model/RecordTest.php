@@ -1335,7 +1335,7 @@ class RecordTest extends UnitTestCase
     public function testIsLocalPreviewAvailableReturnsTrueIfPageCanBeRendered()
     {
         $record = $this->getRecordStub([]);
-        $record->__construct('pages', ['doktype' => 2], ['doktype' => 223], [], []);
+        $record->__construct('pages', ['uid' => 3, 'doktype' => 2], ['uid' => 3, 'doktype' => 223], [], []);
         $this->assertTrue($record->isLocalPreviewAvailable());
     }
 
@@ -1345,7 +1345,7 @@ class RecordTest extends UnitTestCase
     public function testIsLocalPreviewAvailableReturnsFalseForHighDoktypes()
     {
         $record = $this->getRecordStub([]);
-        $record->__construct('pages', ['doktype' => 201], ['doktype' => 201], [], []);
+        $record->__construct('pages', ['uid' => 3, 'doktype' => 201], ['uid' => 3, 'doktype' => 201], [], []);
         $this->assertFalse($record->isLocalPreviewAvailable());
     }
 
@@ -1355,7 +1355,17 @@ class RecordTest extends UnitTestCase
     public function testIsLocalPreviewAvailableReturnsFalseForOtherTablesThanPages()
     {
         $record = $this->getRecordStub([]);
-        $record->__construct('bar', ['doktype' => 2], ['doktype' => 2], [], []);
+        $record->__construct('bar', ['uid' => 3, 'doktype' => 2], ['uid' => 3, 'doktype' => 2], [], []);
+        $this->assertFalse($record->isLocalPreviewAvailable());
+    }
+
+    /**
+     * @covers ::isLocalPreviewAvailable
+     */
+    public function testIsLocalPreviewAvailableReturnsFalseForRootPage()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', ['uid' => 0, 'doktype' => 2], ['uid' => 0, 'doktype' => 2], [], []);
         $this->assertFalse($record->isLocalPreviewAvailable());
     }
 
@@ -1365,7 +1375,7 @@ class RecordTest extends UnitTestCase
     public function testIsForeignPreviewAvailableReturnsTrueIfPageCanBeRendered()
     {
         $record = $this->getRecordStub([]);
-        $record->__construct('pages', ['doktype' => 211], ['doktype' => 2], [], []);
+        $record->__construct('pages', ['uid' => 3, 'doktype' => 211], ['uid' => 3, 'doktype' => 2], [], []);
         $this->assertTrue($record->isForeignPreviewAvailable());
     }
 
@@ -1375,7 +1385,7 @@ class RecordTest extends UnitTestCase
     public function testIsForeignPreviewAvailableReturnsFalseForHighDoktypes()
     {
         $record = $this->getRecordStub([]);
-        $record->__construct('pages', ['doktype' => 2], ['doktype' => 222], [], []);
+        $record->__construct('pages', ['uid' => 3, 'doktype' => 2], ['uid' => 3, 'doktype' => 222], [], []);
         $this->assertFalse($record->isForeignPreviewAvailable());
     }
 
@@ -1385,7 +1395,17 @@ class RecordTest extends UnitTestCase
     public function testIsForeignPreviewAvailableReturnsFalseForOtherTablesThanPages()
     {
         $record = $this->getRecordStub([]);
-        $record->__construct('foo', ['doktype' => 2], ['doktype' => 100], [], []);
+        $record->__construct('foo', ['uid' => 3, 'doktype' => 2], ['uid' => 3, 'doktype' => 100], [], []);
+        $this->assertFalse($record->isForeignPreviewAvailable());
+    }
+
+    /**
+     * @covers ::isForeignPreviewAvailable
+     */
+    public function testIsForeignPreviewAvailableReturnsFalseForRootPage()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', ['uid' => 0, 'doktype' => 2], ['uid' => 0, 'doktype' => 100], [], []);
         $this->assertFalse($record->isForeignPreviewAvailable());
     }
 

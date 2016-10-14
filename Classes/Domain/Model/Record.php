@@ -1006,7 +1006,9 @@ class Record implements RecordInterface
      */
     public function isLocalPreviewAvailable()
     {
-        return $this->tableName === 'pages' && $this->getLocalProperty('doktype') < 200;
+        return $this->tableName === 'pages'
+               && $this->getLocalProperty('doktype') < 200
+               && $this->getLocalProperty('uid') > 0;
     }
 
     /**
@@ -1014,7 +1016,9 @@ class Record implements RecordInterface
      */
     public function isForeignPreviewAvailable()
     {
-        return $this->tableName === 'pages' && $this->getForeignProperty('doktype') < 200;
+        return $this->tableName === 'pages'
+               && $this->getForeignProperty('doktype') < 200
+               && $this->getForeignProperty('uid') > 0;
     }
 
     /**
