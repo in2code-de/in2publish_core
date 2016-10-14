@@ -25,7 +25,8 @@ namespace In2code\In2publishCore\ViewHelpers\Repository;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Repository\LocalRepository;
+use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -34,11 +35,24 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 class GetBackendUserUsernameByIdentifierViewHelper extends AbstractViewHelper
 {
     /**
-     * formsRepository
-     *
-     * @var LocalRepository
+     * @var DatabaseConnection
      */
-    protected $localRepository;
+    protected $databaseConnection;
+
+    /**
+     * @var array
+     */
+    protected $cache = array();
+
+    /**
+     * Init
+     *
+     * @return void
+     */
+    public function initialize()
+    {
+        $this->databaseConnection = DatabaseUtility::buildLocalDatabaseConnection();
+    }
 
     /**
      * Get username of a backend user
@@ -48,24 +62,20 @@ class GetBackendUserUsernameByIdentifierViewHelper extends AbstractViewHelper
      */
     public function render($identifier)
     {
-        $username = '-';
-        $row = $this->localRepository->getPropertiesForIdentifier($identifier);
-        if (!empty($row['username'])) {
-            $username = $row['username'];
+        // lookup cache
+        if (!isset($this->cache[$identifier = (int)$identifier])) {
+            $result = (array)$this->databaseConnection->exec_SELECTgetSingleRow(
+                'username',
+                'be_users',
+                'uid=' . $identifier
+            );
+            if (!empty($result['username'])) {
+                $this->cache[$identifier] = $result['username'];
+            } else {
+                // fallback value
+                $this->cache[$identifier] = '- [' . $identifier . ']';
+            }
         }
-        return $username;
-    }
-
-    /**
-     * Init
-     *
-     * @return void
-     */
-    public function initialize()
-    {
-        $this->localRepository = $this->objectManager->get(
-            'In2code\\In2publishCore\\Domain\\Repository\\LocalRepository',
-            'be_users'
-        );
+        return $this->cache[$identifier];
     }
 }

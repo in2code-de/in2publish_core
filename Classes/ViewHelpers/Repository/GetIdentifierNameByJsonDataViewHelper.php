@@ -25,7 +25,8 @@ namespace In2code\In2publishCore\ViewHelpers\Repository;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Repository\LocalRepository;
+use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -34,11 +35,19 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 class GetIdentifierNameByJsonDataViewHelper extends AbstractViewHelper
 {
     /**
-     * formsRepository
-     *
-     * @var LocalRepository
+     * @var DatabaseConnection
      */
-    protected $localRepository;
+    protected $databaseConnection;
+
+    /**
+     * Init
+     *
+     * @return void
+     */
+    public function initialize()
+    {
+        $this->databaseConnection = DatabaseUtility::buildLocalDatabaseConnection();
+    }
 
     /**
      * Get identifier name from json data
@@ -55,25 +64,16 @@ class GetIdentifierNameByJsonDataViewHelper extends AbstractViewHelper
         if (!empty($dataArray['identifier'])) {
             $identifier = $dataArray['identifier'];
             if (is_numeric($dataArray['identifier'])) {
-                $row = $this->localRepository->getPropertiesForIdentifier($dataArray['identifier']);
+                $row = (array)$this->databaseConnection->exec_SELECTgetSingleRow(
+                    '*',
+                    'pages',
+                    'uid=' . (int)$dataArray['identifier']
+                );
                 if (!empty($row['title'])) {
                     $identifier = $row['title'];
                 }
             }
         }
         return $identifier;
-    }
-
-    /**
-     * Init
-     *
-     * @return void
-     */
-    public function initialize()
-    {
-        $this->localRepository = $this->objectManager->get(
-            'In2code\\In2publishCore\\Domain\\Repository\\LocalRepository',
-            'pages'
-        );
     }
 }
