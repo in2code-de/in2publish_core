@@ -108,6 +108,7 @@ class DomainService
         $rootline = BackendUtility::BEgetRootLine($record->getIdentifier());
         foreach ($rootline as $page) {
             $pageIdentifier = (int)$page['uid'];
+            // TODO this seems to be called too often
             $domainRecords = $this->commonRepository->findByProperty('pid', $pageIdentifier);
             foreach ($domainRecords as $domainRecord) {
                 /** @var Record $domainRecord */
