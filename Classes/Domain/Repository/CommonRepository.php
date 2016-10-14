@@ -1576,43 +1576,45 @@ class CommonRepository extends BaseRepository
         }
         $alreadyVisited[$tableName][] = $record->getIdentifier();
 
-        // Dispatch Anomaly
-        $this->signalSlotDispatcher->dispatch(
-            __CLASS__,
-            'publishRecordRecursiveBeforePublishing',
-            array($tableName, $record, $this)
-        );
+        if ($this->shouldPublishRecord($record, $tableName)) {
+            // Dispatch Anomaly
+            $this->signalSlotDispatcher->dispatch(
+                __CLASS__,
+                'publishRecordRecursiveBeforePublishing',
+                array($tableName, $record, $this)
+            );
 
-        /*
-         * For Records shown as moved:
-         * Since moved pages only get published explicitly, they will
-         * have the state "changed" instead of "moved".
-         * Because of this, we don't need to take care about that state
-         */
+            /*
+             * For Records shown as moved:
+             * Since moved pages only get published explicitly, they will
+             * have the state "changed" instead of "moved".
+             * Because of this, we don't need to take care about that state
+             */
 
-        $state = $record->getState();
-        if ($state === RecordInterface::RECORD_STATE_CHANGED || $state === RecordInterface::RECORD_STATE_MOVED) {
-            $this->updateForeignRecord($record);
-        } elseif ($state === RecordInterface::RECORD_STATE_ADDED) {
-            $this->addForeignRecord($record);
-        } elseif ($state === RecordInterface::RECORD_STATE_DELETED) {
-            if ($record->localRecordExists()) {
+            $state = $record->getState();
+            if ($state === RecordInterface::RECORD_STATE_CHANGED || $state === RecordInterface::RECORD_STATE_MOVED) {
                 $this->updateForeignRecord($record);
-            } elseif ($record->foreignRecordExists()) {
-                $this->deleteForeignRecord($record);
+            } elseif ($state === RecordInterface::RECORD_STATE_ADDED) {
+                $this->addForeignRecord($record);
+            } elseif ($state === RecordInterface::RECORD_STATE_DELETED) {
+                if ($record->localRecordExists()) {
+                    $this->updateForeignRecord($record);
+                } elseif ($record->foreignRecordExists()) {
+                    $this->deleteForeignRecord($record);
+                }
             }
+
+            // Dispatch Anomaly
+            $this->signalSlotDispatcher->dispatch(
+                __CLASS__,
+                'publishRecordRecursiveAfterPublishing',
+                array($tableName, $record, $this)
+            );
+
+            // set the records state to published/unchanged to prevent
+            // a second INSERT or UPDATE (superfluous queries)
+            $record->setState(RecordInterface::RECORD_STATE_UNCHANGED);
         }
-
-        // Dispatch Anomaly
-        $this->signalSlotDispatcher->dispatch(
-            __CLASS__,
-            'publishRecordRecursiveAfterPublishing',
-            array($tableName, $record, $this)
-        );
-
-        // set the records state to published/unchanged to prevent
-        // a second INSERT or UPDATE (superfluous queries)
-        $record->setState(RecordInterface::RECORD_STATE_UNCHANGED);
 
         // publish all related records
         $this->publishRelatedRecordsRecursive($record, $excludedTables, $alreadyVisited);
@@ -1824,6 +1826,18 @@ class CommonRepository extends BaseRepository
      * @return bool
      */
     protected function shouldSkipSearchingForRelatedRecordByTable(Record $record, $tableName)
+    {
+        return $this->getBooleanDecisionBySignal(__FUNCTION__, array('record' => $record, 'tableName' => $tableName));
+    }
+
+    /**
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
+     *
+     * @param Record $record
+     * @param string $tableName
+     * @return bool
+     */
+    protected function shouldPublishRecord(Record $record, $tableName)
     {
         return $this->getBooleanDecisionBySignal(__FUNCTION__, array('record' => $record, 'tableName' => $tableName));
     }
