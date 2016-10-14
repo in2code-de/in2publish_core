@@ -107,7 +107,7 @@ class Record implements RecordInterface
      * alteration of this value can be prohibited by setting
      * $this->parentRecordIsLocked = TRUE (or public setter)
      *
-     * @var Record
+     * @var RecordInterface
      */
     protected $parentRecord = null;
 
@@ -511,6 +511,23 @@ class Record implements RecordInterface
     public function getRelatedRecords()
     {
         return $this->relatedRecords;
+    }
+
+    /**
+     * NOTICE: This will not work if debug.disableParentRecords is disabled!
+     *
+     * @return RecordInterface|null
+     */
+    public function getParentPageRecord()
+    {
+        if ($this->parentRecord instanceof RecordInterface) {
+            if ('pages' === $this->parentRecord->getTableName()) {
+                return $this->parentRecord;
+            } else {
+                return $this->parentRecord->getParentPageRecord();
+            }
+        }
+        return null;
     }
 
     /**

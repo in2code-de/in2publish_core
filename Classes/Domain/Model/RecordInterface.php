@@ -181,4 +181,11 @@ interface RecordInterface
      * @return Record[][]
      */
     public function getRelatedRecords();
+
+    /**
+     * NOTICE: This will not work if debug.disableParentRecords is disabled!
+     *
+     * @return RecordInterface|null
+     */
+    public function getParentPageRecord();
 }
