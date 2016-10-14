@@ -176,4 +176,9 @@ interface RecordInterface
      * @return mixed
      */
     public function getMergedProperty($propertyName);
+
+    /**
+     * @return Record[][]
+     */
+    public function getRelatedRecords();
 }
