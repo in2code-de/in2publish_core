@@ -146,6 +146,11 @@ class RecordFactory
     protected $signalSlotDispatcher;
 
     /**
+     * @var bool
+     */
+    protected $isRootRecord = false;
+
+    /**
      * Creates the logger and sets any required configuration
      */
     public function __construct()
@@ -183,6 +188,12 @@ class RecordFactory
         array $foreignProperties,
         array $additionalProperties = array()
     ) {
+        if (false === $this->isRootRecord) {
+            $this->isRootRecord = true;
+            $isRootRecord = true;
+        } else {
+            $isRootRecord = false;
+        }
         // one of the property arrays might be empty,
         // to get the identifier we have to take a look into both arrays
         $mergedIdentifier = $this->getMergedIdentifierValue($commonRepository, $localProperties, $foreignProperties);
@@ -271,6 +282,10 @@ class RecordFactory
             }
             $this->finishedInstantiation($instanceTableName, $mergedIdentifier);
             $this->runtimeCache[$instanceTableName][$mergedIdentifier] = $instance;
+        }
+        if (true === $isRootRecord && true === $this->isRootRecord) {
+            $this->isRootRecord = false;
+            $this->signalSlotDispatcher->dispatch(__CLASS__, 'rootRecordFinished', array($this, $instance));
         }
         return $instance;
     }
