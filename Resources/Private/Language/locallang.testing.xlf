@@ -306,6 +306,9 @@
 			<trans-unit id="fal.xsp_premium_notice">
 				<source>In this community version changes between FAL storages will be simply overwritten. Allowing different FAL drivers hence allowing Cross-Storage-Publishing (XSP) is an enterprise version.</source>
 			</trans-unit>
+			<trans-unit id="fal.error_case_sensitive_setting">
+				<source>A local storage is case sensitive but the foreign storage is not. This will lead to errors and data loss on foreign when publishing files with the same name.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

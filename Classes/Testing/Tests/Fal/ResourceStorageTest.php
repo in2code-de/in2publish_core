@@ -29,12 +29,27 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Service\FlexFormService;
 
 /**
  * Class ResourceStorageTest
  */
 class ResourceStorageTest implements TestCaseInterface
 {
+    /**
+     * @var FlexFormService
+     */
+    protected $flexFormService = null;
+
+    /**
+     * ResourceStorageTest constructor.
+     */
+    public function __construct()
+    {
+        $this->flexFormService = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Service\\FlexFormService');
+    }
+
     /**
      * @return TestResult Returns a TestResult object holding all information about the failure or success
      */
@@ -67,21 +82,38 @@ class ResourceStorageTest implements TestCaseInterface
             }
         }
 
-        $addPremiumNotice = false;
-        foreach ($localStorages as $uid => $localStorage) {
-            if ($foreignStorages[$uid]['driver'] !== $localStorage['driver']) {
-                $messages[] = 'fal.different_storage_drivers';
-                $messages[] = sprintf(
-                    'Local: "%s" Foreign: "%s"',
-                    $localStorage['name'],
-                    $foreignStorages[$uid]['name']
-                );
-                $addPremiumNotice = true;
+        $caseInconsistentStorages = array();
+        $driverInconsistentStorages = array();
+        foreach (array_unique(array_merge(array_keys($localStorages), array_keys($foreignStorages))) as $uid) {
+            if (isset($localStorages[$uid], $foreignStorages[$uid])) {
+                // driver type differences
+                if ($localStorages[$uid]['driver'] !== $foreignStorages[$uid]['driver']) {
+                    $driverInconsistentStorages[] = sprintf(
+                        'Local: "%s"; Foreign: "%s"; UID: %d',
+                        $localStorages[$uid]['name'],
+                        $foreignStorages[$uid]['name'],
+                        $uid
+                    );
+                }
+
+                // case sensitivity for local drivers
+                $localConfig = $this->getStorageConfiguration($localStorages, $uid);
+                $foreignConfig = $this->getStorageConfiguration($foreignStorages, $uid);
+                if (isset($localConfig['caseSensitive'], $foreignConfig['caseSensitive'])) {
+                    if (true === (bool)$localConfig['caseSensitive'] && false === (bool)$foreignConfig['caseSensitive']) {
+                        $caseInconsistentStorages[] = 'Affected storage UID: ' . $uid;
+                    }
+                }
             }
         }
-
-        if (true === $addPremiumNotice) {
+        if (!empty($driverInconsistentStorages)) {
+            $messages[] = 'fal.different_storage_drivers';
+            $messages = array_merge($messages, $driverInconsistentStorages);
             $messages[] = 'fal.xsp_premium_notice';
+        }
+        if (!empty($caseInconsistentStorages)) {
+            $messages[] = 'fal.error_case_sensitive_setting';
+            $messages = array_merge($messages, $caseInconsistentStorages);
         }
 
         if (!empty($messages)) {
@@ -99,5 +131,15 @@ class ResourceStorageTest implements TestCaseInterface
             'In2code\\In2publishCore\\Testing\\Tests\\Database\\LocalDatabaseTest',
             'In2code\\In2publishCore\\Testing\\Tests\\Database\\ForeignDatabaseTest',
         );
+    }
+
+    /**
+     * @param array $storageConfig
+     * @param int $uid
+     * @return array
+     */
+    protected function getStorageConfiguration(array $storageConfig, $uid)
+    {
+        return $this->flexFormService->convertFlexFormContentToArray($storageConfig[$uid]['configuration']);
     }
 }

@@ -383,7 +383,11 @@
 			</trans-unit>
 			<trans-unit id="fal.xsp_premium_notice">
 				<source>In this community version changes between FAL storages will be simply overwritten. Allowing different FAL drivers hence allowing Cross-Storage-Publishing (XSP) is an enterprise version.</source>
-				<target state="translated">In dieser Community Version werden unterschiede zwischen FAL Storages überschrieben. Cross-Storage-Publishing (XSP) ist ein Feature der Enterprise Version von in2publish. </target>
+				<target state="translated">In dieser Community Version werden unterschiede zwischen FAL Storages überschrieben. Cross-Storage-Publishing (XSP) ist ein Feature der Enterprise Version von in2publish.</target>
+			</trans-unit>
+			<trans-unit id="fal.error_case_sensitive_setting">
+				<source>A local storage is case sensitive but the foreign storage is not. This will lead to errors and data loss on foreign when publishing files with the same name.</source>
+				<target state="translated">Eine lokale FAL Storage unterscheidet zwischen Groß- und Kleinschreibung, die entfernte Storage jedoch nicht. Dies wird zu Fehlern und Datenverlust auf dem entfernten System führen, wenn Dateien mit dem gleichen Namen publiziert werden.</target>
 			</trans-unit>
 		</body>
 	</file>
