@@ -292,7 +292,7 @@
 				<source>All FAL Storages are okay.</source>
 			</trans-unit>
 			<trans-unit id="fal.storage_errors">
-				<source>Fal Storages are missing. This might lead to publishing errors.</source>
+				<source>Your FAL configuration is erroneous. This might lead to publishing errors.</source>
 			</trans-unit>
 			<trans-unit id="fal.missing_on_local">
 				<source>Following FAL Storages are missing on Local:</source>

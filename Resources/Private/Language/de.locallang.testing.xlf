@@ -366,8 +366,8 @@
 				<target state="translated">Alle FAL Storages sind okay.</target>
 			</trans-unit>
 			<trans-unit id="fal.storage_errors">
-				<source>Fal Storages are missing. This might lead to publishing errors.</source>
-				<target state="translated">Es fehlen FAL Storages. Dies kann zu Fehlern beim Dateipublishing führen.</target>
+				<source>Your FAL configuration is erroneous. This might lead to publishing errors.</source>
+				<target state="translated">Ihre FAL Konfiguration ist fehlerhaft. Dies kann zu Fehlern beim Dateipublishing führen.</target>
 			</trans-unit>
 			<trans-unit id="fal.missing_on_local">
 				<source>Following FAL Storages are missing on Local:</source>
