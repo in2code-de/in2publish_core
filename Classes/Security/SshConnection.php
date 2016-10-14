@@ -754,13 +754,21 @@ class SshConnection
             } elseif ($information[0] === 'FolderCreateMask') {
                 $createMasks['folder'] = $information[1];
             } else {
-                throw new \Exception(
-                    'Failed to retrieve foreign file and folder mask. '
-                    . 'The response does not contain the neccessary keys. '
-                    . 'Check if BE user _cli_lowlevel does exist on foreign, '
-                    . 'in2publish is installed and command controllers can be called (CMD: "' . $command . '"',
-                    1446816322
-                );
+                if (false !== strpos($value, 'not accepted when the connection to the database')) {
+                    throw new \Exception(
+                        'The foreign database is unreachable. (CMD: "' . $command . '"; Message: "' . $value . '")',
+                        1476450079
+                    );
+                } else {
+                    throw new \Exception(
+                        'Failed to retrieve foreign file and folder mask. '
+                        . 'The response does not contain the neccessary keys. '
+                        . 'Check if BE user _cli_lowlevel does exist on foreign, '
+                        . 'in2publish is installed and command controllers can be called (CMD: "'
+                        . $command . '"; Message: "' . $value . '")',
+                        1446816322
+                    );
+                }
             }
         }
 
