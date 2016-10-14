@@ -179,16 +179,13 @@ call_user_func(
                     'registerInstance',
                     false
                 );
-
-                foreach (array('beforeIndexViewRender', 'beforeDetailViewRender', 'beforePublishing') as $signalName) {
-                    $signalSlotDispatcher->connect(
-                        'In2code\\In2publishCore\\Controller\\RecordController',
-                        $signalName,
-                        'In2code\\In2publishCore\\Domain\\PostProcessing\\FileIndexPostProcessor',
-                        'postProcess',
-                        false
-                    );
-                }
+                $signalSlotDispatcher->connect(
+                    'In2code\\In2publishCore\\Domain\\Factory\\RecordFactory',
+                    'rootRecordFinished',
+                    'In2code\\In2publishCore\\Domain\\PostProcessing\\FileIndexPostProcessor',
+                    'postProcess',
+                    false
+                );
 
                 // register tests for tools module
                 $GLOBALS['in2publish_core']['tests'] = array(

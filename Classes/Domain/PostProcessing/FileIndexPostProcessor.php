@@ -26,7 +26,6 @@ namespace In2code\In2publishCore\Domain\PostProcessing;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Controller\RecordController;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
@@ -59,11 +58,11 @@ class FileIndexPostProcessor implements SingletonInterface
     }
 
     /**
-     * @param RecordController $recordController
+     * @param RecordFactory $recordFactory
      * @param RecordInterface $instance
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function postProcess(RecordController $recordController, RecordInterface $instance)
+    public function postProcess(RecordFactory $recordFactory, RecordInterface $instance)
     {
         $resourceFactory = ResourceFactory::getInstance();
         /** @var RecordInterface[][] $sortedRecords */
