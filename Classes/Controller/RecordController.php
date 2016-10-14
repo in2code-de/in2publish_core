@@ -121,7 +121,7 @@ class RecordController extends AbstractController
      */
     public function toggleFilterStatusAndRedirectToIndexAction($filter)
     {
-        $this->toggleFilterStatusAndRedirect('in2publish_filter_records_', $filter,'index');
+        $this->toggleFilterStatusAndRedirect('in2publish_filter_records_', $filter, 'index');
     }
 
     /**
