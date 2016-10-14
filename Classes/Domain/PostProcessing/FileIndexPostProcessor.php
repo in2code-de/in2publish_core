@@ -97,6 +97,7 @@ class FileIndexPostProcessor implements SingletonInterface
                     $foreignIdentifier = $record->getLocalProperty('identifier');
                 }
                 $fileIndexFactory->updateFileIndexInfo($record, $localIdentifier, $foreignIdentifier);
+                $record->addAdditionalProperty('isAuthoritative', true);
             }
         }
     }
