@@ -63,6 +63,16 @@ function In2publishPageModule($) {
 		$('body').click(function() {
 			closeAllWorkflowContainers();
 		});
+		// Close - cross in container
+		$('.in2publish__workflowcontainer__button-close').click(function() {
+			closeAllWorkflowContainers();
+		});
+		// ESC key press
+		$(document).keyup(function(e) {
+			if (e.keyCode == 27) {
+				closeAllWorkflowContainers();
+			}
+		});
 		$('.' + that.workflowContainerClassName).click(function(e) {
 			e.stopPropagation();
 		});
