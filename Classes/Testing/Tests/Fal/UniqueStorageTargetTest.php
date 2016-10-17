@@ -40,6 +40,9 @@ use TYPO3\CMS\Extbase\Reflection\PropertyReflection;
  */
 class UniqueStorageTargetTest implements TestCaseInterface
 {
+    /**
+     * @return TestResult
+     */
     public function run()
     {
         $resourceFactory = ResourceFactory::getInstance();
@@ -107,6 +110,9 @@ class UniqueStorageTargetTest implements TestCaseInterface
         return new TestResult('fal.storage_targets_different');
     }
 
+    /**
+     * @return array
+     */
     public function getDependencies()
     {
         return array(
