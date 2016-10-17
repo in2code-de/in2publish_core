@@ -77,6 +77,7 @@ class FileIndexPostProcessor implements SingletonInterface
             }
             $sortedRecords[$uid][] = $record;
         }
+        $this->registeredInstances = array();
 
         foreach ($sortedRecords as $storageIndex => $recordArray) {
             $fileIndexFactory = GeneralUtility::makeInstance(
