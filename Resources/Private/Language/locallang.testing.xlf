@@ -309,6 +309,21 @@
 			<trans-unit id="fal.error_case_sensitive_setting">
 				<source>A local storage is case sensitive but the foreign storage is not. This will lead to errors and data loss on foreign when publishing files with the same name.</source>
 			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\UniqueStorageTargetTest -->
+
+			<trans-unit id="fal.storage_targets_different">
+				<source>All FAL storages have different file system targets.</source>
+			</trans-unit>
+			<trans-unit id="fal.storage_targets_same">
+				<source>One or more storages on local have the same file system target as the corresponding storage on foreign.</source>
+			</trans-unit>
+			<trans-unit id="fal.test_file_upload_failed">
+				<source>Could not upload a testfile to a FAL storage. Please assure write and read permissions on the storages root level folder.</source>
+			</trans-unit>
+			<trans-unit id="fal.xsp_notice">
+				<source>This community version does not support storages with identical file systems. Cross-Storage-Publishing (XSP) is an enterprise feature, which enables you to use the same file system on foreign.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

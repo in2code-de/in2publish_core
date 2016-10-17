@@ -691,6 +691,14 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         return 'getPublicUrl|' . $identifier;
     }
 
+    /**
+     * Resets the internal cache
+     */
+    public function clearCache()
+    {
+        $this->cache = array();
+    }
+
     /****************************************************************
      *
      *              NOT IMPLEMENTED; NOT NEEDED

@@ -202,6 +202,7 @@ call_user_func(
                     'In2code\\In2publishCore\\Testing\\Tests\\Application\\ForeignInstanceTest',
                     'In2code\\In2publishCore\\Testing\\Tests\\Application\\ForeignSysDomainTest',
                     'In2code\\In2publishCore\\Testing\\Tests\\Fal\\ResourceStorageTest',
+                    'In2code\\In2publishCore\\Testing\\Tests\\Fal\\UniqueStorageTargetTest',
                 );
             }
         }
