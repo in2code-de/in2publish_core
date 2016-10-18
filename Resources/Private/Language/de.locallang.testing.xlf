@@ -404,10 +404,6 @@
 				<source>Could not upload a testfile to a FAL storage. Please assure write and read permissions on the storages root level folder.</source>
 				<target state="translated">Die Testdatei konnte nicht hochgeladen werden. Bitte stellen sie sicher, dass TYPO3 Schreib- und Leserechte im Wurzelverzeichnis der FAL Storage hat.</target>
 			</trans-unit>
-			<trans-unit id="fal.xsp_notice">
-				<source>This community version does not support storages with identical file systems. Cross-Storage-Publishing (XSP) is an enterprise feature, which enables you to use the same file system on foreign.</source>
-				<target state="translated">In dieser Community Version werden identische Dateisysteme als FAL Storage Endpunkte nicht untertützt. Das Feature Cross-Storage-Publishing (XSP) der Enterprise Version ermöglicht diese Funktionalität.</target>
-			</trans-unit>
 		</body>
 	</file>
 </xliff>

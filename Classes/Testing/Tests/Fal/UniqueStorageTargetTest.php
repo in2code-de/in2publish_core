@@ -103,7 +103,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
             return new TestResult(
                 'fal.storage_targets_same',
                 TestResult::ERROR,
-                array('Affected Storages: ' . implode(',', $affectedStorages), 'fal.xsp_notice')
+                array('Affected Storages: ' . implode(',', $affectedStorages))
             );
         }
 
