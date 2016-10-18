@@ -386,8 +386,12 @@
 				<target state="translated">In dieser Community Version werden unterschiede zwischen FAL Storages überschrieben. Cross-Storage-Publishing (XSP) ist ein Feature der Enterprise Version von in2publish.</target>
 			</trans-unit>
 			<trans-unit id="fal.error_case_sensitive_setting">
-				<source>A local storage is case sensitive but the foreign storage is not. This will lead to errors and data loss on foreign when publishing files with the same name.</source>
-				<target state="translated">Eine lokale FAL Storage unterscheidet zwischen Groß- und Kleinschreibung, die entfernte Storage jedoch nicht. Dies wird zu Fehlern und Datenverlust auf dem entfernten System führen, wenn Dateien mit dem gleichen Namen publiziert werden.</target>
+				<source>Case sensitivity differences have been detected. This might lead to errors and data loss when publishing files with the same name.</source>
+				<target state="translated">Unterschiede zwischen der beachtung der Groß- und Kleinschreibung wurden entdeckt. Dies wird zu Fehlern und Datenverlust auf dem entfernten System führen, wenn Dateien mit dem gleichen Namen publiziert werden.</target>
+			</trans-unit>
+			<trans-unit id="fal.configuration_differences">
+				<source>There are configuration differences between your storages. Please align your configurations.</source>
+				<target state="translated">Es existieren Unterschiede in den Storage-Konfigurationen. Bitte gleichen sie diese an.</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Fal\UniqueStorageTargetTest -->

@@ -83,8 +83,9 @@ class ResourceStorageTest implements TestCaseInterface
             }
         }
 
-        $caseInconsistentStorages = array();
-        $driverInconsistentStorages = array();
+        $differentCaseSens = array();
+        $differentDriver = array();
+        $differentConfig = array();
 
         $storages = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher')->dispatch(
             'In2code\\In2publishCore\\Testing\\Tests\\Fal\\ResourceStorageTest',
@@ -94,36 +95,46 @@ class ResourceStorageTest implements TestCaseInterface
 
         foreach ($storages[0] as $uid) {
             if (isset($localStorages[$uid], $foreignStorages[$uid])) {
+                $localConfig = $this->getStorageConfiguration($localStorages, $uid);
+                $foreignConfig = $this->getStorageConfiguration($foreignStorages, $uid);
+
                 // driver type differences
                 if ($localStorages[$uid]['driver'] !== $foreignStorages[$uid]['driver']) {
-                    $driverInconsistentStorages[] = sprintf(
+                    $differentDriver[] = sprintf(
                         'Local: "%s"; Foreign: "%s"; UID: %d',
                         $localStorages[$uid]['name'],
                         $foreignStorages[$uid]['name'],
                         $uid
                     );
-                }
-
-                // case sensitivity for local drivers
-                $localConfig = $this->getStorageConfiguration($localStorages, $uid);
-                $foreignConfig = $this->getStorageConfiguration($foreignStorages, $uid);
-                if (isset($localConfig['caseSensitive'], $foreignConfig['caseSensitive'])) {
-                    if (true === (bool)$localConfig['caseSensitive'] && false === (bool)$foreignConfig['caseSensitive']) {
-                        $caseInconsistentStorages[] = 'Affected storage UID: ' . $uid;
-                    }
+                } elseif (isset($localConfig['caseSensitive'], $foreignConfig['caseSensitive'])
+                          && (bool)$localConfig['caseSensitive'] !== (bool)$foreignConfig['caseSensitive']
+                ) {
+                    $differentCaseSens[] = 'Affected storage UID: ' . $uid;
+                } elseif ($localConfig !== $foreignConfig) {
+                    $differentConfig[] = sprintf(
+                        'Storage: [%d] %s',
+                        $uid,
+                        $localStorages[$uid]['name']
+                    );
                 }
             }
         }
-        if (!empty($driverInconsistentStorages)) {
+        if (!empty($differentDriver)) {
             $messages[] = 'fal.different_storage_drivers';
-            $messages = array_merge($messages, $driverInconsistentStorages);
-            if (!ExtensionManagementUtility::isLoaded('in2publish')) {
-                $messages[] = 'fal.xsp_premium_notice';
-            }
+            $messages = array_merge($messages, $differentDriver);
         }
-        if (!empty($caseInconsistentStorages)) {
+        if (!empty($differentCaseSens)) {
             $messages[] = 'fal.error_case_sensitive_setting';
-            $messages = array_merge($messages, $caseInconsistentStorages);
+            $messages = array_merge($messages, $differentCaseSens);
+        }
+        if (!empty($differentConfig)) {
+            $messages[] = 'fal.configuration_differences';
+            $messages = array_merge($messages, $differentConfig);
+        }
+        if ((!empty($differentDriver) || !empty($differentConfig))
+            && !ExtensionManagementUtility::isLoaded('in2publish')
+        ) {
+            $messages[] = 'fal.xsp_premium_notice';
         }
 
         if (!empty($messages)) {

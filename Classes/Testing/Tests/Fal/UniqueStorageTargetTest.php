@@ -95,7 +95,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
             return new TestResult(
                 'fal.test_file_upload_failed',
                 TestResult::ERROR,
-                array('Affected Storages: ' . implode(',', $failedUploads))
+                array_merge(array('Affected Storages:'), $failedUploads)
             );
         }
 
@@ -103,7 +103,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
             return new TestResult(
                 'fal.storage_targets_same',
                 TestResult::ERROR,
-                array('Affected Storages: ' . implode(',', $affectedStorages))
+                array_merge(array('Affected Storages:'), $affectedStorages)
             );
         }
 

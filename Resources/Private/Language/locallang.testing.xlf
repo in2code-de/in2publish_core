@@ -307,7 +307,10 @@
 				<source>In this community version changes between FAL storages will be simply overwritten. Allowing different FAL drivers hence allowing Cross-Storage-Publishing (XSP) is an enterprise version.</source>
 			</trans-unit>
 			<trans-unit id="fal.error_case_sensitive_setting">
-				<source>A local storage is case sensitive but the foreign storage is not. This will lead to errors and data loss on foreign when publishing files with the same name.</source>
+				<source>Case sensitivity differences have been detected. This might lead to errors and data loss when publishing files with the same name.</source>
+			</trans-unit>
+			<trans-unit id="fal.configuration_differences">
+				<source>There are configuration differences between your storages. Please align your configurations.</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Fal\UniqueStorageTargetTest -->
