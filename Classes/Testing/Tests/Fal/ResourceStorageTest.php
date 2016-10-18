@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\FlexFormService;
 
@@ -84,7 +85,14 @@ class ResourceStorageTest implements TestCaseInterface
 
         $caseInconsistentStorages = array();
         $driverInconsistentStorages = array();
-        foreach (array_unique(array_merge(array_keys($localStorages), array_keys($foreignStorages))) as $uid) {
+
+        $storages = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher')->dispatch(
+            'In2code\\In2publishCore\\Testing\\Tests\\Fal\\ResourceStorageTest',
+            'filterStoragesForDriverTest',
+            array(array_unique(array_merge(array_keys($localStorages), array_keys($foreignStorages))))
+        );
+
+        foreach ($storages[0] as $uid) {
             if (isset($localStorages[$uid], $foreignStorages[$uid])) {
                 // driver type differences
                 if ($localStorages[$uid]['driver'] !== $foreignStorages[$uid]['driver']) {
@@ -109,7 +117,9 @@ class ResourceStorageTest implements TestCaseInterface
         if (!empty($driverInconsistentStorages)) {
             $messages[] = 'fal.different_storage_drivers';
             $messages = array_merge($messages, $driverInconsistentStorages);
-            $messages[] = 'fal.xsp_premium_notice';
+            if (!ExtensionManagementUtility::isLoaded('in2publish')) {
+                $messages[] = 'fal.xsp_premium_notice';
+            }
         }
         if (!empty($caseInconsistentStorages)) {
             $messages[] = 'fal.error_case_sensitive_setting';
