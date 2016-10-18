@@ -286,37 +286,60 @@
 				<source>A valid sys_domain entry has been found on the foreign system.</source>
 			</trans-unit>
 
-			<!-- \In2code\In2publishCore\Testing\Tests\Fal\ResourceStorageTest -->
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest
+				 && \In2code\In2publishCore\Testing\Tests\Fal\CaseSensitivityTest
+				 && \In2code\In2publishCore\Testing\Tests\Fal\IdenticalDriverTest -->
 
-			<trans-unit id="fal.storage_okay">
-				<source>All FAL Storages are okay.</source>
+			<trans-unit id="fal.affected_storages">
+				<source>Affected Storages:</source>
 			</trans-unit>
-			<trans-unit id="fal.storage_errors">
-				<source>Your FAL configuration is erroneous. This might lead to publishing errors.</source>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest -->
+
+			<trans-unit id="fal.no_missing_storages">
+				<source>No missing FAL storages.</source>
+			</trans-unit>
+			<trans-unit id="fal.missing_storages">
+				<source>Missing FAL storages detected.</source>
 			</trans-unit>
 			<trans-unit id="fal.missing_on_local">
-				<source>Following FAL Storages are missing on Local:</source>
+				<source>Storages missing on local:</source>
 			</trans-unit>
 			<trans-unit id="fal.missing_on_foreign">
-				<source>Following FAL Storages are missing on Foreign:</source>
+				<source>Storages missing on foreign:</source>
 			</trans-unit>
-			<trans-unit id="fal.different_storage_drivers">
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\CaseSensitivityTest -->
+
+			<trans-unit id="fal.case_sensitivity_matching">
+				<source>FAL storages case sensitivity checked.</source>
+			</trans-unit>
+			<trans-unit id="fal.case_sensitivity_mismatch">
+				<source>Case sensitivity errors detected.</source>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\IdenticalDriverTest -->
+
+			<trans-unit id="fal.driver_matching">
+				<source>The FAL storages have identical drivers.</source>
+			</trans-unit>
+			<trans-unit id="fal.driver_mismatch">
 				<source>Following FAL Storages have different drivers.</source>
 			</trans-unit>
-			<trans-unit id="fal.xsp_premium_notice">
-				<source>In this community version changes between FAL storages will be simply overwritten. Allowing different FAL drivers hence allowing Cross-Storage-Publishing (XSP) is an enterprise version.</source>
+			<trans-unit id="fal.driver_mismatch_explanation">
+				<source>The FAL driver on live will be changed by publishing. This might result in missing images in the frontend or data loss in worst case.</source>
 			</trans-unit>
-			<trans-unit id="fal.error_case_sensitive_setting">
-				<source>Case sensitivity differences have been detected. This might lead to errors and data loss when publishing files with the same name.</source>
-			</trans-unit>
-			<trans-unit id="fal.configuration_differences">
-				<source>There are configuration differences between your storages. Please align your configurations.</source>
+			<trans-unit id="fal.xsp_driver_premium_notice">
+				<source>In this community version differences between FAL storages will be simply overwritten. Allowing different FAL drivers hence allowing Cross-Storage-Publishing (XSP) is an enterprise version feature.</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Fal\UniqueStorageTargetTest -->
 
-			<trans-unit id="fal.storage_targets_different">
+			<trans-unit id="fal.storage_targets_okay">
 				<source>All FAL storages have different file system targets.</source>
+			</trans-unit>
+			<trans-unit id="fal.storage_targets_test_error">
+				<source>The unique storage target test failed.</source>
 			</trans-unit>
 			<trans-unit id="fal.storage_targets_same">
 				<source>One or more storages on local have the same file system target as the corresponding storage on foreign.</source>

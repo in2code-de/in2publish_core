@@ -27,9 +27,9 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
+use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -41,38 +41,46 @@ use TYPO3\CMS\Extbase\Reflection\PropertyReflection;
 class UniqueStorageTargetTest implements TestCaseInterface
 {
     /**
+     * @var FalStorageTestSubjectsProvider
+     */
+    protected $testSubjectProvider = null;
+
+    /**
+     * ResourceStorageTest constructor.
+     */
+    public function __construct()
+    {
+        $this->testSubjectProvider = GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Testing\\Data\\FalStorageTestSubjectsProvider'
+        );
+    }
+
+    /**
      * @return TestResult
      */
     public function run()
     {
-        $resourceFactory = ResourceFactory::getInstance();
-        $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-        $storages = $localDatabase->exec_SELECTgetRows(
-            '*',
-            'sys_file_storage',
-            'deleted=0 AND is_online=1',
-            '',
-            '',
-            '',
-            'uid'
-        );
+        $storages = $this->testSubjectProvider->getStoragesForUniqueTargetTest();
+        $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
 
+        $resourceFactory = ResourceFactory::getInstance();
+        $messages = array();
         $affectedStorages = array();
         $failedUploads = array();
 
-        foreach ($storages as $uid => $storage) {
-            $storageObject = $resourceFactory->getStorageObject($storage['uid'], $storage);
+        foreach ($keys as $key) {
+            $storageObject = $resourceFactory->getStorageObject($key, $storages['local'][$key]);
             $driverProperty = new PropertyReflection(get_class($storageObject), 'driver');
             $driverProperty->setAccessible(true);
             /** @var DriverInterface $localDriver */
             $localDriver = $driverProperty->getValue($storageObject);
             // DO NOT USE GU::MI because rFALd must not be a singleton
             $foreignDriver = new RemoteFileAbstractionLayerDriver();
-            $foreignDriver->setStorageUid($uid);
+            $foreignDriver->setStorageUid($storages['foreign'][$key]['uid']);
             $foreignDriver->initialize();
 
             do {
-                $uniqueFile = uniqid('tx_in2publish_tesfile');
+                $uniqueFile = uniqid('tx_in2publish_testfile');
             } while ($localDriver->fileExists($uniqueFile) || $foreignDriver->fileExists($uniqueFile));
 
             $sourceFile = GeneralUtility::tempnam($uniqueFile);
@@ -81,10 +89,10 @@ class UniqueStorageTargetTest implements TestCaseInterface
             if ($uniqueFile === ltrim($addedFile, '/')) {
                 $foreignDriver->clearCache();
                 if ($foreignDriver->fileExists($uniqueFile)) {
-                    $affectedStorages[] = '[' . $uid . '] ' . $storage['name'];
+                    $affectedStorages[] = '[' . $key . '] ' . $storages['local'][$key]['name'];
                 }
             } else {
-                $failedUploads[] = $uid;
+                $failedUploads[] = $key;
             }
             if ($localDriver->fileExists($uniqueFile)) {
                 $localDriver->deleteFile($uniqueFile);
@@ -92,22 +100,26 @@ class UniqueStorageTargetTest implements TestCaseInterface
         }
 
         if (!empty($failedUploads)) {
-            return new TestResult(
-                'fal.test_file_upload_failed',
-                TestResult::ERROR,
-                array_merge(array('Affected Storages:'), $failedUploads)
-            );
+            $messages[] = 'fal.test_file_upload_failed';
+            $messages[] = 'Affected Storages:';
+            $messages = array_merge($messages, $failedUploads);
         }
 
         if (!empty($affectedStorages)) {
+            $messages[] = 'fal.storage_targets_same';
+            $messages[] = 'Affected Storages:';
+            $messages = array_merge($messages, $affectedStorages);
+        }
+
+        if (!empty($messages)) {
             return new TestResult(
-                'fal.storage_targets_same',
+                'fal.storage_targets_test_error',
                 TestResult::ERROR,
-                array_merge(array('Affected Storages:'), $affectedStorages)
+                $messages
             );
         }
 
-        return new TestResult('fal.storage_targets_different');
+        return new TestResult('fal.storage_targets_okay');
     }
 
     /**
@@ -116,7 +128,9 @@ class UniqueStorageTargetTest implements TestCaseInterface
     public function getDependencies()
     {
         return array(
-            'In2code\\In2publishCore\\Testing\\Tests\\Fal\\ResourceStorageTest',
+            'In2code\\In2publishCore\\Testing\\Tests\\Fal\\MissingStoragesTest',
+            'In2code\\In2publishCore\\Testing\\Tests\\Fal\\CaseSensitivityTest',
+            'In2code\\In2publishCore\\Testing\\Tests\\Fal\\IdenticalDriverTest',
         );
     }
 }
