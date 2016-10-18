@@ -285,6 +285,7 @@ class RecordFactory
         }
         if (true === $isRootRecord && true === $this->isRootRecord) {
             $this->isRootRecord = false;
+            $instance->addAdditionalProperty('isRoot', true);
             $this->signalSlotDispatcher->dispatch(__CLASS__, 'rootRecordFinished', array($this, $instance));
         }
         return $instance;
