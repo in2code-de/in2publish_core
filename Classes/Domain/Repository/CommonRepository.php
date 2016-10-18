@@ -1492,9 +1492,9 @@ class CommonRepository extends BaseRepository
      */
     protected function isIgnoredRecord(array $localProperties, array $foreignProperties)
     {
-
         if ($this->isDeletedAndUnchangedRecord($localProperties, $foreignProperties)
             || $this->isDeletedOnlyOnLocal($localProperties, $foreignProperties)
+            || $this->shouldIgnoreRecord($localProperties, $foreignProperties)
         ) {
             return true;
         }
@@ -1840,6 +1840,25 @@ class CommonRepository extends BaseRepository
     protected function shouldSkipRecord(Record $record, $tableName)
     {
         return $this->getBooleanDecisionBySignal(__FUNCTION__, array('record' => $record, 'tableName' => $tableName));
+    }
+
+    /**
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
+     *
+     * @param array $localProperties
+     * @param array $foreignProperties
+     * @return bool
+     */
+    protected function shouldIgnoreRecord(array $localProperties, array $foreignProperties)
+    {
+        return $this->getBooleanDecisionBySignal(
+            __FUNCTION__,
+            array(
+                'localProperties' => $localProperties,
+                'foreignProperties' => $foreignProperties,
+                'tableName' => $this->tableName,
+            )
+        );
     }
 
     /**
