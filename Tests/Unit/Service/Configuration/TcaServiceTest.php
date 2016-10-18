@@ -380,6 +380,48 @@ class TcaServiceTest extends UnitTestCase
     }
 
     /**
+     * @covers ::getColumnConfigurationForTableColumn
+     */
+    public function testGetColumnConfigurationForTableColumnReturnsNullForMissingTable()
+    {
+        $tcaService = new TcaService();
+        $this->assertNull($tcaService->getColumnConfigurationForTableColumn('foo', 'bar'));
+    }
+
+    /**
+     * @covers ::getColumnConfigurationForTableColumn
+     */
+    public function testGetColumnConfigurationForTableColumnReturnsColumnConfiguration()
+    {
+        $expected = [
+            'columns' => [
+                'bar' => ['whee'],
+            ],
+        ];
+        $this->setTca(['table' => $expected]);
+
+        $tcaService = new TcaService();
+        $this->assertSame(['whee'], $tcaService->getColumnConfigurationForTableColumn('table', 'bar'));
+    }
+
+    /**
+     * @covers ::getColumnConfigurationForTableColumn
+     * @depends testGetColumnConfigurationForTableColumnReturnsColumnConfiguration
+     */
+    public function testGetColumnConfigurationForTableColumnReturnsNullForMissingColumn()
+    {
+        $expected = [
+            'columns' => [
+                'boo' => ['whee'],
+            ],
+        ];
+        $this->setTca(['table' => $expected]);
+
+        $tcaService = new TcaService();
+        $this->assertNull($tcaService->getColumnConfigurationForTableColumn('table', 'bar'));
+    }
+
+    /**
      * @param array $tca
      * @SuppressWarnings("PHPMD.Superglobals")
      */
