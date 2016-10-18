@@ -1576,7 +1576,7 @@ class CommonRepository extends BaseRepository
         }
         $alreadyVisited[$tableName][] = $record->getIdentifier();
 
-        if ($this->shouldPublishRecord($record, $tableName)) {
+        if (!$this->shouldSkipRecord($record, $tableName)) {
             // Dispatch Anomaly
             $this->signalSlotDispatcher->dispatch(
                 __CLASS__,
@@ -1837,7 +1837,7 @@ class CommonRepository extends BaseRepository
      * @param string $tableName
      * @return bool
      */
-    protected function shouldPublishRecord(Record $record, $tableName)
+    protected function shouldSkipRecord(Record $record, $tableName)
     {
         return $this->getBooleanDecisionBySignal(__FUNCTION__, array('record' => $record, 'tableName' => $tableName));
     }
@@ -1854,7 +1854,7 @@ class CommonRepository extends BaseRepository
      *
      * @param string $signal Name of the registered signal to dispatch
      * @param array $arguments additional arguments to be passed to the slot
-     * @return bool
+     * @return bool If no vote was received false will be returned
      */
     protected function getBooleanDecisionBySignal($signal, array $arguments)
     {
