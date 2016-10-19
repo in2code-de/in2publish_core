@@ -158,6 +158,7 @@ class FolderRecordFactory
         $localFolder = $this->initializeDependenciesAndGetFolder($identifier);
 
         // Get the FAL-cleaned folder identifier (this should not be necessary, but i mistrust FAL)
+        $storageUid = $localFolder->getStorage()->getUid();
         $identifier = $localFolder->getIdentifier();
         // Also get the hashed identifier, which will be used later for temporary index creation and record searching.
         $hashedIdentifier = $localFolder->getHashedIdentifier();
@@ -169,7 +170,9 @@ class FolderRecordFactory
         $record->addRelatedRecords($this->getSubFolderRecordInstances($identifier));
 
         // Now let's find all files inside of the selected folder by the folders hash.
-        $files = $this->commonRepository->findByProperty('folder_hash', $hashedIdentifier);
+        $files = $this->commonRepository->findByProperties(
+            array('folder_hash' => $hashedIdentifier, 'storage' => $storageUid)
+        );
 
         // FEATURE: mergeSysFileByIdentifier and enableSysFileReferenceUpdate
         if (true === $this->configuration['mergeSysFileByIdentifier']) {

@@ -184,6 +184,31 @@ class CommonRepository extends BaseRepository
     }
 
     /**
+     * Finds and creates none or more Records in the current table name
+     * where the properties are matching.
+     *
+     * @param array $properties
+     *
+     * @return Record[]
+     */
+    public function findByProperties(array $properties)
+    {
+        foreach ($properties as $propertyName => $propertyValue) {
+            if ($this->shouldSkipFindByProperty($propertyName, $propertyValue)) {
+                return array();
+            }
+        }
+        if (isset($properties['uid'])) {
+            if ($this->recordFactory->hasCachedRecord($this->tableName, $properties['uid'])) {
+                return $this->recordFactory->getCachedRecord($this->tableName, $properties['uid']);
+            }
+        }
+        $localProperties = $this->findPropertiesByProperties($this->localDatabase, $properties);
+        $foreignProperties = $this->findPropertiesByProperties($this->foreignDatabase, $properties);
+        return $this->convertPropertyArraysToRecords($localProperties, $foreignProperties);
+    }
+
+    /**
      * Fetches an array of property arrays (plural !!!) from
      * the given database connection where the column
      * "$propertyName" equals $propertyValue
