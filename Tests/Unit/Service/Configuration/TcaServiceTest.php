@@ -422,6 +422,35 @@ class TcaServiceTest extends UnitTestCase
     }
 
     /**
+     * @covers ::isHiddenRootTable
+     */
+    public function testIsHiddenRootTableReturnsTrueForInvisbleTablesPossibleOnRoot()
+    {
+        $this->setTca(['table' => ['ctrl' => ['hideTable' => true, 'rootLevel' => 1]]]);
+        $tcaService = new TcaService();
+        $this->assertTrue($tcaService->isHiddenRootTable('table'));
+
+        $this->setTca(['table' => ['ctrl' => ['hideTable' => 1, 'rootLevel' => -1]]]);
+        $tcaService = new TcaService();
+        $this->assertTrue($tcaService->isHiddenRootTable('table'));
+    }
+
+    /**
+     * @covers ::isHiddenRootTable
+     */
+    public function testIsHiddenRootTableReturnsFalseForVisibleOrPagesOnlyTables()
+    {
+        $this->setTca(['table' => ['ctrl' => ['hideTable' => false, 'rootLevel' => 1]]]);
+        $tcaService = new TcaService();
+        $this->assertFalse($tcaService->isHiddenRootTable('table'));
+
+        $this->setTca(['table' => ['ctrl' => ['hideTable' => 1, 'rootLevel' => 0]]]);
+        $tcaService = new TcaService();
+        $this->assertFalse($tcaService->isHiddenRootTable('table'));
+        $this->assertFalse($tcaService->isHiddenRootTable('foo'));
+    }
+
+    /**
      * @param array $tca
      * @SuppressWarnings("PHPMD.Superglobals")
      */

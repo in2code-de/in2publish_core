@@ -241,6 +241,18 @@ class TcaService implements SingletonInterface
     }
 
     /**
+     * @param string $tableName
+     * @return bool
+     */
+    public function isHiddenRootTable($tableName)
+    {
+        return isset($this->tca[$tableName]['ctrl']['hideTable'])
+               && isset($this->tca[$tableName]['ctrl']['rootLevel'])
+               && true === (bool)$this->tca[$tableName]['ctrl']['hideTable']
+               && in_array($this->tca[$tableName]['ctrl']['rootLevel'], array(1, -1));
+    }
+
+    /**
      * @return array[]
      * @SuppressWarnings("PHPMD.Superglobals")
      */
