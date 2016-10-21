@@ -96,18 +96,43 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      */
     public function initialize()
     {
-        $this->remoteDriverSettings = DatabaseUtility::buildForeignDatabaseConnection()->exec_SELECTgetSingleRow(
-            '*',
-            'sys_file_storage',
-            'uid=' . (int)$this->storageUid
-        );
+        if (0 === (int)$this->storageUid) {
+            $this->remoteDriverSettings = array(
+                'uid' => 0,
+                'pid' => 0,
+                'name' => 'Fallback Storage',
+                'description' => 'Internal storage, mounting the main TYPO3_site directory.',
+                'driver' => 'Local',
+                'processingfolder' => 'typo3temp/_processed_/',
+                // legacy code
+                'is_online' => true,
+                'is_browsable' => true,
+                'is_public' => true,
+                'is_writable' => true,
+                'is_default' => false,
+                'configuration' => array(
+                    'basePath' => '/',
+                    'pathType' => 'relative',
+                ),
+            );
+            $this->configuration = array(
+                'basePath' => '/',
+                'pathType' => 'relative',
+            );
+        } else {
+            $this->remoteDriverSettings = DatabaseUtility::buildForeignDatabaseConnection()->exec_SELECTgetSingleRow(
+                '*',
+                'sys_file_storage',
+                'uid=' . (int)$this->storageUid
+            );
+            $flexFormService = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Service\\FlexFormService');
+            $this->configuration = $flexFormService->convertFlexFormContentToArray(
+                $this->remoteDriverSettings['configuration']
+            );
+        }
         if (!is_array($this->remoteDriverSettings)) {
             throw new \LogicException('Could not find the remote storage.', 1474470724);
         }
-        $flexFormService = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Service\\FlexFormService');
-        $this->configuration = $flexFormService->convertFlexFormContentToArray(
-            $this->remoteDriverSettings['configuration']
-        );
     }
 
     /**
