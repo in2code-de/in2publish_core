@@ -725,9 +725,13 @@ class Record implements RecordInterface
         $foreignValue = null;
         if ($this->hasLocalProperty($propertyName)) {
             $localValue = $this->getLocalProperty($propertyName);
+        } else {
+            return $this->getForeignProperty($propertyName);
         }
         if ($this->hasForeignProperty($propertyName)) {
             $foreignValue = $this->getForeignProperty($propertyName);
+        } else {
+            return $this->getLocalProperty($propertyName);
         }
         if ($localValue !== $foreignValue) {
             if (is_array($localValue) || is_array($foreignValue)) {

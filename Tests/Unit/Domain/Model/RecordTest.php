@@ -1225,8 +1225,7 @@ class RecordTest extends UnitTestCase
             'local_true' => [['foo' => true], [], true],
             'local_false' => [['foo' => false], [], false],
             'foreign_true' => [[], ['foo' => true], true],
-            // Hmm, that might not be the expected return value for "foreign_false"...
-            'foreign_false' => [[], ['foo' => false], null],
+            'foreign_false' => [[], ['foo' => false], false],
             'both_true' => [['foo' => true], ['foo' => true], true],
             'both_false' => [['foo' => false], ['foo' => false], false],
             'different_true' => [['foo' => true], ['foo' => false], true],
