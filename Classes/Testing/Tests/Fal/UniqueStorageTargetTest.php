@@ -128,6 +128,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
     public function getDependencies()
     {
         return array(
+            'In2code\\In2publishCore\\Testing\\Tests\\Application\\ForeignInstanceTest',
             'In2code\\In2publishCore\\Testing\\Tests\\Fal\\MissingStoragesTest',
             'In2code\\In2publishCore\\Testing\\Tests\\Fal\\CaseSensitivityTest',
             'In2code\\In2publishCore\\Testing\\Tests\\Fal\\IdenticalDriverTest',
