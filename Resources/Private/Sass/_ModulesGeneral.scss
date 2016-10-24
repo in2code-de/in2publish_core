@@ -268,11 +268,9 @@ a.in2publish-notextdecoration {
   }
 }
 
-@for $n from 3 through 8 {
-  .in2publish-stagelisting__item--workflowState#{$n} {
-    &:before {
-      @include stripes($mariner, $alto);
-    }
+.in2publish-stagelisting__item--workflowState3 {
+  &:before {
+    @include stripes($mariner, $alto);
   }
 }
 
