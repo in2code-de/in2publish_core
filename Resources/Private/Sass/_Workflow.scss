@@ -342,4 +342,9 @@
   &:before{
     transform: rotate(-45deg);
   }
+  // specifically overrule TYPO3 6.2 default button CSS
+  &:active {
+    position: absolute ;
+    top: 10px ;
+  }
 }
