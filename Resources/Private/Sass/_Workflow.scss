@@ -57,25 +57,6 @@
   }
 }
 
-.in2publish__messagelist__item__stateicon {
-  border-radius: 50%;
-  width: 10px;
-  height: 10px;
-  background-color: $silverchalice;
-  display: inline-block;
-  &.in2publish__messagelist__item__stateicon1 {
-    background-color: $apple;
-  }
-  &.in2publish__messagelist__item__stateicon2 {
-    background-color: $salomie;
-  }
-  @for $n from 3 through 8 {
-    &.in2publish__messagelist__item__stateicon#{$n} {
-      background-color: $mariner;
-    }
-  }
-}
-
 // Workflow Button
 .in2publish__workflowbutton {
   display: inline-block;
@@ -278,27 +259,6 @@
   }
 }
 
-.in2publish-pagemodule__select {
-  &--key1:before {
-    color: $apple;
-  }
-
-  &--key2:before {
-    color: $salomie;
-  }
-
-  @for $n from 3 through 8 {
-    &--key#{$n}:before {
-      color: $mariner;
-    }
-  }
-
-  &--disallowedstate {
-    cursor: not-allowed !important;
-    opacity: 0.5;
-  }
-}
-
 .in2publish-removevalue {
   @extend .icon-x-altx-alt;
   cursor: pointer;
@@ -346,5 +306,44 @@
   &:active {
     position: absolute ;
     top: 10px ;
+  }
+}
+
+// WORKFLOW STATES
+
+.in2publish__messagelist__item__stateicon {
+  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  background-color: $silverchalice;
+  display: inline-block;
+  &.in2publish__messagelist__item__stateicon1 {
+    background-color: $apple;
+  }
+  &.in2publish__messagelist__item__stateicon2 {
+    background-color: $salomie;
+  }
+  &.in2publish__messagelist__item__stateicon3 {
+    background-color: $mariner;
+  }
+}
+
+
+.in2publish-pagemodule__select {
+  &--key1:before {
+    color: $apple;
+  }
+
+  &--key2:before {
+    color: $salomie;
+  }
+
+  &--key3:before {
+    color: $mariner;
+  }
+
+  &--disallowedstate {
+    cursor: not-allowed !important;
+    opacity: 0.5;
   }
 }

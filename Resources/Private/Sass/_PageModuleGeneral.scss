@@ -18,10 +18,8 @@
   @include stripes($salomie, $tundora);
 }
 
-@for $n from 3 through 8 {
-  .in2publish__workflow#{$n} {
-    @include stripes($mariner, $white);
-  }
+.in2publish__workflow3 {
+  @include stripes($mariner, $white);
 }
 
 #typo3-docheader .right {
