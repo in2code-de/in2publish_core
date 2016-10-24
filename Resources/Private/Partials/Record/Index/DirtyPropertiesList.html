@@ -20,11 +20,11 @@
 					<a href="{publish:Uri.UndoRecord(table:record.tableName,identifier:record.identifier)}"><i class="in2publish-icon-history"></i><f:translate key="dirty_properties_history_page">Page History</f:translate></a>
 					<f:if condition="{record.localPreviewAvailable}">
 						<f:then>
-							<f:link.external uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local')}/index.php?id={record.identifier}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
+							<f:link.external uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local',addProtocol: 'false')}/index.php?id={record.identifier}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
 						</f:then>
 						<f:else>
 							<f:if condition="{publish:Uri.PreviewAnyRecord(tableName:record.tableName,identifier:record.identifier)}">
-								<f:link.external uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local')}/{publish:Uri.PreviewAnyRecord(tableName:record.tableName,identifier:record.identifier)}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
+								<f:link.external uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local',addProtocol: 'false')}/{publish:Uri.PreviewAnyRecord(tableName:record.tableName,identifier:record.identifier)}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
 							</f:if>
 							<a title="{f:translate(key:'dirty_properties_edit',default:'edit')}" href="{publish:Uri.EditRecord(table:record.tableName,identifier:record.identifier)}">
 								<i class="in2publish-icon-edit"></i><f:translate key="dirty_properties_edit_main">edit</f:translate>
@@ -97,9 +97,9 @@
 					<f:if condition="{record.foreignPreviewAvailable}">
 						<f:then>
 							<f:if condition="{record.localPreviewAvailable}">
-								<f:link.external uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local')}/index.php?id={record.identifier}&tx_in2publishcore_pi1[identifier]={record.identifier}&type=9815" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_compare">Compare</f:translate></f:link.external>
+								<f:link.external uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local',addProtocol: 'false')}/index.php?id={record.identifier}&tx_in2publishcore_pi1[identifier]={record.identifier}&type=9815" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_compare">Compare</f:translate></f:link.external>
 							</f:if>
-							<f:link.external uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'foreign')}/index.php?id={record.identifier}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
+							<f:link.external uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'foreign',addProtocol: 'false')}/index.php?id={record.identifier}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
 						</f:then>
 						<f:else>
 							&nbsp;
