@@ -18,7 +18,7 @@ function In2publishJquery() {
 	 *
 	 * @type {string}
 	 */
-	this.jQueryPath = '../../../../../typo3conf/ext/in2publish/Resources/Public/JavaScripts/Libraries/jquery-1.11.2.min.js';
+	this.jQueryPath = '../../../../../typo3conf/ext/in2publish_core/Resources/Public/JavaScripts/Libraries/jquery-1.11.2.min.js';
 
 	/**
 	 * get jQuery and call class and method
