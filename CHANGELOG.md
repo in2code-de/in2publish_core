@@ -1,5 +1,14 @@
 # In2publish Core Change Log
 
+5.1.0:
+
+- [FEATURE] Add full FAL support
+- [FEATURE] Support case insensitive file systems
+- [BUGFIX] Fix Record::getMergedProperty including the unit test
+- [BUGFIX] Do not consider the root page (ID=0) as accessible in the frontend
+- [FEATURE] Add RPC/Envelope system
+- [!!!][CLEANUP] Remove legacy methods from File- and FolderUtility
+
 5.0.1:
 
 - [BUGFIX] Ignore TCA columns without config section
