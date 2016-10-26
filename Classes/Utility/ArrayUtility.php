@@ -88,19 +88,4 @@ class ArrayUtility
         }
         return $array;
     }
-
-    /**
-     * Compare two array with array_diff with the possibility to ignore some keys
-     *
-     * @param array $array1
-     * @param array $array2
-     * @param array $ignoreKeys
-     * @return array
-     */
-    public static function compareArrays(array $array1, array $array2, array $ignoreKeys = array())
-    {
-        $array1 = self::removeFromArrayByKey($array1, $ignoreKeys);
-        $array2 = self::removeFromArrayByKey($array2, $ignoreKeys);
-        return array_diff($array1, $array2);
-    }
 }

@@ -27,12 +27,8 @@ namespace In2code\In2publishCore\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Security\Exceptions\CommandFailedException;
-use In2code\In2publishCore\Security\SshConnection;
+use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -42,242 +38,95 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 class FileController extends AbstractController
 {
     /**
-     * @var string
-     */
-    protected $folderIdentifier = 'fileadmin/';
-
-    /**
-     * @var \In2code\In2publishCore\Domain\Factory\FolderRecordFactory
-     * @inject
-     */
-    protected $folderRecordFactory = null;
-
-    /**
-     * FileController constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $combinedIdentifier = GeneralUtility::_GP('id');
-        if ($combinedIdentifier !== null) {
-            $this->folderIdentifier = str_replace('1:/', 'fileadmin/', $combinedIdentifier);
-        } else {
-            $fileStorages = $this->getBackendUser()->getFileStorages();
-            $fileStorage = reset($fileStorages);
-            // Assume that the storage with uid 1 is always fileadmin.
-            // This is really bad, but we don't want to break this assumption at this point.
-            // Will be changed when this module is refactored to be based completely on FAL
-            if (false !== $fileStorage && 1 === $fileStorage->getUid()) {
-                $folderObject = $fileStorage->getRootLevelFolder();
-                if ($folderObject instanceof Folder) {
-                    $this->folderIdentifier = 'fileadmin/' . ltrim($folderObject->getIdentifier(), '/');
-                }
-            }
-        }
-    }
-
-    /**
-     * Assigns all Files of the current folder to the view.
-     * any other folder, sibling - parent - child, is ignored
      *
-     * !!! Do NOT use $this->tryToGetFolderInstance() in this action, it will cause a loop !!!
-     *
-     * @return void
      */
     public function indexAction()
     {
         $this->assignServerAndPublishingStatus();
-        try {
-            $this->view->assign('record', $this->folderRecordFactory->makeInstance($this->folderIdentifier));
-        } catch (CommandFailedException $exception) {
-            $this->addFailureFlashMessage(
-                LocalizationUtility::translate(
-                    'folder_retrieving_failed',
-                    'in2publish_core',
-                    array($this->folderIdentifier)
-                )
-            );
-        }
+
+        $record = $this
+            ->objectManager
+            ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
+            ->makeInstance(GeneralUtility::_GP('id'));
+
+        $this->view->assign('record', $record);
     }
 
     /**
      * @param string $identifier
-     * @return void
      */
     public function publishFolderAction($identifier)
     {
-        $folder = $this->tryToGetFolderInstance($identifier);
-        $this->logger->notice('publishing folder', array('identifier' => $identifier));
-        switch ($folder->getState()) {
-            case RecordInterface::RECORD_STATE_ADDED:
-                if (SshConnection::makeInstance()->createFolderOnRemote($folder)) {
-                    $this->addFlashMessage(LocalizationUtility::translate('folder_created', 'in2publish_core'));
-                } else {
-                    $this->addFailureFlashMessage(
-                        LocalizationUtility::translate('folder_creation_failed', 'in2publish_core')
-                    );
-                }
-                break;
-            case RecordInterface::RECORD_STATE_DELETED:
-                $message = SshConnection::makeInstance()->removeFolderFromRemote($folder);
-                if ($message === true) {
-                    $this->addFlashMessage(LocalizationUtility::translate('folder_removed', 'in2publish_core'));
-                } else {
-                    $this->addFailureFlashMessage(
-                        $message,
-                        LocalizationUtility::translate('folder_removal_failed', 'in2publish_core')
-                    );
-                }
-                break;
-            default:
+        $success = $this
+            ->objectManager
+            ->get('In2code\\In2publishCore\\Domain\\Service\\Publishing\\FolderPublisherService')
+            ->publish($identifier);
+
+        if ($success) {
+            $this->addFlashMessage(
+                LocalizationUtility::translate('file_publishing.folder', 'in2publish_core', array($identifier)),
+                LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
+            );
+        } else {
+            $this->addFlashMessage(
+                LocalizationUtility::translate('file_publishing.failure.folder', 'in2publish_core', array($identifier)),
+                LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
+                AbstractMessage::ERROR
+            );
         }
+
         $this->redirect('index');
     }
 
     /**
-     * @param int $identifier
-     * @return void
-     */
-    public function publishRecordAction($identifier)
-    {
-        $this->logger->notice('publishing file', array('identifier' => $identifier));
-        $sysFileInstance = $this->commonRepository->findByIdentifier($identifier);
-        if ($sysFileInstance->getState() === RecordInterface::RECORD_STATE_UNCHANGED) {
-            $sysFileInstance = $this->folderRecordFactory->addInformationAboutPhysicalFile($sysFileInstance);
-        }
-        $this->commonRepository->publishRecordRecursive($sysFileInstance);
-        $this->addFlashMessage(
-            sprintf(
-                LocalizationUtility::translate('publishing.publish_file_success', 'in2publish_core'),
-                $sysFileInstance->getMergedProperty('name')
-            )
-        );
-        $this->redirect('index');
-    }
-
-    /**
-     * @param string $identifier
      * @param int $uid
+     * @param string $identifier
+     * @param int $storage
      */
-    public function publishPhysicalRecordAction($identifier, $uid)
+    public function publishFileAction($uid, $identifier, $storage)
     {
-        $folderInstance = $this->tryToGetFolderInstance(
-            str_replace('//', '/', 'fileadmin' . dirname($identifier) . '/')
-        );
-        $relatedRecords = $folderInstance->getRelatedRecords();
-        /** @var Record $record */
-        $record = $relatedRecords['physical_file'][$uid];
-        switch ($record->getState()) {
-            case RecordInterface::RECORD_STATE_DELETED:
-                $sshConnection = SshConnection::makeInstance();
-                if ($sshConnection->removeRemoteFile('fileadmin' . $identifier)) {
-                    $this->addFlashMessage(
-                        LocalizationUtility::translate(
-                            'publishing.physical_file_deleted_success',
-                            'in2publish_core',
-                            array(basename($identifier))
-                        )
-                    );
-                } else {
-                    $this->addFailureFlashMessage(
-                        LocalizationUtility::translate(
-                            'publishing.physical_file_deleted_failure',
-                            'in2publish_core',
-                            array(basename($identifier))
-                        )
-                    );
-                }
-                break;
-            case RecordInterface::RECORD_STATE_ADDED:
-                $this->logger->error(
-                    'Can not publish a file to foreign without sys_file record',
-                    array('identifier' => $identifier)
-                );
-                $this->addFailureFlashMessage(
-                    LocalizationUtility::translate('publishing.physical_file_add_failure', 'in2publish_core')
-                );
-                break;
-            case RecordInterface::RECORD_STATE_MOVED:
-                $this->logger->error(
-                    'Can not move a file on foreign without sys_file record',
-                    array('identifier' => $identifier)
-                );
-                $this->addFailureFlashMessage('Something went wrong. Please contact your admin.');
-                break;
-            case RecordInterface::RECORD_STATE_CHANGED:
-                $this->logger->error(
-                    'Can not change a file on foreign without sys_file record',
-                    array('identifier' => $identifier)
-                );
-                $this->addFailureFlashMessage('Something went wrong. Please contact your admin.');
-                break;
-            case RecordInterface::RECORD_STATE_UNCHANGED:
-                $this->logger->emergency(
-                    'Detected physical file without sys_file record which is unchanged',
-                    array('identifier' => $identifier)
-                );
-                $this->addFailureFlashMessage('Something went wrong. Please contact your admin.');
-                break;
+        // Special case: The file was moved hence the identifier is a merged one
+        if (strpos($identifier, ',')) {
+            // Just take the local part of the file identifier.
+            // We need the local folder identifier to instantiate the folder record.
+            list($identifier) = GeneralUtility::trimExplode(',', $identifier);
         }
+
+        $record = $this
+            ->objectManager
+            ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
+            ->makeInstance($storage . ':/' . ltrim(dirname($identifier), '/'));
+
+        $relatedRecords = $record->getRelatedRecordByTableAndProperty('sys_file', 'identifier', $identifier);
+
+        if (0 === ($recordsCount = count($relatedRecords))) {
+            throw new \RuntimeException('Did not find any record that matches the publishing arguments', 1475656572);
+        } elseif (1 === $recordsCount) {
+            $relatedRecord = reset($relatedRecords);
+        } elseif (isset($relatedRecords[$uid])) {
+            $relatedRecord = $relatedRecords[$uid];
+        } else {
+            throw new \RuntimeException('Did not find an exact record match for the given arguments', 1475588793);
+        }
+
+        CommonRepository::getDefaultInstance('sys_file')->publishRecordRecursive($relatedRecord);
+
+        $this->addFlashMessage(
+            LocalizationUtility::translate('file_publishing.file', 'in2publish_core', array($identifier)),
+            LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
+        );
+
         $this->redirect('index');
     }
 
     /**
-     * @param string $message
-     * @param string $title
-     * @return void
-     */
-    protected function addFailureFlashMessage($message, $title = '')
-    {
-        $this->addFlashMessage(
-            $message,
-            $title ? $title : LocalizationUtility::translate('error', 'in2publish_core'),
-            AbstractMessage::ERROR
-        );
-    }
-
-    /**
-     * toggle filter status and save the filter status
-     * in the current backendUser's session.
+     * toggle filter status and save the filter status in the current backendUser's session.
      *
      * @param string $filter "changed", "added", "deleted"
      * @return void
      */
     public function toggleFilterStatusAndRedirectToIndexAction($filter)
     {
-        $this->logger->debug('Called ' . __FUNCTION__, array('filter', $filter));
-        $currentStatus = $this->backendUser->getSessionData('in2publish_filter_files_' . $filter);
-        $this->logger->debug(
-            'Retrieved currentStatus from filter files session',
-            array('currentStatus' => $currentStatus)
-        );
-        if (!is_bool($currentStatus)) {
-            $currentStatus = false;
-        }
-        $this->backendUser->setAndSaveSessionData('in2publish_filter_files_' . $filter, !$currentStatus);
-        $this->redirect('index');
-    }
-
-    /**
-     * @param string $identifier
-     * @return Record
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
-     */
-    protected function tryToGetFolderInstance($identifier)
-    {
-        try {
-            return $this->folderRecordFactory->makeInstance($identifier);
-        } catch (CommandFailedException $exception) {
-            $this->redirect('index');
-        }
-    }
-
-    /**
-     * @return void
-     */
-    public function initializeAction()
-    {
-        parent::initializeAction();
-        $this->commonRepository->setTableName('sys_file');
+        $this->toggleFilterStatusAndRedirect('in2publish_filter_files_', $filter,'index');
     }
 }

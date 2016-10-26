@@ -166,7 +166,7 @@ class CommonRepository extends BaseRepository
      *
      * @param string $propertyName
      * @param mixed $propertyValue
-     * @return array
+     * @return Record[]
      */
     public function findByProperty($propertyName, $propertyValue)
     {
@@ -180,6 +180,31 @@ class CommonRepository extends BaseRepository
         }
         $localProperties = $this->findPropertiesByProperty($this->localDatabase, $propertyName, $propertyValue);
         $foreignProperties = $this->findPropertiesByProperty($this->foreignDatabase, $propertyName, $propertyValue);
+        return $this->convertPropertyArraysToRecords($localProperties, $foreignProperties);
+    }
+
+    /**
+     * Finds and creates none or more Records in the current table name
+     * where the properties are matching.
+     *
+     * @param array $properties
+     *
+     * @return Record[]
+     */
+    public function findByProperties(array $properties)
+    {
+        foreach ($properties as $propertyName => $propertyValue) {
+            if ($this->shouldSkipFindByProperty($propertyName, $propertyValue)) {
+                return array();
+            }
+        }
+        if (isset($properties['uid'])) {
+            if ($this->recordFactory->hasCachedRecord($this->tableName, $properties['uid'])) {
+                return $this->recordFactory->getCachedRecord($this->tableName, $properties['uid']);
+            }
+        }
+        $localProperties = $this->findPropertiesByProperties($this->localDatabase, $properties);
+        $foreignProperties = $this->findPropertiesByProperties($this->foreignDatabase, $properties);
         return $this->convertPropertyArraysToRecords($localProperties, $foreignProperties);
     }
 
@@ -275,7 +300,7 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
-     * @return array
+     * @return Record[]
      */
     protected function convertPropertyArraysToRecords(array $localProperties, array $foreignProperties)
     {
@@ -295,6 +320,24 @@ class CommonRepository extends BaseRepository
                     $propertyArray = $this->findPropertiesByProperty($this->foreignDatabase, 'uid', $key);
                     if (!empty($propertyArray[$key])) {
                         $foreignProperties[$key] = $propertyArray[$key];
+                        if ('sys_file_metadata' === $this->tableName
+                            && isset($localProperties[$key]['file'])
+                            && isset($foreignProperties[$key]['file'])
+                            && (int)$localProperties[$key]['file'] !== (int)$foreignProperties[$key]['file']
+                        ) {
+                            // If the fixing of this relation results in a different related
+                            // record we log it because it is very very very unlikely for
+                            // sys_file_metadata to change their target sys_file entry
+                            $this->logger->warning(
+                                'Fixed possibly broken relation by replacing it with another possibly broken relation',
+                                array(
+                                    'table' => $this->tableName,
+                                    'key (UID)' => $key,
+                                    'file_local' => $localProperties[$key]['file'],
+                                    'file_foreign' => $foreignProperties[$key]['file'],
+                                )
+                            );
+                        }
                     }
                 }
             }
@@ -1474,9 +1517,9 @@ class CommonRepository extends BaseRepository
      */
     protected function isIgnoredRecord(array $localProperties, array $foreignProperties)
     {
-
         if ($this->isDeletedAndUnchangedRecord($localProperties, $foreignProperties)
             || $this->isDeletedOnlyOnLocal($localProperties, $foreignProperties)
+            || $this->shouldIgnoreRecord($localProperties, $foreignProperties)
         ) {
             return true;
         }
@@ -1558,43 +1601,45 @@ class CommonRepository extends BaseRepository
         }
         $alreadyVisited[$tableName][] = $record->getIdentifier();
 
-        // Dispatch Anomaly
-        $this->signalSlotDispatcher->dispatch(
-            __CLASS__,
-            'publishRecordRecursiveBeforePublishing',
-            array($tableName, $record, $this)
-        );
+        if (!$this->shouldSkipRecord($record, $tableName)) {
+            // Dispatch Anomaly
+            $this->signalSlotDispatcher->dispatch(
+                __CLASS__,
+                'publishRecordRecursiveBeforePublishing',
+                array($tableName, $record, $this)
+            );
 
-        /*
-         * For Records shown as moved:
-         * Since moved pages only get published explicitly, they will
-         * have the state "changed" instead of "moved".
-         * Because of this, we don't need to take care about that state
-         */
+            /*
+             * For Records shown as moved:
+             * Since moved pages only get published explicitly, they will
+             * have the state "changed" instead of "moved".
+             * Because of this, we don't need to take care about that state
+             */
 
-        $state = $record->getState();
-        if ($state === RecordInterface::RECORD_STATE_CHANGED || $state === RecordInterface::RECORD_STATE_MOVED) {
-            $this->updateForeignRecord($record);
-        } elseif ($state === RecordInterface::RECORD_STATE_ADDED) {
-            $this->addForeignRecord($record);
-        } elseif ($state === RecordInterface::RECORD_STATE_DELETED) {
-            if ($record->localRecordExists()) {
+            $state = $record->getState();
+            if ($state === RecordInterface::RECORD_STATE_CHANGED || $state === RecordInterface::RECORD_STATE_MOVED) {
                 $this->updateForeignRecord($record);
-            } elseif ($record->foreignRecordExists()) {
-                $this->deleteForeignRecord($record);
+            } elseif ($state === RecordInterface::RECORD_STATE_ADDED) {
+                $this->addForeignRecord($record);
+            } elseif ($state === RecordInterface::RECORD_STATE_DELETED) {
+                if ($record->localRecordExists()) {
+                    $this->updateForeignRecord($record);
+                } elseif ($record->foreignRecordExists()) {
+                    $this->deleteForeignRecord($record);
+                }
             }
+
+            // Dispatch Anomaly
+            $this->signalSlotDispatcher->dispatch(
+                __CLASS__,
+                'publishRecordRecursiveAfterPublishing',
+                array($tableName, $record, $this)
+            );
+
+            // set the records state to published/unchanged to prevent
+            // a second INSERT or UPDATE (superfluous queries)
+            $record->setState(RecordInterface::RECORD_STATE_UNCHANGED);
         }
-
-        // Dispatch Anomaly
-        $this->signalSlotDispatcher->dispatch(
-            __CLASS__,
-            'publishRecordRecursiveAfterPublishing',
-            array($tableName, $record, $this)
-        );
-
-        // set the records state to published/unchanged to prevent
-        // a second INSERT or UPDATE (superfluous queries)
-        $record->setState(RecordInterface::RECORD_STATE_UNCHANGED);
 
         // publish all related records
         $this->publishRelatedRecordsRecursive($record, $excludedTables, $alreadyVisited);
@@ -1648,7 +1693,6 @@ class CommonRepository extends BaseRepository
     {
         $previousTableName = $this->replaceTableName($record->getTableName());
         $this->updateRecord($this->foreignDatabase, $record->getIdentifier(), $record->getLocalProperties());
-        $record->setForeignProperties($record->getLocalProperties());
         $this->setTableName($previousTableName);
     }
 
@@ -1812,6 +1856,37 @@ class CommonRepository extends BaseRepository
     }
 
     /**
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
+     *
+     * @param Record $record
+     * @param string $tableName
+     * @return bool
+     */
+    protected function shouldSkipRecord(Record $record, $tableName)
+    {
+        return $this->getBooleanDecisionBySignal(__FUNCTION__, array('record' => $record, 'tableName' => $tableName));
+    }
+
+    /**
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
+     *
+     * @param array $localProperties
+     * @param array $foreignProperties
+     * @return bool
+     */
+    protected function shouldIgnoreRecord(array $localProperties, array $foreignProperties)
+    {
+        return $this->getBooleanDecisionBySignal(
+            __FUNCTION__,
+            array(
+                'localProperties' => $localProperties,
+                'foreignProperties' => $foreignProperties,
+                'tableName' => $this->tableName,
+            )
+        );
+    }
+
+    /**
      * Slot method signature:
      *  public function slotMethod($votes, CommonRepository $commonRepository, array $additionalArguments)
      *
@@ -1823,7 +1898,7 @@ class CommonRepository extends BaseRepository
      *
      * @param string $signal Name of the registered signal to dispatch
      * @param array $arguments additional arguments to be passed to the slot
-     * @return bool
+     * @return bool If no vote was received false will be returned
      */
     protected function getBooleanDecisionBySignal($signal, array $arguments)
     {

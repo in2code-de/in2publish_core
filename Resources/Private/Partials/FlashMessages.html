@@ -1,22 +1,9 @@
-<f:flashMessages as="messages">
-	<f:for each="{messages}" as="message">
-		<div class="{additionalClass}">
-			<div class="alert {message.class}" style="display: block;">
-				<div class="media">
-					<div class="media-left">
-						<span class="fa-stack fa-lg">
-							<i class="fa fa-circle fa-stack-2x"></i>
-							<i class="fa fa-check fa-stack-1x"></i>
-						</span>
-					</div>
-					<div class="media-body">
-						<f:if condition="{message.title}">
-							{message.title}
-						</f:if>
-						<div class="alert-message">{message.message -> f:format.raw()}</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</f:for>
-</f:flashMessages>
+{namespace publish=In2code\In2publishCore\ViewHelpers}
+<f:if condition="{publish:Condition.IsCompatVersion(versionNumber:'7.6.0')}">
+	<f:then>
+		<f:render partial="FlashMessages/FlashMessages" arguments="{_all}"/>
+	</f:then>
+	<f:else>
+		<f:render partial="LegacyCode/FlashMessages/FlashMessages" arguments="{_all}"/>
+	</f:else>
+</f:if>

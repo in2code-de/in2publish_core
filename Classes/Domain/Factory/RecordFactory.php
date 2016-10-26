@@ -34,6 +34,7 @@ use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 /**
  * RecordFactory: This class is responsible for create instances of Record.
@@ -140,12 +141,24 @@ class RecordFactory
     protected $tcaService = null;
 
     /**
+     * @var Dispatcher
+     */
+    protected $signalSlotDispatcher;
+
+    /**
+     * @var bool
+     */
+    protected $isRootRecord = false;
+
+    /**
      * Creates the logger and sets any required configuration
      */
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
         $this->tcaService = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService');
+        $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+        $this->signalSlotDispatcher = $objectManager->get('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
 
         $factorySettings = ConfigurationUtility::getConfiguration('factory');
         $this->maximumPageRecursion = $factorySettings['maximumPageRecursion'];
@@ -175,6 +188,12 @@ class RecordFactory
         array $foreignProperties,
         array $additionalProperties = array()
     ) {
+        if (false === $this->isRootRecord) {
+            $this->isRootRecord = true;
+            $isRootRecord = true;
+        } else {
+            $isRootRecord = false;
+        }
         // one of the property arrays might be empty,
         // to get the identifier we have to take a look into both arrays
         $mergedIdentifier = $this->getMergedIdentifierValue($commonRepository, $localProperties, $foreignProperties);
@@ -220,6 +239,8 @@ class RecordFactory
                 $instance->setState(RecordInterface::RECORD_STATE_MOVED);
             }
 
+            $this->signalSlotDispatcher->dispatch(__CLASS__, 'instanceCreated', array($this, $instance));
+
             /* special case of tables without TCA (currently only sys_file_processedfile).
              * Normally we would just ignore them, but:
              *      sys_file_processedfile:
@@ -261,6 +282,11 @@ class RecordFactory
             }
             $this->finishedInstantiation($instanceTableName, $mergedIdentifier);
             $this->runtimeCache[$instanceTableName][$mergedIdentifier] = $instance;
+        }
+        if (true === $isRootRecord && true === $this->isRootRecord) {
+            $this->isRootRecord = false;
+            $instance->addAdditionalProperty('isRoot', true);
+            $this->signalSlotDispatcher->dispatch(__CLASS__, 'rootRecordFinished', array($this, $instance));
         }
         return $instance;
     }

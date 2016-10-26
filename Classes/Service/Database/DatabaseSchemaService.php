@@ -26,7 +26,7 @@ namespace In2code\In2publishCore\Service\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -69,7 +69,7 @@ class DatabaseSchemaService implements SingletonInterface
         }
 
         if (false === $schema) {
-            $database = $this->getDatabase();
+            $database = DatabaseUtility::buildLocalDatabaseConnection();
 
             $schema = array();
             foreach ($database->admin_get_tables() as $tableName => $tableInfo) {
@@ -91,14 +91,5 @@ class DatabaseSchemaService implements SingletonInterface
     protected function getCache()
     {
         return GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('in2publish_core');
-    }
-
-    /**
-     * @return DatabaseConnection
-     * @SuppressWarnings("PHPMD.Superglobals")
-     */
-    protected function getDatabase()
-    {
-        return $GLOBALS['TYPO3_DB'];
     }
 }

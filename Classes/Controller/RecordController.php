@@ -54,13 +54,10 @@ class RecordController extends AbstractController
                 'In2code\\In2publishCore\\Domain\\Factory\\FakeRecordFactory'
             )->buildFromStartPage($this->pid);
         }
-        $this->view->assignMultiple(
-            array(
-                'record' => $record,
-                'showRecordDepth' => ConfigurationUtility::getConfiguration('debug.showRecordDepth'),
-                'configuration' => ConfigurationUtility::getConfiguration(),
-            )
-        );
+
+        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeIndexViewRender', array($this, $record));
+
+        $this->view->assign('record', $record);
         $this->assignServerAndPublishingStatus();
     }
 
@@ -77,6 +74,9 @@ class RecordController extends AbstractController
         $this->logger->debug('Called ' . __FUNCTION__);
         $this->commonRepository->disablePageRecursion();
         $record = $this->commonRepository->findByIdentifier($identifier, $tableName);
+
+        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeDetailViewRender', array($this, $record));
+
         $this->view->assign('record', $record);
         $this->view->assign('configuration', ConfigurationUtility::getConfiguration());
     }
@@ -121,17 +121,7 @@ class RecordController extends AbstractController
      */
     public function toggleFilterStatusAndRedirectToIndexAction($filter)
     {
-        $this->logger->debug('Called ' . __FUNCTION__, array('filter', $filter));
-        $currentStatus = $this->backendUser->getSessionData('in2publish_filter_records_' . $filter);
-        $this->logger->debug(
-            'Retrieved currentStatus from filter records session',
-            array('currentStatus' => $currentStatus)
-        );
-        if (!is_bool($currentStatus)) {
-            $currentStatus = false;
-        }
-        $this->backendUser->setAndSaveSessionData('in2publish_filter_records_' . $filter, !$currentStatus);
-        $this->redirect('index');
+        $this->toggleFilterStatusAndRedirect('in2publish_filter_records_', $filter, 'index');
     }
 
     /**
@@ -141,8 +131,12 @@ class RecordController extends AbstractController
      */
     protected function publishRecord($identifier, array $exceptTableNames = array())
     {
+        $record = $this->commonRepository->findByIdentifier($identifier);
+
+        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforePublishing', array($this, $record));
+
         $this->commonRepository->publishRecordRecursive(
-            $this->commonRepository->findByIdentifier($identifier),
+            $record,
             array_merge(ConfigurationUtility::getConfiguration('excludeRelatedTables'), $exceptTableNames)
         );
         $this->runTasks();

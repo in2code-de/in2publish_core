@@ -83,6 +83,12 @@ class ConfigurationDefinitionProvider implements SingletonInterface
                     'maximumOverallRecursion' => 'integer',
                     'resolvePageRelations' => 'boolean',
                     'simpleOverviewAndAjax' => 'boolean',
+                    'fal' => array(
+                        'reclaimSysFileEntries' => 'boolean',
+                        'autoRepairFolderHash' => 'boolean',
+                        'mergeSysFileByIdentifier' => 'boolean',
+                        'enableSysFileReferenceUpdate' => 'boolean',
+                    ),
                 ),
                 'filePreviewDomainName' => array(
                     'local' => 'string',
@@ -124,6 +130,7 @@ class ConfigurationDefinitionProvider implements SingletonInterface
                     'showRecordDepth' => 'boolean',
                     'showExecutionTime' => 'boolean',
                     'allInformation' => 'boolean',
+                    'keepEnvelopes' => 'boolean',
                 ),
                 'tasks' => array(
                     '*:string' => array(

@@ -27,16 +27,12 @@ namespace In2code\In2publishCore\Security;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Command\FilesystemCommandController;
 use In2code\In2publishCore\Command\PublishTasksRunnerCommandController;
+use In2code\In2publishCore\Command\RpcCommandController;
 use In2code\In2publishCore\Command\StatusCommandController;
 use In2code\In2publishCore\Command\TableCommandController;
-use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Security\Exceptions\CommandFailedException;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
-use In2code\In2publishCore\Utility\FolderUtility;
-use TYPO3\CMS\Core\Resource\AbstractFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -70,199 +66,6 @@ class SshConnection
             . self::TYPO3_CLI_EXTBASE_DISPATCHER
             . sprintf(TableCommandController::BACKUP_COMMAND, $tableName);
         return $this->executeRemoteCommand($command);
-    }
-
-    /**
-     * @param string $fileIdentifier
-     * @return string
-     */
-    public function remoteFileHash($fileIdentifier)
-    {
-        $this->stopIfArgumentContainsCommand($fileIdentifier);
-        $command =
-            'cd ' . $this->foreignRootPath . ' && '
-            . $this->pathToPhp . ' '
-            . self::TYPO3_CLI_EXTBASE_DISPATCHER . FilesystemCommandController::MD5_FILE_COMMAND . ' '
-            . escapeshellarg($fileIdentifier);
-        $hashArray = $this->executeRemoteCommand($command);
-        return end($hashArray);
-    }
-
-    /**
-     * @param string $fileIdentifier
-     * @return bool
-     */
-    public function removeRemoteFile($fileIdentifier)
-    {
-        $this->stopIfArgumentContainsCommand($fileIdentifier);
-        $this->connectIfNecessary();
-        $success = ssh2_sftp_unlink($this->sftpSubSystem, $this->foreignRootPath . $fileIdentifier);
-        return $success;
-    }
-
-    /**
-     * @param string $oldIdentifier
-     * @param string $newIdentifier
-     * @return bool
-     */
-    public function renameRemoteFile($oldIdentifier, $newIdentifier)
-    {
-        $this->stopIfArgumentContainsCommand($oldIdentifier);
-        $this->stopIfArgumentContainsCommand($newIdentifier);
-        $this->connectIfNecessary();
-        $success = ssh2_sftp_rename(
-            $this->sftpSubSystem,
-            $this->foreignRootPath . $oldIdentifier,
-            $this->foreignRootPath . $newIdentifier
-        );
-        return $success;
-    }
-
-    /**
-     * @param string $fileIdentifier
-     * @return bool
-     */
-    public function isRemoteFileExisting($fileIdentifier)
-    {
-        $this->stopIfArgumentContainsCommand($fileIdentifier);
-        $this->connectIfNecessary();
-        if (PHP_MAJOR_VERSION >= 7) {
-            $command = 'test -f ' . escapeshellarg($this->foreignRootPath . $fileIdentifier) . ';echo -e "\n$?"';
-            $result = $this->executeRemoteCommand($command) === array();
-        } else {
-            $result = is_file(
-                self::SSH2_WRAPPER
-                . $this->sftpSubSystem
-                . $this->foreignRootPath
-                . $fileIdentifier
-            );
-        }
-        return $result;
-    }
-
-    /**
-     * @param Record $record
-     * @return bool
-     */
-    public function createFolderOnRemote(Record $record)
-    {
-        return $this->createRemoteFolder($this->foreignRootPath . $record->getLocalProperty('relativePath'));
-    }
-
-    /**
-     * @param string $relativeFolderIdentifier
-     * @return bool
-     */
-    public function createFolderByIdentifierOnRemote($relativeFolderIdentifier)
-    {
-        $this->stopIfArgumentContainsCommand($relativeFolderIdentifier);
-        return $this->createRemoteFolder($this->foreignRootPath . $relativeFolderIdentifier);
-    }
-
-    /**
-     * @param Record $record A Record of virtual table physical_folder
-     * @return bool
-     */
-    public function removeFolderFromRemote(Record $record)
-    {
-        $command =
-            'cd ' . $this->foreignRootPath . ' && '
-            . $this->pathToPhp . ' '
-            . self::TYPO3_CLI_EXTBASE_DISPATCHER . FilesystemCommandController::REMOVE_FOLDER_RECURSIVE_COMMAND . ' '
-            . escapeshellarg(FolderUtility::getSanitizedFolderName($record->getForeignProperty('relativePath')));
-        $results = array();
-        $outputLines = $this->executeRemoteCommand($command);
-        foreach ($outputLines as $outputLine) {
-            $results[] = unserialize(base64_decode($outputLine));
-        }
-        return reset($results);
-    }
-
-    /**
-     * @param string $relativePath
-     * @return array
-     */
-    public function getRemoteFolderInformation($relativePath)
-    {
-        $this->stopIfArgumentContainsCommand($relativePath);
-        $command =
-            'cd ' . $this->foreignRootPath . ' && '
-            . $this->pathToPhp . ' '
-            . self::TYPO3_CLI_EXTBASE_DISPATCHER . FilesystemCommandController::GET_FOLDER_INFORMATION_COMMAND . ' '
-            . escapeshellarg($relativePath);
-        $results = array();
-        $outputLines = $this->executeRemoteCommand($command);
-        foreach ($outputLines as $outputLine) {
-            $results[] = unserialize(base64_decode($outputLine));
-        }
-        $returnValue = reset($results);
-        if (!is_array($returnValue)) {
-            throw new CommandFailedException(
-                'Failed to execute ' . __METHOD__ . '. Please verify the in2publish tests',
-                1454664909
-            );
-        }
-        return $returnValue;
-    }
-
-    /**
-     * @param string $relativePath
-     * @return array
-     */
-    public function getFilesInRemoteFolder($relativePath)
-    {
-        $this->stopIfArgumentContainsCommand($relativePath);
-        $command =
-            'cd ' . $this->foreignRootPath . ' && '
-            . $this->pathToPhp . ' '
-            . self::TYPO3_CLI_EXTBASE_DISPATCHER . FilesystemCommandController::GET_FILES_IN_FOLDER_COMMAND . ' '
-            . escapeshellarg($relativePath);
-        $results = array();
-        $outputLines = $this->executeRemoteCommand($command);
-        foreach ($outputLines as $outputLine) {
-            $results[] = unserialize(base64_decode($outputLine));
-        }
-        return reset($results);
-    }
-
-    /**
-     * @param string $relativePath
-     * @return array
-     */
-    public function getFoldersInRemoteFolder($relativePath)
-    {
-        $this->stopIfArgumentContainsCommand($relativePath);
-        $command =
-            'cd ' . $this->foreignRootPath . ' && '
-            . $this->pathToPhp . ' ' . self::TYPO3_CLI_EXTBASE_DISPATCHER
-            . FilesystemCommandController::GET_FOLDERS_IN_FOLDER_COMMAND . ' '
-            . escapeshellarg($relativePath);
-        $results = array();
-        $outputLines = $this->executeRemoteCommand($command);
-        foreach ($outputLines as $outputLine) {
-            $results[] = unserialize(base64_decode($outputLine));
-        }
-        return reset($results);
-    }
-
-    /**
-     * Sends a File over the ether. If the foreign directory does not exist it
-     * will be created.
-     * After creating a File or Folder the permissions are applied directly
-     *
-     * @param AbstractFile $file
-     * @return bool
-     * @throws \Exception
-     */
-    public function sendFile(AbstractFile $file)
-    {
-        $localFilePathAndName = $this->getFullFilePathAndNameByFile($file);
-        if (!file_exists($localFilePathAndName)) {
-            throw new \Exception('The file "' . $localFilePathAndName . '" does not exist', 1425465977);
-        } elseif (!is_readable($localFilePathAndName)) {
-            throw new \Exception('The file "' . $localFilePathAndName . '" is not readable', 1425466007);
-        }
-        return $this->writeRemoteFile($localFilePathAndName, $this->getFullFilePathAndNameByFile($file, true));
     }
 
     /**
@@ -350,7 +153,6 @@ class SshConnection
         return $this->executeRawCommand($command);
     }
 
-
     /**
      * @return array
      * @throws \Exception
@@ -369,6 +171,48 @@ class SshConnection
     {
         $command = 'cd ' . $this->foreignRootPath . ' && ls';
         return $this->executeRawCommand($command);
+    }
+
+    /**
+     * @param int $uid Envelope uid
+     * @return array|mixed
+     */
+    public function executeRpc($uid)
+    {
+        $command =
+            'cd ' . $this->foreignRootPath . ' && '
+            . $this->pathToPhp . ' '
+            . self::TYPO3_CLI_EXTBASE_DISPATCHER . RpcCommandController::EXECUTE_COMMAND . ' '
+            . (int)$uid;
+        $returnValues = $this->executeRemoteCommand($command);
+        $result = json_decode(reset($returnValues), true);
+        if ($result === null) {
+            return (array)$returnValues;
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $absoluteSourceFile
+     * @return string
+     */
+    public function transferTemporaryFile($absoluteSourceFile)
+    {
+        if (is_file($absoluteSourceFile)) {
+            $temporaryIdentifier = $this->foreignRootPath . 'typo3temp/' . uniqid('tx_in2publish_temp_');
+            if ($this->writeRemoteFile($absoluteSourceFile, $temporaryIdentifier)) {
+                return $temporaryIdentifier;
+            } else {
+                throw new \RuntimeException(
+                    'Could not transfer ' . $absoluteSourceFile . ' to the foreign system',
+                    1476272902
+                );
+            }
+        } else {
+            throw new \InvalidArgumentException(
+                'The source file ' . $absoluteSourceFile . ' does not exist', 1476272905
+            );
+        }
     }
 
     /***************************************************
@@ -414,31 +258,6 @@ class SshConnection
         fclose($stdOutStream);
         fclose($stdErrStream);
         return array_filter(explode(PHP_EOL, $stdOut . $stdErr));
-    }
-
-    /**
-     * Resolves the full absolute path to the file on the local or foreign side
-     *
-     * @param AbstractFile $file
-     * @param bool $remote
-     * @return string
-     */
-    private function getFullFilePathAndNameByFile(AbstractFile $file, $remote = false)
-    {
-        $storageConfiguration = $file->getStorage()->getConfiguration();
-        // TODO: This is just for LocalDriver storages.
-        // Use correct FAL methods for full FAL compatibility
-        $storageBasePath = trim($storageConfiguration['basePath'], '/');
-        if ($remote === true) {
-            $basePath = $this->foreignRootPath . $storageBasePath;
-        } else {
-            // special case for uploads folder
-            if ($storageBasePath === '') {
-                $storageBasePath = PATH_site;
-            }
-            $basePath = GeneralUtility::getFileAbsFileName($storageBasePath);
-        }
-        return rtrim($basePath, '/') . '/' . ltrim($file->getIdentifier(), '/');
     }
 
     /**
@@ -897,6 +716,10 @@ class SshConnection
     }
 
     /**
+     * Do not offer to not set create masks, because if this is
+     * called in first place all other requests, even if they
+     * need it, will not have the createMasks set and fail.
+     *
      * @throws \Exception
      */
     private function connectIfNecessary()
@@ -931,13 +754,21 @@ class SshConnection
             } elseif ($information[0] === 'FolderCreateMask') {
                 $createMasks['folder'] = $information[1];
             } else {
-                throw new \Exception(
-                    'Failed to retrieve foreign file and folder mask. '
-                    . 'The response does not contain the neccessary keys. '
-                    . 'Check if BE user _cli_lowlevel does exist on foreign, '
-                    . 'in2publish is installed and command controllers can be called (CMD: "' . $command . '"',
-                    1446816322
-                );
+                if (false !== strpos($value, 'not accepted when the connection to the database')) {
+                    throw new \Exception(
+                        'The foreign database is unreachable. (CMD: "' . $command . '"; Message: "' . $value . '")',
+                        1476450079
+                    );
+                } else {
+                    throw new \Exception(
+                        'Failed to retrieve foreign file and folder mask. '
+                        . 'The response does not contain the neccessary keys. '
+                        . 'Check if BE user _cli_lowlevel does exist on foreign, '
+                        . 'in2publish is installed and command controllers can be called (CMD: "'
+                        . $command . '"; Message: "' . $value . '")',
+                        1446816322
+                    );
+                }
             }
         }
 

@@ -91,46 +91,4 @@ class ArrayUtilityTest extends UnitTestCase
         $expectedArray = [12, false, 51234, true, '17.9', 0, 'stuff' => [12, true, false, '12,4', 0]];
         $this->assertSame($expectedArray, ArrayUtility::normalizeArray($arrayToNormalize));
     }
-
-    /**
-     * @covers ::compareArrays
-     */
-    public function testCompareArraysReturnsArrayDifferences()
-    {
-        $array1 = [
-            'foo' => 'bar',
-            'baz' => 'boo',
-            'coo' => 'zoo',
-            'meh' => 'zeh',
-        ];
-        $array2 = [
-            'foo' => 'baz',
-            'baz' => 'faz',
-            'coo' => 'zoo',
-            'oiu' => 'duf',
-        ];
-        $this->assertSame(
-            ['foo' => 'bar', 'baz' => 'boo', 'meh' => 'zeh'],
-            ArrayUtility::compareArrays($array1, $array2, [])
-        );
-    }
-
-    /**
-     * @covers ::compareArrays
-     * @depends testCompareArraysReturnsArrayDifferences
-     */
-    public function testCompareArraysReturnsArrayDifferencesExceptGivenKeysToIgnore()
-    {
-        $array1 = [
-            'foo' => 'bar',
-            'baz' => 'boo',
-            'coo' => 'zoo',
-        ];
-        $array2 = [
-            'foo' => 'baz',
-            'baz' => 'faz',
-            'coo' => 'zoo',
-        ];
-        $this->assertSame(['baz' => 'boo'], ArrayUtility::compareArrays($array1, $array2, ['foo']));
-    }
 }

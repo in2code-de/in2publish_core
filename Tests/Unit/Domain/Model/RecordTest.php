@@ -466,6 +466,20 @@ class RecordTest extends UnitTestCase
     }
 
     /**
+     * @covers ::setForeignProperties
+     * @covers ::getForeignProperties
+     */
+    public function testSetForeignPropertiesSetsForeignProperties()
+    {
+        $stub = $this->getRecordStub([]);
+        $stub->__construct('pages', [], ['foo' => 'boo'], [], []);
+
+        $stub->setForeignProperties(['baz' => 'inga']);
+
+        $this->assertSame(['baz' => 'inga'], $stub->getForeignProperties());
+    }
+
+    /**
      * @covers ::setLocalProperties
      */
     public function testSetLocalPropertiesAllowsChaining()
@@ -983,10 +997,39 @@ class RecordTest extends UnitTestCase
     }
 
     /**
+     * @covers ::getAdditionalProperty
+     */
+    public function testAdditionalPropertyReturnsNullIfPropertyIsNotSet()
+    {
+        $record = $this->getRecordStub([]);
+        $this->assertNull($record->getAdditionalProperty('foo'));
+    }
+
+    /**
+     * @covers ::hasAdditionalProperty
+     */
+    public function testHasAdditionalPropertyReturnsTrueIfAdditionalPropertyIsSet()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], ['foo' => 'bar']);
+        $this->assertTrue($record->hasAdditionalProperty('foo'));
+    }
+
+    /**
+     * @covers ::hasAdditionalProperty
+     */
+    public function testHasAdditionalPropertyReturnsFalseIfPropertyIsNotSet()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+        $this->assertFalse($record->hasAdditionalProperty('foo'));
+    }
+
+    /**
      * @covers ::setAdditionalProperties
      * @depends testGetAdditionalPropertiesReturnsAdditionalProperties
      */
-    public function testGetAdditionalPropertiesSetsThemAndAllowsChaining()
+    public function testSetAdditionalPropertiesSetsThemAndAllowsChaining()
     {
         $record = $this->getRecordStub([]);
         $this->assertSame($record, $record->setAdditionalProperties(['foo']));
@@ -1107,7 +1150,11 @@ class RecordTest extends UnitTestCase
         $related2 = $this->getRecordStub([]);
         $related2->__construct('tt_content', ['uid' => 2], ['uid' => 2], [], []);
 
-        $this->assertSame($record, $record->addRelatedRecords([$related1, $related2]));
+        $this->assertSame(
+            $record,
+            $record->addRelatedRecords([$related1, $related2]),
+            '[!!!] \In2code\In2publishCore\Domain\Model\Record::addRelatedRecords must allow chaining'
+        );
 
         $this->assertSame(
             [
@@ -1178,8 +1225,7 @@ class RecordTest extends UnitTestCase
             'local_true' => [['foo' => true], [], true],
             'local_false' => [['foo' => false], [], false],
             'foreign_true' => [[], ['foo' => true], true],
-            // Hmm, that might not be the expected return value for "foreign_false"...
-            'foreign_false' => [[], ['foo' => false], null],
+            'foreign_false' => [[], ['foo' => false], false],
             'both_true' => [['foo' => true], ['foo' => true], true],
             'both_false' => [['foo' => false], ['foo' => false], false],
             'different_true' => [['foo' => true], ['foo' => false], true],
@@ -1282,17 +1328,15 @@ class RecordTest extends UnitTestCase
         $this->assertSame([$record], $record->getChangedRelatedRecordsFlat());
     }
 
-
     /**
      * @covers ::isLocalPreviewAvailable
      */
     public function testIsLocalPreviewAvailableReturnsTrueIfPageCanBeRendered()
     {
         $record = $this->getRecordStub([]);
-        $record->__construct('pages', ['doktype' => 2], ['doktype' => 223], [], []);
+        $record->__construct('pages', ['uid' => 3, 'doktype' => 2], ['uid' => 3, 'doktype' => 223], [], []);
         $this->assertTrue($record->isLocalPreviewAvailable());
     }
-
 
     /**
      * @covers ::isLocalPreviewAvailable
@@ -1300,10 +1344,9 @@ class RecordTest extends UnitTestCase
     public function testIsLocalPreviewAvailableReturnsFalseForHighDoktypes()
     {
         $record = $this->getRecordStub([]);
-        $record->__construct('pages', ['doktype' => 201], ['doktype' => 201], [], []);
+        $record->__construct('pages', ['uid' => 3, 'doktype' => 201], ['uid' => 3, 'doktype' => 201], [], []);
         $this->assertFalse($record->isLocalPreviewAvailable());
     }
-
 
     /**
      * @covers ::isLocalPreviewAvailable
@@ -1311,10 +1354,19 @@ class RecordTest extends UnitTestCase
     public function testIsLocalPreviewAvailableReturnsFalseForOtherTablesThanPages()
     {
         $record = $this->getRecordStub([]);
-        $record->__construct('bar', ['doktype' => 2], ['doktype' => 2], [], []);
+        $record->__construct('bar', ['uid' => 3, 'doktype' => 2], ['uid' => 3, 'doktype' => 2], [], []);
         $this->assertFalse($record->isLocalPreviewAvailable());
     }
 
+    /**
+     * @covers ::isLocalPreviewAvailable
+     */
+    public function testIsLocalPreviewAvailableReturnsFalseForRootPage()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', ['uid' => 0, 'doktype' => 2], ['uid' => 0, 'doktype' => 2], [], []);
+        $this->assertFalse($record->isLocalPreviewAvailable());
+    }
 
     /**
      * @covers ::isForeignPreviewAvailable
@@ -1322,10 +1374,9 @@ class RecordTest extends UnitTestCase
     public function testIsForeignPreviewAvailableReturnsTrueIfPageCanBeRendered()
     {
         $record = $this->getRecordStub([]);
-        $record->__construct('pages', ['doktype' => 211], ['doktype' => 2], [], []);
+        $record->__construct('pages', ['uid' => 3, 'doktype' => 211], ['uid' => 3, 'doktype' => 2], [], []);
         $this->assertTrue($record->isForeignPreviewAvailable());
     }
-
 
     /**
      * @covers ::isForeignPreviewAvailable
@@ -1333,10 +1384,9 @@ class RecordTest extends UnitTestCase
     public function testIsForeignPreviewAvailableReturnsFalseForHighDoktypes()
     {
         $record = $this->getRecordStub([]);
-        $record->__construct('pages', ['doktype' => 2], ['doktype' => 222], [], []);
+        $record->__construct('pages', ['uid' => 3, 'doktype' => 2], ['uid' => 3, 'doktype' => 222], [], []);
         $this->assertFalse($record->isForeignPreviewAvailable());
     }
-
 
     /**
      * @covers ::isForeignPreviewAvailable
@@ -1344,7 +1394,266 @@ class RecordTest extends UnitTestCase
     public function testIsForeignPreviewAvailableReturnsFalseForOtherTablesThanPages()
     {
         $record = $this->getRecordStub([]);
-        $record->__construct('foo', ['doktype' => 2], ['doktype' => 100], [], []);
+        $record->__construct('foo', ['uid' => 3, 'doktype' => 2], ['uid' => 3, 'doktype' => 100], [], []);
         $this->assertFalse($record->isForeignPreviewAvailable());
+    }
+
+    /**
+     * @covers ::isForeignPreviewAvailable
+     */
+    public function testIsForeignPreviewAvailableReturnsFalseForRootPage()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', ['uid' => 0, 'doktype' => 2], ['uid' => 0, 'doktype' => 100], [], []);
+        $this->assertFalse($record->isForeignPreviewAvailable());
+    }
+
+    /**
+     * @covers ::setForeignProperties
+     * @covers ::foreignRecordExists
+     * @depends testStateOfRecordIsAddedIfOnlyLocalPropertiesAreSet
+     * @depends testStateOfRecordIsDeletedIfOnlyForeignPropertiesAreSet
+     */
+    public function testRuntimeCacheIsResetIfForeignPropertiesChange()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('foo', ['uid' => 2], ['uid' => 100], [], []);
+        $this->assertTrue($record->foreignRecordExists());
+        $record->setForeignProperties([]);
+        $this->assertFalse($record->foreignRecordExists());
+    }
+
+    /**
+     * @covers ::setLocalProperties
+     * @covers ::localRecordExists
+     * @depends testStateOfRecordIsAddedIfOnlyLocalPropertiesAreSet
+     * @depends testStateOfRecordIsDeletedIfOnlyForeignPropertiesAreSet
+     */
+    public function testRuntimeCacheIsResetIfLocalPropertiesChange()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('foo', ['uid' => 2], ['uid' => 100], [], []);
+        $this->assertTrue($record->localRecordExists());
+        $record->setLocalProperties([]);
+        $this->assertFalse($record->localRecordExists());
+    }
+
+    /**
+     * @covers ::setDirtyProperties
+     */
+    public function testSetDirtyPropertiesResetsOldDirtyProperties()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('foo', ['uid' => 100, 'foo' => 'baz'], ['uid' => 200, 'bar' => 'bem'], [], []);
+        $record->setDirtyProperties();
+        $this->assertSame(['uid', 'foo', 'bar'], $record->getDirtyProperties());
+        $record->setForeignProperties(['uid' => 200, 'foo' => 'baz', 'bar' => 'bem']);
+        $record->setDirtyProperties();
+        $this->assertSame(['uid', 'bar'], $record->getDirtyProperties());
+    }
+
+    /**
+     * @covers ::getRelatedRecord
+     * @depends testGetChangedRelatedRecordsFlatReturnsFlatArrayOfChangedRelatedRecords
+     */
+    public function testGetRelatedRecordByPropertyReturnsEmptyArrayForNonExistingRecord()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $related1 = $this->getRecordStub([]);
+        $related1->__construct('tt_content', ['uid' => 1, 'foo' => 'bar'], ['uid' => 1], [], []);
+
+        $related2 = $this->getRecordStub([]);
+        $related2->__construct('sys_file', [], ['uid' => 2], [], []);
+
+        $record->addRelatedRecords([$related1, $related2]);
+
+        $this->assertSame([], $record->getRelatedRecordByTableAndProperty('tt_content', 'boo', 'foo'));
+    }
+
+    /**
+     * @covers ::getRelatedRecord
+     * @depends testGetChangedRelatedRecordsFlatReturnsFlatArrayOfChangedRelatedRecords
+     */
+    public function testGetRelatedRecordByPropertyReturnsEmptyArrayForNonExistingTable()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $this->assertSame([], $record->getRelatedRecordByTableAndProperty('tt_content', 'boo', 'foo'));
+    }
+
+    /**
+     * @covers ::getRelatedRecord
+     * @depends testGetChangedRelatedRecordsFlatReturnsFlatArrayOfChangedRelatedRecords
+     */
+    public function testGetRelatedRecordByPropertyReturnsExpectedPropertyInArray()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $related1 = $this->getRecordStub([]);
+        $related1->__construct('tt_content', ['uid' => 1, 'foo' => 'bar'], ['uid' => 1], [], []);
+
+        $related2 = $this->getRecordStub([]);
+        $related2->__construct('sys_file', [], ['uid' => 2], [], []);
+
+        $record->addRelatedRecords([$related1, $related2]);
+
+        $this->assertSame(
+            [$related1->getIdentifier() => $related1],
+            $record->getRelatedRecordByTableAndProperty('tt_content', 'foo', 'bar')
+        );
+    }
+
+    /**
+     * @covers ::setPropertiesBySideIdentifier
+     * @depends testSetLocalPropertiesSetsLocalProperties
+     * @depends testGetLocalPropertiesReturnsAllLocalProperties
+     */
+    public function testSetPropertiesBySideSetsPropertiesForLocalSide()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $properties = ['foo' => 'bar'];
+        $record->setPropertiesBySideIdentifier('local', $properties);
+
+        $this->assertSame($properties, $record->getLocalProperties());
+    }
+
+    /**
+     * @covers ::setPropertiesBySideIdentifier
+     * @depends testSetForeignPropertiesSetsForeignProperties
+     * @depends testGetForeignPropertiesReturnsAllForeignProperties
+     */
+    public function testSetPropertiesBySideSetsPropertiesForForeignSide()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $properties = ['foo' => 'bar'];
+        $record->setPropertiesBySideIdentifier('local', $properties);
+
+        $this->assertSame($properties, $record->getLocalProperties());
+    }
+
+    /**
+     * @covers ::setPropertiesBySideIdentifier
+     * @depends testSetForeignPropertiesSetsForeignProperties
+     * @depends testGetForeignPropertiesReturnsAllForeignProperties
+     */
+    public function testSetPropertiesBySideAllowsChaining()
+    {
+        $stub = $this->getRecordStub([]);
+        $stub->__construct('pages', [], [], [], []);
+
+        $this->assertSame(
+            $stub,
+            $stub->setPropertiesBySideIdentifier('local', []),
+            '[!!!] \In2code\In2publishCore\Domain\Model\Record::setPropertiesBySideIdentifier must allow chaining'
+        );
+    }
+
+    /**
+     * @covers ::setPropertiesBySideIdentifier
+     * @depends testSetForeignPropertiesSetsForeignProperties
+     * @depends testGetForeignPropertiesReturnsAllForeignProperties
+     */
+    public function testSetPropertiesBySideThrowsExceptionForUndefinedSide()
+    {
+        $stub = $this->getRecordStub([]);
+        $stub->__construct('pages', [], [], [], []);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionCode(1475857626);
+        $this->expectExceptionMessage('Can not set properties for undefined side "foo"');
+
+        $stub->setPropertiesBySideIdentifier('foo', []);
+    }
+
+    /**
+     * @covers ::getPropertiesBySideIdentifier
+     * @depends testGetLocalPropertiesReturnsAllLocalProperties
+     */
+    public function getPropertiesBySideIdentifierReturnsLocalPropertiesForLocalSide()
+    {
+        $record = $this->getRecordStub([]);
+
+        $properties = ['foo' => 'bar'];
+        $record->__construct('pages', $properties, [], [], []);
+
+        $this->assertSame($properties, $record->getPropertiesBySideIdentifier('local'));
+    }
+
+    /**
+     * @covers ::getPropertiesBySideIdentifier
+     * @depends testGetForeignPropertiesReturnsAllForeignProperties
+     */
+    public function getPropertiesBySideIdentifierReturnsForeignPropertiesForForeignSide()
+    {
+        $record = $this->getRecordStub([]);
+
+        $properties = ['foo' => 'bar'];
+        $record->__construct('pages', [], $properties, [], []);
+
+        $this->assertSame($properties, $record->getPropertiesBySideIdentifier('foreign'));
+    }
+
+    /**
+     * @covers ::getPropertiesBySideIdentifier
+     */
+    public function getPropertiesBySideIdentifierThrowsExceptionIfSideIsUndefined()
+    {
+        $stub = $this->getRecordStub([]);
+        $stub->__construct('pages', [], [], [], []);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionCode(1475858502);
+        $this->expectExceptionMessage('Can not get Properties from undefined side "foo"');
+
+        $stub->getPropertiesBySideIdentifier('foo');
+    }
+
+    /**
+     * @covers ::getPropertyBySideIdentifier
+     * @depends testGetLocalPropertyReturnsLocalProperty
+     */
+    public function testGetPropertyBySideIdentifierReturnsLocalProperty()
+    {
+        $record = $this->getRecordStub([]);
+
+        $record->__construct('pages', ['foo' => 'bar'], [], [], []);
+
+        $this->assertSame('bar', $record->getPropertyBySideIdentifier('local', 'foo'));
+    }
+
+    /**
+     * @covers ::getPropertyBySideIdentifier
+     * @depends testGetForeignPropertyReturnsForeignProperty
+     */
+    public function testGetPropertyBySideIdentifierReturnsForeignProperty()
+    {
+        $record = $this->getRecordStub([]);
+
+        $record->__construct('pages', [], ['foo' => 'bar'], [], []);
+
+        $this->assertSame('bar', $record->getPropertyBySideIdentifier('foreign', 'foo'));
+    }
+
+    /**
+     * @covers ::getPropertyBySideIdentifier
+     */
+    public function testGetPropertyBySideIdentifierThrowsExceptionForUndefinedSide()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionCode(1475858834);
+        $this->expectExceptionMessage('Can not get property "bar" from undefined side "foo"');
+
+        $this->assertSame('bar', $record->getPropertyBySideIdentifier('foo', 'bar'));
     }
 }

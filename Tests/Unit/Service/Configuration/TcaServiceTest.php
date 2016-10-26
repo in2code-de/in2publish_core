@@ -380,6 +380,77 @@ class TcaServiceTest extends UnitTestCase
     }
 
     /**
+     * @covers ::getColumnConfigurationForTableColumn
+     */
+    public function testGetColumnConfigurationForTableColumnReturnsNullForMissingTable()
+    {
+        $tcaService = new TcaService();
+        $this->assertNull($tcaService->getColumnConfigurationForTableColumn('foo', 'bar'));
+    }
+
+    /**
+     * @covers ::getColumnConfigurationForTableColumn
+     */
+    public function testGetColumnConfigurationForTableColumnReturnsColumnConfiguration()
+    {
+        $expected = [
+            'columns' => [
+                'bar' => ['whee'],
+            ],
+        ];
+        $this->setTca(['table' => $expected]);
+
+        $tcaService = new TcaService();
+        $this->assertSame(['whee'], $tcaService->getColumnConfigurationForTableColumn('table', 'bar'));
+    }
+
+    /**
+     * @covers ::getColumnConfigurationForTableColumn
+     * @depends testGetColumnConfigurationForTableColumnReturnsColumnConfiguration
+     */
+    public function testGetColumnConfigurationForTableColumnReturnsNullForMissingColumn()
+    {
+        $expected = [
+            'columns' => [
+                'boo' => ['whee'],
+            ],
+        ];
+        $this->setTca(['table' => $expected]);
+
+        $tcaService = new TcaService();
+        $this->assertNull($tcaService->getColumnConfigurationForTableColumn('table', 'bar'));
+    }
+
+    /**
+     * @covers ::isHiddenRootTable
+     */
+    public function testIsHiddenRootTableReturnsTrueForInvisbleTablesPossibleOnRoot()
+    {
+        $this->setTca(['table' => ['ctrl' => ['hideTable' => true, 'rootLevel' => 1]]]);
+        $tcaService = new TcaService();
+        $this->assertTrue($tcaService->isHiddenRootTable('table'));
+
+        $this->setTca(['table' => ['ctrl' => ['hideTable' => 1, 'rootLevel' => -1]]]);
+        $tcaService = new TcaService();
+        $this->assertTrue($tcaService->isHiddenRootTable('table'));
+    }
+
+    /**
+     * @covers ::isHiddenRootTable
+     */
+    public function testIsHiddenRootTableReturnsFalseForVisibleOrPagesOnlyTables()
+    {
+        $this->setTca(['table' => ['ctrl' => ['hideTable' => false, 'rootLevel' => 1]]]);
+        $tcaService = new TcaService();
+        $this->assertFalse($tcaService->isHiddenRootTable('table'));
+
+        $this->setTca(['table' => ['ctrl' => ['hideTable' => 1, 'rootLevel' => 0]]]);
+        $tcaService = new TcaService();
+        $this->assertFalse($tcaService->isHiddenRootTable('table'));
+        $this->assertFalse($tcaService->isHiddenRootTable('foo'));
+    }
+
+    /**
      * @param array $tca
      * @SuppressWarnings("PHPMD.Superglobals")
      */

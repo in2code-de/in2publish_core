@@ -192,6 +192,19 @@ class TcaService implements SingletonInterface
     }
 
     /**
+     * @param string $table
+     * @param string $column
+     * @return array|null
+     */
+    public function getColumnConfigurationForTableColumn($table, $column)
+    {
+        if (isset($this->tca[$table]['columns'][$column])) {
+            return $this->tca[$table]['columns'][$column];
+        }
+        return null;
+    }
+
+    /**
      * Returns all table names that are not in the exclusion list
      *
      * @param array $exceptTableNames
@@ -225,6 +238,18 @@ class TcaService implements SingletonInterface
         }
 
         return $label;
+    }
+
+    /**
+     * @param string $tableName
+     * @return bool
+     */
+    public function isHiddenRootTable($tableName)
+    {
+        return isset($this->tca[$tableName]['ctrl']['hideTable'])
+               && isset($this->tca[$tableName]['ctrl']['rootLevel'])
+               && true === (bool)$this->tca[$tableName]['ctrl']['hideTable']
+               && in_array($this->tca[$tableName]['ctrl']['rootLevel'], array(1, -1));
     }
 
     /**

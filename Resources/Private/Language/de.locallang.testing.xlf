@@ -175,7 +175,7 @@
 			</trans-unit>
 			<trans-unit id="database.tables_only_on_local">
 				<source>Following tables only exist on local:</source>
-				<target state="translated">Folgende Tabellen exitsieren nur lokal:</target>
+				<target state="translated">Folgende Tabellen existieren nur lokal:</target>
 			</trans-unit>
 			<trans-unit id="database.tables_only_on_foreign">
 				<source>Following tables only exist on foreign:</source>
@@ -189,6 +189,10 @@
 			<trans-unit id="database.different_fields">
 				<source>These fields differ:</source>
 				<target state="translated">Diese Felder haben Unterschiede:</target>
+			</trans-unit>
+			<trans-unit id="database.different_tables">
+				<source>These tables differ:</source>
+				<target state="translated">Diese Tabellen haben Unterschiede:</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest -->
@@ -353,6 +357,83 @@
 			<trans-unit id="application.foreign_sys_domain_configured">
 				<source>A valid sys_domain entry has been found on the foreign system.</source>
 				<target state="translated">Es wurde ein gültiger sys_domain Eintrag im entfernte System gefunden.</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest
+				 && \In2code\In2publishCore\Testing\Tests\Fal\CaseSensitivityTest
+				 && \In2code\In2publishCore\Testing\Tests\Fal\IdenticalDriverTest -->
+
+			<trans-unit id="fal.affected_storages">
+				<source>Affected Storages:</source>
+				<target state="translated">Betroffene FAL Storages:</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest -->
+
+			<trans-unit id="fal.no_missing_storages">
+				<source>No missing FAL storages.</source>
+				<target state="translated">Keine fehlenden FAL Storages gefunden.</target>
+			</trans-unit>
+			<trans-unit id="fal.missing_storages">
+				<source>Missing FAL storages detected.</source>
+				<target state="translated">Fehlenden FAL Storages gefunden.</target>
+			</trans-unit>
+			<trans-unit id="fal.missing_on_local">
+				<source>Storages missing on local:</source>
+				<target state="translated">Folgende FAL Storages fehlen lokal:</target>
+			</trans-unit>
+			<trans-unit id="fal.missing_on_foreign">
+				<source>Storages missing on foreign:</source>
+				<target state="translated">Folgende FAL Storages fehlen auf dem entfernten System:</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\CaseSensitivityTest -->
+
+			<trans-unit id="fal.case_sensitivity_matching">
+				<source>FAL storages case sensitivity checked.</source>
+				<target state="translated">Beachtung der Groß- Kleinschreibung in FAL Storages überprüft.</target>
+			</trans-unit>
+			<trans-unit id="fal.case_sensitivity_mismatch">
+				<source>Case sensitivity errors detected.</source>
+				<target state="translated">Probleme mit Beachtung der Groß- Kleinschreibung entdeckt.</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\IdenticalDriverTest -->
+
+			<trans-unit id="fal.driver_matching">
+				<source>The FAL storages have identical drivers.</source>
+				<target state="translated">Alle FAL Storages haben identische Treiber.</target>
+			</trans-unit>
+			<trans-unit id="fal.driver_mismatch">
+				<source>Following FAL Storages have different drivers.</source>
+				<target state="translated">Folgende FAL Storages haben unterschiedliche Treiber:</target>
+			</trans-unit>
+			<trans-unit id="fal.driver_mismatch_explanation">
+				<source>The FAL driver on live will be changed by publishing. This might result in missing images in the frontend or data loss in worst case.</source>
+				<target state="translated">Unterschiedliche Treiber werden beim publishing überschrieben. Das kann zu fehlenden Bildern im Frontend führen oder gar zu Datenverlust.</target>
+			</trans-unit>
+			<trans-unit id="fal.xsp_driver_premium_notice">
+				<source>In this community version differences between FAL storages will be simply overwritten. Allowing different FAL drivers hence allowing Cross-Storage-Publishing (XSP) is an enterprise version feature.</source>
+				<target state="translated">In dieser Community Version werden unterschiede zwischen FAL Storages überschrieben. Cross-Storage-Publishing (XSP) ist ein Feature der Enterprise Version.</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\UniqueStorageTargetTest -->
+
+			<trans-unit id="fal.storage_targets_okay">
+				<source>All FAL storages have different file system targets.</source>
+				<target state="translated">Alle FAL Storages haben verschiedene Dateisysteme zum Ziel.</target>
+			</trans-unit>
+			<trans-unit id="fal.storage_targets_test_error">
+				<source>The unique storage target test failed.</source>
+				<target state="translated">Der Zieldateisystemtest schlug fehl.</target>
+			</trans-unit>
+			<trans-unit id="fal.storage_targets_same">
+				<source>One or more storages on local have the same file system target as the corresponding storage on foreign.</source>
+				<target state="translated">Eine oder mehrere lokale FAL Storages haben das selbe Dateisystem zum Ziel wie die dazugehörige entfernte FAL Storage(s).</target>
+			</trans-unit>
+			<trans-unit id="fal.test_file_upload_failed">
+				<source>Could not upload a testfile to a FAL storage. Please assure write and read permissions on the storages root level folder.</source>
+				<target state="translated">Die Testdatei konnte nicht hochgeladen werden. Bitte stellen sie sicher, dass TYPO3 Schreib- und Leserechte im Wurzelverzeichnis der FAL Storage hat.</target>
 			</trans-unit>
 		</body>
 	</file>

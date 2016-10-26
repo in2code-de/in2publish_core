@@ -4,12 +4,15 @@
 	<div class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.stateRecursive} in2publish-clearfix">
 		<f:comment>Left</f:comment>
 		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--left">
-			<i class="in2publish-icon-file"></i><f:if condition="{showRecordDepth}">[{record.additionalProperties.depth}] </f:if><publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" />
+			<i class="in2publish-icon-file"></i><f:if condition="{configuration.debug.showRecordDepth}">[{record.additionalProperties.depth}] </f:if><publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" />
 			<i class="in2publish-icon-info" data-action="opendirtypropertieslistcontainer"></i>
 			<f:if condition="{record.changedRecursive}">
 				<f:link.action
-						action="publishRecord"
-						arguments="{identifier:record.identifier}"
+						action="publishFile"
+						arguments="{
+						    uid:record.identifier,
+						    identifier:'{publish:record.getMergedProperty(record:record, propertyName: \'identifier\')}',
+						    storage:'{publish:record.getMergedProperty(record:record, propertyName: \'storage\')}'}"
 						additionalAttributes="{data-in2publish-overlay: 'TRUE', data-in2publish-confirm: '{f:translate(key:\'confirm_publish_file\', default:\'Are you sure?\')}'}">
 					<i class="in2publish-icon-publish"></i>
 				</f:link.action>
@@ -24,14 +27,4 @@
 		<f:comment>Difference View</f:comment>
 		<f:render partial="File/Index/DirtyPropertiesList" arguments="{_all}" />
 	</div>
-
-	<f:if condition="{record.relatedRecords}">
-		<ul class="in2publish-unstyledlist in2publish-list-level in2publish-list-level--{record.additionalProperties.depth}">
-			<f:for each="{record.relatedRecords.physical_file}" as="fileRecord">
-				<li>
-					<f:render partial="File/Index/FileList" arguments="{record:fileRecord, showRecordDepth:showRecordDepth}" />
-				</li>
-			</f:for>
-		</ul>
-	</f:if>
 </f:if>

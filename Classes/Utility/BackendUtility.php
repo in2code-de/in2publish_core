@@ -87,7 +87,7 @@ class BackendUtility
         // get id from record ?data[tt_content][13]=foo
         if (null !== ($data = GeneralUtility::_GP('data')) && is_array($data)) {
             $table = key($data);
-            $result = self::getDatabaseConnection()->exec_SELECTgetSingleRow(
+            $result = DatabaseUtility::buildLocalDatabaseConnection()->exec_SELECTgetSingleRow(
                 'pid',
                 $table,
                 'uid=' . (int)key($data[$table])
@@ -101,7 +101,7 @@ class BackendUtility
         if (null !== ($rollbackFields = GeneralUtility::_GP('element')) && is_string($rollbackFields)) {
             $rollbackData = explode(':', $rollbackFields);
             if (count($rollbackData) > 1) {
-                $result = self::getDatabaseConnection()->exec_SELECTgetSingleRow(
+                $result = DatabaseUtility::buildLocalDatabaseConnection()->exec_SELECTgetSingleRow(
                     'pid',
                     $rollbackData[0],
                     'uid=' . (int)$rollbackData[1]
@@ -149,7 +149,6 @@ class BackendUtility
      *
      * @param string $table
      * @param int $identifier
-     * @param bool $addReturnUrl
      * @return string
      * @todo Remove outdated URI generation for TYPO3 6.2 in upcoming major version
      */
@@ -169,14 +168,5 @@ class BackendUtility
             $undoUri .= '&returnUrl=' . BackendUtilityCore::getModuleUrl('web_In2publishCoreM1');
         }
         return $undoUri;
-    }
-
-    /**
-     * @return DatabaseConnection
-     * @SuppressWarnings("PHPMD.Superglobals")
-     */
-    protected static function getDatabaseConnection()
-    {
-        return $GLOBALS['TYPO3_DB'];
     }
 }

@@ -107,42 +107,87 @@ class DatabaseDifferencesTest implements TestCaseInterface
         $diffOnForeign = $this->identifyDifferences($foreignTableInfo, $localTableInfo);
 
         if (!empty($diffOnLocal) || !empty($diffOnForeign)) {
-            $differences = array();
+            $fieldDifferences = array();
+            $tableDifferences = array();
 
             foreach ($diffOnLocal as $tableName => $fieldArray) {
-                foreach ($fieldArray['fields'] as $fieldName => $fieldProperties) {
-                    $fieldExistsOnLocal = isset($localTableInfo[$tableName]['fields'][$fieldName]);
-                    $fieldExistsOnForeign = isset($foreignTableInfo[$tableName]['fields'][$fieldName]);
+                if (isset($fieldArray['fields']) && is_array($fieldArray['fields'])) {
+                    foreach ($fieldArray['fields'] as $fieldName => $fieldProperties) {
+                        $fieldExistsOnLocal = isset($localTableInfo[$tableName]['fields'][$fieldName]);
+                        $fieldExistsOnForeign = isset($foreignTableInfo[$tableName]['fields'][$fieldName]);
 
-                    if ($fieldExistsOnForeign && $fieldExistsOnLocal) {
-                        foreach ($fieldProperties as $propertyType => $propertyValue) {
-                            $differences[] = $tableName . '.' . $fieldName . '.' . $propertyType . ': Local: '
-                                             . $propertyValue . ' Foreign: '
-                                             . $diffOnForeign[$tableName]['fields'][$fieldName][$propertyType];
+                        if ($fieldExistsOnForeign && $fieldExistsOnLocal) {
+                            foreach ($fieldProperties as $propertyType => $propertyValue) {
+                                $fieldDifferences[] = $tableName . '.' . $fieldName . '.' . $propertyType . ': Local: '
+                                                      . $propertyValue . ' Foreign: '
+                                                      . $diffOnForeign[$tableName]['fields'][$fieldName][$propertyType];
+                            }
+                        } elseif ($fieldExistsOnForeign && !$fieldExistsOnLocal) {
+                            $fieldDifferences[] = $tableName . '.' . $fieldName . ': Only exists on foreign';
+                        } elseif (!$fieldExistsOnForeign && $fieldExistsOnLocal) {
+                            $fieldDifferences[] = $tableName . '.' . $fieldName . ': Only exists on local';
+                        } else {
+                            continue;
                         }
-                    } elseif ($fieldExistsOnForeign && !$fieldExistsOnLocal) {
-                        $differences[] = $tableName . '.' . $fieldName . ': Only exists on foreign';
-                    } elseif (!$fieldExistsOnForeign && $fieldExistsOnLocal) {
-                        $differences[] = $tableName . '.' . $fieldName . ': Only exists on local';
-                    } else {
-                        continue;
-                    }
 
-                    unset($diffOnLocal[$tableName]['fields'][$fieldName]);
-                    unset($diffOnForeign[$tableName]['fields'][$fieldName]);
+                        unset($diffOnLocal[$tableName]['fields'][$fieldName]);
+                        unset($diffOnForeign[$tableName]['fields'][$fieldName]);
+                    }
+                }
+
+                if (isset($fieldArray['table']) && is_array($fieldArray['table'])) {
+                    foreach ($fieldArray['table'] as $propertyName => $fieldProperties) {
+                        $propertyExistsLocal = isset($localTableInfo[$tableName]['table'][$propertyName]);
+                        $propertyExistsForeign = isset($foreignTableInfo[$tableName]['table'][$propertyName]);
+
+                        if ($propertyExistsLocal && $propertyExistsForeign) {
+                            if ($localTableInfo[$tableName]['table'][$propertyName]
+                                !== $foreignTableInfo[$tableName]['table'][$propertyName]
+                            ) {
+                                $tableDifferences[] = $tableName . '.' . $propertyName . ': Local: '
+                                                      . $localTableInfo[$tableName]['table'][$propertyName]
+                                                      . ' Foreign: '
+                                                      . $foreignTableInfo[$tableName]['table'][$propertyName];
+                            }
+                        } elseif ($propertyExistsLocal && !$propertyExistsForeign) {
+                            $tableDifferences[] = 'Table property ' . $tableName . '.' . $propertyName
+                                                  . ': Only exists on foreign';
+                        } elseif (!$propertyExistsLocal && $propertyExistsForeign) {
+                            $tableDifferences[] = 'Table property ' . $tableName . '.' . $propertyName
+                                                  . ': Only exists on local';
+                        } else {
+                            continue;
+                        }
+
+                        unset($diffOnLocal[$tableName]['table'][$propertyName]);
+                        unset($diffOnForeign[$tableName]['table'][$propertyName]);
+                    }
                 }
             }
 
             foreach ($diffOnForeign as $tableName => $fieldArray) {
-                foreach (array_keys($fieldArray['fields']) as $fieldOnlyOnForeign) {
-                    $differences[] = $tableName . '.' . $fieldOnlyOnForeign . ': Only exists on foreign';
+                if (isset($fieldArray['fields']) && is_array($fieldArray['fields'])) {
+                    foreach (array_keys($fieldArray['fields']) as $fieldOnlyOnForeign) {
+                        $fieldDifferences[] = $tableName . '.' . $fieldOnlyOnForeign . ': Only exists on foreign';
+                    }
+                }
+                if (isset($fieldArray['table']) && is_array($fieldArray['fields'])) {
+                    foreach (array_keys($fieldArray['table']) as $propertyOnlyOnForeign) {
+                        $fieldDifferences[] = 'Table propety ' . $tableName . '.' . $propertyOnlyOnForeign
+                                              . ': Only exists on foreign';
+                    }
                 }
             }
 
             return new TestResult(
                 'database.field_differences',
                 TestResult::ERROR,
-                array_merge(array('database.different_fields'), $differences)
+                array_merge(
+                    array('database.different_fields'),
+                    $fieldDifferences,
+                    array('database.different_tables'),
+                    $tableDifferences
+                )
             );
         }
 

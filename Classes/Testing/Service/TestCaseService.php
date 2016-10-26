@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Testing\Service;
  ***************************************************************/
 
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class TestCaseService
@@ -89,7 +90,7 @@ class TestCaseService
                     1470244507
                 );
             }
-            $tests[$class] = new $class();
+            $tests[$class] = GeneralUtility::makeInstance($class);
         }
         return $tests;
     }

@@ -92,21 +92,8 @@ abstract class AbstractController extends ActionController
     {
         parent::__construct();
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
-    }
-
-    /**
-     * Create the controller context. Do NOT call this Method
-     * before $this->initializeAction() is going to be executed
-     * because it relies on $this->request and $this->response to be set
-     *
-     * @return void
-     */
-    protected function buildControllerContextIfNecessary()
-    {
-        if ($this->controllerContext === null) {
-            $this->logger->debug('Prematurely building ControllerContext');
-            $this->controllerContext = $this->buildControllerContext();
-        }
+        $this->pid = BackendUtility::getPageIdentifier();
+        $this->backendUser = $this->getBackendUser();
     }
 
     /**
@@ -168,6 +155,10 @@ abstract class AbstractController extends ActionController
      * Decorates the original addFlashMessage Method.
      * If the controller context was not built yet it will be initialized
      *
+     * Additionally creates the controller context if not done yet.
+     * Do NOT call this Method before $this->initializeAction() is going to be executed
+     * because it relies on $this->request and $this->response to be set
+     *
      * @param string $messageBody
      * @param string $messageTitle
      * @param int $severity
@@ -180,7 +171,10 @@ abstract class AbstractController extends ActionController
         $severity = AbstractMessage::OK,
         $storeInSession = true
     ) {
-        $this->buildControllerContextIfNecessary();
+        if ($this->controllerContext === null) {
+            $this->logger->debug('Prematurely building ControllerContext');
+            $this->controllerContext = $this->buildControllerContext();
+        }
         parent::addFlashMessage($messageBody, $messageTitle, $severity, $storeInSession);
     }
 
@@ -225,7 +219,6 @@ abstract class AbstractController extends ActionController
      */
     protected function getErrorFlashMessage()
     {
-        $this->logger->debug('Called ' . __FUNCTION__);
         return false;
     }
 
@@ -257,8 +250,15 @@ abstract class AbstractController extends ActionController
     protected function initializeView(ViewInterface $view)
     {
         parent::initializeView($view);
-        $this->view->assign('extensionVersion', ExtensionManagementUtility::getExtensionVersion('in2publish_core'));
-        $this->view->assign('configurationExists', $this->actionMethodName !== self::BLANK_ACTION);
+        $this->view->assignMultiple(
+            array(
+                'extensionVersion' => ExtensionManagementUtility::getExtensionVersion('in2publish_core'),
+                'configurationExists' => $this->actionMethodName !== self::BLANK_ACTION,
+            )
+        );
+        if (ConfigurationUtility::isConfigurationLoadedSuccessfully()) {
+            $this->view->assign('configuration', ConfigurationUtility::getConfiguration());
+        }
     }
 
     /**
@@ -276,8 +276,6 @@ abstract class AbstractController extends ActionController
         );
         $executionTimeService->start();
         $this->initializeDatabaseConnections();
-        $this->pid = BackendUtility::getPageIdentifier();
-        $this->backendUser = $this->getBackendUser();
         $this->commonRepository = CommonRepository::getDefaultInstance();
     }
 
@@ -321,6 +319,21 @@ abstract class AbstractController extends ActionController
                 )
             );
         }
+    }
+
+    /**
+     * @param string $filterName
+     * @param string $status
+     * @param string $action
+     */
+    protected function toggleFilterStatusAndRedirect($filterName, $status, $action)
+    {
+        $currentStatus = $this->backendUser->getSessionData($filterName . $status);
+        if (!is_bool($currentStatus)) {
+            $currentStatus = false;
+        }
+        $this->backendUser->setAndSaveSessionData($filterName . $status, !$currentStatus);
+        $this->redirect($action);
     }
 
     /**

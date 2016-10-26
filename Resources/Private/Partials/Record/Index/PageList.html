@@ -6,7 +6,7 @@
 			Left
 		</f:comment>
 		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--left">
-			<i class="in2publish-icon-folder" title="{f:translate(key:'record.state.{record.stateRecursive}',default:record.stateRecursive)}"></i><f:if condition="{showRecordDepth}">[{record.additionalProperties.depth}] </f:if><publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="title" stagingLevel="local" />
+			<i class="in2publish-icon-folder" title="{f:translate(key:'record.state.{record.stateRecursive}',default:record.stateRecursive)}"></i><f:if condition="{configuration.debug.showRecordDepth}">[{record.additionalProperties.depth}] </f:if><publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="title" stagingLevel="local" />
 			<i class="in2publish-icon-info"{publish:Attribute.DirtyPropertiesIconDataAttributes(record:record)}></i>
 			<f:if condition="{record.changedRecursive}">
 				<f:if condition="{publish:Condition.IsUserAllowedToPublish()}">
@@ -55,7 +55,7 @@
 		<ul class="in2publish-unstyledlist in2publish-list-level in2publish-list-level--{record.additionalProperties.depth}">
 			<f:for each="{record.relatedRecords.pages}" as="pageRecord">
 				<li>
-					<f:render partial="Record/Index/PageList" arguments="{record:pageRecord, showRecordDepth:showRecordDepth, configuration:configuration}" />
+					<f:render partial="Record/Index/PageList" arguments="{record:pageRecord, configuration:configuration}" />
 				</li>
 			</f:for>
 		</ul>

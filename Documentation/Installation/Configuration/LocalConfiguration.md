@@ -11,14 +11,17 @@
 |database.foreign.hostname|string|'localhost'|Host of the foreign database|
 |database.foreign.port|int|3306|Port to the foreign database|
 |excludeRelatedTables|array|_cropped. See example file_|Tables that are excluded from publishing|
-|ignoreFieldsForDifferenceView.[tableName]|array|_depends on table, tables defined by default: pages, sys_folder_|Don't show a difference if there is a difference in this table.field|
-|ignoreFieldsForDifferenceView.physical_file|array|_cropped. See example file_|Don't show a difference if there is a difference by comparing files between local and foreign (All settings of php function stat() are possible.)|
+|ignoreFieldsForDifferenceView.[tableName]|array|_depends on table, tables defined by default: pages, physical_folder, sys_file_|Don't show a difference if there is a difference in this table.field|
 |ignoreFieldsForDifferenceView.physical_folder|array|_cropped. See example file_|Don't show a difference if there is a difference by comparing folders between Local and Foreign (All settings of  php function stat() are possible.)|
 |factory.maximumPageRecursion|int|3|Depth of pages to fetch in hierarchy|
 |factory.maximumContentRecursion|int|6|Maximum number of relations in one relation chain. For example: a value of "3" would stop after `tt_content` > `sys_file_reference` > `sys_file`. Therefor `sys_file_metadata` will not be included. |
 |factory.maximumOverallRecursion|int|12|Maximum number of instance creation recursion. Minimum: maximumPageRecursion + maximumContentRecursion. Will be ignored if lower.|
 |factory.resolvePageRelations|bool|FALSE|Resolve properties of records which target records from "pages" table. Use with care: Related pages will be published through the relation chain, too. Content records are ALL records, even pages and MM Records.|
 |factory.simpleOverviewAndAjax|bool|FALSE|_cropped. See example file_|
+|factory.fal.reclaimSysFileEntries|bool|FALSE|_cropped. See example file_|
+|factory.fal.autoRepairFolderHash|bool|FALSE|_cropped. See example file_|
+|factory.fal.mergeSysFileByIdentifier|bool|FALSE|_cropped. See example file_|
+|factory.fal.enableSysFileReferenceUpdate|bool|FALSE|_cropped. See example file_|
 |filePreviewDomainName.local|string|stage.publishing.localhost.de|Domain prefix for local instance. This is needed for the preview links.|
 |filePreviewDomainName.foreign|string|prod.publishing.localhost.de|Domain prefix for the foreign instance. This is needed for the preview links.|
 |log.logLevel|int|5|0:Emergency, 1:Alert, 2:Critical, 3:Error, 4:Warning, 5:Notice, 6:Info, 7:Debug (int) - All levels smaller or equal to this value will be stored.|
@@ -43,6 +46,7 @@
 |debug.showForeignKeyFingerprint|bool|FALSE|Debug settings: Show foreign key fingerprint instead of throwing an exception if keyprint does not match with configuration|
 |debug.showRecordDepth|bool|FALSE|Debug settings: Show depth of records in publishing view|
 |debug.allInformation|bool|FALSE|Debug settings: Show all information in publishing overview module (which records are related to the current page)|
+|debug.keepEnvelopes|bool|FALSE|Do not delete Envelope entries after they fulfilled their purpose. Enable to keep all Envelopes. Overrules method level burnEnvelopes setting.|
 |tasks.realUrl.excludedDokTypes|array|[254]|Exclude pages with these dokTypes from realUrl generation|
 |tasks.realUrl.requestFrontend|bool|FALSE|Create a web request for the published page|
 |disableUserConfig|bool|FALSE|Set to TRUE if User TSconfig should not be merged into this configuration file|
@@ -131,36 +135,6 @@ ignoreFieldsForDifferenceView:
     - cruser_id
     - SYS_LASTCHANGED
     - l18n_cfg
-  sys_folder:
-    - absolutePath
-    - dev
-    - ino
-    - mode
-    - nlink
-    - uid
-    - gid
-    - rdev
-    - size
-    - atime
-    - mtime
-    - ctime
-    - blksize
-    - blocks
-  physical_file:
-    - absolutePath
-    - dev
-    - ino
-    - mode
-    - nlink
-    - uid
-    - gid
-    - rdev
-    - size
-    - atime
-    - mtime
-    - ctime
-    - blksize
-    - blocks
   physical_folder:
     - absolutePath
     - ino
@@ -175,7 +149,10 @@ ignoreFieldsForDifferenceView:
     - ctime
     - blksize
     - blocks
-
+  sys_file:
+    - modification_date
+    - creation_date
+    - tstamp
 
 # factory settings (configuration about building relations in in2publish)
 factory:
@@ -200,6 +177,54 @@ factory:
   # Details are available through an AJAX request and comparison with the foreign system.
   # Warning: Overview does not include everything (e.g. file records) and is not as robust as on default mode
   simpleOverviewAndAjax: FALSE
+
+  # FAL related settings
+  fal:
+
+    # This setting will enable a sys_file lookup based on the file identifier of files which were found in the storage
+    # but not in the database. (Database files are found by their folder hash)
+    reclaimSysFileEntries: FALSE
+
+    # Only in combination with factory.fal.reclaimSysFileEntries enabled.
+    # While reclaimSysFileEntries is consuming some additional performance this setting autoRepairFolderHash
+    # will automatically repair database entries and increase relation consistency
+    #
+    # WARNING: This feature changes sys_file entries on live without opt-in or asking for permission.
+    #   There is no preview of the changes which are going to be made.
+    #   Changes are persisted immediately before the publish file module is rendered.
+    autoRepairFolderHash: FALSE
+
+    # [BETA]
+    # It is possible for sys_file records to have different UIDs on local and foreign while referencing the same file
+    # due to the indexing behaviour of FAL. If this setting is set to FALSE you might see duplicate file entries in the
+    # publish files module. Enable this feature to merge the sys_files by identifier before showing them.
+    #
+    # WARNING: This feature will overwrite the UID of the foreign sys_file record if there are no references in the
+    #   table sys_file_reference. No other table or relation will be checked.
+    #   This feature changes sys_file_reference entries on live without opt-in or asking for permission.
+    #   There is no preview of the changes which are going to be made.
+    #   Changes are persisted immediately before the publish file module is rendered.
+    #
+    # IMPORTANT: If the UID of the foreign sys_file entry is already used in sys_file_reference this feature will not
+    #   overwrite the foreign UID to prevent severe damage or missing images on the foreign's frontend.
+    #   Hence it's mostly worth the risk and relatively stable.
+    mergeSysFileByIdentifier: TRUE
+
+    # [BETA]
+    #
+    # CAUTION: This feature disables the integrity check of the mergeSysFileByIdentifier feature. USE WITH CARE!
+    #
+    # DISCLAIMER:
+    #   This feature is distributed WITHOUT ANY WARRANTY;
+    #   without even the implied warranty of merchantability or fitness for a particular purpose.
+    #
+    # Disables the mergeSysFileByIdentifier integrity protection to allow you to update a sys_file's UID on foreign
+    # along with all associated sys_file_reference entries.
+    #
+    # WARNING: This feature changes sys_file_reference entries on live without opt-in or asking for permission.
+    #   There is no preview of the changes which are going to be made.
+    #   Changes are persisted immediately before the publish file module is rendered.
+    enableSysFileReferenceUpdate: TRUE
 
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
 filePreviewDomainName:
@@ -293,6 +318,9 @@ debug:
 
   # show all information in publishing overview module (which records are related to the current page)
   allInformation: FALSE
+
+  # Do not delete Envelope entries after they fulfilled their purpose. Enable to keep all Envelopes. Overrules method level burnEnvelopes setting.
+  keepEnvelopes: FALSE
 
 # Configuration for tasks
 tasks:

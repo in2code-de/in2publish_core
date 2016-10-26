@@ -46,13 +46,19 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
      * @param \In2code\In2publishCore\Domain\Model\Record $record
      * @param string $propertyName
      * @param string $stagingLevel
+     * @param string $fallbackProperty Property to use if $propertyName is empty. Takes effect before
+     *     fallbackRootPageTitle
      * @return string
      */
-    public function render(Record $record, $propertyName, $stagingLevel = 'local')
+    public function render(Record $record, $propertyName, $stagingLevel = 'local', $fallbackProperty = null)
     {
         $properties = ObjectAccess::getProperty($record, ucfirst($stagingLevel) . 'Properties');
         if (isset($properties[$propertyName])) {
-            return $properties[$propertyName];
+            $value = $properties[$propertyName];
+            if (empty($value) && null !== $fallbackProperty) {
+                $value = $this->render($record, $fallbackProperty, $stagingLevel);
+            }
+            return $value;
         }
         return $this->fallbackRootPageTitle($record, $propertyName, $stagingLevel);
     }
@@ -69,11 +75,20 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
     {
         if ($record->getTableName() === 'pages' && $record->getIdentifier() === 0 && $propertyName === 'title') {
             if ($stagingLevel === 'local') {
-                return $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];
+                return $this->getSiteName();
             } else {
                 return LocalizationUtility::translate('label_production', 'in2publish_core');
             }
         }
         return $this->emptyFieldValue;
+    }
+
+    /**
+     * @return string
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    protected function getSiteName()
+    {
+        return $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];
     }
 }

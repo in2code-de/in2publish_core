@@ -275,7 +275,7 @@ class ConfigurationUtility
      */
     protected function mergePageTs(array $configuration)
     {
-        $uid = \In2code\In2publishCore\Utility\BackendUtility::getPageIdentifier();
+        $uid = BackendUtility::getPageIdentifier();
         if ($this->configurationCache[self::CACHE_KEY_PAGE] === null) {
             // get the pageTS | Manually pass rootline to disable caching.
             $pageTs = CoreBackendUtility::getPagesTSconfig($uid, CoreBackendUtility::BEgetRootLine($uid));

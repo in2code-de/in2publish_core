@@ -162,6 +162,44 @@ abstract class BaseRepository
     }
 
     /**
+     * @param DatabaseConnection $databaseConnection
+     * @param array $properties
+     * @param string $additionalWhere
+     * @param string $groupBy
+     * @param string $orderBy
+     * @param string $limit
+     * @param string $indexField
+     * @return array
+     */
+    public function findPropertiesByProperties(
+        DatabaseConnection $databaseConnection,
+        array $properties,
+        $additionalWhere = '',
+        $groupBy = '',
+        $orderBy = '',
+        $limit = '',
+        $indexField = 'uid'
+    ) {
+        $whereParts = array();
+        foreach ($properties as $propertyName => $propertyValue) {
+            $whereParts[] = $databaseConnection->quoteStr($propertyName, $this->tableName) . ' LIKE '
+                            . $databaseConnection->fullQuoteStr($propertyValue, $this->tableName);
+        }
+        if (empty($orderBy)) {
+            $orderBy = $this->tcaService->getSortingField($this->tableName);
+        }
+        return (array)$databaseConnection->exec_SELECTgetRows(
+            '*',
+            $this->tableName,
+            implode(' AND ', $whereParts) . $additionalWhere,
+            $groupBy,
+            $orderBy,
+            $limit,
+            $indexField
+        );
+    }
+
+    /**
      * TODO: check if $this->identifierFieldName could be used instead
      *
      * Executes an UPDATE query on the given database connection. This method will
@@ -262,6 +300,27 @@ abstract class BaseRepository
             }
             return $success;
         }
+    }
+
+    /**
+     * Does not support identifier array!
+     *
+     * @param DatabaseConnection $databaseConnection
+     * @param string|int $identifier
+     * @return bool|int
+     */
+    protected function countRecord(DatabaseConnection $databaseConnection, $identifier)
+    {
+        $result = $databaseConnection->exec_SELECTcountRows(
+            '*',
+            $this->tableName,
+            $this->identifierFieldName . ' LIKE ' . $databaseConnection->fullQuoteStr($identifier, $this->tableName)
+        );
+        if (false === $result) {
+            $this->logFailedQuery(__METHOD__, $databaseConnection);
+            return false;
+        }
+        return (int)$result;
     }
 
     /**

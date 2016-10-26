@@ -2,63 +2,84 @@
 namespace In2code\In2publishCore\Domain\Factory;
 
 /***************************************************************
- *  Copyright notice
+ * Copyright notice
  *
- *  (c) 2015 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>,
- *  Oliver Eglseder <oliver.eglseder@in2code.de>
+ * (c) 2016 in2code.de and the following authors:
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  All rights reserved
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
+ * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
-use In2code\In2publishCore\Security\SshConnection;
+use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use In2code\In2publishCore\Utility\FolderUtility;
+use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
+use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
+use TYPO3\CMS\Core\Resource\Folder;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
+use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Extbase\Reflection\PropertyReflection;
 
 /**
  * Class FolderRecordFactory
  */
 class FolderRecordFactory
 {
-    const TABLE_NAME_PHYSICAL_FOLDER = 'physical_folder';
-    const TABLE_NAME_PHYSICAL_FILE = 'physical_file';
-
-    /**
-     * @var SshConnection
-     */
-    protected $sshConnection = null;
-
-    /**
-     * @var CommonRepository
-     */
-    protected $commonRepository = null;
-
     /**
      * @var Logger
      */
     protected $logger = null;
+
+    /**
+     * @var CommonRepository
+     */
+    protected $commonRepository;
+
+    /**
+     * @var DatabaseConnection
+     */
+    protected $foreignDatabase;
+
+    /**
+     * @var array
+     */
+    protected $configuration = array();
+
+    /**
+     * @var DriverInterface
+     */
+    protected $localDriver;
+
+    /**
+     * @var DriverInterface
+     */
+    protected $foreignDriver;
+
+    /**
+     * @var FileIndexFactory
+     */
+    protected $fileIndexFactory = null;
 
     /**
      * FolderRecordFactory constructor.
@@ -66,336 +87,758 @@ class FolderRecordFactory
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
-        $this->sshConnection = SshConnection::makeInstance();
-        /** @var ObjectManager $objectManager */
-        $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-        $this->commonRepository = $objectManager->get(
-            'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
-            DatabaseUtility::buildLocalDatabaseConnection(),
-            DatabaseUtility::buildForeignDatabaseConnection(),
-            'sys_file'
-        );
+        $this->commonRepository = CommonRepository::getDefaultInstance('sys_file');
+        $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
+        $this->configuration = ConfigurationUtility::getConfiguration('factory.fal');
     }
 
     /**
-     * @param string $folderIdentifier
+     * @param string $identifier
+     * @return Folder
+     */
+    protected function initializeDependenciesAndGetFolder($identifier)
+    {
+        // Grab the resource factory to get the FAL driver of the selected folder "FAL style"
+        $resourceFactory = ResourceFactory::getInstance();
+
+        // Determine the current folder. If the identifier is NULL there was no folder selected.
+        if (null === $identifier) {
+            // Special case: The module was opened, but no storage/folder has been selected.
+            // Get the default storage and the default folder to show.
+            $localStorage = $resourceFactory->getDefaultStorage();
+            // Notice: ->getDefaultFolder does not return the default folder to show, but to upload files to.
+            // The root level folder is the "real" default and also respects mount points of the current user.
+            $localFolder = $localStorage->getRootLevelFolder();
+        } else {
+            // This is the normal case. The identifier identifies the folder inclusive its storage.
+            try {
+                $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
+            } catch (FolderDoesNotExistException $exception) {
+                list($storage) = GeneralUtility::trimExplode(':', $identifier);
+                $localStorage = $resourceFactory->getStorageObject($storage);
+                $localFolder = $localStorage->getRootLevelFolder();
+            }
+            $localStorage = $localFolder->getStorage();
+        }
+
+        // Get the storages driver to prevent unintentional indexing by using storage methods.
+        $this->localDriver = $this->getLocalDriver($localStorage);
+        $this->foreignDriver = $this->getForeignDriver($localStorage);
+
+        $this->fileIndexFactory = GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Domain\\Factory\\FileIndexFactory',
+            $this->localDriver,
+            $this->foreignDriver
+        );
+
+        // Drop the reference to the local storage, since i've got the driver objects for both sides now.
+        return $localFolder;
+    }
+
+    /**
+     * Creates a Record instance representing the current chosen folder in the
+     * backend module and attaches all sub folders and files as related records.
+     * Also takes care of files that have not been indexed yet by FAL.
+     *
+     * I only work with drivers so i don't "accidentally" index files...
+     *
+     * @param string|null $identifier
      * @return Record
      */
-    public function makeInstance($folderIdentifier)
+    public function makeInstance($identifier)
     {
-        $record = $this->createFolderRecordInstance($folderIdentifier);
-        $record = $this->setRelatedPhysicalFolders($record);
-        $record = $this->setRelatedDatabaseFiles($record);
-        $record = $this->setRelatedPhysicalFiles($record);
-        $record->sortRelatedRecords(
-            'sys_file',
-            function ($recordA, $recordB) {
-                /** @var Record $recordA */
-                /** @var Record $recordB */
-                return strcmp(
-                    $recordA->getMergedProperty('name'),
-                    $recordB->getMergedProperty('name')
+        /*
+         * IMPORTANT NOTICES (a.k.a "never forget about this"-Notices):
+         *  1. The local folder always exist, because it's the one which has been selected (or the default)
+         *  2. The foreign folder might not exist
+         *  3. NEVER USE THE STORAGE, it might create new file index entries
+         *  4. Blame FAL. Always.
+         *  5. Lead the readers through this hell with a lot of comments ;)
+         */
+        $localFolder = $this->initializeDependenciesAndGetFolder($identifier);
+
+        // Get the FAL-cleaned folder identifier (this should not be necessary, but i mistrust FAL)
+        $storageUid = $localFolder->getStorage()->getUid();
+        $identifier = $localFolder->getIdentifier();
+        // Also get the hashed identifier, which will be used later for temporary index creation and record searching.
+        $hashedIdentifier = $localFolder->getHashedIdentifier();
+
+        // Create the main record instance. This represent the selected folder.
+        $record = $this->makePhysicalFolderInstance($identifier, 1);
+
+        // Add all related sub folders
+        $record->addRelatedRecords($this->getSubFolderRecordInstances($identifier));
+
+        // Now let's find all files inside of the selected folder by the folders hash.
+        $files = $this->commonRepository->findByProperties(
+            array('folder_hash' => $hashedIdentifier, 'storage' => $storageUid)
+        );
+
+        // FEATURE: mergeSysFileByIdentifier and enableSysFileReferenceUpdate
+        if (true === $this->configuration['mergeSysFileByIdentifier']) {
+            $files = $this->mergeSysFileByIdentifier($files);
+        }
+
+        $indexedIdentifiers = $this->buildIndexedIdentifiersList($files);
+        $diskIdentifiers = $this->buildDiskIdentifiersList($identifier);
+        $onlyDiskIdentifiers = $this->determineIdentifiersOnlyOnDisk($diskIdentifiers, $indexedIdentifiers);
+
+        // [5] LDFF and [8] LFFD
+        $this->fixIntersectingIdentifiers($diskIdentifiers, $indexedIdentifiers, $files);
+
+        // FEATURE: reclaimSysFileEntries
+        if (true === $this->configuration['reclaimSysFileEntries']) {
+            foreach (array('local', 'foreign') as $side) {
+                list($onlyDiskIdentifiers, $files) = $this->reclaimSysFileEntriesBySide(
+                    $onlyDiskIdentifiers,
+                    $hashedIdentifier,
+                    $files,
+                    $side
                 );
             }
+        }
+
+        // [1] OLFS, [2] OFFS and [7] OFS
+        $files = $this->convertAndAddOnlyDiskIdentifiersToFileRecords($onlyDiskIdentifiers, $files);
+
+        // [10] NFDB and [13] NLDB
+        $this->updateFilesWithMissingIndices($indexedIdentifiers, $diskIdentifiers, $files);
+
+        // [0] OLDB, [3] OFDB, [4] OL, [6] ODB, [9] OF, [11] NFFS, [12] NLFS, [14] ALL and [15] NONE
+        $files = $this->filterFileRecords($files);
+
+        return $record->addRelatedRecords($files);
+    }
+
+    /**
+     * @param ResourceStorage $localStorage
+     * @return DriverInterface
+     */
+    protected function getLocalDriver(ResourceStorage $localStorage)
+    {
+        $driverProperty = new PropertyReflection(get_class($localStorage), 'driver');
+        $driverProperty->setAccessible(true);
+        return $driverProperty->getValue($localStorage);
+    }
+
+    /**
+     * @param ResourceStorage $localStorage
+     * @return DriverInterface
+     */
+    protected function getForeignDriver(ResourceStorage $localStorage)
+    {
+        $this->foreignDriver = GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Domain\\Driver\\RemoteFileAbstractionLayerDriver'
         );
-        return $record;
+        $this->foreignDriver->setStorageUid($localStorage->getUid());
+        $this->foreignDriver->initialize();
+        return $this->foreignDriver;
     }
 
     /**
-     * @param Record $record
-     * @return Record
-     */
-    protected function setRelatedPhysicalFolders(Record $record)
-    {
-        $relativePath = $record->getLocalProperty('relativePath');
-        $localFolders = FolderUtility::getFoldersInFolder($relativePath);
-        $foreignFolders = $this->sshConnection->getFoldersInRemoteFolder($relativePath);
-
-        $mergedFolders = array();
-        foreach ($localFolders as $localFolder) {
-            $mergedFolders[$localFolder['uid']]['local'] = $localFolder;
-        }
-        foreach ($foreignFolders as $foreignFolder) {
-            $mergedFolders[$foreignFolder['uid']]['foreign'] = $foreignFolder;
-        }
-        foreach ($mergedFolders as $mergedFolder) {
-            $record->addRelatedRecord($this->createFolderRecordInstanceFromMergedFolder($mergedFolder));
-        }
-        return $record;
-    }
-
-    /**
-     * @param array $mergedFolder
-     * @return Record
-     */
-    protected function createFolderRecordInstanceFromMergedFolder(array $mergedFolder)
-    {
-        $localProperties = array();
-        if (!empty($mergedFolder['local'])) {
-            $localProperties = $mergedFolder['local'];
-        }
-        $foreignProperties = array();
-        if (!empty($mergedFolder['foreign'])) {
-            $foreignProperties = $mergedFolder['foreign'];
-        }
-        return GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Model\\Record',
-            self::TABLE_NAME_PHYSICAL_FOLDER,
-            $localProperties,
-            $foreignProperties,
-            array(),
-            array()
-        );
-    }
-
-    /**
-     * @param Record $record
-     * @return Record
-     */
-    protected function setRelatedDatabaseFiles(Record $record)
-    {
-        $relativePath = $record->getLocalProperty('relativePath');
-        if (strpos($relativePath, 'fileadmin') === 0) {
-            $relativePath = substr($relativePath, 9);
-        }
-        $relativePath = rtrim($relativePath, '/');
-        if ($relativePath === '') {
-            $relativePath = '/';
-        }
-        foreach ($this->commonRepository->findByProperty('folder_hash', sha1($relativePath)) as $relatedRecord) {
-            $record->addRelatedRecord($relatedRecord);
-        }
-        return $record;
-    }
-
-    /**
-     * @param Record $record
-     * @return Record
-     */
-    protected function setRelatedPhysicalFiles(Record $record)
-    {
-        $relativePath = $record->getLocalProperty('relativePath');
-        $localFiles = FolderUtility::getFilesInFolder($relativePath);
-        $foreignFiles = $this->sshConnection->getFilesInRemoteFolder($relativePath);
-        $mergedFiles = $this->initializeMergedFiles($localFiles);
-        $mergedFiles = $this->enrichMergedFilesWithForeignFiles($mergedFiles, $foreignFiles);
-
-        $mergedFiles = $this->setHasSysFilesForPhysicalFiles($mergedFiles, $record);
-
-        foreach ($mergedFiles as $mergedFile) {
-            $record->addRelatedRecord($this->createFileRecordInstanceFromMergedFile($mergedFile));
-        }
-        return $record;
-    }
-
-    /**
-     * Enrich merged files with sys files
+     * Filtering:
+     *  Notation:
+     *      FFS = Foreign File System
+     *      FDB = Foreign Database
+     *      LFS = Local File System
+     *      LDB = Local Database
+     *  These filters files and entries i do not consider, because they do not represent an actual file.
+     *  Prefer $this->localDriver over $foreignDriver where applicable, because it will be faster.
      *
-     * @param array $mergedFiles
-     * @param Record $record
+     * @param Record[] $files
+     * @return Record[]
+     */
+    protected function filterFileRecords(array $files)
+    {
+        foreach ($files as $index => $file) {
+            $fdb = $file->foreignRecordExists();
+            $ldb = $file->localRecordExists();
+
+            if ($file->hasLocalProperty('identifier')) {
+                $localFileIdentifier = $file->getLocalProperty('identifier');
+            } else {
+                $localFileIdentifier = $file->getForeignProperty('identifier');
+            }
+            if ($file->hasForeignProperty('identifier')) {
+                $foreignFileIdentifier = $file->getForeignProperty('identifier');
+            } else {
+                $foreignFileIdentifier = $file->getLocalProperty('identifier');
+            }
+
+            $lfs = $this->localDriver->fileExists($localFileIdentifier);
+            $ffs = $this->foreignDriver->fileExists($foreignFileIdentifier);
+
+            if ($ldb && !$lfs && !$ffs && !$fdb) {
+                // CODE: [0] OLDB; The file exists only in the local database. Ignore the orphaned DB record.
+                unset($files[$index]);
+                continue;
+            } elseif (!$ldb && $lfs && !$ffs && !$fdb) {
+                // CODE: [1] OLFS; Fixed earlier. See [4] OL
+                throw new \LogicException(
+                    'The FAL case OLFS is impossible due to prior record transformation',
+                    1475178450
+                );
+            } elseif (!$ldb && !$lfs && $ffs && !$fdb) {
+                // CODE: [2] OFFS; Fixed earlier. See [9] OF
+                throw new \LogicException(
+                    'The FAL case OFFS is impossible due to prior record transformation',
+                    1475250513
+                );
+            } elseif (!$ldb && !$lfs && !$ffs && $fdb) {
+                // CODE: [3] OFDB; The file exists only in the foreign database. Ignore the orphaned DB record.
+                unset($files[$index]);
+                continue;
+            } elseif ($ldb && $lfs && !$ffs && !$fdb) {
+                // CODE: [4] OL; Nothing to do here. The record exists only on local and will be displayed correctly.
+            } elseif ($ldb && !$lfs && $ffs && !$fdb) {
+                // CODE: [5] LDFF; Foreign disk file got indexed, local database record is ignored. See [9] OF.
+                throw new \LogicException(
+                    'The FAL case LDFF is impossible due to prior record transformation',
+                    1475252172
+                );
+            } elseif ($ldb && !$lfs && !$ffs && $fdb) {
+                // CODE: [6] ODB; Both indices are orphaned. Ignore them. This might be a result of [12] NLFS
+                unset($files[$index]);
+                continue;
+            } elseif (!$ldb && $lfs && $ffs && !$fdb) {
+                // CODE: [7] OFS; Both disk files were indexed. See [14] ALL
+                throw new \LogicException(
+                    'The FAL case OFS is impossible due to prior record transformation',
+                    1475572486
+                );
+            } elseif (!$ldb && $lfs && !$ffs && $fdb) {
+                // CODE: [8] LFFD. Ignored foreign database record, indexed local disk file. See [11] NFFS
+                throw new \LogicException(
+                    'The FAL case LFFD is impossible due to prior record transformation',
+                    1475573724
+                );
+            } elseif (!$ldb && !$lfs && $ffs && $fdb) {
+                // CODE: [9] OF; Nothing to do here;
+            } elseif ($ldb && $lfs && $ffs && !$fdb) {
+                // CODE: [10] NFDB; Indexed the foreign file. See [14] ALL
+                throw new \LogicException(
+                    'The FAL case NFDB is impossible due to prior record transformation',
+                    1475576764
+                );
+            } elseif ($ldb && $lfs && !$ffs && $fdb) {
+                // CODE: [11] NFFS; The foreign database record is orphaned and will be ignored.
+                $file->setForeignProperties(array())->setDirtyProperties()->calculateState();
+            } elseif ($ldb && !$lfs && $ffs && $fdb) {
+                // CODE: [12] NLFS; The local database record is orphaned and will be ignored.
+                $file->setLocalProperties(array())->setDirtyProperties()->calculateState();
+            } elseif (!$ldb && $lfs && $ffs && $fdb) {
+                // CODE: [13] NLDB; Indexed the local disk file. See [14] ALL
+                throw new \LogicException(
+                    'The FAL case NLDB is impossible due to prior record transformation',
+                    1475578482
+                );
+            } elseif ($ldb && $lfs && $ffs && $fdb) {
+                // CODE: [14] ALL
+                if (RecordInterface::RECORD_STATE_UNCHANGED === $file->getState()) {
+                    // The database records are identical, but this does not necessarily reflect the reality on disk,
+                    // because files might have changed in the file system without FAL noticing these changes.
+                    $this->fileIndexFactory->updateFileIndexInfo($file, $localFileIdentifier, $foreignFileIdentifier);
+                }
+            } elseif (!$ldb && !$lfs && !$ffs && !$fdb) {
+                // CODE: [15] NONE; The file exists nowhere. Ignore it.
+                unset($files[$index]);
+                continue;
+            }
+            $file->addAdditionalProperty('depth', 2);
+            $file->addAdditionalProperty('isAuthoritative', true);
+        }
+        return $files;
+    }
+
+    /**
+     * Builds a list of all index identifiers of local and foreign,
+     * so files only existing on disk can be determined by diff-ing against this list
+     *
+     * @param Record[] $files
      * @return array
      */
-    protected function setHasSysFilesForPhysicalFiles(array $mergedFiles, Record $record)
+    protected function buildIndexedIdentifiersList(array $files)
     {
-        $relatedRecords = $record->getRelatedRecords();
-        if (!empty($relatedRecords['sys_file'])) {
-            /** @var Record $sysFile */
-            foreach ($relatedRecords['sys_file'] as $sysFile) {
-                $sides = array(
-                    'local' => $sysFile->getLocalProperty('name'),
-                    'foreign' => $sysFile->getForeignProperty('name'),
-                );
-                foreach ($sides as $side => $sysFileName) {
-                    if (empty($sysFileName)) {
-                        continue;
-                    }
-                    foreach ($mergedFiles as $key => $mergedFile) {
-                        if (empty($mergedFile[$side]) || true === $mergedFiles[$key]['has_sys_file']) {
-                            continue;
-                        }
-                        if ($sysFileName === $mergedFile[$side]['name']) {
-                            $mergedFiles[$key]['has_sys_file'] = true;
-                            if (!$sysFile->isChanged()) {
-                                $reverseSide = ($side === 'local' ? 'foreign' : $side);
-                                if (isset($mergedFile[$side]) && isset($mergedFile[$reverseSide])) {
-                                    if (empty($mergedFile['local']) && !empty($mergedFile['foreign'])) {
-                                        $sysFile->setState(RecordInterface::RECORD_STATE_DELETED);
-                                    } elseif (!empty($mergedFile['local']) && empty($mergedFile['foreign'])) {
-                                        $sysFile->setState(RecordInterface::RECORD_STATE_ADDED);
-                                    } elseif (isset($mergedFile[$side]['hash'])
-                                              && isset($mergedFile[$reverseSide]['hash'])
-                                              && $mergedFile[$side]['hash'] !== $mergedFile[$reverseSide]['hash']
-                                    ) {
-                                        $sysFile->setState(RecordInterface::RECORD_STATE_CHANGED);
-                                    }
-                                }
-                            }
-                        }
-                    }
+        $indexedIdentifiers = array('local' => array(), 'foreign' => array(), 'both' => array());
+
+        foreach ($files as $file) {
+            $identifier = $file->getIdentifier();
+
+            // hint: not existing properties will just return null
+            $localIdentifier = $file->getLocalProperty('identifier');
+            $foreignIdentifier = $file->getForeignProperty('identifier');
+
+            // if the record was indexed on both sides
+            if (null !== $localIdentifier && null !== $foreignIdentifier) {
+                if ($localIdentifier === $foreignIdentifier) {
+                    // if the identifiers are the same: mark the as "indexed on both sides"
+                    $indexedIdentifiers['both'][$identifier] = $localIdentifier;
+                } else {
+                    // otherwise mark it as indexed on the respective side. this takes care of moved (renamed) files
+                    $indexedIdentifiers['local'][$identifier] = $localIdentifier;
+                    $indexedIdentifiers['foreign'][$identifier] = $foreignIdentifier;
+                }
+            } elseif (null !== $localIdentifier && null === $foreignIdentifier) {
+                // only local
+                $indexedIdentifiers['local'][$identifier] = $localIdentifier;
+            } elseif (null === $localIdentifier && null !== $foreignIdentifier) {
+                // only foreign
+                $indexedIdentifiers['foreign'][$identifier] = $foreignIdentifier;
+            }
+        }
+        return $indexedIdentifiers;
+    }
+
+    /**
+     * Remove all identifiers found in the databases from the disk identifiers list to get the "disk only identifiers".
+     * This list is important for any OxFS case. (local = OLFS; foreign = OFFS, both = OFS)
+     *
+     * @param array $diskIdentifiers
+     * @param array $indices
+     * @return array
+     */
+    protected function determineIdentifiersOnlyOnDisk(array $diskIdentifiers, array $indices)
+    {
+        $allIndices = array_merge($indices['local'], $indices['foreign'], $indices['both']);
+        $diskIdentifiers['local'] = array_diff($diskIdentifiers['local'], $allIndices);
+        $diskIdentifiers['foreign'] = array_diff($diskIdentifiers['foreign'], $allIndices);
+        $diskIdentifiers['both'] = array_diff($diskIdentifiers['both'], $allIndices);
+        return $diskIdentifiers;
+    }
+
+    /**
+     * PRE-FIX for the [1] OLFS, [2] OFFS, [7] OFS case; Creates temporary sys_file
+     * entries for all files found on exactly one or both disk and no database.
+     *
+     * @param array $onlyDiskIdentifiers
+     * @param Record[] $files
+     * @return Record[]
+     */
+    protected function convertAndAddOnlyDiskIdentifiersToFileRecords(array $onlyDiskIdentifiers, array $files)
+    {
+        foreach (array('local', 'foreign', 'both') as $side) {
+            if (!empty($onlyDiskIdentifiers[$side])) {
+                // iterate through all files found on exactly one disc but not in the database
+                foreach ($onlyDiskIdentifiers[$side] as $onlyDiskIdentifier) {
+                    // create a temporary sys_file entry for the current identifier, since none was found or reclaimed.
+                    $temporarySysFile = $this->fileIndexFactory->makeInstanceForSide($side, $onlyDiskIdentifier);
+                    $files[$temporarySysFile->getIdentifier()] = $temporarySysFile;
                 }
             }
         }
-        return $mergedFiles;
+        return $files;
     }
 
     /**
-     * Create mergeFiles array out of local files
-     *      array(
-     *          89787079498 => array(
-     *              has_sys_file => false,
-     *              local => array(...),
-     *              foreign => array()
-     *          )
-     *      )
+     * Search on the disk for all files in the current folder and build a list of file identifiers
+     * for each local and foreign, so i can identify e.g. not indexed files.
+     * Move all entries occurring on both sides to the "both" index afterwards.
      *
-     * @param array $localFiles
+     * The resulting array has the three keys: local, foreign and both. Therefore i know where the files were found.
+     *
+     * @param string $identifier
      * @return array
      */
-    protected function initializeMergedFiles(array $localFiles)
+    protected function buildDiskIdentifiersList($identifier)
     {
-        $mergedFiles = array();
-        foreach ($localFiles as $localFile) {
-            $mergedFiles[$localFile['uid']]['has_sys_file'] = false;
-            $mergedFiles[$localFile['uid']]['local'] = $localFile;
-            $mergedFiles[$localFile['uid']]['foreign'] = array();
-        }
-        return $mergedFiles;
+        $diskIdentifiers = array(
+            'local' => $this->getFilesIdentifiersInFolder($identifier, $this->localDriver),
+            'foreign' => $this->getFilesIdentifiersInFolder($identifier, $this->foreignDriver),
+            'both' => array(),
+        );
+
+        $diskIdentifiers['both'] = array_intersect($diskIdentifiers['local'], $diskIdentifiers['foreign']);
+        $diskIdentifiers['local'] = array_diff($diskIdentifiers['local'], $diskIdentifiers['both']);
+        $diskIdentifiers['foreign'] = array_diff($diskIdentifiers['foreign'], $diskIdentifiers['both']);
+
+        return $diskIdentifiers;
     }
 
     /**
-     * Enrich merged files with foreign files
-     *
-     * @param array $mergedFiles
-     * @param array $foreignFiles
+     * @param string $identifier
+     * @param DriverInterface $driver
      * @return array
      */
-    protected function enrichMergedFilesWithForeignFiles(array $mergedFiles, array $foreignFiles)
+    protected function getFilesIdentifiersInFolder($identifier, DriverInterface $driver)
     {
-        foreach ($foreignFiles as $foreignFile) {
-            $mergedFiles[$foreignFile['uid']]['has_sys_file'] = false;
-            $mergedFiles[$foreignFile['uid']]['foreign'] = $foreignFile;
-            if (!isset($mergedFiles[$foreignFile['uid']]['local'])) {
-                $mergedFiles[$foreignFile['uid']]['local'] = array();
-            }
+        if ($driver->folderExists($identifier)) {
+            $identifierList = array_values($driver->getFilesInFolder($identifier));
+            return $this->convertIdentifiers($driver, $identifierList);
         }
-        return $mergedFiles;
+        return array();
     }
 
     /**
-     * @param Record $record
+     * Factory method to create Record instances from a list of folder identifier
+     *
+     * @param string $identifier
+     * @return array
+     */
+    protected function getSubFolderRecordInstances($identifier)
+    {
+        $subFolderIdentifiers = array_merge(
+            $this->getSubFolderIdentifiers($this->localDriver, $identifier),
+            $this->getSubFolderIdentifiers($this->foreignDriver, $identifier)
+        );
+        $subFolders = array();
+        foreach ($subFolderIdentifiers as $subFolderIdentifier) {
+            $subFolders[] = $this->makePhysicalFolderInstance($subFolderIdentifier, 2);
+        }
+        return $subFolders;
+    }
+
+    /**
+     * @param string $identifier
+     * @param int $depth
      * @return Record
      */
-    public function addInformationAboutPhysicalFile(Record $record)
+    protected function makePhysicalFolderInstance($identifier, $depth)
     {
-        $identifier = null;
-        if ($record->localRecordExists()) {
-            $identifier = $record->getLocalProperty('identifier');
-            $localName = $record->getLocalProperty('name');
-        } else {
-            $localName = null;
+        return GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Domain\\Model\\Record',
+            'physical_folder',
+            $this->getFolderInfoByIdentifier($this->localDriver, $identifier),
+            $this->getFolderInfoByIdentifier($this->foreignDriver, $identifier),
+            array(),
+            array('depth' => $depth)
+        );
+    }
+
+    /**
+     * @param DriverInterface $driver
+     * @param string $identifier
+     * @return array
+     */
+    protected function getSubFolderIdentifiers(DriverInterface $driver, $identifier)
+    {
+        if ($driver->folderExists($identifier)) {
+            $identifierList = $driver->getFoldersInFolder($identifier);
+            return $this->convertIdentifiers($driver, $identifierList);
         }
-        if ($record->foreignRecordExists()) {
-            $identifier = $record->getForeignProperty('identifier');
-            $foreignName = $record->getLocalProperty('name');
+        return array();
+    }
+
+    /**
+     * Fetches all information regarding the folder and sets the combined identifier as uid
+     *
+     * @param DriverInterface $driver
+     * @param string $identifier
+     * @return array
+     */
+    protected function getFolderInfoByIdentifier(DriverInterface $driver, $identifier)
+    {
+        if ($driver->folderExists($identifier)) {
+            $info = $driver->getFolderInfoByIdentifier($identifier);
+            $info['uid'] = sprintf('%d:%s', $info['storage'], $info['identifier']);
         } else {
-            $foreignName = null;
+            $info = array();
         }
-        if ($identifier === null) {
-            $this->logger->error(
-                'Tried to set physical information for a record but it neither exists local nor on foreign',
-                array(
-                    'record' => $record,
-                )
+        return $info;
+    }
+
+    /**
+     * @param array $diskIdentifiers
+     * @param array $indexedIdentifiers
+     * @param Record[] $files
+     */
+    protected function fixIntersectingIdentifiers(array $diskIdentifiers, array $indexedIdentifiers, array $files)
+    {
+        foreach (array('local' => 'foreign', 'foreign' => 'local') as $diskSide => $indexSide) {
+            // Find intersecting identifiers. These are identifiers only on one disk and teh opposite database.
+            $notIndexedIdentifier = array_diff(
+                $diskIdentifiers[$diskSide],
+                $indexedIdentifiers[$diskSide],
+                $indexedIdentifiers['both']
             );
-            return $record;
-        }
-        $relativePath = 'fileadmin' . dirname($identifier) . DIRECTORY_SEPARATOR;
-        $localPhysicalFile = null;
-        if ($localName !== null) {
-            $localFiles = FolderUtility::getFilesInFolder($relativePath);
-            foreach ($localFiles as $localFile) {
-                if ($localFile['name'] === $localName) {
-                    $localPhysicalFile = $localFile;
-                    break;
+            $intersecting = array_intersect($indexedIdentifiers[$indexSide], $notIndexedIdentifier);
+
+            foreach ($intersecting as $fileRecordUid => $identifier) {
+                $file = $files[$fileRecordUid];
+                $state = $file->getState();
+                if ('foreign' === $diskSide && RecordInterface::RECORD_STATE_ADDED === $state) {
+                    // PRE-FIX for [5] LDFF case; The file was found on the foreign disk and the local database.
+                    $this->fileIndexFactory->updateFileIndexInfoBySide($file, $identifier, 'foreign', true);
+                } elseif ('local' === $diskSide && RecordInterface::RECORD_STATE_DELETED === $state) {
+                    // PRE-FIX for [8] LFFD case; The file exists on the local disk and the foreign database.
+                    $this->fileIndexFactory->updateFileIndexInfoBySide($file, $identifier, 'local', true);
                 }
             }
         }
-        $foreignPhysicalFile = null;
-        if ($foreignName !== null) {
-            $foreignFiles = $this->sshConnection->getFilesInRemoteFolder($relativePath);
-            foreach ($foreignFiles as $foreignFile) {
-                if ($foreignFile['name'] === $foreignName) {
-                    $foreignPhysicalFile = $foreignFile;
-                    break;
+    }
+
+    /**
+     * Reconnect sys_file entries that definitely belong to the files found
+     * on disk but were not found because the folder hash is broken
+     *
+     * @param array $onlyDiskIdentifiers
+     * @param $hashedIdentifier
+     * @param Record[] $files
+     * @param string $side
+     * @return array
+     * @internal param DatabaseConnection $targetDatabase
+     */
+    protected function reclaimSysFileEntriesBySide(array $onlyDiskIdentifiers, $hashedIdentifier, array $files, $side)
+    {
+        // the chance is vanishing low to find a file by its identifier in the database
+        // because they should have been found by the folder hash already, but i'm a
+        // generous developer and allow FAL to completely fuck up the folder hash
+        foreach ($onlyDiskIdentifiers[$side] as $index => $onlyDiskIdentifier) {
+            $disconnectedSysFiles = $this->commonRepository->findByProperty('identifier', $onlyDiskIdentifier);
+            // if a sys_file record could be reclaimed use it
+            if (!empty($disconnectedSysFiles)) {
+                // repair the entry a.k.a reconnect it by updating the folder hash
+                if (true === $this->configuration['autoRepairFolderHash']) {
+                    foreach ($disconnectedSysFiles as $sysFileEntry) {
+                        // update on the local side if record has been found on the local side.
+                        // Hint: Do *not* update the foreign index with the local folder hash.
+                        // The folder hash on foreign might be correctly different e.g. in case the file was moved!
+                        $property = $sysFileEntry->getPropertyBySideIdentifier($side, 'folder_hash');
+                        if (null !== $property) {
+                            DatabaseUtility::buildDatabaseConnectionForSide($side)->exec_UPDATEquery(
+                                'sys_file',
+                                'uid=' . $sysFileEntry->getIdentifier(),
+                                array('folder_hash' => $hashedIdentifier)
+                            );
+                            $properties = $sysFileEntry->getPropertiesBySideIdentifier($side);
+                            $properties['folder_hash'] = $hashedIdentifier;
+                            $sysFileEntry->setPropertiesBySideIdentifier($side, $properties);
+                        }
+                    }
                 }
+                // add the reclaimed sys_file record to the list of files
+                foreach ($disconnectedSysFiles as $disconnectedSysFile) {
+                    $files[$disconnectedSysFile->getIdentifier()] = $disconnectedSysFile;
+                }
+                // remove the identifier from the list of missing database record identifiers
+                // so i can deal with them later
+                unset($onlyDiskIdentifiers[$side][$index]);
+            }
+        }
+        return array($onlyDiskIdentifiers, $files);
+    }
+
+    /**
+     * mergeSysFileByIdentifier feature: Finds sys_file duplicates and "merges" them.
+     *
+     * If the foreign sys_file was not referenced in the foreign's sys_file_reference table the the
+     * UID of the foreign record can be overwritten to restore a consistent state.
+     *
+     * @param Record[] $files
+     * @return Record[]
+     */
+    protected function mergeSysFileByIdentifier(array $files)
+    {
+        $identifierList = array();
+
+        foreach ($files as $file) {
+            $identifier = $file->getIdentifier();
+            if (null !== $localIdentifier = $file->getLocalProperty('identifier')) {
+                $identifierList[$localIdentifier]['local'] = $identifier;
+            }
+            if (null !== $foreignIdentifier = $file->getForeignProperty('identifier')) {
+                $identifierList[$foreignIdentifier]['foreign'] = $identifier;
             }
         }
 
-        // if the local file does not exist, but the remote file does, the record has to be marked as deleted
-        if ((null === $localPhysicalFile && null !== $foreignPhysicalFile)
-            && (empty($localPhysicalFile['hash']) && !empty($foreignPhysicalFile['hash']))
-        ) {
-            $record->setState(RecordInterface::RECORD_STATE_DELETED);
-        } elseif (($localPhysicalFile === null || $foreignPhysicalFile === null)
-                  || ($localPhysicalFile['hash'] !== $foreignPhysicalFile['hash'])
-        ) {
-            $record->setState(RecordInterface::RECORD_STATE_CHANGED);
+        foreach ($identifierList as $identifier => $uidArray) {
+            if (!isset($uidArray['local'], $uidArray['foreign']) || $uidArray['local'] === $uidArray['foreign']) {
+                continue;
+            }
+
+            $foreignFile = $files[$uidArray['foreign']];
+            $localFile = $files[$uidArray['local']];
+
+            $logData = array(
+                'local|new' => $uidArray['local'],
+                'foreign|old' => $uidArray['foreign'],
+                'identifier' => $identifier,
+            );
+
+            // Run the integrity test when enableSysFileReferenceUpdate (ESFRU) is not enabled
+            if (true !== $this->configuration['enableSysFileReferenceUpdate']) {
+                // If the sys_file was referenced abort here, because it's unsafe to overwrite the uid
+                if (0 !== $this->countForeignReferences($uidArray['foreign'])) {
+                    continue;
+                }
+            }
+
+            // If a sys_file record with the "new" uid has been found abort immediately
+            if (0 !== $this->countForeignIndices($uidArray['local'])) {
+                // TODO: UID FLIP CANDIDATES
+                continue;
+            }
+
+            // Rewrite the foreign UID of the foreign index.
+            if (true === $this->updateForeignIndex($uidArray['foreign'], $uidArray['local'])) {
+                $this->logger->notice('Rewrote a sys_file uid by the mergeSysFileByIdentifier feature', $logData);
+
+                // Rewrite all occurrences of the old uid by the new in all references on foreign if SFRU is enabled
+                if (true === $this->configuration['enableSysFileReferenceUpdate']) {
+                    if (true === $this->updateForeignReference($uidArray['foreign'], $uidArray['local'])) {
+                        $this->logger->notice('Rewrote sys_file_reference by the SFRU feature', $logData);
+                    } else {
+                        $this->logger->error(
+                            'Failed to rewrite sys_file_reference by the SFRU feature',
+                            $this->enrichWithForeignDatabaseErrorInformation($logData)
+                        );
+                    }
+                }
+
+                // copy the foreign's properties with the new uid to the local record (merge)
+                $foreignProperties = $foreignFile->getForeignProperties();
+                $foreignProperties['uid'] = (string)$uidArray['local'];
+                $localFile->setForeignProperties($foreignProperties);
+                $localFile->setDirtyProperties()->calculateState();
+
+                // remove the (old) foreign file from the list
+                unset($files[$uidArray['foreign']]);
+            } else {
+                $this->logger->error(
+                    'Failed to rewrite a sys_file uid by the mergeSysFileByIdentifier feature',
+                    $this->enrichWithForeignDatabaseErrorInformation($logData)
+                );
+            }
         }
-        return $record;
+
+        return $files;
     }
 
     /**
-     * @param array $mergedFile
-     * @return Record
+     * Condition method:
+     *  The sys_file exists on local, matches any identifier from the list but is not the already persisted.
+     *  (UIDs are different, identifier is the same, record is not temporary)
+     *
+     * @param array $identifierList
+     * @param Record $file
+     * @return bool
      */
-    protected function createFileRecordInstanceFromMergedFile(array $mergedFile)
+    protected function isLocalIndexWithMatchingDuplicateIndexOnForeign(array $identifierList, Record $file)
     {
-        $localProperties = array();
-        if (!empty($mergedFile['local'])) {
-            $localProperties = $mergedFile['local'];
+        return null !== ($localIdentifier = $file->getLocalProperty('identifier'))
+               && null !== ($localUid = $file->getLocalProperty('uid'))
+               // There is a foreign record with the same identifier
+               && isset($identifierList[$localIdentifier])
+               // But there is no foreign record with the same identifier AND the same uid
+               && !isset($identifierList[$localIdentifier][$localUid])
+               // The foreign part of the local record does not exists OR is temporary (= Not index for a remote file)
+               && !$file->foreignRecordExists();
+    }
+
+    /**
+     * @param array $indexedIdentifiers
+     * @param array $diskIdentifiers
+     * @param Record[] $files
+     */
+    protected function updateFilesWithMissingIndices(array $indexedIdentifiers, array $diskIdentifiers, array $files)
+    {
+        // Get a list of all identifiers that exist on both disks but only in one database
+        $indicesToRecheck = array_intersect($indexedIdentifiers['local'], $diskIdentifiers['both'])
+                            + array_intersect($indexedIdentifiers['foreign'], $diskIdentifiers['both']);
+
+        foreach ($indicesToRecheck as $index => $identifier) {
+            $file = $files[$index];
+            $recordState = $file->getState();
+            if (RecordInterface::RECORD_STATE_ADDED === $recordState) {
+                // PRE-FIX for [10] NFDB; The file has been found on both file systems but not in the foreign database.
+                // Create a temporary counterpart for the local index, so we end up in [14] ALL
+                $this->fileIndexFactory->updateFileIndexInfoBySide($file, $identifier, 'foreign');
+            } elseif (RecordInterface::RECORD_STATE_DELETED === $recordState) {
+                // PRE-FIX for [13] NLDB; The file has been found on both file systems but not in the local database.
+                // Create a temporary local index with the uid of the existing foreign index. Results is [14] ALL
+                $this->fileIndexFactory->updateFileIndexInfoBySide($file, $identifier, 'local');
+            }
         }
-        $foreignProperties = array();
-        if (!empty($mergedFile['foreign'])) {
-            $foreignProperties = $mergedFile['foreign'];
-        }
-        $additionalProperties = array(
-            'hasSysFile' => $mergedFile['has_sys_file'],
-            'identifier' =>
-                (!empty($mergedFile['local']['identifier'])
-                    ?
-                    $mergedFile['local']['identifier']
-                    :
-                    $mergedFile['foreign']['identifier']
-                ),
-        );
-        return GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Model\\Record',
-            self::TABLE_NAME_PHYSICAL_FILE,
-            $localProperties,
-            $foreignProperties,
-            array(),
-            $additionalProperties
+    }
+
+    /**
+     * @param array $logData
+     * @return array
+     */
+    protected function enrichWithForeignDatabaseErrorInformation(array $logData)
+    {
+        return array_merge(
+            $logData,
+            array('error' => $this->foreignDatabase->sql_error(), 'errno' => $this->foreignDatabase->sql_errno())
         );
     }
 
     /**
-     * @param string $folderIdentifier
-     * @return Record
+     * @param int $oldUid
+     * @param int $newUid
+     * @return bool
      */
-    protected function createFolderRecordInstance($folderIdentifier)
+    protected function updateForeignIndex($oldUid, $newUid)
     {
-        $localProperties = FolderUtility::getFolderInformation($folderIdentifier);
-        $foreignProperties = $this->sshConnection->getRemoteFolderInformation($folderIdentifier);
-        $additionalProperties = array(
-            'absoluteDepth' => count(GeneralUtility::trimExplode('/', $folderIdentifier, true)),
+        return (bool)$this->foreignDatabase->exec_UPDATEquery('sys_file', 'uid=' . $oldUid, array('uid' => $newUid));
+    }
+
+    /**
+     * @param int $oldUid
+     * @param int $newUid
+     * @return bool
+     */
+    protected function updateForeignReference($oldUid, $newUid)
+    {
+        return (bool)$this->foreignDatabase->exec_UPDATEquery(
+            'sys_file_reference',
+            'table_local LIKE "sys_file" AND uid_local=' . $oldUid,
+            array('uid_local' => $newUid)
         );
-        return GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Model\\Record',
-            self::TABLE_NAME_PHYSICAL_FOLDER,
-            $localProperties,
-            $foreignProperties,
-            array(),
-            $additionalProperties
+    }
+
+    /**
+     * @param int $oldUid
+     * @return int
+     */
+    protected function countForeignReferences($oldUid)
+    {
+        $count = $this->foreignDatabase->exec_SELECTcountRows(
+            'uid',
+            'sys_file_reference',
+            'table_local LIKE "sys_file" AND uid_local=' . $oldUid
         );
+        if (false === $count) {
+            $this->logger->critical(
+                'Could not count foreign references by uid',
+                $this->enrichWithForeignDatabaseErrorInformation(array('uid', $oldUid))
+            );
+            throw new \RuntimeException('Could not count foreign references by uid', 1476097402);
+        }
+        return (int)$count;
+    }
+
+    /**
+     * @param int $newUid
+     * @return int
+     */
+    protected function countForeignIndices($newUid)
+    {
+        if (false === ($count = $this->foreignDatabase->exec_SELECTcountRows('uid', 'sys_file', 'uid=' . $newUid))) {
+            $this->logger->critical(
+                'Could not count foreign indices by uid',
+                $this->enrichWithForeignDatabaseErrorInformation(array('uid', $newUid))
+            );
+            throw new \RuntimeException('Could not count foreign indices by uid', 1476097373);
+        }
+        return (int)$count;
+    }
+
+    /**
+     * @param DriverInterface $driver
+     * @param array $identifierList
+     * @return array
+     */
+    protected function convertIdentifiers(DriverInterface $driver, array $identifierList)
+    {
+        if (!$driver->isCaseSensitiveFileSystem()) {
+            $identifierList = array_map(
+                function ($identifier) {
+                    return strtolower($identifier);
+                },
+                $identifierList
+            );
+            return $identifierList;
+        }
+        return $identifierList;
     }
 }

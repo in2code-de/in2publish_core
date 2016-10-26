@@ -7,7 +7,7 @@ Open the backend module **Publish Tools** and select Tests from the drop down.
 
 You should see a couple of test result containers for the configuration tests of in2publish. Please follow the instructions.
 
-![Backend module tests](_img/module_tools_test.png) 
+![Backend module tests](_img/module_tools_test.png)
 
 Hint:
 
@@ -21,6 +21,6 @@ Hint:
 > Some tests will be executed in the background from time to time.
 > If a problem is detected, a notice will be shown in the other modules, indicating that the test have to be run.
 
-![Problem detected](_img/module_problem_detected.png) 
+![Problem detected](_img/module_problem_detected.png)
 
-**You are done. Enjoy the content publisher!**
+**You have finished. Enjoy the content publisher!**

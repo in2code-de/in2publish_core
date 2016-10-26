@@ -150,7 +150,9 @@
 			</trans-unit>
 			<trans-unit id="database.different_fields">
 				<source>These fields differ:</source>
-				<target state="translated">Diese Felder haben Unterschiede:</target>
+			</trans-unit>
+			<trans-unit id="database.different_tables">
+				<source>These tables differ:</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest -->
@@ -282,6 +284,68 @@
 			</trans-unit>
 			<trans-unit id="application.foreign_sys_domain_configured">
 				<source>A valid sys_domain entry has been found on the foreign system.</source>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest
+				 && \In2code\In2publishCore\Testing\Tests\Fal\CaseSensitivityTest
+				 && \In2code\In2publishCore\Testing\Tests\Fal\IdenticalDriverTest -->
+
+			<trans-unit id="fal.affected_storages">
+				<source>Affected Storages:</source>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest -->
+
+			<trans-unit id="fal.no_missing_storages">
+				<source>No missing FAL storages.</source>
+			</trans-unit>
+			<trans-unit id="fal.missing_storages">
+				<source>Missing FAL storages detected.</source>
+			</trans-unit>
+			<trans-unit id="fal.missing_on_local">
+				<source>Storages missing on local:</source>
+			</trans-unit>
+			<trans-unit id="fal.missing_on_foreign">
+				<source>Storages missing on foreign:</source>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\CaseSensitivityTest -->
+
+			<trans-unit id="fal.case_sensitivity_matching">
+				<source>FAL storages case sensitivity checked.</source>
+			</trans-unit>
+			<trans-unit id="fal.case_sensitivity_mismatch">
+				<source>Case sensitivity errors detected.</source>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\IdenticalDriverTest -->
+
+			<trans-unit id="fal.driver_matching">
+				<source>The FAL storages have identical drivers.</source>
+			</trans-unit>
+			<trans-unit id="fal.driver_mismatch">
+				<source>Following FAL Storages have different drivers.</source>
+			</trans-unit>
+			<trans-unit id="fal.driver_mismatch_explanation">
+				<source>The FAL driver on live will be changed by publishing. This might result in missing images in the frontend or data loss in worst case.</source>
+			</trans-unit>
+			<trans-unit id="fal.xsp_driver_premium_notice">
+				<source>In this community version differences between FAL storages will be simply overwritten. Allowing different FAL drivers hence allowing Cross-Storage-Publishing (XSP) is an enterprise version feature.</source>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\UniqueStorageTargetTest -->
+
+			<trans-unit id="fal.storage_targets_okay">
+				<source>All FAL storages have different file system targets.</source>
+			</trans-unit>
+			<trans-unit id="fal.storage_targets_test_error">
+				<source>The unique storage target test failed.</source>
+			</trans-unit>
+			<trans-unit id="fal.storage_targets_same">
+				<source>One or more storages on local have the same file system target as the corresponding storage on foreign.</source>
+			</trans-unit>
+			<trans-unit id="fal.test_file_upload_failed">
+				<source>Could not upload a testfile to a FAL storage. Please assure write and read permissions on the storages root level folder.</source>
 			</trans-unit>
 		</body>
 	</file>

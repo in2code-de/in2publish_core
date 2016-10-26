@@ -59,12 +59,7 @@ class DomainService
      */
     public function __construct()
     {
-        $this->commonRepository = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager')->get(
-            'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
-            DatabaseUtility::buildLocalDatabaseConnection(),
-            DatabaseUtility::buildForeignDatabaseConnection(),
-            self::TABLE_NAME
-        );
+        $this->commonRepository = CommonRepository::getDefaultInstance(self::TABLE_NAME);
     }
 
     /**
@@ -87,7 +82,6 @@ class DomainService
                 }
                 break;
 
-            case 'physical_file':
             case 'sys_file':
                 $domainName = ConfigurationUtility::getConfiguration('filePreviewDomainName.' . $this->stagingLevel);
                 break;
@@ -114,6 +108,7 @@ class DomainService
         $rootline = BackendUtility::BEgetRootLine($record->getIdentifier());
         foreach ($rootline as $page) {
             $pageIdentifier = (int)$page['uid'];
+            // TODO this seems to be called too often
             $domainRecords = $this->commonRepository->findByProperty('pid', $pageIdentifier);
             foreach ($domainRecords as $domainRecord) {
                 /** @var Record $domainRecord */

@@ -241,22 +241,13 @@
 				<source>Flush all cached TCA entries of in2publish on local.</source>
 				<target state="translated">Löscht alle TCA Einträge im Cache von in2publish in der lokalen Datenbank.</target>
 			</trans-unit>
-
-			<trans-unit id="publishing.publish_file_success">
-				<source>The File "%s" was successful published.</source>
-				<target state="translated">Die Datei "%s" wurde erfolgreich veröffentlicht.</target>
+			<trans-unit id="moduleselector.flush_envelopes">
+				<source>Remove superfluous envelopes</source>
+				<target state="translated">Überflüssige Envelopes löschen</target>
 			</trans-unit>
-			<trans-unit id="publishing.physical_file_deleted_success">
-				<source>The File "%s" has been successfully deleted.</source>
-				<target state="translated">Die Datei "%s" wurde erfolgreich gelöscht.</target>
-			</trans-unit>
-			<trans-unit id="publishing.physical_file_deleted_failure">
-				<source>The File "%s" could not be deleted.</source>
-				<target state="translated">Die Datei "%s" konnte nicht gelöscht werden.</target>
-			</trans-unit>
-			<trans-unit id="publishing.physical_file_add_failure">
-				<source>Can not publish a file wihout a sys_file record. Open this folder in the Filelist module once before publishing.</source>
-				<target state="translated">Die Datei kann nicht ohne sys_file Datensatz publiziert werden. Öffnen sie diesen Ordner einmalig im Filelist Modul damit der Datensatz angelegt wird.</target>
+			<trans-unit id="moduleselector.flush_envelopes.description">
+				<source>Deletes all envelopes (remote procedure call database entries) which were already used (envelopes are one-way records).</source>
+				<target state="translated">Löscht alle Envelopes  ("Remote Procedure Call"-Datenbankeinträge) die bereits genutzt wurden (Diese sind Einweg-Einträge)</target>
 			</trans-unit>
 
 			<trans-unit id="record.state.unchanged">
@@ -381,6 +372,27 @@
 			<trans-unit id="frontend.compare.selection.alignment.horizontal">
 				<source>Horizontal</source>
 				<target state="translated">Horizontal</target>
+			</trans-unit>
+
+			<trans-unit id="file_publishing.success">
+				<source>Successful published.</source>
+				<target state="translated">Erfolgreich publiziert.</target>
+			</trans-unit>
+			<trans-unit id="file_publishing.failure">
+				<source>Something went wrong.</source>
+				<target state="translated">Ein Fehler ist aufgetreten.</target>
+			</trans-unit>
+			<trans-unit id="file_publishing.folder">
+				<source>The selected folder %s has been published to the foreign system.</source>
+				<target state="translated">Das Verzeichnis %s wurde erfolgreich publiziert.</target>
+			</trans-unit>
+			<trans-unit id="file_publishing.failure.folder">
+				<source>The selected folder %s could not be published.</source>
+				<target state="translated">Das Verzeichnis %s konnte nicht publiziert werden.</target>
+			</trans-unit>
+			<trans-unit id="file_publishing.file">
+				<source>The selected file %s has been published to the foreign system.</source>
+				<target state="translated">Die Datei %s wurde erfolgreich publiziert.</target>
 			</trans-unit>
 		</body>
 	</file>

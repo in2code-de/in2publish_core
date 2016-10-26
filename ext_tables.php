@@ -67,7 +67,7 @@ call_user_func(
                 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
                     'In2code\\In2publishCore\\Command\\PublishTasksRunnerCommandController';
                 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
-                    'In2code\\In2publishCore\\Command\\FilesystemCommandController';
+                    'In2code\\In2publishCore\\Command\\RpcCommandController';
             }
 
             /**
@@ -101,7 +101,7 @@ call_user_func(
                         'm3',
                         '',
                         array(
-                            'File' => 'index,publishRecord,publishFolder,publishPhysicalRecord,toggleFilterStatusAndRedirectToIndex',
+                            'File' => 'index,publishFolder,publishFile,toggleFilterStatusAndRedirectToIndex',
                         ),
                         array(
                             'access' => 'user,group',
@@ -121,7 +121,7 @@ call_user_func(
                         'm4',
                         '',
                         array(
-                            'Tools' => 'index, test, showLogs, flushLogs, configuration, tca, clearTcaCaches',
+                            'Tools' => 'index, test, showLogs, flushLogs, configuration, tca, clearTcaCaches, flushEnvelopes',
                         ),
                         array(
                             'access' => 'admin',
@@ -172,6 +172,20 @@ call_user_func(
                     'publishSysLog',
                     false
                 );
+                $signalSlotDispatcher->connect(
+                    'In2code\\In2publishCore\\Domain\\Factory\\RecordFactory',
+                    'instanceCreated',
+                    'In2code\\In2publishCore\\Domain\\PostProcessing\\FileIndexPostProcessor',
+                    'registerInstance',
+                    false
+                );
+                $signalSlotDispatcher->connect(
+                    'In2code\\In2publishCore\\Domain\\Factory\\RecordFactory',
+                    'rootRecordFinished',
+                    'In2code\\In2publishCore\\Domain\\PostProcessing\\FileIndexPostProcessor',
+                    'postProcess',
+                    false
+                );
 
                 // register tests for tools module
                 $GLOBALS['in2publish_core']['tests'] = array(
@@ -187,6 +201,10 @@ call_user_func(
                     'In2code\\In2publishCore\\Testing\\Tests\\Application\\LocalSysDomainTest',
                     'In2code\\In2publishCore\\Testing\\Tests\\Application\\ForeignInstanceTest',
                     'In2code\\In2publishCore\\Testing\\Tests\\Application\\ForeignSysDomainTest',
+                    'In2code\\In2publishCore\\Testing\\Tests\\Fal\\MissingStoragesTest',
+                    'In2code\\In2publishCore\\Testing\\Tests\\Fal\\CaseSensitivityTest',
+                    'In2code\\In2publishCore\\Testing\\Tests\\Fal\\IdenticalDriverTest',
+                    'In2code\\In2publishCore\\Testing\\Tests\\Fal\\UniqueStorageTargetTest',
                 );
             }
         }
