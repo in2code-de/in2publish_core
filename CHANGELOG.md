@@ -1,5 +1,10 @@
 # In2publish Core Change Log
 
+5.1.1:
+
+- [BUGFIX] Use Records property setter to set local and foreign properties
+- [BUGFIX] Redefine dependency to TYPO3
+
 5.1.0:
 
 - [FEATURE] Add full FAL support
