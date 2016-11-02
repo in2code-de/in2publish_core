@@ -148,8 +148,8 @@ class Record implements RecordInterface
         }
         $this->tableName = $tableName;
         $this->additionalProperties = $additionalProperties;
-        $this->localProperties = $localProperties;
-        $this->foreignProperties = $foreignProperties;
+        $this->setLocalProperties($localProperties);
+        $this->setForeignProperties($foreignProperties);
         $this->tableConfigurationArray = $tableConfigurationArray;
         $this->setDirtyProperties();
         $this->calculateState();
