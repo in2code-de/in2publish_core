@@ -28,7 +28,6 @@ namespace In2code\In2publishCore\Domain\Service;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -45,25 +44,7 @@ class DomainService
     const LEVEL_FOREIGN = 'foreign';
 
     /**
-     * @var string
-     */
-    protected $stagingLevel;
-
-    /**
-     * @var CommonRepository
-     */
-    protected $commonRepository = null;
-
-    /**
-     * Initialize
-     */
-    public function __construct()
-    {
-        $this->commonRepository = CommonRepository::getDefaultInstance(self::TABLE_NAME);
-    }
-
-    /**
-     * Get domain from rootline without trailing slash
+     * Get domain from root line without trailing slash
      *
      * @param Record $record
      * @param string $stagingLevel "local" or "foreign"
@@ -72,18 +53,16 @@ class DomainService
      */
     public function getFirstDomain(Record $record, $stagingLevel = self::LEVEL_LOCAL, $addProtocol = true)
     {
-        $this->stagingLevel = $stagingLevel;
-
         switch ($record->getTableName()) {
             case 'pages':
-                $domainName = $this->getFirstDomainInRootLineFromRelatedRecords($record);
+                $domainName = $this->getFirstDomainInRootLineFromRelatedRecords($record, $stagingLevel);
                 if ($domainName === null) {
-                    $domainName = $this->getDomainRecordFromDatabaseConnectionAndRootLine($record);
+                    $domainName = $this->getDomainFromPageIdentifier($record->getIdentifier(), $stagingLevel);
                 }
                 break;
 
             case 'sys_file':
-                $domainName = ConfigurationUtility::getConfiguration('filePreviewDomainName.' . $this->stagingLevel);
+                $domainName = ConfigurationUtility::getConfiguration('filePreviewDomainName.' . $stagingLevel);
                 break;
 
             default:
@@ -98,65 +77,51 @@ class DomainService
     }
 
     /**
-     * Find first domain record from database connection
-     *
-     * @param Record $record
-     * @return string
-     */
-    protected function getDomainRecordFromDatabaseConnectionAndRootLine(Record $record)
-    {
-        $rootline = BackendUtility::BEgetRootLine($record->getIdentifier());
-        foreach ($rootline as $page) {
-            $pageIdentifier = (int)$page['uid'];
-            // TODO this seems to be called too often
-            $domainRecords = $this->commonRepository->findByProperty('pid', $pageIdentifier);
-            foreach ($domainRecords as $domainRecord) {
-                /** @var Record $domainRecord */
-                if (!$this->isRecordDisabled($domainRecord)) {
-                    $domainProperties = ObjectAccess::getProperty($domainRecord, $this->stagingLevel . 'Properties');
-                    return $domainProperties['domainName'];
-                }
-            }
-        }
-        return '';
-    }
-
-    /**
-     * @param Record $record
-     * @return bool
-     */
-    protected function isRecordDisabled(Record $record)
-    {
-        switch ($this->stagingLevel) {
-            case self::LEVEL_FOREIGN:
-                return $record->isForeignRecordDisabled();
-            case self::LEVEL_LOCAL:
-                return $record->isLocalRecordDisabled();
-        }
-        return true;
-    }
-
-    /**
      * Find first domain record of related children records
      *
      * @param Record $record
+     * @param string $stagingLevel
      * @return string
      */
-    protected function getFirstDomainInRootLineFromRelatedRecords(Record $record)
+    protected function getFirstDomainInRootLineFromRelatedRecords(Record $record, $stagingLevel)
     {
         $relatedRecords = $record->getRelatedRecords();
         $domainRecordValues = array();
         if (!empty($relatedRecords[self::TABLE_NAME])) {
             foreach ($relatedRecords[self::TABLE_NAME] as $relatedDomainRecord) {
                 /** @var Record $relatedDomainRecord */
-                $domainProperties = ObjectAccess::getProperty($relatedDomainRecord, $this->stagingLevel . 'Properties');
+                $domainProperties = ObjectAccess::getProperty($relatedDomainRecord, $stagingLevel . 'Properties');
                 $domainRecordValues[$domainProperties['sorting']] = $domainProperties['domainName'];
             }
         }
         $domainName = array_shift($domainRecordValues);
         if ($domainName === null && $record->getParentRecord() !== null) {
-            $domainName = self::getFirstDomainInRootLineFromRelatedRecords($record->getParentRecord());
+            $domainName = self::getFirstDomainInRootLineFromRelatedRecords($record->getParentRecord(), $stagingLevel);
         }
         return $domainName;
+    }
+
+    /**
+     * @param int $identifier UID of a pages record
+     * @param string $stagingLevel
+     * @return string
+     */
+    public function getDomainFromPageIdentifier($identifier, $stagingLevel)
+    {
+        $rootLine = BackendUtility::BEgetRootLine($identifier);
+        foreach ($rootLine as $page) {
+            $databaseConnection = DatabaseUtility::buildDatabaseConnectionForSide($stagingLevel);
+            $domainRecord = $databaseConnection->exec_SELECTgetSingleRow(
+                'domainName',
+                self::TABLE_NAME,
+                'pid=' . (int)$page['uid'] . ' AND hidden=0',
+                '',
+                'sorting'
+            );
+            if (isset($domainRecord['domainName'])) {
+                return $domainRecord['domainName'];
+            }
+        }
+        return '';
     }
 }
