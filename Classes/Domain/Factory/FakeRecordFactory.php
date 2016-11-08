@@ -65,6 +65,11 @@ class FakeRecordFactory
     protected $tcaService = null;
 
     /**
+     * @var array
+     */
+    protected $sysFileMetaDataBlackList = array();
+
+    /**
      * FakeRepository constructor.
      */
     public function __construct()
@@ -293,6 +298,25 @@ class FakeRecordFactory
     protected function areDifferentArrays(array $arrayLocal, array $arrayForeign, $table)
     {
         $newLocal = $newForeign = array();
+
+        // remove sys file entries from local extensions and their sys_file_metadata records
+        if ('sys_file' === $table) {
+            foreach ($arrayLocal as $localIndex => $localSysFile) {
+                if (0 === strpos($localSysFile['identifier'], '/typo3conf/ext/')) {
+                    if (!isset($arrayForeign[$localIndex])) {
+                        $this->sysFileMetaDataBlackList[$localIndex] = $localIndex;
+                        unset($arrayLocal[$localIndex]);
+                    }
+                }
+            }
+        } elseif ('sys_file_metadata' === $table) {
+            foreach ($arrayLocal as $localIndex => $localSysFileMeta) {
+                if (isset($this->sysFileMetaDataBlackList[$localSysFileMeta['file']])) {
+                    unset($arrayLocal[$localIndex]);
+                }
+            }
+        }
+
         foreach ($arrayLocal as $subLocal) {
             $subLocal = $this->removeIgnoreFieldsFromArray($subLocal, $table);
             if (!$this->isRecordDeletedOnLocalAndNonExistingOnForeign($subLocal['uid'], $table)

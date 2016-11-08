@@ -131,6 +131,8 @@ class TableCacheRepository implements SingletonInterface
                 $tableName,
                 'pid=' . (int)$pageIdentifier,
                 '',
+                'uid',
+                '',
                 'uid'
             );
             $this->cacheRecords($tableName, $rows, $databaseName);
