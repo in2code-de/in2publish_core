@@ -76,7 +76,7 @@ class DomainService
 
         switch ($record->getTableName()) {
             case 'pages':
-                $domainName = $this->getRootlineDomainFromRelatedRecords($record);
+                $domainName = $this->getFirstDomainInRootLineFromRelatedRecords($record);
                 if ($domainName === null) {
                     $domainName = $this->getDomainRecordFromDatabaseConnectionAndRootLine($record);
                 }
@@ -142,7 +142,7 @@ class DomainService
      * @param Record $record
      * @return string
      */
-    protected function getRootlineDomainFromRelatedRecords(Record $record)
+    protected function getFirstDomainInRootLineFromRelatedRecords(Record $record)
     {
         $relatedRecords = $record->getRelatedRecords();
         $domainRecordValues = array();
@@ -155,7 +155,7 @@ class DomainService
         }
         $domainName = array_shift($domainRecordValues);
         if ($domainName === null && $record->getParentRecord() !== null) {
-            $domainName = self::getRootlineDomainFromRelatedRecords($record->getParentRecord());
+            $domainName = self::getFirstDomainInRootLineFromRelatedRecords($record->getParentRecord());
         }
         return $domainName;
     }
