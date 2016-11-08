@@ -1,5 +1,11 @@
 # In2publish Core Change Log
 
+5.1.2:
+
+- [BUGFIX] Downgrade array syntax the be PHP 5.3 compatible
+- [DOCS] Update default excluded tables list
+- [BUGFIX] Ignore assets of extensions simpleOverviewAndAjax
+
 5.1.1:
 
 - [BUGFIX] Use Records property setter to set local and foreign properties
