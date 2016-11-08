@@ -134,7 +134,7 @@ factory:
     # IMPORTANT: If the UID of the foreign sys_file entry is already used in sys_file_reference this feature will not
     #   overwrite the foreign UID to prevent severe damage or missing images on the foreign's frontend.
     #   Hence it's mostly worth the risk and relatively stable.
-    mergeSysFileByIdentifier: TRUE
+    mergeSysFileByIdentifier: FALSE
 
     # [BETA]
     #
@@ -150,7 +150,7 @@ factory:
     # WARNING: This feature changes sys_file_reference entries on live without opt-in or asking for permission.
     #   There is no preview of the changes which are going to be made.
     #   Changes are persisted immediately before the publish file module is rendered.
-    enableSysFileReferenceUpdate: TRUE
+    enableSysFileReferenceUpdate: FALSE
 
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
 filePreviewDomainName:
