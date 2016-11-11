@@ -138,6 +138,14 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     /**
      * @return bool
      */
+    public function isOnline()
+    {
+        return true === (bool)$this->remoteDriverSettings['is_online'];
+    }
+
+    /**
+     * @return bool
+     */
     public function isCaseSensitiveFileSystem()
     {
         return $this->configuration['caseSensitive'];

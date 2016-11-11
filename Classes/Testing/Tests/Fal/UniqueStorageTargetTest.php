@@ -70,6 +70,9 @@ class UniqueStorageTargetTest implements TestCaseInterface
 
         foreach ($keys as $key) {
             $storageObject = $resourceFactory->getStorageObject($key, $storages['local'][$key]);
+            if (!$storageObject->isOnline()) {
+                continue;
+            }
             $driverProperty = new PropertyReflection(get_class($storageObject), 'driver');
             $driverProperty->setAccessible(true);
             /** @var DriverInterface $localDriver */
@@ -78,6 +81,9 @@ class UniqueStorageTargetTest implements TestCaseInterface
             $foreignDriver = new RemoteFileAbstractionLayerDriver();
             $foreignDriver->setStorageUid($storages['foreign'][$key]['uid']);
             $foreignDriver->initialize();
+            if (!$foreignDriver->isOnline()) {
+                continue;
+            }
 
             do {
                 $uniqueFile = uniqid('tx_in2publish_testfile');
