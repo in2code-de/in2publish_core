@@ -1,5 +1,11 @@
 # In2publish Core Change Log
 
+5.2.0:
+
+- [FEATURE] Display an error if a storage is offline on foreign only
+- [FEATURE] Show a warning for if offline storages were detected
+- [BUGFIX] Do not test offline FAL storages
+
 5.1.2:
 
 - [BUGFIX] Downgrade array syntax the be PHP 5.3 compatible
