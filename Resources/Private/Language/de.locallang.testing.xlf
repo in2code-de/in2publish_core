@@ -427,6 +427,18 @@
 				<source>The unique storage target test failed.</source>
 				<target state="translated">Der Zieldateisystemtest schlug fehl.</target>
 			</trans-unit>
+			<trans-unit id="fal.storage_targets_test_skipped">
+				<source>The unique storage target has skipped one or more storages, because they are offline.</source>
+				<target state="translated">Der Zieldateisystemtest konnte nicht auf alle Storages angewendet werden, weil mindestens eine offline ist.</target>
+			</trans-unit>
+			<trans-unit id="fal.offline_storage_names">
+				<source>Following Storages are offline:</source>
+				<target state="translated">Folgende Storages sind offline:</target>
+			</trans-unit>
+			<trans-unit id="fal.foreign_offline_storages">
+				<source>Following Storages are offline only on foreign:</source>
+				<target state="translated">Folgende Storages sind auf dem entfernten System offline:</target>
+			</trans-unit>
 			<trans-unit id="fal.storage_targets_same">
 				<source>One or more storages on local have the same file system target as the corresponding storage on foreign.</source>
 				<target state="translated">Eine oder mehrere lokale FAL Storages haben das selbe Dateisystem zum Ziel wie die dazugehörige entfernte FAL Storage(s).</target>

@@ -341,6 +341,15 @@
 			<trans-unit id="fal.storage_targets_test_error">
 				<source>The unique storage target test failed.</source>
 			</trans-unit>
+			<trans-unit id="fal.storage_targets_test_skipped">
+				<source>The unique storage target has skipped one or more storages, because they are offline.</source>
+			</trans-unit>
+			<trans-unit id="fal.offline_storage_names">
+				<source>Following Storages are offline:</source>
+			</trans-unit>
+			<trans-unit id="fal.foreign_offline_storages">
+				<source>Following Storages are offline only on foreign:</source>
+			</trans-unit>
 			<trans-unit id="fal.storage_targets_same">
 				<source>One or more storages on local have the same file system target as the corresponding storage on foreign.</source>
 			</trans-unit>

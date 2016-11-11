@@ -68,9 +68,13 @@ class UniqueStorageTargetTest implements TestCaseInterface
         $affectedStorages = array();
         $failedUploads = array();
 
+        $skippedStorages = array();
+        $foreignOffline = array();
+
         foreach ($keys as $key) {
             $storageObject = $resourceFactory->getStorageObject($key, $storages['local'][$key]);
             if (!$storageObject->isOnline()) {
+                $skippedStorages[] = $storageObject->getName();
                 continue;
             }
             $driverProperty = new PropertyReflection(get_class($storageObject), 'driver');
@@ -82,6 +86,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
             $foreignDriver->setStorageUid($storages['foreign'][$key]['uid']);
             $foreignDriver->initialize();
             if (!$foreignDriver->isOnline()) {
+                $foreignOffline[] = $storageObject->getName();
                 continue;
             }
 
@@ -117,11 +122,26 @@ class UniqueStorageTargetTest implements TestCaseInterface
             $messages = array_merge($messages, $affectedStorages);
         }
 
+        if (!empty($foreignOffline)) {
+            $messages[] = 'fal.foreign_offline_storages';
+            $messages = array_merge($messages, $foreignOffline);
+        }
+
         if (!empty($messages)) {
+            if (!empty($skippedStorages)) {
+                $messages[] = 'fal.offline_storage_names';
+                $messages = array_merge($messages, $skippedStorages);
+            }
             return new TestResult(
                 'fal.storage_targets_test_error',
                 TestResult::ERROR,
                 $messages
+            );
+        } elseif (!empty($skippedStorages)) {
+            return new TestResult(
+                'fal.storage_targets_test_skipped',
+                TestResult::WARNING,
+                array_merge(array('fal.offline_storage_names'), $skippedStorages)
             );
         }
 
