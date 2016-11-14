@@ -1,5 +1,14 @@
 # In2publish Core Change Log
 
+5.3.0:
+
+- [FEATURE] Cache all remote files for the Overview module for a vast performance increas
+- [CODESTYLE] Adjust line breaks in RemoteFalDriver
+- [BUGFIX] Increase row size for envelope responses (essentially for FFS RPC/Envelope)
+- [REFACTOR] Rename EnvelopeDispatcher::getFileObjectWithoutIndexing to EnvelopeDispatcher::getFileObject
+- [FEATURE] Prefetch all sibling file information upon remote file existence check
+- [BUGFIX] Respect the storage uid in RemoteFalDriver caches
+
 5.2.0:
 
 - [FEATURE] Display an error if a storage is offline on foreign only
