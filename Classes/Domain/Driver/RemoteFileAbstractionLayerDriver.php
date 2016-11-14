@@ -188,19 +188,19 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                 )
             );
 
-            $this->cache[$this->getGetFilesInFolderCacheIdentifier($folderIdentifier)] = array_keys($response['files']);
+            $this->cache[$this->storageUid][$this->getGetFilesInFolderCacheIdentifier($folderIdentifier)] = array_keys($response['files']);
 
             foreach ($response['files'] as $file => $values) {
-                $this->cache[$this->getFileExistsCacheIdentifier($file)] = true;
-                $this->cache[$this->getHashCacheIdentifier($file, 'sha1')] = $values['hash'];
-                $this->cache[$this->getGetFileInfoByIdentifierCacheIdentifier($file)] = $values['info'];
-                $this->cache[$this->getGetPublicUrlCacheIdentifier($file)] = $values['publicUrl'];
+                $this->cache[$this->storageUid][$this->getFileExistsCacheIdentifier($file)] = true;
+                $this->cache[$this->storageUid][$this->getHashCacheIdentifier($file, 'sha1')] = $values['hash'];
+                $this->cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($file)] = $values['info'];
+                $this->cache[$this->storageUid][$this->getGetPublicUrlCacheIdentifier($file)] = $values['publicUrl'];
             }
 
-            $this->cache[$this->getGetFoldersInFolderCacheIdentifier($folderIdentifier)] = $response['folders'];
+            $this->cache[$this->storageUid][$this->getGetFoldersInFolderCacheIdentifier($folderIdentifier)] = $response['folders'];
 
             foreach ($response['folders'] as $folder) {
-                $this->cache[$this->getFolderExistsCacheIdentifier($folder)] = true;
+                $this->cache[$this->storageUid][$this->getFolderExistsCacheIdentifier($folder)] = true;
             }
 
             return $response['exists'];
@@ -467,10 +467,10 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             );
 
             foreach ($files as $file => $values) {
-                $this->cache[$this->getFileExistsCacheIdentifier($file)] = true;
-                $this->cache[$this->getHashCacheIdentifier($file, 'sha1')] = $values['hash'];
-                $this->cache[$this->getGetFileInfoByIdentifierCacheIdentifier($file)] = $values['info'];
-                $this->cache[$this->getGetPublicUrlCacheIdentifier($file)] = $values['publicUrl'];
+                $this->cache[$this->storageUid][$this->getFileExistsCacheIdentifier($file)] = true;
+                $this->cache[$this->storageUid][$this->getHashCacheIdentifier($file, 'sha1')] = $values['hash'];
+                $this->cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($file)] = $values['info'];
+                $this->cache[$this->storageUid][$this->getGetPublicUrlCacheIdentifier($file)] = $values['publicUrl'];
             }
 
             return array_keys($files);
@@ -517,7 +517,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             );
 
             foreach ($folders as $folder) {
-                $this->cache[$this->getFolderExistsCacheIdentifier($folder)] = true;
+                $this->cache[$this->storageUid][$this->getFolderExistsCacheIdentifier($folder)] = true;
             }
 
             return $folders;
@@ -635,11 +635,11 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      */
     protected function cache($identifier, $callback)
     {
-        if (!isset($this->cache[$identifier])) {
-            $this->cache[$identifier] = $callback();
+        if (!isset($this->cache[$this->storageUid][$identifier])) {
+            $this->cache[$this->storageUid][$identifier] = $callback();
         }
 
-        return $this->cache[$identifier];
+        return $this->cache[$this->storageUid][$identifier];
     }
 
     /**
@@ -729,7 +729,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      */
     public function clearCache()
     {
-        $this->cache = array();
+        $this->cache[$this->storageUid] = array();
     }
 
     /****************************************************************
