@@ -171,8 +171,10 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                 foreach ($response as $file => $values) {
                     $this->cache[$this->storageUid][$this->getFileExistsCacheIdentifier($file)] = true;
                     $this->cache[$this->storageUid][$this->getHashCacheIdentifier($file, 'sha1')] = $values['hash'];
-                    $this->cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($file)] = $values['info'];
-                    $this->cache[$this->storageUid][$this->getGetPublicUrlCacheIdentifier($file)] = $values['publicUrl'];
+                    $this->cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($file)] =
+                        $values['info'];
+                    $this->cache[$this->storageUid][$this->getGetPublicUrlCacheIdentifier($file)] =
+                        $values['publicUrl'];
                 }
             }
 
@@ -199,16 +201,20 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                 )
             );
 
-            $this->cache[$this->storageUid][$this->getGetFilesInFolderCacheIdentifier($folderIdentifier)] = array_keys($response['files']);
+            $this->cache[$this->storageUid][$this->getGetFilesInFolderCacheIdentifier($folderIdentifier)] = array_keys(
+                $response['files']
+            );
 
             foreach ($response['files'] as $file => $values) {
                 $this->cache[$this->storageUid][$this->getFileExistsCacheIdentifier($file)] = true;
                 $this->cache[$this->storageUid][$this->getHashCacheIdentifier($file, 'sha1')] = $values['hash'];
-                $this->cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($file)] = $values['info'];
+                $this->cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($file)] =
+                    $values['info'];
                 $this->cache[$this->storageUid][$this->getGetPublicUrlCacheIdentifier($file)] = $values['publicUrl'];
             }
 
-            $this->cache[$this->storageUid][$this->getGetFoldersInFolderCacheIdentifier($folderIdentifier)] = $response['folders'];
+            $this->cache[$this->storageUid][$this->getGetFoldersInFolderCacheIdentifier($folderIdentifier)] =
+                $response['folders'];
 
             foreach ($response['folders'] as $folder) {
                 $this->cache[$this->storageUid][$this->getFolderExistsCacheIdentifier($folder)] = true;
@@ -480,7 +486,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             foreach ($files as $file => $values) {
                 $this->cache[$this->storageUid][$this->getFileExistsCacheIdentifier($file)] = true;
                 $this->cache[$this->storageUid][$this->getHashCacheIdentifier($file, 'sha1')] = $values['hash'];
-                $this->cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($file)] = $values['info'];
+                $this->cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($file)] =
+                    $values['info'];
                 $this->cache[$this->storageUid][$this->getGetPublicUrlCacheIdentifier($file)] = $values['publicUrl'];
             }
 
