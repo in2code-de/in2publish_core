@@ -84,7 +84,7 @@ class EnvelopeDispatcher
             $fileIdentifiers = $this->convertIdentifiers($driver, $driver->getFilesInFolder($folderIdentifier));
 
             foreach ($fileIdentifiers as $fileIdentifier) {
-                $fileObject = $this->getFileObjectWithoutIndexing($driver, $fileIdentifier, $storage);
+                $fileObject = $this->getFileObject($driver, $fileIdentifier, $storage);
                 $files[$fileIdentifier] = array();
                 $files[$fileIdentifier]['hash'] = $driver->hash($fileIdentifier, 'sha1');
                 $files[$fileIdentifier]['info'] = $driver->getFileInfoByIdentifier($fileIdentifier);
@@ -147,7 +147,7 @@ class EnvelopeDispatcher
                 );
                 if (is_array($files)) {
                     foreach ($files as $file) {
-                        $fileObject = $this->getFileObjectWithoutIndexing($driver, $file, $storage);
+                        $fileObject = $this->getFileObject($driver, $file, $storage);
                         $files[$file] = array();
                         $files[$file]['hash'] = $driver->hash($file, 'sha1');
                         $files[$file]['info'] = $driver->getFileInfoByIdentifier($file);
@@ -155,7 +155,7 @@ class EnvelopeDispatcher
                     }
                 }
             } else {
-                $fileObject = $this->getFileObjectWithoutIndexing($driver, $fileIdentifier, $storage);
+                $fileObject = $this->getFileObject($driver, $fileIdentifier, $storage);
                 $files = array(
                     $fileIdentifier => array(
                         'hash' => $driver->hash($fileIdentifier, 'sha1'),
@@ -181,7 +181,7 @@ class EnvelopeDispatcher
         $files = $this->convertIdentifiers($driver, call_user_func_array(array($driver, 'getFilesInFolder'), $request));
 
         foreach ($files as $file) {
-            $fileObject = $this->getFileObjectWithoutIndexing($driver, $file, $storage);
+            $fileObject = $this->getFileObject($driver, $file, $storage);
             $files[$file] = array();
             $files[$file]['hash'] = $driver->hash($file, 'sha1');
             $files[$file]['info'] = $driver->getFileInfoByIdentifier($file);
@@ -295,7 +295,7 @@ class EnvelopeDispatcher
         $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
         $driver = $this->getStorageDriver($storage);
         $identifier = $request['identifier'];
-        $file = $this->getFileObjectWithoutIndexing($driver, $identifier, $storage);
+        $file = $this->getFileObject($driver, $identifier, $storage);
         return $storage->getPublicUrl($file);
     }
 
@@ -317,7 +317,7 @@ class EnvelopeDispatcher
      * @param $storage
      * @return File
      */
-    protected function getFileObjectWithoutIndexing($driver, $identifier, $storage)
+    protected function getFileObject($driver, $identifier, $storage)
     {
         $fileIndexFactory = GeneralUtility::makeInstance(
             'In2code\\In2publishCore\\Domain\\Factory\\FileIndexFactory',
