@@ -33,7 +33,7 @@ CREATE TABLE tx_in2code_in2publish_envelope (
 
   command varchar(255) DEFAULT '' NOT NULL,
   request text,
-  response text,
+  response longtext,
 
   PRIMARY KEY (uid)
 ) ENGINE=InnoDB;
