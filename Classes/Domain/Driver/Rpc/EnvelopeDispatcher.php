@@ -31,6 +31,7 @@ use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 
 /**
  * Class EnvelopeDispatcher
@@ -128,12 +129,44 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
-     * @return bool
+     * @return array
      */
     protected function fileExists(array $request)
     {
         $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
-        return $this->getStorageDriver($storage)->fileExists($request['fileIdentifier']);
+        $storage->setEvaluatePermissions(false);
+        $driver = $this->getStorageDriver($storage);
+
+        $fileIdentifier = $request['fileIdentifier'];
+        $directory = PathUtility::dirname($fileIdentifier);
+        if ($driver->folderExists($directory)) {
+            if ($driver->countFilesInFolder($directory) < 51) {
+                $files = $this->convertIdentifiers(
+                    $driver,
+                    call_user_func(array($driver, 'getFilesInFolder'), $directory)
+                );
+                if (is_array($files)) {
+                    foreach ($files as $file) {
+                        $fileObject = $this->getFileObjectWithoutIndexing($driver, $file, $storage);
+                        $files[$file] = array();
+                        $files[$file]['hash'] = $driver->hash($file, 'sha1');
+                        $files[$file]['info'] = $driver->getFileInfoByIdentifier($file);
+                        $files[$file]['publicUrl'] = $storage->getPublicUrl($fileObject);
+                    }
+                }
+            } else {
+                $fileObject = $this->getFileObjectWithoutIndexing($driver, $fileIdentifier, $storage);
+                $files = array(
+                    $fileIdentifier => array(
+                        'hash' => $driver->hash($fileIdentifier, 'sha1'),
+                        'info' => $driver->getFileInfoByIdentifier($fileIdentifier),
+                        'publicUrl' => $storage->getPublicUrl($fileObject),
+                    ),
+                );
+            }
+            return $files;
+        }
+        return array();
     }
 
     /**

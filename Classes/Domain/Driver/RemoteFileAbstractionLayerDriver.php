@@ -160,12 +160,23 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function fileExists($fileIdentifier)
     {
         $callback = function () use ($fileIdentifier) {
-            return $this->executeEnvelope(
+            $response = $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_FILE_EXISTS,
                     array('storage' => $this->storageUid, 'fileIdentifier' => $fileIdentifier)
                 )
             );
+
+            if (is_array($response)) {
+                foreach ($response as $file => $values) {
+                    $this->cache[$this->storageUid][$this->getFileExistsCacheIdentifier($file)] = true;
+                    $this->cache[$this->storageUid][$this->getHashCacheIdentifier($file, 'sha1')] = $values['hash'];
+                    $this->cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($file)] = $values['info'];
+                    $this->cache[$this->storageUid][$this->getGetPublicUrlCacheIdentifier($file)] = $values['publicUrl'];
+                }
+            }
+
+            return isset($response[$fileIdentifier]);
         };
 
         return $this->cache($this->getFileExistsCacheIdentifier($fileIdentifier), $callback);
