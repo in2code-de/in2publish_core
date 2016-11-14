@@ -52,6 +52,7 @@ class EnvelopeDispatcher
     const CMD_REPLACE_FILE = 'replaceFile';
     const CMD_RENAME_FILE = 'renameFile';
     const CMD_GET_PUBLIC_URL = 'getPublicUrl';
+    const CMD_BATCH_PREFETCH_FILES = 'batchPrefetchFiles';
 
     /**
      * @param Envelope $envelope
@@ -297,6 +298,31 @@ class EnvelopeDispatcher
         $identifier = $request['identifier'];
         $file = $this->getFileObject($driver, $identifier, $storage);
         return $storage->getPublicUrl($file);
+    }
+
+    /**
+     * @param array $request
+     * @return array
+     */
+    protected function batchPrefetchFiles(array $request)
+    {
+        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage->setEvaluatePermissions(false);
+        $driver = $this->getStorageDriver($storage);
+
+        $files = array();
+
+        foreach ($request['identifiers'] as $identifier) {
+            if ($driver->fileExists($identifier)) {
+                $fileObject = $this->getFileObject($driver, $identifier, $storage);
+                $files[$identifier] = array();
+                $files[$identifier]['hash'] = $driver->hash($identifier, 'sha1');
+                $files[$identifier]['info'] = $driver->getFileInfoByIdentifier($identifier);
+                $files[$identifier]['publicUrl'] = $storage->getPublicUrl($fileObject);
+            }
+        }
+
+        return $files;
     }
 
     /**

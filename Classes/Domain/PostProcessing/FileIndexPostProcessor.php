@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\Domain\PostProcessing;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
@@ -79,6 +80,8 @@ class FileIndexPostProcessor implements SingletonInterface
         }
         $this->registeredInstances = array();
 
+        $this->prefetchForeignInformationFiles($storages, $sortedRecords);
+
         foreach ($sortedRecords as $storageIndex => $recordArray) {
             $fileIndexFactory = GeneralUtility::makeInstance(
                 'In2code\\In2publishCore\\Domain\\Factory\\FileIndexFactory',
@@ -103,6 +106,28 @@ class FileIndexPostProcessor implements SingletonInterface
     }
 
     /**
+     * @param array $storages
+     * @param RecordInterface[][] $sortedRecords
+     */
+    protected function prefetchForeignInformationFiles(array $storages, array $sortedRecords)
+    {
+        $foreignIdentifiers = array();
+        foreach ($sortedRecords as $storageIndex => $recordArray) {
+            foreach ($recordArray as $record) {
+                if ($record->hasForeignProperty('identifier')) {
+                    $foreignIdentifier = $record->getForeignProperty('identifier');
+                } else {
+                    $foreignIdentifier = $record->getLocalProperty('identifier');
+                }
+                $foreignIdentifiers[$storageIndex][] = $foreignIdentifier;
+            }
+        }
+        foreach ($foreignIdentifiers as $storageIndex => $identifierArray) {
+            $this->getForeignDriver($storages[$storageIndex])->batchPrefetchFiles($identifierArray);
+        }
+    }
+
+    /**
      * @param ResourceStorage $localStorage
      * @return DriverInterface
      */
@@ -115,7 +140,7 @@ class FileIndexPostProcessor implements SingletonInterface
 
     /**
      * @param ResourceStorage $localStorage
-     * @return DriverInterface
+     * @return RemoteFileAbstractionLayerDriver
      */
     protected function getForeignDriver(ResourceStorage $localStorage)
     {

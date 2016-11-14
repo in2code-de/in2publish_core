@@ -144,6 +144,33 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     }
 
     /**
+     * @param array $identifiers
+     */
+    public function batchPrefetchFiles(array $identifiers)
+    {
+        $response = $this->executeEnvelope(
+            new Envelope(
+                EnvelopeDispatcher::CMD_BATCH_PREFETCH_FILES,
+                array('storage' => $this->storageUid, 'identifiers' => $identifiers)
+            )
+        );
+
+        foreach ($identifiers as $identifier) {
+            if (isset($response[$identifier])) {
+                $this->cache[$this->storageUid][$this->getFileExistsCacheIdentifier($identifier)] = true;
+                $this->cache[$this->storageUid][$this->getHashCacheIdentifier($identifier, 'sha1')] =
+                    $response[$identifier]['hash'];
+                $this->cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($identifier)] =
+                    $response[$identifier]['info'];
+                $this->cache[$this->storageUid][$this->getGetPublicUrlCacheIdentifier($identifier)] =
+                    $response[$identifier]['publicUrl'];
+            } else {
+                $this->cache[$this->storageUid][$this->getFileExistsCacheIdentifier($identifier)] = false;
+            }
+        }
+    }
+
+    /**
      * @return bool
      */
     public function isCaseSensitiveFileSystem()
