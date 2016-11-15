@@ -16,21 +16,19 @@ install:
   - 'composer require typo3/cms="$TYPO3_VERSION"'
   - 'git checkout composer.json'
 
-# disable the possibility to sudo, this speeds up tests
 sudo: false
 
 script:
   - '.Build/bin/phpcpd Classes/ --min-tokens=42'
   - '.Build/bin/phpcs Classes/ --standard=PSR2'
-  - '.Build/bin/phpmd Classes/ text cleancode'
-  - '.Build/bin/phpmd Classes/ text codesize'
+#  - '.Build/bin/phpmd Classes/ text cleancode'
+#  - '.Build/bin/phpmd Classes/ text codesize'
   - '.Build/bin/phpmd Classes/ text controversial'
   - '.Build/bin/phpmd Classes/ text design'
-  - '.Build/bin/phpmd Classes/ text naming'
+#  - '.Build/bin/phpmd Classes/ text naming'
   - '.Build/bin/phpmd Classes/ text unusedcode'
   - '.Build/bin/phpunit -c phpunit.xml.dist'
 
-# reduce load and network I/O on travis by caching composer dependencies
 cache:
   directories:
     - '$HOME/.composer/cache'
