@@ -127,6 +127,6 @@ class FileController extends AbstractController
      */
     public function toggleFilterStatusAndRedirectToIndexAction($filter)
     {
-        $this->toggleFilterStatusAndRedirect('in2publish_filter_files_', $filter,'index');
+        $this->toggleFilterStatusAndRedirect('in2publish_filter_files_', $filter, 'index');
     }
 }

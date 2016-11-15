@@ -210,7 +210,8 @@ class SshConnection
             }
         } else {
             throw new \InvalidArgumentException(
-                'The source file ' . $absoluteSourceFile . ' does not exist', 1476272905
+                'The source file ' . $absoluteSourceFile . ' does not exist',
+                1476272905
             );
         }
     }

@@ -222,10 +222,10 @@ class FileIndexFactory
         if ($this->contextService->isLocal()) {
             $databaseConnection = DatabaseUtility::buildDatabaseConnectionForSide($side);
 
-            if (0 === $count = $databaseConnection->exec_SELECTcountRows('uid', 'sys_file', 'uid='. $uid)) {
+            if (0 === $count = $databaseConnection->exec_SELECTcountRows('uid', 'sys_file', 'uid=' . $uid)) {
                 $databaseConnection->exec_INSERTquery('sys_file', $fileInfo);
-            } elseif($count > 0) {
-                $databaseConnection->exec_UPDATEquery('sys_file', 'uid='. $uid, $fileInfo);
+            } elseif ($count > 0) {
+                $databaseConnection->exec_UPDATEquery('sys_file', 'uid=' . $uid, $fileInfo);
             }
         }
 
