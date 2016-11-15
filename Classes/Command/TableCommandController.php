@@ -81,15 +81,8 @@ class TableCommandController extends AbstractCommandController
      */
     public function publishCommand($tableName)
     {
-        if (!$this->contextService->isLocal()) {
-            $this->outputLine('This command is available on Local only');
-            $this->sendAndExit(self::EXIT_WRONG_CONTEXT);
-        }
-
-        if (!$this->databaseSchemaService->tableExists($tableName)) {
-            $this->outputLine('The table does not exist');
-            $this->sendAndExit(self::EXIT_INVALID_TABLE);
-        }
+        $this->checkLocalContext();
+        $this->checkTableExists($tableName);
 
         $this->logger->notice('Called Publish Table Command for table name "' . $tableName . '"');
         $backupResults = SshConnection::makeInstance()->backupRemoteTable($tableName);
@@ -111,15 +104,8 @@ class TableCommandController extends AbstractCommandController
      */
     public function importCommand($tableName)
     {
-        if (!$this->contextService->isLocal()) {
-            $this->outputLine('This command is available on Local only');
-            $this->sendAndExit(self::EXIT_WRONG_CONTEXT);
-        }
-
-        if (!$this->databaseSchemaService->tableExists($tableName)) {
-            $this->outputLine('The table does not exist');
-            $this->sendAndExit(self::EXIT_INVALID_TABLE);
-        }
+        $this->checkLocalContext();
+        $this->checkTableExists($tableName);
 
         $this->logger->notice('Called Import Table Command for table "' . $tableName . '"');
         DatabaseUtility::backupTable($this->localDatabase, $tableName);
@@ -192,5 +178,24 @@ class TableCommandController extends AbstractCommandController
     {
         $this->logger->notice('Called Backup Table Command for table "' . $tableName . '"');
         DatabaseUtility::backupTable($this->localDatabase, $tableName);
+    }
+
+    protected function checkLocalContext()
+    {
+        if (!$this->contextService->isLocal()) {
+            $this->outputLine('This command is available on Local only');
+            $this->sendAndExit(self::EXIT_WRONG_CONTEXT);
+        }
+    }
+
+    /**
+     * @param $tableName
+     */
+    protected function checkTableExists($tableName)
+    {
+        if (!$this->databaseSchemaService->tableExists($tableName)) {
+            $this->outputLine('The table does not exist');
+            $this->sendAndExit(self::EXIT_INVALID_TABLE);
+        }
     }
 }

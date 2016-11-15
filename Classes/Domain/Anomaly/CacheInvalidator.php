@@ -130,16 +130,7 @@ class CacheInvalidator implements SingletonInterface
      */
     protected function flushPageCache($tableName, Record $record)
     {
-        if ($tableName === 'pages') {
-            $pid = (int)$record->getIdentifier();
-        } elseif ($record->hasLocalProperty('pid')) {
-            // hint for the condition: check the local PID,
-            // because after publishing foreign and local PID will be the same.
-            // if the merged or foreign PID is checked then possibly wrong caches will get deleted
-            $pid = (int)$record->getLocalProperty('pid');
-        } else {
-            $pid = null;
-        }
+        $pid = $this->determinePid($tableName, $record);
 
         if (null !== $pid) {
             if (!isset($this->clearCachePids[$pid])) {
@@ -157,15 +148,7 @@ class CacheInvalidator implements SingletonInterface
      */
     protected function flushPageCacheByClearCacheCommand($tableName, Record $record)
     {
-        if ($tableName === 'pages') {
-            $pid = (int)$record->getIdentifier();
-        } elseif ($record->hasLocalProperty('pid')) {
-            // \In2code\In2publishCore\Domain\Anomaly\CacheInvalidator::flushPageCache
-            // for info about the above condition
-            $pid = (int)$record->getLocalProperty('pid');
-        } else {
-            $pid = null;
-        }
+        $pid = $this->determinePid($tableName, $record);
 
         if (null !== $pid) {
             if (!isset($this->clearCacheCommands[$pid])) {
@@ -200,5 +183,25 @@ class CacheInvalidator implements SingletonInterface
                 $this->newsCachePidsArray[$pid] = 'tx_news_pid_' . $pid;
             }
         }
+    }
+
+    /**
+     * @param $tableName
+     * @param Record $record
+     * @return int|null
+     */
+    protected function determinePid($tableName, Record $record)
+    {
+        if ($tableName === 'pages') {
+            $pid = (int)$record->getIdentifier();
+        } elseif ($record->hasLocalProperty('pid')) {
+            // hint for the condition: check the local PID,
+            // because after publishing foreign and local PID will be the same.
+            // if the merged or foreign PID is checked then possibly wrong caches will get deleted
+            $pid = (int)$record->getLocalProperty('pid');
+        } else {
+            $pid = null;
+        }
+        return $pid;
     }
 }
