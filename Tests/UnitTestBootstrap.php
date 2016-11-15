@@ -21,21 +21,3 @@ if (!file_exists($coreBootstrap)) {
 }
 
 require($coreBootstrap);
-
-// manually add required PSR-4 namespaces to ensure they are loaded.
-//$classLoader = \TYPO3\CMS\Core\Core\Bootstrap::getInstance()->getEarlyInstance(\Composer\Autoload\ClassLoader::class);
-//$classLoader->addPsr4(
-//    'In2code\\In2publishCore\\Tests\\Unit\\',
-//    __DIR__ . '/Unit/',
-//    true
-//);
-//$classLoader->addPsr4(
-//    'In2code\\In2publishCore\\Tests\\Helper\\',
-//    __DIR__ . '/Helper/',
-//    true
-//);
-//$classLoader->addPsr4(
-//    'TYPO3\\CMS\\Core\\Tests\\',
-//    $webRoot . '/typo3/sysext/core/Tests/',
-//    true
-//);
