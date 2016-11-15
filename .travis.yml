@@ -1,0 +1,38 @@
+language: php
+
+php:
+  - '5.5'
+  - '5.6'
+  - '7.0'
+  - '7.1'
+
+before_script:
+  - 'export TYPO3_PATH_WEB=$PWD/.Build/Web'
+
+install:
+  - 'composer require typo3/cms="$TYPO3_VERSION"'
+  - 'git checkout composer.json'
+
+# disable the possibility to sudo, this speeds up tests
+sudo: false
+
+script:
+  - '.Build/bin/phpcpd Classes/ --min-tokens=10'
+  - '.Build/bin/phpcs Classes/ --standard=PSR2'
+  - '.Build/bin/phpmd Classes/ text cleancode'
+  - '.Build/bin/phpmd Classes/ text codesize'
+  - '.Build/bin/phpmd Classes/ text controversial'
+  - '.Build/bin/phpmd Classes/ text design'
+  - '.Build/bin/phpmd Classes/ text naming'
+  - '.Build/bin/phpmd Classes/ text unusedcode'
+  - '.Build/bin/phpunit -c phpunit.xml.dist'
+
+# reduce load and network I/O on travis by caching composer dependencies
+cache:
+  directories:
+    - '$HOME/.composer/cache'
+
+
+notifications:
+  slack:
+    secure: 'hUoMDCaVjU0LIiCw3woVz2sHumqeDWXPrMJ/VkEOtOwyZ5VkZOraGLl42B5AuL1LpZPWU3qevnMFBIGNtFo3NaDwt8lv3NWCSf4tHmcuTP7IjQz05+Bc4bqy24s56oh+WU2yA7QIwSAo56trdq3WKC/LfQUQJxjTfi6UtfzwxNJq793zurR2A22plVisHf2A9l/w1YaOMHlQHvniJtCOSU0sg0BrXa3CYyrTqcZDqjy4FGBi5LWkH3grVXd3FZ5pCK+KK6nTxoJtJTT1jlf45cHz+hjVzZTZtGOkoNcvuZCnWN96t2sG1TZlMTHnPidOr++zKmliAAEMQZG8zpPxZV21k+ooTRS3BghkqbfsPrQ+YMq7fEG+Tz/yp1fPtUG5oqTm5PK47Hg3dvH0OSiSOrSvwRfMDSd2py8dlgQfbJFM0IxbXBpLwJ9+9gtZx2Jrol3klaotJBM7XF4KVmpBzp0oACuLXpLv7qfXl096v6dazVyHoqYxvQE6rFPUZMGu4IEGAmMm7tcrSqzgn/cY5Dnq9szeaJMYWGpL7D4Wzg2MrXiRlWd3Z4Rrf73rAzV/MiypmYAZIOAS+jX2rDDb13nq3uL3sEY36M/dO/6vA12SItLM6G5LeW1WSzIYW050VZYSWEJ5GFQxhZImdOmZNXXWerNEKHIYiBZUKaVNCpY='
