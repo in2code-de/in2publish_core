@@ -20,7 +20,7 @@ install:
 sudo: false
 
 script:
-  - '.Build/bin/phpcpd Classes/ --min-tokens=10'
+  - '.Build/bin/phpcpd Classes/ --min-tokens=42'
   - '.Build/bin/phpcs Classes/ --standard=PSR2'
   - '.Build/bin/phpmd Classes/ text cleancode'
   - '.Build/bin/phpmd Classes/ text codesize'
