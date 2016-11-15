@@ -65,6 +65,8 @@ use TYPO3\CMS\Extbase\Utility\ArrayUtility as ExtbaseArrayUtility;
  *                '- continue as long as depth < maxDepth
  *
  *  this loop breaks in the factory when maximumRecursionDepth is reached
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class CommonRepository extends BaseRepository
 {

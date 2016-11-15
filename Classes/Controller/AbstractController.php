@@ -44,6 +44,8 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * class AbstractController
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 abstract class AbstractController extends ActionController
 {

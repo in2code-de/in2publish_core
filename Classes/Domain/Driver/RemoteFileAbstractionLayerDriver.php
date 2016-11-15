@@ -40,6 +40,8 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 
 /**
  * Class RemoteFileAbstractionLayerDriver
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDriver implements
     DriverInterface,

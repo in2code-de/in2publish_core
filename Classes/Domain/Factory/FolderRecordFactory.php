@@ -43,6 +43,8 @@ use TYPO3\CMS\Extbase\Reflection\PropertyReflection;
 
 /**
  * Class FolderRecordFactory
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class FolderRecordFactory
 {
