@@ -796,6 +796,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * @param string $folderIdentifier
      * @param string $newName
      * @return array A map of old to new file identifiers of all affected resources
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function renameFolder($folderIdentifier, $newName)
     {
@@ -809,6 +811,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * @param bool $recursive
      * @param array $filenameFilterCallbacks callbacks for filtering the items
      * @return int Number of files in folder
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function countFilesInFolder($folderIdentifier, $recursive = false, array $filenameFilterCallbacks = array())
     {
@@ -822,6 +826,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * @param bool $recursive
      * @param array $fnFc callbacks for filtering the items
      * @return int Number of folders in folder
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function countFoldersInFolder($folderIdentifier, $recursive = false, array $fnFc = array())
     {
@@ -834,6 +840,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * @param string $folderName The name of the target folder
      * @param string $folderIdentifier
      * @return string folder identifier
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getFolderInFolder($folderName, $folderIdentifier)
     {
@@ -846,6 +854,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * @param string $fileName
      * @param string $folderIdentifier
      * @return string file identifier
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getFileInFolder($fileName, $folderIdentifier)
     {
@@ -859,6 +869,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      *
      * @param string $identifier
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function dumpFileContents($identifier)
     {
@@ -877,6 +889,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * @param string $folderIdentifier
      * @param string $identifier identifier to be checked against $folderIdentifier
      * @return bool TRUE if $content is within or matches $folderIdentifier
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function isWithin($folderIdentifier, $identifier)
     {
@@ -891,6 +905,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      *
      * @param string $fileIdentifier
      * @return string The file contents
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getFileContents($fileIdentifier)
     {
@@ -903,6 +919,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * @param string $fileIdentifier
      * @param string $contents
      * @return int The number of bytes written to the file
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function setFileContents($fileIdentifier, $contents)
     {
@@ -915,6 +933,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * @param string $fileName
      * @param string $folderIdentifier
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function fileExistsInFolder($fileName, $folderIdentifier)
     {
@@ -927,6 +947,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * @param string $folderName
      * @param string $folderIdentifier
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function folderExistsInFolder($folderName, $folderIdentifier)
     {
@@ -943,6 +965,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      *                       a cached local version. Never modify the file if you
      *                       have set this flag!
      * @return string The path to the file on the local disk
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getFileForLocalProcessing($fileIdentifier, $writable = true)
     {
@@ -958,6 +982,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * @param string $targetFolderIdentifier
      * @param string $newFileName
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function moveFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $newFileName)
     {
@@ -971,6 +997,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * @param string $targetFolderIdentifier
      * @param string $newFolderName
      * @return array All files which are affected, map of old => new file identifiers
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function moveFolderWithinStorage($sourceFolderIdentifier, $targetFolderIdentifier, $newFolderName)
     {
@@ -984,6 +1012,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * @param string $targetFolderIdentifier
      * @param string $newFolderName
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function copyFolderWithinStorage($sourceFolderIdentifier, $targetFolderIdentifier, $newFolderName)
     {
@@ -996,6 +1026,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * @param string $fileName
      * @param string $parentFolderIdentifier
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function createFile($fileName, $parentFolderIdentifier)
     {
@@ -1011,6 +1043,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * @param string $targetFolderIdentifier
      * @param string $fileName
      * @return string the Identifier of the new file
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function copyFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $fileName)
     {
@@ -1022,6 +1056,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      *
      * @param string $folderIdentifier
      * @return bool TRUE if there are no files and folders within $folder
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function isFolderEmpty($folderIdentifier)
     {
@@ -1033,6 +1069,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      *
      * @param int $capabilities
      * @return int
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function mergeConfigurationCapabilities($capabilities)
     {
@@ -1043,6 +1081,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * Never called
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function processConfiguration()
     {
@@ -1054,6 +1094,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      *
      * @param int $capability
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function hasCapability($capability)
     {
@@ -1064,6 +1106,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      * Not required
      *
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function getRootLevelFolder()
     {
