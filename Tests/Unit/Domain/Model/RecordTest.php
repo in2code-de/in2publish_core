@@ -1566,9 +1566,11 @@ class RecordTest extends UnitTestCase
         $stub = $this->getRecordStub([]);
         $stub->__construct('pages', [], [], [], []);
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionCode(1475857626);
-        $this->expectExceptionMessage('Can not set properties for undefined side "foo"');
+        $this->setExpectedException(
+            \LogicException::class,
+            'Can not set properties for undefined side "foo"',
+            1475857626
+        );
 
         $stub->setPropertiesBySideIdentifier('foo', []);
     }
@@ -1609,9 +1611,11 @@ class RecordTest extends UnitTestCase
         $stub = $this->getRecordStub([]);
         $stub->__construct('pages', [], [], [], []);
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionCode(1475858502);
-        $this->expectExceptionMessage('Can not get Properties from undefined side "foo"');
+        $this->setExpectedException(
+            \LogicException::class,
+            'Can not get Properties from undefined side "foo"',
+            1475858502
+        );
 
         $stub->getPropertiesBySideIdentifier('foo');
     }
@@ -1650,9 +1654,11 @@ class RecordTest extends UnitTestCase
         $record = $this->getRecordStub([]);
         $record->__construct('pages', [], [], [], []);
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionCode(1475858834);
-        $this->expectExceptionMessage('Can not get property "bar" from undefined side "foo"');
+        $this->setExpectedException(
+            \LogicException::class,
+            'Can not get property "bar" from undefined side "foo"',
+            1475858834
+        );
 
         $this->assertSame('bar', $record->getPropertyBySideIdentifier('foo', 'bar'));
     }

@@ -70,9 +70,12 @@ class ContextServiceTest extends UnitTestCase
         TestingHelper::setIn2publishContext('Wrong');
         TestingHelper::setApplicationContext('Development');
 
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('The defined in2publish context is not supported');
-        $this->expectExceptionCode(1469717011);
+        $this->setExpectedException(
+            \LogicException::class,
+            'The defined in2publish context is not supported',
+            1469717011
+        );
+
         new ContextService();
     }
 
