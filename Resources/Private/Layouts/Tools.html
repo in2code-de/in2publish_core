@@ -1,12 +1,19 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
 <f:be.container
-		includeCssFiles="{0: '{f:uri.resource(path:\'Css/Modules.css\',extensionName:\'In2publishCore\')}', 1: '{f:uri.resource(path:\'Css/Bootstrap.css\',extensionName:\'In2publishCore\')}'}"
-		includeJsFiles="{0: '{f:uri.resource(path:\'JavaScripts/In2publish/Overall.js\',extensionName:\'In2publishCore\')}', 1: '{f:uri.resource(path:\'JavaScripts/In2publish/BackendModule.js\',extensionName:\'In2publishCore\')}', 2: '{f:uri.resource(path:\'JavaScripts/In2publish/VersionCheck.min.js\',extensionName:\'In2publishCore\')}'}"
-		enableClickMenu="false"
-		loadExtJs="false"
-		loadExtJsTheme="false"
-		enableExtJsDebug="false"
-		loadJQuery="true">
+	includeCssFiles="{
+		0: '{f:uri.resource(path:\'Css/Modules.css\',extensionName:\'In2publishCore\')}',
+		1: '{f:uri.resource(path:\'Css/Bootstrap.css\',extensionName:\'In2publishCore\')}'
+	}"
+	includeJsFiles="{
+		0: '{f:uri.resource(path:\'JavaScripts/In2publish/Overall.js\',extensionName:\'In2publishCore\')}',
+		1: '{f:uri.resource(path:\'JavaScripts/In2publish/BackendModule.js\',extensionName:\'In2publishCore\')}',
+		2: '{f:uri.resource(path:\'JavaScripts/In2publish/VersionCheck.min.js\',extensionName:\'In2publishCore\')}'
+	}"
+	enableClickMenu="false"
+	loadExtJs="false"
+	loadExtJsTheme="false"
+	enableExtJsDebug="false"
+	loadJQuery="true">
 
 	<div class="overlay"></div>
 
@@ -46,8 +53,8 @@
 			<div id="typo3-inner-docbody" class="in2publish-backend">
 				<f:render partial="FlashMessages"/>
 				<div class="container container-full">
-					<f:render section="content" />
-					<f:render partial="Typo3Version" />
+					<f:render section="content"/>
+					<f:render partial="Typo3Version"/>
 				</div>
 			</div>
 		</div>

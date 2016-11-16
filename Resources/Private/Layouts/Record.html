@@ -1,16 +1,20 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
 <f:be.container
-		includeCssFiles="{0: '{f:uri.resource(path:\'Css/Modules.css\',extensionName:\'In2publishCore\')}',
-			1: '{f:uri.resource(path:\'Css/Bootstrap.css\',extensionName:\'In2publishCore\')}'}"
-		includeJsFiles="{0: '{f:uri.resource(path:\'JavaScripts/Libraries/pikaday.js\',extensionName:\'In2publishCore\')}',
-			1: '{f:uri.resource(path:\'JavaScripts/In2publish/DateTimePicker.js\',extensionName:\'In2publishCore\')}',
-			2: '{f:uri.resource(path:\'JavaScripts/In2publish/Overall.js\',extensionName:\'In2publishCore\')}',
-			3: '{f:uri.resource(path:\'JavaScripts/In2publish/BackendModule.js\',extensionName:\'In2publishCore\')}'}"
-		enableClickMenu="false"
-		loadExtJs="false"
-		loadExtJsTheme="false"
-		enableExtJsDebug="false"
-		loadJQuery="true">
+	includeCssFiles="{
+		0: '{f:uri.resource(path:\'Css/Modules.css\',extensionName:\'In2publishCore\')}',
+		1: '{f:uri.resource(path:\'Css/Bootstrap.css\',extensionName:\'In2publishCore\')}'
+	}"
+	includeJsFiles="{
+		0: '{f:uri.resource(path:\'JavaScripts/Libraries/pikaday.js\',extensionName:\'In2publishCore\')}',
+		1: '{f:uri.resource(path:\'JavaScripts/In2publish/DateTimePicker.js\',extensionName:\'In2publishCore\')}',
+		2: '{f:uri.resource(path:\'JavaScripts/In2publish/Overall.js\',extensionName:\'In2publishCore\')}',
+		3: '{f:uri.resource(path:\'JavaScripts/In2publish/BackendModule.js\',extensionName:\'In2publishCore\')}'
+	}"
+	enableClickMenu="false"
+	loadExtJs="false"
+	loadExtJsTheme="false"
+	enableExtJsDebug="false"
+	loadJQuery="true">
 
 	<div class="overlay"></div>
 
@@ -19,7 +23,7 @@
 			<div id="typo3-docheader-row2">
 				<div class="docheader-row2-left typo3-docheader-functions in2publish-backend-select"></div>
 				<div class="docheader-row2-right">
-					<f:be.pagePath />
+					<f:be.pagePath/>
 				</div>
 			</div>
 		</div>
@@ -27,10 +31,10 @@
 
 			<div id="typo3-inner-docbody" class="in2publish-backend">
 				<div class="container container-full">
-					<f:render partial="LoadingOverlay" />
+					<f:render partial="LoadingOverlay"/>
 					<f:render partial="FlashMessages" arguments="{additionalClass:'in2publish-messages in2publish-messages--removeable'}"/>
-					<f:render section="content" />
-					<f:render partial="Typo3Version" />
+					<f:render section="content"/>
+					<f:render partial="Typo3Version"/>
 				</div>
 			</div>
 		</div>
