@@ -39,7 +39,6 @@ class DatabaseSchemaServiceTest extends UnitTestCase
     /**
      * @covers ::__construct
      * @covers ::getDatabaseSchema
-     * @covers ::getDatabase
      */
     public function testGetDatabaseSchemaBuildArrayOfTableAndFieldInformation()
     {

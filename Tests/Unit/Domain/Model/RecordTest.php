@@ -1453,8 +1453,8 @@ class RecordTest extends UnitTestCase
     }
 
     /**
-     * @covers ::getRelatedRecord
-     * @depends testGetChangedRelatedRecordsFlatReturnsFlatArrayOfChangedRelatedRecords
+     * @covers ::getRelatedRecordByTableAndProperty
+     * @depends testAddRelatedRecordsAddsArrayOfRelatedRecordsAndAllowsChaining
      */
     public function testGetRelatedRecordByPropertyReturnsEmptyArrayForNonExistingRecord()
     {
@@ -1473,8 +1473,7 @@ class RecordTest extends UnitTestCase
     }
 
     /**
-     * @covers ::getRelatedRecord
-     * @depends testGetChangedRelatedRecordsFlatReturnsFlatArrayOfChangedRelatedRecords
+     * @covers ::getRelatedRecordByTableAndProperty
      */
     public function testGetRelatedRecordByPropertyReturnsEmptyArrayForNonExistingTable()
     {
@@ -1485,8 +1484,8 @@ class RecordTest extends UnitTestCase
     }
 
     /**
-     * @covers ::getRelatedRecord
-     * @depends testGetChangedRelatedRecordsFlatReturnsFlatArrayOfChangedRelatedRecords
+     * @covers ::getRelatedRecordByTableAndProperty
+     * @depends testAddRelatedRecordsAddsArrayOfRelatedRecordsAndAllowsChaining
      */
     public function testGetRelatedRecordByPropertyReturnsExpectedPropertyInArray()
     {
