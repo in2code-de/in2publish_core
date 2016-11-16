@@ -90,12 +90,33 @@ function In2publishPageModule($) {
 			$this.addClass('sending');
 			var recordIdentifier = $this.siblings('*[data-workflow-container-recordidentifier]').val();
 
-			sendParamsAndReloadWithoutParams({
+			var params = {
 				identifier: $('*[name="in2publish_pagestate[' + recordIdentifier + '][identifier]"]').val(),
 				tableName: $('*[name="in2publish_pagestate[' + recordIdentifier + '][tableName]"]').val(),
 				state: $('*[name="in2publish_pagestate[' + recordIdentifier + '][pagestate]"]:checked').val(),
 				message: $('*[name="in2publish_pagestate[' + recordIdentifier + '][message]"]').val(),
 				scheduledpublish: $('*[name="in2publish_pagestate[' + recordIdentifier + '][scheduledPublishDate]"]').val()
+			};
+
+			var paramsString = '';
+			for (var key in params) {
+				paramsString += '&workflowstate[' + key + ']=' + encodeURIComponent(params[key]);
+			}
+
+			$.ajax({
+				type: 'POST',
+				url: window.location.href,
+				data: paramsString,
+				success: function(data) {
+					if (data == "reload") {
+						window.location.href = cleanUriFromAnchors(getCurrentUri()) + '&workflowstate[justpublished]=1';
+					} else {
+						$this.closest('.in2publish__workflowcontainer').html(data);
+					}
+				},
+				error: function() {
+					alert('Error: Could not set workflow state for this page');
+				}
 			});
 			e.preventDefault();
 		});
