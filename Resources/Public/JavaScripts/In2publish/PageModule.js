@@ -37,7 +37,7 @@ function In2publishPageModule($) {
 	 */
 	this.initialize = function() {
 		this.addWorkflowContainerOpenListener();
-		this.addWorkflowContainerCloseListener();
+		this.addWorkflowContainerCloseListener(false);
 		this.addSubmitListener();
 		this.addPublishListener();
 	};
@@ -59,18 +59,18 @@ function In2publishPageModule($) {
 	 *
 	 * @returns {void}
 	 */
-	this.addWorkflowContainerCloseListener = function() {
+	this.addWorkflowContainerCloseListener = function(reloadAfterClose) {
 		$('body').click(function() {
-			closeAllWorkflowContainers();
+			closeAllWorkflowContainers(reloadAfterClose);
 		});
 		// Close - cross in container
 		$('.in2publish__workflowcontainer__button-close').click(function() {
-			closeAllWorkflowContainers();
+			closeAllWorkflowContainers(reloadAfterClose);
 		});
 		// ESC key press
 		$(document).keyup(function(e) {
 			if (e.keyCode == 27) {
-				closeAllWorkflowContainers();
+				closeAllWorkflowContainers(reloadAfterClose);
 			}
 		});
 		$('.' + that.workflowContainerClassName).click(function(e) {
@@ -90,13 +90,28 @@ function In2publishPageModule($) {
 			$this.addClass('sending');
 			var recordIdentifier = $this.siblings('*[data-workflow-container-recordidentifier]').val();
 
-			var params = {
-				identifier: $('*[name="in2publish_pagestate[' + recordIdentifier + '][identifier]"]').val(),
-				tableName: $('*[name="in2publish_pagestate[' + recordIdentifier + '][tableName]"]').val(),
-				state: $('*[name="in2publish_pagestate[' + recordIdentifier + '][pagestate]"]:checked').val(),
-				message: $('*[name="in2publish_pagestate[' + recordIdentifier + '][message]"]').val(),
-				scheduledpublish: $('*[name="in2publish_pagestate[' + recordIdentifier + '][scheduledPublishDate]"]').val()
-			};
+			var action = $('*[name="in2publish_pagestate[action]"]').val();
+
+			var params = {};
+
+			if (action == "workflowstateassignment") {
+				params = {
+					action: action,
+					target: $('*[name="in2publish_pagestate[assignment][target]"]').val(),
+					message: $('*[name="in2publish_pagestate[assignment][message]"]').val(),
+					identifier: $('*[name="in2publish_pagestate[identifier]"]').val(),
+					tableName: $('*[name="in2publish_pagestate[tableName]"]').val()
+				};
+			} else {
+				params = {
+					action: action,
+					identifier: $('*[name="in2publish_pagestate[' + recordIdentifier + '][identifier]"]').val(),
+					tableName: $('*[name="in2publish_pagestate[' + recordIdentifier + '][tableName]"]').val(),
+					state: $('*[name="in2publish_pagestate[' + recordIdentifier + '][pagestate]"]:checked').val(),
+					message: $('*[name="in2publish_pagestate[' + recordIdentifier + '][message]"]').val(),
+					scheduledpublish: $('*[name="in2publish_pagestate[' + recordIdentifier + '][scheduledPublishDate]"]').val()
+				};
+			}
 
 			var paramsString = '';
 			for (var key in params) {
@@ -110,8 +125,12 @@ function In2publishPageModule($) {
 				success: function(data) {
 					if (data == "reload") {
 						window.location.href = cleanUriFromAnchors(getCurrentUri()) + '&workflowstate[justpublished]=1';
+					} else if (data =="failure_wfsa") {
+						alert('Sending the message failed. Please check the publish logs for more information');
 					} else {
 						$this.closest('.in2publish__workflowcontainer').html(data);
+						that.addSubmitListener();
+						that.addWorkflowContainerCloseListener(true);
 					}
 				},
 				error: function() {
@@ -163,9 +182,12 @@ function In2publishPageModule($) {
 	 *
 	 * @returns {void}
 	 */
-	var closeAllWorkflowContainers = function() {
+	var closeAllWorkflowContainers = function(reloadAfterClose) {
 		$('.' + that.workflowContainerClassName).hide();
 		$('.in2publish__workflowcontainer__lightbox').hide();
+		if (reloadAfterClose) {
+			window.location.href = cleanUriFromAnchors(getCurrentUri()) + '&workflowstate[justpublished]=1';
+		}
 	};
 
 	/**
