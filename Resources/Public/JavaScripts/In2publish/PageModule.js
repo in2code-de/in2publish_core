@@ -90,17 +90,18 @@ function In2publishPageModule($) {
 			$this.addClass('sending');
 			var recordIdentifier = $this.siblings('*[data-workflow-container-recordidentifier]').val();
 
-			var action = $('*[name="in2publish_pagestate[action]"]').val();
+			var $parentContainer = $this.closest('.in2publish__workflowcontainer');
+			var action = $parentContainer.find('*[name="in2publish_pagestate[action]"]').val();
 
 			var params = {};
 
 			if (action == "workflowstateassignment") {
 				params = {
 					action: action,
-					target: $('*[name="in2publish_pagestate[assignment][target]"]').val(),
-					message: $('*[name="in2publish_pagestate[assignment][message]"]').val(),
-					identifier: $('*[name="in2publish_pagestate[identifier]"]').val(),
-					tableName: $('*[name="in2publish_pagestate[tableName]"]').val()
+					target: $parentContainer.find('*[name="in2publish_pagestate[assignment][target]"]').val(),
+					message: $parentContainer.find('*[name="in2publish_pagestate[assignment][message]"]').val(),
+					identifier: $parentContainer.find('*[name="in2publish_pagestate[identifier]"]').val(),
+					tableName: $parentContainer.find('*[name="in2publish_pagestate[tableName]"]').val()
 				};
 			} else {
 				params = {
