@@ -141,7 +141,7 @@ class EnvelopeDispatcher
         $fileIdentifier = $request['fileIdentifier'];
         $directory = PathUtility::dirname($fileIdentifier);
         if ($driver->folderExists($directory)) {
-            if ($driver->countFilesInFolder($directory) < 51) {
+            if (is_callable(array($driver, 'countFilesInFolder')) && $driver->countFilesInFolder($directory) < 51) {
                 $files = $this->convertIdentifiers(
                     $driver,
                     call_user_func(array($driver, 'getFilesInFolder'), $directory)
@@ -157,13 +157,17 @@ class EnvelopeDispatcher
                 }
             } else {
                 $fileObject = $this->getFileObject($driver, $fileIdentifier, $storage);
-                $files = array(
-                    $fileIdentifier => array(
-                        'hash' => $driver->hash($fileIdentifier, 'sha1'),
-                        'info' => $driver->getFileInfoByIdentifier($fileIdentifier),
-                        'publicUrl' => $storage->getPublicUrl($fileObject),
-                    ),
-                );
+                if (null !== $fileObject) {
+                    $files = array(
+                        $fileIdentifier => array(
+                            'hash' => $driver->hash($fileIdentifier, 'sha1'),
+                            'info' => $driver->getFileInfoByIdentifier($fileIdentifier),
+                            'publicUrl' => $storage->getPublicUrl($fileObject),
+                        ),
+                    );
+                } else {
+                    $files = array();
+                }
             }
             return $files;
         }
@@ -341,7 +345,7 @@ class EnvelopeDispatcher
      * @param $driver
      * @param $identifier
      * @param $storage
-     * @return File
+     * @return File|null
      */
     protected function getFileObject($driver, $identifier, $storage)
     {
@@ -352,9 +356,13 @@ class EnvelopeDispatcher
         );
 
         /** @var File $file */
+        $fileIndexArray = $fileIndexFactory->getFileIndexArray($identifier, 'local');
+        if (empty($fileIndexArray)) {
+            return null;
+        }
         $file = GeneralUtility::makeInstance(
             'TYPO3\\CMS\\Core\\Resource\\File',
-            $fileIndexFactory->getFileIndexArray($identifier, 'local'),
+            $fileIndexArray,
             $storage
         );
         return $file;
