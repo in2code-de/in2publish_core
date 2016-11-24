@@ -1,5 +1,18 @@
 # In2publish Core Change Log
 
+5.3.1:
+
+- [TESTS] Integrate Travis CI testing
+- [TESTS] Purge manual autoload configuration
+- [REFACTOR] Remove code doublet by merging them into single methods
+- [STYLE] Add editor config file and fix all codestyle issues
+- [TESTS] Set correct @covers annotations in unit tests for code coverage
+- [DOCS] Add short developer explanation for JavaScript files
+- [PURGE] Remove unused PageModule fluid layout
+- [TASK] Add WFSA feature dependency of the enterprise version
+- [BUGFIX] Fix version incompatibility with TYPO3 6.2 where a FFS-PreCaching requires a specific method
+- [TASK] Require the existence of the RPC/Envelope table in the backend tests
+
 5.3.0:
 
 - [FEATURE] Cache all remote files for the Overview module for a vast performance increas
