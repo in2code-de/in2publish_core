@@ -62,6 +62,7 @@ class RequiredTablesDataProvider implements SingletonInterface
             $requiredTables = array(
                 'tx_in2code_in2publish_log',
                 'tx_in2code_in2publish_task',
+                'tx_in2code_in2publish_envelope',
             );
             $requiredTables = $this->overruleTables($requiredTables);
             $this->cache = $requiredTables;
