@@ -1,5 +1,10 @@
 # In2publish Core Change Log
 
+5.3.2:
+
+- [BUGFIX] Remove SingletonInterface from RemoteFalDriver to ensure references don't get reinitialized with wrong properties
+- [BUGFIX] Initialize RemoteFalDriver with proper arguments for each published file
+
 5.3.1:
 
 - [TESTS] Integrate Travis CI testing
