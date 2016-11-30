@@ -229,12 +229,12 @@ class FolderRecordFactory
      */
     protected function getForeignDriver(ResourceStorage $localStorage)
     {
-        $this->foreignDriver = GeneralUtility::makeInstance(
+        $foreignDriver = GeneralUtility::makeInstance(
             'In2code\\In2publishCore\\Domain\\Driver\\RemoteFileAbstractionLayerDriver'
         );
-        $this->foreignDriver->setStorageUid($localStorage->getUid());
-        $this->foreignDriver->initialize();
-        return $this->foreignDriver;
+        $foreignDriver->setStorageUid($localStorage->getUid());
+        $foreignDriver->initialize();
+        return $foreignDriver;
     }
 
     /**
