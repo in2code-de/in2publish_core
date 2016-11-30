@@ -61,6 +61,8 @@ class FilePublisherService
     public function removeForeignFile($storage, $fileIdentifier)
     {
         $this->remoteFalDriver->setStorageUid($storage);
+        $this->remoteFalDriver->initialize();
+
         return $this->remoteFalDriver->deleteFile($fileIdentifier);
     }
 
@@ -73,6 +75,9 @@ class FilePublisherService
      */
     public function addFileToForeign($storage, $fileIdentifier)
     {
+        $this->remoteFalDriver->setStorageUid($storage);
+        $this->remoteFalDriver->initialize();
+
         $temporaryIdentifier = $this->transferTemporaryFile($storage, $fileIdentifier);
 
         $folderIdentifier = dirname($fileIdentifier);
@@ -96,9 +101,11 @@ class FilePublisherService
      */
     public function updateFileOnForeign($storage, $fileIdentifier)
     {
+        $this->remoteFalDriver->setStorageUid($storage);
+        $this->remoteFalDriver->initialize();
+
         $temporaryIdentifier = $this->transferTemporaryFile($storage, $fileIdentifier);
 
-        $this->remoteFalDriver->setStorageUid($storage);
         return $this->remoteFalDriver->replaceFile($fileIdentifier, $temporaryIdentifier);
     }
 
@@ -111,6 +118,8 @@ class FilePublisherService
     public function renameForeignFile($storage, $fileIdentifier, $newName)
     {
         $this->remoteFalDriver->setStorageUid($storage);
+        $this->remoteFalDriver->initialize();
+
         return $this->remoteFalDriver->renameFile($fileIdentifier, $newName);
     }
 
