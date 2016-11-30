@@ -34,7 +34,6 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Resource\Driver\AbstractHierarchicalFilesystemDriver;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
-use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
@@ -43,9 +42,7 @@ use TYPO3\CMS\Core\Utility\PathUtility;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDriver implements
-    DriverInterface,
-    SingletonInterface
+class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDriver implements DriverInterface
 {
     /**
      * @var SshConnection
