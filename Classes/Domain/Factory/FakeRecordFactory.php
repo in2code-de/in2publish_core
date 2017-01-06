@@ -274,7 +274,7 @@ class FakeRecordFactory
      */
     protected function pageContentRecordsHasChanged(Record $record)
     {
-        $tables = $this->tcaService->getAllTableNamesWithPidField(
+        $tables = $this->tcaService->getAllTableNamesWithPidAndUidField(
             array_merge(ConfigurationUtility::getConfiguration('excludeRelatedTables'), array('pages'))
         );
         foreach ($tables as $table) {

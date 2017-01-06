@@ -156,18 +156,18 @@ class TcaService implements SingletonInterface
     }
 
     /**
-     * Returns all table names that are not in the exclusion list and that have a pid field
+     * Returns all table names that are not in the exclusion list and that have a pid and uid field
      *
      * @param array $exceptTableNames
      * @return array
      */
-    public function getAllTableNamesWithPidField(array $exceptTableNames = array())
+    public function getAllTableNamesWithPidAndUidField(array $exceptTableNames = array())
     {
         $databaseSchema = $this->getDatabaseSchema();
         $allTableNames = array();
 
         foreach (array_keys($databaseSchema) as $tableName) {
-            if (isset($databaseSchema[$tableName]['pid'])) {
+            if (isset($databaseSchema[$tableName]['pid']) && isset($databaseSchema[$tableName]['uid'])) {
                 $allTableNames[] = $tableName;
             }
         }
