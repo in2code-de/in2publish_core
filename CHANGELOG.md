@@ -1,5 +1,9 @@
 # In2publish Core Change Log
 
+5.3.3:
+
+- [BUGFIX] SimpleOverviewAndAjax: Exclude tables without uid field to prevent failures
+
 5.3.2:
 
 - [BUGFIX] Remove SingletonInterface from RemoteFalDriver to ensure references don't get reinitialized with wrong properties

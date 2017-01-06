@@ -1,7 +1,7 @@
 {
     "name": "in2code/in2publish_core",
     "description": "Content publishing extension to connect stage and production server",
-    "version": "5.3.2",
+    "version": "5.3.3",
     "keywords": [
         "TYPO3 CMS",
         "publishing",
