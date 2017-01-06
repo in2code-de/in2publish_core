@@ -1,6 +1,18 @@
 FAQ
 ===
 
+Publisher backend modules are not visible?
+------------------------------------------
+
+Please check if you have set the environment variables on your server for the stage system:
+
+```
+SetEnv IN2PUBLISH_CONTEXT Local
+```
+
+See https://github.com/in2code-de/in2publish_core/blob/master/Documentation/Installation/Preparation.md#os-requirements
+for details
+
 How to delete cache of a page in production?
 --------------------------------------------
 
