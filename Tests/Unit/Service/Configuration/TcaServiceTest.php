@@ -267,9 +267,9 @@ class TcaServiceTest extends UnitTestCase
     }
 
     /**
-     * @covers ::getAllTableNamesWithPidField
+     * @covers ::getAllTableNamesWithPidAndUidField
      */
-    public function testGetAllTableNamesWithPidFieldReturnsExpectedTables()
+    public function testGetAllTableNamesWithPidAndUidFieldReturnsExpectedTables()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TcaService $tcaService */
         $tcaService = $this->getMockBuilder(TcaService::class)->setMethods(['getDatabaseSchema'])->getMock();
@@ -277,12 +277,20 @@ class TcaServiceTest extends UnitTestCase
         $databaseSchema = [
             'foo' => [
                 'pid' => [],
+                'uid' => []
             ],
             'bar' => [
                 'pid' => [],
+                'uid' => []
             ],
             'baz' => [
-                'uid' => [],
+                'tstamp' => []
+            ],
+            'boo' => [
+                'pid' => []
+            ],
+            'far' => [
+                'uid' => []
             ],
         ];
 
@@ -293,10 +301,10 @@ class TcaServiceTest extends UnitTestCase
     }
 
     /**
-     * @covers ::getAllTableNamesWithPidField
-     * @depends testGetAllTableNamesWithPidFieldReturnsExpectedTables
+     * @covers ::getAllTableNamesWithPidAndUidField
+     * @depends testGetAllTableNamesWithPidAndUidFieldReturnsExpectedTables
      */
-    public function testGetAllTableNamesWithPidFieldReturnsExpectedTablesExceptExcludedTables()
+    public function testGetAllTableNamesWithPidAndUidFieldReturnsExpectedTablesExceptExcludedTables()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TcaService $tcaService */
         $tcaService = $this->getMockBuilder(TcaService::class)->setMethods(['getDatabaseSchema'])->getMock();
@@ -304,15 +312,21 @@ class TcaServiceTest extends UnitTestCase
         $databaseSchema = [
             'foo' => [
                 'pid' => [],
+                'uid' => []
             ],
             'bar' => [
                 'pid' => [],
+                'uid' => []
             ],
             'baz' => [
                 'uid' => [],
             ],
+            'faz' => [
+                'pid' => [],
+            ],
             'boo' => [
                 'pid' => [],
+                'uid' => []
             ],
         ];
 
