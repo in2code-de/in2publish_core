@@ -656,7 +656,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
 
         if (!empty($executionResult)) {
             throw new \RuntimeException(
-                'Could not execute RPC. An error occurred on foreign: ' . implode(',', $executionResult),
+                'Could not execute RPC [' . $uid . ']. An error occurred on foreign: ' . implode(',', $executionResult),
                 1476281965
             );
         }
