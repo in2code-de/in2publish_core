@@ -190,11 +190,16 @@ class CommonRepository extends BaseRepository
      * where the properties are matching.
      *
      * @param array $properties
+     * @param bool $simulateRoot Simulate an existent root record to prevent filePostProcessing
+     *  in the RecordFactory for each single Record
      *
      * @return Record[]
      */
-    public function findByProperties(array $properties)
+    public function findByProperties(array $properties, $simulateRoot = false)
     {
+        if ($simulateRoot) {
+            $this->recordFactory->simulateRootRecord();
+        }
         foreach ($properties as $propertyName => $propertyValue) {
             if ($this->shouldSkipFindByProperty($propertyName, $propertyValue)) {
                 return array();
@@ -207,7 +212,11 @@ class CommonRepository extends BaseRepository
         }
         $localProperties = $this->findPropertiesByProperties($this->localDatabase, $properties);
         $foreignProperties = $this->findPropertiesByProperties($this->foreignDatabase, $properties);
-        return $this->convertPropertyArraysToRecords($localProperties, $foreignProperties);
+        $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties);
+        if ($simulateRoot) {
+            $this->recordFactory->endSimulation();
+        }
+        return $records;
     }
 
     /**

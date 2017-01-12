@@ -173,7 +173,8 @@ class FolderRecordFactory
 
         // Now let's find all files inside of the selected folder by the folders hash.
         $files = $this->commonRepository->findByProperties(
-            array('folder_hash' => $hashedIdentifier, 'storage' => $storageUid)
+            array('folder_hash' => $hashedIdentifier, 'storage' => $storageUid),
+            true
         );
 
         // FEATURE: mergeSysFileByIdentifier and enableSysFileReferenceUpdate

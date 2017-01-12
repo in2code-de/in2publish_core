@@ -562,4 +562,25 @@ class RecordFactory
     {
         $this->pageRecursionEnabled = false;
     }
+
+    /**
+     * @internal
+     */
+    public function simulateRootRecord()
+    {
+        $this->isRootRecord = true;
+    }
+
+    /**
+     * @internal
+     */
+    public function endSimulation()
+    {
+        $this->isRootRecord = false;
+        $this->signalSlotDispatcher->dispatch(
+            __CLASS__,
+            'rootRecordFinished',
+            array($this, GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Model\\NullRecord'))
+        );
+    }
 }
