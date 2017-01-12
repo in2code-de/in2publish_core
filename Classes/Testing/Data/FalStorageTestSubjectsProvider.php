@@ -58,13 +58,16 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     protected $foreignStorages = array();
 
     /**
+     * @var bool
+     */
+    protected $initialized = false;
+
+    /**
      * FalStorageTestSubjectsProvider constructor.
      */
     public function __construct()
     {
         $this->signalSlotDispatcher = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
-        $this->localStorages = $this->fetchStorages(DatabaseUtility::buildLocalDatabaseConnection());
-        $this->foreignStorages = $this->fetchStorages(DatabaseUtility::buildForeignDatabaseConnection());
     }
 
     /**
@@ -105,6 +108,11 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
      */
     protected function getStorages($purpose)
     {
+        if (false === $this->initialized) {
+            $this->initialized = true;
+            $this->localStorages = $this->fetchStorages(DatabaseUtility::buildLocalDatabaseConnection());
+            $this->foreignStorages = $this->fetchStorages(DatabaseUtility::buildForeignDatabaseConnection());
+        }
         $arguments = array(
             'localStorages' => $this->localStorages,
             'foreignStorages' => $this->foreignStorages,
