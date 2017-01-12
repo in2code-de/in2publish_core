@@ -111,6 +111,10 @@ class DomainService
         $rootLine = BackendUtility::BEgetRootLine($identifier);
         foreach ($rootLine as $page) {
             $databaseConnection = DatabaseUtility::buildDatabaseConnectionForSide($stagingLevel);
+            if (null === $databaseConnection) {
+                // Error: not connected
+                return '';
+            }
             $domainRecord = $databaseConnection->exec_SELECTgetSingleRow(
                 'domainName',
                 self::TABLE_NAME,
