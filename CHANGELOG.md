@@ -1,5 +1,11 @@
 # In2publish Core Change Log
 
+5.3.4:
+
+- [BUGFIX] Concentrate remote FAL operations for all files in Publish Files Module selected folder
+- [BUGFIX] Cache rFALd results for the whole request
+- [TASK] Include the failed Envelopes UID in the error message
+
 5.3.3:
 
 - [BUGFIX] SimpleOverviewAndAjax: Exclude tables without uid field to prevent failures
