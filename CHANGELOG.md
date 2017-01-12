@@ -1,5 +1,12 @@
 # In2publish Core Change Log
 
+5.3.5:
+
+- [TASK] Update CSS for in2publish' WFSA feature
+- [BUGFIX] Return empty domain for page identifier if database is not connected
+- [BUGFIX] Lazy initialize FalStorageTestSubjectsProvider (fixes #5)
+- [BUGFIX] Escape database name for sysFile auto increment reflection (fixes #7)
+
 5.3.4:
 
 - [BUGFIX] Concentrate remote FAL operations for all files in Publish Files Module selected folder
