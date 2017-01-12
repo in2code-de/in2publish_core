@@ -347,3 +347,14 @@
     opacity: 0.5;
   }
 }
+
+// WORKFLOW STATE ASSIGNMENT
+
+.in2publish-workflowstateassignment {
+  background-color: $dovegray;
+  border: 10px solid $dovegray;
+  textarea {
+    color: $scorpion;
+    width: 100%;
+  }
+}
