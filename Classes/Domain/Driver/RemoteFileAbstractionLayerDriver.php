@@ -157,9 +157,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         foreach ($identifiers as $identifier) {
             if (isset($response[$identifier])) {
                 static::$cache[$this->storageUid][$this->getFileExistsCacheIdentifier($identifier)] = true;
-                static::$cache[$this->storageUid][$this->getHashCacheIdentifier($identifier, 'sha1')] = $response[$identifier]['hash'];
-                static::$cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($identifier)] = $response[$identifier]['info'];
-                static::$cache[$this->storageUid][$this->getGetPublicUrlCacheIdentifier($identifier)] = $response[$identifier]['publicUrl'];
+                static::$cache[$this->storageUid][$this->getHashCacheIdentifier($identifier, 'sha1')] =
+                    $response[$identifier]['hash'];
+                static::$cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($identifier)] =
+                    $response[$identifier]['info'];
+                static::$cache[$this->storageUid][$this->getGetPublicUrlCacheIdentifier($identifier)] =
+                    $response[$identifier]['publicUrl'];
             } else {
                 static::$cache[$this->storageUid][$this->getFileExistsCacheIdentifier($identifier)] = false;
             }
@@ -206,10 +209,14 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     protected function writeFileCaches(array $files)
     {
         foreach ($files as $file => $values) {
-            static::$cache[$this->storageUid][$this->getFileExistsCacheIdentifier($file)] = true;
-            static::$cache[$this->storageUid][$this->getHashCacheIdentifier($file, 'sha1')] = $values['hash'];
-            static::$cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($file)] = $values['info'];
-            static::$cache[$this->storageUid][$this->getGetPublicUrlCacheIdentifier($file)] = $values['publicUrl'];
+            static::$cache[$this->storageUid][$this->getFileExistsCacheIdentifier($file)] =
+                true;
+            static::$cache[$this->storageUid][$this->getHashCacheIdentifier($file, 'sha1')] =
+                $values['hash'];
+            static::$cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($file)] =
+                $values['info'];
+            static::$cache[$this->storageUid][$this->getGetPublicUrlCacheIdentifier($file)] =
+                $values['publicUrl'];
         }
     }
 
