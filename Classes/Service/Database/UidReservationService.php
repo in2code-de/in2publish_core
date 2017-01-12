@@ -136,7 +136,7 @@ class UidReservationService
     {
         $queryResult = $databaseConnection->admin_query(
             'SHOW TABLE STATUS FROM '
-            . $this->determineDatabaseOfConnection($databaseConnection)
+            . '`' . $this->determineDatabaseOfConnection($databaseConnection) . '`'
             . ' WHERE name LIKE "sys_file";'
         );
         if (false === $queryResult) {
