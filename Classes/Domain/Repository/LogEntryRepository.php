@@ -75,9 +75,7 @@ class LogEntryRepository
     /**
      * @var array
      */
-    protected $filter = array(
-        'component LIKE "In2code.In2publish%"',
-    );
+    protected $filter = array();
 
     /**
      * @var array
