@@ -42,6 +42,7 @@ class LogEntryRepository
     const EQUALS = ' = %d';
     const STRICT_LIKE = ' LIKE "%s"';
     const RANGE_LIKE = ' LIKE %%%s%%';
+    const TABLE_NAME = 'tx_in2code_in2publish_log';
 
     /**
      * @var array
@@ -55,11 +56,6 @@ class LogEntryRepository
         self::STRICT_LIKE,
         self::RANGE_LIKE,
     );
-
-    /**
-     * @var string
-     */
-    protected $tableName = 'tx_in2code_in2publish_log';
 
     /**
      * @var DatabaseConnection
@@ -124,7 +120,7 @@ class LogEntryRepository
         }
         $operator = $this->propertyOperatorMap[$propertyName];
         if (in_array($operator, array(self::STRICT_LIKE, self::RANGE_LIKE))) {
-            $propertyValue = $this->databaseConnection->escapeStrForLike($propertyValue, $this->tableName);
+            $propertyValue = $this->databaseConnection->escapeStrForLike($propertyValue, static::TABLE_NAME);
         }
         $this->filter[] = $propertyName . sprintf($operator, $propertyValue);
     }
@@ -136,7 +132,7 @@ class LogEntryRepository
      */
     public function getLogLevels()
     {
-        $results = $this->databaseConnection->exec_SELECTgetRows('level', $this->tableName, '1=1', 'level');
+        $results = $this->databaseConnection->exec_SELECTgetRows('level', static::TABLE_NAME, '1=1', 'level');
         $logLevels = array();
         foreach ($results as $result) {
             $logLevels[$result['level']] = $result['level'];
@@ -151,7 +147,7 @@ class LogEntryRepository
      */
     public function countAll()
     {
-        return (int)$this->databaseConnection->exec_SELECTcountRows('uid', $this->tableName);
+        return (int)$this->databaseConnection->exec_SELECTcountRows('uid', static::TABLE_NAME);
     }
 
     /**
@@ -161,7 +157,7 @@ class LogEntryRepository
     {
         return (int)$this->databaseConnection->exec_SELECTcountRows(
             'uid',
-            $this->tableName,
+            static::TABLE_NAME,
             implode(' AND ', $this->filter)
         );
     }
@@ -176,7 +172,7 @@ class LogEntryRepository
         $implodedFilter = implode(' AND ', $this->filter);
         $logEntries = (array)$this->databaseConnection->exec_SELECTgetRows(
             '*',
-            $this->tableName,
+            static::TABLE_NAME,
             $implodedFilter,
             '',
             'uid DESC',
@@ -220,6 +216,6 @@ class LogEntryRepository
      */
     public function flush()
     {
-        $this->databaseConnection->exec_DELETEquery($this->tableName, 'component LIKE "In2code.In2publishCore.%"');
+        $this->databaseConnection->exec_TRUNCATEquery(static::TABLE_NAME);
     }
 }
