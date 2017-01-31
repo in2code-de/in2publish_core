@@ -49,7 +49,7 @@ Index - Information and Stuff
 				<f:for each="{logEntries}" as="logEntry">
 					<tr>
 						<td><f:format.date format="d.m.Y - H:i:s">@{logEntry.timestamp}</f:format.date></td>
-						<td><publish:String.Replace search="In2code.In2publish." replace="">{logEntry.component}</publish:String.Replace></td>
+						<td>{logEntry.component}</td>
 						<td>{logEntry.level}</td>
 						<td><f:translate key="tx_in2code_in2publish_log.message.{logEntry.message}" arguments="{0:'{publish:Repository.GetIdentifierNameByJsonData(data:logEntry.data)}'}">{logEntry.message}</f:translate></td>
 						<td>
