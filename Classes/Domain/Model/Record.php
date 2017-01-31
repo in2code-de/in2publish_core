@@ -79,7 +79,7 @@ class Record implements RecordInterface
     /**
      * records which are related to this record.
      *
-     * @var Record[][]
+     * @var RecordInterface[][]
      */
     protected $relatedRecords = array();
 
@@ -506,7 +506,7 @@ class Record implements RecordInterface
     }
 
     /**
-     * @return Record[][]
+     * @return RecordInterface[][]
      */
     public function getRelatedRecords()
     {
@@ -643,7 +643,7 @@ class Record implements RecordInterface
     }
 
     /**
-     * @return Record
+     * @return RecordInterface
      */
     public function getParentRecord()
     {
@@ -979,22 +979,22 @@ class Record implements RecordInterface
     }
 
     /**
-     * @param Record $record
+     * @param RecordInterface $record
      * @return string
      */
-    protected function getRecordPath($record)
+    protected function getRecordPath(RecordInterface $record)
     {
         $path = '';
         if (!is_null($record)) {
-            $path = '/ ' . $record->tableName . ' [' . $record->getIdentifier() . '] ';
-            $path = $this->getRecordPath($record->parentRecord) . $path;
+            $path = '/ ' . $record->getTableName() . ' [' . $record->getIdentifier() . '] ';
+            $path = $this->getRecordPath($record->getParentRecord()) . $path;
         }
 
         return $path;
     }
 
     /**
-     * @return Record[]
+     * @return RecordInterface[]
      */
     public function getChangedRelatedRecordsFlat()
     {
@@ -1026,10 +1026,10 @@ class Record implements RecordInterface
     }
 
     /**
-     * @param Record[] $relatedRecordsFlat
-     * @return Record[]
+     * @param RecordInterface[] $relatedRecordsFlat
+     * @return RecordInterface[]
      */
-    protected function addChangedRelatedRecordsRecursive($relatedRecordsFlat = array())
+    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = array())
     {
         foreach ($this->getRelatedRecords() as $relatedRecords) {
             foreach ($relatedRecords as $relatedRecord) {

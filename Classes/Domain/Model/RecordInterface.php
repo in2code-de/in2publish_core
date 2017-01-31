@@ -178,7 +178,7 @@ interface RecordInterface
     public function getMergedProperty($propertyName);
 
     /**
-     * @return Record[][]
+     * @return RecordInterface[][]
      */
     public function getRelatedRecords();
 
@@ -188,4 +188,23 @@ interface RecordInterface
      * @return RecordInterface|null
      */
     public function getParentPageRecord();
+
+    /**
+     * Returns the parent record object or null if this is a root record
+     * NOTICE: This will not work if debug.disableParentRecords is disabled!
+     *
+     * @return RecordInterface|null
+     */
+    public function getParentRecord();
+
+    /**
+     * @return bool
+     */
+    public function isChanged();
+
+    /**
+     * @param RecordInterface[] $relatedRecordsFlat
+     * @return RecordInterface[]
+     */
+    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = array());
 }
