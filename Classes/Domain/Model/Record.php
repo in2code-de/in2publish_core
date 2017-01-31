@@ -979,10 +979,10 @@ class Record implements RecordInterface
     }
 
     /**
-     * @param RecordInterface $record
+     * @param RecordInterface|null $record
      * @return string
      */
-    protected function getRecordPath(RecordInterface $record)
+    protected function getRecordPath(RecordInterface $record = null)
     {
         $path = '';
         if (!is_null($record)) {
