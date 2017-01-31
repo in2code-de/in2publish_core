@@ -1,5 +1,16 @@
 # In2publish Core Change Log
 
+5.3.6:
+
+- [BUGFIX] Show all in2publish related logs
+- [TASK] Always show full component name in logs
+- [REFACTOR] Replace log table name field with constant
+- [CLEANUP] Remove unneccessary log component filter
+- [TASK] Define lightweight distribution properties
+- [COMMENT] Set correct return type annotation for Record::hasDeleteField
+- [API] Loosen Record implementation dependency by defining all required methods in the interface
+- [BUGFIX] Allow null for strictly typed getRecordPath parameter
+
 5.3.5:
 
 - [TASK] Update CSS for in2publish' WFSA feature
