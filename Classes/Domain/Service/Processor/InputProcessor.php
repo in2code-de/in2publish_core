@@ -31,4 +31,19 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  */
 class InputProcessor extends AbstractProcessor
 {
+    const WIZARDS = 'wizards';
+
+    /**
+     * Overwrite and set TRUE for types like "select" or "inline"
+     *
+     * @var bool
+     */
+    protected $canHoldRelations = true;
+
+    /**
+     * @var array
+     */
+    protected $required = array(
+        'inputs without wizards most likely do not hold relations' => self::WIZARDS,
+    );
 }

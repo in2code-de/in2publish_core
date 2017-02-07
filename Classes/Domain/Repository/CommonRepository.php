@@ -423,6 +423,8 @@ class CommonRepository extends BaseRepository
                         $columnConfiguration
                     );
                     break;
+                case 'input':
+                    // fall through because fetch by RTE already supports "file:x" links
                 case 'text':
                     // TODO: use some kind of merged property to check against changed foreign RTE relations
                     $relatedRecords = $this->fetchRelatedRecordsByRte(
