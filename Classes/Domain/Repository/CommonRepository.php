@@ -1629,7 +1629,12 @@ class CommonRepository extends BaseRepository
              * Because of this, we don't need to take care about that state
              */
 
-            $state = $record->getState();
+            if ($record->hasAdditionalProperty('recordDatabaseState')) {
+                $state = $record->getAdditionalProperty('recordDatabaseState');
+            } else {
+                $state = $record->getState();
+            }
+
             if ($state === RecordInterface::RECORD_STATE_CHANGED || $state === RecordInterface::RECORD_STATE_MOVED) {
                 $this->updateForeignRecord($record);
             } elseif ($state === RecordInterface::RECORD_STATE_ADDED) {

@@ -143,6 +143,7 @@ class FileIndexFactory
     public function updateFileIndexInfo(RecordInterface $record, $localIdentifier, $foreignIdentifier)
     {
         $uid = $record->getIdentifier();
+        $record->addAdditionalProperty('recordDatabaseState', $record->getState());
         $record->setLocalProperties($this->getFileIndexArray($localIdentifier, 'local', $uid));
         $record->setForeignProperties($this->getFileIndexArray($foreignIdentifier, 'foreign', $uid));
         $record->setDirtyProperties()->calculateState();
