@@ -123,7 +123,9 @@ class FileIndexPostProcessor implements SingletonInterface
             }
         }
         foreach ($foreignIdentifiers as $storageIndex => $identifierArray) {
-            $this->getForeignDriver($storages[$storageIndex])->batchPrefetchFiles($identifierArray);
+            foreach (array_chunk($identifierArray, 500) as $fragmentedArray) {
+                $this->getForeignDriver($storages[$storageIndex])->batchPrefetchFiles($fragmentedArray);
+            }
         }
     }
 
