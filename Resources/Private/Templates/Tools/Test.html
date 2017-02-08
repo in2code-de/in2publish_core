@@ -1,4 +1,4 @@
-<f:layout name="Tools"/>
+<f:layout name="Tools" />
 
 <f:section name="content">
 
@@ -12,7 +12,9 @@
 			<div class="typo3-message message-{testResult.severity}">
 				<div class="message-header">{testResult.translatedLabel}</div>
 				<div class="message-body">
-					<p><f:format.nl2br>{testResult.translatedMessages}</f:format.nl2br></p>
+					<p>
+						<f:format.nl2br>{testResult.translatedMessages}</f:format.nl2br>
+					</p>
 				</div>
 			</div>
 		</f:for>

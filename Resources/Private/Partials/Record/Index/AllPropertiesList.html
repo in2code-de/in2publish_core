@@ -11,13 +11,15 @@
 		</f:if>
 		<h3>
 			<f:if condition="{related} == 'true'">
-				<publish:Tca.GetLabelFieldFromRecord record="{record}" stagingLevel="local" /> /
+				<publish:Tca.GetLabelFieldFromRecord record="{record}" stagingLevel="local" />
+				/
 			</f:if>
 			<b><f:translate key="dirty_properties_pageproperties">Page properties</f:translate></b>
 		</h3>
 		<ul>
 			<f:for each="{record.localProperties}" key="fieldName" as="value">
-				<li><publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.tableName}" />
+				<li>
+					<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.tableName}" />
 					<publish:Tca.FormatPropertyByTcaDefinition fieldName="{fieldName}" tableName="{record.tableName}">
 						{value}
 					</publish:Tca.FormatPropertyByTcaDefinition>
@@ -32,13 +34,15 @@
 		</f:if>
 		<h3>
 			<f:if condition="{related} == 'true'">
-				<publish:Tca.GetLabelFieldFromRecord record="{record}" stagingLevel="foreign" /> /
+				<publish:Tca.GetLabelFieldFromRecord record="{record}" stagingLevel="foreign" />
+				/
 			</f:if>
 			<b><f:translate key="dirty_properties_pageproperties">Page properties</f:translate></b>
 		</h3>
 		<ul>
 			<f:for each="{record.foreignProperties}" key="fieldName" as="value">
-				<li><publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.tableName}" />
+				<li>
+					<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.tableName}" />
 					<publish:Tca.FormatPropertyByTcaDefinition fieldName="{fieldName}" tableName="{record.tableName}">
 						{value}
 					</publish:Tca.FormatPropertyByTcaDefinition>
@@ -48,7 +52,9 @@
 	</div>
 	<div class="in2publish-stagelisting__dropdown__item in2publish-stagelisting__dropdown__item--full">
 		<f:for each="{record.relatedRecords}" key="tableName" as="relatedRecords">
-			<f:comment><h3 class=""title="{tableName}"><publish:Tca.GetTableLabelFromLocallang tableName="{tableName}" /></h3></f:comment>
+			<f:comment><h3 class="" title="{tableName}">
+				<publish:Tca.GetTableLabelFromLocallang tableName="{tableName}" />
+			</h3></f:comment>
 			<ul class="in2publish-stagelisting__dropdown__item__list">
 				<f:for each="{relatedRecords}" as="relatedRecord">
 					<f:render section="properties" arguments="{record:relatedRecord, related: 'true'}" />

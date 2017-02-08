@@ -18,17 +18,17 @@ Index - Information and Stuff
 				</label>
 
 				<f:form.select
-						name="filter[level]"
-						options="{filter.logLevels}"
-						value="{filter.level}"
-						class="filter_select"
-						id="log_level" />
+					name="filter[level]"
+					options="{filter.logLevels}"
+					value="{filter.level}"
+					class="filter_select"
+					id="log_level" />
 
 				<f:form.select
-						name="filter[limit]"
-						options="{filter.limits}"
-						class="filter_select"
-						value="{filter.limit}" />
+					name="filter[limit]"
+					options="{filter.limits}"
+					class="filter_select"
+					value="{filter.limit}" />
 
 				<f:form.submit class="in2publish-btn in2publish-btn-ok" value="{f:translate(key:'submit')}" />
 			</f:form>
@@ -48,10 +48,14 @@ Index - Information and Stuff
 				</tr>
 				<f:for each="{logEntries}" as="logEntry">
 					<tr>
-						<td><f:format.date format="d.m.Y - H:i:s">@{logEntry.timestamp}</f:format.date></td>
+						<td>
+							<f:format.date format="d.m.Y - H:i:s">@{logEntry.timestamp}</f:format.date>
+						</td>
 						<td>{logEntry.component}</td>
 						<td>{logEntry.level}</td>
-						<td><f:translate key="tx_in2code_in2publish_log.message.{logEntry.message}" arguments="{0:'{publish:Repository.GetIdentifierNameByJsonData(data:logEntry.data)}'}">{logEntry.message}</f:translate></td>
+						<td>
+							<f:translate key="tx_in2code_in2publish_log.message.{logEntry.message}" arguments="{0:'{publish:Repository.GetIdentifierNameByJsonData(data:logEntry.data)}'}">{logEntry.message}</f:translate>
+						</td>
 						<td>
 							<f:for each="{publish:String.JsonDecode(string:logEntry.data)}" key="key" as="value">
 								{key}:
@@ -60,7 +64,8 @@ Index - Information and Stuff
 										<span title="UID:{value}"><publish:Repository.GetBackendUserUsernameByIdentifier identifier="{value}" /></span>
 									</f:then>
 									<f:else>
-										<publish:Miscellaneous.HumanReadable>{value}</publish:Miscellaneous.HumanReadable>
+										<publish:Miscellaneous.HumanReadable>{value}
+										</publish:Miscellaneous.HumanReadable>
 									</f:else>
 								</f:if>
 								<br />
@@ -69,14 +74,16 @@ Index - Information and Stuff
 					</tr>
 				</f:for>
 			</table>
-			<f:translate key="module.m4.logs.page"/>
+			<f:translate key="module.m4.logs.page" />
 			<f:for each="{pageNumbers}" as="pageNumber">
 				<f:if condition="{currentPage} == {pageNumber}">
 					<f:then>
 						<em>{pageNumber}</em>
 					</f:then>
 					<f:else>
-						<f:link.action action="showLogs" arguments="{filter:filter, pageNumber:pageNumber}">{pageNumber}</f:link.action>
+						<f:link.action action="showLogs" arguments="{filter:filter, pageNumber:pageNumber}">
+							{pageNumber}
+						</f:link.action>
 					</f:else>
 				</f:if>
 			</f:for>
@@ -97,7 +104,8 @@ Index - Information and Stuff
 				</tr>
 				<f:for each="{logConfigurations}" key="configurationKey" as="configurationValue">
 					<tr>
-						<td><f:translate key="module.m4.overview.{configurationKey}">{configurationKey}</f:translate></td>
+						<td><f:translate key="module.m4.overview.{configurationKey}">{configurationKey}</f:translate>
+						</td>
 						<td>{configurationValue}</td>
 					</tr>
 				</f:for>
@@ -105,8 +113,8 @@ Index - Information and Stuff
 		</section>
 
 		<f:link.action
-				action="flushLogs"
-				class="in2publish-btn in2publish-btn-warning"><f:translate key="module.m4.logs.flush"/></f:link.action>
+			action="flushLogs"
+			class="in2publish-btn in2publish-btn-warning"><f:translate key="module.m4.logs.flush" /></f:link.action>
 	</div>
 	<f:alias map="{moduleName: 'tools'}">
 		<f:render partial="Footer" arguments="{_all}" />

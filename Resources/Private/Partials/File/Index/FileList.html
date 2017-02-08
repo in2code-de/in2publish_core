@@ -4,16 +4,18 @@
 	<div class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.stateRecursive} in2publish-clearfix">
 		<f:comment>Left</f:comment>
 		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--left">
-			<i class="in2publish-icon-file"></i><f:if condition="{configuration.debug.showRecordDepth}">[{record.additionalProperties.depth}] </f:if><publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" />
+			<i class="in2publish-icon-file"></i>
+			<f:if condition="{configuration.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
+			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" />
 			<i class="in2publish-icon-info" data-action="opendirtypropertieslistcontainer"></i>
 			<f:if condition="{record.changedRecursive}">
 				<f:link.action
-						action="publishFile"
-						arguments="{
-						    uid:record.identifier,
-						    identifier:'{publish:record.getMergedProperty(record:record, propertyName: \'identifier\')}',
-						    storage:'{publish:record.getMergedProperty(record:record, propertyName: \'storage\')}'}"
-						additionalAttributes="{data-in2publish-overlay: 'TRUE', data-in2publish-confirm: '{f:translate(key:\'confirm_publish_file\', default:\'Are you sure?\')}'}">
+					action="publishFile"
+					arguments="{
+						uid:record.identifier,
+						identifier:'{publish:record.getMergedProperty(record:record, propertyName: \'identifier\')}',
+						storage:'{publish:record.getMergedProperty(record:record, propertyName: \'storage\')}'}"
+					additionalAttributes="{data-in2publish-overlay: 'TRUE', data-in2publish-confirm: '{f:translate(key:\'confirm_publish_file\', default:\'Are you sure?\')}'}">
 					<i class="in2publish-icon-publish"></i>
 				</f:link.action>
 			</f:if>
@@ -21,7 +23,8 @@
 
 		<f:comment>Right</f:comment>
 		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--right">
-			<i class="in2publish-icon-file"></i><publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" />
+			<i class="in2publish-icon-file"></i>
+			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" />
 		</div>
 
 		<f:comment>Difference View</f:comment>
