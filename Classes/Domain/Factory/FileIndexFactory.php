@@ -67,6 +67,7 @@ class FileIndexFactory
 
     /**
      * FileIndexFactory constructor.
+     *
      * @param DriverInterface $localDriver
      * @param DriverInterface $foreignDriver
      */
@@ -149,6 +150,7 @@ class FileIndexFactory
 
     /**
      * This method is mostly a copy of an indexer method
+     *
      * @see \TYPO3\CMS\Core\Resource\Index\Indexer::gatherFileInformationArray
      *
      * @param string $identifier
@@ -234,6 +236,7 @@ class FileIndexFactory
 
     /**
      * Adapted copy of
+     *
      * @see \TYPO3\CMS\Core\Resource\Index\Indexer::getFileType
      *
      * @param array $fileInfo

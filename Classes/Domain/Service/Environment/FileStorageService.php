@@ -33,7 +33,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class FileStorageService extends AbstractService
 {
-
     /**
      * [
      *  $originalPath1 => $newPath1,
@@ -56,6 +55,7 @@ class FileStorageService extends AbstractService
 
     /**
      * FileStorageEnvironmentService constructor.
+     *
      * @param $fileStoragePath
      */
     public function __construct($fileStoragePath)
@@ -133,7 +133,7 @@ class FileStorageService extends AbstractService
         if (is_file($newPathAndFilename)) {
             $pathInfo = pathinfo($pathAndFilename);
             $newPathAndFilename = $pathInfo['dirname'] . '/'
-                . uniqid() . '.' . $pathInfo['extension'];
+                                  . uniqid() . '.' . $pathInfo['extension'];
         }
         return $newPathAndFilename;
     }

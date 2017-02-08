@@ -68,6 +68,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
 
     /**
      * RemoteFileAbstractionLayerDriver constructor.
+     *
      * @param array $configuration
      */
     public function __construct(array $configuration = array())

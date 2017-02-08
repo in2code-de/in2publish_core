@@ -86,12 +86,13 @@ class FilePublisherService
         }
 
         $this->remoteFalDriver->setStorageUid($storage);
-        return $fileIdentifier === $this->remoteFalDriver->addFile(
+        $newFileIdentifier = $this->remoteFalDriver->addFile(
             $temporaryIdentifier,
             $folderIdentifier,
             basename($fileIdentifier),
             true
         );
+        return $fileIdentifier === $newFileIdentifier;
     }
 
     /**

@@ -5,12 +5,13 @@ if (empty($webRoot = getenv('TYPO3_PATH_WEB'))) {
     $webRoot = rtrim($webRoot, '/') . '/';
 }
 
-if (!file_exists($autoload = $webRoot . 'vendor/autoload.php') && !file_exists($autoload = $webRoot . '../vendor/autoload.php')) {
+if (!file_exists($autoload = $webRoot . 'vendor/autoload.php')
+    && !file_exists($autoload = $webRoot . '../vendor/autoload.php')
+) {
     throw new \LogicException(
         'Use this bootstrap file only when you installed in2publish via composer as dependency or predefine TYPO3_PATH_WEB'
     );
 }
-
 
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'] = array();
 

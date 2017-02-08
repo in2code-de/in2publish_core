@@ -107,7 +107,7 @@ class SysFileService extends AbstractService
         return array(
             'identifier' => str_replace($oldIdentifierPath, $newIdentifierPath, $identifier),
             'identifier_hash' => sha1($identifier),
-            'folder_hash' => sha1($newIdentifierPath)
+            'folder_hash' => sha1($newIdentifierPath),
         );
     }
 
@@ -123,7 +123,7 @@ class SysFileService extends AbstractService
             'identifier' => $newIdentifier,
             'identifier_hash' => sha1($newIdentifier),
             'folder_hash' => sha1($this->getPathFromPathAndFilename($newIdentifier)),
-            'name' => $this->getFilenameFromPathAndFilename($newIdentifier)
+            'name' => $this->getFilenameFromPathAndFilename($newIdentifier),
         );
     }
 

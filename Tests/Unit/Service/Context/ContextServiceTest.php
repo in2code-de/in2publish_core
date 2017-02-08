@@ -157,5 +157,4 @@ class ContextServiceTest extends UnitTestCase
         $contextService = new ContextService();
         $this->assertTrue($contextService->isContextDefined());
     }
-
 }

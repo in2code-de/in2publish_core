@@ -85,13 +85,13 @@ class EnvironmentServiceTest extends UnitTestCase
         return [
             'tests_never_ran' => [
                 [
-                    EnvironmentService::STATE_TESTS_NEVER_RAN
+                    EnvironmentService::STATE_TESTS_NEVER_RAN,
                 ],
                 false,
             ],
             'only_package_states_wrong' => [
                 [
-                    EnvironmentService::STATE_PACKAGES_CHANGED
+                    EnvironmentService::STATE_PACKAGES_CHANGED,
                 ],
                 [
                     'packages_hash' => 'other',
@@ -101,7 +101,7 @@ class EnvironmentServiceTest extends UnitTestCase
             ],
             'only_configuration_hash_wrong' => [
                 [
-                    EnvironmentService::STATE_CONFIGURATION_CHANGED
+                    EnvironmentService::STATE_CONFIGURATION_CHANGED,
                 ],
                 [
                     'packages_hash' => $packagesHash,
@@ -111,7 +111,7 @@ class EnvironmentServiceTest extends UnitTestCase
             ],
             'only_tests_failed' => [
                 [
-                    EnvironmentService::STATE_TESTS_FAILING
+                    EnvironmentService::STATE_TESTS_FAILING,
                 ],
                 [
                     'packages_hash' => $packagesHash,
@@ -122,7 +122,7 @@ class EnvironmentServiceTest extends UnitTestCase
             'tests_failed_and_packages_changed' => [
                 [
                     EnvironmentService::STATE_PACKAGES_CHANGED,
-                    EnvironmentService::STATE_TESTS_FAILING
+                    EnvironmentService::STATE_TESTS_FAILING,
                 ],
                 [
                     'packages_hash' => 'other',
@@ -133,7 +133,7 @@ class EnvironmentServiceTest extends UnitTestCase
             'tests_failed_and_configuration_changed' => [
                 [
                     EnvironmentService::STATE_CONFIGURATION_CHANGED,
-                    EnvironmentService::STATE_TESTS_FAILING
+                    EnvironmentService::STATE_TESTS_FAILING,
                 ],
                 [
                     'packages_hash' => $packagesHash,

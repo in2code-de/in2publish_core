@@ -277,20 +277,20 @@ class TcaServiceTest extends UnitTestCase
         $databaseSchema = [
             'foo' => [
                 'pid' => [],
-                'uid' => []
+                'uid' => [],
             ],
             'bar' => [
                 'pid' => [],
-                'uid' => []
+                'uid' => [],
             ],
             'baz' => [
-                'tstamp' => []
+                'tstamp' => [],
             ],
             'boo' => [
-                'pid' => []
+                'pid' => [],
             ],
             'far' => [
-                'uid' => []
+                'uid' => [],
             ],
         ];
 
@@ -312,11 +312,11 @@ class TcaServiceTest extends UnitTestCase
         $databaseSchema = [
             'foo' => [
                 'pid' => [],
-                'uid' => []
+                'uid' => [],
             ],
             'bar' => [
                 'pid' => [],
-                'uid' => []
+                'uid' => [],
             ],
             'baz' => [
                 'uid' => [],
@@ -326,7 +326,7 @@ class TcaServiceTest extends UnitTestCase
             ],
             'boo' => [
                 'pid' => [],
-                'uid' => []
+                'uid' => [],
             ],
         ];
 
@@ -337,7 +337,10 @@ class TcaServiceTest extends UnitTestCase
         $tcaService->method('getDatabaseSchema')->will($this->returnValue($databaseSchema));
 
         // ignore array keys
-        $this->assertSame(['foo', 'boo'], array_values($tcaService->getAllTableNamesWithPidAndUidField($excludedTables)));
+        $this->assertSame(
+            ['foo', 'boo'],
+            array_values($tcaService->getAllTableNamesWithPidAndUidField($excludedTables))
+        );
     }
 
     /**
