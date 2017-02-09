@@ -1,5 +1,13 @@
 # In2publish Core Change Log
 
+5.3.7:
+
+- [BUGFIX] Resolve relations in input type fields with configured wizards
+- [BUGFIX] Preserve the original record state when overriding with file state
+- [BUGFIX] Limit the number of files to prefetch to prevent request field overflow
+- [BUGFIX] Treat FAL storages as case sensitive by default
+- [CODESTYLE] Update code style rules and apply them
+
 5.3.6:
 
 - [BUGFIX] Show all in2publish related logs
