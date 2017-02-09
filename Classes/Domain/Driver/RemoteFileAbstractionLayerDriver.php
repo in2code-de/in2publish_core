@@ -34,6 +34,7 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Resource\Driver\AbstractHierarchicalFilesystemDriver;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
@@ -73,7 +74,14 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      */
     public function __construct(array $configuration = array())
     {
-        parent::__construct($configuration);
+        $defaultConfiguration = array(
+            'basePath' => '/',
+            'pathType' => 'relative',
+            'caseSensitive' => true,
+        );
+        ArrayUtility::mergeRecursiveWithOverrule($defaultConfiguration, $configuration);
+        parent::__construct($defaultConfiguration);
+
         $this->sshConnection = SshConnection::makeInstance();
         $this->letterBox = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\Rpc\\Letterbox');
     }
@@ -115,10 +123,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                     'pathType' => 'relative',
                 ),
             );
-            $this->configuration = array(
-                'basePath' => '/',
-                'pathType' => 'relative',
-            );
         } else {
             $this->remoteDriverSettings = DatabaseUtility::buildForeignDatabaseConnection()->exec_SELECTgetSingleRow(
                 '*',
@@ -126,9 +130,10 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                 'uid=' . (int)$this->storageUid
             );
             $flexFormService = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Service\\FlexFormService');
-            $this->configuration = $flexFormService->convertFlexFormContentToArray(
+            $driverConfiguration = $flexFormService->convertFlexFormContentToArray(
                 $this->remoteDriverSettings['configuration']
             );
+            ArrayUtility::mergeRecursiveWithOverrule($this->configuration, $driverConfiguration);
         }
         if (!is_array($this->remoteDriverSettings)) {
             throw new \LogicException('Could not find the remote storage.', 1474470724);
