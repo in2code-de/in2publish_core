@@ -670,7 +670,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             );
         }
 
-        return $this->letterBox->receiveEnvelope($uid)->getResponse();
+        $envelope = $this->letterBox->receiveEnvelope($uid);
+
+        if (false === $envelope) {
+            throw new \Exception('Could not receive envelope [' . $uid . ']', 1486727017);
+        }
+        return $envelope->getResponse();
     }
 
     /**

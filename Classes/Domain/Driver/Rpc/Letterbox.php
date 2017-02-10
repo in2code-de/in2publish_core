@@ -30,6 +30,7 @@ use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -50,6 +51,11 @@ class Letterbox
     protected $keepEnvelopes = true;
 
     /**
+     * @var Logger
+     */
+    protected $logger = null;
+
+    /**
      * Letterbox constructor.
      */
     public function __construct()
@@ -58,6 +64,7 @@ class Letterbox
             'In2code\\In2publishCore\\Service\\Context\\ContextService'
         );
         $this->keepEnvelopes = (bool)ConfigurationUtility::getConfiguration('debug.keepEnvelopes');
+        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
     }
 
     /**
@@ -82,9 +89,21 @@ class Letterbox
                 $uid = $database->sql_insert_id();
                 $envelope->setUid($uid);
                 return $uid;
+            } else {
+                $this->logger->error(
+                    'Failed to send envelope [' . $uid . ']',
+                    array('envelope' => $envelope->toArray())
+                );
             }
         } else {
-            return (bool)$database->exec_UPDATEquery(static::TABLE, 'uid=' . $uid, $envelope->toArray());
+            if (false === $database->exec_UPDATEquery(static::TABLE, 'uid=' . $uid, $envelope->toArray())) {
+                $this->logger->error(
+                    'Failed to update envelope [' . $uid . ']',
+                    array('envelope' => $envelope->toArray())
+                );
+            } else {
+                return true;
+            }
         }
         return false;
     }
@@ -116,6 +135,7 @@ class Letterbox
                 $database->exec_DELETEquery(static::TABLE, 'uid=' . $uid);
             }
         } else {
+            $this->logger->error('Failed to receive envelope [' . $uid . ']');
             $envelope = false;
         }
         return $envelope;
