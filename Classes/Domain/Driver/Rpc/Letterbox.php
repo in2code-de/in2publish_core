@@ -92,14 +92,22 @@ class Letterbox
             } else {
                 $this->logger->error(
                     'Failed to send envelope [' . $uid . ']',
-                    array('envelope' => $envelope->toArray())
+                    array(
+                        'envelope' => $envelope->toArray(),
+                        'error' => $database->sql_error(),
+                        'errno' => $database->sql_errno(),
+                    )
                 );
             }
         } else {
             if (false === $database->exec_UPDATEquery(static::TABLE, 'uid=' . $uid, $envelope->toArray())) {
                 $this->logger->error(
                     'Failed to update envelope [' . $uid . ']',
-                    array('envelope' => $envelope->toArray())
+                    array(
+                        'envelope' => $envelope->toArray(),
+                        'error' => $database->sql_error(),
+                        'errno' => $database->sql_errno(),
+                    )
                 );
             } else {
                 return true;
@@ -135,7 +143,13 @@ class Letterbox
                 $database->exec_DELETEquery(static::TABLE, 'uid=' . $uid);
             }
         } else {
-            $this->logger->error('Failed to receive envelope [' . $uid . ']');
+            $this->logger->error(
+                'Failed to receive envelope [' . $uid . '] "' . $database->sql_error() . '"',
+                array(
+                    'error' => $database->sql_error(),
+                    'errno' => $database->sql_errno(),
+                )
+            );
             $envelope = false;
         }
         return $envelope;
