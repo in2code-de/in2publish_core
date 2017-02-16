@@ -126,11 +126,20 @@ class PhysicalFilePublisher implements SingletonInterface
                         break;
                     case RecordInterface::RECORD_STATE_MOVED:
                         $old = $record->getForeignProperty('identifier');
-                        $new = basename($record->getLocalProperty('identifier'));
-                        if (true === $result = $filePublisherService->renameForeignFile($storage, $old, $new)) {
-                            $this->logger->info('Updated file on foreign', $logData);
+                        $new = $record->getLocalProperty('identifier');
+                        if ($old !== $new) {
+                            $result = $filePublisherService->renameForeignFile($storage, $old, basename($new));
+                            if ($result = ($new === $result)) {
+                                $this->logger->info('Updated file on foreign', $logData);
+                            } else {
+                                $this->logger->error('Failed to update file to foreign', $logData);
+                            }
                         } else {
-                            $this->logger->error('Failed to update file to foreign', $logData);
+                            $this->logger->warning(
+                                'File renaming was requested but old and new name are identical',
+                                array_merge($logData, array('old' => $old, 'new' => $new))
+                            );
+                            $result = true;
                         }
                         break;
                     default:
