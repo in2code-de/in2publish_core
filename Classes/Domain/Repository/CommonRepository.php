@@ -1573,27 +1573,41 @@ class CommonRepository extends BaseRepository
      * @param array $excludedTables
      * @param array $alreadyVisited
      * @return void
+     * @throws \Exception
      */
     public function publishRecordRecursive(
         Record $record,
         array $excludedTables = array('pages'),
         array $alreadyVisited = array()
     ) {
-        // Dispatch Anomaly
-        $this->signalSlotDispatcher->dispatch(
-            __CLASS__,
-            'publishRecordRecursiveBegin',
-            array($record, $this)
-        );
+        try {
+            // Dispatch Anomaly
+            $this->signalSlotDispatcher->dispatch(
+                __CLASS__,
+                'publishRecordRecursiveBegin',
+                array($record, $this)
+            );
 
-        $this->publishRecordRecursiveInternal($record, $excludedTables, $alreadyVisited);
+            $this->publishRecordRecursiveInternal($record, $excludedTables, $alreadyVisited);
 
-        // Dispatch Anomaly
-        $this->signalSlotDispatcher->dispatch(
-            __CLASS__,
-            'publishRecordRecursiveEnd',
-            array($record, $this)
-        );
+            // Dispatch Anomaly
+            $this->signalSlotDispatcher->dispatch(
+                __CLASS__,
+                'publishRecordRecursiveEnd',
+                array($record, $this)
+            );
+        } catch (\Exception $exception) {
+            $this->logger->critical(
+                'Publishing single record failed',
+                array(
+                    'message' => $exception->getMessage(),
+                    'code' => $exception->getCode(),
+                    'file' => $exception->getFile(),
+                    'line' => $exception->getLine(),
+                )
+            );
+            throw $exception;
+        }
     }
 
     /**
