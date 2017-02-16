@@ -1,5 +1,12 @@
 # In2publish Core Change Log
 
+5.3.8:
+
+- [BUGFIX] Prevent file rename when file was not renamed
+- [API] Add Record::removeRelatedRecord to it's interface since it's required by RecordFactory
+- [TASK] Also log database errors in Letterbox
+- [TASK] Add logger to Letterbox and handle failed envelopes
+
 5.3.7:
 
 - [BUGFIX] Resolve relations in input type fields with configured wizards
