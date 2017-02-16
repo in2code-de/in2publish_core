@@ -602,10 +602,10 @@ class Record implements RecordInterface
     }
 
     /**
-     * @param Record $record
-     * @return Record
+     * @param RecordInterface $record
+     * @return RecordInterface
      */
-    public function removeRelatedRecord(Record $record)
+    public function removeRelatedRecord(RecordInterface $record)
     {
         $tableName = $record->getTableName();
         $identifier = $record->getIdentifier();

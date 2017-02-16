@@ -207,4 +207,13 @@ interface RecordInterface
      * @return RecordInterface[]
      */
     public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = array());
+
+    /**
+     * Returns the given records from the list of related records if the relation is direct.
+     * The record is not removed recursively.
+     *
+     * @param RecordInterface $record
+     * @return RecordInterface Returns always itself
+     */
+    public function removeRelatedRecord(RecordInterface $record);
 }
