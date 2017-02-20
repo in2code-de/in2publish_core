@@ -75,7 +75,7 @@ class EnvelopeDispatcher
      */
     protected function folderExists(array $request)
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = $this->getStorage($request);
         $driver = $this->getStorageDriver($storage);
         $folderIdentifier = $request['folderIdentifier'];
 
@@ -112,7 +112,7 @@ class EnvelopeDispatcher
      */
     protected function getPermissions(array $request)
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = $this->getStorage($request);
         return $this->getStorageDriver($storage)->getPermissions($request['identifier']);
     }
 
@@ -122,7 +122,7 @@ class EnvelopeDispatcher
      */
     protected function getFoldersInFolder(array $request)
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
         return $this->convertIdentifiers($driver, call_user_func_array(array($driver, 'getFoldersInFolder'), $request));
@@ -134,8 +134,7 @@ class EnvelopeDispatcher
      */
     protected function fileExists(array $request)
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
-        $storage->setEvaluatePermissions(false);
+        $storage = $this->getStorage($request);
         $driver = $this->getStorageDriver($storage);
 
         $fileIdentifier = $request['fileIdentifier'];
@@ -180,7 +179,7 @@ class EnvelopeDispatcher
      */
     protected function getFilesInFolder(array $request)
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
         $files = $this->convertIdentifiers($driver, call_user_func_array(array($driver, 'getFilesInFolder'), $request));
@@ -201,7 +200,7 @@ class EnvelopeDispatcher
      */
     protected function getFileInfoByIdentifier(array $request)
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
         return call_user_func_array(array($driver, 'getFileInfoByIdentifier'), $request);
@@ -213,7 +212,7 @@ class EnvelopeDispatcher
      */
     protected function hash(array $request)
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
         return call_user_func_array(array($driver, 'hash'), $request);
@@ -225,7 +224,7 @@ class EnvelopeDispatcher
      */
     protected function createFolder(array $request)
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
         return call_user_func_array(array($driver, 'createFolder'), $request);
@@ -237,7 +236,7 @@ class EnvelopeDispatcher
      */
     protected function deleteFolder(array $request)
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
         return call_user_func_array(array($driver, 'deleteFolder'), $request);
@@ -249,7 +248,7 @@ class EnvelopeDispatcher
      */
     protected function deleteFile(array $request)
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
         return call_user_func_array(array($driver, 'deleteFile'), $request);
@@ -261,7 +260,7 @@ class EnvelopeDispatcher
      */
     protected function addFile(array $request)
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
         return call_user_func_array(array($driver, 'addFile'), $request);
@@ -273,7 +272,7 @@ class EnvelopeDispatcher
      */
     protected function replaceFile(array $request)
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
         return call_user_func_array(array($driver, 'replaceFile'), $request);
@@ -285,7 +284,7 @@ class EnvelopeDispatcher
      */
     protected function renameFile(array $request)
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
         return call_user_func_array(array($driver, 'renameFile'), $request);
@@ -297,7 +296,7 @@ class EnvelopeDispatcher
      */
     protected function getPublicUrl(array $request)
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = $this->getStorage($request);
         $driver = $this->getStorageDriver($storage);
         $identifier = $request['identifier'];
         $file = $this->getFileObject($driver, $identifier, $storage);
@@ -310,7 +309,7 @@ class EnvelopeDispatcher
      */
     protected function batchPrefetchFiles(array $request)
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = $this->getStorage($request);
         $storage->setEvaluatePermissions(false);
         $driver = $this->getStorageDriver($storage);
 
@@ -384,5 +383,16 @@ class EnvelopeDispatcher
             );
         }
         return $identifierList;
+    }
+
+    /**
+     * @param array $request
+     * @return ResourceStorage
+     */
+    protected function getStorage(array $request)
+    {
+        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage->setEvaluatePermissions(false);
+        return $storage;
     }
 }
