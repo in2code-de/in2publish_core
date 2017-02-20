@@ -451,7 +451,11 @@ class SshConnection
             throw new \Exception('Could not create a stream for local file "' . $localFileLocation . '"', 1425466802);
         }
         try {
-            $foreignFileStream = fopen(self::SSH2_WRAPPER . $this->sftpSubSystem . $foreignFileLocation, 'w');
+            /**
+             * typecast resource for PHP 7.0
+             * @see http://paul-m-jones.com/archives/6439
+             */
+            $foreignFileStream = fopen(self::SSH2_WRAPPER . (int)$this->sftpSubSystem . $foreignFileLocation, 'w');
         } catch (\Exception $e) {
             if (strpos($e->getMessage(), 'failed to open stream: operation failed')) {
                 $this->logger->alert(
