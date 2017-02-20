@@ -29,6 +29,8 @@ namespace In2code\In2publishCore\Domain\PostProcessing;
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
@@ -45,6 +47,19 @@ class FileIndexPostProcessor implements SingletonInterface
      * @var RecordInterface[]
      */
     protected $registeredInstances = array();
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger = null;
+
+    /**
+     * FileIndexPostProcessor constructor.
+     */
+    public function __construct()
+    {
+        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+    }
 
     /**
      * @param RecordFactory $recordFactory
@@ -69,15 +84,43 @@ class FileIndexPostProcessor implements SingletonInterface
         /** @var RecordInterface[][] $sortedRecords */
         $sortedRecords = array();
         $storages = array();
+        $skipStorages = array();
         foreach ($this->registeredInstances as $record) {
             if (null === $uid = $record->getLocalProperty('storage')) {
                 $uid = $record->getForeignProperty('storage');
             }
-            if (!isset($storages[$uid])) {
-                $storages[$uid] = $resourceFactory->getStorageObject($uid);
+            if (isset($skipStorages[$uid])) {
+                $skipStorages[$uid][] = $record->getTableName() . '[' . $record->getIdentifier() . ']';
+                continue;
+            } elseif (!isset($storages[$uid])) {
+                try {
+                    $storages[$uid] = $resourceFactory->getStorageObject($uid);
+                } catch (\InvalidArgumentException $exception) {
+                    $skipStorages[$uid] = array();
+                    $skipStorages[$uid][] = $record->getTableName() . '[' . $record->getIdentifier() . ']';
+                    $this->logger->critical(
+                        'Could not fetch storage for file, skipping file and any further request to get storage',
+                        array(
+                            'record_table' => $record->getTableName(),
+                            'record_uid' => $record->getIdentifier(),
+                            'storage_uid' => $uid,
+                        )
+                    );
+                    continue;
+                }
             }
             $sortedRecords[$uid][] = $record;
         }
+
+        if (!empty($skipStorages)) {
+            $logData = array();
+            foreach ($skipStorages as $storageUid => $skippedFiles) {
+                $logData[$storageUid]['storage'] = $storageUid;
+                $logData[$storageUid]['files'] = $skippedFiles;
+            }
+            $this->logger->info('Statistics of skipped files per unavailable storage', $logData);
+        }
+
         $this->registeredInstances = array();
 
         $this->prefetchForeignInformationFiles($storages, $sortedRecords);
