@@ -33,6 +33,7 @@ use In2code\In2publishCore\Command\StatusCommandController;
 use In2code\In2publishCore\Command\TableCommandController;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
+use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -51,6 +52,11 @@ class SshConnection
      * @var bool
      */
     protected $chmodEnabled = false;
+
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger = null;
 
     /**
      * @param string $tableName
@@ -447,10 +453,25 @@ class SshConnection
         try {
             $foreignFileStream = fopen(self::SSH2_WRAPPER . $this->sftpSubSystem . $foreignFileLocation, 'w');
         } catch (\Exception $e) {
-            throw new \Exception(
-                'Insufficient write permissions for remote file "' . $foreignFileLocation . '"',
-                1425467980
-            );
+            if (strpos($e->getMessage(), 'failed to open stream: operation failed')) {
+                $this->logger->alert(
+                    'PHP SSH2 fopen stream wrapper failure.',
+                    array(
+                        'php_version' => PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . '.' . PHP_RELEASE_VERSION,
+                        'file' => $foreignFileLocation
+                    )
+                );
+                throw new \Exception(
+                    'Could not write remote file "' . $foreignFileLocation . '" because PHP failed to open a stream.'
+                    . ' This might be a problem of your PHP version or php-ssh2 extension',
+                    1487588970
+                );
+            } else {
+                throw new \Exception(
+                    'Insufficient write permissions for remote file "' . $foreignFileLocation . '"',
+                    1425467980
+                );
+            }
         }
         if (!is_resource($localFileStream)) {
             throw new \Exception(
@@ -827,6 +848,7 @@ class SshConnection
      */
     final protected function __construct()
     {
+        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
         if (function_exists('ssh2_sftp_chmod')) {
             $this->chmodEnabled = true;
         }
