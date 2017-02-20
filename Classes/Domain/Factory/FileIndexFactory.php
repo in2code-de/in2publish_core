@@ -144,9 +144,14 @@ class FileIndexFactory
     {
         $uid = $record->getIdentifier();
         $record->addAdditionalProperty('recordDatabaseState', $record->getState());
-        $record->setLocalProperties($this->getFileIndexArray($localIdentifier, 'local', $uid));
-        $record->setForeignProperties($this->getFileIndexArray($foreignIdentifier, 'foreign', $uid));
-        $record->setDirtyProperties()->calculateState();
+        $localFileInfo = $this->getFileIndexArray($localIdentifier, 'local', $uid);
+        $foreignFileInfo = $this->getFileIndexArray($foreignIdentifier, 'foreign', $uid);
+        // only set new file info if the file exists at least on one side, else we only deal with the database record
+        if (!empty($localFileInfo) || !empty($foreignFileInfo)) {
+            $record->setLocalProperties($localFileInfo);
+            $record->setForeignProperties($foreignFileInfo);
+            $record->setDirtyProperties()->calculateState();
+        }
     }
 
     /**
