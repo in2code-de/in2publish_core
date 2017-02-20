@@ -120,6 +120,11 @@ interface RecordInterface
     public function setDirtyProperties();
 
     /**
+     * @return mixed
+     */
+    public function getDirtyProperties();
+
+    /**
      * @return RecordInterface
      */
     public function calculateState();
