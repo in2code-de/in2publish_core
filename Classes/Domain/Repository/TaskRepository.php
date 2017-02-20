@@ -69,6 +69,8 @@ class TaskRepository
         } elseif ($this->contextService->isLocal()) {
             $this->databaseConnection = DatabaseUtility::buildForeignDatabaseConnection();
         }
+        $now = new \DateTime('now');
+        $this->creationDate = $now->format('Y-m-d H:i:s');
     }
 
     /**
@@ -81,7 +83,7 @@ class TaskRepository
     {
         $this->databaseConnection->exec_INSERTquery(
             self::TASK_TABLE_NAME,
-            $this->taskToPropertiesArray($task)
+            array_merge($this->taskToPropertiesArray($task), array('creation_date' => $this->creationDate))
         );
     }
 
