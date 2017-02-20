@@ -89,7 +89,7 @@ class RealUrlCacheInvalidator
      */
     public function registerClearRealUrlCacheTask($tableName, Record $record)
     {
-        if ($this->enabled && ($tableName === 'pages' || $tableName === 'pages_language_overlay')) {
+        if ($this->enabled && $record->isChanged() && in_array($tableName, array('pages', 'pages_language_overlay'))) {
             if (!in_array($record->getLocalProperty('doktype'), $this->excludedDokTypes)) {
                 if ($this->updateData) {
                     $realUrlTask = new RealUrlUpdateTask(array('record' => $record));
