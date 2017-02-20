@@ -133,10 +133,14 @@ class RealUrlTask extends AbstractTask
     protected function cleanAllRealUrlCachesForPageIdentifier($pageUid)
     {
         $realUrlTables = array(
-            'tx_realurl_pathcache', // realurl 1.x and 2.x
-            'tx_realurl_urlencodecache', // realurl 1.x
-            'tx_realurl_urldecodecache', // realurl 1.x
-            'tx_realurl_urlcache' // realurl 2.x
+            // realurl < 2.2
+            'tx_realurl_pathcache',
+            // realurl 1.x
+            'tx_realurl_urlencodecache',
+            // realurl 1.x
+            'tx_realurl_urldecodecache',
+            // realurl < 2.2
+            'tx_realurl_urlcache',
         );
         foreach ($realUrlTables as $table) {
             if (DatabaseUtility::isTableExistingOnLocal($table)) {
