@@ -1,5 +1,18 @@
 # In2publish Core Change Log
 
+5.4.0:
+
+- [BUGFIX] Only create RealUrlCacheTasks for changed records
+- [FEATURE] Add support for RealUrl > 2.2
+- [TASK] Update affected versions of realurl in comments in RealUrlTask (these tables do not exist from 2.2 on)
+- [API] Declare getDirtyProperties in RecordInterface
+- [BUGFIX] Set the creation time manually when adding new tasks, because MySQL default was removed from field
+- [BUGFIX] Force read access on FAL storage for all RPC/Envelope requests
+- [BUGFIX] Do not drop all file information when related file does not exist on disk
+- [BUGFIX] Typecast sftp resource for PHP7 stream wrapper compatibility
+- [BUGFIX] Distinguish between insufficient permissions and PHP errors when opening remote streams
+- [BUGFIX] Skip diff post processing of files which reside in deleted or unaccessible storages
+
 5.3.8:
 
 - [BUGFIX] Prevent file rename when file was not renamed
