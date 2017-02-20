@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Domain\Anomaly;
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\Task\RealUrlTask;
+use In2code\In2publishCore\Domain\Model\Task\RealUrlUpdateTask;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -39,6 +40,16 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RealUrlCacheInvalidator
 {
+    /**
+     * @var bool
+     */
+    protected $enabled = false;
+
+    /**
+     * @var bool
+     */
+    protected $updateData = true;
+
     /**
      * @var Logger
      */
@@ -51,11 +62,24 @@ class RealUrlCacheInvalidator
     protected $taskRepository;
 
     /**
+     * @var array
+     */
+    protected $excludedDokTypes = array();
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->enabled = ExtensionManagementUtility::isLoaded('realurl');
+        if ($this->enabled) {
+            $realUrlVersion = ExtensionManagementUtility::getExtensionVersion('realurl');
+            $this->updateData = version_compare($realUrlVersion, '2.1.0') >= 0;
+            $this->excludedDokTypes = (array)ConfigurationUtility::getConfiguration('tasks.realUrl.excludedDokTypes');
+        } else {
+            $this->logger->debug('RealUrl is not installed, skipping RealUrlCacheInvalidator');
+        }
     }
 
     /**
@@ -65,16 +89,14 @@ class RealUrlCacheInvalidator
      */
     public function registerClearRealUrlCacheTask($tableName, Record $record)
     {
-        if ($tableName === 'pages') {
-            if (!in_array(
-                $record->getLocalProperty('doktype'),
-                ConfigurationUtility::getConfiguration('tasks.realUrl.excludedDokTypes')
-            )
-            ) {
-                if (ExtensionManagementUtility::isLoaded('realurl')) {
+        if ($this->enabled && ($tableName === 'pages' || $tableName === 'pages_language_overlay')) {
+            if (!in_array($record->getLocalProperty('doktype'), $this->excludedDokTypes)) {
+                if ($this->updateData) {
+                    $realUrlTask = new RealUrlUpdateTask(array('record' => $record));
+                } else {
                     $realUrlTask = new RealUrlTask(array('record' => $record));
-                    $this->taskRepository->add($realUrlTask);
                 }
+                $this->taskRepository->add($realUrlTask);
             }
         }
     }
