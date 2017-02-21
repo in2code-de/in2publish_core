@@ -358,7 +358,7 @@
 			</trans-unit>
 			<trans-unit id="test_state_error.environment_changed">
 				<source>Your TYPO3 installation changed.</source>
-				<target state="translated">Ihre TYPO3 Installtion hat sich verändert.</target>
+				<target state="translated">Ihre TYPO3 Installation hat sich verändert.</target>
 			</trans-unit>
 			<trans-unit id="test_state_error.configuration_changed">
 				<source>The In2publish configuration has changed.</source>
