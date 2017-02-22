@@ -1,5 +1,11 @@
 # In2publish Core Change Log
 
+5.4.1:
+
+- [TYPO] Fix "installtion" in german warning label
+- [BUGFIX] Support moving files between folders in a single storage
+- [BUGFIX] Redirect after publishing errors after confirmation
+
 5.4.0:
 
 - [BUGFIX] Only create RealUrlCacheTasks for changed records
