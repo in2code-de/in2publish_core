@@ -56,6 +56,14 @@ class EnvelopeDispatcher
     const CMD_MOVE_FILE_WITHIN_STORAGE = 'moveFileWithinStorage';
 
     /**
+     * Limits the amount of files in a folder for pre fetching. If there are more than $prefetchLimit files in
+     * the selected folder they will not be processed when not requested explicitely.
+     *
+     * @var int
+     */
+    protected $prefetchLimit = 51;
+
+    /**
      * @param Envelope $envelope
      * @return bool
      */
@@ -83,14 +91,18 @@ class EnvelopeDispatcher
         if ($driver->folderExists($folderIdentifier)) {
             $files = array();
 
-            $fileIdentifiers = $this->convertIdentifiers($driver, $driver->getFilesInFolder($folderIdentifier));
+            if (is_callable(array($driver, 'countFilesInFolder'))
+                && $driver->countFilesInFolder($folderIdentifier) < $this->prefetchLimit
+            ) {
+                $fileIdentifiers = $this->convertIdentifiers($driver, $driver->getFilesInFolder($folderIdentifier));
 
-            foreach ($fileIdentifiers as $fileIdentifier) {
-                $fileObject = $this->getFileObject($driver, $fileIdentifier, $storage);
-                $files[$fileIdentifier] = array();
-                $files[$fileIdentifier]['hash'] = $driver->hash($fileIdentifier, 'sha1');
-                $files[$fileIdentifier]['info'] = $driver->getFileInfoByIdentifier($fileIdentifier);
-                $files[$fileIdentifier]['publicUrl'] = $storage->getPublicUrl($fileObject);
+                foreach ($fileIdentifiers as $fileIdentifier) {
+                    $fileObject = $this->getFileObject($driver, $fileIdentifier, $storage);
+                    $files[$fileIdentifier] = array();
+                    $files[$fileIdentifier]['hash'] = $driver->hash($fileIdentifier, 'sha1');
+                    $files[$fileIdentifier]['info'] = $driver->getFileInfoByIdentifier($fileIdentifier);
+                    $files[$fileIdentifier]['publicUrl'] = $storage->getPublicUrl($fileObject);
+                }
             }
 
             return array(
@@ -141,7 +153,9 @@ class EnvelopeDispatcher
         $fileIdentifier = $request['fileIdentifier'];
         $directory = PathUtility::dirname($fileIdentifier);
         if ($driver->folderExists($directory)) {
-            if (is_callable(array($driver, 'countFilesInFolder')) && $driver->countFilesInFolder($directory) < 51) {
+            if (is_callable(array($driver, 'countFilesInFolder'))
+                && $driver->countFilesInFolder($directory) < $this->prefetchLimit
+            ) {
                 $files = $this->convertIdentifiers(
                     $driver,
                     call_user_func(array($driver, 'getFilesInFolder'), $directory)
