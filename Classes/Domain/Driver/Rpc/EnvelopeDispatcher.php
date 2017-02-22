@@ -53,6 +53,7 @@ class EnvelopeDispatcher
     const CMD_RENAME_FILE = 'renameFile';
     const CMD_GET_PUBLIC_URL = 'getPublicUrl';
     const CMD_BATCH_PREFETCH_FILES = 'batchPrefetchFiles';
+    const CMD_MOVE_FILE_WITHIN_STORAGE = 'moveFileWithinStorage';
 
     /**
      * @param Envelope $envelope
@@ -326,6 +327,28 @@ class EnvelopeDispatcher
         }
 
         return $files;
+    }
+
+    /**
+     * @param array $request
+     * @return string
+     */
+    protected function moveFileWithinStorage(array $request)
+    {
+        $storage = $this->getStorage($request);
+        $driver = $this->getStorageDriver($storage);
+        $targetDirName = $request['targetFolderIdentifier'];
+
+        // ensure directory exists before moving file into it
+        if (!$driver->folderExists($targetDirName)) {
+            $driver->createFolder(basename($targetDirName), dirname($targetDirName));
+        }
+
+        return $driver->moveFileWithinStorage(
+            $request['fileIdentifier'],
+            $targetDirName,
+            $request['newFileName']
+        );
     }
 
     /**

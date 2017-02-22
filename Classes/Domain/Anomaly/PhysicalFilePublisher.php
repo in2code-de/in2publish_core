@@ -128,7 +128,12 @@ class PhysicalFilePublisher implements SingletonInterface
                         $old = $record->getForeignProperty('identifier');
                         $new = $record->getLocalProperty('identifier');
                         if ($old !== $new) {
-                            $result = $filePublisherService->renameForeignFile($storage, $old, basename($new));
+                            $result = $filePublisherService->moveForeignFile(
+                                $storage,
+                                $old,
+                                dirname($new),
+                                basename($new)
+                            );
                             if ($result = ($new === $result)) {
                                 $this->logger->info('Updated file on foreign', $logData);
                             } else {

@@ -649,6 +649,35 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     }
 
     /**
+     * This method is not cached!
+     *
+     * Moves a file *within* the current storage.
+     * Note that this is only about an inner-storage move action,
+     * where a file is just moved to another folder in the same storage.
+     *
+     * @param string $fileIdentifier
+     * @param string $targetFolderIdentifier
+     * @param string $newFileName
+     * @return string
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function moveFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $newFileName)
+    {
+        return $this->executeEnvelope(
+            new Envelope(
+                EnvelopeDispatcher::CMD_MOVE_FILE_WITHIN_STORAGE,
+                array(
+                    'storage' => $this->storageUid,
+                    'fileIdentifier' => $fileIdentifier,
+                    'targetFolderIdentifier' => $targetFolderIdentifier,
+                    'newFileName' => $newFileName,
+                )
+            )
+        );
+    }
+
+    /**
      * @param Envelope $envelope
      * @return mixed
      * @throws \Exception
@@ -982,23 +1011,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function getFileForLocalProcessing($fileIdentifier, $writable = true)
     {
         throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201472);
-    }
-
-    /**
-     * Moves a file *within* the current storage.
-     * Note that this is only about an inner-storage move action,
-     * where a file is just moved to another folder in the same storage.
-     *
-     * @param string $fileIdentifier
-     * @param string $targetFolderIdentifier
-     * @param string $newFileName
-     * @return string
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function moveFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $newFileName)
-    {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201491);
     }
 
     /**
