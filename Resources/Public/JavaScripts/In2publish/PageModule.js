@@ -152,7 +152,10 @@ function In2publishPageModule($) {
 			var $this = $(this);
 			var href = $this.prop('href');
 			$this.addClass('sending');
-			ajaxAndReload(href);
+			var failureCallback = function () {
+				$this.removeClass('sending');
+			};
+			ajaxAndReload(href, null, failureCallback);
 			e.preventDefault();
 		});
 	};
@@ -211,7 +214,7 @@ function In2publishPageModule($) {
 	 * @param {string} href send ajax request to this target
 	 * @param {string} paramsString optional parameters that should be send with
 	 */
-	var ajaxAndReload = function(href, paramsString) {
+	var ajaxAndReload = function(href, paramsString, failureCallback) {
 		$.ajax({
 			type: 'POST',
 			url: href,
@@ -220,7 +223,13 @@ function In2publishPageModule($) {
 				window.location.href = cleanUriFromAnchors(getCurrentUri()) + '&workflowstate[justpublished]=1';
 			},
 			error: function() {
-				alert('Error: Publishing of this page failed');
+				if (window.confirm('Error: Publishing of this page failed. Continue?')) {
+					window.location.href = cleanUriFromAnchors(getCurrentUri()) + '&workflowstate[justpublished]=1';
+				} else {
+					if (typeof failureCallback === 'function') {
+						failureCallback();
+					}
+				}
 			}
 		});
 	};
