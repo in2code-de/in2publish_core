@@ -64,7 +64,7 @@ class ContextService implements SingletonInterface
      */
     protected function determineContext()
     {
-        if (false === ($environmentVariable = getenv(static::ENV_VAR_NAME))) {
+        if (false === ($environmentVariable = getenv(static::ENV_VAR_NAME) || getenv('REDIRECT_' . static::ENV_VAR_NAME))) {
             return static::FOREIGN;
         } elseif (in_array($environmentVariable, array(static::LOCAL, static::FOREIGN))) {
             return $environmentVariable;
