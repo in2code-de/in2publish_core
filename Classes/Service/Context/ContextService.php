@@ -37,6 +37,7 @@ class ContextService implements SingletonInterface
     const LOCAL = 'Local';
     const FOREIGN = 'Foreign';
     const ENV_VAR_NAME = 'IN2PUBLISH_CONTEXT';
+    const REDIRECT_ENV_VAR_NAME = 'REDIRECT_IN2PUBLISH_CONTEXT';
 
     /**
      * @var string
@@ -64,7 +65,8 @@ class ContextService implements SingletonInterface
      */
     protected function determineContext()
     {
-        if (false === ($environmentVariable = getenv(static::ENV_VAR_NAME))) {
+        $environmentVariable = getenv(static::ENV_VAR_NAME) ?: getenv(static::REDIRECT_ENV_VAR_NAME) ?: false;
+        if (false === $environmentVariable) {
             return static::FOREIGN;
         } elseif (in_array($environmentVariable, array(static::LOCAL, static::FOREIGN))) {
             return $environmentVariable;
@@ -96,6 +98,6 @@ class ContextService implements SingletonInterface
      */
     public function isContextDefined()
     {
-        return false !== getenv(static::ENV_VAR_NAME);
+        return (false !== getenv(static::ENV_VAR_NAME)) || (false !== getenv(static::REDIRECT_ENV_VAR_NAME));
     }
 }
