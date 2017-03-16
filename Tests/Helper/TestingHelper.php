@@ -64,6 +64,27 @@ class TestingHelper
     /**
      * @param string|null $value
      */
+    public static function setRedirectedIn2publishContext($value)
+    {
+        if (null === $value) {
+            putenv(ContextService::REDIRECT_ENV_VAR_NAME);
+        } else {
+            putenv(ContextService::REDIRECT_ENV_VAR_NAME . '=' . $value);
+        }
+    }
+
+    /**
+     * Unsets any supported in2publish context environment variable
+     */
+    public static function clearIn2publishContext()
+    {
+        static::setIn2publishContext(null);
+        static::setRedirectedIn2publishContext(null);
+    }
+
+    /**
+     * @param string|null $value
+     */
     public static function setApplicationContext($value)
     {
         if (null === $value) {

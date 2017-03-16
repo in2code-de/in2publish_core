@@ -36,6 +36,22 @@ use TYPO3\CMS\Core\Tests\UnitTestCase;
 class ContextServiceTest extends UnitTestCase
 {
     /**
+     *
+     */
+    public function setUp()
+    {
+        TestingHelper::clearIn2publishContext();
+    }
+
+    /**
+     *
+     */
+    public function tearDown()
+    {
+        TestingHelper::clearIn2publishContext();
+    }
+
+    /**
      * @covers ::__construct
      * @covers ::determineContext
      * @covers ::getContext
@@ -156,5 +172,60 @@ class ContextServiceTest extends UnitTestCase
 
         $contextService = new ContextService();
         $this->assertTrue($contextService->isContextDefined());
+    }
+
+    /**
+     * @covers ::isContextDefined
+     */
+    public function testRedirectContextAlsoDefinesContext()
+    {
+        TestingHelper::setRedirectedIn2publishContext(ContextService::LOCAL);
+
+        $contextService = new ContextService();
+        $this->assertTrue($contextService->isContextDefined());
+    }
+
+    /**
+     * @covers ::isLocal
+     */
+    public function testIsLocalReturnsTrueIfRedirectIn2publishContextIsLocal()
+    {
+        TestingHelper::setRedirectedIn2publishContext(ContextService::LOCAL);
+
+        $contextService = new ContextService();
+        $this->assertTrue($contextService->isLocal());
+    }
+
+    /**
+     * @covers ::isForeign
+     */
+    public function testIsForeignReturnsTrueIfRedirectIn2publishContextIsForeign()
+    {
+        TestingHelper::setRedirectedIn2publishContext(ContextService::FOREIGN);
+
+        $contextService = new ContextService();
+        $this->assertTrue($contextService->isForeign());
+    }
+
+    /**
+     * @covers ::isLocal
+     */
+    public function testIsLocalReturnsFalseIfRedirectIn2publishContextIsForeign()
+    {
+        TestingHelper::setRedirectedIn2publishContext(ContextService::FOREIGN);
+
+        $contextService = new ContextService();
+        $this->assertFalse($contextService->isLocal());
+    }
+
+    /**
+     * @covers ::isForeign
+     */
+    public function testIsForeignReturnsFalseIfRedirectIn2publishContextIsLocal()
+    {
+        TestingHelper::setRedirectedIn2publishContext(ContextService::LOCAL);
+
+        $contextService = new ContextService();
+        $this->assertFalse($contextService->isForeign());
     }
 }
