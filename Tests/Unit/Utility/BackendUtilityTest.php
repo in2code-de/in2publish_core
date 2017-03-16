@@ -56,8 +56,18 @@ class BackendUtilityTest extends UnitTestCase
     {
         /** @var DatabaseConnection|\PHPUnit_Framework_MockObject_MockObject $databaseMock */
         $databaseMock = $this->getMockBuilder(DatabaseConnection::class)
-                             ->setMethods(['exec_SELECTgetSingleRow'])
+                             ->setMethods(['exec_SELECTgetSingleRow', 'isConnected', 'connectDB'])
                              ->getMock();
+
+        $databaseMock
+            ->expects($this->any())
+            ->method('isConnected')
+            ->willReturn(true);
+
+        $databaseMock
+            ->expects($this->any())
+            ->method('connectDB')
+            ->willReturn(true);
 
         $expectedPid = 4;
 
@@ -94,8 +104,18 @@ class BackendUtilityTest extends UnitTestCase
     {
         /** @var DatabaseConnection|\PHPUnit_Framework_MockObject_MockObject $databaseMock */
         $databaseMock = $this->getMockBuilder(DatabaseConnection::class)
-                             ->setMethods(['exec_SELECTgetSingleRow'])
+                             ->setMethods(['exec_SELECTgetSingleRow', 'isConnected', 'connectDB'])
                              ->getMock();
+
+        $databaseMock
+            ->expects($this->any())
+            ->method('isConnected')
+            ->willReturn(true);
+
+        $databaseMock
+            ->expects($this->any())
+            ->method('connectDB')
+            ->willReturn(true);
 
         /**
          * @see \TYPO3\CMS\Core\Database\DatabaseConnection::exec_SELECTgetSingleRow
@@ -119,8 +139,18 @@ class BackendUtilityTest extends UnitTestCase
     {
         /** @var DatabaseConnection|\PHPUnit_Framework_MockObject_MockObject $databaseMock */
         $databaseMock = $this->getMockBuilder(DatabaseConnection::class)
-                             ->setMethods(['exec_SELECTgetSingleRow'])
+                             ->setMethods(['exec_SELECTgetSingleRow', 'isConnected', 'connectDB'])
                              ->getMock();
+
+        $databaseMock
+            ->expects($this->any())
+            ->method('isConnected')
+            ->willReturn(true);
+
+        $databaseMock
+            ->expects($this->any())
+            ->method('connectDB')
+            ->willReturn(true);
 
         $expectedPid = 14;
 
@@ -146,8 +176,18 @@ class BackendUtilityTest extends UnitTestCase
     {
         /** @var DatabaseConnection|\PHPUnit_Framework_MockObject_MockObject $databaseMock */
         $databaseMock = $this->getMockBuilder(DatabaseConnection::class)
-                             ->setMethods(['exec_SELECTgetSingleRow'])
+                             ->setMethods(['exec_SELECTgetSingleRow', 'isConnected', 'connectDB'])
                              ->getMock();
+
+        $databaseMock
+            ->expects($this->any())
+            ->method('isConnected')
+            ->willReturn(true);
+
+        $databaseMock
+            ->expects($this->any())
+            ->method('connectDB')
+            ->willReturn(true);
 
         /**
          * @see \TYPO3\CMS\Core\Database\DatabaseConnection::exec_SELECTgetSingleRow

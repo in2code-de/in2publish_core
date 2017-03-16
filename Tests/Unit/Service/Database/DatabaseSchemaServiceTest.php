@@ -127,13 +127,23 @@ class DatabaseSchemaServiceTest extends UnitTestCase
     protected function buildDatabaseMock()
     {
         $database = $this->getMockBuilder(DatabaseConnection::class)->setMethods(
-            ['admin_get_tables', 'admin_get_fields']
+            ['admin_get_tables', 'admin_get_fields', 'isConnected', 'connectDB']
         )->getMock();
 
         $database
             ->expects($this->once())
             ->method('admin_get_tables')
             ->willReturn(['foo' => [], 'bar' => []]);
+
+        $database
+            ->expects($this->any())
+            ->method('isConnected')
+            ->willReturn(true);
+
+        $database
+            ->expects($this->any())
+            ->method('connectDB')
+            ->willReturn(true);
 
         $database
             ->expects($this->exactly(2))
