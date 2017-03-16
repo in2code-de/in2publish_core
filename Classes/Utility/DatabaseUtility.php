@@ -81,12 +81,20 @@ class DatabaseUtility
     }
 
     /**
-     * @return DatabaseConnection
+     * @return DatabaseConnection|null
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     public static function buildLocalDatabaseConnection()
     {
-        return isset($GLOBALS['TYPO3_DB']) ? $GLOBALS['TYPO3_DB'] : null;
+        $database = null;
+        if (isset($GLOBALS['TYPO3_DB']) && $GLOBALS['TYPO3_DB'] instanceof DatabaseConnection) {
+            /** @var DatabaseConnection $database */
+            $database = $GLOBALS['TYPO3_DB'];
+            if (!$database->isConnected()) {
+                $database->connectDB();
+            }
+        }
+        return $database;
     }
 
     /**
