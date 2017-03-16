@@ -111,8 +111,6 @@ excludeRelatedTables:
   - tx_in2code_in2publish_log
   - tx_in2code_in2publish_task
   - tx_in2code_in2publish_envelope
-  - tx_in2publish_domain_model_notification
-  - tx_in2publish_domain_model_workflowstate
 
 # Ignore this fields for DIFF view
 ignoreFieldsForDifferenceView:
