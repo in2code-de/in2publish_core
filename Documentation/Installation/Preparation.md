@@ -21,7 +21,7 @@ Additional PHP extensions:
 
 Hint:
 
-> php_ssh2 0.11 does not include the function ssh2_sftp_chmod. You can download a newer version here: [PECL SSH2 Download](https://pecl.php.net/package/ssh2) 
+> php_ssh2 0.11 does not include the function ssh2_sftp_chmod. You can download a newer version here: [PECL SSH2 Download](https://pecl.php.net/package/ssh2)
 > Most versions on package based server software are below 0.12, so the function has been made optional in in2publish.
 > In this case you have to take care of file permissions yourself.
 
@@ -66,15 +66,20 @@ Hint:
 | Environment variable  | in2publish requires `SetEnv IN2PUBLISH_CONTEXT Foreign` to be set in the virtual host or (if allowed) .htaccess.                              |
 
 Appendix to `Shell Apache2`:
-    
+
 > Under certain circumstances the user may differ from the webprocess user
-> 
+>
 >     1. Both users are able to read/write directories and files written by the other one.
 >     2. libssh2 >= 0.12 for ``ssh2_sftp_chmod`` support
 
 Appendix to `Environment variable`:
-    
+
 > This line is optional (on foreign), since `IN2PUBLISH_CONTEXT` defaults to `Foreign`
+
+## TYPO3 Requirements
+
+Your TYPO3 installation must not use the `UTF8filesystem` option.
+If you currently use that feature set `$GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'] = false` and run the rewrite commands from the EnvironmentCommandController to convert all umlauts and special characters.
 
 ## How to create the Public and Private Key pair
 
