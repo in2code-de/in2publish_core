@@ -4,10 +4,16 @@ FAQ
 Publisher backend modules are not visible?
 ------------------------------------------
 
-Please check if you have set the environment variables on your server for the stage system:
+Please check if you have set the environment variables on your server for the stage system via htaccess:
 
 ```
 SetEnv IN2PUBLISH_CONTEXT Local
+```
+
+or AdditionalConfiguration.php:
+
+```
+putenv('IN2PUBLISH_CONTEXT=Local');
 ```
 
 See https://github.com/in2code-de/in2publish_core/blob/master/Documentation/Installation/Preparation.md#os-requirements
@@ -32,8 +38,8 @@ that was published. In this case you can use clearCacheCmd in Page TSConfig on t
 See https://docs.typo3.org/typo3cms/TSconfigReference/PageTsconfig/TCEmain/Index.html#clearcachecmd for the original
 documentation
 
-Scheduler: Can't call commandController from cli but in scheduler backend module works?
----------------------------------------------------------------------------------------
+Scheduler: Can't call commandController from cli or cronjob but it works in the scheduler module?
+-------------------------------------------------------------------------------------------------
 
 You have to add the environment variable for all CLI calls of commandControllers
 Example call with environment variable (for the stage system):
@@ -43,7 +49,7 @@ Example call with environment variable (for the stage system):
 Where can i get the Foreign Key Fingerprint
 -------------------------------------------
 
-Have a look here: [How to get the foreign key fingerprint](Installation/Configuration/LocalConfiguration.md#how-to-get-the-foreign-key-fingerprint) 
+Have a look here: [How to get the foreign key fingerprint](Installation/Configuration/LocalConfiguration.md#how-to-get-the-foreign-key-fingerprint)
 
 How do i enable SSH Daemon on my Mac?
 -------------------------------------
