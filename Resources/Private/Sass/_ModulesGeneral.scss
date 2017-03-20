@@ -620,21 +620,6 @@ a.in2publish-btn {
   }
 }
 
-.in2publish-tableview-viewarray {
-  table {
-    background: $dovegray;
-    td {
-      padding: 3px 10px;
-      font {
-        font-size: 16px;
-        &[color="red"] {
-          color: $fuzzywuzzybrown;
-        }
-      }
-    }
-  }
-}
-
 .in2publish-tableview--fullwidth {
   width: 100%;
 }

@@ -11,9 +11,7 @@ Configuration overview
 			<f:translate key="module.m4.configuration">Configuration</f:translate>
 		</h2>
 
-		<section class="in2publish-tableview-viewarray">
-			<publish:String.ViewArray array="{configuration}" title="Configuration" />
-		</section>
+		<f:debug title="Configuration" inline="true">{configuration}</f:debug>
 	</div>
 	<f:alias map="{moduleName: 'tools'}">
 		<f:render partial="Footer" arguments="{_all}" />
