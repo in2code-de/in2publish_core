@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Controller;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -43,11 +44,17 @@ class FileController extends AbstractController
     public function indexAction()
     {
         $this->assignServerAndPublishingStatus();
-
-        $record = $this
-            ->objectManager
-            ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
-            ->makeInstance(GeneralUtility::_GP('id'));
+        if (false === (bool)ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
+            $record = $this
+                ->objectManager
+                ->get('In2code\\In2publishCore\\Domain\\Factory\\IndexingFolderRecordFactory')
+                ->makeInstance(GeneralUtility::_GP('id'));
+        } else {
+            $record = $this
+                ->objectManager
+                ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
+                ->makeInstance(GeneralUtility::_GP('id'));
+        }
 
         $this->view->assign('record', $record);
     }

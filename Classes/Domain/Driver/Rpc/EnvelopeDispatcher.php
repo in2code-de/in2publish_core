@@ -26,6 +26,9 @@ namespace In2code\In2publishCore\Domain\Driver\Rpc;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Driver\RemoteStorage;
+use In2code\In2publishCore\Utility\FileUtility;
+use In2code\In2publishCore\Utility\FolderUtility;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
@@ -38,6 +41,9 @@ use TYPO3\CMS\Core\Utility\PathUtility;
  */
 class EnvelopeDispatcher
 {
+    /*
+     * Non-indexing commands
+     */
     const CMD_FOLDER_EXISTS = 'folderExists';
     const CMD_FILE_EXISTS = 'fileExists';
     const CMD_GET_PERMISSIONS = 'getPermissions';
@@ -54,6 +60,12 @@ class EnvelopeDispatcher
     const CMD_GET_PUBLIC_URL = 'getPublicUrl';
     const CMD_BATCH_PREFETCH_FILES = 'batchPrefetchFiles';
     const CMD_MOVE_FILE_WITHIN_STORAGE = 'moveFileWithinStorage';
+    /*
+     * Indexing commands (using the storage object)
+     */
+    const CMD_STORAGE_HAS_FOLDER = 'getStorageHasFolder';
+    const CMD_STORAGE_GET_FOLDERS_IN_FOLDER = 'getStorageGetFoldersInFolder';
+    const CMD_STORAGE_GET_FILES_IN_FOLDER = 'getStorageGetFilesInFolder';
 
     /**
      * Limits the amount of files in a folder for pre fetching. If there are more than $prefetchLimit files in
@@ -431,5 +443,49 @@ class EnvelopeDispatcher
         $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
         $storage->setEvaluatePermissions(false);
         return $storage;
+    }
+
+    /**
+     * @param array $request
+     * @return array
+     */
+    public function getStorageHasFolder(array $request)
+    {
+        $hasFolder = $this->getStorage($request)->hasFolder($request['identifier']);
+        // pre-fetching sub folders and files for later use if storage exists (we know this will be required)
+        if ($hasFolder) {
+            $subFolders = $this->getStorageGetFoldersInFolder($request);
+            $files = $this->getStorageGetFilesInFolder($request);
+        } else {
+            $subFolders = array();
+            $files = array();
+        }
+        return array(
+            RemoteStorage::HAS_FOLDER_KEY => $hasFolder,
+            RemoteStorage::SUB_FOLDERS_KEY => $subFolders,
+            RemoteStorage::FILES_KEY => $files,
+        );
+    }
+
+    /**
+     * @param array $request
+     * @return array
+     */
+    public function getStorageGetFoldersInFolder(array $request)
+    {
+        $storage = $this->getStorage($request);
+        $folders = $storage->getFoldersInFolder($storage->getFolder($request['identifier']));
+        return FolderUtility::extractFoldersInformation($folders);
+    }
+
+    /**
+     * @param array $request
+     * @return array
+     */
+    public function getStorageGetFilesInFolder(array $request)
+    {
+        $storage = $this->getStorage($request);
+        $files = $storage->getFilesInFolder($storage->getFolder($request['identifier']));
+        return FileUtility::extractFilesInformation($files);
     }
 }

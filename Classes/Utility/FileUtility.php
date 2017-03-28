@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\Utility;
  ***************************************************************/
 
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -101,5 +102,30 @@ class FileUtility
             return '/';
         }
         return '/' . $folder . '/';
+    }
+
+    /**
+     * @param FileInterface $file
+     * @return array
+     */
+    public static function extractFileInformation(FileInterface $file)
+    {
+        return array(
+            'identifier' => $file->getIdentifier(),
+        );
+    }
+
+    /**
+     * @param array $files
+     * @return array
+     */
+    public static function extractFilesInformation(array $files)
+    {
+        $newIndex = array();
+        foreach ($files as $file) {
+            $fileInfo = static::extractFileInformation($file);
+            $newIndex[$fileInfo['identifier']] = $fileInfo;
+        }
+        return $newIndex;
     }
 }

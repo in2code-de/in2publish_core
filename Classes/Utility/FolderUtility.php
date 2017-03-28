@@ -25,6 +25,7 @@ namespace In2code\In2publishCore\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Resource\FolderInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -69,5 +70,31 @@ class FolderUtility
             $subFolder = '/' . $subFolder;
         }
         return $subFolder;
+    }
+
+    /**
+     * @param FolderInterface $folder
+     * @return array
+     */
+    public static function extractFolderInformation(FolderInterface $folder)
+    {
+        return array(
+            'name' => $folder->getName(),
+            'identifier' => $folder->getIdentifier(),
+            'storage' => $folder->getStorage()->getUid(),
+            'uid' => sprintf('%d:%s', $folder->getStorage()->getUid(), $folder->getIdentifier()),
+        );
+    }
+
+    /**
+     * @param array $folders
+     * @return array
+     */
+    public static function extractFoldersInformation(array $folders)
+    {
+        foreach ($folders as $index => $folder) {
+            $folders[$index] = static::extractFolderInformation($folder);
+        }
+        return $folders;
     }
 }

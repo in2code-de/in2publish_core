@@ -172,20 +172,24 @@ call_user_func(
                     'publishSysLog',
                     false
                 );
-                $signalSlotDispatcher->connect(
-                    'In2code\\In2publishCore\\Domain\\Factory\\RecordFactory',
-                    'instanceCreated',
-                    'In2code\\In2publishCore\\Domain\\PostProcessing\\FileIndexPostProcessor',
-                    'registerInstance',
-                    false
-                );
-                $signalSlotDispatcher->connect(
-                    'In2code\\In2publishCore\\Domain\\Factory\\RecordFactory',
-                    'rootRecordFinished',
-                    'In2code\\In2publishCore\\Domain\\PostProcessing\\FileIndexPostProcessor',
-                    'postProcess',
-                    false
-                );
+
+                // check if value is explicit false. after updating it's "null" if not set
+                if (false !== \In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
+                    $signalSlotDispatcher->connect(
+                        'In2code\\In2publishCore\\Domain\\Factory\\RecordFactory',
+                        'instanceCreated',
+                        'In2code\\In2publishCore\\Domain\\PostProcessing\\FileIndexPostProcessor',
+                        'registerInstance',
+                        false
+                    );
+                    $signalSlotDispatcher->connect(
+                        'In2code\\In2publishCore\\Domain\\Factory\\RecordFactory',
+                        'rootRecordFinished',
+                        'In2code\\In2publishCore\\Domain\\PostProcessing\\FileIndexPostProcessor',
+                        'postProcess',
+                        false
+                    );
+                }
 
                 // register tests for tools module
                 $GLOBALS['in2publish_core']['tests'] = array(
