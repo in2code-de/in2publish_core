@@ -116,12 +116,15 @@ class IndexingFolderRecordFactory
      *
      * @param array $localFiles
      * @param array $remoteFiles
-     * @param array $records
+     * @param RecordInterface[] $records
      * @return array
      */
     protected function filterRecords(array $localFiles, array $remoteFiles, array $records)
     {
         $filesOnDisk = array_unique(array_merge(array_keys($localFiles), array_keys($remoteFiles)));
+
+        /** @var RecordInterface[] $touchedEntries */
+        $touchedEntries = array();
 
         foreach ($records as $index => $file) {
             $localFileName = $file->hasLocalProperty('identifier') ? $file->getLocalProperty('identifier') : '';
@@ -131,31 +134,51 @@ class IndexingFolderRecordFactory
             if (!in_array($localFileName, $filesOnDisk) && !in_array($foreignFileName, $filesOnDisk)) {
                 unset($records[$index]);
             } else {
-                // save the database state separately, because we're going to modify it now.
-                $file->addAdditionalProperty('recordDatabaseState', $file->getState());
-
-                // if the file exists on disk then overrule the index data with the file information
-                if (isset($localFiles[$localFileName])) {
-                    $localProperties = $file->getLocalProperties();
-                    ArrayUtility::mergeRecursiveWithOverrule($localProperties, $localFiles[$localFileName], false);
+                if ($file->getState() === RecordInterface::RECORD_STATE_MOVED) {
+                    $fileInfoIndex = $localFileName;
                 } else {
-                    // truncate the indexed values if the represented file does not exist on disk
-                    $localProperties = array();
+                    $fileInfoIndex = $localFileName !== '' ? $localFileName : $foreignFileName;
+                    $localFileName = $localFileName !== '' ? $localFileName : $fileInfoIndex;
+                    $foreignFileName = $foreignFileName !== '' ? $foreignFileName : $fileInfoIndex;
                 }
-                // do it again for foreign
-                if (isset($remoteFiles[$foreignFileName])) {
-                    $foreignProperties = $file->getLocalProperties();
-                    ArrayUtility::mergeRecursiveWithOverrule($foreignProperties, $remoteFiles[$foreignFileName], false);
+                if (isset($touchedEntries[$fileInfoIndex])) {
+                    $touchedEntries[$fileInfoIndex]->addAdditionalProperty('isPrimaryIndex', true);
+                    $file->addAdditionalProperty('isDuplicateIndex', true);
+                    unset($records[$index]);
                 } else {
-                    $foreignProperties = array();
+                    $touchedEntries[$fileInfoIndex] = $file;
+
+                    $fileExistsLocally = isset($localFiles[$localFileName]);
+                    $fileExistsRemotely = isset($remoteFiles[$foreignFileName]);
+
+                    // save the database state separately, because we're going to modify it now.
+                    $file->addAdditionalProperty('recordDatabaseState', $file->getState());
+
+                    // if the file exists on disk then overrule the index data with the file information
+                    if (true === $fileExistsLocally) {
+                        $localProperties = $file->getLocalProperties();
+                        if (!empty($localProperties)) {
+                            ArrayUtility::mergeRecursiveWithOverrule($localProperties, $localFiles[$localFileName], false);
+                        }
+                    } else {
+                        // truncate the indexed values if the represented file does not exist on disk
+                        $localProperties = array();
+                    }
+                    // do it again for foreign
+                    if (true === $fileExistsRemotely) {
+                        $foreignProperties = $file->getForeignProperties();
+                        ArrayUtility::mergeRecursiveWithOverrule($foreignProperties, $remoteFiles[$foreignFileName]);
+                    } else {
+                        $foreignProperties = array();
+                    }
+
+                    $file->setLocalProperties($localProperties);
+                    $file->setForeignProperties($foreignProperties);
+                    $file->setDirtyProperties()->calculateState();
+
+                    // mark the file state as desired publishing action for the PhysicalFilePublisherAnomaly.
+                    $file->addAdditionalProperty('isAuthoritative', true);
                 }
-
-                $file->setLocalProperties($localProperties);
-                $file->setForeignProperties($foreignProperties);
-                $file->setDirtyProperties()->calculateState();
-
-                // mark the file state as desired publishing action for the PhysicalFilePublisherAnomaly.
-                $file->addAdditionalProperty('isAuthoritative', true);
             }
         }
         return $records;

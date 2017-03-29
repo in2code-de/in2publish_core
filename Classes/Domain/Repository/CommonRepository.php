@@ -1649,6 +1649,21 @@ class CommonRepository extends BaseRepository
                 $state = $record->getState();
             }
 
+            if (true === $record->getAdditionalProperty('isPrimaryIndex')) {
+                $this->logger->notice(
+                    'Removing duplicate index from remote',
+                    array(
+                        'tableName' => $record->getTableName(),
+                        'local_uid' => $record->getLocalProperty('uid'),
+                        'foreign_uid' => $record->getForeignProperty('uid'),
+                    )
+                );
+                // remove duplicate remote index
+                $previousTableName = $this->replaceTableName($record->getTableName());
+                $this->deleteRecord($this->foreignDatabase, $record->getForeignProperty('uid'));
+                $this->setTableName($previousTableName);
+            }
+
             if ($state === RecordInterface::RECORD_STATE_CHANGED || $state === RecordInterface::RECORD_STATE_MOVED) {
                 $this->updateForeignRecord($record);
             } elseif ($state === RecordInterface::RECORD_STATE_ADDED) {
