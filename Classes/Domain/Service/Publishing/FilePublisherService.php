@@ -85,7 +85,6 @@ class FilePublisherService
             $this->remoteFalDriver->createFolder(basename($folderIdentifier), dirname($folderIdentifier), true);
         }
 
-        $this->remoteFalDriver->setStorageUid($storage);
         $newFileIdentifier = $this->remoteFalDriver->addFile(
             $temporaryIdentifier,
             $folderIdentifier,
