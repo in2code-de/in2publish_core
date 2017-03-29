@@ -32,6 +32,7 @@ use In2code\In2publishCore\Utility\FileUtility;
 use In2code\In2publishCore\Utility\FolderUtility;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -46,31 +47,35 @@ class IndexingFolderRecordFactory
      */
     public function makeInstance($dir = null)
     {
+        // determine current folder
         $resourceFactory = ResourceFactory::getInstance();
         try {
             $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($dir);
         } catch (FolderDoesNotExistException $exception) {
             $localFolder = $resourceFactory->getStorageObject(substr($dir, 0, strpos($dir, ':')))->getRootLevelFolder();
         }
+
+        // get FAL storages for each side
         $localStorage = $localFolder->getStorage();
-
-        $localProperties = FolderUtility::extractFolderInformation($localFolder);
-        $localSubFolders = FolderUtility::extractFoldersInformation($localFolder->getSubfolders());
-
         $remoteStorage = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\RemoteStorage');
-        $remoteFolderExists = $remoteStorage->hasFolder($localStorage->getUid(), $localFolder->getIdentifier());
 
-        if (false === $remoteFolderExists) {
-            $remoteProperties = array();
-            $remoteSubFolders = array();
-            $remoteFiles = array();
-        } else {
+        // some often used variables
+        $storageUid = $localStorage->getUid();
+        $folderIdentifier = $localFolder->getIdentifier();
+
+        // gather information about the folder, sub folders and files in this folder
+        $localProperties = FolderUtility::extractFolderInformation($localFolder);
+        $remoteProperties = array();
+        $localSubFolders = FolderUtility::extractFoldersInformation($localFolder->getSubfolders());
+        $remoteSubFolders = array();
+        $localFiles = FileUtility::extractFilesInformation($localStorage->getFilesInFolder($localFolder));
+        $remoteFiles = array();
+
+        // get the actual information from remote if the folder actually exists
+        if (true === $remoteStorage->hasFolder($storageUid, $folderIdentifier)) {
             $remoteProperties = $localProperties;
-            $remoteSubFolders = $remoteStorage->getFoldersInFolder(
-                $localStorage->getUid(),
-                $localFolder->getIdentifier()
-            );
-            $remoteFiles = $remoteStorage->getFilesInFolder($localStorage->getUid(), $localFolder->getIdentifier());
+            $remoteSubFolders = $remoteStorage->getFoldersInFolder($storageUid, $folderIdentifier);
+            $remoteFiles = $remoteStorage->getFilesInFolder($storageUid, $folderIdentifier);
         }
 
         $rootFolder = GeneralUtility::makeInstance(
@@ -95,31 +100,64 @@ class IndexingFolderRecordFactory
             $rootFolder->addRelatedRecord($subFolder);
         }
 
-        $localFiles = FileUtility::extractFilesInformation($localStorage->getFilesInFolder($localFolder));
-
-        $fileIdentifiers = array_unique(array_merge(array_keys($localFiles), array_keys($remoteFiles)));
-
-        $files = CommonRepository::getDefaultInstance('sys_file')->findByProperties(
-            array('folder_hash' => $localFolder->getHashedIdentifier(), 'storage' => $localStorage->getUid()),
+        $records = CommonRepository::getDefaultInstance('sys_file')->findByProperties(
+            array('folder_hash' => $localFolder->getHashedIdentifier(), 'storage' => $storageUid),
             true
         );
-
-        foreach ($files as $index => $file) {
-            if ($file->hasLocalProperty('identifier')) {
-                if (in_array($file->getLocalProperty('identifier'), $fileIdentifiers)) {
-                    continue;
-                }
-            }
-            if ($file->hasForeignProperty('identifier')) {
-                if (in_array($file->getForeignProperty('identifier'), $fileIdentifiers)) {
-                    continue;
-                }
-            }
-            unset($files[$index]);
-        }
-
-        $rootFolder->addRelatedRecords($files);
+        $records = $this->filterRecords($localFiles, $remoteFiles, $records);
+        $rootFolder->addRelatedRecords($records);
 
         return $rootFolder;
+    }
+
+    /**
+     * Remove properties from a side where a file does not exist
+     * or remove the whole record from the list if there is no file at all
+     *
+     * @param array $localFiles
+     * @param array $remoteFiles
+     * @param array $records
+     * @return array
+     */
+    protected function filterRecords(array $localFiles, array $remoteFiles, array $records)
+    {
+        $filesOnDisk = array_unique(array_merge(array_keys($localFiles), array_keys($remoteFiles)));
+
+        foreach ($records as $index => $file) {
+            $localFileName = $file->hasLocalProperty('identifier') ? $file->getLocalProperty('identifier') : '';
+            $foreignFileName = $file->hasForeignProperty('identifier') ? $file->getForeignProperty('identifier') : '';
+
+            // remove records from the list which do not have at least one file on the disk which they represent
+            if (!in_array($localFileName, $filesOnDisk) && !in_array($foreignFileName, $filesOnDisk)) {
+                unset($records[$index]);
+            } else {
+                // save the database state separately, because we're going to modify it now.
+                $file->addAdditionalProperty('recordDatabaseState', $file->getState());
+
+                // if the file exists on disk then overrule the index data with the file information
+                if (isset($localFiles[$localFileName])) {
+                    $localProperties = $file->getLocalProperties();
+                    ArrayUtility::mergeRecursiveWithOverrule($localProperties, $localFiles[$localFileName], false);
+                } else {
+                    // truncate the indexed values if the represented file does not exist on disk
+                    $localProperties = array();
+                }
+                // do it again for foreign
+                if (isset($remoteFiles[$foreignFileName])) {
+                    $foreignProperties = $file->getLocalProperties();
+                    ArrayUtility::mergeRecursiveWithOverrule($foreignProperties, $remoteFiles[$foreignFileName], false);
+                } else {
+                    $foreignProperties = array();
+                }
+
+                $file->setLocalProperties($localProperties);
+                $file->setForeignProperties($foreignProperties);
+                $file->setDirtyProperties()->calculateState();
+
+                // mark the file state as desired publishing action for the PhysicalFilePublisherAnomaly.
+                $file->addAdditionalProperty('isAuthoritative', true);
+            }
+        }
+        return $records;
     }
 }

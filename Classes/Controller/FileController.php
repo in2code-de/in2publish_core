@@ -99,10 +99,17 @@ class FileController extends AbstractController
             list($identifier) = GeneralUtility::trimExplode(',', $identifier);
         }
 
-        $record = $this
-            ->objectManager
-            ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
-            ->makeInstance($storage . ':/' . ltrim(dirname($identifier), '/'));
+        if (false === (bool)ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
+            $record = $this
+                ->objectManager
+                ->get('In2code\\In2publishCore\\Domain\\Factory\\IndexingFolderRecordFactory')
+                ->makeInstance($storage . ':/' . ltrim(dirname($identifier), '/'));
+        } else {
+            $record = $this
+                ->objectManager
+                ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
+                ->makeInstance($storage . ':/' . ltrim(dirname($identifier), '/'));
+        }
 
         $relatedRecords = $record->getRelatedRecordByTableAndProperty('sys_file', 'identifier', $identifier);
 

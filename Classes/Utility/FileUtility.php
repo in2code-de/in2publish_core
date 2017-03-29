@@ -26,7 +26,7 @@ namespace In2code\In2publishCore\Utility;
  ***************************************************************/
 
 use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Resource\FileInterface;
+use TYPO3\CMS\Core\Resource\AbstractFile;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -105,13 +105,17 @@ class FileUtility
     }
 
     /**
-     * @param FileInterface $file
+     * @param AbstractFile $file
      * @return array
      */
-    public static function extractFileInformation(FileInterface $file)
+    public static function extractFileInformation(AbstractFile $file)
     {
         return array(
+            'uid' => $file->getUid(),
             'identifier' => $file->getIdentifier(),
+            'storage' => $file->getStorage()->getUid(),
+            'size' => $file->getSize() === null ? 0 : $file->getSize(),
+            'name' => $file->getName(),
         );
     }
 
