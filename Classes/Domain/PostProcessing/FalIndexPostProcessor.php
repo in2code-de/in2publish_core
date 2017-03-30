@@ -65,7 +65,7 @@ class FalIndexPostProcessor implements SingletonInterface
      */
     public function registerInstance(RecordFactory $recordFactory, RecordInterface $instance)
     {
-        if ('sys_file' === $instance->getTableName()) {
+        if (GeneralUtility::_GET('M') !== 'file_In2publishCoreM3' && 'sys_file' === $instance->getTableName()) {
             $this->registeredInstances[] = $instance;
         }
     }
