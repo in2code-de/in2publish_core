@@ -44,7 +44,7 @@ class FileController extends AbstractController
     public function indexAction()
     {
         $this->assignServerAndPublishingStatus();
-        if (false === (bool)ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
+        if (false === ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
             $record = $this
                 ->objectManager
                 ->get('In2code\\In2publishCore\\Domain\\Factory\\IndexingFolderRecordFactory')
@@ -99,7 +99,7 @@ class FileController extends AbstractController
             list($identifier) = GeneralUtility::trimExplode(',', $identifier);
         }
 
-        if (false === (bool)ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
+        if (false === ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
             $record = $this
                 ->objectManager
                 ->get('In2code\\In2publishCore\\Domain\\Factory\\IndexingFolderRecordFactory')
