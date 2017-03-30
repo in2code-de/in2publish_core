@@ -73,7 +73,10 @@ class PhysicalFilePublisher implements SingletonInterface
         if ('sys_file' === $table) {
             // create a combined identifier, which is unique among all files
             // and might hence be used as cache identifier or similar
-            $storage = $record->getMergedProperty('storage');
+            $storage = $record->getLocalProperty('storage');
+            if (!is_numeric($storage)) {
+                $storage = $record->getForeignProperty('storage');
+            }
             $identifier = $record->getMergedProperty('identifier');
 
             if (strpos($identifier, ',')) {
