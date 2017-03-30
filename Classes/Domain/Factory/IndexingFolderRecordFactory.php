@@ -158,7 +158,11 @@ class IndexingFolderRecordFactory
                     if (true === $fileExistsLocally) {
                         $localProperties = $file->getLocalProperties();
                         if (!empty($localProperties)) {
-                            ArrayUtility::mergeRecursiveWithOverrule($localProperties, $localFiles[$localFileName], false);
+                            ArrayUtility::mergeRecursiveWithOverrule(
+                                $localProperties,
+                                $localFiles[$localFileName],
+                                false
+                            );
                         }
                     } else {
                         // truncate the indexed values if the represented file does not exist on disk
