@@ -124,6 +124,24 @@ class RemoteStorage implements ResourceStorageInterface
     }
 
     /**
+     * @param int $storage
+     * @param string $identifier
+     * @return array
+     */
+    public function getFile($storage, $identifier)
+    {
+        if (!isset(static::$cache[$storage][$identifier][static::FILES_KEY][$identifier])) {
+            $result = $this->executeEnvelope(
+                EnvelopeDispatcher::CMD_STORAGE_GET_FILE,
+                array('storage' => $storage, 'identifier' => $identifier)
+            );
+
+            static::$cache[$storage][$identifier][static::FILES_KEY][$identifier] = $result;
+        }
+        return static::$cache[$storage][$identifier][static::FILES_KEY][$identifier];
+    }
+
+    /**
      * @param string $command
      * @param array $arguments
      * @return mixed

@@ -66,6 +66,7 @@ class EnvelopeDispatcher
     const CMD_STORAGE_HAS_FOLDER = 'getStorageHasFolder';
     const CMD_STORAGE_GET_FOLDERS_IN_FOLDER = 'getStorageGetFoldersInFolder';
     const CMD_STORAGE_GET_FILES_IN_FOLDER = 'getStorageGetFilesInFolder';
+    const CMD_STORAGE_GET_FILE = 'getStorageGetFile';
 
     /**
      * Limits the amount of files in a folder for pre fetching. If there are more than $prefetchLimit files in
@@ -487,5 +488,19 @@ class EnvelopeDispatcher
         $storage = $this->getStorage($request);
         $files = $storage->getFilesInFolder($storage->getFolder($request['identifier']));
         return FileUtility::extractFilesInformation($files);
+    }
+
+    /**
+     * @param array $request
+     * @return array
+     */
+    public function getStorageGetFile(array $request)
+    {
+        $storage = $this->getStorage($request);
+        if ($storage->hasFile($request['identifier'])) {
+            $file = $storage->getFile($request['identifier']);
+            return FileUtility::extractFileInformation($file);
+        }
+        return array();
     }
 }

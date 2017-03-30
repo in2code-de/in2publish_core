@@ -123,7 +123,7 @@ class IndexingFolderRecordFactory
      * @param RecordInterface[] $records
      * @return array
      */
-    protected function filterRecords(array $localFiles, array $remoteFiles, array $records)
+    public function filterRecords(array $localFiles, array $remoteFiles, array $records)
     {
         $filesOnDisk = array_unique(array_merge(array_keys($localFiles), array_keys($remoteFiles)));
 
