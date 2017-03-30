@@ -50,7 +50,11 @@ class IndexingFolderRecordFactory
         // determine current folder
         $resourceFactory = ResourceFactory::getInstance();
         try {
-            $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($dir);
+            if (null === $dir) {
+                $localFolder = $resourceFactory->getDefaultStorage()->getRootLevelFolder();
+            } else {
+                $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($dir);
+            }
         } catch (FolderDoesNotExistException $exception) {
             $localFolder = $resourceFactory->getStorageObject(substr($dir, 0, strpos($dir, ':')))->getRootLevelFolder();
         }
