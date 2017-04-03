@@ -1,5 +1,29 @@
 # In2publish Core Change Log
 
+5.5.0:
+
+- [DOCS] Add defaults, test data and documentation for disable auto_increment sync feature
+- [TASK] Raise TYPO3 compatibility to match 8 LTS
+- [BUGFIX] Prevent duplicate file indexing via slot
+- [BUGFIX] Prefer local storage for file publishing
+- [FEATURE] Enable File PostProcessing for reserveSysFileUids disabled
+- [BUGFIX] Check for explicit disabled reserveSysFileUids feature
+- [BUGFIX] Select correct default folder when nothing was selected
+- [CODESTYLE] Chop down line exceeding method call
+- [FEATURE] Automatically remove duplicate sys_file indices and support renaming
+- [CLEANUP] Remove redundant setting of a storage uid
+- [FEATURE] Set publishing relevant information for files and make them publishable
+- [FEATURE] Implement index based file list diff
+- [DOCS] Enhance FAQs
+- [DOCS] Add a note about UTF8filesystem must be false (fixes #15)
+- [CLEANUP] Replace ViewArrayViewHelper with cores debugging viewhelper (fixes #18)
+- [TEST] Add unit tests for new REDIRECT_IN2PUBLISH_CONTEXT support
+- [FEATURE] Support REDIRECT_IN2PUBLISH_CONTEXT environment variable (fixes #12)
+- [TEST] Also mock isConnected and connectDB for DB related tests
+- [DOCS] Remove enterprise version tables from example config and docs (fixes #16)
+- [TASK] Always initialize the local database connection (fixes #14)
+- [BUGFIX] Limit automatically prefetching files on folderExists call
+
 5.4.1:
 
 - [TYPO] Fix "installtion" in german warning label
