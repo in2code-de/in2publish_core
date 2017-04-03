@@ -84,6 +84,7 @@ class ConfigurationDefinitionProvider implements SingletonInterface
                     'resolvePageRelations' => 'boolean',
                     'simpleOverviewAndAjax' => 'boolean',
                     'fal' => array(
+                        'reserveSysFileUids' => 'boolean',
                         'reclaimSysFileEntries' => 'boolean',
                         'autoRepairFolderHash' => 'boolean',
                         'mergeSysFileByIdentifier' => 'boolean',

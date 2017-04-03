@@ -16,6 +16,7 @@
 |factory.maximumPageRecursion|int|3|Depth of pages to fetch in hierarchy|
 |factory.maximumContentRecursion|int|6|Maximum number of relations in one relation chain. For example: a value of "3" would stop after `tt_content` > `sys_file_reference` > `sys_file`. Therefor `sys_file_metadata` will not be included. |
 |factory.maximumOverallRecursion|int|12|Maximum number of instance creation recursion. Minimum: maximumPageRecursion + maximumContentRecursion. Will be ignored if lower.|
+|factory.reserveSysFileUids|bool|TRUE|Set this to FALSE if you take care of the auto_increment yourself (e.g. when having FAL uploads in the foreign frontend.|
 |factory.resolvePageRelations|bool|FALSE|Resolve properties of records which target records from "pages" table. Use with care: Related pages will be published through the relation chain, too. Content records are ALL records, even pages and MM Records.|
 |factory.simpleOverviewAndAjax|bool|FALSE|_cropped. See example file_|
 |factory.fal.reclaimSysFileEntries|bool|FALSE|_cropped. See example file_|
@@ -183,6 +184,16 @@ factory:
 
   # FAL related settings
   fal:
+
+    # Set this to FALSE if you take care of the auto_increment yourself (e.g. when having FAL uploads in the
+    # foreign frontend. If set to TRUE it will enable the auto_increment synchronization whenever
+    # the publish files module was opened.
+    # This enabled by default because it will lead to problems if you did not set the auto_increment to a high value
+    # before disabling this option.
+    #
+    # It is recommended to not disable it if you are rather sure that there are no file uploads on live.
+    # If you have uploads on live (which you should not) you must enable this or you will get problems with file references.
+    reserveSysFileUids: TRUE
 
     # This setting will enable a sys_file lookup based on the file identifier of files which were found in the storage
     # but not in the database. (Database files are found by their folder hash)
