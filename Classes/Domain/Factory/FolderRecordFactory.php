@@ -26,6 +26,8 @@ namespace In2code\In2publishCore\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
+use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
@@ -82,6 +84,13 @@ class FolderRecordFactory
      * @var FileIndexFactory
      */
     protected $fileIndexFactory = null;
+
+    /**
+     * Maximum number of files which are supported to exist in a single folder
+     *
+     * @var int
+     */
+    protected $threshold = 150;
 
     /**
      * FolderRecordFactory constructor.
@@ -843,5 +852,30 @@ class FolderRecordFactory
             return $identifierList;
         }
         return $identifierList;
+    }
+
+    /**
+     * @param array $files
+     * @param string $folderIdentifier
+     * @param string $side
+     * @throws TooManyForeignFilesException
+     * @throws TooManyLocalFilesException
+     */
+    protected function checkFileCount(array $files, $folderIdentifier, $side)
+    {
+        $count = count($files);
+        if ($count > $this->threshold) {
+            if ($side === 'foreign') {
+                throw new TooManyForeignFilesException(
+                    sprintf('The folder "%s" has too many files (%d)', $folderIdentifier, $count),
+                    1491310782
+                );
+            } else {
+                throw new TooManyLocalFilesException(
+                    sprintf('The folder "%s" has too many files (%d)', $folderIdentifier, $count),
+                    1491310787
+                );
+            }
+        }
     }
 }

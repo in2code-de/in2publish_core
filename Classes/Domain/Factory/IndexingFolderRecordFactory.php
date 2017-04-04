@@ -26,6 +26,8 @@ namespace In2code\In2publishCore\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
+use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\FileUtility;
@@ -42,8 +44,17 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class IndexingFolderRecordFactory
 {
     /**
+     * Maximum number of files which are supported to exist in a single folder
+     *
+     * @var int
+     */
+    protected $threshold = 150;
+
+    /**
      * @param string|null $dir Directory which is currently selected in the directory tree
      * @return RecordInterface
+     * @throws TooManyForeignFilesException
+     * @throws TooManyLocalFilesException
      */
     public function makeInstance($dir = null)
     {
@@ -73,6 +84,9 @@ class IndexingFolderRecordFactory
         $localSubFolders = FolderUtility::extractFoldersInformation($localFolder->getSubfolders());
         $remoteSubFolders = array();
         $localFiles = FileUtility::extractFilesInformation($localStorage->getFilesInFolder($localFolder));
+
+        $this->checkFileCount($localFiles, $folderIdentifier, 'local');
+
         $remoteFiles = array();
 
         // get the actual information from remote if the folder actually exists
@@ -81,6 +95,8 @@ class IndexingFolderRecordFactory
             $remoteSubFolders = $remoteStorage->getFoldersInFolder($storageUid, $folderIdentifier);
             $remoteFiles = $remoteStorage->getFilesInFolder($storageUid, $folderIdentifier);
         }
+
+        $this->checkFileCount($remoteFiles, $folderIdentifier, 'foreign');
 
         $rootFolder = GeneralUtility::makeInstance(
             'In2code\\In2publishCore\\Domain\\Model\\Record',
@@ -190,5 +206,30 @@ class IndexingFolderRecordFactory
             }
         }
         return $records;
+    }
+
+    /**
+     * @param array $files
+     * @param string $folderIdentifier
+     * @param string $side
+     * @throws TooManyForeignFilesException
+     * @throws TooManyLocalFilesException
+     */
+    protected function checkFileCount(array $files, $folderIdentifier, $side)
+    {
+        $count = count($files);
+        if ($count > $this->threshold) {
+            if ($side === 'foreign') {
+                throw new TooManyForeignFilesException(
+                    sprintf('The folder "%s" has too many files (%d)', $folderIdentifier, $count),
+                    1491308552
+                );
+            } else {
+                throw new TooManyLocalFilesException(
+                    sprintf('The folder "%s" has too many files (%d)', $folderIdentifier, $count),
+                    1491308555
+                );
+            }
+        }
     }
 }

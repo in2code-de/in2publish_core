@@ -394,6 +394,10 @@
 				<source>The selected file %s has been published to the foreign system.</source>
 				<target state="translated">Die Datei %s wurde erfolgreich publiziert.</target>
 			</trans-unit>
+			<trans-unit id="file_publishing.too_many_files">
+				<source>To folder %s contains too many files %sto process. The limit of files in a folder is 150 files per folder, but you should not have more than 100 files in a single folder.</source>
+				<target state="translated">Das Verzeichnis %s enthält zu viele Dateien %sum es zu verarbeiten. Das Dateilimit beträgt 150 Dateien pro Verzeichnis, es sollten jedoch generell nicht mehr als 100 Dateien in einem einzelnen Verzeichnis liegen.</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

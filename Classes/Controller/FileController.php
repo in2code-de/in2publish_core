@@ -27,6 +27,8 @@ namespace In2code\In2publishCore\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
+use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
@@ -38,25 +40,56 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
  */
 class FileController extends AbstractController
 {
+    const EXCEPTION_MESSAGE_PATTERN = '~The folder "(?P<folder>[\w\/\-\_]+)" has too many files \((?P<number>\d+)\)~';
+
     /**
      *
      */
     public function indexAction()
     {
         $this->assignServerAndPublishingStatus();
-        if (false === ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
-            $record = $this
-                ->objectManager
-                ->get('In2code\\In2publishCore\\Domain\\Factory\\IndexingFolderRecordFactory')
-                ->makeInstance(GeneralUtility::_GP('id'));
+        try {
+            if (false === ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
+                $record = $this
+                    ->objectManager
+                    ->get('In2code\\In2publishCore\\Domain\\Factory\\IndexingFolderRecordFactory')
+                    ->makeInstance(GeneralUtility::_GP('id'));
+            } else {
+                $record = $this
+                    ->objectManager
+                    ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
+                    ->makeInstance(GeneralUtility::_GP('id'));
+            }
+            $this->view->assign('record', $record);
+        } catch (TooManyLocalFilesException $exception) {
+            $this->displayTooManyFilesError($exception);
+        } catch (TooManyForeignFilesException $exception) {
+            $this->displayTooManyFilesError($exception);
+        }
+    }
+
+    /**
+     * @param \Exception $exception
+     */
+    protected function displayTooManyFilesError(\Exception $exception)
+    {
+        if (1 === preg_match(self::EXCEPTION_MESSAGE_PATTERN, $exception->getMessage(), $matches)) {
+            $folder = $matches['folder'];
+            // Do not remove the space at the end, because it can't
+            // be included dynamically in the label where this value is used!
+            $number = '(' . $matches['number'] . ') ';
         } else {
-            $record = $this
-                ->objectManager
-                ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
-                ->makeInstance(GeneralUtility::_GP('id'));
+            $folder = GeneralUtility::_GP('id');
+            $number = '';
         }
 
-        $this->view->assign('record', $record);
+        $arguments = array($folder, $number);
+
+        $this->addFlashMessage(
+            LocalizationUtility::translate('file_publishing.too_many_files', 'in2publish_core', $arguments),
+            LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
+            AbstractMessage::WARNING
+        );
     }
 
     /**
