@@ -279,7 +279,10 @@ class EnvelopeDispatcher
         $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
-        return call_user_func_array(array($driver, 'deleteFile'), $request);
+        if ($driver->fileExists($request['fileIdentifier'])) {
+            return $driver->deleteFile($request['fileIdentifier']);
+        }
+        return true;
     }
 
     /**
