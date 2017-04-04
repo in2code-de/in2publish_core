@@ -98,10 +98,14 @@ class FalIndexPostProcessor implements SingletonInterface
                 $foreignIdentifier = $foreignIdentifier !== '' ? $foreignIdentifier : $localIdentifier;
             }
 
-            $localFile = $storage->getFile($localIdentifier);
+            if ($storage->hasFile($localIdentifier)) {
+                $localFile = $storage->getFile($localIdentifier);
+                $localFileInfo = FileUtility::extractFileInformation($localFile);
+            } else {
+                $localFileInfo = array();
+            }
 
-            $localFileInfo = FileUtility::extractFileInformation($localFile);
-            $foreignFileInfo = $remoteStorage->getFile($storage->getUid(), $localFile->getIdentifier());
+            $foreignFileInfo = $remoteStorage->getFile($storage->getUid(), $foreignIdentifier);
 
             // do not use the return value since we only desire the record update of the file
             $ifrFactory->filterRecords(
