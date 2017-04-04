@@ -131,6 +131,47 @@ class IndexingFolderRecordFactory
     }
 
     /**
+     * Detects files which are located in other folders that the local one (e.g. the local folder got renamed)
+     * @param RecordInterface[] $records
+     * @param array $remoteFiles
+     *
+     * @return array
+     */
+    protected function updateForeignFilesByRecords(array $records, array $remoteFiles)
+    {
+        $remoteFolders = array();
+
+        foreach ($records as $record) {
+            if ($record->getState() === RecordInterface::RECORD_STATE_MOVED) {
+                $foreignIdentifier = $record->getForeignProperty('identifier');
+                $folder = dirname($foreignIdentifier);
+                if (!isset($remoteFolders[$folder])) {
+                    $remoteFolders[$folder] = array();
+                    $remoteFolders[$folder]['files'] = array();
+                    $remoteFolders[$folder]['storageUid'] = $record->getForeignProperty('storage');
+                }
+                $remoteFolders[$folder]['files'][] = $foreignIdentifier;
+            }
+        }
+
+        if (!empty($remoteFolders)) {
+            $remoteStorage = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\RemoteStorage');
+            foreach ($remoteFolders as $folder => $fileInfo) {
+                if ($remoteStorage->hasFolder($fileInfo['storageUid'], $folder)) {
+                    $filesInFolder = $remoteStorage->getFilesInFolder($fileInfo['storageUid'], $folder);
+                    foreach ($remoteFolders[$folder]['files'] as $identifier) {
+                        if (isset($filesInFolder[$identifier])) {
+                            $remoteFiles[$identifier] = $filesInFolder[$identifier];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $remoteFiles;
+    }
+
+    /**
      * Remove properties from a side where a file does not exist
      * or remove the whole record from the list if there is no file at all
      *
@@ -145,6 +186,8 @@ class IndexingFolderRecordFactory
 
         /** @var RecordInterface[] $touchedEntries */
         $touchedEntries = array();
+
+        $remoteFiles = $this->updateForeignFilesByRecords($records, $remoteFiles);
 
         foreach ($records as $index => $file) {
             $localFileName = $file->hasLocalProperty('identifier') ? $file->getLocalProperty('identifier') : '';
