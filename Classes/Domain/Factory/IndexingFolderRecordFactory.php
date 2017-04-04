@@ -154,7 +154,8 @@ class IndexingFolderRecordFactory
             if (!in_array($localFileName, $filesOnDisk) && !in_array($foreignFileName, $filesOnDisk)) {
                 unset($records[$index]);
             } else {
-                if ($file->getState() === RecordInterface::RECORD_STATE_MOVED) {
+                $recordGotMoved = $file->getState() === RecordInterface::RECORD_STATE_MOVED;
+                if ($recordGotMoved) {
                     $fileInfoIndex = $localFileName;
                 } else {
                     $fileInfoIndex = $localFileName !== '' ? $localFileName : $foreignFileName;
