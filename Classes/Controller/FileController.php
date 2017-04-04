@@ -74,16 +74,12 @@ class FileController extends AbstractController
     protected function displayTooManyFilesError(\Exception $exception)
     {
         if (1 === preg_match(self::EXCEPTION_MESSAGE_PATTERN, $exception->getMessage(), $matches)) {
-            $folder = $matches['folder'];
-            // Do not remove the space at the end, because it can't
+            // Do not remove the space at the end of ') ', because it can't
             // be included dynamically in the label where this value is used!
-            $number = '(' . $matches['number'] . ') ';
+            $arguments = array($matches['folder'], '(' . $matches['number'] . ') ');
         } else {
-            $folder = GeneralUtility::_GP('id');
-            $number = '';
+            $arguments = array(GeneralUtility::_GP('id'), '');
         }
-
-        $arguments = array($folder, $number);
 
         $this->addFlashMessage(
             LocalizationUtility::translate('file_publishing.too_many_files', 'in2publish_core', $arguments),
