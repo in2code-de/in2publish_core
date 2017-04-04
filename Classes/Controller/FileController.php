@@ -40,7 +40,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
  */
 class FileController extends AbstractController
 {
-    const EXCEPTION_MESSAGE_PATTERN = '~The folder "(?P<folder>[\w\/\-\_]+)" has too many files \((?P<number>\d+)\)~';
+    const EXCEPTION_MESSAGE_PATTERN = '~The folder "(?P<folder>[^"]+)" has too many files(?: \((?P<number>\d+)\))?~';
 
     /**
      *
