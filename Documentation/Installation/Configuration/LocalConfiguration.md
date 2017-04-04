@@ -157,6 +157,7 @@ ignoreFieldsForDifferenceView:
     - modification_date
     - creation_date
     - tstamp
+    - last_indexed
 
 # factory settings (configuration about building relations in in2publish)
 factory:
