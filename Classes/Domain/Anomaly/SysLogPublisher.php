@@ -103,7 +103,7 @@ class SysLogPublisher
             if (!empty($sysLogRow)) {
                 $this->foreignDatabase->exec_INSERTquery($this->sysLogTableName, $sysLogRow);
                 $this->logger->notice(
-                    'sys_log table automaticly published',
+                    'sys_log table automatically published',
                     array('tableName' => $tableName, 'identifier' => $record->getIdentifier())
                 );
             }

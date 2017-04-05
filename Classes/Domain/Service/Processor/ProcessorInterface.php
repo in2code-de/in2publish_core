@@ -71,7 +71,7 @@ interface ProcessorInterface
     public function preProcess(array $config);
 
     /**
-     * Returns an array of $field => $resons that explains why canPreProcess returned false.
+     * Returns an array of $field => $reasons that explains why canPreProcess returned false.
      *
      * @return array
      */
