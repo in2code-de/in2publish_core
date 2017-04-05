@@ -534,7 +534,7 @@ class Record implements RecordInterface
      * @param string $table
      * @param string $property
      * @param mixed $value
-     * @return Record[]
+     * @return RecordInterface[]
      */
     public function getRelatedRecordByTableAndProperty($table, $property, $value)
     {

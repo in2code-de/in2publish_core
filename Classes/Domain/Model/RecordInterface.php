@@ -236,4 +236,11 @@ interface RecordInterface
      */
     public function foreignRecordExists();
 
+    /**
+     * @param string $table
+     * @param string $property
+     * @param mixed $value
+     * @return RecordInterface[]
+     */
+    public function getRelatedRecordByTableAndProperty($table, $property, $value);
 }
