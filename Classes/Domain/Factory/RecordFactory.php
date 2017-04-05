@@ -57,7 +57,7 @@ class RecordFactory
      *  2. Index: UID
      *  3. Value: Record Object
      *
-     * @var array
+     * @var RecordInterface[][]
      */
     protected $runtimeCache = array();
 
@@ -180,7 +180,7 @@ class RecordFactory
      * @param array $localProperties Properties of the record from local Database
      * @param array $foreignProperties Properties of the record from foreign Database
      * @param array $additionalProperties array of not persisted properties
-     * @return Record
+     * @return RecordInterface
      */
     public function makeInstance(
         CommonRepository $commonRepository,
@@ -292,11 +292,11 @@ class RecordFactory
     }
 
     /**
-     * @param Record $record
+     * @param RecordInterface $record
      * @param CommonRepository $commonRepository
-     * @return Record
+     * @return RecordInterface
      */
-    protected function findRelatedRecordsForContentRecord(Record $record, CommonRepository $commonRepository)
+    protected function findRelatedRecordsForContentRecord(RecordInterface $record, CommonRepository $commonRepository)
     {
         if ($this->relatedRecordsDepth < $this->maximumContentRecursion) {
             $this->relatedRecordsDepth++;
@@ -313,7 +313,7 @@ class RecordFactory
     /**
      * @param Record $record
      * @param CommonRepository $commonRepository
-     * @return Record
+     * @return RecordInterface
      */
     protected function findRelatedRecordsForPageRecord(Record $record, CommonRepository $commonRepository)
     {
@@ -373,13 +373,12 @@ class RecordFactory
         $hasBeenMoved = false;
         // 1. it was created already
         if (!empty($this->runtimeCache[$tableName][$identifier]) && !in_array($tableName, $this->excludedTableNames)) {
-            /** @var Record $record */
             $record = $this->runtimeCache[$tableName][$identifier];
             // consequence of 5.
             if ($record->getState() === RecordInterface::RECORD_STATE_MOVED) {
                 $localPid = $record->getLocalProperty('pid');
                 $parentRecord = $record->getParentRecord();
-                if ($parentRecord instanceof Record) {
+                if ($parentRecord instanceof RecordInterface) {
                     // if the parent is set correctly
                     if ((int)$parentRecord->getIdentifier() === (int)$localPid) {
                         $record->lockParentRecord();
