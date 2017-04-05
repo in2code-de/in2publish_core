@@ -243,4 +243,15 @@ interface RecordInterface
      * @return RecordInterface[]
      */
     public function getRelatedRecordByTableAndProperty($table, $property, $value);
+
+    /**
+     * @param RecordInterface $record
+     * @return mixed
+     */
+    public function addRelatedRecord(RecordInterface $record);
+
+    /**
+     * @return bool
+     */
+    public function isParentRecordLocked();
 }

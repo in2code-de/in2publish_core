@@ -557,10 +557,10 @@ class Record implements RecordInterface
      * adds a record to the related records, if parentRecord is unlocked
      * when parentRecord is locked nothing will happen
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @return void
      */
-    public function addRelatedRecord(Record $record)
+    public function addRelatedRecord(RecordInterface $record)
     {
         if (!$record->isParentRecordLocked()) {
             if (!($this->tableName === 'pages' && $record->getTableName() === 'pages')
