@@ -262,4 +262,10 @@ interface RecordInterface
      * @return bool
      */
     public function isChangedRecursive(array &$alreadyVisited = array());
+
+    /**
+     * @param Record $parentRecord
+     * @return Record
+     */
+    public function setParentRecord($parentRecord);
 }
