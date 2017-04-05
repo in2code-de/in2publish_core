@@ -251,6 +251,14 @@ interface RecordInterface
     public function addRelatedRecord(RecordInterface $record);
 
     /**
+     * Adds a bunch of records
+     *
+     * @param RecordInterface[] $relatedRecords
+     * @return RecordInterface
+     */
+    public function addRelatedRecords(array $relatedRecords);
+
+    /**
      * @return bool
      */
     public function isParentRecordLocked();
@@ -267,5 +275,5 @@ interface RecordInterface
      * @param Record $parentRecord
      * @return Record
      */
-    public function setParentRecord($parentRecord);
+    public function setParentRecord(RecordInterface $parentRecord);
 }

@@ -239,7 +239,6 @@ class Record implements RecordInterface
                     continue;
                 }
                 foreach ($relatedRecords as $relatedRecord) {
-                    /** @var $relatedRecord Record */
                     if ($relatedRecord->isChangedRecursive($alreadyVisited)) {
                         return self::RECORD_STATE_CHANGED;
                     }
@@ -463,7 +462,7 @@ class Record implements RecordInterface
 
     /**
      * @param array $additionalProperties
-     * @return Record
+     * @return RecordInterface
      */
     public function setAdditionalProperties(array $additionalProperties)
     {
@@ -496,7 +495,7 @@ class Record implements RecordInterface
     /**
      * @param $propertyName
      * @param $propertyValue
-     * @return Record
+     * @return RecordInterface
      */
     public function addAdditionalProperty($propertyName, $propertyValue)
     {
@@ -577,11 +576,11 @@ class Record implements RecordInterface
     /**
      * Just add without any tests
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param string $tableName
      * @return void
      */
-    public function addRelatedRecordRaw(Record $record, $tableName = 'pages')
+    public function addRelatedRecordRaw(RecordInterface $record, $tableName = 'pages')
     {
         $this->relatedRecords[$tableName][] = $record;
     }
@@ -589,12 +588,11 @@ class Record implements RecordInterface
     /**
      * Adds a bunch of records
      *
-     * @param array $relatedRecords
-     * @return Record
+     * @param RecordInterface[] $relatedRecords
+     * @return RecordInterface
      */
     public function addRelatedRecords(array $relatedRecords)
     {
-        /** @var Record $relatedRecord */
         foreach ($relatedRecords as $relatedRecord) {
             $this->addRelatedRecord($relatedRecord);
         }
@@ -651,10 +649,10 @@ class Record implements RecordInterface
     }
 
     /**
-     * @param Record $parentRecord
-     * @return Record
+     * @param RecordInterface $parentRecord
+     * @return RecordInterface
      */
-    public function setParentRecord($parentRecord)
+    public function setParentRecord(RecordInterface $parentRecord)
     {
         if ($this->parentRecordIsLocked === false) {
             $this->parentRecord = $parentRecord;
