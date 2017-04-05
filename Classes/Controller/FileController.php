@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Controller;
 
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
@@ -48,23 +49,11 @@ class FileController extends AbstractController
     public function indexAction()
     {
         $this->assignServerAndPublishingStatus();
-        try {
-            if (false === ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
-                $record = $this
-                    ->objectManager
-                    ->get('In2code\\In2publishCore\\Domain\\Factory\\IndexingFolderRecordFactory')
-                    ->makeInstance(GeneralUtility::_GP('id'));
-            } else {
-                $record = $this
-                    ->objectManager
-                    ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
-                    ->makeInstance(GeneralUtility::_GP('id'));
-            }
+
+        $record = $this->tryToGetFolderInstance(GeneralUtility::_GP('id'));
+
+        if (null !== $record) {
             $this->view->assign('record', $record);
-        } catch (TooManyLocalFilesException $exception) {
-            $this->displayTooManyFilesError($exception);
-        } catch (TooManyForeignFilesException $exception) {
-            $this->displayTooManyFilesError($exception);
         }
     }
 
@@ -128,36 +117,28 @@ class FileController extends AbstractController
             list($identifier) = GeneralUtility::trimExplode(',', $identifier);
         }
 
-        if (false === ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
-            $record = $this
-                ->objectManager
-                ->get('In2code\\In2publishCore\\Domain\\Factory\\IndexingFolderRecordFactory')
-                ->makeInstance($storage . ':/' . ltrim(dirname($identifier), '/'));
-        } else {
-            $record = $this
-                ->objectManager
-                ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
-                ->makeInstance($storage . ':/' . ltrim(dirname($identifier), '/'));
+        $record = $this->tryToGetFolderInstance($storage . ':/' . ltrim(dirname($identifier), '/'));
+
+        if (null !== $record) {
+            $relatedRecords = $record->getRelatedRecordByTableAndProperty('sys_file', 'identifier', $identifier);
+
+            if (0 === ($recordsCount = count($relatedRecords))) {
+                throw new \RuntimeException('Did not find any record matching the publishing arguments', 1475656572);
+            } elseif (1 === $recordsCount) {
+                $relatedRecord = reset($relatedRecords);
+            } elseif (isset($relatedRecords[$uid])) {
+                $relatedRecord = $relatedRecords[$uid];
+            } else {
+                throw new \RuntimeException('Did not find an exact record match for the given arguments', 1475588793);
+            }
+
+            CommonRepository::getDefaultInstance('sys_file')->publishRecordRecursive($relatedRecord);
+
+            $this->addFlashMessage(
+                LocalizationUtility::translate('file_publishing.file', 'in2publish_core', array($identifier)),
+                LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
+            );
         }
-
-        $relatedRecords = $record->getRelatedRecordByTableAndProperty('sys_file', 'identifier', $identifier);
-
-        if (0 === ($recordsCount = count($relatedRecords))) {
-            throw new \RuntimeException('Did not find any record that matches the publishing arguments', 1475656572);
-        } elseif (1 === $recordsCount) {
-            $relatedRecord = reset($relatedRecords);
-        } elseif (isset($relatedRecords[$uid])) {
-            $relatedRecord = $relatedRecords[$uid];
-        } else {
-            throw new \RuntimeException('Did not find an exact record match for the given arguments', 1475588793);
-        }
-
-        CommonRepository::getDefaultInstance('sys_file')->publishRecordRecursive($relatedRecord);
-
-        $this->addFlashMessage(
-            LocalizationUtility::translate('file_publishing.file', 'in2publish_core', array($identifier)),
-            LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
-        );
 
         $this->redirect('index');
     }
@@ -171,5 +152,32 @@ class FileController extends AbstractController
     public function toggleFilterStatusAndRedirectToIndexAction($filter)
     {
         $this->toggleFilterStatusAndRedirect('in2publish_filter_files_', $filter, 'index');
+    }
+
+    /**
+     * @param string $identifier CombinedIdentifier as FAL would use it
+     * @return RecordInterface|null The record or null if it can not be handled
+     */
+    protected function tryToGetFolderInstance($identifier)
+    {
+        try {
+            if (false === ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
+                $record = $this
+                    ->objectManager
+                    ->get('In2code\\In2publishCore\\Domain\\Factory\\IndexingFolderRecordFactory')
+                    ->makeInstance($identifier);
+            } else {
+                $record = $this
+                    ->objectManager
+                    ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
+                    ->makeInstance($identifier);
+            }
+            return $record;
+        } catch (TooManyLocalFilesException $exception) {
+            $this->displayTooManyFilesError($exception);
+        } catch (TooManyForeignFilesException $exception) {
+            $this->displayTooManyFilesError($exception);
+        }
+        return null;
     }
 }
