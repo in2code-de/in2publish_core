@@ -1453,7 +1453,16 @@ class CommonRepository extends BaseRepository
                 '',
                 'uid_local,uid_foreign'
             ),
-            $this->findPropertiesByProperty($this->foreignDatabase, 'uid_local', $recordIdentifier, '','','','','uid_local,uid_foreign')
+            $this->findPropertiesByProperty(
+                $this->foreignDatabase,
+                'uid_local',
+                $recordIdentifier,
+                '',
+                '',
+                '',
+                '',
+                'uid_local,uid_foreign'
+            )
         );
         $this->fetchOriginalRecordsForInlineRecord(
             $relationRecords,
