@@ -1,5 +1,37 @@
 # In2publish Core Change Log
 
+5.5.1:
+
+- [TYPO] Fix typo3 in warning label for folders with too many files
+- [COMMENT] Replace some words with better matches
+- [COMMENT] Add missing annotation for record in FalIndexPostProcessor::getStorage
+- [TYPO] Fix typo in SysLogPublisher::publishSysLog log notice message
+- [TYPO] Fix typo in EnvelopeDispatcher->prefetchLimit DocBlock
+- [REFACTOR] Replace all occurrences of Record with its interface in RecordFactory
+- [API] Add lockParentRecord to RecordInterface
+- [API] Add getColumnsTca, hasAdditionalPropertyand getPropertiesBySideIdentifier to RecordInterface
+- [CLEANUP] Remove unused import from FileIndexPostProcessor
+- [REFACTOR] Replcae all occurrences of Record with RecordInterface in DomainService
+- [API] Add addRelatedRecords to RecordInterface and add type hint to setParentRecord
+- [API] Add setParentRecord to RecordInterface
+- [API] Add isChangedRecursive to RecordInterface
+- [CODESTYLE] Chop down long method signatures from CommonRepository
+- [REFACTOR] Extract duplicate code to FileController::tryToGetFolderInstance
+- [REFACTOR] Replace all Record type hints and annotations in CommonRepository and ReplaceMarkerService
+- [API] Add methods addRelatedRecord and isParentRecordLocked to RecordInterface
+- [API] Add getRelatedRecordByTableAndProperty to RecordInterface
+- [REFACTOR] Replace all type annotations of Record with RecordInterface in FolderRecordFactory
+- [API] Add local-/foreignRecordExists to RecordInterface
+- [BUGFIX] Update branch alias version in composer.json
+- [BUGFIX] Detect files on the remote file system after renaming folders
+- [REFACTOR] Extract variable that indicates if a files record got renamed
+- [REFACTOR] Remove unnecessary argument variables
+- [BUGFIX] Enhance file limit excess exception message pattern
+- [BUGFIX] Respect file identifier context when PostProcessing
+- [BUGFIX] Check if file exists in storage before deleting it
+- [BUGFIX] Display warning if a folder contains too many files to be processed for the publish files module
+- [TASK] Add sys_file.last_indexed to default excluded fields configuration
+
 5.5.0:
 
 - [DOCS] Add defaults, test data and documentation for disable auto_increment sync feature
