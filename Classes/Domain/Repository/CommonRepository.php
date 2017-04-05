@@ -1164,8 +1164,12 @@ class CommonRepository extends BaseRepository
      * @param string $flexFormData
      * @return array
      */
-    protected function getFileAndPathNames(array $columnConfiguration, RecordInterface $record, $propertyName, $flexFormData)
-    {
+    protected function getFileAndPathNames(
+        array $columnConfiguration,
+        RecordInterface $record,
+        $propertyName,
+        $flexFormData
+    ) {
         $uploadFolder = FileUtility::getCleanFolder($columnConfiguration['uploadfolder']);
         if (empty($flexFormData)) {
             $fileNames = GeneralUtility::trimExplode(',', $record->getLocalProperty($propertyName), true);
@@ -1616,8 +1620,11 @@ class CommonRepository extends BaseRepository
      * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
      * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException
      */
-    protected function publishRecordRecursiveInternal(RecordInterface $record, array $excludedTables, array $alreadyVisited)
-    {
+    protected function publishRecordRecursiveInternal(
+        RecordInterface $record,
+        array $excludedTables,
+        array $alreadyVisited
+    ) {
         $tableName = $record->getTableName();
 
         if (!empty($alreadyVisited[$tableName])) {
