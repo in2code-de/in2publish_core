@@ -272,8 +272,25 @@ interface RecordInterface
     public function isChangedRecursive(array &$alreadyVisited = array());
 
     /**
-     * @param Record $parentRecord
+     * @param RecordInterface $parentRecord
      * @return Record
      */
     public function setParentRecord(RecordInterface $parentRecord);
+
+    /**
+     * @return mixed
+     */
+    public function getColumnsTca();
+
+    /**
+     * @param string $propertyName
+     * @return bool
+     */
+    public function hasAdditionalProperty($propertyName);
+
+    /**
+     * @param string $side
+     * @return array
+     */
+    public function getPropertiesBySideIdentifier($side);
 }
