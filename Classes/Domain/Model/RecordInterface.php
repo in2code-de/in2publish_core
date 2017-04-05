@@ -293,4 +293,11 @@ interface RecordInterface
      * @return array
      */
     public function getPropertiesBySideIdentifier($side);
+
+    /**
+     * Prohibits changing this records parent record (prohibits changing parents of moved records)
+     *
+     * @return void
+     */
+    public function lockParentRecord();
 }
