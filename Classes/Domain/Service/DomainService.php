@@ -27,7 +27,7 @@ namespace In2code\In2publishCore\Domain\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -46,12 +46,12 @@ class DomainService
     /**
      * Get domain from root line without trailing slash
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param string $stagingLevel "local" or "foreign"
      * @param bool $addProtocol
      * @return string
      */
-    public function getFirstDomain(Record $record, $stagingLevel = self::LEVEL_LOCAL, $addProtocol = true)
+    public function getFirstDomain(RecordInterface $record, $stagingLevel = self::LEVEL_LOCAL, $addProtocol = true)
     {
         switch ($record->getTableName()) {
             case 'pages':
@@ -79,17 +79,17 @@ class DomainService
     /**
      * Find first domain record of related children records
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param string $stagingLevel
      * @return string
      */
-    protected function getFirstDomainInRootLineFromRelatedRecords(Record $record, $stagingLevel)
+    protected function getFirstDomainInRootLineFromRelatedRecords(RecordInterface $record, $stagingLevel)
     {
         $relatedRecords = $record->getRelatedRecords();
         $domainRecordValues = array();
         if (!empty($relatedRecords[self::TABLE_NAME])) {
             foreach ($relatedRecords[self::TABLE_NAME] as $relatedDomainRecord) {
-                /** @var Record $relatedDomainRecord */
+                /** @var RecordInterface $relatedDomainRecord */
                 $domainProperties = ObjectAccess::getProperty($relatedDomainRecord, $stagingLevel . 'Properties');
                 $domainRecordValues[$domainProperties['sorting']] = $domainProperties['domainName'];
             }
