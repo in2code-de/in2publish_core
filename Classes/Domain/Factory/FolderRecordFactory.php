@@ -28,7 +28,6 @@ namespace In2code\In2publishCore\Domain\Factory;
 
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
-use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
@@ -154,7 +153,7 @@ class FolderRecordFactory
      * I only work with drivers so i don't "accidentally" index files...
      *
      * @param string|null $identifier
-     * @return Record
+     * @return RecordInterface
      */
     public function makeInstance($identifier)
     {
@@ -257,8 +256,8 @@ class FolderRecordFactory
      *  These filters files and entries i do not consider, because they do not represent an actual file.
      *  Prefer $this->localDriver over $foreignDriver where applicable, because it will be faster.
      *
-     * @param Record[] $files
-     * @return Record[]
+     * @param RecordInterface[] $files
+     * @return RecordInterface[]
      */
     protected function filterFileRecords(array $files)
     {
@@ -366,7 +365,7 @@ class FolderRecordFactory
      * Builds a list of all index identifiers of local and foreign,
      * so files only existing on disk can be determined by diff-ing against this list
      *
-     * @param Record[] $files
+     * @param RecordInterface[] $files
      * @return array
      */
     protected function buildIndexedIdentifiersList(array $files)
@@ -423,8 +422,8 @@ class FolderRecordFactory
      * entries for all files found on exactly one or both disk and no database.
      *
      * @param array $onlyDiskIdentifiers
-     * @param Record[] $files
-     * @return Record[]
+     * @param RecordInterface[] $files
+     * @return RecordInterface[]
      */
     protected function convertAndAddOnlyDiskIdentifiersToFileRecords(array $onlyDiskIdentifiers, array $files)
     {
@@ -502,7 +501,7 @@ class FolderRecordFactory
     /**
      * @param string $identifier
      * @param int $depth
-     * @return Record
+     * @return RecordInterface
      */
     protected function makePhysicalFolderInstance($identifier, $depth)
     {
@@ -551,7 +550,7 @@ class FolderRecordFactory
     /**
      * @param array $diskIdentifiers
      * @param array $indexedIdentifiers
-     * @param Record[] $files
+     * @param RecordInterface[] $files
      */
     protected function fixIntersectingIdentifiers(array $diskIdentifiers, array $indexedIdentifiers, array $files)
     {
@@ -584,7 +583,7 @@ class FolderRecordFactory
      *
      * @param array $onlyDiskIdentifiers
      * @param $hashedIdentifier
-     * @param Record[] $files
+     * @param RecordInterface[] $files
      * @param string $side
      * @return array
      * @internal param DatabaseConnection $targetDatabase
@@ -635,8 +634,8 @@ class FolderRecordFactory
      * If the foreign sys_file was not referenced in the foreign's sys_file_reference table the the
      * UID of the foreign record can be overwritten to restore a consistent state.
      *
-     * @param Record[] $files
-     * @return Record[]
+     * @param RecordInterface[] $files
+     * @return RecordInterface[]
      */
     protected function mergeSysFileByIdentifier(array $files)
     {
@@ -721,10 +720,10 @@ class FolderRecordFactory
      *  (UIDs are different, identifier is the same, record is not temporary)
      *
      * @param array $identifierList
-     * @param Record $file
+     * @param RecordInterface $file
      * @return bool
      */
-    protected function isLocalIndexWithMatchingDuplicateIndexOnForeign(array $identifierList, Record $file)
+    protected function isLocalIndexWithMatchingDuplicateIndexOnForeign(array $identifierList, RecordInterface $file)
     {
         return null !== ($localIdentifier = $file->getLocalProperty('identifier'))
                && null !== ($localUid = $file->getLocalProperty('uid'))
@@ -739,7 +738,7 @@ class FolderRecordFactory
     /**
      * @param array $indexedIdentifiers
      * @param array $diskIdentifiers
-     * @param Record[] $files
+     * @param RecordInterface[] $files
      */
     protected function updateFilesWithMissingIndices(array $indexedIdentifiers, array $diskIdentifiers, array $files)
     {
