@@ -221,4 +221,19 @@ interface RecordInterface
      * @return RecordInterface Returns always itself
      */
     public function removeRelatedRecord(RecordInterface $record);
+
+    /**
+     * Check if there is a local record
+     *
+     * @return bool
+     */
+    public function localRecordExists();
+
+    /**
+     * Check if there is a foreign record
+     *
+     * @return bool
+     */
+    public function foreignRecordExists();
+
 }
