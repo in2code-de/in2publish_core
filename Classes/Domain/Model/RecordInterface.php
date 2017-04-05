@@ -254,4 +254,12 @@ interface RecordInterface
      * @return bool
      */
     public function isParentRecordLocked();
+
+    /**
+     * Returns if this record or children record has changed in any way if added or changed or deleted
+     *
+     * @param array $alreadyVisited
+     * @return bool
+     */
+    public function isChangedRecursive(array &$alreadyVisited = array());
 }
