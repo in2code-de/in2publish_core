@@ -70,7 +70,7 @@ class EnvelopeDispatcher
 
     /**
      * Limits the amount of files in a folder for pre fetching. If there are more than $prefetchLimit files in
-     * the selected folder they will not be processed when not requested explicitely.
+     * the selected folder they will not be processed when not requested explicitly.
      *
      * @var int
      */
