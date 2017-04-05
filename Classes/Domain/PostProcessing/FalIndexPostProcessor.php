@@ -117,6 +117,7 @@ class FalIndexPostProcessor implements SingletonInterface
     }
 
     /**
+     * @param RecordInterface $record
      * @return ResourceStorage
      */
     protected function getStorage(RecordInterface $record)
