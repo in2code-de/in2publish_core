@@ -174,7 +174,7 @@ class FakeRecordFactory
     }
 
     /**
-     * Get all page identifiers from subpages
+     * Get all page identifiers from sub pages
      *
      * @param int $identifier
      * @return array

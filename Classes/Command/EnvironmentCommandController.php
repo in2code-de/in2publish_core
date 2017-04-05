@@ -41,7 +41,7 @@ class EnvironmentCommandController extends AbstractCommandController
      *  and also in their related sys_file records. German umlauts will be replaced (ä => ae).
      *  Other not allowed characters will be substituted with "_"
      *
-     * @param string $fileStoragePath Startfolder where to start the substitution
+     * @param string $fileStoragePath Folder where to start the substitution
      * @param boolean $dryRun Test how many records/files could be rewritten before doing it (pls use CLI for output)
      * @return void
      */
@@ -64,7 +64,7 @@ class EnvironmentCommandController extends AbstractCommandController
      *  and also in their related sys_file records. German umlauts will be replaced (ä => ae).
      *  Other not allowed characters will be substituted with "_"
      *
-     * @param string $fileStoragePath Startfolder where to start the substitution
+     * @param string $fileStoragePath Folder where to start the substitution
      * @param boolean $dryRun Test how many records/files could be rewritten before doing it (pls use CLI for output)
      * @return void
      */
