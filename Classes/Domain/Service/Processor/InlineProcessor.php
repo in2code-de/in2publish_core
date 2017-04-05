@@ -34,6 +34,7 @@ class InlineProcessor extends AbstractProcessor
     const FOREIGN_FIELD = 'foreign_field';
     const FOREIGN_MATCH_FIELDS = 'foreign_match_fields';
     const FOREIGN_TABLE_FIELD = 'foreign_table_field';
+    const MM = 'MM';
 
     /**
      * @var bool
@@ -59,5 +60,20 @@ class InlineProcessor extends AbstractProcessor
     protected $allowed = array(
         self::FOREIGN_MATCH_FIELDS,
         self::FOREIGN_TABLE_FIELD,
+        self::MM
     );
+
+    /**
+     * @param array $config
+     * @return bool
+     */
+    public function canPreProcess(array $config)
+    {
+        parent::canPreProcess($config);
+        if (isset($this->lastReasons[self::FOREIGN_FIELD]) && array_key_exists(self::MM, $config)) {
+            unset($this->lastReasons[self::FOREIGN_FIELD]);
+        }
+
+        return empty($this->lastReasons);
+    }
 }
