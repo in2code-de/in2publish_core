@@ -300,7 +300,7 @@
 				<source>The selected file %s has been published to the foreign system.</source>
 			</trans-unit>
 			<trans-unit id="file_publishing.too_many_files">
-				<source>To folder %s contains too many files %sto process. The limit of files in a folder is 150 files per folder, but you should not have more than 100 files in a single folder.</source>
+				<source>The folder %s contains too many files %sto process. The limit of files in a folder is 150 files per folder, but you should not have more than 100 files in a single folder.</source>
 			</trans-unit>
 		</body>
 	</file>
