@@ -27,7 +27,7 @@ namespace In2code\In2publishCore\Domain\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
@@ -71,11 +71,11 @@ class ReplaceMarkersService
      * If a Marker could not be replaced a Log is written.
      * This should, however, not be needed.
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param string $string
      * @return string
      */
-    public function replaceMarkers(Record $record, $string)
+    public function replaceMarkers(RecordInterface $record, $string)
     {
         if (strpos($string, '#') !== false) {
             $string = $this->replaceRecFieldMarker($record, $string);
@@ -88,11 +88,11 @@ class ReplaceMarkersService
     /**
      * Replace ###REC_FIELD_fieldname### with it's value
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param string $string
      * @return string
      */
-    protected function replaceRecFieldMarker(Record $record, $string)
+    protected function replaceRecFieldMarker(RecordInterface $record, $string)
     {
         if (strstr($string, '###REC_FIELD_')) {
             $string = preg_replace_callback(
@@ -114,11 +114,11 @@ class ReplaceMarkersService
     /**
      * Replace default marker names
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param $string
      * @return mixed
      */
-    protected function replaceGeneralMarkers(Record $record, $string)
+    protected function replaceGeneralMarkers(RecordInterface $record, $string)
     {
         if (false !== strpos($string, '###CURRENT_PID###')) {
             if (null !== ($currentPid = $this->getCurrentRecordPageId($record))) {
@@ -186,10 +186,10 @@ class ReplaceMarkersService
     }
 
     /**
-     * @param Record $record
+     * @param RecordInterface $record
      * @return mixed
      */
-    protected function getCurrentRecordPageId(Record $record)
+    protected function getCurrentRecordPageId(RecordInterface $record)
     {
         return ($record->hasLocalProperty('pid') ?
             $record->getLocalProperty('pid') : $record->getForeignProperty('pid'));

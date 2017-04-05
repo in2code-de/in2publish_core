@@ -27,7 +27,6 @@ namespace In2code\In2publishCore\Domain\Repository;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -146,7 +145,7 @@ class CommonRepository extends BaseRepository
      *
      * @param int $identifier
      * @param string $tableName
-     * @return Record
+     * @return RecordInterface
      */
     public function findByIdentifier($identifier, $tableName = null)
     {
@@ -168,7 +167,7 @@ class CommonRepository extends BaseRepository
      *
      * @param string $propertyName
      * @param mixed $propertyValue
-     * @return Record[]
+     * @return RecordInterface[]
      */
     public function findByProperty($propertyName, $propertyValue)
     {
@@ -193,7 +192,7 @@ class CommonRepository extends BaseRepository
      * @param bool $simulateRoot Simulate an existent root record to prevent filePostProcessing
      *  in the RecordFactory for each single Record
      *
-     * @return Record[]
+     * @return RecordInterface[]
      */
     public function findByProperties(array $properties, $simulateRoot = false)
     {
@@ -311,7 +310,7 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
-     * @return Record[]
+     * @return RecordInterface[]
      */
     protected function convertPropertyArraysToRecords(array $localProperties, array $foreignProperties)
     {
@@ -372,11 +371,11 @@ class CommonRepository extends BaseRepository
      * Records which relate on the given Record are not included,
      * they will have $record as their related record (from the other side)
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param array $excludedTableNames
-     * @return Record
+     * @return RecordInterface
      */
-    public function enrichRecordWithRelatedRecords(Record $record, array $excludedTableNames)
+    public function enrichRecordWithRelatedRecords(RecordInterface $record, array $excludedTableNames)
     {
         if ($this->shouldSkipSearchingForRelatedRecords($record)) {
             return $record;
@@ -515,11 +514,11 @@ class CommonRepository extends BaseRepository
      * finds and adds related records to pages. this is a special case, because any
      * related Record is found by its pid
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param array $excludedTableNames
-     * @return Record
+     * @return RecordInterface
      */
-    public function enrichPageRecord(Record $record, array $excludedTableNames)
+    public function enrichPageRecord(RecordInterface $record, array $excludedTableNames)
     {
         if ($this->shouldSkipEnrichingPageRecord($record)) {
             return $record;
@@ -538,11 +537,11 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @param Record $record
+     * @param RecordInterface $record
      * @param array $columnConfiguration
      * @return string
      */
-    protected function getFlexFormDefinitionSource(Record $record, array $columnConfiguration)
+    protected function getFlexFormDefinitionSource(RecordInterface $record, array $columnConfiguration)
     {
         $dsArray = $columnConfiguration['ds'];
         $pointerFields = GeneralUtility::trimExplode(',', $columnConfiguration['ds_pointerField']);
@@ -613,11 +612,11 @@ class CommonRepository extends BaseRepository
     /**
      * Get flexform configuration from file or reference
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param array $columnConfiguration
      * @return array|mixed
      */
-    protected function getFlexFormDefinition(Record $record, array $columnConfiguration)
+    protected function getFlexFormDefinition(RecordInterface $record, array $columnConfiguration)
     {
         $flexFormDefinition = array();
         $flexFormSource = $this->getFlexFormDefinitionSource($record, $columnConfiguration);
@@ -782,11 +781,11 @@ class CommonRepository extends BaseRepository
     /**
      * Get saved flexform from database
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param string $column
      * @return array
      */
-    protected function getLocalFlexFormDataFromRecord(Record $record, $column)
+    protected function getLocalFlexFormDataFromRecord(RecordInterface $record, $column)
     {
         /** @var FlexFormService $flexFormService */
         $flexFormService = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Service\\FlexFormService');
@@ -804,7 +803,7 @@ class CommonRepository extends BaseRepository
      * combines it with the FlexForm data array.
      * Currently only FlexForms using "select" and "group/db"-relations are supported
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param string $column
      * @param array $excludedTableNames
      * @param array $columnConfiguration
@@ -812,7 +811,7 @@ class CommonRepository extends BaseRepository
      * @throws \Exception
      */
     protected function fetchRelatedRecordsByFlexForm(
-        Record $record,
+        RecordInterface $record,
         $column,
         array $excludedTableNames,
         array $columnConfiguration
@@ -895,20 +894,20 @@ class CommonRepository extends BaseRepository
 
     /**
      * @param array $columnConfiguration
-     * @param Record $record
+     * @param RecordInterface $record
      * @param array $excludedTableNames
      * @param string $propertyName
      * @param array $overrideIdentifierArray
-     * @return Record[]
+     * @return RecordInterface[]
      */
     protected function fetchRelatedRecordsByGroupTypeDb(
         array $columnConfiguration,
-        Record $record,
+        RecordInterface $record,
         array $excludedTableNames,
         $propertyName,
         array $overrideIdentifierArray = array()
     ) {
-        /** @var Record[] $records */
+        /** @var RecordInterface[] $records */
         $records = array();
         $tableName = '';
         if (!empty($columnConfiguration['foreign_table'])) {
@@ -1017,7 +1016,7 @@ class CommonRepository extends BaseRepository
                     )
                 );
                 $this->tableName = $previousTable;
-                /** @var Record $relatedRecord */
+                /** @var RecordInterface $relatedRecord */
                 foreach ($records as $relatedRecord) {
                     if ($relatedRecord->hasLocalProperty('tablenames')) {
                         $originalTableName = $relatedRecord->hasLocalProperty('tablenames');
@@ -1082,7 +1081,7 @@ class CommonRepository extends BaseRepository
      * This method fetches records related by group.
      *
      * @param array $columnConfiguration
-     * @param Record $record
+     * @param RecordInterface $record
      * @param string $propertyName
      * @param array $excludedTableNames
      * @param string $flexFormData
@@ -1091,7 +1090,7 @@ class CommonRepository extends BaseRepository
      */
     protected function fetchRelatedRecordsByGroup(
         array $columnConfiguration,
-        Record $record,
+        RecordInterface $record,
         $propertyName,
         array $excludedTableNames,
         $flexFormData = ''
@@ -1120,17 +1119,17 @@ class CommonRepository extends BaseRepository
                     $this->identifierFieldName = 'identifier';
                     $record = $this->findByIdentifier($fileAndPathName);
                     $this->identifierFieldName = $previousIdFieldName;
-                    if ($record instanceof Record) {
+                    if ($record instanceof RecordInterface) {
                         $recordIdentifier = $record->getIdentifier();
 
                         // special case: the record exists only in the local database and the same uid
                         // is existent in the foreign table, but not with the given identifier
                         // Solution: Re-fetch the record by its UID, so we ensure we can overwrite the foreign record,
                         // given the relation is broken
-                        if (Record::RECORD_STATE_ADDED === $record->getState()) {
+                        if (RecordInterface::RECORD_STATE_ADDED === $record->getState()) {
                             $this->recordFactory->forgetCachedRecord($this->getTableName(), $recordIdentifier);
                             $record = $this->findByIdentifier($recordIdentifier);
-                            if (Record::RECORD_STATE_ADDED !== $record->getState()) {
+                            if (RecordInterface::RECORD_STATE_ADDED !== $record->getState()) {
                                 $this->logger->notice(
                                     'Detected broken record relation between local and foreign. '
                                     . 'The foreign\'s identifier differs from the local, but the uid is the same',
@@ -1160,12 +1159,12 @@ class CommonRepository extends BaseRepository
      * Get file and path (and index it)
      *
      * @param array $columnConfiguration
-     * @param Record $record
+     * @param RecordInterface $record
      * @param string $propertyName
      * @param string $flexFormData
      * @return array
      */
-    protected function getFileAndPathNames(array $columnConfiguration, Record $record, $propertyName, $flexFormData)
+    protected function getFileAndPathNames(array $columnConfiguration, RecordInterface $record, $propertyName, $flexFormData)
     {
         $uploadFolder = FileUtility::getCleanFolder($columnConfiguration['uploadfolder']);
         if (empty($flexFormData)) {
@@ -1187,7 +1186,7 @@ class CommonRepository extends BaseRepository
      * Fetches records by select relations. supports MM tables
      *
      * @param array $columnConfiguration
-     * @param Record $record
+     * @param RecordInterface $record
      * @param string $propertyName
      * @param array $excludedTableNames
      * @param bool $propertyNameOverridesRecordIdentifier
@@ -1195,7 +1194,7 @@ class CommonRepository extends BaseRepository
      */
     protected function fetchRelatedRecordsBySelect(
         array $columnConfiguration,
-        Record $record,
+        RecordInterface $record,
         $propertyName,
         array $excludedTableNames,
         $propertyNameOverridesRecordIdentifier = false
@@ -1263,13 +1262,13 @@ class CommonRepository extends BaseRepository
 
     /**
      * @param array $columnConfiguration
-     * @param Record $record
+     * @param RecordInterface $record
      * @param array $excludedTableNames
      * @return array
      */
     protected function fetchRelatedRecordsBySelectMm(
         array $columnConfiguration,
-        Record $record,
+        RecordInterface $record,
         array $excludedTableNames
     ) {
         $previousTableName = $this->replaceTableName($columnConfiguration['MM']);
@@ -1320,7 +1319,7 @@ class CommonRepository extends BaseRepository
             )
         );
 
-        /** @var Record $relationRecord */
+        /** @var RecordInterface $relationRecord */
         foreach ($records as $relationRecord) {
             $originalTableName = $columnConfiguration['foreign_table'];
             if (!in_array($originalTableName, $excludedTableNames)) {
@@ -1459,7 +1458,7 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @param Record[] $relationRecords
+     * @param RecordInterface[] $relationRecords
      * @param array $columnConfiguration
      * @param string $recordTableName
      * @param string $recordIdentifier
@@ -1473,7 +1472,7 @@ class CommonRepository extends BaseRepository
         $recordIdentifier,
         array $excludedTableNames
     ) {
-        /** @var Record $mmRecord */
+        /** @var RecordInterface $mmRecord */
         foreach ($relationRecords as $mmRecord) {
             $localUid = $mmRecord->getLocalProperty('uid_foreign');
             $foreignUid = $mmRecord->getForeignProperty('uid_foreign');
@@ -1508,7 +1507,7 @@ class CommonRepository extends BaseRepository
      *
      * @param int $identifier
      * @param string $tableName
-     * @return Record
+     * @return RecordInterface
      */
     protected function findByIdentifierInOtherTable($identifier, $tableName)
     {
@@ -1569,14 +1568,14 @@ class CommonRepository extends BaseRepository
      * Publishes the given Record and all related Records
      * where the related Record's tableName is not excluded
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param array $excludedTables
      * @param array $alreadyVisited
      * @return void
      * @throws \Exception
      */
     public function publishRecordRecursive(
-        Record $record,
+        RecordInterface $record,
         array $excludedTables = array('pages'),
         array $alreadyVisited = array()
     ) {
@@ -1611,13 +1610,13 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @param Record $record
+     * @param RecordInterface $record
      * @param array $excludedTables
      * @param array $alreadyVisited
      * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
      * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException
      */
-    protected function publishRecordRecursiveInternal(Record $record, array $excludedTables, array $alreadyVisited)
+    protected function publishRecordRecursiveInternal(RecordInterface $record, array $excludedTables, array $alreadyVisited)
     {
         $tableName = $record->getTableName();
 
@@ -1696,19 +1695,19 @@ class CommonRepository extends BaseRepository
      * Publishes all related Records of the given record if
      * their tableName is not included in $excludedTables
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param array $excludedTables
      * @param array $alreadyVisited
      * @return void
      */
     protected function publishRelatedRecordsRecursive(
-        Record $record,
+        RecordInterface $record,
         array $excludedTables,
         array $alreadyVisited = array()
     ) {
         foreach ($record->getRelatedRecords() as $tableName => $relatedRecords) {
             if (!in_array($tableName, $excludedTables) && is_array($relatedRecords)) {
-                /** @var Record $relatedRecord */
+                /** @var RecordInterface $relatedRecord */
                 foreach ($relatedRecords as $relatedRecord) {
                     $this->publishRecordRecursiveInternal($relatedRecord, $excludedTables, $alreadyVisited);
                 }
@@ -1722,7 +1721,7 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
-     * @return Record
+     * @return RecordInterface
      */
     protected function convertToRecord(array $localProperties, array $foreignProperties)
     {
@@ -1733,10 +1732,10 @@ class CommonRepository extends BaseRepository
      * Publishing Method: Executes an UPDATE query on the
      * foreign Database with all record properties
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @return void
      */
-    protected function updateForeignRecord(Record $record)
+    protected function updateForeignRecord(RecordInterface $record)
     {
         $previousTableName = $this->replaceTableName($record->getTableName());
         $this->updateRecord($this->foreignDatabase, $record->getIdentifier(), $record->getLocalProperties());
@@ -1747,10 +1746,10 @@ class CommonRepository extends BaseRepository
      * Publishing Method: Executes an INSERT query on the
      * foreign database with all record properties
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @return void
      */
-    protected function addForeignRecord(Record $record)
+    protected function addForeignRecord(RecordInterface $record)
     {
         $previousTableName = $this->replaceTableName($record->getTableName());
         $this->addRecord($this->foreignDatabase, $record->getLocalProperties());
@@ -1764,10 +1763,10 @@ class CommonRepository extends BaseRepository
      * Since this action is highly destructive, it
      * must be enabled in the Configuration
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @return void
      */
-    protected function deleteForeignRecord(Record $record)
+    protected function deleteForeignRecord(RecordInterface $record)
     {
         $this->logger->notice(
             'Deleting foreign record',
@@ -1850,10 +1849,10 @@ class CommonRepository extends BaseRepository
     /**
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @return bool
      */
-    protected function shouldSkipSearchingForRelatedRecords(Record $record)
+    protected function shouldSkipSearchingForRelatedRecords(RecordInterface $record)
     {
         return $this->getBooleanDecisionBySignal(__FUNCTION__, array('record' => $record));
     }
@@ -1861,13 +1860,13 @@ class CommonRepository extends BaseRepository
     /**
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param string $propertyName
      * @param array $columnConfiguration
      * @return bool
      */
     protected function shouldSkipSearchingForRelatedRecordsByProperty(
-        Record $record,
+        RecordInterface $record,
         $propertyName,
         array $columnConfiguration
     ) {
@@ -1882,10 +1881,10 @@ class CommonRepository extends BaseRepository
     /**
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @return bool
      */
-    protected function shouldSkipEnrichingPageRecord(Record $record)
+    protected function shouldSkipEnrichingPageRecord(RecordInterface $record)
     {
         return $this->getBooleanDecisionBySignal(__FUNCTION__, array('record' => $record));
     }
@@ -1893,11 +1892,11 @@ class CommonRepository extends BaseRepository
     /**
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param string $tableName
      * @return bool
      */
-    protected function shouldSkipSearchingForRelatedRecordByTable(Record $record, $tableName)
+    protected function shouldSkipSearchingForRelatedRecordByTable(RecordInterface $record, $tableName)
     {
         return $this->getBooleanDecisionBySignal(__FUNCTION__, array('record' => $record, 'tableName' => $tableName));
     }
@@ -1905,11 +1904,11 @@ class CommonRepository extends BaseRepository
     /**
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param string $tableName
      * @return bool
      */
-    protected function shouldSkipRecord(Record $record, $tableName)
+    protected function shouldSkipRecord(RecordInterface $record, $tableName)
     {
         return $this->getBooleanDecisionBySignal(__FUNCTION__, array('record' => $record, 'tableName' => $tableName));
     }
