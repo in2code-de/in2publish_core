@@ -69,7 +69,7 @@ class IdenticalDriverTest implements TestCaseInterface
             if ($storages['local'][$key]['driver'] !== $storages['foreign'][$key]['driver']) {
                 $affected[] = sprintf(
                     '[%d] %s (Local: %s; Foreign: %s)',
-                    $keys,
+                    $key,
                     $storages['local'][$key]['name'],
                     $storages['local'][$key]['driver'],
                     $storages['foreign'][$key]['driver']
