@@ -1,4 +1,5 @@
 <?php
+
 namespace In2code\In2publishCore\Domain\Service\Processor;
 
 /***************************************************************
@@ -50,7 +51,6 @@ class InlineProcessor extends AbstractProcessor
      * @var array
      */
     protected $required = array(
-        'the foreign_field tells the field where to find the uid pointing to the relation' => self::FOREIGN_FIELD,
         'Must be set, there is no type "inline" without a foreign table' => self::FOREIGN_TABLE,
     );
 
@@ -58,6 +58,7 @@ class InlineProcessor extends AbstractProcessor
      * @var array
      */
     protected $allowed = array(
+        self::FOREIGN_FIELD,
         self::FOREIGN_MATCH_FIELDS,
         self::FOREIGN_TABLE_FIELD,
         self::MM
@@ -70,8 +71,11 @@ class InlineProcessor extends AbstractProcessor
     public function canPreProcess(array $config)
     {
         parent::canPreProcess($config);
-        if (isset($this->lastReasons[self::FOREIGN_FIELD]) && array_key_exists(self::MM, $config)) {
-            unset($this->lastReasons[self::FOREIGN_FIELD]);
+        if (array_key_exists(self::MM, $config) && array_key_exists(self::FOREIGN_FIELD, $config)) {
+            $this->lastReasons[self::FOREIGN_FIELD] = 'the foreign_field is not allowed here because of given MM table';
+        }
+        if (!(array_key_exists(self::MM, $config) || array_key_exists(self::FOREIGN_FIELD, $config))) {
+            $this->lastReasons[self::FOREIGN_FIELD] = 'foreign_field or MM table must be set for type "inline"';
         }
 
         return empty($this->lastReasons);
