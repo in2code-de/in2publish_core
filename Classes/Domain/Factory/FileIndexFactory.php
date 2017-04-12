@@ -51,11 +51,6 @@ class FileIndexFactory
     protected $foreignDriver = null;
 
     /**
-     * @var UidReservationService
-     */
-    protected $uidReservationService = null;
-
-    /**
      * @var array
      */
     protected $sysFileTca = array();
@@ -75,9 +70,6 @@ class FileIndexFactory
     {
         $this->localDriver = $localDriver;
         $this->foreignDriver = $foreignDriver;
-        $this->uidReservationService = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Service\\Database\\UidReservationService'
-        );
         $this->sysFileTca = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService')
                                           ->getConfigurationArrayForTable('sys_file');
         $this->contextService = GeneralUtility::makeInstance(
@@ -194,7 +186,7 @@ class FileIndexFactory
         if ($uid > 0) {
             $fileInfo['uid'] = $uid;
         } elseif ($this->contextService->isLocal()) {
-            $fileInfo['uid'] = $this->uidReservationService->getReservedUid();
+            $fileInfo['uid'] = $this->getUidReservationService()->getReservedUid();
         } else {
             $fileInfo['uid'] = $uid;
         }
@@ -296,5 +288,15 @@ class FileIndexFactory
             return $fileInfo;
         }
         return array();
+    }
+
+    /**
+     * @return UidReservationService
+     */
+    protected function getUidReservationService()
+    {
+        return GeneralUtility::makeInstance(
+            'In2code\\In2publishCore\\Service\\Database\\UidReservationService'
+        );
     }
 }
