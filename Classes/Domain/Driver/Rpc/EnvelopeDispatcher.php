@@ -519,6 +519,8 @@ class EnvelopeDispatcher
     {
         if (!empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['setDBinit'])) {
             return $GLOBALS['TYPO3_CONF_VARS']['SYS']['setDBinit'];
+        } elseif (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'])) {
+            return $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'];
         }
         return '';
     }
