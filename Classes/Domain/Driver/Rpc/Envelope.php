@@ -55,11 +55,11 @@ class Envelope
      * Envelope constructor.
      *
      * @param string $command
-     * @param mixed $request
+     * @param array $request
      * @param mixed $response
      * @param int|null $uid
      */
-    public function __construct($command, $request, $response = null, $uid = null)
+    public function __construct($command, array $request = array(), $response = null, $uid = null)
     {
         $this->setCommand($command);
         $this->setRequest($request);
