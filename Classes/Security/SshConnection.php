@@ -286,7 +286,7 @@ class SshConnection
                 }
             }
         } else {
-            if (!($result = is_dir(self::SSH2_WRAPPER . $this->sftpSubSystem . $folder))) {
+            if (!($result = is_dir(self::SSH2_WRAPPER . ((int)$this->sftpSubSystem) . $folder))) {
                 $result = $this->createFolder($folder);
             }
         }
