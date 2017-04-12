@@ -67,6 +67,10 @@ class EnvelopeDispatcher
     const CMD_STORAGE_GET_FOLDERS_IN_FOLDER = 'getStorageGetFoldersInFolder';
     const CMD_STORAGE_GET_FILES_IN_FOLDER = 'getStorageGetFilesInFolder';
     const CMD_STORAGE_GET_FILE = 'getStorageGetFile';
+    /*
+     * Others
+     */
+    const CMD_GET_SET_DB_INIT = 'getSetDbInit';
 
     /**
      * Limits the amount of files in a folder for pre fetching. If there are more than $prefetchLimit files in
@@ -505,5 +509,17 @@ class EnvelopeDispatcher
             return FileUtility::extractFileInformation($file);
         }
         return array();
+    }
+
+    /**
+     * @return string
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    public function getSetDbInit()
+    {
+        if (!empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['setDBinit'])) {
+            return $GLOBALS['TYPO3_CONF_VARS']['SYS']['setDBinit'];
+        }
+        return '';
     }
 }

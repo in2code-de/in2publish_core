@@ -59,6 +59,14 @@ class DatabaseUtility
             self::$foreignDatabase->setDatabasePassword($configuration['password']);
             self::$foreignDatabase->setDatabaseUsername($configuration['username']);
             self::$foreignDatabase->setDatabasePort($configuration['port']);
+
+            $foreignEnvironmentService = GeneralUtility::makeInstance(
+                'In2code\\In2publishCore\\Service\\Environment\\ForeignEnvironmentService'
+            );
+            self::$foreignDatabase->setInitializeCommandsAfterConnect(
+                $foreignEnvironmentService->getDatabaseInitializationCommands()
+            );
+
             try {
                 @self::$foreignDatabase->connectDB();
             } catch (\Exception $e) {
