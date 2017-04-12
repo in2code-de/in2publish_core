@@ -189,6 +189,12 @@
 			<trans-unit id="moduleselector.flush_envelopes.description">
 				<source>Deletes all envelopes (remote procedure call database entries) which were already used (envelopes are one-way records).</source>
 			</trans-unit>
+			<trans-unit id="moduleselector.flush_registry">
+				<source>Remove all Registry entries</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.flush_registry.description">
+				<source>Removes all registry entries which store information about the local and foreign environment. You must run the test after flushing these.</source>
+			</trans-unit>
 
 			<trans-unit id="record.state.unchanged">
 				<source>Record unchanged</source>
@@ -259,6 +265,9 @@
 			</trans-unit>
 			<trans-unit id="module.m4.tca.navigate.to_controls">
 				<source>Navigate to controls</source>
+			</trans-unit>
+			<trans-unit id="module.m4.registry_flushed">
+				<source>Flushed all related registry entries.</source>
 			</trans-unit>
 
 			<trans-unit id="test_state_error">

@@ -121,7 +121,7 @@ call_user_func(
                         'm4',
                         '',
                         array(
-                            'Tools' => 'index, test, showLogs, flushLogs, configuration, tca, clearTcaCaches, flushEnvelopes',
+                            'Tools' => 'index, test, showLogs, flushLogs, configuration, tca, clearTcaCaches, flushEnvelopes, flushRegistry',
                         ),
                         array(
                             'access' => 'admin',

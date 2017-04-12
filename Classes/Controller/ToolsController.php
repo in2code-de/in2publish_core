@@ -33,6 +33,7 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * The ToolsController is the controller of the Backend Module "Publish Tools" "m3"
@@ -192,6 +193,16 @@ class ToolsController extends AbstractController
     public function clearTcaCachesAction()
     {
         TcaService::getInstance()->flushCaches();
+        $this->redirect('index');
+    }
+
+    /**
+     *
+     */
+    public function flushRegistryAction()
+    {
+        GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Registry')->removeAllByNamespace('tx_in2publishcore');
+        $this->addFlashMessage(LocalizationUtility::translate('module.m4.registry_flushed', 'in2publish_core'));
         $this->redirect('index');
     }
 
