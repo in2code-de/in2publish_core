@@ -1,5 +1,15 @@
 # In2publish Core Change Log
 
+5.6.0:
+
+- [BUGFIX] Typecast sftp connection to int for use with ssh2 wrapper.
+- [BUGFIX] Do not instantiate UidReservationService on foreign
+- [FEATURE] Support remote setting [SYS][setDBinit]
+- [FEATURE] Add possibility to remove in2publish_core related registry entries in the tools module
+- [COMMENT] Fix constructor annotation for Envelope parameter $request
+- [FEATURE] Enable MM relations of inline records
+- [BUGFIX] Show correct uid of the FAL storage with a different driver
+
 5.5.1:
 
 - [TYPO] Fix typo3 in warning label for folders with too many files
