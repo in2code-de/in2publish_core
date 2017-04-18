@@ -1,5 +1,12 @@
 # In2publish Core Change Log
 
+5.7.0:
+
+- [FEATURE] Add signal to FolderPublisherServive after publishing a folder
+- [REFACTOR] Inline only once used variable
+- [FEATURE] Add new signal tight after creation of folder records
+- [DOCS] Elaborate about setting the auto_increment correctly for disabled reserveSysFileUids
+
 5.6.0:
 
 - [BUGFIX] Typecast sftp connection to int for use with ssh2 wrapper.
