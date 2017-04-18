@@ -347,6 +347,14 @@
 				<source>Foreign TYPO3 Version:</source>
 				<target state="translated">Entfernte TYPO3 Version:</target>
 			</trans-unit>
+			<trans-unit id="application.foreign_admin_mode">
+				<source>adminMode is set to "0" on the foreign system, which means anyone with an account can log in.</source>
+				<target state="translated">adminMode ist auf in der entfernten Instanz auf "0" gesetzt, daher kann sich jeder reguläre Benutzer einloggen..</target>
+			</trans-unit>
+			<trans-unit id="application.editor_login_possible">
+				<source>Since adminMode is not set to "2" it is possible for regular backend users to log in, if they have an account on foreign.</source>
+				<target state="translated">Da adminMode nicht auf "2" gesetzt ist, ist es normalen Backend-Benutzern möglich sich auf dem entfernten System einzuloggen, sofern sie dort einen benutzer haben.</target>
+			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignSysDomainTest -->
 

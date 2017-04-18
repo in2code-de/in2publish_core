@@ -105,11 +105,21 @@ class ForeignInstanceTest implements TestCaseInterface
             );
         }
 
-        if ($sshConnection->getForeignGlobalConfiguration() === 'Utf8Filesystem: 1') {
+        $foreignConfiguration = $sshConnection->getForeignGlobalConfiguration();
+
+        if (isset($foreignConfiguration['Utf8Filesystem']) && '1' === $foreignConfiguration['Utf8Filesystem']) {
             return new TestResult(
                 'application.foreign_utf8_fs',
                 TestResult::ERROR,
                 array('application.utf8_fs_errors')
+            );
+        }
+
+        if (isset($foreignConfiguration['adminOnly']) && '0' === $foreignConfiguration['adminOnly']) {
+            return new TestResult(
+                'application.foreign_admin_mode',
+                TestResult::WARNING,
+                array('application.editor_login_possible')
             );
         }
 

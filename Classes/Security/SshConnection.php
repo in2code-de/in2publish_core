@@ -89,7 +89,7 @@ class SshConnection
     }
 
     /**
-     * @return string
+     * @return array
      * @throws \Exception
      */
     public function getForeignGlobalConfiguration()
@@ -98,8 +98,13 @@ class SshConnection
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
             . self::TYPO3_CLI_EXTBASE_DISPATCHER . StatusCommandController::GLOBAL_CONFIGURATION;
-        $remoteVersion = $this->executeRemoteCommand($command);
-        return reset($remoteVersion);
+        $configurationValues = $this->executeRemoteCommand($command);
+        $configurationArray = array();
+        foreach ($configurationValues as $line) {
+            list($key, $value) = explode(': ', $line, 2);
+            $configurationArray[$key] = $value;
+        }
+        return $configurationArray;
     }
 
     /**

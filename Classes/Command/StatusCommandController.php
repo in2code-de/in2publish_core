@@ -137,8 +137,12 @@ class StatusCommandController extends AbstractCommandController
             'Utf8Filesystem: '
             . (empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'])
                 ? 'empty'
-                : $GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem']
-            )
+                : $GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'])
+            . PHP_EOL
+            . 'adminOnly: '
+            . (isset($GLOBALS['TYPO3_CONF_VARS']['BE']['adminOnly'])
+                ? $GLOBALS['TYPO3_CONF_VARS']['BE']['adminOnly']
+                : 'empty')
         );
     }
 
