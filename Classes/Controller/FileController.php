@@ -172,6 +172,11 @@ class FileController extends AbstractController
                     ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
                     ->makeInstance($identifier);
             }
+            $this->signalSlotDispatcher->dispatch(
+                'In2code\\In2publishCore\\Controller\\FileController',
+                'folderInstanceCreated',
+                array($record)
+            );
             return $record;
         } catch (TooManyLocalFilesException $exception) {
             $this->displayTooManyFilesError($exception);
