@@ -55,6 +55,11 @@ class FolderPublisherService
         } else {
             $success = $remoteFalDriver->deleteFolder($folderIdentifier, true);
         }
+        GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher')->dispatch(
+            'In2code\\In2publishCore\\Domain\\Service\\Publishing\\FolderPublisherService',
+            'afterPublishingFolder',
+            array($storage, $folderIdentifier, ($success !== false))
+        );
         return $success;
     }
 }
