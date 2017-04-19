@@ -136,7 +136,10 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             ArrayUtility::mergeRecursiveWithOverrule($this->configuration, $driverConfiguration);
         }
         if (!is_array($this->remoteDriverSettings)) {
-            throw new \LogicException('Could not find the remote storage.', 1474470724);
+            throw new \LogicException(
+                'Could not find the remote storage with UID "' . $this->storageUid . '"',
+                1474470724
+            );
         }
     }
 
