@@ -153,7 +153,13 @@
 }
 
 .in2publish-t3-version-6_2 {
+  #typo3-inner-docbody {
+    position: relative;
+  }
   table {
+    .in2publish__workflowcontainer__lightbox {
+      position: absolute;
+    }
     .in2publish__workflowbutton {
       min-width: 150px;
       &:before {
