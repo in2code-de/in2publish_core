@@ -458,6 +458,7 @@ class SshConnection
         try {
             /**
              * typecast resource for PHP 7.0
+             *
              * @see http://paul-m-jones.com/archives/6439
              */
             $foreignFileStream = fopen(self::SSH2_WRAPPER . (int)$this->sftpSubSystem . $foreignFileLocation, 'w');
