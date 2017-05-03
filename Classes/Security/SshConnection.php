@@ -46,6 +46,14 @@ class SshConnection
     const TYPO3_CLI_EXTBASE_DISPATCHER = './typo3/cli_dispatch.phpsh extbase ';
 
     /**
+     * @var array
+     */
+    protected $supportedFingerprintMethods = array(
+        'SSH2_FINGERPRINT_MD5',
+        'SSH2_FINGERPRINT_SHA1',
+    );
+
+    /**
      * Indicates if ssh2_sftp_chmod is available.
      * This function was introduced in ssh2 extension version 0.12
      *
@@ -642,14 +650,7 @@ class SshConnection
         if (empty($configuration['foreignKeyFingerprintHashingMethod'])) {
             $configuration['foreignKeyFingerprintHashingMethod'] = SSH2_FINGERPRINT_MD5 | SSH2_FINGERPRINT_HEX;
         } else {
-            if (!in_array(
-                $configuration['foreignKeyFingerprintHashingMethod'],
-                array(
-                    'SSH2_FINGERPRINT_MD5',
-                    'SSH2_FINGERPRINT_SHA1',
-                )
-            )
-            ) {
+            if (!in_array($configuration['foreignKeyFingerprintHashingMethod'], $this->supportedFingerprintMethods)) {
                 throw new \Exception(
                     'SSH Connection: The first part of foreignKeyFingerprintHashingMethod '
                     . 'must either be "SSH2_FINGERPRINT_MD5" or "SSH2_FINGERPRINT_SHA1"'
