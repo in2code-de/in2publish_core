@@ -630,8 +630,9 @@ class SshConnection
         if (empty($configuration['foreignKeyFingerprint'])) {
             throw new \Exception('SSH Connection: Option foreignKeyFingerprint is empty', 1425400689);
         } elseif (strpos($configuration['foreignKeyFingerprint'], ':') !== false) {
-            $configuration['foreignKeyFingerprint'] =
-                strtoupper(str_replace(':', '', $configuration['foreignKeyFingerprint']));
+            $configuration['foreignKeyFingerprint'] = strtoupper(
+                str_replace(':', '', $configuration['foreignKeyFingerprint'])
+            );
         }
         if (empty($configuration['foreignRootPath'])) {
             throw new \Exception('SSH Connection: Option foreignRootPath is empty');
