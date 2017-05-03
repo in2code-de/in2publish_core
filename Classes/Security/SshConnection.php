@@ -618,7 +618,7 @@ class SshConnection
                 );
             } elseif (!is_readable($configuration[$requiredFileKey])) {
                 throw new \Exception(
-                    'SSH Connection: The File defined in ' . $requiredFileKey . ' does not readable',
+                    'SSH Connection: The File defined in ' . $requiredFileKey . ' is not readable',
                     1425400444
                 );
             }
