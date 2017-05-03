@@ -468,7 +468,7 @@ class SshConnection
                     'PHP SSH2 fopen stream wrapper failure.',
                     array(
                         'php_version' => PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . '.' . PHP_RELEASE_VERSION,
-                        'file' => $foreignFileLocation
+                        'file' => $foreignFileLocation,
                     )
                 );
                 throw new \Exception(
