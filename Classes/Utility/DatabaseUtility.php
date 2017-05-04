@@ -169,7 +169,6 @@ class DatabaseUtility
      */
     protected static function createBackup(DatabaseConnection $databaseConnection, $tableName, $backupFolder)
     {
-
         $fileName = time() . '_' . $tableName . '.sql';
 
         $publishTableSettings = ConfigurationUtility::getConfiguration('backup.publishTableCommand');
