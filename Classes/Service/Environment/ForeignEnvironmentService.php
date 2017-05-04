@@ -67,35 +67,31 @@ class ForeignEnvironmentService
     public function getDatabaseInitializationCommands()
     {
         if (!$this->cache->has('foreign_db_init')) {
-            $envelope = GeneralUtility::makeInstance(Envelope::class, EnvelopeDispatcher::CMD_GET_SET_DB_INIT);
-            $letterbox = GeneralUtility::makeInstance(Letterbox::class);
-            $uid = $letterbox->sendEnvelope($envelope);
-            $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'rpc:execute ' . $uid);
+            $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'status:dbinitqueryencoded');
             $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
 
-            $foreignDbInit = [];
-
-            if (!$response->isSuccessful()) {
+            $decodedDbInit = [];
+            if ($response->isSuccessful()) {
+                $encodedDbInit = 'W10=';
+                foreach ($response->getOutput() as $line) {
+                    if (false !== strpos($line, 'DBinit: ')) {
+                        $encodedDbInit = GeneralUtility::trimExplode(':', $line)[1];
+                        break;
+                    }
+                }
+                $decodedDbInit = json_decode(base64_decode($encodedDbInit), true);
+            } else {
                 $this->logger->error(
-                    'Could not execute RPC. Falling back to empty "setDBinit"',
+                    'Could not get DB init. Falling back to empty conuration value',
                     [
-                        'rpc' => $uid,
                         'errors' => $response->getErrors(),
                         'exit_status' => $response->getExitStatus(),
                         'output' => $response->getOutput(),
                     ]
                 );
-            } else {
-                $envelope = $letterbox->receiveEnvelope($uid);
-                if (false === $envelope) {
-                    $this->logger->error('Could not receive envelope. Falling back to empty "setDBinit"');
-                } else {
-                    $dbInit = $envelope->getResponse();
-                    $foreignDbInit = GeneralUtility::trimExplode(LF, str_replace('\' . LF . \'', LF, $dbInit), true);
-                }
             }
 
-            $this->cache->set('foreign_db_init', $foreignDbInit, [], 86400);
+            $this->cache->set('foreign_db_init', $decodedDbInit, [], 86400);
         }
         return (array)$this->cache->get('foreign_db_init');
     }

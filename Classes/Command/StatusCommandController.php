@@ -59,6 +59,7 @@ class StatusCommandController extends AbstractCommandController
         $this->createMasksCommand();
         $this->globalConfigurationCommand();
         $this->typo3VersionCommand();
+        $this->dbInitQueryEncodedCommand();
     }
 
     /**
@@ -158,5 +159,25 @@ class StatusCommandController extends AbstractCommandController
     public function typo3VersionCommand()
     {
         $this->outputLine('TYPO3: ' . TYPO3_version);
+    }
+
+    /**
+     * Prints TYPO3 version
+     * NOTE: This command is used for internal operations in in2publish_core
+     *
+     * @internal
+     */
+    public function dbInitQueryEncodedCommand()
+    {
+        $dbInit = [];
+        if (!empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['setDBinit'])) {
+            $dbInit = $GLOBALS['TYPO3_CONF_VARS']['SYS']['setDBinit'];
+        }
+        if (version_compare(TYPO3_version, '8.1.0') >= 0) {
+            if (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'])) {
+                $dbInit = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'];
+            }
+        }
+        $this->outputLine('DBinit: ' . base64_encode(json_encode($dbInit)));
     }
 }
