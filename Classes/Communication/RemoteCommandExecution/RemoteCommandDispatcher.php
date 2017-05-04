@@ -55,8 +55,6 @@ class RemoteCommandDispatcher implements SingletonInterface
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->logger->debug('Initializing RemoteCommandDispatcher');
-
-        $this->adapter = GeneralUtility::makeInstance(SshAdapter::class);
     }
 
     /**
@@ -65,6 +63,11 @@ class RemoteCommandDispatcher implements SingletonInterface
      */
     public function dispatch(RemoteCommandRequest $request)
     {
+        if (null === $this->adapter) {
+            $this->logger->debug('Lazy initializing SshAdapter');
+            $this->adapter = GeneralUtility::makeInstance(SshAdapter::class);
+        }
+
         $this->logger->debug('Dispatching command request', ['command' => $request->getCommand()]);
         $start = microtime(true);
 
