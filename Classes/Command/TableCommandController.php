@@ -65,7 +65,9 @@ class TableCommandController extends AbstractCommandController
     {
         parent::__construct();
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-        $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
+        if ($this->contextService->isLocal()) {
+            $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
+        }
         $this->databaseSchemaService = GeneralUtility::makeInstance(
             'In2code\\In2publishCore\\Service\\Database\\DatabaseSchemaService'
         );
