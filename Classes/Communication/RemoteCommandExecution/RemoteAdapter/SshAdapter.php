@@ -88,9 +88,6 @@ class SshAdapter implements AdapterInterface
         $this->config = $this->getValidatedConfig();
         $this->config['chmodEnabled'] = function_exists('ssh2_sftp_chmod');
         $this->config['debug'] = (bool)ConfigurationUtility::getConfiguration('debug.showForeignKeyFingerprint');
-
-        $this->logger->debug('Initializing SshAdapter ssh session');
-        $this->session = $this->establishSession();
     }
 
     /**
@@ -99,6 +96,11 @@ class SshAdapter implements AdapterInterface
      */
     public function execute(RemoteCommandRequest $request)
     {
+        if (null === $this->session) {
+            $this->logger->debug('Lazy initializing SshAdapter ssh session');
+            $this->session = $this->establishSession();
+        }
+
         $command = '';
 
         foreach ($request->getEnvironmentVariables() as $name => $value) {
