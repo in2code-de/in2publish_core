@@ -26,11 +26,13 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Security\SshConnection;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
@@ -39,87 +41,99 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 class ForeignInstanceTest implements TestCaseInterface
 {
     /**
+     * @var RemoteCommandDispatcher
+     */
+    protected $remoteCommandDispatcher = null;
+
+    /**
+     * ForeignInstanceTest constructor.
+     */
+    public function __construct()
+    {
+        $this->remoteCommandDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
+    }
+
+    /**
      * @return TestResult
      */
     public function run()
     {
-        $sshConnection = SshConnection::makeInstance();
-        $dispatcherResult = $sshConnection->callForeignCliDispatcherCallable();
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'status:all');
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
-        if (false !== strpos($dispatcherResult['stdOut'], '_cli_lowlevel')) {
-            return new TestResult(
-                'application.foreign_cli_lowlevel_user_missing',
-                TestResult::ERROR,
-                array('application.foreign_cli_lowlevel_user_missing_message', $dispatcherResult['stdOut'])
-            );
+        if (!$response->isSuccessful()) {
+            if (false !== strpos($response->getOutputString(), '_cli_lowlevel')) {
+                return new TestResult(
+                    'application.foreign_cli_lowlevel_user_missing',
+                    TestResult::ERROR,
+                    ['application.foreign_cli_lowlevel_user_missing_message', $response->getOutputString()]
+                );
+            } else {
+                return new TestResult(
+                    'application.foreign_cli_dispatcher_not_callable',
+                    TestResult::ERROR,
+                    [
+                        'application.foreign_cli_dispatcher_error_message',
+                        $response->getOutputString(),
+                        $response->getErrorsString(),
+                    ]
+                );
+            }
         }
 
-        if (0 !== (int)$dispatcherResult['code']) {
-            return new TestResult(
-                'application.foreign_cli_dispatcher_not_callable',
-                TestResult::ERROR,
-                array(
-                    'application.foreign_cli_dispatcher_error_message',
-                    $dispatcherResult['stdOut'],
-                    $dispatcherResult['stdErr'],
-                )
-            );
-        }
+        $foreign = $this->tokenizeResponse($response->getOutput());
 
         $localVersion = ExtensionManagementUtility::getExtensionVersion('in2publish_core');
-        $foreignVersion = $sshConnection->getForeignIn2publishVersion();
-        $foreignVersion = trim(substr($foreignVersion, strpos($foreignVersion, ':') + 1));
-
-        if ($localVersion !== $foreignVersion) {
+        if (!isset($foreign['Version'])) {
+            return new TestResult(
+                'application.foreign_version_not_detectable',
+                TestResult::ERROR,
+                [
+                    'application.foreign_cli_dispatcher_error_message',
+                    $response->getOutputString(),
+                    $response->getErrorsString(),
+                ]
+            );
+        } elseif ($foreign['Version'] !== $localVersion) {
             return new TestResult(
                 'application.foreign_version_differs',
                 TestResult::ERROR,
-                array('application.local_version', $localVersion, 'application.foreign_version', $foreignVersion)
+                ['application.local_version', $localVersion, 'application.foreign_version', $foreign['Version']]
             );
         }
 
-        $foreignConfigState = $sshConnection->getForeignConfigurationState();
-        $foreignConfigState = trim(substr($foreignConfigState, strpos($foreignConfigState, ':') + 1));
-        if ($foreignConfigState !== ConfigurationUtility::STATE_LOADED) {
+        if ($foreign['ConfigurationState'] !== ConfigurationUtility::STATE_LOADED) {
             return new TestResult(
                 'application.foreign_configuration_not_loaded',
                 TestResult::ERROR,
-                array(
+                [
                     'application.foreign_configuration_loading_state',
-                    LocalizationUtility::translate($foreignConfigState, 'in2publish_core'),
-                )
+                    LocalizationUtility::translate($foreign['ConfigurationState'], 'in2publish_core'),
+                ]
             );
         }
 
-        $foreignVersion = $sshConnection->getForeignTypo3Version();
-        if ($foreignVersion !== TYPO3_version) {
+        if ($foreign['TYPO3'] !== TYPO3_version) {
             return new TestResult(
                 'application.different_t3_versions',
                 TestResult::ERROR,
-                array(
-                    'application.local_t3_versions',
-                    TYPO3_version,
-                    'application.foreign_t3_versions',
-                    $foreignVersion,
-                )
+                ['application.local_t3_versions', TYPO3_version, 'application.foreign_t3_versions', $foreign['TYPO3']]
             );
         }
 
-        $foreignConfiguration = $sshConnection->getForeignGlobalConfiguration();
-
-        if (isset($foreignConfiguration['Utf8Filesystem']) && '1' === $foreignConfiguration['Utf8Filesystem']) {
+        if (isset($foreign['Utf8Filesystem']) && '1' === $foreign['Utf8Filesystem']) {
             return new TestResult(
                 'application.foreign_utf8_fs',
                 TestResult::ERROR,
-                array('application.utf8_fs_errors')
+                ['application.utf8_fs_errors']
             );
         }
 
-        if (isset($foreignConfiguration['adminOnly']) && '0' === $foreignConfiguration['adminOnly']) {
+        if (isset($foreign['adminOnly']) && '0' === $foreign['adminOnly']) {
             return new TestResult(
                 'application.foreign_admin_mode',
                 TestResult::WARNING,
-                array('application.editor_login_possible')
+                ['application.editor_login_possible']
             );
         }
 
@@ -127,13 +141,29 @@ class ForeignInstanceTest implements TestCaseInterface
     }
 
     /**
+     * @param array $output
+     * @return array
+     */
+    protected function tokenizeResponse(array $output)
+    {
+        $values = [];
+        foreach ($output as $line) {
+            if (false !== strpos($line, ':')) {
+                list ($key, $value) = GeneralUtility::trimExplode(':', $line);
+                $values[$key] = $value;
+            }
+        }
+        return $values;
+    }
+
+    /**
      * @return array
      */
     public function getDependencies()
     {
-        return array(
+        return [
             'In2code\\In2publishCore\\Testing\\Tests\\SshConnection\\SshConnectionTest',
             'In2code\\In2publishCore\\Testing\\Tests\\Database\\ForeignDatabaseTest',
-        );
+        ];
     }
 }

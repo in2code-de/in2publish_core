@@ -26,7 +26,8 @@ namespace In2code\In2publishCore\Testing\Tests\SshConnection;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Security\SshConnection;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -37,52 +38,63 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class SshConnectionTest implements TestCaseInterface
 {
     /**
+     * @var RemoteCommandDispatcher
+     */
+    protected $remoteCommandDispatcher = null;
+
+    /**
+     * ForeignInstanceTest constructor.
+     */
+    public function __construct()
+    {
+        $this->remoteCommandDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
+    }
+
+    /**
      * @return TestResult
      */
     public function run()
     {
-        $sshConnection = SshConnection::makeInstance();
-        try {
-            $phpVersion = $sshConnection->testConnection();
-            if ($phpVersion['code'] > 0) {
-                return new TestResult(
-                    'ssh_connection.invalid_php',
-                    TestResult::ERROR,
-                    array('ssh_connection.php_test_error_message', $phpVersion['stdErr'])
-                );
-            }
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
+        $request->setDispatcher('');
+        $request->setOption('-v');
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
-            $result = $sshConnection->validateForeignDocumentRoot();
-
-            if (0 === (int)$result['code']) {
-                $documentRootFiles = GeneralUtility::trimExplode(PHP_EOL, $result['stdOut']);
-
-                $requiredNames = array(
-                    'fileadmin',
-                    'typo3',
-                    'index.php',
-                    'typo3conf',
-                );
-
-                if (!empty(array_diff($requiredNames, $documentRootFiles))) {
-                    return new TestResult('ssh_connection.foreign_document_root_wrong', TestResult::ERROR);
-                }
-            } else {
-                return new TestResult(
-                    'ssh_connection.foreign_document_validation_error',
-                    TestResult::ERROR,
-                    array(
-                        'ssh_connection.foreign_document_validation_error_reason',
-                        $result['stdOut'],
-                        $result['stdErr'],
-                    )
-                );
-            }
-        } catch (\Exception $exception) {
+        if (!$response->isSuccessful()) {
             return new TestResult(
-                'ssh_connection.connection_failed',
+                'ssh_connection.invalid_php',
                 TestResult::ERROR,
-                array('ssh_connection.connection_failure_message', $exception->getMessage())
+                array('ssh_connection.php_test_error_message', $response->getErrorsString())
+            );
+        }
+
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'ls');
+        $request->usePhp(false);
+        $request->setDispatcher('');
+        $response = $this->remoteCommandDispatcher->dispatch($request);
+
+        if ($response->isSuccessful()) {
+            $documentRootFiles = GeneralUtility::trimExplode("\n", $response->getOutputString());
+
+            $requiredNames = array(
+                'fileadmin',
+                'typo3',
+                'index.php',
+                'typo3conf',
+            );
+
+            if (!empty(array_diff($requiredNames, $documentRootFiles))) {
+                return new TestResult('ssh_connection.foreign_document_root_wrong', TestResult::ERROR);
+            }
+        } else {
+            return new TestResult(
+                'ssh_connection.foreign_document_validation_error',
+                TestResult::ERROR,
+                array(
+                    'ssh_connection.foreign_document_validation_error_reason',
+                    $response->getOutputString(),
+                    $response->getErrorsString(),
+                )
             );
         }
 

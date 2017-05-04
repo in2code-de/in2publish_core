@@ -410,6 +410,11 @@
 				<source>The folder %s contains too many files %sto process. The limit of files in a folder is 150 files per folder, but you should not have more than 100 files in a single folder.</source>
 				<target state="translated">Das Verzeichnis %s enthält zu viele Dateien %sum es zu verarbeiten. Das Dateilimit beträgt 150 Dateien pro Verzeichnis, es sollten jedoch generell nicht mehr als 100 Dateien in einem einzelnen Verzeichnis liegen.</target>
 			</trans-unit>
+
+			<trans-unit id="publishing.tasks_failure">
+				<source>One or more additional tasks which run after the successful publishing process failed. Caches and other non critical aspects might not behave as expected. The logs might contain more information.</source>
+				<target state="translated">Eine oder mehrere Aufgaben, die nach dem erfolgreichen publizieren ausgeführt werden sind fehlgeschlagen. Caches und andere nicht kritische Aspekte könnten sich nicht wie erwartet verhalten. Die Logs können weitere Informationen enthalten.</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

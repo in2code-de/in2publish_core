@@ -27,8 +27,9 @@ namespace In2code\In2publishCore\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
-use In2code\In2publishCore\Security\SshConnection;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -308,17 +309,25 @@ abstract class AbstractController extends ActionController
      */
     protected function runTasks()
     {
-        $sshConnection = SshConnection::makeInstance();
-        $resultingMessages = $sshConnection->runForeignTasksCommandController();
-        foreach ($resultingMessages as $resultMessage) {
-            if (is_array($resultMessage)) {
-                $resultMessage = implode(PHP_EOL, $resultMessage);
-            }
-            $this->logger->notice(
-                'Task execution results',
-                array(
-                    'message' => $resultMessage,
-                )
+        $dispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'publishtasksrunner:runtasksinqueue');
+        $response = $dispatcher->dispatch($request);
+
+        if ($response->isSuccessful()) {
+            $this->logger->notice('Task execution results', ['output' => $response->getOutput()]);
+        } else {
+            $this->logger->error(
+                'Task execution failed',
+                [
+                    'output' => $response->getOutput(),
+                    'errors' => $response->getErrors(),
+                    'exit_status' => $response->getExitStatus(),
+                ]
+            );
+            $this->addFlashMessage(
+                implode('<br/>', $response->getOutput()) . implode('<br/>', $response->getErrors()),
+                LocalizationUtility::translate('publishing.tasks_failure', 'in2publish_core'),
+                AbstractMessage::ERROR
             );
         }
     }

@@ -26,9 +26,15 @@ namespace In2code\In2publishCore\Service\Environment;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Domain\Driver\Rpc\Envelope;
 use In2code\In2publishCore\Domain\Driver\Rpc\EnvelopeDispatcher;
-use In2code\In2publishCore\Security\SshConnection;
-use TYPO3\CMS\Core\Registry;
+use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
+use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
+use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -37,16 +43,22 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class ForeignEnvironmentService
 {
     /**
-     * @var Registry
+     * @var FrontendInterface
      */
-    protected $registry = null;
+    protected $cache = null;
+
+    /**
+     * @var Logger
+     */
+    protected $logger = null;
 
     /**
      * ForeignEnvironmentService constructor.
      */
     public function __construct()
     {
-        $this->registry = $this->getRegistry();
+        $this->cache = $this->getCache();
+        $this->logger = $this->getLogger();
     }
 
     /**
@@ -54,33 +66,55 @@ class ForeignEnvironmentService
      */
     public function getDatabaseInitializationCommands()
     {
-        $dbInit = $this->registry->get('tx_in2publishcore', 'foreign_db_init', null);
-
-        if (null === $dbInit) {
-            $envelope = GeneralUtility::makeInstance(
-                'In2code\\In2publishCore\\Domain\\Driver\\Rpc\\Envelope',
-                EnvelopeDispatcher::CMD_GET_SET_DB_INIT
-            );
-            $letterbox = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\Rpc\\Letterbox');
+        if (!$this->cache->has('foreign_db_init')) {
+            $envelope = GeneralUtility::makeInstance(Envelope::class, EnvelopeDispatcher::CMD_GET_SET_DB_INIT);
+            $letterbox = GeneralUtility::makeInstance(Letterbox::class);
             $uid = $letterbox->sendEnvelope($envelope);
-            SshConnection::makeInstance()->executeRpc($uid);
-            $envelope = $letterbox->receiveEnvelope($uid);
+            $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'rpc:execute ' . $uid);
+            $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
 
-            $dbInit = $envelope->getResponse();
+            $foreignDbInit = [];
 
-            $dbInit = GeneralUtility::trimExplode(LF, str_replace('\' . LF . \'', LF, $dbInit), true);
+            if (!$response->isSuccessful()) {
+                $this->logger->error(
+                    'Could not execute RPC. Falling back to empty "setDBinit"',
+                    [
+                        'rpc' => $uid,
+                        'errors' => $response->getErrors(),
+                        'exit_status' => $response->getExitStatus(),
+                        'output' => $response->getOutput(),
+                    ]
+                );
+            } else {
+                $envelope = $letterbox->receiveEnvelope($uid);
+                if (false === $envelope) {
+                    $this->logger->error('Could not receive envelope. Falling back to empty "setDBinit"');
+                } else {
+                    $dbInit = $envelope->getResponse();
+                    $foreignDbInit = GeneralUtility::trimExplode(LF, str_replace('\' . LF . \'', LF, $dbInit), true);
+                }
+            }
 
-            $this->registry->set('tx_in2publishcore', 'foreign_db_init', $dbInit);
+            $this->cache->set('foreign_db_init', $foreignDbInit, [], 86400);
         }
-        return (array)$dbInit;
+        return (array)$this->cache->get('foreign_db_init');
     }
 
     /**
-     * @return Registry
+     * @return FrontendInterface
      * @codeCoverageIgnore
      */
-    protected function getRegistry()
+    protected function getCache()
     {
-        return GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Registry');
+        return GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
+    }
+
+    /**
+     * @return Logger
+     * @codeCoverageIgnore
+     */
+    protected function getLogger()
+    {
+        return GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
     }
 }

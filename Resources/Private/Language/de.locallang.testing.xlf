@@ -315,6 +315,10 @@
 				<source>The installed versions on the local and foreign system are different.</source>
 				<target state="translated">Auf dem lokalen und dem entfernten System sind unterschiedliche Versionen von in2publish installiert.</target>
 			</trans-unit>
+			<trans-unit id="application.foreign_version_not_detectable">
+				<source>The installed version of in2publish_core on the foreign system is not detectable.</source>
+				<target state="translated">Die installierte Version auf dem entfernten System konnte nicht erkannt werden.</target>
+			</trans-unit>
 			<trans-unit id="application.local_version">
 				<source>Local version:</source>
 				<target state="translated">Lokale Version:</target>

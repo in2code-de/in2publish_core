@@ -311,6 +311,10 @@
 			<trans-unit id="file_publishing.too_many_files">
 				<source>The folder %s contains too many files %sto process. The limit of files in a folder is 150 files per folder, but you should not have more than 100 files in a single folder.</source>
 			</trans-unit>
+
+			<trans-unit id="publishing.tasks_failure">
+				<source>One or more additional tasks which run after the successful publishing process failed. Caches and other non critical aspects might not behave as expected. The logs might contain more information.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

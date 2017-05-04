@@ -27,7 +27,8 @@ namespace In2code\In2publishCore\Command;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Security\SshConnection;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Service\Database\DatabaseSchemaService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
@@ -87,12 +88,31 @@ class TableCommandController extends AbstractCommandController
         $this->checkTableExists($tableName);
 
         $this->logger->notice('Called Publish Table Command for table name "' . $tableName . '"');
-        $backupResults = SshConnection::makeInstance()->backupRemoteTable($tableName);
-        $this->logger->info('Backup results from foreign system:', array('backupResults' => $backupResults));
-        if ($this->copyTableContents($this->localDatabase, $this->foreignDatabase, $tableName)) {
-            $this->logger->notice('Finished publishing of table "' . $tableName . '"');
+
+        $request = GeneralUtility::makeInstance(
+            RemoteCommandRequest::class,
+            'table:backup',
+            ['--table-name' => $tableName]
+        );
+        $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
+
+        if ($response->isSuccessful()) {
+            $this->logger->info('Backup seems to be successful.');
+
+            if ($this->copyTableContents($this->localDatabase, $this->foreignDatabase, $tableName)) {
+                $this->logger->notice('Finished publishing of table "' . $tableName . '"');
+            } else {
+                $this->logger->critical('Could not truncate foreign table "' . $tableName . '". Skipping import');
+            }
         } else {
-            $this->logger->critical('Could not truncate foreign table "' . $tableName . '". Skipping import');
+            $this->logger->error(
+                'Could not create backup on remote:',
+                [
+                    'errors' => $response->getErrors(),
+                    'exit_status' => $response->getExitStatus(),
+                    'output' => $response->getOutput(),
+                ]
+            );
         }
     }
 

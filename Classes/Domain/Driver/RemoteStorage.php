@@ -26,6 +26,8 @@ namespace In2code\In2publishCore\Domain\Driver;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Domain\Driver\Rpc\Envelope;
 use In2code\In2publishCore\Domain\Driver\Rpc\EnvelopeDispatcher;
 use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
@@ -154,10 +156,13 @@ class RemoteStorage implements ResourceStorageInterface
         if (false === $uid) {
             throw new \Exception('Could not send ' . $envelope->getCommand() . ' request to remote system', 1490708190);
         }
-        $executionResult = $this->sshConnection->executeRpc($uid);
-        if (!empty($executionResult)) {
+
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'rpc:execute ' . $uid);
+        $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
+
+        if (!$response->isSuccessful()) {
             throw new \RuntimeException(
-                'Could not execute RPC [' . $uid . ']. An error occurred on foreign: ' . implode(',', $executionResult),
+                'Could not execute RPC [' . $uid . ']. An error occurred on foreign: ' . $response->getErrorsString(),
                 1476281965
             );
         }

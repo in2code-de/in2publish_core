@@ -26,10 +26,11 @@ namespace In2code\In2publishCore\Domain\Driver;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Domain\Driver\Rpc\Envelope;
 use In2code\In2publishCore\Domain\Driver\Rpc\EnvelopeDispatcher;
 use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
-use In2code\In2publishCore\Security\SshConnection;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Resource\Driver\AbstractHierarchicalFilesystemDriver;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
@@ -46,9 +47,9 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDriver implements DriverInterface
 {
     /**
-     * @var SshConnection
+     * @var RemoteCommandDispatcher
      */
-    protected $sshConnection = null;
+    protected $remoteCommandDispatcher = null;
 
     /**
      * @var Letterbox
@@ -82,7 +83,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         ArrayUtility::mergeRecursiveWithOverrule($defaultConfiguration, $configuration);
         parent::__construct($defaultConfiguration);
 
-        $this->sshConnection = SshConnection::makeInstance();
+        $this->remoteCommandDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
         $this->letterBox = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\Rpc\\Letterbox');
     }
 
@@ -693,11 +694,17 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             throw new \Exception('Could not send ' . $envelope->getCommand() . ' request to remote system', 1476296011);
         }
 
-        $executionResult = $this->sshConnection->executeRpc($uid);
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'rpc:execute ' . $uid);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
-        if (!empty($executionResult)) {
+        if (!$response->isSuccessful()) {
             throw new \RuntimeException(
-                'Could not execute RPC [' . $uid . ']. An error occurred on foreign: ' . implode(',', $executionResult),
+                sprintf(
+                    'Could not execute RPC [%d]. Errors and Output: %s %s',
+                    $uid,
+                    $response->getErrorsString(),
+                    $response->getOutputString()
+                ),
                 1476281965
             );
         }

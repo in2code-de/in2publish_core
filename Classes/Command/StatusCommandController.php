@@ -157,6 +157,6 @@ class StatusCommandController extends AbstractCommandController
      */
     public function typo3VersionCommand()
     {
-        $this->outputLine(TYPO3_version);
+        $this->outputLine('TYPO3: ' . TYPO3_version);
     }
 }
