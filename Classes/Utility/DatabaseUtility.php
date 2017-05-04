@@ -127,6 +127,7 @@ class DatabaseUtility
      */
     public static function backupTable(DatabaseConnection $databaseConnection, $tableName)
     {
+        $tableName = static::sanitizeTable($databaseConnection, $tableName);
         self::initializeLogger();
 
         if (ConfigurationUtility::getLoadingState() !== ConfigurationUtility::STATE_LOADED) {
@@ -265,5 +266,29 @@ class DatabaseUtility
                 get_called_class()
             );
         }
+    }
+
+    /**
+     * @param DatabaseConnection $databaseConnection
+     * @param string $tableName
+     * @return string
+     */
+    protected static function sanitizeTable(DatabaseConnection $databaseConnection, $tableName)
+    {
+        $tableName = stripslashes($tableName);
+        $tableName = str_replace("'", '', $tableName);
+        $tableName = str_replace('"', '', $tableName);
+
+        $allTables = $databaseConnection->admin_get_tables();
+        if (array_key_exists($tableName, $allTables)) {
+            return $tableName;
+        }
+        throw new \InvalidArgumentException(
+            sprintf(
+                'The given table name was not properly escaped or does not esist. Given table name: %s',
+                $tableName
+            ),
+            1493891084
+        );
     }
 }
