@@ -166,6 +166,7 @@ class StatusCommandController extends AbstractCommandController
      * NOTE: This command is used for internal operations in in2publish_core
      *
      * @internal
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function dbInitQueryEncodedCommand()
     {
