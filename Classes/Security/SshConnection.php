@@ -41,6 +41,8 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Class SshConnection
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SshConnection
 {
