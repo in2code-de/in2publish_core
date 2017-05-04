@@ -58,7 +58,16 @@ class SshConnectionTest implements TestCaseInterface
         $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
         $request->setDispatcher('');
         $request->setOption('-v');
-        $response = $this->remoteCommandDispatcher->dispatch($request);
+
+        try {
+            $response = $this->remoteCommandDispatcher->dispatch($request);
+        } catch (\Exception $exception) {
+            return new TestResult(
+                'ssh_connection.connection_failed',
+                TestResult::ERROR,
+                array('ssh_connection.connection_failure_message', $exception->getMessage())
+            );
+        }
 
         if (!$response->isSuccessful()) {
             return new TestResult(
