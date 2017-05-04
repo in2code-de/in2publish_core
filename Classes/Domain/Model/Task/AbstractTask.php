@@ -213,7 +213,7 @@ abstract class AbstractTask
     }
 
     /**
-     * @return string
+     * @return array
      */
     final public function getMessages()
     {
