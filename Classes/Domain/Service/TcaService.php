@@ -68,6 +68,7 @@ class TcaService
         'select' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\SelectProcessor',
         'text' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\TextProcessor',
         'user' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\UserProcessor',
+        'imageManipulation' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\ImageManipulationProcessor'
     );
 
     /**
