@@ -55,8 +55,10 @@ class StatusCommandController extends AbstractCommandController
     public function allCommand()
     {
         $this->versionCommand();
-        $this->configurationCommand();
+        $this->configurationRawCommand();
         $this->createMasksCommand();
+        $this->globalConfigurationCommand();
+        $this->typo3VersionCommand();
     }
 
     /**
