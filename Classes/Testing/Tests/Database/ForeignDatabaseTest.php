@@ -82,6 +82,7 @@ class ForeignDatabaseTest implements TestCaseInterface
     {
         return array(
             'In2code\\In2publishCore\\Testing\\Tests\\Configuration\\ConfigurationFormatTest',
+            'In2code\\In2publishCore\\Testing\\Tests\\SshConnection\\SshConnectionTest',
         );
     }
 }
