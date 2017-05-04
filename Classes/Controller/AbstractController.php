@@ -140,18 +140,27 @@ abstract class AbstractController extends ActionController
     {
         try {
             $databaseConnection = DatabaseUtility::buildForeignDatabaseConnection();
-            $this->logger->debug('Successfully established foreign database connection');
-            return $databaseConnection;
-        } catch (\Exception $e) {
+            $message = 'See logs for more details';
+        } catch (\Exception $exception) {
+            $databaseConnection = null;
+            $message = $exception;
+        }
+
+        if (null === $databaseConnection) {
             $this->addFlashMessage(
+                $message,
                 LocalizationUtility::translate('error_not_connected', 'in2publish_core'),
-                '',
                 AbstractMessage::ERROR
             );
-            $this->actionMethodName = self::BLANK_ACTION;
-            $this->logger->error('Could not create foreign database connection');
+            if (static::class !== ToolsController::class) {
+                $this->actionMethodName = self::BLANK_ACTION;
+            }
+            $this->logger->error(
+                'Could not create foreign database connection. An error occured',
+                ['message' => $message]
+            );
         }
-        return null;
+        return $databaseConnection;
     }
 
     /**
