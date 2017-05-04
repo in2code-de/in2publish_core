@@ -31,6 +31,7 @@ use In2code\In2publishCore\Command\PublishTasksRunnerCommandController;
 use In2code\In2publishCore\Command\RpcCommandController;
 use In2code\In2publishCore\Command\StatusCommandController;
 use In2code\In2publishCore\Command\TableCommandController;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use Psr\Log\LoggerInterface;
@@ -70,9 +71,11 @@ class SshConnection
      * @param string $tableName
      * @return array
      * @throws \Exception
+     * @deprecated This method has been deprecated in favour of the RemoteCommandDispatcher and will be deleted in 6.0.
      */
     public function backupRemoteTable($tableName)
     {
+        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
         $this->stopIfArgumentContainsCommand($tableName);
         $command =
             'cd ' . $this->foreignRootPath . ' && '
@@ -85,9 +88,11 @@ class SshConnection
     /**
      * @return string
      * @throws \Exception
+     * @deprecated This method has been deprecated in favour of the RemoteCommandDispatcher and will be deleted in 6.0.
      */
     public function getForeignIn2publishVersion()
     {
+        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
@@ -99,9 +104,11 @@ class SshConnection
     /**
      * @return array
      * @throws \Exception
+     * @deprecated This method has been deprecated in favour of the RemoteCommandDispatcher and will be deleted in 6.0.
      */
     public function getForeignGlobalConfiguration()
     {
+        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
@@ -118,9 +125,11 @@ class SshConnection
     /**
      * @return string
      * @throws \Exception
+     * @deprecated This method has been deprecated in favour of the RemoteCommandDispatcher and will be deleted in 6.0.
      */
     public function getForeignTypo3Version()
     {
+        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
@@ -132,9 +141,11 @@ class SshConnection
     /**
      * @return string
      * @throws \Exception
+     * @deprecated This method has been deprecated in favour of the RemoteCommandDispatcher and will be deleted in 6.0.
      */
     public function getForeignConfigurationState()
     {
+        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
@@ -145,9 +156,11 @@ class SshConnection
 
     /**
      * @return array
+     * @deprecated This method has been deprecated in favour of the RemoteCommandDispatcher and will be deleted in 6.0.
      */
     public function runForeignTasksCommandController()
     {
+        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
@@ -164,9 +177,11 @@ class SshConnection
      * @return array
      * @throws \Exception
      * @internal USE ONLY FOR TESTING!
+     * @deprecated This method has been deprecated in favour of the RemoteCommandDispatcher and will be deleted in 6.0.
      */
     public function callForeignCliDispatcherCallable()
     {
+        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
         $command = 'cd ' . $this->foreignRootPath
                    . ' && ' . $this->pathToPhp . ' ' . self::TYPO3_CLI_EXTBASE_DISPATCHER;
         return $this->executeRawCommand($command);
@@ -176,18 +191,22 @@ class SshConnection
      * @return array
      * @throws \Exception
      * @internal USE ONLY FOR TESTING!
+     * @deprecated This method has been deprecated in favour of the RemoteCommandDispatcher and will be deleted in 6.0.
      */
     public function testConnection()
     {
+        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
         return $this->executeRawCommand($this->pathToPhp . ' -v');
     }
 
     /**
      * @return array
      * @internal USE ONLY FOR TESTING!
+     * @deprecated This method has been deprecated in favour of the RemoteCommandDispatcher and will be deleted in 6.0.
      */
     public function validateForeignDocumentRoot()
     {
+        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
         $command = 'cd ' . $this->foreignRootPath . ' && ls';
         return $this->executeRawCommand($command);
     }
@@ -195,9 +214,11 @@ class SshConnection
     /**
      * @param int $uid Envelope uid
      * @return array|mixed
+     * @deprecated This method has been deprecated in favour of the RemoteCommandDispatcher and will be deleted in 6.0.
      */
     public function executeRpc($uid)
     {
+        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
