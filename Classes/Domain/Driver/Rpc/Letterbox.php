@@ -166,7 +166,7 @@ class Letterbox
             $database = DatabaseUtility::buildLocalDatabaseConnection();
         }
 
-        if ($database instanceof DatabaseConnection) {
+        if ($database instanceof DatabaseConnection && $database->isConnected()) {
             return $database->exec_SELECTcountRows('uid', static::TABLE, 'response IS NOT NULL');
         }
         return false;
