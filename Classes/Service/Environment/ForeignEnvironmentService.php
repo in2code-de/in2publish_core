@@ -82,7 +82,7 @@ class ForeignEnvironmentService
                 $decodedDbInit = json_decode(base64_decode($encodedDbInit), true);
             } else {
                 $this->logger->error(
-                    'Could not get DB init. Falling back to empty conuration value',
+                    'Could not get DB init. Falling back to empty configuration value',
                     [
                         'errors' => $response->getErrors(),
                         'exit_status' => $response->getExitStatus(),
