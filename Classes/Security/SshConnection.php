@@ -33,9 +33,9 @@ use In2code\In2publishCore\Command\StatusCommandController;
 use In2code\In2publishCore\Command\TableCommandController;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Service\Context\ContextService;
+use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use Psr\Log\LoggerInterface;
-use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -791,82 +791,12 @@ class SshConnection
      */
     private function setCreateMasks()
     {
-        if ($this->getCache()->has(self::CREATE_MASKS_CACHE_KEY)) {
-            $createMasks = $this->getCache()->get(self::CREATE_MASKS_CACHE_KEY);
-        } else {
-            $command =
-                'cd ' . $this->foreignRootPath . ' && '
-                . $this->pathToPhp . ' '
-                . self::TYPO3_CLI_EXTBASE_DISPATCHER . StatusCommandController::CREATE_MASKS_COMMAND;
-            $response = $this->executeRemoteCommand($command);
-            if (!is_array($response)) {
-                throw new \Exception(
-                    'Failed to retrieve foreign file and folder mask. The response is not an array.',
-                    1440750956
-                );
-            }
-
-            $createMasks = array();
-            foreach ($response as $value) {
-                $information = GeneralUtility::trimExplode(':', $value);
-                if ($information[0] === 'FileCreateMask') {
-                    $createMasks['file'] = $information[1];
-                } elseif ($information[0] === 'FolderCreateMask') {
-                    $createMasks['folder'] = $information[1];
-                } else {
-                    if (false !== strpos($value, 'not accepted when the connection to the database')) {
-                        throw new \Exception(
-                            'The foreign database is unreachable. (CMD: "' . $command . '"; Message: "' . $value . '")',
-                            1476450079
-                        );
-                    } else {
-                        throw new \Exception(
-                            'Failed to retrieve foreign file and folder mask. '
-                            . 'The response does not contain the neccessary keys. '
-                            . 'Check if BE user _cli_lowlevel does exist on foreign, '
-                            . 'in2publish is installed and command controllers can be called (CMD: "'
-                            . $command . '"; Message: "' . $value . '")',
-                            1446816322
-                        );
-                    }
-                }
-            }
-
-            if (!isset($createMasks['folder'])) {
-                throw new \Exception('Failed to retrieve foreign folder folder mask.', 1440750975);
-            }
-            if (!isset($createMasks['file'])) {
-                throw new \Exception('Failed to retrieve foreign file folder mask.', 1440750975);
-            }
-            if (!is_string($createMasks['folder']) || preg_match('~^[0124567]{4}$~', $createMasks['folder']) !== 1) {
-                throw new \Exception(
-                    'The retrieved folder mask "' . htmlspecialchars($createMasks['folder']) . '" is invalid.',
-                    1440751666
-                );
-            }
-            if (!is_string($createMasks['file']) || preg_match('~^[0124567]{4}$~', $createMasks['file']) !== 1) {
-                throw new \Exception(
-                    'The retrieved file  mask "' . htmlspecialchars($createMasks['file']) . '" is invalid.',
-                    1440751662
-                );
-            }
-            // Cache this value for a day.
-            $this->getCache()->set(self::CREATE_MASKS_CACHE_KEY, $createMasks, [], 86400);
-        }
+        $createMasks = GeneralUtility::makeInstance(ForeignEnvironmentService::class)->getCreateMasks();
 
         $this->rawFileMode = $createMasks['file'];
         $this->rawFolderMode = $createMasks['folder'];
         $this->fileMode = octdec($createMasks['file']);
         $this->folderMode = octdec($createMasks['folder']);
-    }
-
-    /**
-     * @return \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
-     * @codeCoverageIgnore
-     */
-    private function getCache()
-    {
-        return GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
     }
 
     /**

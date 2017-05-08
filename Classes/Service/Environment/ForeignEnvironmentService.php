@@ -94,6 +94,50 @@ class ForeignEnvironmentService
     }
 
     /**
+     * @return array
+     */
+    public function getCreateMasks()
+    {
+        if (!$this->cache->has('create_masks')) {
+            $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'status:createmasks');
+            $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
+
+            $createMasks = null;
+
+            if ($response->isSuccessful()) {
+                $values = $this->tokenizeResponse($response->getOutput());
+                if (isset($values['FileCreateMask']) && isset($values['FileCreateMask'])) {
+                    $createMasks = [
+                        'file' => $values['FileCreateMask'],
+                        'folder' => $values['FileCreateMask'],
+                    ];
+                }
+            }
+
+            if (null === $createMasks) {
+                $this->logger->error(
+                    'Could not get createMasks. Falling back to local configuration value',
+                    [
+                        'errors' => $response->getErrors(),
+                        'exit_status' => $response->getExitStatus(),
+                        'output' => $response->getOutput(),
+                    ]
+                );
+
+                list($fileCreateMask, $folderCreateMask) = $this->getLocalCreateMasks();
+
+                $createMasks = [
+                    'file' => $fileCreateMask,
+                    'folder' => $folderCreateMask,
+                ];
+            }
+
+            $this->cache->set('create_masks', $createMasks, [], 86400);
+        }
+        return (array)$this->cache->get('create_masks');
+    }
+
+    /**
      * @return FrontendInterface
      * @codeCoverageIgnore
      */
@@ -109,5 +153,38 @@ class ForeignEnvironmentService
     protected function getLogger()
     {
         return GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
+    }
+
+    /**
+     * @param array $output
+     * @return array
+     */
+    protected function tokenizeResponse(array $output)
+    {
+        $values = [];
+        foreach ($output as $line) {
+            if (false !== strpos($line, ':')) {
+                list ($key, $value) = GeneralUtility::trimExplode(':', $line);
+                $values[$key] = $value;
+            }
+        }
+        return $values;
+    }
+
+    /**
+     * @return array
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    protected function getLocalCreateMasks()
+    {
+        if (GeneralUtility::compat_version('7.6') === true) {
+            $fileCreateMask = $GLOBALS['TYPO3_CONF_VARS']['SYS']['fileCreateMask'];
+            $folderCreateMask = $GLOBALS['TYPO3_CONF_VARS']['SYS']['folderCreateMask'];
+        } else {
+            $fileCreateMask = $GLOBALS['TYPO3_CONF_VARS']['BE']['fileCreateMask'];
+            $folderCreateMask = $GLOBALS['TYPO3_CONF_VARS']['BE']['folderCreateMask'];
+        }
+        return array($fileCreateMask, $folderCreateMask);
     }
 }
