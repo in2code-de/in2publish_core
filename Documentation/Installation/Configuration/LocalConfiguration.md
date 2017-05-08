@@ -5,20 +5,20 @@
 
 |Settings|Type|Default|Description|
 |---|---|---|---|
-|database.foreign.name|string|'database_123'|Name of the foreign database|
-|database.foreign.username|string|'username_123'|Username to the foreign database|
-|database.foreign.password|string|'Password_123'|Password to the foreign database|
-|database.foreign.hostname|string|'localhost'|Host of the foreign database|
+|database.foreign.name|string|database_123|Name of the foreign database|
+|database.foreign.username|string|username_123|Username to the foreign database|
+|database.foreign.password|string|Password_123|Password to the foreign database|
+|database.foreign.hostname|string|localhost|Host of the foreign database|
 |database.foreign.port|int|3306|Port to the foreign database|
 |excludeRelatedTables|array|_cropped. See example file_|Tables that are excluded from publishing|
 |ignoreFieldsForDifferenceView.[tableName]|array|_depends on table, tables defined by default: pages, physical_folder, sys_file_|Don't show a difference if there is a difference in this table.field|
 |ignoreFieldsForDifferenceView.physical_folder|array|_cropped. See example file_|Don't show a difference if there is a difference by comparing folders between Local and Foreign (All settings of  php function stat() are possible.)|
-|factory.maximumPageRecursion|int|3|Depth of pages to fetch in hierarchy|
+|factory.maximumPageRecursion|int|2|Depth of pages to fetch in hierarchy|
 |factory.maximumContentRecursion|int|6|Maximum number of relations in one relation chain. For example: a value of "3" would stop after `tt_content` > `sys_file_reference` > `sys_file`. Therefor `sys_file_metadata` will not be included. |
-|factory.maximumOverallRecursion|int|12|Maximum number of instance creation recursion. Minimum: maximumPageRecursion + maximumContentRecursion. Will be ignored if lower.|
-|factory.reserveSysFileUids|bool|TRUE|Set this to FALSE if you take care of the auto_increment yourself (e.g. when having FAL uploads in the foreign frontend.|
+|factory.maximumOverallRecursion|int|8|Maximum number of instance creation recursion. Minimum: maximumPageRecursion + maximumContentRecursion. Will be ignored if lower.|
 |factory.resolvePageRelations|bool|FALSE|Resolve properties of records which target records from "pages" table. Use with care: Related pages will be published through the relation chain, too. Content records are ALL records, even pages and MM Records.|
 |factory.simpleOverviewAndAjax|bool|FALSE|_cropped. See example file_|
+|factory.fal.reserveSysFileUids|bool|TRUE|Set this to FALSE if you take care of the auto_increment yourself (e.g. when having FAL uploads in the foreign frontend.|
 |factory.fal.reclaimSysFileEntries|bool|FALSE|_cropped. See example file_|
 |factory.fal.autoRepairFolderHash|bool|FALSE|_cropped. See example file_|
 |factory.fal.mergeSysFileByIdentifier|bool|FALSE|_cropped. See example file_|
@@ -46,6 +46,7 @@
 |debug.disableParentRecords|bool|FALSE|Debug settings: If set to TRUE, parentRecord will not be set for records|
 |debug.showForeignKeyFingerprint|bool|FALSE|Debug settings: Show foreign key fingerprint instead of throwing an exception if keyprint does not match with configuration|
 |debug.showRecordDepth|bool|FALSE|Debug settings: Show depth of records in publishing view|
+|debug.showExecutionTime|bool|TRUE|Show execution time in backend modules in footer|
 |debug.allInformation|bool|FALSE|Debug settings: Show all information in publishing overview module (which records are related to the current page)|
 |debug.keepEnvelopes|bool|FALSE|Do not delete Envelope entries after they fulfilled their purpose. Enable to keep all Envelopes. Overrules method level burnEnvelopes setting.|
 |tasks.realUrl.excludedDokTypes|array|[254]|Exclude pages with these dokTypes from realUrl generation|
@@ -225,7 +226,7 @@ factory:
     # IMPORTANT: If the UID of the foreign sys_file entry is already used in sys_file_reference this feature will not
     #   overwrite the foreign UID to prevent severe damage or missing images on the foreign's frontend.
     #   Hence it's mostly worth the risk and relatively stable.
-    mergeSysFileByIdentifier: TRUE
+    mergeSysFileByIdentifier: FALSE
 
     # [BETA]
     #
@@ -241,7 +242,7 @@ factory:
     # WARNING: This feature changes sys_file_reference entries on live without opt-in or asking for permission.
     #   There is no preview of the changes which are going to be made.
     #   Changes are persisted immediately before the publish file module is rendered.
-    enableSysFileReferenceUpdate: TRUE
+    enableSysFileReferenceUpdate: FALSE
 
 
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
@@ -341,7 +342,7 @@ debug:
   # show all information in publishing overview module (which records are related to the current page)
   allInformation: FALSE
 
-  # Do not delete Envelope entries after they fulfilled their purpose. Enable to keep all Envelopes. Overrules method level burnEnvelopes setting.
+  # Do not delete Envelope entries after they fulfilled their purpose
   keepEnvelopes: FALSE
 
 
@@ -356,12 +357,6 @@ tasks:
 
     # Create a web request for the published page.
     requestFrontend: FALSE
-
-  # Task name
-  solr:
-
-    # enable or disable solr integration
-    enable: FALSE
 
 
 # Set to TRUE if User TSconfig shall not be merged into this configuration file.
