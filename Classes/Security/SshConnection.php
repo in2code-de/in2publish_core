@@ -387,9 +387,7 @@ class SshConnection
      */
     private function setPermissionPerCommand($fileOrFolder, $permission)
     {
-        if ($this->chmodEnabled && PHP_MAJOR_VERSION < 7) {
-            $this->executeRemoteCommand('chmod ' . $permission . ' "' . $fileOrFolder . '"');
-        }
+        $this->executeRemoteCommand('chmod ' . $permission . ' "' . $fileOrFolder . '"');
     }
 
     /**
