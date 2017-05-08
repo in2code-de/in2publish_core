@@ -25,6 +25,7 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 
 /**

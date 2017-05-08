@@ -113,6 +113,7 @@ excludeRelatedTables:
   - tx_in2code_in2publish_task
   - tx_in2code_in2publish_envelope
 
+
 # Ignore this fields for DIFF view
 ignoreFieldsForDifferenceView:
   pages:
@@ -158,6 +159,7 @@ ignoreFieldsForDifferenceView:
     - creation_date
     - tstamp
     - last_indexed
+
 
 # factory settings (configuration about building relations in in2publish)
 factory:
@@ -241,16 +243,19 @@ factory:
     #   Changes are persisted immediately before the publish file module is rendered.
     enableSysFileReferenceUpdate: TRUE
 
+
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
 filePreviewDomainName:
   local: stage.publishing.localhost.de
   foreign: prod.publishing.localhost.de
+
 
 # Logger configuration
 log:
   # 0:Emergency, 1:Alert, 2:Critical, 3:Error, 4:Warning, 5:Notice, 6:Info, 7:Debug (int)
   # - All levels smaller or equal to this value will be stored.
   logLevel: 5
+
 
 # Manipulate view
 view:
@@ -305,6 +310,7 @@ sshConnection:
   ignoreChmodFail: FALSE
 
 
+
 # module settings
 module:
   # Enable/Disable Publishing overview module
@@ -315,6 +321,7 @@ module:
 
   # Enable/Disable Function Publishing module
   m4: TRUE
+
 
 # Debug settings
 debug:
@@ -336,6 +343,7 @@ debug:
 
   # Do not delete Envelope entries after they fulfilled their purpose. Enable to keep all Envelopes. Overrules method level burnEnvelopes setting.
   keepEnvelopes: FALSE
+
 
 # Configuration for tasks
 tasks:
@@ -359,6 +367,7 @@ tasks:
 # Set to TRUE if User TSconfig shall not be merged into this configuration file.
 disableUserConfig: FALSE
 
+
 # Backup configuration
 backup:
 
@@ -378,6 +387,7 @@ backup:
     # If TRUE, backups of tables will be stored in ZIP files instead of plain sql file.
     # saves a lot of disc space.
     zipBackup: TRUE
+
 
 tca:
   processor:
