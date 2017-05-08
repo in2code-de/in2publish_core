@@ -6,18 +6,17 @@ if (!defined('TYPO3_MODE')) {
 call_user_func(
     function ($extKey) {
         if (TYPO3_MODE === 'BE' && !(TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_INSTALL)) {
-            // get absolute path (do not use __DIR__ because of symlinks)
-            $extensionPath = TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($extKey);
-
             $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
                 'In2code\\In2publishCore\\Service\\Context\\ContextService'
             );
 
-            /**
-             * Manually load Spy YAML parser
-             */
+            // Manually load Spy YAML parser
             if (!class_exists('\Spyc')) {
-                require_once($extensionPath . '/Resources/Private/Spyc/Spyc.php');
+                $file = TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath(
+                    'in2publish_core',
+                    'Resources/Private/Libraries/Spyc/Spyc.php'
+                );
+                require_once($file);
             }
 
             $isModuleM1Enabled = \In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('module.m1');
