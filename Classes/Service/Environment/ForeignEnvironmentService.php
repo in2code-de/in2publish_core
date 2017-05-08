@@ -28,9 +28,6 @@ namespace In2code\In2publishCore\Service\Environment;
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
-use In2code\In2publishCore\Domain\Driver\Rpc\Envelope;
-use In2code\In2publishCore\Domain\Driver\Rpc\EnvelopeDispatcher;
-use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Log\Logger;
