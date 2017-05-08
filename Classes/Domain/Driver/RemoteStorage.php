@@ -31,7 +31,6 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandReq
 use In2code\In2publishCore\Domain\Driver\Rpc\Envelope;
 use In2code\In2publishCore\Domain\Driver\Rpc\EnvelopeDispatcher;
 use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
-use In2code\In2publishCore\Security\SshConnection;
 use TYPO3\CMS\Core\Resource\ResourceStorageInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -50,11 +49,6 @@ class RemoteStorage implements ResourceStorageInterface
     protected $letterbox = null;
 
     /**
-     * @var null
-     */
-    protected $sshConnection = null;
-
-    /**
      * @var array
      */
     protected static $cache = array();
@@ -65,7 +59,6 @@ class RemoteStorage implements ResourceStorageInterface
     public function __construct()
     {
         $this->letterbox = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\Rpc\\Letterbox');
-        $this->sshConnection = SshConnection::makeInstance();
     }
 
     /**
