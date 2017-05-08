@@ -119,6 +119,7 @@ class ConfigurationDefinitionProvider implements SingletonInterface
                     'foreignRootPath' => 'string',
                     'pathToPhp' => 'string',
                     'ignoreChmodFail' => 'boolean',
+                    'foreignTYPO3Context' => 'string',
                 ),
                 'module' => array(
                     'm1' => 'boolean',

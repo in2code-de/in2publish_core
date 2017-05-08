@@ -40,6 +40,7 @@
 |sshConnection.foreignRootPath|string|/Users/simpleAccount/Projects/Websites/foreign.publishing.dev|Root path of the foreign TYPO3 CMS instance|
 |sshConnection.pathToPhp|string|/usr/bin/env php|Path to php binary on foreign|
 |sshConnection.ignoreChmodFail|bool|FALSE|SSH and transfer settings. Ignore if chmod fails. Prevents exception.|
+|sshConnection.foreignTYPO3Context|string|Production|TYPO3 Context environment variable to preprendend to each CLI call on foreign. Will by set via export. (example: `export TYPO3_CONTEXT="Production"`)|
 |module.m1|bool|TRUE|Enable or disable publishing overview module in general|
 |module.m3|bool|TRUE|Enable or disable file publishing module in general|
 |module.m4|bool|TRUE|Enable or disable tools module in general|
@@ -310,6 +311,8 @@ sshConnection:
   # ignore if chmod fails. prevents exception
   ignoreChmodFail: FALSE
 
+  # TYPO3_CONTEXT environment variable to preprend to remote CLI calls
+  foreignTYPO3Context: Production
 
 
 # module settings

@@ -234,6 +234,9 @@ sshConnection:
   # ignore if chmod fails. prevents exception
   ignoreChmodFail: FALSE
 
+  # TYPO3_CONTEXT environment variable to preprend to remote CLI calls
+  foreignTYPO3Context: Production
+
 
 # module settings
 module:
