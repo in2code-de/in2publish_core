@@ -106,10 +106,10 @@ class ForeignEnvironmentService
 
             if ($response->isSuccessful()) {
                 $values = $this->tokenizeResponse($response->getOutput());
-                if (isset($values['FileCreateMask']) && isset($values['FileCreateMask'])) {
+                if (isset($values['FileCreateMask']) && isset($values['FolderCreateMask'])) {
                     $createMasks = [
                         'file' => $values['FileCreateMask'],
-                        'folder' => $values['FileCreateMask'],
+                        'folder' => $values['FolderCreateMask'],
                     ];
                 }
             }
