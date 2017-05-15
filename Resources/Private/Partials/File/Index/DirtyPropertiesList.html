@@ -7,6 +7,7 @@
 				<f:then>
 
 					<f:link.external
+						class="in2publish-notextdecoration"
 						uri="{publish:File.BuildResourcePath(record:record,stagingLevel:'local')}"
 						target="_blank">
 						<i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_file">Preview</f:translate>
@@ -44,6 +45,7 @@
 			<f:if condition="{record.state} != 'added'">
 				<f:then>
 					<f:link.external
+						class="in2publish-notextdecoration"
 						uri="{publish:File.BuildResourcePath(record:record,stagingLevel:'foreign')}"
 						target="_blank">
 						<i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_file">Preview</f:translate>
