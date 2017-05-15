@@ -73,7 +73,7 @@ Example workflow feature (part of the enterprise version)
 
 Browser notifications after asynchronous publishing (part of the enterprise version)
 
-## Instalation
+## Installation
 
 `composer require in2code/in2publish_core`
 
