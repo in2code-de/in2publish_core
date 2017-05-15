@@ -17,20 +17,16 @@
 		<div class="in2publish-stagelisting__dropdown__actions">
 			<f:if condition="{record.state} != 'deleted'">
 				<f:then>
-					<a href="{publish:Uri.UndoRecord(table:record.tableName,identifier:record.identifier)}"><i class="in2publish-icon-history"></i><f:translate key="dirty_properties_history_page">Page History</f:translate></a>
+					<a class="in2publish-notextdecoration" href="{publish:Uri.UndoRecord(table:record.tableName,identifier:record.identifier)}"><i class="in2publish-icon-history"></i><f:translate key="dirty_properties_history_page">Page History</f:translate></a>
 					<f:if condition="{record.localPreviewAvailable}">
 						<f:then>
-							<f:link.external uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local',addProtocol:'0')}/index.php?id={record.identifier}" target="_blank">
-								<i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate>
-							</f:link.external>
+							<f:link.external class="in2publish-notextdecoration" uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local',addProtocol:'0')}/index.php?id={record.identifier}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
 						</f:then>
 						<f:else>
 							<f:if condition="{publish:Uri.PreviewAnyRecord(tableName:record.tableName,identifier:record.identifier)}">
-								<f:link.external uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local',addProtocol:'0')}/{publish:Uri.PreviewAnyRecord(tableName:record.tableName,identifier:record.identifier)}" target="_blank">
-									<i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate>
-								</f:link.external>
+								<f:link.external class="in2publish-notextdecoration" uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local',addProtocol:'0')}/{publish:Uri.PreviewAnyRecord(tableName:record.tableName,identifier:record.identifier)}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
 							</f:if>
-							<a title="{f:translate(key:'dirty_properties_edit',default:'edit')}" href="{publish:Uri.EditRecord(table:record.tableName,identifier:record.identifier)}">
+							<a class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_edit',default:'edit')}" href="{publish:Uri.EditRecord(table:record.tableName,identifier:record.identifier)}">
 								<i class="in2publish-icon-edit"></i><f:translate key="dirty_properties_edit_main">edit</f:translate>
 							</a>
 						</f:else>
@@ -56,8 +52,8 @@
 						<f:for each="{record.dirtyProperties}" as="fieldName">
 							<li>
 								<f:if condition="{record.tableName} == 'pages'">
-									<a title="{f:translate(key:'dirty_properties_undo',default:'undo')}" href="{publish:Uri.UndoRecord(table:'pages',identifier:record.identifier)}"><i class="in2publish-icon-history"></i></a>
-									<a title="{f:translate(key:'dirty_properties_edit',default:'edit')}" href="{publish:Uri.EditRecord(table:'pages',identifier:record.identifier)}"><i class="in2publish-icon-edit"></i></a>
+									<a class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" href="{publish:Uri.UndoRecord(table:'pages',identifier:record.identifier)}"><i class="in2publish-icon-history"></i></a>
+									<a class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_edit',default:'edit')}" href="{publish:Uri.EditRecord(table:'pages',identifier:record.identifier)}"><i class="in2publish-icon-edit"></i></a>
 								</f:if>
 								<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.tableName}" />
 								<publish:Tca.FormatPropertyByTcaDefinition fieldName="{dirtyProperty}" tableName="{record.tableName}">
@@ -75,15 +71,13 @@
 			</f:comment>
 			<f:for each="{record.relatedRecords}" key="tableName" as="relatedRecords">
 				<f:if condition="{publish:Miscellaneous.HasChangedRecords(records:relatedRecords)}">
-					<h3 title="{tableName}">
-						<publish:Tca.GetTableLabelFromLocallang tableName="{tableName}" />
-					</h3>
+					<h3 title="{tableName}"><publish:Tca.GetTableLabelFromLocallang tableName="{tableName}" /></h3>
 					<ul class="in2publish-stagelisting__dropdown__item__list">
 						<f:for each="{relatedRecords}" as="relatedRecord">
 							<f:if condition="{relatedRecord.changed}">
 								<li>
-									<a title="{f:translate(key:'dirty_properties_undo',default:'undo')}" href="{publish:Uri.UndoRecord(table:tableName,identifier:relatedRecord.identifier)}"><i class="in2publish-icon-history"></i></a>
-									<a title="{f:translate(key:'dirty_properties_edit',default:'edit')}" href="{publish:Uri.EditRecord(table:tableName,identifier:relatedRecord.identifier)}"><i class="in2publish-icon-edit"></i></a>
+									<a class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" href="{publish:Uri.UndoRecord(table:tableName,identifier:relatedRecord.identifier)}"><i class="in2publish-icon-history"></i></a>
+									<a class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_edit',default:'edit')}" href="{publish:Uri.EditRecord(table:tableName,identifier:relatedRecord.identifier)}"><i class="in2publish-icon-edit"></i></a>
 									<publish:Tca.GetLabelFieldFromRecord record="{relatedRecord}" stagingLevel="local" />
 								</li>
 							</f:if>
@@ -102,13 +96,9 @@
 					<f:if condition="{record.foreignPreviewAvailable}">
 						<f:then>
 							<f:if condition="{record.localPreviewAvailable}">
-								<f:link.external uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local',addProtocol:'0')}/index.php?id={record.identifier}&tx_in2publishcore_pi1[identifier]={record.identifier}&type=9815" target="_blank">
-									<i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_compare">Compare</f:translate>
-								</f:link.external>
+								<f:link.external class="in2publish-notextdecoration" uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local',addProtocol:'0')}/index.php?id={record.identifier}&tx_in2publishcore_pi1[identifier]={record.identifier}&type=9815" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_compare">Compare</f:translate></f:link.external>
 							</f:if>
-							<f:link.external uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'foreign',addProtocol:'0')}/index.php?id={record.identifier}" target="_blank">
-								<i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate>
-							</f:link.external>
+							<f:link.external class="in2publish-notextdecoration" uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'foreign',addProtocol:'0')}/index.php?id={record.identifier}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
 						</f:then>
 						<f:else>
 							&nbsp;
@@ -150,9 +140,7 @@
 			</f:comment>
 			<f:for each="{record.relatedRecords}" key="tableName" as="relatedRecords">
 				<f:if condition="{publish:Miscellaneous.HasChangedRecords(records:relatedRecords)}">
-					<h3 title="{tableName}">
-						<publish:Tca.GetTableLabelFromLocallang tableName="{tableName}" />
-					</h3>
+					<h3 title="{tableName}"><publish:Tca.GetTableLabelFromLocallang tableName="{tableName}" /></h3>
 					<ul class="in2publish-stagelisting__dropdown__item__list">
 						<f:for each="{relatedRecords}" as="relatedRecord">
 							<f:if condition="{relatedRecord.changed}">
