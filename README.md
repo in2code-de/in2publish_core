@@ -15,27 +15,25 @@ Content Publishing in TYPO3 - the easy way:
 
 ### Description
 
-The Content Publisher brings working with content to a new level. As an editor you can see all changes
-at a glance and publish them. Major revisions can be prepared and approved properly.
-Related content and files are reliably transferred as well. You can also publish selected page trees to
-the live server.
+The Content Publisher takes working with content to a whole new level. As an editor you can see all changes
+at a glance and publish them. Changes of major revisions can be prepared and approved individually.
+Pages and related content and files are reliably transferred as well.
+You can also publish selected page trees to the live server.
 
-Editing pages can be structured into a multi-step workflow. By this editing, reviewing, and publishing
-can also be separated into distinct roles.
+Editing pages can be structured into a multi-step workflow, thus editing, reviewing, and publishing can be separated into distinct roles.
 The modern user interface facilitates intuitive handling without excessive training.
 
 ### Technical note
 
-The content publisher basicly requires two TYPO3 servers. A staging and a live server. The authors do their
-editing on the stage server. They also have a backend module to manage pages and files and their publishing
-status. This means that backend access to the live server is not required anymore. The data transfer between
-the two servers is secured by SSH tunnels and happens only from the stage towards the live server.
+The content publisher basically requires two TYPO3 instances. A staging and a live instance.
+Editors work solely on the stage server. They also have a backend module to manage pages and files and their publishing status.
+This means that backend access to the live server is not required anymore. The data transfer between
+the two servers is secured by encrypted connections and allows only unidirectional system access from stage to live.
 
 Data from the live server is only transferred upon explicit request from the stage server. This also means
-that the stage server can be placed inside the private company network while the live server is accessible
-throughout the Internet. The same TYPO3 extension is installed on both servers. So both servers only differ
-in configuration. This brings the big advantage that an existing deployment can be used for both systems in
-one go.
+that the stage server can be placed inside the private company intranet while the live server is accessible
+throughout the internet. The same TYPO3 extension is installed on both servers. So both servers only differ
+in configuration. This has the great advantage that an existing deployment can be used for both systems at once.
 
 See for more details:
 * https://www.in2code.de/produkte/content-publisher/ (german)
