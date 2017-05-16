@@ -79,7 +79,7 @@ Easy installation via composer. See documentation for a step by step manual
 
 ## Documentation
 
-* [Requirements And Limitations](RequirementsAndLimitations.md)
+* [Requirements And Limitations](Documentation/RequirementsAndLimitations.md)
 * Extension documentation: [Documentation](Documentation/README.md)
 * Community help: https://typo3.slack.com/messages/ext-in2publish/
 
