@@ -79,8 +79,9 @@ Easy installation via composer. See documentation for a step by step manual
 
 ## Documentation
 
-* See: https://github.com/in2code-de/in2publish_core/tree/master/Documentation
-* Community help on: https://typo3.slack.com/messages/ext-in2publish/
+* [Requirements And Limitations](RequirementsAndLimitations.md)
+* Extension documentation: [Documentation](Documentation/README.md)
+* Community help: https://typo3.slack.com/messages/ext-in2publish/
 
 ## Version changelog
 
