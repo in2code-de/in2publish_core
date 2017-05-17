@@ -774,7 +774,7 @@ class Record implements RecordInterface
      */
     public function calculateState()
     {
-        if ($this->tableName === 'sys_file') {
+        if ($this->tableName === 'sys_file' && !isset($this->additionalProperties['recordDatabaseState'])) {
             if ($this->hasLocalProperty('identifier') && $this->hasForeignProperty('identifier')) {
                 if ($this->localProperties['identifier'] !== $this->foreignProperties['identifier']) {
                     $this->setState(self::RECORD_STATE_MOVED);
@@ -786,7 +786,12 @@ class Record implements RecordInterface
             if ($this->isLocalRecordDeleted() && !$this->isForeignRecordDeleted()) {
                 $this->setState(RecordInterface::RECORD_STATE_DELETED);
             } elseif (count($this->dirtyProperties) > 0) {
-                $this->setState(RecordInterface::RECORD_STATE_CHANGED);
+                if ($this->state === RecordInterface::RECORD_STATE_MOVED
+                    && isset($this->additionalProperties['recordDatabaseState'])) {
+                    $this->setState(RecordInterface::RECORD_STATE_MOVED_AND_CHANGED);
+                } else {
+                    $this->setState(RecordInterface::RECORD_STATE_CHANGED);
+                }
             } else {
                 $this->setState(RecordInterface::RECORD_STATE_UNCHANGED);
             }

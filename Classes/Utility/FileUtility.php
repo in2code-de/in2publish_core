@@ -111,10 +111,13 @@ class FileUtility
      */
     public static function extractFileInformation(FileInterface $file)
     {
+
+        $size = array_pop($file->getStorage()->getFileInfoByIdentifier($file->getIdentifier(), ['size']));
+
         $info = array(
             'identifier' => $file->getIdentifier(),
             'storage' => $file->getStorage()->getUid(),
-            'size' => $file->getSize() === null ? 0 : $file->getSize(),
+            'size' => $size === null ? 0 : $size,
             'name' => $file->getName(),
         );
 

@@ -34,6 +34,7 @@ use In2code\In2publishCore\Utility\FileUtility;
 use In2code\In2publishCore\Utility\FolderUtility;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
+use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -43,6 +44,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class IndexingFolderRecordFactory
 {
+    /**
+     * @var ResourceStorage
+     */
+    protected $storage;
+
     /**
      * Maximum number of files which are supported to exist in a single folder
      *
@@ -71,11 +77,11 @@ class IndexingFolderRecordFactory
         }
 
         // get FAL storages for each side
-        $localStorage = $localFolder->getStorage();
+        $this->storage = $localFolder->getStorage();
         $remoteStorage = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\RemoteStorage');
 
         // some often used variables
-        $storageUid = $localStorage->getUid();
+        $storageUid = $this->storage->getUid();
         $folderIdentifier = $localFolder->getIdentifier();
 
         // gather information about the folder, sub folders and files in this folder
@@ -83,7 +89,7 @@ class IndexingFolderRecordFactory
         $remoteProperties = array();
         $localSubFolders = FolderUtility::extractFoldersInformation($localFolder->getSubfolders());
         $remoteSubFolders = array();
-        $localFiles = FileUtility::extractFilesInformation($localStorage->getFilesInFolder($localFolder));
+        $localFiles = FileUtility::extractFilesInformation($this->storage->getFilesInFolder($localFolder));
 
         $this->checkFileCount($localFiles, $folderIdentifier, 'local');
 
@@ -131,44 +137,59 @@ class IndexingFolderRecordFactory
     }
 
     /**
-     * Detects files which are located in other folders that the local one (e.g. the local folder got renamed)
-     * @param RecordInterface[] $records
-     * @param array $remoteFiles
+     * Detects files which are located in other folders that the local/foreign one (e.g. the local folder got renamed)
      *
+     * @param RecordInterface[] $records
+     * @param array $files
+     * @param string $side
      * @return array
      */
-    protected function updateForeignFilesByRecords(array $records, array $remoteFiles)
+    protected function updateFilesByMovedRecords(array $records, array $files, $side)
     {
-        $remoteFolders = array();
+        $relatedFolders = [];
 
         foreach ($records as $record) {
             if ($record->getState() === RecordInterface::RECORD_STATE_MOVED) {
-                $foreignIdentifier = $record->getForeignProperty('identifier');
-                $folder = dirname($foreignIdentifier);
-                if (!isset($remoteFolders[$folder])) {
-                    $remoteFolders[$folder] = array();
-                    $remoteFolders[$folder]['files'] = array();
-                    $remoteFolders[$folder]['storageUid'] = $record->getForeignProperty('storage');
+                $fileIdentifier = $record->getPropertyBySideIdentifier($side, 'identifier');
+                $folder = dirname($fileIdentifier);
+                if (!isset($relatedFolders[$folder])) {
+                    $relatedFolders[$folder] = array();
+                    $relatedFolders[$folder]['files'] = array();
+                    $relatedFolders[$folder]['storageUid'] = $record->getPropertyBySideIdentifier($side, 'storage');
                 }
-                $remoteFolders[$folder]['files'][] = $foreignIdentifier;
+                $relatedFolders[$folder]['files'][] = $fileIdentifier;
             }
         }
 
-        if (!empty($remoteFolders)) {
-            $remoteStorage = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\RemoteStorage');
-            foreach ($remoteFolders as $folder => $fileInfo) {
-                if ($remoteStorage->hasFolder($fileInfo['storageUid'], $folder)) {
-                    $filesInFolder = $remoteStorage->getFilesInFolder($fileInfo['storageUid'], $folder);
-                    foreach ($remoteFolders[$folder]['files'] as $identifier) {
+        if (!empty($relatedFolders)) {
+            if ($side === 'foreign') {
+                $storage = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\RemoteStorage');
+            } else {
+                $storage = $this->storage;
+            }
+            foreach ($relatedFolders as $folder => $fileInfo) {
+                if ($side === 'foreign') {
+                    if ($storage->hasFolder($fileInfo['storageUid'], $folder)) {
+                        $filesInFolder = $storage->getFilesInFolder($fileInfo['storageUid'], $folder);
+                        foreach ($relatedFolders[$folder]['files'] as $identifier) {
+                            if (isset($filesInFolder[$identifier])) {
+                                $files[$identifier] = $filesInFolder[$identifier];
+                            }
+                        }
+                    }
+                } elseif ($storage->hasFolder($folder)) {
+                    $filesInFolder = $storage->getFolder($folder)->getFiles();
+                    $filesInFolder = FileUtility::extractFilesInformation($filesInFolder);
+                    foreach ($relatedFolders[$folder]['files'] as $identifier) {
                         if (isset($filesInFolder[$identifier])) {
-                            $remoteFiles[$identifier] = $filesInFolder[$identifier];
+                            $files[$identifier] = $filesInFolder[$identifier];
                         }
                     }
                 }
             }
         }
 
-        return $remoteFiles;
+        return $files;
     }
 
     /**
@@ -187,7 +208,8 @@ class IndexingFolderRecordFactory
         /** @var RecordInterface[] $touchedEntries */
         $touchedEntries = array();
 
-        $remoteFiles = $this->updateForeignFilesByRecords($records, $remoteFiles);
+        $localFiles = $this->updateFilesByMovedRecords($records, $localFiles, 'local');
+        $remoteFiles = $this->updateFilesByMovedRecords($records, $remoteFiles, 'foreign');
 
         foreach ($records as $index => $file) {
             $localFileName = $file->hasLocalProperty('identifier') ? $file->getLocalProperty('identifier') : '';

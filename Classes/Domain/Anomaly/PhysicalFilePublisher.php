@@ -106,6 +106,20 @@ class PhysicalFilePublisher implements SingletonInterface
                 );
 
                 switch ($record->getState()) {
+                    case RecordInterface::RECORD_STATE_MOVED_AND_CHANGED:
+                        $old = $record->getForeignProperty('identifier');
+                        $new = $record->getLocalProperty('identifier');
+                        if (true === $result = $filePublisherService->addFileToForeign($storage, $new)) {
+                            $this->logger->info('Added file to foreign', $logData);
+                            if (true === $result = $filePublisherService->removeForeignFile($storage, $old)) {
+                                $this->logger->info('Removed remote file', $logData);
+                            } else {
+                                $this->logger->error('Failed to remove remote file', $logData);
+                            }
+                        } else {
+                            $this->logger->error('Failed to add file to foreign', $logData);
+                        }
+                        break;
                     case RecordInterface::RECORD_STATE_DELETED:
                         if (true === $result = $filePublisherService->removeForeignFile($storage, $identifier)) {
                             $this->logger->info('Removed remote file', $logData);

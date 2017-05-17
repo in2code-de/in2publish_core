@@ -201,7 +201,7 @@ a.in2publish-notextdecoration {
       @extend .icon-file-broken;
     }
   }
-
+  .in2publish-stagelisting__item--moved-and-changed &,
   .in2publish-stagelisting__item--changed & {
     background-color: $goldentainoi;
     color: $scorpion;

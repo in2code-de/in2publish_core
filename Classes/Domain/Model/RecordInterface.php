@@ -37,6 +37,7 @@ interface RecordInterface
     const RECORD_STATE_ADDED = 'added';
     const RECORD_STATE_DELETED = 'deleted';
     const RECORD_STATE_MOVED = 'moved';
+    const RECORD_STATE_MOVED_AND_CHANGED = 'moved-and-changed';
 
     /**
      * @param string $tableName
