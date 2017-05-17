@@ -1,7 +1,7 @@
 {
 	"name": "in2code/in2publish_core",
 	"description": "Content publishing extension to connect stage and production server",
-	"version": "5.7.0",
+	"version": "5.8.0",
 	"keywords": [
 		"TYPO3 CMS",
 		"publishing",
@@ -34,8 +34,8 @@
 	"type": "typo3-cms-extension",
 	"license": "GPL-3.0",
 	"require": {
-		"php": ">=5.3",
-		"typo3/cms": ">=6.2.0 <9.0.0, !=8.3.0"
+		"php": ">=5.5",
+		"typo3/cms": ">=7.6.0 <9.0.0, !=8.3.0"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^4.8",
@@ -71,7 +71,7 @@
 			"web-dir": ".Build/Web"
 		},
 		"branch-alias": {
-			"dev-master": "5.7.x-dev"
+			"dev-master": "5.8.x-dev"
 		}
 	}
 }

@@ -1,5 +1,57 @@
 # In2publish Core Change Log
 
+5.8.0:
+
+- [BUGFIX] Replace file on foreign with new file in different location after it got moved and replaced (fixes #28)
+- [DOCS] Fix link to Reqs and Limits
+- [DOCS] Add link to requirements and limitations
+- [DOCS] Add requirements and limitations abstract
+- [DOCS] Fix some typos and wordings in readme
+- [DOCS] Remove outdated information table from Docs/Readme
+- [DOCS] Remove trailing whitespace from README
+- [DOCS] Fix of a readme typo
+- [DOCS] Update of readme.md with some more information and screenshots
+- [BUGFIX] Remove text decoration by hover on icons in filelist
+- [BUGFIX] Remove text decoration by hover on icons
+- [BUGFIX] Use FolderCreateMask instead of FileCreateMask for folder permissions (fixes #27)
+- [BUGFIX] Use RCE API to retrieve createMasks for SshConnection (related #25, fixes #26)
+- [CLEANUP] Remove unused imports from ForeignEnvironmentService
+- [BUGFIX] Always apply remote permissions on newly created files and folders when ssh2_sftp_chmod is not available
+- [TYPO] Fix a typo in the error message if retrieving the foreign DB init failed
+- [CLEANUP] Remove unused SshConnection from RemoteStorage (fixes #24)
+- [BUGFIX] Require Spyc in ext_tables by the correct path (now same as in ext_localconf) (fixes #23)
+- [FEATURE] Add option to configure the foreign CLI TYPO3 context (fixes #22)
+- [DOCS] Update LocalConfig documentation to match current example configuration
+- [CODESTYLE] Add blank lines to separate sections more clearly
+- [COMMENT] Ignore superglobals access in StatusCommandController::dbInitQueryEncodedCommand because it's required
+- [COMMENT] Ignore coupling of objects in SshConnection because those classes are not used
+- [BUGFIX] Add SshConnectionTest as a dependency for ForeignDatabaseTest
+- [BUGFIX] Catch RCE adapter exceptions and use the result as test result to identify SSH connection problems
+- [BUGFIX] Properly overload the controller action if the database could not be initialized
+- [REFACTOR] Lazy initialize the ssh session of SshAdapter
+- [REFACTOR] Lazy initialize the RCE adapter
+- [BUGFIX] Use RCE API to initialize the foreign database
+- [BUGFIX] Add default TCA processor for TCA type imageManipulation
+- [BUGFIX] Do not select envelopes from the letterbox if the database is not connected
+- [FEATURE] Use caching for createMasks in SshConnection
+- [DEPRECATION] Deprecate rewritten parts of SshConnection
+- [FEATURE] Replace all SshConnection command related method calls with new RCE API
+- [FEATURE] Rewrite command related parts of SshConnection as RCE API
+- [COMMENT] Fix return type annotation of AbstractTask::getMessage
+- [BUGFIX] Only build foreign database connection for table commands when on local
+- [BUGFIX] Ensure table exists in the given database before creating a backup of it
+- [CLEANUP] Remove leading empty line in Databaseutility method
+- [BUGFIX] Add missing output values to status:all command
+- [REFACTOR] Print separate lines of configuration values instead of manually breking the line
+- [REFACTOR] Extract supported SSH2 key fingerprint hashing algorithm to class member
+- [CODESTYLE] Rewrap multiline function call
+- [CODESTYLE] Add missing comma on trailing array element
+- [COMMENT] Add missing blank line between description and annotation
+- [TYPO] Fix typo in SshConnection exception message
+- [BUGFIX] Prevent workflowcontainer scrolling in non natural scrolling backend modules
+- [TASK] Add storageUid to exception message if remote storage could not be found
+- [FEATURE] Add backend test to detect if regular logins are permitted on foreign
+
 5.7.0:
 
 - [FEATURE] Add signal to FolderPublisherServive after publishing a folder
