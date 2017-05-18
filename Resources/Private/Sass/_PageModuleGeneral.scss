@@ -169,3 +169,12 @@
     }
   }
 }
+
+.in2publish__workflowbutton {
+  a.disabled,
+  a[disabled] {
+    span {
+      cursor: not-allowed;
+    }
+  }
+}
