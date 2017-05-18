@@ -28,7 +28,6 @@ namespace In2code\In2publishCore\Utility;
 use In2code\In2publishCore\Service\Context\ContextService;
 use TYPO3\CMS\Backend\Utility\BackendUtility as CoreBackendUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Utility\ArrayUtility as CoreArrayUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -112,7 +111,7 @@ class ConfigurationUtility
         $configuration = $this->getMergedConfiguration();
 
         if (!empty($configurationPath)) {
-            return CoreArrayUtility::getValueByPath($configuration, $configurationPath, '.');
+            return ArrayUtility::getValueByPath($configuration, $configurationPath);
         }
         return $configuration;
     }

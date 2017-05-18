@@ -26,8 +26,7 @@ namespace In2code\In2publishCore\Domain\Model\Task;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-
-use TYPO3\CMS\Core\Utility\ArrayUtility;
+use In2code\In2publishCore\Utility\ArrayUtility;
 
 /**
  * Any Task must inherit from this class. This AbstractTask works like a Template
@@ -131,7 +130,7 @@ abstract class AbstractTask
     final public function getConfiguration($path = '')
     {
         if ($path) {
-            return ArrayUtility::getValueByPath($this->configuration, $path, '.');
+            return ArrayUtility::getValueByPath($this->configuration, $path);
         }
         return $this->configuration;
     }
