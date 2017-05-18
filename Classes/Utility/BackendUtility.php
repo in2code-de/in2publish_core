@@ -26,7 +26,6 @@ namespace In2code\In2publishCore\Utility;
  ***************************************************************/
 
 use TYPO3\CMS\Backend\Utility\BackendUtility as BackendUtilityCore;
-use TYPO3\CMS\Core\FormProtection\FormProtectionFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -120,26 +119,18 @@ class BackendUtility
      * @param string $tableName
      * @param int $identifier
      * @return string
-     * @todo Remove outdated URI generation for TYPO3 6.2 in upcoming major version
      */
     public static function buildEditUri($tableName, $identifier)
     {
-        // use new link generation in backend for TYPO3 7.2 or newer
-        if (GeneralUtility::compat_version('7.2')) {
-            $uriParameters = array(
-                'edit' => array(
-                    $tableName => array(
-                        $identifier => 'edit',
-                    ),
-                ),
-                'returnUrl' => BackendUtilityCore::getModuleUrl('web_In2publishCoreM1'),
-            );
-            $editUri = BackendUtilityCore::getModuleUrl('record_edit', $uriParameters);
-        } else {
-            $editUri = FolderUtility::getSubFolderOfCurrentUrl();
-            $editUri .= 'typo3/alt_doc.php?edit[' . $tableName . '][' . $identifier . ']=edit';
-            $editUri .= '&returnUrl=' . BackendUtilityCore::getModuleUrl('web_In2publishCoreM1');
-        }
+        $uriParameters = [
+            'edit' => [
+                $tableName => [
+                    $identifier => 'edit',
+                ],
+            ],
+            'returnUrl' => BackendUtilityCore::getModuleUrl('web_In2publishCoreM1'),
+        ];
+        $editUri = BackendUtilityCore::getModuleUrl('record_edit', $uriParameters);
         return $editUri;
     }
 
@@ -149,23 +140,14 @@ class BackendUtility
      * @param string $table
      * @param int $identifier
      * @return string
-     * @todo Remove outdated URI generation for TYPO3 6.2 in upcoming major version
      */
     public static function buildUndoUri($table, $identifier)
     {
-        // use new link generation in backend for TYPO3 7.2 or newer
-        if (GeneralUtility::compat_version('7.2')) {
-            $uriParameters = array(
-                'element' => $table . ':' . $identifier,
-                'returnUrl' => BackendUtilityCore::getModuleUrl('web_In2publishCoreM1'),
-            );
-            $undoUri = BackendUtilityCore::getModuleUrl('record_history', $uriParameters);
-        } else {
-            $undoUri = FolderUtility::getSubFolderOfCurrentUrl();
-            $undoUri .= 'typo3/mod.php?M=record_history&element=' . $table . ':' . $identifier;
-            $undoUri .= '&moduleToken=' . FormProtectionFactory::get()->generateToken('moduleCall', 'record_history');
-            $undoUri .= '&returnUrl=' . BackendUtilityCore::getModuleUrl('web_In2publishCoreM1');
-        }
+        $uriParameters = array(
+            'element' => $table . ':' . $identifier,
+            'returnUrl' => BackendUtilityCore::getModuleUrl('web_In2publishCoreM1'),
+        );
+        $undoUri = BackendUtilityCore::getModuleUrl('record_history', $uriParameters);
         return $undoUri;
     }
 }
