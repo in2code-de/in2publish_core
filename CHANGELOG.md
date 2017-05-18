@@ -1,5 +1,18 @@
 # In2publish Core Change Log
 
+5.8.1:
+
+- [BUGFIX] Resolve MM relations with the correct identifier
+- [DOCS] Add configuration setting dependencies to example config
+- [BUGFIX] Display correct error if foreign document root does not exist
+- [BUGFIX] Return failed response if RCE adapter failed to initialize
+- [BUGFIX] Disable workflow publish button in page and list module when publishing is not available
+- [LOGS] Log the specific reason the SshAdapter configuration validation failed
+- [BUGFIX] Use FQCN for Core ArrayUtility to in Utility namespace
+- [BUGFIX] Convert exception to string before passing it to the flash message
+- [BUGFIX] Backport Extbase method because the Core version throws an exception if a value does not exist
+- [REFACTOR] Replace all usages of Extbase ArrayUtility with the Core version
+
 5.8.0:
 
 - [BUGFIX] Replace file on foreign with new file in different location after it got moved and replaced (fixes #28)
