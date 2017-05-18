@@ -32,10 +32,10 @@ use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\FileUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Extbase\Service\FlexFormService;
-use TYPO3\CMS\Extbase\Utility\ArrayUtility as ExtbaseArrayUtility;
 
 /**
  * CommonRepository - actions in foreign and local database
@@ -770,7 +770,7 @@ class CommonRepository extends BaseRepository
     {
         $flexFormData = array();
         foreach (array_keys($flexFormDefinition) as $key) {
-            $data = ExtbaseArrayUtility::getValueByPath($originalData, $key);
+            $data = ArrayUtility::getValueByPath($originalData, $key, '.');
             if (!empty($data)) {
                 $flexFormData[$key] = $data;
             }
