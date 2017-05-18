@@ -143,7 +143,7 @@ abstract class AbstractController extends ActionController
             $message = 'See logs for more details';
         } catch (\Exception $exception) {
             $databaseConnection = null;
-            $message = $exception;
+            $message = $exception->getMessage();
         }
 
         if (null === $databaseConnection) {
