@@ -1323,14 +1323,14 @@ class CommonRepository extends BaseRepository
             )
         );
 
+        $foreignField = $this->getForeignField($columnConfiguration);
+
         /** @var RecordInterface $relationRecord */
         foreach ($records as $relationRecord) {
             $originalTableName = $columnConfiguration['foreign_table'];
             if (!in_array($originalTableName, $excludedTableNames)) {
-                $originalRecord = $this->findByIdentifierInOtherTable(
-                    $relationRecord->getMergedProperty('uid_local'),
-                    $columnConfiguration['foreign_table']
-                );
+                $identifier = $relationRecord->getMergedProperty($foreignField);
+                $originalRecord = $this->findByIdentifierInOtherTable($identifier, $originalTableName);
                 if ($originalRecord !== null) {
                     $relationRecord->addRelatedRecord($originalRecord);
                 }
