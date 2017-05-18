@@ -242,6 +242,10 @@
 				<source>The foreign document root could not be validated, because typical TYPO3 folders are missing (option: sshConnection.foreignRootPath).</source>
 				<target state="translated">Das Webverzeichnis des entfernten Systems konnte nicht verifiziert werden, da typische TYPO3-Verzeichnisse fehlen (Option: sshConnection.foreignRootPath).</target>
 			</trans-unit>
+			<trans-unit id="ssh_connection.foreign_document_root_missing">
+				<source>The foreign document root could not be validated, because the configured folder "%s" does not exist (option: sshConnection.foreignRootPath).</source>
+				<target state="translated">Das Webverzeichnis des entfernten Systems konnte nicht verifiziert werden, da das konfigurierte Verzeichnis "%s" nicht existiert (Option: sshConnection.foreignRootPath).</target>
+			</trans-unit>
 			<trans-unit id="ssh_connection.foreign_document_validation_error">
 				<source>Could not validate the foreign document root for other reasons.</source>
 				<target state="translated">Das Webverzeichnis des entfernten Systems konnte aus anderen Gründen nicht verifiziert werden.</target>

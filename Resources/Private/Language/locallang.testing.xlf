@@ -192,6 +192,9 @@
 			<trans-unit id="ssh_connection.foreign_document_root_wrong">
 				<source>The foreign document root could not be validated, because typical TYPO3 folders are missing (option: sshConnection.foreignRootPath).</source>
 			</trans-unit>
+			<trans-unit id="ssh_connection.foreign_document_root_missing">
+				<source>The foreign document root could not be validated, because the configured folder "%s" does not exist (option: sshConnection.foreignRootPath).</source>
+			</trans-unit>
 			<trans-unit id="ssh_connection.foreign_document_validation_error">
 				<source>Could not validate the foreign document root for other reasons.</source>
 			</trans-unit>

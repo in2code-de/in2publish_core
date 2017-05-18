@@ -69,12 +69,22 @@ class SshConnectionTest implements TestCaseInterface
             );
         }
 
+        // this is the first time a RCE is executed so we have to tes exactly here for the missing do root folder
         if (!$response->isSuccessful()) {
-            return new TestResult(
-                'ssh_connection.invalid_php',
-                TestResult::ERROR,
-                array('ssh_connection.php_test_error_message', $response->getErrorsString())
-            );
+            if (false !== strpos($response->getErrorsString(), 'No such file or directory')) {
+                return new TestResult(
+                    'ssh_connection.foreign_document_root_missing',
+                    TestResult::ERROR,
+                    [],
+                    [$request->getWorkingDirectory()]
+                );
+            } else {
+                return new TestResult(
+                    'ssh_connection.invalid_php',
+                    TestResult::ERROR,
+                    array('ssh_connection.php_test_error_message', $response->getErrorsString())
+                );
+            }
         }
 
         $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'ls');
