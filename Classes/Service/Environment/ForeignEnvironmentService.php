@@ -95,6 +95,8 @@ class ForeignEnvironmentService
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function getCreateMasks()
     {
@@ -124,11 +126,9 @@ class ForeignEnvironmentService
                     ]
                 );
 
-                list($fileCreateMask, $folderCreateMask) = $this->getLocalCreateMasks();
-
                 $createMasks = [
-                    'file' => $fileCreateMask,
-                    'folder' => $folderCreateMask,
+                    'file' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['fileCreateMask'],
+                    'folder' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['folderCreateMask'],
                 ];
             }
 
@@ -169,22 +169,5 @@ class ForeignEnvironmentService
             }
         }
         return $values;
-    }
-
-    /**
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
-    protected function getLocalCreateMasks()
-    {
-        if (GeneralUtility::compat_version('7.6') === true) {
-            $fileCreateMask = $GLOBALS['TYPO3_CONF_VARS']['SYS']['fileCreateMask'];
-            $folderCreateMask = $GLOBALS['TYPO3_CONF_VARS']['SYS']['folderCreateMask'];
-        } else {
-            $fileCreateMask = $GLOBALS['TYPO3_CONF_VARS']['BE']['fileCreateMask'];
-            $folderCreateMask = $GLOBALS['TYPO3_CONF_VARS']['BE']['folderCreateMask'];
-        }
-        return array($fileCreateMask, $folderCreateMask);
     }
 }

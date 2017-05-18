@@ -114,17 +114,8 @@ class StatusCommandController extends AbstractCommandController
      */
     public function createMasksCommand()
     {
-        $isAtLeast76 = GeneralUtility::compat_version('7.6');
-        if ($isAtLeast76 === true) {
-            $fileCreateMask = $GLOBALS['TYPO3_CONF_VARS']['SYS']['fileCreateMask'];
-            $folderCreateMask = $GLOBALS['TYPO3_CONF_VARS']['SYS']['folderCreateMask'];
-        } else {
-            $fileCreateMask = $GLOBALS['TYPO3_CONF_VARS']['BE']['fileCreateMask'];
-            $folderCreateMask = $GLOBALS['TYPO3_CONF_VARS']['BE']['folderCreateMask'];
-        }
-
-        $this->outputLine('FileCreateMask: ' . $fileCreateMask);
-        $this->outputLine('FolderCreateMask: ' . $folderCreateMask);
+        $this->outputLine('FileCreateMask: ' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['fileCreateMask']);
+        $this->outputLine('FolderCreateMask: ' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['folderCreateMask']);
     }
 
     /**
