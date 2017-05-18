@@ -22,7 +22,6 @@ call_user_func(
             $isModuleM1Enabled = \In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('module.m1');
             $isModuleM3Enabled = \In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('module.m3');
             $isModuleM4Enabled = \In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('module.m4');
-            $is70Branch = \TYPO3\CMS\Core\Utility\GeneralUtility::compat_version('7.0');
 
             // initialize logging with configuration
             if (\In2code\In2publishCore\Utility\ConfigurationUtility::isConfigurationLoadedSuccessfully()) {
@@ -85,8 +84,7 @@ call_user_func(
                         ),
                         array(
                             'access' => 'user,group',
-                            'icon' => 'EXT:' . $extKey . '/Resources/Public/Icons/Record.' . ($is70Branch ? 'svg'
-                                    : 'png'),
+                            'icon' => 'EXT:' . $extKey . '/Resources/Public/Icons/Record.svg',
                             'labels' => 'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang_mod1.xlf',
                         )
                     );
@@ -104,8 +102,7 @@ call_user_func(
                         ),
                         array(
                             'access' => 'user,group',
-                            'icon' => 'EXT:' . $extKey . '/Resources/Public/Icons/File.' . ($is70Branch ? 'svg'
-                                    : 'png'),
+                            'icon' => 'EXT:' . $extKey . '/Resources/Public/Icons/File.svg',
                             'labels' => 'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang_mod3.xlf',
                         )
                     );
@@ -124,8 +121,7 @@ call_user_func(
                         ),
                         array(
                             'access' => 'admin',
-                            'icon' => 'EXT:' . $extKey . '/Resources/Public/Icons/Tools.' . ($is70Branch ? 'svg'
-                                    : 'png'),
+                            'icon' => 'EXT:' . $extKey . '/Resources/Public/Icons/Tools.svg',
                             'labels' => 'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang_mod4.xlf',
                         )
                     );
