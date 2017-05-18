@@ -85,7 +85,16 @@ class SshAdapter implements AdapterInterface
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->logger->debug('Initializing SshAdapter configuration');
 
-        $this->config = $this->getValidatedConfig();
+        try {
+            $this->config = $this->getValidatedConfig();
+        } catch (\Exception $exception) {
+            $this->logger->error(
+                'Invalid SSH connection configuration detected',
+                ['message' => $exception->getMessage()]
+            );
+            throw $exception;
+        }
+
         $this->config['chmodEnabled'] = function_exists('ssh2_sftp_chmod');
         $this->config['debug'] = (bool)ConfigurationUtility::getConfiguration('debug.showForeignKeyFingerprint');
     }
