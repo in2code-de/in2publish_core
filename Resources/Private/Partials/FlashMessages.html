@@ -1,9 +1,1 @@
-{namespace publish=In2code\In2publishCore\ViewHelpers}
-<f:if condition="{publish:Condition.IsCompatVersion(versionNumber:'7.6.0')}">
-	<f:then>
-		<f:render partial="FlashMessages/FlashMessages" arguments="{_all}" />
-	</f:then>
-	<f:else>
-		<f:render partial="LegacyCode/FlashMessages/FlashMessages" arguments="{_all}" />
-	</f:else>
-</f:if>
+<f:render partial="FlashMessages/FlashMessages" arguments="{_all}" />
