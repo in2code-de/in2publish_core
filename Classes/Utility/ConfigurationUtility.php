@@ -298,7 +298,7 @@ class ConfigurationUtility
      */
     protected function merge(array $configuration, array $overwrite)
     {
-        CoreArrayUtility::mergeRecursiveWithOverrule(
+        \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
             $configuration,
             ArrayUtility::removeFromArrayByKey($overwrite, self::$privateConfiguration),
             true
