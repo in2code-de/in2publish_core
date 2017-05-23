@@ -58,6 +58,7 @@ Here's a list of currently known limitations, but without claim of completeness:
 * Maximum number of files in a folder: The publish files module can only handle up to 150 files in a single folder. It's recommended to have a maximum of 100 files in a single folder.
 * User generated Content: You can have user generated on foreign and editorial content on stage on the same table if properly configured. It's possible to publish editorial contents, but not to retreive user generated content.
 * Multi Head / Multi Target publishing: in2publish-core can not diff against or publish to more than a single target.
+* Moved/Renamed folders can not be detected. The folder on foreign will be marked as deleted, the one on local will be shown marked new. If you delete the folder from foreign all files within will be removed with their parent folder. Publish files in the Publish Files Module from the renamed folder on local to move them.
 
 ---
 ---
