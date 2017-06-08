@@ -107,6 +107,8 @@ class FalIndexPostProcessor implements SingletonInterface
 
             $foreignFileInfo = $remoteStorage->getFile($storage->getUid(), $foreignIdentifier);
 
+            $ifrFactory->overruleLocalStorage($storage);
+            $ifrFactory->overruleRemoteStorage($remoteStorage);
             // do not use the return value since we only desire the record update of the file
             $ifrFactory->filterRecords(
                 array($localIdentifier => $localFileInfo),

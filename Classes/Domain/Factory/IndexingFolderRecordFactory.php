@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Driver\RemoteStorage;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
@@ -47,7 +48,12 @@ class IndexingFolderRecordFactory
     /**
      * @var ResourceStorage
      */
-    protected $storage;
+    protected $localStorage;
+
+    /**
+     * @var RemoteStorage
+     */
+    protected $remoteStorage;
 
     /**
      * Maximum number of files which are supported to exist in a single folder
@@ -55,6 +61,22 @@ class IndexingFolderRecordFactory
      * @var int
      */
     protected $threshold = 150;
+
+    /**
+     * @param ResourceStorage $localStorage
+     */
+    public function overruleLocalStorage(ResourceStorage $localStorage)
+    {
+        $this->localStorage = $localStorage;
+    }
+
+    /**
+     * @param RemoteStorage $remoteStorage
+     */
+    public function overruleRemoteStorage(RemoteStorage $remoteStorage)
+    {
+        $this->remoteStorage = $remoteStorage;
+    }
 
     /**
      * @param string|null $dir Directory which is currently selected in the directory tree
@@ -77,11 +99,11 @@ class IndexingFolderRecordFactory
         }
 
         // get FAL storages for each side
-        $this->storage = $localFolder->getStorage();
-        $remoteStorage = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\RemoteStorage');
+        $this->localStorage = $localFolder->getStorage();
+        $this->remoteStorage = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\RemoteStorage');
 
         // some often used variables
-        $storageUid = $this->storage->getUid();
+        $storageUid = $this->localStorage->getUid();
         $folderIdentifier = $localFolder->getIdentifier();
 
         // gather information about the folder, sub folders and files in this folder
@@ -89,17 +111,17 @@ class IndexingFolderRecordFactory
         $remoteProperties = array();
         $localSubFolders = FolderUtility::extractFoldersInformation($localFolder->getSubfolders());
         $remoteSubFolders = array();
-        $localFiles = FileUtility::extractFilesInformation($this->storage->getFilesInFolder($localFolder));
+        $localFiles = FileUtility::extractFilesInformation($this->localStorage->getFilesInFolder($localFolder));
 
         $this->checkFileCount($localFiles, $folderIdentifier, 'local');
 
         $remoteFiles = array();
 
         // get the actual information from remote if the folder actually exists
-        if (true === $remoteStorage->hasFolder($storageUid, $folderIdentifier)) {
+        if (true === $this->remoteStorage->hasFolder($storageUid, $folderIdentifier)) {
             $remoteProperties = $localProperties;
-            $remoteSubFolders = $remoteStorage->getFoldersInFolder($storageUid, $folderIdentifier);
-            $remoteFiles = $remoteStorage->getFilesInFolder($storageUid, $folderIdentifier);
+            $remoteSubFolders = $this->remoteStorage->getFoldersInFolder($storageUid, $folderIdentifier);
+            $remoteFiles = $this->remoteStorage->getFilesInFolder($storageUid, $folderIdentifier);
         }
 
         $this->checkFileCount($remoteFiles, $folderIdentifier, 'foreign');
@@ -163,9 +185,9 @@ class IndexingFolderRecordFactory
 
         if (!empty($relatedFolders)) {
             if ($side === 'foreign') {
-                $storage = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\RemoteStorage');
+                $storage = $this->remoteStorage;
             } else {
-                $storage = $this->storage;
+                $storage = $this->localStorage;
             }
             foreach ($relatedFolders as $folder => $fileInfo) {
                 if ($side === 'foreign') {
