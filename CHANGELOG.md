@@ -1,5 +1,15 @@
 # In2publish Core Change Log
 
+5.8.2:
+
+- [BUGFIX] Inject fal storages before filtering post processed fal records
+- [BUGFIX] Include the Plugin definition as reference because it might be defined later (fixes #31)
+- [DOCS] Add known limitation about moved/renamed folders
+- [CLEANUP] Remove TYPO3 6.2 flashMessage rendering partial and related IsCompatVersionViewHelper
+- [CLEANUP] Remove module link generation for TYPO3 6.2
+- [CLEANUP] Remove access to TYPO3 6.2 specific globals
+- [CLEANUP] Remove png module icon registration for TYPO3 6.2 and png files
+
 5.8.1:
 
 - [BUGFIX] Resolve MM relations with the correct identifier
