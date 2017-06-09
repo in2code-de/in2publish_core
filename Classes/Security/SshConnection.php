@@ -494,7 +494,8 @@ class SshConnection
              */
             $foreignFileStream = fopen(self::SSH2_WRAPPER . (int)$this->sftpSubSystem . $foreignFileLocation, 'w');
         } catch (\Exception $e) {
-            if (strpos($e->getMessage(), 'failed to open stream: operation failed')) {
+            $exceptionMessage = $e->getMessage();
+            if (strpos($exceptionMessage, 'failed to open stream: operation failed')) {
                 $this->logger->alert(
                     'PHP SSH2 fopen stream wrapper failure.',
                     array(
@@ -507,13 +508,18 @@ class SshConnection
                     . ' This might be a problem of your PHP version or php-ssh2 extension',
                     1487588970
                 );
+            } elseif (false !== strpos($exceptionMessage, 'server configuration by allow_url_fopen=0')) {
+                $this->logger->alert('PHP setting allow_url_fopen is false.');
+                throw new \Exception('PHP setting allow_url_fopen is disabled: ' . $exceptionMessage, 1496999878);
             } else {
+                $this->logger->alert('Caught unknown error while fopen(ssh2.sftp://)', ['exception' => $e]);
                 throw new \Exception(
-                    'Insufficient write permissions for remote file "' . $foreignFileLocation . '"',
+                    'An unknown error occurred or you have insufficient write permission: ' . $exceptionMessage,
                     1425467980
                 );
             }
         }
+
         if (!is_resource($localFileStream)) {
             throw new \Exception(
                 'Could not create a stream for foreign file "' . $foreignFileLocation . '"',
