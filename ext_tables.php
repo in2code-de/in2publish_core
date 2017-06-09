@@ -7,11 +7,11 @@ call_user_func(
     function ($extKey) {
         if (TYPO3_MODE === 'BE' && !(TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_INSTALL)) {
             $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                'In2code\\In2publishCore\\Service\\Context\\ContextService'
+                \In2code\In2publishCore\Service\Context\ContextService::class
             );
 
             // Manually load Spy YAML parser
-            if (!class_exists('\Spyc')) {
+            if (!class_exists(\Spyc::class)) {
                 $file = TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath(
                     'in2publish_core',
                     'Resources/Private/Libraries/Spyc/Spyc.php'
@@ -34,38 +34,38 @@ call_user_func(
                     $logLevel = 5;
                 }
 
-                $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'] = array(
-                    'writerConfiguration' => array(
-                        $logLevel => array(
-                            'TYPO3\\CMS\\Core\\Log\\Writer\\DatabaseWriter' => array(
+                $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'] = [
+                    'writerConfiguration' => [
+                        $logLevel => [
+                            \TYPO3\CMS\Core\Log\Writer\DatabaseWriter::class => [
                                 'logTable' => 'tx_in2code_in2publish_log',
-                            ),
-                        ),
-                    ),
-                    'processorConfiguration' => array(
-                        $logLevel => array(
-                            'In2code\\In2publishCore\\Log\\Processor\\BackendUserProcessor' => array(),
-                        ),
-                    ),
-                );
+                            ],
+                        ],
+                    ],
+                    'processorConfiguration' => [
+                        $logLevel => [
+                            \In2code\In2publishCore\Log\Processor\BackendUserProcessor::class => [],
+                        ],
+                    ],
+                ];
             }
 
             // These command controllers are always available.
             $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
-                'In2code\\In2publishCore\\Command\\StatusCommandController';
+                \In2code\In2publishCore\Command\StatusCommandController::class;
             $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
-                'In2code\\In2publishCore\\Command\\EnvironmentCommandController';
+                \In2code\In2publishCore\Command\EnvironmentCommandController::class;
             $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
-                'In2code\\In2publishCore\\Command\\TableCommandController';
+                \In2code\In2publishCore\Command\TableCommandController::class;
 
             /**
              * On foreign environment
              */
             if ($contextService->isForeign()) {
                 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
-                    'In2code\\In2publishCore\\Command\\PublishTasksRunnerCommandController';
+                    \In2code\In2publishCore\Command\PublishTasksRunnerCommandController::class;
                 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
-                    'In2code\\In2publishCore\\Command\\RpcCommandController';
+                    \In2code\In2publishCore\Command\RpcCommandController::class;
             }
 
             /**
@@ -79,14 +79,14 @@ call_user_func(
                         'web',
                         'm1',
                         '',
-                        array(
+                        [
                             'Record' => 'index,detail,publishRecord,publishRecordRecursive,toggleFilterStatusAndRedirectToIndex',
-                        ),
-                        array(
+                        ],
+                        [
                             'access' => 'user,group',
                             'icon' => 'EXT:' . $extKey . '/Resources/Public/Icons/Record.svg',
                             'labels' => 'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang_mod1.xlf',
-                        )
+                        ]
                     );
                 }
 
@@ -97,14 +97,14 @@ call_user_func(
                         'file',
                         'm3',
                         '',
-                        array(
+                        [
                             'File' => 'index,publishFolder,publishFile,toggleFilterStatusAndRedirectToIndex',
-                        ),
-                        array(
+                        ],
+                        [
                             'access' => 'user,group',
                             'icon' => 'EXT:' . $extKey . '/Resources/Public/Icons/File.svg',
                             'labels' => 'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang_mod3.xlf',
-                        )
+                        ]
                     );
                 }
 
@@ -116,14 +116,14 @@ call_user_func(
                         'tools',
                         'm4',
                         '',
-                        array(
+                        [
                             'Tools' => 'index, test, showLogs, flushLogs, configuration, tca, clearTcaCaches, flushEnvelopes, flushRegistry',
-                        ),
-                        array(
+                        ],
+                        [
                             'access' => 'admin',
                             'icon' => 'EXT:' . $extKey . '/Resources/Public/Icons/Tools.svg',
                             'labels' => 'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang_mod4.xlf',
-                        )
+                        ]
                     );
                 }
 
@@ -133,57 +133,60 @@ call_user_func(
                     'TYPO3\CMS\Extbase\SignalSlot\Dispatcher'
                 );
                 $signalSlotDispatcher->connect(
-                    'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
+                    \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
                     'publishRecordRecursiveAfterPublishing',
-                    'In2code\\In2publishCore\\Domain\\Anomaly\\PhysicalFilePublisher',
+                    \In2code\In2publishCore\Domain\Anomaly\PhysicalFilePublisher::class,
                     'publishPhysicalFileOfSysFile',
                     false
                 );
                 $signalSlotDispatcher->connect(
-                    'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
+                    \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
                     'publishRecordRecursiveBeforePublishing',
-                    'In2code\\In2publishCore\\Domain\\Anomaly\\CacheInvalidator',
+                    \In2code\In2publishCore\Domain\Anomaly\CacheInvalidator::class,
                     'registerClearCacheTasks',
                     false
                 );
                 $signalSlotDispatcher->connect(
-                    'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
+                    \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
                     'publishRecordRecursiveEnd',
-                    'In2code\\In2publishCore\\Domain\\Anomaly\\CacheInvalidator',
+                    \In2code\In2publishCore\Domain\Anomaly\CacheInvalidator::class,
                     'writeClearCacheTask',
                     false
                 );
                 $signalSlotDispatcher->connect(
-                    'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
+                    \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
                     'publishRecordRecursiveAfterPublishing',
-                    'In2code\\In2publishCore\\Domain\\Anomaly\\RealUrlCacheInvalidator',
+                    \In2code\In2publishCore\Domain\Anomaly\RealUrlCacheInvalidator::class,
                     'registerClearRealUrlCacheTask',
                     false
                 );
                 $signalSlotDispatcher->connect(
-                    'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
+                    \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
                     'publishRecordRecursiveAfterPublishing',
-                    'In2code\\In2publishCore\\Domain\\Anomaly\\SysLogPublisher',
+                    \In2code\In2publishCore\Domain\Anomaly\SysLogPublisher::class,
                     'publishSysLog',
                     false
                 );
 
-                if (false === \In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
-                    $indexPostProcessor = 'In2code\\In2publishCore\\Domain\\PostProcessing\\FalIndexPostProcessor';
+                $reserveSysFileUids = \In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration(
+                    'factory.fal.reserveSysFileUids'
+                );
+                if (false === $reserveSysFileUids) {
+                    $indexPostProcessor = \In2code\In2publishCore\Domain\PostProcessing\FalIndexPostProcessor::class;
                 } else {
-                    $indexPostProcessor = 'In2code\\In2publishCore\\Domain\\PostProcessing\\FileIndexPostProcessor';
+                    $indexPostProcessor = \In2code\In2publishCore\Domain\PostProcessing\FileIndexPostProcessor::class;
                 }
 
                 // check if value is explicit false. after updating it's "null" if not set
                 $signalSlotDispatcher->connect(
-                    'In2code\\In2publishCore\\Domain\\Factory\\RecordFactory',
+                    \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
                     'instanceCreated',
                     $indexPostProcessor,
                     'registerInstance',
                     false
                 );
                 $signalSlotDispatcher->connect(
-                    'In2code\\In2publishCore\\Domain\\Factory\\RecordFactory',
+                    \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
                     'rootRecordFinished',
                     $indexPostProcessor,
                     'postProcess',
@@ -191,24 +194,24 @@ call_user_func(
                 );
 
                 // register tests for tools module
-                $GLOBALS['in2publish_core']['tests'] = array(
-                    'In2code\\In2publishCore\\Testing\\Tests\\Configuration\\ConfigurationIsAvailableTest',
-                    'In2code\\In2publishCore\\Testing\\Tests\\Configuration\\ConfigurationFormatTest',
-                    'In2code\\In2publishCore\\Testing\\Tests\\Configuration\\ConfigurationValuesTest',
-                    'In2code\\In2publishCore\\Testing\\Tests\\Database\\LocalDatabaseTest',
-                    'In2code\\In2publishCore\\Testing\\Tests\\Database\\ForeignDatabaseTest',
-                    'In2code\\In2publishCore\\Testing\\Tests\\Database\\DatabaseDifferencesTest',
-                    'In2code\\In2publishCore\\Testing\\Tests\\SshConnection\\SshFunctionAvailabilityTest',
-                    'In2code\\In2publishCore\\Testing\\Tests\\SshConnection\\SshConnectionTest',
-                    'In2code\\In2publishCore\\Testing\\Tests\\Application\\LocalInstanceTest',
-                    'In2code\\In2publishCore\\Testing\\Tests\\Application\\LocalSysDomainTest',
-                    'In2code\\In2publishCore\\Testing\\Tests\\Application\\ForeignInstanceTest',
-                    'In2code\\In2publishCore\\Testing\\Tests\\Application\\ForeignSysDomainTest',
-                    'In2code\\In2publishCore\\Testing\\Tests\\Fal\\MissingStoragesTest',
-                    'In2code\\In2publishCore\\Testing\\Tests\\Fal\\CaseSensitivityTest',
-                    'In2code\\In2publishCore\\Testing\\Tests\\Fal\\IdenticalDriverTest',
-                    'In2code\\In2publishCore\\Testing\\Tests\\Fal\\UniqueStorageTargetTest',
-                );
+                $GLOBALS['in2publish_core']['tests'] = [
+                    \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationIsAvailableTest::class,
+                    \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest::class,
+                    \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest::class,
+                    \In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest::class,
+                    \In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest::class,
+                    \In2code\In2publishCore\Testing\Tests\Database\DatabaseDifferencesTest::class,
+                    \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
+                    \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
+                    \In2code\In2publishCore\Testing\Tests\Application\LocalInstanceTest::class,
+                    \In2code\In2publishCore\Testing\Tests\Application\LocalSysDomainTest::class,
+                    \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest::class,
+                    \In2code\In2publishCore\Testing\Tests\Application\ForeignSysDomainTest::class,
+                    \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest::class,
+                    \In2code\In2publishCore\Testing\Tests\Fal\CaseSensitivityTest::class,
+                    \In2code\In2publishCore\Testing\Tests\Fal\IdenticalDriverTest::class,
+                    \In2code\In2publishCore\Testing\Tests\Fal\UniqueStorageTargetTest::class,
+                ];
             }
         }
     },
