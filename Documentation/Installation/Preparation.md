@@ -18,6 +18,13 @@ Additional PHP extensions:
 |------------|---------|
 | libssh2    | >= 0.11 |
 
+PHP configuration values:
+
+
+| Name            | Value   |
+|-----------------|---------|
+| allow_url_fopen | On      |
+
 
 Hint:
 

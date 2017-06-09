@@ -215,6 +215,17 @@
 				<target state="translated">Die Funktion "ssh2_sftp_chmod" steht ab der Version 0.12 von php_ssh2 zu Verfügung. Upgraden Sie php_ssh2 oder ignorieren Sie diese Meldung.</target>
 			</trans-unit>
 
+			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest -->
+
+			<trans-unit id="sftp_requirements.all_known_dependencies_okay">
+				<source>All known settings for the SFTP data transfer are correct.</source>
+				<target state="translated">Alle bekannten benötigten Einstellungen für den SFTP Dateitransfer sind korrekt.</target>
+			</trans-unit>
+			<trans-unit id="sftp_requirements.allow_url_fopen_disabled">
+				<source>The SFTP file transfer requires the php setting allow_url_fopen to be enabled.</source>
+				<target state="translated">Der SFTP Dateitransfer setzt voraus, dass die PHP-Einstellung allow_url_fopen aktiviert ist.</target>
+			</trans-unit>
+
 			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest -->
 
 			<trans-unit id="ssh_connection.connection_successful">

@@ -203,6 +203,7 @@ call_user_func(
                     \In2code\In2publishCore\Testing\Tests\Database\DatabaseDifferencesTest::class,
                     \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
                     \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
+                    \In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest::class,
                     \In2code\In2publishCore\Testing\Tests\Application\LocalInstanceTest::class,
                     \In2code\In2publishCore\Testing\Tests\Application\LocalSysDomainTest::class,
                     \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest::class,
