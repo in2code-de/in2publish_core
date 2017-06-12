@@ -48,8 +48,8 @@ class BackendUtility
         }
 
         // get id from ?id=123
-        if (null !== ($identifier = GeneralUtility::_GP('id'))) {
-            return (int)$identifier;
+        if (null !== ($getId = GeneralUtility::_GP('id'))) {
+            return (int)$getId;
         }
 
         // get id from AJAX request
