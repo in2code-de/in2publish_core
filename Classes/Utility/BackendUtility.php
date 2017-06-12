@@ -53,8 +53,8 @@ class BackendUtility
         }
 
         // get id from AJAX request
-        if (null !== GeneralUtility::_GP('pageId')) {
-            return (int)GeneralUtility::_GP('pageId');
+        if (null !== ($pageId = GeneralUtility::_GP('pageId'))) {
+            return (int)$pageId;
         }
 
         // get id from ?cmd[pages][123][delete]=1
