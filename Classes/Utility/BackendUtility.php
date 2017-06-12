@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Utility;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility as BackendUtilityCore;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\MathUtility;
 
 /**
  * Class BackendUtility
@@ -107,6 +108,19 @@ class BackendUtility
                 if (false !== $result && isset($result['pid'])) {
                     return (int)$result['pid'];
                 }
+            }
+        }
+
+        // Assume the record has been imported via DataHandler on the CLI
+        // Also, this is the last fallback strategy
+        if (!empty($table) && MathUtility::canBeInterpretedAsInteger($identifier)) {
+            $row = DatabaseUtility::buildLocalDatabaseConnection()->exec_SELECTgetSingleRow(
+                'pid',
+                $table,
+                'uid=' . (int)$identifier
+            );
+            if (isset($row['pid'])) {
+                return (int)$row['pid'];
             }
         }
 
