@@ -207,6 +207,40 @@ class BackendUtilityTest extends UnitTestCase
      * @covers ::getPageIdentifier
      * @SuppressWarnings("PHPMD.Superglobals")
      */
+    public function testGetPageIdentifierReturnsZeroIfTheRecordCanBeFound()
+    {
+        /** @var DatabaseConnection|\PHPUnit_Framework_MockObject_MockObject $databaseMock */
+        $databaseMock = $this->getMockBuilder(DatabaseConnection::class)
+                             ->setMethods(['exec_SELECTgetSingleRow', 'isConnected', 'connectDB'])
+                             ->getMock();
+
+        $databaseMock
+            ->expects($this->any())
+            ->method('isConnected')
+            ->willReturn(true);
+
+        $databaseMock
+            ->expects($this->any())
+            ->method('connectDB')
+            ->willReturn(true);
+
+        /**
+         * @see \TYPO3\CMS\Core\Database\DatabaseConnection::exec_SELECTgetSingleRow
+         */
+        $databaseMock->expects($this->once())
+                     ->method('exec_SELECTgetSingleRow')
+                     ->with('pid', 'tt_content', 'uid=321')
+                     ->willReturn(['pid' => '2']);
+
+        $GLOBALS['TYPO3_DB'] = $databaseMock;
+
+        $this->assertSame(2, BackendUtility::getPageIdentifier(321, 'tt_content'));
+    }
+
+    /**
+     * @covers ::getPageIdentifier
+     * @SuppressWarnings("PHPMD.Superglobals")
+     */
     public function testGetPageIdentifierReturnsPidFromRedirectParameter()
     {
         $_POST['redirect'] = 'script.php?param1=a&id=123&param2=2';
@@ -288,6 +322,17 @@ class BackendUtilityTest extends UnitTestCase
      * @covers ::getPageIdentifier
      * @SuppressWarnings("PHPMD.Superglobals")
      */
+    public function testGetPageIdentifierReturnsPidFromPAjaxPageId()
+    {
+        $_POST['pageId'] = 321;
+
+        $this->assertSame(321, BackendUtility::getPageIdentifier());
+    }
+
+    /**
+     * @covers ::getPageIdentifier
+     * @SuppressWarnings("PHPMD.Superglobals")
+     */
     public function testGetPageIdentifierReturnsPidFromArgumentsIfTableIsPages()
     {
         $this->assertSame(321, BackendUtility::getPageIdentifier(321, 'pages'));
@@ -297,8 +342,33 @@ class BackendUtilityTest extends UnitTestCase
      * @covers ::getPageIdentifier
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    public function testGetPageIdentifierReturnsZeroIfTableIsNotPages()
+    public function testGetPageIdentifierReturnsZeroIfAnyMethodFails()
     {
+        /** @var DatabaseConnection|\PHPUnit_Framework_MockObject_MockObject $databaseMock */
+        $databaseMock = $this->getMockBuilder(DatabaseConnection::class)
+                             ->setMethods(['exec_SELECTgetSingleRow', 'isConnected', 'connectDB'])
+                             ->getMock();
+
+        $databaseMock
+            ->expects($this->any())
+            ->method('isConnected')
+            ->willReturn(true);
+
+        $databaseMock
+            ->expects($this->any())
+            ->method('connectDB')
+            ->willReturn(true);
+
+        /**
+         * @see \TYPO3\CMS\Core\Database\DatabaseConnection::exec_SELECTgetSingleRow
+         */
+        $databaseMock->expects($this->once())
+                     ->method('exec_SELECTgetSingleRow')
+                     ->with('pid', 'tt_content', 'uid=321')
+                     ->willReturn(false);
+
+        $GLOBALS['TYPO3_DB'] = $databaseMock;
+
         $this->assertSame(0, BackendUtility::getPageIdentifier(321, 'tt_content'));
     }
 }
