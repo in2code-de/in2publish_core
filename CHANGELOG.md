@@ -1,5 +1,14 @@
 # In2publish Core Change Log
 
+5.9.0:
+
+- [BUGFIX] Retrieve pid from the given record information if it couldn't be determined (fixes in2code-de/in2publish#19)
+- [REFACTOR] Call GeneralUtility::_GP only once for pageId
+- [REFACTOR] Use distinct variable for get parameter page id
+- [BUGFIX] Throw specific exception if allow_url_fopen is disabled and log all fopen errors (fixes #32)
+- [FEATURE] Add a new test and docs to ensure SFTP requirements are met (related #32)
+- [REFACTOR] Replace all class names and arrays in ext_localconf and ext_tables with class constants and array short snytax
+
 5.8.2:
 
 - [BUGFIX] Inject fal storages before filtering post processed fal records
