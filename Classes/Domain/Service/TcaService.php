@@ -47,6 +47,7 @@ class TcaService
     const CACHE_KEY_TCA_INCOMPATIBLE = 'tca_incompatible';
     const CACHE_KEY_TCA_PROCESSORS = 'tca_processors';
     const CACHE_KEY_CONTROLS = 'controls';
+    const DEFAULT_EXTRAS = 'defaultExtras';
 
     /**
      * @var TcaService
@@ -190,6 +191,9 @@ class TcaService
                 }
 
                 $config = $columnConfiguration[self::CONFIG];
+                $config[self::DEFAULT_EXTRAS] = isset($columnConfiguration[self::DEFAULT_EXTRAS])
+                    ? $columnConfiguration[self::DEFAULT_EXTRAS]
+                    : null;
                 $type = $config[self::TYPE];
 
                 // If there's no processor for the type it is not a standard type of TYPO3

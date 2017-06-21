@@ -26,11 +26,14 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Service\TcaService;
+
 /**
  * Class TextProcessor
  */
 class TextProcessor extends AbstractProcessor
 {
+    const RTE_DEFAULT_EXTRAS = 'richtext';
     const WIZARDS = 'wizards';
     const RTE = 'RTE';
 
@@ -40,13 +43,6 @@ class TextProcessor extends AbstractProcessor
     protected $canHoldRelations = true;
 
     /**
-     * @var array
-     */
-    protected $required = array(
-        'only the RTE is supported for relation resolving' => self::WIZARDS,
-    );
-
-    /**
      * @param array $config
      * @return bool
      */
@@ -54,11 +50,34 @@ class TextProcessor extends AbstractProcessor
     {
         $canPreProcess = parent::canPreProcess($config);
         if ($canPreProcess) {
-            if (empty($config[self::WIZARDS][self::RTE])) {
+            $hasDefaultExtrasRte = $this->hasDefaultExtrasRte($config);
+            $hasRteWizard = $this->hasRteWizard($config);
+            if (!$hasDefaultExtrasRte && !$hasRteWizard) {
                 $this->lastReasons[self::WIZARDS] = 'only the RTE is supported for relation resolving';
                 $canPreProcess = false;
             }
         }
         return $canPreProcess;
+    }
+
+    /**
+     * @param array $config
+     * @return bool
+     */
+    protected function hasRteWizard(array $config)
+    {
+        return !empty($config[self::WIZARDS][self::RTE]);
+    }
+
+    /**
+     * @param array $config
+     * @return bool
+     */
+    protected function hasDefaultExtrasRte(array $config)
+    {
+        if (isset($config[TcaService::DEFAULT_EXTRAS])) {
+            return false !== strpos($config[TcaService::DEFAULT_EXTRAS], self::RTE_DEFAULT_EXTRAS);
+        }
+        return false;
     }
 }
