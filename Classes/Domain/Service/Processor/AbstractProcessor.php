@@ -79,8 +79,6 @@ abstract class AbstractProcessor implements ProcessorInterface
     /**
      * Overwrite this in your Processor if canHoldRelations is TRUE!
      *
-     *
-     *
      * @param array $config
      * @return array
      */
