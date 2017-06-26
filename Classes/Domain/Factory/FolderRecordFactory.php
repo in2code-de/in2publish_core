@@ -845,13 +845,7 @@ class FolderRecordFactory
     protected function convertIdentifiers(DriverInterface $driver, array $identifierList)
     {
         if (!$driver->isCaseSensitiveFileSystem()) {
-            $identifierList = array_map(
-                function ($identifier) {
-                    return strtolower($identifier);
-                },
-                $identifierList
-            );
-            return $identifierList;
+            return array_map('strtolower', $identifierList);
         }
         return $identifierList;
     }
