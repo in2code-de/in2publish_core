@@ -83,15 +83,15 @@ class GroupProcessor extends AbstractProcessor
             return false;
         }
 
-        $internalType = $config[self::INTERNAL_TYPE];
+        $internalType = $config[static::INTERNAL_TYPE];
 
-        if ($internalType === self::INTERNAL_TYPE_DB) {
+        if ($internalType === static::INTERNAL_TYPE_DB) {
             return $this->canPreProcessInternalTypeDb($config);
-        } elseif ($internalType === self::INTERNAL_TYPE_FILE) {
+        } elseif ($internalType === static::INTERNAL_TYPE_FILE) {
             return $this->canPreProcessInternalTypeFile($config);
         }
 
-        $this->lastReasons[self::INTERNAL_TYPE] = 'The internal type "' . $internalType . '" is not supported';
+        $this->lastReasons[static::INTERNAL_TYPE] = 'The internal type "' . $internalType . '" is not supported';
         return false;
     }
 
@@ -101,8 +101,8 @@ class GroupProcessor extends AbstractProcessor
      */
     protected function canPreProcessInternalTypeFile(array $config)
     {
-        if (empty($config[self::UPLOAD_FOLDER])) {
-            $this->lastReasons[self::INTERNAL_TYPE] =
+        if (empty($config[static::UPLOAD_FOLDER])) {
+            $this->lastReasons[static::INTERNAL_TYPE] =
                 'group internal type file without "uploadfolder" can not be resolved';
             return false;
         }
@@ -115,14 +115,14 @@ class GroupProcessor extends AbstractProcessor
      */
     protected function canPreProcessInternalTypeDb(array $config)
     {
-        $referencesAllowed = isset($config[self::ALLOWED]);
-        $referencesTable = isset($config[self::FOREIGN_TABLE]);
+        $referencesAllowed = isset($config[static::ALLOWED]);
+        $referencesTable = isset($config[static::FOREIGN_TABLE]);
         if ($referencesAllowed) {
-            return $this->canPreProcessInternalTypeDbAllowed($config[self::ALLOWED]);
+            return $this->canPreProcessInternalTypeDbAllowed($config[static::ALLOWED]);
         } elseif ($referencesTable) {
-            return $this->canPreProcessInternalTypeDbTable($config[self::FOREIGN_TABLE]);
+            return $this->canPreProcessInternalTypeDbTable($config[static::FOREIGN_TABLE]);
         }
-        $this->lastReasons[self::INTERNAL_TYPE] = 'There is neither "allowed" nor "foreign_tables" defined';
+        $this->lastReasons[static::INTERNAL_TYPE] = 'There is neither "allowed" nor "foreign_tables" defined';
         return false;
     }
 
@@ -133,7 +133,7 @@ class GroupProcessor extends AbstractProcessor
     public function canPreProcessInternalTypeDbTable($table)
     {
         if (!TcaService::tableExists($table)) {
-            $this->lastReasons[self::INTERNAL_TYPE] =
+            $this->lastReasons[static::INTERNAL_TYPE] =
                 'Can not reference the table "' . $table . '" from "foreign_table. It is not present in the TCA';
             return false;
         }
@@ -147,7 +147,7 @@ class GroupProcessor extends AbstractProcessor
     protected function canPreProcessInternalTypeDbAllowed($allowed)
     {
         if ($allowed === '') {
-            $this->lastReasons[self::INTERNAL_TYPE] = '"allowed" is empty, there is no table to match';
+            $this->lastReasons[static::INTERNAL_TYPE] = '"allowed" is empty, there is no table to match';
             return false;
         }
 
@@ -162,7 +162,7 @@ class GroupProcessor extends AbstractProcessor
         }
         foreach ($allowedTables as $table) {
             if (!TcaService::tableExists($table)) {
-                $this->lastReasons[self::INTERNAL_TYPE] =
+                $this->lastReasons[static::INTERNAL_TYPE] =
                     'Can not reference the table "' . $table . '" from "allowed. It is not present in the TCA';
                 return false;
             }

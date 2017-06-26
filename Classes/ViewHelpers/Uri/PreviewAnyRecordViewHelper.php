@@ -102,7 +102,7 @@ class PreviewAnyRecordViewHelper extends AbstractViewHelper
             } else {
                 foreach ((array)$additionalConfig[$additionalKey] as $additionalKey2 => $additionalValue2) {
                     if (!is_array($additionalKey2)) {
-                        $uri .= '&' . self::removeLastDot($additionalKey) . '[' . $additionalKey2 . ']='
+                        $uri .= '&' . static::removeLastDot($additionalKey) . '[' . $additionalKey2 . ']='
                                 . $additionalValue2;
                     }
                 }

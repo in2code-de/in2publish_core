@@ -59,12 +59,12 @@ class SysFileService extends AbstractService
         $newIdentifierPath = $this->getIdentifierFromAbsolutePath($newFolder);
         $rows = $this->databaseConnection->exec_SELECTgetRows(
             'uid,identifier',
-            self::TABLE_NAME,
+            static::TABLE_NAME,
             'identifier like "%' . $oldIdentifierPath . '%"'
         );
         foreach ($rows as $row) {
             $this->databaseConnection->exec_UPDATEquery(
-                self::TABLE_NAME,
+                static::TABLE_NAME,
                 'uid=' . (int)$row['uid'],
                 $this->getArgumentsForSysFileFromPath($row, $oldIdentifierPath, $newIdentifierPath)
             );
@@ -81,12 +81,12 @@ class SysFileService extends AbstractService
         $newIdentifier = $this->getIdentifierFromAbsolutePath($newFile);
         $rows = $this->databaseConnection->exec_SELECTgetRows(
             'uid',
-            self::TABLE_NAME,
+            static::TABLE_NAME,
             'identifier = "' . $oldIdentifier . '"'
         );
         foreach ($rows as $row) {
             $this->databaseConnection->exec_UPDATEquery(
-                self::TABLE_NAME,
+                static::TABLE_NAME,
                 'uid=' . (int)$row['uid'],
                 $this->getArgumentsForSysFileFromFile($newIdentifier)
             );

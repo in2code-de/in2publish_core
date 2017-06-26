@@ -48,7 +48,7 @@ class ConfigurationUtility
      */
     public static function getFileConfigurationHash()
     {
-        return self::getInstance()->getFileConfigurationHashInternal();
+        return static::getInstance()->getFileConfigurationHashInternal();
     }
 
     /**
@@ -59,7 +59,7 @@ class ConfigurationUtility
      */
     public static function getConfiguration($configurationPath = '')
     {
-        return self::getInstance()->getConfigurationInternal($configurationPath);
+        return static::getInstance()->getConfigurationInternal($configurationPath);
     }
 
     /**
@@ -69,7 +69,7 @@ class ConfigurationUtility
      */
     public static function getPublicConfiguration()
     {
-        return ArrayUtility::removeFromArrayByKey(self::getConfiguration(), self::$privateConfiguration);
+        return ArrayUtility::removeFromArrayByKey(static::getConfiguration(), static::$privateConfiguration);
     }
 
     /**
@@ -77,7 +77,7 @@ class ConfigurationUtility
      */
     public static function getLoadingState()
     {
-        return self::getInstance()->getLoadingStateInternal();
+        return static::getInstance()->getLoadingStateInternal();
     }
 
     /**
@@ -85,7 +85,7 @@ class ConfigurationUtility
      */
     public static function isConfigurationLoadedSuccessfully()
     {
-        return self::getInstance()->isConfigurationLoadedSuccessfullyInternal();
+        return static::getInstance()->isConfigurationLoadedSuccessfullyInternal();
     }
 
     /**********************
@@ -99,7 +99,7 @@ class ConfigurationUtility
      */
     protected function getFileConfigurationHashInternal()
     {
-        return sha1(serialize($this->configurationCache[self::CACHE_KEY_FILE]));
+        return sha1(serialize($this->configurationCache[static::CACHE_KEY_FILE]));
     }
 
     /**
@@ -130,7 +130,7 @@ class ConfigurationUtility
      */
     protected function isConfigurationLoadedSuccessfullyInternal()
     {
-        return $this->loadingMessage === self::STATE_LOADED;
+        return $this->loadingMessage === static::STATE_LOADED;
     }
 
     /**********************
@@ -171,11 +171,11 @@ class ConfigurationUtility
      */
     private static function getInstance()
     {
-        if (self::$instance === null) {
-            self::$instance = new self;
-            self::$instance->initialize();
+        if (static::$instance === null) {
+            static::$instance = new static;
+            static::$instance->initialize();
         }
-        return self::$instance;
+        return static::$instance;
     }
 
     /**********************
@@ -230,13 +230,13 @@ class ConfigurationUtility
      */
     protected function getMergedConfiguration()
     {
-        if ($this->configurationCache[self::CACHE_KEY_USER] !== null) {
-            $configuration = $this->configurationCache[self::CACHE_KEY_USER];
-        } elseif ($this->configurationCache[self::CACHE_KEY_PAGE] !== null) {
-            $configuration = $this->configurationCache[self::CACHE_KEY_PAGE];
+        if ($this->configurationCache[static::CACHE_KEY_USER] !== null) {
+            $configuration = $this->configurationCache[static::CACHE_KEY_USER];
+        } elseif ($this->configurationCache[static::CACHE_KEY_PAGE] !== null) {
+            $configuration = $this->configurationCache[static::CACHE_KEY_PAGE];
             $configuration = $this->mergeUserTs($configuration);
         } else {
-            $configuration = $this->configurationCache[self::CACHE_KEY_FILE];
+            $configuration = $this->configurationCache[static::CACHE_KEY_FILE];
             $configuration = $this->mergePageTs($configuration);
             $configuration = $this->mergeUserTs($configuration);
         }
@@ -249,7 +249,7 @@ class ConfigurationUtility
      */
     protected function mergeUserTs(array $configuration)
     {
-        if ($this->configurationCache[self::CACHE_KEY_USER] === null) {
+        if ($this->configurationCache[static::CACHE_KEY_USER] === null) {
             // try merge userTS the first time BE_USER is available
             if ($this->isBackendUserInitialized()) {
                 if ($this->isUserTsConfigEnabled()) {
@@ -259,11 +259,11 @@ class ConfigurationUtility
                 }
 
                 // set the cache if userTS is disabled or it was merged
-                $this->configurationCache[self::CACHE_KEY_USER] = $configuration;
+                $this->configurationCache[static::CACHE_KEY_USER] = $configuration;
             }
         } else {
             // set to the cached config (userTS: FALSE || MERGED)
-            $configuration = $this->configurationCache[self::CACHE_KEY_USER];
+            $configuration = $this->configurationCache[static::CACHE_KEY_USER];
         }
         // return the cached config (BE_USER unavailable || userTS MERGED)
         return $configuration;
@@ -276,7 +276,7 @@ class ConfigurationUtility
     protected function mergePageTs(array $configuration)
     {
         $uid = BackendUtility::getPageIdentifier();
-        if ($this->configurationCache[self::CACHE_KEY_PAGE] === null) {
+        if ($this->configurationCache[static::CACHE_KEY_PAGE] === null) {
             // get the pageTS | Manually pass rootline to disable caching.
             $pageTs = CoreBackendUtility::getPagesTSconfig($uid, CoreBackendUtility::BEgetRootLine($uid));
 
@@ -285,9 +285,9 @@ class ConfigurationUtility
                 $pageTs = ArrayUtility::normalizeArray(GeneralUtility::removeDotsFromTS($pageTs['tx_in2publish.']));
                 $configuration = $this->merge($configuration, $pageTs);
             }
-            $this->configurationCache[self::CACHE_KEY_PAGE] = $configuration;
+            $this->configurationCache[static::CACHE_KEY_PAGE] = $configuration;
         } else {
-            $configuration = $this->configurationCache[self::CACHE_KEY_PAGE];
+            $configuration = $this->configurationCache[static::CACHE_KEY_PAGE];
         }
         return $configuration;
     }
@@ -301,7 +301,7 @@ class ConfigurationUtility
     {
         \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
             $configuration,
-            ArrayUtility::removeFromArrayByKey($overwrite, self::$privateConfiguration),
+            ArrayUtility::removeFromArrayByKey($overwrite, static::$privateConfiguration),
             true
         );
         return $configuration;
@@ -313,8 +313,8 @@ class ConfigurationUtility
     protected function isUserTsConfigEnabled()
     {
         return (
-            isset($this->configurationCache[self::CACHE_KEY_FILE]['disableUserConfig'])
-            && $this->configurationCache[self::CACHE_KEY_FILE]['disableUserConfig'] === false
+            isset($this->configurationCache[static::CACHE_KEY_FILE]['disableUserConfig'])
+            && $this->configurationCache[static::CACHE_KEY_FILE]['disableUserConfig'] === false
         );
     }
 
@@ -328,7 +328,7 @@ class ConfigurationUtility
         )->getPathToConfiguration();
 
         if (null === $pathToConfiguration) {
-            $this->loadingMessage = self::STATE_EXT_CONF_NOT_AVAILABLE;
+            $this->loadingMessage = static::STATE_EXT_CONF_NOT_AVAILABLE;
             return false;
         } elseif (strpos($pathToConfiguration, '/') !== 0 && strpos($pathToConfiguration, '../') !== 0) {
             $pathToConfiguration = GeneralUtility::getFileAbsFileName($pathToConfiguration);
@@ -341,14 +341,14 @@ class ConfigurationUtility
         $configurationFile = $this->resolveConfigurationFile($pathToConfiguration);
 
         if (empty($pathToConfiguration)) {
-            $this->loadingMessage = self::STATE_PATH_NOT_EXISTING;
+            $this->loadingMessage = static::STATE_PATH_NOT_EXISTING;
         } elseif (!file_exists($configurationFile)) {
-            $this->loadingMessage = self::STATE_FILE_NOT_EXISTING;
+            $this->loadingMessage = static::STATE_FILE_NOT_EXISTING;
         } elseif (!is_readable($configurationFile)) {
-            $this->loadingMessage = self::STATE_FILE_NOT_READABLE;
+            $this->loadingMessage = static::STATE_FILE_NOT_READABLE;
         } else {
-            $this->configurationCache[self::CACHE_KEY_FILE] = \Spyc::YAMLLoad($configurationFile);
-            $this->loadingMessage = self::STATE_LOADED;
+            $this->configurationCache[static::CACHE_KEY_FILE] = \Spyc::YAMLLoad($configurationFile);
+            $this->loadingMessage = static::STATE_LOADED;
             return true;
         }
         return false;
@@ -376,7 +376,7 @@ class ConfigurationUtility
      */
     protected function getFilename()
     {
-        return sprintf(self::CONFIGURATION_FILE_PATTERN, $this->contextService->getContext());
+        return sprintf(static::CONFIGURATION_FILE_PATTERN, $this->contextService->getContext());
     }
 
     /**
@@ -387,7 +387,7 @@ class ConfigurationUtility
     protected function getVersionedFilename()
     {
         return sprintf(
-            self::VERSIONED_CONFIGURATION_FILE_PATTERN,
+            static::VERSIONED_CONFIGURATION_FILE_PATTERN,
             $this->contextService->getContext(),
             $this->getIn2publishCoreVersion()
         );

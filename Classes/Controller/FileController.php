@@ -65,7 +65,7 @@ class FileController extends AbstractController
      */
     protected function displayTooManyFilesError(\Exception $exception)
     {
-        if (1 === preg_match(self::EXCEPTION_MESSAGE_PATTERN, $exception->getMessage(), $matches)) {
+        if (1 === preg_match(static::EXCEPTION_MESSAGE_PATTERN, $exception->getMessage(), $matches)) {
             // Do not remove the space at the end of ') ', because it can't
             // be included dynamically in the label where this value is used!
             $arguments = [$matches['folder'], '(' . $matches['number'] . ') '];

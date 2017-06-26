@@ -132,7 +132,7 @@ abstract class AbstractController extends ActionController
                 '',
                 AbstractMessage::ERROR
             );
-            $this->actionMethodName = self::BLANK_ACTION;
+            $this->actionMethodName = static::BLANK_ACTION;
             $this->logger->error('Could not load Configuration');
         }
     }
@@ -157,7 +157,7 @@ abstract class AbstractController extends ActionController
                 AbstractMessage::ERROR
             );
             if (static::class !== ToolsController::class) {
-                $this->actionMethodName = self::BLANK_ACTION;
+                $this->actionMethodName = static::BLANK_ACTION;
             }
             $this->logger->error(
                 'Could not create foreign database connection. An error occured',
@@ -269,7 +269,7 @@ abstract class AbstractController extends ActionController
         $this->view->assignMultiple(
             [
                 'extensionVersion' => ExtensionManagementUtility::getExtensionVersion('in2publish_core'),
-                'configurationExists' => $this->actionMethodName !== self::BLANK_ACTION,
+                'configurationExists' => $this->actionMethodName !== static::BLANK_ACTION,
             ]
         );
         if (ConfigurationUtility::isConfigurationLoadedSuccessfully()) {

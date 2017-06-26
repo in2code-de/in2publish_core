@@ -51,33 +51,33 @@ class DatabaseUtility
      */
     public static function buildForeignDatabaseConnection()
     {
-        self::initializeLogger();
-        if (self::$foreignDatabase === null) {
+        static::initializeLogger();
+        if (static::$foreignDatabase === null) {
             $configuration = ConfigurationUtility::getConfiguration('database.foreign');
             /** @var DatabaseConnection $foreignDatabase */
-            self::$foreignDatabase = GeneralUtility::makeInstance(DatabaseConnection::class);
-            self::$foreignDatabase->setDatabaseHost($configuration['hostname']);
-            self::$foreignDatabase->setDatabaseName($configuration['name']);
-            self::$foreignDatabase->setDatabasePassword($configuration['password']);
-            self::$foreignDatabase->setDatabaseUsername($configuration['username']);
-            self::$foreignDatabase->setDatabasePort($configuration['port']);
+            static::$foreignDatabase = GeneralUtility::makeInstance(DatabaseConnection::class);
+            static::$foreignDatabase->setDatabaseHost($configuration['hostname']);
+            static::$foreignDatabase->setDatabaseName($configuration['name']);
+            static::$foreignDatabase->setDatabasePassword($configuration['password']);
+            static::$foreignDatabase->setDatabaseUsername($configuration['username']);
+            static::$foreignDatabase->setDatabasePort($configuration['port']);
 
             $foreignEnvironmentService = GeneralUtility::makeInstance(
                 ForeignEnvironmentService::class
             );
-            self::$foreignDatabase->setInitializeCommandsAfterConnect(
+            static::$foreignDatabase->setInitializeCommandsAfterConnect(
                 $foreignEnvironmentService->getDatabaseInitializationCommands()
             );
 
             try {
-                @self::$foreignDatabase->connectDB();
+                @static::$foreignDatabase->connectDB();
             } catch (\Exception $e) {
-                self::$logger->error($e->getMessage());
-                self::$foreignDatabase = null;
+                static::$logger->error($e->getMessage());
+                static::$foreignDatabase = null;
             }
         }
 
-        return self::$foreignDatabase;
+        return static::$foreignDatabase;
     }
 
     /**
@@ -87,7 +87,7 @@ class DatabaseUtility
      */
     public static function quoteString($string, $tableName)
     {
-        return self::buildLocalDatabaseConnection()->quoteStr($string, $tableName);
+        return static::buildLocalDatabaseConnection()->quoteStr($string, $tableName);
     }
 
     /**
@@ -130,13 +130,13 @@ class DatabaseUtility
     public static function backupTable(DatabaseConnection $databaseConnection, $tableName)
     {
         $tableName = static::sanitizeTable($databaseConnection, $tableName);
-        self::initializeLogger();
+        static::initializeLogger();
 
         if (ConfigurationUtility::getLoadingState() !== ConfigurationUtility::STATE_LOADED) {
             $message =
                 'BackupTable was called in context "' . getenv('IN2PUBLISH_CONTEXT')
                 . '", but the configuration was not loaded successfully. Aborting immediately to prevent any damage.';
-            self::$logger->critical($message);
+            static::$logger->critical($message);
             throw new \Exception($message, 1446819956);
         }
 
@@ -146,9 +146,9 @@ class DatabaseUtility
             . '/';
         FileUtility::cleanUpBackups($keepBackups, $tableName, $backupFolder);
         if ($keepBackups > 0) {
-            self::createBackup($databaseConnection, $tableName, $backupFolder);
+            static::createBackup($databaseConnection, $tableName, $backupFolder);
         } else {
-            self::$logger->notice('Skipping backup for "' . $tableName . '", because keepBackups=0');
+            static::$logger->notice('Skipping backup for "' . $tableName . '", because keepBackups=0');
         }
     }
 
@@ -160,7 +160,7 @@ class DatabaseUtility
      */
     public static function isTableExistingOnLocal($tableName)
     {
-        $allTables = self::buildLocalDatabaseConnection()->admin_get_tables();
+        $allTables = static::buildLocalDatabaseConnection()->admin_get_tables();
         return array_key_exists($tableName, $allTables);
     }
 
@@ -178,7 +178,7 @@ class DatabaseUtility
         $addDropTable = $publishTableSettings['addDropTable'];
         $zipBackup = $publishTableSettings['zipBackup'];
 
-        self::$logger->notice(
+        static::$logger->notice(
             'Creating a backup for "' . $tableName . '"',
             [
                 'fileName' => $fileName,
@@ -224,14 +224,14 @@ class DatabaseUtility
                     $zip->addFromString($fileName, $data);
                     $backupWritten = $zip->close();
                     if ($backupWritten === true) {
-                        self::$logger->notice(
+                        static::$logger->notice(
                             'Successfully created zip backup of "' . $tableName . '"',
                             ['fileSize' => filesize($zipFileName)]
                         );
                     }
                 }
             } else {
-                self::$logger->error(
+                static::$logger->error(
                     'Error while backing up table "' . $tableName .
                     '": zipBackup is enabled but class "ZipArchive" does not exist'
                 );
@@ -242,12 +242,14 @@ class DatabaseUtility
             $backupFile = $backupFolder . $fileName;
             if (file_put_contents($backupFolder . $fileName, $data) === false) {
                 if (is_file($backupFile) === false) {
-                    self::$logger->error('The backup file "' . $backupFile . '" could not be created');
+                    static::$logger->error('The backup file "' . $backupFile . '" could not be created');
                 } else {
-                    self::$logger->error('The backup file "' . $backupFile . '" was created but could not be written');
+                    static::$logger->error(
+                        'The backup file "' . $backupFile . '" was created but could not be written'
+                    );
                 }
             } else {
-                self::$logger->notice(
+                static::$logger->notice(
                     'Successfully created uncompressed backup for "' . $tableName . '"',
                     [
                         'fileName' => $backupFile,
@@ -263,8 +265,8 @@ class DatabaseUtility
      */
     protected static function initializeLogger()
     {
-        if (self::$logger === null) {
-            self::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(
+        if (static::$logger === null) {
+            static::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(
                 get_called_class()
             );
         }

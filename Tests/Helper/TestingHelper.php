@@ -94,7 +94,7 @@ class TestingHelper
             putenv('TYPO3_CONTEXT=' . $value);
             $applicationContext = new ApplicationContext($value);
         }
-        self::setStaticProperty(GeneralUtility::class, 'applicationContext', $applicationContext);
+        static::setStaticProperty(GeneralUtility::class, 'applicationContext', $applicationContext);
     }
 
     /**

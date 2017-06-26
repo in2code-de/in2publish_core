@@ -46,8 +46,8 @@ class FileUtility
      */
     protected static function initializeLogger()
     {
-        if (self::$logger === null) {
-            self::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(
+        if (static::$logger === null) {
+            static::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(
                 get_called_class()
             );
         }
@@ -63,19 +63,19 @@ class FileUtility
      */
     public static function cleanUpBackups($keepBackups, $tableName, $backupFolder)
     {
-        self::initializeLogger();
+        static::initializeLogger();
 
         $backups = glob($backupFolder . '*_' . $tableName . '.*');
         while (count($backups) >= $keepBackups) {
             $backupFileName = array_shift($backups);
             try {
                 if (unlink($backupFileName)) {
-                    self::$logger->notice('Deleted old backup "' . $backupFileName . '"');
+                    static::$logger->notice('Deleted old backup "' . $backupFileName . '"');
                 } else {
-                    self::$logger->error('Could not delete backup "' . $backupFileName . '"');
+                    static::$logger->error('Could not delete backup "' . $backupFileName . '"');
                 }
             } catch (\Exception $exception) {
-                self::$logger->critical(
+                static::$logger->critical(
                     'An error occurred while deletion of "' . $backupFileName . '"',
                     [
                         'code' => $exception->getCode(),

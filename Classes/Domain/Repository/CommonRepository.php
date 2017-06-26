@@ -1922,7 +1922,10 @@ class CommonRepository extends BaseRepository
      */
     protected function shouldSkipSearchingForRelatedRecordByTable(RecordInterface $record, $tableName)
     {
-        return $this->getBooleanDecisionBySignal('shouldSkipSearchingForRelatedRecordByTable', ['record' => $record, 'tableName' => $tableName]);
+        return $this->getBooleanDecisionBySignal(
+            'shouldSkipSearchingForRelatedRecordByTable',
+            ['record' => $record, 'tableName' => $tableName]
+        );
     }
 
     /**

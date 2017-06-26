@@ -80,16 +80,16 @@ class EnvironmentService implements SingletonInterface
         $testResults = $this->registry->get('tx_in2publishcore', 'test_result', false);
 
         if ($testResults === false) {
-            return [self::STATE_TESTS_NEVER_RAN];
+            return [static::STATE_TESTS_NEVER_RAN];
         }
         if ($testResults['packages_hash'] !== $this->getPackagesHash()) {
-            $statusArray[] = self::STATE_PACKAGES_CHANGED;
+            $statusArray[] = static::STATE_PACKAGES_CHANGED;
         }
         if ($testResults['configuration_hash'] !== $this->getConfigurationHash()) {
-            $statusArray[] = self::STATE_CONFIGURATION_CHANGED;
+            $statusArray[] = static::STATE_CONFIGURATION_CHANGED;
         }
         if ($testResults['success'] !== true) {
-            $statusArray[] = self::STATE_TESTS_FAILING;
+            $statusArray[] = static::STATE_TESTS_FAILING;
         }
         return $statusArray;
     }

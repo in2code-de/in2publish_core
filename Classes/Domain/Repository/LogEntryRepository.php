@@ -117,7 +117,7 @@ class LogEntryRepository
             );
         }
         $operator = $this->propertyOperatorMap[$propertyName];
-        if (in_array($operator, [self::STRICT_LIKE, self::RANGE_LIKE])) {
+        if (in_array($operator, [static::STRICT_LIKE, static::RANGE_LIKE])) {
             $propertyValue = $this->databaseConnection->escapeStrForLike($propertyValue, static::TABLE_NAME);
         }
         $this->filter[] = $propertyName . sprintf($operator, $propertyValue);

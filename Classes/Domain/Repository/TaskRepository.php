@@ -82,7 +82,7 @@ class TaskRepository
     public function add(AbstractTask $task)
     {
         $this->databaseConnection->exec_INSERTquery(
-            self::TASK_TABLE_NAME,
+            static::TASK_TABLE_NAME,
             array_merge($this->taskToPropertiesArray($task), ['creation_date' => $this->creationDate])
         );
     }
@@ -96,7 +96,7 @@ class TaskRepository
     public function update(AbstractTask $task)
     {
         $this->databaseConnection->exec_UPDATEquery(
-            self::TASK_TABLE_NAME,
+            static::TASK_TABLE_NAME,
             'uid=' . $task->getUid(),
             $this->taskToPropertiesArray($task)
         );
@@ -137,7 +137,7 @@ class TaskRepository
         $taskObjects = [];
         $tasksPropertiesArray = (array)$this->databaseConnection->exec_SELECTgetRows(
             '*',
-            self::TASK_TABLE_NAME,
+            static::TASK_TABLE_NAME,
             $whereClause
         );
         foreach ($tasksPropertiesArray as $taskProperties) {

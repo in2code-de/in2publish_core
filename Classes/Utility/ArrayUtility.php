@@ -64,7 +64,7 @@ class ArrayUtility
         foreach ($array as $key => &$value) {
             switch (gettype($value)) {
                 case 'array':
-                    $value = self::normalizeArray($value);
+                    $value = static::normalizeArray($value);
                     if (empty($value)) {
                         unset($array[$key]);
                     }
@@ -107,7 +107,7 @@ class ArrayUtility
         $key = array_shift($path);
         if (isset($array[$key])) {
             if (!empty($path)) {
-                return is_array($array[$key]) ? self::getValueByPath($array[$key], $path) : null;
+                return is_array($array[$key]) ? static::getValueByPath($array[$key], $path) : null;
             }
             return $array[$key];
         } else {

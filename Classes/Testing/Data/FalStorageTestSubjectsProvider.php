@@ -75,7 +75,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
      */
     public function getStoragesForCaseSensitivityTest()
     {
-        return $this->getStorages(self::PURPOSE_CASE_SENSITIVITY);
+        return $this->getStorages(static::PURPOSE_CASE_SENSITIVITY);
     }
 
     /**
@@ -83,7 +83,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
      */
     public function getStoragesForDriverTest()
     {
-        return $this->getStorages(self::PURPOSE_DRIVER);
+        return $this->getStorages(static::PURPOSE_DRIVER);
     }
 
     /**
@@ -91,7 +91,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
      */
     public function getStoragesForMissingStoragesTest()
     {
-        return $this->getStorages(self::PURPOSE_MISSING);
+        return $this->getStorages(static::PURPOSE_MISSING);
     }
 
     /**
@@ -99,7 +99,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
      */
     public function getStoragesForUniqueTargetTest()
     {
-        return $this->getStorages(self::PURPOSE_UNIQUE_TARGET);
+        return $this->getStorages(static::PURPOSE_UNIQUE_TARGET);
     }
 
     /**

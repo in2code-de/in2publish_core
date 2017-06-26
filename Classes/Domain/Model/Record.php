@@ -208,7 +208,7 @@ class Record implements RecordInterface
      */
     public function isChanged()
     {
-        if ($this->getState() !== self::RECORD_STATE_UNCHANGED) {
+        if ($this->getState() !== static::RECORD_STATE_UNCHANGED) {
             return true;
         }
         return false;
@@ -229,7 +229,7 @@ class Record implements RecordInterface
     {
         if (!empty($alreadyVisited[$this->tableName])) {
             if (in_array($this->getIdentifier(), $alreadyVisited[$this->tableName])) {
-                return self::RECORD_STATE_UNCHANGED;
+                return static::RECORD_STATE_UNCHANGED;
             }
         }
         $alreadyVisited[$this->tableName][] = $this->getIdentifier();
@@ -240,7 +240,7 @@ class Record implements RecordInterface
                 }
                 foreach ($relatedRecords as $relatedRecord) {
                     if ($relatedRecord->isChangedRecursive($alreadyVisited)) {
-                        return self::RECORD_STATE_CHANGED;
+                        return static::RECORD_STATE_CHANGED;
                     }
                 }
             }
@@ -258,7 +258,7 @@ class Record implements RecordInterface
      */
     public function isChangedRecursive(array &$alreadyVisited = [])
     {
-        if ($this->getStateRecursive($alreadyVisited) !== self::RECORD_STATE_UNCHANGED) {
+        if ($this->getStateRecursive($alreadyVisited) !== static::RECORD_STATE_UNCHANGED) {
             return true;
         }
         return false;
@@ -697,7 +697,7 @@ class Record implements RecordInterface
         } elseif ($this->hasForeignProperty('uid')) {
             $uid = $this->getForeignProperty('uid');
         } else {
-            $combinedIdentifier = self::createCombinedIdentifier($this->localProperties, $this->foreignProperties);
+            $combinedIdentifier = static::createCombinedIdentifier($this->localProperties, $this->foreignProperties);
             if (strlen($combinedIdentifier) > 0) {
                 return $combinedIdentifier;
             }
@@ -777,7 +777,7 @@ class Record implements RecordInterface
         if ($this->tableName === 'sys_file' && !isset($this->additionalProperties['recordDatabaseState'])) {
             if ($this->hasLocalProperty('identifier') && $this->hasForeignProperty('identifier')) {
                 if ($this->localProperties['identifier'] !== $this->foreignProperties['identifier']) {
-                    $this->setState(self::RECORD_STATE_MOVED);
+                    $this->setState(static::RECORD_STATE_MOVED);
                     return;
                 }
             }
@@ -810,7 +810,9 @@ class Record implements RecordInterface
     public function isForeignRecordDeleted()
     {
         if (!isset($this->runtimeCache['isForeignRecordDeleted'])) {
-            $this->runtimeCache['isForeignRecordDeleted'] = $this->isRecordMarkedAsDeletedByProperties($this->foreignProperties);
+            $this->runtimeCache['isForeignRecordDeleted'] = $this->isRecordMarkedAsDeletedByProperties(
+                $this->foreignProperties
+            );
         }
         return $this->runtimeCache['isForeignRecordDeleted'];
     }
@@ -821,7 +823,9 @@ class Record implements RecordInterface
     public function isLocalRecordDeleted()
     {
         if (!isset($this->runtimeCache['isLocalRecordDeleted'])) {
-            $this->runtimeCache['isLocalRecordDeleted'] = $this->isRecordMarkedAsDeletedByProperties($this->localProperties);
+            $this->runtimeCache['isLocalRecordDeleted'] = $this->isRecordMarkedAsDeletedByProperties(
+                $this->localProperties
+            );
         }
         return $this->runtimeCache['isLocalRecordDeleted'];
     }
@@ -847,7 +851,9 @@ class Record implements RecordInterface
     public function isLocalRecordDisabled()
     {
         if (!isset($this->runtimeCache['isLocalRecordDisabled'])) {
-            $this->runtimeCache['isLocalRecordDisabled'] = $this->isRecordMarkedAsDisabledByProperties($this->localProperties);
+            $this->runtimeCache['isLocalRecordDisabled'] = $this->isRecordMarkedAsDisabledByProperties(
+                $this->localProperties
+            );
         }
         return $this->runtimeCache['isLocalRecordDisabled'];
     }
@@ -858,7 +864,9 @@ class Record implements RecordInterface
     public function isForeignRecordDisabled()
     {
         if (!isset($this->runtimeCache['isForeignRecordDisabled'])) {
-            $this->runtimeCache['isForeignRecordDisabled'] = $this->isRecordMarkedAsDisabledByProperties($this->foreignProperties);
+            $this->runtimeCache['isForeignRecordDisabled'] = $this->isRecordMarkedAsDisabledByProperties(
+                $this->foreignProperties
+            );
         }
         return $this->runtimeCache['isForeignRecordDisabled'];
     }

@@ -158,11 +158,11 @@ class TcaService
      */
     public static function getInstance()
     {
-        if (self::$instance === null) {
-            self::$instance = new self;
-            self::$instance->preProcessTca();
+        if (static::$instance === null) {
+            static::$instance = new static;
+            static::$instance->preProcessTca();
         }
-        return self::$instance;
+        return static::$instance;
     }
 
     /**
@@ -170,18 +170,18 @@ class TcaService
      */
     protected function preProcessTca()
     {
-        if ($this->cache->has(self::CACHE_KEY_TCA_COMPATIBLE)
-            && $this->cache->has(self::CACHE_KEY_TCA_INCOMPATIBLE)
-            && $this->cache->has(self::CACHE_KEY_CONTROLS)
+        if ($this->cache->has(static::CACHE_KEY_TCA_COMPATIBLE)
+            && $this->cache->has(static::CACHE_KEY_TCA_INCOMPATIBLE)
+            && $this->cache->has(static::CACHE_KEY_CONTROLS)
         ) {
-            $this->compatibleTca = $this->cache->get(self::CACHE_KEY_TCA_COMPATIBLE);
-            $this->incompatibleTca = $this->cache->get(self::CACHE_KEY_TCA_INCOMPATIBLE);
-            $this->controls = $this->cache->get(self::CACHE_KEY_CONTROLS);
+            $this->compatibleTca = $this->cache->get(static::CACHE_KEY_TCA_COMPATIBLE);
+            $this->incompatibleTca = $this->cache->get(static::CACHE_KEY_TCA_INCOMPATIBLE);
+            $this->controls = $this->cache->get(static::CACHE_KEY_CONTROLS);
         } else {
             $this->preProcessTcaReal();
-            $this->cache->set(self::CACHE_KEY_TCA_COMPATIBLE, $this->compatibleTca);
-            $this->cache->set(self::CACHE_KEY_TCA_INCOMPATIBLE, $this->incompatibleTca);
-            $this->cache->set(self::CACHE_KEY_CONTROLS, $this->controls);
+            $this->cache->set(static::CACHE_KEY_TCA_COMPATIBLE, $this->compatibleTca);
+            $this->cache->set(static::CACHE_KEY_TCA_INCOMPATIBLE, $this->incompatibleTca);
+            $this->cache->set(static::CACHE_KEY_CONTROLS, $this->controls);
         }
     }
 
@@ -190,25 +190,25 @@ class TcaService
      */
     protected function preProcessTcaReal()
     {
-        foreach (self::getCompleteTca() as $table => $tableConfiguration) {
-            if (!empty($tableConfiguration[self::CONTROL][self::DELETE])) {
-                $this->controls[$table][self::DELETE] = $tableConfiguration[self::CONTROL][self::DELETE];
+        foreach (static::getCompleteTca() as $table => $tableConfiguration) {
+            if (!empty($tableConfiguration[static::CONTROL][static::DELETE])) {
+                $this->controls[$table][static::DELETE] = $tableConfiguration[static::CONTROL][static::DELETE];
             } else {
-                $this->controls[$table][self::DELETE] = '';
+                $this->controls[$table][static::DELETE] = '';
             }
 
-            foreach ($tableConfiguration[self::COLUMNS] as $column => $columnConfiguration) {
+            foreach ($tableConfiguration[static::COLUMNS] as $column => $columnConfiguration) {
                 // if the column has no config section like sys_file_metadata[columns][height]
-                if (!isset($columnConfiguration[self::CONFIG])) {
+                if (!isset($columnConfiguration[static::CONFIG])) {
                     $this->incompatibleTca[$table][$column] = 'Columns without config section can not hold relations';
                     continue;
                 }
 
-                $config = $columnConfiguration[self::CONFIG];
-                $config[self::DEFAULT_EXTRAS] = isset($columnConfiguration[self::DEFAULT_EXTRAS])
-                    ? $columnConfiguration[self::DEFAULT_EXTRAS]
+                $config = $columnConfiguration[static::CONFIG];
+                $config[static::DEFAULT_EXTRAS] = isset($columnConfiguration[static::DEFAULT_EXTRAS])
+                    ? $columnConfiguration[static::DEFAULT_EXTRAS]
                     : null;
-                $type = $config[self::TYPE];
+                $type = $config[static::TYPE];
 
                 // If there's no processor for the type it is not a standard type of TYPO3
                 // The incident will be logged and the field will be skipped
@@ -232,7 +232,7 @@ class TcaService
                     if ($this->processors[$type]->canPreProcess($config)) {
                         // Set the preprocessed values
                         $this->compatibleTca[$table][$column] = $this->processors[$type]->preProcess($config);
-                        $this->compatibleTca[$table][$column][self::TYPE] = $type;
+                        $this->compatibleTca[$table][$column][static::TYPE] = $type;
                     } else {
                         // Set the reasons why it can not be pre processed. Useful for Extension authors
                         foreach ($this->processors[$type]->getLastReasons() as $key => $reason) {
@@ -257,7 +257,7 @@ class TcaService
      */
     public static function getIncompatibleTca()
     {
-        return self::getInstance()->incompatibleTca;
+        return static::getInstance()->incompatibleTca;
     }
 
     /**
@@ -265,7 +265,7 @@ class TcaService
      */
     public static function getCompatibleTca()
     {
-        return self::getInstance()->compatibleTca;
+        return static::getInstance()->compatibleTca;
     }
 
     /**
@@ -273,7 +273,7 @@ class TcaService
      */
     public static function getControls()
     {
-        return self::getInstance()->controls;
+        return static::getInstance()->controls;
     }
 
     /**
@@ -281,7 +281,7 @@ class TcaService
      */
     public static function getAllTables()
     {
-        return array_keys(self::getCompleteTca());
+        return array_keys(static::getCompleteTca());
     }
 
     /**
@@ -290,7 +290,7 @@ class TcaService
      */
     public static function tableExists($table)
     {
-        return array_key_exists($table, self::getCompleteTca());
+        return array_key_exists($table, static::getCompleteTca());
     }
 
     /**
@@ -299,7 +299,7 @@ class TcaService
      */
     public static function getCompleteTca()
     {
-        return $GLOBALS[self::TCA];
+        return $GLOBALS[static::TCA];
     }
 
     /**
@@ -309,7 +309,7 @@ class TcaService
      */
     public static function getCompleteTcaForTable($tableName)
     {
-        return $GLOBALS[self::TCA][$tableName];
+        return $GLOBALS[static::TCA][$tableName];
     }
 
     /**
@@ -318,7 +318,7 @@ class TcaService
      */
     public static function getColumnsFor($table)
     {
-        return (array)self::getInstance()->compatibleTca[$table];
+        return (array)static::getInstance()->compatibleTca[$table];
     }
 
     /**
@@ -327,7 +327,7 @@ class TcaService
      */
     public static function getControlsFor($table)
     {
-        return self::getInstance()->controls[$table];
+        return static::getInstance()->controls[$table];
     }
 
     /**
@@ -336,7 +336,7 @@ class TcaService
      */
     public static function hasDeleteField($table)
     {
-        return (self::getInstance()->controls[$table][self::DELETE] !== '');
+        return (static::getInstance()->controls[$table][static::DELETE] !== '');
     }
 
     /**
@@ -345,7 +345,7 @@ class TcaService
      */
     public static function getDeleteField($table)
     {
-        return self::getInstance()->controls[$table][self::DELETE];
+        return static::getInstance()->controls[$table][static::DELETE];
     }
 
     /**

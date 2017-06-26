@@ -85,7 +85,7 @@ class SshConnection
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
-            . self::TYPO3_CLI_EXTBASE_DISPATCHER
+            . static::TYPO3_CLI_EXTBASE_DISPATCHER
             . sprintf(TableCommandController::BACKUP_COMMAND, $tableName);
         return $this->executeRemoteCommand($command);
     }
@@ -101,7 +101,7 @@ class SshConnection
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
-            . self::TYPO3_CLI_EXTBASE_DISPATCHER . StatusCommandController::VERSION_COMMAND;
+            . static::TYPO3_CLI_EXTBASE_DISPATCHER . StatusCommandController::VERSION_COMMAND;
         $remoteVersion = $this->executeRemoteCommand($command);
         return reset($remoteVersion);
     }
@@ -117,7 +117,7 @@ class SshConnection
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
-            . self::TYPO3_CLI_EXTBASE_DISPATCHER . StatusCommandController::GLOBAL_CONFIGURATION;
+            . static::TYPO3_CLI_EXTBASE_DISPATCHER . StatusCommandController::GLOBAL_CONFIGURATION;
         $configurationValues = $this->executeRemoteCommand($command);
         $configurationArray = [];
         foreach ($configurationValues as $line) {
@@ -138,7 +138,7 @@ class SshConnection
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
-            . self::TYPO3_CLI_EXTBASE_DISPATCHER . StatusCommandController::TYPO3_VERSION;
+            . static::TYPO3_CLI_EXTBASE_DISPATCHER . StatusCommandController::TYPO3_VERSION;
         $remoteVersion = $this->executeRemoteCommand($command);
         return reset($remoteVersion);
     }
@@ -154,7 +154,7 @@ class SshConnection
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
-            . self::TYPO3_CLI_EXTBASE_DISPATCHER . StatusCommandController::CONFIGURATION_RAW_COMMAND;
+            . static::TYPO3_CLI_EXTBASE_DISPATCHER . StatusCommandController::CONFIGURATION_RAW_COMMAND;
         $result = $this->executeRemoteCommand($command);
         return reset($result);
     }
@@ -169,7 +169,7 @@ class SshConnection
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
-            . self::TYPO3_CLI_EXTBASE_DISPATCHER . PublishTasksRunnerCommandController::RUN_TASKS_COMMAND;
+            . static::TYPO3_CLI_EXTBASE_DISPATCHER . PublishTasksRunnerCommandController::RUN_TASKS_COMMAND;
         $returnValues = $this->executeRemoteCommand($command);
         $result = json_decode(reset($returnValues), true);
         if ($result === null) {
@@ -188,7 +188,7 @@ class SshConnection
     {
         GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
         $command = 'cd ' . $this->foreignRootPath
-                   . ' && ' . $this->pathToPhp . ' ' . self::TYPO3_CLI_EXTBASE_DISPATCHER;
+                   . ' && ' . $this->pathToPhp . ' ' . static::TYPO3_CLI_EXTBASE_DISPATCHER;
         return $this->executeRawCommand($command);
     }
 
@@ -227,7 +227,7 @@ class SshConnection
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
-            . self::TYPO3_CLI_EXTBASE_DISPATCHER . RpcCommandController::EXECUTE_COMMAND . ' '
+            . static::TYPO3_CLI_EXTBASE_DISPATCHER . RpcCommandController::EXECUTE_COMMAND . ' '
             . (int)$uid;
         $returnValues = $this->executeRemoteCommand($command);
         $result = json_decode(reset($returnValues), true);
@@ -325,7 +325,7 @@ class SshConnection
                 }
             }
         } else {
-            if (!($result = is_dir(self::SSH2_WRAPPER . ((int)$this->sftpSubSystem) . $folder))) {
+            if (!($result = is_dir(static::SSH2_WRAPPER . ((int)$this->sftpSubSystem) . $folder))) {
                 $result = $this->createFolder($folder);
             }
         }
@@ -493,7 +493,7 @@ class SshConnection
              *
              * @see http://paul-m-jones.com/archives/6439
              */
-            $foreignFileStream = fopen(self::SSH2_WRAPPER . (int)$this->sftpSubSystem . $foreignFileLocation, 'w');
+            $foreignFileStream = fopen(static::SSH2_WRAPPER . (int)$this->sftpSubSystem . $foreignFileLocation, 'w');
         } catch (\Exception $e) {
             $exceptionMessage = $e->getMessage();
             if (strpos($exceptionMessage, 'failed to open stream: operation failed')) {
@@ -863,10 +863,10 @@ class SshConnection
      */
     public static function makeInstance()
     {
-        if (self::$instance === null) {
-            self::$instance = new self;
+        if (static::$instance === null) {
+            static::$instance = new self;
         }
-        return self::$instance;
+        return static::$instance;
     }
 
     /**

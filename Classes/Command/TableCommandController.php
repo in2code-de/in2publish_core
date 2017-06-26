@@ -206,7 +206,7 @@ class TableCommandController extends AbstractCommandController
     {
         if (!$this->contextService->isLocal()) {
             $this->outputLine('This command is available on Local only');
-            $this->sendAndExit(self::EXIT_WRONG_CONTEXT);
+            $this->sendAndExit(static::EXIT_WRONG_CONTEXT);
         }
     }
 
@@ -217,7 +217,7 @@ class TableCommandController extends AbstractCommandController
     {
         if (!$this->databaseSchemaService->tableExists($tableName)) {
             $this->outputLine('The table does not exist');
-            $this->sendAndExit(self::EXIT_INVALID_TABLE);
+            $this->sendAndExit(static::EXIT_INVALID_TABLE);
         }
     }
 }

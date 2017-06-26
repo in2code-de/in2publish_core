@@ -87,8 +87,8 @@ class DomainService
     {
         $relatedRecords = $record->getRelatedRecords();
         $domainRecordValues = [];
-        if (!empty($relatedRecords[self::TABLE_NAME])) {
-            foreach ($relatedRecords[self::TABLE_NAME] as $relatedDomainRecord) {
+        if (!empty($relatedRecords[static::TABLE_NAME])) {
+            foreach ($relatedRecords[static::TABLE_NAME] as $relatedDomainRecord) {
                 /** @var RecordInterface $relatedDomainRecord */
                 $domainProperties = ObjectAccess::getProperty($relatedDomainRecord, $stagingLevel . 'Properties');
                 $domainRecordValues[$domainProperties['sorting']] = $domainProperties['domainName'];
@@ -96,7 +96,7 @@ class DomainService
         }
         $domainName = array_shift($domainRecordValues);
         if ($domainName === null && $record->getParentRecord() !== null) {
-            $domainName = self::getFirstDomainInRootLineFromRelatedRecords($record->getParentRecord(), $stagingLevel);
+            $domainName = static::getFirstDomainInRootLineFromRelatedRecords($record->getParentRecord(), $stagingLevel);
         }
         return $domainName;
     }
@@ -117,7 +117,7 @@ class DomainService
             }
             $domainRecord = $databaseConnection->exec_SELECTgetSingleRow(
                 'domainName',
-                self::TABLE_NAME,
+                static::TABLE_NAME,
                 'pid=' . (int)$page['uid'] . ' AND hidden=0',
                 '',
                 'sorting'

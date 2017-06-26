@@ -120,8 +120,8 @@ class FakeRecordFactory
      */
     protected function getSingleFakeRecordFromPageIdentifier($identifier)
     {
-        $propertiesLocal = $this->tableCacheRepository->findByUid(self::PAGE_TABLE_NAME, $identifier, 'local');
-        $propertiesForeign = $this->tableCacheRepository->findByUid(self::PAGE_TABLE_NAME, $identifier, 'foreign');
+        $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier, 'local');
+        $propertiesForeign = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier, 'foreign');
         $record = GeneralUtility::makeInstance(ObjectManager::class)->get(
             Record::class,
             'pages',
@@ -162,12 +162,12 @@ class FakeRecordFactory
     protected function pageIsNew(Record $record)
     {
         $propertiesLocal = $this->tableCacheRepository->findByUid(
-            self::PAGE_TABLE_NAME,
+            static::PAGE_TABLE_NAME,
             $record->getIdentifier(),
             'local'
         );
         $propertiesForeign = $this->tableCacheRepository->findByUid(
-            self::PAGE_TABLE_NAME,
+            static::PAGE_TABLE_NAME,
             $record->getIdentifier(),
             'foreign'
         );
@@ -182,7 +182,7 @@ class FakeRecordFactory
      */
     protected function getChildrenPages($identifier)
     {
-        $rows = $this->tableCacheRepository->findByPid(self::PAGE_TABLE_NAME, $identifier);
+        $rows = $this->tableCacheRepository->findByPid(static::PAGE_TABLE_NAME, $identifier);
         $rows = $this->sortRowsBySorting($rows);
         $pageIdentifiers = [];
         foreach ($rows as $row) {
@@ -217,8 +217,12 @@ class FakeRecordFactory
      */
     protected function pageHasMoved($pageIdentifier)
     {
-        $propertiesLocal = $this->tableCacheRepository->findByUid(self::PAGE_TABLE_NAME, $pageIdentifier, 'local');
-        $propertiesForeign = $this->tableCacheRepository->findByUid(self::PAGE_TABLE_NAME, $pageIdentifier, 'foreign');
+        $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $pageIdentifier, 'local');
+        $propertiesForeign = $this->tableCacheRepository->findByUid(
+            static::PAGE_TABLE_NAME,
+            $pageIdentifier,
+            'foreign'
+        );
         return $propertiesLocal['sorting'] !== $propertiesForeign['sorting']
                || $propertiesLocal['pid'] !== $propertiesForeign['pid'];
     }
@@ -231,7 +235,7 @@ class FakeRecordFactory
      */
     protected function shouldSkipChildrenPage($pageIdentifier)
     {
-        return !$this->isRecordDeletedOnBothInstances($pageIdentifier, self::PAGE_TABLE_NAME)
+        return !$this->isRecordDeletedOnBothInstances($pageIdentifier, static::PAGE_TABLE_NAME)
                && !$this->isRecordDeletedOnLocalAndNonExistingOnForeign($pageIdentifier);
     }
 
@@ -259,8 +263,12 @@ class FakeRecordFactory
      */
     protected function pageHasChanged($pageIdentifier)
     {
-        $propertiesLocal = $this->tableCacheRepository->findByUid(self::PAGE_TABLE_NAME, $pageIdentifier, 'local');
-        $propertiesForeign = $this->tableCacheRepository->findByUid(self::PAGE_TABLE_NAME, $pageIdentifier, 'foreign');
+        $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $pageIdentifier, 'local');
+        $propertiesForeign = $this->tableCacheRepository->findByUid(
+            static::PAGE_TABLE_NAME,
+            $pageIdentifier,
+            'foreign'
+        );
         $propertiesLocal = $this->removeIgnoreFieldsFromArray($propertiesLocal, 'pages');
         $propertiesForeign = $this->removeIgnoreFieldsFromArray($propertiesForeign, 'pages');
         $changes = array_diff($propertiesLocal, $propertiesForeign);

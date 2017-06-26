@@ -71,13 +71,13 @@ class RpcCommandController extends AbstractCommandController
         if (!$this->contextService->isForeign()) {
             $this->logger->warning('RPC called but context is not Foreign');
             $this->outputLine('This command is available on Foreign only');
-            $this->sendAndExit(self::EXIT_WRONG_CONTEXT);
+            $this->sendAndExit(static::EXIT_WRONG_CONTEXT);
         }
 
         if (0 === $uid) {
             $this->logger->warning('RPC called but UID was not given');
             $this->outputLine('Please define an UID for the envelope');
-            $this->sendAndExit(self::EXIT_UID_MISSING);
+            $this->sendAndExit(static::EXIT_UID_MISSING);
         }
 
         $envelope = $this->letterbox->receiveEnvelope($uid, false);
@@ -85,7 +85,7 @@ class RpcCommandController extends AbstractCommandController
         if (false === $envelope) {
             $this->logger->error('The requested envelope could not be received', ['uid' => $uid]);
             $this->outputLine('The requested envelope is not available');
-            $this->sendAndExit(self::EXIT_ENVELOPE_MISSING);
+            $this->sendAndExit(static::EXIT_ENVELOPE_MISSING);
         }
 
         $success = $this->envelopeDispatcher->dispatch($envelope);
@@ -95,7 +95,7 @@ class RpcCommandController extends AbstractCommandController
         if (false === $success) {
             $this->logger->error('Dispatching the requested envelope failed', ['uid' => $uid]);
             $this->outputLine('RPC failed');
-            $this->sendAndExit(self::EXIT_EXECUTION_FAILED);
+            $this->sendAndExit(static::EXIT_EXECUTION_FAILED);
         }
     }
 }

@@ -53,7 +53,7 @@ class TextProcessor extends AbstractProcessor
             $hasDefaultExtrasRte = $this->hasDefaultExtrasRte($config);
             $hasRteWizard = $this->hasRteWizard($config);
             if (!$hasDefaultExtrasRte && !$hasRteWizard) {
-                $this->lastReasons[self::WIZARDS] = 'only the RTE is supported for relation resolving';
+                $this->lastReasons[static::WIZARDS] = 'only the RTE is supported for relation resolving';
                 $canPreProcess = false;
             }
         }
@@ -66,7 +66,7 @@ class TextProcessor extends AbstractProcessor
      */
     protected function hasRteWizard(array $config)
     {
-        return !empty($config[self::WIZARDS][self::RTE]);
+        return !empty($config[static::WIZARDS][static::RTE]);
     }
 
     /**
@@ -76,7 +76,7 @@ class TextProcessor extends AbstractProcessor
     protected function hasDefaultExtrasRte(array $config)
     {
         if (isset($config[TcaService::DEFAULT_EXTRAS])) {
-            return false !== strpos($config[TcaService::DEFAULT_EXTRAS], self::RTE_DEFAULT_EXTRAS);
+            return false !== strpos($config[TcaService::DEFAULT_EXTRAS], static::RTE_DEFAULT_EXTRAS);
         }
         return false;
     }
