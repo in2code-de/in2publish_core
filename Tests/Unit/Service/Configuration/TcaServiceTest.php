@@ -441,7 +441,7 @@ class TcaServiceTest extends UnitTestCase
     /**
      * @covers ::isHiddenRootTable
      */
-    public function testIsHiddenRootTableReturnsTrueForInvisbleTablesPossibleOnRoot()
+    public function testIsHiddenRootTableReturnsTrueForInvisibleTablesPossibleOnRoot()
     {
         $this->setTca(['table' => ['ctrl' => ['hideTable' => true, 'rootLevel' => 1]]]);
         $tcaService = new TcaService();

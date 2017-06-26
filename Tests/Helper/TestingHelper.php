@@ -74,7 +74,7 @@ class TestingHelper
     }
 
     /**
-     * Unsets any supported in2publish context environment variable
+     * Unset any supported in2publish context environment variable
      */
     public static function clearIn2publishContext()
     {

@@ -289,7 +289,7 @@ class DatabaseUtility
         }
         throw new \InvalidArgumentException(
             sprintf(
-                'The given table name was not properly escaped or does not esist. Given table name: %s',
+                'The given table name was not properly escaped or does not exist. Given table name: %s',
                 $tableName
             ),
             1493891084

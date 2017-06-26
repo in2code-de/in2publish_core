@@ -42,6 +42,6 @@ class UserProcessor extends AbstractProcessor
      * @var array
      */
     protected $forbidden = [
-        'itemsProcFunc is not suported' => self::ITEMS_PROC_FUNC,
+        'itemsProcFunc is not supported' => self::ITEMS_PROC_FUNC,
     ];
 }

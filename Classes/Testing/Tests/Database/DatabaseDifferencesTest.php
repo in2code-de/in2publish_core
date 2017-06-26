@@ -173,7 +173,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
                 }
                 if (isset($fieldArray['table']) && is_array($fieldArray['fields'])) {
                     foreach (array_keys($fieldArray['table']) as $propertyOnlyOnForeign) {
-                        $fieldDifferences[] = 'Table propety ' . $tableName . '.' . $propertyOnlyOnForeign
+                        $fieldDifferences[] = 'Table property ' . $tableName . '.' . $propertyOnlyOnForeign
                                               . ': Only exists on foreign';
                     }
                 }

@@ -34,8 +34,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class FolderUtility
 {
     /**
-     * Get Subfolder of current TYPO3 Installation
-     *        and never return "//"
+     * Get sub folder of current TYPO3 Installation and never return "//"
      *
      * @param bool $leadingSlash will be prepended
      * @param bool $trailingSlash will be appended

@@ -8,7 +8,7 @@ Content Publishing in TYPO3 - the easy way:
 
 * Intuitive Use
 * High Security
-* Futureproof
+* Future proof
 * Supports all extensions (with correct TCA)
 
 <img src="https://www.in2code.de/fileadmin/content/images/produkte/contentpublisher/content_publisher_screenshot01_prev.png" width="450" />

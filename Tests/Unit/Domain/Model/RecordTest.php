@@ -1171,7 +1171,7 @@ class RecordTest extends UnitTestCase
      * @covers ::removeRelatedRecord
      * @depends testAddRelatedRecordsAddsArrayOfRelatedRecordsAndAllowsChaining
      */
-    public function testRemoveRelatedRecordRemvoesPreviouslyAddedRecord()
+    public function testRemoveRelatedRecordRemovesPreviouslyAddedRecord()
     {
         $record = $this->getRecordStub([]);
         $record->__construct('pages', [], [], [], []);

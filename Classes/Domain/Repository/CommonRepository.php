@@ -107,7 +107,7 @@ class CommonRepository extends BaseRepository
     protected $foreignDatabase = null;
 
     /**
-     * If flexform is in use with subfields, set a limit
+     * If flexform is in use with sub fields, set a limit
      *
      * @var int
      */

@@ -277,7 +277,7 @@ class SshConnection
         if (preg_replace('~[^a-zA-Z0-9._\-\/]~', '', $argument) !== $argument) {
             throw new \Exception(
                 'Argument "' . htmlspecialchars($argument) . '" contains not allowed characters. ' .
-                'Note: Umlauts in filenames and folders are not allowed',
+                'Note: Umlauts in file names or folder names are not allowed',
                 1454944102
             );
         }
@@ -766,7 +766,7 @@ class SshConnection
         ) {
             throw new \Exception(
                 'Could not authenticate the SSH connection for "'
-                . $this->username . '@' . $this->host . ':' . $this->port . '" with the given ssh keypair',
+                . $this->username . '@' . $this->host . ':' . $this->port . '" with the given ssh key pair',
                 1425401293
             );
         }

@@ -160,7 +160,7 @@ abstract class AbstractController extends ActionController
                 $this->actionMethodName = static::BLANK_ACTION;
             }
             $this->logger->error(
-                'Could not create foreign database connection. An error occured',
+                'Could not create foreign database connection. An error occurred',
                 ['message' => $message]
             );
         }
