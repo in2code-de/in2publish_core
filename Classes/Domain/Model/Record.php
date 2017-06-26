@@ -441,15 +441,22 @@ class Record implements RecordInterface
             );
 
         foreach ($propertyNames as $propertyName) {
-            if (!array_key_exists($propertyName, $this->localProperties)) {
-                $this->dirtyProperties[] = $propertyName;
-            } elseif (!array_key_exists($propertyName, $this->foreignProperties)) {
-                $this->dirtyProperties[] = $propertyName;
-            } elseif ($this->localProperties[$propertyName] !== $this->foreignProperties[$propertyName]) {
+            if ($this->isDirtyProperty($propertyName)) {
                 $this->dirtyProperties[] = $propertyName;
             }
         }
         return $this;
+    }
+
+    /**
+     * @param string $propertyName
+     * @return bool
+     */
+    protected function isDirtyProperty($propertyName)
+    {
+        return !array_key_exists($propertyName, $this->localProperties)
+               || !array_key_exists($propertyName, $this->foreignProperties)
+               || $this->localProperties[$propertyName] !== $this->foreignProperties[$propertyName];
     }
 
     /**
