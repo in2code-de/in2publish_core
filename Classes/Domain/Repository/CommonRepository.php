@@ -1030,7 +1030,6 @@ class CommonRepository extends BaseRepository
                     $foreignUid = $relatedRecord->getForeignProperty($this->getForeignField($columnConfiguration));
 
                     if ($localUid > 0 && $foreignUid > 0 && $localUid !== $foreignUid) {
-                        //throw new \Exception('DEVELOP EXCEPTION ' . __FUNCTION__ . '@' . __LINE__);
                         $this->logger->alert(
                             'Detected different UIDs in fetchRelatedRecordsByGroup',
                             [
@@ -1499,7 +1498,6 @@ class CommonRepository extends BaseRepository
             $foreignUid = $mmRecord->getForeignProperty('uid_foreign');
 
             if ($localUid > 0 && $foreignUid > 0 && $localUid !== $foreignUid) {
-                //throw new \Exception('DEVELOP EXCEPTION ' . __FUNCTION__ . '@' . __LINE__);
                 $this->logger->alert(
                     'Detected different UIDs in fetchRelatedRecordsByInline',
                     [
