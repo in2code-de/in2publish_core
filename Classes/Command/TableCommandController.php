@@ -153,10 +153,10 @@ class TableCommandController extends AbstractCommandController
                 if (($success = $this->insertRow($toDatabase, $tableName, $row)) !== true) {
                     $this->logger->critical(
                         'Failed to import row into "' . $tableName . '"',
-                        array(
+                        [
                             'row' => $row,
                             'result' => $success,
-                        )
+                        ]
                     );
                 }
             }

@@ -42,17 +42,17 @@ class RealUrlUpdateTask extends AbstractTask
         if (!empty($this->configuration['record'])) {
             $record = $this->configuration['record'];
             if ($record instanceof RecordInterface) {
-                $data = array();
+                $data = [];
                 $dirtyProperties = $record->getDirtyProperties();
                 foreach ($dirtyProperties as $dirtyProperty) {
                     $data[$dirtyProperty] = $record->getLocalProperty($dirtyProperty);
                 }
-                $this->configuration = array(
+                $this->configuration = [
                     'state' => $record->getState(),
                     'identifier' => $record->getIdentifier(),
                     'table' => $record->getTableName(),
                     'data' => $data,
-                );
+                ];
             }
         }
     }

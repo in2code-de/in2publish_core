@@ -41,7 +41,7 @@ class FileStorageService extends AbstractService
      *
      * @var array
      */
-    protected $nonAllowedFolders = array();
+    protected $nonAllowedFolders = [];
 
     /**
      * [
@@ -51,7 +51,7 @@ class FileStorageService extends AbstractService
      *
      * @var array
      */
-    protected $nonAllowedFiles = array();
+    protected $nonAllowedFiles = [];
 
     /**
      * FileStorageEnvironmentService constructor.
@@ -161,7 +161,7 @@ class FileStorageService extends AbstractService
     protected function getFilesAndFoldersRecursive($fileStorage)
     {
         return GeneralUtility::getAllFilesAndFoldersInPath(
-            array(),
+            [],
             GeneralUtility::getFileAbsFileName($fileStorage),
             '',
             true,

@@ -43,7 +43,7 @@ class ConfigurationDefinitionProvider implements SingletonInterface
     /**
      * @var array
      */
-    protected $cache = array();
+    protected $cache = [];
 
     /**
      * ConfigurationIsCompleteTest constructor.
@@ -59,55 +59,55 @@ class ConfigurationDefinitionProvider implements SingletonInterface
     public function getConfigurationDefinition()
     {
         if (empty($this->cache)) {
-            $definition = array(
-                'database' => array(
-                    'foreign' => array(
+            $definition = [
+                'database' => [
+                    'foreign' => [
                         'name' => 'string',
                         'username' => 'string',
                         'password' => 'string',
                         'hostname' => 'string',
                         'port' => 'integer',
-                    ),
-                ),
-                'excludeRelatedTables' => array(
+                    ],
+                ],
+                'excludeRelatedTables' => [
                     '*:integer' => 'string',
-                ),
-                'ignoreFieldsForDifferenceView' => array(
-                    '*:string' => array(
+                ],
+                'ignoreFieldsForDifferenceView' => [
+                    '*:string' => [
                         '*:integer' => 'string',
-                    ),
-                ),
-                'factory' => array(
+                    ],
+                ],
+                'factory' => [
                     'maximumPageRecursion' => 'integer',
                     'maximumContentRecursion' => 'integer',
                     'maximumOverallRecursion' => 'integer',
                     'resolvePageRelations' => 'boolean',
                     'simpleOverviewAndAjax' => 'boolean',
-                    'fal' => array(
+                    'fal' => [
                         'reserveSysFileUids' => 'boolean',
                         'reclaimSysFileEntries' => 'boolean',
                         'autoRepairFolderHash' => 'boolean',
                         'mergeSysFileByIdentifier' => 'boolean',
                         'enableSysFileReferenceUpdate' => 'boolean',
-                    ),
-                ),
-                'filePreviewDomainName' => array(
+                    ],
+                ],
+                'filePreviewDomainName' => [
                     'local' => 'string',
                     'foreign' => 'string',
-                ),
-                'log' => array(
+                ],
+                'log' => [
                     'logLevel' => 'integer',
-                ),
-                'view' => array(
-                    'records' => array(
+                ],
+                'view' => [
+                    'records' => [
                         'filterButtons' => 'boolean',
                         'breadcrumb' => 'boolean',
-                    ),
-                    'files' => array(
+                    ],
+                    'files' => [
                         'filterButtons' => 'boolean',
-                    ),
-                ),
-                'sshConnection' => array(
+                    ],
+                ],
+                'sshConnection' => [
                     'host' => 'string',
                     'port' => 'integer',
                     'username' => 'string',
@@ -120,40 +120,40 @@ class ConfigurationDefinitionProvider implements SingletonInterface
                     'pathToPhp' => 'string',
                     'ignoreChmodFail' => 'boolean',
                     'foreignTYPO3Context' => 'string',
-                ),
-                'module' => array(
+                ],
+                'module' => [
                     'm1' => 'boolean',
                     'm3' => 'boolean',
                     'm4' => 'boolean',
-                ),
-                'debug' => array(
+                ],
+                'debug' => [
                     'disableParentRecords' => 'boolean',
                     'showForeignKeyFingerprint' => 'boolean',
                     'showRecordDepth' => 'boolean',
                     'showExecutionTime' => 'boolean',
                     'allInformation' => 'boolean',
                     'keepEnvelopes' => 'boolean',
-                ),
-                'tasks' => array(
-                    '*:string' => array(
+                ],
+                'tasks' => [
+                    '*:string' => [
                         '*' => '*',
-                    ),
-                ),
+                    ],
+                ],
                 'disableUserConfig' => 'boolean',
-                'backup' => array(
-                    'publishTableCommand' => array(
+                'backup' => [
+                    'publishTableCommand' => [
                         'keepBackups' => 'integer',
                         'backupLocation' => 'string',
                         'addDropTable' => 'boolean',
                         'zipBackup' => 'boolean',
-                    ),
-                ),
-                'tca' => array(
-                    'processor' => array(
+                    ],
+                ],
+                'tca' => [
+                    'processor' => [
                         '*:string' => 'string',
-                    ),
-                ),
-            );
+                    ],
+                ],
+            ];
             $this->cache = $this->overruleDefinition($definition);
         }
         return $this->cache;
@@ -165,7 +165,7 @@ class ConfigurationDefinitionProvider implements SingletonInterface
      */
     protected function overruleDefinition(array $definition)
     {
-        $returnValue = $this->dispatcher->dispatch(__CLASS__, __FUNCTION__, array($definition));
+        $returnValue = $this->dispatcher->dispatch(__CLASS__, __FUNCTION__, [$definition]);
         if (isset($returnValue[0])) {
             return $returnValue[0];
         }

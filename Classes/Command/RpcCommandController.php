@@ -83,7 +83,7 @@ class RpcCommandController extends AbstractCommandController
         $envelope = $this->letterbox->receiveEnvelope($uid, false);
 
         if (false === $envelope) {
-            $this->logger->error('The requested envelope could not be received', array('uid' => $uid));
+            $this->logger->error('The requested envelope could not be received', ['uid' => $uid]);
             $this->outputLine('The requested envelope is not available');
             $this->sendAndExit(self::EXIT_ENVELOPE_MISSING);
         }
@@ -93,7 +93,7 @@ class RpcCommandController extends AbstractCommandController
         $this->letterbox->sendEnvelope($envelope);
 
         if (false === $success) {
-            $this->logger->error('Dispatching the requested envelope failed', array('uid' => $uid));
+            $this->logger->error('Dispatching the requested envelope failed', ['uid' => $uid]);
             $this->outputLine('RPC failed');
             $this->sendAndExit(self::EXIT_EXECUTION_FAILED);
         }

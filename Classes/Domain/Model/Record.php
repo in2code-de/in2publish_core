@@ -55,33 +55,33 @@ class Record implements RecordInterface
     /**
      * @var array
      */
-    protected $localProperties = array();
+    protected $localProperties = [];
 
     /**
      * @var array
      */
-    protected $foreignProperties = array();
+    protected $foreignProperties = [];
 
     /**
      * Short said: difference between local and foreign properties
      *
      * @var array
      */
-    protected $dirtyProperties = array();
+    protected $dirtyProperties = [];
 
     /**
      * e.g. the depth of the current record
      *
      * @var array
      */
-    protected $additionalProperties = array();
+    protected $additionalProperties = [];
 
     /**
      * records which are related to this record.
      *
      * @var RecordInterface[][]
      */
-    protected $relatedRecords = array();
+    protected $relatedRecords = [];
 
     /**
      * TableConfigurationArray of this record
@@ -89,7 +89,7 @@ class Record implements RecordInterface
      *
      * @var array
      */
-    protected $tableConfigurationArray = array();
+    protected $tableConfigurationArray = [];
 
     /**
      * Internal (volatile) cache
@@ -97,7 +97,7 @@ class Record implements RecordInterface
      *
      * @var array
      */
-    protected $runtimeCache = array();
+    protected $runtimeCache = [];
 
     /**
      * reference to the parent record. The parent record is
@@ -225,7 +225,7 @@ class Record implements RecordInterface
      * @param array $alreadyVisited
      * @return string
      */
-    public function getStateRecursive(array &$alreadyVisited = array())
+    public function getStateRecursive(array &$alreadyVisited = [])
     {
         if (!empty($alreadyVisited[$this->tableName])) {
             if (in_array($this->getIdentifier(), $alreadyVisited[$this->tableName])) {
@@ -256,7 +256,7 @@ class Record implements RecordInterface
      * @param array $alreadyVisited
      * @return bool
      */
-    public function isChangedRecursive(array &$alreadyVisited = array())
+    public function isChangedRecursive(array &$alreadyVisited = [])
     {
         if ($this->getStateRecursive($alreadyVisited) !== self::RECORD_STATE_UNCHANGED) {
             return true;
@@ -302,7 +302,7 @@ class Record implements RecordInterface
     public function setLocalProperties(array $localProperties)
     {
         $this->localProperties = $localProperties;
-        $this->runtimeCache = array();
+        $this->runtimeCache = [];
         return $this;
     }
 
@@ -384,7 +384,7 @@ class Record implements RecordInterface
     public function setForeignProperties(array $foreignProperties)
     {
         $this->foreignProperties = $foreignProperties;
-        $this->runtimeCache = array();
+        $this->runtimeCache = [];
         return $this;
     }
 
@@ -424,10 +424,10 @@ class Record implements RecordInterface
     public function setDirtyProperties()
     {
         // reset dirty properties first
-        $this->dirtyProperties = array();
+        $this->dirtyProperties = [];
         $ignoreFields = $this->getIgnoreFields();
         if (!is_array($ignoreFields)) {
-            $ignoreFields = array();
+            $ignoreFields = [];
         }
         $propertyNames =
             array_diff(
@@ -467,7 +467,7 @@ class Record implements RecordInterface
     public function setAdditionalProperties(array $additionalProperties)
     {
         $this->additionalProperties = $additionalProperties;
-        $this->runtimeCache = array();
+        $this->runtimeCache = [];
         return $this;
     }
 
@@ -500,7 +500,7 @@ class Record implements RecordInterface
     public function addAdditionalProperty($propertyName, $propertyValue)
     {
         $this->additionalProperties[$propertyName] = $propertyValue;
-        $this->runtimeCache = array();
+        $this->runtimeCache = [];
         return $this;
     }
 
@@ -537,7 +537,7 @@ class Record implements RecordInterface
      */
     public function getRelatedRecordByTableAndProperty($table, $property, $value)
     {
-        $relatedRecords = array();
+        $relatedRecords = [];
         if (isset($this->relatedRecords[$table]) && is_array($this->relatedRecords[$table])) {
             foreach ($this->relatedRecords[$table] as $record) {
                 if (($record->hasLocalProperty($property)
@@ -746,7 +746,7 @@ class Record implements RecordInterface
                         $value = $localValue;
                     } else {
                         if (strlen($localValue) > 0 && strlen($foreignValue) > 0) {
-                            $value = implode(',', array($localValue, $foreignValue));
+                            $value = implode(',', [$localValue, $foreignValue]);
                         } elseif (!$localValue && $foreignValue) {
                             $value = $foreignValue;
                         } else {
@@ -949,13 +949,13 @@ class Record implements RecordInterface
     public static function splitCombinedIdentifier($combinedIdentifier)
     {
         if (false === strpos($combinedIdentifier, ',')) {
-            return array();
+            return [];
         } else {
             $identifierArray = explode(',', $combinedIdentifier);
-            return array(
+            return [
                 'uid_local' => $identifierArray[0],
                 'uid_foreign' => $identifierArray[1],
-            );
+            ];
         }
     }
 
@@ -1001,7 +1001,7 @@ class Record implements RecordInterface
      */
     public function getChangedRelatedRecordsFlat()
     {
-        $relatedRecordsFlat = array();
+        $relatedRecordsFlat = [];
         if ($this->isChanged()) {
             $relatedRecordsFlat[] = $this;
         }
@@ -1032,7 +1032,7 @@ class Record implements RecordInterface
      * @param RecordInterface[] $relatedRecordsFlat
      * @return RecordInterface[]
      */
-    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = array())
+    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = [])
     {
         foreach ($this->getRelatedRecords() as $relatedRecords) {
             foreach ($relatedRecords as $relatedRecord) {

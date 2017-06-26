@@ -62,7 +62,7 @@ class RecordFactory
      *
      * @var RecordInterface[][]
      */
-    protected $runtimeCache = array();
+    protected $runtimeCache = [];
 
     /**
      * Array of $tableName => array($uid, $uid) entries
@@ -71,7 +71,7 @@ class RecordFactory
      *
      * @var array
      */
-    protected $instantiationQueue = array();
+    protected $instantiationQueue = [];
 
     /**
      * @var Logger
@@ -112,7 +112,7 @@ class RecordFactory
      *
      * @var array
      */
-    protected $excludedTableNames = array();
+    protected $excludedTableNames = [];
 
     /**
      * current depth of related page records
@@ -189,7 +189,7 @@ class RecordFactory
         CommonRepository $commonRepository,
         array $localProperties,
         array $foreignProperties,
-        array $additionalProperties = array()
+        array $additionalProperties = []
     ) {
         if (false === $this->isRootRecord) {
             $this->isRootRecord = true;
@@ -225,7 +225,7 @@ class RecordFactory
             }
 
             $depth = $instanceTableName === 'pages' ? $this->pagesDepth : $this->relatedRecordsDepth;
-            $additionalProperties += array('depth' => $depth);
+            $additionalProperties += ['depth' => $depth];
 
             // do not use objectManager->get because of performance issues. Additionally,
             // we just do not need it, because there is no dependency injection
@@ -242,7 +242,7 @@ class RecordFactory
                 $instance->setState(RecordInterface::RECORD_STATE_MOVED);
             }
 
-            $this->signalSlotDispatcher->dispatch(__CLASS__, 'instanceCreated', array($this, $instance));
+            $this->signalSlotDispatcher->dispatch(__CLASS__, 'instanceCreated', [$this, $instance]);
 
             /* special case of tables without TCA (currently only sys_file_processedfile).
              * Normally we would just ignore them, but:
@@ -274,12 +274,12 @@ class RecordFactory
                     $this->logger->emergency(
                         'Reached maximumOverallRecursion. This should not happen since maximumOverallRecursion ' .
                         'is considered deprecated and will be removed',
-                        array(
+                        [
                             'table' => $instance->getTableName(),
                             'depth' => $instance->getAdditionalProperty('depth'),
                             'currentOverallRecursion' => $this->currentOverallRecursion,
                             'maximumOverallRecursion' => $this->maximumOverallRecursion,
-                        )
+                        ]
                     );
                 }
             }
@@ -289,7 +289,7 @@ class RecordFactory
         if (true === $isRootRecord && true === $this->isRootRecord) {
             $this->isRootRecord = false;
             $instance->addAdditionalProperty('isRoot', true);
-            $this->signalSlotDispatcher->dispatch(__CLASS__, 'rootRecordFinished', array($this, $instance));
+            $this->signalSlotDispatcher->dispatch(__CLASS__, 'rootRecordFinished', [$this, $instance]);
         }
         return $instance;
     }
@@ -328,7 +328,7 @@ class RecordFactory
                         $this->tcaService->getAllTableNamesAllowedOnRootLevel()
                     ),
                     $this->excludedTableNames,
-                    array('sys_file', 'sys_file_metadata')
+                    ['sys_file', 'sys_file_metadata']
                 );
         } else {
             $tableNamesToExclude = $this->excludedTableNames;
@@ -460,12 +460,12 @@ class RecordFactory
                 if (!empty($localProperties) && !empty($foreignProperties)) {
                     $this->logger->error(
                         'Could not merge identifier values',
-                        array(
+                        [
                             'identifierFieldName' => $identifierFieldName,
                             'tableName' => $commonRepository->getTableName(),
                             'localProperties' => $localProperties,
                             'foreignProperties' => $foreignProperties,
-                        )
+                        ]
                     );
                 }
             } else {
@@ -489,15 +489,15 @@ class RecordFactory
             $this->logger->info(
                 'Recursion detected! This is mostly a sys_file_reference'
                 . ' pointing to it\'s sys_file, which gets currently enriched',
-                array(
+                [
                     'instanceTableName' => $instanceTableName,
                     'mergedIdentifier' => $mergedIdentifier,
-                )
+                ]
             );
             return true;
         }
         if (empty($this->instantiationQueue[$instanceTableName])) {
-            $this->instantiationQueue[$instanceTableName] = array();
+            $this->instantiationQueue[$instanceTableName] = [];
         }
         $this->instantiationQueue[$instanceTableName][] = $mergedIdentifier;
         return false;
@@ -582,7 +582,7 @@ class RecordFactory
         $this->signalSlotDispatcher->dispatch(
             __CLASS__,
             'rootRecordFinished',
-            array($this, GeneralUtility::makeInstance(NullRecord::class))
+            [$this, GeneralUtility::makeInstance(NullRecord::class)]
         );
     }
 }

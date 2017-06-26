@@ -157,10 +157,10 @@ class BackendUtility
      */
     public static function buildUndoUri($table, $identifier)
     {
-        $uriParameters = array(
+        $uriParameters = [
             'element' => $table . ':' . $identifier,
             'returnUrl' => BackendUtilityCore::getModuleUrl('web_In2publishCoreM1'),
-        );
+        ];
         $undoUri = BackendUtilityCore::getModuleUrl('record_history', $uriParameters);
         return $undoUri;
     }

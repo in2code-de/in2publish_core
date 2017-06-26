@@ -55,10 +55,10 @@ class TestingService
      */
     public function runAllTests()
     {
-        $failedTests = array();
-        $skippedTests = array();
-        $successfulTests = array();
-        $warningTests = array();
+        $failedTests = [];
+        $skippedTests = [];
+        $successfulTests = [];
+        $warningTests = [];
 
         foreach ($this->testCaseService->getTests() as $testClass => $testCase) {
             if ($this->hasDependencyFailed($testCase->getDependencies(), $failedTests)) {
@@ -66,20 +66,20 @@ class TestingService
                     'test_skipped',
                     TestResult::SKIPPED,
                     array_merge(
-                        array('dependency_failed'),
+                        ['dependency_failed'],
                         array_intersect($testCase->getDependencies(), array_keys($failedTests))
                     ),
-                    array($testClass)
+                    [$testClass]
                 );
             } elseif ($this->hasDependencyFailed($testCase->getDependencies(), $skippedTests)) {
                 $skippedTests[$testClass] = new TestResult(
                     'test_skipped',
                     TestResult::SKIPPED,
                     array_merge(
-                        array('dependency_skipped'),
+                        ['dependency_skipped'],
                         array_intersect($testCase->getDependencies(), array_keys($skippedTests))
                     ),
-                    array($testClass)
+                    [$testClass]
                 );
             } else {
                 $result = $testCase->run();

@@ -59,7 +59,7 @@ class IdenticalDriverTest implements TestCaseInterface
     {
         $storages = $this->testSubjectProvider->getStoragesForDriverTest();
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
-        $affected = array();
+        $affected = [];
 
         foreach ($keys as $key) {
             if (!isset($storages['local'][$key]['driver'], $storages['foreign'][$key]['driver'])) {
@@ -78,14 +78,14 @@ class IdenticalDriverTest implements TestCaseInterface
         }
 
         if (!empty($affected)) {
-            $explanations = array('fal.driver_mismatch_explanation');
+            $explanations = ['fal.driver_mismatch_explanation'];
             if (!ExtensionManagementUtility::isLoaded('in2publish')) {
                 $explanations[] = 'fal.xsp_driver_premium_notice';
             }
             return new TestResult(
                 'fal.driver_mismatch',
                 TestResult::ERROR,
-                array_merge(array('fal.affected_storages'), $affected, $explanations)
+                array_merge(['fal.affected_storages'], $affected, $explanations)
             );
         }
 
@@ -97,8 +97,8 @@ class IdenticalDriverTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return array(
+        return [
             CaseSensitivityTest::class,
-        );
+        ];
     }
 }

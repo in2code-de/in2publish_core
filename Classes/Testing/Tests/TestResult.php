@@ -70,7 +70,7 @@ class TestResult
     public function __construct(
         $label,
         $severity = self::OK,
-        array $messages = array(),
+        array $messages = [],
         array $labelArguments = null
     ) {
         $this->severity = $severity;
@@ -137,7 +137,7 @@ class TestResult
      */
     public function getTranslatedMessages()
     {
-        $translatedMessages = array();
+        $translatedMessages = [];
         foreach ($this->messages as $message) {
             $translatedMessages[] = TestLabelLocalizer::translate($message);
         }

@@ -54,7 +54,7 @@ class PublishTasksRunnerCommandController extends AbstractCommandController
      */
     public function runTasksInQueueCommand()
     {
-        $result = array();
+        $result = [];
         // Tasks which should get executed do not have an execution begin
         $tasksToExecute = $this->taskRepository->findByExecutionBegin(null);
         /** @var AbstractTask $task */

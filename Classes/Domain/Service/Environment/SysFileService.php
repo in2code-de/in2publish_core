@@ -104,11 +104,11 @@ class SysFileService extends AbstractService
     protected function getArgumentsForSysFileFromPath(array $row, $oldIdentifierPath, $newIdentifierPath)
     {
         $identifier = $row['identifier'];
-        return array(
+        return [
             'identifier' => str_replace($oldIdentifierPath, $newIdentifierPath, $identifier),
             'identifier_hash' => sha1($identifier),
             'folder_hash' => sha1($newIdentifierPath),
-        );
+        ];
     }
 
     /**
@@ -119,12 +119,12 @@ class SysFileService extends AbstractService
      */
     protected function getArgumentsForSysFileFromFile($newIdentifier)
     {
-        return array(
+        return [
             'identifier' => $newIdentifier,
             'identifier_hash' => sha1($newIdentifier),
             'folder_hash' => sha1($this->getPathFromPathAndFilename($newIdentifier)),
             'name' => $this->getFilenameFromPathAndFilename($newIdentifier),
-        );
+        ];
     }
 
     /**

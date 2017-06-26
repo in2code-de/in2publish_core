@@ -65,7 +65,7 @@ class SshConnectionTest implements TestCaseInterface
             return new TestResult(
                 'ssh_connection.connection_failed',
                 TestResult::ERROR,
-                array('ssh_connection.connection_failure_message', $exception->getMessage())
+                ['ssh_connection.connection_failure_message', $exception->getMessage()]
             );
         }
 
@@ -82,7 +82,7 @@ class SshConnectionTest implements TestCaseInterface
                 return new TestResult(
                     'ssh_connection.invalid_php',
                     TestResult::ERROR,
-                    array('ssh_connection.php_test_error_message', $response->getErrorsString())
+                    ['ssh_connection.php_test_error_message', $response->getErrorsString()]
                 );
             }
         }
@@ -95,12 +95,12 @@ class SshConnectionTest implements TestCaseInterface
         if ($response->isSuccessful()) {
             $documentRootFiles = GeneralUtility::trimExplode("\n", $response->getOutputString());
 
-            $requiredNames = array(
+            $requiredNames = [
                 'fileadmin',
                 'typo3',
                 'index.php',
                 'typo3conf',
-            );
+            ];
 
             if (!empty(array_diff($requiredNames, $documentRootFiles))) {
                 return new TestResult('ssh_connection.foreign_document_root_wrong', TestResult::ERROR);
@@ -109,11 +109,11 @@ class SshConnectionTest implements TestCaseInterface
             return new TestResult(
                 'ssh_connection.foreign_document_validation_error',
                 TestResult::ERROR,
-                array(
+                [
                     'ssh_connection.foreign_document_validation_error_reason',
                     $response->getOutputString(),
                     $response->getErrorsString(),
-                )
+                ]
             );
         }
 
@@ -125,8 +125,8 @@ class SshConnectionTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return array(
+        return [
             SshFunctionAvailabilityTest::class,
-        );
+        ];
     }
 }

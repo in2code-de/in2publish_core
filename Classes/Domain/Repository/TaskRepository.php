@@ -83,7 +83,7 @@ class TaskRepository
     {
         $this->databaseConnection->exec_INSERTquery(
             self::TASK_TABLE_NAME,
-            array_merge($this->taskToPropertiesArray($task), array('creation_date' => $this->creationDate))
+            array_merge($this->taskToPropertiesArray($task), ['creation_date' => $this->creationDate])
         );
     }
 
@@ -111,13 +111,13 @@ class TaskRepository
     protected function taskToPropertiesArray(AbstractTask $task)
     {
         $task->modifyConfiguration();
-        return array(
+        return [
             'task_type' => get_class($task),
             'configuration' => json_encode($task->getConfiguration()),
             'execution_begin' => $task->getExecutionBeginForPersistence(),
             'execution_end' => $task->getExecutionEndForPersistence(),
             'messages' => json_encode($task->getMessages()),
-        );
+        ];
     }
 
     /**
@@ -134,7 +134,7 @@ class TaskRepository
         } else {
             $whereClause = '(execution_begin IS NULL OR execution_begin LIKE "0000-00-00 00:00:00")';
         }
-        $taskObjects = array();
+        $taskObjects = [];
         $tasksPropertiesArray = (array)$this->databaseConnection->exec_SELECTgetRows(
             '*',
             self::TASK_TABLE_NAME,

@@ -52,6 +52,6 @@ class ConfigurationIsAvailableTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return array();
+        return [];
     }
 }

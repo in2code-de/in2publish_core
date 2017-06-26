@@ -47,7 +47,7 @@ class FileIndexPostProcessor implements SingletonInterface
     /**
      * @var RecordInterface[]
      */
-    protected $registeredInstances = array();
+    protected $registeredInstances = [];
 
     /**
      * @var LoggerInterface
@@ -83,9 +83,9 @@ class FileIndexPostProcessor implements SingletonInterface
     {
         $resourceFactory = ResourceFactory::getInstance();
         /** @var RecordInterface[][] $sortedRecords */
-        $sortedRecords = array();
-        $storages = array();
-        $skipStorages = array();
+        $sortedRecords = [];
+        $storages = [];
+        $skipStorages = [];
         foreach ($this->registeredInstances as $record) {
             if (null === $uid = $record->getLocalProperty('storage')) {
                 $uid = $record->getForeignProperty('storage');
@@ -97,15 +97,15 @@ class FileIndexPostProcessor implements SingletonInterface
                 try {
                     $storages[$uid] = $resourceFactory->getStorageObject($uid);
                 } catch (\InvalidArgumentException $exception) {
-                    $skipStorages[$uid] = array();
+                    $skipStorages[$uid] = [];
                     $skipStorages[$uid][] = $record->getTableName() . '[' . $record->getIdentifier() . ']';
                     $this->logger->critical(
                         'Could not fetch storage for file, skipping file and any further request to get storage',
-                        array(
+                        [
                             'record_table' => $record->getTableName(),
                             'record_uid' => $record->getIdentifier(),
                             'storage_uid' => $uid,
-                        )
+                        ]
                     );
                     continue;
                 }
@@ -114,7 +114,7 @@ class FileIndexPostProcessor implements SingletonInterface
         }
 
         if (!empty($skipStorages)) {
-            $logData = array();
+            $logData = [];
             foreach ($skipStorages as $storageUid => $skippedFiles) {
                 $logData[$storageUid]['storage'] = $storageUid;
                 $logData[$storageUid]['files'] = $skippedFiles;
@@ -122,7 +122,7 @@ class FileIndexPostProcessor implements SingletonInterface
             $this->logger->info('Statistics of skipped files per unavailable storage', $logData);
         }
 
-        $this->registeredInstances = array();
+        $this->registeredInstances = [];
 
         $this->prefetchForeignInformationFiles($storages, $sortedRecords);
 
@@ -155,7 +155,7 @@ class FileIndexPostProcessor implements SingletonInterface
      */
     protected function prefetchForeignInformationFiles(array $storages, array $sortedRecords)
     {
-        $foreignIdentifiers = array();
+        $foreignIdentifiers = [];
         foreach ($sortedRecords as $storageIndex => $recordArray) {
             foreach ($recordArray as $record) {
                 if ($record->hasForeignProperty('identifier')) {

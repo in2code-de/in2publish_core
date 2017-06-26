@@ -86,7 +86,7 @@ class DomainService
     protected function getFirstDomainInRootLineFromRelatedRecords(RecordInterface $record, $stagingLevel)
     {
         $relatedRecords = $record->getRelatedRecords();
-        $domainRecordValues = array();
+        $domainRecordValues = [];
         if (!empty($relatedRecords[self::TABLE_NAME])) {
             foreach ($relatedRecords[self::TABLE_NAME] as $relatedDomainRecord) {
                 /** @var RecordInterface $relatedDomainRecord */

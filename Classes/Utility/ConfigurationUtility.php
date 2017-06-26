@@ -204,10 +204,10 @@ class ConfigurationUtility
      *
      * @var array
      */
-    protected static $privateConfiguration = array(
+    protected static $privateConfiguration = [
         self::DATABASE,
         self::SSH_CONNECTION,
-    );
+    ];
 
     /**
      * @var string
@@ -219,11 +219,11 @@ class ConfigurationUtility
      *
      * @var array
      */
-    protected $configurationCache = array(
-        self::CACHE_KEY_FILE => array(),
+    protected $configurationCache = [
+        self::CACHE_KEY_FILE => [],
         self::CACHE_KEY_PAGE => null,
         self::CACHE_KEY_USER => null,
-    );
+    ];
 
     /**
      * @return array

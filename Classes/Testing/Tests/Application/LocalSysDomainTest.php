@@ -54,8 +54,8 @@ class LocalSysDomainTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return array(
+        return [
             LocalDatabaseTest::class,
-        );
+        ];
     }
 }

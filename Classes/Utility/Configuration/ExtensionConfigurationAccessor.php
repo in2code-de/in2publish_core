@@ -41,7 +41,7 @@ class ExtensionConfigurationAccessor
      */
     public static function getExtensionConfiguration($extensionKey = 'in2publish_core')
     {
-        $extConf = array();
+        $extConf = [];
         if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extensionKey])) {
             if (is_string($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extensionKey])) {
                 // default case: The extConf is stored in serialized format

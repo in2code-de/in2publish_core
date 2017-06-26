@@ -45,23 +45,23 @@ class FlexProcessor extends AbstractProcessor
     /**
      * @var array
      */
-    protected $forbidden = array(
+    protected $forbidden = [
         'ds_pointerField_searchParent is not supported' => self::DS_POINTER_FIELD_SEARCH_PARENT,
         'ds_pointerField_searchParent_subField is not supported' => self::DS_POINTER_FIELD_SEARCH_PARENT_SUB_FIELD,
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $required = array(
+    protected $required = [
         'can not resolve flexform values without "ds"' => self::DS,
         'can not resolve flexform values without "ds_pointerField"' => self::DS_POINTER_FIELD,
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $allowed = array(
+    protected $allowed = [
         self::SEARCH,
-    );
+    ];
 }

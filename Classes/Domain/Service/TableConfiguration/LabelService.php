@@ -85,7 +85,7 @@ class LabelService
         $labelField = $this->tcaService->getLabelFieldFromTable($tableName);
         $labelAltField = $this->tcaService->getLabelAltFieldFromTable($tableName);
 
-        $labelFields = array();
+        $labelFields = [];
         if (!empty($labelField)) {
             $labelFields[] = $labelField;
         }

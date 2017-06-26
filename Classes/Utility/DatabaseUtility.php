@@ -180,14 +180,14 @@ class DatabaseUtility
 
         self::$logger->notice(
             'Creating a backup for "' . $tableName . '"',
-            array(
+            [
                 'fileName' => $fileName,
-                'configuration' => array(
+                'configuration' => [
                     'addDropTable' => $addDropTable,
                     'zipBackup' => $zipBackup,
-                ),
+                ],
                 'hostInfo' => $databaseConnection->getDatabaseHandle()->host_info,
-            )
+            ]
         );
         $data =
             PHP_EOL .
@@ -226,7 +226,7 @@ class DatabaseUtility
                     if ($backupWritten === true) {
                         self::$logger->notice(
                             'Successfully created zip backup of "' . $tableName . '"',
-                            array('fileSize' => filesize($zipFileName))
+                            ['fileSize' => filesize($zipFileName)]
                         );
                     }
                 }
@@ -249,10 +249,10 @@ class DatabaseUtility
             } else {
                 self::$logger->notice(
                     'Successfully created uncompressed backup for "' . $tableName . '"',
-                    array(
+                    [
                         'fileName' => $backupFile,
                         'fileSize' => filesize($backupFile),
-                    )
+                    ]
                 );
             }
         }

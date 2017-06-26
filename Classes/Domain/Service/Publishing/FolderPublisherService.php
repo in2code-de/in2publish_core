@@ -60,7 +60,7 @@ class FolderPublisherService
         GeneralUtility::makeInstance(Dispatcher::class)->dispatch(
             FolderPublisherService::class,
             'afterPublishingFolder',
-            array($storage, $folderIdentifier, ($success !== false))
+            [$storage, $folderIdentifier, ($success !== false)]
         );
         return $success;
     }

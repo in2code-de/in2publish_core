@@ -65,12 +65,12 @@ class UniqueStorageTargetTest implements TestCaseInterface
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
 
         $resourceFactory = ResourceFactory::getInstance();
-        $messages = array();
-        $affectedStorages = array();
-        $failedUploads = array();
+        $messages = [];
+        $affectedStorages = [];
+        $failedUploads = [];
 
-        $skippedStorages = array();
-        $foreignOffline = array();
+        $skippedStorages = [];
+        $foreignOffline = [];
 
         foreach ($keys as $key) {
             $storageObject = $resourceFactory->getStorageObject($key, $storages['local'][$key]);
@@ -142,7 +142,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
             return new TestResult(
                 'fal.storage_targets_test_skipped',
                 TestResult::WARNING,
-                array_merge(array('fal.offline_storage_names'), $skippedStorages)
+                array_merge(['fal.offline_storage_names'], $skippedStorages)
             );
         }
 
@@ -154,11 +154,11 @@ class UniqueStorageTargetTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return array(
+        return [
             ForeignInstanceTest::class,
             MissingStoragesTest::class,
             CaseSensitivityTest::class,
             IdenticalDriverTest::class,
-        );
+        ];
     }
 }

@@ -56,7 +56,7 @@ class RecordController extends AbstractController
             )->buildFromStartPage($this->pid);
         }
 
-        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeIndexViewRender', array($this, $record));
+        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeIndexViewRender', [$this, $record]);
 
         $this->view->assign('record', $record);
         $this->assignServerAndPublishingStatus();
@@ -76,7 +76,7 @@ class RecordController extends AbstractController
         $this->commonRepository->disablePageRecursion();
         $record = $this->commonRepository->findByIdentifier($identifier, $tableName);
 
-        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeDetailViewRender', array($this, $record));
+        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeDetailViewRender', [$this, $record]);
 
         $this->view->assign('record', $record);
         $this->view->assign('configuration', ConfigurationUtility::getConfiguration());
@@ -103,9 +103,9 @@ class RecordController extends AbstractController
     {
         $this->logger->notice(
             'publishing page in ' . LocalizationUtility::translate($this->request->getPluginName(), 'in2publish_core'),
-            array('identifier' => $identifier)
+            ['identifier' => $identifier]
         );
-        $this->publishRecord($identifier, array('pages'));
+        $this->publishRecord($identifier, ['pages']);
         if ($returnUrl !== null) {
             $this->redirectToUri($this->decodeReturnUrl($returnUrl));
         } else {
@@ -130,11 +130,11 @@ class RecordController extends AbstractController
      * @param array $exceptTableNames
      * @return void
      */
-    protected function publishRecord($identifier, array $exceptTableNames = array())
+    protected function publishRecord($identifier, array $exceptTableNames = [])
     {
         $record = $this->commonRepository->findByIdentifier($identifier);
 
-        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforePublishing', array($this, $record));
+        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforePublishing', [$this, $record]);
 
         $this->commonRepository->publishRecordRecursive(
             $record,

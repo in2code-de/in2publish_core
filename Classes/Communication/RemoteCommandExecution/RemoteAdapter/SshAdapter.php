@@ -51,7 +51,7 @@ class SshAdapter implements AdapterInterface
     /**
      * @var array
      */
-    protected $config = array(
+    protected $config = [
         'chmodEnabled' => '',
         'debug' => '',
         'host' => '',
@@ -62,15 +62,15 @@ class SshAdapter implements AdapterInterface
         'privateKeyPassphrase' => '',
         'foreignKeyFingerprint' => '',
         'foreignKeyFingerprintHashingMethod' => '',
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $supportedHashMethods = array(
+    protected $supportedHashMethods = [
         'SSH2_FINGERPRINT_MD5',
         'SSH2_FINGERPRINT_SHA1',
-    );
+    ];
 
     /**
      * @var resource
@@ -244,7 +244,7 @@ class SshAdapter implements AdapterInterface
         if (empty($config['username'])) {
             throw new \Exception('SSH Connection: Option username is empty', 1425400379);
         }
-        foreach (array('privateKeyFileAndPathName', 'publicKeyFileAndPathName') as $requiredFileKey) {
+        foreach (['privateKeyFileAndPathName', 'publicKeyFileAndPathName'] as $requiredFileKey) {
             if (empty($config[$requiredFileKey])) {
                 throw new \Exception('SSH Connection: Option ' . $requiredFileKey . ' is empty', 1425400434);
             } elseif (!file_exists($config[$requiredFileKey])) {

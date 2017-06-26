@@ -207,12 +207,12 @@ abstract class AbstractController extends ActionController
         $testStatus = GeneralUtility::makeInstance(EnvironmentService::class)
                                     ->getTestStatus();
         $this->view->assignMultiple(
-            array(
+            [
                 'localDatabaseConnectionAvailable' => $localDatabaseOn,
                 'foreignDatabaseConnectionAvailable' => $foreignDatabaseOn,
                 'publishingAvailable' => $localDatabaseOn && $foreignDatabaseOn,
                 'testStatus' => empty($testStatus),
-            )
+            ]
         );
     }
 
@@ -245,11 +245,11 @@ abstract class AbstractController extends ActionController
      */
     protected function checkUserAllowedToPublish()
     {
-        $votes = array('yes' => 0, 'no' => 0);
+        $votes = ['yes' => 0, 'no' => 0];
         $votingResult = GeneralUtility::makeInstance(Dispatcher::class)->dispatch(
             __CLASS__,
             __FUNCTION__,
-            array($votes)
+            [$votes]
         );
         if (isset($votingResult[0])) {
             $votes = $votingResult[0];
@@ -267,10 +267,10 @@ abstract class AbstractController extends ActionController
     {
         parent::initializeView($view);
         $this->view->assignMultiple(
-            array(
+            [
                 'extensionVersion' => ExtensionManagementUtility::getExtensionVersion('in2publish_core'),
                 'configurationExists' => $this->actionMethodName !== self::BLANK_ACTION,
-            )
+            ]
         );
         if (ConfigurationUtility::isConfigurationLoadedSuccessfully()) {
             $this->view->assign('configuration', ConfigurationUtility::getConfiguration());
@@ -303,7 +303,7 @@ abstract class AbstractController extends ActionController
         $testStates = GeneralUtility::makeInstance(EnvironmentService::class)
                                     ->getTestStatus();
         if (!empty($testStates)) {
-            $messages = array();
+            $messages = [];
             foreach ($testStates as $testState) {
                 $messages[] = LocalizationUtility::translate('test_state_error.' . $testState, 'in2publish_core');
             }

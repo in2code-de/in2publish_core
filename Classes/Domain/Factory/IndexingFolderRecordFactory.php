@@ -109,14 +109,14 @@ class IndexingFolderRecordFactory
 
         // gather information about the folder, sub folders and files in this folder
         $localProperties = FolderUtility::extractFolderInformation($localFolder);
-        $remoteProperties = array();
+        $remoteProperties = [];
         $localSubFolders = FolderUtility::extractFoldersInformation($localFolder->getSubfolders());
-        $remoteSubFolders = array();
+        $remoteSubFolders = [];
         $localFiles = FileUtility::extractFilesInformation($this->localStorage->getFilesInFolder($localFolder));
 
         $this->checkFileCount($localFiles, $folderIdentifier, 'local');
 
-        $remoteFiles = array();
+        $remoteFiles = [];
 
         // get the actual information from remote if the folder actually exists
         if (true === $this->remoteStorage->hasFolder($storageUid, $folderIdentifier)) {
@@ -132,8 +132,8 @@ class IndexingFolderRecordFactory
             'physical_folder',
             $localProperties,
             $remoteProperties,
-            array(),
-            array('depth' => 1)
+            [],
+            ['depth' => 1]
         );
 
         $folderIdentifiers = array_unique(array_merge(array_keys($localSubFolders), array_keys($remoteSubFolders)));
@@ -141,16 +141,16 @@ class IndexingFolderRecordFactory
             $subFolder = GeneralUtility::makeInstance(
                 Record::class,
                 'physical_folder',
-                isset($localSubFolders[$identifier]) ? $localSubFolders[$identifier] : array(),
-                isset($remoteSubFolders[$identifier]) ? $remoteSubFolders[$identifier] : array(),
-                array(),
-                array('depth' => 2)
+                isset($localSubFolders[$identifier]) ? $localSubFolders[$identifier] : [],
+                isset($remoteSubFolders[$identifier]) ? $remoteSubFolders[$identifier] : [],
+                [],
+                ['depth' => 2]
             );
             $rootFolder->addRelatedRecord($subFolder);
         }
 
         $records = CommonRepository::getDefaultInstance('sys_file')->findByProperties(
-            array('folder_hash' => $localFolder->getHashedIdentifier(), 'storage' => $storageUid),
+            ['folder_hash' => $localFolder->getHashedIdentifier(), 'storage' => $storageUid],
             true
         );
         $records = $this->filterRecords($localFiles, $remoteFiles, $records);
@@ -176,8 +176,8 @@ class IndexingFolderRecordFactory
                 $fileIdentifier = $record->getPropertyBySideIdentifier($side, 'identifier');
                 $folder = dirname($fileIdentifier);
                 if (!isset($relatedFolders[$folder])) {
-                    $relatedFolders[$folder] = array();
-                    $relatedFolders[$folder]['files'] = array();
+                    $relatedFolders[$folder] = [];
+                    $relatedFolders[$folder]['files'] = [];
                     $relatedFolders[$folder]['storageUid'] = $record->getPropertyBySideIdentifier($side, 'storage');
                 }
                 $relatedFolders[$folder]['files'][] = $fileIdentifier;
@@ -229,7 +229,7 @@ class IndexingFolderRecordFactory
         $filesOnDisk = array_unique(array_merge(array_keys($localFiles), array_keys($remoteFiles)));
 
         /** @var RecordInterface[] $touchedEntries */
-        $touchedEntries = array();
+        $touchedEntries = [];
 
         $localFiles = $this->updateFilesByMovedRecords($records, $localFiles, 'local');
         $remoteFiles = $this->updateFilesByMovedRecords($records, $remoteFiles, 'foreign');
@@ -274,14 +274,14 @@ class IndexingFolderRecordFactory
                         }
                     } else {
                         // truncate the indexed values if the represented file does not exist on disk
-                        $localProperties = array();
+                        $localProperties = [];
                     }
                     // do it again for foreign
                     if (true === $fileExistsRemotely) {
                         $foreignProperties = $file->getForeignProperties();
                         ArrayUtility::mergeRecursiveWithOverrule($foreignProperties, $remoteFiles[$foreignFileName]);
                     } else {
-                        $foreignProperties = array();
+                        $foreignProperties = [];
                     }
 
                     $file->setLocalProperties($localProperties);

@@ -212,7 +212,7 @@ interface RecordInterface
      * @param RecordInterface[] $relatedRecordsFlat
      * @return RecordInterface[]
      */
-    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = array());
+    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = []);
 
     /**
      * Returns the given records from the list of related records if the relation is direct.
@@ -270,7 +270,7 @@ interface RecordInterface
      * @param array $alreadyVisited
      * @return bool
      */
-    public function isChangedRecursive(array &$alreadyVisited = array());
+    public function isChangedRecursive(array &$alreadyVisited = []);
 
     /**
      * @param RecordInterface $parentRecord

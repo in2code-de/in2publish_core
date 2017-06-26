@@ -41,7 +41,7 @@ class ArrayUtility
      * @param array|NULL $keysToRemove
      * @return array
      */
-    public static function removeFromArrayByKey(array $array, array $keysToRemove = array())
+    public static function removeFromArrayByKey(array $array, array $keysToRemove = [])
     {
         foreach ($keysToRemove as $key) {
             if (array_key_exists($key, $array)) {

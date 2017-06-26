@@ -68,7 +68,7 @@ class ContextService implements SingletonInterface
         $environmentVariable = getenv(static::ENV_VAR_NAME) ?: getenv(static::REDIRECT_ENV_VAR_NAME) ?: false;
         if (false === $environmentVariable) {
             return static::FOREIGN;
-        } elseif (in_array($environmentVariable, array(static::LOCAL, static::FOREIGN))) {
+        } elseif (in_array($environmentVariable, [static::LOCAL, static::FOREIGN])) {
             return $environmentVariable;
         } elseif (GeneralUtility::getApplicationContext()->isProduction()) {
             return static::FOREIGN;

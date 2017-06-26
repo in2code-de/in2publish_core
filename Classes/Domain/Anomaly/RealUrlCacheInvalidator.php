@@ -65,7 +65,7 @@ class RealUrlCacheInvalidator
     /**
      * @var array
      */
-    protected $excludedDokTypes = array();
+    protected $excludedDokTypes = [];
 
     /**
      * Constructor
@@ -90,12 +90,12 @@ class RealUrlCacheInvalidator
      */
     public function registerClearRealUrlCacheTask($tableName, Record $record)
     {
-        if ($this->enabled && $record->isChanged() && in_array($tableName, array('pages', 'pages_language_overlay'))) {
+        if ($this->enabled && $record->isChanged() && in_array($tableName, ['pages', 'pages_language_overlay'])) {
             if (!in_array($record->getLocalProperty('doktype'), $this->excludedDokTypes)) {
                 if ($this->updateData) {
-                    $realUrlTask = new RealUrlUpdateTask(array('record' => $record));
+                    $realUrlTask = new RealUrlUpdateTask(['record' => $record]);
                 } else {
-                    $realUrlTask = new RealUrlTask(array('record' => $record));
+                    $realUrlTask = new RealUrlTask(['record' => $record]);
                 }
                 $this->taskRepository->add($realUrlTask);
             }

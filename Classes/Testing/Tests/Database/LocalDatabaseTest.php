@@ -58,7 +58,7 @@ class LocalDatabaseTest implements TestCaseInterface
         )->getRequiredTables();
         $actualTables = array_keys($localDatabase->admin_get_tables());
 
-        $missingTables = array();
+        $missingTables = [];
         foreach ($expectedTables as $expectedTable) {
             if (!in_array($expectedTable, $actualTables)) {
                 $missingTables[] = $expectedTable;
@@ -69,7 +69,7 @@ class LocalDatabaseTest implements TestCaseInterface
             return new TestResult(
                 'database.local_tables_missing',
                 TestResult::ERROR,
-                array_merge(array('database.missing_important_tables'), $missingTables)
+                array_merge(['database.missing_important_tables'], $missingTables)
             );
         }
 
@@ -81,6 +81,6 @@ class LocalDatabaseTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return array();
+        return [];
     }
 }

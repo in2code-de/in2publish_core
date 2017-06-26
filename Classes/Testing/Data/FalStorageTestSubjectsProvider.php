@@ -50,12 +50,12 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     /**
      * @var array
      */
-    protected $localStorages = array();
+    protected $localStorages = [];
 
     /**
      * @var array
      */
-    protected $foreignStorages = array();
+    protected $foreignStorages = [];
 
     /**
      * @var bool
@@ -113,11 +113,11 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
             $this->localStorages = $this->fetchStorages(DatabaseUtility::buildLocalDatabaseConnection());
             $this->foreignStorages = $this->fetchStorages(DatabaseUtility::buildForeignDatabaseConnection());
         }
-        $arguments = array(
+        $arguments = [
             'localStorages' => $this->localStorages,
             'foreignStorages' => $this->foreignStorages,
             'purpose' => $purpose,
-        );
+        ];
         $return = $this->signalSlotDispatcher->dispatch(
             __CLASS__,
             'filterStorages',
@@ -129,10 +129,10 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
         } else {
             list($localStorages, $foreignStorages) = $return;
         }
-        return array(
+        return [
             'local' => $localStorages,
             'foreign' => $foreignStorages,
-        );
+        ];
     }
 
     /**

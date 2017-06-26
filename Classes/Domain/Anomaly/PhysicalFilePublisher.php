@@ -48,7 +48,7 @@ class PhysicalFilePublisher implements SingletonInterface
     /**
      * @var array
      */
-    protected $publishedRecords = array();
+    protected $publishedRecords = [];
 
     /**
      * Constructor
@@ -92,12 +92,12 @@ class PhysicalFilePublisher implements SingletonInterface
                 return null;
             }
 
-            $logData = array(
+            $logData = [
                 'table' => $table,
                 'uid' => $record->getIdentifier(),
                 'storage' => $storage,
                 'identifier' => $identifier,
-            );
+            ];
 
             // The new full FAL support implementation provides us with a sys_file record
             // which comprises all information, given it was created by the FolderRecordFactory
@@ -161,7 +161,7 @@ class PhysicalFilePublisher implements SingletonInterface
                         } else {
                             $this->logger->warning(
                                 'File renaming was requested but old and new name are identical',
-                                array_merge($logData, array('old' => $old, 'new' => $new))
+                                array_merge($logData, ['old' => $old, 'new' => $new])
                             );
                             $result = true;
                         }

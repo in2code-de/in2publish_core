@@ -40,14 +40,14 @@ class SshFunctionAvailabilityTest implements TestCaseInterface
      */
     public function run()
     {
-        $sshFunctions = array(
+        $sshFunctions = [
             'ssh2_connect',
             'ssh2_sftp_mkdir',
             'ssh2_exec',
             'ssh2_fingerprint',
             'ssh2_auth_pubkey_file',
             'ssh2_sftp',
-        );
+        ];
 
         foreach ($sshFunctions as $index => $sshFunction) {
             if (function_exists($sshFunction)) {
@@ -63,7 +63,7 @@ class SshFunctionAvailabilityTest implements TestCaseInterface
             return new TestResult(
                 'ssh_connection.chmod_missing',
                 TestResult::WARNING,
-                array('ssh_connection.chmod_description')
+                ['ssh_connection.chmod_description']
             );
         }
 
@@ -75,8 +75,8 @@ class SshFunctionAvailabilityTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return array(
+        return [
             ConfigurationValuesTest::class,
-        );
+        ];
     }
 }

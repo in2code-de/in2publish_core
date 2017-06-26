@@ -42,7 +42,7 @@ class ConfigurationValuesTest implements TestCaseInterface
     /**
      * @var array
      */
-    protected $configuration = array();
+    protected $configuration = [];
 
     /**
      * ConfigurationValuesTest constructor.
@@ -57,7 +57,7 @@ class ConfigurationValuesTest implements TestCaseInterface
      */
     public function run()
     {
-        $errors = array();
+        $errors = [];
 
         // test the settings
         if ($this->configuration['log']['logLevel'] > 7) {
@@ -85,8 +85,8 @@ class ConfigurationValuesTest implements TestCaseInterface
         ) {
             $errors[] = 'configuration.zip_extension_not_installed';
         }
-        $missingProcessors = array();
-        $missingInterface = array();
+        $missingProcessors = [];
+        $missingInterface = [];
         foreach ($this->configuration['tca']['processor'] as $processorClass) {
             if (!class_exists($processorClass)) {
                 $missingProcessors[] = $processorClass;
@@ -115,8 +115,8 @@ class ConfigurationValuesTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return array(
+        return [
             ConfigurationFormatTest::class,
-        );
+        ];
     }
 }

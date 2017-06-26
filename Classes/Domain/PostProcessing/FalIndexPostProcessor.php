@@ -44,7 +44,7 @@ class FalIndexPostProcessor implements SingletonInterface
     /**
      * @var RecordInterface[]
      */
-    protected $registeredInstances = array();
+    protected $registeredInstances = [];
 
     /**
      * @var ResourceFactory
@@ -104,7 +104,7 @@ class FalIndexPostProcessor implements SingletonInterface
                 $localFile = $storage->getFile($localIdentifier);
                 $localFileInfo = FileUtility::extractFileInformation($localFile);
             } else {
-                $localFileInfo = array();
+                $localFileInfo = [];
             }
 
             $foreignFileInfo = $remoteStorage->getFile($storage->getUid(), $foreignIdentifier);
@@ -113,9 +113,9 @@ class FalIndexPostProcessor implements SingletonInterface
             $ifrFactory->overruleRemoteStorage($remoteStorage);
             // do not use the return value since we only desire the record update of the file
             $ifrFactory->filterRecords(
-                array($localIdentifier => $localFileInfo),
-                array($foreignIdentifier => $foreignFileInfo),
-                array($file)
+                [$localIdentifier => $localFileInfo],
+                [$foreignIdentifier => $foreignFileInfo],
+                [$file]
             );
         }
     }
@@ -126,7 +126,7 @@ class FalIndexPostProcessor implements SingletonInterface
      */
     protected function getStorage(RecordInterface $record)
     {
-        static $storages = array();
+        static $storages = [];
         if (!isset($storages[0])) {
             $storages[0] = $this->resourceFactory->getStorageObject(0);
         }

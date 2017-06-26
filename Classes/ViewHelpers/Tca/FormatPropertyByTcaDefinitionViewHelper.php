@@ -36,7 +36,7 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
     /**
      * @var array
      */
-    protected $tableConfiguration = array();
+    protected $tableConfiguration = [];
 
     /**
      * Get formatted output by TCA definition

@@ -54,8 +54,8 @@ class ForeignSysDomainTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return array(
+        return [
             ForeignDatabaseTest::class,
-        );
+        ];
     }
 }

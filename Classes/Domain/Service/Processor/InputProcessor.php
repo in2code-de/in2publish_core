@@ -43,7 +43,7 @@ class InputProcessor extends AbstractProcessor
     /**
      * @var array
      */
-    protected $required = array(
+    protected $required = [
         'inputs without wizards most likely do not hold relations' => self::WIZARDS,
-    );
+    ];
 }

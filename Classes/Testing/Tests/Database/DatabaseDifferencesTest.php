@@ -49,7 +49,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
         }
 
         $tableInfoBlackList = array_flip(
-            array(
+            [
                 'Version',
                 'Rows',
                 'Avg_row_length',
@@ -63,11 +63,11 @@ class DatabaseDifferencesTest implements TestCaseInterface
                 'Check_time',
                 'Checksum',
                 'Comment',
-            )
+            ]
         );
 
         $fieldInfoBlackList = array_flip(
-            array(
+            [
                 'Create_time',
                 'Rows',
                 'Avg_row_length',
@@ -78,7 +78,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
                 'Update_time',
                 'Check_time',
                 'Comment',
-            )
+            ]
         );
 
         $localTableInfo = $this->readTableStructure($localDatabase, $tableInfoBlackList, $fieldInfoBlackList);
@@ -95,9 +95,9 @@ class DatabaseDifferencesTest implements TestCaseInterface
                 'database.tables_missing_on_other_side',
                 TestResult::ERROR,
                 array_merge(
-                    array('database.tables_only_on_local'),
+                    ['database.tables_only_on_local'],
                     $tablesOnlyOnLocal,
-                    array('database.tables_only_on_foreign'),
+                    ['database.tables_only_on_foreign'],
                     $tablesOnlyOnForeign
                 )
             );
@@ -107,8 +107,8 @@ class DatabaseDifferencesTest implements TestCaseInterface
         $diffOnForeign = $this->identifyDifferences($foreignTableInfo, $localTableInfo);
 
         if (!empty($diffOnLocal) || !empty($diffOnForeign)) {
-            $fieldDifferences = array();
-            $tableDifferences = array();
+            $fieldDifferences = [];
+            $tableDifferences = [];
 
             foreach ($diffOnLocal as $tableName => $fieldArray) {
                 if (isset($fieldArray['fields']) && is_array($fieldArray['fields'])) {
@@ -183,9 +183,9 @@ class DatabaseDifferencesTest implements TestCaseInterface
                 'database.field_differences',
                 TestResult::ERROR,
                 array_merge(
-                    array('database.different_fields'),
+                    ['database.different_fields'],
                     $fieldDifferences,
-                    array('database.different_tables'),
+                    ['database.different_tables'],
                     $tableDifferences
                 )
             );
@@ -201,7 +201,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
      */
     public function identifyDifferences(array $left, array $right)
     {
-        $differences = array();
+        $differences = [];
 
         foreach ($left as $leftKey => $leftValue) {
             if (array_key_exists($leftKey, $right)) {
@@ -232,10 +232,10 @@ class DatabaseDifferencesTest implements TestCaseInterface
         $random = (int)mt_rand(1, PHP_INT_MAX);
         $local->exec_INSERTquery(
             'tx_in2code_in2publish_task',
-            array(
+            [
                 'task_type' => 'Backend Test',
                 'configuration' => $random,
-            )
+            ]
         );
         $uid = (int)$local->sql_insert_id();
         $results = (array)$foreign->exec_SELECTgetRows(
@@ -268,7 +268,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
         array $tableInfoBlackList,
         array $fieldInfoBlackList
     ) {
-        $tableStructure = array();
+        $tableStructure = [];
         $tables = $database->admin_get_tables();
 
         foreach ($tables as $tableName => $tableInfo) {
@@ -276,17 +276,17 @@ class DatabaseDifferencesTest implements TestCaseInterface
             if (0 === strpos($tableName, 'zzz_')) {
                 continue;
             }
-            $fieldStructure = array();
+            $fieldStructure = [];
 
             $fields = $database->admin_get_fields($tableName);
             foreach ($fields as $fieldName => $fieldInfo) {
                 $fieldStructure[$fieldName] = array_diff_key($fieldInfo, $fieldInfoBlackList);
             }
 
-            $tableStructure[$tableName] = array(
+            $tableStructure[$tableName] = [
                 'table' => array_diff_key($tableInfo, $tableInfoBlackList),
                 'fields' => $fieldStructure,
-            );
+            ];
         }
 
         return $tableStructure;
@@ -297,9 +297,9 @@ class DatabaseDifferencesTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return array(
+        return [
             LocalDatabaseTest::class,
             ForeignDatabaseTest::class,
-        );
+        ];
     }
 }

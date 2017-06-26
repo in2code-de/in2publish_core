@@ -48,7 +48,7 @@ abstract class AbstractProcessor implements ProcessorInterface
      *
      * @var array
      */
-    protected $lastReasons = array();
+    protected $lastReasons = [];
 
     /**
      * Overwrite this in your Processor if canHoldRelations is TRUE!
@@ -57,7 +57,7 @@ abstract class AbstractProcessor implements ProcessorInterface
      *
      * @var array
      */
-    protected $forbidden = array();
+    protected $forbidden = [];
 
     /**
      * Overwrite this in your Processor if canHoldRelations is TRUE!
@@ -66,7 +66,7 @@ abstract class AbstractProcessor implements ProcessorInterface
      *
      * @var array
      */
-    protected $required = array();
+    protected $required = [];
 
     /**
      * Overwrite this in your Processor if canHoldRelations is TRUE and these are needed!
@@ -75,7 +75,7 @@ abstract class AbstractProcessor implements ProcessorInterface
      *
      * @var array
      */
-    protected $allowed = array();
+    protected $allowed = [];
 
     /**
      * Overwrite this in your Processor if canHoldRelations is TRUE!
@@ -85,7 +85,7 @@ abstract class AbstractProcessor implements ProcessorInterface
      */
     public function preProcess(array $config)
     {
-        $return = array();
+        $return = [];
         foreach ($this->getImportantFields() as $field) {
             if (!empty($config[$field])) {
                 $return[$field] = $config[$field];
@@ -100,7 +100,7 @@ abstract class AbstractProcessor implements ProcessorInterface
      */
     public function canPreProcess(array $config)
     {
-        $this->lastReasons = array();
+        $this->lastReasons = [];
         foreach ($this->forbidden as $reason => $key) {
             if (array_key_exists($key, $config)) {
                 $this->lastReasons[$key] = $reason;

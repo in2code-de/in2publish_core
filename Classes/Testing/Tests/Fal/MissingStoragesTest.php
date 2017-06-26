@@ -59,7 +59,7 @@ class MissingStoragesTest implements TestCaseInterface
     public function run()
     {
         $storages = $this->testSubjectProvider->getStoragesForMissingStoragesTest();
-        $messages = $this->getMissing($storages, array(), 'local');
+        $messages = $this->getMissing($storages, [], 'local');
         $messages = $this->getMissing($storages, $messages, 'foreign');
 
         if (!empty($messages)) {
@@ -74,10 +74,10 @@ class MissingStoragesTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return array(
+        return [
             LocalDatabaseTest::class,
             ForeignDatabaseTest::class,
-        );
+        ];
     }
 
     /**

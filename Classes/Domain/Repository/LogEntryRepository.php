@@ -47,7 +47,7 @@ class LogEntryRepository
     /**
      * @var array
      */
-    protected $allowedOperators = array(
+    protected $allowedOperators = [
         self::GREATER_THAN,
         self::LOWER_THAN,
         self::GREATER_THAN_OR_EQUAL,
@@ -55,7 +55,7 @@ class LogEntryRepository
         self::EQUALS,
         self::STRICT_LIKE,
         self::RANGE_LIKE,
-    );
+    ];
 
     /**
      * @var DatabaseConnection
@@ -75,14 +75,14 @@ class LogEntryRepository
     /**
      * @var array
      */
-    protected $filter = array();
+    protected $filter = [];
 
     /**
      * @var array
      */
-    protected $propertyOperatorMap = array(
+    protected $propertyOperatorMap = [
         'level' => self::LOWER_THAN_OR_EQUAL,
-    );
+    ];
 
     /**
      * LogEntryRepository constructor.
@@ -117,7 +117,7 @@ class LogEntryRepository
             );
         }
         $operator = $this->propertyOperatorMap[$propertyName];
-        if (in_array($operator, array(self::STRICT_LIKE, self::RANGE_LIKE))) {
+        if (in_array($operator, [self::STRICT_LIKE, self::RANGE_LIKE])) {
             $propertyValue = $this->databaseConnection->escapeStrForLike($propertyValue, static::TABLE_NAME);
         }
         $this->filter[] = $propertyName . sprintf($operator, $propertyValue);
@@ -131,7 +131,7 @@ class LogEntryRepository
     public function getLogLevels()
     {
         $results = $this->databaseConnection->exec_SELECTgetRows('level', static::TABLE_NAME, '1=1', 'level');
-        $logLevels = array();
+        $logLevels = [];
         foreach ($results as $result) {
             $logLevels[$result['level']] = $result['level'];
         }

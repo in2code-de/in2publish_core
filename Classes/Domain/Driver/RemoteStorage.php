@@ -51,7 +51,7 @@ class RemoteStorage implements ResourceStorageInterface
     /**
      * @var array
      */
-    protected static $cache = array();
+    protected static $cache = [];
 
     /**
      * RemoteStorage constructor.
@@ -71,7 +71,7 @@ class RemoteStorage implements ResourceStorageInterface
         if (!isset(static::$cache[$storage][$identifier][static::HAS_FOLDER_KEY])) {
             $result = $this->executeEnvelope(
                 EnvelopeDispatcher::CMD_STORAGE_HAS_FOLDER,
-                array('storage' => $storage, 'identifier' => $identifier)
+                ['storage' => $storage, 'identifier' => $identifier]
             );
 
             static::$cache[$storage][$identifier][static::HAS_FOLDER_KEY] = $result[static::HAS_FOLDER_KEY];
@@ -92,7 +92,7 @@ class RemoteStorage implements ResourceStorageInterface
         if (!isset(static::$cache[$storage][$identifier][static::SUB_FOLDERS_KEY])) {
             $result = $this->executeEnvelope(
                 EnvelopeDispatcher::CMD_STORAGE_GET_FOLDERS_IN_FOLDER,
-                array('storage' => $storage, 'identifier' => $identifier)
+                ['storage' => $storage, 'identifier' => $identifier]
             );
 
             static::$cache[$storage][$identifier][static::SUB_FOLDERS_KEY] = $result;
@@ -110,7 +110,7 @@ class RemoteStorage implements ResourceStorageInterface
         if (!isset(static::$cache[$storage][$identifier][static::FILES_KEY])) {
             $result = $this->executeEnvelope(
                 EnvelopeDispatcher::CMD_STORAGE_GET_FILES_IN_FOLDER,
-                array('storage' => $storage, 'identifier' => $identifier)
+                ['storage' => $storage, 'identifier' => $identifier]
             );
 
             static::$cache[$storage][$identifier][static::FILES_KEY] = $result;
@@ -128,7 +128,7 @@ class RemoteStorage implements ResourceStorageInterface
         if (!isset(static::$cache[$storage][$identifier][static::FILES_KEY][$identifier])) {
             $result = $this->executeEnvelope(
                 EnvelopeDispatcher::CMD_STORAGE_GET_FILE,
-                array('storage' => $storage, 'identifier' => $identifier)
+                ['storage' => $storage, 'identifier' => $identifier]
             );
 
             static::$cache[$storage][$identifier][static::FILES_KEY][$identifier] = $result;
@@ -142,7 +142,7 @@ class RemoteStorage implements ResourceStorageInterface
      * @return mixed
      * @throws \Exception
      */
-    protected function executeEnvelope($command, array $arguments = array())
+    protected function executeEnvelope($command, array $arguments = [])
     {
         $envelope = new Envelope($command, $arguments);
         $uid = $this->letterbox->sendEnvelope($envelope);

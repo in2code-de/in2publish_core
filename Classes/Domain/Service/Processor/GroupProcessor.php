@@ -48,22 +48,22 @@ class GroupProcessor extends AbstractProcessor
     /**
      * @var array
      */
-    protected $forbidden = array(
+    protected $forbidden = [
         'relations are only resolved from the owning side, MM_oppositeUsage marks the opposite side' =>
             self::MM_OPPOSITE_USAGE,
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $required = array(
+    protected $required = [
         'the internal type determines the relation target' => self::INTERNAL_TYPE,
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $allowed = array(
+    protected $allowed = [
         self::ALLOWED,
         self::FOREIGN_TABLE,
         self::MM,
@@ -71,7 +71,7 @@ class GroupProcessor extends AbstractProcessor
         self::MM_MATCH_FIELDS,
         self::MM_TABLE_WHERE,
         self::UPLOAD_FOLDER,
-    );
+    ];
 
     /**
      * @param array $config
@@ -158,7 +158,7 @@ class GroupProcessor extends AbstractProcessor
         if (strpos($allowed, ',')) {
             $allowedTables = GeneralUtility::trimExplode(',', $allowed);
         } else {
-            $allowedTables = array($allowed);
+            $allowedTables = [$allowed];
         }
         foreach ($allowedTables as $table) {
             if (!TcaService::tableExists($table)) {

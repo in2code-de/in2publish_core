@@ -77,12 +77,12 @@ class FileUtility
             } catch (\Exception $exception) {
                 self::$logger->critical(
                     'An error occurred while deletion of "' . $backupFileName . '"',
-                    array(
+                    [
                         'code' => $exception->getCode(),
                         'message' => $exception->getMessage(),
                         'file' => $exception->getFile(),
                         'line' => $exception->getLine(),
-                    )
+                    ]
                 );
             }
         }
@@ -115,12 +115,12 @@ class FileUtility
 
         $size = array_pop($file->getStorage()->getFileInfoByIdentifier($file->getIdentifier(), ['size']));
 
-        $info = array(
+        $info = [
             'identifier' => $file->getIdentifier(),
             'storage' => $file->getStorage()->getUid(),
             'size' => $size === null ? 0 : $size,
             'name' => $file->getName(),
-        );
+        ];
 
         if ($file instanceof AbstractFile) {
             $info['uid'] = $file->getUid();
@@ -137,7 +137,7 @@ class FileUtility
      */
     public static function extractFilesInformation(array $files)
     {
-        $newIndex = array();
+        $newIndex = [];
         foreach ($files as $file) {
             $fileInfo = static::extractFileInformation($file);
             $newIndex[$fileInfo['identifier']] = $fileInfo;

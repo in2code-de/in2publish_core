@@ -40,7 +40,7 @@ class TestCaseService
     public function getTests()
     {
         $tests = $this->getTestObjects();
-        $orderedTests = array();
+        $orderedTests = [];
 
         while (count($tests) > 0) {
             $resolvedDependencies = 0;
@@ -82,7 +82,7 @@ class TestCaseService
      */
     protected function getTestObjects()
     {
-        $tests = array();
+        $tests = [];
         foreach ($this->getTestClasses() as $class) {
             if (!is_subclass_of($class, TestCaseInterface::class)) {
                 throw new \InvalidArgumentException(

@@ -100,12 +100,12 @@ class SysLogPublisher
     public function publishSysLog($tableName, Record $record)
     {
         if ($tableName === 'pages') {
-            $sysLogRow = $this->getLastLocalSysLogProperties($record, array('uid'));
+            $sysLogRow = $this->getLastLocalSysLogProperties($record, ['uid']);
             if (!empty($sysLogRow)) {
                 $this->foreignDatabase->exec_INSERTquery($this->sysLogTableName, $sysLogRow);
                 $this->logger->notice(
                     'sys_log table automatically published',
-                    array('tableName' => $tableName, 'identifier' => $record->getIdentifier())
+                    ['tableName' => $tableName, 'identifier' => $record->getIdentifier()]
                 );
             }
         }
@@ -118,7 +118,7 @@ class SysLogPublisher
      * @param array $removeProperties
      * @return array
      */
-    protected function getLastLocalSysLogProperties(Record $record, array $removeProperties = array())
+    protected function getLastLocalSysLogProperties(Record $record, array $removeProperties = [])
     {
         $row = $this->commonRepository->findLastPropertiesByPropertyAndTableName(
             $this->localDatabase,

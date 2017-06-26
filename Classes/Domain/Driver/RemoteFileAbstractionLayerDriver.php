@@ -60,27 +60,27 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     /**
      * @var array
      */
-    protected $remoteDriverSettings = array();
+    protected $remoteDriverSettings = [];
 
     /**
      * Maybe most important property in this class, since sending envelopes is very costly
      *
      * @var array
      */
-    protected static $cache = array();
+    protected static $cache = [];
 
     /**
      * RemoteFileAbstractionLayerDriver constructor.
      *
      * @param array $configuration
      */
-    public function __construct(array $configuration = array())
+    public function __construct(array $configuration = [])
     {
-        $defaultConfiguration = array(
+        $defaultConfiguration = [
             'basePath' => '/',
             'pathType' => 'relative',
             'caseSensitive' => true,
-        );
+        ];
         ArrayUtility::mergeRecursiveWithOverrule($defaultConfiguration, $configuration);
         parent::__construct($defaultConfiguration);
 
@@ -107,7 +107,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
     public function initialize()
     {
         if (0 === (int)$this->storageUid) {
-            $this->remoteDriverSettings = array(
+            $this->remoteDriverSettings = [
                 'uid' => 0,
                 'pid' => 0,
                 'name' => 'Fallback Storage',
@@ -120,11 +120,11 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                 'is_public' => true,
                 'is_writable' => true,
                 'is_default' => false,
-                'configuration' => array(
+                'configuration' => [
                     'basePath' => '/',
                     'pathType' => 'relative',
-                ),
-            );
+                ],
+            ];
         } else {
             $this->remoteDriverSettings = DatabaseUtility::buildForeignDatabaseConnection()->exec_SELECTgetSingleRow(
                 '*',
@@ -161,7 +161,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         $response = $this->executeEnvelope(
             new Envelope(
                 EnvelopeDispatcher::CMD_BATCH_PREFETCH_FILES,
-                array('storage' => $this->storageUid, 'identifiers' => $identifiers)
+                ['storage' => $this->storageUid, 'identifiers' => $identifiers]
             )
         );
 
@@ -200,7 +200,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             $response = $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_FILE_EXISTS,
-                    array('storage' => $this->storageUid, 'fileIdentifier' => $fileIdentifier)
+                    ['storage' => $this->storageUid, 'fileIdentifier' => $fileIdentifier]
                 )
             );
 
@@ -244,7 +244,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             $response = $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_FOLDER_EXISTS,
-                    array('storage' => $this->storageUid, 'folderIdentifier' => $folderIdentifier)
+                    ['storage' => $this->storageUid, 'folderIdentifier' => $folderIdentifier]
                 )
             );
 
@@ -285,13 +285,13 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_ADD_FILE,
-                    array(
+                    [
                         'storage' => $this->storageUid,
                         'localFilePath' => $localFilePath,
                         'targetFolderIdentifier' => $targetFolderIdentifier,
                         'newFileName' => $newFileName,
                         'removeOriginal' => $removeOriginal,
-                    )
+                    ]
                 )
             );
         };
@@ -312,11 +312,11 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_RENAME_FILE,
-                    array(
+                    [
                         'storage' => $this->storageUid,
                         'fileIdentifier' => $fileIdentifier,
                         'newName' => $newName,
-                    )
+                    ]
                 )
             );
         };
@@ -337,11 +337,11 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_REPLACE_FILE,
-                    array(
+                    [
                         'storage' => $this->storageUid,
                         'fileIdentifier' => $fileIdentifier,
                         'localFilePath' => $localFilePath,
-                    )
+                    ]
                 )
             );
         };
@@ -363,7 +363,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_DELETE_FILE,
-                    array('storage' => $this->storageUid, 'fileIdentifier' => $fileIdentifier)
+                    ['storage' => $this->storageUid, 'fileIdentifier' => $fileIdentifier]
                 )
             );
         };
@@ -384,11 +384,11 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_GET_HASH,
-                    array(
+                    [
                         'storage' => $this->storageUid,
                         'identifier' => $fileIdentifier,
                         'hashAlgorithm' => $hashAlgorithm,
-                    )
+                    ]
                 )
             );
         };
@@ -413,7 +413,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_GET_PERMISSIONS,
-                    array('storage' => $this->storageUid, 'identifier' => $identifier)
+                    ['storage' => $this->storageUid, 'identifier' => $identifier]
                 )
             );
         };
@@ -429,7 +429,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      *                                   If empty all will be extracted
      * @return array
      */
-    public function getFileInfoByIdentifier($fileIdentifier, array $propertiesToExtract = array())
+    public function getFileInfoByIdentifier($fileIdentifier, array $propertiesToExtract = [])
     {
         $callback = function () use ($fileIdentifier, $propertiesToExtract) {
             if (!$this->fileExists($fileIdentifier)) {
@@ -438,11 +438,11 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                 return $this->executeEnvelope(
                     new Envelope(
                         EnvelopeDispatcher::CMD_GET_FILE_INFO_BY_IDENTIFIER,
-                        array(
+                        [
                             'storage' => $this->storageUid,
                             'fileIdentifier' => $fileIdentifier,
                             'propertiesToExtract' => $propertiesToExtract,
-                        )
+                        ]
                     )
                 );
             }
@@ -470,11 +470,11 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                     1314516810
                 );
             }
-            return array(
+            return [
                 'identifier' => $folderIdentifier,
                 'name' => PathUtility::basename($folderIdentifier),
                 'storage' => $this->storageUid,
-            );
+            ];
         };
 
         return $this->cache($this->getGetFolderInfoByIdentifierCacheIdentifier($folderIdentifier), $callback);
@@ -501,7 +501,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         $start = 0,
         $max = 0,
         $recursive = false,
-        array $fnFc = array(),
+        array $fnFc = [],
         $sort = '',
         $sortRev = false
     ) {
@@ -520,7 +520,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             $files = $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_GET_FILES_IN_FOLDER,
-                    array('storage' => $this->storageUid, 'folderIdentifier' => $folderIdentifier)
+                    ['storage' => $this->storageUid, 'folderIdentifier' => $folderIdentifier]
                 )
             );
 
@@ -553,7 +553,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         $start = 0,
         $max = 0,
         $recursive = false,
-        array $fnFc = array(),
+        array $fnFc = [],
         $sort = '',
         $sortRev = false
     ) {
@@ -565,7 +565,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             $folders = $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_GET_FOLDERS_IN_FOLDER,
-                    array('storage' => $this->storageUid, 'folderIdentifier' => $folderIdentifier)
+                    ['storage' => $this->storageUid, 'folderIdentifier' => $folderIdentifier]
                 )
             );
 
@@ -592,7 +592,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_GET_PUBLIC_URL,
-                    array('storage' => $this->storageUid, 'identifier' => $identifier)
+                    ['storage' => $this->storageUid, 'identifier' => $identifier]
                 )
             );
         };
@@ -615,12 +615,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_CREATE_FOLDER,
-                    array(
+                    [
                         'storage' => $this->storageUid,
                         '$newFolderName' => $newFolderName,
                         '$parentFolderIdentifier' => $parentFolderIdentifier,
                         '$recursive' => $recursive,
-                    )
+                    ]
                 )
             );
         };
@@ -641,11 +641,11 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_DELETE_FOLDER,
-                    array(
+                    [
                         'storage' => $this->storageUid,
                         'folderIdentifier' => $folderIdentifier,
                         'deleteRecursively' => $deleteRecursively,
-                    )
+                    ]
                 )
             );
         };
@@ -672,12 +672,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         return $this->executeEnvelope(
             new Envelope(
                 EnvelopeDispatcher::CMD_MOVE_FILE_WITHIN_STORAGE,
-                array(
+                [
                     'storage' => $this->storageUid,
                     'fileIdentifier' => $fileIdentifier,
                     'targetFolderIdentifier' => $targetFolderIdentifier,
                     'newFileName' => $newFileName,
-                )
+                ]
             )
         );
     }
@@ -822,7 +822,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      */
     public function clearCache()
     {
-        static::$cache[$this->storageUid] = array();
+        static::$cache[$this->storageUid] = [];
     }
 
     /****************************************************************
@@ -865,7 +865,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function countFilesInFolder($folderIdentifier, $recursive = false, array $filenameFilterCallbacks = array())
+    public function countFilesInFolder($folderIdentifier, $recursive = false, array $filenameFilterCallbacks = [])
     {
         throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201312);
     }
@@ -880,7 +880,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function countFoldersInFolder($folderIdentifier, $recursive = false, array $fnFc = array())
+    public function countFoldersInFolder($folderIdentifier, $recursive = false, array $fnFc = [])
     {
         throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201325);
     }

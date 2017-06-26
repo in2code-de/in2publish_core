@@ -35,7 +35,7 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
     /**
      * @var array
      */
-    protected $tableConfigurationArray = array();
+    protected $tableConfigurationArray = [];
 
     /**
      * @var \TYPO3\CMS\Lang\LanguageService

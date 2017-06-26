@@ -60,7 +60,7 @@ class ForeignDatabaseTest implements TestCaseInterface
         )->getRequiredTables();
         $actualTables = array_keys($foreignDatabase->admin_get_tables());
 
-        $missingTables = array();
+        $missingTables = [];
         foreach ($expectedTables as $expectedTable) {
             if (!in_array($expectedTable, $actualTables)) {
                 $missingTables[] = $expectedTable;
@@ -71,7 +71,7 @@ class ForeignDatabaseTest implements TestCaseInterface
             return new TestResult(
                 'database.foreign_tables_missing',
                 TestResult::ERROR,
-                array_merge(array('database.missing_important_tables'), $missingTables)
+                array_merge(['database.missing_important_tables'], $missingTables)
             );
         }
 
@@ -83,9 +83,9 @@ class ForeignDatabaseTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return array(
+        return [
             ConfigurationFormatTest::class,
             SshConnectionTest::class,
-        );
+        ];
     }
 }

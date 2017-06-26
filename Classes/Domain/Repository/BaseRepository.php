@@ -139,9 +139,9 @@ abstract class BaseRepository
                     $limit,
                     ''
                 );
-                $propertyArray = array();
+                $propertyArray = [];
                 foreach ($rows as $row) {
-                    $identifierArray = array();
+                    $identifierArray = [];
                     foreach ($combinedIdentifier as $identifierFieldName) {
                         $identifierArray[] = $row[$identifierFieldName];
                     }
@@ -159,7 +159,7 @@ abstract class BaseRepository
                 $indexField
             );
         }
-        return array();
+        return [];
     }
 
     /**
@@ -181,7 +181,7 @@ abstract class BaseRepository
         $limit = '',
         $indexField = 'uid'
     ) {
-        $whereParts = array();
+        $whereParts = [];
         foreach ($properties as $propertyName => $propertyValue) {
             $whereParts[] = $databaseConnection->quoteStr($propertyName, $this->tableName) . ' LIKE '
                             . $databaseConnection->fullQuoteStr($propertyValue, $this->tableName);
@@ -217,7 +217,7 @@ abstract class BaseRepository
         if (strpos($identifier, ',') !== false) {
             $identifierArray = Record::splitCombinedIdentifier($identifier);
 
-            $whereArray = array();
+            $whereArray = [];
 
             foreach ($identifierArray as $property => $value) {
                 $whereArray[] = $property . ' LIKE "' . $this->quoteString($value) . '"';
@@ -281,7 +281,7 @@ abstract class BaseRepository
         if (strpos($identifier, ',') !== false) {
             $identifierArray = Record::splitCombinedIdentifier($identifier);
 
-            $whereArray = array();
+            $whereArray = [];
 
             foreach ($identifierArray as $property => $value) {
                 $whereArray[] = $property . ' LIKE "' . $this->quoteString($value) . '"';
@@ -346,11 +346,11 @@ abstract class BaseRepository
     {
         $this->logger->critical(
             $method . ': Query failed.',
-            array(
+            [
                 'errno' => $databaseConnection->sql_errno(),
                 'error' => $databaseConnection->sql_error(),
                 'tableName' => $this->tableName,
-            )
+            ]
         );
     }
 

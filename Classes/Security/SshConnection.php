@@ -54,10 +54,10 @@ class SshConnection
     /**
      * @var array
      */
-    protected $supportedFingerprintMethods = array(
+    protected $supportedFingerprintMethods = [
         'SSH2_FINGERPRINT_MD5',
         'SSH2_FINGERPRINT_SHA1',
-    );
+    ];
 
     /**
      * Indicates if ssh2_sftp_chmod is available.
@@ -119,7 +119,7 @@ class SshConnection
             . $this->pathToPhp . ' '
             . self::TYPO3_CLI_EXTBASE_DISPATCHER . StatusCommandController::GLOBAL_CONFIGURATION;
         $configurationValues = $this->executeRemoteCommand($command);
-        $configurationArray = array();
+        $configurationArray = [];
         foreach ($configurationValues as $line) {
             list($key, $value) = explode(': ', $line, 2);
             $configurationArray[$key] = $value;
@@ -434,11 +434,11 @@ class SshConnection
         $handle = ssh2_exec($this->session, $command);
 
         if (false === $handle) {
-            return array(
+            return [
                 'stdOut' => '',
                 'stdErr' => 'EXECUTION FAILED',
                 'code' => 1470246119,
-            );
+            ];
         }
 
         $stdOutStream = ssh2_fetch_stream($handle, SSH2_STREAM_STDIO);
@@ -461,11 +461,11 @@ class SshConnection
 
         $this->disconnect();
 
-        return array(
+        return [
             'stdOut' => $stdOut,
             'stdErr' => $stdErr,
             'code' => $code,
-        );
+        ];
     }
 
     /**
@@ -499,10 +499,10 @@ class SshConnection
             if (strpos($exceptionMessage, 'failed to open stream: operation failed')) {
                 $this->logger->alert(
                     'PHP SSH2 fopen stream wrapper failure.',
-                    array(
+                    [
                         'php_version' => PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION . '.' . PHP_RELEASE_VERSION,
                         'file' => $foreignFileLocation,
-                    )
+                    ]
                 );
                 throw new \Exception(
                     'Could not write remote file "' . $foreignFileLocation . '" because PHP failed to open a stream.'
@@ -647,7 +647,7 @@ class SshConnection
         if (empty($configuration['username'])) {
             throw new \Exception('SSH Connection: Option username is empty', 1425400379);
         }
-        foreach (array('privateKeyFileAndPathName', 'publicKeyFileAndPathName') as $requiredFileKey) {
+        foreach (['privateKeyFileAndPathName', 'publicKeyFileAndPathName'] as $requiredFileKey) {
             if (empty($configuration[$requiredFileKey])) {
                 throw new \Exception('SSH Connection: Option ' . $requiredFileKey . ' is empty', 1425400434);
             } elseif (!file_exists($configuration[$requiredFileKey])) {

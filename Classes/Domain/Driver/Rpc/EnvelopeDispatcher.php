@@ -89,7 +89,7 @@ class EnvelopeDispatcher
     {
         $command = $envelope->getCommand();
         if (method_exists($this, $command)) {
-            $envelope->setResponse(call_user_func(array($this, $command), $envelope->getRequest()));
+            $envelope->setResponse(call_user_func([$this, $command], $envelope->getRequest()));
             return true;
         }
 
@@ -107,34 +107,34 @@ class EnvelopeDispatcher
         $folderIdentifier = $request['folderIdentifier'];
 
         if ($driver->folderExists($folderIdentifier)) {
-            $files = array();
+            $files = [];
 
-            if (is_callable(array($driver, 'countFilesInFolder'))
+            if (is_callable([$driver, 'countFilesInFolder'])
                 && $driver->countFilesInFolder($folderIdentifier) < $this->prefetchLimit
             ) {
                 $fileIdentifiers = $this->convertIdentifiers($driver, $driver->getFilesInFolder($folderIdentifier));
 
                 foreach ($fileIdentifiers as $fileIdentifier) {
                     $fileObject = $this->getFileObject($driver, $fileIdentifier, $storage);
-                    $files[$fileIdentifier] = array();
+                    $files[$fileIdentifier] = [];
                     $files[$fileIdentifier]['hash'] = $driver->hash($fileIdentifier, 'sha1');
                     $files[$fileIdentifier]['info'] = $driver->getFileInfoByIdentifier($fileIdentifier);
                     $files[$fileIdentifier]['publicUrl'] = $storage->getPublicUrl($fileObject);
                 }
             }
 
-            return array(
+            return [
                 'exists' => true,
                 'folders' => $this->convertIdentifiers($driver, $driver->getFoldersInFolder($folderIdentifier)),
                 'files' => $files,
-            );
+            ];
         }
 
-        return array(
+        return [
             'exists' => false,
-            'folders' => array(),
-            'files' => array(),
-        );
+            'folders' => [],
+            'files' => [],
+        ];
     }
 
     /**
@@ -156,7 +156,7 @@ class EnvelopeDispatcher
         $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
-        return $this->convertIdentifiers($driver, call_user_func_array(array($driver, 'getFoldersInFolder'), $request));
+        return $this->convertIdentifiers($driver, call_user_func_array([$driver, 'getFoldersInFolder'], $request));
     }
 
     /**
@@ -171,17 +171,17 @@ class EnvelopeDispatcher
         $fileIdentifier = $request['fileIdentifier'];
         $directory = PathUtility::dirname($fileIdentifier);
         if ($driver->folderExists($directory)) {
-            if (is_callable(array($driver, 'countFilesInFolder'))
+            if (is_callable([$driver, 'countFilesInFolder'])
                 && $driver->countFilesInFolder($directory) < $this->prefetchLimit
             ) {
                 $files = $this->convertIdentifiers(
                     $driver,
-                    call_user_func(array($driver, 'getFilesInFolder'), $directory)
+                    call_user_func([$driver, 'getFilesInFolder'], $directory)
                 );
                 if (is_array($files)) {
                     foreach ($files as $file) {
                         $fileObject = $this->getFileObject($driver, $file, $storage);
-                        $files[$file] = array();
+                        $files[$file] = [];
                         $files[$file]['hash'] = $driver->hash($file, 'sha1');
                         $files[$file]['info'] = $driver->getFileInfoByIdentifier($file);
                         $files[$file]['publicUrl'] = $storage->getPublicUrl($fileObject);
@@ -190,20 +190,20 @@ class EnvelopeDispatcher
             } else {
                 $fileObject = $this->getFileObject($driver, $fileIdentifier, $storage);
                 if (null !== $fileObject) {
-                    $files = array(
-                        $fileIdentifier => array(
+                    $files = [
+                        $fileIdentifier => [
                             'hash' => $driver->hash($fileIdentifier, 'sha1'),
                             'info' => $driver->getFileInfoByIdentifier($fileIdentifier),
                             'publicUrl' => $storage->getPublicUrl($fileObject),
-                        ),
-                    );
+                        ],
+                    ];
                 } else {
-                    $files = array();
+                    $files = [];
                 }
             }
             return $files;
         }
-        return array();
+        return [];
     }
 
     /**
@@ -215,11 +215,11 @@ class EnvelopeDispatcher
         $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
-        $files = $this->convertIdentifiers($driver, call_user_func_array(array($driver, 'getFilesInFolder'), $request));
+        $files = $this->convertIdentifiers($driver, call_user_func_array([$driver, 'getFilesInFolder'], $request));
 
         foreach ($files as $file) {
             $fileObject = $this->getFileObject($driver, $file, $storage);
-            $files[$file] = array();
+            $files[$file] = [];
             $files[$file]['hash'] = $driver->hash($file, 'sha1');
             $files[$file]['info'] = $driver->getFileInfoByIdentifier($file);
             $files[$file]['publicUrl'] = $storage->getPublicUrl($fileObject);
@@ -236,7 +236,7 @@ class EnvelopeDispatcher
         $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
-        return call_user_func_array(array($driver, 'getFileInfoByIdentifier'), $request);
+        return call_user_func_array([$driver, 'getFileInfoByIdentifier'], $request);
     }
 
     /**
@@ -248,7 +248,7 @@ class EnvelopeDispatcher
         $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
-        return call_user_func_array(array($driver, 'hash'), $request);
+        return call_user_func_array([$driver, 'hash'], $request);
     }
 
     /**
@@ -260,7 +260,7 @@ class EnvelopeDispatcher
         $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
-        return call_user_func_array(array($driver, 'createFolder'), $request);
+        return call_user_func_array([$driver, 'createFolder'], $request);
     }
 
     /**
@@ -272,7 +272,7 @@ class EnvelopeDispatcher
         $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
-        return call_user_func_array(array($driver, 'deleteFolder'), $request);
+        return call_user_func_array([$driver, 'deleteFolder'], $request);
     }
 
     /**
@@ -299,7 +299,7 @@ class EnvelopeDispatcher
         $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
-        return call_user_func_array(array($driver, 'addFile'), $request);
+        return call_user_func_array([$driver, 'addFile'], $request);
     }
 
     /**
@@ -311,7 +311,7 @@ class EnvelopeDispatcher
         $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
-        return call_user_func_array(array($driver, 'replaceFile'), $request);
+        return call_user_func_array([$driver, 'replaceFile'], $request);
     }
 
     /**
@@ -323,7 +323,7 @@ class EnvelopeDispatcher
         $storage = $this->getStorage($request);
         unset($request['storage']);
         $driver = $this->getStorageDriver($storage);
-        return call_user_func_array(array($driver, 'renameFile'), $request);
+        return call_user_func_array([$driver, 'renameFile'], $request);
     }
 
     /**
@@ -349,12 +349,12 @@ class EnvelopeDispatcher
         $storage->setEvaluatePermissions(false);
         $driver = $this->getStorageDriver($storage);
 
-        $files = array();
+        $files = [];
 
         foreach ($request['identifiers'] as $identifier) {
             if ($driver->fileExists($identifier)) {
                 $fileObject = $this->getFileObject($driver, $identifier, $storage);
-                $files[$identifier] = array();
+                $files[$identifier] = [];
                 $files[$identifier]['hash'] = $driver->hash($identifier, 'sha1');
                 $files[$identifier]['info'] = $driver->getFileInfoByIdentifier($identifier);
                 $files[$identifier]['publicUrl'] = $storage->getPublicUrl($fileObject);
@@ -466,14 +466,14 @@ class EnvelopeDispatcher
             $subFolders = $this->getStorageGetFoldersInFolder($request);
             $files = $this->getStorageGetFilesInFolder($request);
         } else {
-            $subFolders = array();
-            $files = array();
+            $subFolders = [];
+            $files = [];
         }
-        return array(
+        return [
             RemoteStorage::HAS_FOLDER_KEY => $hasFolder,
             RemoteStorage::SUB_FOLDERS_KEY => $subFolders,
             RemoteStorage::FILES_KEY => $files,
-        );
+        ];
     }
 
     /**
@@ -509,7 +509,7 @@ class EnvelopeDispatcher
             $file = $storage->getFile($request['identifier']);
             return FileUtility::extractFileInformation($file);
         }
-        return array();
+        return [];
     }
 
     /**

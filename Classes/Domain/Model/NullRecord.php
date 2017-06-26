@@ -44,10 +44,10 @@ class NullRecord extends Record
      */
     public function __construct(
         $tableName = 'pages',
-        array $localProperties = array(0 => false),
-        array $foreignProperties = array(0 => false),
-        array $tca = array(),
-        array $additionalProperties = array('depth' => 1)
+        array $localProperties = [0 => false],
+        array $foreignProperties = [0 => false],
+        array $tca = [],
+        array $additionalProperties = ['depth' => 1]
     ) {
         $this->tableName = $tableName;
         $this->additionalProperties = $additionalProperties;
@@ -57,7 +57,7 @@ class NullRecord extends Record
             $tca = TcaService::getCompleteTcaForTable($tableName);
         }
         $this->tableConfigurationArray = $tca;
-        $this->dirtyProperties = array();
+        $this->dirtyProperties = [];
         $this->state = RecordInterface::RECORD_STATE_UNCHANGED;
     }
 }

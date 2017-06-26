@@ -68,9 +68,9 @@ class FileController extends AbstractController
         if (1 === preg_match(self::EXCEPTION_MESSAGE_PATTERN, $exception->getMessage(), $matches)) {
             // Do not remove the space at the end of ') ', because it can't
             // be included dynamically in the label where this value is used!
-            $arguments = array($matches['folder'], '(' . $matches['number'] . ') ');
+            $arguments = [$matches['folder'], '(' . $matches['number'] . ') '];
         } else {
-            $arguments = array(GeneralUtility::_GP('id'), '');
+            $arguments = [GeneralUtility::_GP('id'), ''];
         }
 
         $this->addFlashMessage(
@@ -92,12 +92,12 @@ class FileController extends AbstractController
 
         if ($success) {
             $this->addFlashMessage(
-                LocalizationUtility::translate('file_publishing.folder', 'in2publish_core', array($identifier)),
+                LocalizationUtility::translate('file_publishing.folder', 'in2publish_core', [$identifier]),
                 LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
             );
         } else {
             $this->addFlashMessage(
-                LocalizationUtility::translate('file_publishing.failure.folder', 'in2publish_core', array($identifier)),
+                LocalizationUtility::translate('file_publishing.failure.folder', 'in2publish_core', [$identifier]),
                 LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
                 AbstractMessage::ERROR
             );
@@ -138,7 +138,7 @@ class FileController extends AbstractController
             CommonRepository::getDefaultInstance('sys_file')->publishRecordRecursive($relatedRecord);
 
             $this->addFlashMessage(
-                LocalizationUtility::translate('file_publishing.file', 'in2publish_core', array($identifier)),
+                LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
                 LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
             );
         }
@@ -178,7 +178,7 @@ class FileController extends AbstractController
             $this->signalSlotDispatcher->dispatch(
                 FileController::class,
                 'folderInstanceCreated',
-                array($record)
+                [$record]
             );
             return $record;
         } catch (TooManyLocalFilesException $exception) {

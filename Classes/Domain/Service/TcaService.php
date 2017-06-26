@@ -71,7 +71,7 @@ class TcaService
     /**
      * @var array
      */
-    protected $defaultProcessor = array(
+    protected $defaultProcessor = [
         'check' => CheckProcessor::class,
         'flex' => FlexProcessor::class,
         'group' => GroupProcessor::class,
@@ -84,33 +84,33 @@ class TcaService
         'text' => TextProcessor::class,
         'user' => UserProcessor::class,
         'imageManipulation' => ImageManipulationProcessor::class,
-    );
+    ];
 
     /**
      * @var AbstractProcessor[]
      */
-    protected $processors = array();
+    protected $processors = [];
 
     /**
      * Stores the part of the TCA that can be used for relation resolving
      *
      * @var array[]
      */
-    protected $compatibleTca = array();
+    protected $compatibleTca = [];
 
     /**
      * Stores the part of the TCA that can not be used for relation resolving including reasons
      *
      * @var array[]
      */
-    protected $incompatibleTca = array();
+    protected $incompatibleTca = [];
 
     /**
      * Stores the controls for each table from TCA
      *
      * @var array[]
      */
-    protected $controls = array();
+    protected $controls = [];
 
     /**
      * @var Logger
@@ -218,10 +218,10 @@ class TcaService
                     }
                     $this->logger->critical(
                         'No Processor for "' . $type . '" found. Skipping configuration',
-                        array(
+                        [
                             'table' => $table,
                             'column' => $column,
-                        )
+                        ]
                     );
                     continue;
                 }
@@ -247,7 +247,7 @@ class TcaService
 
             // set an empty array as default, prevents NULL values
             if (empty($this->compatibleTca[$table])) {
-                $this->compatibleTca[$table] = array();
+                $this->compatibleTca[$table] = [];
             }
         }
     }

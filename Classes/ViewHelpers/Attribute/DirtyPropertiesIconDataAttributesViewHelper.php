@@ -78,7 +78,7 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
             ->getUriBuilder()
             ->uriFor(
                 'detail',
-                array('identifier' => $record->getIdentifier(), 'tableName' => $record->getTableName()),
+                ['identifier' => $record->getIdentifier(), 'tableName' => $record->getTableName()],
                 'Record'
             );
     }

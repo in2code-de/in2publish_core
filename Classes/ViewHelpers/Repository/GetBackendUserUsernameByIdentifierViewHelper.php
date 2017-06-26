@@ -42,7 +42,7 @@ class GetBackendUserUsernameByIdentifierViewHelper extends AbstractViewHelper
     /**
      * @var array
      */
-    protected $cache = array();
+    protected $cache = [];
 
     /**
      * Init

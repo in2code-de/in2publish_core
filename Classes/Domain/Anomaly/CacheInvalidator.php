@@ -55,22 +55,22 @@ class CacheInvalidator implements SingletonInterface
     /**
      * @var array
      */
-    protected $clearCachePids = array();
+    protected $clearCachePids = [];
 
     /**
      * @var array
      */
-    protected $clearCacheCommands = array();
+    protected $clearCacheCommands = [];
 
     /**
      * @var array
      */
-    protected $newsCacheUidsArray = array();
+    protected $newsCacheUidsArray = [];
 
     /**
      * @var array
      */
-    protected $newsCachePidsArray = array();
+    protected $newsCachePidsArray = [];
 
     /**
      * Constructor
@@ -98,7 +98,7 @@ class CacheInvalidator implements SingletonInterface
     public function writeClearCacheTask()
     {
         if (!empty($this->clearCachePids)) {
-            $flushPageCacheTask = new FlushFrontendPageCacheTask(array('pid' => implode(',', $this->clearCachePids)));
+            $flushPageCacheTask = new FlushFrontendPageCacheTask(['pid' => implode(',', $this->clearCachePids)]);
             $this->taskRepository->add($flushPageCacheTask);
         }
 
@@ -106,18 +106,18 @@ class CacheInvalidator implements SingletonInterface
 
         if (!empty($this->clearCacheCommands)) {
             $clearCacheCommands = new FlushFrontendPageCacheTask(
-                array('pid' => implode(',', $this->clearCacheCommands))
+                ['pid' => implode(',', $this->clearCacheCommands)]
             );
             $this->taskRepository->add($clearCacheCommands);
         }
 
         if (!empty($this->newsCachePidsArray)) {
-            $flushNewsCacheTask = new FlushNewsCacheTask(array('tagsToFlush' => $this->newsCachePidsArray));
+            $flushNewsCacheTask = new FlushNewsCacheTask(['tagsToFlush' => $this->newsCachePidsArray]);
             $this->taskRepository->add($flushNewsCacheTask);
         }
 
         if (!empty($this->newsCacheUidsArray)) {
-            $flushNewsCacheTask = new FlushNewsCacheTask(array('tagsToFlush' => $this->newsCacheUidsArray));
+            $flushNewsCacheTask = new FlushNewsCacheTask(['tagsToFlush' => $this->newsCacheUidsArray]);
             $this->taskRepository->add($flushNewsCacheTask);
         }
     }

@@ -63,11 +63,11 @@ class EnvironmentService implements SingletonInterface
         $this->registry->set(
             'tx_in2publishcore',
             'test_result',
-            array(
+            [
                 'success' => $success,
                 'packages_hash' => $this->getPackagesHash(),
                 'configuration_hash' => $this->getConfigurationHash(),
-            )
+            ]
         );
     }
 
@@ -76,11 +76,11 @@ class EnvironmentService implements SingletonInterface
      */
     public function getTestStatus()
     {
-        $statusArray = array();
+        $statusArray = [];
         $testResults = $this->registry->get('tx_in2publishcore', 'test_result', false);
 
         if ($testResults === false) {
-            return array(self::STATE_TESTS_NEVER_RAN);
+            return [self::STATE_TESTS_NEVER_RAN];
         }
         if ($testResults['packages_hash'] !== $this->getPackagesHash()) {
             $statusArray[] = self::STATE_PACKAGES_CHANGED;

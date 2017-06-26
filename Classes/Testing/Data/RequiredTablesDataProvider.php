@@ -43,7 +43,7 @@ class RequiredTablesDataProvider implements SingletonInterface
     /**
      * @var array
      */
-    protected $cache = array();
+    protected $cache = [];
 
     /**
      * ConfigurationIsCompleteTest constructor.
@@ -59,11 +59,11 @@ class RequiredTablesDataProvider implements SingletonInterface
     public function getRequiredTables()
     {
         if ((empty($this->cache))) {
-            $requiredTables = array(
+            $requiredTables = [
                 'tx_in2code_in2publish_log',
                 'tx_in2code_in2publish_task',
                 'tx_in2code_in2publish_envelope',
-            );
+            ];
             $requiredTables = $this->overruleTables($requiredTables);
             $this->cache = $requiredTables;
         }
@@ -76,7 +76,7 @@ class RequiredTablesDataProvider implements SingletonInterface
      */
     protected function overruleTables(array $tables)
     {
-        $returnValue = $this->dispatcher->dispatch(__CLASS__, __FUNCTION__, array($tables));
+        $returnValue = $this->dispatcher->dispatch(__CLASS__, __FUNCTION__, [$tables]);
         if (isset($returnValue[0])) {
             return $returnValue[0];
         }

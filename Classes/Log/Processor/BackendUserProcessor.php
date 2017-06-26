@@ -43,7 +43,7 @@ class BackendUserProcessor extends AbstractProcessor
     /**
      * {@inheritdoc}
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         parent::__construct($options);
         $this->backendUserUid = $this->getBackendUser()->user['uid'];
@@ -55,7 +55,7 @@ class BackendUserProcessor extends AbstractProcessor
      */
     public function processLogRecord(LogRecord $logRecord)
     {
-        return $logRecord->addData(array('be_user' => $this->backendUserUid));
+        return $logRecord->addData(['be_user' => $this->backendUserUid]);
     }
 
     /**

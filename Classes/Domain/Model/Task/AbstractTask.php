@@ -42,7 +42,7 @@ abstract class AbstractTask
     /**
      * @var array
      */
-    protected $configuration = array();
+    protected $configuration = [];
 
     /**
      * @var \DateTime
@@ -62,7 +62,7 @@ abstract class AbstractTask
     /**
      * @var array
      */
-    private $messages = array();
+    private $messages = [];
 
     /**
      * @param array $configuration

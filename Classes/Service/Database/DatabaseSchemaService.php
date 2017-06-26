@@ -72,7 +72,7 @@ class DatabaseSchemaService implements SingletonInterface
         if (false === $schema) {
             $database = DatabaseUtility::buildLocalDatabaseConnection();
 
-            $schema = array();
+            $schema = [];
             foreach ($database->admin_get_tables() as $tableName => $tableInfo) {
                 $schema[$tableName]['_TABLEINFO'] = $tableInfo;
                 foreach ($database->admin_get_fields($tableName) as $fieldName => $fieldInfo) {

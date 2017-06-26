@@ -54,10 +54,10 @@ class IsUserAllowedToPublishViewHelper extends AbstractViewHelper
      */
     public function render()
     {
-        $votes = array(
+        $votes = [
             'yes' => 0,
             'no' => 0,
-        );
+        ];
         $votes = $this->voteUserIsAllowedToPublish($votes);
         return $votes['yes'] >= $votes['no'];
     }
@@ -69,7 +69,7 @@ class IsUserAllowedToPublishViewHelper extends AbstractViewHelper
     protected function voteUserIsAllowedToPublish(array $votes)
     {
         // votes are manipulated via reference
-        $voteResult = $this->dispatcher->dispatch(__CLASS__, __FUNCTION__, array($votes));
+        $voteResult = $this->dispatcher->dispatch(__CLASS__, __FUNCTION__, [$votes]);
         if (isset($voteResult[0])) {
             return $voteResult[0];
         }

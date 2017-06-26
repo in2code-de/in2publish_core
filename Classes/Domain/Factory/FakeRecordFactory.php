@@ -68,7 +68,7 @@ class FakeRecordFactory
     /**
      * @var array
      */
-    protected $sysFileMetaDataBlackList = array();
+    protected $sysFileMetaDataBlackList = [];
 
     /**
      * FakeRepository constructor.
@@ -127,8 +127,8 @@ class FakeRecordFactory
             'pages',
             $propertiesLocal,
             $propertiesForeign,
-            array(),
-            array()
+            [],
+            []
         );
         $this->guessState($record);
         return $record;
@@ -184,7 +184,7 @@ class FakeRecordFactory
     {
         $rows = $this->tableCacheRepository->findByPid(self::PAGE_TABLE_NAME, $identifier);
         $rows = $this->sortRowsBySorting($rows);
-        $pageIdentifiers = array();
+        $pageIdentifiers = [];
         foreach ($rows as $row) {
             $pageIdentifiers[] = $row['uid'];
         }
@@ -276,7 +276,7 @@ class FakeRecordFactory
     protected function pageContentRecordsHasChanged(Record $record)
     {
         $tables = $this->tcaService->getAllTableNamesWithPidAndUidField(
-            array_merge(ConfigurationUtility::getConfiguration('excludeRelatedTables'), array('pages'))
+            array_merge(ConfigurationUtility::getConfiguration('excludeRelatedTables'), ['pages'])
         );
         foreach ($tables as $table) {
             $propertiesLocal = $this->tableCacheRepository->findByPid($table, $record->getIdentifier(), 'local');
@@ -298,7 +298,7 @@ class FakeRecordFactory
      */
     protected function areDifferentArrays(array $arrayLocal, array $arrayForeign, $table)
     {
-        $newLocal = $newForeign = array();
+        $newLocal = $newForeign = [];
 
         // remove sys file entries from local extensions and their sys_file_metadata records
         if ('sys_file' === $table) {

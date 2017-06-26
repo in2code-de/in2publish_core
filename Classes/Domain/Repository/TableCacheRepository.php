@@ -48,7 +48,7 @@ class TableCacheRepository implements SingletonInterface
      *
      * @var array
      */
-    protected $localCache = array();
+    protected $localCache = [];
 
     /**
      * Hold table values from foreign database
@@ -62,7 +62,7 @@ class TableCacheRepository implements SingletonInterface
      *
      * @var array
      */
-    protected $foreignCache = array();
+    protected $foreignCache = [];
 
     /**
      * @var DatabaseConnection
@@ -105,11 +105,11 @@ class TableCacheRepository implements SingletonInterface
                 'uid=' . (int)$uniqueIdentifier
             );
             if (isset($row[0]) && $row[0] === false) {
-                return array();
+                return [];
             }
             $this->cacheSingleRecord($tableName, $uniqueIdentifier, $row, $databaseName);
         } else {
-            $row = array();
+            $row = [];
         }
         return $row;
     }
@@ -137,7 +137,7 @@ class TableCacheRepository implements SingletonInterface
             );
             $this->cacheRecords($tableName, $rows, $databaseName);
         } else {
-            $rows = array();
+            $rows = [];
         }
         return $rows;
     }

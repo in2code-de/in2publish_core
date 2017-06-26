@@ -52,7 +52,7 @@ class ToolsController extends AbstractController
     /**
      * @var array
      */
-    protected $tests = array();
+    protected $tests = [];
 
     /**
      * @param ViewInterface $view
@@ -105,7 +105,7 @@ class ToolsController extends AbstractController
      * @param int $pageNumber
      * @return void
      */
-    public function showLogsAction(array $filter = array(), $pageNumber = 1)
+    public function showLogsAction(array $filter = [], $pageNumber = 1)
     {
         if (empty($filter['limit'])) {
             $filter['limit'] = 25;
@@ -119,25 +119,25 @@ class ToolsController extends AbstractController
         reset($logLevels);
         $this->view->assign(
             'filter',
-            array(
-                'limits' => array(25 => 25, 50 => 50, 100 => 100, 150 => 150, 250 => 250),
+            [
+                'limits' => [25 => 25, 50 => 50, 100 => 100, 150 => 150, 250 => 250],
                 'limit' => $filter['limit'],
                 'logLevels' => $logLevels,
                 'level' => $filter['level'],
-            )
+            ]
         );
         $numberOfPages = ceil($this->logEntryRepository->countFiltered() / $filter['limit']);
-        $pageNumbers = array();
+        $pageNumbers = [];
         for ($i = 1; $i <= $numberOfPages; $i++) {
             $pageNumbers[] = $i;
         }
         $this->view->assignMultiple(
-            array(
+            [
                 'logsCount' => $this->logEntryRepository->countAll(),
                 'numberOfPages' => $numberOfPages,
                 'pageNumbers' => $pageNumbers,
                 'currentPage' => $pageNumber,
-            )
+            ]
         );
         $this->view->assign('logEntries', $this->logEntryRepository->getFiltered());
         $this->view->assign('logConfigurations', ConfigurationUtility::getConfiguration('log'));

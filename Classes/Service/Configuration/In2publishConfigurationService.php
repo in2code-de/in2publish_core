@@ -38,7 +38,7 @@ class In2publishConfigurationService implements SingletonInterface
     /**
      * @var array
      */
-    protected $configuration = array();
+    protected $configuration = [];
 
     /**
      * In2publishConfigurationService constructor.

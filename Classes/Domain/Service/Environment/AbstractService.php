@@ -55,7 +55,7 @@ abstract class AbstractService
      *
      * @var array
      */
-    protected $rewriteCharacters = array(
+    protected $rewriteCharacters = [
         'ä' => 'ae',
         'ö' => 'oe',
         'ü' => 'ue',
@@ -63,7 +63,7 @@ abstract class AbstractService
         'Ö' => 'Oe',
         'Ü' => 'Ue',
         'ß' => 'ss',
-    );
+    ];
 
     /**
      * Remove first folder from path (with beginning slash)

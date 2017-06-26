@@ -67,7 +67,7 @@ class CaseSensitivityTest implements TestCaseInterface
     {
         $storages = $this->testSubjectProvider->getStoragesForCaseSensitivityTest();
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
-        $affected = array();
+        $affected = [];
 
         foreach ($keys as $key) {
             $local = $this->getConfiguration($storages, $key, 'local');
@@ -89,7 +89,7 @@ class CaseSensitivityTest implements TestCaseInterface
             return new TestResult(
                 'fal.case_sensitivity_mismatch',
                 TestResult::ERROR,
-                array_merge(array('fal.affected_storages'), $affected)
+                array_merge(['fal.affected_storages'], $affected)
             );
         }
 
@@ -101,9 +101,9 @@ class CaseSensitivityTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return array(
+        return [
             MissingStoragesTest::class,
-        );
+        ];
     }
 
     /**

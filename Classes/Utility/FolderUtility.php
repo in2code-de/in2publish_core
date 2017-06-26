@@ -78,12 +78,12 @@ class FolderUtility
      */
     public static function extractFolderInformation(FolderInterface $folder)
     {
-        return array(
+        return [
             'name' => $folder->getName(),
             'identifier' => $folder->getIdentifier(),
             'storage' => $folder->getStorage()->getUid(),
             'uid' => sprintf('%d:%s', $folder->getStorage()->getUid(), $folder->getIdentifier()),
-        );
+        ];
     }
 
     /**

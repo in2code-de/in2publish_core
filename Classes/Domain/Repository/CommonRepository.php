@@ -118,7 +118,7 @@ class CommonRepository extends BaseRepository
      *
      * @var array
      */
-    protected $skipRecords = array();
+    protected $skipRecords = [];
 
     /**
      * @param DatabaseConnection $localDatabase
@@ -175,7 +175,7 @@ class CommonRepository extends BaseRepository
     public function findByProperty($propertyName, $propertyValue)
     {
         if ($this->shouldSkipFindByProperty($propertyName, $propertyValue)) {
-            return array();
+            return [];
         }
         if ($propertyName === 'uid') {
             if ($this->recordFactory->hasCachedRecord($this->tableName, $propertyValue)) {
@@ -204,7 +204,7 @@ class CommonRepository extends BaseRepository
         }
         foreach ($properties as $propertyName => $propertyValue) {
             if ($this->shouldSkipFindByProperty($propertyName, $propertyValue)) {
-                return array();
+                return [];
             }
         }
         if (isset($properties['uid'])) {
@@ -294,7 +294,7 @@ class CommonRepository extends BaseRepository
         if ($firstKey !== null) {
             return $properties[$firstKey];
         }
-        return array();
+        return [];
     }
 
     /**
@@ -319,7 +319,7 @@ class CommonRepository extends BaseRepository
     {
         $keysToIterate = array_unique(array_merge(array_keys($localProperties), array_keys($foreignProperties)));
 
-        $foundRecords = array();
+        $foundRecords = [];
 
         foreach ($keysToIterate as $key) {
             if (strpos($key, ',') === false) {
@@ -343,12 +343,12 @@ class CommonRepository extends BaseRepository
                             // sys_file_metadata to change their target sys_file entry
                             $this->logger->warning(
                                 'Fixed possibly broken relation by replacing it with another possibly broken relation',
-                                array(
+                                [
                                     'table' => $this->tableName,
                                     'key (UID)' => $key,
                                     'file_local' => $localProperties[$key]['file'],
                                     'file_foreign' => $foreignProperties[$key]['file'],
-                                )
+                                ]
                             );
                         }
                     }
@@ -435,7 +435,7 @@ class CommonRepository extends BaseRepository
                     );
                     break;
                 default:
-                    $relatedRecords = array();
+                    $relatedRecords = [];
             }
             $this->identifierFieldName = $previousIdFieldName;
             try {
@@ -443,14 +443,14 @@ class CommonRepository extends BaseRepository
             } catch (\Exception $e) {
                 $this->logger->emergency(
                     'Exception thrown while adding related record: ' . $e->getMessage(),
-                    array(
+                    [
                         'code' => $e->getCode(),
                         'tablename' => $record->getTableName(),
                         'uid' => $record->getIdentifier(),
                         'propertyName' => $propertyName,
                         'columnConfiguration' => $columnConfiguration,
                         'relatedRecords' => $relatedRecords,
-                    )
+                    ]
                 );
             }
         }
@@ -468,7 +468,7 @@ class CommonRepository extends BaseRepository
      */
     protected function fetchRelatedRecordsByRte($bodyText, array $excludedTableNames)
     {
-        $relatedRecords = array();
+        $relatedRecords = [];
         // if RTE is enabled
         if (strpos($bodyText, 'src=') !== false) {
             // match and src tag
@@ -559,13 +559,13 @@ class CommonRepository extends BaseRepository
             // Intentionally named and used this way (mainly for code sniffer :D)
             $possibleCombination = 'default';
 
-            $possibleCombinations = array(
+            $possibleCombinations = [
                 $firstPointerValue . ',' . $secondPointerValue,
                 $firstPointerValue . ',*',
                 '*,' . $secondPointerValue,
                 $firstPointerValue,
                 $possibleCombination,
-            );
+            ];
 
             $definitionSource = null;
 
@@ -621,18 +621,18 @@ class CommonRepository extends BaseRepository
      */
     protected function getFlexFormDefinition(RecordInterface $record, array $columnConfiguration)
     {
-        $flexFormDefinition = array();
+        $flexFormDefinition = [];
         $flexFormSource = $this->getFlexFormDefinitionSource($record, $columnConfiguration);
         if ($flexFormSource !== '') {
             $flexFormString = $this->resolveFlexFormSource($flexFormSource);
             if ($flexFormString === '') {
                 $this->logger->warning(
                     'The FlexForm was empty',
-                    array(
+                    [
                         'tableName' => $record->getTableName(),
                         'identifier' => $record->getIdentifier(),
                         'flexFormSource' => $flexFormSource,
-                    )
+                    ]
                 );
                 return $flexFormDefinition;
             }
@@ -681,7 +681,7 @@ class CommonRepository extends BaseRepository
      */
     protected function flattenFlexFormDefinition(array $flexFormDefinition)
     {
-        $flattenedDefinition = array();
+        $flattenedDefinition = [];
         foreach ($flexFormDefinition as $sheetDefinition) {
             foreach ($sheetDefinition as $rootDefinition) {
                 if (is_array($rootDefinition) && !empty($rootDefinition['el'])) {
@@ -757,7 +757,7 @@ class CommonRepository extends BaseRepository
     protected function filterFlexFormDefinition(array $flexFormDefinition)
     {
         foreach ($flexFormDefinition as $key => $config) {
-            if (empty($config['type']) || !in_array($config['type'], array('select', 'group', 'inline'))) {
+            if (empty($config['type']) || !in_array($config['type'], ['select', 'group', 'inline'])) {
                 unset($flexFormDefinition[$key]);
             }
         }
@@ -771,7 +771,7 @@ class CommonRepository extends BaseRepository
      */
     protected function getFlexFormDataByDefinition(array $originalData, array $flexFormDefinition)
     {
-        $flexFormData = array();
+        $flexFormData = [];
         foreach (array_keys($flexFormDefinition) as $key) {
             $data = ArrayUtility::getValueByPath($originalData, $key);
             if (!empty($data)) {
@@ -793,7 +793,7 @@ class CommonRepository extends BaseRepository
         /** @var FlexFormService $flexFormService */
         $flexFormService = $this->objectManager->get(FlexFormService::class);
 
-        $localFlexFormData = array();
+        $localFlexFormData = [];
         if ($record->hasLocalProperty($column)) {
             $localFlexFormData = $flexFormService->convertFlexFormContentToArray($record->getLocalProperty($column));
         }
@@ -819,7 +819,7 @@ class CommonRepository extends BaseRepository
         array $excludedTableNames,
         array $columnConfiguration
     ) {
-        $records = array();
+        $records = [];
 
         $localFlexFormData = $this->getLocalFlexFormDataFromRecord($record, $column);
         if (empty($localFlexFormData)) {
@@ -860,11 +860,11 @@ class CommonRepository extends BaseRepository
                         );
                         $this->logger->warning(
                             'FlexForm relation inline is not implemented. Please contact in2code.',
-                            array(
+                            [
                                 'sheetConfiguration' => $config,
                                 'column' => $column,
                                 'tableName' => $record->getTableName(),
-                            )
+                            ]
                         );
                         break;
                     case 'group':
@@ -882,12 +882,12 @@ class CommonRepository extends BaseRepository
                     default:
                         $this->logger->emergency(
                             'A weird error occurred. An unsupported FlexForm type sneaked through the FlexForm filter',
-                            array(
+                            [
                                 'sheetConfiguration' => $config,
                                 'column' => $column,
                                 'tableName' => $record->getTableName(),
                                 'identifier' => $record->getIdentifier(),
-                            )
+                            ]
                         );
                 }
             }
@@ -908,10 +908,10 @@ class CommonRepository extends BaseRepository
         RecordInterface $record,
         array $excludedTableNames,
         $propertyName,
-        array $overrideIdentifierArray = array()
+        array $overrideIdentifierArray = []
     ) {
         /** @var RecordInterface[] $records */
-        $records = array();
+        $records = [];
         $tableName = '';
         if (!empty($columnConfiguration['foreign_table'])) {
             $tableName = $columnConfiguration['foreign_table'];
@@ -931,7 +931,7 @@ class CommonRepository extends BaseRepository
                 );
             }
             if (!empty($identifierArray)) {
-                $identifierToTableArray = array();
+                $identifierToTableArray = [];
                 foreach ($tableNames as $tableName) {
                     if (in_array($tableName, $excludedTableNames)) {
                         continue;
@@ -948,11 +948,11 @@ class CommonRepository extends BaseRepository
                     if ($columnConfiguration['MM']) {
                         $this->logger->alert(
                             'Missing implementation: GROUP MM',
-                            array(
+                            [
                                 'table' => $record->getTableName(),
                                 'property' => $propertyName,
                                 'columnConfiguration' => $columnConfiguration,
-                            )
+                            ]
                         );
                     }
                     foreach ($identifiers as $identifier) {
@@ -988,11 +988,11 @@ class CommonRepository extends BaseRepository
                     $this->logger->error(
                         'Group MM relations with MM_match_fields,'
                         . ' MM_insert_fields, MM_table_where or MM_hasUidField are not supported',
-                        array(
+                        [
                             'tableName' => $tableName,
                             'propertyName' => $propertyName,
                             'columnConfiguration' => $columnConfiguration,
-                        )
+                        ]
                     );
                 }
                 $previousTable = $this->replaceTableName($columnConfiguration['MM']);
@@ -1033,11 +1033,11 @@ class CommonRepository extends BaseRepository
                         //throw new \Exception('DEVELOP EXCEPTION ' . __FUNCTION__ . '@' . __LINE__);
                         $this->logger->alert(
                             'Detected different UIDs in fetchRelatedRecordsByGroup',
-                            array(
+                            [
                                 'columnConfiguration' => $columnConfiguration,
                                 'recordTableName' => $this->tableName,
                                 'relatedRecordIdentifier' => $relatedRecord->getIdentifier(),
-                            )
+                            ]
                         );
                         continue;
                     }
@@ -1098,7 +1098,7 @@ class CommonRepository extends BaseRepository
         array $excludedTableNames,
         $flexFormData = ''
     ) {
-        $records = array();
+        $records = [];
         switch ($columnConfiguration['internal_type']) {
             case 'db':
                 $records = $this->fetchRelatedRecordsByGroupTypeDb(
@@ -1136,7 +1136,7 @@ class CommonRepository extends BaseRepository
                                 $this->logger->notice(
                                     'Detected broken record relation between local and foreign. '
                                     . 'The foreign\'s identifier differs from the local, but the uid is the same',
-                                    array('uid' => $recordIdentifier, 'identifier' => $fileAndPathName)
+                                    ['uid' => $recordIdentifier, 'identifier' => $fileAndPathName]
                                 );
                             }
                         }
@@ -1148,11 +1148,11 @@ class CommonRepository extends BaseRepository
             default:
                 $this->logger->alert(
                     'Missing implementation: GROUP TYPE',
-                    array(
+                    [
                         'table' => $record->getTableName(),
                         'property' => $propertyName,
                         'columnConfiguration' => $columnConfiguration,
-                    )
+                    ]
                 );
         }
         return $records;
@@ -1208,10 +1208,10 @@ class CommonRepository extends BaseRepository
     ) {
         $tableName = $columnConfiguration['foreign_table'];
         if (in_array($tableName, $excludedTableNames)) {
-            return array();
+            return [];
         }
         $previousTableName = $this->replaceTableName($tableName);
-        $records = array();
+        $records = [];
 
         if ($propertyNameOverridesRecordIdentifier) {
             $recordIdentifier = $propertyName;
@@ -1238,7 +1238,7 @@ class CommonRepository extends BaseRepository
                     );
                 }
 
-                $uidArray = array();
+                $uidArray = [];
 
                 if (MathUtility::canBeInterpretedAsInteger($recordIdentifier)) {
                     $uidArray[] = $recordIdentifier;
@@ -1284,16 +1284,16 @@ class CommonRepository extends BaseRepository
         if (!empty($columnConfiguration['MM_table_where'])) {
             $this->logger->warning(
                 'MM_table_where of select records is not implemented. Please contact the extension authors at in2code',
-                array(
+                [
                     'columnConfiguration' => $columnConfiguration,
-                )
+                ]
             );
         }
 
         // build additional where clause
-        $additionalWhereArray = array();
+        $additionalWhereArray = [];
         if (!empty($columnConfiguration['MM_match_fields'])) {
-            $foreignMatchFields = array();
+            $foreignMatchFields = [];
             foreach ($columnConfiguration['MM_match_fields'] as $matchField => $matchValue) {
                 $foreignMatchFields[] = $matchField . ' LIKE "' . $matchValue . '"';
             }
@@ -1363,11 +1363,11 @@ class CommonRepository extends BaseRepository
     ) {
         $tableName = $columnConfiguration['foreign_table'];
         if (in_array($tableName, $excludedTableNames)) {
-            return array();
+            return [];
         }
         $previousTableName = $this->replaceTableName($tableName);
 
-        $where = array();
+        $where = [];
 
         if (!empty($columnConfiguration['MM'])) {
             $records = $this->fetchRelatedRecordsByInlineMm(
@@ -1437,11 +1437,11 @@ class CommonRepository extends BaseRepository
             $this->logger->error(
                 'Inline MM relations with foreign_field, foreign_types, symmetric_field, filter, '
                 . 'foreign_table_field, foreign_record_defaults or foreign_selector are not supported',
-                array(
+                [
                     'columnConfiguration' => $columnConfiguration,
                     'recordTableName' => $recordTableName,
                     'recordIdentifier' => $recordIdentifier,
-                )
+                ]
             );
         }
         $previousTable = $this->replaceTableName($columnConfiguration['MM']);
@@ -1502,11 +1502,11 @@ class CommonRepository extends BaseRepository
                 //throw new \Exception('DEVELOP EXCEPTION ' . __FUNCTION__ . '@' . __LINE__);
                 $this->logger->alert(
                     'Detected different UIDs in fetchRelatedRecordsByInline',
-                    array(
+                    [
                         'columnConfiguration' => $columnConfiguration,
                         'recordTableName' => $recordTableName,
                         'recordIdentifier' => $recordIdentifier,
-                    )
+                    ]
                 );
                 continue;
             }
@@ -1597,15 +1597,15 @@ class CommonRepository extends BaseRepository
      */
     public function publishRecordRecursive(
         RecordInterface $record,
-        array $excludedTables = array('pages'),
-        array $alreadyVisited = array()
+        array $excludedTables = ['pages'],
+        array $alreadyVisited = []
     ) {
         try {
             // Dispatch Anomaly
             $this->signalSlotDispatcher->dispatch(
                 __CLASS__,
                 'publishRecordRecursiveBegin',
-                array($record, $this)
+                [$record, $this]
             );
 
             $this->publishRecordRecursiveInternal($record, $excludedTables, $alreadyVisited);
@@ -1614,17 +1614,17 @@ class CommonRepository extends BaseRepository
             $this->signalSlotDispatcher->dispatch(
                 __CLASS__,
                 'publishRecordRecursiveEnd',
-                array($record, $this)
+                [$record, $this]
             );
         } catch (\Exception $exception) {
             $this->logger->critical(
                 'Publishing single record failed',
-                array(
+                [
                     'message' => $exception->getMessage(),
                     'code' => $exception->getCode(),
                     'file' => $exception->getFile(),
                     'line' => $exception->getLine(),
-                )
+                ]
             );
             throw $exception;
         }
@@ -1656,7 +1656,7 @@ class CommonRepository extends BaseRepository
             $this->signalSlotDispatcher->dispatch(
                 __CLASS__,
                 'publishRecordRecursiveBeforePublishing',
-                array($tableName, $record, $this)
+                [$tableName, $record, $this]
             );
 
             /*
@@ -1675,11 +1675,11 @@ class CommonRepository extends BaseRepository
             if (true === $record->getAdditionalProperty('isPrimaryIndex')) {
                 $this->logger->notice(
                     'Removing duplicate index from remote',
-                    array(
+                    [
                         'tableName' => $record->getTableName(),
                         'local_uid' => $record->getLocalProperty('uid'),
                         'foreign_uid' => $record->getForeignProperty('uid'),
-                    )
+                    ]
                 );
                 // remove duplicate remote index
                 $previousTableName = $this->replaceTableName($record->getTableName());
@@ -1703,7 +1703,7 @@ class CommonRepository extends BaseRepository
             $this->signalSlotDispatcher->dispatch(
                 __CLASS__,
                 'publishRecordRecursiveAfterPublishing',
-                array($tableName, $record, $this)
+                [$tableName, $record, $this]
             );
 
             // set the records state to published/unchanged to prevent
@@ -1727,7 +1727,7 @@ class CommonRepository extends BaseRepository
     protected function publishRelatedRecordsRecursive(
         RecordInterface $record,
         array $excludedTables,
-        array $alreadyVisited = array()
+        array $alreadyVisited = []
     ) {
         foreach ($record->getRelatedRecords() as $tableName => $relatedRecords) {
             if (!in_array($tableName, $excludedTables) && is_array($relatedRecords)) {
@@ -1794,12 +1794,12 @@ class CommonRepository extends BaseRepository
     {
         $this->logger->notice(
             'Deleting foreign record',
-            array(
+            [
                 'localProperties' => $record->getLocalProperties(),
                 'foreignProperties' => $record->getForeignProperties(),
                 'tableName' => $record->getTableName(),
                 'identifier' => $record->getIdentifier(),
-            )
+            ]
         );
         $previousTableName = $this->replaceTableName($record->getTableName());
         $this->deleteRecord($this->foreignDatabase, $record->getIdentifier());
@@ -1854,7 +1854,7 @@ class CommonRepository extends BaseRepository
      */
     protected function shouldSkipFindByIdentifier($identifier)
     {
-        return $this->getBooleanDecisionBySignal(__FUNCTION__, array('identifier' => $identifier));
+        return $this->getBooleanDecisionBySignal(__FUNCTION__, ['identifier' => $identifier]);
     }
 
     /**
@@ -1866,7 +1866,7 @@ class CommonRepository extends BaseRepository
      */
     protected function shouldSkipFindByProperty($propertyName, $propertyValue)
     {
-        $arguments = array('propertyName' => $propertyName, 'propertyValue' => $propertyValue);
+        $arguments = ['propertyName' => $propertyName, 'propertyValue' => $propertyValue];
         return $this->getBooleanDecisionBySignal(__FUNCTION__, $arguments);
     }
 
@@ -1878,7 +1878,7 @@ class CommonRepository extends BaseRepository
      */
     protected function shouldSkipSearchingForRelatedRecords(RecordInterface $record)
     {
-        return $this->getBooleanDecisionBySignal(__FUNCTION__, array('record' => $record));
+        return $this->getBooleanDecisionBySignal(__FUNCTION__, ['record' => $record]);
     }
 
     /**
@@ -1894,11 +1894,11 @@ class CommonRepository extends BaseRepository
         $propertyName,
         array $columnConfiguration
     ) {
-        $arguments = array(
+        $arguments = [
             'record' => $record,
             'propertyName' => $propertyName,
             'columnConfiguration' => $columnConfiguration,
-        );
+        ];
         return $this->getBooleanDecisionBySignal(__FUNCTION__, $arguments);
     }
 
@@ -1910,7 +1910,7 @@ class CommonRepository extends BaseRepository
      */
     protected function shouldSkipEnrichingPageRecord(RecordInterface $record)
     {
-        return $this->getBooleanDecisionBySignal(__FUNCTION__, array('record' => $record));
+        return $this->getBooleanDecisionBySignal(__FUNCTION__, ['record' => $record]);
     }
 
     /**
@@ -1922,7 +1922,7 @@ class CommonRepository extends BaseRepository
      */
     protected function shouldSkipSearchingForRelatedRecordByTable(RecordInterface $record, $tableName)
     {
-        return $this->getBooleanDecisionBySignal(__FUNCTION__, array('record' => $record, 'tableName' => $tableName));
+        return $this->getBooleanDecisionBySignal(__FUNCTION__, ['record' => $record, 'tableName' => $tableName]);
     }
 
     /**
@@ -1934,7 +1934,7 @@ class CommonRepository extends BaseRepository
      */
     protected function shouldSkipRecord(RecordInterface $record, $tableName)
     {
-        return $this->getBooleanDecisionBySignal(__FUNCTION__, array('record' => $record, 'tableName' => $tableName));
+        return $this->getBooleanDecisionBySignal(__FUNCTION__, ['record' => $record, 'tableName' => $tableName]);
     }
 
     /**
@@ -1948,11 +1948,11 @@ class CommonRepository extends BaseRepository
     {
         return $this->getBooleanDecisionBySignal(
             __FUNCTION__,
-            array(
+            [
                 'localProperties' => $localProperties,
                 'foreignProperties' => $foreignProperties,
                 'tableName' => $this->tableName,
-            )
+            ]
         );
     }
 
@@ -1975,7 +1975,7 @@ class CommonRepository extends BaseRepository
         $signalArguments = $this->signalSlotDispatcher->dispatch(
             __CLASS__,
             $signal,
-            array(array('yes' => 0, 'no' => 0), $this, $arguments)
+            [['yes' => 0, 'no' => 0], $this, $arguments]
         );
         return $signalArguments[0]['yes'] > $signalArguments[0]['no'];
     }

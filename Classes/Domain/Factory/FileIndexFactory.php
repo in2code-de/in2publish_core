@@ -55,7 +55,7 @@ class FileIndexFactory
     /**
      * @var array
      */
-    protected $sysFileTca = array();
+    protected $sysFileTca = [];
 
     /**
      * @var ContextService
@@ -86,8 +86,8 @@ class FileIndexFactory
      */
     public function makeInstanceForSide($side, $identifier)
     {
-        $foreignProperties = array();
-        $localProperties = array();
+        $foreignProperties = [];
+        $localProperties = [];
         $uid = 0;
 
         if ('both' === $side || 'local' === $side) {
@@ -105,7 +105,7 @@ class FileIndexFactory
             $localProperties,
             $foreignProperties,
             $this->sysFileTca,
-            array()
+            []
         );
     }
 
@@ -123,7 +123,7 @@ class FileIndexFactory
         $record->setPropertiesBySideIdentifier($side, $this->getFileIndexArray($identifier, $side, $uid));
 
         if ($clearOpposite) {
-            $record->setPropertiesBySideIdentifier($oppositeSide, array());
+            $record->setPropertiesBySideIdentifier($oppositeSide, []);
         }
 
         $record->setDirtyProperties()->calculateState();
@@ -166,11 +166,11 @@ class FileIndexFactory
             return $fileInfo;
         }
 
-        $remapKeys = array(
+        $remapKeys = [
             'mtime' => 'modification_date',
             'ctime' => 'creation_date',
             'mimetype' => 'mime_type',
-        );
+        ];
 
         foreach ($remapKeys as $fileInfoKey => $sysFileRecordKey) {
             $fileInfo[$sysFileRecordKey] = $fileInfo[$fileInfoKey];
@@ -196,7 +196,7 @@ class FileIndexFactory
 
         $fileInfo = array_intersect_key(
             $fileInfo,
-            array(
+            [
                 'uid' => '',
                 'pid' => '',
                 'missing' => '',
@@ -213,7 +213,7 @@ class FileIndexFactory
                 'modification_date' => '',
                 'folder_hash' => '',
                 'tstamp' => '',
-            )
+            ]
         );
 
         // convert all values to string to match the resulting types of a database select query result
@@ -289,7 +289,7 @@ class FileIndexFactory
             $fileInfo['sha1'] = $driver->hash($identifier, 'sha1');
             return $fileInfo;
         }
-        return array();
+        return [];
     }
 
     /**

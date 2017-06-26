@@ -137,20 +137,20 @@ class ReplaceMarkersService
             }
         }
         $string = str_replace(
-            array(
+            [
                 '###THIS_CID###',
                 '###SITEROOT###',
                 '###PAGE_TSCONFIG_ID###',
                 '###PAGE_TSCONFIG_IDLIST###',
                 '###PAGE_TSCONFIG_STR###',
-            ),
-            array(
+            ],
+            [
                 0,
                 '#_SITEROOT',
                 '#PAGE_TSCONFIG_ID',
                 '#PAGE_TSCONFIG_IDLIST',
                 '#PAGE_TSCONFIG_STR',
-            ),
+            ],
             $string
         );
         return $string;
@@ -165,9 +165,9 @@ class ReplaceMarkersService
     protected function checkForMarkersAndErrors($string)
     {
         if (strpos($string, '###') !== false) {
-            $this->logger->error('Could not replace marker', array('string' => $string));
+            $this->logger->error('Could not replace marker', ['string' => $string]);
         } elseif (strpos($string, '#') !== false) {
-            $this->logger->warning('Marker replacement not implemented', array('string' => $string));
+            $this->logger->warning('Marker replacement not implemented', ['string' => $string]);
         }
     }
 

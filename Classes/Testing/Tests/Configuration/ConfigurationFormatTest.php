@@ -66,7 +66,7 @@ class ConfigurationFormatTest implements TestCaseInterface
             return new TestResult(
                 'configuration.superfluous_keys',
                 TestResult::ERROR,
-                array_merge(array('configuration.keys_superfluous'), $superfluousKeys)
+                array_merge(['configuration.keys_superfluous'], $superfluousKeys)
             );
         }
 
@@ -76,7 +76,7 @@ class ConfigurationFormatTest implements TestCaseInterface
             return new TestResult(
                 'configuration.missing_keys',
                 TestResult::ERROR,
-                array_merge(array('configuration.keys_missing'), $missingKeys)
+                array_merge(['configuration.keys_missing'], $missingKeys)
             );
         }
 
@@ -86,7 +86,7 @@ class ConfigurationFormatTest implements TestCaseInterface
             return new TestResult(
                 'configuration.mismatching_keys',
                 TestResult::ERROR,
-                array_merge(array('configuration.keys_mismatching'), $mismatchingKeys)
+                array_merge(['configuration.keys_mismatching'], $mismatchingKeys)
             );
         }
 
@@ -98,9 +98,9 @@ class ConfigurationFormatTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return array(
+        return [
             ConfigurationIsAvailableTest::class,
-        );
+        ];
     }
 
     /**
@@ -109,9 +109,9 @@ class ConfigurationFormatTest implements TestCaseInterface
      * @param array $path
      * @return array
      */
-    protected function identifySuperfluousKeys(array $expected, array $actual, array $path = array())
+    protected function identifySuperfluousKeys(array $expected, array $actual, array $path = [])
     {
-        $missingKeys = array();
+        $missingKeys = [];
 
         foreach ($actual as $actualKey => $actualValue) {
             array_push($path, $actualKey);
@@ -150,9 +150,9 @@ class ConfigurationFormatTest implements TestCaseInterface
      * @param array $path
      * @return array
      */
-    protected function identifyMissingKeys(array $expected, array $actual, array $path = array())
+    protected function identifyMissingKeys(array $expected, array $actual, array $path = [])
     {
-        $missingKeys = array();
+        $missingKeys = [];
 
         foreach ($expected as $requiredKey => $requiredType) {
             array_push($path, $requiredKey);
@@ -211,9 +211,9 @@ class ConfigurationFormatTest implements TestCaseInterface
      * @param array $path
      * @return array
      */
-    protected function identifyMismatchingKeys(array $expected, array $actual, array $path = array())
+    protected function identifyMismatchingKeys(array $expected, array $actual, array $path = [])
     {
-        $mismatchingKeys = array();
+        $mismatchingKeys = [];
 
         foreach ($expected as $requiredKey => $requiredType) {
             if (false !== strpos($requiredKey, '*')) {
@@ -354,6 +354,6 @@ class ConfigurationFormatTest implements TestCaseInterface
         if (strpos($expected, '|') !== false) {
             return explode('|', $expected);
         }
-        return array($expected);
+        return [$expected];
     }
 }

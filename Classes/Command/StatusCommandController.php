@@ -71,7 +71,7 @@ class StatusCommandController extends AbstractCommandController
      */
     public function versionCommand()
     {
-        $EM_CONF = array();
+        $EM_CONF = [];
         $_EXTKEY = 'in2publish_core';
         require_once(ExtensionManagementUtility::extPath($_EXTKEY, 'ext_emconf.php'));
         $this->outputLine('Version: ' . $EM_CONF[$_EXTKEY]['version']);

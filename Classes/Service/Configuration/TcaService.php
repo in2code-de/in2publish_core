@@ -39,12 +39,12 @@ class TcaService implements SingletonInterface
     /**
      * @var array[]
      */
-    protected $tca = array();
+    protected $tca = [];
 
     /**
      * @var array
      */
-    protected $tableNames = array();
+    protected $tableNames = [];
 
     /**
      * TcaService constructor.
@@ -59,13 +59,13 @@ class TcaService implements SingletonInterface
      * @param array $exceptTableNames
      * @return array
      */
-    public function getAllTableNamesAllowedOnRootLevel(array $exceptTableNames = array())
+    public function getAllTableNamesAllowedOnRootLevel(array $exceptTableNames = [])
     {
-        $rootLevelTables = array();
+        $rootLevelTables = [];
         foreach ($this->tca as $tableName => $tableConfiguration) {
             if (!in_array($tableName, $exceptTableNames)) {
                 if (!empty($tableConfiguration['ctrl']['rootLevel'])) {
-                    if (in_array($tableConfiguration['ctrl']['rootLevel'], array(1, -1, true))) {
+                    if (in_array($tableConfiguration['ctrl']['rootLevel'], [1, -1, true])) {
                         $rootLevelTables[] = $tableName;
                     }
                 }
@@ -162,10 +162,10 @@ class TcaService implements SingletonInterface
      * @param array $exceptTableNames
      * @return array
      */
-    public function getAllTableNamesWithPidAndUidField(array $exceptTableNames = array())
+    public function getAllTableNamesWithPidAndUidField(array $exceptTableNames = [])
     {
         $databaseSchema = $this->getDatabaseSchema();
-        $allTableNames = array();
+        $allTableNames = [];
 
         foreach (array_keys($databaseSchema) as $tableName) {
             if (isset($databaseSchema[$tableName]['pid']) && isset($databaseSchema[$tableName]['uid'])) {
@@ -211,7 +211,7 @@ class TcaService implements SingletonInterface
      * @param array $exceptTableNames
      * @return array
      */
-    public function getAllTableNames(array $exceptTableNames = array())
+    public function getAllTableNames(array $exceptTableNames = [])
     {
         if (!empty($exceptTableNames)) {
             return array_diff($this->tableNames, $exceptTableNames);
@@ -250,7 +250,7 @@ class TcaService implements SingletonInterface
         return isset($this->tca[$tableName]['ctrl']['hideTable'])
                && isset($this->tca[$tableName]['ctrl']['rootLevel'])
                && true === (bool)$this->tca[$tableName]['ctrl']['hideTable']
-               && in_array($this->tca[$tableName]['ctrl']['rootLevel'], array(1, -1));
+               && in_array($this->tca[$tableName]['ctrl']['rootLevel'], [1, -1]);
     }
 
     /**
@@ -259,7 +259,7 @@ class TcaService implements SingletonInterface
      */
     protected function getTca()
     {
-        return isset($GLOBALS['TCA']) ? $GLOBALS['TCA'] : array();
+        return isset($GLOBALS['TCA']) ? $GLOBALS['TCA'] : [];
     }
 
     /**

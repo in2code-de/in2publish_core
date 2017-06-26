@@ -57,10 +57,10 @@ class RealUrlTask extends AbstractTask
         if (!empty($this->configuration['record'])) {
             $record = $this->configuration['record'];
             if ($record instanceof Record) {
-                $this->configuration = array(
+                $this->configuration = [
                     'identifier' => $record->getIdentifier(),
                     'requestFrontend' => ConfigurationUtility::getConfiguration('tasks.realUrl.requestFrontend'),
-                );
+                ];
             }
         }
     }
@@ -99,7 +99,7 @@ class RealUrlTask extends AbstractTask
         $GLOBALS['TSFE']->set_no_cache('Refresh RealUrl');
         $GLOBALS['TSFE']->cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 
-        $uidArray = array();
+        $uidArray = [];
 
         foreach ($rootline as $page) {
             $pageUid = (int)$page['uid'];
@@ -135,7 +135,7 @@ class RealUrlTask extends AbstractTask
      */
     protected function cleanAllRealUrlCachesForPageIdentifier($pageUid)
     {
-        $realUrlTables = array(
+        $realUrlTables = [
             // realurl < 2.2
             'tx_realurl_pathcache',
             // realurl 1.x
@@ -144,7 +144,7 @@ class RealUrlTask extends AbstractTask
             'tx_realurl_urldecodecache',
             // realurl < 2.2
             'tx_realurl_urlcache',
-        );
+        ];
         foreach ($realUrlTables as $table) {
             if (DatabaseUtility::isTableExistingOnLocal($table)) {
                 $this->databaseConnection->exec_DELETEquery($table, 'page_id=' . (int)$pageUid);

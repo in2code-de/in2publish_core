@@ -47,7 +47,7 @@ class UidReservationService
     /**
      * @var array
      */
-    protected $cache = array();
+    protected $cache = [];
 
     /**
      * IdentifierReservationService constructor.
@@ -108,7 +108,7 @@ class UidReservationService
      */
     protected function setAutoIncrement($autoIncrement)
     {
-        foreach (array($this->localDatabase, $this->foreignDatabase) as $databaseConnection) {
+        foreach ([$this->localDatabase, $this->foreignDatabase] as $databaseConnection) {
             $success = $databaseConnection->admin_query(
                 'ALTER TABLE sys_file AUTO_INCREMENT = ' . (int)$autoIncrement
             );

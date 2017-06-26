@@ -40,7 +40,7 @@ class PublishingDataAttributesViewHelper extends AbstractViewHelper
      * @param array $attributes
      * @return array
      */
-    public function render(array $attributes = array())
+    public function render(array $attributes = [])
     {
         $attributes['data-in2publish-confirm'] = LocalizationUtility::translate(
             'confirm_publish_pages',

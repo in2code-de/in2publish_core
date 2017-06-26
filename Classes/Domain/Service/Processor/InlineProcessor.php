@@ -44,24 +44,24 @@ class InlineProcessor extends AbstractProcessor
     /**
      * @var array
      */
-    protected $forbidden = array();
+    protected $forbidden = [];
 
     /**
      * @var array
      */
-    protected $required = array(
+    protected $required = [
         'Must be set, there is no type "inline" without a foreign table' => self::FOREIGN_TABLE,
-    );
+    ];
 
     /**
      * @var array
      */
-    protected $allowed = array(
+    protected $allowed = [
         self::FOREIGN_FIELD,
         self::FOREIGN_MATCH_FIELDS,
         self::FOREIGN_TABLE_FIELD,
-        self::MM
-    );
+        self::MM,
+    ];
 
     /**
      * @param array $config

@@ -59,7 +59,7 @@ class Envelope
      * @param mixed $response
      * @param int|null $uid
      */
-    public function __construct($command, array $request = array(), $response = null, $uid = null)
+    public function __construct($command, array $request = [], $response = null, $uid = null)
     {
         $this->setCommand($command);
         $this->setRequest($request);
@@ -153,12 +153,12 @@ class Envelope
     public function toArray()
     {
         return array_filter(
-            array(
+            [
                 'uid' => $this->uid,
                 'command' => $this->command,
                 'request' => $this->request,
                 'response' => $this->response,
-            )
+            ]
         );
     }
 
@@ -168,8 +168,8 @@ class Envelope
      */
     public static function fromArray(array $values)
     {
-        $object = new Envelope('', array());
-        foreach (array('uid', 'command', 'request', 'response') as $property) {
+        $object = new Envelope('', []);
+        foreach (['uid', 'command', 'request', 'response'] as $property) {
             if (isset($values[$property])) {
                 $object->{$property} = $values[$property];
             }
