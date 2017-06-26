@@ -127,7 +127,7 @@ class TcaService
      */
     protected function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache(
             'in2publish_core'
         );

@@ -98,7 +98,7 @@ abstract class AbstractController extends ActionController
     public function __construct()
     {
         parent::__construct();
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->pid = BackendUtility::getPageIdentifier();
         $this->backendUser = $this->getBackendUser();
     }

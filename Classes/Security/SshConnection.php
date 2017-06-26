@@ -836,7 +836,7 @@ class SshConnection
      */
     final protected function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         if (function_exists('ssh2_sftp_chmod')) {
             $this->chmodEnabled = true;
         }

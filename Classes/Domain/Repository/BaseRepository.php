@@ -75,7 +75,7 @@ abstract class BaseRepository
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
     }
 

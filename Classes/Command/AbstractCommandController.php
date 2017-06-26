@@ -56,7 +56,7 @@ abstract class AbstractCommandController extends CommandController
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->contextService = GeneralUtility::makeInstance(
             ContextService::class
         );
@@ -69,7 +69,7 @@ abstract class AbstractCommandController extends CommandController
     {
         if (!$this->contextService->isContextDefined()) {
             $this->logger->error(
-                'The command controller ' . get_class($this) . ' was called over '
+                'The command controller ' . static::class . ' was called over '
                 . php_sapi_name() . ' without the IN2PUBLISH_CONTEXT environment variable'
             );
             $this->outputLine(

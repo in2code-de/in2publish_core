@@ -158,7 +158,7 @@ class RecordFactory
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         $this->signalSlotDispatcher = $objectManager->get(Dispatcher::class);
