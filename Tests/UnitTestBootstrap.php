@@ -9,7 +9,7 @@ if (!file_exists($autoload = $webRoot . 'vendor/autoload.php')
     && !file_exists($autoload = $webRoot . '../vendor/autoload.php')
 ) {
     throw new \LogicException(
-        'Use this bootstrap file only when you installed in2publish via composer as dependency or predefine TYPO3_PATH_WEB'
+        'Use this bootstrap file only if you installed in2publish as composer dependency or predefined TYPO3_PATH_WEB'
     );
 }
 
