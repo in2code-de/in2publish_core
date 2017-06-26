@@ -113,7 +113,7 @@ class SshConnection
      */
     public function getForeignGlobalConfiguration()
     {
-        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
+        GeneralUtility::logDeprecatedFunction();
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
@@ -150,7 +150,7 @@ class SshConnection
      */
     public function getForeignConfigurationState()
     {
-        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
+        GeneralUtility::logDeprecatedFunction();
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
@@ -186,7 +186,7 @@ class SshConnection
      */
     public function callForeignCliDispatcherCallable()
     {
-        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
+        GeneralUtility::logDeprecatedFunction();
         $command = 'cd ' . $this->foreignRootPath
                    . ' && ' . $this->pathToPhp . ' ' . static::TYPO3_CLI_EXTBASE_DISPATCHER;
         return $this->executeRawCommand($command);
