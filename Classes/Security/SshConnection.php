@@ -409,7 +409,7 @@ class SshConnection
         if (!fclose($handle)) {
             throw new \Exception(
                 'Command:"' . htmlspecialchars($command) . '" returned an error! '
-                . 'Message: "' . htmlspecialchars($result) . '"',
+                . 'Message: "' . htmlspecialchars(implode('', $result)) . '"',
                 1425408542
             );
         }
