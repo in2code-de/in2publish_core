@@ -185,9 +185,7 @@ class FileIndexFactory
         $fileInfo['tstamp'] = time();
         $fileInfo['pid'] = 0;
 
-        if ($uid > 0) {
-            $fileInfo['uid'] = $uid;
-        } elseif ($this->contextService->isLocal()) {
+        if ($uid <= 0 && $this->contextService->isLocal()) {
             $fileInfo['uid'] = $this->getUidReservationService()->getReservedUid();
         } else {
             $fileInfo['uid'] = $uid;
