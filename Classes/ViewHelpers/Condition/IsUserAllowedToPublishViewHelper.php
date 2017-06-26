@@ -69,7 +69,7 @@ class IsUserAllowedToPublishViewHelper extends AbstractViewHelper
     protected function voteUserIsAllowedToPublish(array $votes)
     {
         // votes are manipulated via reference
-        $voteResult = $this->dispatcher->dispatch(__CLASS__, __FUNCTION__, [$votes]);
+        $voteResult = $this->dispatcher->dispatch(__CLASS__, 'voteUserIsAllowedToPublish', [$votes]);
         if (isset($voteResult[0])) {
             return $voteResult[0];
         }

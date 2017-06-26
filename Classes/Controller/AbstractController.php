@@ -248,7 +248,7 @@ abstract class AbstractController extends ActionController
         $votes = ['yes' => 0, 'no' => 0];
         $votingResult = GeneralUtility::makeInstance(Dispatcher::class)->dispatch(
             __CLASS__,
-            __FUNCTION__,
+            'checkUserAllowedToPublish',
             [$votes]
         );
         if (isset($votingResult[0])) {

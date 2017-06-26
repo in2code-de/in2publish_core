@@ -809,10 +809,10 @@ class Record implements RecordInterface
      */
     public function isForeignRecordDeleted()
     {
-        if (!isset($this->runtimeCache[__FUNCTION__])) {
-            $this->runtimeCache[__FUNCTION__] = $this->isRecordMarkedAsDeletedByProperties($this->foreignProperties);
+        if (!isset($this->runtimeCache['isForeignRecordDeleted'])) {
+            $this->runtimeCache['isForeignRecordDeleted'] = $this->isRecordMarkedAsDeletedByProperties($this->foreignProperties);
         }
-        return $this->runtimeCache[__FUNCTION__];
+        return $this->runtimeCache['isForeignRecordDeleted'];
     }
 
     /**
@@ -820,10 +820,10 @@ class Record implements RecordInterface
      */
     public function isLocalRecordDeleted()
     {
-        if (!isset($this->runtimeCache[__FUNCTION__])) {
-            $this->runtimeCache[__FUNCTION__] = $this->isRecordMarkedAsDeletedByProperties($this->localProperties);
+        if (!isset($this->runtimeCache['isLocalRecordDeleted'])) {
+            $this->runtimeCache['isLocalRecordDeleted'] = $this->isRecordMarkedAsDeletedByProperties($this->localProperties);
         }
-        return $this->runtimeCache[__FUNCTION__];
+        return $this->runtimeCache['isLocalRecordDeleted'];
     }
 
     /**
@@ -846,10 +846,10 @@ class Record implements RecordInterface
      */
     public function isLocalRecordDisabled()
     {
-        if (!isset($this->runtimeCache[__FUNCTION__])) {
-            $this->runtimeCache[__FUNCTION__] = $this->isRecordMarkedAsDisabledByProperties($this->localProperties);
+        if (!isset($this->runtimeCache['isLocalRecordDisabled'])) {
+            $this->runtimeCache['isLocalRecordDisabled'] = $this->isRecordMarkedAsDisabledByProperties($this->localProperties);
         }
-        return $this->runtimeCache[__FUNCTION__];
+        return $this->runtimeCache['isLocalRecordDisabled'];
     }
 
     /**
@@ -857,10 +857,10 @@ class Record implements RecordInterface
      */
     public function isForeignRecordDisabled()
     {
-        if (!isset($this->runtimeCache[__FUNCTION__])) {
-            $this->runtimeCache[__FUNCTION__] = $this->isRecordMarkedAsDisabledByProperties($this->foreignProperties);
+        if (!isset($this->runtimeCache['isForeignRecordDisabled'])) {
+            $this->runtimeCache['isForeignRecordDisabled'] = $this->isRecordMarkedAsDisabledByProperties($this->foreignProperties);
         }
-        return $this->runtimeCache[__FUNCTION__];
+        return $this->runtimeCache['isForeignRecordDisabled'];
     }
 
     /**
@@ -883,10 +883,10 @@ class Record implements RecordInterface
      */
     public function foreignRecordExists()
     {
-        if (!isset($this->runtimeCache[__FUNCTION__])) {
-            $this->runtimeCache[__FUNCTION__] = $this->isRecordRepresentByProperties($this->foreignProperties);
+        if (!isset($this->runtimeCache['foreignRecordExists'])) {
+            $this->runtimeCache['foreignRecordExists'] = $this->isRecordRepresentByProperties($this->foreignProperties);
         }
-        return $this->runtimeCache[__FUNCTION__];
+        return $this->runtimeCache['foreignRecordExists'];
     }
 
     /**
@@ -896,10 +896,10 @@ class Record implements RecordInterface
      */
     public function localRecordExists()
     {
-        if (!isset($this->runtimeCache[__FUNCTION__])) {
-            $this->runtimeCache[__FUNCTION__] = $this->isRecordRepresentByProperties($this->localProperties);
+        if (!isset($this->runtimeCache['localRecordExists'])) {
+            $this->runtimeCache['localRecordExists'] = $this->isRecordRepresentByProperties($this->localProperties);
         }
-        return $this->runtimeCache[__FUNCTION__];
+        return $this->runtimeCache['localRecordExists'];
     }
 
     /**

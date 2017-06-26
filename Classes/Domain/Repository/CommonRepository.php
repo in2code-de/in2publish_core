@@ -1854,7 +1854,7 @@ class CommonRepository extends BaseRepository
      */
     protected function shouldSkipFindByIdentifier($identifier)
     {
-        return $this->getBooleanDecisionBySignal(__FUNCTION__, ['identifier' => $identifier]);
+        return $this->getBooleanDecisionBySignal('shouldSkipFindByIdentifier', ['identifier' => $identifier]);
     }
 
     /**
@@ -1867,7 +1867,7 @@ class CommonRepository extends BaseRepository
     protected function shouldSkipFindByProperty($propertyName, $propertyValue)
     {
         $arguments = ['propertyName' => $propertyName, 'propertyValue' => $propertyValue];
-        return $this->getBooleanDecisionBySignal(__FUNCTION__, $arguments);
+        return $this->getBooleanDecisionBySignal('shouldSkipFindByProperty', $arguments);
     }
 
     /**
@@ -1878,7 +1878,7 @@ class CommonRepository extends BaseRepository
      */
     protected function shouldSkipSearchingForRelatedRecords(RecordInterface $record)
     {
-        return $this->getBooleanDecisionBySignal(__FUNCTION__, ['record' => $record]);
+        return $this->getBooleanDecisionBySignal('shouldSkipSearchingForRelatedRecords', ['record' => $record]);
     }
 
     /**
@@ -1899,7 +1899,7 @@ class CommonRepository extends BaseRepository
             'propertyName' => $propertyName,
             'columnConfiguration' => $columnConfiguration,
         ];
-        return $this->getBooleanDecisionBySignal(__FUNCTION__, $arguments);
+        return $this->getBooleanDecisionBySignal('shouldSkipSearchingForRelatedRecordsByProperty', $arguments);
     }
 
     /**
@@ -1910,7 +1910,7 @@ class CommonRepository extends BaseRepository
      */
     protected function shouldSkipEnrichingPageRecord(RecordInterface $record)
     {
-        return $this->getBooleanDecisionBySignal(__FUNCTION__, ['record' => $record]);
+        return $this->getBooleanDecisionBySignal('shouldSkipEnrichingPageRecord', ['record' => $record]);
     }
 
     /**
@@ -1922,7 +1922,7 @@ class CommonRepository extends BaseRepository
      */
     protected function shouldSkipSearchingForRelatedRecordByTable(RecordInterface $record, $tableName)
     {
-        return $this->getBooleanDecisionBySignal(__FUNCTION__, ['record' => $record, 'tableName' => $tableName]);
+        return $this->getBooleanDecisionBySignal('shouldSkipSearchingForRelatedRecordByTable', ['record' => $record, 'tableName' => $tableName]);
     }
 
     /**
@@ -1934,7 +1934,7 @@ class CommonRepository extends BaseRepository
      */
     protected function shouldSkipRecord(RecordInterface $record, $tableName)
     {
-        return $this->getBooleanDecisionBySignal(__FUNCTION__, ['record' => $record, 'tableName' => $tableName]);
+        return $this->getBooleanDecisionBySignal('shouldSkipRecord', ['record' => $record, 'tableName' => $tableName]);
     }
 
     /**
@@ -1947,7 +1947,7 @@ class CommonRepository extends BaseRepository
     protected function shouldIgnoreRecord(array $localProperties, array $foreignProperties)
     {
         return $this->getBooleanDecisionBySignal(
-            __FUNCTION__,
+            'shouldIgnoreRecord',
             [
                 'localProperties' => $localProperties,
                 'foreignProperties' => $foreignProperties,

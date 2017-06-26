@@ -165,7 +165,7 @@ class ConfigurationDefinitionProvider implements SingletonInterface
      */
     protected function overruleDefinition(array $definition)
     {
-        $returnValue = $this->dispatcher->dispatch(__CLASS__, __FUNCTION__, [$definition]);
+        $returnValue = $this->dispatcher->dispatch(__CLASS__, 'overruleDefinition', [$definition]);
         if (isset($returnValue[0])) {
             return $returnValue[0];
         }

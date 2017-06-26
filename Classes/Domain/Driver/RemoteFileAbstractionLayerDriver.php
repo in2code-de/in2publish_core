@@ -321,7 +321,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             );
         };
 
-        return $this->cache(__FUNCTION__ . $fileIdentifier . '|' . $newName, $callback);
+        return $this->cache('renameFile' . $fileIdentifier . '|' . $newName, $callback);
     }
 
     /**
@@ -346,7 +346,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             );
         };
 
-        return $this->cache(__FUNCTION__ . $fileIdentifier . '|' . $localFilePath, $callback);
+        return $this->cache('replaceFile' . $fileIdentifier . '|' . $localFilePath, $callback);
     }
 
     /**
@@ -368,7 +368,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             );
         };
 
-        return $this->cache(__FUNCTION__ . $fileIdentifier, $callback);
+        return $this->cache('deleteFile' . $fileIdentifier, $callback);
     }
 
     /**

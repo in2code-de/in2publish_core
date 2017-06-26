@@ -76,7 +76,7 @@ class RequiredTablesDataProvider implements SingletonInterface
      */
     protected function overruleTables(array $tables)
     {
-        $returnValue = $this->dispatcher->dispatch(__CLASS__, __FUNCTION__, [$tables]);
+        $returnValue = $this->dispatcher->dispatch(__CLASS__, 'overruleTables', [$tables]);
         if (isset($returnValue[0])) {
             return $returnValue[0];
         }

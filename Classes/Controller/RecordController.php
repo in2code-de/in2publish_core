@@ -46,7 +46,7 @@ class RecordController extends AbstractController
      */
     public function indexAction()
     {
-        $this->logger->debug('Called ' . __FUNCTION__);
+        $this->logger->debug('Called indexAction');
         TcaService::getInstance();
         if (!ConfigurationUtility::getConfiguration('factory.simpleOverviewAndAjax')) {
             $record = $this->commonRepository->findByIdentifier($this->pid);
@@ -72,7 +72,7 @@ class RecordController extends AbstractController
      */
     public function detailAction($identifier, $tableName)
     {
-        $this->logger->debug('Called ' . __FUNCTION__);
+        $this->logger->debug('Called detailAction');
         $this->commonRepository->disablePageRecursion();
         $record = $this->commonRepository->findByIdentifier($identifier, $tableName);
 
