@@ -80,7 +80,7 @@ class SshConnection
      */
     public function backupRemoteTable($tableName)
     {
-        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
+        GeneralUtility::logDeprecatedFunction();
         $this->stopIfArgumentContainsCommand($tableName);
         $command =
             'cd ' . $this->foreignRootPath . ' && '
@@ -97,7 +97,7 @@ class SshConnection
      */
     public function getForeignIn2publishVersion()
     {
-        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
+        GeneralUtility::logDeprecatedFunction();
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
@@ -134,7 +134,7 @@ class SshConnection
      */
     public function getForeignTypo3Version()
     {
-        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
+        GeneralUtility::logDeprecatedFunction();
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
@@ -165,7 +165,7 @@ class SshConnection
      */
     public function runForeignTasksCommandController()
     {
-        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
+        GeneralUtility::logDeprecatedFunction();
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
@@ -200,7 +200,7 @@ class SshConnection
      */
     public function testConnection()
     {
-        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
+        GeneralUtility::logDeprecatedFunction();
         return $this->executeRawCommand($this->pathToPhp . ' -v');
     }
 
@@ -211,7 +211,7 @@ class SshConnection
      */
     public function validateForeignDocumentRoot()
     {
-        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
+        GeneralUtility::logDeprecatedFunction();
         $command = 'cd ' . $this->foreignRootPath . ' && ls';
         return $this->executeRawCommand($command);
     }
@@ -223,7 +223,7 @@ class SshConnection
      */
     public function executeRpc($uid)
     {
-        GeneralUtility::deprecationLog('Deprecation notice ' . __METHOD__ . '. Use ' . RemoteCommandDispatcher::class);
+        GeneralUtility::logDeprecatedFunction();
         $command =
             'cd ' . $this->foreignRootPath . ' && '
             . $this->pathToPhp . ' '
