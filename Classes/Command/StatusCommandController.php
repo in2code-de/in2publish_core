@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Command;
 
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
