@@ -25,8 +25,10 @@ namespace In2code\In2publishCore\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -53,7 +55,7 @@ class DatabaseUtility
         if (self::$foreignDatabase === null) {
             $configuration = ConfigurationUtility::getConfiguration('database.foreign');
             /** @var DatabaseConnection $foreignDatabase */
-            self::$foreignDatabase = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Database\\DatabaseConnection');
+            self::$foreignDatabase = GeneralUtility::makeInstance(DatabaseConnection::class);
             self::$foreignDatabase->setDatabaseHost($configuration['hostname']);
             self::$foreignDatabase->setDatabaseName($configuration['name']);
             self::$foreignDatabase->setDatabasePassword($configuration['password']);
@@ -61,7 +63,7 @@ class DatabaseUtility
             self::$foreignDatabase->setDatabasePort($configuration['port']);
 
             $foreignEnvironmentService = GeneralUtility::makeInstance(
-                'In2code\\In2publishCore\\Service\\Environment\\ForeignEnvironmentService'
+                ForeignEnvironmentService::class
             );
             self::$foreignDatabase->setInitializeCommandsAfterConnect(
                 $foreignEnvironmentService->getDatabaseInitializationCommands()
@@ -262,7 +264,7 @@ class DatabaseUtility
     protected static function initializeLogger()
     {
         if (self::$logger === null) {
-            self::$logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(
+            self::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(
                 get_called_class()
             );
         }

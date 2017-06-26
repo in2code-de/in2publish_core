@@ -84,7 +84,7 @@ class TestCaseService
     {
         $tests = array();
         foreach ($this->getTestClasses() as $class) {
-            if (!is_subclass_of($class, 'In2code\\In2publishCore\\Testing\\Tests\\TestCaseInterface')) {
+            if (!is_subclass_of($class, TestCaseInterface::class)) {
                 throw new \InvalidArgumentException(
                     'The test class ' . $class . ' must implement the TestCaseInterface',
                     1470244507

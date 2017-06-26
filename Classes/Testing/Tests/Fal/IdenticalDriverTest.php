@@ -48,7 +48,7 @@ class IdenticalDriverTest implements TestCaseInterface
     public function __construct()
     {
         $this->testSubjectProvider = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Testing\\Data\\FalStorageTestSubjectsProvider'
+            FalStorageTestSubjectsProvider::class
         );
     }
 
@@ -98,7 +98,7 @@ class IdenticalDriverTest implements TestCaseInterface
     public function getDependencies()
     {
         return array(
-            'In2code\\In2publishCore\\Testing\\Tests\\Fal\\CaseSensitivityTest',
+            CaseSensitivityTest::class,
         );
     }
 }

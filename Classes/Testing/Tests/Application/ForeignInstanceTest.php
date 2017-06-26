@@ -28,6 +28,8 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
+use In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
@@ -162,8 +164,8 @@ class ForeignInstanceTest implements TestCaseInterface
     public function getDependencies()
     {
         return [
-            'In2code\\In2publishCore\\Testing\\Tests\\SshConnection\\SshConnectionTest',
-            'In2code\\In2publishCore\\Testing\\Tests\\Database\\ForeignDatabaseTest',
+            SshConnectionTest::class,
+            ForeignDatabaseTest::class,
         ];
     }
 }

@@ -30,17 +30,21 @@ namespace In2code\In2publishCore\Controller;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
+use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
+use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
@@ -94,7 +98,7 @@ abstract class AbstractController extends ActionController
     public function __construct()
     {
         parent::__construct();
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
         $this->pid = BackendUtility::getPageIdentifier();
         $this->backendUser = $this->getBackendUser();
     }
@@ -200,7 +204,7 @@ abstract class AbstractController extends ActionController
     {
         $localDatabaseOn = $this->localDatabase !== null;
         $foreignDatabaseOn = $this->foreignDatabase !== null;
-        $testStatus = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Environment\\EnvironmentService')
+        $testStatus = GeneralUtility::makeInstance(EnvironmentService::class)
                                     ->getTestStatus();
         $this->view->assignMultiple(
             array(
@@ -242,7 +246,7 @@ abstract class AbstractController extends ActionController
     protected function checkUserAllowedToPublish()
     {
         $votes = array('yes' => 0, 'no' => 0);
-        $votingResult = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher')->dispatch(
+        $votingResult = GeneralUtility::makeInstance(Dispatcher::class)->dispatch(
             __CLASS__,
             __FUNCTION__,
             array($votes)
@@ -284,7 +288,7 @@ abstract class AbstractController extends ActionController
     {
         /** @var \In2code\In2publishCore\Domain\Service\ExecutionTimeService $executionTimeService */
         $executionTimeService = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Service\\ExecutionTimeService'
+            ExecutionTimeService::class
         );
         $executionTimeService->start();
         $this->initializeDatabaseConnections();
@@ -296,7 +300,7 @@ abstract class AbstractController extends ActionController
      */
     protected function checkTestStatus()
     {
-        $testStates = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Environment\\EnvironmentService')
+        $testStates = GeneralUtility::makeInstance(EnvironmentService::class)
                                     ->getTestStatus();
         if (!empty($testStates)) {
             $messages = array();

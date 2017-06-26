@@ -36,6 +36,7 @@ use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -835,7 +836,7 @@ class SshConnection
      */
     final protected function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
         if (function_exists('ssh2_sftp_chmod')) {
             $this->chmodEnabled = true;
         }

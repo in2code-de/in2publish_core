@@ -26,6 +26,9 @@ namespace In2code\In2publishCore\Testing\Tests\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Testing\Data\RequiredTablesDataProvider;
+use In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest;
+use In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -53,7 +56,7 @@ class ForeignDatabaseTest implements TestCaseInterface
         }
 
         $expectedTables = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Testing\\Data\\RequiredTablesDataProvider'
+            RequiredTablesDataProvider::class
         )->getRequiredTables();
         $actualTables = array_keys($foreignDatabase->admin_get_tables());
 
@@ -81,8 +84,8 @@ class ForeignDatabaseTest implements TestCaseInterface
     public function getDependencies()
     {
         return array(
-            'In2code\\In2publishCore\\Testing\\Tests\\Configuration\\ConfigurationFormatTest',
-            'In2code\\In2publishCore\\Testing\\Tests\\SshConnection\\SshConnectionTest',
+            ConfigurationFormatTest::class,
+            SshConnectionTest::class,
         );
     }
 }

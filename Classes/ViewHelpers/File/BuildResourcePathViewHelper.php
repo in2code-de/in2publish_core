@@ -25,6 +25,7 @@ namespace In2code\In2publishCore\ViewHelpers\File;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Service\DomainService;
 use TYPO3\CMS\Core\Resource\File;
@@ -47,7 +48,7 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
      */
     public function initialize()
     {
-        $this->domainService = $this->objectManager->get('In2code\\In2publishCore\\Domain\\Service\\DomainService');
+        $this->domainService = $this->objectManager->get(DomainService::class);
     }
 
     /**
@@ -72,7 +73,7 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
                 $identifier = $record->getPropertyBySideIdentifier($stagingLevel, 'identifier');
 
                 $remoteFalDriver = GeneralUtility::makeInstance(
-                    'In2code\\In2publishCore\\Domain\\Driver\\RemoteFileAbstractionLayerDriver'
+                    RemoteFileAbstractionLayerDriver::class
                 );
                 $remoteFalDriver->setStorageUid($storage);
                 $remoteFalDriver->initialize();

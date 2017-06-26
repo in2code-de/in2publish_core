@@ -52,7 +52,7 @@ class LabelService
      */
     public function __construct()
     {
-        $this->tcaService = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService');
+        $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
     }
 
     /**

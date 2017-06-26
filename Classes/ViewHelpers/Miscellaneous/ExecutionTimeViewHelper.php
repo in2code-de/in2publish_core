@@ -25,6 +25,7 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -38,7 +39,7 @@ class ExecutionTimeViewHelper extends AbstractViewHelper
      */
     public function render()
     {
-        return GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Service\\ExecutionTimeService')
+        return GeneralUtility::makeInstance(ExecutionTimeService::class)
                              ->getExecutionTime();
     }
 }

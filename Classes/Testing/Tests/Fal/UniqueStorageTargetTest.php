@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
 
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
+use In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
@@ -51,7 +52,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
     public function __construct()
     {
         $this->testSubjectProvider = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Testing\\Data\\FalStorageTestSubjectsProvider'
+            FalStorageTestSubjectsProvider::class
         );
     }
 
@@ -154,10 +155,10 @@ class UniqueStorageTargetTest implements TestCaseInterface
     public function getDependencies()
     {
         return array(
-            'In2code\\In2publishCore\\Testing\\Tests\\Application\\ForeignInstanceTest',
-            'In2code\\In2publishCore\\Testing\\Tests\\Fal\\MissingStoragesTest',
-            'In2code\\In2publishCore\\Testing\\Tests\\Fal\\CaseSensitivityTest',
-            'In2code\\In2publishCore\\Testing\\Tests\\Fal\\IdenticalDriverTest',
+            ForeignInstanceTest::class,
+            MissingStoragesTest::class,
+            CaseSensitivityTest::class,
+            IdenticalDriverTest::class,
         );
     }
 }

@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
@@ -76,7 +77,7 @@ class LocalInstanceTest implements TestCaseInterface
     public function getDependencies()
     {
         return array(
-            'In2code\\In2publishCore\\Testing\\Tests\\Database\\LocalDatabaseTest',
+            LocalDatabaseTest::class,
         );
     }
 }

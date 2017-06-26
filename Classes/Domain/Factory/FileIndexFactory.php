@@ -26,7 +26,9 @@ namespace In2code\In2publishCore\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Service\Database\UidReservationService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -70,10 +72,10 @@ class FileIndexFactory
     {
         $this->localDriver = $localDriver;
         $this->foreignDriver = $foreignDriver;
-        $this->sysFileTca = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService')
+        $this->sysFileTca = GeneralUtility::makeInstance(TcaService::class)
                                           ->getConfigurationArrayForTable('sys_file');
         $this->contextService = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Service\\Context\\ContextService'
+            ContextService::class
         );
     }
 
@@ -98,7 +100,7 @@ class FileIndexFactory
         }
 
         return GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Model\\Record',
+            Record::class,
             'sys_file',
             $localProperties,
             $foreignProperties,
@@ -296,7 +298,7 @@ class FileIndexFactory
     protected function getUidReservationService()
     {
         return GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Service\\Database\\UidReservationService'
+            UidReservationService::class
         );
     }
 }

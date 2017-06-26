@@ -27,13 +27,16 @@ namespace In2code\In2publishCore\Domain\Factory;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 /**
@@ -155,10 +158,10 @@ class RecordFactory
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
-        $this->tcaService = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService');
-        $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-        $this->signalSlotDispatcher = $objectManager->get('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
+        $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+        $this->signalSlotDispatcher = $objectManager->get(Dispatcher::class);
 
         $factorySettings = ConfigurationUtility::getConfiguration('factory');
         $this->maximumPageRecursion = $factorySettings['maximumPageRecursion'];
@@ -227,7 +230,7 @@ class RecordFactory
             // do not use objectManager->get because of performance issues. Additionally,
             // we just do not need it, because there is no dependency injection
             $instance = GeneralUtility::makeInstance(
-                'In2code\\In2publishCore\\Domain\\Model\\Record',
+                Record::class,
                 $instanceTableName,
                 $localProperties,
                 $foreignProperties,
@@ -579,7 +582,7 @@ class RecordFactory
         $this->signalSlotDispatcher->dispatch(
             __CLASS__,
             'rootRecordFinished',
-            array($this, GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Model\\NullRecord'))
+            array($this, GeneralUtility::makeInstance(NullRecord::class))
         );
     }
 }

@@ -58,7 +58,7 @@ class RemoteStorage implements ResourceStorageInterface
      */
     public function __construct()
     {
-        $this->letterbox = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\Rpc\\Letterbox');
+        $this->letterbox = GeneralUtility::makeInstance(Letterbox::class);
     }
 
     /**

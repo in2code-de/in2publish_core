@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Service\Database;
  ***************************************************************/
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -90,6 +91,6 @@ class DatabaseSchemaService implements SingletonInterface
      */
     protected function getCache()
     {
-        return GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache('in2publish_core');
+        return GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
     }
 }

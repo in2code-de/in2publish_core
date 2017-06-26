@@ -27,10 +27,13 @@ namespace In2code\In2publishCore\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
 use In2code\In2publishCore\Domain\Service\TcaService;
+use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
+use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -58,7 +61,7 @@ class ToolsController extends AbstractController
     protected function initializeView(ViewInterface $view)
     {
         parent::initializeView($view);
-        $letterbox = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\Rpc\\Letterbox');
+        $letterbox = GeneralUtility::makeInstance(Letterbox::class);
         $this->view->assign('canFlushEnvelopes', $letterbox->hasUnAnsweredEnvelopes());
     }
 
@@ -89,7 +92,7 @@ class ToolsController extends AbstractController
             }
         }
 
-        GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Environment\\EnvironmentService')
+        GeneralUtility::makeInstance(EnvironmentService::class)
                       ->setTestResult($success);
 
         $this->view->assign('testingResults', $testingResults);
@@ -201,7 +204,7 @@ class ToolsController extends AbstractController
      */
     public function flushRegistryAction()
     {
-        GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Registry')->removeAllByNamespace('tx_in2publishcore');
+        GeneralUtility::makeInstance(Registry::class)->removeAllByNamespace('tx_in2publishcore');
         $this->addFlashMessage(LocalizationUtility::translate('module.m4.registry_flushed', 'in2publish_core'));
         $this->redirect('index');
     }
@@ -211,7 +214,7 @@ class ToolsController extends AbstractController
      */
     public function flushEnvelopesAction()
     {
-        $letterbox = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\Rpc\\Letterbox');
+        $letterbox = GeneralUtility::makeInstance(Letterbox::class);
         $letterbox->removeAnsweredEnvelopes();
         $this->redirect('index');
     }

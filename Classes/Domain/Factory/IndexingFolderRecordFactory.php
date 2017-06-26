@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Domain\Factory;
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\FileUtility;
@@ -100,7 +101,7 @@ class IndexingFolderRecordFactory
 
         // get FAL storages for each side
         $this->localStorage = $localFolder->getStorage();
-        $this->remoteStorage = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\RemoteStorage');
+        $this->remoteStorage = GeneralUtility::makeInstance(RemoteStorage::class);
 
         // some often used variables
         $storageUid = $this->localStorage->getUid();
@@ -127,7 +128,7 @@ class IndexingFolderRecordFactory
         $this->checkFileCount($remoteFiles, $folderIdentifier, 'foreign');
 
         $rootFolder = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Model\\Record',
+            Record::class,
             'physical_folder',
             $localProperties,
             $remoteProperties,
@@ -138,7 +139,7 @@ class IndexingFolderRecordFactory
         $folderIdentifiers = array_unique(array_merge(array_keys($localSubFolders), array_keys($remoteSubFolders)));
         foreach ($folderIdentifiers as $identifier) {
             $subFolder = GeneralUtility::makeInstance(
-                'In2code\\In2publishCore\\Domain\\Model\\Record',
+                Record::class,
                 'physical_folder',
                 isset($localSubFolders[$identifier]) ? $localSubFolders[$identifier] : array(),
                 isset($remoteSubFolders[$identifier]) ? $remoteSubFolders[$identifier] : array(),

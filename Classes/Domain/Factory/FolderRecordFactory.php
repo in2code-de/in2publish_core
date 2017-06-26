@@ -26,14 +26,17 @@ namespace In2code\In2publishCore\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Resource\Folder;
@@ -96,7 +99,7 @@ class FolderRecordFactory
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
         $this->commonRepository = CommonRepository::getDefaultInstance('sys_file');
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->configuration = ConfigurationUtility::getConfiguration('factory.fal');
@@ -136,7 +139,7 @@ class FolderRecordFactory
         $this->foreignDriver = $this->getForeignDriver($localStorage);
 
         $this->fileIndexFactory = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Factory\\FileIndexFactory',
+            FileIndexFactory::class,
             $this->localDriver,
             $this->foreignDriver
         );
@@ -239,7 +242,7 @@ class FolderRecordFactory
     protected function getForeignDriver(ResourceStorage $localStorage)
     {
         $foreignDriver = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Driver\\RemoteFileAbstractionLayerDriver'
+            RemoteFileAbstractionLayerDriver::class
         );
         $foreignDriver->setStorageUid($localStorage->getUid());
         $foreignDriver->initialize();
@@ -506,7 +509,7 @@ class FolderRecordFactory
     protected function makePhysicalFolderInstance($identifier, $depth)
     {
         return GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Model\\Record',
+            Record::class,
             'physical_folder',
             $this->getFolderInfoByIdentifier($this->localDriver, $identifier),
             $this->getFolderInfoByIdentifier($this->foreignDriver, $identifier),

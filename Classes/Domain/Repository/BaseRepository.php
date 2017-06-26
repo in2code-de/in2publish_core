@@ -32,6 +32,7 @@ use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -74,8 +75,8 @@ abstract class BaseRepository
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
-        $this->tcaService = GeneralUtility::makeInstance('In2code\\In2publishCore\\Service\\Configuration\\TcaService');
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
+        $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
     }
 
     /**

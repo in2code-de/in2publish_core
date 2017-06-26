@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\Testing\Tests\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Testing\Data\RequiredTablesDataProvider;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -53,7 +54,7 @@ class LocalDatabaseTest implements TestCaseInterface
         }
 
         $expectedTables = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Testing\\Data\\RequiredTablesDataProvider'
+            RequiredTablesDataProvider::class
         )->getRequiredTables();
         $actualTables = array_keys($localDatabase->admin_get_tables());
 

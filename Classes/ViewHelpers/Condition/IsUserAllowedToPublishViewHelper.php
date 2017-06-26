@@ -44,7 +44,7 @@ class IsUserAllowedToPublishViewHelper extends AbstractViewHelper
      */
     public function __construct()
     {
-        $this->dispatcher = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
+        $this->dispatcher = GeneralUtility::makeInstance(Dispatcher::class);
     }
 
     /**

@@ -29,7 +29,9 @@ namespace In2code\In2publishCore\Domain\Anomaly;
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Service\Publishing\FilePublisherService;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -53,7 +55,7 @@ class PhysicalFilePublisher implements SingletonInterface
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
     }
 
     /**
@@ -102,7 +104,7 @@ class PhysicalFilePublisher implements SingletonInterface
             // if that's the case we can rely on the records state to decide on the action to take.
             if (true === $record->getAdditionalProperty('isAuthoritative')) {
                 $filePublisherService = GeneralUtility::makeInstance(
-                    'In2code\\In2publishCore\\Domain\\Service\\Publishing\\FilePublisherService'
+                    FilePublisherService::class
                 );
 
                 switch ($record->getState()) {

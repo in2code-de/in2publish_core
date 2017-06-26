@@ -48,7 +48,7 @@ class ConfigurationFormatTest implements TestCaseInterface
     public function __construct()
     {
         $this->definitionProvider = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Testing\\Data\\ConfigurationDefinitionProvider'
+            ConfigurationDefinitionProvider::class
         );
     }
 
@@ -99,7 +99,7 @@ class ConfigurationFormatTest implements TestCaseInterface
     public function getDependencies()
     {
         return array(
-            'In2code\\In2publishCore\\Testing\\Tests\\Configuration\\ConfigurationIsAvailableTest',
+            ConfigurationIsAvailableTest::class,
         );
     }
 

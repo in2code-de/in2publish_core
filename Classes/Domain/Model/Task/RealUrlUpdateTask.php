@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\Domain\Model\Task;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -61,8 +62,8 @@ class RealUrlUpdateTask extends AbstractTask
      */
     protected function executeTask()
     {
-        $realUrlDataHandler = GeneralUtility::makeInstance('DmitryDulepov\\Realurl\\Hooks\\DataHandler');
-        $cdh = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\DataHandling\\DataHandler');
+        $realUrlDataHandler = GeneralUtility::makeInstance(\DmitryDulepov\Realurl\Hooks\DataHandler::class);
+        $cdh = GeneralUtility::makeInstance(DataHandler::class);
 
         $state = $this->configuration['state'];
         $identifier = $this->configuration['identifier'];

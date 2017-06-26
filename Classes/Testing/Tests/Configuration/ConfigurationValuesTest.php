@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\Testing\Tests\Configuration;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Service\Processor\ProcessorInterface;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
@@ -36,7 +37,7 @@ use In2code\In2publishCore\Utility\ConfigurationUtility;
  */
 class ConfigurationValuesTest implements TestCaseInterface
 {
-    const PROCESSOR_INTERFACE = 'In2code\\In2publishCore\\Domain\\Service\\Processor\\ProcessorInterface';
+    const PROCESSOR_INTERFACE = ProcessorInterface::class;
 
     /**
      * @var array
@@ -115,7 +116,7 @@ class ConfigurationValuesTest implements TestCaseInterface
     public function getDependencies()
     {
         return array(
-            'In2code\\In2publishCore\\Testing\\Tests\\Configuration\\ConfigurationFormatTest',
+            ConfigurationFormatTest::class,
         );
     }
 }

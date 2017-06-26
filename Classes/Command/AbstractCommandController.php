@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Command;
 
 use In2code\In2publishCore\Service\Context\ContextService;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 
@@ -55,9 +56,9 @@ abstract class AbstractCommandController extends CommandController
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
         $this->contextService = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Service\\Context\\ContextService'
+            ContextService::class
         );
     }
 

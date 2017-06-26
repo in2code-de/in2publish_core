@@ -31,6 +31,7 @@ use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -61,10 +62,10 @@ class Letterbox
     public function __construct()
     {
         $this->contextService = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Service\\Context\\ContextService'
+            ContextService::class
         );
         $this->keepEnvelopes = (bool)ConfigurationUtility::getConfiguration('debug.keepEnvelopes');
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
     }
 
     /**

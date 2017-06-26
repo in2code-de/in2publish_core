@@ -45,7 +45,7 @@ class TestingService
     public function __construct()
     {
         $this->testCaseService = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Testing\\Service\\TestCaseService'
+            TestCaseService::class
         );
     }
 

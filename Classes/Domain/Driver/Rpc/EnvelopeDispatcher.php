@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Domain\Driver\Rpc;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
+use In2code\In2publishCore\Domain\Factory\FileIndexFactory;
 use In2code\In2publishCore\Utility\FileUtility;
 use In2code\In2publishCore\Utility\FolderUtility;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
@@ -406,7 +407,7 @@ class EnvelopeDispatcher
     protected function getFileObject($driver, $identifier, $storage)
     {
         $fileIndexFactory = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Factory\\FileIndexFactory',
+            FileIndexFactory::class,
             $driver,
             $driver
         );
@@ -417,7 +418,7 @@ class EnvelopeDispatcher
             return null;
         }
         $file = GeneralUtility::makeInstance(
-            'TYPO3\\CMS\\Core\\Resource\\File',
+            File::class,
             $fileIndexArray,
             $storage
         );

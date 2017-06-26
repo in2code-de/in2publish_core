@@ -26,6 +26,8 @@ namespace In2code\In2publishCore\Domain\PostProcessing;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Driver\RemoteStorage;
+use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\FileUtility;
@@ -82,9 +84,9 @@ class FalIndexPostProcessor implements SingletonInterface
             return;
         }
 
-        $remoteStorage = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\RemoteStorage');
+        $remoteStorage = GeneralUtility::makeInstance(RemoteStorage::class);
         $ifrFactory = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Factory\\IndexingFolderRecordFactory'
+            IndexingFolderRecordFactory::class
         );
 
         foreach ($this->registeredInstances as $file) {

@@ -38,6 +38,7 @@ use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
+use TYPO3\CMS\Extbase\Service\FlexFormService;
 
 /**
  * Class RemoteFileAbstractionLayerDriver
@@ -84,7 +85,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         parent::__construct($defaultConfiguration);
 
         $this->remoteCommandDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
-        $this->letterBox = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\Rpc\\Letterbox');
+        $this->letterBox = GeneralUtility::makeInstance(Letterbox::class);
     }
 
     /**
@@ -130,7 +131,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
                 'sys_file_storage',
                 'uid=' . (int)$this->storageUid
             );
-            $flexFormService = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Service\\FlexFormService');
+            $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
             $driverConfiguration = $flexFormService->convertFlexFormContentToArray(
                 $this->remoteDriverSettings['configuration']
             );

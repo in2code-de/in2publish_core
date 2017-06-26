@@ -47,7 +47,7 @@ class FilePublisherService
     public function __construct()
     {
         $this->remoteFalDriver = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Driver\\RemoteFileAbstractionLayerDriver'
+            RemoteFileAbstractionLayerDriver::class
         );
     }
 

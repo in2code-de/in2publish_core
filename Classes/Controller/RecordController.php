@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Factory\FakeRecordFactory;
 use In2code\In2publishCore\Domain\Service\TcaService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -51,7 +52,7 @@ class RecordController extends AbstractController
             $record = $this->commonRepository->findByIdentifier($this->pid);
         } else {
             $record = $this->objectManager->get(
-                'In2code\\In2publishCore\\Domain\\Factory\\FakeRecordFactory'
+                FakeRecordFactory::class
             )->buildFromStartPage($this->pid);
         }
 

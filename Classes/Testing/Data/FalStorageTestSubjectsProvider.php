@@ -67,7 +67,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
      */
     public function __construct()
     {
-        $this->signalSlotDispatcher = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher');
+        $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
     }
 
     /**

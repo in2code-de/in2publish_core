@@ -298,8 +298,8 @@ class DatabaseDifferencesTest implements TestCaseInterface
     public function getDependencies()
     {
         return array(
-            'In2code\\In2publishCore\\Testing\\Tests\\Database\\LocalDatabaseTest',
-            'In2code\\In2publishCore\\Testing\\Tests\\Database\\ForeignDatabaseTest',
+            LocalDatabaseTest::class,
+            ForeignDatabaseTest::class,
         );
     }
 }

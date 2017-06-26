@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\Testing\Tests\SshConnection;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 
@@ -75,7 +76,7 @@ class SshFunctionAvailabilityTest implements TestCaseInterface
     public function getDependencies()
     {
         return array(
-            'In2code\\In2publishCore\\Testing\\Tests\\Configuration\\ConfigurationValuesTest',
+            ConfigurationValuesTest::class,
         );
     }
 }

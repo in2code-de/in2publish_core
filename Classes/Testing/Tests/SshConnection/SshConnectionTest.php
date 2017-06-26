@@ -126,7 +126,7 @@ class SshConnectionTest implements TestCaseInterface
     public function getDependencies()
     {
         return array(
-            'In2code\\In2publishCore\\Testing\\Tests\\SshConnection\\SshFunctionAvailabilityTest',
+            SshFunctionAvailabilityTest::class,
         );
     }
 }

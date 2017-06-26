@@ -33,6 +33,7 @@ use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -82,7 +83,7 @@ class SysLogPublisher
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->commonRepository = CommonRepository::getDefaultInstance();

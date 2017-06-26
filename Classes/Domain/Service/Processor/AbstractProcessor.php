@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  ***************************************************************/
 
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -130,7 +131,7 @@ abstract class AbstractProcessor implements ProcessorInterface
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
     }
 
     /**

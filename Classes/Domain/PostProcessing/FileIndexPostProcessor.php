@@ -27,9 +27,11 @@ namespace In2code\In2publishCore\Domain\PostProcessing;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
+use In2code\In2publishCore\Domain\Factory\FileIndexFactory;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
@@ -57,7 +59,7 @@ class FileIndexPostProcessor implements SingletonInterface
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
     }
 
     /**
@@ -126,7 +128,7 @@ class FileIndexPostProcessor implements SingletonInterface
 
         foreach ($sortedRecords as $storageIndex => $recordArray) {
             $fileIndexFactory = GeneralUtility::makeInstance(
-                'In2code\\In2publishCore\\Domain\\Factory\\FileIndexFactory',
+                FileIndexFactory::class,
                 $this->getLocalDriver($storages[$storageIndex]),
                 $this->getForeignDriver($storages[$storageIndex])
             );
@@ -189,7 +191,7 @@ class FileIndexPostProcessor implements SingletonInterface
     protected function getForeignDriver(ResourceStorage $localStorage)
     {
         $foreignDriver = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Driver\\RemoteFileAbstractionLayerDriver'
+            RemoteFileAbstractionLayerDriver::class
         );
         $foreignDriver->setStorageUid($localStorage->getUid());
         $foreignDriver->initialize();

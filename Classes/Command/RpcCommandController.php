@@ -56,9 +56,9 @@ class RpcCommandController extends AbstractCommandController
     public function __construct()
     {
         parent::__construct();
-        $this->letterbox = GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Driver\\Rpc\\Letterbox');
+        $this->letterbox = GeneralUtility::makeInstance(Letterbox::class);
         $this->envelopeDispatcher = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Driver\\Rpc\\EnvelopeDispatcher'
+            EnvelopeDispatcher::class
         );
     }
 

@@ -70,7 +70,7 @@ class TableCommandController extends AbstractCommandController
             $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         }
         $this->databaseSchemaService = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Service\\Database\\DatabaseSchemaService'
+            DatabaseSchemaService::class
         );
     }
 

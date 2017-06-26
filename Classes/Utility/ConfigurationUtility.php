@@ -25,6 +25,7 @@ namespace In2code\In2publishCore\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Service\Configuration\In2publishConfigurationService;
 use In2code\In2publishCore\Service\Context\ContextService;
 use TYPO3\CMS\Backend\Utility\BackendUtility as CoreBackendUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
@@ -154,7 +155,7 @@ class ConfigurationUtility
     private function __construct()
     {
         $this->contextService = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Service\\Context\\ContextService'
+            ContextService::class
         );
     }
 
@@ -323,7 +324,7 @@ class ConfigurationUtility
     protected function initialize()
     {
         $pathToConfiguration = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Service\\Configuration\\In2publishConfigurationService'
+            In2publishConfigurationService::class
         )->getPathToConfiguration();
 
         if (null === $pathToConfiguration) {

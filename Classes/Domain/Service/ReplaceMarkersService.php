@@ -32,6 +32,7 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -62,7 +63,7 @@ class ReplaceMarkersService
     {
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
     }
 
     /**

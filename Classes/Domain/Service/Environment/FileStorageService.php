@@ -222,7 +222,7 @@ class FileStorageService extends AbstractService
     {
         $this->renamePhysicalFolderOrFile($oldFile, $newFile);
         $sysFileService = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Service\\Environment\\SysFileService'
+            SysFileService::class
         );
         $sysFileService->renameSysFile($oldFile, $newFile);
     }
@@ -236,7 +236,7 @@ class FileStorageService extends AbstractService
     {
         $this->renamePhysicalFolderOrFile($oldFolder, $newFolder);
         $sysFileService = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Service\\Environment\\SysFileService'
+            SysFileService::class
         );
         $sysFileService->renameFolderInSysFile($oldFolder, $newFolder);
     }

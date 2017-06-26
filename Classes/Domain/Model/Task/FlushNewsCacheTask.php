@@ -52,7 +52,7 @@ class FlushNewsCacheTask extends AbstractTask
     protected function executeTask()
     {
         /** @var CacheManager $cacheManager */
-        $cacheManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager');
+        $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
         foreach ($this->configuration['tagsToFlush'] as $cacheTag) {
             $cacheManager->getCache('cache_pages')->flushByTag($cacheTag);
             $cacheManager->getCache('cache_pagesection')->flushByTag($cacheTag);

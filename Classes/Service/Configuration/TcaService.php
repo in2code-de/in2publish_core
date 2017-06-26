@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\Service\Configuration;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Service\Database\DatabaseSchemaService;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
@@ -282,7 +283,7 @@ class TcaService implements SingletonInterface
     protected function getDatabaseSchema()
     {
         return GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Service\\Database\\DatabaseSchemaService'
+            DatabaseSchemaService::class
         )->getDatabaseSchema();
     }
 }

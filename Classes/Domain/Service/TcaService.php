@@ -27,9 +27,23 @@ namespace In2code\In2publishCore\Domain\Service;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Service\Processor\AbstractProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\CheckProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\FlexProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\GroupProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\ImageManipulationProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\InlineProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\InputProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\NoneProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\PassthroughProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\RadioProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\SelectProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\TextProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\UserProcessor;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -58,18 +72,18 @@ class TcaService
      * @var array
      */
     protected $defaultProcessor = array(
-        'check' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\CheckProcessor',
-        'flex' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\FlexProcessor',
-        'group' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\GroupProcessor',
-        'inline' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\InlineProcessor',
-        'input' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\InputProcessor',
-        'none' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\NoneProcessor',
-        'passthrough' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\PassthroughProcessor',
-        'radio' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\RadioProcessor',
-        'select' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\SelectProcessor',
-        'text' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\TextProcessor',
-        'user' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\UserProcessor',
-        'imageManipulation' => 'In2code\\In2publishCore\\Domain\\Service\\Processor\\ImageManipulationProcessor',
+        'check' => CheckProcessor::class,
+        'flex' => FlexProcessor::class,
+        'group' => GroupProcessor::class,
+        'inline' => InlineProcessor::class,
+        'input' => InputProcessor::class,
+        'none' => NoneProcessor::class,
+        'passthrough' => PassthroughProcessor::class,
+        'radio' => RadioProcessor::class,
+        'select' => SelectProcessor::class,
+        'text' => TextProcessor::class,
+        'user' => UserProcessor::class,
+        'imageManipulation' => ImageManipulationProcessor::class,
     );
 
     /**
@@ -113,8 +127,8 @@ class TcaService
      */
     protected function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
-        $this->cache = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Cache\\CacheManager')->getCache(
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
+        $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache(
             'in2publish_core'
         );
 

@@ -26,8 +26,10 @@ namespace In2code\In2publishCore\Domain\Service\Publishing;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 /**
  * Class FolderPublisherService
@@ -43,7 +45,7 @@ class FolderPublisherService
         list($storage, $folderIdentifier) = GeneralUtility::trimExplode(':', $combinedIdentifier);
 
         $remoteFalDriver = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Domain\\Driver\\RemoteFileAbstractionLayerDriver'
+            RemoteFileAbstractionLayerDriver::class
         );
         $remoteFalDriver->setStorageUid($storage);
         $remoteFalDriver->initialize();
@@ -55,8 +57,8 @@ class FolderPublisherService
         } else {
             $success = $remoteFalDriver->deleteFolder($folderIdentifier, true);
         }
-        GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\SignalSlot\\Dispatcher')->dispatch(
-            'In2code\\In2publishCore\\Domain\\Service\\Publishing\\FolderPublisherService',
+        GeneralUtility::makeInstance(Dispatcher::class)->dispatch(
+            FolderPublisherService::class,
             'afterPublishingFolder',
             array($storage, $folderIdentifier, ($success !== false))
         );

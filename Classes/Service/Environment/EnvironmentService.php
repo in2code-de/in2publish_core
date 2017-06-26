@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Service\Environment;
  ***************************************************************/
 
 use In2code\In2publishCore\Utility\ConfigurationUtility;
+use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -107,7 +108,7 @@ class EnvironmentService implements SingletonInterface
      */
     protected function getActivePackagesArray()
     {
-        return GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Package\\PackageManager')->getActivePackages();
+        return GeneralUtility::makeInstance(PackageManager::class)->getActivePackages();
     }
 
     /**
@@ -125,6 +126,6 @@ class EnvironmentService implements SingletonInterface
      */
     protected function getRegistry()
     {
-        return GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Registry');
+        return GeneralUtility::makeInstance(Registry::class);
     }
 }

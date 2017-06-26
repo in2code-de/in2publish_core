@@ -32,8 +32,11 @@ use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\TimeTracker\NullTimeTracker;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\CacheService;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Utility\EidUtility;
 
 /**
@@ -74,14 +77,14 @@ class RealUrlTask extends AbstractTask
         $host = BackendUtility::firstDomainRecord($rootline);
         $_SERVER['HTTP_HOST'] = $host;
         /** @var CacheService $cacheService */
-        $cacheService = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Service\\CacheService');
+        $cacheService = GeneralUtility::makeInstance(CacheService::class);
 
         if (!is_object($GLOBALS['TT'])) {
-            $GLOBALS['TT'] = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TimeTracker\\NullTimeTracker');
+            $GLOBALS['TT'] = GeneralUtility::makeInstance(NullTimeTracker::class);
         }
 
         $GLOBALS['TSFE'] = GeneralUtility::makeInstance(
-            'TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController',
+            TypoScriptFrontendController::class,
             $GLOBALS['TYPO3_CONF_VARS'],
             1,
             0,
@@ -94,7 +97,7 @@ class RealUrlTask extends AbstractTask
         $GLOBALS['TSFE']->initTemplate();
         $GLOBALS['TSFE']->getConfigArray();
         $GLOBALS['TSFE']->set_no_cache('Refresh RealUrl');
-        $GLOBALS['TSFE']->cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
+        $GLOBALS['TSFE']->cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 
         $uidArray = array();
 

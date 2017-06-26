@@ -32,6 +32,7 @@ use In2code\In2publishCore\Domain\Model\Task\FlushFrontendPageCacheTask;
 use In2code\In2publishCore\Domain\Model\Task\FlushNewsCacheTask;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -76,7 +77,7 @@ class CacheInvalidator implements SingletonInterface
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
     }
 
     /**

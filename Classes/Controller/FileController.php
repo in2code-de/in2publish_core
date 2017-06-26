@@ -29,8 +29,11 @@ namespace In2code\In2publishCore\Controller;
 
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
+use In2code\In2publishCore\Domain\Factory\FolderRecordFactory;
+use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -84,7 +87,7 @@ class FileController extends AbstractController
     {
         $success = $this
             ->objectManager
-            ->get('In2code\\In2publishCore\\Domain\\Service\\Publishing\\FolderPublisherService')
+            ->get(FolderPublisherService::class)
             ->publish($identifier);
 
         if ($success) {
@@ -164,16 +167,16 @@ class FileController extends AbstractController
             if (false === ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
                 $record = $this
                     ->objectManager
-                    ->get('In2code\\In2publishCore\\Domain\\Factory\\IndexingFolderRecordFactory')
+                    ->get(IndexingFolderRecordFactory::class)
                     ->makeInstance($identifier);
             } else {
                 $record = $this
                     ->objectManager
-                    ->get('In2code\\In2publishCore\\Domain\\Factory\\FolderRecordFactory')
+                    ->get(FolderRecordFactory::class)
                     ->makeInstance($identifier);
             }
             $this->signalSlotDispatcher->dispatch(
-                'In2code\\In2publishCore\\Controller\\FileController',
+                FileController::class,
                 'folderInstanceCreated',
                 array($record)
             );

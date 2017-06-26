@@ -53,10 +53,10 @@ class CaseSensitivityTest implements TestCaseInterface
     public function __construct()
     {
         $this->flexFormService = GeneralUtility::makeInstance(
-            'TYPO3\\CMS\\Extbase\\Service\\FlexFormService'
+            FlexFormService::class
         );
         $this->testSubjectProvider = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Testing\\Data\\FalStorageTestSubjectsProvider'
+            FalStorageTestSubjectsProvider::class
         );
     }
 
@@ -102,7 +102,7 @@ class CaseSensitivityTest implements TestCaseInterface
     public function getDependencies()
     {
         return array(
-            'In2code\\In2publishCore\\Testing\\Tests\\Fal\\MissingStoragesTest',
+            MissingStoragesTest::class,
         );
     }
 

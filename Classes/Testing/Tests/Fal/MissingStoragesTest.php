@@ -27,6 +27,8 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  ***************************************************************/
 
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
+use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
+use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -47,7 +49,7 @@ class MissingStoragesTest implements TestCaseInterface
     public function __construct()
     {
         $this->testSubjectProvider = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Testing\\Data\\FalStorageTestSubjectsProvider'
+            FalStorageTestSubjectsProvider::class
         );
     }
 
@@ -73,8 +75,8 @@ class MissingStoragesTest implements TestCaseInterface
     public function getDependencies()
     {
         return array(
-            'In2code\\In2publishCore\\Testing\\Tests\\Database\\LocalDatabaseTest',
-            'In2code\\In2publishCore\\Testing\\Tests\\Database\\ForeignDatabaseTest',
+            LocalDatabaseTest::class,
+            ForeignDatabaseTest::class,
         );
     }
 

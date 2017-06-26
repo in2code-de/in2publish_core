@@ -27,14 +27,17 @@ namespace In2code\In2publishCore\Domain\Repository;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\FileUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Service\FlexFormService;
 
 /**
@@ -153,7 +156,7 @@ class CommonRepository extends BaseRepository
             $this->tableName = $tableName;
         }
         if ($this->shouldSkipFindByIdentifier($identifier)) {
-            return GeneralUtility::makeInstance('In2code\\In2publishCore\\Domain\\Model\\NullRecord', $tableName);
+            return GeneralUtility::makeInstance(NullRecord::class, $tableName);
         }
         return $this->convertToRecord(
             $this->getPropertiesForIdentifier($this->localDatabase, $identifier),
@@ -788,7 +791,7 @@ class CommonRepository extends BaseRepository
     protected function getLocalFlexFormDataFromRecord(RecordInterface $record, $column)
     {
         /** @var FlexFormService $flexFormService */
-        $flexFormService = $this->objectManager->get('TYPO3\\CMS\\Extbase\\Service\\FlexFormService');
+        $flexFormService = $this->objectManager->get(FlexFormService::class);
 
         $localFlexFormData = array();
         if ($record->hasLocalProperty($column)) {
@@ -1180,7 +1183,7 @@ class CommonRepository extends BaseRepository
             $fileNames[$key] = $uploadFolder . $filename;
 
             // Force indexing of the record
-            GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Resource\\ResourceFactory')
+            GeneralUtility::makeInstance(ResourceFactory::class)
                           ->getFileObjectFromCombinedIdentifier($fileNames[$key]);
         }
         return $fileNames;
@@ -1225,7 +1228,7 @@ class CommonRepository extends BaseRepository
                 if (!empty($columnConfiguration['foreign_table_where'])) {
                     /** @var ReplaceMarkersService $replaceMarkers */
                     $replaceMarkers = $this->objectManager->get(
-                        'In2code\\In2publishCore\\Domain\\Service\\ReplaceMarkersService',
+                        ReplaceMarkersService::class,
                         $this->localDatabase,
                         $this->foreignDatabase
                     );
@@ -1983,9 +1986,9 @@ class CommonRepository extends BaseRepository
      */
     public static function getDefaultInstance($tableName = 'pages')
     {
-        $objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         return $objectManager->get(
-            'In2code\\In2publishCore\\Domain\\Repository\\CommonRepository',
+            CommonRepository::class,
             DatabaseUtility::buildLocalDatabaseConnection(),
             DatabaseUtility::buildForeignDatabaseConnection(),
             $tableName

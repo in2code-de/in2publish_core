@@ -62,7 +62,7 @@ class TaskRepository
     public function __construct()
     {
         $this->contextService = GeneralUtility::makeInstance(
-            'In2code\\In2publishCore\\Service\\Context\\ContextService'
+            ContextService::class
         );
         if ($this->contextService->isForeign()) {
             $this->databaseConnection = DatabaseUtility::buildLocalDatabaseConnection();

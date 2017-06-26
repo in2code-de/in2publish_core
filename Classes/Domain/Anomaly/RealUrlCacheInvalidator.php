@@ -32,6 +32,7 @@ use In2code\In2publishCore\Domain\Model\Task\RealUrlTask;
 use In2code\In2publishCore\Domain\Model\Task\RealUrlUpdateTask;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -71,7 +72,7 @@ class RealUrlCacheInvalidator
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(get_class($this));
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(get_class($this));
         $this->enabled = ExtensionManagementUtility::isLoaded('realurl');
         if ($this->enabled) {
             $realUrlVersion = ExtensionManagementUtility::getExtensionVersion('realurl');

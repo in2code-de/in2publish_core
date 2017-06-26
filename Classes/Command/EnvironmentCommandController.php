@@ -48,7 +48,7 @@ class EnvironmentCommandController extends AbstractCommandController
     public function rewriteNonUtf8CharactersForFoldersCommand($fileStoragePath = 'fileadmin/', $dryRun = false)
     {
         $fileStorageService = $this->objectManager->get(
-            'In2code\\In2publishCore\\Domain\\Service\\Environment\\FileStorageService',
+            FileStorageService::class,
             $fileStoragePath
         );
         $this->showNonAllowedFolders($fileStorageService);
@@ -71,7 +71,7 @@ class EnvironmentCommandController extends AbstractCommandController
     public function rewriteNonUtf8CharactersForFilesCommand($fileStoragePath = 'fileadmin/', $dryRun = false)
     {
         $fileStorageService = $this->objectManager->get(
-            'In2code\\In2publishCore\\Domain\\Service\\Environment\\FileStorageService',
+            FileStorageService::class,
             $fileStoragePath
         );
         $this->showNonAllowedFiles($fileStorageService);

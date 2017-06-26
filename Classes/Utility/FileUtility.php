@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\Utility;
  ***************************************************************/
 
 use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\AbstractFile;
 use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -46,7 +47,7 @@ class FileUtility
     protected static function initializeLogger()
     {
         if (self::$logger === null) {
-            self::$logger = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Log\\LogManager')->getLogger(
+            self::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(
                 get_called_class()
             );
         }

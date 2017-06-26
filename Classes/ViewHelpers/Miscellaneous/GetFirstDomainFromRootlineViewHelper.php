@@ -26,7 +26,9 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Service\DomainService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -44,8 +46,8 @@ class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
      */
     public function render(Record $record, $stagingLevel = 'local', $addProtocol = true)
     {
-        $domainService = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager')->get(
-            'In2code\\In2publishCore\\Domain\\Service\\DomainService'
+        $domainService = GeneralUtility::makeInstance(ObjectManager::class)->get(
+            DomainService::class
         );
         return $domainService->getFirstDomain($record, $stagingLevel, $addProtocol);
     }
