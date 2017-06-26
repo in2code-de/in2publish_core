@@ -71,7 +71,7 @@ class InlineProcessor extends AbstractProcessor
     {
         parent::canPreProcess($config);
         if (array_key_exists(static::MM, $config) && array_key_exists(static::FOREIGN_FIELD, $config)) {
-            $this->lastReasons[static::FOREIGN_FIELD] = 'the foreign_field is not allowed here because of given MM table';
+            $this->lastReasons[static::FOREIGN_FIELD] = 'foreign_field is not allowed here because of a given MM table';
         }
         if (!(array_key_exists(static::MM, $config) || array_key_exists(static::FOREIGN_FIELD, $config))) {
             $this->lastReasons[static::FOREIGN_FIELD] = 'foreign_field or MM table must be set for type "inline"';
