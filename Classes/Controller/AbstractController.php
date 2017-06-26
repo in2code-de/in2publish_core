@@ -31,6 +31,7 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDis
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
+use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
@@ -255,7 +256,7 @@ abstract class AbstractController extends ActionController
             $votes = $votingResult[0];
         }
         if ($votes['no'] > $votes['yes']) {
-            throw new \Exception('You are not allowed to publish', 1435306780);
+            throw new In2publishCoreException('You are not allowed to publish', 1435306780);
         }
     }
 

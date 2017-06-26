@@ -31,6 +31,7 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandReq
 use In2code\In2publishCore\Domain\Driver\Rpc\Envelope;
 use In2code\In2publishCore\Domain\Driver\Rpc\EnvelopeDispatcher;
 use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
+use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Resource\ResourceStorageInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -147,7 +148,10 @@ class RemoteStorage implements ResourceStorageInterface
         $envelope = new Envelope($command, $arguments);
         $uid = $this->letterbox->sendEnvelope($envelope);
         if (false === $uid) {
-            throw new \Exception('Could not send ' . $envelope->getCommand() . ' request to remote system', 1490708190);
+            throw new In2publishCoreException(
+                'Could not send ' . $envelope->getCommand() . ' request to remote system',
+                1490708190
+            );
         }
 
         $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'rpc:execute ' . $uid);
@@ -161,7 +165,7 @@ class RemoteStorage implements ResourceStorageInterface
         }
         $envelope = $this->letterbox->receiveEnvelope($uid);
         if (false === $envelope) {
-            throw new \Exception('Could not receive envelope [' . $uid . ']', 1490708194);
+            throw new In2publishCoreException('Could not receive envelope [' . $uid . ']', 1490708194);
         }
         return $envelope->getResponse();
     }

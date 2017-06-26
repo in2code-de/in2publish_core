@@ -31,6 +31,7 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandReq
 use In2code\In2publishCore\Domain\Driver\Rpc\Envelope;
 use In2code\In2publishCore\Domain\Driver\Rpc\EnvelopeDispatcher;
 use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
+use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Resource\Driver\AbstractHierarchicalFilesystemDriver;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
@@ -692,7 +693,10 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         $uid = $this->letterBox->sendEnvelope($envelope);
 
         if (false === $uid) {
-            throw new \Exception('Could not send ' . $envelope->getCommand() . ' request to remote system', 1476296011);
+            throw new In2publishCoreException(
+                'Could not send ' . $envelope->getCommand() . ' request to remote system',
+                1476296011
+            );
         }
 
         $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'rpc:execute ' . $uid);
@@ -713,7 +717,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
         $envelope = $this->letterBox->receiveEnvelope($uid);
 
         if (false === $envelope) {
-            throw new \Exception('Could not receive envelope [' . $uid . ']', 1486727017);
+            throw new In2publishCoreException('Could not receive envelope [' . $uid . ']', 1486727017);
         }
         return $envelope->getResponse();
     }

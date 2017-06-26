@@ -25,6 +25,7 @@ namespace In2code\In2publishCore\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
@@ -137,7 +138,7 @@ class DatabaseUtility
                 'BackupTable was called in context "' . getenv('IN2PUBLISH_CONTEXT')
                 . '", but the configuration was not loaded successfully. Aborting immediately to prevent any damage.';
             static::$logger->critical($message);
-            throw new \Exception($message, 1446819956);
+            throw new In2publishCoreException($message, 1446819956);
         }
 
         $keepBackups = (int)ConfigurationUtility::getConfiguration('backup.publishTableCommand.keepBackups');

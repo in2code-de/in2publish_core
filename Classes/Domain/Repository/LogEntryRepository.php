@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Domain\Repository;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 
@@ -111,7 +112,7 @@ class LogEntryRepository
     public function setFilter($propertyName, $propertyValue)
     {
         if (!array_key_exists($propertyName, $this->propertyOperatorMap)) {
-            throw new \Exception(
+            throw new In2publishCoreException(
                 'The propertyName "' . htmlspecialchars($propertyName) . '" is not allowed',
                 1425551782
             );

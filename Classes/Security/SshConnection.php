@@ -31,7 +31,7 @@ use In2code\In2publishCore\Command\PublishTasksRunnerCommandController;
 use In2code\In2publishCore\Command\RpcCommandController;
 use In2code\In2publishCore\Command\StatusCommandController;
 use In2code\In2publishCore\Command\TableCommandController;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
@@ -275,14 +275,14 @@ class SshConnection
     private function stopIfArgumentContainsCommand($argument)
     {
         if (preg_replace('~[^a-zA-Z0-9._\-\/]~', '', $argument) !== $argument) {
-            throw new \Exception(
+            throw new In2publishCoreException(
                 'Argument "' . htmlspecialchars($argument) . '" contains not allowed characters. ' .
                 'Note: Umlauts in file names or folder names are not allowed',
                 1454944102
             );
         }
         if (escapeshellcmd($argument) !== $argument) {
-            throw new \Exception(
+            throw new In2publishCoreException(
                 'The given argument "' . htmlspecialchars($argument) . '" may contain a malicious command',
                 1440758497
             );
@@ -330,7 +330,7 @@ class SshConnection
             }
         }
         if ($result === false) {
-            throw new \Exception('Could not create remote directory "' . $folder . '"', 1425477874);
+            throw new In2publishCoreException('Could not create remote directory "' . $folder . '"', 1425477874);
         }
         $this->setRemoteFolderPermission($folder);
         return $result;
@@ -356,7 +356,7 @@ class SshConnection
     {
         if ($this->chmodEnabled && PHP_MAJOR_VERSION < 7) {
             if (!ssh2_sftp_chmod($this->sftpSubSystem, $folder, $this->folderMode) && !$this->ignoreChmodFail) {
-                throw new \Exception('Failed to set permissions for folder "' . $folder . '"', 1425482252);
+                throw new In2publishCoreException('Failed to set permissions for folder "' . $folder . '"', 1425482252);
             }
         } else {
             $this->setPermissionPerCommand($folder, $this->rawFolderMode);
@@ -374,7 +374,7 @@ class SshConnection
     {
         if ($this->chmodEnabled && PHP_MAJOR_VERSION < 7) {
             if (!ssh2_sftp_chmod($this->sftpSubSystem, $file, $this->fileMode) && !$this->ignoreChmodFail) {
-                throw new \Exception('Failed to set permissions for file "' . $file . '"', 1440748670);
+                throw new In2publishCoreException('Failed to set permissions for file "' . $file . '"', 1440748670);
             }
         } else {
             $this->setPermissionPerCommand($file, $this->rawFileMode);
@@ -407,7 +407,7 @@ class SshConnection
         $handle = ssh2_exec($this->session, $command);
         $result = $this->getHandleResponse($handle);
         if (!fclose($handle)) {
-            throw new \Exception(
+            throw new In2publishCoreException(
                 'Command:"' . htmlspecialchars($command) . '" returned an error! '
                 . 'Message: "' . htmlspecialchars(implode('', $result)) . '"',
                 1425408542
@@ -485,7 +485,10 @@ class SshConnection
         $bytesToWrite = filesize($localFileLocation);
         $localFileStream = fopen($localFileLocation, 'r');
         if (!is_resource($localFileStream)) {
-            throw new \Exception('Could not create a stream for local file "' . $localFileLocation . '"', 1425466802);
+            throw new In2publishCoreException(
+                'Could not create a stream for local file "' . $localFileLocation . '"',
+                1425466802
+            );
         }
         try {
             /**
@@ -504,17 +507,20 @@ class SshConnection
                         'file' => $foreignFileLocation,
                     ]
                 );
-                throw new \Exception(
+                throw new In2publishCoreException(
                     'Could not write remote file "' . $foreignFileLocation . '" because PHP failed to open a stream.'
                     . ' This might be a problem of your PHP version or php-ssh2 extension',
                     1487588970
                 );
             } elseif (false !== strpos($exceptionMessage, 'server configuration by allow_url_fopen=0')) {
                 $this->logger->alert('PHP setting allow_url_fopen is false.');
-                throw new \Exception('PHP setting allow_url_fopen is disabled: ' . $exceptionMessage, 1496999878);
+                throw new In2publishCoreException(
+                    'PHP setting allow_url_fopen is disabled: ' . $exceptionMessage,
+                    1496999878
+                );
             } else {
                 $this->logger->alert('Caught unknown error while fopen(ssh2.sftp://)', ['exception' => $e]);
-                throw new \Exception(
+                throw new In2publishCoreException(
                     'An unknown error occurred or you have insufficient write permission: ' . $exceptionMessage,
                     1425467980
                 );
@@ -522,7 +528,7 @@ class SshConnection
         }
 
         if (!is_resource($localFileStream)) {
-            throw new \Exception(
+            throw new In2publishCoreException(
                 'Could not create a stream for foreign file "' . $foreignFileLocation . '"',
                 1425466826
             );
@@ -531,7 +537,7 @@ class SshConnection
         $bytesWritten = stream_copy_to_stream($localFileStream, $foreignFileStream);
 
         if ($bytesToWrite !== $bytesWritten) {
-            throw new \Exception('Could not write remote file "' . $foreignFileLocation . '"', 1425467808);
+            throw new In2publishCoreException('Could not write remote file "' . $foreignFileLocation . '"', 1425467808);
         }
 
         $this->setRemoteFilePermission($foreignFileLocation);
@@ -639,24 +645,27 @@ class SshConnection
     private function validateConfiguration(array &$configuration)
     {
         if (empty($configuration['host'])) {
-            throw new \Exception('SSH Connection: Option host is empty', 1425400317);
+            throw new In2publishCoreException('SSH Connection: Option host is empty', 1425400317);
         }
         if (empty($configuration['port'])) {
             $configuration['port'] = 22;
         }
         if (empty($configuration['username'])) {
-            throw new \Exception('SSH Connection: Option username is empty', 1425400379);
+            throw new In2publishCoreException('SSH Connection: Option username is empty', 1425400379);
         }
         foreach (['privateKeyFileAndPathName', 'publicKeyFileAndPathName'] as $requiredFileKey) {
             if (empty($configuration[$requiredFileKey])) {
-                throw new \Exception('SSH Connection: Option ' . $requiredFileKey . ' is empty', 1425400434);
+                throw new In2publishCoreException(
+                    'SSH Connection: Option ' . $requiredFileKey . ' is empty',
+                    1425400434
+                );
             } elseif (!file_exists($configuration[$requiredFileKey])) {
-                throw new \Exception(
+                throw new In2publishCoreException(
                     'SSH Connection: The File defined in ' . $requiredFileKey . ' does not exist',
                     1425400440
                 );
             } elseif (!is_readable($configuration[$requiredFileKey])) {
-                throw new \Exception(
+                throw new In2publishCoreException(
                     'SSH Connection: The File defined in ' . $requiredFileKey . ' is not readable',
                     1425400444
                 );
@@ -666,14 +675,14 @@ class SshConnection
             $configuration['privateKeyPassphrase'] = $this->privateKeyPassphrase;
         }
         if (empty($configuration['foreignKeyFingerprint'])) {
-            throw new \Exception('SSH Connection: Option foreignKeyFingerprint is empty', 1425400689);
+            throw new In2publishCoreException('SSH Connection: Option foreignKeyFingerprint is empty', 1425400689);
         } elseif (strpos($configuration['foreignKeyFingerprint'], ':') !== false) {
             $configuration['foreignKeyFingerprint'] = strtoupper(
                 str_replace(':', '', $configuration['foreignKeyFingerprint'])
             );
         }
         if (empty($configuration['foreignRootPath'])) {
-            throw new \Exception('SSH Connection: Option foreignRootPath is empty');
+            throw new In2publishCoreException('SSH Connection: Option foreignRootPath is empty', 1498495128);
         } else {
             $configuration['foreignRootPath'] = rtrim($configuration['foreignRootPath'], '/') . '/';
         }
@@ -681,9 +690,10 @@ class SshConnection
             $configuration['foreignKeyFingerprintHashingMethod'] = SSH2_FINGERPRINT_MD5 | SSH2_FINGERPRINT_HEX;
         } else {
             if (!in_array($configuration['foreignKeyFingerprintHashingMethod'], $this->supportedFingerprintMethods)) {
-                throw new \Exception(
+                throw new In2publishCoreException(
                     'SSH Connection: The first part of foreignKeyFingerprintHashingMethod '
-                    . 'must either be "SSH2_FINGERPRINT_MD5" or "SSH2_FINGERPRINT_SHA1"'
+                    . 'must either be "SSH2_FINGERPRINT_MD5" or "SSH2_FINGERPRINT_SHA1"',
+                    1498495123
                 );
             }
             $configuration['foreignKeyFingerprintHashingMethod'] =
@@ -691,8 +701,9 @@ class SshConnection
         }
         if (!empty($configuration['pathToPhp'])) {
             if (strpos($configuration['pathToPhp'], '/') !== 0) {
-                throw new \Exception(
-                    'SSH Connection: The first part of pathToPhp must begin with a slash'
+                throw new In2publishCoreException(
+                    'SSH Connection: The first part of pathToPhp must begin with a slash',
+                    1498495117
                 );
             }
         } else {
@@ -736,7 +747,7 @@ class SshConnection
     {
         $this->session = @ssh2_connect($this->host, $this->port);
         if (!is_resource($this->session)) {
-            throw new \Exception(
+            throw new In2publishCoreException(
                 'Could not establish a SSH connection to "' . $this->host . ':' . $this->port . '"',
                 1425401287
             );
@@ -744,13 +755,13 @@ class SshConnection
         $keyFingerPrint = ssh2_fingerprint($this->session, $this->foreignKeyFingerprintHashingMethod);
         if ($keyFingerPrint !== $this->foreignKeyFingerprint) {
             if (ConfigurationUtility::getConfiguration('debug.showForeignKeyFingerprint') === true) {
-                throw new \Exception(
+                throw new In2publishCoreException(
                     'Identification of foreign host failed, SSH Key Fingerprint mismatch. Foreign Key Fingerprint: "'
                     . $keyFingerPrint . '"; Configured Key Fingerprint: "' . $this->foreignKeyFingerprint . '"',
                     1426868565
                 );
             } else {
-                throw new \Exception(
+                throw new In2publishCoreException(
                     'Identification of foreign host failed, SSH Key Fingerprint mismatch!!!',
                     1425401452
                 );
@@ -764,7 +775,7 @@ class SshConnection
             $this->privateKeyPassphrase
         )
         ) {
-            throw new \Exception(
+            throw new In2publishCoreException(
                 'Could not authenticate the SSH connection for "'
                 . $this->username . '@' . $this->host . ':' . $this->port . '" with the given ssh key pair',
                 1425401293
@@ -772,7 +783,7 @@ class SshConnection
         }
         $this->sftpSubSystem = ssh2_sftp($this->session);
         if (!is_resource($this->sftpSubSystem)) {
-            throw new \Exception('Could not initialize the SFTP Subsystem', 1425466318);
+            throw new In2publishCoreException('Could not initialize the SFTP Subsystem', 1425466318);
         }
         if ($setCreateMasks) {
             $this->setCreateMasks();
@@ -846,7 +857,7 @@ class SshConnection
             $this->validateConfiguration($configuration);
             $this->applyConfiguration($configuration);
         } else {
-            throw new \Exception(
+            throw new In2publishCoreException(
                 'The configuration for SshConnection is invalid: "'
                 . LocalizationUtility::translate(ConfigurationUtility::getLoadingState(), 'in2publish_core') . '"',
                 1428492639

@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdap
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
+use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -180,7 +181,7 @@ class SshAdapter implements AdapterInterface
     {
         $session = @ssh2_connect($this->config['host'], $this->config['port']);
         if (!is_resource($session)) {
-            throw new \Exception(
+            throw new In2publishCoreException(
                 'Could not establish a SSH connection to "' . $this->config['host'] . ':' . $this->config['port'] . '"',
                 1425401287
             );
@@ -189,13 +190,13 @@ class SshAdapter implements AdapterInterface
         $keyFingerPrint = ssh2_fingerprint($session, $this->config['foreignKeyFingerprintHashingMethod']);
         if ($keyFingerPrint !== $this->config['foreignKeyFingerprint']) {
             if (true === $this->config['debug']) {
-                throw new \Exception(
+                throw new In2publishCoreException(
                     'Identification of foreign host failed, SSH Key Fingerprint mismatch. Actual Fingerprint: "'
                     . $keyFingerPrint . '"; Configured: "' . $this->config['foreignKeyFingerprint'] . '"',
                     1426868565
                 );
             } else {
-                throw new \Exception(
+                throw new In2publishCoreException(
                     'Identification of foreign host failed, SSH Key Fingerprint mismatch!!!',
                     1425401452
                 );
@@ -210,7 +211,7 @@ class SshAdapter implements AdapterInterface
             $this->config['privateKeyPassphrase']
         );
         if (true !== $authorizationSuccess) {
-            throw new \Exception(
+            throw new In2publishCoreException(
                 sprintf(
                     'Could not authenticate the SSH connection for "%s@%s:%d" with the given SSH key pair',
                     $this->config['username'],
@@ -233,27 +234,30 @@ class SshAdapter implements AdapterInterface
     {
         $config = ConfigurationUtility::getConfiguration('sshConnection');
         if (empty($config)) {
-            throw new \Exception('SSH Connection: Missing configuration', 1428492639);
+            throw new In2publishCoreException('SSH Connection: Missing configuration', 1428492639);
         }
         if (empty($config['host'])) {
-            throw new \Exception('SSH Connection: Option host is empty', 1425400317);
+            throw new In2publishCoreException('SSH Connection: Option host is empty', 1425400317);
         }
         if (empty($config['port'])) {
-            throw new \Exception('SSH Connection: Option port is empty', 1493823206);
+            throw new In2publishCoreException('SSH Connection: Option port is empty', 1493823206);
         }
         if (empty($config['username'])) {
-            throw new \Exception('SSH Connection: Option username is empty', 1425400379);
+            throw new In2publishCoreException('SSH Connection: Option username is empty', 1425400379);
         }
         foreach (['privateKeyFileAndPathName', 'publicKeyFileAndPathName'] as $requiredFileKey) {
             if (empty($config[$requiredFileKey])) {
-                throw new \Exception('SSH Connection: Option ' . $requiredFileKey . ' is empty', 1425400434);
+                throw new In2publishCoreException(
+                    'SSH Connection: Option ' . $requiredFileKey . ' is empty',
+                    1425400434
+                );
             } elseif (!file_exists($config[$requiredFileKey])) {
-                throw new \Exception(
+                throw new In2publishCoreException(
                     'SSH Connection: The File defined in ' . $requiredFileKey . ' does not exist',
                     1425400440
                 );
             } elseif (!is_readable($config[$requiredFileKey])) {
-                throw new \Exception(
+                throw new In2publishCoreException(
                     'SSH Connection: The File defined in ' . $requiredFileKey . ' is not readable',
                     1425400444
                 );
@@ -263,7 +267,7 @@ class SshAdapter implements AdapterInterface
             $config['privateKeyPassphrase'] = null;
         }
         if (empty($config['foreignKeyFingerprint'])) {
-            throw new \Exception('SSH Connection: Option foreignKeyFingerprint is empty', 1425400689);
+            throw new In2publishCoreException('SSH Connection: Option foreignKeyFingerprint is empty', 1425400689);
         } elseif (strpos($config['foreignKeyFingerprint'], ':') !== false) {
             $config['foreignKeyFingerprint'] = strtoupper(str_replace(':', '', $config['foreignKeyFingerprint']));
         }
@@ -271,7 +275,7 @@ class SshAdapter implements AdapterInterface
             $config['foreignKeyFingerprintHashingMethod'] = SSH2_FINGERPRINT_MD5 | SSH2_FINGERPRINT_HEX;
         } else {
             if (!in_array($config['foreignKeyFingerprintHashingMethod'], $this->supportedHashMethods)) {
-                throw new \Exception(
+                throw new In2publishCoreException(
                     'SSH Connection: The defined foreignKeyFingerprintHashingMethod is not supported',
                     1493822754
                 );

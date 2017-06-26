@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\Testing\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -84,7 +85,10 @@ class TestingService
             } else {
                 $result = $testCase->run();
                 if (!($result instanceof TestResult)) {
-                    throw new \Exception('The test ' . get_class($testCase) . ' did not return a valid TestResult');
+                    throw new In2publishCoreException(
+                        'The test ' . get_class($testCase) . ' did not return a valid TestResult',
+                        1498495165
+                    );
                 }
                 $severity = $result->getSeverity();
                 if ($severity === TestResult::OK) {
