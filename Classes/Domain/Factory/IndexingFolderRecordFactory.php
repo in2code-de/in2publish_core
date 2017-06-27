@@ -43,6 +43,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 /**
  * This class describes an alternative workflow for the FAL diff and publishing mechanism.
  * It's solely used for the reserveSysFileUids feature.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class IndexingFolderRecordFactory
 {

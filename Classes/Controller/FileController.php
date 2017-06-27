@@ -41,6 +41,8 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * The FileController is responsible for the "Publish Files" Backend module "m2"
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class FileController extends AbstractController
 {
