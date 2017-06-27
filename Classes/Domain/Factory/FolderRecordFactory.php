@@ -34,6 +34,7 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use In2code\In2publishCore\Utility\StorageDriverExtractor;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -135,8 +136,8 @@ class FolderRecordFactory
         }
 
         // Get the storages driver to prevent unintentional indexing by using storage methods.
-        $this->localDriver = $this->getLocalDriver($localStorage);
-        $this->foreignDriver = $this->getForeignDriver($localStorage);
+        $this->localDriver = StorageDriverExtractor::getLocalDriver($localStorage);
+        $this->foreignDriver = StorageDriverExtractor::getForeignDriver($localStorage);
 
         $this->fileIndexFactory = GeneralUtility::makeInstance(
             FileIndexFactory::class,
@@ -222,31 +223,6 @@ class FolderRecordFactory
         $files = $this->filterFileRecords($files);
 
         return $record->addRelatedRecords($files);
-    }
-
-    /**
-     * @param ResourceStorage $localStorage
-     * @return DriverInterface
-     */
-    protected function getLocalDriver(ResourceStorage $localStorage)
-    {
-        $driverProperty = new PropertyReflection(get_class($localStorage), 'driver');
-        $driverProperty->setAccessible(true);
-        return $driverProperty->getValue($localStorage);
-    }
-
-    /**
-     * @param ResourceStorage $localStorage
-     * @return DriverInterface
-     */
-    protected function getForeignDriver(ResourceStorage $localStorage)
-    {
-        $foreignDriver = GeneralUtility::makeInstance(
-            RemoteFileAbstractionLayerDriver::class
-        );
-        $foreignDriver->setStorageUid($localStorage->getUid());
-        $foreignDriver->initialize();
-        return $foreignDriver;
     }
 
     /**

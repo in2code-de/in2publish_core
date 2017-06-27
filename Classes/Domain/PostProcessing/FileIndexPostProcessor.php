@@ -26,18 +26,15 @@ namespace In2code\In2publishCore\Domain\PostProcessing;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Factory\FileIndexFactory;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Utility\StorageDriverExtractor;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
-use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Reflection\PropertyReflection;
 
 /**
  * Class FileIndexPostProcessor
@@ -129,8 +126,8 @@ class FileIndexPostProcessor implements SingletonInterface
         foreach ($sortedRecords as $storageIndex => $recordArray) {
             $fileIndexFactory = GeneralUtility::makeInstance(
                 FileIndexFactory::class,
-                $this->getLocalDriver($storages[$storageIndex]),
-                $this->getForeignDriver($storages[$storageIndex])
+                StorageDriverExtractor::getLocalDriver($storages[$storageIndex]),
+                StorageDriverExtractor::getForeignDriver($storages[$storageIndex])
             );
             foreach ($recordArray as $record) {
                 if ($record->hasLocalProperty('identifier')) {
@@ -168,33 +165,9 @@ class FileIndexPostProcessor implements SingletonInterface
         }
         foreach ($foreignIdentifiers as $storageIndex => $identifierArray) {
             foreach (array_chunk($identifierArray, 500) as $fragmentedArray) {
-                $this->getForeignDriver($storages[$storageIndex])->batchPrefetchFiles($fragmentedArray);
+                StorageDriverExtractor::getForeignDriver($storages[$storageIndex])
+                                      ->batchPrefetchFiles($fragmentedArray);
             }
         }
-    }
-
-    /**
-     * @param ResourceStorage $localStorage
-     * @return DriverInterface
-     */
-    protected function getLocalDriver(ResourceStorage $localStorage)
-    {
-        $driverProperty = new PropertyReflection(get_class($localStorage), 'driver');
-        $driverProperty->setAccessible(true);
-        return $driverProperty->getValue($localStorage);
-    }
-
-    /**
-     * @param ResourceStorage $localStorage
-     * @return RemoteFileAbstractionLayerDriver
-     */
-    protected function getForeignDriver(ResourceStorage $localStorage)
-    {
-        $foreignDriver = GeneralUtility::makeInstance(
-            RemoteFileAbstractionLayerDriver::class
-        );
-        $foreignDriver->setStorageUid($localStorage->getUid());
-        $foreignDriver->initialize();
-        return $foreignDriver;
     }
 }
