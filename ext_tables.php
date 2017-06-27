@@ -167,6 +167,13 @@ call_user_func(
                     'publishSysLog',
                     false
                 );
+                $signalSlotDispatcher->connect(
+                    \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+                    'publishRecordRecursiveAfterPublishing',
+                    \In2code\In2publishCore\Domain\Anomaly\RefindexUpdater::class,
+                    'registerRefindexUpdate',
+                    false
+                );
 
                 $reserveSysFileUids = \In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration(
                     'factory.fal.reserveSysFileUids'
