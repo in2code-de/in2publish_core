@@ -26,8 +26,8 @@ namespace In2code\In2publishCore\Command;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Driver\Rpc\EnvelopeDispatcher;
-use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
+use In2code\In2publishCore\Communication\RemoteProcedureCall\EnvelopeDispatcher;
+use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**

@@ -27,7 +27,7 @@ namespace In2code\In2publishCore\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
+use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\Domain\Repository\LogEntryRepository;
 use In2code\In2publishCore\Domain\Service\TcaService;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;

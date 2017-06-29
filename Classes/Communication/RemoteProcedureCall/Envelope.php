@@ -1,5 +1,5 @@
 <?php
-namespace In2code\In2publishCore\Domain\Driver\Rpc;
+namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
 
 /***************************************************************
  * Copyright notice

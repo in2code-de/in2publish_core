@@ -28,9 +28,9 @@ namespace In2code\In2publishCore\Domain\Driver;
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
-use In2code\In2publishCore\Domain\Driver\Rpc\Envelope;
-use In2code\In2publishCore\Domain\Driver\Rpc\EnvelopeDispatcher;
-use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
+use In2code\In2publishCore\Communication\RemoteProcedureCall\Envelope;
+use In2code\In2publishCore\Communication\RemoteProcedureCall\EnvelopeDispatcher;
+use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Resource\ResourceStorageInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
