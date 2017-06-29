@@ -51,9 +51,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
      */
     public function __construct()
     {
-        $this->testSubjectProvider = GeneralUtility::makeInstance(
-            FalStorageTestSubjectsProvider::class
-        );
+        $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);
     }
 
     /**

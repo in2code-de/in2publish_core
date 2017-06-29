@@ -103,9 +103,7 @@ class PhysicalFilePublisher implements SingletonInterface
             // which comprises all information, given it was created by the FolderRecordFactory
             // if that's the case we can rely on the records state to decide on the action to take.
             if (true === $record->getAdditionalProperty('isAuthoritative')) {
-                $filePublisherService = GeneralUtility::makeInstance(
-                    FilePublisherService::class
-                );
+                $filePublisherService = GeneralUtility::makeInstance(FilePublisherService::class);
 
                 switch ($record->getState()) {
                     case RecordInterface::RECORD_STATE_MOVED_AND_CHANGED:

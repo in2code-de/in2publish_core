@@ -47,9 +47,7 @@ class ConfigurationFormatTest implements TestCaseInterface
      */
     public function __construct()
     {
-        $this->definitionProvider = GeneralUtility::makeInstance(
-            ConfigurationDefinitionProvider::class
-        );
+        $this->definitionProvider = GeneralUtility::makeInstance(ConfigurationDefinitionProvider::class);
     }
 
     /**

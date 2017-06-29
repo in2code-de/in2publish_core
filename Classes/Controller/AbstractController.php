@@ -288,9 +288,7 @@ abstract class AbstractController extends ActionController
     public function initializeAction()
     {
         /** @var \In2code\In2publishCore\Domain\Service\ExecutionTimeService $executionTimeService */
-        $executionTimeService = GeneralUtility::makeInstance(
-            ExecutionTimeService::class
-        );
+        $executionTimeService = GeneralUtility::makeInstance(ExecutionTimeService::class);
         $executionTimeService->start();
         $this->initializeDatabaseConnections();
         $this->commonRepository = CommonRepository::getDefaultInstance();

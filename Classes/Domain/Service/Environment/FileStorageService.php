@@ -221,9 +221,7 @@ class FileStorageService extends AbstractService
     protected function renameFile($oldFile, $newFile)
     {
         $this->renamePhysicalFolderOrFile($oldFile, $newFile);
-        $sysFileService = GeneralUtility::makeInstance(
-            SysFileService::class
-        );
+        $sysFileService = GeneralUtility::makeInstance(SysFileService::class);
         $sysFileService->renameSysFile($oldFile, $newFile);
     }
 
@@ -235,9 +233,7 @@ class FileStorageService extends AbstractService
     protected function renameFolder($oldFolder, $newFolder)
     {
         $this->renamePhysicalFolderOrFile($oldFolder, $newFolder);
-        $sysFileService = GeneralUtility::makeInstance(
-            SysFileService::class
-        );
+        $sysFileService = GeneralUtility::makeInstance(SysFileService::class);
         $sysFileService->renameFolderInSysFile($oldFolder, $newFolder);
     }
 

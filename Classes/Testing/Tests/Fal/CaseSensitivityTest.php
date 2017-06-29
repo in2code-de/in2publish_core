@@ -52,12 +52,8 @@ class CaseSensitivityTest implements TestCaseInterface
      */
     public function __construct()
     {
-        $this->flexFormService = GeneralUtility::makeInstance(
-            FlexFormService::class
-        );
-        $this->testSubjectProvider = GeneralUtility::makeInstance(
-            FalStorageTestSubjectsProvider::class
-        );
+        $this->flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
+        $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);
     }
 
     /**

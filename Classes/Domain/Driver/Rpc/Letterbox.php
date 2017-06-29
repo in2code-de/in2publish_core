@@ -61,9 +61,7 @@ class Letterbox
      */
     public function __construct()
     {
-        $this->contextService = GeneralUtility::makeInstance(
-            ContextService::class
-        );
+        $this->contextService = GeneralUtility::makeInstance(ContextService::class);
         $this->keepEnvelopes = (bool)ConfigurationUtility::getConfiguration('debug.keepEnvelopes');
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
     }

@@ -45,9 +45,7 @@ class TestingService
      */
     public function __construct()
     {
-        $this->testCaseService = GeneralUtility::makeInstance(
-            TestCaseService::class
-        );
+        $this->testCaseService = GeneralUtility::makeInstance(TestCaseService::class);
     }
 
     /**

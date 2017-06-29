@@ -282,8 +282,6 @@ class TcaService implements SingletonInterface
      */
     protected function getDatabaseSchema()
     {
-        return GeneralUtility::makeInstance(
-            DatabaseSchemaService::class
-        )->getDatabaseSchema();
+        return GeneralUtility::makeInstance(DatabaseSchemaService::class)->getDatabaseSchema();
     }
 }

@@ -406,22 +406,14 @@ class EnvelopeDispatcher
      */
     protected function getFileObject($driver, $identifier, $storage)
     {
-        $fileIndexFactory = GeneralUtility::makeInstance(
-            FileIndexFactory::class,
-            $driver,
-            $driver
-        );
+        $fileIndexFactory = GeneralUtility::makeInstance(FileIndexFactory::class, $driver, $driver);
 
         /** @var File $file */
         $fileIndexArray = $fileIndexFactory->getFileIndexArray($identifier, 'local');
         if (empty($fileIndexArray)) {
             return null;
         }
-        $file = GeneralUtility::makeInstance(
-            File::class,
-            $fileIndexArray,
-            $storage
-        );
+        $file = GeneralUtility::makeInstance(File::class, $fileIndexArray, $storage);
         return $file;
     }
 

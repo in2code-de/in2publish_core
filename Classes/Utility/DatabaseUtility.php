@@ -63,9 +63,7 @@ class DatabaseUtility
             static::$foreignDatabase->setDatabaseUsername($configuration['username']);
             static::$foreignDatabase->setDatabasePort($configuration['port']);
 
-            $foreignEnvironmentService = GeneralUtility::makeInstance(
-                ForeignEnvironmentService::class
-            );
+            $foreignEnvironmentService = GeneralUtility::makeInstance(ForeignEnvironmentService::class);
             static::$foreignDatabase->setInitializeCommandsAfterConnect(
                 $foreignEnvironmentService->getDatabaseInitializationCommands()
             );

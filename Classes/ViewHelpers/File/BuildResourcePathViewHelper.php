@@ -72,9 +72,7 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
                 $storage = $record->getPropertyBySideIdentifier($stagingLevel, 'storage');
                 $identifier = $record->getPropertyBySideIdentifier($stagingLevel, 'identifier');
 
-                $remoteFalDriver = GeneralUtility::makeInstance(
-                    RemoteFileAbstractionLayerDriver::class
-                );
+                $remoteFalDriver = GeneralUtility::makeInstance(RemoteFileAbstractionLayerDriver::class);
                 $remoteFalDriver->setStorageUid($storage);
                 $remoteFalDriver->initialize();
                 $resourceUrl = $remoteFalDriver->getPublicUrl($identifier);

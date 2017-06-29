@@ -154,9 +154,7 @@ class ConfigurationUtility
      */
     private function __construct()
     {
-        $this->contextService = GeneralUtility::makeInstance(
-            ContextService::class
-        );
+        $this->contextService = GeneralUtility::makeInstance(ContextService::class);
     }
 
     /**
@@ -323,9 +321,8 @@ class ConfigurationUtility
      */
     protected function initialize()
     {
-        $pathToConfiguration = GeneralUtility::makeInstance(
-            In2publishConfigurationService::class
-        )->getPathToConfiguration();
+        $pathToConfiguration = GeneralUtility::makeInstance(In2publishConfigurationService::class)
+                                             ->getPathToConfiguration();
 
         if (null === $pathToConfiguration) {
             $this->loadingMessage = static::STATE_EXT_CONF_NOT_AVAILABLE;

@@ -57,9 +57,7 @@ class RpcCommandController extends AbstractCommandController
     {
         parent::__construct();
         $this->letterbox = GeneralUtility::makeInstance(Letterbox::class);
-        $this->envelopeDispatcher = GeneralUtility::makeInstance(
-            EnvelopeDispatcher::class
-        );
+        $this->envelopeDispatcher = GeneralUtility::makeInstance(EnvelopeDispatcher::class);
     }
 
     /**

@@ -53,9 +53,7 @@ class LocalDatabaseTest implements TestCaseInterface
             return new TestResult('database.local_offline', TestResult::ERROR);
         }
 
-        $expectedTables = GeneralUtility::makeInstance(
-            RequiredTablesDataProvider::class
-        )->getRequiredTables();
+        $expectedTables = GeneralUtility::makeInstance(RequiredTablesDataProvider::class)->getRequiredTables();
         $actualTables = array_keys($localDatabase->admin_get_tables());
 
         $missingTables = [];

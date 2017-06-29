@@ -85,9 +85,7 @@ class FalIndexPostProcessor implements SingletonInterface
         }
 
         $remoteStorage = GeneralUtility::makeInstance(RemoteStorage::class);
-        $ifrFactory = GeneralUtility::makeInstance(
-            IndexingFolderRecordFactory::class
-        );
+        $ifrFactory = GeneralUtility::makeInstance(IndexingFolderRecordFactory::class);
 
         foreach ($this->registeredInstances as $file) {
             $storage = $this->getStorage($file);

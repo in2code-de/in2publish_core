@@ -74,9 +74,7 @@ class FileIndexFactory
         $this->foreignDriver = $foreignDriver;
         $this->sysFileTca = GeneralUtility::makeInstance(TcaService::class)
                                           ->getConfigurationArrayForTable('sys_file');
-        $this->contextService = GeneralUtility::makeInstance(
-            ContextService::class
-        );
+        $this->contextService = GeneralUtility::makeInstance(ContextService::class);
     }
 
     /**
@@ -295,8 +293,6 @@ class FileIndexFactory
      */
     protected function getUidReservationService()
     {
-        return GeneralUtility::makeInstance(
-            UidReservationService::class
-        );
+        return GeneralUtility::makeInstance(UidReservationService::class);
     }
 }

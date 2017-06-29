@@ -55,9 +55,7 @@ class ForeignDatabaseTest implements TestCaseInterface
             return new TestResult('database.foreign_offline', TestResult::ERROR);
         }
 
-        $expectedTables = GeneralUtility::makeInstance(
-            RequiredTablesDataProvider::class
-        )->getRequiredTables();
+        $expectedTables = GeneralUtility::makeInstance(RequiredTablesDataProvider::class)->getRequiredTables();
         $actualTables = array_keys($foreignDatabase->admin_get_tables());
 
         $missingTables = [];

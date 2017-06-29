@@ -46,9 +46,7 @@ class FilePublisherService
      */
     public function __construct()
     {
-        $this->remoteFalDriver = GeneralUtility::makeInstance(
-            RemoteFileAbstractionLayerDriver::class
-        );
+        $this->remoteFalDriver = GeneralUtility::makeInstance(RemoteFileAbstractionLayerDriver::class);
     }
 
     /**
