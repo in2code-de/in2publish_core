@@ -28,7 +28,6 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Service\TableConfiguration\LabelService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -36,6 +35,19 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
  */
 class GetLabelFieldFromRecordViewHelper extends AbstractViewHelper
 {
+    /**
+     * @var LabelService
+     */
+    protected $labelService;
+
+    /**
+     * GetLabelFieldFromRecordViewHelper constructor.
+     */
+    public function __construct()
+    {
+        $this->labelService = GeneralUtility::makeInstance(LabelService::class);
+    }
+
     /**
      * Get label field from record
      *
@@ -45,10 +57,6 @@ class GetLabelFieldFromRecordViewHelper extends AbstractViewHelper
      */
     public function render(Record $record, $stagingLevel = 'local')
     {
-        /** @var LabelService $labelService */
-        $labelService = GeneralUtility::makeInstance(ObjectManager::class)->get(
-            LabelService::class
-        );
-        return $labelService->getLabelField($record, $stagingLevel);
+        return $this->labelService->getLabelField($record, $stagingLevel);
     }
 }

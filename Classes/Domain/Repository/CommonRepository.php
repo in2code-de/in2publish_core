@@ -38,7 +38,6 @@ use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Service\FlexFormService;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
@@ -793,7 +792,7 @@ class CommonRepository extends BaseRepository
     protected function getLocalFlexFormDataFromRecord(RecordInterface $record, $column)
     {
         /** @var FlexFormService $flexFormService */
-        $flexFormService = $this->objectManager->get(FlexFormService::class);
+        $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
 
         $localFlexFormData = [];
         if ($record->hasLocalProperty($column)) {
@@ -1228,7 +1227,7 @@ class CommonRepository extends BaseRepository
                 $whereClause = '';
                 if (!empty($columnConfiguration['foreign_table_where'])) {
                     /** @var ReplaceMarkersService $replaceMarkers */
-                    $replaceMarkers = $this->objectManager->get(
+                    $replaceMarkers = GeneralUtility::makeInstance(
                         ReplaceMarkersService::class,
                         $this->localDatabase,
                         $this->foreignDatabase
@@ -1989,8 +1988,7 @@ class CommonRepository extends BaseRepository
      */
     public static function getDefaultInstance($tableName = 'pages')
     {
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        return $objectManager->get(
+        return GeneralUtility::makeInstance(
             CommonRepository::class,
             DatabaseUtility::buildLocalDatabaseConnection(),
             DatabaseUtility::buildForeignDatabaseConnection(),

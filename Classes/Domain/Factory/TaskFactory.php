@@ -29,26 +29,12 @@ namespace In2code\In2publishCore\Domain\Factory;
 
 use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * converts database rows from tx_in2code_in2publish_task into Task objects
  */
 class TaskFactory
 {
-    /**
-     * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
-     */
-    protected $objectManager = null;
-
-    /**
-     * TaskFactory constructor.
-     */
-    public function __construct()
-    {
-        $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-    }
-
     /**
      * @param array $taskProperties
      * @return AbstractTask
@@ -59,7 +45,7 @@ class TaskFactory
         $configuration = json_decode($taskProperties['configuration'], true);
 
         /** @var AbstractTask $object */
-        $object = $this->objectManager->get($className, $configuration, $taskProperties['uid']);
+        $object = GeneralUtility::makeInstance($className, $configuration, $taskProperties['uid']);
         $object->setCreationDate(new \DateTime($taskProperties['creation_date']));
 
         if ($taskProperties['messages']) {

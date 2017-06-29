@@ -48,7 +48,7 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
      */
     public function initialize()
     {
-        $this->domainService = $this->objectManager->get(DomainService::class);
+        $this->domainService = GeneralUtility::makeInstance(DomainService::class);
     }
 
     /**

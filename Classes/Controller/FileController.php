@@ -87,10 +87,7 @@ class FileController extends AbstractController
      */
     public function publishFolderAction($identifier)
     {
-        $success = $this
-            ->objectManager
-            ->get(FolderPublisherService::class)
-            ->publish($identifier);
+        $success = GeneralUtility::makeInstance(FolderPublisherService::class)->publish($identifier);
 
         if ($success) {
             $this->addFlashMessage(
@@ -167,15 +164,9 @@ class FileController extends AbstractController
     {
         try {
             if (false === ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
-                $record = $this
-                    ->objectManager
-                    ->get(IndexingFolderRecordFactory::class)
-                    ->makeInstance($identifier);
+                $record = GeneralUtility::makeInstance(IndexingFolderRecordFactory::class)->makeInstance($identifier);
             } else {
-                $record = $this
-                    ->objectManager
-                    ->get(FolderRecordFactory::class)
-                    ->makeInstance($identifier);
+                $record = GeneralUtility::makeInstance(FolderRecordFactory::class)->makeInstance($identifier);
             }
             $this->signalSlotDispatcher->dispatch(
                 FileController::class,

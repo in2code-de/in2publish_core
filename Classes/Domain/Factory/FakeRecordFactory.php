@@ -36,7 +36,6 @@ use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class FakeRecordFactory to fake a record tree with just the information from local and just the pages
@@ -123,7 +122,7 @@ class FakeRecordFactory
     {
         $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier, 'local');
         $propertiesForeign = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier, 'foreign');
-        $record = GeneralUtility::makeInstance(ObjectManager::class)->get(
+        $record = GeneralUtility::makeInstance(
             Record::class,
             'pages',
             $propertiesLocal,

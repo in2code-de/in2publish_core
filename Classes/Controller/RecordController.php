@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Controller;
 use In2code\In2publishCore\Domain\Factory\FakeRecordFactory;
 use In2code\In2publishCore\Domain\Service\TcaService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
@@ -51,9 +52,7 @@ class RecordController extends AbstractController
         if (!ConfigurationUtility::getConfiguration('factory.simpleOverviewAndAjax')) {
             $record = $this->commonRepository->findByIdentifier($this->pid);
         } else {
-            $record = $this->objectManager->get(
-                FakeRecordFactory::class
-            )->buildFromStartPage($this->pid);
+            $record = GeneralUtility::makeInstance(FakeRecordFactory::class)->buildFromStartPage($this->pid);
         }
 
         $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeIndexViewRender', [$this, $record]);

@@ -34,7 +34,6 @@ use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class BaseRepository. Inherit from this repository to execute methods
@@ -43,11 +42,6 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
  */
 abstract class BaseRepository
 {
-    /**
-     * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
-     */
-    protected $objectManager;
-
     /**
      * The table name to use for any SELECT, INSERT, UPDATE and DELETE query
      *
@@ -76,7 +70,6 @@ abstract class BaseRepository
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
         $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
     }
 

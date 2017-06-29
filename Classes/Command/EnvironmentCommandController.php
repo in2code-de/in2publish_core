@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Command;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Service\Environment\FileStorageService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class EnvironmentCommandController (always enabled)
@@ -47,10 +48,7 @@ class EnvironmentCommandController extends AbstractCommandController
      */
     public function rewriteNonUtf8CharactersForFoldersCommand($fileStoragePath = 'fileadmin/', $dryRun = false)
     {
-        $fileStorageService = $this->objectManager->get(
-            FileStorageService::class,
-            $fileStoragePath
-        );
+        $fileStorageService = GeneralUtility::makeInstance(FileStorageService::class, $fileStoragePath);
         $this->showNonAllowedFolders($fileStorageService);
         if (!$dryRun) {
             $fileStorageService->rewriteNonAllowedFolders();
@@ -70,10 +68,7 @@ class EnvironmentCommandController extends AbstractCommandController
      */
     public function rewriteNonUtf8CharactersForFilesCommand($fileStoragePath = 'fileadmin/', $dryRun = false)
     {
-        $fileStorageService = $this->objectManager->get(
-            FileStorageService::class,
-            $fileStoragePath
-        );
+        $fileStorageService = GeneralUtility::makeInstance(FileStorageService::class, $fileStoragePath);
         $this->showNonAllowedFiles($fileStorageService);
         if (!$dryRun) {
             $fileStorageService->rewriteNonAllowedFiles();
