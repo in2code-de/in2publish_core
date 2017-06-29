@@ -36,7 +36,6 @@ use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 /**
@@ -154,8 +153,7 @@ class RecordFactory
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        $this->signalSlotDispatcher = $objectManager->get(Dispatcher::class);
+        $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
 
         $factorySettings = ConfigurationUtility::getConfiguration('factory');
         $this->maximumPageRecursion = $factorySettings['maximumPageRecursion'];
