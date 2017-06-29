@@ -44,6 +44,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
  * Class SshConnection
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @deprecated This whole class has bee deprecated and will be removed in 6.0. Use RCE or TAT API instead.
  */
 class SshConnection
 {
@@ -240,9 +241,11 @@ class SshConnection
     /**
      * @param string $absoluteSourceFile
      * @return string
+     * @deprecated This method has been deprecated and will be deleted in 6.0. Use TemporaryAssetTransmission instead.
      */
     public function transferTemporaryFile($absoluteSourceFile)
     {
+        GeneralUtility::logDeprecatedFunction();
         if (is_file($absoluteSourceFile)) {
             $temporaryIdentifier = $this->foreignRootPath . 'typo3temp/' . uniqid('tx_in2publish_temp_');
             if ($this->writeRemoteFile($absoluteSourceFile, $temporaryIdentifier)) {

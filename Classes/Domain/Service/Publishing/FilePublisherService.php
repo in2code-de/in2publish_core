@@ -26,8 +26,8 @@ namespace In2code\In2publishCore\Domain\Service\Publishing;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Communication\TemporaryAssetTransmission\AssetTransmitter;
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
-use In2code\In2publishCore\Security\SshConnection;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -129,9 +129,12 @@ class FilePublisherService
      */
     protected function transferTemporaryFile($storage, $fileIdentifier)
     {
-        return SshConnection::makeInstance()->transferTemporaryFile(
-            $this->getLocalReadableFilePathForIdentifier($storage, $fileIdentifier)
-        );
+        $source = $this->getLocalReadableFilePathForIdentifier($storage, $fileIdentifier);
+
+        $assetTransmitter = GeneralUtility::makeInstance(AssetTransmitter::class);
+        $target = $assetTransmitter->transmitTemporaryFile($source);
+
+        return $target;
     }
 
     /**
