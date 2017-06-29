@@ -46,7 +46,6 @@ abstract class SshBaseAdapter
      * @var array
      */
     protected $config = [
-        'chmodEnabled' => '',
         'debug' => '',
         'host' => '',
         'port' => '',
@@ -86,7 +85,6 @@ abstract class SshBaseAdapter
             throw $exception;
         }
 
-        $this->config['chmodEnabled'] = function_exists('ssh2_sftp_chmod');
         $this->config['debug'] = (bool)ConfigurationUtility::getConfiguration('debug.showForeignKeyFingerprint');
     }
 
