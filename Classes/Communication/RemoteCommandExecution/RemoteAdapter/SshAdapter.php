@@ -113,11 +113,4 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
         }
         unset($this->session);
     }
-
-    /**
-     */
-    public function __destruct()
-    {
-        $this->disconnect();
-    }
 }

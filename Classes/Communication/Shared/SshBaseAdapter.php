@@ -202,4 +202,18 @@ abstract class SshBaseAdapter
         }
         return $config;
     }
+
+    /**
+     * Destroy all sessions and connections
+     *
+     * @return void
+     */
+    abstract protected function disconnect();
+
+    /**
+     */
+    public function __destruct()
+    {
+        $this->disconnect();
+    }
 }
