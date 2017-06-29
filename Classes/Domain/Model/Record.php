@@ -630,7 +630,7 @@ class Record implements RecordInterface
     }
 
     /**
-     * @return array
+     * @return string
      * @codeCoverageIgnore
      */
     public function getDeleteField()

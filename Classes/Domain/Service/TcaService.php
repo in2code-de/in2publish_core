@@ -341,7 +341,7 @@ class TcaService
 
     /**
      * @param string $table
-     * @return array
+     * @return string
      */
     public static function getDeleteField($table)
     {
