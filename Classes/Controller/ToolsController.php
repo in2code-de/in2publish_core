@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Controller;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Driver\Rpc\Letterbox;
+use In2code\In2publishCore\Domain\Repository\LogEntryRepository;
 use In2code\In2publishCore\Domain\Service\TcaService;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Testing\Service\TestingService;
@@ -44,8 +45,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 class ToolsController extends AbstractController
 {
     /**
-     * @var \In2code\In2publishCore\Domain\Repository\LogEntryRepository
-     * @inject
+     * @var LogEntryRepository
      */
     protected $logEntryRepository = null;
 
@@ -53,6 +53,15 @@ class ToolsController extends AbstractController
      * @var array
      */
     protected $tests = [];
+
+    /**
+     * ToolsController constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->logEntryRepository = GeneralUtility::makeInstance(LogEntryRepository::class);
+    }
 
     /**
      * @param ViewInterface $view

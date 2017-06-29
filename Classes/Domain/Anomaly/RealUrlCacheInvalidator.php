@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Domain\Anomaly;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\Task\RealUrlTask;
 use In2code\In2publishCore\Domain\Model\Task\RealUrlUpdateTask;
+use In2code\In2publishCore\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -58,7 +59,6 @@ class RealUrlCacheInvalidator
 
     /**
      * @var \In2code\In2publishCore\Domain\Repository\TaskRepository
-     * @inject
      */
     protected $taskRepository;
 
@@ -78,6 +78,7 @@ class RealUrlCacheInvalidator
             $realUrlVersion = ExtensionManagementUtility::getExtensionVersion('realurl');
             $this->updateData = version_compare($realUrlVersion, '2.1.0') >= 0;
             $this->excludedDokTypes = (array)ConfigurationUtility::getConfiguration('tasks.realUrl.excludedDokTypes');
+            $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
         } else {
             $this->logger->debug('RealUrl is not installed, skipping RealUrlCacheInvalidator');
         }

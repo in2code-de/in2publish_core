@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Domain\Anomaly;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\Task\FlushFrontendPageCacheTask;
 use In2code\In2publishCore\Domain\Model\Task\FlushNewsCacheTask;
+use In2code\In2publishCore\Domain\Repository\TaskRepository;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -47,8 +48,7 @@ class CacheInvalidator implements SingletonInterface
     protected $logger = null;
 
     /**
-     * @var \In2code\In2publishCore\Domain\Repository\TaskRepository
-     * @inject
+     * @var TaskRepository
      */
     protected $taskRepository;
 
@@ -78,6 +78,7 @@ class CacheInvalidator implements SingletonInterface
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
+        $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
     }
 
     /**

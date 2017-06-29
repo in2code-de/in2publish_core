@@ -28,6 +28,8 @@ namespace In2code\In2publishCore\Domain\Factory;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * converts database rows from tx_in2code_in2publish_task into Task objects
@@ -36,9 +38,16 @@ class TaskFactory
 {
     /**
      * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
-     * @inject
      */
     protected $objectManager = null;
+
+    /**
+     * TaskFactory constructor.
+     */
+    public function __construct()
+    {
+        $this->objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+    }
 
     /**
      * @param array $taskProperties

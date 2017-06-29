@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Domain\Factory;
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Repository\TableCacheRepository;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
@@ -55,8 +56,7 @@ class FakeRecordFactory
     protected $foreignDatabase = null;
 
     /**
-     * @var \In2code\In2publishCore\Domain\Repository\TableCacheRepository
-     * @inject
+     * @var TableCacheRepository
      */
     protected $tableCacheRepository = null;
 
@@ -77,6 +77,7 @@ class FakeRecordFactory
     {
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
+        $this->tableCacheRepository = GeneralUtility::makeInstance(TableCacheRepository::class);
         $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
     }
 

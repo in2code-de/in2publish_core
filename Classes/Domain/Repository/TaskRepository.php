@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Domain\Repository;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Factory\TaskFactory;
 use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -46,8 +47,7 @@ class TaskRepository
     protected $databaseConnection = null;
 
     /**
-     * @var \In2code\In2publishCore\Domain\Factory\TaskFactory
-     * @inject
+     * @var TaskFactory
      */
     protected $taskFactory = null;
 
@@ -62,6 +62,7 @@ class TaskRepository
     public function __construct()
     {
         $this->contextService = GeneralUtility::makeInstance(ContextService::class);
+        $this->taskFactory = GeneralUtility::makeInstance(TaskFactory::class);
         if ($this->contextService->isForeign()) {
             $this->databaseConnection = DatabaseUtility::buildLocalDatabaseConnection();
         } elseif ($this->contextService->isLocal()) {

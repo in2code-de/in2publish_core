@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Domain\Repository;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
@@ -39,6 +40,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Service\FlexFormService;
+use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 /**
  * CommonRepository - actions in foreign and local database
@@ -73,26 +75,22 @@ use TYPO3\CMS\Extbase\Service\FlexFormService;
 class CommonRepository extends BaseRepository
 {
     /**
-     * @var \In2code\In2publishCore\Domain\Factory\RecordFactory
-     * @inject
+     * @var RecordFactory
      */
     protected $recordFactory;
 
     /**
-     * @var \TYPO3\CMS\Core\Resource\ResourceFactory
-     * @inject
+     * @var ResourceFactory
      */
     protected $resourceFactory;
 
     /**
-     * @var \In2code\In2publishCore\Domain\Repository\TaskRepository
-     * @inject
+     * @var TaskRepository
      */
     protected $taskRepository;
 
     /**
-     * @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher
-     * @inject
+     * @var Dispatcher
      */
     protected $signalSlotDispatcher;
 
@@ -133,6 +131,10 @@ class CommonRepository extends BaseRepository
         $identifierFieldName = 'uid'
     ) {
         parent::__construct();
+        $this->recordFactory = GeneralUtility::makeInstance(RecordFactory::class);
+        $this->resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+        $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
+        $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
         $this->identifierFieldName = $identifierFieldName;
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;

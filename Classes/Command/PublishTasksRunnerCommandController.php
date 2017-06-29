@@ -28,6 +28,8 @@ namespace In2code\In2publishCore\Command;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
+use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class PublishTasksRunnerCommandController (enabled on foreign)
@@ -37,10 +39,18 @@ class PublishTasksRunnerCommandController extends AbstractCommandController
     const RUN_TASKS_COMMAND = 'publishtasksrunner:runtasksinqueue';
 
     /**
-     * @var \In2code\In2publishCore\Domain\Repository\TaskRepository
-     * @inject
+     * @var TaskRepository
      */
     protected $taskRepository;
+
+    /**
+     * PublishTasksRunnerCommandController constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
+    }
 
     /**
      * Reads all Tasks to execute from the Database and executes them

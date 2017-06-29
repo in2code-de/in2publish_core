@@ -27,8 +27,10 @@ namespace In2code\In2publishCore\Domain\Anomaly;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
@@ -42,14 +44,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class SysLogPublisher
 {
     /**
-     * @var \In2code\In2publishCore\Domain\Repository\TaskRepository
-     * @inject
+     * @var TaskRepository
      */
     protected $taskRepository;
 
     /**
-     * @var \In2code\In2publishCore\Domain\Factory\RecordFactory
-     * @inject
+     * @var RecordFactory
      */
     protected $recordFactory;
 
@@ -84,6 +84,8 @@ class SysLogPublisher
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
+        $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
+        $this->recordFactory = GeneralUtility::makeInstance(RecordFactory::class);
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->commonRepository = CommonRepository::getDefaultInstance();
