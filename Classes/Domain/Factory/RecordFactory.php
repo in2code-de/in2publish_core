@@ -48,12 +48,6 @@ use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 class RecordFactory
 {
     /**
-     * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
-     * @inject
-     */
-    protected $objectManager;
-
-    /**
      * Runtime cache to cache already created Records
      * Structure:
      *  1. Index: TableName
