@@ -26,7 +26,7 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Service\TcaService;
+use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 
 /**
  * Class TextProcessor
@@ -75,8 +75,8 @@ class TextProcessor extends AbstractProcessor
      */
     protected function hasDefaultExtrasRte(array $config)
     {
-        if (isset($config[TcaService::DEFAULT_EXTRAS])) {
-            return false !== strpos($config[TcaService::DEFAULT_EXTRAS], static::RTE_DEFAULT_EXTRAS);
+        if (isset($config[TcaProcessingService::DEFAULT_EXTRAS])) {
+            return false !== strpos($config[TcaProcessingService::DEFAULT_EXTRAS], static::RTE_DEFAULT_EXTRAS);
         }
         return false;
     }

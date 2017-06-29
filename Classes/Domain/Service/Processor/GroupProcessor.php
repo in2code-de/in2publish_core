@@ -26,7 +26,7 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Service\TcaService;
+use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -132,7 +132,7 @@ class GroupProcessor extends AbstractProcessor
      */
     public function canPreProcessInternalTypeDbTable($table)
     {
-        if (!TcaService::tableExists($table)) {
+        if (!TcaProcessingService::tableExists($table)) {
             $this->lastReasons[static::INTERNAL_TYPE] =
                 'Can not reference the table "' . $table . '" from "foreign_table. It is not present in the TCA';
             return false;
@@ -161,7 +161,7 @@ class GroupProcessor extends AbstractProcessor
             $allowedTables = [$allowed];
         }
         foreach ($allowedTables as $table) {
-            if (!TcaService::tableExists($table)) {
+            if (!TcaProcessingService::tableExists($table)) {
                 $this->lastReasons[static::INTERNAL_TYPE] =
                     'Can not reference the table "' . $table . '" from "allowed. It is not present in the TCA';
                 return false;

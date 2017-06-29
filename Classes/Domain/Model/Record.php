@@ -27,7 +27,7 @@ namespace In2code\In2publishCore\Domain\Model;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Service\TcaService;
+use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 
 /**
@@ -626,7 +626,7 @@ class Record implements RecordInterface
      */
     public function hasDeleteField()
     {
-        return TcaService::hasDeleteField($this->tableName);
+        return TcaProcessingService::hasDeleteField($this->tableName);
     }
 
     /**
@@ -635,7 +635,7 @@ class Record implements RecordInterface
      */
     public function getDeleteField()
     {
-        return TcaService::getDeleteField($this->tableName);
+        return TcaProcessingService::getDeleteField($this->tableName);
     }
 
     /**
@@ -644,7 +644,7 @@ class Record implements RecordInterface
      */
     public function getColumnsTca()
     {
-        return TcaService::getColumnsFor($this->tableName);
+        return TcaProcessingService::getColumnsFor($this->tableName);
     }
 
     /**

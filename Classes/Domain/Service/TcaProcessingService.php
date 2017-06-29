@@ -47,9 +47,9 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Class TcaService
+ * Class TcaProcessingService
  */
-class TcaService
+class TcaProcessingService
 {
     const COLUMNS = 'columns';
     const CONFIG = 'config';
@@ -64,7 +64,7 @@ class TcaService
     const DEFAULT_EXTRAS = 'defaultExtras';
 
     /**
-     * @var TcaService
+     * @var TcaProcessingService
      */
     protected static $instance = null;
 
@@ -123,7 +123,7 @@ class TcaService
     protected $cache = null;
 
     /**
-     * TcaService constructor.
+     * TcaProcessingService constructor.
      */
     protected function __construct()
     {
@@ -154,7 +154,7 @@ class TcaService
     }
 
     /**
-     * @return TcaService
+     * @return TcaProcessingService
      */
     public static function getInstance()
     {

@@ -26,7 +26,7 @@ namespace In2code\In2publishCore\Domain\Model;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Service\TcaService;
+use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 
 /**
  * Representation of a (default: Page-) Record that does not exist, neither on Local nor on Foreign.
@@ -54,7 +54,7 @@ class NullRecord extends Record
         $this->localProperties = $localProperties;
         $this->foreignProperties = $foreignProperties;
         if (empty($tca)) {
-            $tca = TcaService::getCompleteTcaForTable($tableName);
+            $tca = TcaProcessingService::getCompleteTcaForTable($tableName);
         }
         $this->tableConfigurationArray = $tca;
         $this->dirtyProperties = [];
