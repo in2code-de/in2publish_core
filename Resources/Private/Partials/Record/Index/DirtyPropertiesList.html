@@ -96,7 +96,7 @@
 					<f:if condition="{record.foreignPreviewAvailable}">
 						<f:then>
 							<f:if condition="{record.localPreviewAvailable}">
-								<f:link.external class="in2publish-notextdecoration" uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local',addProtocol:'0')}/index.php?id={record.identifier}&tx_in2publishcore_pi1[identifier]={record.identifier}&type=9815" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_compare">Compare</f:translate></f:link.external>
+								<publish:uri.compareUri identifier="{record.identifier}" class="in2publish-notextdecoration"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_compare">Compare</f:translate></publish:uri.compareUri>
 							</f:if>
 							<f:link.external class="in2publish-notextdecoration" uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'foreign',addProtocol:'0')}/index.php?id={record.identifier}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
 						</f:then>
