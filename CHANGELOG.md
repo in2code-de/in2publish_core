@@ -1,5 +1,45 @@
 # In2publish Core Change Log
 
+5.10.0:
+
+- [CLEANUP] Remove the pagetreenodesstripes mixin (better version in enterprise edition)
+- [BUGFIX] Calculate and add the cHash to the page compare preview URL
+- [REFACTOR] Rename Domain\Service\TcaService to TcaProcessingServcie to reduce confusion with Service\TcaService
+- [REFACTOR] Move RPC/Envelope API to Communication folder
+- [FEATURE] Introcude TAT API (TemporaryAssetTransmission) and deprecate SshConnection
+- [CLEANUP] Remove chmodEnabled from SshBaseAdapter
+- [REFACTOR] Move desctructor to SshBaseAdapter
+- [REFACTOR] Extract main ssh functionality to shared adapter class
+- [COMMENT] Fix return type annotation for TCA delete field value
+- [REFACTOR] Replace all occurences of ObjectManager with GeneralUtility
+- [REFACTOR] Get rid of ObjectManager in RecordFactory at all
+- [CLEANUP] Remove unused property objectManager from RecordFactory
+- [REFACTOR] Get rid of all extbase injections
+- [CODESTYLE] Single-line all simple GU::makeInstance calls
+- [REFACTOR] Extract duplicate code to get drivers from FAL storages to utility class
+- [COMMENT] Add suppression annotations for coupling in classes which got new imports
+- [REFACTOR] Simplify identifier conversion for case insensitive storages
+- [CLEANUP] Remove developer exceptions
+- [REFACTOR] Replace all generic exceptions with at least In2publishCoreException and add missing expcetion codes
+- [REFACTOR] Merge dirty property detection conditions into single method
+- [REFACTOR] Resolve double condition body
+- [REFACTOR] Change GeneralUtility:deprecationLog to ::logDeprecatedFunction for simplicity
+- [BUGFIX] Implode the array of error messages before escaping the html
+- [TYPO] Fix various typos found in test methods and messages
+- [REFACTOR] Change GeneralUtility:deprecationLog to ::logDeprecatedFunction for simplicity
+- [TASK] Update an error message in InlineProcessor
+- [TYPO] Fix UnitTestBootstrap exception message
+- [REFACTOR] Replace all self:: with static:: (where possble)
+- [REFACTOR] Resolve all __FUNCTION__ constants
+- [REFACTOR] Replace all calls to get_class with the late bound static FQCN constant
+- [REFACTOR] Convert all arrays to short syntax
+- [REFACTOR] Replace overlooked occurrence of a string class reference
+- [REFACTOR] Use PHP 5.5 magic class constant for all class references
+- [CODESTYLE] Add trailing comma in default tca processor list
+- [CLEANUP] Remove unused import in StatusCommandController
+- [BUGFIX] Support RTE for input fields if enabled in defaultExtras
+- [COMMENT] Remove superfluous empty lines from AbstractProcessor
+
 5.9.0:
 
 - [BUGFIX] Retrieve pid from the given record information if it couldn't be determined (fixes in2code-de/in2publish#19)
