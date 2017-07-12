@@ -43,8 +43,3 @@ $pictonblue: #557AD1;
 	background-image: repeating-linear-gradient(-45deg, transparent, transparent $stripWidth, rgba(255, 255, 255, $backgroundColorTransparent) $stripWidth, rgba(255, 255, 255, $backgroundColorTransparent) (2*$stripWidth));
 	color: $textColor $important;
 }
-
-@mixin pagetreenodesstripes($backgroundColor, $backgroundColorTransparent: 0.4) {
-	background-color: $backgroundColor;
-	background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(255, 255, 255, $backgroundColorTransparent) 5px, rgba(255, 255, 255, $backgroundColorTransparent) 10px);
-}
