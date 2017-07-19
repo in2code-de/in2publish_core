@@ -3,7 +3,7 @@
 * Before creating a Feature Pull Requests please contact us, otherwise your work might be in vain!
     * Slack: #ext-in2publish [Open in App](https://typo3.slack.com/archives/ext-in2publish) [Open in Browser](https://typo3.slack.com/messages/C2ULY79MZ)
     * Email: [service@in2code.de](mailto:service@in2code.de)
-    * Phone or Form: See [in2code contact page](https://www.in2code.de/kontakt/)  
+    * Phone or Form: See [in2code contact page](https://www.in2code.de/kontakt/)
 * Strictly follow PSR-2.
 * Use tags in commit messages. The full list can be found here: http://vxvr.de/ideas/commitmessages.html
 * Commit messages are imperative. They must make sense when read as "When applied, this commit will $COMMITMESSAGE" (without the tag in square brackets).
