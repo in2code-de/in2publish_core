@@ -100,13 +100,17 @@ class BackendUtility
         if (null !== ($rollbackFields = GeneralUtility::_GP('element')) && is_string($rollbackFields)) {
             $rollbackData = explode(':', $rollbackFields);
             if (count($rollbackData) > 1) {
-                $result = DatabaseUtility::buildLocalDatabaseConnection()->exec_SELECTgetSingleRow(
-                    'pid',
-                    $rollbackData[0],
-                    'uid=' . (int)$rollbackData[1]
-                );
-                if (false !== $result && isset($result['pid'])) {
-                    return (int)$result['pid'];
+                if ($rollbackData[0] === 'pages') {
+                    return (int)$rollbackData[1];
+                } else {
+                    $result = DatabaseUtility::buildLocalDatabaseConnection()->exec_SELECTgetSingleRow(
+                        'pid',
+                        $rollbackData[0],
+                        'uid=' . (int)$rollbackData[1]
+                    );
+                    if (false !== $result && isset($result['pid'])) {
+                        return (int)$result['pid'];
+                    }
                 }
             }
         }
