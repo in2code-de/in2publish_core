@@ -317,7 +317,7 @@ function In2publishModule($) {
 			$.each(allDataAttributes, function(key, currentData) {
 				var filterField = $('*[name="' + key + '"]');
 				if (filterField.length && filterField.val() !== '') {
-					var value = filterField.val();
+					var value = filterField.val().toLowerCase();
 					if (typeof currentData === 'string') {
 						currentData = currentData.toLowerCase();
 						if (currentData.indexOf(value) === -1) {
