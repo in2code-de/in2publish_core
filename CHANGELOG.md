@@ -1,6 +1,7 @@
 # In2publish Core Change Log
 
 5.10.1:
+
 - [BUGFIX] Handle initialization of invalid or removed FAL storages oder drivers
 - [BUGFIX] Compare lower string representations of values and search term in Worklfow Module
 - [BUGFIX] Use the uid of the active page when reverting the history
