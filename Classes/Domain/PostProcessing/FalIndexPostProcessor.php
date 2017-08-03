@@ -31,6 +31,8 @@ use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\FileUtility;
+use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -52,10 +54,16 @@ class FalIndexPostProcessor implements SingletonInterface
     protected $resourceFactory = null;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger = null;
+
+    /**
      * FalIndexPostProcessor constructor.
      */
     public function __construct()
     {
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->resourceFactory = ResourceFactory::getInstance();
     }
 
@@ -90,36 +98,45 @@ class FalIndexPostProcessor implements SingletonInterface
         foreach ($this->registeredInstances as $file) {
             $storage = $this->getStorage($file);
 
-            $localIdentifier = $file->hasLocalProperty('identifier') ? $file->getLocalProperty('identifier') : '';
-            $foreignIdentifier = $file->hasForeignProperty('identifier') ? $file->getForeignProperty('identifier') : '';
+            if (null !== $storage) {
+                $localIdentifier = '';
+                if ($file->hasLocalProperty('identifier')) {
+                    $localIdentifier = $file->getLocalProperty('identifier');
+                }
+                $foreignIdentifier = '';
+                if ($file->hasForeignProperty('identifier')) {
+                    $foreignIdentifier = $file->getForeignProperty('identifier');
+                }
 
-            if ($file->getState() !== RecordInterface::RECORD_STATE_MOVED) {
-                $localIdentifier = $localIdentifier !== '' ? $localIdentifier : $foreignIdentifier;
-                $foreignIdentifier = $foreignIdentifier !== '' ? $foreignIdentifier : $localIdentifier;
+                if ($file->getState() !== RecordInterface::RECORD_STATE_MOVED) {
+                    $localIdentifier = $localIdentifier !== '' ? $localIdentifier : $foreignIdentifier;
+                    $foreignIdentifier = $foreignIdentifier !== '' ? $foreignIdentifier : $localIdentifier;
+                }
+
+                if ($storage->hasFile($localIdentifier)) {
+                    $localFile = $storage->getFile($localIdentifier);
+                    $localFileInfo = FileUtility::extractFileInformation($localFile);
+                } else {
+                    $localFileInfo = [];
+                }
+
+                $foreignFileInfo = $remoteStorage->getFile($storage->getUid(), $foreignIdentifier);
+
+                $ifrFactory->overruleLocalStorage($storage);
+                $ifrFactory->overruleRemoteStorage($remoteStorage);
+                // do not use the return value since we only desire the record update of the file
+                $ifrFactory->filterRecords(
+                    [$localIdentifier => $localFileInfo],
+                    [$foreignIdentifier => $foreignFileInfo],
+                    [$file]
+                );
             }
-
-            if ($storage->hasFile($localIdentifier)) {
-                $localFile = $storage->getFile($localIdentifier);
-                $localFileInfo = FileUtility::extractFileInformation($localFile);
-            } else {
-                $localFileInfo = [];
-            }
-
-            $foreignFileInfo = $remoteStorage->getFile($storage->getUid(), $foreignIdentifier);
-
-            $ifrFactory->overruleLocalStorage($storage);
-            $ifrFactory->overruleRemoteStorage($remoteStorage);
-            // do not use the return value since we only desire the record update of the file
-            $ifrFactory->filterRecords(
-                [$localIdentifier => $localFileInfo],
-                [$foreignIdentifier => $foreignFileInfo],
-                [$file]
-            );
         }
     }
 
     /**
      * @param RecordInterface $record
+     *
      * @return ResourceStorage
      */
     protected function getStorage(RecordInterface $record)
@@ -130,7 +147,19 @@ class FalIndexPostProcessor implements SingletonInterface
         }
 
         if (null !== ($storageUid = $record->getLocalProperty('storage'))) {
-            $storages[$storageUid] = $this->resourceFactory->getStorageObject($storageUid);
+            try {
+                $storages[$storageUid] = $this->resourceFactory->getStorageObject($storageUid);
+            } catch (\InvalidArgumentException $exception) {
+                $this->logger->warning(
+                    'Storage or driver for record does not exist',
+                    [
+                        'exception' => $exception,
+                        'storage' => $record->getLocalProperty('storage'),
+                        'record' => $record->getIdentifier(),
+                    ]
+                );
+                return null;
+            }
             return $storages[$storageUid];
         }
 
