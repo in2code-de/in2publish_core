@@ -1,5 +1,14 @@
 # In2publish Core Change Log
 
+5.10.1:
+- [BUGFIX] Handle initialization of invalid or removed FAL storages oder drivers
+- [BUGFIX] Compare lower string representations of values and search term in Worklfow Module
+- [BUGFIX] Use the uid of the active page when reverting the history
+- [DOCS] Remove superfluous whitespace from contribution guideline
+- [DOCS] Add contribution guidelines
+- [DOCS] Create the introduction to the editors manual (related #2)
+- [DEV] Raise dev-master branch alias version
+
 5.10.0:
 
 - [CLEANUP] Remove the pagetreenodesstripes mixin (better version in enterprise edition)
