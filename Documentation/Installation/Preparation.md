@@ -14,9 +14,9 @@ as well as some minimum server software versions.
 
 Additional PHP extensions:
 
-| Dependency | Version |
-|------------|---------|
-| libssh2    | >= 0.11 |
+| Dependency   | Version |
+|--------------|---------|
+| php-ext ssh2 | >= 0.11 |
 
 PHP configuration values:
 
@@ -44,7 +44,7 @@ These requirements are on top of the basic requirements of TYPO3 CMS 6.2 - 7.6
 
 | Value                 | Description                                                                                                     |
 |-----------------------|-----------------------------------------------------------------------------------------------------------------|
-| SSH2                  | the libssh2 library, which is used by the php-extension php_ssh2                                                |
+| SSH2                  | the libssh2 library, which is used by the php-ext ssh2                                                          |
 | Keypair               | A public and private key pair to authenticate the Webprocess User on Foreign (crypted and uncrypted rsa tested) |
 | Environment variable  | in2publish requires `SetEnv IN2PUBLISH_CONTEXT Local` to be set in the virtual host or (if allowed) .htaccess   |
 
@@ -77,7 +77,7 @@ Appendix to `Shell Apache2`:
 > Under certain circumstances the user may differ from the webprocess user
 >
 >     1. Both users are able to read/write directories and files written by the other one.
->     2. libssh2 >= 0.12 for ``ssh2_sftp_chmod`` support
+>     2. php-ext ssh2 >= 0.12 for ``ssh2_sftp_chmod`` support
 
 Appendix to `Environment variable`:
 
