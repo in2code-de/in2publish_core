@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Controller;
 
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\Domain\Repository\LogEntryRepository;
-use In2code\In2publishCore\Domain\Service\TcaService;
+use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
@@ -194,9 +194,9 @@ class ToolsController extends AbstractController
      */
     public function tcaAction()
     {
-        $this->view->assign('incompatibleTca', TcaService::getIncompatibleTca());
-        $this->view->assign('compatibleTca', TcaService::getCompatibleTca());
-        $this->view->assign('controls', TcaService::getControls());
+        $this->view->assign('incompatibleTca', TcaProcessingService::getIncompatibleTca());
+        $this->view->assign('compatibleTca', TcaProcessingService::getCompatibleTca());
+        $this->view->assign('controls', TcaProcessingService::getControls());
     }
 
     /**
@@ -204,7 +204,7 @@ class ToolsController extends AbstractController
      */
     public function clearTcaCachesAction()
     {
-        TcaService::getInstance()->flushCaches();
+        TcaProcessingService::getInstance()->flushCaches();
         $this->redirect('index');
     }
 
