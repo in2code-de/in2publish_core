@@ -8,7 +8,7 @@
 |database.foreign.name|string|database_123|Name of the foreign database|
 |database.foreign.username|string|username_123|Username to the foreign database|
 |database.foreign.password|string|Password_123|Password to the foreign database|
-|database.foreign.hostname|string|localhost|Host of the foreign database|
+|database.foreign.hostname|string|127.0.0.1|IP or host name of the foreign database|
 |database.foreign.port|int|3306|Port to the foreign database|
 |excludeRelatedTables|array|_cropped. See example file_|Tables that are excluded from publishing|
 |ignoreFieldsForDifferenceView.[tableName]|array|_depends on table, tables defined by default: pages, physical_folder, sys_file_|Don't show a difference if there is a difference in this table.field|
@@ -84,8 +84,7 @@ Filename: `LocalConfigurtion.yaml`
 # Database access
 database:
   # Set your production systems database credentials here. If you use port forwarding to
-  # the server where the database is
-  # installed, the host is localhost and the port is your forwarded port.
+  # the server where the database is installed, the host is 127.0.0.1 and the port is your forwarded port.
   foreign:
     # name of the foreign database
     name: 'database_123'
@@ -94,7 +93,7 @@ database:
     # password of the foreign user above
     password: 'Password_123'
     # hostname of the database to connect to.
-    hostname: 'localhost'
+    hostname: '127.0.0.1'
     # default: 3306
     port: 3306
 

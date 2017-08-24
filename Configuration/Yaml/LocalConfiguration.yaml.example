@@ -7,8 +7,7 @@
 # Database access
 database:
   # Set your production systems database credentials here. If you use port forwarding to
-  # the server where the database is
-  # installed, the host is localhost and the port is your forwarded port.
+  # the server where the database is installed, the host is 127.0.0.1 and the port is your forwarded port.
   foreign:
     # name of the foreign database
     name: 'database_123'
@@ -17,7 +16,7 @@ database:
     # password of the foreign user above
     password: 'Password_123'
     # hostname of the database to connect to.
-    hostname: 'localhost'
+    hostname: '127.0.0.1'
     # default: 3306
     port: 3306
 

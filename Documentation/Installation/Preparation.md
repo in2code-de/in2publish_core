@@ -62,7 +62,7 @@ Hint:
 > For automated refreshing of the port forwarding use the following line in /etc/rc.local/:
 >
 >     /usr/bin/autossh -M 0 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -N -f  -i
->     /path/to/.ssh/id_rsa -L 3307:localhost:3306 www-data@production.domain.tld
+>     /path/to/.ssh/id_rsa -L 3307:127.0.0.1:3306 www-data@production.domain.tld
 
 **Foreign:**
 
