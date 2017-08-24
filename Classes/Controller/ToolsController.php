@@ -33,6 +33,7 @@ use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use In2code\In2publishCore\Tools\ToolsRegistry;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -80,6 +81,7 @@ class ToolsController extends AbstractController
     public function indexAction()
     {
         $this->checkTestStatus();
+        $this->view->assign('tools', GeneralUtility::makeInstance(ToolsRegistry::class)->getTools());
     }
 
     /**

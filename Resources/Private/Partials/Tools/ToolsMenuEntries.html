@@ -1,29 +1,6 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
-<f:if condition="{configurationExists}">
-	<f:link.action action="index" controller="Tools" class="btn btn-xs{publish:Be.GetClassNameOnAction(actionName:'index')}">
-		<f:translate key="moduleselector.index">Introduction</f:translate>
+<f:for each="{publish:tools.getEnabledTools()}" as="entry">
+	<f:link.action action="{entry.action}" controller="{entry.controller}" extensionName="{entry.extensionName}" class="btn btn-xs{publish:Be.GetClassNameOnAction(actionName:'{entry.action}')}">
+		<f:translate key="{entry.name}">{entry.name}</f:translate>
 	</f:link.action>
-	<f:link.action action="test" controller="Tools" class="btn btn-xs{publish:Be.GetClassNameOnAction(actionName:'test')}">
-		<f:translate key="moduleselector.test">Tests</f:translate>
-	</f:link.action>
-	<f:link.action action="configuration" controller="Tools" class="btn btn-xs{publish:Be.GetClassNameOnAction(actionName:'configuration')}">
-		<f:translate key="moduleselector.configuration">Configuration</f:translate>
-	</f:link.action>
-	<f:link.action action="showLogs" controller="Tools" class="btn btn-xs{publish:Be.GetClassNameOnAction(actionName:'showLogs')}">
-		<f:translate key="moduleselector.show_logs">Logs</f:translate>
-	</f:link.action>
-	<f:link.action action="tca" controller="Tools" class="btn btn-xs{publish:Be.GetClassNameOnAction(actionName:'tca')}">
-		<f:translate key="moduleselector.tca">TCA</f:translate>
-	</f:link.action>
-	<f:link.action action="clearTcaCaches" controller="Tools" class="btn btn-xs{publish:Be.GetClassNameOnAction(actionName:'clearTcaCaches')}">
-		<f:translate key="moduleselector.flush_tca">TCA flush</f:translate>
-	</f:link.action>
-	<f:if condition="{canFlushEnvelopes}">
-		<f:link.action action="flushEnvelopes" controller="Tools" class="btn btn-xs{publish:Be.GetClassNameOnAction(actionName:'flushEnvelopes')}">
-			<f:translate key="moduleselector.flush_envelopes">Remove superfluous envelopes</f:translate>
-		</f:link.action>
-	</f:if>
-	<f:link.action action="flushRegistry" controller="Tools" class="btn btn-xs{publish:Be.GetClassNameOnAction(actionName:'flushRegistry')}">
-		<f:translate key="moduleselector.flush_registry">Remove registry</f:translate>
-	</f:link.action>
-</f:if>
+</f:for>

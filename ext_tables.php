@@ -111,20 +111,63 @@ call_user_func(
                 // Register Tools module
                 // check explicitly against false to enable this module when the configuration could not be read
                 if ($isModuleM4Enabled !== false) {
-                    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-                        'In2code.' . $extKey,
-                        'tools',
-                        'm4',
-                        '',
-                        [
-                            'Tools' => 'index, test, showLogs, flushLogs, configuration, tca, clearTcaCaches, flushEnvelopes, flushRegistry',
-                        ],
-                        [
-                            'access' => 'admin',
-                            'icon' => 'EXT:' . $extKey . '/Resources/Public/Icons/Tools.svg',
-                            'labels' => 'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang_mod4.xlf',
-                        ]
+                    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['extTablesInclusion-PostProcessing'][] = \In2code\In2publishCore\Tools\ToolsRegistry::class;
+                    $toolsRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                        \In2code\In2publishCore\Tools\ToolsRegistry::class
                     );
+                    $toolsRegistry->addTool(
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.index',
+                        '',
+                        'Tools',
+                        'index'
+                    );
+                    $toolsRegistry->addTool(
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test',
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test.description',
+                        'Tools',
+                        'test'
+                    );
+                    $toolsRegistry->addTool(
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration',
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration.description',
+                        'Tools',
+                        'configuration'
+                    );
+                    $toolsRegistry->addTool(
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.show_logs',
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.show_logs.description',
+                        'Tools',
+                        'showLogs'
+                    );
+                    $toolsRegistry->addTool(
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca',
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca.description',
+                        'Tools',
+                        'tca'
+                    );
+                    $toolsRegistry->addTool(
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca',
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca.description',
+                        'Tools',
+                        'clearTcaCaches'
+                    );
+                    $toolsRegistry->addTool(
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry',
+                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry.description',
+                        'Tools',
+                        'flushRegistry'
+                    );
+                    $letterbox = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                        \In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox::class
+                    );
+                    if ($letterbox->hasUnAnsweredEnvelopes()) {
+                        $toolsRegistry->addTool(
+                            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes',
+                            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes.description',
+                            'Tools',
+                            'flushEnvelopes'
+                        );
+                    }
                 }
 
                 // Register Anomalies
