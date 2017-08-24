@@ -1,0 +1,56 @@
+<li class="active">
+	<f:link.action action="index">
+		<f:translate key="moduleselector.introduction">Introduction</f:translate>:
+		<f:translate key="moduleselector.introduction.description">Small tools description</f:translate>
+	</f:link.action>
+</li>
+<li>
+	<f:link.action action="test">
+		<f:translate key="moduleselector.test">Tests</f:translate>:
+		<f:translate key="moduleselector.test.description">Run some function test of in2publish</f:translate>
+	</f:link.action>
+</li>
+<li>
+	<f:link.action action="configuration">
+		<f:translate key="moduleselector.configuration">Show configuration</f:translate>:
+		<f:translate key="moduleselector.configuration.description">Display the local configuration of in2publish from LocalConfiguration.yaml</f:translate>
+	</f:link.action>
+</li>
+<li>
+	<f:link.action action="editConfiguration">
+		<f:translate key="moduleselector.configuration">Edit configuration</f:translate>:
+		<f:translate key="moduleselector.configuration.description">Display the local configuration of in2publish from LocalConfiguration.yaml</f:translate>
+	</f:link.action>
+</li>
+<li>
+	<f:link.action action="showLogs">
+		<f:translate key="moduleselector.show_logs">Show logs</f:translate>:
+		<f:translate key="moduleselector.show_logs.description">Show logfiles of in2publish</f:translate>
+	</f:link.action>
+</li>
+<li>
+	<f:link.action action="tca">
+		<f:translate key="moduleselector.tca">Inspect TCA</f:translate>:
+		<f:translate key="moduleselector.tca.description">See which parts of the TCA are processed, and the reason why others are not.</f:translate>
+	</f:link.action>
+</li>
+<li>
+	<f:link.action action="clearTcaCaches">
+		<f:translate key="moduleselector.flush_tca">Flush TCA cache</f:translate>:
+		<f:translate key="moduleselector.flush_tca.description">Immediately flush all cached TCA entries.</f:translate>
+	</f:link.action>
+</li>
+<f:if condition="{canFlushEnvelopes}">
+	<li>
+		<f:link.action action="flushEnvelopes">
+			<f:translate key="moduleselector.flush_envelopes">Remove superfluous envelopes</f:translate>:
+			<f:translate key="moduleselector.flush_envelopes.description">Deletes all envelopes which were already used (envelopes are one-way records).</f:translate>
+		</f:link.action>
+	</li>
+</f:if>
+<li>
+	<f:link.action action="flushRegistry">
+		<f:translate key="moduleselector.flush_registry">remove all registry entries</f:translate>:
+		<f:translate key="moduleselector.flush_registry.description">removes all registry entries which store information about the local and foreign environment</f:translate>
+	</f:link.action>
+</li>
