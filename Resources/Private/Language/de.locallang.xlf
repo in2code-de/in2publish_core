@@ -255,7 +255,7 @@
 			</trans-unit>
 			<trans-unit id="moduleselector.flush_registry.description">
 				<source>Removes all registry entries which store information about the local and foreign environment. You must run the test after flushing these.</source>
-				<target state="translated">Löscht alle Registereinträge, welche Infomrationen über das lokale und entfernte System vorhalten. Danach müssen die Tests erneut ausgeführt werden.</target>
+				<target state="translated">Löscht alle Registereinträge, welche Informationen über das lokale und entfernte System vorhalten. Danach müssen die Tests erneut ausgeführt werden.</target>
 			</trans-unit>
 
 			<trans-unit id="record.state.unchanged">
