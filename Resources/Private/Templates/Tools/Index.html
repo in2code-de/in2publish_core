@@ -5,24 +5,16 @@ Index - Information and Stuff
 <f:section name="content">
 	<f:if condition="{configurationExists}">
 		<div class="in2publish-module">
-			<div class="row">
-				<h2>
-					<f:translate key="module_main_title">Publish Content</f:translate> -
-					<f:translate key="module_m4_title">Tools</f:translate>
-				</h2>
+			<h2><f:translate key="module_main_title">Publish Content</f:translate> - <f:translate key="module_m4_title">Tools</f:translate></h2>
 
-				<p><f:translate key="module_m3_index_content">The Tools Module</f:translate></p>
+			<p><f:translate key="module_m3_index_content">The Tools Module</f:translate></p>
 
-				<section class="nav-pills-container">
-					<ul class="nav nav-pills nav-stacked">
-						<f:render partial="Tools/IntroductionMenu" arguments="{_all}" />
-					</ul>
-				</section>
-			</div>
+			<section class="nav-pills-container">
+				<ul class="nav nav-pills nav-stacked">
+					<f:render partial="Tools/IntroductionMenu" arguments="{_all}" />
+				</ul>
+			</section>
 		</div>
 	</f:if>
-	<f:alias map="{moduleName: 'tools'}">
-		<f:render partial="Footer" arguments="{_all}" />
-	</f:alias>
 </f:section>
 

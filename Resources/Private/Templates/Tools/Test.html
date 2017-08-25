@@ -1,11 +1,7 @@
 <f:layout name="Tools" />
 
 <f:section name="content">
-
-	<h2>
-		<f:translate key="module_main_title">Publish Content</f:translate> -
-		<f:translate key="module_m4_title">Tools</f:translate>
-	</h2>
+	<h2><f:translate key="module_main_title">Publish Content</f:translate> - <f:translate key="module_m4_title">Tools</f:translate></h2>
 
 	<div class="in2publish-messages">
 		<f:for each="{testingResults}" as="testResult">
@@ -19,8 +15,4 @@
 			</div>
 		</f:for>
 	</div>
-
-	<f:alias map="{moduleName: 'tools'}">
-		<f:render partial="Footer" arguments="{_all}" />
-	</f:alias>
 </f:section>

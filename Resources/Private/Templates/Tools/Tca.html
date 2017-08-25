@@ -1,15 +1,9 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
 <f:layout name="Tools" />
 
-Configuration overview
-
 <f:section name="content">
 	<div class="in2publish-module">
-		<h2>
-			<f:translate key="module_main_title">Publish Content</f:translate>
-			-
-			<f:translate key="module.m4.tca">TCA</f:translate>
-		</h2>
+		<h2><f:translate key="module_main_title">Publish Content</f:translate> - <f:translate key="module.m4.tca">TCA</f:translate></h2>
 
 		<h3><a id="in2publish--compatible-tca"><f:translate key="module.m4.tca.compatible">Compatible TCA</f:translate></a></h3>
 		<a href="#in2publish--incompatible-tca"><f:translate key="module.m4.tca.navigate.to_incompatible">To incompatbile TCA</f:translate></a>
@@ -26,7 +20,4 @@ Configuration overview
 		<a href="#in2publish--incompatible-tca"><f:translate key="module.m4.tca.navigate.to_incompatible">To incompatbile TCA</f:translate></a>
 		<f:debug title="{f:translate(key:'module.m4.tca.controls')}" inline="true">{controls}</f:debug>
 	</div>
-	<f:alias map="{moduleName: 'tools'}">
-		<f:render partial="Footer" arguments="{_all}" />
-	</f:alias>
 </f:section>

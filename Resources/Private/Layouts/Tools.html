@@ -30,6 +30,9 @@
 				<f:render partial="FlashMessages" />
 				<div class="container container-full">
 					<f:render section="content" />
+					<f:alias map="{moduleName: 'tools'}">
+						<f:render partial="Footer" arguments="{_all}" />
+					</f:alias>
 					<f:render partial="Typo3Version" />
 				</div>
 			</div>

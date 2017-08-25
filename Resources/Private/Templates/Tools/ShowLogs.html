@@ -5,11 +5,7 @@ Index - Information and Stuff
 
 <f:section name="content">
 	<div class="in2publish-module">
-		<h2>
-			<f:translate key="module_main_title">Publish Content</f:translate>
-			-
-			<f:translate key="module.m4.logs">Logs</f:translate>
-		</h2>
+		<h2><f:translate key="module_main_title">Publish Content</f:translate> - <f:translate key="module.m4.logs">Logs</f:translate></h2>
 
 		<section>
 			<f:form action="showLogs">
@@ -112,11 +108,6 @@ Index - Information and Stuff
 			</table>
 		</section>
 
-		<f:link.action
-			action="flushLogs"
-			class="in2publish-btn in2publish-btn-warning"><f:translate key="module.m4.logs.flush" /></f:link.action>
+		<f:link.action action="flushLogs" class="in2publish-btn in2publish-btn-warning"><f:translate key="module.m4.logs.flush" /></f:link.action>
 	</div>
-	<f:alias map="{moduleName: 'tools'}">
-		<f:render partial="Footer" arguments="{_all}" />
-	</f:alias>
 </f:section>
