@@ -9,6 +9,5 @@ There are a few JavaScript files, which are used in different places:
 * Overall.js required for eneterprise features
 * PageModule.js contains most of the workflow UI functionalities
 * PageModuleJquery.js wraps around jQuery for TYPO3 lower than 7.6
-* VersionCheck.min.js is included in the Tools module to show you if you use a current version of in2publish.
 
 Most of the JavaScript actually belongs to the enterprise version and will be removed eventually.
