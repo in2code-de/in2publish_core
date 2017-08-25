@@ -55,24 +55,28 @@ class DatabaseUtility
         static::initializeLogger();
         if (static::$foreignDatabase === null) {
             $configuration = ConfigurationUtility::getConfiguration('database.foreign');
-            /** @var DatabaseConnection $foreignDatabase */
-            static::$foreignDatabase = GeneralUtility::makeInstance(DatabaseConnection::class);
-            static::$foreignDatabase->setDatabaseHost($configuration['hostname']);
-            static::$foreignDatabase->setDatabaseName($configuration['name']);
-            static::$foreignDatabase->setDatabasePassword($configuration['password']);
-            static::$foreignDatabase->setDatabaseUsername($configuration['username']);
-            static::$foreignDatabase->setDatabasePort($configuration['port']);
-
-            $foreignEnvironmentService = GeneralUtility::makeInstance(ForeignEnvironmentService::class);
-            static::$foreignDatabase->setInitializeCommandsAfterConnect(
-                $foreignEnvironmentService->getDatabaseInitializationCommands()
-            );
-
-            try {
-                @static::$foreignDatabase->connectDB();
-            } catch (\Exception $e) {
-                static::$logger->error($e->getMessage());
+            if (null === $configuration) {
+                static::$logger->warning('Can not instantiate the foreign database connection without a configuration');
                 static::$foreignDatabase = null;
+            } else {
+                static::$foreignDatabase = GeneralUtility::makeInstance(DatabaseConnection::class);
+                static::$foreignDatabase->setDatabaseHost($configuration['hostname']);
+                static::$foreignDatabase->setDatabaseName($configuration['name']);
+                static::$foreignDatabase->setDatabasePassword($configuration['password']);
+                static::$foreignDatabase->setDatabaseUsername($configuration['username']);
+                static::$foreignDatabase->setDatabasePort($configuration['port']);
+
+                $foreignEnvironmentService = GeneralUtility::makeInstance(ForeignEnvironmentService::class);
+                static::$foreignDatabase->setInitializeCommandsAfterConnect(
+                    $foreignEnvironmentService->getDatabaseInitializationCommands()
+                );
+
+                try {
+                    @static::$foreignDatabase->connectDB();
+                } catch (\Exception $e) {
+                    static::$logger->error($e->getMessage());
+                    static::$foreignDatabase = null;
+                }
             }
         }
 
