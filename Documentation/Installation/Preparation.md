@@ -121,14 +121,14 @@ Using the webserver's user (assuming the user's name is `www-data`):
     usermod -s /usr/bin/bash www-data
 
     # 3. Set the home directory if not set (example for www-data)
-    usermod -d /var/www/websites
+    usermod -d /var/www/websites www-data
 
     # 4. Create an .ssh folder inside the home directory
     mkdir /var/www/websites/.ssh
 
     # 5. Create an authorized_keys file inside the .ssh folder and paste
     #    the public key from Local into it (you can use vi/vim instead of nano)
-    nano /var/www/websites/.authorized_keys
+    nano /var/www/websites/.ssh/authorized_keys
 
     # 6. Login on Local::
     exit
