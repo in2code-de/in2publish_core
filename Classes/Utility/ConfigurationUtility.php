@@ -170,7 +170,7 @@ class ConfigurationUtility
     protected static function getInstance()
     {
         if (static::$instance === null) {
-            static::$instance = new static;
+            static::$instance = GeneralUtility::makeInstance(static::class);
             static::$instance->initialize();
         }
         return static::$instance;
