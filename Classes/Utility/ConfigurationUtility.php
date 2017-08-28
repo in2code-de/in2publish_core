@@ -142,7 +142,7 @@ class ConfigurationUtility
     /**
      * @var ConfigurationUtility
      */
-    private static $instance = null;
+    protected static $instance = null;
 
     /**
      * @var ContextService
@@ -152,7 +152,7 @@ class ConfigurationUtility
     /**
      * ConfigurationUtility constructor.
      */
-    private function __construct()
+    protected function __construct()
     {
         $this->contextService = GeneralUtility::makeInstance(ContextService::class);
     }
@@ -160,14 +160,14 @@ class ConfigurationUtility
     /**
      * @return void
      */
-    private function __clone()
+    protected function __clone()
     {
     }
 
     /**
      * @return ConfigurationUtility
      */
-    private static function getInstance()
+    protected static function getInstance()
     {
         if (static::$instance === null) {
             static::$instance = new static;
