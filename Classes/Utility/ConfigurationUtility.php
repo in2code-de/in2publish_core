@@ -165,7 +165,7 @@ class ConfigurationUtility
     }
 
     /**
-     * @return ConfigurationUtility
+     * @return static
      */
     protected static function getInstance()
     {
