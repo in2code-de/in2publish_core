@@ -25,6 +25,7 @@ namespace In2code\In2publishCore\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Configuration\In2publishConfigurationService;
 use In2code\In2publishCore\Service\Context\ContextService;
 use TYPO3\CMS\Backend\Utility\BackendUtility as CoreBackendUtility;
@@ -152,8 +153,11 @@ class ConfigurationUtility
     /**
      * ConfigurationUtility constructor.
      */
-    protected function __construct()
+    public function __construct()
     {
+        if (null !== static::$instance) {
+            throw new In2publishCoreException('You are not allowed to instantiate this class twice', 1504022940);
+        }
         $this->contextService = GeneralUtility::makeInstance(ContextService::class);
     }
 
