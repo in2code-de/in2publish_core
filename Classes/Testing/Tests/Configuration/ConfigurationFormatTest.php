@@ -129,7 +129,7 @@ class ConfigurationFormatTest implements TestCaseInterface
                     }
                 }
             } else {
-                if (is_array($actualValue)) {
+                if (is_array($actualValue) && is_array($expected[$actualKey])) {
                     $missingKeys = array_merge(
                         $missingKeys,
                         $this->identifySuperfluousKeys($expected[$actualKey], $actualValue, $path)
