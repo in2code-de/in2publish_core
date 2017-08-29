@@ -137,7 +137,7 @@ call_user_func(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.show_logs',
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.show_logs.description',
                         'Tools',
-                        'showLogs'
+                        'showLogs,flushLogs'
                     );
                     $toolsRegistry->addTool(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca',
