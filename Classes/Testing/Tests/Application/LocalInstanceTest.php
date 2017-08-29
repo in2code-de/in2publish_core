@@ -49,7 +49,7 @@ class LocalInstanceTest implements TestCaseInterface
             return new TestResult('application.local_utf8_fs', TestResult::ERROR, ['application.utf8_fs_errors']);
         }
 
-        $excludedTables = ConfigurationUtility::getConfiguration('excludeRelatedTables');
+        $excludedTables = (array)ConfigurationUtility::getConfiguration('excludeRelatedTables');
         $localTables = $localDatabase->admin_get_tables();
 
         $missingTables = [];
