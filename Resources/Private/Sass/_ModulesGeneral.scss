@@ -78,16 +78,15 @@ div.typo3-fullDoc {
   }
 }
 
+.in2publish-module {
+  background: $scorpion;
+}
+
 body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: $scorpion;
   font-size: $defaultFontSize;
-  &[class^="in2publish-module-"], &[class*=" in2publish-module-"] {
-    background: $scorpion;
-  }
-
 
   &.in2publish-module-m1 {
     &:after {
