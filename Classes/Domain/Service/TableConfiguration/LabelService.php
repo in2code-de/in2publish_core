@@ -27,7 +27,7 @@ namespace In2code\In2publishCore\Domain\Service\TableConfiguration;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
@@ -58,7 +58,7 @@ class LabelService
     /**
      * Get label field from record
      *
-     * @param Record $record
+     * @param RecordInterface $record
      * @param string $stagingLevel "local" or "foreign"
      * @return string
      */
