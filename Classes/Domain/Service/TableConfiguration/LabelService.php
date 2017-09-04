@@ -64,7 +64,18 @@ class LabelService
      */
     public function getLabelField($record, $stagingLevel = 'local')
     {
-        $fields = $this->getLabelFieldsFromTableConfiguration($record->getTableName());
+        $tableName = $record->getTableName();
+
+        if ($tableName === 'sys_file_reference') {
+            return sprintf(
+                '%d [%d,%d]',
+                $record->getPropertyBySideIdentifier($stagingLevel, 'uid'),
+                $record->getPropertyBySideIdentifier($stagingLevel, 'uid_local'),
+                $record->getPropertyBySideIdentifier($stagingLevel, 'uid_foreign')
+            );
+        }
+
+        $fields = $this->getLabelFieldsFromTableConfiguration($tableName);
         foreach ($fields as $field) {
             $recordProperties = ObjectAccess::getProperty($record, $stagingLevel . 'Properties');
             if (!empty($recordProperties[$field])) {
