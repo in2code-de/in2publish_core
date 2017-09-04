@@ -35,9 +35,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RpcCommandController extends AbstractCommandController
 {
-    const EXIT_ENVELOPE_MISSING = 2300;
-    const EXIT_UID_MISSING = 2301;
-    const EXIT_EXECUTION_FAILED = 2302;
+    const EXIT_ENVELOPE_MISSING = 230;
+    const EXIT_UID_MISSING = 231;
+    const EXIT_EXECUTION_FAILED = 232;
     const EXECUTE_COMMAND = 'rpc:execute';
 
     /**

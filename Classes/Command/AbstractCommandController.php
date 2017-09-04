@@ -38,8 +38,8 @@ use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
  */
 abstract class AbstractCommandController extends CommandController
 {
-    const EXIT_NO_CONTEXT = 2110;
-    const EXIT_WRONG_CONTEXT = 2111;
+    const EXIT_NO_CONTEXT = 210;
+    const EXIT_WRONG_CONTEXT = 211;
 
     /**
      * @var Logger

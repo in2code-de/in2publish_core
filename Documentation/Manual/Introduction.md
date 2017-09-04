@@ -23,3 +23,6 @@ The color codes are as follows:
 
 You can publish a page by clicking on the arrow in the middle of the row with the pages name.
 
+## Compoment specific manuals:
+
+* [Command Controller Exit Codes](CommandControllers/ExitCodes.md)

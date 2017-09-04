@@ -42,7 +42,7 @@ class TableCommandController extends AbstractCommandController
     const PUBLISH_COMMAND = 'table:publish --table-name=%s';
     const IMPORT_COMMAND = 'table:import --table-name=%s';
     const BACKUP_COMMAND = 'table:backup --table-name=%s';
-    const EXIT_INVALID_TABLE = 2200;
+    const EXIT_INVALID_TABLE = 220;
 
     /**
      * @var DatabaseConnection
