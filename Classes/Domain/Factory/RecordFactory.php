@@ -325,6 +325,9 @@ class RecordFactory
         } else {
             $tableNamesToExclude = $this->excludedTableNames;
         }
+        // Special excluded table for page to table relation because this MM table has a PID (for whatever reason).
+        // The relation should come from the record via TCA not via the PID relation to the page.
+        $tableNamesToExclude[] = 'sys_file_reference';
         // if page recursion depth reached
         if ($this->pagesDepth < $this->maximumPageRecursion && $this->pageRecursionEnabled) {
             $this->pagesDepth++;
