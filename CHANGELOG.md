@@ -1,5 +1,40 @@
 # In2publish Core Change Log
 
+5.11.0:
+
+- [BUGFIX] Do not directly resolve relations from pages to sys_file_reference
+- [BUGFIX] Use the UID and relation targets of a sys_file_reference records as its label instead of just uid_local
+- [BUGFIX] Set comamnd exit codes to be lower than 254 and finally document these
+- [COMMENT] Exchange annotation of Record with RecordInterface
+- [FEATURE] Add Anomaly to update sys_refindex on foreign after publishing
+- [COMMENT] Ignore the coupling between objects of the ConfigurationUtility because there is currently no other solution
+- [BUGFIX] Allow GeneralUtility to create an instance of ConfigurationUtility
+- [BUGFIX] Ignore subsequent starts in the ExecutionTimeService
+- [BUGFIX] Allow the deletion of log entries from the tools module again
+- [BUGFIX] Prevent recursion of non-array values for superfluous index identification
+- [BUGFIX] Ensure that the tested setting excludeRelatedTables is an array
+- [BUGFIX] Use a specific class to style in2publish' modules
+- [DOCS] Fix the example commands to configure foreign's webserver user on foreign
+- [BUGFIX] Use the first of all allowed actions per tool as default action for the tool
+- [BUGFIX] Use GeneralUtility instead of new operator to instantiate the ConfigurationUtility
+- [COMMENT] Automatically return the right context specific class name for CfgUtility::getInstance()
+- [BUGFIX] Make ConfigurationUtility's private methods protected
+- [BUGFIX] Prohibit accessing the foreign database withtout any configuration
+- [CLEANUP] Remove superfluous JavaScript
+- [REFACTOR] Move the rendering of the tools footer to the layout
+- [REFACTOR] Move the fluid condition inside of class attribute to maintain the HTML code structure
+- [FEATURE] Add ToolsRegistry to dynamically add more tools to the module
+- [TYPO] Fix typo in german label moduleselector.flush_registry.description
+- [BUGFIX] Do not try to initialize the CommonRepo if the config check failed
+- [BUGFIX] Remove duplicate introduction menu entry for "show configuration"
+- [BUGFIX] Add the missing VHNS declaration
+- [REFACTOR] Move in2publish tools menu and menu entries to partials
+- [DOCS] Use 127.0.0.1 as example for the forwarded port host name instead of localhost
+- [BUGFIX] Update the class name of the renamed (formerly known as:) TcaService (fixes #39)
+- [DOCS] Exchange libssh2 with php-ext ssh2
+- [BUGFIX] Add missing disabled state for in2publish buttons
+- [DOCS] Add missing new line after tag in change log
+
 5.10.1:
 
 - [BUGFIX] Handle initialization of invalid or removed FAL storages oder drivers
