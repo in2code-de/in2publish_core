@@ -1,5 +1,9 @@
 # In2publish Core Change Log
 
+5.11.1:
+
+- [BUGFIX] Fix small typo in composer.json
+
 5.11.0:
 
 - [BUGFIX] Do not directly resolve relations from pages to sys_file_reference
