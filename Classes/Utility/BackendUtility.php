@@ -161,11 +161,22 @@ class BackendUtility
      */
     public static function buildUndoUri($table, $identifier)
     {
+        $module = GeneralUtility::_GP('M');
+
+        $returnParameters = [
+            'id' => GeneralUtility::_GP('id'),
+        ];
+        foreach (GeneralUtility::_GET() as $name => $value) {
+            if (is_array($value) && false !== strpos(strtolower($name), strtolower($module))) {
+                $returnParameters[$name] = $value;
+            }
+        }
+
         $uriParameters = [
             'element' => $table . ':' . $identifier,
-            'returnUrl' => BackendUtilityCore::getModuleUrl('web_In2publishCoreM1'),
+            'returnUrl' => BackendUtilityCore::getModuleUrl($module, $returnParameters),
         ];
-        $undoUri = BackendUtilityCore::getModuleUrl('record_history', $uriParameters);
-        return $undoUri;
+
+        return BackendUtilityCore::getModuleUrl('record_history', $uriParameters);
     }
 }
