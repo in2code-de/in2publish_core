@@ -18,11 +18,11 @@ CREATE TABLE tx_in2code_in2publish_task (
   uid int(11) unsigned NOT NULL auto_increment,
   task_type varchar(255) DEFAULT '' NOT NULL,
 
-  configuration text,
+  configuration longtext,
   creation_date datetime default NULL,
   execution_begin datetime default NULL,
   execution_end datetime default NULL,
-  messages text,
+  messages longtext,
 
   PRIMARY KEY (uid)
 ) ENGINE=InnoDB;
