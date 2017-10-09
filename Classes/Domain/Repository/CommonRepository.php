@@ -548,6 +548,9 @@ class CommonRepository extends BaseRepository
     protected function getFlexFormDefinitionSource(RecordInterface $record, array $columnConfiguration)
     {
         $dsArray = $columnConfiguration['ds'];
+        if (!isset($columnConfiguration['ds_pointerField'])) {
+            return $dsArray['default'];
+        }
         $pointerFields = GeneralUtility::trimExplode(',', $columnConfiguration['ds_pointerField']);
         $pointerFieldsCount = count($pointerFields);
         if ($pointerFieldsCount === 2) {

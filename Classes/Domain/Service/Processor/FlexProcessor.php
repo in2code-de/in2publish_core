@@ -41,6 +41,8 @@ class FlexProcessor extends AbstractProcessor
     const DS_POINTER_FIELD_SEARCH_PARENT = 'ds_pointerField_searchParent';
     const DS_POINTER_FIELD_SEARCH_PARENT_SUB_FIELD = 'ds_pointerField_searchParent_subField';
     const SEARCH = 'search';
+    const MISSING_POINTER_FIELD = 'can not resolve flexform values without "ds_pointerField" or default value';
+    const DEFAULT_VALUE = 'default';
 
     /**
      * @var array
@@ -55,7 +57,6 @@ class FlexProcessor extends AbstractProcessor
      */
     protected $required = [
         'can not resolve flexform values without "ds"' => self::DS,
-        'can not resolve flexform values without "ds_pointerField"' => self::DS_POINTER_FIELD,
     ];
 
     /**
@@ -64,4 +65,20 @@ class FlexProcessor extends AbstractProcessor
     protected $allowed = [
         self::SEARCH,
     ];
+
+    /**
+     * @param array $config
+     *
+     * @return bool
+     */
+    public function canPreProcess(array $config)
+    {
+        if (parent::canPreProcess($config) && !array_key_exists(static::DS_POINTER_FIELD, $config)) {
+            if (empty($config[static::DS][static::DEFAULT_VALUE])) {
+                $this->lastReasons[static::DS_POINTER_FIELD] = self::MISSING_POINTER_FIELD;
+            }
+        }
+
+        return empty($this->lastReasons);
+    }
 }
