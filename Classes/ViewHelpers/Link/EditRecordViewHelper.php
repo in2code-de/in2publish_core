@@ -45,7 +45,9 @@ class EditRecordViewHelper extends AbstractTagBasedViewHelper
      */
     public function initializeArguments()
     {
-        $this->registerArgument('record', RecordInterface::class, 'The record to edit', true);
+        $this->registerArgument('record', RecordInterface::class, 'The record object the link is built for');
+        $this->registerArgument('table', 'string', 'Alt. to record: The record table');
+        $this->registerArgument('identifier', 'integer', 'Alt. to record: The record identifier');
         parent::initializeArguments();
         parent::registerUniversalTagAttributes();
     }
@@ -55,9 +57,17 @@ class EditRecordViewHelper extends AbstractTagBasedViewHelper
      */
     public function render()
     {
-        /** @var RecordInterface $record */
-        $record = $this->arguments['record'];
-        $uri = BackendUtility::buildEditUri($record->getTableName(), $record->getIdentifier());
+        if (!empty($this->arguments['record'])) {
+            /** @var RecordInterface $record */
+            $record = $this->arguments['record'];
+            $table = $record->getTableName();
+            $identifier = $record->getIdentifier();
+        } else {
+            $table = $this->arguments['table'];
+            $identifier = $this->arguments['identifier'];
+        }
+
+        $uri = BackendUtility::buildEditUri($table, $identifier);
         $this->tag->addAttribute('href', $uri);
         $this->tag->setContent($this->renderChildren());
         return $this->tag->render();
