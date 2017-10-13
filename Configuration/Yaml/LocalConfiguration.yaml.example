@@ -292,12 +292,6 @@ tasks:
     # Create a web request for the published page.
     requestFrontend: FALSE
 
-  # Task name
-  solr:
-
-    # enable or disable solr integration
-    enable: FALSE
-
 
 # Set to TRUE if User TSconfig shall not be merged into this configuration file.
 disableUserConfig: FALSE
@@ -338,3 +332,7 @@ tca:
     text: 'In2code\In2publishCore\Domain\Service\Processor\TextProcessor'
     user: 'In2code\In2publishCore\Domain\Service\Processor\UserProcessor'
     imageManipulation: 'In2code\In2publishCore\Domain\Service\Processor\ImageManipulationProcessor'
+
+adapter:
+  remote: 'ssh'
+  transmission: 'ssh'

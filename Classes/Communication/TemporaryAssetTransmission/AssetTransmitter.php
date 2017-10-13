@@ -26,8 +26,8 @@ namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Communication\AdapterRegistry;
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface;
-use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -50,6 +50,11 @@ class AssetTransmitter implements SingletonInterface
     protected $adapter = null;
 
     /**
+     * @var AdapterRegistry
+     */
+    protected $adapterRegistry = null;
+
+    /**
      * @var string
      */
     protected $foreignRootPath = '';
@@ -60,6 +65,7 @@ class AssetTransmitter implements SingletonInterface
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
+        $this->adapterRegistry = GeneralUtility::makeInstance(AdapterRegistry::class);
         $this->foreignRootPath = rtrim(ConfigurationUtility::getConfiguration('sshConnection.foreignRootPath'), '/');
     }
 
@@ -75,7 +81,8 @@ class AssetTransmitter implements SingletonInterface
         if (null === $this->adapter) {
             $this->logger->debug('Lazy initializing SshAdapter');
             try {
-                $this->adapter = GeneralUtility::makeInstance(SshAdapter::class);
+                $adapterClass = $this->adapterRegistry->getAdapter(AdapterInterface::class);
+                $this->adapter = GeneralUtility::makeInstance($adapterClass);
             } catch (\Exception $exception) {
                 $this->logger->debug('SshAdapter initialization failed. See previous log for reason.');
             }

@@ -107,20 +107,6 @@ class ConfigurationDefinitionProvider implements SingletonInterface
                         'filterButtons' => 'boolean',
                     ],
                 ],
-                'sshConnection' => [
-                    'host' => 'string',
-                    'port' => 'integer',
-                    'username' => 'string',
-                    'privateKeyFileAndPathName' => 'string',
-                    'publicKeyFileAndPathName' => 'string',
-                    'privateKeyPassphrase' => 'string|NULL',
-                    'foreignKeyFingerprint' => 'string',
-                    'foreignKeyFingerprintHashingMethod' => 'string',
-                    'foreignRootPath' => 'string',
-                    'pathToPhp' => 'string',
-                    'ignoreChmodFail' => 'boolean',
-                    'foreignTYPO3Context' => 'string',
-                ],
                 'module' => [
                     'm1' => 'boolean',
                     'm3' => 'boolean',
@@ -153,6 +139,10 @@ class ConfigurationDefinitionProvider implements SingletonInterface
                         '*:string' => 'string',
                     ],
                 ],
+                'adapter' => [
+                    'remote' => 'string',
+                    'transmission' => 'string',
+                ],
             ];
             $this->cache = $this->overruleDefinition($definition);
         }
@@ -161,6 +151,7 @@ class ConfigurationDefinitionProvider implements SingletonInterface
 
     /**
      * @param array $definition
+     *
      * @return array
      */
     protected function overruleDefinition(array $definition)

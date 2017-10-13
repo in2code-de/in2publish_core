@@ -27,8 +27,8 @@ namespace In2code\In2publishCore\Testing\Tests\Database;
  ***************************************************************/
 
 use In2code\In2publishCore\Testing\Data\RequiredTablesDataProvider;
+use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest;
-use In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -83,7 +83,7 @@ class ForeignDatabaseTest implements TestCaseInterface
     {
         return [
             ConfigurationFormatTest::class,
-            SshConnectionTest::class,
+            RemoteAdapterTest::class,
         ];
     }
 }

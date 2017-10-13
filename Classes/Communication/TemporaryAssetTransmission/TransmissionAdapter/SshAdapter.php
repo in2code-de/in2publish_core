@@ -34,7 +34,7 @@ use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Class PhpSftpTransmissionDriver
+ * Class SshAdapter
  */
 class SshAdapter extends SshBaseAdapter implements AdapterInterface
 {

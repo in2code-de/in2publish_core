@@ -26,8 +26,8 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Communication\AdapterRegistry;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -49,16 +49,23 @@ class RemoteCommandDispatcher implements SingletonInterface
     protected $adapter = null;
 
     /**
+     * @var AdapterRegistry
+     */
+    protected $adapterRegistry = null;
+
+    /**
      * RemoteCommandDispatcher constructor.
      */
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->logger->debug('Initializing RemoteCommandDispatcher');
+        $this->adapterRegistry = GeneralUtility::makeInstance(AdapterRegistry::class);
     }
 
     /**
      * @param RemoteCommandRequest $request
+     *
      * @return RemoteCommandResponse
      */
     public function dispatch(RemoteCommandRequest $request)
@@ -66,7 +73,8 @@ class RemoteCommandDispatcher implements SingletonInterface
         if (null === $this->adapter) {
             $this->logger->debug('Lazy initializing SshAdapter');
             try {
-                $this->adapter = GeneralUtility::makeInstance(SshAdapter::class);
+                $adapterClass = $this->adapterRegistry->getAdapter(AdapterInterface::class);
+                $this->adapter = GeneralUtility::makeInstance($adapterClass);
             } catch (\Exception $exception) {
                 $this->logger->debug('SshAdapter initialization failed. See previous log for reason.');
                 return GeneralUtility::makeInstance(RemoteCommandResponse::class, [], [$exception->getMessage()], 1);

@@ -2,6 +2,13 @@
 
 ## Software Requirements
 
+**Preface**:
+If you do not use `adapter.remote: 'ssh'` or `adapter.transmission: 'ssh'` you can safely ignore any reference to SSH/libssh/php-ssh(2).
+SSH-Adapters are used by default and they are the only ones shipped with in2publish.
+If you can't or don't want to use SSH you can ask us for alternatives.
+
+---
+
 in2publish requires some functions that are not commonly available on many servers
 as well as some minimum server software versions.
 
@@ -12,14 +19,13 @@ as well as some minimum server software versions.
 | MySQL      | >= 5.6 |
 | TYPO3      | >= 6.2 |
 
-Additional PHP extensions:
+Additional PHP extensions for the default RCE and TATAPI adapter:
 
 | Dependency   | Version |
 |--------------|---------|
 | php-ext ssh2 | >= 0.11 |
 
 PHP configuration values:
-
 
 | Name            | Value   |
 |-----------------|---------|

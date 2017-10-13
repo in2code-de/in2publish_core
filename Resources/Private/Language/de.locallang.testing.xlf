@@ -474,6 +474,20 @@
 				<source>Could not upload a testfile to a FAL storage. Please assure write and read permissions on the storages root level folder.</source>
 				<target state="translated">Die Testdatei konnte nicht hochgeladen werden. Bitte stellen sie sicher, dass TYPO3 Schreib- und Leserechte im Wurzelverzeichnis der FAL Storage hat.</target>
 			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest -->
+
+			<trans-unit id="adapter.all_remote_adapter_tests__passed">
+				<source>All adapter tests for the RCE component have passed</source>
+				<target state="translated">Alle Adaptertests für die RCE-Komponente waren erfolgreich</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Adapter\TransmissionAdapterTest -->
+
+			<trans-unit id="adapter.all_transmission_adapter_tests__passed">
+				<source>All adapter tests for the TATAPI component have passed</source>
+				<target state="translated">Alle Adaptertests für die TATAPI-Komponente waren erfolgreich</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

@@ -58,6 +58,8 @@
 |backup.publishTableCommand.addDropTable|bool|TRUE|Backup configuration for Backuptable Command Controller: adds a "DROP TABLE {tablename} IF EXISTS" statement to the backup|
 |backup.publishTableCommand.zipBackup|bool|TRUE|Backup configuration for Backuptable Command Controller: If TRUE, backups of tables will be stored in ZIP files instead of plain sql file. Saves a lot of disc space.|
 |tca.processor.[type]|array|_cropped. See example file_|Processors to handle table relations|
+|adapter.remote|string|ssh|Registered key of the adapter implementation for the RCE component|
+|adapter.transmission|string|ssh|Registered key of the adapter implementation for the TATAPI|
 
 ## How to get the Foreign Key Fingerprint
 
@@ -199,10 +201,14 @@ factory:
     # If you have uploads on live (which you should not) you must enable this or you will get problems with file references.
     reserveSysFileUids: TRUE
 
+    # Requires: reserveSysFileUids: TRUE
+    #
     # This setting will enable a sys_file lookup based on the file identifier of files which were found in the storage
     # but not in the database. (Database files are found by their folder hash)
     reclaimSysFileEntries: FALSE
 
+    # Requires: reserveSysFileUids: TRUE
+    #
     # Only in combination with factory.fal.reclaimSysFileEntries enabled.
     # While reclaimSysFileEntries is consuming some additional performance this setting autoRepairFolderHash
     # will automatically repair database entries and increase relation consistency
@@ -212,7 +218,10 @@ factory:
     #   Changes are persisted immediately before the publish file module is rendered.
     autoRepairFolderHash: FALSE
 
+    # Requires: reserveSysFileUids: TRUE
+    #
     # [BETA]
+    #
     # It is possible for sys_file records to have different UIDs on local and foreign while referencing the same file
     # due to the indexing behaviour of FAL. If this setting is set to FALSE you might see duplicate file entries in the
     # publish files module. Enable this feature to merge the sys_files by identifier before showing them.
@@ -228,6 +237,8 @@ factory:
     #   Hence it's mostly worth the risk and relatively stable.
     mergeSysFileByIdentifier: FALSE
 
+    # Requires: reserveSysFileUids: TRUE
+    #
     # [BETA]
     #
     # CAUTION: This feature disables the integrity check of the mergeSysFileByIdentifier feature. USE WITH CARE!
@@ -400,4 +411,8 @@ tca:
     text: 'In2code\In2publishCore\Domain\Service\Processor\TextProcessor'
     user: 'In2code\In2publishCore\Domain\Service\Processor\UserProcessor'
     imageManipulation: 'In2code\In2publishCore\Domain\Service\Processor\ImageManipulationProcessor'
+
+adapter:
+  remote: 'ssh'
+  transmission: 'ssh'
 ```

@@ -377,6 +377,18 @@
 			<trans-unit id="fal.test_file_upload_failed">
 				<source>Could not upload a testfile to a FAL storage. Please assure write and read permissions on the storages root level folder.</source>
 			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest -->
+
+			<trans-unit id="adapter.all_remote_adapter_tests__passed">
+				<source>All adapter tests for the RCE component have passed</source>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Adapter\TransmissionAdapterTest -->
+
+			<trans-unit id="adapter.all_transmission_adapter_tests__passed">
+				<source>All adapter tests for the TATAPI component have passed</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
