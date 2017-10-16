@@ -154,7 +154,7 @@ class RemoteStorage implements ResourceStorageInterface
             );
         }
 
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'rpc:execute ' . $uid);
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'rpc:execute ', [], [$uid]);
         $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
 
         if (!$response->isSuccessful()) {

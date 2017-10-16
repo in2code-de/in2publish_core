@@ -699,7 +699,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractHierarchicalFilesystemDri
             );
         }
 
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'rpc:execute ' . $uid);
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'rpc:execute', [], [$uid]);
         $response = $this->remoteCommandDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {
