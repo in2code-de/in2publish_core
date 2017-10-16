@@ -277,7 +277,8 @@ call_user_func(
                     'remote',
                     'ssh',
                     \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter::class,
-                    [\In2code\In2publishCore\Testing\Data\RemoteSshAdapterConfigProvider::class => 'overruleDefinition'],
+                    'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.remote.ssh',
+                    [\In2code\In2publishCore\Testing\Data\RemoteSshAdapterConfigProvider::class => 'overruleDefinition',],
                     [
                         \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
                         \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
@@ -287,7 +288,8 @@ call_user_func(
                     'transmission',
                     'ssh',
                     \In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::class,
-                    [\In2code\In2publishCore\Testing\Data\TransmissionSshAdapterConfigProvider::class => 'overruleDefinition'],
+                    'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.transmission.ssh',
+                    [\In2code\In2publishCore\Testing\Data\TransmissionSshAdapterConfigProvider::class => 'overruleDefinition',],
                     [
                         \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
                         \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,

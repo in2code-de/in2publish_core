@@ -38,6 +38,7 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
+use TYPO3\CMS\Lang\LanguageService;
 
 /**
  * Class AdapterRegistry
@@ -95,12 +96,13 @@ class AdapterRegistry implements SingletonInterface
      * @param string $type
      * @param string $key
      * @param string $adapter
+     * @param string $label
      * @param array $provider
      * @param array $tests
      *
      * @return bool
      */
-    public function registerAdapter($type, $key, $adapter, array $provider = [], array $tests = [])
+    public function registerAdapter($type, $key, $adapter, $label, array $provider = [], array $tests = [])
     {
         if (!isset($this->adapterMap[$type])) {
             $this->logger->alert(
@@ -124,6 +126,7 @@ class AdapterRegistry implements SingletonInterface
             'class' => $adapter,
             'tests' => $tests,
             'provider' => $provider,
+            'label' => $label,
         ];
 
         if ($key === $this->config[$type]) {
@@ -132,6 +135,21 @@ class AdapterRegistry implements SingletonInterface
         }
 
         return true;
+    }
+
+    /**
+     * @return string[][]
+     */
+    public function getAdapterInfo()
+    {
+        $adapterInfo = [];
+        foreach ($this->adapter as $type => $adapters) {
+            foreach ($adapters as $key => $config) {
+                $label = $this->getLanguageService()->sL($config['label']);
+                $adapterInfo[$type][$key] = $key . ': ' . ($label ?: $config['label']);
+            }
+        }
+        return $adapterInfo;
     }
 
     /**
@@ -206,5 +224,13 @@ class AdapterRegistry implements SingletonInterface
                 $GLOBALS['in2publish_core']['tests'][] = $test;
             }
         }
+    }
+
+    /**
+     * @return LanguageService
+     */
+    protected function getLanguageService()
+    {
+        return $GLOBALS['LANG'];
     }
 }

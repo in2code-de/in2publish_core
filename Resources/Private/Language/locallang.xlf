@@ -315,6 +315,13 @@
 			<trans-unit id="publishing.tasks_failure">
 				<source>One or more additional tasks which run after the successful publishing process failed. Caches and other non critical aspects might not behave as expected. The logs might contain more information.</source>
 			</trans-unit>
+
+			<trans-unit id="adapter.remote.ssh">
+				<source>Secure, authenticated and encrypted command execution</source>
+			</trans-unit>
+			<trans-unit id="adapter.transmission.ssh">
+				<source>Secure, reliable and encrypted asset transission</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
