@@ -75,14 +75,6 @@ i.loadinganimation:before {
   color: $tundora;
 }
 
-
-// TYPO3 6.2 compatibility
-.in2publish-t3-version-6_2 {
-  a.loadinganimation:before {
-    top: 3px;
-  }
-}
-
 // Animations
 //**********************//
 @mixin rotate {

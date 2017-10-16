@@ -10,48 +10,10 @@
   }
 }
 
-.in2publish__workflow1 {
-  @include stripes($apple, $white, 0.2);
-}
-
-.in2publish__workflow2 {
-  @include stripes($salomie, $tundora);
-}
-
-.in2publish__workflow3 {
-  @include stripes($mariner, $white);
-}
-
 #typo3-docheader .right {
   text-align: right;
   * {
     text-align: left;
-  }
-}
-
-.in2publish_pagestate_messagebox {
-  position: absolute;
-  z-index: 555;
-  background-color: $whitesmoke;
-  color: $black;
-  line-height: 18px;
-  border: 1px solid $verylightgrey;
-  max-height: 300px;
-  overflow-y: scroll;
-  border-top: transparent;
-  padding: 10px;
-  right: 0;
-  width: 470px;
-  top: 27px;
-  textarea {
-    resize: none;
-    display: block;
-    width: 448px;
-    height: 160px;
-    padding: 6px;
-    font-size: 12px;
-    line-height: 1.5;
-    margin-bottom: 10px;
   }
 }
 
@@ -82,20 +44,6 @@
   }
 }
 
-#typo3-docheader a.in2publish_pagestate_message-toggle {
-  background-image: url("../Images/message.svg");
-  background-repeat: no-repeat;
-  color: transparent;
-  width: 25px;
-  display: inline-block;
-  line-height: 20px;
-}
-
-#typo3-docheader .in2publish__workflow1 a.in2publish_pagestate_message-toggle,
-#typo3-docheader .in2publish__workflow3 a.in2publish_pagestate_message-toggle {
-  background-image: url("../Images/message_white.svg");
-}
-
 .hidden {
   display: none;
 }
@@ -124,57 +72,6 @@
     cursor: not-allowed;
     &:before {
       content: "\e60a";
-    }
-  }
-}
-
-.in2publish__workflowcontainer legend {
-  margin: 10px 0;
-}
-
-.in2publish__workflowcontainer__field__message {
-  line-height: 130%;
-  min-height: 70px;
-}
-
-.in2publish__workflowcontainer__field {
-  position: relative;
-}
-
-.in2publish__workflowcontainer__lightbox {
-  background-color: rgba(0,0,0,0.8);
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 9999;
-  display: none;
-}
-
-.in2publish-t3-version-6_2 {
-  #typo3-inner-docbody {
-    position: relative;
-  }
-  table {
-    .in2publish__workflowcontainer__lightbox {
-      position: absolute;
-    }
-    .in2publish__workflowbutton {
-      min-width: 150px;
-      &:before {
-        right: auto;
-        left: 122px;
-      }
-    }
-  }
-}
-
-.in2publish__workflowbutton {
-  a.disabled,
-  a[disabled] {
-    span {
-      cursor: not-allowed;
     }
   }
 }

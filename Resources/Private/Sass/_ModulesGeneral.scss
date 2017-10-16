@@ -1,3 +1,8 @@
+.nav-pills-container {
+  background: white;
+  padding: 10px;
+}
+
 // TYPO3 Fix (to show var_dump() output)
 div.typo3-fullDoc {
   height: auto;
@@ -45,6 +50,7 @@ div.typo3-fullDoc {
 }
 
 .in2publish-backend {
+  font-size: 15px;
   color: $white;
 
   h1,
@@ -80,36 +86,6 @@ div.typo3-fullDoc {
 
 .in2publish-module {
   background: $scorpion;
-}
-
-body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-size: $defaultFontSize;
-
-  &.in2publish-module-m1 {
-    &:after {
-      content: ' ';
-      background-image: url("../Images/in2code_circle.svg");
-      width: 600px;
-      height: 600px;
-      display: block;
-      position: absolute;
-      bottom: -300px;
-      left: -300px;
-      opacity: 0.3;
-
-    }
-  }
-  &.in2publish-module-m2 {
-    @include stripes($scorpion, $white, 0.03, 20px, $important:'');
-    // --- TYPO3 7.x fix
-    #typo3-docbody {
-      @include stripes($scorpion, $white, 0.03, 20px, $important:'');
-    }
-  }
-
 }
 
 legend {
@@ -150,18 +126,6 @@ a.in2publish-notextdecoration {
     width: 90px;
     height: auto;
   }
-}
-
-.in2publish-stagelisting {
-
-}
-
-.in2publish-stagelisting__item {
-  //position: relative;
-  //top: 0;
-  //left: 0;
-  //padding: 0;
-  //margin-bottom: 10px;
 }
 
 .in2publish-stagelisting__item__column {
@@ -225,52 +189,6 @@ a.in2publish-notextdecoration {
     }
   }
 
-  .in2publish-stagelisting__item--workflowState & {
-    background-color: $dovegray;
-    color: $white;
-    //margin-bottom: 15px;
-
-    .in2publish-icon-publish {
-      color: currentColor;
-    }
-  }
-}
-
-.in2publish-stagelisting__item--wrap {
-  clear: both;
-}
-
-.in2publish-stagelisting__item--workflowState {
-  margin-bottom: 15px;
-
-  &:before {
-    content: '';
-    display: block;
-    position: relative;
-    left: 0;
-    right: 0;
-    top: 35px;
-    height: 5px;
-    z-index: 1;
-  }
-}
-
-.in2publish-stagelisting__item--workflowState1 {
-  &:before {
-    @include stripes($apple, $alto, 0.3);
-  }
-}
-
-.in2publish-stagelisting__item--workflowState2 {
-  &:before {
-    @include stripes($salomie, $tundora, 0.5);
-  }
-}
-
-.in2publish-stagelisting__item--workflowState3 {
-  &:before {
-    @include stripes($mariner, $alto);
-  }
 }
 
 // ----- Listlevel -----
@@ -300,57 +218,6 @@ a.in2publish-notextdecoration {
   > li {
     border-top: 1px solid $scorpion;
   }
-}
-
-
-// ----- Workflow Module -----
-
-.in2publish-module-m2 {
-  .in2publish-stagelisting__item__column--left {
-    width: 75%;
-    @media only screen and (min-width: 1200px) {
-      width: 85%;
-    }
-  }
-  .in2publish-stagelisting__item__column--right {
-    width: 25%;
-    padding-left: 20px;
-
-    @media only screen and (min-width: 1200px) {
-      width: 15%;
-    }
-  }
-}
-
-.in2publish-stagelisting--workflowform {
-  display: inline-block;
-  position: absolute;
-  top: 0;
-  right: 70px;
-
-  > select {
-    width: 160px;
-  }
-}
-
-.in2publish-stagelisting__item__path {
-  font-size: 0.8em;
-  margin: 0 0 0 15px;
-}
-
-// hide publish button per default
-.in2publish-stagelisting__item__publish {
-  display: none;
-}
-
-.in2publish__workflowbutton {
-  position: absolute;
-  right: 0;
-  top: 0;
-}
-.in2publish__workflowbutton > .in2publish__workflowbutton__primary,
-.in2publish__workflowbutton > .in2publish__workflowbutton__secondary {
-  padding: 3px 10px;
 }
 
 // ----- Icon
@@ -473,29 +340,31 @@ a.in2publish-notextdecoration {
   background-color: $white;
 }
 
-.in2publish-backend .in2publish-related {
-  &__title {
-    font-style: normal;
-    line-height: 30px;
-    padding: 0 15px;
-    margin: 0;
-    background-color: $salomie;
-    color: $tundora;
-  }
-  &__list {
-    margin: 12px 0 15px;
-    li {
-      font-size: 14px;
+.in2publish-backend {
+
+  .in2publish-related {
+    &__title {
+      font-style: normal;
+      line-height: 30px;
+      padding: 0 15px;
+      margin: 0;
+      background-color: $salomie;
+      color: $tundora;
+    }
+    &__list {
+      margin: 12px 0 15px;
+      li {
+        font-size: 14px;
+      }
     }
   }
-}
 
-.in2publish-backend .in2publish-stagelisting__dropdown__item__list {
-  margin-bottom: 12px;
+  .in2publish-stagelisting__dropdown__item__list {
+    margin-bottom: 12px;
+  }
 }
 
 // ----- Footer -----
-
 .in2publish-footer {
   margin: 20px 0;
   color: $silverchalice;
@@ -557,48 +426,6 @@ a.in2publish-notextdecoration {
     }
   }
 
-}
-
-// ----- Buttons -----
-
-.in2publish-btn,
-a.in2publish-btn {
-  padding: 10px;
-  display: inline-block;
-  background-color: $alto;
-  color: $dovegray;
-
-  &:hover {
-    text-decoration: none;
-    background-color: $silverchalice;
-    color: $alto;
-  }
-
-  &.in2publish-btn-warning {
-    color: $white;
-    background-color: $appleblossom;
-
-    &:hover {
-      background-color: $fuzzywuzzybrown;
-    }
-  }
-
-  &.in2publish-btn-ok {
-    color: $white;
-    background-color: $forestgreen;
-
-    &:hover {
-      background-color: $apple;
-    }
-  }
-
-  &.in2publish-btn-disabled {
-    cursor: not-allowed;
-  }
-}
-
-.filter_select {
-  padding: 8px;
 }
 
 // ----- Table -----
@@ -791,142 +618,9 @@ div#typo3-docbody.stopScrolling {
   }
 }
 
-.in2publish-icon-messages {
-  background-image: url("../Images/message.svg");
-  background-repeat: no-repeat;
-  position: absolute;
-  top: 9px;
-  right: 44px;
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-}
-
-.in2publish-stagelisting__messages {
-  display: none;
-  overflow: hidden;
-  background-color: $dovegray;
-  border: 10px solid $dovegray;
-
-  > form {
-    display: flex;
-
-    #typo3-docbody & {
-      margin-bottom: 0;
-    }
-  }
-
-  .in2publish-stagelisting__item--added & {
-    border-color: $forestgreen;
-  }
-
-  .in2publish-stagelisting__item--deleted & {
-    border-color: $appleblossom;
-  }
-
-  .in2publish-stagelisting__item--changed & {
-    border: 10px solid $goldentainoi;
-  }
-
-  .in2publish-stagelisting__item--moved & {
-    border: 10px solid $mariner;
-  }
-
-  fieldset {
-    border: none;
-  }
-
-  .in2publish__messagelist__item__username {
-    margin-right: 10px !important;
-  }
-
-  .in2publish__messagelist__itemcontainer {
-    padding-left: 20px;
-  }
-}
-
-.in2publish__workflowcontainer__field {
-  margin: 10px 0;
-  position: relative;
-
-  &--scrollable {
-    max-height: 500px;
-  }
-}
-
-.in2publish-backend {
-  .in2publish__workflowcontainer__field {
-    input,
-    textarea {
-      padding: 10px;
-    }
-  }
-}
-
-.in2publish-stagelisting__new-messages {
-  display: none;
-  overflow: hidden;
-  background-color: $alto;
-  color: $scorpion;
-  border: 10px solid $dovegray;
-  padding: 7px;
-  textarea {
-    resize: none;
-    width: 100%;
-  }
-}
-
-.in2publish-stagelisting__messages--open {
-  position: relative;
-  top: -10px;
-}
-
-.in2publish-stagelisting__new-messages--open {
-  position: fixed;
-  z-index: 44;
-  margin-top: 5px;
-}
-
-.in2publish-stagelisting__messages__left {
-  width: 50%;
-  float: left;
-  padding: 10px;
-  border-right: 1px solid $alto;
-
-  input,
-  textarea {
-    width: 100%;
-    padding: 5px;
-    color: $black;
-  }
-
-  .in2publish-removevalue:before {
-    right: 10px;
-    bottom: 14px;
-  }
-
-}
-
-.in2publish-stagelisting__messages__right {
-  width: 50%;
-  float: left;
-  padding: 10px 10px 10px 15px;
-  border-left: 1px solid $alto;
-
-  ol {
-    list-style-type: none;
-  }
-}
-
 .in2publish-removevalue:before {
   right: 4px;
   bottom: 4px;
-}
-
-.pika-single {
-  top: inherit;
-  bottom: 20px;
-  left: 80px !important;
 }
 
 .in2publish-btn {
