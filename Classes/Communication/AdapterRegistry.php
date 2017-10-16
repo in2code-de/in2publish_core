@@ -27,7 +27,8 @@ namespace In2code\In2publishCore\Communication;
  ***************************************************************/
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface as RemoteAdapter;
-use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface as TransmissionAdapter;
+use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface
+    as TransmissionAdapter;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Testing\Data\ConfigurationDefinitionProvider;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
@@ -46,7 +47,7 @@ use TYPO3\CMS\Lang\LanguageService;
 class AdapterRegistry implements SingletonInterface
 {
     /**
-     * @var string[][]
+     * @var string[][][]
      */
     protected $adapter = [
         'remote' => [],
