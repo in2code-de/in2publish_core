@@ -8,6 +8,7 @@
 * `230`: The RPC/Envelope identified by the argument `uid` did not exist.
 * `231`: No argument `uid` was given to identify an RPC/Envelope. The command must contain a `uid` like `rpc:execute 4`.
 * `232`: Executing the RPC/Envelope failed. More information should be available in the logs.
+* `240`: At least one test failed, so in2publish_core is not ready to be used.
 
 ## API stability
 

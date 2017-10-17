@@ -72,6 +72,9 @@ call_user_func(
              * On local environment
              */
             if ($contextService->isLocal()) {
+                $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
+                    \In2code\In2publishCore\Command\ToolsCommandController::class;
+
                 // Register record publishing module
                 if ($isModuleM1Enabled) {
                     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
