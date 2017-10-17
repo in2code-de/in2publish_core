@@ -50,6 +50,9 @@ class TransmissionAdapterTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return $GLOBALS['in2publish_core']['virtual_tests'][AdapterInterface::class];
+        if (isset($GLOBALS['in2publish_core']['virtual_tests'][AdapterInterface::class])) {
+            return $GLOBALS['in2publish_core']['virtual_tests'][AdapterInterface::class];
+        }
+        return [];
     }
 }
