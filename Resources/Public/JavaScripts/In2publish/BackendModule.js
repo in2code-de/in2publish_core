@@ -189,28 +189,6 @@ function In2publishModule($) {
 	};
 
 	/**
-	 * Callback before AJAX request for publishing with fireAndForget
-	 *
-	 * @param {string} uri not used
-	 * @param {string} $container not used
-	 * @param {jQuery} $element Clicked element not used
-	 */
-	this.publishingStart = function(uri, $container, $element) {
-		$element.find('i').addClass('loadinganimation').addClass('sending');
-	};
-
-	/**
-	 * Callback after AJAX request for publishing with fireAndForget
-	 *
-	 * @param {string} uri not used
-	 * @param {string} $container not used
-	 * @param {jQuery} $element Clicked element not used
-	 */
-	this.publishingDone = function(uri, $container, $element) {
-		location.reload();
-	};
-
-	/**
 	 * Callback after AJAX request for opening container
 	 *
 	 * @param {string} uri not used

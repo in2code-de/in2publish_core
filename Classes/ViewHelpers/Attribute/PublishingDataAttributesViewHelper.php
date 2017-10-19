@@ -25,7 +25,6 @@ namespace In2code\In2publishCore\ViewHelpers\Attribute;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -37,23 +36,13 @@ class PublishingDataAttributesViewHelper extends AbstractViewHelper
     /**
      * Get data attributes for publishing link
      *
-     * @param array $attributes
      * @return array
      */
-    public function render(array $attributes = [])
+    public function render()
     {
-        $attributes['data-in2publish-confirm'] = LocalizationUtility::translate(
-            'confirm_publish_pages',
-            'in2publish_core'
-        );
-        if (ConfigurationUtility::getConfiguration('features.publish.fireAndForget.enable') !== true) {
-            $attributes['data-in2publish-overlay'] = 'TRUE';
-        } else {
-            $attributes['data-action-ajax-uri'] = 'href';
-            $attributes['data-action-ajax-once'] = 'true';
-            $attributes['data-action-ajax-callback-start'] = 'publishingStart';
-            $attributes['data-action-ajax-callback-done'] = 'publishingDone';
-        }
-        return $attributes;
+        return [
+            'data-in2publish-confirm' => LocalizationUtility::translate('confirm_publish_pages', 'in2publish_core'),
+            'data-in2publish-overlay' => 'TRUE',
+        ];
     }
 }
