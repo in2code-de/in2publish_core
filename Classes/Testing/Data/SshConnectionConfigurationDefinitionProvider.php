@@ -29,9 +29,9 @@ namespace In2code\In2publishCore\Testing\Data;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 
 /**
- * Class TransmissionSshAdapterConfigProvider
+ * Class SshConnectionConfigurationDefinitionProvider
  */
-class TransmissionSshAdapterConfigProvider
+class SshConnectionConfigurationDefinitionProvider
 {
     /**
      * @param array $definition
