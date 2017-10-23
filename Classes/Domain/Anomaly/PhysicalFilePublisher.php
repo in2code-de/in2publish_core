@@ -46,6 +46,11 @@ class PhysicalFilePublisher implements SingletonInterface
     protected $logger = null;
 
     /**
+     * @var FilePublisherService
+     */
+    protected $filePublisherService;
+
+    /**
      * @var array
      */
     protected $publishedRecords = [];
@@ -56,6 +61,7 @@ class PhysicalFilePublisher implements SingletonInterface
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
+        $this->filePublisherService = GeneralUtility::makeInstance(FilePublisherService::class);
     }
 
     /**
@@ -67,6 +73,7 @@ class PhysicalFilePublisher implements SingletonInterface
      *
      * @param string $table
      * @param Record $record
+     *
      * @return null Returns always null, because slot return values (arrays) are remapped and booleans are not allowed
      * @throws \Exception
      */
@@ -103,78 +110,153 @@ class PhysicalFilePublisher implements SingletonInterface
             // which comprises all information, given it was created by the FolderRecordFactory
             // if that's the case we can rely on the records state to decide on the action to take.
             if (true === $record->getAdditionalProperty('isAuthoritative')) {
-                $filePublisherService = GeneralUtility::makeInstance(FilePublisherService::class);
-
-                switch ($record->getState()) {
-                    case RecordInterface::RECORD_STATE_MOVED_AND_CHANGED:
-                        $old = $record->getForeignProperty('identifier');
-                        $new = $record->getLocalProperty('identifier');
-                        if (true === $result = $filePublisherService->addFileToForeign($storage, $new)) {
-                            $this->logger->info('Added file to foreign', $logData);
-                            if (true === $result = $filePublisherService->removeForeignFile($storage, $old)) {
-                                $this->logger->info('Removed remote file', $logData);
-                            } else {
-                                $this->logger->error('Failed to remove remote file', $logData);
-                            }
-                        } else {
-                            $this->logger->error('Failed to add file to foreign', $logData);
-                        }
-                        break;
-                    case RecordInterface::RECORD_STATE_DELETED:
-                        if (true === $result = $filePublisherService->removeForeignFile($storage, $identifier)) {
-                            $this->logger->info('Removed remote file', $logData);
-                        } else {
-                            $this->logger->error('Failed to remove remote file', $logData);
-                        }
-                        break;
-                    case RecordInterface::RECORD_STATE_ADDED:
-                        if (true === $result = $filePublisherService->addFileToForeign($storage, $identifier)) {
-                            $this->logger->info('Added file to foreign', $logData);
-                        } else {
-                            $this->logger->error('Failed to add file to foreign', $logData);
-                        }
-                        break;
-                    case RecordInterface::RECORD_STATE_CHANGED:
-                        if (true === $result = $filePublisherService->updateFileOnForeign($storage, $identifier)) {
-                            $this->logger->info('Updated file on foreign', $logData);
-                        } else {
-                            $this->logger->error('Failed to update file to foreign', $logData);
-                        }
-                        break;
-                    case RecordInterface::RECORD_STATE_MOVED:
-                        $old = $record->getForeignProperty('identifier');
-                        $new = $record->getLocalProperty('identifier');
-                        if ($old !== $new) {
-                            $result = $filePublisherService->moveForeignFile(
-                                $storage,
-                                $old,
-                                dirname($new),
-                                basename($new)
-                            );
-                            if ($result = ($new === $result)) {
-                                $this->logger->info('Updated file on foreign', $logData);
-                            } else {
-                                $this->logger->error('Failed to update file to foreign', $logData);
-                            }
-                        } else {
-                            $this->logger->warning(
-                                'File renaming was requested but old and new name are identical',
-                                array_merge($logData, ['old' => $old, 'new' => $new])
-                            );
-                            $result = true;
-                        }
-                        break;
-                    default:
-                        // this state includes RecordInterface::RECORD_STATE_UNCHANGED
-                        // and any impossible state, which will be ignored
-                        $result = true;
-                }
-
-                $this->publishedRecords[$table][$combinedIdentifier] = $result;
+                $this->publishAuthoritativeRecord($record, $storage, $logData, $identifier, $combinedIdentifier);
             } else {
                 $this->logger->error('Non authoritative sys_file record detected.', $logData);
             }
         }
         return null;
+    }
+
+    /**
+     * @param Record $record
+     * @param int $storage
+     * @param array $logData
+     * @param string|int $identifier
+     * @param string $combinedIdentifier
+     */
+    protected function publishAuthoritativeRecord(Record $record, $storage, $logData, $identifier, $combinedIdentifier)
+    {
+        switch ($record->getState()) {
+            case RecordInterface::RECORD_STATE_MOVED_AND_CHANGED:
+                $result = $this->replaceFileWithChangedCopy($record, $storage, $logData);
+                break;
+            case RecordInterface::RECORD_STATE_DELETED:
+                $result = $this->removeFileFromForeign($storage, $logData, $identifier);
+                break;
+            case RecordInterface::RECORD_STATE_ADDED:
+                $result = $this->addFileToForeign($storage, $logData, $identifier);
+                break;
+            case RecordInterface::RECORD_STATE_CHANGED:
+                $result = $this->updateFileOnForeign($storage, $logData, $identifier);
+                break;
+            case RecordInterface::RECORD_STATE_MOVED:
+                $result = $this->moveForeignFile($record, $storage, $logData);
+                break;
+            default:
+                // this state includes RecordInterface::RECORD_STATE_UNCHANGED
+                // and any impossible state, which will be ignored
+                $result = true;
+        }
+
+        $this->publishedRecords[$record->getTableName()][$combinedIdentifier] = $result;
+    }
+
+    /**
+     * @param Record $record
+     * @param int $storage
+     * @param array $logData
+     *
+     * @return bool
+     */
+    protected function replaceFileWithChangedCopy(Record $record, $storage, $logData)
+    {
+        $old = $record->getForeignProperty('identifier');
+        $new = $record->getLocalProperty('identifier');
+        if (true === $result = $this->filePublisherService->addFileToForeign($storage, $new)) {
+            $this->logger->info('Added file to foreign', $logData);
+            if (true === $result = $this->filePublisherService->removeForeignFile($storage, $old)) {
+                $this->logger->info('Removed remote file', $logData);
+            } else {
+                $this->logger->error('Failed to remove remote file', $logData);
+            }
+        } else {
+            $this->logger->error('Failed to add file to foreign', $logData);
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $storage
+     * @param array $logData
+     * @param string|int $identifier
+     *
+     * @return bool
+     */
+    protected function removeFileFromForeign($storage, $logData, $identifier)
+    {
+        if (true === $result = $this->filePublisherService->removeForeignFile($storage, $identifier)) {
+            $this->logger->info('Removed remote file', $logData);
+        } else {
+            $this->logger->error('Failed to remove remote file', $logData);
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $storage
+     * @param array $logData
+     * @param string|int $identifier
+     *
+     * @return bool
+     */
+    protected function addFileToForeign($storage, $logData, $identifier)
+    {
+        if (true === $result = $this->filePublisherService->addFileToForeign($storage, $identifier)) {
+            $this->logger->info('Added file to foreign', $logData);
+        } else {
+            $this->logger->error('Failed to add file to foreign', $logData);
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $storage
+     * @param array $logData
+     * @param string|int $identifier
+     *
+     * @return bool
+     */
+    protected function updateFileOnForeign($storage, $logData, $identifier)
+    {
+        if (true === $result = $this->filePublisherService->updateFileOnForeign($storage, $identifier)) {
+            $this->logger->info('Updated file on foreign', $logData);
+        } else {
+            $this->logger->error('Failed to update file to foreign', $logData);
+        }
+        return $result;
+    }
+
+    /**
+     * @param Record $record
+     * @param int $storage
+     * @param array $logData
+     *
+     * @return bool
+     */
+    protected function moveForeignFile(Record $record, $storage, $logData)
+    {
+        $old = $record->getForeignProperty('identifier');
+        $new = $record->getLocalProperty('identifier');
+        if ($old !== $new) {
+            $result = $this->filePublisherService->moveForeignFile(
+                $storage,
+                $old,
+                dirname($new),
+                basename($new)
+            );
+            if ($result = ($new === $result)) {
+                $this->logger->info('Updated file on foreign', $logData);
+            } else {
+                $this->logger->error('Failed to update file to foreign', $logData);
+            }
+        } else {
+            $this->logger->warning(
+                'File renaming was requested but old and new name are identical',
+                array_merge($logData, ['old' => $old, 'new' => $new])
+            );
+            $result = true;
+        }
+        return $result;
     }
 }
