@@ -229,6 +229,8 @@ class AdapterRegistry implements SingletonInterface
 
     /**
      * @return LanguageService
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     protected function getLanguageService()
     {
