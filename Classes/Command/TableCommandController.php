@@ -57,7 +57,7 @@ class TableCommandController extends AbstractCommandController
     /**
      * @var DatabaseSchemaService
      */
-    protected $databaseSchemaService = null;
+    protected $dbSchemaService = null;
 
     /**
      * @throws \Exception
@@ -69,7 +69,7 @@ class TableCommandController extends AbstractCommandController
         if ($this->contextService->isLocal()) {
             $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         }
-        $this->databaseSchemaService = GeneralUtility::makeInstance(DatabaseSchemaService::class);
+        $this->dbSchemaService = GeneralUtility::makeInstance(DatabaseSchemaService::class);
     }
 
     /**
@@ -213,7 +213,7 @@ class TableCommandController extends AbstractCommandController
      */
     protected function checkTableExists($tableName)
     {
-        if (!$this->databaseSchemaService->tableExists($tableName)) {
+        if (!$this->dbSchemaService->tableExists($tableName)) {
             $this->outputLine('The table does not exist');
             $this->sendAndExit(static::EXIT_INVALID_TABLE);
         }
