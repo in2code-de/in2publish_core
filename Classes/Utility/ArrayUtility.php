@@ -70,15 +70,7 @@ class ArrayUtility
                     }
                     break;
                 case 'string':
-                    if (strtolower($value) === 'true') {
-                        $value = true;
-                    } elseif (strtolower($value) === 'false') {
-                        $value = false;
-                    } elseif (MathUtility::canBeInterpretedAsInteger($value)) {
-                        $value = (int)$value;
-                    } elseif (strlen($value) === 0 || strtolower($value) === 'null') {
-                        unset($array[$key]);
-                    }
+                    $value = self::autoCastString($array, $value, $key);
                     break;
                 case 'NULL':
                     unset($array[$key]);
@@ -113,5 +105,26 @@ class ArrayUtility
         } else {
             return null;
         }
+    }
+
+    /**
+     * @param array $array
+     * @param $value
+     * @param $key
+     *
+     * @return bool|int
+     */
+    protected static function autoCastString(array &$array, $value, $key)
+    {
+        if (strtolower($value) === 'true') {
+            $value = true;
+        } elseif (strtolower($value) === 'false') {
+            $value = false;
+        } elseif (MathUtility::canBeInterpretedAsInteger($value)) {
+            $value = (int)$value;
+        } elseif (strlen($value) === 0 || strtolower($value) === 'null') {
+            unset($array[$key]);
+        }
+        return $value;
     }
 }
