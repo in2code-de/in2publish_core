@@ -26,50 +26,21 @@ namespace In2code\In2publishCore\ViewHelpers\Link;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\BackendUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 /**
  * Class EditRecordViewHelper
  */
-class EditRecordViewHelper extends AbstractTagBasedViewHelper
+class EditRecordViewHelper extends AbstractRecordActionLinkViewHelper
 {
     /**
-     * @var string
-     */
-    protected $tagName = 'a';
-
-    /**
+     * @param string $table
+     * @param int $identifier
      *
-     */
-    public function initializeArguments()
-    {
-        $this->registerArgument('record', RecordInterface::class, 'The record object the link is built for');
-        $this->registerArgument('table', 'string', 'Alt. to record: The record table');
-        $this->registerArgument('identifier', 'integer', 'Alt. to record: The record identifier');
-        parent::initializeArguments();
-        parent::registerUniversalTagAttributes();
-    }
-
-    /**
      * @return string
      */
-    public function render()
+    protected function buildUri($table, $identifier)
     {
-        if (!empty($this->arguments['record'])) {
-            /** @var RecordInterface $record */
-            $record = $this->arguments['record'];
-            $table = $record->getTableName();
-            $identifier = $record->getIdentifier();
-        } else {
-            $table = $this->arguments['table'];
-            $identifier = $this->arguments['identifier'];
-        }
-
-        $uri = BackendUtility::buildEditUri($table, $identifier);
-        $this->tag->addAttribute('href', $uri);
-        $this->tag->setContent($this->renderChildren());
-        return $this->tag->render();
+        return BackendUtility::buildEditUri($table, $identifier);
     }
 }
