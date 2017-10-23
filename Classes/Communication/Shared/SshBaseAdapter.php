@@ -148,6 +148,20 @@ abstract class SshBaseAdapter
     protected function getValidatedConfig()
     {
         $config = ConfigurationUtility::getConfiguration('sshConnection');
+        $config = $this->validateRequiredSettings($config);
+        $config = $this->validateKeys($config);
+        $config = $this->validateSshParameter($config);
+        return $config;
+    }
+
+    /**
+     * @param $config
+     *
+     * @return mixed
+     * @throws In2publishCoreException
+     */
+    protected function validateRequiredSettings($config)
+    {
         if (empty($config)) {
             throw new In2publishCoreException('SSH Connection: Missing configuration', 1428492639);
         }
@@ -160,6 +174,17 @@ abstract class SshBaseAdapter
         if (empty($config['username'])) {
             throw new In2publishCoreException('SSH Connection: Option username is empty', 1425400379);
         }
+        return $config;
+    }
+
+    /**
+     * @param $config
+     *
+     * @return mixed
+     * @throws In2publishCoreException
+     */
+    protected function validateKeys($config)
+    {
         foreach (['privateKeyFileAndPathName', 'publicKeyFileAndPathName'] as $requiredFileKey) {
             if (empty($config[$requiredFileKey])) {
                 throw new In2publishCoreException(
@@ -178,6 +203,17 @@ abstract class SshBaseAdapter
                 );
             }
         }
+        return $config;
+    }
+
+    /**
+     * @param $config
+     *
+     * @return mixed
+     * @throws In2publishCoreException
+     */
+    protected function validateSshParameter($config)
+    {
         if (empty($config['privateKeyPassphrase'])) {
             $config['privateKeyPassphrase'] = null;
         }
