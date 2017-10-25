@@ -128,9 +128,7 @@ class TcaProcessingService
     protected function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache(
-            'in2publish_core'
-        );
+        $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
 
         $configuredProcessor = ConfigurationUtility::getConfiguration('tca.processor');
         if (is_array($configuredProcessor)) {
