@@ -160,7 +160,7 @@ Disclaimer:
 > This guide comes WITHOUT ANY WARRANTY
 
 Taken from https://www.df.eu/forum/threads/68032-Installationsprobleme-ssh2-so
-Walkthrough for domainFactory ManagedServer and target PHP version 5.5
+Walkthrough for domainFactory ManagedServer and target PHP version 7
 
     # 1. Login via ssh
     ssh ssh-xxxxx@my-domain.tld
@@ -171,34 +171,34 @@ Walkthrough for domainFactory ManagedServer and target PHP version 5.5
     # 3. Download all required sources
 
     # 3.1 Get the latest version from http://www.libssh2.org/
-    wget http://www.libssh2.org/download/libssh2-1.6.0.tar.gz
+    wget https://www.libssh2.org/download/libssh2-1.7.0.tar.gz
 
     # 3.2 Get the latest version from http://pecl.php.net/package/ssh2
-    wget http://pecl.php.net/get/ssh2-0.12.tgz
+    wget https://pecl.php.net/get/ssh2-1.1.2.tgz
 
     # 4. Unpack the resources:
-    tar -xvf libssh2-1.6.0.tar.gz
-    tar zxf ssh2-0.12.tgz
+    tar xfz libssh2-1.7.0.tar.gz
+    tar xfz ssh2-1.1.2.tgz
 
     # 5. Enter the unpacked libssh folder and compile the module.
     #    Keep the version in the folder name.
     cd libssh2-1.6.0/
-    ./configure --prefix=$HOME/php_modules/libssh2-1.6.0/
+    ./configure --prefix=$HOME/php_modules/libssh2-1.7.0/
     make && make install
 
     # 6. Enter the unpacked ssh2 folder and compile the module.
-    cd ../ssh2-0.12/
+    cd ../ssh2-1.1.2/
 
-    phpize55
+    phpize7
 
-    ./configure --with-php-config=/usr/local/bin/php55-config
-      --with-ssh2=$HOME/php_modules/libssh2-1.6.0/
+    ./configure --with-php-config=/usr/local/bin/php7-config
+      --with-ssh2=$HOME/php_modules/libssh2-1.7.0/
 
     make
 
     # 7. Enter your target directory and add a php.ini file
     cd $HOME/webseiten/my_website/stage/webroot/typo3
-    printf "extension_dir=$HOME/php_modules/sources/ssh2-0.12/modules/\nextension=ssh2.so"
+    printf "extension_dir=$HOME/php_modules/sources/ssh2-1.1.2/modules/\nextension=ssh2.so"
       > php.ini
 
 The ssh2 functions should be available immediately, as well as the ssh2:// wrapper
