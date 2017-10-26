@@ -291,7 +291,7 @@ abstract class AbstractController extends ActionController
         $executionTimeService = GeneralUtility::makeInstance(ExecutionTimeService::class);
         $executionTimeService->start();
         $this->initializeDatabaseConnections();
-        if ($this->actionMethodName !== static::BLANK_ACTION) {
+        if ($this->actionMethodName !== static::BLANK_ACTION && null !== $this->foreignDatabase) {
             $this->commonRepository = CommonRepository::getDefaultInstance();
         }
     }
