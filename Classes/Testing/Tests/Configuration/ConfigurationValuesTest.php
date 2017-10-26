@@ -66,12 +66,6 @@ class ConfigurationValuesTest implements TestCaseInterface
         if ($this->configuration['log']['logLevel'] < 0) {
             $errors[] = 'configuration.loglevel_too_low';
         }
-        if (!is_file($this->configuration['sshConnection']['privateKeyFileAndPathName'])) {
-            $errors[] = 'configuration.private_key_invalid';
-        }
-        if (!is_file($this->configuration['sshConnection']['publicKeyFileAndPathName'])) {
-            $errors[] = 'configuration.public_key_invalid';
-        }
         if (true === (bool)$this->configuration['debug']['disableParentRecords']
             && true === (bool)$this->configuration['view']['records']['breadcrumb']
         ) {

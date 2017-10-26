@@ -283,6 +283,7 @@ call_user_func(
                     'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.remote.ssh',
                     [\In2code\In2publishCore\Testing\Data\SshConnectionConfigurationDefinitionProvider::class => 'overruleDefinition'],
                     [
+                        \In2code\In2publishCore\Testing\Tests\SshConnection\SshKeyFilesExistTest::class,
                         \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
                         \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
                     ]
@@ -294,6 +295,7 @@ call_user_func(
                     'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.transmission.ssh',
                     [\In2code\In2publishCore\Testing\Data\SshConnectionConfigurationDefinitionProvider::class => 'overruleDefinition'],
                     [
+                        \In2code\In2publishCore\Testing\Tests\SshConnection\SshKeyFilesExistTest::class,
                         \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
                         \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
                         \In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest::class,

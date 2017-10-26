@@ -59,6 +59,7 @@ class SftpRequirementsTest implements TestCaseInterface
     {
         return [
             SshFunctionAvailabilityTest::class,
+            SshKeyFilesExistTest::class,
         ];
     }
 }

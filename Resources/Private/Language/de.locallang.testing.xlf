@@ -45,14 +45,6 @@
 				<source>The configured log level is too low. The log level must be at least 0.</source>
 				<target state="translated">Das eingestellte LogLevel ist zu niedrig. Das LogLevel muss mindestens 0 sein.</target>
 			</trans-unit>
-			<trans-unit id="configuration.private_key_invalid">
-				<source>The given SSH private key file can not be found.</source>
-				<target state="translated">Der angegebene SSH Private Key konnte nicht gefunden werden.</target>
-			</trans-unit>
-			<trans-unit id="configuration.public_key_invalid">
-				<source>The given SSH public key file can not be found.</source>
-				<target state="translated">Der angegebene SSH Public Key konnte nicht gefunden werden.</target>
-			</trans-unit>
 			<trans-unit id="configuration.breadcrumb_and_disable_parents_active">
 				<source>view.record.breadcrumb and debug.disableParentRecords are both enabled. Breadcrumbs will not be displayed correctly.</source>
 				<target state="translated">view.record.breadcrumb und debug.disableParentRecords sind beide aktiviert. Breadcrumbs werden nicht korrekt dargestellt.</target>
@@ -213,6 +205,26 @@
 			<trans-unit id="ssh_connection.chmod_description">
 				<source>The function "ssh2_sftp_chmod" is available since php_ssh2 0.12. Either upgrade or ignore this message.</source>
 				<target state="translated">Die Funktion "ssh2_sftp_chmod" steht ab der Version 0.12 von php_ssh2 zu Verfügung. Upgraden Sie php_ssh2 oder ignorieren Sie diese Meldung.</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SshKeyFilesExistTest -->
+
+			<trans-unit id="ssh_key_files_exist.ssh_files_missing">
+				<source>Configured SSH files are missing.</source>
+				<target state="translated">Konfigurierte Dateien für die SSH-Verbindung Fehlen. Bitte die Konfiguration überprüfen.</target>
+			</trans-unit>
+			<trans-unit id="ssh_key_files_exist.ssh_files_exist">
+				<source>The configured SSH keys do exist</source>
+				<target state="translated">Die konfigurierten SSH-Keys existieren.</target>
+			</trans-unit>
+
+			<trans-unit id="ssh_key_files_exist.private_key_invalid">
+				<source>The given SSH private key file can not be found.</source>
+				<target state="translated">Der angegebene SSH Private Key konnte nicht gefunden werden.</target>
+			</trans-unit>
+			<trans-unit id="ssh_key_files_exist.public_key_invalid">
+				<source>The given SSH public key file can not be found.</source>
+				<target state="translated">Der angegebene SSH Public Key konnte nicht gefunden werden.</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest -->

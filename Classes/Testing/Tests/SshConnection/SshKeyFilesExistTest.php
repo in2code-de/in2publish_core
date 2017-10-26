@@ -4,7 +4,7 @@ namespace In2code\In2publishCore\Testing\Tests\SshConnection;
 /***************************************************************
  * Copyright notice
  *
- * (c) 2016 in2code.de and the following authors:
+ * (c) 2017 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -26,48 +26,34 @@ namespace In2code\In2publishCore\Testing\Tests\SshConnection;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest;
+use In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use In2code\In2publishCore\Utility\ConfigurationUtility;
 
 /**
- * Class SshFunctionAvailabilityTest
+ * Class SshKeyFilesExistTest
  */
-class SshFunctionAvailabilityTest implements TestCaseInterface
+class SshKeyFilesExistTest implements TestCaseInterface
 {
     /**
      * @return TestResult
      */
     public function run()
     {
-        $sshFunctions = [
-            'ssh2_connect',
-            'ssh2_sftp_mkdir',
-            'ssh2_exec',
-            'ssh2_fingerprint',
-            'ssh2_auth_pubkey_file',
-            'ssh2_sftp',
-        ];
-
-        foreach ($sshFunctions as $index => $sshFunction) {
-            if (function_exists($sshFunction)) {
-                unset($sshFunctions[$index]);
-            }
+        $configuration = ConfigurationUtility::getConfiguration('sshConnection');
+        if (!is_file($configuration['privateKeyFileAndPathName'])) {
+            $errors[] = 'ssh_key_files_exist.private_key_invalid';
+        }
+        if (!is_file($configuration['publicKeyFileAndPathName'])) {
+            $errors[] = 'ssh_key_files_exist.public_key_invalid';
         }
 
-        if (!empty($sshFunctions)) {
-            return new TestResult('ssh_connection.functions_missing', TestResult::ERROR);
+        // construct TestResult
+        if (!empty($errors)) {
+            return new TestResult('ssh_key_files_exist.ssh_files_missing', TestResult::ERROR, $errors);
         }
-
-        if (!function_exists('ssh2_sftp_chmod')) {
-            return new TestResult(
-                'ssh_connection.chmod_missing',
-                TestResult::WARNING,
-                ['ssh_connection.chmod_description']
-            );
-        }
-
-        return new TestResult('ssh_connection.full_availability');
+        return new TestResult('ssh_key_files_exist.ssh_files_exist');
     }
 
     /**
@@ -75,6 +61,8 @@ class SshFunctionAvailabilityTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return [];
+        return [
+            ConfigurationFormatTest::class,
+        ];
     }
 }

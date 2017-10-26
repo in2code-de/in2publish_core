@@ -127,6 +127,7 @@ class SshConnectionTest implements TestCaseInterface
     {
         return [
             SshFunctionAvailabilityTest::class,
+            SshKeyFilesExistTest::class,
         ];
     }
 }
