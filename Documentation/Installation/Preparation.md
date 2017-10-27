@@ -182,7 +182,7 @@ Walkthrough for domainFactory ManagedServer and target PHP version 7
 
     # 5. Enter the unpacked libssh folder and compile the module.
     #    Keep the version in the folder name.
-    cd libssh2-1.6.0/
+    cd libssh2-1.7.0/
     ./configure --prefix=$HOME/php_modules/libssh2-1.7.0/
     make && make install
 
