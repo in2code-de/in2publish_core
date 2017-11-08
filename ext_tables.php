@@ -256,6 +256,7 @@ call_user_func(
                 // register tests for tools module
                 $GLOBALS['in2publish_core']['tests'] = [
                     \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationIsAvailableTest::class,
+                    \In2code\In2publishCore\Testing\Tests\Adapter\AdapterSelectionTest::class,
                     \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest::class,
                     \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest::class,
                     \In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest::class,

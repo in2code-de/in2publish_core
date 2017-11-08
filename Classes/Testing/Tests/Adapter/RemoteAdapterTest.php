@@ -50,9 +50,15 @@ class RemoteAdapterTest implements TestCaseInterface
      */
     public function getDependencies()
     {
+        $dependencies = [
+            AdapterSelectionTest::class,
+        ];
         if (isset($GLOBALS['in2publish_core']['virtual_tests'][AdapterInterface::class])) {
-            return $GLOBALS['in2publish_core']['virtual_tests'][AdapterInterface::class];
+            $dependencies = array_merge(
+                $dependencies,
+                $GLOBALS['in2publish_core']['virtual_tests'][AdapterInterface::class]
+            );
         }
-        return [];
+        return $dependencies;
     }
 }

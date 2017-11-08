@@ -500,6 +500,22 @@
 				<source>All adapter tests for the TATAPI component have passed</source>
 				<target state="translated">Alle Adaptertests für die TATAPI-Komponente waren erfolgreich</target>
 			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Adapter\AdapterSelectionTest -->
+
+			<trans-unit id="adapter.adapter_selection.valid">
+				<source>The selected values for the adapter configuration are okay</source>
+				<target state="translated">Die Werte für die Adapterauswahl sind okay</target>
+			</trans-unit>
+			<trans-unit id="adapter.adapter_selection.missing_adapter_or_implementation">
+				<source>The configuration for following adapters is invalid or the adapter could not be loaded</source>
+				<target state="translated">Die Konfiguration für folgende adapter ist ungültig oder die Klasse konnte nicht geladen werden</target>
+			</trans-unit>
+			<trans-unit id="adapter.adapter_selection.config_error">
+				<source>The configuration for the adaptersis missing. Please check the other tests and your configuration</source>
+				<target state="translated">Die Konfiguration für die Adapter fehlt. Bitte die anderen Tests beachten und die Konfiguration prüfen.</target>
+			</trans-unit>
+
 		</body>
 	</file>
 </xliff>

@@ -400,6 +400,19 @@
 			<trans-unit id="adapter.all_transmission_adapter_tests__passed">
 				<source>All adapter tests for the TATAPI component have passed</source>
 			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Adapter\AdapterSelectionTest -->
+
+			<trans-unit id="adapter.adapter_selection.valid">
+				<source>The selected values for the adapter configuration are okay</source>
+			</trans-unit>
+			<trans-unit id="adapter.adapter_selection.missing_adapter_or_implementation">
+				<source>The configuration for following adapters is invalid or the adapter could not be loaded</source>
+			</trans-unit>
+			<trans-unit id="adapter.adapter_selection.config_error">
+				<source>The configuration for the adaptersis missing. Please check the other tests and your configuration</source>
+			</trans-unit>
+
 		</body>
 	</file>
 </xliff>
