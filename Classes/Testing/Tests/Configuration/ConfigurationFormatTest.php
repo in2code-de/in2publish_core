@@ -105,6 +105,7 @@ class ConfigurationFormatTest implements TestCaseInterface
      * @param array $expected
      * @param array $actual
      * @param array $path
+     *
      * @return array
      */
     protected function identifySuperfluousKeys(array $expected, array $actual, array $path = [])
@@ -146,6 +147,7 @@ class ConfigurationFormatTest implements TestCaseInterface
      * @param array $expected
      * @param array $actual
      * @param array $path
+     *
      * @return array
      */
     protected function identifyMissingKeys(array $expected, array $actual, array $path = [])
@@ -207,6 +209,7 @@ class ConfigurationFormatTest implements TestCaseInterface
      * @param array $expected
      * @param array $actual
      * @param array $path
+     *
      * @return array
      */
     protected function identifyMismatchingKeys(array $expected, array $actual, array $path = [])
@@ -296,6 +299,7 @@ class ConfigurationFormatTest implements TestCaseInterface
      * @param mixed $expected
      * @param mixed $actual
      * @param bool $value
+     *
      * @return string
      */
     protected function getTypeMismatchString(array $path, $expected, $actual, $value = false)
@@ -315,6 +319,7 @@ class ConfigurationFormatTest implements TestCaseInterface
     /**
      * @param string $expected
      * @param mixed $actual
+     *
      * @return bool
      */
     protected function mixedMatchesType($expected, $actual)
@@ -325,6 +330,7 @@ class ConfigurationFormatTest implements TestCaseInterface
     /**
      * @param string $expected
      * @param string $actual
+     *
      * @return bool
      */
     protected function typeMatchesType($expected, $actual)
@@ -342,6 +348,7 @@ class ConfigurationFormatTest implements TestCaseInterface
 
     /**
      * @param string $expected
+     *
      * @return array
      */
     protected function getExpectedTypesAsArray($expected)
