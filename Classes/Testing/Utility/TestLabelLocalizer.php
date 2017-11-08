@@ -36,15 +36,20 @@ class TestLabelLocalizer
     /**
      * @param $key
      * @param array|null $arguments
+     *
      * @return string
      */
     public static function translate($key, array $arguments = null)
     {
-        $label = (string)LocalizationUtility::translate(
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:' . $key,
-            'in2publish_core',
-            $arguments
-        );
+        if (0 === strpos($key, 'LLL')) {
+            $label = (string)LocalizationUtility::translate($key, 'in2publish_core', $arguments);
+        } else {
+            $label = (string)LocalizationUtility::translate(
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:' . $key,
+                'in2publish_core',
+                $arguments
+            );
+        }
         return !empty($label) ? $label : $key;
     }
 }
