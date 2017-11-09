@@ -50,10 +50,7 @@ class SshConnectionConfigurationDefinitionProvider
                 'privateKeyPassphrase' => 'string|NULL',
                 'foreignKeyFingerprint' => 'string',
                 'foreignKeyFingerprintHashingMethod' => 'string',
-                'foreignRootPath' => 'string',
-                'pathToPhp' => 'string',
                 'ignoreChmodFail' => 'boolean',
-                'foreignTYPO3Context' => 'string',
             ],
         ];
 

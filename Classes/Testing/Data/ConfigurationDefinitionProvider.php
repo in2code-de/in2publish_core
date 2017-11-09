@@ -60,8 +60,11 @@ class ConfigurationDefinitionProvider implements SingletonInterface
     {
         if (empty($this->cache)) {
             $definition = [
-                'database' => [
-                    'foreign' => [
+                'foreign' => [
+                    'rootPath' => 'string',
+                    'pathToPhp' => 'string',
+                    'context' => 'string',
+                    'database' => [
                         'name' => 'string',
                         'username' => 'string',
                         'password' => 'string',
