@@ -58,16 +58,6 @@ class ConfigurationFormatTest implements TestCaseInterface
         $expected = $this->definitionProvider->getConfigurationDefinition();
         $actual = ConfigurationUtility::getConfiguration();
 
-        $superfluousKeys = $this->identifySuperfluousKeys($expected, $actual);
-
-        if (!empty($superfluousKeys)) {
-            return new TestResult(
-                'configuration.superfluous_keys',
-                TestResult::ERROR,
-                array_merge(['configuration.keys_superfluous'], $superfluousKeys)
-            );
-        }
-
         $missingKeys = $this->identifyMissingKeys($expected, $actual);
 
         if (!empty($missingKeys)) {
@@ -85,6 +75,16 @@ class ConfigurationFormatTest implements TestCaseInterface
                 'configuration.mismatching_keys',
                 TestResult::ERROR,
                 array_merge(['configuration.keys_mismatching'], $mismatchingKeys)
+            );
+        }
+
+        $superfluousKeys = $this->identifySuperfluousKeys($expected, $actual);
+
+        if (!empty($superfluousKeys)) {
+            return new TestResult(
+                'configuration.superfluous_keys',
+                TestResult::WARNING,
+                array_merge(['configuration.keys_superfluous'], $superfluousKeys)
             );
         }
 
