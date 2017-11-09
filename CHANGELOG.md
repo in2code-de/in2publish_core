@@ -44,8 +44,6 @@
 - [BUGFIX] Do not evaluate permissions of any FAL storage while extracting file information
 - [REFACTOR] Replace record action uri VHs with link VHs
 
-
-
 5.11.0:
 
 - [BUGFIX] Do not directly resolve relations from pages to sys_file_reference
