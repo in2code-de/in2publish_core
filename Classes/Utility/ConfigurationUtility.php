@@ -200,7 +200,7 @@ class ConfigurationUtility
     const CACHE_KEY_FILE = 'file';
     const CACHE_KEY_PAGE = 'page';
     const CACHE_KEY_USER = 'user';
-    const DATABASE = 'database';
+    const FOREIGN = 'foreign';
     const SSH_CONNECTION = 'sshConnection';
 
     /**
@@ -209,7 +209,7 @@ class ConfigurationUtility
      * @var array
      */
     protected static $privateConfiguration = [
-        self::DATABASE,
+        self::FOREIGN,
         self::SSH_CONNECTION,
     ];
 

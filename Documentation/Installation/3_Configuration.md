@@ -12,7 +12,7 @@ Note:
 
 # Overwrite Configuration for Users or Pages
 
-Any configuration of the LocalConfiguration.yaml except **database** and **sshConnection** can be overwritten by
+Any configuration of the LocalConfiguration.yaml except **foreign** and **sshConnection** can be overwritten by
 PageTS config and UserTS config.
 
 PageTS config will always be merged, overruling the configuration of the yaml file.
