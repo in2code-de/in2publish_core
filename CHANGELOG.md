@@ -1,5 +1,51 @@
 # In2publish Core Change Log
 
+6.0.0:
+
+- [CLEANUP] Remove unused imports from FolderRecordFactory and SSH functions test
+- [BUGFIX] Warn about superfluous config entries but allow them
+- [BUGFIX] Move foreign config values to correct place in correct ConfigDefProvider
+- [BUGFIX] Prevent overruling and disclosure of config value for foreign
+- [DOCS] Fix links to configuration example files
+- [!!!][BUGFIX] Reorder the configuration structure to separate adapter independent parts
+- [FEATURE] Add test to check if the sleected adapters are valid and can be loaded
+- [FEATURE] Support custom full qualified label identifier for test result messages
+- [CODESTYLE] Add empty line between parameter and return annotation
+- [DOCS] Fix tiny typo in php-ssh2 compilation walkthrough
+- [BUGFIX] Do not initialize CommonRepository if foreign's db connection is not available
+- [BUGFIX] Add empty templates for tool actions that aren't callable before config is set
+- [BUGFIX] Check for SSH key file  existence only if ssh drivers are selected
+- [CODESTYLE] Reduce TcaProcService's cache instantiation to a single line
+- [DOCS] Update ssh2 compilation walkthrough for dF-Servers
+- [CLEANUP] Remove deprecated attributes from container-VH usage
+- [REFACTOR] Extract string auto casting to extra method
+- [REFACTOR] Split SshBaseAdapter's configuration validation into mulitple methods
+- [REFACTOR] Split PhysicalFilePublisher into multiple methods
+- [REFACTOR] Shorten dbSchemaService variable name
+- [CODESTYLE] Reindent chopped down attributes in Record FunctionBar
+- [REFACTOR] Merge identical code of RecordEdit-VH and RecordHistory-VH in superclass
+- [COMMENT] Add missing suppression annotation for LanguageService access
+- [REFACTOR] Merge identical configDevProv for ssh based connections
+- [CLEANUP] Remove unused code of the removed F&FF
+- [BUGFIX] Remove duplicate css file inclusion
+- [BUGFIX] Check if tests are registered for virtual tests
+- [FEATURE] Add command controller to execute tests on the CLI
+- [BUGFIX] Set RPC envelope uid in options instead of command
+- [CODESTYLE] Break import statement at use before reaching line length limit
+- [CLEANUP] Remove most of the unused CSS
+- [FEATURE] Add labels to the adapter registration
+- [FEATURE] Decouple communications adapter and use a registry to reference implementations
+- [FEATURE] Introduce alternative Edit- & HistoryLinkVH attributes
+- [BUGFIX] Support flex field DS default field if ds_pointer is not set
+- [BUGFIX] Always include ext_emconf to get the uncached extension version
+- [BUGFIX] Increase Task configuration and message field size to support huge installations
+- [REFACTOR] Wrap main Template in Fluid HTML tag
+- [BUGFIX] Build the return URL for the actual module and append all related query params
+- [BUGFIX] Do not evaluate permissions of any FAL storage while extracting file information
+- [REFACTOR] Replace record action uri VHs with link VHs
+
+
+
 5.11.0:
 
 - [BUGFIX] Do not directly resolve relations from pages to sys_file_reference
