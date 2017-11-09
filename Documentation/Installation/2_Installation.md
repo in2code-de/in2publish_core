@@ -18,4 +18,6 @@ If the environment is configured correctly, you will see three or four **new Bac
 
 On Foreign there are a couple of new command controllers available.
 
-Continue with [Configuration](Configuration/) .
+---
+
+**Continue with [Configuration](3_Configuration.md)**

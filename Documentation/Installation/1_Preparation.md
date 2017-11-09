@@ -202,3 +202,7 @@ Walkthrough for domainFactory ManagedServer and target PHP version 7
       > php.ini
 
 The ssh2 functions should be available immediately, as well as the ssh2:// wrapper
+
+---
+
+**Continue with [Installation](2_Installation.md)**

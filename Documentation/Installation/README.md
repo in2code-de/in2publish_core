@@ -1,6 +1,6 @@
 # Installation
 
-1. [Preparation](Preparation.md)
-2. [Installation](Installation.md)
-3. [Configuration](Configuration/README.md)
-4. [Testing](Testing.md)
+1. [Preparation](1_Preparation.md)
+2. [Installation](2_Installation.md)
+3. [Configuration](3_Configuration.md)
+4. [Testing](4_Testing.md)

@@ -54,7 +54,7 @@ class DatabaseUtility
     {
         static::initializeLogger();
         if (static::$foreignDatabase === null) {
-            $configuration = ConfigurationUtility::getConfiguration('database.foreign');
+            $configuration = ConfigurationUtility::getConfiguration('foreign.database');
             if (null === $configuration) {
                 static::$logger->warning('Can not instantiate the foreign database connection without a configuration');
                 static::$foreignDatabase = null;

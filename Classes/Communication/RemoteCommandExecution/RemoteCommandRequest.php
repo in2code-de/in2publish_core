@@ -82,10 +82,10 @@ class RemoteCommandRequest
      */
     public function __construct($command = '', array $arguments = [], array $options = [])
     {
-        $this->pathToPhp = ConfigurationUtility::getConfiguration('sshConnection.pathToPhp');
-        $this->workingDirectory = ConfigurationUtility::getConfiguration('sshConnection.foreignRootPath');
+        $this->pathToPhp = ConfigurationUtility::getConfiguration('foreign.pathToPhp');
+        $this->workingDirectory = ConfigurationUtility::getConfiguration('foreign.rootPath');
         $this->environmentVariables = [
-            'TYPO3_CONTEXT' => ConfigurationUtility::getConfiguration('sshConnection.foreignTYPO3Context'),
+            'TYPO3_CONTEXT' => ConfigurationUtility::getConfiguration('foreign.context'),
             'IN2PUBLISH_CONTEXT' => 'Foreign',
         ];
         $this->dispatcher = './typo3/cli_dispatch.phpsh extbase';

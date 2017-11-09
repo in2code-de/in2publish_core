@@ -5,18 +5,33 @@
 ---
 
 # Database access
-database:
+foreign:
+
+  # root path of the foreign TYPO3 CMS instance
+  rootPath: /Users/simpleAccount/Projects/Websites/foreign.publishing.dev
+
+  # path to php binary
+  pathToPhp: /usr/bin/env php
+
+  # TYPO3_CONTEXT environment variable to preprend to remote CLI calls
+  context: Production
+
   # Set your production systems database credentials here. If you use port forwarding to
   # the server where the database is installed, the host is 127.0.0.1 and the port is your forwarded port.
-  foreign:
+  database:
+
     # name of the foreign database
     name: 'database_123'
+
     # name of the foreign mysql user
     username: 'username_123'
+
     # password of the foreign user above
     password: 'Password_123'
+
     # hostname of the database to connect to.
     hostname: '127.0.0.1'
+
     # default: 3306
     port: 3306
 
@@ -228,22 +243,14 @@ sshConnection:
   privateKeyPassphrase: NULL
 
   # Key fingerprint of the production server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection.
+  # You don't need to keep the colons
   foreignKeyFingerprint: 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
 
   # Method modification: one of SSH2_FINGERPRINT_MD5 or SSH2_FINGERPRINT_SHA1
   foreignKeyFingerprintHashingMethod: SSH2_FINGERPRINT_MD5
 
-  # root path of the foreign TYPO3 CMS instance
-  foreignRootPath: /Users/simpleAccount/Projects/Websites/foreign.publishing.dev
-
-  # path to php binary
-  pathToPhp: /usr/bin/env php
-
   # ignore if chmod fails. prevents exception
   ignoreChmodFail: FALSE
-
-  # TYPO3_CONTEXT environment variable to preprend to remote CLI calls
-  foreignTYPO3Context: Production
 
 
 # module settings
@@ -317,8 +324,10 @@ backup:
     # saves a lot of disc space.
     zipBackup: TRUE
 
-
+# TCA processing settings
 tca:
+
+  # TCA processors decide if parts of the TCA are suitable to resolve relations
   processor:
     check: 'In2code\In2publishCore\Domain\Service\Processor\CheckProcessor'
     flex: 'In2code\In2publishCore\Domain\Service\Processor\FlexProcessor'
@@ -333,6 +342,12 @@ tca:
     user: 'In2code\In2publishCore\Domain\Service\Processor\UserProcessor'
     imageManipulation: 'In2code\In2publishCore\Domain\Service\Processor\ImageManipulationProcessor'
 
+
+# Communication adapter selection
 adapter:
+
+  # Adapter to execute command controllers on foreign
   remote: 'ssh'
+
+  # Adapter to transfer files to foreign
   transmission: 'ssh'
