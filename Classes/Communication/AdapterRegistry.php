@@ -85,12 +85,17 @@ class AdapterRegistry implements SingletonInterface
 
     /**
      * AdapterRegistry constructor.
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
         $this->config = ConfigurationUtility::getConfiguration('adapter');
+        if (!isset($GLOBALS['in2publish_core']['tests'])) {
+            $GLOBALS['in2publish_core']['tests'] = [];
+        }
     }
 
     /**
