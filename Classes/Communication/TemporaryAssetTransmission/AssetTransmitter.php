@@ -66,7 +66,7 @@ class AssetTransmitter implements SingletonInterface
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->adapterRegistry = GeneralUtility::makeInstance(AdapterRegistry::class);
-        $this->foreignRootPath = rtrim(ConfigurationUtility::getConfiguration('sshConnection.foreignRootPath'), '/');
+        $this->foreignRootPath = rtrim(ConfigurationUtility::getConfiguration('foreign.rootPath'), '/');
     }
 
     /**
