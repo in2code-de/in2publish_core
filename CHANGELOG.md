@@ -1,5 +1,12 @@
 # In2publish Core Change Log
 
+6.0.1:
+
+- [BUGFIX] Prefix all commands to avoid command name intersections (fixes #42)
+- [BUGFIX] Use correct config path to moved foreignRootPath value (fixes #43)
+- [BUGFIX] Initialize the tests array before acessing it
+- [DOCS] Remove superfluous empty lines from changelog
+
 6.0.0:
 
 - [CLEANUP] Remove unused imports from FolderRecordFactory and SSH functions test
