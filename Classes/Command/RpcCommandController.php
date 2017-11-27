@@ -38,7 +38,7 @@ class RpcCommandController extends AbstractCommandController
     const EXIT_ENVELOPE_MISSING = 230;
     const EXIT_UID_MISSING = 231;
     const EXIT_EXECUTION_FAILED = 232;
-    const EXECUTE_COMMAND = 'rpc:execute';
+    const EXECUTE_COMMAND = 'in2publish_core:rpc:execute';
 
     /**
      * @var Letterbox

@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Command\StatusCommandController;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
@@ -60,7 +61,7 @@ class ForeignInstanceTest implements TestCaseInterface
      */
     public function run()
     {
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'status:all');
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, StatusCommandController::ALL_COMMAND);
         $response = $this->remoteCommandDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {

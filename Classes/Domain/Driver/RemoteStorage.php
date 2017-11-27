@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\Domain\Driver;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Command\RpcCommandController;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Envelope;
@@ -154,7 +155,12 @@ class RemoteStorage implements ResourceStorageInterface
             );
         }
 
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'rpc:execute ', [], [$uid]);
+        $request = GeneralUtility::makeInstance(
+            RemoteCommandRequest::class,
+            RpcCommandController::EXECUTE_COMMAND,
+            [],
+            [$uid]
+        );
         $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
 
         if (!$response->isSuccessful()) {

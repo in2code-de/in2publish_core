@@ -36,7 +36,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class PublishTasksRunnerCommandController extends AbstractCommandController
 {
-    const RUN_TASKS_COMMAND = 'publishtasksrunner:runtasksinqueue';
+    const RUN_TASKS_COMMAND = 'in2publish_core:publishtasksrunner:runtasksinqueue';
 
     /**
      * @var TaskRepository

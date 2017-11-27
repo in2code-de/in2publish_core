@@ -39,9 +39,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class TableCommandController extends AbstractCommandController
 {
-    const PUBLISH_COMMAND = 'table:publish --table-name=%s';
-    const IMPORT_COMMAND = 'table:import --table-name=%s';
-    const BACKUP_COMMAND = 'table:backup --table-name=%s';
+    const PUBLISH_COMMAND = 'in2publish_core:table:publish --table-name=%s';
+    const IMPORT_COMMAND = 'in2publish_core:table:import --table-name=%s';
+    const BACKUP_COMMAND = 'in2publish_core:table:backup --table-name=%s';
     const EXIT_INVALID_TABLE = 220;
 
     /**
@@ -89,7 +89,7 @@ class TableCommandController extends AbstractCommandController
 
         $request = GeneralUtility::makeInstance(
             RemoteCommandRequest::class,
-            'table:backup',
+            TableCommandController::BACKUP_COMMAND,
             ['--table-name' => $tableName]
         );
         $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);

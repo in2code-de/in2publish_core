@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Command\PublishTasksRunnerCommandController;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
@@ -324,7 +325,10 @@ abstract class AbstractController extends ActionController
     protected function runTasks()
     {
         $dispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'publishtasksrunner:runtasksinqueue');
+        $request = GeneralUtility::makeInstance(
+            RemoteCommandRequest::class,
+            PublishTasksRunnerCommandController::RUN_TASKS_COMMAND
+        );
         $response = $dispatcher->dispatch($request);
 
         if ($response->isSuccessful()) {

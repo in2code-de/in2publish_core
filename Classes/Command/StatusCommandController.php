@@ -36,13 +36,14 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
  */
 class StatusCommandController extends AbstractCommandController
 {
-    const ALL_COMMAND = 'status:all';
-    const VERSION_COMMAND = 'status:version';
-    const CONFIGURATION_COMMAND = 'status:configuration';
-    const CONFIGURATION_RAW_COMMAND = 'status:configurationraw';
-    const CREATE_MASKS_COMMAND = 'status:createmasks';
-    const GLOBAL_CONFIGURATION = 'status:globalconfiguration';
-    const TYPO3_VERSION = 'status:typo3version';
+    const ALL_COMMAND = 'in2publish_core:status:all';
+    const VERSION_COMMAND = 'in2publish_core:status:version';
+    const CONFIGURATION_COMMAND = 'in2publish_core:status:configuration';
+    const CONFIGURATION_RAW_COMMAND = 'in2publish_core:status:configurationraw';
+    const CREATE_MASKS_COMMAND = 'in2publish_core:status:createmasks';
+    const GLOBAL_CONFIGURATION = 'in2publish_core:status:globalconfiguration';
+    const TYPO3_VERSION = 'in2publish_core:status:typo3version';
+    const DB_INIT_QUERY_ENCODED = 'in2publish_core:status:dbInitQueryEncoded';
 
     /**
      * Prints all information about the in2publish system
