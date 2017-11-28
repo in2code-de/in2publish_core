@@ -310,18 +310,16 @@ class FakeRecordFactory
 
         // remove sys file entries from local extensions and their sys_file_metadata records
         if ('sys_file' === $table) {
-            foreach ($arrayLocal as $localIndex => $localSysFile) {
-                if (0 === strpos($localSysFile['identifier'], '/typo3conf/ext/')) {
-                    if (!isset($arrayForeign[$localIndex])) {
-                        $this->sysFileMetaDataBlackList[$localIndex] = $localIndex;
-                        unset($arrayLocal[$localIndex]);
-                    }
+            foreach ($arrayLocal as $index => $localSysFile) {
+                if (0 === strpos($localSysFile['identifier'], '/typo3conf/ext/') && !isset($arrayForeign[$index])) {
+                    $this->sysFileMetaDataBlackList[$index] = $index;
+                    unset($arrayLocal[$index]);
                 }
             }
         } elseif ('sys_file_metadata' === $table) {
-            foreach ($arrayLocal as $localIndex => $localSysFileMeta) {
+            foreach ($arrayLocal as $index => $localSysFileMeta) {
                 if (isset($this->sysFileMetaDataBlackList[$localSysFileMeta['file']])) {
-                    unset($arrayLocal[$localIndex]);
+                    unset($arrayLocal[$index]);
                 }
             }
         }
