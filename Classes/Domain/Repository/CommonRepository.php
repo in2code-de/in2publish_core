@@ -178,10 +178,8 @@ class CommonRepository extends BaseRepository
         if ($this->shouldSkipFindByProperty($propertyName, $propertyValue)) {
             return [];
         }
-        if ($propertyName === 'uid') {
-            if ($this->recordFactory->hasCachedRecord($this->tableName, $propertyValue)) {
-                return $this->recordFactory->getCachedRecord($this->tableName, $propertyValue);
-            }
+        if ($propertyName === 'uid' && $this->recordFactory->hasCachedRecord($this->tableName, $propertyValue)) {
+            return $this->recordFactory->getCachedRecord($this->tableName, $propertyValue);
         }
         $localProperties = $this->findPropertiesByProperty($this->localDatabase, $propertyName, $propertyValue);
         $foreignProperties = $this->findPropertiesByProperty($this->foreignDatabase, $propertyName, $propertyValue);
