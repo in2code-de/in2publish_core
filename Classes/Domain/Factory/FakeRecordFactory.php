@@ -70,6 +70,11 @@ class FakeRecordFactory
     protected $sysFileMetaDataBlackList = [];
 
     /**
+     * @var array
+     */
+    protected $config = [];
+
+    /**
      * FakeRepository constructor.
      */
     public function __construct()
@@ -78,6 +83,7 @@ class FakeRecordFactory
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->tableCacheRepository = GeneralUtility::makeInstance(TableCacheRepository::class);
         $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
+        $this->config = ConfigurationUtility::getConfiguration();
     }
 
     /**
@@ -103,7 +109,7 @@ class FakeRecordFactory
     protected function addRelatedRecords(Record $record, $currentDepth = 0)
     {
         $currentDepth++;
-        if ($currentDepth < ConfigurationUtility::getConfiguration('factory.maximumPageRecursion')) {
+        if ($currentDepth < $this->config['factory']['maximumPageRecursion']) {
             foreach ($this->getChildrenPages($record->getIdentifier()) as $pageIdentifier) {
                 if ($this->shouldSkipChildrenPage($pageIdentifier)) {
                     $subRecord = $this->getSingleFakeRecordFromPageIdentifier((int)$pageIdentifier);
@@ -284,7 +290,7 @@ class FakeRecordFactory
     protected function pageContentRecordsHasChanged(Record $record)
     {
         $tables = $this->tcaService->getAllTableNamesWithPidAndUidField(
-            array_merge(ConfigurationUtility::getConfiguration('excludeRelatedTables'), ['pages'])
+            array_merge($this->config['excludeRelatedTables'], ['pages'])
         );
         foreach ($tables as $table) {
             $propertiesLocal = $this->tableCacheRepository->findByPid($table, $record->getIdentifier(), 'local');
@@ -367,8 +373,11 @@ class FakeRecordFactory
      */
     protected function removeIgnoreFieldsFromArray(array $properties, $table)
     {
-        $ignoreFields = (array)ConfigurationUtility::getConfiguration('ignoreFieldsForDifferenceView.' . $table);
-        return ArrayUtility::removeFromArrayByKey($properties, $ignoreFields);
+        if (!empty($this->config['ignoreFieldsForDifferenceView'][$table])) {
+            $ignoreFields = $this->config['ignoreFieldsForDifferenceView'][$table];
+            $properties = ArrayUtility::removeFromArrayByKey($properties, $ignoreFields);
+        }
+        return $properties;
     }
 
     /**
