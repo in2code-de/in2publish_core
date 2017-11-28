@@ -346,10 +346,8 @@ class Record implements RecordInterface
         switch ($side) {
             case 'local':
                 return $this->getLocalProperties();
-                break;
             case 'foreign':
                 return $this->getForeignProperties();
-                break;
             default:
                 throw new \LogicException('Can not get properties from undefined side "' . $side . '"', 1475858502);
         }
@@ -365,10 +363,8 @@ class Record implements RecordInterface
         switch ($side) {
             case 'local':
                 return $this->getLocalProperty($propertyName);
-                break;
             case 'foreign':
                 return $this->getForeignProperty($propertyName);
-                break;
             default:
                 throw new \LogicException(
                     'Can not get property "' . $propertyName . '" from undefined side "' . $side . '"',
