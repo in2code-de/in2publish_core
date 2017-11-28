@@ -82,11 +82,10 @@ class Letterbox
 
         if (0 === $uid || 0 === $database->exec_SELECTcountRows('uid', static::TABLE, 'uid=' . $uid)) {
             if (true === $database->exec_INSERTquery(static::TABLE, $envelope->toArray())) {
-                if ($uid > 0) {
-                    return $uid;
+                if ($uid <= 0) {
+                    $uid = $database->sql_insert_id();
+                    $envelope->setUid($uid);
                 }
-                $uid = $database->sql_insert_id();
-                $envelope->setUid($uid);
                 return $uid;
             } else {
                 $this->logger->error(
