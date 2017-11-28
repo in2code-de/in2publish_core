@@ -413,8 +413,7 @@ class EnvelopeDispatcher
         if (empty($fileIndexArray)) {
             return null;
         }
-        $file = GeneralUtility::makeInstance(File::class, $fileIndexArray, $storage);
-        return $file;
+        return GeneralUtility::makeInstance(File::class, $fileIndexArray, $storage);
     }
 
     /**
