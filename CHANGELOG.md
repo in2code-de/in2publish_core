@@ -1,5 +1,16 @@
 # In2publish Core Change Log
 
+6.0.2:
+
+- [BUGFIX] Skip relation resolving for records that do not exist
+- [REFACTOR] Simplify condition in CommonRepository
+- [CLEANUP] Remove unreachable break statements
+- [REFACTOR] Replace redundant method calls with local field
+- [REFACTOR] Simplify condition and reduce code in FakeRecordFactory
+- [REFACTOR] Move not implemented methods from rFALd to abstract superclass
+- [REFACTOR] Reduce return points in Letterbox::sendEnvelope
+- [REFACTOR] Remove superfluous variable assignment
+
 6.0.1:
 
 - [BUGFIX] Prefix all commands to avoid command name intersections (fixes #42)
