@@ -230,6 +230,10 @@ class RecordFactory
                 $additionalProperties
             );
 
+            if (!$instance->localRecordExists() && !$instance->foreignRecordExists()) {
+                return $instance;
+            }
+
             if ($hasBeenMoved && !$instance->isChanged()) {
                 $instance->setState(RecordInterface::RECORD_STATE_MOVED);
             }

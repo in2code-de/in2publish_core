@@ -564,14 +564,16 @@ class Record implements RecordInterface
      */
     public function addRelatedRecord(RecordInterface $record)
     {
-        if (!$record->isParentRecordLocked()) {
-            if (!($this->tableName === 'pages' && $record->getTableName() === 'pages')
-                || (((int)$record->getMergedProperty('pid')) === ((int)$this->getIdentifier()))
-            ) {
-                if (!$this->isParentRecordDisabled) {
-                    $record->setParentRecord($this);
+        if ($record->localRecordExists() || $record->foreignRecordExists()) {
+            if (!$record->isParentRecordLocked()) {
+                if (!($this->tableName === 'pages' && $record->getTableName() === 'pages')
+                    || (((int)$record->getMergedProperty('pid')) === ((int)$this->getIdentifier()))
+                ) {
+                    if (!$this->isParentRecordDisabled) {
+                        $record->setParentRecord($this);
+                    }
+                    $this->relatedRecords[$record->getTableName()][$record->getIdentifier()] = $record;
                 }
-                $this->relatedRecords[$record->getTableName()][$record->getIdentifier()] = $record;
             }
         }
     }
