@@ -825,16 +825,16 @@ class RecordTest extends UnitTestCase
     public function testAddAndGetRelatedRecordsSetsAndReturnsRelatedRecords()
     {
         $root = $this->getRecordStub([]);
-        $root->__construct('pages', [], [], [], []);
+        $root->__construct('pages', ['uid' => 1], [], [], []);
         $sub = $this->getRecordStub([]);
-        $sub->__construct('tt_content', [], [], [], []);
+        $sub->__construct('tt_content', ['uid' => 2], [], [], []);
 
         $root->addRelatedRecord($sub);
 
         $this->assertSame(
             [
                 'tt_content' => [
-                    0 => $sub,
+                    2 => $sub,
                 ],
             ],
             $root->getRelatedRecords()
@@ -849,10 +849,10 @@ class RecordTest extends UnitTestCase
     public function testAddRelatedRecordsSetsParentRecord()
     {
         $root = $this->getRecordStub([]);
-        $root->__construct('pages', [], [], [], []);
+        $root->__construct('pages', ['uid' => 1], [], [], []);
 
         $sub = $this->getRecordStub([]);
-        $sub->__construct('tt_content', [], [], [], []);
+        $sub->__construct('tt_content', ['uid' => 2], [], [], []);
 
         $root->addRelatedRecord($sub);
 
