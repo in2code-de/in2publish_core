@@ -61,7 +61,7 @@
 	"scripts": {
 		"post-autoload-dump": [
 			"mkdir -p .Build/Web/typo3conf/ext/",
-			"[ -L .Build/Web/typo3conf/ext/in2publish ] || ln -snvf ../../../../. .Build/Web/typo3conf/ext/in2publish"
+			"[ -L .Build/Web/typo3conf/ext/in2publish_core ] || ln -snvf ../../../../. .Build/Web/typo3conf/ext/in2publish_core"
 		]
 	},
 	"extra": {
