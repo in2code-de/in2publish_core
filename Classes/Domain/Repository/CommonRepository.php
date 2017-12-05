@@ -1551,7 +1551,7 @@ class CommonRepository extends BaseRepository
     protected function isIgnoredRecord(array $localProperties, array $foreignProperties)
     {
         if ($this->isDeletedAndUnchangedRecord($localProperties, $foreignProperties)
-            || $this->isDeletedOnlyOnLocal($localProperties, $foreignProperties)
+            || $this->isRemovedAndDeletedRecord($localProperties, $foreignProperties)
             || $this->shouldIgnoreRecord($localProperties, $foreignProperties)
         ) {
             return true;
@@ -1560,16 +1560,16 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * Check if this record is deleted on local site and
-     * completely non existing on foreign site (don't show)
+     * Check if the record is removed on one side (never existed) and was deleted on the other (it got deleted)
      *
-     * @param array $localProperties
-     * @param array $foreignProperties
+     * @param array $localProps
+     * @param array $foreignProps
      * @return bool
      */
-    protected function isDeletedOnlyOnLocal(array $localProperties, array $foreignProperties)
+    protected function isRemovedAndDeletedRecord(array $localProps, array $foreignProps)
     {
-        return $localProperties['deleted'] === '1' && empty($foreignProperties);
+        return (empty($localProps) && isset($foreignProps['deleted']) && 1 === (int)$foreignProps['deleted'])
+            || (empty($foreignProps) && isset($localProps['deleted']) && 1 === (int)$localProps['deleted']);
     }
 
     /**
