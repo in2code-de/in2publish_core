@@ -1,6 +1,6 @@
 # in2publish_core - Content publisher for TYPO3
 
-[![Latest Stable Version](https://poser.pugx.org/in2code/in2publish_core/v/stable)](https://packagist.org/packages/in2code/in2publish_core) [![Build Status](https://travis-ci.org/in2code-de/in2publish_core.svg?branch=master)](https://travis-ci.org/in2code-de/in2publish_core) [![Latest Unstable Version](https://poser.pugx.org/in2code/in2publish_core/v/unstable)](https://packagist.org/packages/in2code/in2publish_core) [![License](https://poser.pugx.org/in2code/in2publish_core/license)](https://packagist.org/packages/in2code/in2publish_core)
+[![Latest Stable Version](https://poser.pugx.org/in2code/in2publish_core/v/stable)](https://packagist.org/packages/in2code/in2publish_core) [![Build Status](https://travis-ci.org/in2code-de/in2publish_core.svg?branch=master)](https://travis-ci.org/in2code-de/in2publish_core) [![Latest Unstable Version](https://poser.pugx.org/in2code/in2publish_core/v/unstable)](https://packagist.org/packages/in2code/in2publish_core) [![License](https://poser.pugx.org/in2code/in2publish_core/license)](https://packagist.org/packages/in2code/in2publish_core) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/fb1891cd41bd4b9db6a29b4b01952ec1)](https://www.codacy.com/app/vertexvaar/in2publish_core?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=in2code-de/in2publish_core&amp;utm_campaign=Badge_Grade)
 
 ## Introduction
 
