@@ -181,7 +181,6 @@ function In2publishModule($) {
 						if (callbackDone !== undefined) {
 							that[callbackDone](uri, $container, $this);
 						}
-						initializeOverallFunctions();
 					}
 				});
 			}
@@ -367,16 +366,6 @@ function In2publishModule($) {
 	};
 
 	/**
-	 * initialize overall methods again (show datepicker, etc...)
-	 *
-	 * @returns {void}
-	 */
-	var initializeOverallFunctions = function() {
-		var In2publishOverall = new window.In2publishOverall($);
-		In2publishOverall.initialize();
-	};
-
-	/**
 	 * @returns void
 	 */
 	this.initializeFilterStatus = function() {
@@ -463,7 +452,4 @@ jQueryContainer(document).ready(function($) {
 
 	var In2publishModule = new window.In2publishModule($);
 	In2publishModule.initialize();
-
-	var In2publishOverall = new window.In2publishOverall($);
-	In2publishOverall.initialize();
 });

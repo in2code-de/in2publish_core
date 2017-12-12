@@ -272,4 +272,3 @@ function In2publishPageModule($) {
 
 var jQueryObject = new window.In2publishJquery();
 jQueryObject.getJqueryAndCallInstance('In2publishPageModule', 'initialize');
-jQueryObject.getJqueryAndCallInstance('In2publishOverall', 'initialize');
