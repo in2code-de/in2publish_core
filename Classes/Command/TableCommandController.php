@@ -106,9 +106,9 @@ class TableCommandController extends AbstractCommandController
             $this->logger->error(
                 'Could not create backup on remote:',
                 [
-                    'errors' => $response->getErrors(),
+                    'errors' => $response->getErrorsString(),
                     'exit_status' => $response->getExitStatus(),
-                    'output' => $response->getOutput(),
+                    'output' => $response->getOutputString(),
                 ]
             );
         }
