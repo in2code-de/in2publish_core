@@ -92,7 +92,7 @@ class RemoteCommandDispatcher implements SingletonInterface
         );
         $this->logger->debug(
             'Command dispatching results',
-            ['output' => $response->getOutput(), 'errors' => $response->getErrors()]
+            ['output' => $response->getOutputString(), 'errors' => $response->getErrorsString()]
         );
         return $response;
     }
