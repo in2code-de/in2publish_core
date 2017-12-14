@@ -78,6 +78,7 @@ class TableCommandController extends AbstractCommandController
      *      Copies a complete table from stage to production and overwrites all old entries!
      *
      * @param string $tableName
+     *
      * @return void
      */
     public function publishCommand($tableName)
@@ -120,7 +121,10 @@ class TableCommandController extends AbstractCommandController
      *      Copies a complete table from production to stage and overwrites all old entries!
      *
      * @param string $tableName
+     *
      * @return void
+     *
+     * @throws \Exception
      */
     public function importCommand($tableName)
     {
@@ -140,6 +144,7 @@ class TableCommandController extends AbstractCommandController
      * @param DatabaseConnection $fromDatabase
      * @param DatabaseConnection $toDatabase
      * @param string $tableName
+     *
      * @return bool
      */
     protected function copyTableContents(DatabaseConnection $fromDatabase, DatabaseConnection $toDatabase, $tableName)
@@ -192,7 +197,10 @@ class TableCommandController extends AbstractCommandController
      * Stores a backup of the complete local table into the configured directory
      *
      * @param string $tableName
+     *
      * @return void
+     *
+     * @throws \Exception
      */
     public function backupCommand($tableName)
     {
@@ -200,6 +208,9 @@ class TableCommandController extends AbstractCommandController
         DatabaseUtility::backupTable($this->localDatabase, $tableName);
     }
 
+    /**
+     *
+     */
     protected function checkLocalContext()
     {
         if (!$this->contextService->isLocal()) {
