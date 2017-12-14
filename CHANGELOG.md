@@ -1,5 +1,17 @@
 # In2publish Core Change Log
 
+6.0.3:
+
+- [COMMENT] Update annotations of TableCommandController
+- [BUGFIX] Dump debug log RCE response as strings
+- [BUGFIX] Remove arguments from command identifiers
+- [BUGFIX] Log error and output of failed remote table backups as strings
+- [CLEANUP] Remove Overall.js
+- [DOCS] Add Codacy Badge to readme
+- [BUGFIX] Ignore completely removed records
+- [DEV] Correctly link the extension in the virtual document root
+- [TESTS][BUGFIX] Add record uid property for test records
+
 6.0.2:
 
 - [BUGFIX] Skip relation resolving for records that do not exist
