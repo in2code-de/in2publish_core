@@ -39,9 +39,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class TableCommandController extends AbstractCommandController
 {
-    const PUBLISH_COMMAND = 'in2publish_core:table:publish --table-name=%s';
-    const IMPORT_COMMAND = 'in2publish_core:table:import --table-name=%s';
-    const BACKUP_COMMAND = 'in2publish_core:table:backup --table-name=%s';
+    const PUBLISH_COMMAND = 'in2publish_core:table:publish';
+    const IMPORT_COMMAND = 'in2publish_core:table:import';
+    const BACKUP_COMMAND = 'in2publish_core:table:backup';
     const EXIT_INVALID_TABLE = 220;
 
     /**
