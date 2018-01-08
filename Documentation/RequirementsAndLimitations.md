@@ -54,7 +54,7 @@ Not every difficult or big task can be made faster (or possible) with more RAM, 
 Here's a list of currently known limitations, but without claim of completeness:
 
 * TYPO3 setting UTF8filesystem: in2publish_core uses only FAL to publish files to the foreign system. Umlauts and special characters will be replaced by FAL automatically which results in unresolvable differences between your local and foreign files, therefore you are advised to disable this unsupported setting.
-* Foreign side relations. Bidirectional relations have an owning and a foreign side. in2publish_core can only resolve relations and henve publishg relations from the owning side or else it will run into a loop.
+* Foreign side relations. Bidirectional relations have an owning and a foreign side. in2publish_core can only resolve relations and hence publish relations from the owning side or else it will run into a loop.
 * Maximum number of files in a folder: The publish files module can only handle up to 150 files in a single folder. It's recommended to have a maximum of 100 files in a single folder.
 * User generated Content: You can have user generated on foreign and editorial content on stage on the same table if properly configured. It's possible to publish editorial contents, but not to retreive user generated content.
 * Multi Head / Multi Target publishing: in2publish-core can not diff against or publish to more than a single target.
