@@ -22,6 +22,9 @@ for details
 How to delete caches of a page in production?
 ---------------------------------------------
 
+in2publish (Enterprise Version) includes the Remote Cache Control (short: RCC) feature.
+This allows you to clear specific caches on remote as easy an configurable as the clear cache controls in you Local's backend.
+
 If you publish a page, frontend-caches of the same page on production will be cleaned.
 Special case: For sysfolders, e.g. with news-records, you  want to clean the cache of another page than the sysfolder
 that was published. In this case you can use clearCacheCmd in Page TSConfig on the stage (!) system:
