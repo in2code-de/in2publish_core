@@ -252,19 +252,19 @@ function In2publishModule($) {
 	 * @returns void
 	 */
 	this.overlayListener = function() {
-		$('[data-in2publish-overlay]').each(function() {
+		$('[data-in2publish-confirm]').each(function() {
 			var element = $(this);
-			if (element.data('in2publish-overlay') === 'TRUE') {
-				element.on('click', function(event) {
-					if (element.data('in2publish-confirm')) {
-						if (element.hasClass('in2publish-stagelisting__item__publish--blocked') || !confirm(element.data('in2publish-confirm'))) {
-							event.preventDefault();
-							return;
-						}
+			element.on('click', function(event) {
+				if (element.data('in2publish-confirm')) {
+					if (element.hasClass('in2publish-stagelisting__item__publish--blocked') || !confirm(element.data('in2publish-confirm'))) {
+						event.preventDefault();
+						return;
 					}
+				}
+				if ('TRUE' === element.data('in2publish-overlay')) {
 					showPreloader();
-				});
-			}
+				}
+			});
 		});
 	};
 
