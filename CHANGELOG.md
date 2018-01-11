@@ -1,5 +1,12 @@
 # In2publish Core Change Log
 
+6.0.4:
+
+- [BUGFIX] Skip permission evaluation only on ResourceStorage
+- [BUGFIX] Decouple the publishing confirmation from the overlay
+- [DOCS] Add hint about in2publish' RCC feature
+- [DOCS] Fix typos in ReqsAndLimits
+
 6.0.3:
 
 - [COMMENT] Update annotations of TableCommandController
