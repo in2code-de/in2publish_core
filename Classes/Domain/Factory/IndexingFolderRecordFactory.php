@@ -192,8 +192,10 @@ class IndexingFolderRecordFactory
             } else {
                 $storage = $this->localStorage;
             }
-            $evaluatePermissions = $storage->getEvaluatePermissions();
-            $storage->setEvaluatePermissions(false);
+            if ($storage instanceof ResourceStorage) {
+                $evaluatePermissions = $storage->getEvaluatePermissions();
+                $storage->setEvaluatePermissions(false);
+            }
             foreach ($relatedFolders as $folder => $fileInfo) {
                 if ($side === 'foreign') {
                     if ($storage->hasFolder($fileInfo['storageUid'], $folder)) {
@@ -214,7 +216,9 @@ class IndexingFolderRecordFactory
                     }
                 }
             }
-            $storage->setEvaluatePermissions($evaluatePermissions);
+            if (isset($evaluatePermissions) && $storage instanceof ResourceStorage) {
+                $storage->setEvaluatePermissions($evaluatePermissions);
+            }
         }
 
         return $files;
