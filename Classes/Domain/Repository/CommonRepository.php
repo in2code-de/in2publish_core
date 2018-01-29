@@ -1569,7 +1569,7 @@ class CommonRepository extends BaseRepository
     protected function isRemovedAndDeletedRecord(array $localProps, array $foreignProps)
     {
         return (empty($localProps) && isset($foreignProps['deleted']) && 1 === (int)$foreignProps['deleted'])
-            || (empty($foreignProps) && isset($localProps['deleted']) && 1 === (int)$localProps['deleted']);
+               || (empty($foreignProps) && isset($localProps['deleted']) && 1 === (int)$localProps['deleted']);
     }
 
     /**
