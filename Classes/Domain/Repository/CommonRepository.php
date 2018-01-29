@@ -40,6 +40,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Extbase\Service\FlexFormService;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
+use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
+use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
 /**
  * CommonRepository - actions in foreign and local database
@@ -452,6 +454,16 @@ class CommonRepository extends BaseRepository
                     ]
                 );
             }
+        }
+
+        try {
+            list($record) = $this->signalSlotDispatcher->dispatch(
+                CommonRepository::class,
+                'afterRecordEnrichment',
+                [$record]
+            );
+        } catch (InvalidSlotException $e) {
+        } catch (InvalidSlotReturnException $e) {
         }
         return $record;
     }
