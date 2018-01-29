@@ -31,7 +31,7 @@
 		}
 	],
 	"type": "typo3-cms-extension",
-	"license": "GPL-3.0",
+	"license": "GPL-3.0-or-later",
 	"require": {
 		"php": ">=5.5",
 		"typo3/cms": ">=7.6.0 <9.0.0, !=8.3.0"
