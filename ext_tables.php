@@ -114,7 +114,6 @@ call_user_func(
                 // Register Tools module
                 // check explicitly against false to enable this module when the configuration could not be read
                 if ($isModuleM4Enabled !== false) {
-                    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['extTablesInclusion-PostProcessing'][] = \In2code\In2publishCore\Tools\ToolsRegistry::class;
                     $toolsRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
                         \In2code\In2publishCore\Tools\ToolsRegistry::class
                     );

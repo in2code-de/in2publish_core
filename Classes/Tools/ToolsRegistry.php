@@ -42,6 +42,14 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
     protected $entries = [];
 
     /**
+     * ToolsRegistry constructor.
+     */
+    public function __construct()
+    {
+        $this->registerHookForPostProcessing();
+    }
+
+    /**
      * @param string $name
      * @param string $description
      * @param string $controller
@@ -104,5 +112,16 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
                 'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf',
             ]
         );
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
+    protected function registerHookForPostProcessing()
+    {
+        $scOptions = &$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS'];
+        if (!isset($scOptions['GLOBAL']['extTablesInclusion-PostProcessing'][1517414708])) {
+            $scOptions['GLOBAL']['extTablesInclusion-PostProcessing'][1517414708] = static::class;
+        }
     }
 }
