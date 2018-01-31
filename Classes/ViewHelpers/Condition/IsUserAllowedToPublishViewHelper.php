@@ -25,8 +25,8 @@ namespace In2code\In2publishCore\ViewHelpers\Condition;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Service\Permission\PermissionService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -35,44 +35,12 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 class IsUserAllowedToPublishViewHelper extends AbstractViewHelper
 {
     /**
-     * @var Dispatcher
-     */
-    protected $dispatcher = null;
-
-    /**
-     * IsUserAllowedToPublishViewHelper constructor.
-     */
-    public function __construct()
-    {
-        $this->dispatcher = GeneralUtility::makeInstance(Dispatcher::class);
-    }
-
-    /**
      * Check if user is allowed to publish
      *
      * @return bool
      */
     public function render()
     {
-        $votes = [
-            'yes' => 0,
-            'no' => 0,
-        ];
-        $votes = $this->voteUserIsAllowedToPublish($votes);
-        return $votes['yes'] >= $votes['no'];
-    }
-
-    /**
-     * @param array $votes
-     * @return array
-     */
-    protected function voteUserIsAllowedToPublish(array $votes)
-    {
-        // votes are manipulated via reference
-        $voteResult = $this->dispatcher->dispatch(__CLASS__, 'voteUserIsAllowedToPublish', [$votes]);
-        if (isset($voteResult[0])) {
-            return $voteResult[0];
-        }
-        return $votes;
+        return GeneralUtility::makeInstance(PermissionService::class)->isUserAllowedToPublish();
     }
 }
