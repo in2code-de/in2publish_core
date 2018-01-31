@@ -34,6 +34,7 @@ use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
+use In2code\In2publishCore\Service\Permission\PermissionService;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -46,7 +47,6 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
@@ -243,20 +243,11 @@ abstract class AbstractController extends ActionController
     /**
      * Check if user is allowed to publish
      *
-     * @throws \Exception
+     * @throws In2publishCoreException
      */
     protected function checkUserAllowedToPublish()
     {
-        $votes = ['yes' => 0, 'no' => 0];
-        $votingResult = GeneralUtility::makeInstance(Dispatcher::class)->dispatch(
-            __CLASS__,
-            'checkUserAllowedToPublish',
-            [$votes]
-        );
-        if (isset($votingResult[0])) {
-            $votes = $votingResult[0];
-        }
-        if ($votes['no'] > $votes['yes']) {
+        if (!GeneralUtility::makeInstance(PermissionService::class)->isUserAllowedToPublish()) {
             throw new In2publishCoreException('You are not allowed to publish', 1435306780);
         }
     }
