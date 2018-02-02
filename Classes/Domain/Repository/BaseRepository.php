@@ -74,23 +74,6 @@ abstract class BaseRepository
     }
 
     /**
-     * Fetches an array of properties from the given database where the
-     * column "$this->identifierFieldName" equals $identifier
-     *
-     * @param DatabaseConnection $databaseConnection
-     * @param int $identifier
-     * @return array
-     */
-    protected function getPropertiesForIdentifier(DatabaseConnection $databaseConnection, $identifier)
-    {
-        return (array)$databaseConnection->exec_SELECTgetSingleRow(
-            '*',
-            $this->tableName,
-            $this->identifierFieldName . '="' . $this->quoteString($identifier) . '"'
-        );
-    }
-
-    /**
      * Fetches an array of property arrays (plural !!!) from
      * the given database connection where the column
      * "$propertyName" equals $propertyValue

@@ -161,10 +161,11 @@ class CommonRepository extends BaseRepository
         if ($this->shouldSkipFindByIdentifier($identifier)) {
             return GeneralUtility::makeInstance(NullRecord::class, $tableName);
         }
-        return $this->convertToRecord(
-            $this->getPropertiesForIdentifier($this->localDatabase, $identifier),
-            $this->getPropertiesForIdentifier($this->foreignDatabase, $identifier)
-        );
+        $local = $this->findPropertiesByProperty($this->localDatabase, $this->identifierFieldName, $identifier);
+        $local = empty($local) ? [] : reset($local);
+        $foreign = $this->findPropertiesByProperty($this->foreignDatabase, $this->identifierFieldName, $identifier);
+        $foreign = empty($foreign) ? [] : reset($foreign);
+        return $this->convertToRecord($local, $foreign);
     }
 
     /**
