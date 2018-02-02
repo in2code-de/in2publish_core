@@ -32,7 +32,9 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 
 /**
- * Class LogEntryRepository
+ * TODO remove before releasing version 7.0 and make vertexvaar/logs mandatory
+ *
+ * @deprecated Will be removed with version 7.0. Use vertexvaar/logs instead.
  */
 class LogEntryRepository
 {
