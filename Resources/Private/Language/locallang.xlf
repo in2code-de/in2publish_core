@@ -165,6 +165,12 @@
 			<trans-unit id="moduleselector.show_logs.description">
 				<source>Show logfiles of in2publish</source>
 			</trans-unit>
+			<trans-unit id="moduleselector.advanced_logs">
+				<source>Show advanced logs</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.advanced_logs.description">
+				<source>Show all logs of the Content Publisher with plenty filter options</source>
+			</trans-unit>
 			<trans-unit id="moduleselector.test">
 				<source>Tests</source>
 			</trans-unit>

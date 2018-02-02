@@ -1,0 +1,21 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+	<f:be.container>
+		<div class="overlay"></div>
+
+		<div class="typo3-fullDoc">
+			<div id="typo3-docheader">
+				<div id="typo3-docheader-row2" class="module-docheader">
+					<div class="docheader-row2-left typo3-docheader-functions module-docheader-bar in2publish-backend-select">
+						<f:render partial="Tools/ToolsMenuEntries" arguments="{_all}" />
+					</div>
+				</div>
+			</div>
+			<div id="typo3-docbody" class="in2publish-module" data-module="m4">
+				<div id="typo3-inner-docbody" class="in2publish-backend">
+					<f:render partial="FlashMessages" />
+					<f:render section="content" />
+				</div>
+			</div>
+		</div>
+	</f:be.container>
+</html>

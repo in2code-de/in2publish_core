@@ -135,12 +135,21 @@ call_user_func(
                         'Tools',
                         'configuration'
                     );
-                    $toolsRegistry->addTool(
-                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.show_logs',
-                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.show_logs.description',
-                        'Tools',
-                        'showLogs,flushLogs'
-                    );
+                    if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('logs')) {
+                        $toolsRegistry->addTool(
+                            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.advanced_logs',
+                            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.advanced_logs.description',
+                            'Log',
+                            'filter,delete'
+                        );
+                    } else {
+                        $toolsRegistry->addTool(
+                            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.show_logs',
+                            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.show_logs.description',
+                            'Tools',
+                            'showLogs,flushLogs'
+                        );
+                    }
                     $toolsRegistry->addTool(
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca',
                         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca.description',

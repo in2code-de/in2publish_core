@@ -217,6 +217,14 @@
 				<source>Show logfiles of in2publish</source>
 				<target state="translated">Zeige Logfiles der Erweiterung in2publish</target>
 			</trans-unit>
+			<trans-unit id="moduleselector.advanced_logs">
+				<source>Show advanced logs</source>
+				<target state="translated">Erweiterte Logs anzeigen</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.advanced_logs.description">
+				<source>Show all logs of the Content Publisher with plenty filter options</source>
+				<target state="translated">Zeigt die Logeinträge des Content Publishers mit vielen Filteroptionen an</target>
+			</trans-unit>
 			<trans-unit id="moduleselector.test">
 				<source>Tests</source>
 				<target state="translated">Tests</target>
