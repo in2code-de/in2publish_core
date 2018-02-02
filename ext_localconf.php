@@ -18,12 +18,8 @@ call_user_func(
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
             'In2code.in2publishCore',
             'Pi1',
-            [
-                'Frontend' => 'preview',
-            ],
-            [
-                'Frontend' => 'preview',
-            ]
+            ['Frontend' => 'preview'],
+            ['Frontend' => 'preview']
         );
     }
 );
