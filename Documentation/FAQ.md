@@ -52,7 +52,12 @@ Example call with environment variable (for the stage system):
 Where can i get the Foreign Key Fingerprint
 -------------------------------------------
 
-Have a look here: [How to get the foreign key fingerprint](Installation/Configuration/LocalConfiguration.md#how-to-get-the-foreign-key-fingerprint)
+The Foreign Key Fingerprint is, as the name states, a hash of the public ssh key from the **foreign** system's ssh server.
+You can generate the hash with following command on your **foreign** server (example command!): `ssh-keygen -E md5 -lf /etc/ssh/ssh_host_rsa_key.pub`
+
+Hint:
+
+> You can omit the colons of the hash.
 
 How do i enable SSH Daemon on my Mac?
 -------------------------------------
