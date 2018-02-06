@@ -440,6 +440,23 @@ class CommonRepository extends BaseRepository
                     $relatedRecords = [];
             }
             $this->identifierFieldName = $previousIdFieldName;
+
+            foreach ($relatedRecords as $index => $relatedRecord) {
+                if (!($relatedRecord instanceof RecordInterface)) {
+                    $this->logger->alert(
+                        'Relation was resolved but result is not a record',
+                        [
+                            'tablename' => $record->getTableName(),
+                            'uid' => $record->getIdentifier(),
+                            'propertyName' => $propertyName,
+                            'columnConfiguration' => $columnConfiguration,
+                            'relatedRecordType' => gettype($relatedRecord),
+                        ]
+                    );
+                    unset($relatedRecords[$index]);
+                }
+            }
+
             try {
                 $record->addRelatedRecords($relatedRecords);
             } catch (\Exception $e) {
