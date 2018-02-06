@@ -1,5 +1,25 @@
 # In2publish Core Change Log
 
+6.1.0:
+
+- [BUGFIX] Check all records to add and log and remove wrong values
+- [DOCS] Rescue the FKFP guide from the depths of the git history
+- [DEPRECATION] Deprecate the interal log API reader
+- [FEATURE] Add optional integration of the external TYPO3 log API reader vertexvaar/logs
+- [DEV] Update editor cfg
+- [BUGFIX] Add newline after logo (better UI if CSS failed to load)
+- [CODESTYLE] Reduce lines in ext_localconf
+- [REFACTOR] Remove CommonRepository::getPropertiesForIdentifier
+- [CLEANUP] Remove unsipported jscsrc rule validateJSDoc
+- [BUGFIX] Directly log the publish permission voting results to use the assoc. keys
+- [BUGFIX] Replace duplicated signal implementation with its valid predecessor
+- [REFACTOR] Register extTables-PostProcessing hook upon ToolsRegistry usage
+- [REFACTOR] Extract publishing permission check to service
+- [CLEANUP] Remove deprecated SshConnection
+- [META] Update license
+- [FEATURE] Add signal for custom record relation resolving
+- [CODESTYLE] Fix condition indentation in CommonRepo
+
 6.0.4:
 
 - [BUGFIX] Skip permission evaluation only on ResourceStorage
