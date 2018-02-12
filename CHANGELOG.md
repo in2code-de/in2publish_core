@@ -1,5 +1,10 @@
 # In2publish Core Change Log
 
+6.2.0:
+
+- [FEATURE] Add option to include sys_file_references by PID again
+- [META] Update branch alias to 6.1.x
+
 6.1.0:
 
 - [BUGFIX] Check all records to add and log and remove wrong values
