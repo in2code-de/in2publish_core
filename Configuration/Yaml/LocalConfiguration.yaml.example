@@ -124,6 +124,16 @@ factory:
   # Warning: Overview does not include everything (e.g. file records) and is not as robust as on default mode
   simpleOverviewAndAjax: FALSE
 
+  # THIS OPTION COMES WITHOUT ANY WARRANTY. USE AT YOUR OWN RISK.
+  #
+  # Set to TRUE to directly connect file relations to the page through the PID. This makes it impossible to control
+  # publishing of content by the content element because the file reference will be published directly after the page
+  # and not have the content element as its parent.
+  # Also it is technically inaccurate, unexpected and might result in undocumented behaviour.
+  # This option will include file references which would not be resolved because you are using non-compatible extensions
+  # based on user functions like DCE or fluidcontent.
+  includeSysFileReference: FALSE
+
   # FAL related settings
   fal:
 

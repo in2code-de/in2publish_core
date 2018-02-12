@@ -132,6 +132,11 @@ class RecordFactory
     protected $resolvePageRelations = true;
 
     /**
+     * @var bool
+     */
+    protected $includeSysFileRef = false;
+
+    /**
      * @var TcaService
      */
     protected $tcaService = null;
@@ -160,6 +165,7 @@ class RecordFactory
         $this->maximumContentRecursion = $factorySettings['maximumContentRecursion'];
         $this->maximumOverallRecursion = $factorySettings['maximumOverallRecursion'];
         $this->resolvePageRelations = $factorySettings['resolvePageRelations'];
+        $this->includeSysFileRef = (bool)$factorySettings['includeSysFileReference'];
 
         $minimumRecursionDepth = $this->maximumPageRecursion + $this->maximumContentRecursion;
         if ($this->maximumOverallRecursion < $minimumRecursionDepth) {
@@ -331,7 +337,9 @@ class RecordFactory
         }
         // Special excluded table for page to table relation because this MM table has a PID (for whatever reason).
         // The relation should come from the record via TCA not via the PID relation to the page.
-        $tableNamesToExclude[] = 'sys_file_reference';
+        if (!$this->includeSysFileRef) {
+            $tableNamesToExclude[] = 'sys_file_reference';
+        }
         // if page recursion depth reached
         if ($this->pagesDepth < $this->maximumPageRecursion && $this->pageRecursionEnabled) {
             $this->pagesDepth++;

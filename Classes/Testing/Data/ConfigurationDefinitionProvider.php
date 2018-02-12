@@ -86,6 +86,7 @@ class ConfigurationDefinitionProvider implements SingletonInterface
                     'maximumOverallRecursion' => 'integer',
                     'resolvePageRelations' => 'boolean',
                     'simpleOverviewAndAjax' => 'boolean',
+                    'includeSysFileReference' => 'boolean',
                     'fal' => [
                         'reserveSysFileUids' => 'boolean',
                         'reclaimSysFileEntries' => 'boolean',
