@@ -36,30 +36,28 @@ use TYPO3\CMS\Core\Log\Processor\AbstractProcessor;
 class BackendUserProcessor extends AbstractProcessor
 {
     /**
-     * @var int
-     */
-    protected $backendUserUid = 0;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function __construct(array $options = [])
-    {
-        parent::__construct($options);
-        $this->backendUserUid = $this->getBackendUser()->user['uid'];
-    }
-
-    /**
      * @param LogRecord $logRecord
+     *
      * @return LogRecord
      */
     public function processLogRecord(LogRecord $logRecord)
     {
-        return $logRecord->addData(['be_user' => $this->backendUserUid]);
+        $backendUser = $this->getBackendUser();
+        if ($backendUser instanceof BackendUserAuthentication) {
+            if (!empty($backendUser->user['uid'])) {
+                $data = $backendUser->user['uid'];
+            } else {
+                $data = 'NO UID';
+            }
+        } else {
+            $data = gettype($backendUser);
+        }
+        return $logRecord->addData(['be_user' => $data]);
     }
 
     /**
      * @return BackendUserAuthentication
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
      */
     protected function getBackendUser()
