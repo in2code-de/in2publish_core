@@ -5,8 +5,6 @@ In in2publish_core we try to use as less as possible JavaScript to accomplish ou
 There are a few JavaScript files, which are used in different places:
 
 * BackendModule.js contains JavaScript used in all backend modules
-* DateTimePicker.js builds around the pikaday JavaScript library and is required for especially enterprise features.
-* PageModule.js contains most of the workflow UI functionalities
 * PageModuleJquery.js wraps around jQuery for TYPO3 lower than 7.6
 
 Most of the JavaScript actually belongs to the enterprise version and will be removed eventually.
