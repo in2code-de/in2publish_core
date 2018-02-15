@@ -47,7 +47,8 @@ class BackendUserProcessorTest extends UnitTestCase
         $expectedBeUserUid = 31;
 
         // preparation
-        $GLOBALS['BE_USER'] = new \stdClass();
+        $GLOBALS['TYPO3_DB'] = null;
+        $GLOBALS['BE_USER'] = new \TYPO3\CMS\Core\Authentication\BackendUserAuthentication();
         $GLOBALS['BE_USER']->user = ['uid' => $expectedBeUserUid];
 
         $backendUserProcessor = new BackendUserProcessor();
@@ -56,5 +57,44 @@ class BackendUserProcessorTest extends UnitTestCase
         $log = $backendUserProcessor->processLogRecord($log);
 
         $this->assertSame(['be_user' => $expectedBeUserUid], $log->getData());
+    }
+
+    /**
+     * @covers ::__construct
+     * @covers ::getBackendUser
+     * @covers ::processLogRecord
+     * @SuppressWarnings("PHPMD.Superglobals")
+     */
+    public function testBackendUserProcessorAddsBackendUserClassToLogEntryDataIfNotBackendUserAuthentication()
+    {
+        // preparation
+        $GLOBALS['BE_USER'] = new \stdClass();
+
+        $backendUserProcessor = new BackendUserProcessor();
+
+        $log = new LogRecord('Foo.Bar', LogLevel::DEBUG, 'baz', []);
+        $log = $backendUserProcessor->processLogRecord($log);
+
+        $this->assertSame(['be_user' => 'stdClass'], $log->getData());
+    }
+
+    /**
+     * @covers ::__construct
+     * @covers ::getBackendUser
+     * @covers ::processLogRecord
+     * @SuppressWarnings("PHPMD.Superglobals")
+     */
+    public function testBackendUserProcessorAddsUnkownValueStringToLogEntryIfBackendUserIsKnownButHasNoId()
+    {
+        // preparation
+        $GLOBALS['TYPO3_DB'] = null;
+        $GLOBALS['BE_USER'] = new \TYPO3\CMS\Core\Authentication\BackendUserAuthentication();
+
+        $backendUserProcessor = new BackendUserProcessor();
+
+        $log = new LogRecord('Foo.Bar', LogLevel::DEBUG, 'baz', []);
+        $log = $backendUserProcessor->processLogRecord($log);
+
+        $this->assertSame(['be_user' => 'NO UID'], $log->getData());
     }
 }

@@ -51,6 +51,9 @@ class BackendUserProcessor extends AbstractProcessor
             }
         } else {
             $data = gettype($backendUser);
+            if ($data === 'object') {
+                $data = get_class($backendUser);
+            }
         }
         return $logRecord->addData(['be_user' => $data]);
     }
