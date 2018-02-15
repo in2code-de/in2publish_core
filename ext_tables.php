@@ -4,314 +4,177 @@ if (!defined('TYPO3_MODE')) {
 }
 
 call_user_func(
-    function ($extKey) {
-        if (TYPO3_MODE === 'BE' && !(TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_INSTALL)) {
-            $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                \In2code\In2publishCore\Service\Context\ContextService::class
-            );
+    function () {
+        // @codingStandardsIgnoreStart @formatter:off
 
-            // Manually load Spy YAML parser
-            if (!class_exists(\Spyc::class)) {
-                $file = TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath(
-                    'in2publish_core',
-                    'Resources/Private/Libraries/Spyc/Spyc.php'
-                );
-                require_once($file);
-            }
-
-            $isModuleM1Enabled = \In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('module.m1');
-            $isModuleM3Enabled = \In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('module.m3');
-            $isModuleM4Enabled = \In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('module.m4');
-
-            // initialize logging with configuration
-            if (\In2code\In2publishCore\Utility\ConfigurationUtility::isConfigurationLoadedSuccessfully()) {
-                $logConfiguration = \In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('log');
-
-                if (isset($logConfiguration['logLevel'])) {
-                    $logLevel = $logConfiguration['logLevel'];
-                    $logLevel = \TYPO3\CMS\Core\Utility\MathUtility::forceIntegerInRange($logLevel, 0, 7, 5);
-                } else {
-                    $logLevel = 5;
-                }
-
-                $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'] = [
-                    'writerConfiguration' => [
-                        $logLevel => [
-                            \TYPO3\CMS\Core\Log\Writer\DatabaseWriter::class => [
-                                'logTable' => 'tx_in2code_in2publish_log',
-                            ],
-                        ],
-                    ],
-                    'processorConfiguration' => [
-                        $logLevel => [
-                            \In2code\In2publishCore\Log\Processor\BackendUserProcessor::class => [],
-                        ],
-                    ],
-                ];
-            }
-
-            // These command controllers are always available.
-            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
-                \In2code\In2publishCore\Command\StatusCommandController::class;
-            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
-                \In2code\In2publishCore\Command\EnvironmentCommandController::class;
-            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
-                \In2code\In2publishCore\Command\TableCommandController::class;
-
-            /**
-             * On foreign environment
-             */
-            if ($contextService->isForeign()) {
-                $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
-                    \In2code\In2publishCore\Command\PublishTasksRunnerCommandController::class;
-                $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
-                    \In2code\In2publishCore\Command\RpcCommandController::class;
-            }
-
-            /**
-             * On local environment
-             */
-            if ($contextService->isLocal()) {
-                $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] =
-                    \In2code\In2publishCore\Command\ToolsCommandController::class;
-
-                // Register record publishing module
-                if ($isModuleM1Enabled) {
-                    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-                        'In2code.' . $extKey,
-                        'web',
-                        'm1',
-                        '',
-                        [
-                            'Record' => 'index,detail,publishRecord,publishRecordRecursive,toggleFilterStatusAndRedirectToIndex',
-                        ],
-                        [
-                            'access' => 'user,group',
-                            'icon' => 'EXT:' . $extKey . '/Resources/Public/Icons/Record.svg',
-                            'labels' => 'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang_mod1.xlf',
-                        ]
-                    );
-                }
-
-                // Register file publishing module
-                if ($isModuleM3Enabled) {
-                    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-                        'In2code.' . $extKey,
-                        'file',
-                        'm3',
-                        '',
-                        [
-                            'File' => 'index,publishFolder,publishFile,toggleFilterStatusAndRedirectToIndex',
-                        ],
-                        [
-                            'access' => 'user,group',
-                            'icon' => 'EXT:' . $extKey . '/Resources/Public/Icons/File.svg',
-                            'labels' => 'LLL:EXT:' . $extKey . '/Resources/Private/Language/locallang_mod3.xlf',
-                        ]
-                    );
-                }
-
-                // Register Tools module
-                // check explicitly against false to enable this module when the configuration could not be read
-                if ($isModuleM4Enabled !== false) {
-                    $toolsRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                        \In2code\In2publishCore\Tools\ToolsRegistry::class
-                    );
-                    $toolsRegistry->addTool(
-                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.index',
-                        '',
-                        'Tools',
-                        'index'
-                    );
-                    $toolsRegistry->addTool(
-                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test',
-                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test.description',
-                        'Tools',
-                        'test'
-                    );
-                    $toolsRegistry->addTool(
-                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration',
-                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration.description',
-                        'Tools',
-                        'configuration'
-                    );
-                    if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('logs')) {
-                        $toolsRegistry->addTool(
-                            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.advanced_logs',
-                            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.advanced_logs.description',
-                            'Log',
-                            'filter,delete'
-                        );
-                    } else {
-                        $toolsRegistry->addTool(
-                            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.show_logs',
-                            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.show_logs.description',
-                            'Tools',
-                            'showLogs,flushLogs'
-                        );
-                    }
-                    $toolsRegistry->addTool(
-                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca',
-                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca.description',
-                        'Tools',
-                        'tca'
-                    );
-                    $toolsRegistry->addTool(
-                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca',
-                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca.description',
-                        'Tools',
-                        'clearTcaCaches'
-                    );
-                    $toolsRegistry->addTool(
-                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry',
-                        'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry.description',
-                        'Tools',
-                        'flushRegistry'
-                    );
-                    $letterbox = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                        \In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox::class
-                    );
-                    if ($letterbox->hasUnAnsweredEnvelopes()) {
-                        $toolsRegistry->addTool(
-                            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes',
-                            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes.description',
-                            'Tools',
-                            'flushEnvelopes'
-                        );
-                    }
-                }
-
-                // Register Anomalies
-                /** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
-                $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                    \TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class
-                );
-                $signalSlotDispatcher->connect(
-                    \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                    'publishRecordRecursiveAfterPublishing',
-                    \In2code\In2publishCore\Domain\Anomaly\PhysicalFilePublisher::class,
-                    'publishPhysicalFileOfSysFile',
-                    false
-                );
-                $signalSlotDispatcher->connect(
-                    \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                    'publishRecordRecursiveBeforePublishing',
-                    \In2code\In2publishCore\Domain\Anomaly\CacheInvalidator::class,
-                    'registerClearCacheTasks',
-                    false
-                );
-                $signalSlotDispatcher->connect(
-                    \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                    'publishRecordRecursiveEnd',
-                    \In2code\In2publishCore\Domain\Anomaly\CacheInvalidator::class,
-                    'writeClearCacheTask',
-                    false
-                );
-                $signalSlotDispatcher->connect(
-                    \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                    'publishRecordRecursiveAfterPublishing',
-                    \In2code\In2publishCore\Domain\Anomaly\RealUrlCacheInvalidator::class,
-                    'registerClearRealUrlCacheTask',
-                    false
-                );
-                $signalSlotDispatcher->connect(
-                    \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                    'publishRecordRecursiveAfterPublishing',
-                    \In2code\In2publishCore\Domain\Anomaly\SysLogPublisher::class,
-                    'publishSysLog',
-                    false
-                );
-                $signalSlotDispatcher->connect(
-                    \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                    'publishRecordRecursiveAfterPublishing',
-                    \In2code\In2publishCore\Domain\Anomaly\RefindexUpdater::class,
-                    'registerRefindexUpdate',
-                    false
-                );
-                $signalSlotDispatcher->connect(
-                    \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                    'publishRecordRecursiveEnd',
-                    \In2code\In2publishCore\Domain\Anomaly\RefindexUpdater::class,
-                    'writeRefindexUpdateTask',
-                    false
-                );
-
-                $reserveSysFileUids = \In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration(
-                    'factory.fal.reserveSysFileUids'
-                );
-                if (false === $reserveSysFileUids) {
-                    $indexPostProcessor = \In2code\In2publishCore\Domain\PostProcessing\FalIndexPostProcessor::class;
-                } else {
-                    $indexPostProcessor = \In2code\In2publishCore\Domain\PostProcessing\FileIndexPostProcessor::class;
-                }
-
-                // check if value is explicit false. after updating it's "null" if not set
-                $signalSlotDispatcher->connect(
-                    \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
-                    'instanceCreated',
-                    $indexPostProcessor,
-                    'registerInstance',
-                    false
-                );
-                $signalSlotDispatcher->connect(
-                    \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
-                    'rootRecordFinished',
-                    $indexPostProcessor,
-                    'postProcess',
-                    false
-                );
-
-                // register tests for tools module
-                $GLOBALS['in2publish_core']['tests'] = [
-                    \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationIsAvailableTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Adapter\AdapterSelectionTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Database\DatabaseDifferencesTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Adapter\TransmissionAdapterTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Application\LocalInstanceTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Application\LocalSysDomainTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Application\ForeignSysDomainTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Fal\CaseSensitivityTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Fal\IdenticalDriverTest::class,
-                    \In2code\In2publishCore\Testing\Tests\Fal\UniqueStorageTargetTest::class,
-                ];
-
-                $adapterRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                    \In2code\In2publishCore\Communication\AdapterRegistry::class
-                );
-                $adapterRegistry->registerAdapter(
-                    'remote',
-                    'ssh',
-                    \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter::class,
-                    'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.remote.ssh',
-                    [\In2code\In2publishCore\Testing\Data\SshConnectionConfigurationDefinitionProvider::class => 'overruleDefinition'],
-                    [
-                        \In2code\In2publishCore\Testing\Tests\SshConnection\SshKeyFilesExistTest::class,
-                        \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
-                        \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
-                    ]
-                );
-                $adapterRegistry->registerAdapter(
-                    'transmission',
-                    'ssh',
-                    \In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::class,
-                    'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.transmission.ssh',
-                    [\In2code\In2publishCore\Testing\Data\SshConnectionConfigurationDefinitionProvider::class => 'overruleDefinition'],
-                    [
-                        \In2code\In2publishCore\Testing\Tests\SshConnection\SshKeyFilesExistTest::class,
-                        \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
-                        \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
-                        \In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest::class,
-                    ]
-                );
-            }
+        // abort if not in BE or INSTALL TOOL
+        if (TYPO3_MODE !== 'BE' || TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_INSTALL) {
+            return;
         }
-    },
-    $_EXTKEY
+
+        if (!class_exists(\Spyc::class)) {
+            require_once(TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('in2publish_core', 'Resources/Private/Libraries/Spyc/Spyc.php'));
+        }
+
+        $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Service\Context\ContextService::class);
+
+
+        /******************************************* initialize logging *******************************************/
+        if (\In2code\In2publishCore\Utility\ConfigurationUtility::isConfigurationLoadedSuccessfully()) {
+            $logConfiguration = \In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('log');
+            $logLevel = \TYPO3\CMS\Core\Utility\MathUtility::forceIntegerInRange($logConfiguration['logLevel'], 0, 7, 5);
+
+            $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'] = [
+                'writerConfiguration' => [$logLevel => [\TYPO3\CMS\Core\Log\Writer\DatabaseWriter::class => ['logTable' => 'tx_in2code_in2publish_log']]],
+                'processorConfiguration' => [$logLevel => [\In2code\In2publishCore\Log\Processor\BackendUserProcessor::class => []]],
+            ];
+        }
+
+
+        /*********************************** register basic command controllers ***********************************/
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \In2code\In2publishCore\Command\StatusCommandController::class;
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \In2code\In2publishCore\Command\EnvironmentCommandController::class;
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \In2code\In2publishCore\Command\TableCommandController::class;
+
+
+        /********************************************** ONLY FOREIGN **********************************************/
+        if ($contextService->isForeign()) {
+            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \In2code\In2publishCore\Command\PublishTasksRunnerCommandController::class;
+            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \In2code\In2publishCore\Command\RpcCommandController::class;
+        }
+
+
+        /*********************************************** ONLY LOCAL ***********************************************/
+        if ($contextService->isLocal()) {
+            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \In2code\In2publishCore\Command\ToolsCommandController::class;
+
+            if (\In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('module.m1')) {
+                \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+                    'In2code.In2publishCore',
+                    'web',
+                    'm1',
+                    '',
+                    [
+                        'Record' => 'index,detail,publishRecord,publishRecordRecursive,toggleFilterStatusAndRedirectToIndex',
+                    ],
+                    [
+                        'access' => 'user,group',
+                        'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Record.svg',
+                        'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod1.xlf',
+                    ]
+                );
+            }
+
+            if (\In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('module.m3')) {
+                \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+                    'In2code.In2publishCore',
+                    'file',
+                    'm3',
+                    '',
+                    [
+                        'File' => 'index,publishFolder,publishFile,toggleFilterStatusAndRedirectToIndex',
+                    ],
+                    [
+                        'access' => 'user,group',
+                        'icon' => 'EXT:in2publish_core/Resources/Public/Icons/File.svg',
+                        'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod3.xlf',
+                    ]
+                );
+            }
+
+
+            /********************************** register tools for the tools mod **********************************/
+            if (\In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('module.m4') !== false) {
+                $letterbox = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox::class);
+
+                $toolsRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Tools\ToolsRegistry::class);
+                $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.index', '', 'Tools', 'index');
+                $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test.description', 'Tools', 'test');
+                $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration.description', 'Tools', 'configuration');
+                if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('logs')) {
+                    $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.advanced_logs', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.advanced_logs.description', 'Log', 'filter,delete');
+                } else {
+                    $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.show_logs', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.show_logs.description', 'Tools', 'showLogs,flushLogs');
+                }
+                $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca.description', 'Tools', 'tca');
+                $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca.description', 'Tools', 'clearTcaCaches');
+                $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry.description', 'Tools', 'flushRegistry');
+                if ($letterbox->hasUnAnsweredEnvelopes()) {
+                    $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes.description', 'Tools', 'flushEnvelopes');
+                }
+            }
+
+
+            /**************************************** Anomaly Registration ****************************************/
+            /** @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signalSlotDispatcher */
+            $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
+            $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveBeforePublishing', \In2code\In2publishCore\Domain\Anomaly\CacheInvalidator::class, 'registerClearCacheTasks', false);
+            $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveAfterPublishing', \In2code\In2publishCore\Domain\Anomaly\PhysicalFilePublisher::class, 'publishPhysicalFileOfSysFile', false);
+            $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveAfterPublishing', \In2code\In2publishCore\Domain\Anomaly\RealUrlCacheInvalidator::class, 'registerClearRealUrlCacheTask', false);
+            $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveAfterPublishing', \In2code\In2publishCore\Domain\Anomaly\SysLogPublisher::class, 'publishSysLog', false);
+            $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveAfterPublishing', \In2code\In2publishCore\Domain\Anomaly\RefindexUpdater::class, 'registerRefindexUpdate', false);
+            $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveEnd', \In2code\In2publishCore\Domain\Anomaly\RefindexUpdater::class, 'writeRefindexUpdateTask', false);
+            $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveEnd', \In2code\In2publishCore\Domain\Anomaly\CacheInvalidator::class, 'writeClearCacheTask', false);
+            if (!\In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
+                $indexPostProcessor = \In2code\In2publishCore\Domain\PostProcessing\FalIndexPostProcessor::class;
+            } else {
+                $indexPostProcessor = \In2code\In2publishCore\Domain\PostProcessing\FileIndexPostProcessor::class;
+            }
+            $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Factory\RecordFactory::class, 'instanceCreated', $indexPostProcessor, 'registerInstance', false);
+            $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Factory\RecordFactory::class, 'rootRecordFinished', $indexPostProcessor, 'postProcess', false);
+
+
+            /***************************************** Tests Registration *****************************************/
+            $GLOBALS['in2publish_core']['tests'] = [
+                \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationIsAvailableTest::class,
+                \In2code\In2publishCore\Testing\Tests\Adapter\AdapterSelectionTest::class,
+                \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest::class,
+                \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest::class,
+                \In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest::class,
+                \In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest::class,
+                \In2code\In2publishCore\Testing\Tests\Database\DatabaseDifferencesTest::class,
+                \In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest::class,
+                \In2code\In2publishCore\Testing\Tests\Adapter\TransmissionAdapterTest::class,
+                \In2code\In2publishCore\Testing\Tests\Application\LocalInstanceTest::class,
+                \In2code\In2publishCore\Testing\Tests\Application\LocalSysDomainTest::class,
+                \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest::class,
+                \In2code\In2publishCore\Testing\Tests\Application\ForeignSysDomainTest::class,
+                \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest::class,
+                \In2code\In2publishCore\Testing\Tests\Fal\CaseSensitivityTest::class,
+                \In2code\In2publishCore\Testing\Tests\Fal\IdenticalDriverTest::class,
+                \In2code\In2publishCore\Testing\Tests\Fal\UniqueStorageTargetTest::class,
+            ];
+
+
+            /*********************************** Register Communication Adapter ***********************************/
+            $adapterRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Communication\AdapterRegistry::class);
+            $adapterRegistry->registerAdapter(
+                'remote',
+                'ssh',
+                \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter::class,
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.remote.ssh',
+                [\In2code\In2publishCore\Testing\Data\SshConnectionConfigurationDefinitionProvider::class => 'overruleDefinition'],
+                [
+                    \In2code\In2publishCore\Testing\Tests\SshConnection\SshKeyFilesExistTest::class,
+                    \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
+                    \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
+                ]
+            );
+            $adapterRegistry->registerAdapter(
+                'transmission',
+                'ssh',
+                \In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::class,
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.transmission.ssh',
+                [\In2code\In2publishCore\Testing\Data\SshConnectionConfigurationDefinitionProvider::class => 'overruleDefinition'],
+                [
+                    \In2code\In2publishCore\Testing\Tests\SshConnection\SshKeyFilesExistTest::class,
+                    \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
+                    \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
+                    \In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest::class,
+                ]
+            );
+        }
+
+        // @codingStandardsIgnoreEnd @formatter:on
+    }
 );
