@@ -367,13 +367,7 @@ function In2publishModule($) {
 	};
 }
 
-var jQueryContainer;
-if (TYPO3.jQuery !== undefined) {
-	jQueryContainer = TYPO3.jQuery;
-} else {
-	jQueryContainer = jQuery;
-}
-jQueryContainer(document).ready(function($) {
+TYPO3.jQuery(document).ready(function($) {
 	'use strict';
 
 	var In2publishModule = new window.In2publishModule($);
