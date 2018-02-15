@@ -64,6 +64,7 @@ class FlexProcessor extends AbstractProcessor
      */
     protected $allowed = [
         self::SEARCH,
+        self::DS_POINTER_FIELD,
     ];
 
     /**
