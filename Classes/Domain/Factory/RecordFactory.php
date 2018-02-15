@@ -72,25 +72,15 @@ class RecordFactory
     protected $logger = null;
 
     /**
-     * Maximum recursion depth for pages in hierarchy
-     *
-     * @var int
+     * @var array
      */
-    protected $maximumPageRecursion = 0;
-
-    /**
-     * Maximum chain length of related records
-     *
-     * @var int
-     */
-    protected $maximumContentRecursion = 0;
-
-    /**
-     * Maximum recursion depth for makeInstance
-     *
-     * @var int
-     */
-    protected $maximumOverallRecursion = 0;
+    protected $config = [
+        'maximumPageRecursion' => 0,
+        'maximumContentRecursion' => 0,
+        'maximumOverallRecursion' => 0,
+        'resolvePageRelations' => true,
+        'includeSysFileReference' => false,
+    ];
 
     /**
      * current recursion depth of makeInstance
@@ -127,16 +117,6 @@ class RecordFactory
     protected $pageRecursionEnabled = true;
 
     /**
-     * @var bool
-     */
-    protected $resolvePageRelations = true;
-
-    /**
-     * @var bool
-     */
-    protected $includeSysFileRef = false;
-
-    /**
      * @var TcaService
      */
     protected $tcaService = null;
@@ -160,17 +140,13 @@ class RecordFactory
         $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
         $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
 
-        $factorySettings = ConfigurationUtility::getConfiguration('factory');
-        $this->maximumPageRecursion = $factorySettings['maximumPageRecursion'];
-        $this->maximumContentRecursion = $factorySettings['maximumContentRecursion'];
-        $this->maximumOverallRecursion = $factorySettings['maximumOverallRecursion'];
-        $this->resolvePageRelations = $factorySettings['resolvePageRelations'];
-        $this->includeSysFileRef = (bool)$factorySettings['includeSysFileReference'];
+        $this->config = ConfigurationUtility::getConfiguration('factory');
 
-        $minimumRecursionDepth = $this->maximumPageRecursion + $this->maximumContentRecursion;
-        if ($this->maximumOverallRecursion < $minimumRecursionDepth) {
-            $this->maximumOverallRecursion = $minimumRecursionDepth;
-        }
+        $this->config['maximumOverallRecursion'] = max(
+            $this->config['maximumOverallRecursion'],
+            $this->config['maximumPageRecursion'] + $this->config['maximumContentRecursion']
+        );
+
         $this->excludedTableNames = ConfigurationUtility::getConfiguration('excludeRelatedTables');
     }
 
@@ -264,7 +240,7 @@ class RecordFactory
                     default:
                 }
             } else {
-                if ($this->currentOverallRecursion < $this->maximumOverallRecursion) {
+                if ($this->currentOverallRecursion < $this->config['maximumOverallRecursion']) {
                     $this->currentOverallRecursion++;
                     if ($instanceTableName === 'pages') {
                         $instance = $this->findRelatedRecordsForPageRecord($instance, $commonRepository);
@@ -280,7 +256,7 @@ class RecordFactory
                             'table' => $instance->getTableName(),
                             'depth' => $instance->getAdditionalProperty('depth'),
                             'currentOverallRecursion' => $this->currentOverallRecursion,
-                            'maximumOverallRecursion' => $this->maximumOverallRecursion,
+                            'maximumOverallRecursion' => $this->config['maximumOverallRecursion'],
                         ]
                     );
                 }
@@ -303,10 +279,10 @@ class RecordFactory
      */
     protected function findRelatedRecordsForContentRecord(RecordInterface $record, CommonRepository $commonRepository)
     {
-        if ($this->relatedRecordsDepth < $this->maximumContentRecursion) {
+        if ($this->relatedRecordsDepth < $this->config['maximumContentRecursion']) {
             $this->relatedRecordsDepth++;
             $excludedTableNames = $this->excludedTableNames;
-            if (false === $this->resolvePageRelations) {
+            if (false === $this->config['resolvePageRelations']) {
                 $excludedTableNames[] = 'pages';
             }
             $record = $commonRepository->enrichRecordWithRelatedRecords($record, $excludedTableNames);
@@ -337,11 +313,11 @@ class RecordFactory
         }
         // Special excluded table for page to table relation because this MM table has a PID (for whatever reason).
         // The relation should come from the record via TCA not via the PID relation to the page.
-        if (!$this->includeSysFileRef) {
+        if (!$this->config['includeSysFileReference']) {
             $tableNamesToExclude[] = 'sys_file_reference';
         }
         // if page recursion depth reached
-        if ($this->pagesDepth < $this->maximumPageRecursion && $this->pageRecursionEnabled) {
+        if ($this->pagesDepth < $this->config['maximumPageRecursion'] && $this->pageRecursionEnabled) {
             $this->pagesDepth++;
             $record = $commonRepository->enrichPageRecord($record, $tableNamesToExclude);
             $this->pagesDepth--;
