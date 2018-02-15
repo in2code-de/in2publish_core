@@ -513,29 +513,19 @@ class RecordFactory
     }
 
     /**
-     * public method to check for cached records
-     * mainly for performance issues
-     *
-     * @param string $tableName
-     * @param string|int $identifier
-     * @return bool
-     */
-    public function hasCachedRecord($tableName, $identifier)
-    {
-        return !empty($this->runtimeCache[$tableName][$identifier]);
-    }
-
-    /**
      * public method to get a cached record
      * mainly for performance issues
      *
      * @param string $tableName
      * @param string|int $identifier
-     * @return mixed
+     * @return RecordInterface|null
      */
     public function getCachedRecord($tableName, $identifier)
     {
-        return $this->runtimeCache[$tableName][$identifier];
+        if (!empty($this->runtimeCache[$tableName][$identifier])) {
+            return $this->runtimeCache[$tableName][$identifier];
+        }
+        return null;
     }
 
     /**
