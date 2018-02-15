@@ -37,6 +37,8 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
+use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
+use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
 /**
  * RecordFactory: This class is responsible for create instances of Record.
@@ -157,6 +159,7 @@ class RecordFactory
      * @param array $localProperties Properties of the record from local Database
      * @param array $foreignProperties Properties of the record from foreign Database
      * @param array $additionalProperties array of not persisted properties
+     *
      * @return RecordInterface
      */
     public function makeInstance(
@@ -220,7 +223,11 @@ class RecordFactory
                 $instance->setState(RecordInterface::RECORD_STATE_MOVED);
             }
 
-            $this->signalSlotDispatcher->dispatch(__CLASS__, 'instanceCreated', [$this, $instance]);
+            try {
+                $this->signalSlotDispatcher->dispatch(__CLASS__, 'instanceCreated', [$this, $instance]);
+            } catch (InvalidSlotException $e) {
+            } catch (InvalidSlotReturnException $e) {
+            }
 
             /* special case of tables without TCA (currently only sys_file_processedfile).
              * Normally we would just ignore them, but:
@@ -267,7 +274,11 @@ class RecordFactory
         if (true === $isRootRecord && true === $this->isRootRecord) {
             $this->isRootRecord = false;
             $instance->addAdditionalProperty('isRoot', true);
-            $this->signalSlotDispatcher->dispatch(__CLASS__, 'rootRecordFinished', [$this, $instance]);
+            try {
+                $this->signalSlotDispatcher->dispatch(__CLASS__, 'rootRecordFinished', [$this, $instance]);
+            } catch (InvalidSlotException $e) {
+            } catch (InvalidSlotReturnException $e) {
+            }
         }
         return $instance;
     }
@@ -562,10 +573,14 @@ class RecordFactory
     public function endSimulation()
     {
         $this->isRootRecord = false;
-        $this->signalSlotDispatcher->dispatch(
-            __CLASS__,
-            'rootRecordFinished',
-            [$this, GeneralUtility::makeInstance(NullRecord::class)]
-        );
+        try {
+            $this->signalSlotDispatcher->dispatch(
+                __CLASS__,
+                'rootRecordFinished',
+                [$this, GeneralUtility::makeInstance(NullRecord::class)]
+            );
+        } catch (InvalidSlotException $e) {
+        } catch (InvalidSlotReturnException $e) {
+        }
     }
 }
