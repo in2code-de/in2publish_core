@@ -87,7 +87,7 @@ class RecordFactory
      *
      * @var int
      */
-    protected $currentOverallRecursion = 0;
+    protected $currentDepth = 0;
 
     /**
      * array of table names to be excluded from publishing
@@ -240,14 +240,14 @@ class RecordFactory
                     default:
                 }
             } else {
-                if ($this->currentOverallRecursion < $this->config['maximumOverallRecursion']) {
-                    $this->currentOverallRecursion++;
+                if ($this->currentDepth < $this->config['maximumOverallRecursion']) {
+                    $this->currentDepth++;
                     if ($instanceTableName === 'pages') {
                         $instance = $this->findRelatedRecordsForPageRecord($instance, $commonRepository);
                     } else {
                         $instance = $this->findRelatedRecordsForContentRecord($instance, $commonRepository);
                     }
-                    $this->currentOverallRecursion--;
+                    $this->currentDepth--;
                 } else {
                     $this->logger->emergency(
                         'Reached maximumOverallRecursion. This should not happen since maximumOverallRecursion ' .
@@ -255,7 +255,7 @@ class RecordFactory
                         [
                             'table' => $instance->getTableName(),
                             'depth' => $instance->getAdditionalProperty('depth'),
-                            'currentOverallRecursion' => $this->currentOverallRecursion,
+                            'currentOverallRecursion' => $this->currentDepth,
                             'maximumOverallRecursion' => $this->config['maximumOverallRecursion'],
                         ]
                     );
