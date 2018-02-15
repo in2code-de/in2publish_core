@@ -49,7 +49,6 @@ function In2publishModule($) {
 		that.messageListener();
 		that.overlayListener();
 		ajaxUriListener();
-		workflowFilterListener();
 	};
 
 	/**
@@ -267,79 +266,6 @@ function In2publishModule($) {
 			});
 		});
 	};
-
-	/**
-	 * Event listener for filter list
-	 *
-	 * @returns void
-	 */
-	var workflowFilterListener = function() {
-		if ($('*[data-workflow-filter="true"]').length) {
-			$('*[data-workflow-filter="true"] *[data-workflow-filter-field="true"]').on('keyup change', function() {
-				filterList();
-			});
-		}
-	};
-
-	/**
-	 * Filter list is triggered on field change
-	 *
-	 * @returns void
-	 */
-	var filterList = function() {
-		$('*[data-record-item="true"]').each(function() {
-			var $this = $(this);
-			var hideItem = false;
-			var allDataAttributes = getAllDataRecordAttributesOfElement($this);
-			$.each(allDataAttributes, function(key, currentData) {
-				var filterField = $('*[name="' + key + '"]');
-				if (filterField.length && filterField.val() !== '') {
-					var value = filterField.val().toLowerCase();
-					if (typeof currentData === 'string') {
-						currentData = currentData.toLowerCase();
-						if (currentData.indexOf(value) === -1) {
-							hideItem = true;
-						}
-					} else {
-						if (currentData !== parseInt(value)) {
-							hideItem = true;
-						}
-					}
-				}
-			});
-			if (hideItem === true) {
-				$this.hide();
-			} else {
-				$this.show();
-			}
-		});
-		countAndShowNumberOfResults();
-	};
-
-	/**
-	 * @param {jQuery} $element
-	 * @return {object}
-	 */
-	var getAllDataRecordAttributesOfElement = function($element) {
-		var attributes = {};
-		$.each($element.get(0).attributes, function(i, attribute) {
-			if (attribute.name.indexOf('data-record-') !== -1) {
-				attributes[attribute.name] = attribute.value;
-			}
-		});
-		return attributes;
-	};
-
-	/**
-	 * @returns {void}
-	 */
-	var countAndShowNumberOfResults = function() {
-		var container = $('*[data-count-container="true"]');
-		if (container.length) {
-			container.html($('*[data-record-item="true"]:visible').length);
-		}
-	};
-
 
 	/**
 	 * ******* Internal *******
