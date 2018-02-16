@@ -1,5 +1,24 @@
 # In2publish Core Change Log
 
+6.2.1:
+
+- [REFACTOR] Rewrite and register BackendModule.js as require module
+- [REFACTOR] Rework ext_tables.php
+- [CLEANUP] Remove forgotten qunit css file
+- [CLEANUP] Remove unmaintained clickdummy
+- [CLEANUP] Remove remaining unused libraries as bootstrap.js and jquery
+- [CLEANUP] Remove any JS related hack and workaround for TYPO3 < 7.6
+- [CLEANUP] Remove unused JS library pikaday.js
+- [CLEANUP] Remove replaced workflow filter listener from BackendModule.js
+- [CLEANUP] Remove obsolete/unused DateTimePicker.js and PageModule.js
+- [REFACTOR] Remove RecordFactory::hasCachedRecord
+- [BUGFIX] Ignore failing signals in RecordFactory
+- [REFACTOR] Shorten RecordFactory's currentOverallRecursion to more meaningful currentDepth
+- [REFACTOR] Use config field for RecordFactory instead of multiple single fields
+- [BUGFIX] Log the object's class if the class is different from BeUserAuth
+- [BUGFIX] Include ds_pointerField for flex fields again
+- [BUGFIX] Log the backend user's type if no UID could be found
+
 6.2.0:
 
 - [FEATURE] Add option to include sys_file_references by PID again
