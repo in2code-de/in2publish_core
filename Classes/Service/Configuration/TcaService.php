@@ -157,6 +157,22 @@ class TcaService implements SingletonInterface
     }
 
     /**
+     * Get the disabled field from TCA.
+     * Records whose deleted field evaluate to true will not be shown in the frontend.
+     *
+     * @param string $tableName
+     * @return string
+     */
+    public function getDisableField($tableName)
+    {
+        $deleteField = '';
+        if (!empty($this->tca[$tableName]['ctrl']['enablecolumns']['disabled'])) {
+            $deleteField = $this->tca[$tableName]['ctrl']['enablecolumns']['disabled'];
+        }
+        return $deleteField;
+    }
+
+    /**
      * Returns all table names that are not in the exclusion list and that have a pid and uid field
      *
      * @param array $exceptTableNames
