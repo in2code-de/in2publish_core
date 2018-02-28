@@ -791,7 +791,10 @@ class CommonRepository extends BaseRepository
     protected function filterFlexFormDefinition(array $flexFormDefinition)
     {
         foreach ($flexFormDefinition as $key => $config) {
-            if (empty($config['type']) || !in_array($config['type'], ['select', 'group', 'inline'])) {
+            if (empty($config['type'])
+                || !in_array($config['type'], ['select', 'group', 'inline'])
+                   && !($config['type'] === 'input' && !empty($config['wizards']))
+            ) {
                 unset($flexFormDefinition[$key]);
             }
         }
@@ -910,6 +913,15 @@ class CommonRepository extends BaseRepository
                                 $column,
                                 $excludedTableNames,
                                 $flexFormData[$key]
+                            )
+                        );
+                        break;
+                    case 'input':
+                        $records = array_merge(
+                            $records,
+                            $this->fetchRelatedRecordsByRte(
+                                $flexFormData[$key],
+                                $excludedTableNames
                             )
                         );
                         break;
