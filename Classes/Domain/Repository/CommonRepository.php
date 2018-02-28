@@ -792,8 +792,8 @@ class CommonRepository extends BaseRepository
     {
         foreach ($flexFormDefinition as $key => $config) {
             if (empty($config['type'])
-                || !in_array($config['type'], ['select', 'group', 'inline'])
-                   && !($config['type'] === 'input' && !empty($config['wizards']))
+                || !(in_array($config['type'], ['select', 'group', 'inline'])
+                     || ($config['type'] === 'input' && !empty($config['wizards'])))
             ) {
                 unset($flexFormDefinition[$key]);
             }
@@ -889,19 +889,14 @@ class CommonRepository extends BaseRepository
                         );
                         break;
                     case 'inline':
-                        $this->fetchRelatedRecordsByInline(
-                            $config,
-                            $record->getTableName(),
-                            $record->getIdentifier(),
-                            $excludedTableNames
-                        );
-                        $this->logger->warning(
-                            'FlexForm relation inline is not implemented. Please contact in2code.',
-                            [
-                                'sheetConfiguration' => $config,
-                                'column' => $column,
-                                'tableName' => $record->getTableName(),
-                            ]
+                        $records = array_merge(
+                            $records,
+                            $this->fetchRelatedRecordsByInline(
+                                $config,
+                                $record->getTableName(),
+                                $record->getIdentifier(),
+                                $excludedTableNames
+                            )
                         );
                         break;
                     case 'group':
