@@ -1,5 +1,11 @@
 # In2publish Core Change Log
 
+6.2.2:
+
+- [BUGFIX] Enable support for flex form relation type inline
+- [BUGFIX] Support relations in inputs with wizard in flex forms
+- [BUGFIX] Add missing TcaService method to get the TCA deleted field
+
 6.2.1:
 
 - [REFACTOR] Rewrite and register BackendModule.js as require module
