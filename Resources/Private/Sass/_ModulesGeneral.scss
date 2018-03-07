@@ -622,31 +622,3 @@ div#typo3-docbody.stopScrolling {
   right: 4px;
   bottom: 4px;
 }
-
-.in2publish-btn {
-  display: inline-block;
-  color: $nightrider;
-  padding: 4px 4px;
-  font-size: 11px;
-  line-height: 1.5;
-  border-radius: 2px;
-  background-color: $whitesmoke;
-  margin-bottom: 0;
-  font-weight: normal;
-  text-align: center;
-  vertical-align: middle;
-  touch-action: manipulation;
-  cursor: pointer;
-  background-image: none;
-  border: 1px solid #bbbbbb;
-  white-space: nowrap;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  &:hover {
-    background-color: $lightgrey;
-    border-color: $nobel;
-    color: $nightrider;
-  }
-}
