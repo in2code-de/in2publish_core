@@ -16,20 +16,11 @@ define([
 	};
 
 	In2publishModule.initialize = function() {
-		In2publishModule.addClassBodyTag();
 		In2publishModule.toggleDirtyPropertiesListContainerListener();
 		In2publishModule.setFilterForPageView();
 		In2publishModule.filterButtonsListener();
 		In2publishModule.overlayListener();
 		In2publishModule.ajaxUriListener();
-	};
-
-	In2publishModule.addClassBodyTag = function() {
-		var dataModuleContainer = $('*[data-module]');
-		if (undefined !== dataModuleContainer) {
-			var moduleName = dataModuleContainer.data('module');
-			In2publishModule.objects.body.addClass('in2publish-module-' + moduleName);
-		}
 	};
 
 	In2publishModule.toggleDirtyPropertiesListContainerListener = function() {
