@@ -20,7 +20,6 @@ define([
 		In2publishModule.toggleDirtyPropertiesListContainerListener();
 		In2publishModule.setFilterForPageView();
 		In2publishModule.filterButtonsListener();
-		In2publishModule.messageListener();
 		In2publishModule.overlayListener();
 		In2publishModule.ajaxUriListener();
 	};
@@ -132,32 +131,6 @@ define([
 			});
 			In2publishModule.setFilterForPageView();
 		});
-	};
-
-	In2publishModule.messageListener = function() {
-		var in2publishMessage = $('.in2publish-messages');
-		if (in2publishMessage.length) {
-			var delay = 0;
-			var errorMessages = $('.in2publish-messages > div');
-			errorMessages.each(function() {
-				var element = $(this);
-				element.queue('fade', function(next) {
-					element.delay(delay).fadeIn(500, next);
-				});
-				element.dequeue('fade');
-				delay += 300;
-			});
-
-			if (in2publishMessage.hasClass('in2publish-messages--removeable')) {
-				errorMessages.each(function() {
-					var $errorMessage = $(this);
-					var closeButton = $('<span />').addClass('in2publish-icon-x-altx-alt').click(function() {
-						$errorMessage.remove();
-					});
-					$errorMessage.append(closeButton);
-				});
-			}
-		}
 	};
 
 	In2publishModule.overlayListener = function() {
