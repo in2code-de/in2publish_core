@@ -55,8 +55,6 @@ class RecordController extends AbstractController
             $record = GeneralUtility::makeInstance(FakeRecordFactory::class)->buildFromStartPage($this->pid);
         }
 
-        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeIndexViewRender', [$this, $record]);
-
         $this->view->assign('record', $record);
         $this->assignServerAndPublishingStatus();
     }
