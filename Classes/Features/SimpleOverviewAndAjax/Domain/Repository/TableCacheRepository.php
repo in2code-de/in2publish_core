@@ -1,5 +1,5 @@
 <?php
-namespace In2code\In2publishCore\Domain\Repository;
+namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository;
 
 /***************************************************************
  *  Copyright notice

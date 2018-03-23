@@ -1,5 +1,5 @@
 <?php
-namespace In2code\In2publishCore\Domain\Factory;
+namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Factory;
 
 /***************************************************************
  *  Copyright notice
@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Domain\Factory;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\TableCacheRepository;
+use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository\TableCacheRepository;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;

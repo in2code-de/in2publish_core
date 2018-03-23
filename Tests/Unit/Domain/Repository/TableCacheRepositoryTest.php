@@ -26,23 +26,24 @@ namespace In2code\In2publishCore\Tests\Unit\Domain\Repository;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Repository\TableCacheRepository;
+use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository\TableCacheRepository;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \In2code\In2publishCore\Domain\Repository\TableCacheRepository
+ * @coversDefaultClass \In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository\TableCacheRepository
  */
 class TableCacheRepositoryTest extends UnitTestCase
 {
     /**
      * @param null $foreignDatabase
-     * @return TableCacheRepository
+     * @return \In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository\TableCacheRepository
      */
     protected function getTableCacheRepositoryInstance($foreignDatabase = null)
     {
         /** @var TableCacheRepository|\PHPUnit_Framework_MockObject_MockObject $mock */
         $mock = $this
-            ->getMockBuilder(TableCacheRepository::class)
+            ->getMockBuilder(
+                \In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository\TableCacheRepository::class)
             ->setMethods(['getForeignDatabaseConnection'])
             ->disableOriginalConstructor()
             ->getMock();

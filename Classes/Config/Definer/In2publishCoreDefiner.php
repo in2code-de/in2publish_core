@@ -172,7 +172,6 @@ class In2publishCoreDefiner implements DefinerInterface
                        ->addInteger('maximumContentRecursion', 6)
                        ->addInteger('maximumOverallRecursion', 8)
                        ->addBoolean('resolvePageRelations', false)
-                       ->addBoolean('simpleOverviewAndAjax', false)
                        ->addBoolean('includeSysFileReference', false)
                        ->addArray(
                            'fal',
