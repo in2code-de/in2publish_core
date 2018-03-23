@@ -1,5 +1,5 @@
 <?php
-namespace In2code\In2publishCore\Domain\Anomaly;
+namespace In2code\In2publishCore\Features\RefIndexUpdate\Domain\Anomaly;
 
 /***************************************************************
  * Copyright notice
@@ -28,15 +28,15 @@ namespace In2code\In2publishCore\Domain\Anomaly;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\Task\RefindexUpdaterTask;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Features\RefIndexUpdate\Domain\Model\Task\RefIndexUpdateTask;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Class RefindexUpdater
+ * Class RefIndexUpdater
  */
-class RefindexUpdater implements SingletonInterface
+class RefIndexUpdater implements SingletonInterface
 {
     /**
      * @var TaskRepository
@@ -64,7 +64,7 @@ class RefindexUpdater implements SingletonInterface
      * @param string $tableName
      * @param Record $record
      */
-    public function registerRefindexUpdate($tableName, Record $record)
+    public function registerRefIndexUpdate($tableName, Record $record)
     {
         $uid = $record->getIdentifier();
 
@@ -76,9 +76,8 @@ class RefindexUpdater implements SingletonInterface
     /**
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function writeRefindexUpdateTask()
+    public function writeRefIndexUpdateTask()
     {
-        $flushPageCacheTask = GeneralUtility::makeInstance(RefindexUpdaterTask::class, $this->configuration);
-        $this->taskRepository->add($flushPageCacheTask);
+        $this->taskRepository->add(GeneralUtility::makeInstance(RefIndexUpdateTask::class, $this->configuration));
     }
 }

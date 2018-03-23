@@ -1,5 +1,5 @@
 <?php
-namespace In2code\In2publishCore\Domain\Model\Task;
+namespace In2code\In2publishCore\Features\RefIndexUpdate\Domain\Model\Task;
 
 /***************************************************************
  * Copyright notice
@@ -27,13 +27,14 @@ namespace In2code\In2publishCore\Domain\Model\Task;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Class RefindexUpdaterTask
+ * Class RefIndexUpdateTask
  */
-class RefindexUpdaterTask extends AbstractTask
+class RefIndexUpdateTask extends AbstractTask
 {
     /**
      * Don't modify configuration
@@ -67,8 +68,8 @@ class RefindexUpdaterTask extends AbstractTask
     {
         $count = 0;
         $refIndexObj = GeneralUtility::makeInstance(ReferenceIndex::class);
-        foreach ($this->configuration as $table => $uids) {
-            foreach ($uids as $uid) {
+        foreach ($this->configuration as $table => $uidArray) {
+            foreach ($uidArray as $uid) {
                 $refIndexObj->updateRefIndexTable($table, $uid);
                 $count++;
             }
