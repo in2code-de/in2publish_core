@@ -1,5 +1,5 @@
 <?php
-namespace In2code\In2publishCore\Domain\Anomaly;
+namespace In2code\In2publishCore\Features\CacheInvalidation\Domain\Anomaly;
 
 /***************************************************************
  *  Copyright notice
@@ -28,8 +28,8 @@ namespace In2code\In2publishCore\Domain\Anomaly;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\Task\FlushFrontendPageCacheTask;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Features\CacheInvalidation\Domain\Model\Task\FlushFrontendPageCacheTask;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Log\LogManager;
