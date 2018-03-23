@@ -13,15 +13,6 @@
 				<source>Following dependencies skipped:</source>
 			</trans-unit>
 
-			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationIsAvailableTest -->
-
-			<trans-unit id="configuration.available">
-				<source>The configuration could be loaded.</source>
-			</trans-unit>
-			<trans-unit id="configuration.not_available">
-				<source>The configuration could not be loaded.</source>
-			</trans-unit>
-
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest -->
 
 			<trans-unit id="configuration.options_valid">
@@ -30,26 +21,8 @@
 			<trans-unit id="configuration.options_invalid">
 				<source>Some tested configuration options are invalid.</source>
 			</trans-unit>
-			<trans-unit id="configuration.loglevel_too_high">
-				<source>The configured log level is too high. Maximum is 7.</source>
-			</trans-unit>
-			<trans-unit id="configuration.loglevel_too_low">
-				<source>The configured log level is too low. The log level must be at least 0.</source>
-			</trans-unit>
 			<trans-unit id="configuration.breadcrumb_and_disable_parents_active">
 				<source>view.record.breadcrumb and debug.disableParentRecords are both enabled. Breadcrumbs will not be displayed correctly.</source>
-			</trans-unit>
-			<trans-unit id="configuration.backup_folder_invalid">
-				<source>The configured backup folder does not exist.</source>
-			</trans-unit>
-			<trans-unit id="configuration.zip_extension_not_installed">
-				<source>The compression of backups is enabled, but the zip extension for PHP is not installed or activated.</source>
-			</trans-unit>
-			<trans-unit id="configuration.tca_processor_missing">
-				<source>Following TCA Processors are missing (they could not be found):</source>
-			</trans-unit>
-			<trans-unit id="configuration.tca_processor_implementation_missing">
-				<source>Following TCA Processors do not implement the ProcessorInterface:</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest -->
@@ -57,26 +30,8 @@
 			<trans-unit id="configuration.format_okay">
 				<source>The configuration file is well formated and holds all required options.</source>
 			</trans-unit>
-
-			<trans-unit id="configuration.missing_keys">
-				<source>The configuration file is missing required options.</source>
-			</trans-unit>
-			<trans-unit id="configuration.keys_missing">
-				<source>These configuration values are missing:</source>
-			</trans-unit>
-
-			<trans-unit id="configuration.superfluous_keys">
-				<source>The configuration file contains unused options.</source>
-			</trans-unit>
-			<trans-unit id="configuration.keys_superfluous">
-				<source>These configuration options are not used:</source>
-			</trans-unit>
-
-			<trans-unit id="configuration.mismatching_keys">
-				<source>Some options to not match the expected variable type.</source>
-			</trans-unit>
-			<trans-unit id="configuration.keys_mismatching">
-				<source>Following options do not respect the format:</source>
+			<trans-unit id="configuration.format_error">
+				<source>One or more options are not confiured correctly.</source>
 			</trans-unit>
 
 
@@ -164,22 +119,6 @@
 			<trans-unit id="ssh_connection.chmod_description">
 				<source>The function "ssh2_sftp_chmod" is available since php_ssh2 0.12. Either upgrade or ignore this message.</source>
 				<target state="translated">Die Funktion "ssh2_sftp_chmod" steht ab der Version 0.12 von php_ssh2 zu Verfügung. Upgraden Sie php_ssh2 oder ignorieren Sie diese Meldung.</target>
-			</trans-unit>
-
-			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SshKeyFilesExistTest -->
-
-			<trans-unit id="ssh_key_files_exist.ssh_files_missing">
-				<source>Configured SSH files are missing.</source>
-			</trans-unit>
-			<trans-unit id="ssh_key_files_exist.ssh_files_exist">
-				<source>The configured SSH keys do exist</source>
-			</trans-unit>
-
-			<trans-unit id="ssh_key_files_exist.private_key_invalid">
-				<source>The given SSH private key file can not be found.</source>
-			</trans-unit>
-			<trans-unit id="ssh_key_files_exist.public_key_invalid">
-				<source>The given SSH public key file can not be found.</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest -->
@@ -283,9 +222,6 @@
 			</trans-unit>
 			<trans-unit id="application.foreign_version">
 				<source>Foreign Version:</source>
-			</trans-unit>
-			<trans-unit id="application.foreign_configuration_not_loaded">
-				<source>The configuration could not be loaded on the foreign system.</source>
 			</trans-unit>
 			<trans-unit id="application.foreign_configuration_loading_state">
 				<source>The confguration utility has following loading state:</source>

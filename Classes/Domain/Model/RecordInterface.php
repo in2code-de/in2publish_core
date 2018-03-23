@@ -43,14 +43,14 @@ interface RecordInterface
      * @param string $tableName
      * @param array $localProperties
      * @param array $foreignProperties
-     * @param array $tableConfigurationArray
+     * @param array $tca
      * @param array $additionalProperties
      */
     public function __construct(
         $tableName,
         array $localProperties,
         array $foreignProperties,
-        array $tableConfigurationArray,
+        array $tca,
         array $additionalProperties
     );
 

@@ -25,8 +25,9 @@ namespace In2code\In2publishCore\ViewHelpers\Attribute;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -48,7 +49,7 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
     public function render(Record $record)
     {
         $attributesString = 'data-action="opendirtypropertieslistcontainer"';
-        if (ConfigurationUtility::getConfiguration('factory.simpleOverviewAndAjax')) {
+        if (GeneralUtility::makeInstance(ConfigContainer::class)->get('factory.simpleOverviewAndAjax')) {
             $attributesString .= $this->getDataAttributesForSimpleOverviewAndAjax($record);
         }
         return $attributesString;

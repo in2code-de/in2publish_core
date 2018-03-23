@@ -83,6 +83,10 @@
 				<source>The selected record has been published successfully.</source>
 				<target state="translated">Der ausgewählte Datensatz wurde erfolgreich veröffentlicht.</target>
 			</trans-unit>
+			<trans-unit id="publish_failed">
+				<source>The selected record has been published successfully.</source>
+				<target state="translated">Der ausgewählte Datensatz wurde erfolgreich veröffentlicht.</target>
+			</trans-unit>
 			<trans-unit id="folder_created">
 				<source>The selected folder has been created successfully.</source>
 				<target state="translated">Der ausgewählte Ordner wurde erfolgreich angelegt.</target>
@@ -170,31 +174,6 @@
 			<trans-unit id="related_records">
 				<source>Related Records</source>
 				<target state="translated">Verknüpfte Datensätze</target>
-			</trans-unit>
-
-			<trans-unit id="configuration.loaded">
-				<source>The Configuration was loaded successfully.</source>
-				<target state="translated">Die Konfiguration wurde erfolgreich geladen.</target>
-			</trans-unit>
-			<trans-unit id="configuration.not_loaded">
-				<source>The Configuration was not loaded yet.</source>
-				<target state="translated">Die Konfiguration wurde noch nicht geladen.</target>
-			</trans-unit>
-			<trans-unit id="configuration.ext_conf_not_available">
-				<source>in2publish extension configuration is not available. Please configure in2publish in the Extension Manager.</source>
-				<target state="translated">Die Konfiguration von in2publish ist nicht verfügbar. Bitte Konfigurieren sie in2publish im Extension Manager.</target>
-			</trans-unit>
-			<trans-unit id="configuration.configuration_file_missing">
-				<source>The configuration file path of in2publish is wrong, because no matching configuration file was found.</source>
-				<target state="translated">Der angegebene Konfigurationspfad ist falsch, da keine passende Konfigurationsdatei gefunden werden konnte.</target>
-			</trans-unit>
-			<trans-unit id="configuration.configuration_file_not_readable">
-				<source>The given configuration file is not readable. Please check file permissions.</source>
-				<target state="translated">Die angegebene Konfigurationsdatei ist nicht lesbar. Bitte überprüfen sie die Dateirechte.</target>
-			</trans-unit>
-			<trans-unit id="configuration.configuration_path_not_existing">
-				<source>The given configuration path does not exist.</source>
-				<target state="translated">Die angegebene Konfigurationspfad existiert nicht.</target>
 			</trans-unit>
 
 			<trans-unit id="moduleselector.index">
@@ -294,6 +273,14 @@
 			<trans-unit id="module.m4.configuration">
 				<source>Configuration</source>
 				<target state="translated">Konfiguration</target>
+			</trans-unit>
+			<trans-unit id="module.m4.global_config">
+				<source>Global Configuration</source>
+				<target state="translated">Globale Konfiguration</target>
+			</trans-unit>
+			<trans-unit id="module.m4.personal_config">
+				<source>Personal Config</source>
+				<target state="translated">Persönliche Konfiguration</target>
 			</trans-unit>
 			<trans-unit id="module.m4.overview">
 				<source>Overview</source>
@@ -413,6 +400,10 @@
 			<trans-unit id="file_publishing.file">
 				<source>The selected file %s has been published to the foreign system.</source>
 				<target state="translated">Die Datei %s wurde erfolgreich publiziert.</target>
+			</trans-unit>
+			<trans-unit id="file_publishing.failure.file">
+				<source>The selected file %s could not be fully published.</source>
+				<target state="translated">Die Datei %s konnte nicht vollständig publiziert werden.</target>
 			</trans-unit>
 			<trans-unit id="file_publishing.too_many_files">
 				<source>The folder %s contains too many files %sto process. The limit of files in a folder is 150 files per folder, but you should not have more than 100 files in a single folder.</source>

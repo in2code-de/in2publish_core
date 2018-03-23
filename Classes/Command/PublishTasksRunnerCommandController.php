@@ -45,6 +45,8 @@ class PublishTasksRunnerCommandController extends AbstractCommandController
 
     /**
      * PublishTasksRunnerCommandController constructor.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
@@ -70,11 +72,8 @@ class PublishTasksRunnerCommandController extends AbstractCommandController
         /** @var AbstractTask $task */
         foreach ($tasksToExecute as $task) {
             try {
-                if ($task->execute()) {
-                    $result[] = 'Task ' . $task->getUid() . ' was executed successfully';
-                } else {
-                    $result[] = 'Task ' . $task->getUid() . ' failed';
-                }
+                $success = $task->execute();
+                $result[] = 'Task ' . $task->getUid() . $success ? ' was executed successfully' : ' failed';
                 $result[] = $task->getMessages();
             } catch (\Exception $e) {
                 $result[] = $e->getMessage();

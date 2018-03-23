@@ -29,11 +29,10 @@ namespace In2code\In2publishCore\Testing\Tests\Adapter;
 use In2code\In2publishCore\Communication\AdapterRegistry;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface as RemoteAdapter;
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface as TransAdapt;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
-use In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationIsAvailableTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -59,7 +58,7 @@ class AdapterSelectionTest implements TestCaseInterface
      */
     public function run()
     {
-        $config = ConfigurationUtility::getConfiguration('adapter');
+        $config = GeneralUtility::makeInstance(ConfigContainer::class)->get('adapter');
         if (!is_array($config) || !array_key_exists('remote', $config) || !array_key_exists('transmission', $config)) {
             return new TestResult('adapter.adapter_selection.config_error', TestResult::ERROR);
         }
@@ -94,8 +93,6 @@ class AdapterSelectionTest implements TestCaseInterface
      */
     public function getDependencies()
     {
-        return [
-            ConfigurationIsAvailableTest::class,
-        ];
+        return [];
     }
 }

@@ -31,6 +31,8 @@ use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 
 /**
  * Class AbstractLimitedFilesystemDriver
+ *
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFilesystemDriver implements DriverInterface
 {
@@ -63,12 +65,12 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @param string $folderIdentifier
      * @param bool $recursive
-     * @param array $filenameFilterCallbacks callbacks for filtering the items
+     * @param array $filterCallbacks callbacks for filtering the items
      * @return int Number of files in folder
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function countFilesInFolder($folderIdentifier, $recursive = false, array $filenameFilterCallbacks = [])
+    public function countFilesInFolder($folderIdentifier, $recursive = false, array $filterCallbacks = [])
     {
         throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201312);
     }
@@ -230,14 +232,14 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
     /**
      * Folder equivalent to moveFileWithinStorage().
      *
-     * @param string $sourceFolderIdentifier
-     * @param string $targetFolderIdentifier
+     * @param string $sourceIdentifier
+     * @param string $targetIdentifier
      * @param string $newFolderName
      * @return array All files which are affected, map of old => new file identifiers
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function moveFolderWithinStorage($sourceFolderIdentifier, $targetFolderIdentifier, $newFolderName)
+    public function moveFolderWithinStorage($sourceIdentifier, $targetIdentifier, $newFolderName)
     {
         throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201494);
     }
@@ -245,14 +247,14 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
     /**
      * Folder equivalent to copyFileWithinStorage().
      *
-     * @param string $sourceFolderIdentifier
-     * @param string $targetFolderIdentifier
+     * @param string $sourceIdentifier
+     * @param string $targetIdentifier
      * @param string $newFolderName
      * @return bool
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function copyFolderWithinStorage($sourceFolderIdentifier, $targetFolderIdentifier, $newFolderName)
+    public function copyFolderWithinStorage($sourceIdentifier, $targetIdentifier, $newFolderName)
     {
         throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201496);
     }
@@ -261,12 +263,12 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      * Creates a new (empty) file and returns the identifier.
      *
      * @param string $fileName
-     * @param string $parentFolderIdentifier
+     * @param string $parentIdentifier
      * @return string
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function createFile($fileName, $parentFolderIdentifier)
+    public function createFile($fileName, $parentIdentifier)
     {
         throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201512);
     }
@@ -277,13 +279,13 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      * where a file is just copied to another folder in the same storage.
      *
      * @param string $fileIdentifier
-     * @param string $targetFolderIdentifier
+     * @param string $targetIdentifier
      * @param string $fileName
      * @return string the Identifier of the new file
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function copyFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $fileName)
+    public function copyFileWithinStorage($fileIdentifier, $targetIdentifier, $fileName)
     {
         throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201516);
     }

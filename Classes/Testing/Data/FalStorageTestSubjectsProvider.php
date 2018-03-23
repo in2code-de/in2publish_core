@@ -31,6 +31,8 @@ use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
+use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
+use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
 /**
  * Class FalStorageTestSubjectsProvider
@@ -118,20 +120,18 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
             'foreignStorages' => $this->foreignStorages,
             'purpose' => $purpose,
         ];
-        $return = $this->signalSlotDispatcher->dispatch(
-            __CLASS__,
-            'filterStorages',
-            $arguments
-        );
-        if ($return === $arguments) {
-            $localStorages = $arguments['localStorages'];
-            $foreignStorages = $arguments['foreignStorages'];
-        } else {
-            list($localStorages, $foreignStorages) = $return;
+        try {
+            $arguments = $this->signalSlotDispatcher->dispatch(
+                __CLASS__,
+                'filterStorages',
+                $arguments
+            );
+        } catch (InvalidSlotException $e) {
+        } catch (InvalidSlotReturnException $e) {
         }
         return [
-            'local' => $localStorages,
-            'foreign' => $foreignStorages,
+            'local' => $arguments['localStorages'],
+            'foreign' => $arguments['foreignStorages'],
         ];
     }
 

@@ -55,6 +55,8 @@ class RemoteCommandDispatcher implements SingletonInterface
 
     /**
      * RemoteCommandDispatcher constructor.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
@@ -67,6 +69,8 @@ class RemoteCommandDispatcher implements SingletonInterface
      * @param RemoteCommandRequest $request
      *
      * @return RemoteCommandResponse
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function dispatch(RemoteCommandRequest $request)
     {

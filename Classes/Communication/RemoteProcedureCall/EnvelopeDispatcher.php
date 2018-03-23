@@ -402,7 +402,9 @@ class EnvelopeDispatcher
      * @param $driver
      * @param $identifier
      * @param $storage
-     * @return File|null
+     * @return File|null|object
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function getFileObject($driver, $identifier, $storage)
     {
@@ -437,6 +439,8 @@ class EnvelopeDispatcher
     /**
      * @param array $request
      * @return ResourceStorage
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function getStorage(array $request)
     {
@@ -470,6 +474,8 @@ class EnvelopeDispatcher
     /**
      * @param array $request
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function getStorageGetFoldersInFolder(array $request)
     {
@@ -481,6 +487,8 @@ class EnvelopeDispatcher
     /**
      * @param array $request
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function getStorageGetFilesInFolder(array $request)
     {
@@ -492,6 +500,8 @@ class EnvelopeDispatcher
     /**
      * @param array $request
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function getStorageGetFile(array $request)
     {

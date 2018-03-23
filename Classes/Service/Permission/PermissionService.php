@@ -51,6 +51,8 @@ class PermissionService
 
     /**
      * PermissionService constructor.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {

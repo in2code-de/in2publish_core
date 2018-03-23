@@ -109,7 +109,7 @@ class LogEntryRepository
      * @param string $propertyName
      * @param string $propertyValue
      * @return void
-     * @throws \Exception
+     * @throws In2publishCoreException
      */
     public function setFilter($propertyName, $propertyValue)
     {

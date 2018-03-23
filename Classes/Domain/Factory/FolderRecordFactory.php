@@ -26,12 +26,12 @@ namespace In2code\In2publishCore\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\StorageDriverExtractor;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
@@ -94,18 +94,23 @@ class FolderRecordFactory
 
     /**
      * FolderRecordFactory constructor.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->commonRepository = CommonRepository::getDefaultInstance('sys_file');
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
-        $this->configuration = ConfigurationUtility::getConfiguration('factory.fal');
+        $this->configuration = GeneralUtility::makeInstance(ConfigContainer::class)->get('factory.fal');
     }
 
     /**
      * @param string $identifier
+     *
      * @return Folder
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function initializeDependenciesAndGetFolder($identifier)
     {
@@ -242,18 +247,18 @@ class FolderRecordFactory
             $ldb = $file->localRecordExists();
 
             if ($file->hasLocalProperty('identifier')) {
-                $localFileIdentifier = $file->getLocalProperty('identifier');
+                $localFileId = $file->getLocalProperty('identifier');
             } else {
-                $localFileIdentifier = $file->getForeignProperty('identifier');
+                $localFileId = $file->getForeignProperty('identifier');
             }
             if ($file->hasForeignProperty('identifier')) {
-                $foreignFileIdentifier = $file->getForeignProperty('identifier');
+                $foreignFileId = $file->getForeignProperty('identifier');
             } else {
-                $foreignFileIdentifier = $file->getLocalProperty('identifier');
+                $foreignFileId = $file->getLocalProperty('identifier');
             }
 
-            $lfs = $this->localDriver->fileExists($localFileIdentifier);
-            $ffs = $this->foreignDriver->fileExists($foreignFileIdentifier);
+            $lfs = $this->localDriver->fileExists($localFileId);
+            $ffs = $this->foreignDriver->fileExists($foreignFileId);
 
             if ($ldb && !$lfs && !$ffs && !$fdb) {
                 // CODE: [0] OLDB; The file exists only in the local database. Ignore the orphaned DB record.
@@ -324,7 +329,7 @@ class FolderRecordFactory
                 if (RecordInterface::RECORD_STATE_UNCHANGED === $file->getState()) {
                     // The database records are identical, but this does not necessarily reflect the reality on disk,
                     // because files might have changed in the file system without FAL noticing these changes.
-                    $this->fileIndexFactory->updateFileIndexInfo($file, $localFileIdentifier, $foreignFileIdentifier);
+                    $this->fileIndexFactory->updateFileIndexInfo($file, $localFileId, $foreignFileId);
                 }
             } elseif (!$ldb && !$lfs && !$ffs && !$fdb) {
                 // CODE: [15] NONE; The file exists nowhere. Ignore it.
@@ -477,7 +482,10 @@ class FolderRecordFactory
     /**
      * @param string $identifier
      * @param int $depth
+     *
      * @return RecordInterface
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function makePhysicalFolderInstance($identifier, $depth)
     {

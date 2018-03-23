@@ -28,18 +28,12 @@ namespace In2code\In2publishCore\Controller;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 /**
  * Class FrontendController
  */
-class FrontendController extends ActionController
+class FrontendController extends AbstractController
 {
-    /**
-     * @var CommonRepository
-     */
-    protected $commonRepository = null;
-
     /**
      * Preview action for vertical or horizontal view
      *
@@ -48,15 +42,6 @@ class FrontendController extends ActionController
      */
     public function previewAction($identifier = 1)
     {
-        $record = $this->commonRepository->findByIdentifier($identifier);
-        $this->view->assign('record', $record);
-    }
-
-    /**
-     * @return void
-     */
-    public function initializeAction()
-    {
-        $this->commonRepository = CommonRepository::getDefaultInstance();
+        $this->view->assign('record', CommonRepository::getDefaultInstance()->findByIdentifier($identifier));
     }
 }

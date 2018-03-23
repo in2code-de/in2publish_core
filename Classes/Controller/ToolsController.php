@@ -30,20 +30,25 @@ namespace In2code\In2publishCore\Controller;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\Domain\Repository\LogEntryRepository;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Tools\ToolsRegistry;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
+use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * The ToolsController is the controller of the Backend Module "Publish Tools" "m3"
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ToolsController extends AbstractController
+class ToolsController extends ActionController
 {
     /**
      * @var LogEntryRepository
@@ -76,18 +81,29 @@ class ToolsController extends AbstractController
     }
 
     /**
-     * @return void
+     *
      */
     public function indexAction()
     {
-        $this->checkTestStatus();
+        $testStates = GeneralUtility::makeInstance(EnvironmentService::class)->getTestStatus();
+
+        $messages = [];
+        foreach ($testStates as $testState) {
+            $messages[] = LocalizationUtility::translate('test_state_error.' . $testState, 'in2publish_core');
+        }
+        if (!empty($messages)) {
+            $this->addFlashMessage(
+                implode('<br/>', $messages),
+                LocalizationUtility::translate('test_state_error', 'in2publish_core'),
+                AbstractMessage::ERROR
+            );
+        }
+
         $this->view->assign('tools', GeneralUtility::makeInstance(ToolsRegistry::class)->getTools());
     }
 
     /**
-     * This action is used only for JavaScript Unit Tests
-     *
-     * @return void
+     * @throws In2publishCoreException
      */
     public function testAction()
     {
@@ -103,8 +119,7 @@ class ToolsController extends AbstractController
             }
         }
 
-        GeneralUtility::makeInstance(EnvironmentService::class)
-                      ->setTestResult($success);
+        GeneralUtility::makeInstance(EnvironmentService::class)->setTestResult($success);
 
         $this->view->assign('testingResults', $testingResults);
     }
@@ -114,7 +129,8 @@ class ToolsController extends AbstractController
      *
      * @param array $filter
      * @param int $pageNumber
-     * @return void
+     *
+     * @throws In2publishCoreException
      */
     public function showLogsAction(array $filter = [], $pageNumber = 1)
     {
@@ -151,7 +167,7 @@ class ToolsController extends AbstractController
             ]
         );
         $this->view->assign('logEntries', $this->logEntryRepository->getFiltered());
-        $this->view->assign('logConfigurations', ConfigurationUtility::getConfiguration('log'));
+        $this->view->assign('logConfigurations', $this->configContainer->get('log'));
     }
 
     /**
@@ -161,14 +177,16 @@ class ToolsController extends AbstractController
      */
     public function configurationAction()
     {
-        $this->view->assign('configuration', ConfigurationUtility::getPublicConfiguration());
+        $this->view->assign('globalConfig', $this->configContainer->getContextFreeConfig());
+        $this->view->assign('personalConfig', $this->configContainer->get());
     }
 
     /**
      * applies the selected filters to the repository
      *
      * @param array $filters
-     * @return void
+     *
+     * @throws In2publishCoreException
      */
     protected function setFilters(array $filters)
     {
@@ -183,7 +201,7 @@ class ToolsController extends AbstractController
     /**
      * deletes ALL logs from the database
      *
-     * @return void
+     * @throws StopActionException
      */
     public function flushLogsAction()
     {
@@ -202,31 +220,39 @@ class ToolsController extends AbstractController
     }
 
     /**
-     *
+     * @throws StopActionException
      */
     public function clearTcaCachesAction()
     {
         TcaProcessingService::getInstance()->flushCaches();
-        $this->redirect('index');
+        try {
+            $this->redirect('index');
+        } catch (UnsupportedRequestTypeException $e) {
+        }
     }
 
     /**
-     *
+     * @throws StopActionException
      */
     public function flushRegistryAction()
     {
         GeneralUtility::makeInstance(Registry::class)->removeAllByNamespace('tx_in2publishcore');
         $this->addFlashMessage(LocalizationUtility::translate('module.m4.registry_flushed', 'in2publish_core'));
-        $this->redirect('index');
+        try {
+            $this->redirect('index');
+        } catch (UnsupportedRequestTypeException $e) {
+        }
     }
 
     /**
-     *
+     * @throws StopActionException
      */
     public function flushEnvelopesAction()
     {
-        $letterbox = GeneralUtility::makeInstance(Letterbox::class);
-        $letterbox->removeAnsweredEnvelopes();
-        $this->redirect('index');
+        GeneralUtility::makeInstance(Letterbox::class)->removeAnsweredEnvelopes();
+        try {
+            $this->redirect('index');
+        } catch (UnsupportedRequestTypeException $e) {
+        }
     }
 }

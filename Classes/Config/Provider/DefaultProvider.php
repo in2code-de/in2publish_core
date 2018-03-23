@@ -1,10 +1,10 @@
 <?php
-namespace In2code\In2publishCore\Service\Configuration;
+namespace In2code\In2publishCore\Config\Provider;
 
 /***************************************************************
  * Copyright notice
  *
- * (c) 2016 in2code.de and the following authors:
+ * (c) 2018 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -26,36 +26,36 @@ namespace In2code\In2publishCore\Service\Configuration;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Utility\Configuration\ExtensionConfigurationAccessor;
-use TYPO3\CMS\Core\SingletonInterface;
+use In2code\In2publishCore\Config\ConfigContainer;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Central class for configuration set in the Extension Manager, solely for in2publish_core.
- * This should be the only class using ExtensionConfigurationAccessor::getExtensionConfiguration.
+ * Class DefaultProvider
  */
-class In2publishConfigurationService implements SingletonInterface
+class DefaultProvider implements ProviderInterface
 {
     /**
-     * @var array
+     * @return bool
      */
-    protected $configuration = [];
-
-    /**
-     * In2publishConfigurationService constructor.
-     */
-    public function __construct()
+    public function isAvailable()
     {
-        $this->configuration = ExtensionConfigurationAccessor::getExtensionConfiguration();
+        return true;
     }
 
     /**
-     * @return null|string
+     * @return array
      */
-    public function getPathToConfiguration()
+    public function getConfig()
     {
-        if (isset($this->configuration['pathToConfiguration'])) {
-            return (string)$this->configuration['pathToConfiguration'];
-        }
-        return null;
+        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+        return $configContainer->getLocalDefinition()->getDefaults();
+    }
+
+    /**
+     * @return int
+     */
+    public function getPriority()
+    {
+        return 10;
     }
 }

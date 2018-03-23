@@ -55,6 +55,8 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
      * @param string $controller
      * @param string $action
      * @param string $extensionName
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function addTool($name, $description, $controller, $action, $extensionName = 'in2publish_core')
     {

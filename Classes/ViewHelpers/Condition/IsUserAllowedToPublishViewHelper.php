@@ -38,6 +38,8 @@ class IsUserAllowedToPublishViewHelper extends AbstractViewHelper
      * Check if user is allowed to publish
      *
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function render()
     {

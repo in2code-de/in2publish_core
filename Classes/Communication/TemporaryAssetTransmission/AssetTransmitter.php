@@ -28,7 +28,7 @@ namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission;
 
 use In2code\In2publishCore\Communication\AdapterRegistry;
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
+use In2code\In2publishCore\Config\ConfigContainer;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -64,9 +64,10 @@ class AssetTransmitter implements SingletonInterface
      */
     public function __construct()
     {
+        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->adapterRegistry = GeneralUtility::makeInstance(AdapterRegistry::class);
-        $this->foreignRootPath = rtrim(ConfigurationUtility::getConfiguration('foreign.rootPath'), '/');
+        $this->foreignRootPath = rtrim($configContainer->get('foreign.rootPath'), '/');
     }
 
     /**

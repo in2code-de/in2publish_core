@@ -60,6 +60,8 @@ class RefindexUpdaterTask extends AbstractTask
      *      ]
      *
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function executeTask()
     {

@@ -29,6 +29,8 @@ namespace In2code\In2publishCore\Testing\Data;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
+use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
+use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
 /**
  * Class RequiredTablesDataProvider
@@ -76,9 +78,10 @@ class RequiredTablesDataProvider implements SingletonInterface
      */
     protected function overruleTables(array $tables)
     {
-        $returnValue = $this->dispatcher->dispatch(__CLASS__, 'overruleTables', [$tables]);
-        if (isset($returnValue[0])) {
-            return $returnValue[0];
+        try {
+            list($tables) = $this->dispatcher->dispatch(__CLASS__, 'overruleTables', [$tables]);
+        } catch (InvalidSlotException $e) {
+        } catch (InvalidSlotReturnException $e) {
         }
         return $tables;
     }

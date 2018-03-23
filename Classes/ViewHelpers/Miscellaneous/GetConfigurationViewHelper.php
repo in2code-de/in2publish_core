@@ -25,7 +25,8 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Utility\ConfigurationUtility;
+use In2code\In2publishCore\Config\ConfigContainer;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -41,6 +42,6 @@ class GetConfigurationViewHelper extends AbstractViewHelper
      */
     public function render($configurationPath = '')
     {
-        return ConfigurationUtility::getConfiguration($configurationPath);
+        return GeneralUtility::makeInstance(ConfigContainer::class)->get($configurationPath);
     }
 }

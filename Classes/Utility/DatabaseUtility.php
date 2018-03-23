@@ -25,7 +25,7 @@ namespace In2code\In2publishCore\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\In2publishCoreException;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
@@ -54,7 +54,7 @@ class DatabaseUtility
     {
         static::initializeLogger();
         if (static::$foreignDatabase === null) {
-            $configuration = ConfigurationUtility::getConfiguration('foreign.database');
+            $configuration = GeneralUtility::makeInstance(ConfigContainer::class)->get('foreign.database');
             if (null === $configuration) {
                 static::$logger->warning('Can not instantiate the foreign database connection without a configuration');
                 static::$foreignDatabase = null;
@@ -66,9 +66,9 @@ class DatabaseUtility
                 static::$foreignDatabase->setDatabaseUsername($configuration['username']);
                 static::$foreignDatabase->setDatabasePort($configuration['port']);
 
-                $foreignEnvironmentService = GeneralUtility::makeInstance(ForeignEnvironmentService::class);
+                $foreignEnvService = GeneralUtility::makeInstance(ForeignEnvironmentService::class);
                 static::$foreignDatabase->setInitializeCommandsAfterConnect(
-                    $foreignEnvironmentService->getDatabaseInitializationCommands()
+                    $foreignEnvService->getDatabaseInitializationCommands()
                 );
 
                 try {
@@ -135,18 +135,9 @@ class DatabaseUtility
         $tableName = static::sanitizeTable($databaseConnection, $tableName);
         static::initializeLogger();
 
-        if (ConfigurationUtility::getLoadingState() !== ConfigurationUtility::STATE_LOADED) {
-            $message =
-                'BackupTable was called in context "' . getenv('IN2PUBLISH_CONTEXT')
-                . '", but the configuration was not loaded successfully. Aborting immediately to prevent any damage.';
-            static::$logger->critical($message);
-            throw new In2publishCoreException($message, 1446819956);
-        }
-
-        $keepBackups = (int)ConfigurationUtility::getConfiguration('backup.publishTableCommand.keepBackups');
-        $backupFolder =
-            rtrim(ConfigurationUtility::getConfiguration('backup.publishTableCommand.backupLocation'), '/')
-            . '/';
+        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+        $keepBackups = $configContainer->get('backup.publishTableCommand.keepBackups');
+        $backupFolder = rtrim($configContainer->get('backup.publishTableCommand.backupLocation'), '/') . '/';
         FileUtility::cleanUpBackups($keepBackups, $tableName, $backupFolder);
         if ($keepBackups > 0) {
             static::createBackup($databaseConnection, $tableName, $backupFolder);
@@ -177,7 +168,7 @@ class DatabaseUtility
     {
         $fileName = time() . '_' . $tableName . '.sql';
 
-        $publishTableSettings = ConfigurationUtility::getConfiguration('backup.publishTableCommand');
+        $publishTableSettings = GeneralUtility::makeInstance(ConfigContainer::class)->get('backup.publishTableCommand');
         $addDropTable = $publishTableSettings['addDropTable'];
         $zipBackup = $publishTableSettings['zipBackup'];
 

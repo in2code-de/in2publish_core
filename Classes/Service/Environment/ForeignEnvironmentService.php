@@ -30,6 +30,7 @@ use In2code\In2publishCore\Command\StatusCommandController;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -146,6 +147,9 @@ class ForeignEnvironmentService
 
     /**
      * @return FrontendInterface
+     *
+     * @throws NoSuchCacheException
+     *
      * @codeCoverageIgnore
      */
     protected function getCache()
@@ -155,6 +159,7 @@ class ForeignEnvironmentService
 
     /**
      * @return Logger
+     *
      * @codeCoverageIgnore
      */
     protected function getLogger()

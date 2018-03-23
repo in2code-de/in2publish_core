@@ -39,7 +39,7 @@ class ToolsCommandController extends AbstractCommandController
     const TESTS_FAILED = 240;
 
     /**
-     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testCommand()
     {

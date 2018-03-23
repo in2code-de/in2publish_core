@@ -40,18 +40,22 @@ class SshConnectionTest implements TestCaseInterface
     /**
      * @var RemoteCommandDispatcher
      */
-    protected $remoteCommandDispatcher = null;
+    protected $rceDispatcher = null;
 
     /**
      * ForeignInstanceTest constructor.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
-        $this->remoteCommandDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
+        $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
     }
 
     /**
      * @return TestResult
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function run()
     {
@@ -60,7 +64,7 @@ class SshConnectionTest implements TestCaseInterface
         $request->setOption('-v');
 
         try {
-            $response = $this->remoteCommandDispatcher->dispatch($request);
+            $response = $this->rceDispatcher->dispatch($request);
         } catch (\Exception $exception) {
             return new TestResult(
                 'ssh_connection.connection_failed',
@@ -90,7 +94,7 @@ class SshConnectionTest implements TestCaseInterface
         $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'ls');
         $request->usePhp(false);
         $request->setDispatcher('');
-        $response = $this->remoteCommandDispatcher->dispatch($request);
+        $response = $this->rceDispatcher->dispatch($request);
 
         if ($response->isSuccessful()) {
             $documentRootFiles = GeneralUtility::trimExplode("\n", $response->getOutputString());
@@ -127,7 +131,6 @@ class SshConnectionTest implements TestCaseInterface
     {
         return [
             SshFunctionAvailabilityTest::class,
-            SshKeyFilesExistTest::class,
         ];
     }
 }

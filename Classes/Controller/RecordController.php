@@ -28,35 +28,76 @@ namespace In2code\In2publishCore\Controller;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Factory\FakeRecordFactory;
+use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
+use In2code\In2publishCore\In2publishCoreException;
+use In2code\In2publishCore\Service\Permission\PermissionService;
+use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
+use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
+use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
+use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
+use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Content publishing Controller. Any action is for the "Publish Records" Backend module "m1"
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RecordController extends AbstractController
 {
+    /**
+     * @var CommonRepository
+     */
+    protected $commonRepository = null;
+
+    /**
+     * @param ViewInterface $view
+     */
+    protected function initializeView(ViewInterface $view)
+    {
+        parent::initializeView($view);
+        $localDbAvailable = null !== DatabaseUtility::buildLocalDatabaseConnection();
+        $foreignDbAvailable = null !== DatabaseUtility::buildForeignDatabaseConnection();
+        $this->view->assign('localDatabaseConnectionAvailable', $localDbAvailable);
+        $this->view->assign('foreignDatabaseConnectionAvailable', $foreignDbAvailable);
+        $this->view->assign('publishingAvailable', $localDbAvailable && $foreignDbAvailable);
+    }
+
+    /**
+     *
+     */
+    public function initializeAction()
+    {
+        parent::initializeAction();
+        if (static::BLANK_ACTION !== $this->actionMethodName) {
+            $this->commonRepository = CommonRepository::getDefaultInstance();
+        }
+    }
+
     /**
      * Create a Record instance of the current selected page
      * If none is chosen, a Record with uid = 0 is created which
      * represents the instance root
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function indexAction()
     {
         $this->logger->debug('Called indexAction');
         TcaProcessingService::getInstance();
-        if (!ConfigurationUtility::getConfiguration('factory.simpleOverviewAndAjax')) {
+        if (!$this->configContainer->get('factory.simpleOverviewAndAjax')) {
             $record = $this->commonRepository->findByIdentifier($this->pid);
         } else {
             $record = GeneralUtility::makeInstance(FakeRecordFactory::class)->buildFromStartPage($this->pid);
         }
 
         $this->view->assign('record', $record);
-        $this->assignServerAndPublishingStatus();
     }
 
     /**
@@ -73,20 +114,26 @@ class RecordController extends AbstractController
         $this->commonRepository->disablePageRecursion();
         $record = $this->commonRepository->findByIdentifier($identifier, $tableName);
 
-        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeDetailViewRender', [$this, $record]);
+        try {
+            $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeDetailViewRender', [$this, $record]);
+        } catch (InvalidSlotException $e) {
+        } catch (InvalidSlotReturnException $e) {
+        }
 
         $this->view->assign('record', $record);
-        $this->view->assign('configuration', ConfigurationUtility::getConfiguration());
+        $this->view->assign('configuration', $this->configContainer->get());
     }
 
     /**
      * Check if user is allowed to publish
      *
-     * @return void
+     * @throws In2publishCoreException
      */
     public function initializePublishRecordAction()
     {
-        $this->checkUserAllowedToPublish();
+        if (!GeneralUtility::makeInstance(PermissionService::class)->isUserAllowedToPublish()) {
+            throw new In2publishCoreException('You are not allowed to publish', 1435306780);
+        }
     }
 
     /**
@@ -94,20 +141,23 @@ class RecordController extends AbstractController
      *
      * @param int $identifier
      * @param string $returnUrl
-     * @return void
+     *
+     * @throws StopActionException
      */
     public function publishRecordAction($identifier, $returnUrl = null)
     {
-        $this->logger->notice(
-            'publishing page in ' . LocalizationUtility::translate($this->request->getPluginName(), 'in2publish_core'),
-            ['identifier' => $identifier]
-        );
+        $this->logger->notice('publishing record in ' . $this->request->getPluginName(), ['identifier' => $identifier]);
         $this->publishRecord($identifier, ['pages']);
         if ($returnUrl !== null) {
-            $this->redirectToUri($this->decodeReturnUrl($returnUrl));
-        } else {
-            $this->addSuccessFlashMessageAndRedirectToIndex();
+            while (strpos($returnUrl, '/') === false || strpos($returnUrl, 'typo3') === false) {
+                $returnUrl = rawurldecode($returnUrl);
+            }
+            try {
+                $this->redirectToUri($returnUrl);
+            } catch (UnsupportedRequestTypeException $e) {
+            }
         }
+        $this->addSuccessFlashMessageAndRedirectToIndex();
     }
 
     /**
@@ -115,7 +165,8 @@ class RecordController extends AbstractController
      * in the current backendUser's session.
      *
      * @param string $filter "changed", "added", "deleted"
-     * @return void
+     *
+     * @throws StopActionException
      */
     public function toggleFilterStatusAndRedirectToIndexAction($filter)
     {
@@ -125,41 +176,40 @@ class RecordController extends AbstractController
     /**
      * @param int $identifier
      * @param array $exceptTableNames
-     * @return void
      */
     protected function publishRecord($identifier, array $exceptTableNames = [])
     {
         $record = $this->commonRepository->findByIdentifier($identifier);
 
-        $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforePublishing', [$this, $record]);
+        try {
+            $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforePublishing', [$this, $record]);
+        } catch (InvalidSlotException $exception) {
+        } catch (InvalidSlotReturnException $exception) {
+        }
 
-        $this->commonRepository->publishRecordRecursive(
-            $record,
-            array_merge(ConfigurationUtility::getConfiguration('excludeRelatedTables'), $exceptTableNames)
-        );
+        try {
+            $this->commonRepository->publishRecordRecursive(
+                $record,
+                array_merge($this->configContainer->get('excludeRelatedTables'), $exceptTableNames)
+            );
+        } catch (\Exception $exception) {
+            $this->logger->error('Error while publishing', ['exception' => $exception]);
+            $this->addFlashMessage($exception->getMessage(), AbstractMessage::ERROR);
+        }
         $this->runTasks();
     }
 
     /**
      * Add success message and redirect to indexAction
      *
-     * @return void
+     * @throws StopActionException
      */
     protected function addSuccessFlashMessageAndRedirectToIndex()
     {
         $this->addFlashMessage(LocalizationUtility::translate('record_published', 'in2publish_core'));
-        $this->redirect('index');
-    }
-
-    /**
-     * @param string $returnUrl
-     * @return string
-     */
-    protected function decodeReturnUrl($returnUrl)
-    {
-        while (strpos($returnUrl, '/') === false || strpos($returnUrl, 'typo3') === false) {
-            $returnUrl = rawurldecode($returnUrl);
+        try {
+            $this->redirect('index');
+        } catch (UnsupportedRequestTypeException $e) {
         }
-        return $returnUrl;
     }
 }

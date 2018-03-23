@@ -26,7 +26,7 @@ namespace In2code\In2publishCore\Service\Environment;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Utility\ConfigurationUtility;
+use In2code\In2publishCore\Config\ConfigContainer;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -104,6 +104,7 @@ class EnvironmentService implements SingletonInterface
 
     /**
      * @return \TYPO3\CMS\Core\Package\PackageInterface[]
+     *
      * @codeCoverageIgnore
      */
     protected function getActivePackagesArray()
@@ -113,15 +114,17 @@ class EnvironmentService implements SingletonInterface
 
     /**
      * @return string
+     *
      * @codeCoverageIgnore
      */
     protected function getConfigurationHash()
     {
-        return ConfigurationUtility::getFileConfigurationHash();
+        return sha1(serialize(GeneralUtility::makeInstance(ConfigContainer::class)->get()));
     }
 
     /**
      * @return Registry
+     *
      * @codeCoverageIgnore
      */
     protected function getRegistry()

@@ -26,10 +26,11 @@ namespace In2code\In2publishCore\Testing\Tests\Configuration;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Service\Processor\ProcessorInterface;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Test some configuration values if they are in between defined ranges or make sense in the current context and much
@@ -49,7 +50,7 @@ class ConfigurationValuesTest implements TestCaseInterface
      */
     public function __construct()
     {
-        $this->configuration = ConfigurationUtility::getConfiguration();
+        $this->configuration = GeneralUtility::makeInstance(ConfigContainer::class)->get();
     }
 
     /**
@@ -60,41 +61,10 @@ class ConfigurationValuesTest implements TestCaseInterface
         $errors = [];
 
         // test the settings
-        if ($this->configuration['log']['logLevel'] > 7) {
-            $errors[] = 'configuration.loglevel_too_high';
-        }
-        if ($this->configuration['log']['logLevel'] < 0) {
-            $errors[] = 'configuration.loglevel_too_low';
-        }
         if (true === (bool)$this->configuration['debug']['disableParentRecords']
             && true === (bool)$this->configuration['view']['records']['breadcrumb']
         ) {
             $errors[] = 'configuration.breadcrumb_and_disable_parents_active';
-        }
-        if (!is_dir($this->configuration['backup']['publishTableCommand']['backupLocation'])) {
-            $errors[] = 'configuration.backup_folder_invalid';
-        }
-        if (true === (bool)$this->configuration['backup']['publishTableCommand']['zipBackup']
-            && !class_exists('\ZipArchive')
-        ) {
-            $errors[] = 'configuration.zip_extension_not_installed';
-        }
-        $missingProcessors = [];
-        $missingInterface = [];
-        foreach ($this->configuration['tca']['processor'] as $processorClass) {
-            if (!class_exists($processorClass)) {
-                $missingProcessors[] = $processorClass;
-            } elseif (!is_subclass_of($processorClass, static::PROCESSOR_INTERFACE)) {
-                $missingInterface[] = $processorClass;
-            }
-        }
-        if (!empty($missingProcessors)) {
-            $errors[] = 'configuration.tca_processor_missing';
-            $errors = array_merge($errors, $missingProcessors);
-        }
-        if (!empty($missingInterface)) {
-            $errors[] = 'configuration.tca_processor_implementation_missing';
-            $errors = array_merge($errors, $missingInterface);
         }
 
         // construct TestResult

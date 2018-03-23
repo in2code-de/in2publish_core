@@ -173,7 +173,10 @@ class ReplaceMarkersService
 
     /**
      * @param int $pageId
+     *
      * @return int
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function getStoragePidFromPage($pageId)
     {

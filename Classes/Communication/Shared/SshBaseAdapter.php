@@ -26,8 +26,8 @@ namespace In2code\In2publishCore\Communication\Shared;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -85,7 +85,8 @@ abstract class SshBaseAdapter
             throw $exception;
         }
 
-        $this->config['debug'] = (bool)ConfigurationUtility::getConfiguration('debug.showForeignKeyFingerprint');
+        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+        $this->config['debug'] = $configContainer->get('debug.showForeignKeyFingerprint');
     }
 
     /**
@@ -147,7 +148,7 @@ abstract class SshBaseAdapter
      */
     protected function getValidatedConfig()
     {
-        $config = ConfigurationUtility::getConfiguration('sshConnection');
+        $config = GeneralUtility::makeInstance(ConfigContainer::class)->get('sshConnection');
         $config = $this->validateRequiredSettings($config);
         $config = $this->validateKeys($config);
         $config = $this->validateSshParameter($config);

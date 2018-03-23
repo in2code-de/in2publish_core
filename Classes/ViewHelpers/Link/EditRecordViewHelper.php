@@ -38,6 +38,8 @@ class EditRecordViewHelper extends AbstractRecordActionLinkViewHelper
      * @param int $identifier
      *
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function buildUri($table, $identifier)
     {

@@ -110,16 +110,16 @@ class FilePublisherService
     /**
      * @param int $storage
      * @param string $fileIdentifier
-     * @param string $targetFolderIdentifier
+     * @param string $targetFolderId
      * @param string $newFileName
      * @return bool
      */
-    public function moveForeignFile($storage, $fileIdentifier, $targetFolderIdentifier, $newFileName)
+    public function moveForeignFile($storage, $fileIdentifier, $targetFolderId, $newFileName)
     {
         $this->remoteFalDriver->setStorageUid($storage);
         $this->remoteFalDriver->initialize();
 
-        return $this->remoteFalDriver->moveFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $newFileName);
+        return $this->remoteFalDriver->moveFileWithinStorage($fileIdentifier, $targetFolderId, $newFileName);
     }
 
     /**

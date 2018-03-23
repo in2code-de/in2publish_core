@@ -27,8 +27,9 @@ namespace In2code\In2publishCore\Domain\Model;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * The most important class of this application. A Record is a Database
@@ -37,6 +38,8 @@ use In2code\In2publishCore\Utility\ConfigurationUtility;
  * considered a singleton automatically. The RecordFactory takes care of
  * the singleton "implementation". The Pattern will break when a Record
  * gets instantiated without the use of the Factory
+ *
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class Record implements RecordInterface
 {
@@ -89,7 +92,7 @@ class Record implements RecordInterface
      *
      * @var array
      */
-    protected $tableConfigurationArray = [];
+    protected $tca = [];
 
     /**
      * Internal (volatile) cache
@@ -121,22 +124,30 @@ class Record implements RecordInterface
     /**
      * @var bool
      */
-    protected $isParentRecordDisabled = false;
+    protected $isParentDisabled = false;
+
+    /**
+     * @var ConfigContainer
+     */
+    protected $configContainer;
 
     /**
      * @param string $tableName
      * @param array $localProperties
      * @param array $foreignProperties
-     * @param array $tableConfigurationArray
+     * @param array $tca
      * @param array $additionalProperties
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct(
         $tableName,
         array $localProperties,
         array $foreignProperties,
-        array $tableConfigurationArray,
+        array $tca,
         array $additionalProperties
     ) {
+        $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         // Normalize the storage property to be always int, because FAL is inconsistent in this point
         if ('physical_folder' === $tableName) {
             if (isset($localProperties['storage'])) {
@@ -150,10 +161,10 @@ class Record implements RecordInterface
         $this->additionalProperties = $additionalProperties;
         $this->setLocalProperties($localProperties);
         $this->setForeignProperties($foreignProperties);
-        $this->tableConfigurationArray = $tableConfigurationArray;
+        $this->tca = $tca;
         $this->setDirtyProperties();
         $this->calculateState();
-        $this->isParentRecordDisabled = $this->isParentRecordDisabled();
+        $this->isParentDisabled = $this->isParentDisabled();
     }
 
     /**
@@ -569,7 +580,7 @@ class Record implements RecordInterface
                 if (!($this->tableName === 'pages' && $record->getTableName() === 'pages')
                     || (((int)$record->getMergedProperty('pid')) === ((int)$this->getIdentifier()))
                 ) {
-                    if (!$this->isParentRecordDisabled) {
+                    if (!$this->isParentDisabled) {
                         $record->setParentRecord($this);
                     }
                     $this->relatedRecords[$record->getTableName()][$record->getIdentifier()] = $record;
@@ -841,8 +852,8 @@ class Record implements RecordInterface
      */
     protected function isRecordMarkedAsDeletedByProperties(array $properties)
     {
-        if (isset($this->tableConfigurationArray['ctrl']['delete'])) {
-            $deletedField = $this->tableConfigurationArray['ctrl']['delete'];
+        if (isset($this->tca['ctrl']['delete'])) {
+            $deletedField = $this->tca['ctrl']['delete'];
             if (isset($properties[$deletedField]) && ((bool)$properties[$deletedField]) === true) {
                 return true;
             }
@@ -882,8 +893,8 @@ class Record implements RecordInterface
      */
     protected function isRecordMarkedAsDisabledByProperties(array $properties)
     {
-        if (!empty($this->tableConfigurationArray['ctrl']['enablecolumns']['disabled'])) {
-            $disabledField = $this->tableConfigurationArray['ctrl']['enablecolumns']['disabled'];
+        if (!empty($this->tca['ctrl']['enablecolumns']['disabled'])) {
+            $disabledField = $this->tca['ctrl']['enablecolumns']['disabled'];
             return (bool)$properties[$disabledField];
         }
         return false;
@@ -1062,19 +1073,21 @@ class Record implements RecordInterface
 
     /**
      * @return array
+     *
      * @codeCoverageIgnore
      */
     protected function getIgnoreFields()
     {
-        return (array)ConfigurationUtility::getConfiguration('ignoreFieldsForDifferenceView.' . $this->tableName);
+        return $this->configContainer->get('ignoreFieldsForDifferenceView.' . $this->tableName);
     }
 
     /**
      * @return bool
+     *
      * @codeCoverageIgnore
      */
-    protected function isParentRecordDisabled()
+    protected function isParentDisabled()
     {
-        return (bool)ConfigurationUtility::getConfiguration('debug.disableParentRecords');
+        return $this->configContainer->get('debug.disableParentRecords');
     }
 }

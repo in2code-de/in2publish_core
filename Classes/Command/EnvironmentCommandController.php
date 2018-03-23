@@ -44,7 +44,11 @@ class EnvironmentCommandController extends AbstractCommandController
      *
      * @param string $fileStoragePath Folder where to start the substitution
      * @param boolean $dryRun Test how many records/files could be rewritten before doing it (pls use CLI for output)
+     *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     public function rewriteNonUtf8CharactersForFoldersCommand($fileStoragePath = 'fileadmin/', $dryRun = false)
     {
@@ -64,7 +68,11 @@ class EnvironmentCommandController extends AbstractCommandController
      *
      * @param string $fileStoragePath Folder where to start the substitution
      * @param boolean $dryRun Test how many records/files could be rewritten before doing it (pls use CLI for output)
+     *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     public function rewriteNonUtf8CharactersForFilesCommand($fileStoragePath = 'fileadmin/', $dryRun = false)
     {
@@ -82,17 +90,18 @@ class EnvironmentCommandController extends AbstractCommandController
     protected function showNonAllowedFolders(FileStorageService $fileStorageService)
     {
         $folders = $fileStorageService->getNonAllowedFolders();
-        if (!empty($folders)) {
-            $this->outputLine('Folders with non-allowed characters:');
-            $counter = 0;
-            foreach ($folders as $oldFolder => $newFolder) {
-                $counter++;
-                $spacer = preg_replace('~\d~', ' ', $counter);
-                $this->outputLine($counter . ' old: ' . $oldFolder);
-                $this->outputLine($spacer . ' new: ' . $newFolder);
-            }
-        } else {
+        if (empty($folders)) {
             $this->outputLine('No invalid folders found');
+            return;
+        }
+
+        $this->outputLine('Folders with non-allowed characters:');
+        $counter = 0;
+        foreach ($folders as $oldFolder => $newFolder) {
+            $counter++;
+            $spacer = preg_replace('~\d~', ' ', $counter);
+            $this->outputLine($counter . ' old: ' . $oldFolder);
+            $this->outputLine($spacer . ' new: ' . $newFolder);
         }
     }
 
@@ -103,17 +112,18 @@ class EnvironmentCommandController extends AbstractCommandController
     protected function showNonAllowedFiles(FileStorageService $fileStorageService)
     {
         $files = $fileStorageService->getNonAllowedFiles();
-        if (!empty($files)) {
-            $this->outputLine('Files with non-allowed characters:');
-            $counter = 0;
-            foreach ($files as $oldFile => $newFile) {
-                $counter++;
-                $spacer = preg_replace('~\d~', ' ', $counter);
-                $this->outputLine($counter . ' old: ' . $oldFile);
-                $this->outputLine($spacer . ' new: ' . $newFile);
-            }
-        } else {
+        if (empty($files)) {
             $this->outputLine('No invalid files found');
+            return;
+        }
+
+        $this->outputLine('Files with non-allowed characters:');
+        $counter = 0;
+        foreach ($files as $oldFile => $newFile) {
+            $counter++;
+            $spacer = preg_replace('~\d~', ' ', $counter);
+            $this->outputLine($counter . ' old: ' . $oldFile);
+            $this->outputLine($spacer . ' new: ' . $newFile);
         }
     }
 }

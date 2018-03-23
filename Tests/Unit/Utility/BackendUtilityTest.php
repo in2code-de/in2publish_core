@@ -37,7 +37,9 @@ class BackendUtilityTest extends UnitTestCase
 {
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsZeroIfNoPidCanBeFound()
     {
@@ -50,7 +52,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsPidForRollbackRequests()
     {
@@ -87,7 +91,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsZeroIfRollbackRequestIsInvalid()
     {
@@ -98,7 +104,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsZeroIfRollbackRecordDoesNotExist()
     {
@@ -133,7 +141,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsPidFromRecordInDataValues()
     {
@@ -170,7 +180,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsZeroIfTheRecordCanNotBeFound()
     {
@@ -205,7 +217,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsZeroIfTheRecordCanBeFound()
     {
@@ -239,7 +253,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsPidFromRedirectParameter()
     {
@@ -250,7 +266,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsZeroIfRedirectParameterDoesNotContainAnId()
     {
@@ -261,7 +279,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsZeroIfRedirectIdParameterIsEmpty()
     {
@@ -272,7 +292,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsPidFromPopViewId()
     {
@@ -283,7 +305,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsPidFromCmdParameter()
     {
@@ -294,7 +318,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsZeroIfCmdParameterIsEmpty()
     {
@@ -309,7 +335,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsPidFromIdParameter()
     {
@@ -320,7 +348,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsPidFromPAjaxPageId()
     {
@@ -331,7 +361,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsPidFromArgumentsIfTableIsPages()
     {
@@ -340,7 +372,9 @@ class BackendUtilityTest extends UnitTestCase
 
     /**
      * @covers ::getPageIdentifier
+     *
      * @SuppressWarnings("PHPMD.Superglobals")
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function testGetPageIdentifierReturnsZeroIfAnyMethodFails()
     {

@@ -67,6 +67,8 @@ class FileIndexFactory
      *
      * @param DriverInterface $localDriver
      * @param DriverInterface $foreignDriver
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct(DriverInterface $localDriver, DriverInterface $foreignDriver)
     {
@@ -80,7 +82,10 @@ class FileIndexFactory
     /**
      * @param string $side
      * @param string $identifier
+     *
      * @return RecordInterface
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function makeInstanceForSide($side, $identifier)
     {
@@ -290,6 +295,8 @@ class FileIndexFactory
 
     /**
      * @return UidReservationService
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function getUidReservationService()
     {

@@ -80,6 +80,8 @@ class SysLogPublisher
 
     /**
      * Constructor
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {

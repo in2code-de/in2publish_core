@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\ViewHelpers\String;
  ***************************************************************/
 
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\CMS\Fluid\Core\ViewHelper\Exception;
 
 /**
  * Class FirstInListViewHelper
@@ -34,7 +35,7 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 class FirstInListViewHelper extends AbstractViewHelper
 {
     /**
-     *
+     * @throws Exception
      */
     public function initializeArguments()
     {

@@ -45,6 +45,8 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
 
     /**
      * BuildResourcePathViewHelper constructor.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function initialize()
     {
@@ -54,7 +56,10 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
     /**
      * @param Record $record
      * @param string $stagingLevel
+     *
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function render(Record $record, $stagingLevel = 'local')
     {

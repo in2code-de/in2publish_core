@@ -30,6 +30,8 @@ use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
+use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
+use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
 /**
  * Class FolderPublisherService
@@ -55,11 +57,15 @@ class FolderPublisherService
         } else {
             $success = $remoteFalDriver->deleteFolder($folderIdentifier, true);
         }
-        GeneralUtility::makeInstance(Dispatcher::class)->dispatch(
-            FolderPublisherService::class,
-            'afterPublishingFolder',
-            [$storage, $folderIdentifier, ($success !== false)]
-        );
+        try {
+            GeneralUtility::makeInstance(Dispatcher::class)->dispatch(
+                FolderPublisherService::class,
+                'afterPublishingFolder',
+                [$storage, $folderIdentifier, ($success !== false)]
+            );
+        } catch (InvalidSlotException $e) {
+        } catch (InvalidSlotReturnException $e) {
+        }
         return $success;
     }
 }

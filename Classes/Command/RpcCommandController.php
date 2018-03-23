@@ -52,6 +52,8 @@ class RpcCommandController extends AbstractCommandController
 
     /**
      * RpcCommandController constructor.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {

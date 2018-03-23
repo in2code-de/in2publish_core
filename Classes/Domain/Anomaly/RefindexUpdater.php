@@ -50,6 +50,8 @@ class RefindexUpdater implements SingletonInterface
 
     /**
      * Constructor
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
@@ -72,7 +74,7 @@ class RefindexUpdater implements SingletonInterface
     }
 
     /**
-     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function writeRefindexUpdateTask()
     {

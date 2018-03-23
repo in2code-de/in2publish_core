@@ -35,7 +35,7 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
     /**
      * @var array
      */
-    protected $tableConfigurationArray = [];
+    protected $tca = [];
 
     /**
      * @var \TYPO3\CMS\Lang\LanguageService
@@ -53,9 +53,9 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
     {
         $label = ucfirst($fieldName);
 
-        if (!empty($this->tableConfigurationArray[$tableName]['columns'][$fieldName]['label'])) {
-            $localizationLabelDefinition = $this->tableConfigurationArray[$tableName]['columns'][$fieldName]['label'];
-            $localizedLabel = $this->languageService->sL($localizationLabelDefinition);
+        if (!empty($this->tca[$tableName]['columns'][$fieldName]['label'])) {
+            $l10nLabelDefinition = $this->tca[$tableName]['columns'][$fieldName]['label'];
+            $localizedLabel = $this->languageService->sL($l10nLabelDefinition);
             if (!empty($localizedLabel)) {
                 $label = $localizedLabel;
             }
@@ -73,7 +73,7 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
      */
     public function initialize()
     {
-        $this->tableConfigurationArray = $GLOBALS['TCA'];
+        $this->tca = $GLOBALS['TCA'];
         $this->languageService = $GLOBALS['LANG'];
     }
 }

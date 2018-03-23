@@ -28,6 +28,8 @@ namespace In2code\In2publishCore\Service\Database;
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -37,7 +39,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class DatabaseSchemaService implements SingletonInterface
 {
     /**
-     * @var \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+     * @var FrontendInterface
      */
     protected $cache = null;
 
@@ -86,8 +88,12 @@ class DatabaseSchemaService implements SingletonInterface
     }
 
     /**
-     * @return \TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+     * @return FrontendInterface
+     *
+     * @throws NoSuchCacheException
+     *
      * @codeCoverageIgnore
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function getCache()
     {

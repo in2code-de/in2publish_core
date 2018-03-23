@@ -83,9 +83,13 @@ class IndexingFolderRecordFactory
 
     /**
      * @param string|null $dir Directory which is currently selected in the directory tree
+     *
      * @return RecordInterface
+     *
      * @throws TooManyForeignFilesException
      * @throws TooManyLocalFilesException
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function makeInstance($dir = null)
     {

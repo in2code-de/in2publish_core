@@ -39,7 +39,10 @@ class BackendUtility
      *
      * @param mixed $identifier
      * @param string $table
-     * @return int
+     *
+     * @return int|string Returns the page ID or the folder ID when navigating in the file list
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public static function getPageIdentifier($identifier = null, $table = null)
     {
@@ -50,7 +53,7 @@ class BackendUtility
 
         // get id from ?id=123
         if (null !== ($getId = GeneralUtility::_GP('id'))) {
-            return (int)$getId;
+            return is_numeric($getId) ? (int)$getId : $getId;
         }
 
         // get id from AJAX request

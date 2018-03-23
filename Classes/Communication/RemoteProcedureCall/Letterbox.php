@@ -26,8 +26,8 @@ namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Service\Context\ContextService;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
@@ -62,7 +62,7 @@ class Letterbox
     public function __construct()
     {
         $this->contextService = GeneralUtility::makeInstance(ContextService::class);
-        $this->keepEnvelopes = (bool)ConfigurationUtility::getConfiguration('debug.keepEnvelopes');
+        $this->keepEnvelopes = GeneralUtility::makeInstance(ConfigContainer::class)->get('debug.keepEnvelopes');
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
     }
 

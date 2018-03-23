@@ -53,6 +53,8 @@ abstract class AbstractCommandController extends CommandController
 
     /**
      * AbstractCommandController constructor.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {

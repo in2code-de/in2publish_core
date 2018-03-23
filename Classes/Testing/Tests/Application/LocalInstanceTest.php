@@ -26,11 +26,12 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class LocalInstanceTest
@@ -49,7 +50,7 @@ class LocalInstanceTest implements TestCaseInterface
             return new TestResult('application.local_utf8_fs', TestResult::ERROR, ['application.utf8_fs_errors']);
         }
 
-        $excludedTables = (array)ConfigurationUtility::getConfiguration('excludeRelatedTables');
+        $excludedTables = GeneralUtility::makeInstance(ConfigContainer::class)->get('excludeRelatedTables');
         $localTables = $localDatabase->admin_get_tables();
 
         $missingTables = [];

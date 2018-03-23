@@ -65,6 +65,15 @@
 		"post-autoload-dump": [
 			"mkdir -p .Build/Web/typo3conf/ext/",
 			"[ -L .Build/Web/typo3conf/ext/in2publish_core ] || ln -snvf ../../../../. .Build/Web/typo3conf/ext/in2publish_core"
+		],
+		"quality-check" : [
+			".Build/bin/phpcpd Classes/ --min-tokens=42",
+			".Build/bin/phpcs Classes/ --standard=PSR2",
+			".Build/bin/phpmd Classes/ text controversial",
+			".Build/bin/phpmd Classes/ text design",
+			".Build/bin/phpmd Classes/ text unusedcode",
+			".Build/bin/phpmd Classes/ text naming",
+			"TYPO3_PATH_WEB=.Build/Web .Build/bin/phpunit -c phpunit.xml.dist"
 		]
 	},
 	"extra": {
@@ -73,7 +82,7 @@
 			"web-dir": ".Build/Web"
 		},
 		"branch-alias": {
-			"dev-master": "6.2.x-dev"
+			"dev-master": "7.0.x-dev"
 		}
 	}
 }

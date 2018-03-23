@@ -27,9 +27,8 @@ namespace In2code\In2publishCore\Command;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Utility\ConfigurationUtility;
+use In2code\In2publishCore\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Class StatusCommandController (always enabled)
@@ -50,12 +49,12 @@ class StatusCommandController extends AbstractCommandController
      * NOTE: This command is used for internal operations in in2publish_core
      *
      * @return void
+     *
      * @internal
      */
     public function allCommand()
     {
         $this->versionCommand();
-        $this->configurationRawCommand();
         $this->createMasksCommand();
         $this->globalConfigurationCommand();
         $this->typo3VersionCommand();
@@ -66,51 +65,23 @@ class StatusCommandController extends AbstractCommandController
      * Prints the version number of the currently installed in2publish_core extension
      * NOTE: This command is used for internal operations in in2publish_core
      *
-     * @throws \TYPO3\CMS\Core\Package\Exception
-     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
      * @internal
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseVariableName)
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function versionCommand()
     {
-        $EM_CONF = [];
-        $_EXTKEY = 'in2publish_core';
-        require(ExtensionManagementUtility::extPath($_EXTKEY, 'ext_emconf.php'));
-        $this->outputLine('Version: ' . $EM_CONF[$_EXTKEY]['version']);
-    }
-
-    /**
-     * Prints if the configuration was loaded successfully
-     * NOTE: This command is used for internal operations in in2publish_core
-     *
-     * @internal
-     */
-    public function configurationCommand()
-    {
-        $this->outputLine(
-            'ConfigurationState: '
-            . LocalizationUtility::translate(ConfigurationUtility::getLoadingState(), 'in2publish_core')
-        );
-    }
-
-    /**
-     * Prints the configuration state as it was received by the condigfuration utility
-     * NOTE: This command is used for internal operations in in2publish_core
-     *
-     * @internal
-     */
-    public function configurationRawCommand()
-    {
-        $this->outputLine(
-            'ConfigurationState: ' . ConfigurationUtility::getLoadingState()
-        );
+        $this->outputLine('Version: ' . ExtensionUtility::getExtensionVersion('in2publish_core'));
     }
 
     /**
      * Prints the configured fileCreateMask and folderCreateMask
      * NOTE: This command is used for internal operations in in2publish_core
      *
-     * @SuppressWarnings(PHPMD.Superglobals)
      * @internal
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function createMasksCommand()
     {
@@ -122,8 +93,9 @@ class StatusCommandController extends AbstractCommandController
      * Prints global configuration values
      * NOTE: This command is used for internal operations in in2publish_core
      *
-     * @SuppressWarnings(PHPMD.Superglobals)
      * @internal
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function globalConfigurationCommand()
     {

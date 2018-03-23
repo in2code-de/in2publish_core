@@ -25,7 +25,7 @@ script:
 #  - '.Build/bin/phpmd Classes/ text codesize'
   - '.Build/bin/phpmd Classes/ text controversial'
   - '.Build/bin/phpmd Classes/ text design'
-#  - '.Build/bin/phpmd Classes/ text naming'
+  - '.Build/bin/phpmd Classes/ text naming'
   - '.Build/bin/phpmd Classes/ text unusedcode'
   - '.Build/bin/phpunit -c phpunit.xml.dist'
 

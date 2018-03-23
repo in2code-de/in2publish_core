@@ -44,13 +44,14 @@ use TYPO3\CMS\Extbase\Service\FlexFormService;
  * Class RemoteFileAbstractionLayerDriver
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 {
     /**
      * @var RemoteCommandDispatcher
      */
-    protected $remoteCommandDispatcher = null;
+    protected $rceDispatcher = null;
 
     /**
      * @var Letterbox
@@ -73,6 +74,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * RemoteFileAbstractionLayerDriver constructor.
      *
      * @param array $configuration
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct(array $configuration = [])
     {
@@ -84,7 +87,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         ArrayUtility::mergeRecursiveWithOverrule($defaultConfiguration, $configuration);
         parent::__construct($defaultConfiguration);
 
-        $this->remoteCommandDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
+        $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
         $this->letterBox = GeneralUtility::makeInstance(Letterbox::class);
     }
 
@@ -103,6 +106,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * Initializes this object. This is called by the storage after the driver has been attached.
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function initialize()
     {
@@ -273,22 +278,22 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * not exist anymore.
      *
      * @param string $localFilePath (within PATH_site)
-     * @param string $targetFolderIdentifier
+     * @param string $targetFolderId
      * @param string $newFileName optional, if not given original name is used
      * @param bool $removeOriginal if set the original file will be removed
      *                                after successful operation
      * @return string the identifier of the new file
      */
-    public function addFile($localFilePath, $targetFolderIdentifier, $newFileName = '', $removeOriginal = true)
+    public function addFile($localFilePath, $targetFolderId, $newFileName = '', $removeOriginal = true)
     {
-        $callback = function () use ($localFilePath, $targetFolderIdentifier, $newFileName, $removeOriginal) {
+        $callback = function () use ($localFilePath, $targetFolderId, $newFileName, $removeOriginal) {
             return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_ADD_FILE,
                     [
                         'storage' => $this->storageUid,
                         'localFilePath' => $localFilePath,
-                        'targetFolderIdentifier' => $targetFolderIdentifier,
+                        'targetFolderIdentifier' => $targetFolderId,
                         'newFileName' => $newFileName,
                         'removeOriginal' => $removeOriginal,
                     ]
@@ -296,7 +301,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
             );
         };
 
-        return $this->cache('addFile' . $localFilePath . '|' . $targetFolderIdentifier . '|' . $newFileName, $callback);
+        return $this->cache('addFile' . $localFilePath . '|' . $targetFolderId . '|' . $newFileName, $callback);
     }
 
     /**
@@ -605,27 +610,27 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * If no parent folder is given, a root level folder will be created
      *
      * @param string $newFolderName
-     * @param string $parentFolderIdentifier
+     * @param string $parentFolderId
      * @param bool $recursive
      * @return string the Identifier of the new folder
      */
-    public function createFolder($newFolderName, $parentFolderIdentifier = '', $recursive = false)
+    public function createFolder($newFolderName, $parentFolderId = '', $recursive = false)
     {
-        $callback = function () use ($newFolderName, $parentFolderIdentifier, $recursive) {
+        $callback = function () use ($newFolderName, $parentFolderId, $recursive) {
             return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_CREATE_FOLDER,
                     [
                         'storage' => $this->storageUid,
                         '$newFolderName' => $newFolderName,
-                        '$parentFolderIdentifier' => $parentFolderIdentifier,
+                        '$parentFolderIdentifier' => $parentFolderId,
                         '$recursive' => $recursive,
                     ]
                 )
             );
         };
 
-        return $this->cache('createFolder|' . $newFolderName . $parentFolderIdentifier, $callback);
+        return $this->cache('createFolder|' . $newFolderName . $parentFolderId, $callback);
     }
 
     /**
@@ -661,13 +666,13 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * where a file is just moved to another folder in the same storage.
      *
      * @param string $fileIdentifier
-     * @param string $targetFolderIdentifier
+     * @param string $targetFolderId
      * @param string $newFileName
      * @return string
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function moveFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $newFileName)
+    public function moveFileWithinStorage($fileIdentifier, $targetFolderId, $newFileName)
     {
         return $this->executeEnvelope(
             new Envelope(
@@ -675,7 +680,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
                 [
                     'storage' => $this->storageUid,
                     'fileIdentifier' => $fileIdentifier,
-                    'targetFolderIdentifier' => $targetFolderIdentifier,
+                    'targetFolderIdentifier' => $targetFolderId,
                     'newFileName' => $newFileName,
                 ]
             )
@@ -684,8 +689,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 
     /**
      * @param Envelope $envelope
+     *
      * @return mixed
+     *
      * @throws \Exception
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function executeEnvelope(Envelope $envelope)
     {
@@ -704,7 +713,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
             [],
             [$uid]
         );
-        $response = $this->remoteCommandDispatcher->dispatch($request);
+        $response = $this->rceDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {
             throw new \RuntimeException(

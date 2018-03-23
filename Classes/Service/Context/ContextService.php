@@ -62,6 +62,8 @@ class ContextService implements SingletonInterface
 
     /**
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function determineContext()
     {

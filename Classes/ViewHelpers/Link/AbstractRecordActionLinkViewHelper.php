@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\ViewHelpers\Link;
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+use TYPO3\CMS\Fluid\Core\ViewHelper\Exception;
 
 /**
  * Class AbstractRecordActionLinkViewHelper
@@ -40,7 +41,7 @@ abstract class AbstractRecordActionLinkViewHelper extends AbstractTagBasedViewHe
     protected $tagName = 'a';
 
     /**
-     *
+     * @throws Exception
      */
     public function initializeArguments()
     {

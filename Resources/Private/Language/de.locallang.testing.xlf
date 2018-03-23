@@ -16,17 +16,6 @@
 				<target state="translated">Folgende Tests wurden übersprungen:</target>
 			</trans-unit>
 
-			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationIsAvailableTest -->
-
-			<trans-unit id="configuration.available">
-				<source>The configuration could be loaded.</source>
-				<target state="translated">Die Konfigurationsdatei konnte geladen werden.</target>
-			</trans-unit>
-			<trans-unit id="configuration.not_available">
-				<source>The configuration could not be loaded.</source>
-				<target state="translated">Die Konfigurationsdatei konnte nicht geladen werden.</target>
-			</trans-unit>
-
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest -->
 
 			<trans-unit id="configuration.options_valid">
@@ -37,33 +26,9 @@
 				<source>Some tested configuration options are invalid.</source>
 				<target state="translated">Einige der getesteten Konfigurationsoptionen sind ungültig.</target>
 			</trans-unit>
-			<trans-unit id="configuration.loglevel_too_high">
-				<source>The configured log level is too high. Maximum is 7.</source>
-				<target state="translated">Das eingestellte LogLevel ist zu hoch. Das Maximum beträgt 7.</target>
-			</trans-unit>
-			<trans-unit id="configuration.loglevel_too_low">
-				<source>The configured log level is too low. The log level must be at least 0.</source>
-				<target state="translated">Das eingestellte LogLevel ist zu niedrig. Das LogLevel muss mindestens 0 sein.</target>
-			</trans-unit>
 			<trans-unit id="configuration.breadcrumb_and_disable_parents_active">
 				<source>view.record.breadcrumb and debug.disableParentRecords are both enabled. Breadcrumbs will not be displayed correctly.</source>
 				<target state="translated">view.record.breadcrumb und debug.disableParentRecords sind beide aktiviert. Breadcrumbs werden nicht korrekt dargestellt.</target>
-			</trans-unit>
-			<trans-unit id="configuration.backup_folder_invalid">
-				<source>The configured backup folder does not exist.</source>
-				<target state="translated">Das Verzeichnis für Backups existiert nicht.</target>
-			</trans-unit>
-			<trans-unit id="configuration.zip_extension_not_installed">
-				<source>The compression of backups is enabled, but the zip extension for PHP is not installed or activated.</source>
-				<target state="translated">Die komprimierung für Backups ist aktiviert, die PHP Extension zip ist aber nicht installiert oder aktiviert.</target>
-			</trans-unit>
-			<trans-unit id="configuration.tca_processor_missing">
-				<source>Following TCA Processors are missing (they could not be found):</source>
-				<target state="translated">Folgende TCA Prozessoren fehlen (Sie konnten nicht geladen werden):</target>
-			</trans-unit>
-			<trans-unit id="configuration.tca_processor_implementation_missing">
-				<source>Following TCA Processors do not implement the ProcessorInterface:</source>
-				<target state="translated">Folgende TCA Prozessoren implementieren nicht das ProcessorInterface:</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest -->
@@ -72,34 +37,10 @@
 				<source>The configuration file is well formated and holds all required options.</source>
 				<target state="translated">Die Konfiguration ist gültig formatiert und enthält alle Optionen.</target>
 			</trans-unit>
-
-			<trans-unit id="configuration.missing_keys">
-				<source>The configuration file is missing required options.</source>
-				<target state="translated">Die Konfiguration enthält nicht alle notwendigen Optionen.</target>
+			<trans-unit id="configuration.format_error">
+				<source>One or more options are not confiured correctly.</source>
+				<target state="translated">Eine oder mehrere Optionen sind nicht korrekt konfiguriert.</target>
 			</trans-unit>
-			<trans-unit id="configuration.keys_missing">
-				<source>These configuration values are missing:</source>
-				<target state="translated">Diese Optionen fehlen in der Konfiguration:</target>
-			</trans-unit>
-
-			<trans-unit id="configuration.superfluous_keys">
-				<source>The configuration file contains unused options.</source>
-				<target state="translated">Die Konfiguration enthält nicht genutzte Optionen.</target>
-			</trans-unit>
-			<trans-unit id="configuration.keys_superfluous">
-				<source>These configuration options are not used:</source>
-				<target state="translated">Diese Optionen werden nicht genutzt:</target>
-			</trans-unit>
-
-			<trans-unit id="configuration.mismatching_keys">
-				<source>Some options to not match the expected variable type.</source>
-				<target state="translated">Einige optionen entsprechen nicht dem erwarteten Variablentyp.</target>
-			</trans-unit>
-			<trans-unit id="configuration.keys_mismatching">
-				<source>Following options do not respect the format:</source>
-				<target state="translated">Diese Optionen entsprechen nicht dem Format:</target>
-			</trans-unit>
-
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseAccessTest
 				 && \In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest -->
@@ -205,26 +146,6 @@
 			<trans-unit id="ssh_connection.chmod_description">
 				<source>The function "ssh2_sftp_chmod" is available since php_ssh2 0.12. Either upgrade or ignore this message.</source>
 				<target state="translated">Die Funktion "ssh2_sftp_chmod" steht ab der Version 0.12 von php_ssh2 zu Verfügung. Upgraden Sie php_ssh2 oder ignorieren Sie diese Meldung.</target>
-			</trans-unit>
-
-			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SshKeyFilesExistTest -->
-
-			<trans-unit id="ssh_key_files_exist.ssh_files_missing">
-				<source>Configured SSH files are missing.</source>
-				<target state="translated">Konfigurierte Dateien für die SSH-Verbindung Fehlen. Bitte die Konfiguration überprüfen.</target>
-			</trans-unit>
-			<trans-unit id="ssh_key_files_exist.ssh_files_exist">
-				<source>The configured SSH keys do exist</source>
-				<target state="translated">Die konfigurierten SSH-Keys existieren.</target>
-			</trans-unit>
-
-			<trans-unit id="ssh_key_files_exist.private_key_invalid">
-				<source>The given SSH private key file can not be found.</source>
-				<target state="translated">Der angegebene SSH Private Key konnte nicht gefunden werden.</target>
-			</trans-unit>
-			<trans-unit id="ssh_key_files_exist.public_key_invalid">
-				<source>The given SSH public key file can not be found.</source>
-				<target state="translated">Der angegebene SSH Public Key konnte nicht gefunden werden.</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest -->
@@ -353,10 +274,6 @@
 			<trans-unit id="application.foreign_version">
 				<source>Foreign Version:</source>
 				<target state="translated">Entfernte Version:</target>
-			</trans-unit>
-			<trans-unit id="application.foreign_configuration_not_loaded">
-				<source>The configuration could not be loaded on the foreign system.</source>
-				<target state="translated">Die Konfiguration auf dem entfernten System konnte nicht geladen werden.</target>
 			</trans-unit>
 			<trans-unit id="application.foreign_configuration_loading_state">
 				<source>The confguration utility has following loading state:</source>

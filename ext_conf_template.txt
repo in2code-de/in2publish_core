@@ -1,2 +1,5 @@
 # cat=basic//010; type=string; label=LLL:EXT:in2publish_core/Resources/Private/Language/locallang.extconf.xlf:path_to_configuration
 pathToConfiguration = typo3conf/AdditionalConfiguration/
+
+# cat=basic//020; type=boolean; label=LLL:EXT:in2publish_core/Resources/Private/Language/locallang.extconf.xlf:disable_user_config
+disableUserConfig = 0

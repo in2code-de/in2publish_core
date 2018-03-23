@@ -43,7 +43,10 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
 
     /**
      * @param RemoteCommandRequest $request
+     *
      * @return RemoteCommandResponse
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function execute(RemoteCommandRequest $request)
     {

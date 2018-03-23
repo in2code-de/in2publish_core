@@ -106,13 +106,6 @@ class CommonRepository extends BaseRepository
     protected $foreignDatabase = null;
 
     /**
-     * If flexform is in use with sub fields, set a limit
-     *
-     * @var int
-     */
-    protected $flexFormSubValueLimit = 20;
-
-    /**
      * Cache for skipped records
      *
      * @var array
@@ -647,7 +640,9 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * Get flexform configuration from file or reference
+     * TODO: Replace this whole monstrous thing with FlexFormTools upon dropping TYPO3 v7
+     *
+     * Get flex form configuration from file or reference
      *
      * @param RecordInterface $record
      * @param array $columnConfiguration
@@ -768,7 +763,7 @@ class CommonRepository extends BaseRepository
                 foreach (array_keys($fieldDefinition) as $subKey) {
                     if (array_key_exists('el', $fieldDefinition[$subKey])) {
                         foreach ($fieldDefinition[$subKey]['el'] as $subFieldKey => $subFieldDefinition) {
-                            for ($i = 1; $i < $this->flexFormSubValueLimit; $i++) {
+                            for ($i = 1; $i < 20; $i++) {
                                 $newFieldKey = $fieldKey . '.' . $i . '.' . $subKey . '.' . $subFieldKey;
                                 $flattenedDefinition = $this->flattenFieldFlexForm(
                                     $flattenedDefinition,
@@ -941,7 +936,7 @@ class CommonRepository extends BaseRepository
      * @param RecordInterface $record
      * @param array $excludedTableNames
      * @param string $propertyName
-     * @param array $overrideIdentifierArray
+     * @param array $overrideIdentifiers
      * @return RecordInterface[]
      */
     protected function fetchRelatedRecordsByGroupTypeDb(
@@ -949,7 +944,7 @@ class CommonRepository extends BaseRepository
         RecordInterface $record,
         array $excludedTableNames,
         $propertyName,
-        array $overrideIdentifierArray = []
+        array $overrideIdentifiers = []
     ) {
         /** @var RecordInterface[] $records */
         $records = [];
@@ -961,8 +956,8 @@ class CommonRepository extends BaseRepository
         }
         if (strpos($tableName, ',') !== false) {
             $tableNames = explode(',', $tableName);
-            if (!empty($overrideIdentifierArray)) {
-                $identifierArray = $overrideIdentifierArray;
+            if (!empty($overrideIdentifiers)) {
+                $identifierArray = $overrideIdentifiers;
             } else {
                 $identifierArray = array_filter(
                     GeneralUtility::trimExplode(
@@ -972,7 +967,7 @@ class CommonRepository extends BaseRepository
                 );
             }
             if (!empty($identifierArray)) {
-                $identifierToTableArray = [];
+                $identifierToTableMap = [];
                 foreach ($tableNames as $tableName) {
                     if (in_array($tableName, $excludedTableNames)) {
                         continue;
@@ -980,11 +975,11 @@ class CommonRepository extends BaseRepository
                     foreach ($identifierArray as $identifier) {
                         if (strpos($identifier, $tableName) !== false) {
                             $id = substr($identifier, strlen($tableName) + 1);
-                            $identifierToTableArray[$tableName][] = $id;
+                            $identifierToTableMap[$tableName][] = $id;
                         }
                     }
                 }
-                foreach ($identifierToTableArray as $tableName => $identifiers) {
+                foreach ($identifierToTableMap as $tableName => $identifiers) {
                     $previousTableName = $this->replaceTableName($tableName);
                     if ($columnConfiguration['MM']) {
                         $this->logger->alert(
@@ -1090,8 +1085,8 @@ class CommonRepository extends BaseRepository
                 }
             } else {
                 $previousTableName = $this->replaceTableName($tableName);
-                if (!empty($overrideIdentifierArray)) {
-                    $identifiers = $overrideIdentifierArray;
+                if (!empty($overrideIdentifiers)) {
+                    $identifiers = $overrideIdentifiers;
                 } else {
                     $identifiers = array_filter(
                         GeneralUtility::trimExplode(
@@ -1236,7 +1231,7 @@ class CommonRepository extends BaseRepository
      * @param RecordInterface $record
      * @param string $propertyName
      * @param array $excludedTableNames
-     * @param bool $propertyNameOverridesRecordIdentifier
+     * @param bool $overrideIdByRecord
      * @return array
      */
     protected function fetchRelatedRecordsBySelect(
@@ -1244,7 +1239,7 @@ class CommonRepository extends BaseRepository
         RecordInterface $record,
         $propertyName,
         array $excludedTableNames,
-        $propertyNameOverridesRecordIdentifier = false
+        $overrideIdByRecord = false
     ) {
         $tableName = $columnConfiguration['foreign_table'];
         if (in_array($tableName, $excludedTableNames)) {
@@ -1253,7 +1248,7 @@ class CommonRepository extends BaseRepository
         $previousTableName = $this->replaceTableName($tableName);
         $records = [];
 
-        if ($propertyNameOverridesRecordIdentifier) {
+        if ($overrideIdByRecord) {
             $recordIdentifier = $propertyName;
         } else {
             $recordIdentifier = $record->getMergedProperty($propertyName);
@@ -1886,18 +1881,18 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
      * @param string $identifier
      * @return bool
      */
     protected function shouldSkipFindByIdentifier($identifier)
     {
-        return $this->getBooleanDecisionBySignal('shouldSkipFindByIdentifier', ['identifier' => $identifier]);
+        return $this->should('shouldSkipFindByIdentifier', ['identifier' => $identifier]);
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
      * @param string $propertyName
      * @param mixed $propertyValue
@@ -1906,22 +1901,22 @@ class CommonRepository extends BaseRepository
     protected function shouldSkipFindByProperty($propertyName, $propertyValue)
     {
         $arguments = ['propertyName' => $propertyName, 'propertyValue' => $propertyValue];
-        return $this->getBooleanDecisionBySignal('shouldSkipFindByProperty', $arguments);
+        return $this->should('shouldSkipFindByProperty', $arguments);
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
      * @param RecordInterface $record
      * @return bool
      */
     protected function shouldSkipSearchingForRelatedRecords(RecordInterface $record)
     {
-        return $this->getBooleanDecisionBySignal('shouldSkipSearchingForRelatedRecords', ['record' => $record]);
+        return $this->should('shouldSkipSearchingForRelatedRecords', ['record' => $record]);
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
      * @param RecordInterface $record
      * @param string $propertyName
@@ -1938,22 +1933,22 @@ class CommonRepository extends BaseRepository
             'propertyName' => $propertyName,
             'columnConfiguration' => $columnConfiguration,
         ];
-        return $this->getBooleanDecisionBySignal('shouldSkipSearchingForRelatedRecordsByProperty', $arguments);
+        return $this->should('shouldSkipSearchingForRelatedRecordsByProperty', $arguments);
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
      * @param RecordInterface $record
      * @return bool
      */
     protected function shouldSkipEnrichingPageRecord(RecordInterface $record)
     {
-        return $this->getBooleanDecisionBySignal('shouldSkipEnrichingPageRecord', ['record' => $record]);
+        return $this->should('shouldSkipEnrichingPageRecord', ['record' => $record]);
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
      * @param RecordInterface $record
      * @param string $tableName
@@ -1961,14 +1956,14 @@ class CommonRepository extends BaseRepository
      */
     protected function shouldSkipSearchingForRelatedRecordByTable(RecordInterface $record, $tableName)
     {
-        return $this->getBooleanDecisionBySignal(
+        return $this->should(
             'shouldSkipSearchingForRelatedRecordByTable',
             ['record' => $record, 'tableName' => $tableName]
         );
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
      * @param RecordInterface $record
      * @param string $tableName
@@ -1976,11 +1971,11 @@ class CommonRepository extends BaseRepository
      */
     protected function shouldSkipRecord(RecordInterface $record, $tableName)
     {
-        return $this->getBooleanDecisionBySignal('shouldSkipRecord', ['record' => $record, 'tableName' => $tableName]);
+        return $this->should('shouldSkipRecord', ['record' => $record, 'tableName' => $tableName]);
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getBooleanDecisionBySignal
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
      * @param array $localProperties
      * @param array $foreignProperties
@@ -1988,7 +1983,7 @@ class CommonRepository extends BaseRepository
      */
     protected function shouldIgnoreRecord(array $localProperties, array $foreignProperties)
     {
-        return $this->getBooleanDecisionBySignal(
+        return $this->should(
             'shouldIgnoreRecord',
             [
                 'localProperties' => $localProperties,
@@ -2012,7 +2007,7 @@ class CommonRepository extends BaseRepository
      * @param array $arguments additional arguments to be passed to the slot
      * @return bool If no vote was received false will be returned
      */
-    protected function getBooleanDecisionBySignal($signal, array $arguments)
+    protected function should($signal, array $arguments)
     {
         $signalArguments = $this->signalSlotDispatcher->dispatch(
             __CLASS__,

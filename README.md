@@ -23,6 +23,12 @@ You can also publish selected page trees to the live server.
 Editing pages can be structured into a multi-step workflow, thus editing, reviewing, and publishing can be separated into distinct roles.
 The modern user interface facilitates intuitive handling without excessive training.
 
+### Questions
+
+If you have questions **please** have a look at the [FAQs](Documentation/FAQ.md) first. If your question is not listed try to find your answer in the documentation.
+You can ask questions (no support!) in the #ext-in2publish Slack channel on typo3.slack.com but there is no warranty.
+If you need support you can [contact in2code](https://www.in2code.de/en/).
+
 ### Technical note
 
 The content publisher basically requires two TYPO3 instances. A staging and a live instance.

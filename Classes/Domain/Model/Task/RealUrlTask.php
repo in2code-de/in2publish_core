@@ -27,8 +27,8 @@ namespace In2code\In2publishCore\Domain\Model\Task;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
@@ -51,15 +51,18 @@ class RealUrlTask extends AbstractTask
 
     /**
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function modifyConfiguration()
     {
         if (!empty($this->configuration['record'])) {
             $record = $this->configuration['record'];
             if ($record instanceof Record) {
+                $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
                 $this->configuration = [
                     'identifier' => $record->getIdentifier(),
-                    'requestFrontend' => ConfigurationUtility::getConfiguration('tasks.realUrl.requestFrontend'),
+                    'requestFrontend' => $configContainer->get('tasks.realUrl.requestFrontend'),
                 ];
             }
         }
@@ -67,7 +70,9 @@ class RealUrlTask extends AbstractTask
 
     /**
      * @return bool
+     *
      * @SuppressWarnings(PHPMD.Superglobals)
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function executeTask()
     {

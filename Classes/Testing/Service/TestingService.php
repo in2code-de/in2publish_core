@@ -50,7 +50,8 @@ class TestingService
 
     /**
      * @return TestResult[]
-     * @throws \Exception
+     *
+     * @throws In2publishCoreException
      */
     public function runAllTests()
     {

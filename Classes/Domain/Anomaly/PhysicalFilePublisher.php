@@ -57,6 +57,8 @@ class PhysicalFilePublisher implements SingletonInterface
 
     /**
      * Constructor
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
@@ -75,7 +77,10 @@ class PhysicalFilePublisher implements SingletonInterface
      * @param Record $record
      *
      * @return null Returns always null, because slot return values (arrays) are remapped and booleans are not allowed
+     *
      * @throws \Exception
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function publishPhysicalFileOfSysFile($table, Record $record)
     {

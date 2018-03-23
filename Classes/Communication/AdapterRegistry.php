@@ -26,14 +26,12 @@ namespace In2code\In2publishCore\Communication;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface as RemoteAdapter;
-use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface
-    as TransmissionAdapter;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface as RceAdapter;
+use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface as TatAdapter;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
-use In2code\In2publishCore\Testing\Data\ConfigurationDefinitionProvider;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Adapter\TransmissionAdapterTest;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -59,11 +57,11 @@ class AdapterRegistry implements SingletonInterface
      */
     protected $adapterMap = [
         'remote' => [
-            'interface' => RemoteAdapter::class,
+            'interface' => RceAdapter::class,
             'tester' => RemoteAdapterTest::class,
         ],
         'transmission' => [
-            'interface' => TransmissionAdapter::class,
+            'interface' => TatAdapter::class,
             'tester' => TransmissionAdapterTest::class,
         ],
     ];
@@ -87,12 +85,13 @@ class AdapterRegistry implements SingletonInterface
      * AdapterRegistry constructor.
      *
      * @SuppressWarnings(PHPMD.Superglobals)
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
-        $this->config = ConfigurationUtility::getConfiguration('adapter');
+        $this->config = GeneralUtility::makeInstance(ConfigContainer::class)->get('adapter');
         if (!isset($GLOBALS['in2publish_core']['tests'])) {
             $GLOBALS['in2publish_core']['tests'] = [];
         }
@@ -103,12 +102,11 @@ class AdapterRegistry implements SingletonInterface
      * @param string $key
      * @param string $adapter
      * @param string $label
-     * @param array $provider
      * @param array $tests
      *
      * @return bool
      */
-    public function registerAdapter($type, $key, $adapter, $label, array $provider = [], array $tests = [])
+    public function registerAdapter($type, $key, $adapter, $label, array $tests = [])
     {
         if (!isset($this->adapterMap[$type])) {
             $this->logger->alert(
@@ -131,13 +129,11 @@ class AdapterRegistry implements SingletonInterface
         $this->adapter[$type][$key] = [
             'class' => $adapter,
             'tests' => $tests,
-            'provider' => $provider,
             'label' => $label,
         ];
 
         if ($key === $this->config[$type]) {
             $this->addTests($tests, $interface);
-            $this->registerProvider($provider);
         }
 
         return true;
@@ -179,41 +175,6 @@ class AdapterRegistry implements SingletonInterface
             }
         }
         throw new In2publishCoreException('Could not determine adapter or type for ' . $interface, 1507906038);
-    }
-
-    /**
-     * @param array $provider
-     */
-    protected function registerProvider(array $provider)
-    {
-        foreach ($provider as $class => $method) {
-            if (!$this->isSlotRegistered($class, $method)) {
-                $this->signalSlotDispatcher->connect(
-                    ConfigurationDefinitionProvider::class,
-                    'overruleDefinition',
-                    $class,
-                    $method,
-                    false
-                );
-            }
-        }
-    }
-
-    /**
-     * @param string $class
-     * @param string $method
-     *
-     * @return bool
-     */
-    protected function isSlotRegistered($class, $method)
-    {
-        $slots = $this->signalSlotDispatcher->getSlots(ConfigurationDefinitionProvider::class, 'overruleDefinition');
-        foreach ($slots as $slot) {
-            if ($slot['class'] === $class && $slot['method'] === $method) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

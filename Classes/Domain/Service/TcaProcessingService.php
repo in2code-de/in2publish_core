@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\Domain\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Service\Processor\AbstractProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\CheckProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\FlexProcessor;
@@ -39,7 +40,6 @@ use In2code\In2publishCore\Domain\Service\Processor\RadioProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\SelectProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\TextProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\UserProcessor;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Log\Logger;
@@ -130,7 +130,7 @@ class TcaProcessingService
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
 
-        $configuredProcessor = ConfigurationUtility::getConfiguration('tca.processor');
+        $configuredProcessor = GeneralUtility::makeInstance(ConfigContainer::class)->get('tca.processor');
         if (is_array($configuredProcessor)) {
             foreach ($configuredProcessor as $type => $class) {
                 if (!class_exists($class)) {

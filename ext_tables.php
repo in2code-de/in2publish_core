@@ -6,16 +6,12 @@ if (!defined('TYPO3_MODE')) {
 call_user_func(
     function () {
         // @codingStandardsIgnoreStart @formatter:off
-
         // abort if not in BE or INSTALL TOOL
         if (TYPO3_MODE !== 'BE' || TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_INSTALL) {
             return;
         }
 
-        if (!class_exists(\Spyc::class)) {
-            require_once(TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('in2publish_core', 'Resources/Private/Libraries/Spyc/Spyc.php'));
-        }
-
+        $configContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Config\ConfigContainer::class);
         $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Service\Context\ContextService::class);
         $pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Page\PageRenderer::class);
         $pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
@@ -23,15 +19,13 @@ call_user_func(
 
 
         /******************************************* initialize logging *******************************************/
-        if (\In2code\In2publishCore\Utility\ConfigurationUtility::isConfigurationLoadedSuccessfully()) {
-            $logConfiguration = \In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('log');
-            $logLevel = \TYPO3\CMS\Core\Utility\MathUtility::forceIntegerInRange($logConfiguration['logLevel'], 0, 7, 5);
+        $logConfiguration = $configContainer->get('log');
+        $logLevel = \TYPO3\CMS\Core\Utility\MathUtility::forceIntegerInRange($logConfiguration['logLevel'], 0, 7, 5);
 
-            $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'] = [
-                'writerConfiguration' => [$logLevel => [\TYPO3\CMS\Core\Log\Writer\DatabaseWriter::class => ['logTable' => 'tx_in2code_in2publish_log']]],
-                'processorConfiguration' => [$logLevel => [\In2code\In2publishCore\Log\Processor\BackendUserProcessor::class => []]],
-            ];
-        }
+        $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'] = [
+            'writerConfiguration' => [$logLevel => [\TYPO3\CMS\Core\Log\Writer\DatabaseWriter::class => ['logTable' => 'tx_in2code_in2publish_log']]],
+            'processorConfiguration' => [$logLevel => [\In2code\In2publishCore\Log\Processor\BackendUserProcessor::class => []]],
+        ];
 
 
         /*********************************** register basic command controllers ***********************************/
@@ -51,7 +45,7 @@ call_user_func(
         if ($contextService->isLocal()) {
             $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \In2code\In2publishCore\Command\ToolsCommandController::class;
 
-            if (\In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('module.m1')) {
+            if ($configContainer->get('module.m1')) {
                 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
                     'In2code.In2publishCore',
                     'web',
@@ -68,7 +62,7 @@ call_user_func(
                 );
             }
 
-            if (\In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('module.m3')) {
+            if ($configContainer->get('module.m3')) {
                 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
                     'In2code.In2publishCore',
                     'file',
@@ -87,7 +81,7 @@ call_user_func(
 
 
             /********************************** register tools for the tools mod **********************************/
-            if (\In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('module.m4') !== false) {
+            if ($configContainer->get('module.m4') !== false) {
                 $letterbox = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox::class);
 
                 $toolsRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Tools\ToolsRegistry::class);
@@ -118,7 +112,7 @@ call_user_func(
             $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveAfterPublishing', \In2code\In2publishCore\Domain\Anomaly\RefindexUpdater::class, 'registerRefindexUpdate', false);
             $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveEnd', \In2code\In2publishCore\Domain\Anomaly\RefindexUpdater::class, 'writeRefindexUpdateTask', false);
             $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveEnd', \In2code\In2publishCore\Domain\Anomaly\CacheInvalidator::class, 'writeClearCacheTask', false);
-            if (!\In2code\In2publishCore\Utility\ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
+            if (!$configContainer->get('factory.fal.reserveSysFileUids')) {
                 $indexPostProcessor = \In2code\In2publishCore\Domain\PostProcessing\FalIndexPostProcessor::class;
             } else {
                 $indexPostProcessor = \In2code\In2publishCore\Domain\PostProcessing\FileIndexPostProcessor::class;
@@ -129,7 +123,6 @@ call_user_func(
 
             /***************************************** Tests Registration *****************************************/
             $GLOBALS['in2publish_core']['tests'] = [
-                \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationIsAvailableTest::class,
                 \In2code\In2publishCore\Testing\Tests\Adapter\AdapterSelectionTest::class,
                 \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest::class,
                 \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest::class,
@@ -156,9 +149,7 @@ call_user_func(
                 'ssh',
                 \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter::class,
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.remote.ssh',
-                [\In2code\In2publishCore\Testing\Data\SshConnectionConfigurationDefinitionProvider::class => 'overruleDefinition'],
                 [
-                    \In2code\In2publishCore\Testing\Tests\SshConnection\SshKeyFilesExistTest::class,
                     \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
                     \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
                 ]
@@ -168,9 +159,7 @@ call_user_func(
                 'ssh',
                 \In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::class,
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.transmission.ssh',
-                [\In2code\In2publishCore\Testing\Data\SshConnectionConfigurationDefinitionProvider::class => 'overruleDefinition'],
                 [
-                    \In2code\In2publishCore\Testing\Tests\SshConnection\SshKeyFilesExistTest::class,
                     \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
                     \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
                     \In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest::class,

@@ -74,6 +74,8 @@ class CacheInvalidator implements SingletonInterface
 
     /**
      * Constructor
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
@@ -146,7 +148,10 @@ class CacheInvalidator implements SingletonInterface
      *
      * @param string $tableName
      * @param Record $record
+     *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function flushPageCacheByClearCacheCommand($tableName, Record $record)
     {

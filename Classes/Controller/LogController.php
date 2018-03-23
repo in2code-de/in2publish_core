@@ -54,6 +54,7 @@ class LogController extends \VerteXVaaR\Logs\Controller\LogController
 
     /**
      * @SuppressWarnings(PHPMD.Superglobals)
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function initializeAction()
     {
@@ -69,17 +70,17 @@ class LogController extends \VerteXVaaR\Logs\Controller\LogController
     }
 
     /**
-     * @param array $extbaseFrameworkConfiguration
+     * @param array $extbaseConfig
      * @param string $setting
      *
      * @return array
      */
-    protected function getViewProperty($extbaseFrameworkConfiguration, $setting)
+    protected function getViewProperty($extbaseConfig, $setting)
     {
         if (isset($this->txLogsViewConfig[$setting])) {
             ksort($this->txLogsViewConfig[$setting]);
             return array_reverse($this->txLogsViewConfig[$setting]);
         }
-        return parent::getViewProperty($extbaseFrameworkConfiguration, $setting);
+        return parent::getViewProperty($extbaseConfig, $setting);
     }
 }

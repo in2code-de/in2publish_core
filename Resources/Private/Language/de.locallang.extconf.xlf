@@ -19,6 +19,20 @@
 					3) Extension (EXT:in2publish_conf/Resources/Private/Config/)
 				</target>
 			</trans-unit>
+			<trans-unit id="disable_user_config">
+				<source>
+					Disable UserTS configuration.:
+					Parts of the Content Publisher configurations can be overwritten individually on a per user basis.
+					This is done by setting values per UserTS.
+					If you tick this box the UserTS for the Content Publisher will be ignored.
+				</source>
+				<target state="translated">
+					UserTS-Konfiguration deaktivieren.:
+					Teile der Konfiguration des Content Publisher können für einzelne Benutzer individuell überschrieben werden.
+					Die Konfiguration wird per UserTS definiert.
+					Wenn diese Checkbox angehakt ist wird das UserTS aller Benutzer für den Content Publisher ignoriert.
+				</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

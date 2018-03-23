@@ -26,7 +26,8 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Utility\ConfigurationUtility;
+use In2code\In2publishCore\Config\ConfigContainer;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Wrapper for a callable command (commands are the string after "./typo3/cli_dispatch.phpsh").
@@ -82,10 +83,11 @@ class RemoteCommandRequest
      */
     public function __construct($command = '', array $arguments = [], array $options = [])
     {
-        $this->pathToPhp = ConfigurationUtility::getConfiguration('foreign.pathToPhp');
-        $this->workingDirectory = ConfigurationUtility::getConfiguration('foreign.rootPath');
+        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+        $this->pathToPhp = $configContainer->get('foreign.pathToPhp');
+        $this->workingDirectory = $configContainer->get('foreign.rootPath');
         $this->environmentVariables = [
-            'TYPO3_CONTEXT' => ConfigurationUtility::getConfiguration('foreign.context'),
+            'TYPO3_CONTEXT' => $configContainer->get('foreign.context'),
             'IN2PUBLISH_CONTEXT' => 'Foreign',
         ];
         $this->dispatcher = './typo3/cli_dispatch.phpsh extbase';

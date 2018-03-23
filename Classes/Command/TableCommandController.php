@@ -61,6 +61,8 @@ class TableCommandController extends AbstractCommandController
 
     /**
      * @throws \Exception
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
@@ -80,6 +82,8 @@ class TableCommandController extends AbstractCommandController
      * @param string $tableName
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function publishCommand($tableName)
     {
@@ -125,6 +129,8 @@ class TableCommandController extends AbstractCommandController
      * @return void
      *
      * @throws \Exception
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function importCommand($tableName)
     {
@@ -201,6 +207,8 @@ class TableCommandController extends AbstractCommandController
      * @return void
      *
      * @throws \Exception
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function backupCommand($tableName)
     {

@@ -40,7 +40,10 @@ class PreviewAnyRecordViewHelper extends AbstractViewHelper
      *
      * @param int $identifier
      * @param string $tableName
+     *
      * @return false|string false if not configuration found, otherwise URI
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function render($identifier, $tableName)
     {
@@ -59,7 +62,10 @@ class PreviewAnyRecordViewHelper extends AbstractViewHelper
      * Check if there is a Page TSConfig in TCEMAIN.preview for given Tablename
      *
      * @param string $tableName
+     *
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function isPreviewTsConfigExisting($tableName)
     {

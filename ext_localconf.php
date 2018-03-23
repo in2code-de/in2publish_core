@@ -1,25 +1,41 @@
 <?php
+if (!defined('TYPO3_MODE')) {
+    die('Access denied.');
+}
 
 call_user_func(
     function () {
-        // Manually load Spy YAML parser
-        if (!class_exists(\Spyc::class)) {
-            $file = TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath(
-                'in2publish_core',
-                'Resources/Private/Libraries/Spyc/Spyc.php'
-            );
-            require_once($file);
+        // @codingStandardsIgnoreStart @formatter:off
+        $extConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core']);
+
+        /************************************************ Cache Config ************************************************/
+        if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'])) {
+            $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'] = [];
         }
 
-        // Enable caching
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'] = [];
 
-        // register preview plugin
+        /************************************** Register Config Provider/Definer **************************************/
+        $configContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Config\ConfigContainer::class);
+
+        $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\In2publishCoreDefiner::class);
+        $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\SshConnectionDefiner::class);
+
+        $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\DefaultProvider::class);
+        $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\FileProvider::class);
+        $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\PageTsProvider::class);
+        $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\VersionedFileProvider::class);
+        if (!isset($extConf['disableUserConfig']) || true !== (bool)$extConf['disableUserConfig']) {
+            $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\UserTsProvider::class);
+        }
+
+
+        /****************************************** Configure Compare Plugin ******************************************/
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
             'In2code.in2publishCore',
             'Pi1',
             ['Frontend' => 'preview'],
             ['Frontend' => 'preview']
         );
+        // @codingStandardsIgnoreEnd @formatter:on
     }
 );

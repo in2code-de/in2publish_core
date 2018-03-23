@@ -1,10 +1,10 @@
 <?php
-namespace In2code\In2publishCore\Testing\Tests\Configuration;
+namespace In2code\In2publishCore\Config\Definer;
 
 /***************************************************************
  * Copyright notice
  *
- * (c) 2016 in2code.de and the following authors:
+ * (c) 2018 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -26,32 +26,20 @@ namespace In2code\In2publishCore\Testing\Tests\Configuration;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
-use In2code\In2publishCore\Testing\Tests\TestResult;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
+use In2code\In2publishCore\Config\Node\NodeCollection;
 
 /**
- * Class ConfigurationIsAvailableTest
+ * Interface DefinerInterface
  */
-class ConfigurationIsAvailableTest implements TestCaseInterface
+interface DefinerInterface
 {
     /**
-     * @return TestResult
+     * @return NodeCollection
      */
-    public function run()
-    {
-        if (ConfigurationUtility::getLoadingState() === ConfigurationUtility::STATE_LOADED) {
-            return new TestResult('configuration.available');
-        } else {
-            return new TestResult('configuration.not_available', TestResult::ERROR);
-        }
-    }
+    public function getLocalDefinition();
 
     /**
-     * @return array
+     * @return NodeCollection
      */
-    public function getDependencies()
-    {
-        return [];
-    }
+    public function getForeignDefinition();
 }

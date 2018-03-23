@@ -27,11 +27,12 @@ namespace In2code\In2publishCore\Domain\Anomaly;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\Task\RealUrlTask;
 use In2code\In2publishCore\Domain\Model\Task\RealUrlUpdateTask;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
+use In2code\In2publishCore\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -69,15 +70,18 @@ class RealUrlCacheInvalidator
 
     /**
      * Constructor
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->enabled = ExtensionManagementUtility::isLoaded('realurl');
         if ($this->enabled) {
-            $realUrlVersion = ExtensionManagementUtility::getExtensionVersion('realurl');
+            $realUrlVersion = ExtensionUtility::getExtensionVersion('realurl');
             $this->updateData = version_compare($realUrlVersion, '2.1.0') >= 0;
-            $this->excludedDokTypes = (array)ConfigurationUtility::getConfiguration('tasks.realUrl.excludedDokTypes');
+            $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+            $this->excludedDokTypes = $configContainer->get('tasks.realUrl.excludedDokTypes');
             $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
         } else {
             $this->logger->debug('RealUrl is not installed, skipping RealUrlCacheInvalidator');

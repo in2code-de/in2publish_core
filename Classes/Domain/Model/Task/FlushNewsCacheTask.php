@@ -48,6 +48,8 @@ class FlushNewsCacheTask extends AbstractTask
      * Deletes all pages and news caches the same way they will be deleted on local
      *
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function executeTask()
     {

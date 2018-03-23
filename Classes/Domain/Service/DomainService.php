@@ -27,11 +27,12 @@ namespace In2code\In2publishCore\Domain\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Reflection\Exception\PropertyNotAccessibleException;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
 /**
@@ -51,6 +52,22 @@ class DomainService
      * @param bool $addProtocol
      * @return string
      */
+    private $configContainer;
+
+    /**
+     * DomainService constructor.
+     */
+    public function __construct()
+    {
+        $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+    }
+
+    /**
+     * @param RecordInterface $record
+     * @param string $stagingLevel
+     * @param bool $addProtocol
+     * @return mixed|string
+     */
     public function getFirstDomain(RecordInterface $record, $stagingLevel = self::LEVEL_LOCAL, $addProtocol = true)
     {
         switch ($record->getTableName()) {
@@ -62,7 +79,7 @@ class DomainService
                 break;
 
             case 'sys_file':
-                $domainName = ConfigurationUtility::getConfiguration('filePreviewDomainName.' . $stagingLevel);
+                $domainName = $this->configContainer->get('filePreviewDomainName.' . $stagingLevel);
                 break;
 
             default:
@@ -104,7 +121,10 @@ class DomainService
     /**
      * @param int $identifier UID of a pages record
      * @param string $stagingLevel
+     *
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function getDomainFromPageIdentifier($identifier, $stagingLevel)
     {

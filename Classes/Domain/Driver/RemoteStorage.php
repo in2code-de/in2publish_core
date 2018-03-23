@@ -57,6 +57,8 @@ class RemoteStorage implements ResourceStorageInterface
 
     /**
      * RemoteStorage constructor.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
@@ -141,8 +143,12 @@ class RemoteStorage implements ResourceStorageInterface
     /**
      * @param string $command
      * @param array $arguments
+     *
      * @return mixed
+     *
      * @throws \Exception
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function executeEnvelope($command, array $arguments = [])
     {

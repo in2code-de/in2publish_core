@@ -33,10 +33,9 @@ use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
+use In2code\In2publishCore\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
  * Class ForeignInstanceTest
@@ -46,23 +45,24 @@ class ForeignInstanceTest implements TestCaseInterface
     /**
      * @var RemoteCommandDispatcher
      */
-    protected $remoteCommandDispatcher = null;
+    protected $rceDispatcher = null;
 
     /**
      * ForeignInstanceTest constructor.
      */
     public function __construct()
     {
-        $this->remoteCommandDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
+        $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
     }
 
     /**
      * @return TestResult
+     * @throws \TYPO3\CMS\Core\Package\Exception
      */
     public function run()
     {
         $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, StatusCommandController::ALL_COMMAND);
-        $response = $this->remoteCommandDispatcher->dispatch($request);
+        $response = $this->rceDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {
             if (false !== strpos($response->getOutputString(), '_cli_lowlevel')) {
@@ -86,7 +86,7 @@ class ForeignInstanceTest implements TestCaseInterface
 
         $foreign = $this->tokenizeResponse($response->getOutput());
 
-        $localVersion = ExtensionManagementUtility::getExtensionVersion('in2publish_core');
+        $localVersion = ExtensionUtility::getExtensionVersion('in2publish_core');
         if (!isset($foreign['Version'])) {
             return new TestResult(
                 'application.foreign_version_not_detectable',
@@ -102,17 +102,6 @@ class ForeignInstanceTest implements TestCaseInterface
                 'application.foreign_version_differs',
                 TestResult::ERROR,
                 ['application.local_version', $localVersion, 'application.foreign_version', $foreign['Version']]
-            );
-        }
-
-        if ($foreign['ConfigurationState'] !== ConfigurationUtility::STATE_LOADED) {
-            return new TestResult(
-                'application.foreign_configuration_not_loaded',
-                TestResult::ERROR,
-                [
-                    'application.foreign_configuration_loading_state',
-                    LocalizationUtility::translate($foreign['ConfigurationState'], 'in2publish_core'),
-                ]
             );
         }
 

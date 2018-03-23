@@ -31,9 +31,11 @@ use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use ReflectionException;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Reflection\Exception;
 use TYPO3\CMS\Extbase\Reflection\PropertyReflection;
 
 /**
@@ -56,6 +58,8 @@ class UniqueStorageTargetTest implements TestCaseInterface
 
     /**
      * @return TestResult
+     * @throws ReflectionException
+     * @throws Exception
      */
     public function run()
     {

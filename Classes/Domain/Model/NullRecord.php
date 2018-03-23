@@ -56,7 +56,7 @@ class NullRecord extends Record
         if (empty($tca)) {
             $tca = TcaProcessingService::getCompleteTcaForTable($tableName);
         }
-        $this->tableConfigurationArray = $tca;
+        $this->tca = $tca;
         $this->dirtyProperties = [];
         $this->state = RecordInterface::RECORD_STATE_UNCHANGED;
     }

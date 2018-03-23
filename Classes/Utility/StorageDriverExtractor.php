@@ -39,6 +39,7 @@ class StorageDriverExtractor
     /**
      * @param ResourceStorage $localStorage
      * @return DriverInterface
+     * @throws \ReflectionException
      */
     public static function getLocalDriver(ResourceStorage $localStorage)
     {

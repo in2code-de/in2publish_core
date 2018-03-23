@@ -34,9 +34,12 @@ use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
+use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
+use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
+use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
@@ -49,13 +52,11 @@ class FileController extends AbstractController
     const EXCEPTION_MESSAGE_PATTERN = '~The folder "(?P<folder>[^"]+)" has too many files(?: \((?P<number>\d+)\))?~';
 
     /**
-     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function indexAction()
     {
-        $this->assignServerAndPublishingStatus();
-
-        $record = $this->tryToGetFolderInstance(GeneralUtility::_GP('id'));
+        $record = $this->tryToGetFolderInstance($this->pid);
 
         if (null !== $record) {
             $this->view->assign('record', $record);
@@ -63,27 +64,9 @@ class FileController extends AbstractController
     }
 
     /**
-     * @param \Exception $exception
-     */
-    protected function displayTooManyFilesError(\Exception $exception)
-    {
-        if (1 === preg_match(static::EXCEPTION_MESSAGE_PATTERN, $exception->getMessage(), $matches)) {
-            // Do not remove the space at the end of ') ', because it can't
-            // be included dynamically in the label where this value is used!
-            $arguments = [$matches['folder'], '(' . $matches['number'] . ') '];
-        } else {
-            $arguments = [GeneralUtility::_GP('id'), ''];
-        }
-
-        $this->addFlashMessage(
-            LocalizationUtility::translate('file_publishing.too_many_files', 'in2publish_core', $arguments),
-            LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
-            AbstractMessage::WARNING
-        );
-    }
-
-    /**
      * @param string $identifier
+     *
+     * @throws StopActionException
      */
     public function publishFolderAction($identifier)
     {
@@ -102,13 +85,18 @@ class FileController extends AbstractController
             );
         }
 
-        $this->redirect('index');
+        try {
+            $this->redirect('index');
+        } catch (UnsupportedRequestTypeException $e) {
+        }
     }
 
     /**
      * @param int $uid
      * @param string $identifier
      * @param int $storage
+     *
+     * @throws StopActionException
      */
     public function publishFileAction($uid, $identifier, $storage)
     {
@@ -134,22 +122,34 @@ class FileController extends AbstractController
                 throw new \RuntimeException('Did not find an exact record match for the given arguments', 1475588793);
             }
 
-            CommonRepository::getDefaultInstance('sys_file')->publishRecordRecursive($relatedRecord);
-
-            $this->addFlashMessage(
-                LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
-                LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
-            );
+            try {
+                CommonRepository::getDefaultInstance('sys_file')->publishRecordRecursive($relatedRecord);
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
+                    LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
+                );
+            } catch (\Exception $e) {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('file_publishing.failure.file', 'in2publish_core', [$identifier]),
+                    LocalizationUtility::translate('file_publishing.failure', 'in2publish_core')
+                );
+            }
         }
 
-        $this->redirect('index');
+        try {
+            $this->redirect('index');
+        } catch (UnsupportedRequestTypeException $e) {
+        }
     }
 
     /**
      * toggle filter status and save the filter status in the current backendUser's session.
      *
      * @param string $filter "changed", "added", "deleted"
+     *
      * @return void
+     *
+     * @throws StopActionException
      */
     public function toggleFilterStatusAndRedirectToIndexAction($filter)
     {
@@ -163,16 +163,20 @@ class FileController extends AbstractController
     protected function tryToGetFolderInstance($identifier)
     {
         try {
-            if (false === ConfigurationUtility::getConfiguration('factory.fal.reserveSysFileUids')) {
+            if (false === $this->configContainer->get('factory.fal.reserveSysFileUids')) {
                 $record = GeneralUtility::makeInstance(IndexingFolderRecordFactory::class)->makeInstance($identifier);
             } else {
                 $record = GeneralUtility::makeInstance(FolderRecordFactory::class)->makeInstance($identifier);
             }
-            $this->signalSlotDispatcher->dispatch(
-                FileController::class,
-                'folderInstanceCreated',
-                [$record]
-            );
+            try {
+                $this->signalSlotDispatcher->dispatch(
+                    FileController::class,
+                    'folderInstanceCreated',
+                    [$record]
+                );
+            } catch (InvalidSlotException $e) {
+            } catch (InvalidSlotReturnException $e) {
+            }
             return $record;
         } catch (TooManyLocalFilesException $exception) {
             $this->displayTooManyFilesError($exception);
@@ -180,5 +184,25 @@ class FileController extends AbstractController
             $this->displayTooManyFilesError($exception);
         }
         return null;
+    }
+
+    /**
+     * @param \Exception $exception
+     */
+    protected function displayTooManyFilesError(\Exception $exception)
+    {
+        if (1 === preg_match(static::EXCEPTION_MESSAGE_PATTERN, $exception->getMessage(), $matches)) {
+            // Do not remove the space at the end of ') ', because it can't
+            // be included dynamically in the label where this value is used!
+            $arguments = [$matches['folder'], '(' . $matches['number'] . ') '];
+        } else {
+            $arguments = [GeneralUtility::_GP('id'), ''];
+        }
+
+        $this->addFlashMessage(
+            LocalizationUtility::translate('file_publishing.too_many_files', 'in2publish_core', $arguments),
+            LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
+            AbstractMessage::WARNING
+        );
     }
 }

@@ -58,7 +58,7 @@ class RealUrlUpdateTask extends AbstractTask
     }
 
     /**
-     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function executeTask()
     {

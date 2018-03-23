@@ -27,12 +27,12 @@ namespace In2code\In2publishCore\Domain\Factory;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Service\Configuration\TcaService;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -135,6 +135,8 @@ class RecordFactory
 
     /**
      * Creates the logger and sets any required configuration
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
@@ -142,14 +144,14 @@ class RecordFactory
         $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
         $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
 
-        $this->config = ConfigurationUtility::getConfiguration('factory');
+        $this->config = GeneralUtility::makeInstance(ConfigContainer::class)->get('factory');
 
         $this->config['maximumOverallRecursion'] = max(
             $this->config['maximumOverallRecursion'],
             $this->config['maximumPageRecursion'] + $this->config['maximumContentRecursion']
         );
 
-        $this->excludedTableNames = ConfigurationUtility::getConfiguration('excludeRelatedTables');
+        $this->excludedTableNames = GeneralUtility::makeInstance(ConfigContainer::class)->get('excludeRelatedTables');
     }
 
     /**

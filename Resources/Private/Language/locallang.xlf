@@ -64,6 +64,9 @@
 			<trans-unit id="record_published">
 				<source>The selected record has been published successfully.</source>
 			</trans-unit>
+			<trans-unit id="publish_failed">
+				<source>The selected record has been published successfully.</source>
+			</trans-unit>
 			<trans-unit id="folder_created">
 				<source>The selected folder has been created successfully.</source>
 			</trans-unit>
@@ -129,25 +132,6 @@
 			</trans-unit>
 			<trans-unit id="related_records">
 				<source>Related Records</source>
-			</trans-unit>
-
-			<trans-unit id="configuration.loaded">
-				<source>The Configuration was loaded successfully.</source>
-			</trans-unit>
-			<trans-unit id="configuration.not_loaded">
-				<source>The Configuration was not loaded yet.</source>
-			</trans-unit>
-			<trans-unit id="configuration.ext_conf_not_available">
-				<source>in2publish extension configuration is not available. Please configure in2publish in the Extension Manager.</source>
-			</trans-unit>
-			<trans-unit id="configuration.configuration_file_missing">
-				<source>The configuration file path of in2publish is wrong, because no matching configuration file was found.</source>
-			</trans-unit>
-			<trans-unit id="configuration.configuration_file_not_readable">
-				<source>The given configuration file is not readable. Please check file permissions.</source>
-			</trans-unit>
-			<trans-unit id="configuration.configuration_path_not_existing">
-				<source>The given configuration path does not exist.</source>
 			</trans-unit>
 
 			<trans-unit id="moduleselector.index">
@@ -223,6 +207,12 @@
 			</trans-unit>
 			<trans-unit id="module.m4.configuration">
 				<source>Configuration</source>
+			</trans-unit>
+			<trans-unit id="module.m4.global_config">
+				<source>Global Configuration</source>
+			</trans-unit>
+			<trans-unit id="module.m4.personal_config">
+				<source>Personal Config</source>
 			</trans-unit>
 			<trans-unit id="module.m4.overview">
 				<source>Overview</source>

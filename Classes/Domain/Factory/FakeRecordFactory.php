@@ -27,12 +27,12 @@ namespace In2code\In2publishCore\Domain\Factory;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\TableCacheRepository;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\ArrayUtility;
-use In2code\In2publishCore\Utility\ConfigurationUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -67,7 +67,7 @@ class FakeRecordFactory
     /**
      * @var array
      */
-    protected $sysFileMetaDataBlackList = [];
+    protected $metaDataBlackList = [];
 
     /**
      * @var array
@@ -76,6 +76,8 @@ class FakeRecordFactory
 
     /**
      * FakeRepository constructor.
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
@@ -83,7 +85,7 @@ class FakeRecordFactory
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->tableCacheRepository = GeneralUtility::makeInstance(TableCacheRepository::class);
         $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
-        $this->config = ConfigurationUtility::getConfiguration();
+        $this->config = GeneralUtility::makeInstance(ConfigContainer::class)->get();
     }
 
     /**
@@ -122,7 +124,10 @@ class FakeRecordFactory
 
     /**
      * @param int $identifier page identifier
+     *
      * @return Record
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function getSingleFakeRecordFromPageIdentifier($identifier)
     {
@@ -318,13 +323,13 @@ class FakeRecordFactory
         if ('sys_file' === $table) {
             foreach ($arrayLocal as $index => $localSysFile) {
                 if (0 === strpos($localSysFile['identifier'], '/typo3conf/ext/') && !isset($arrayForeign[$index])) {
-                    $this->sysFileMetaDataBlackList[$index] = $index;
+                    $this->metaDataBlackList[$index] = $index;
                     unset($arrayLocal[$index]);
                 }
             }
         } elseif ('sys_file_metadata' === $table) {
             foreach ($arrayLocal as $index => $localSysFileMeta) {
-                if (isset($this->sysFileMetaDataBlackList[$localSysFileMeta['file']])) {
+                if (isset($this->metaDataBlackList[$localSysFileMeta['file']])) {
                     unset($arrayLocal[$index]);
                 }
             }

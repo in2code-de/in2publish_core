@@ -84,6 +84,8 @@ class TestingHelper
 
     /**
      * @param string|null $value
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public static function setApplicationContext($value)
     {
