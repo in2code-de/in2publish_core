@@ -29,10 +29,9 @@ namespace In2code\In2publishCore\Domain\Anomaly;
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\Task\FlushFrontendPageCacheTask;
-use In2code\In2publishCore\Domain\Model\Task\FlushNewsCacheTask;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -43,7 +42,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class CacheInvalidator implements SingletonInterface
 {
     /**
-     * @var Logger
+     * @var LoggerInterface
      */
     protected $logger = null;
 
@@ -61,16 +60,6 @@ class CacheInvalidator implements SingletonInterface
      * @var array
      */
     protected $clearCacheCommands = [];
-
-    /**
-     * @var array
-     */
-    protected $newsCacheUidsArray = [];
-
-    /**
-     * @var array
-     */
-    protected $newsCachePidsArray = [];
 
     /**
      * Constructor
@@ -92,7 +81,6 @@ class CacheInvalidator implements SingletonInterface
     {
         $this->flushPageCache($tableName, $record);
         $this->flushPageCacheByClearCacheCommand($tableName, $record);
-        $this->flushNewsCache($tableName, $record);
     }
 
     /**
@@ -112,16 +100,6 @@ class CacheInvalidator implements SingletonInterface
                 ['pid' => implode(',', $this->clearCacheCommands)]
             );
             $this->taskRepository->add($clearCacheCommands);
-        }
-
-        if (!empty($this->newsCachePidsArray)) {
-            $flushNewsCacheTask = new FlushNewsCacheTask(['tagsToFlush' => $this->newsCachePidsArray]);
-            $this->taskRepository->add($flushNewsCacheTask);
-        }
-
-        if (!empty($this->newsCacheUidsArray)) {
-            $flushNewsCacheTask = new FlushNewsCacheTask(['tagsToFlush' => $this->newsCacheUidsArray]);
-            $this->taskRepository->add($flushNewsCacheTask);
         }
     }
 
@@ -167,27 +145,6 @@ class CacheInvalidator implements SingletonInterface
                     $clearCacheCommand = false;
                 }
                 $this->clearCacheCommands[$pid] = $clearCacheCommand;
-            }
-        }
-    }
-
-    /**
-     * Flush cache especially for tx_news
-     *
-     * @param string $tableName
-     * @param Record $record
-     * @return void
-     */
-    protected function flushNewsCache($tableName, Record $record)
-    {
-        if ($tableName === 'tx_news_domain_model_news' && $record->localRecordExists()) {
-            $uid = $record->getLocalProperty('uid');
-            if (!isset($this->newsCacheUidsArray[$uid])) {
-                $this->newsCacheUidsArray[$uid] = 'tx_news_uid_' . $uid;
-            }
-            $pid = $record->getLocalProperty('pid');
-            if (!isset($this->newsCachePidsArray[$pid])) {
-                $this->newsCachePidsArray[$pid] = 'tx_news_pid_' . $pid;
             }
         }
     }

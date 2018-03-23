@@ -125,6 +125,10 @@ call_user_func(
             $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Factory\RecordFactory::class, 'instanceCreated', $indexPostProcessor, 'registerInstance', false);
             $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Factory\RecordFactory::class, 'rootRecordFinished', $indexPostProcessor, 'postProcess', false);
 
+            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
+                $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveBeforePublishing', \In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly\NewsCacheInvalidator::class, 'registerClearCacheTasks', false);
+                $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveEnd', \In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly\NewsCacheInvalidator::class, 'writeClearCacheTask', false);
+            }
 
             /***************************************** Tests Registration *****************************************/
             $GLOBALS['in2publish_core']['tests'] = [

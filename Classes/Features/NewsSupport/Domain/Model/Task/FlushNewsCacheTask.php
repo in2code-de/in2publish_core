@@ -1,5 +1,5 @@
 <?php
-namespace In2code\In2publishCore\Domain\Model\Task;
+namespace In2code\In2publishCore\Features\NewsSupport\Domain\Model\Task;
 
 /***************************************************************
  *  Copyright notice
@@ -27,7 +27,9 @@ namespace In2code\In2publishCore\Domain\Model\Task;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -48,6 +50,8 @@ class FlushNewsCacheTask extends AbstractTask
      * Deletes all pages and news caches the same way they will be deleted on local
      *
      * @return bool
+     *
+     * @throws NoSuchCacheException
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
