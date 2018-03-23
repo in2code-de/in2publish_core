@@ -121,7 +121,6 @@ class RecordController extends AbstractController
         }
 
         $this->view->assign('record', $record);
-        $this->view->assign('configuration', $this->configContainer->get());
     }
 
     /**

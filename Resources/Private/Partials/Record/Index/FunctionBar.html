@@ -4,7 +4,7 @@
 		<f:comment>
 			Filter buttons
 		</f:comment>
-		<f:if condition="{publish:Miscellaneous.GetConfiguration(configurationPath:'view.records.filterButtons')}">
+		<f:if condition="{config.view.records.filterButtons}">
 			<div class="in2publish-functions-bar__filter">
 				<f:link.action
 					action="toggleFilterStatusAndRedirectToIndex"

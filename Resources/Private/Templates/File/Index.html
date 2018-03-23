@@ -18,7 +18,7 @@ Index
 				<ul class="in2publish-unstyledlist in2publish-list-level in2publish-list-level--{record.additionalProperties.depth}">
 					<f:for each="{record.relatedRecords.sys_file}" as="fileRecord">
 						<li>
-							<f:render partial="File/Index/FileList" arguments="{record:fileRecord, configuration:configuration}" />
+							<f:render partial="File/Index/FileList" arguments="{record:fileRecord, config:config}" />
 						</li>
 					</f:for>
 				</ul>

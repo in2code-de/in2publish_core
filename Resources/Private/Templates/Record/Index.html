@@ -9,7 +9,7 @@
 
 		<div class="in2publish-main">
 			<f:render partial="Server" arguments="{_all}" />
-			<div class="in2publish-stagelisting{f:if(condition:configuration.factory.simpleOverviewAndAjax,then:' simpleOverviewAndAjax')}">
+			<div class="in2publish-stagelisting{f:if(condition:config.factory.simpleOverviewAndAjax,then:' simpleOverviewAndAjax')}">
 				<f:render partial="Record/Index/PageList" arguments="{_all}" />
 			</div>
 		</div>

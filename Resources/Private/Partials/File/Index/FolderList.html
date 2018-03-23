@@ -6,7 +6,7 @@
 		<f:comment>Left</f:comment>
 		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--left">
 			<i class="in2publish-icon-folder"></i>
-			<f:if condition="{configuration.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
+			<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" fallbackProperty="identifier" />
 			<f:if condition="{record.changed}">
 				<f:link.action
@@ -29,7 +29,7 @@
 		<ul class="in2publish-unstyledlist in2publish-list-level in2publish-list-level--{record.additionalProperties.depth}">
 			<f:for each="{record.relatedRecords.physical_folder}" as="folderRecord">
 				<li>
-					<f:render partial="File/Index/FolderList" arguments="{record:folderRecord, configuration:configuration}" />
+					<f:render partial="File/Index/FolderList" arguments="{record:folderRecord, config:config}" />
 				</li>
 			</f:for>
 		</ul>

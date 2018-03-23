@@ -7,7 +7,7 @@
 		</f:comment>
 		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--left">
 			<i class="in2publish-icon-folder" title="{f:translate(key:'record.state.{record.stateRecursive}',default:record.stateRecursive)}"></i>
-			<f:if condition="{configuration.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
+			<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="title" stagingLevel="local" />
 			<i class="in2publish-icon-info" {publish:Attribute.DirtyPropertiesIconDataAttributes(record:record)}></i>
 			<f:if condition="{record.changedRecursive}">
@@ -31,9 +31,16 @@
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="title" stagingLevel="foreign" />
 		</div>
 
-		<f:if condition="{configuration.factory.simpleOverviewAndAjax}">
+		<f:if condition="{config.factory.simpleOverviewAndAjax}">
+			<f:then>
+				<div class="simpleOverviewAndAjaxContainerForRecord{record.tableName}{record.identifier}">
+					<f:comment>
+						Container for AJAX request results: Difference View
+					</f:comment>
+				</div>
+			</f:then>
 			<f:else>
-				<f:if condition="{publish:miscellaneous.getConfiguration(configurationPath:'debug.allInformation')}">
+				<f:if condition="{config.debug.allInformation}">
 					<f:then>
 						<f:comment>Difference View</f:comment>
 						<f:render partial="Record/Index/AllPropertiesList" arguments="{_all}" />
@@ -44,13 +51,6 @@
 					</f:else>
 				</f:if>
 			</f:else>
-			<f:then>
-				<div class="simpleOverviewAndAjaxContainerForRecord{record.tableName}{record.identifier}">
-					<f:comment>
-						Container for AJAX request results: Difference View
-					</f:comment>
-				</div>
-			</f:then>
 		</f:if>
 	</div>
 
@@ -58,7 +58,7 @@
 		<ul class="in2publish-unstyledlist in2publish-list-level in2publish-list-level--{record.additionalProperties.depth}">
 			<f:for each="{record.relatedRecords.pages}" as="pageRecord">
 				<li>
-					<f:render partial="Record/Index/PageList" arguments="{record:pageRecord, configuration:configuration}" />
+					<f:render partial="Record/Index/PageList" arguments="{record:pageRecord, config:config}" />
 				</li>
 			</f:for>
 		</ul>

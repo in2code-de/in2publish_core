@@ -1,6 +1,6 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
 
-<div class="in2publish-footer" data-information-version="{extensionVersion}" data-information-previewdomain="{publish:Miscellaneous.GetConfiguration(configurationPath:'filePreviewDomainName.foreign')}">
+<div class="in2publish-footer" data-information-version="{extensionVersion}" data-information-previewdomain="{config.filePreviewDomainName.foreign}">
 	<f:link.external uri="https://www.in2code.de">
 		<f:image src="{f:uri.resource(path:'Images/in2code_logo.png',extensionName:'In2publishCore')}" alt="in2code - wir leben TYPO3" width="160" height="48" class="in2publish-logo" />
 	</f:link.external>
@@ -11,7 +11,7 @@
 		<div id="versionNoteContainer"></div>
 	</f:if>
 
-	<f:if condition="{publish:Miscellaneous.GetConfiguration(configurationPath:'debug.showExecutionTime')}">
+	<f:if condition="{config.debug.showExecutionTime}">
 		<div>Execution time: {publish:Miscellaneous.ExecutionTime()}</div>
 	</f:if>
 </div>

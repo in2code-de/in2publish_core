@@ -63,7 +63,6 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
     {
         $attributesString = ' data-action-ajax-uri="' . $this->getAjaxUri($record) . '"';
         $attributesString .= ' data-action-ajax-result=".' . $this->getAjaxContainerClassName($record) . '"';
-        $attributesString .= ' data-action-ajax-callback-done="openorclosecontainers"';
         $attributesString .= ' data-action-ajax-once="true" data-action="opendirtypropertieslistcontainer"';
         return $attributesString;
     }

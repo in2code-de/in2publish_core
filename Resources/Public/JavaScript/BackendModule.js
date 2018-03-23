@@ -154,8 +154,6 @@ define([
 				uri = $this.prop('href');
 				e.preventDefault();
 			}
-			var callbackDone = $this.data('action-ajax-callback-done');
-			var callbackStart = $this.data('action-ajax-callback-start');
 			var once = true === $this.data('action-ajax-once');
 			var container = $this.data('action-ajax-result');
 			var filled = false;
@@ -168,11 +166,7 @@ define([
 				$.ajax({
 					url: uri,
 					beforeSend: function() {
-						if (undefined !== callbackStart) {
-							In2publishModule[callbackStart](uri, $container, $this);
-						} else {
-							In2publishModule.showPreloader();
-						}
+						In2publishModule.showPreloader();
 					},
 					complete: function() {
 						In2publishModule.hidePreLoader();
@@ -182,9 +176,12 @@ define([
 							$container.html(data);
 							$container.data('container-filled', true);
 						}
-						if (undefined !== callbackDone) {
-							In2publishModule[callbackDone](uri, $container, $this);
-						}
+						In2publishModule.openOrCloseStageListingDropdownContainer(
+							$container.find('.in2publish-stagelisting__dropdown')
+						);
+						In2publishModule.openOrCloseStageListingMessagesContainer(
+							$container.find('.in2publish-stagelisting__messages')
+						);
 					}
 				});
 			}
