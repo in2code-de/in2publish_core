@@ -26,51 +26,12 @@ namespace In2code\In2publishCore\Utility;
  ***************************************************************/
 
 use TYPO3\CMS\Core\Resource\FolderInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class FolderUtility
  */
 class FolderUtility
 {
-    /**
-     * Get sub folder of current TYPO3 Installation and never return "//"
-     *
-     * @param bool $leadingSlash will be prepended
-     * @param bool $trailingSlash will be appended
-     * @param string $testHost can be used for a test
-     * @param string $testUrl can be used for a test
-     * @return string
-     */
-    public static function getSubFolderOfCurrentUrl(
-        $leadingSlash = true,
-        $trailingSlash = true,
-        $testHost = null,
-        $testUrl = null
-    ) {
-        $subFolder = '';
-        $typo3RequestHost = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
-        if ($testHost) {
-            $typo3RequestHost = $testHost;
-        }
-        $typo3SiteUrl = GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
-        if ($testUrl) {
-            $typo3SiteUrl = $testUrl;
-        }
-
-        // if subFolder
-        if ($typo3RequestHost . '/' !== $typo3SiteUrl) {
-            $subFolder = substr(str_replace($typo3RequestHost . '/', '', $typo3SiteUrl), 0, -1);
-        }
-        if ($trailingSlash && substr($subFolder, 0, -1) !== '/') {
-            $subFolder .= '/';
-        }
-        if ($leadingSlash && $subFolder[0] !== '/') {
-            $subFolder = '/' . $subFolder;
-        }
-        return $subFolder;
-    }
-
     /**
      * @param FolderInterface $folder
      * @return array
