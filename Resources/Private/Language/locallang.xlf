@@ -3,10 +3,6 @@
 	<file source-language="en" datatype="plaintext" original="messages" date="2015-01-20T12:00:00Z" product-name="in2publish_core">
 		<header/>
 		<body>
-			<trans-unit id="submit">
-				<source>Submit</source>
-			</trans-unit>
-
 			<trans-unit id="web_In2publishCoreM1">
 				<source>Publish Overview</source>
 			</trans-unit>
@@ -22,34 +18,6 @@
 			</trans-unit>
 			<trans-unit id="module_m4_title">
 				<source>administration tools</source>
-			</trans-unit>
-
-			<trans-unit id="tx_in2code_in2publish_log.time">
-				<source>Date/Time</source>
-			</trans-unit>
-			<trans-unit id="tx_in2code_in2publish_log.component">
-				<source>Component</source>
-			</trans-unit>
-			<trans-unit id="tx_in2code_in2publish_log.level">
-				<source>Level</source>
-			</trans-unit>
-			<trans-unit id="tx_in2code_in2publish_log.message">
-				<source>Message</source>
-			</trans-unit>
-			<trans-unit id="tx_in2code_in2publish_log.message.publishedPage">
-				<source>Page "%s" was published.</source>
-			</trans-unit>
-			<trans-unit id="tx_in2code_in2publish_log.message.publishedFile">
-				<source>File "%s" was published.</source>
-			</trans-unit>
-			<trans-unit id="tx_in2code_in2publish_log.message.skippedFile">
-				<source>File "%s" was skipped because it does not contain any changes.</source>
-			</trans-unit>
-			<trans-unit id="tx_in2code_in2publish_log.message.deletedFolder">
-				<source>The folder "%s" and all contained files were deleted</source>
-			</trans-unit>
-			<trans-unit id="tx_in2code_in2publish_log.data">
-				<source>Data</source>
 			</trans-unit>
 
 			<trans-unit id="label_stage">
@@ -143,16 +111,10 @@
 			<trans-unit id="moduleselector.configuration.description">
 				<source>Display the local configuration of in2publish from LocalConfiguration.yaml</source>
 			</trans-unit>
-			<trans-unit id="moduleselector.show_logs">
+			<trans-unit id="moduleselector.logs">
 				<source>Show logs</source>
 			</trans-unit>
-			<trans-unit id="moduleselector.show_logs.description">
-				<source>Show logfiles of in2publish</source>
-			</trans-unit>
-			<trans-unit id="moduleselector.advanced_logs">
-				<source>Show advanced logs</source>
-			</trans-unit>
-			<trans-unit id="moduleselector.advanced_logs.description">
+			<trans-unit id="moduleselector.logs.description">
 				<source>Show all logs of the Content Publisher with plenty filter options</source>
 			</trans-unit>
 			<trans-unit id="moduleselector.test">
@@ -202,9 +164,6 @@
 				<source>Record moved</source>
 			</trans-unit>
 
-			<trans-unit id="module.m4.logs">
-				<source>Logs</source>
-			</trans-unit>
 			<trans-unit id="module.m4.configuration">
 				<source>Configuration</source>
 			</trans-unit>
@@ -217,29 +176,11 @@
 			<trans-unit id="module.m4.overview">
 				<source>Overview</source>
 			</trans-unit>
-			<trans-unit id="module.m4.overview.label">
-				<source>Label</source>
-			</trans-unit>
-			<trans-unit id="module.m4.overview.value">
-				<source>Value</source>
-			</trans-unit>
-			<trans-unit id="module.m4.overview.overall">
-				<source>Overall entries</source>
-			</trans-unit>
 			<trans-unit id="module.m4.overview.logLevel">
 				<source>Loglevel</source>
 			</trans-unit>
 			<trans-unit id="module.m4.filter">
 				<source>Filter</source>
-			</trans-unit>
-			<trans-unit id="module.m4.filter.log_level">
-				<source>Loglevel / Results per page</source>
-			</trans-unit>
-			<trans-unit id="module.m4.logs.flush">
-				<source>Flush all logs</source>
-			</trans-unit>
-			<trans-unit id="module.m4.logs.page">
-				<source>Page</source>
 			</trans-unit>
 			<trans-unit id="module.m4.tca">
 				<source>TCA inspection</source>
@@ -303,6 +244,9 @@
 			</trans-unit>
 			<trans-unit id="file_publishing.file">
 				<source>The selected file %s has been published to the foreign system.</source>
+			</trans-unit>
+			<trans-unit id="file_publishing.failure.file">
+				<source>The selected file %s could not be fully published.</source>
 			</trans-unit>
 			<trans-unit id="file_publishing.too_many_files">
 				<source>The folder %s contains too many files %sto process. The limit of files in a folder is 150 files per folder, but you should not have more than 100 files in a single folder.</source>

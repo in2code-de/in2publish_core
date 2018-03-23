@@ -26,61 +26,9 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
-use TYPO3\CMS\Core\Utility\ArrayUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-
 /**
- * Class LogController
+ * Proxy for extbase convention
  */
-class LogController extends \VerteXVaaR\Logs\Controller\LogController
+class LogController extends \In2code\In2publishCore\Features\LogsIntegration\Controller\LogController
 {
-    /**
-     * TODO: Check if the configuration can be accessed and merged somewhere else
-     *
-     * @var array
-     */
-    protected $txLogsViewConfig = [
-        'templateRootPaths' => [
-            20 => 'EXT:in2publish_core/Resources/Private/Templates',
-        ],
-        'partialRootPaths' => [
-            20 => 'EXT:in2publish_core/Resources/Private/Partials',
-        ],
-        'layoutRootPaths' => [
-            20 => 'EXT:in2publish_core/Resources/Private/Layouts',
-        ],
-    ];
-
-    /**
-     * @SuppressWarnings(PHPMD.Superglobals)
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    protected function initializeAction()
-    {
-        parent::initializeAction();
-        GeneralUtility::makeInstance(ExecutionTimeService::class)->start();
-        $this->logConfiguration = $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'];
-
-        $config = $this->configurationManager->getConfiguration('FullTypoScript');
-        ArrayUtility::mergeRecursiveWithOverrule(
-            $this->txLogsViewConfig,
-            GeneralUtility::removeDotsFromTS($config['module.']['tx_logs.']['view.'])
-        );
-    }
-
-    /**
-     * @param array $extbaseConfig
-     * @param string $setting
-     *
-     * @return array
-     */
-    protected function getViewProperty($extbaseConfig, $setting)
-    {
-        if (isset($this->txLogsViewConfig[$setting])) {
-            ksort($this->txLogsViewConfig[$setting]);
-            return array_reverse($this->txLogsViewConfig[$setting]);
-        }
-        return parent::getViewProperty($extbaseConfig, $setting);
-    }
 }

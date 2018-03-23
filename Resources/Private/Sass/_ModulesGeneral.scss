@@ -425,29 +425,6 @@ a.in2publish-notextdecoration {
       border-color: $pictonblue;
     }
   }
-
-}
-
-// ----- Table -----
-
-.in2publish-tableview {
-  border: 1px solid $dovegray;
-  th, td {
-    padding: 5px;
-  }
-  th {
-    text-align: left;
-    background-color: $salomie;
-    color: $tundora;
-  }
-  td {
-    border-top: 1px solid $dovegray;
-  }
-  tr {
-    &:hover {
-      background-color: $dovegray;
-    }
-  }
 }
 
 .in2publish-preloader {

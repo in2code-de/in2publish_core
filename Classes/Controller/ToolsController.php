@@ -28,7 +28,6 @@ namespace In2code\In2publishCore\Controller;
  ***************************************************************/
 
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
-use In2code\In2publishCore\Domain\Repository\LogEntryRepository;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
@@ -51,23 +50,9 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 class ToolsController extends ActionController
 {
     /**
-     * @var LogEntryRepository
-     */
-    protected $logEntryRepository = null;
-
-    /**
      * @var array
      */
     protected $tests = [];
-
-    /**
-     * ToolsController constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-        $this->logEntryRepository = GeneralUtility::makeInstance(LogEntryRepository::class);
-    }
 
     /**
      * @param ViewInterface $view
@@ -125,51 +110,6 @@ class ToolsController extends ActionController
     }
 
     /**
-     * Finds all logs by filters and assigns them to the view
-     *
-     * @param array $filter
-     * @param int $pageNumber
-     *
-     * @throws In2publishCoreException
-     */
-    public function showLogsAction(array $filter = [], $pageNumber = 1)
-    {
-        if (empty($filter['limit'])) {
-            $filter['limit'] = 25;
-        }
-        $logLevels = $this->logEntryRepository->getLogLevels();
-        if (empty($filter['level'])) {
-            $filter['level'] = end($logLevels);
-        }
-        $filter['offset'] = ($pageNumber - 1) * $filter['limit'];
-        $this->setFilters($filter);
-        reset($logLevels);
-        $this->view->assign(
-            'filter',
-            [
-                'limits' => [25 => 25, 50 => 50, 100 => 100, 150 => 150, 250 => 250],
-                'limit' => $filter['limit'],
-                'logLevels' => $logLevels,
-                'level' => $filter['level'],
-            ]
-        );
-        $numberOfPages = ceil($this->logEntryRepository->countFiltered() / $filter['limit']);
-        $pageNumbers = [];
-        for ($i = 1; $i <= $numberOfPages; $i++) {
-            $pageNumbers[] = $i;
-        }
-        $this->view->assignMultiple(
-            [
-                'logsCount' => $this->logEntryRepository->countAll(),
-                'numberOfPages' => $numberOfPages,
-                'pageNumbers' => $pageNumbers,
-                'currentPage' => $pageNumber,
-            ]
-        );
-        $this->view->assign('logEntries', $this->logEntryRepository->getFiltered());
-    }
-
-    /**
      * Show configuration
      *
      * @return void
@@ -178,34 +118,6 @@ class ToolsController extends ActionController
     {
         $this->view->assign('globalConfig', $this->configContainer->getContextFreeConfig());
         $this->view->assign('personalConfig', $this->configContainer->get());
-    }
-
-    /**
-     * applies the selected filters to the repository
-     *
-     * @param array $filters
-     *
-     * @throws In2publishCoreException
-     */
-    protected function setFilters(array $filters)
-    {
-        $this->logEntryRepository->setLimit($filters['limit']);
-        $this->logEntryRepository->setOffset($filters['offset']);
-        $filtersToSet = array_intersect_key($filters, array_flip($this->logEntryRepository->getPropertyNames()));
-        foreach ($filtersToSet as $propertyName => $propertyValue) {
-            $this->logEntryRepository->setFilter($propertyName, $propertyValue);
-        }
-    }
-
-    /**
-     * deletes ALL logs from the database
-     *
-     * @throws StopActionException
-     */
-    public function flushLogsAction()
-    {
-        $this->logEntryRepository->flush();
-        $this->forward('showLogs');
     }
 
     /**
