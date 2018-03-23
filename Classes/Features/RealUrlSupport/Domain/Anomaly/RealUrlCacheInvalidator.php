@@ -1,5 +1,5 @@
 <?php
-namespace In2code\In2publishCore\Domain\Anomaly;
+namespace In2code\In2publishCore\Features\RealUrlSupport\Domain\Anomaly;
 
 /***************************************************************
  *  Copyright notice
@@ -28,12 +28,12 @@ namespace In2code\In2publishCore\Domain\Anomaly;
  ***************************************************************/
 
 use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\Task\RealUrlTask;
-use In2code\In2publishCore\Domain\Model\Task\RealUrlUpdateTask;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Features\RealUrlSupport\Domain\Model\Task\RealUrlTask;
+use In2code\In2publishCore\Features\RealUrlSupport\Domain\Model\Task\RealUrlUpdateTask;
 use In2code\In2publishCore\Utility\ExtensionUtility;
-use TYPO3\CMS\Core\Log\Logger;
+use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -54,12 +54,12 @@ class RealUrlCacheInvalidator
     protected $updateData = true;
 
     /**
-     * @var Logger
+     * @var LoggerInterface
      */
     protected $logger = null;
 
     /**
-     * @var \In2code\In2publishCore\Domain\Repository\TaskRepository
+     * @var TaskRepository
      */
     protected $taskRepository;
 
@@ -89,11 +89,11 @@ class RealUrlCacheInvalidator
     }
 
     /**
-     * @param $tableName
-     * @param Record $record
+     * @param string $tableName
+     * @param RecordInterface $record
      * @return void
      */
-    public function registerClearRealUrlCacheTask($tableName, Record $record)
+    public function registerClearRealUrlCacheTask($tableName, RecordInterface $record)
     {
         if ($this->enabled && $record->isChanged() && in_array($tableName, ['pages', 'pages_language_overlay'])) {
             if (!in_array($record->getLocalProperty('doktype'), $this->excludedDokTypes)) {

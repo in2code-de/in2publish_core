@@ -223,20 +223,6 @@ class In2publishCoreDefiner implements DefinerInterface
                        ->addBoolean('keepEnvelopes', false)
             )
             ->addArray(
-                'tasks',
-                Builder::start()
-                       ->addArray(
-                           'realUrl',
-                           Builder::start()
-                                  ->addArray(
-                                      'excludedDokTypes',
-                                      Builder::start()->addGenericScalar(Node::T_INTEGER, Node::T_INTEGER),
-                                      [254]
-                                  )
-                                  ->addBoolean('requestFrontend', false)
-                       )
-            )
-            ->addArray(
                 'backup',
                 Builder::start()
                        ->addArray(

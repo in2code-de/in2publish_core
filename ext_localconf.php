@@ -24,6 +24,7 @@ call_user_func(
 
         $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\In2publishCoreDefiner::class);
         $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\SshConnectionDefiner::class);
+        $configContainer->registerDefiner(\In2code\In2publishCore\Features\RealUrlSupport\Config\Definer\RealUrlDefiner::class);
 
         $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\DefaultProvider::class);
         $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\FileProvider::class);

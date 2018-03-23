@@ -1,5 +1,5 @@
 <?php
-namespace In2code\In2publishCore\Domain\Model\Task;
+namespace In2code\In2publishCore\Features\RealUrlSupport\Domain\Model\Task;
 
 /***************************************************************
  * Copyright notice
@@ -25,7 +25,9 @@ namespace In2code\In2publishCore\Domain\Model\Task;
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
