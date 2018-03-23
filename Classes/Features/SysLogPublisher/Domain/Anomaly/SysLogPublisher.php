@@ -1,5 +1,5 @@
 <?php
-namespace In2code\In2publishCore\Domain\Anomaly;
+namespace In2code\In2publishCore\Features\SysLogPublisher\Domain\Anomaly;
 
 /***************************************************************
  *  Copyright notice
