@@ -112,7 +112,6 @@ call_user_func(
             $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
             $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveBeforePublishing', \In2code\In2publishCore\Domain\Anomaly\CacheInvalidator::class, 'registerClearCacheTasks', false);
             $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveAfterPublishing', \In2code\In2publishCore\Domain\Anomaly\PhysicalFilePublisher::class, 'publishPhysicalFileOfSysFile', false);
-            $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveAfterPublishing', \In2code\In2publishCore\Features\RealUrlSupport\Domain\Anomaly\RealUrlCacheInvalidator::class, 'registerClearRealUrlCacheTask', false);
             $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveAfterPublishing', \In2code\In2publishCore\Domain\Anomaly\SysLogPublisher::class, 'publishSysLog', false);
             $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveAfterPublishing', \In2code\In2publishCore\Domain\Anomaly\RefindexUpdater::class, 'registerRefindexUpdate', false);
             $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveEnd', \In2code\In2publishCore\Domain\Anomaly\RefindexUpdater::class, 'writeRefindexUpdateTask', false);
@@ -128,6 +127,9 @@ call_user_func(
             if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
                 $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveBeforePublishing', \In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly\NewsCacheInvalidator::class, 'registerClearCacheTasks', false);
                 $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveEnd', \In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly\NewsCacheInvalidator::class, 'writeClearCacheTask', false);
+            }
+            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('realurl')) {
+                $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveAfterPublishing', \In2code\In2publishCore\Features\RealUrlSupport\Domain\Anomaly\RealUrlCacheInvalidator::class, 'registerClearRealUrlCacheTask', false);
             }
 
             /***************************************** Tests Registration *****************************************/

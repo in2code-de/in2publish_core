@@ -33,9 +33,6 @@ use In2code\In2publishCore\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Features\RealUrlSupport\Domain\Model\Task\RealUrlTask;
 use In2code\In2publishCore\Features\RealUrlSupport\Domain\Model\Task\RealUrlUpdateTask;
 use In2code\In2publishCore\Utility\ExtensionUtility;
-use Psr\Log\LoggerInterface;
-use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -46,17 +43,7 @@ class RealUrlCacheInvalidator
     /**
      * @var bool
      */
-    protected $enabled = false;
-
-    /**
-     * @var bool
-     */
     protected $updateData = true;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger = null;
 
     /**
      * @var TaskRepository
@@ -75,17 +62,10 @@ class RealUrlCacheInvalidator
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->enabled = ExtensionManagementUtility::isLoaded('realurl');
-        if ($this->enabled) {
-            $realUrlVersion = ExtensionUtility::getExtensionVersion('realurl');
-            $this->updateData = version_compare($realUrlVersion, '2.1.0') >= 0;
-            $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-            $this->excludedDokTypes = $configContainer->get('tasks.realUrl.excludedDokTypes');
-            $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
-        } else {
-            $this->logger->debug('RealUrl is not installed, skipping RealUrlCacheInvalidator');
-        }
+        $this->updateData = version_compare(ExtensionUtility::getExtensionVersion('realurl'), '2.1.0') >= 0;
+        $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
+        $this->excludedDokTypes = GeneralUtility::makeInstance(ConfigContainer::class)
+                                                ->get('tasks.realUrl.excludedDokTypes');
     }
 
     /**
@@ -95,7 +75,7 @@ class RealUrlCacheInvalidator
      */
     public function registerClearRealUrlCacheTask($tableName, RecordInterface $record)
     {
-        if ($this->enabled && $record->isChanged() && in_array($tableName, ['pages', 'pages_language_overlay'])) {
+        if ($record->isChanged() && in_array($tableName, ['pages', 'pages_language_overlay'])) {
             if (!in_array($record->getLocalProperty('doktype'), $this->excludedDokTypes)) {
                 if ($this->updateData) {
                     $realUrlTask = new RealUrlUpdateTask(['record' => $record]);
