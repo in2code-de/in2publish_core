@@ -122,7 +122,7 @@ class In2publishCoreDefiner implements DefinerInterface
         'sys_note',
         'tx_rsaauth_keys',
         'cache_treelist',
-        'tx_in2code_in2publish_log',
+        'tx_in2publishcore_log',
         'tx_in2code_in2publish_task',
         'tx_in2code_in2publish_envelope',
     ];

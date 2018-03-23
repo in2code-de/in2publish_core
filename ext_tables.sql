@@ -1,4 +1,4 @@
-CREATE TABLE tx_in2code_in2publish_log (
+CREATE TABLE tx_in2publishcore_log (
   uid int(11) unsigned NOT NULL auto_increment,
   pid int(11) unsigned DEFAULT '0' NOT NULL,
 

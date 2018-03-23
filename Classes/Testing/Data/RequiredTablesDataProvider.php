@@ -62,7 +62,7 @@ class RequiredTablesDataProvider implements SingletonInterface
     {
         if ((empty($this->cache))) {
             $requiredTables = [
-                'tx_in2code_in2publish_log',
+                'tx_in2publishcore_log',
                 'tx_in2code_in2publish_task',
                 'tx_in2code_in2publish_envelope',
             ];
