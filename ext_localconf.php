@@ -6,7 +6,12 @@ if (!defined('TYPO3_MODE')) {
 call_user_func(
     function () {
         // @codingStandardsIgnoreStart @formatter:off
-        $extConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core']);
+
+        $extConf = [
+            'disableUserConfig' => false,
+        ];
+        $setConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core']);
+        \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($extConf, $setConf);
 
         /************************************************ Cache Config ************************************************/
         if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'])) {
@@ -24,7 +29,7 @@ call_user_func(
         $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\FileProvider::class);
         $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\PageTsProvider::class);
         $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\VersionedFileProvider::class);
-        if (!isset($extConf['disableUserConfig']) || true !== (bool)$extConf['disableUserConfig']) {
+        if (!$extConf['disableUserConfig']) {
             $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\UserTsProvider::class);
         }
 

@@ -236,7 +236,6 @@ class In2publishCoreDefiner implements DefinerInterface
                                   ->addBoolean('requestFrontend', false)
                        )
             )
-            ->addBoolean('disableUserConfig', false)
             ->addArray(
                 'backup',
                 Builder::start()

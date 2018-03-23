@@ -303,10 +303,6 @@ tasks:
     requestFrontend: FALSE
 
 
-# Set to TRUE if User TSconfig shall not be merged into this configuration file.
-disableUserConfig: FALSE
-
-
 # Backup configuration
 backup:
 
