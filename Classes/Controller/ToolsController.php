@@ -167,7 +167,6 @@ class ToolsController extends ActionController
             ]
         );
         $this->view->assign('logEntries', $this->logEntryRepository->getFiltered());
-        $this->view->assign('logConfigurations', $this->configContainer->get('log'));
     }
 
     /**

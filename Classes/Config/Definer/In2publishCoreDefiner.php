@@ -191,11 +191,6 @@ class In2publishCoreDefiner implements DefinerInterface
                        ->addString('foreign', 'www.example.com')
             )
             ->addArray(
-                'log',
-                Builder::start()
-                       ->addInteger('logLevel', 5, [new IntegerInRangeValidator(0, 7)])
-            )
-            ->addArray(
                 'view',
                 Builder::start()
                        ->addArray(

@@ -11,21 +11,26 @@ call_user_func(
             return;
         }
 
+        $extConf = [
+            'logLevel' => 5,
+        ];
+        $setConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core']);
+        \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($extConf, $setConf);
+
+
+        /************************************************ Init Logging ************************************************/
+        $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'] = [
+            'writerConfiguration' => [$extConf['logLevel'] => [\TYPO3\CMS\Core\Log\Writer\DatabaseWriter::class => ['logTable' => 'tx_in2code_in2publish_log']]],
+            'processorConfiguration' => [$extConf['logLevel'] => [\In2code\In2publishCore\Log\Processor\BackendUserProcessor::class => []]],
+        ];
+
+
+        /*********************************** register basic command controllers ***********************************/
         $configContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Config\ConfigContainer::class);
         $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Service\Context\ContextService::class);
         $pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Page\PageRenderer::class);
         $pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
         $pageRenderer->addCssFile(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('in2publish_core') . 'Resources/Public/Css/Modules.css');
-
-
-        /******************************************* initialize logging *******************************************/
-        $logConfiguration = $configContainer->get('log');
-        $logLevel = \TYPO3\CMS\Core\Utility\MathUtility::forceIntegerInRange($logConfiguration['logLevel'], 0, 7, 5);
-
-        $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'] = [
-            'writerConfiguration' => [$logLevel => [\TYPO3\CMS\Core\Log\Writer\DatabaseWriter::class => ['logTable' => 'tx_in2code_in2publish_log']]],
-            'processorConfiguration' => [$logLevel => [\In2code\In2publishCore\Log\Processor\BackendUserProcessor::class => []]],
-        ];
 
 
         /*********************************** register basic command controllers ***********************************/

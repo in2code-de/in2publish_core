@@ -33,6 +33,18 @@
 					Wenn diese Checkbox angehakt ist wird das UserTS aller Benutzer für den Content Publisher ignoriert.
 				</target>
 			</trans-unit>
+			<trans-unit id="log_level">
+				<source>
+					Log level.:
+					The log level determines the lower bound of severity for log entries to be written.
+					Selecting a "higher" log level reduces the amount of logs and information beeing written to the database.
+				</source>
+				<target state="translated">
+					Log level.:
+					Das Log Level bestimmt über die Untergrenze zum schreiben von Logeinträgen.
+					Die Auswahl eines "höheren" Log Level reduziert die Anzahl der in die Datenbank geschriebenen Logs und Informationen.
+				</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
