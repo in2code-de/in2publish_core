@@ -54,3 +54,7 @@ continuation_indent_size = 8
 [*.sql]
 indent_style = tab
 indent_size = 2
+
+[.eslintrc]
+indent_style = space
+indent_size = 4
