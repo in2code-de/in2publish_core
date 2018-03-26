@@ -91,6 +91,7 @@ abstract class SshBaseAdapter
 
     /**
      * @return resource
+     *
      * @throws In2publishCoreException
      */
     protected function establishSshSession()

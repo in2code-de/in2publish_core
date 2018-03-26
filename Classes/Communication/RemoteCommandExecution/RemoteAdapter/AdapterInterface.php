@@ -41,6 +41,7 @@ interface AdapterInterface
 
     /**
      * @param RemoteCommandRequest $request
+     *
      * @return RemoteCommandResponse
      */
     public function execute(RemoteCommandRequest $request);

@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdap
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
 use In2code\In2publishCore\Communication\Shared\SshBaseAdapter;
+use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -52,7 +53,16 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
     {
         if (null === $this->session) {
             $this->logger->debug('Lazy initializing SshAdapter ssh session');
-            $this->session = $this->establishSshSession();
+            try {
+                $this->session = $this->establishSshSession();
+            } catch (In2publishCoreException $e) {
+                return GeneralUtility::makeInstance(
+                    RemoteCommandResponse::class,
+                    'An error occurred',
+                    $e->getMessage(),
+                    $e->getCode()
+                );
+            }
         }
 
         $command = '';
