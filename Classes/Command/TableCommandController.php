@@ -43,6 +43,7 @@ class TableCommandController extends AbstractCommandController
     const IMPORT_COMMAND = 'in2publish_core:table:import';
     const BACKUP_COMMAND = 'in2publish_core:table:backup';
     const EXIT_INVALID_TABLE = 220;
+    const EXIT_REMOTE_BACKUP_FAILED = 221;
 
     /**
      * @var DatabaseConnection
@@ -116,6 +117,16 @@ class TableCommandController extends AbstractCommandController
                     'output' => $response->getOutputString(),
                 ]
             );
+            $output = array_filter(
+                [
+                    'Could not create backup on remote:',
+                    $response->getOutputString(),
+                    $response->getErrorsString(),
+                ]
+            );
+            $content = implode(PHP_EOL, $output) . PHP_EOL;
+            $this->response->appendContent($content);
+            $this->sendAndExit(static::EXIT_REMOTE_BACKUP_FAILED);
         }
     }
 
