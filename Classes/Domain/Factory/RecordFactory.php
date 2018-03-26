@@ -217,7 +217,10 @@ class RecordFactory
                 $additionalProperties
             );
 
-            if (!$instance->localRecordExists() && !$instance->foreignRecordExists()) {
+            if ($instance->getIdentifier() !== 0
+                && !$instance->localRecordExists()
+                && !$instance->foreignRecordExists()
+            ) {
                 return $instance;
             }
 
