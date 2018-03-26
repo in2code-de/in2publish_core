@@ -53,6 +53,8 @@ class ForeignEnvironmentService
 
     /**
      * ForeignEnvironmentService constructor.
+     *
+     * @throws NoSuchCacheException
      */
     public function __construct()
     {

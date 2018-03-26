@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Service\Environment;
  ***************************************************************/
 
 use In2code\In2publishCore\Config\ConfigContainer;
+use TYPO3\CMS\Core\Package\PackageInterface;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -103,7 +104,7 @@ class EnvironmentService implements SingletonInterface
     }
 
     /**
-     * @return \TYPO3\CMS\Core\Package\PackageInterface[]
+     * @return PackageInterface[]
      *
      * @codeCoverageIgnore
      */

@@ -45,6 +45,8 @@ class DatabaseSchemaService implements SingletonInterface
 
     /**
      * DatabaseSchemaService constructor.
+     *
+     * @throws NoSuchCacheException
      */
     public function __construct()
     {
