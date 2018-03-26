@@ -42,12 +42,10 @@ class SshConnectionDefiner implements DefinerInterface
      */
     public function getLocalDefinition()
     {
-        return Builder
-            ::start()
+        return Builder::start()
             ->addArray(
                 'sshConnection',
-                Builder
-                    ::start()
+                Builder::start()
                     ->addString('host', 'www.example.com', [new HostNameValidator(22)])
                     ->addInteger('port', 22, [new IPv4PortValidator()])
                     ->addString('username', 'ssh-account')
