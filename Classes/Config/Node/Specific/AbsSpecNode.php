@@ -43,6 +43,7 @@ abstract class AbsSpecNode extends AbstractNode
         Node::T_STRING => SpecString::class,
         Node::T_INTEGER => SpecInteger::class,
         Node::T_ARRAY => SpecArray::class,
+        Node::T_STRICT_ARRAY => SpecStrictArray::class,
         Node::T_BOOLEAN => SpecBoolean::class,
     ];
 

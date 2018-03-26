@@ -91,6 +91,19 @@ class Builder
     }
 
     /**
+     * @param string $name
+     * @param Builder $nodes
+     * @param null $default
+     * @param array $validators
+     * @return $this
+     */
+    public function addStrictArray($name, Builder $nodes, $default = null, array $validators = [])
+    {
+        $this->addNode(Node::T_STRICT_ARRAY, $name, $default, $validators, $nodes);
+        return $this;
+    }
+
+    /**
      * @param string $key
      * @param string $default
      * @param array $validators

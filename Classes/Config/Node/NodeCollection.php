@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Config\Node;
 
 use In2code\In2publishCore\Config\Node\Generic\AbsGenNode;
 use In2code\In2publishCore\Config\Node\Specific\AbsSpecNode;
+use In2code\In2publishCore\Config\Node\Specific\SpecArray;
 use In2code\In2publishCore\Config\ValidationContainer;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 

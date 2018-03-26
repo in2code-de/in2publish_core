@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Config\Node;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 use In2code\In2publishCore\Config\Validator\ValidatorInterface;
+use In2code\In2publishCore\In2publishCoreException;
 
 /**
  * Class AbstractNode
@@ -121,6 +122,15 @@ abstract class AbstractNode implements Node
      */
     public function merge(Node $node)
     {
+        if (!empty($node->default)) {
+            if (empty($this->default)) {
+                $this->default = $node->default;
+            } elseif (is_array($this->default) && is_array($node->default)) {
+                $this->default = array_merge($this->default, $node->default);
+            } else {
+                throw new In2publishCoreException('Can not merge properties');
+            }
+        }
         foreach ($node->getNodePath('') as $key => $newNode) {
             if (isset($node->nodes[$key])) {
                 if (isset($this->nodes[$key])) {

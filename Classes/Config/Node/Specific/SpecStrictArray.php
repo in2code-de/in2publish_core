@@ -1,4 +1,5 @@
 <?php
+
 namespace In2code\In2publishCore\Config\Node\Specific;
 
 /***************************************************************
@@ -26,52 +27,11 @@ namespace In2code\In2publishCore\Config\Node\Specific;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Config\ValidationContainer;
-use TYPO3\CMS\Core\Utility\ArrayUtility;
-
 /**
- * Class SpecArray
+ * Class SpecStrictArray
  */
-class SpecArray extends AbsSpecNode
+class SpecStrictArray extends SpecArray
 {
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    public function validateType(ValidationContainer $container, $value)
-    {
-        if (!is_array($value)) {
-            $container->addError('The value is not an array');
-        }
-    }
-
-    /**
-     * @return string[]|int[]|bool[]|array[]
-     */
-    public function getDefaults()
-    {
-        $defaults = [];
-        if (null !== $this->default) {
-            $defaults = [$this->name => $this->default];
-        }
-        $nodeDefaults = $this->nodes->getDefaults();
-        if (!isset($defaults[$this->name])) {
-            $defaults[$this->name] = [];
-        }
-        ArrayUtility::mergeRecursiveWithOverrule($defaults[$this->name], $nodeDefaults);
-        return $defaults;
-    }
-
-    /**
-     * @param array|bool|int|string $value
-     *
-     * @return array
-     */
-    public function cast($value)
-    {
-        return $this->nodes->cast($value);
-    }
-
     /**
      * @param array[]|bool[]|int[]|string[] $value
      */
@@ -79,9 +39,11 @@ class SpecArray extends AbsSpecNode
     {
         $this->nodes->unsetDefaults($value[$this->name]);
         if (null !== $this->default) {
-            foreach ($this->default as $defValue) {
-                if (in_array($defValue, $value[$this->name])) {
-                    unset($value[$this->name][array_search($defValue, $value[$this->name])]);
+            foreach ($this->default as $defKey => $defValue) {
+                if (array_key_exists($defKey, $value[$this->name])) {
+                    if ($value[$this->name][$defKey] === $defValue) {
+                        unset($value[$this->name][$defKey]);
+                    }
                 }
             }
         }

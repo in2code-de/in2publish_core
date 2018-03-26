@@ -34,6 +34,7 @@ use In2code\In2publishCore\Config\ValidationContainer;
 interface Node
 {
     const T_ARRAY = 'array';
+    const T_STRICT_ARRAY = 'strict_array';
     const T_STRING = 'string';
     const T_INTEGER = 'integer';
     const T_BOOLEAN = 'boolean';
