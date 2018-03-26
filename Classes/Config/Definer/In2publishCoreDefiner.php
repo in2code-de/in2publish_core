@@ -55,7 +55,6 @@ use In2code\In2publishCore\Domain\Service\Processor\UserProcessor;
  */
 class In2publishCoreDefiner implements DefinerInterface
 {
-
     /**
      * @var array
      */
@@ -133,138 +132,138 @@ class In2publishCoreDefiner implements DefinerInterface
     public function getLocalDefinition()
     {
         return Builder::start()
-            ->addArray(
-                'foreign',
-                Builder::start()
-                    ->addString('rootPath', '/var/www/html')
-                    ->addString('pathToPhp', '/usr/bin/env php')
-                    ->addString('context', 'Production/Live')
-                    ->addArray(
-                        'database',
-                        Builder::start()
-                            ->addString('name', 'database_123')
-                            ->addString('username', 'username_123')
-                            ->addString('password', 'Password_123')
-                            ->addString('hostname', '127.0.0.1', [new HostNameValidator(3306)])
-                            ->addInteger('port', 3306, [new IPv4PortValidator()])
-                    )
-            )
-            ->addArray(
-                'excludeRelatedTables',
-                Builder::start()->addGenericScalar(Node::T_INTEGER, Node::T_STRING),
-                $this->defaultIgnoredTables
-            )
-            ->addArray(
-                'ignoreFieldsForDifferenceView',
-                Builder::start()
-                    ->addGenericArray(
-                        Node::T_STRING,
-                        Builder::start()
-                            ->addGenericScalar(Node::T_INTEGER, Node::T_STRING)
-                    ),
-                $this->defaultIgnoredFields
-            )
-            ->addArray(
-                'factory',
-                Builder::start()
-                    ->addInteger('maximumPageRecursion', 2)
-                    ->addInteger('maximumContentRecursion', 6)
-                    ->addInteger('maximumOverallRecursion', 8)
-                    ->addBoolean('resolvePageRelations', false)
-                    ->addBoolean('includeSysFileReference', false)
-                    ->addArray(
-                        'fal',
-                        Builder::start()
-                            ->addBoolean('reserveSysFileUids', false)
-                            ->addBoolean('reclaimSysFileEntries', false)
-                            ->addBoolean('autoRepairFolderHash', false)
-                            ->addBoolean('mergeSysFileByIdentifier', false)
-                            ->addBoolean('enableSysFileReferenceUpdate', false)
-                    )
-            )
-            ->addArray(
-                'filePreviewDomainName',
-                Builder::start()
-                    ->addString('local', 'stage.example.com')
-                    ->addString('foreign', 'www.example.com')
-            )
-            ->addArray(
-                'view',
-                Builder::start()
-                    ->addArray(
-                        'records',
-                        Builder::start()
-                            ->addBoolean('filterButtons', true)
-                            ->addBoolean('breadcrumb', false)
-                    )
-                    ->addArray(
-                        'files',
-                        Builder::start()
-                            ->addBoolean('filterButtons', true)
-                    )
-            )
-            ->addArray(
-                'module',
-                Builder::start()
-                    ->addBoolean('m1', true)
-                    ->addBoolean('m3', true)
-                    ->addBoolean('m4', true)
-            )
-            ->addArray(
-                'debug',
-                Builder::start()
-                    ->addBoolean('disableParentRecords', false)
-                    ->addBoolean('showForeignKeyFingerprint', false)
-                    ->addBoolean('showRecordDepth', false)
-                    ->addBoolean('showExecutionTime', true)
-                    ->addBoolean('allInformation', false)
-                    ->addBoolean('keepEnvelopes', false)
-            )
-            ->addArray(
-                'backup',
-                Builder::start()
-                    ->addArray(
-                        'publishTableCommand',
-                        Builder::start()
-                            ->addInteger('keepBackups', 2, [new IntegerInRangeValidator(0, 10)])
-                            ->addString(
-                                'backupLocation',
-                                '/var/backup/',
-                                [new DirectoryExistsValidator()]
-                            )
-                            ->addBoolean('addDropTable', true)
-                            ->addBoolean('zipBackup', true, [new ZipExtensionInstalledValidator()])
-                    )
-            )
-            ->addArray(
-                'tca',
-                Builder::start()
-                    ->addArray(
-                        'processor',
-                        Builder::start()
-                            ->addString('check', CheckProcessor::class)
-                            ->addString('flex', FlexProcessor::class)
-                            ->addString('group', GroupProcessor::class)
-                            ->addString('inline', InlineProcessor::class)
-                            ->addString('input', InputProcessor::class)
-                            ->addString('none', NoneProcessor::class)
-                            ->addString('passthrough', PassthroughProcessor::class)
-                            ->addString('radio', RadioProcessor::class)
-                            ->addString('select', SelectProcessor::class)
-                            ->addString('text', TextProcessor::class)
-                            ->addString('user', UserProcessor::class)
-                            ->addString('imageManipulation', ImageManipulationProcessor::class),
-                        null,
-                        [new IterativeTcaProcessorValidator()]
-                    )
-            )
-            ->addArray(
-                'adapter',
-                Builder::start()
-                    ->addString('remote', 'ssh')
-                    ->addString('transmission', 'ssh')
-            )
-            ->end();
+                      ->addArray(
+                          'foreign',
+                          Builder::start()
+                                 ->addString('rootPath', '/var/www/html')
+                                 ->addString('pathToPhp', '/usr/bin/env php')
+                                 ->addString('context', 'Production/Live')
+                                 ->addArray(
+                                     'database',
+                                     Builder::start()
+                                            ->addString('name', 'database_123')
+                                            ->addString('username', 'username_123')
+                                            ->addString('password', 'Password_123')
+                                            ->addString('hostname', '127.0.0.1', [new HostNameValidator(3306)])
+                                            ->addInteger('port', 3306, [new IPv4PortValidator()])
+                                 )
+                      )
+                      ->addArray(
+                          'excludeRelatedTables',
+                          Builder::start()->addGenericScalar(Node::T_INTEGER, Node::T_STRING),
+                          $this->defaultIgnoredTables
+                      )
+                      ->addArray(
+                          'ignoreFieldsForDifferenceView',
+                          Builder::start()
+                                 ->addGenericArray(
+                                     Node::T_STRING,
+                                     Builder::start()
+                                            ->addGenericScalar(Node::T_INTEGER, Node::T_STRING)
+                                 ),
+                          $this->defaultIgnoredFields
+                      )
+                      ->addArray(
+                          'factory',
+                          Builder::start()
+                                 ->addInteger('maximumPageRecursion', 2)
+                                 ->addInteger('maximumContentRecursion', 6)
+                                 ->addInteger('maximumOverallRecursion', 8)
+                                 ->addBoolean('resolvePageRelations', false)
+                                 ->addBoolean('includeSysFileReference', false)
+                                 ->addArray(
+                                     'fal',
+                                     Builder::start()
+                                            ->addBoolean('reserveSysFileUids', false)
+                                            ->addBoolean('reclaimSysFileEntries', false)
+                                            ->addBoolean('autoRepairFolderHash', false)
+                                            ->addBoolean('mergeSysFileByIdentifier', false)
+                                            ->addBoolean('enableSysFileReferenceUpdate', false)
+                                 )
+                      )
+                      ->addArray(
+                          'filePreviewDomainName',
+                          Builder::start()
+                                 ->addString('local', 'stage.example.com')
+                                 ->addString('foreign', 'www.example.com')
+                      )
+                      ->addArray(
+                          'view',
+                          Builder::start()
+                                 ->addArray(
+                                     'records',
+                                     Builder::start()
+                                            ->addBoolean('filterButtons', true)
+                                            ->addBoolean('breadcrumb', false)
+                                 )
+                                 ->addArray(
+                                     'files',
+                                     Builder::start()
+                                            ->addBoolean('filterButtons', true)
+                                 )
+                      )
+                      ->addArray(
+                          'module',
+                          Builder::start()
+                                 ->addBoolean('m1', true)
+                                 ->addBoolean('m3', true)
+                                 ->addBoolean('m4', true)
+                      )
+                      ->addArray(
+                          'debug',
+                          Builder::start()
+                                 ->addBoolean('disableParentRecords', false)
+                                 ->addBoolean('showForeignKeyFingerprint', false)
+                                 ->addBoolean('showRecordDepth', false)
+                                 ->addBoolean('showExecutionTime', true)
+                                 ->addBoolean('allInformation', false)
+                                 ->addBoolean('keepEnvelopes', false)
+                      )
+                      ->addArray(
+                          'backup',
+                          Builder::start()
+                                 ->addArray(
+                                     'publishTableCommand',
+                                     Builder::start()
+                                            ->addInteger('keepBackups', 2, [new IntegerInRangeValidator(0, 10)])
+                                            ->addString(
+                                                'backupLocation',
+                                                '/var/backup/',
+                                                [new DirectoryExistsValidator()]
+                                            )
+                                            ->addBoolean('addDropTable', true)
+                                            ->addBoolean('zipBackup', true, [new ZipExtensionInstalledValidator()])
+                                 )
+                      )
+                      ->addArray(
+                          'tca',
+                          Builder::start()
+                                 ->addArray(
+                                     'processor',
+                                     Builder::start()
+                                            ->addString('check', CheckProcessor::class)
+                                            ->addString('flex', FlexProcessor::class)
+                                            ->addString('group', GroupProcessor::class)
+                                            ->addString('inline', InlineProcessor::class)
+                                            ->addString('input', InputProcessor::class)
+                                            ->addString('none', NoneProcessor::class)
+                                            ->addString('passthrough', PassthroughProcessor::class)
+                                            ->addString('radio', RadioProcessor::class)
+                                            ->addString('select', SelectProcessor::class)
+                                            ->addString('text', TextProcessor::class)
+                                            ->addString('user', UserProcessor::class)
+                                            ->addString('imageManipulation', ImageManipulationProcessor::class),
+                                     null,
+                                     [new IterativeTcaProcessorValidator()]
+                                 )
+                      )
+                      ->addArray(
+                          'adapter',
+                          Builder::start()
+                                 ->addString('remote', 'ssh')
+                                 ->addString('transmission', 'ssh')
+                      )
+                      ->end();
     }
 
     /**

@@ -43,30 +43,30 @@ class RealUrlDefiner implements DefinerInterface
     public function getLocalDefinition()
     {
         return Builder::start()
-            ->addArray(
-                'tasks',
-                Builder::start()
-                    ->addArray(
-                        'realUrl',
-                        Builder::start()
-                            ->addArray(
-                                'excludedDokTypes',
-                                Builder::start()->addGenericScalar(Node::T_INTEGER, Node::T_INTEGER),
-                                [254]
-                            )
-                            ->addBoolean('requestFrontend', false)
-                    )
-            )
-            ->addArray(
-                'excludeRelatedTables',
-                Builder::start()->addGenericScalar(Node::T_INTEGER, Node::T_STRING),
-                [
-                    'tx_realurl_pathdata',
-                    'tx_realurl_uniqalias',
-                    'tx_realurl_urldata',
-                ]
-            )
-            ->end();
+                      ->addArray(
+                          'tasks',
+                          Builder::start()
+                                 ->addArray(
+                                     'realUrl',
+                                     Builder::start()
+                                            ->addArray(
+                                                'excludedDokTypes',
+                                                Builder::start()->addGenericScalar(Node::T_INTEGER, Node::T_INTEGER),
+                                                [254]
+                                            )
+                                            ->addBoolean('requestFrontend', false)
+                                 )
+                      )
+                      ->addArray(
+                          'excludeRelatedTables',
+                          Builder::start()->addGenericScalar(Node::T_INTEGER, Node::T_STRING),
+                          [
+                              'tx_realurl_pathdata',
+                              'tx_realurl_uniqalias',
+                              'tx_realurl_urldata',
+                          ]
+                      )
+                      ->end();
     }
 
     /**

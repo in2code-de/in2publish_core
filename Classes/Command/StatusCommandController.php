@@ -28,7 +28,6 @@ namespace In2code\In2publishCore\Command;
  ***************************************************************/
 
 use In2code\In2publishCore\Utility\ExtensionUtility;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
  * Class StatusCommandController (always enabled)

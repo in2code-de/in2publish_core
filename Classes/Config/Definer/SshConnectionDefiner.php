@@ -43,20 +43,24 @@ class SshConnectionDefiner implements DefinerInterface
     public function getLocalDefinition()
     {
         return Builder::start()
-            ->addArray(
-                'sshConnection',
-                Builder::start()
-                    ->addString('host', 'www.example.com', [new HostNameValidator(22)])
-                    ->addInteger('port', 22, [new IPv4PortValidator()])
-                    ->addString('username', 'ssh-account')
-                    ->addString('privateKeyFileAndPathName', '/home/ssh-account/.ssh/id_rsa', [new FEV()])
-                    ->addString('publicKeyFileAndPathName', '/home/ssh-account/.ssh/id_rsa.pub', [new FEV()])
-                    ->addString('privateKeyPassphrase', '')
-                    ->addString('foreignKeyFingerprint', '00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00')
-                    ->addString('foreignKeyFingerprintHashingMethod', 'SSH2_FINGERPRINT_MD5')
-                    ->addBoolean('ignoreChmodFail', false)
-            )
-            ->end();
+                      ->addArray(
+                          'sshConnection',
+                          Builder::start()
+                                 ->addString('host', 'www.example.com', [new HostNameValidator(22)])
+                                 ->addInteger('port', 22, [new IPv4PortValidator()])
+                                 ->addString('username', 'ssh-account')
+                                 ->addString('privateKeyFileAndPathName', '/home/ssh-account/.ssh/id_rsa', [new FEV()])
+                                 ->addString(
+                                     'publicKeyFileAndPathName',
+                                     '/home/ssh-account/.ssh/id_rsa.pub',
+                                     [new FEV()]
+                                 )
+                                 ->addString('privateKeyPassphrase', '')
+                                 ->addString('foreignKeyFingerprint', '00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00')
+                                 ->addString('foreignKeyFingerprintHashingMethod', 'SSH2_FINGERPRINT_MD5')
+                                 ->addBoolean('ignoreChmodFail', false)
+                      )
+                      ->end();
     }
 
     /**
