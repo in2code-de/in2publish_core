@@ -51,6 +51,10 @@ excludeRelatedTables:
   - tx_in2publishcore_log
   - tx_in2code_in2publish_task
   - tx_in2code_in2publish_envelope
+  # Added dynamically if realurl is installed
+  - tx_realurl_pathdata
+  - tx_realurl_uniqalias
+  - tx_realurl_urldata
 
 
 # Ignore this fields for DIFF view
