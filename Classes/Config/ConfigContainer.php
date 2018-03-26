@@ -104,12 +104,6 @@ class ConfigContainer implements SingletonInterface
 
         asort($priority);
 
-        $config = [];
-        foreach (array_keys($priority) as $class) {
-            $providerConfig = $this->providers[$class];
-            \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($config, $providerConfig);
-        }
-
         $config = $this->processConfig($priority);
 
         if (true === $complete) {
