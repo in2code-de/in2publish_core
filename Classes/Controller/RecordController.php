@@ -55,19 +55,6 @@ class RecordController extends AbstractController
     protected $commonRepository = null;
 
     /**
-     * @param ViewInterface $view
-     */
-    protected function initializeView(ViewInterface $view)
-    {
-        parent::initializeView($view);
-        $localDbAvailable = null !== DatabaseUtility::buildLocalDatabaseConnection();
-        $foreignDbAvailable = null !== DatabaseUtility::buildForeignDatabaseConnection();
-        $this->view->assign('localDatabaseConnectionAvailable', $localDbAvailable);
-        $this->view->assign('foreignDatabaseConnectionAvailable', $foreignDbAvailable);
-        $this->view->assign('publishingAvailable', $localDbAvailable && $foreignDbAvailable);
-    }
-
-    /**
      *
      */
     public function initializeAction()
