@@ -346,7 +346,7 @@
 				<source>The configuration for following adapters is invalid or the adapter could not be loaded</source>
 			</trans-unit>
 			<trans-unit id="adapter.adapter_selection.config_error">
-				<source>The configuration for the adaptersis missing. Please check the other tests and your configuration</source>
+				<source>The configuration for the adapters is missing. Please check the other tests and your configuration</source>
 			</trans-unit>
 
 		</body>

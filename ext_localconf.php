@@ -9,6 +9,10 @@ call_user_func(
 
         $extConf = [
             'disableUserConfig' => false,
+            'adapter.' => [
+                'remote' => 'ssh',
+                'transmission' => 'ssh',
+            ]
         ];
         if (is_array($setConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core']))) {
             \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($extConf, $setConf);
@@ -24,8 +28,10 @@ call_user_func(
         $configContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Config\ConfigContainer::class);
 
         $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\In2publishCoreDefiner::class);
-        $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\SshConnectionDefiner::class);
         $configContainer->registerDefiner(\In2code\In2publishCore\Features\SimpleOverviewAndAjax\Config\Definer\SimpleOverviewAndAjaxDefiner::class);
+        if ('ssh' === $extConf['adapter.']['remote'] || 'ssh' === $extConf['adapter.']['transmission']) {
+            $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\SshConnectionDefiner::class);
+        }
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('realurl')) {
             $configContainer->registerDefiner(\In2code\In2publishCore\Features\RealUrlSupport\Config\Definer\RealUrlDefiner::class);
         }

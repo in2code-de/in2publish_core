@@ -257,12 +257,6 @@ class In2publishCoreDefiner implements DefinerInterface
                                      [IterativeTcaProcessorValidator::class]
                                  )
                       )
-                      ->addArray(
-                          'adapter',
-                          Builder::start()
-                                 ->addString('remote', 'ssh')
-                                 ->addString('transmission', 'ssh')
-                      )
                       ->end();
     }
 

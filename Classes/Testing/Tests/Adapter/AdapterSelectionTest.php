@@ -58,7 +58,7 @@ class AdapterSelectionTest implements TestCaseInterface
      */
     public function run()
     {
-        $config = GeneralUtility::makeInstance(ConfigContainer::class)->get('adapter');
+        $config = $this->adapterRegistry->getConfig();
         if (!is_array($config) || !array_key_exists('remote', $config) || !array_key_exists('transmission', $config)) {
             return new TestResult('adapter.adapter_selection.config_error', TestResult::ERROR);
         }

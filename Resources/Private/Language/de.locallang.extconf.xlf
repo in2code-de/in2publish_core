@@ -45,6 +45,14 @@
 					Die Auswahl eines "höheren" Log Level reduziert die Anzahl der in die Datenbank geschriebenen Logs und Informationen.
 				</target>
 			</trans-unit>
+			<trans-unit id="adapter.remote">
+				<source>Select the remote connection adapter. Defaults to ssh.</source>
+				<target state="translated">Remote Connection Adapter auswählen. Standard ist ssh.</target>
+			</trans-unit>
+			<trans-unit id="adapter.transmission">
+				<source>Select the file transmission adapter. Defaults to ssh.</source>
+				<target state="translated">Adapter für Dateiübertragung auswählen. Standard ist ssh.</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

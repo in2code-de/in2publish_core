@@ -429,7 +429,7 @@
 				<target state="translated">Die Konfiguration für folgende adapter ist ungültig oder die Klasse konnte nicht geladen werden</target>
 			</trans-unit>
 			<trans-unit id="adapter.adapter_selection.config_error">
-				<source>The configuration for the adaptersis missing. Please check the other tests and your configuration</source>
+				<source>The configuration for the adapters is missing. Please check the other tests and your configuration</source>
 				<target state="translated">Die Konfiguration für die Adapter fehlt. Bitte die anderen Tests beachten und die Konfiguration prüfen.</target>
 			</trans-unit>
 

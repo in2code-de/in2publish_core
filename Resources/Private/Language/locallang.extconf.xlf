@@ -27,6 +27,12 @@
 					Selecting a "higher" log level reduces the amount of logs and information beeing written to the database.
 				</source>
 			</trans-unit>
+			<trans-unit id="adapter.remote">
+				<source>Select the remote connection adapter. Defaults to ssh.</source>
+			</trans-unit>
+			<trans-unit id="adapter.transmission">
+				<source>Select the file transmission adapter. Defaults to ssh.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
