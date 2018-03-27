@@ -88,6 +88,25 @@ class TestResult
     }
 
     /**
+     * @return string
+     */
+    public function getSeverityLabel()
+    {
+        if (version_compare(TYPO3_version, '8.0.0', '>=')) {
+            switch ($this->severity) {
+                case  self::OK:
+                    return 'success';
+                case self::ERROR:
+                    return 'danger';
+            }
+
+        }
+
+        return $this->severity;
+
+    }
+
+    /**
      * @param string $severity
      */
     public function setSeverity($severity)
