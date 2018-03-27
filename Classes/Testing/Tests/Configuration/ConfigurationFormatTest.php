@@ -28,7 +28,6 @@ namespace In2code\In2publishCore\Testing\Tests\Configuration;
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Config\ValidationContainer;
-use In2code\In2publishCore\Testing\Data\ConfigDefinitionProvider;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

@@ -129,24 +129,22 @@ call_user_func(
             }
 
             /***************************************** Tests Registration *****************************************/
-            $GLOBALS['in2publish_core']['tests'] = [
-                \In2code\In2publishCore\Testing\Tests\Adapter\AdapterSelectionTest::class,
-                \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest::class,
-                \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest::class,
-                \In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest::class,
-                \In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest::class,
-                \In2code\In2publishCore\Testing\Tests\Database\DatabaseDifferencesTest::class,
-                \In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest::class,
-                \In2code\In2publishCore\Testing\Tests\Adapter\TransmissionAdapterTest::class,
-                \In2code\In2publishCore\Testing\Tests\Application\LocalInstanceTest::class,
-                \In2code\In2publishCore\Testing\Tests\Application\LocalSysDomainTest::class,
-                \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest::class,
-                \In2code\In2publishCore\Testing\Tests\Application\ForeignSysDomainTest::class,
-                \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest::class,
-                \In2code\In2publishCore\Testing\Tests\Fal\CaseSensitivityTest::class,
-                \In2code\In2publishCore\Testing\Tests\Fal\IdenticalDriverTest::class,
-                \In2code\In2publishCore\Testing\Tests\Fal\UniqueStorageTargetTest::class,
-            ];
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Adapter\AdapterSelectionTest::class;
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest::class;
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest::class;
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest::class;
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest::class;
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Database\DatabaseDifferencesTest::class;
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest::class;
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Adapter\TransmissionAdapterTest::class;
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Application\LocalInstanceTest::class;
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Application\LocalSysDomainTest::class;
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest::class;
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Application\ForeignSysDomainTest::class;
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest::class;
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Fal\CaseSensitivityTest::class;
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Fal\IdenticalDriverTest::class;
+            $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Fal\UniqueStorageTargetTest::class;
         }
         // @codingStandardsIgnoreEnd @formatter:on
     }

@@ -45,8 +45,14 @@ class TestCaseService
         while (count($tests) > 0) {
             $resolvedDependencies = 0;
 
+            $missing = [];
+
             foreach ($tests as $testClass => $testObject) {
-                if ($this->isDependencyMissing($testObject->getDependencies(), $orderedTests)) {
+                $dependencies = $testObject->getDependencies();
+                $missing = array_unique(array_merge($missing, $dependencies));
+                $resolved = array_keys($orderedTests);
+                $missing = array_diff($missing, $resolved);
+                if ($this->isDependencyMissing($dependencies, $orderedTests)) {
                     continue;
                 }
                 $orderedTests[$testClass] = $testObject;
