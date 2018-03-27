@@ -56,7 +56,7 @@ class FileController extends AbstractController
      */
     public function indexAction()
     {
-        $record = $this->tryToGetFolderInstance($this->pid);
+        $record = $this->tryToGetFolderInstance($this->pid === 0 ? null : $this->pid);
 
         if (null !== $record) {
             $this->view->assign('record', $record);
