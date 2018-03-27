@@ -46,14 +46,14 @@ class SshConnectionDefiner implements DefinerInterface
                       ->addArray(
                           'sshConnection',
                           Builder::start()
-                                 ->addString('host', 'www.example.com', [new HostNameValidator(22)])
-                                 ->addInteger('port', 22, [new IPv4PortValidator()])
+                                 ->addString('host', 'www.example.com', [HostNameValidator::class => [22]])
+                                 ->addInteger('port', 22, [IPv4PortValidator::class])
                                  ->addString('username', 'ssh-account')
-                                 ->addString('privateKeyFileAndPathName', '/home/ssh-account/.ssh/id_rsa', [new FEV()])
+                                 ->addString('privateKeyFileAndPathName', '/home/ssh-account/.ssh/id_rsa', [FEV::class])
                                  ->addString(
                                      'publicKeyFileAndPathName',
                                      '/home/ssh-account/.ssh/id_rsa.pub',
-                                     [new FEV()]
+                                     [FEV::class]
                                  )
                                  ->addString('privateKeyPassphrase', '')
                                  ->addString('foreignKeyFingerprint', '00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00')

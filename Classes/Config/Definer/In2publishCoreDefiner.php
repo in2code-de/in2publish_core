@@ -144,8 +144,8 @@ class In2publishCoreDefiner implements DefinerInterface
                                             ->addString('name', 'database_123')
                                             ->addString('username', 'username_123')
                                             ->addString('password', 'Password_123')
-                                            ->addString('hostname', '127.0.0.1', [new HostNameValidator(3306)])
-                                            ->addInteger('port', 3306, [new IPv4PortValidator()])
+                                            ->addString('hostname', '127.0.0.1', [HostNameValidator::class => [3306]])
+                                            ->addInteger('port', 3306, [IPv4PortValidator::class])
                                  )
                       )
                       ->addArray(
@@ -225,14 +225,14 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addArray(
                                      'publishTableCommand',
                                      Builder::start()
-                                            ->addInteger('keepBackups', 2, [new IntegerInRangeValidator(0, 10)])
+                                            ->addInteger('keepBackups', 2, [IntegerInRangeValidator::class => [0, 10]])
                                             ->addString(
                                                 'backupLocation',
                                                 '/var/backup/',
-                                                [new DirectoryExistsValidator()]
+                                                [DirectoryExistsValidator::class]
                                             )
                                             ->addBoolean('addDropTable', true)
-                                            ->addBoolean('zipBackup', true, [new ZipExtensionInstalledValidator()])
+                                            ->addBoolean('zipBackup', true, [ZipExtensionInstalledValidator::class])
                                  )
                       )
                       ->addArray(
@@ -254,7 +254,7 @@ class In2publishCoreDefiner implements DefinerInterface
                                             ->addString('user', UserProcessor::class)
                                             ->addString('imageManipulation', ImageManipulationProcessor::class),
                                      null,
-                                     [new IterativeTcaProcessorValidator()]
+                                     [IterativeTcaProcessorValidator::class]
                                  )
                       )
                       ->addArray(

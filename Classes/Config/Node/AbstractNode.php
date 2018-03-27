@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Config\Node;
 use In2code\In2publishCore\Config\ValidationContainer;
 use In2code\In2publishCore\Config\Validator\ValidatorInterface;
 use In2code\In2publishCore\In2publishCoreException;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class AbstractNode
@@ -41,7 +42,7 @@ abstract class AbstractNode implements Node
     protected $name;
 
     /**
-     * @var ValidatorInterface[]
+     * @var string[]
      */
     protected $validators;
 
@@ -59,7 +60,7 @@ abstract class AbstractNode implements Node
      * AbstractNode constructor.
      *
      * @param string $name
-     * @param ValidatorInterface[] $validators
+     * @param string[] $validators
      * @param NodeCollection $nodes
      * @param string|int|bool|array $default
      */
@@ -110,10 +111,28 @@ abstract class AbstractNode implements Node
             $container->addError('Configuration value must not be empty');
         } else {
             $this->validateType($container, $value[$this->name]);
-            foreach ($this->validators as $validator) {
+            $this->validateByValidators($container, $value);
+            $this->nodes->validate($container, $value[$this->name]);
+        }
+    }
+
+    /**
+     * @param ValidationContainer $container
+     * @param $value
+     */
+    protected function validateByValidators(ValidationContainer $container, $value)
+    {
+        foreach ($this->validators as $classOrIndex => $optionsOrClass) {
+            if (is_string($classOrIndex) && class_exists($classOrIndex) && is_array($optionsOrClass)) {
+                $validator = GeneralUtility::makeInstance($classOrIndex, $optionsOrClass);
+            } elseif (class_exists($optionsOrClass)) {
+                $validator = GeneralUtility::makeInstance($optionsOrClass);
+            } else {
+                continue;
+            }
+            if ($validator instanceof ValidatorInterface) {
                 $validator->validate($container, $value[$this->name]);
             }
-            $this->nodes->validate($container, $value[$this->name]);
         }
     }
 
