@@ -41,7 +41,7 @@ Basic must be configured on both sides, whereas "Local" needs to be set only on 
 
 # Overwrite Configuration for Users or Pages
 
-Some configurations can be overwritten by PageTS config and UserTS config (applys only to Local).
+Some configurations can be overwritten by PageTS config and UserTS config (applies only to Local).
 
 PageTS config will always be merged, overruling the configuration of the yaml file.
 UserTS config can be disabled in the extension configuration.
