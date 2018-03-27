@@ -74,8 +74,8 @@
 						<f:for each="{relatedRecords}" as="relatedRecord">
 							<f:if condition="{relatedRecord.changed}">
 								<li>
-									<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" record="{record}"><i class="in2publish-icon-history"></i></publish:Link.RecordHistory>
-									<publish:Link.EditRecord class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_edit',default:'edit')}" record="{record}"><i class="in2publish-icon-edit"></i></publish:Link.EditRecord>
+									<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" record="{relatedRecord}"><i class="in2publish-icon-history"></i></publish:Link.RecordHistory>
+									<publish:Link.EditRecord class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_edit',default:'edit')}" record="{relatedRecord}"><i class="in2publish-icon-edit"></i></publish:Link.EditRecord>
 									<publish:Tca.GetLabelFieldFromRecord record="{relatedRecord}" stagingLevel="local" />
 								</li>
 							</f:if>
