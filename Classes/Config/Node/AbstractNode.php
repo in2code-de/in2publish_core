@@ -117,6 +117,7 @@ abstract class AbstractNode implements Node
     }
 
     /**
+     * TODO: use "..." when available for GeneralUtility::makeInstance
      * @param ValidationContainer $container
      * @param $value
      */
@@ -124,12 +125,13 @@ abstract class AbstractNode implements Node
     {
         foreach ($this->validators as $classOrIndex => $optionsOrClass) {
             if (is_string($classOrIndex) && class_exists($classOrIndex) && is_array($optionsOrClass)) {
-                $validator = GeneralUtility::makeInstance($classOrIndex, $optionsOrClass);
+                $args = array_merge([$classOrIndex], $optionsOrClass);
             } elseif (class_exists($optionsOrClass)) {
-                $validator = GeneralUtility::makeInstance($optionsOrClass);
+                $args = [$optionsOrClass];
             } else {
                 continue;
             }
+            $validator = call_user_func_array([GeneralUtility::class, 'makeInstance'], $args);
             if ($validator instanceof ValidatorInterface) {
                 $validator->validate($container, $value[$this->name]);
             }
