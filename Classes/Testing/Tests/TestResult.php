@@ -94,16 +94,14 @@ class TestResult
     {
         if (version_compare(TYPO3_version, '8.0.0', '>=')) {
             switch ($this->severity) {
-                case  self::OK:
+                case self::OK:
                     return 'success';
                 case self::ERROR:
                     return 'danger';
             }
-
         }
 
         return $this->severity;
-
     }
 
     /**
