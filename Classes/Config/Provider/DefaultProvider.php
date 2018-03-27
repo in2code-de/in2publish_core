@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Config\Provider;
  ***************************************************************/
 
 use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Service\Context\ContextService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -48,7 +49,10 @@ class DefaultProvider implements ProviderInterface
     public function getConfig()
     {
         $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-        return $configContainer->getLocalDefinition()->getDefaults();
+        if (GeneralUtility::makeInstance(ContextService::class)->isLocal()) {
+            return $configContainer->getLocalDefinition()->getDefaults();
+        }
+        return $configContainer->getForeignDefinition()->getDefaults();
     }
 
     /**

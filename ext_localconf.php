@@ -17,6 +17,7 @@ call_user_func(
         if (is_array($setConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core']))) {
             \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($extConf, $setConf);
         }
+        $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Service\Context\ContextService::class);
 
         /************************************************ Cache Config ************************************************/
         if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'])) {
@@ -29,7 +30,7 @@ call_user_func(
 
         $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\In2publishCoreDefiner::class);
         $configContainer->registerDefiner(\In2code\In2publishCore\Features\SimpleOverviewAndAjax\Config\Definer\SimpleOverviewAndAjaxDefiner::class);
-        if ('ssh' === $extConf['adapter.']['remote'] || 'ssh' === $extConf['adapter.']['transmission']) {
+        if ($contextService->isForeign() || ('ssh' === $extConf['adapter.']['remote'] || 'ssh' === $extConf['adapter.']['transmission'])) {
             $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\SshConnectionDefiner::class);
         }
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('realurl')) {

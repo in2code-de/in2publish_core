@@ -31,6 +31,7 @@ use In2code\In2publishCore\Config\Node\Node;
 use In2code\In2publishCore\Config\Node\NodeCollection;
 use In2code\In2publishCore\Config\Provider\ContextualProvider;
 use In2code\In2publishCore\Config\Provider\ProviderInterface;
+use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -159,7 +160,12 @@ class ConfigContainer implements SingletonInterface
             \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($config, $providerConfig);
         }
 
-        $config = $this->getLocalDefinition()->cast($config);
+        if (GeneralUtility::makeInstance(ContextService::class)->isLocal()) {
+            $config = $this->getLocalDefinition()->cast($config);
+        } else {
+            $config = $this->getForeignDefinition()->cast($config);
+        }
+
 
         return $config;
     }
