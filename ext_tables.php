@@ -11,11 +11,10 @@ call_user_func(
             return;
         }
 
-        $extConf = [
-            'logLevel' => 5,
-        ];
-        $setConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core']);
-        \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($extConf, $setConf);
+        $extConf = ['logLevel' => 5];
+        if (is_array($setConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core']))) {
+            \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($extConf, $setConf);
+        }
 
 
         /************************************************ Init Logging ************************************************/
