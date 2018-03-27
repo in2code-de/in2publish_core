@@ -344,13 +344,3 @@ tca:
     text: 'In2code\In2publishCore\Domain\Service\Processor\TextProcessor'
     user: 'In2code\In2publishCore\Domain\Service\Processor\UserProcessor'
     imageManipulation: 'In2code\In2publishCore\Domain\Service\Processor\ImageManipulationProcessor'
-
-
-# Communication adapter selection
-adapter:
-
-  # Adapter to execute command controllers on foreign
-  remote: 'ssh'
-
-  # Adapter to transfer files to foreign
-  transmission: 'ssh'
