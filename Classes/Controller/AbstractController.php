@@ -36,6 +36,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\Arguments;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
+use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
@@ -79,6 +80,19 @@ abstract class AbstractController extends ActionController
                 AbstractMessage::ERROR
             );
         }
+    }
+
+    /**
+     * @param ViewInterface $view
+     */
+    protected function initializeView(ViewInterface $view)
+    {
+        parent::initializeView($view);
+        $localDbAvailable = null !== DatabaseUtility::buildLocalDatabaseConnection();
+        $foreignDbAvailable = null !== DatabaseUtility::buildForeignDatabaseConnection();
+        $this->view->assign('localDatabaseConnectionAvailable', $localDbAvailable);
+        $this->view->assign('foreignDatabaseConnectionAvailable', $foreignDbAvailable);
+        $this->view->assign('publishingAvailable', $localDbAvailable && $foreignDbAvailable);
     }
 
     /**
