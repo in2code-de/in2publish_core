@@ -147,33 +147,7 @@ call_user_func(
                 \In2code\In2publishCore\Testing\Tests\Fal\IdenticalDriverTest::class,
                 \In2code\In2publishCore\Testing\Tests\Fal\UniqueStorageTargetTest::class,
             ];
-
-
-            /*********************************** Register Communication Adapter ***********************************/
-            $adapterRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Communication\AdapterRegistry::class);
-            $adapterRegistry->registerAdapter(
-                'remote',
-                'ssh',
-                \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter::class,
-                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.remote.ssh',
-                [
-                    \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
-                    \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
-                ]
-            );
-            $adapterRegistry->registerAdapter(
-                'transmission',
-                'ssh',
-                \In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::class,
-                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.transmission.ssh',
-                [
-                    \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
-                    \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
-                    \In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest::class,
-                ]
-            );
         }
-
         // @codingStandardsIgnoreEnd @formatter:on
     }
 );

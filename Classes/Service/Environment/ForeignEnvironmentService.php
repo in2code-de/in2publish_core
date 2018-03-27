@@ -67,37 +67,38 @@ class ForeignEnvironmentService
      */
     public function getDatabaseInitializationCommands()
     {
-        if (!$this->cache->has('foreign_db_init')) {
-            $request = GeneralUtility::makeInstance(
-                RemoteCommandRequest::class,
-                StatusCommandController::DB_INIT_QUERY_ENCODED
-            );
-            $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
-
-            $decodedDbInit = [];
-            if ($response->isSuccessful()) {
-                $encodedDbInit = 'W10=';
-                foreach ($response->getOutput() as $line) {
-                    if (false !== strpos($line, 'DBinit: ')) {
-                        $encodedDbInit = GeneralUtility::trimExplode(':', $line)[1];
-                        break;
-                    }
-                }
-                $decodedDbInit = json_decode(base64_decode($encodedDbInit), true);
-            } else {
-                $this->logger->error(
-                    'Could not get DB init. Falling back to empty configuration value',
-                    [
-                        'errors' => $response->getErrors(),
-                        'exit_status' => $response->getExitStatus(),
-                        'output' => $response->getOutput(),
-                    ]
-                );
-            }
-
-            $this->cache->set('foreign_db_init', $decodedDbInit, [], 86400);
+        if ($this->cache->has('foreign_db_init')) {
+            return $this->cache->get('foreign_db_init');
         }
-        return (array)$this->cache->get('foreign_db_init');
+
+        $request = GeneralUtility::makeInstance(
+            RemoteCommandRequest::class,
+            StatusCommandController::DB_INIT_QUERY_ENCODED
+        );
+        $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
+
+        $decodedDbInit = [];
+        if ($response->isSuccessful()) {
+            $encodedDbInit = 'W10=';
+            foreach ($response->getOutput() as $line) {
+                if (false !== strpos($line, 'DBinit: ')) {
+                    $encodedDbInit = GeneralUtility::trimExplode(':', $line)[1];
+                    break;
+                }
+            }
+            $decodedDbInit = json_decode(base64_decode($encodedDbInit), true);
+            $this->cache->set('foreign_db_init', $decodedDbInit, [], 86400);
+        } else {
+            $this->logger->error(
+                'Could not get DB init. Falling back to empty configuration value',
+                [
+                    'errors' => $response->getErrors(),
+                    'exit_status' => $response->getExitStatus(),
+                    'output' => $response->getOutput(),
+                ]
+            );
+        }
+        return $decodedDbInit;
     }
 
     /**
