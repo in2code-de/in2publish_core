@@ -1,5 +1,67 @@
 # In2publish Core Change Log
 
+7.0.0:
+
+- [TYPO] Correctly write "applies"
+- [DOCS] Remove adapter configuration from example yaml
+- [COMMENT] Ignore coupling of objects in AbstractController
+- [CODESTYLE] PSR 2 fixes for TestResult.php
+- [CLEANUP] Remove code which was moved to another class
+- [DOCS] Update requirements and limitations
+- [BUGFIX] Detect an empty testStatus array as no-error-state
+- [BUGFIX] Pass the related records to their edit and history link view helper
+- [BUGFIX] Always assign the publishing state for configured controllers
+- [BUGFIX] Append additional Tests in the ext_tables instead of overwriting the whole array
+- [TASK] Update test rendering for v8
+- [BUGFIX] Pass null to the FolderRecordFactory if no folder has been selected
+- [BUGFIX] Register adapter as early as possible
+- [DOCS] Add a section about configuring in2publish_core in the extension manager
+- [BUGFIX] Respect context when building defintion and building defaults
+- [!!!][BUGFIX] Configure Adapter type in in2publish_core extConf
+- [BUGFIX] Load RealUrl definition ony if realurl is installed
+- [BUGFIX] Pass all arguments as single paramters
+- [BUGFIX] Merge extConf only if it's an array
+- [!!!][REFACTOR] Lazy create validation objects
+- [CLEANUP] Remove duplicate config processing
+- [CLEANUP] Remove unused imports and revert erroneous codestyle formats
+- [CODESTYLE] Reindent all ConfigDefiner
+- [BUGFIX] Resovle relations from the root page (ID=0)
+- [BUGFIX] Add excluded related tables for realurl in the default config
+- [FEATURE] Split the array  node type and don't compare array keys in the normal array node
+- [DEV] Replace jshint and jscs with eslint
+- [COMMENT] Update DocBlocks and add missing throws annotations
+- [!!!][CLEANUP] Drop ExtConfAccessor
+- [BUGFIX] Catch any internal SshAdapter exception and return it as Response
+- [BUGFIX] Output errors and set correct exit code for failed remote table backup
+- [!!!][REFACTOR] Rename log table to tx_in2publishcore_log
+- [BUGFIX] Repair simpleOverviewAndAjax (html & js)
+- [CLEANUP] Remove unused method getSubFolderOfCurrentUrl from Folderutility
+- [!!!][CLEANUP] Remove the deprecated internal log reader
+- [CLEANUP] Remove unused class Remote\Folder
+- [REFACTOR] Move SysLogPublisher to feature folder
+- [REFACTOR] Move SimpleOverviewAndAjax to feature folder
+- [!!!][REFACTOR] Move refIndex updater to feature folder
+- [!!!][REFACTOR] Move cache invalidation to feature folder
+- [BUGFIX] Only enable the realurl anomaly if realurl is activated
+- [REFACTOR] Move news support to feature folder
+- [!!!][REFACTOR] Move realurl support to feature folder
+- [CLEANUP] Remove disableUserConfig from normal configuration
+- [!!!][REFACTOR] Move log level configuration to extconf
+- [!!!][FEATURE] Rewrite configuration management to extensible structure
+- [CLEANUP] Remove unused configuration values from the foreign example configuration
+- [DOCS] add IN2PUBLISH_CONTEXT note
+- [REFACTOR] Always include modules CSS in the backend
+- [CLEANUP] Remove useless signal from RecordController
+- [CLEANUP] Remove unused PageModule CSS
+- [CLEANUP] Remove unused JS for setting classes which are not styled
+- [CLEANUP] Remove custom message styling (already fully styled by TYPO3)
+- [CLEANUP] Remove useless full-width class which had no effect anyway
+- [REFACTOR] Replace custom btn class with bootstrap button classes
+- [RELEASE] Version 6.2.2 with larger flex relation resolving (inline, input)
+- [BUGFIX] Enable support for flex form relation type inline
+- [BUGFIX] Support relations in inputs with wizard in flex forms
+- [BUGFIX] Add missing TcaService method to get the TCA deleted field
+
 6.2.2:
 
 - [BUGFIX] Enable support for flex form relation type inline
