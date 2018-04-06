@@ -1,27 +1,27 @@
 <?php
 namespace In2code\In2publishCore\Tests\Unit\Service\Configuration;
 
-use In2code\In2publishCore\Service\Configuration\ConfigurationMergeService;
+use In2code\In2publishCore\Service\Configuration\ConfigurationService;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \In2code\In2publishCore\Service\Configuration\ConfigurationMergeService
+ * @coversDefaultClass \In2code\In2publishCore\Service\Configuration\ConfigurationService
  */
-class ConfigurationMergeServiceTest extends UnitTestCase
+class ConfigurationServiceTest extends UnitTestCase
 {
     /**
-     * @var ConfigurationMergeService
+     * @var ConfigurationService
      */
     public $subject;
 
     public function setUp()
     {
-        $this->subject = new ConfigurationMergeService();
+        $this->subject = new ConfigurationService();
     }
 
     /**
      * @test
-     * @covers ::merge()
+     * @covers ::mergeConfiguration()
      */
     public function addsNewKeyValues()
     {
@@ -41,7 +41,7 @@ class ConfigurationMergeServiceTest extends UnitTestCase
         ];
 
         // Act
-        $result = $this->subject->merge($original, $additional);
+        $result = $this->subject->mergeConfiguration($original, $additional);
 
         // Assert
         $this->assertCount(4, $result);
@@ -55,7 +55,7 @@ class ConfigurationMergeServiceTest extends UnitTestCase
 
     /**
      * @test
-     * @covers ::merge()
+     * @covers ::mergeConfiguration()
      */
     public function overwritesValuesOfAlphanumericKeys()
     {
@@ -80,7 +80,7 @@ class ConfigurationMergeServiceTest extends UnitTestCase
         ];
 
         // Act
-        $result = $this->subject->merge($original, $additional);
+        $result = $this->subject->mergeConfiguration($original, $additional);
 
         // Assert
         $this->assertEquals($expectedResult, $result);
@@ -88,7 +88,7 @@ class ConfigurationMergeServiceTest extends UnitTestCase
 
     /**
      * @test
-     * @covers ::merge()
+     * @covers ::mergeConfiguration()
      */
     public function doesNotOverwriteButAddsValuesOfNumericKeys()
     {
@@ -117,7 +117,7 @@ class ConfigurationMergeServiceTest extends UnitTestCase
         ];
 
         // Act
-        $result = $this->subject->merge($original, $additional);
+        $result = $this->subject->mergeConfiguration($original, $additional);
 
         // Assert
         $this->assertEquals($expectedResult, $result);
@@ -125,7 +125,7 @@ class ConfigurationMergeServiceTest extends UnitTestCase
 
     /**
      * @test
-     * @covers ::merge()
+     * @covers ::mergeConfiguration()
      */
     public function canMergenNestedArraysRecursively()
     {
@@ -176,7 +176,7 @@ class ConfigurationMergeServiceTest extends UnitTestCase
         ];
 
         // Act
-        $result = $this->subject->merge($original, $additional);
+        $result = $this->subject->mergeConfiguration($original, $additional);
 
         // Assert
         $this->assertEquals($expectedResult, $result);

@@ -3,7 +3,7 @@ namespace In2code\In2publishCore\Service\Configuration;
 
 use TYPO3\CMS\Core\SingletonInterface;
 
-class ConfigurationMergeService implements SingletonInterface
+class ConfigurationService implements SingletonInterface
 {
     /**
      * Merges two configuration arrays recursively
@@ -15,7 +15,7 @@ class ConfigurationMergeService implements SingletonInterface
      * @param array $additional
      * @return array
      */
-    public function merge(array $original, array $additional)
+    public function mergeConfiguration(array $original, array $additional)
     {
         $result = $original;
 
@@ -51,7 +51,7 @@ class ConfigurationMergeService implements SingletonInterface
             is_array($additionalValue)
         ) {
             // Merge recursively
-            $result = $this->merge($originalValue, $additionalValue);
+            $result = $this->mergeConfiguration($originalValue, $additionalValue);
         } else {
             // Use additional value (to add/replace)
             $result = $additionalValue;
