@@ -43,8 +43,7 @@ class ConfigurationUtility
         $originalValue = array_key_exists($key, $original) ? $original[$key] : null;
         $additionalValue = array_key_exists($key, $additional) ? $additional[$key] : null;
 
-        if (
-            is_array($originalValue)
+        if (is_array($originalValue)
             &&
             is_array($additionalValue)
         ) {
