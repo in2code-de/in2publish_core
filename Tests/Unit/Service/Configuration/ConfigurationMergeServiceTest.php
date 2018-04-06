@@ -122,4 +122,53 @@ class ConfigurationMergeServiceTest extends UnitTestCase
         // Assert
         $this->assertEquals($expectedResult, $result);
     }
+
+    /**
+     * @test
+     * @covers ::mergeConfiguration()
+     */
+    public function canMergenNestedArraysRecursively()
+    {
+        $value1 = 'lorem';
+        $value2original = [
+            0 => 'red',
+            'sub1' => 'green',
+            'sub2' => 'blue',
+        ];
+        $value2additional = [
+            0 => 'black',
+            'sub1' => 'white',
+            'sub2' => 'blue',
+            'sub3' => 'grey',
+        ];
+        $value2Expected = [
+            0 => 'red',
+            1 => 'black',
+            'sub1' => 'white',
+            'sub2' => 'blue',
+            'sub3' => 'grey',
+        ];
+        $value3 = 'dolor';
+
+        // Arrange
+        $original = [
+            'foo' => $value1,
+            'bar' => $value2original,
+            'baz' => $value3,
+        ];
+        $additional = [
+            'bar' => $value2additional,
+        ];
+        $expectedResult = [
+            'foo' => $value1,
+            'bar' => $value2Expected,
+            'baz' => $value3,
+        ];
+
+        // Act
+        $result = $this->subject->mergeConfiguration($original, $additional);
+
+        // Assert
+        $this->assertEquals($expectedResult, $result);
+    }
 }
