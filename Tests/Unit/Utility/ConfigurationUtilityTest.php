@@ -1,24 +1,14 @@
 <?php
 namespace In2code\In2publishCore\Tests\Unit\Service\Configuration;
 
-use In2code\In2publishCore\Service\Configuration\ConfigurationService;
+use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \In2code\In2publishCore\Service\Configuration\ConfigurationService
+ * @coversDefaultClass \In2code\In2publishCore\Utility\ConfigurationUtility
  */
-class ConfigurationServiceTest extends UnitTestCase
+class ConfigurationUtilityTest extends UnitTestCase
 {
-    /**
-     * @var ConfigurationService
-     */
-    public $subject;
-
-    public function setUp()
-    {
-        $this->subject = new ConfigurationService();
-    }
-
     /**
      * @test
      * @covers ::mergeConfiguration()
@@ -41,7 +31,7 @@ class ConfigurationServiceTest extends UnitTestCase
         ];
 
         // Act
-        $result = $this->subject->mergeConfiguration($original, $additional);
+        $result = ConfigurationUtility::mergeConfiguration($original, $additional);
 
         // Assert
         $this->assertCount(4, $result);
@@ -80,7 +70,7 @@ class ConfigurationServiceTest extends UnitTestCase
         ];
 
         // Act
-        $result = $this->subject->mergeConfiguration($original, $additional);
+        $result = ConfigurationUtility::mergeConfiguration($original, $additional);
 
         // Assert
         $this->assertEquals($expectedResult, $result);
@@ -117,7 +107,7 @@ class ConfigurationServiceTest extends UnitTestCase
         ];
 
         // Act
-        $result = $this->subject->mergeConfiguration($original, $additional);
+        $result = ConfigurationUtility::mergeConfiguration($original, $additional);
 
         // Assert
         $this->assertEquals($expectedResult, $result);
@@ -176,7 +166,7 @@ class ConfigurationServiceTest extends UnitTestCase
         ];
 
         // Act
-        $result = $this->subject->mergeConfiguration($original, $additional);
+        $result = ConfigurationUtility::mergeConfiguration($original, $additional);
 
         // Assert
         $this->assertEquals($expectedResult, $result);

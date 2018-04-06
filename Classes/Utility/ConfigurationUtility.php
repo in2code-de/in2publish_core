@@ -1,9 +1,7 @@
 <?php
-namespace In2code\In2publishCore\Service\Configuration;
+namespace In2code\In2publishCore\Utility;
 
-use TYPO3\CMS\Core\SingletonInterface;
-
-class ConfigurationService implements SingletonInterface
+class ConfigurationUtility
 {
     /**
      * Merges two configuration arrays recursively
@@ -15,18 +13,18 @@ class ConfigurationService implements SingletonInterface
      * @param array $additional
      * @return array
      */
-    public function mergeConfiguration(array $original, array $additional)
+    public static function mergeConfiguration(array $original, array $additional)
     {
         $result = $original;
 
         foreach ($additional as $key => $value) {
             if (!is_int($key)) {
                 // Replace original value
-                $result[$key] = $this->getResultingValue($original, $additional, $key);
+                $result[$key] = self::getResultingValue($original, $additional, $key);
             } else {
                 if (!in_array($value, $original, true)) {
                     // Add additional value
-                    $result[] = $this->getResultingValue($original, $additional, $key);
+                    $result[] = self::getResultingValue($original, $additional, $key);
                 }
             }
         }
@@ -40,7 +38,7 @@ class ConfigurationService implements SingletonInterface
      * @param mixed $key
      * @return array|mixed|null
      */
-    private function getResultingValue(array $original, array $additional, $key)
+    private static function getResultingValue(array $original, array $additional, $key)
     {
         $originalValue = array_key_exists($key, $original) ? $original[$key] : null;
         $additionalValue = array_key_exists($key, $additional) ? $additional[$key] : null;
@@ -51,7 +49,7 @@ class ConfigurationService implements SingletonInterface
             is_array($additionalValue)
         ) {
             // Merge recursively
-            $result = $this->mergeConfiguration($originalValue, $additionalValue);
+            $result = self::mergeConfiguration($originalValue, $additionalValue);
         } else {
             // Use additional value (to add/replace)
             $result = $additionalValue;
