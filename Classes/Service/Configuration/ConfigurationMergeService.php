@@ -10,7 +10,7 @@ class ConfigurationMergeService implements SingletonInterface
      * @param array $additional
      * @return array
      */
-    public function mergeConfiguration(array $original, array $additional)
+    public function merge(array $original, array $additional)
     {
         $result = $original;
         foreach ($additional as $key => $value) {
@@ -42,7 +42,7 @@ class ConfigurationMergeService implements SingletonInterface
             &&
             is_array($additionalValue)
         ) {
-            $result = $this->mergeConfiguration($originalValue, $additionalValue);
+            $result = $this->merge($originalValue, $additionalValue);
         } else {
             $result = $additionalValue;
         }

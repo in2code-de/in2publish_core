@@ -21,7 +21,7 @@ class ConfigurationMergeServiceTest extends UnitTestCase
 
     /**
      * @test
-     * @covers ::mergeConfiguration()
+     * @covers ::merge()
      */
     public function addsNewKeyValues()
     {
@@ -41,7 +41,7 @@ class ConfigurationMergeServiceTest extends UnitTestCase
         ];
 
         // Act
-        $result = $this->subject->mergeConfiguration($original, $additional);
+        $result = $this->subject->merge($original, $additional);
 
         // Assert
         $this->assertCount(4, $result);
@@ -55,7 +55,7 @@ class ConfigurationMergeServiceTest extends UnitTestCase
 
     /**
      * @test
-     * @covers ::mergeConfiguration()
+     * @covers ::merge()
      */
     public function overwritesValuesOfAlphanumericKeys()
     {
@@ -80,7 +80,7 @@ class ConfigurationMergeServiceTest extends UnitTestCase
         ];
 
         // Act
-        $result = $this->subject->mergeConfiguration($original, $additional);
+        $result = $this->subject->merge($original, $additional);
 
         // Assert
         $this->assertEquals($expectedResult, $result);
@@ -88,7 +88,7 @@ class ConfigurationMergeServiceTest extends UnitTestCase
 
     /**
      * @test
-     * @covers ::mergeConfiguration()
+     * @covers ::merge()
      */
     public function doesNotOverwriteButAddsValuesOfNumericKeys()
     {
@@ -117,7 +117,7 @@ class ConfigurationMergeServiceTest extends UnitTestCase
         ];
 
         // Act
-        $result = $this->subject->mergeConfiguration($original, $additional);
+        $result = $this->subject->merge($original, $additional);
 
         // Assert
         $this->assertEquals($expectedResult, $result);
@@ -125,28 +125,38 @@ class ConfigurationMergeServiceTest extends UnitTestCase
 
     /**
      * @test
-     * @covers ::mergeConfiguration()
+     * @covers ::merge()
      */
     public function canMergenNestedArraysRecursively()
     {
         $value1 = 'lorem';
         $value2original = [
             0 => 'red',
+            1 => 'rose',
+            999 => 'burgund',
             'sub1' => 'green',
             'sub2' => 'blue',
+            'sub999' => 'magenta',
         ];
         $value2additional = [
             0 => 'black',
+            999 => 'lila',
             'sub1' => 'white',
             'sub2' => 'blue',
             'sub3' => 'grey',
+            'sub4' => null,
         ];
         $value2Expected = [
             0 => 'red',
-            1 => 'black',
+            1 => 'rose',
+            999 => 'burgund',
+            1000 => 'black',
+            1001 => 'lila',
             'sub1' => 'white',
             'sub2' => 'blue',
             'sub3' => 'grey',
+            'sub4' => null,
+            'sub999' => 'magenta',
         ];
         $value3 = 'dolor';
 
@@ -166,7 +176,7 @@ class ConfigurationMergeServiceTest extends UnitTestCase
         ];
 
         // Act
-        $result = $this->subject->mergeConfiguration($original, $additional);
+        $result = $this->subject->merge($original, $additional);
 
         // Assert
         $this->assertEquals($expectedResult, $result);
