@@ -24,7 +24,7 @@ class ConfigurationService implements SingletonInterface
                 // Replace original value
                 $result[$key] = $this->getResultingValue($original, $additional, $key);
             } else {
-                if (!in_array($value, $original)) {
+                if (!in_array($value, $original, true)) {
                     // Add additional value
                     $result[] = $this->getResultingValue($original, $additional, $key);
                 }
