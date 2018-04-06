@@ -6,6 +6,11 @@ use TYPO3\CMS\Core\SingletonInterface;
 class ConfigurationMergeService implements SingletonInterface
 {
     /**
+     * Merges two configuration arrays recursively
+     *
+     * - the value of items having an identical ALPHANUMERIC key will be REPLACED
+     * - the value of items having an identical NUMERIC key will be ADDED
+     *
      * @param array $original
      * @param array $additional
      * @return array
@@ -15,9 +20,11 @@ class ConfigurationMergeService implements SingletonInterface
         $result = $original;
         foreach ($additional as $key => $value) {
             if (!is_int($key)) {
+                // Replace original value
                 $result[$key] = $this->getResultingValue($original, $additional, $key);
             } else {
                 if (!in_array($value, $original)) {
+                    // Add additional value
                     $result[] = $this->getResultingValue($original, $additional, $key);
                 }
             }
@@ -42,8 +49,10 @@ class ConfigurationMergeService implements SingletonInterface
             &&
             is_array($additionalValue)
         ) {
+            // Merge recursively
             $result = $this->merge($originalValue, $additionalValue);
         } else {
+            // Use additional value (to add/replace)
             $result = $additionalValue;
         }
 
