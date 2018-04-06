@@ -18,6 +18,7 @@ class ConfigurationMergeService implements SingletonInterface
     public function merge(array $original, array $additional)
     {
         $result = $original;
+
         foreach ($additional as $key => $value) {
             if (!is_int($key)) {
                 // Replace original value
