@@ -34,6 +34,7 @@ use In2code\In2publishCore\Config\Validator\HostNameValidator;
 use In2code\In2publishCore\Config\Validator\IntegerInRangeValidator;
 use In2code\In2publishCore\Config\Validator\IPv4PortValidator;
 use In2code\In2publishCore\Config\Validator\IterativeTcaProcessorValidator;
+use In2code\In2publishCore\Config\Validator\NotBlankValidator;
 use In2code\In2publishCore\Config\Validator\ZipExtensionInstalledValidator;
 use In2code\In2publishCore\Domain\Service\Processor\CheckProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\FlexProcessor;
@@ -135,17 +136,17 @@ class In2publishCoreDefiner implements DefinerInterface
                       ->addArray(
                           'foreign',
                           Builder::start()
-                                 ->addString('rootPath', '/var/www/html')
-                                 ->addString('pathToPhp', '/usr/bin/env php')
-                                 ->addString('context', 'Production/Live')
+                                 ->addString('rootPath', '/var/www/html', [NotBlankValidator::class])
+                                 ->addString('pathToPhp', '/usr/bin/env php', [NotBlankValidator::class])
+                                 ->addString('context', 'Production/Live', [NotBlankValidator::class])
                                  ->addArray(
                                      'database',
                                      Builder::start()
-                                            ->addString('name', 'database_123')
-                                            ->addString('username', 'username_123')
-                                            ->addString('password', 'Password_123')
-                                            ->addString('hostname', '127.0.0.1', [HostNameValidator::class => [3306]])
-                                            ->addInteger('port', 3306, [IPv4PortValidator::class])
+                                            ->addString('name', 'database_123', [NotBlankValidator::class])
+                                            ->addString('username', 'username_123', [NotBlankValidator::class])
+                                            ->addString('password', 'Password_123', [NotBlankValidator::class])
+                                            ->addString('hostname', '127.0.0.1', [NotBlankValidator::class, HostNameValidator::class => [3306]])
+                                            ->addInteger('port', 3306, [NotBlankValidator::class, IPv4PortValidator::class])
                                  )
                       )
                       ->addArray(
@@ -166,26 +167,26 @@ class In2publishCoreDefiner implements DefinerInterface
                       ->addArray(
                           'factory',
                           Builder::start()
-                                 ->addInteger('maximumPageRecursion', 2)
-                                 ->addInteger('maximumContentRecursion', 6)
-                                 ->addInteger('maximumOverallRecursion', 8)
-                                 ->addBoolean('resolvePageRelations', false)
-                                 ->addBoolean('includeSysFileReference', false)
+                                 ->addInteger('maximumPageRecursion', 2, [NotBlankValidator::class])
+                                 ->addInteger('maximumContentRecursion', 6, [NotBlankValidator::class])
+                                 ->addInteger('maximumOverallRecursion', 8, [NotBlankValidator::class])
+                                 ->addBoolean('resolvePageRelations', false, [NotBlankValidator::class])
+                                 ->addBoolean('includeSysFileReference', false, [NotBlankValidator::class])
                                  ->addArray(
                                      'fal',
                                      Builder::start()
-                                            ->addBoolean('reserveSysFileUids', false)
-                                            ->addBoolean('reclaimSysFileEntries', false)
-                                            ->addBoolean('autoRepairFolderHash', false)
-                                            ->addBoolean('mergeSysFileByIdentifier', false)
-                                            ->addBoolean('enableSysFileReferenceUpdate', false)
+                                            ->addBoolean('reserveSysFileUids', false, [NotBlankValidator::class])
+                                            ->addBoolean('reclaimSysFileEntries', false, [NotBlankValidator::class])
+                                            ->addBoolean('autoRepairFolderHash', false, [NotBlankValidator::class])
+                                            ->addBoolean('mergeSysFileByIdentifier', false, [NotBlankValidator::class])
+                                            ->addBoolean('enableSysFileReferenceUpdate', false, [NotBlankValidator::class])
                                  )
                       )
                       ->addArray(
                           'filePreviewDomainName',
                           Builder::start()
-                                 ->addString('local', 'stage.example.com')
-                                 ->addString('foreign', 'www.example.com')
+                                 ->addString('local', 'stage.example.com', [NotBlankValidator::class])
+                                 ->addString('foreign', 'www.example.com', [NotBlankValidator::class])
                       )
                       ->addArray(
                           'view',
@@ -225,11 +226,11 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addArray(
                                      'publishTableCommand',
                                      Builder::start()
-                                            ->addInteger('keepBackups', 2, [IntegerInRangeValidator::class => [0, 10]])
+                                            ->addInteger('keepBackups', 2, [NotBlankValidator::class, IntegerInRangeValidator::class => [0, 10]])
                                             ->addString(
                                                 'backupLocation',
                                                 '/var/backup/',
-                                                [DirectoryExistsValidator::class]
+                                                [NotBlankValidator::class, DirectoryExistsValidator::class]
                                             )
                                             ->addBoolean('addDropTable', true)
                                             ->addBoolean('zipBackup', true, [ZipExtensionInstalledValidator::class])
@@ -241,18 +242,18 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addArray(
                                      'processor',
                                      Builder::start()
-                                            ->addString('check', CheckProcessor::class)
-                                            ->addString('flex', FlexProcessor::class)
-                                            ->addString('group', GroupProcessor::class)
-                                            ->addString('inline', InlineProcessor::class)
-                                            ->addString('input', InputProcessor::class)
-                                            ->addString('none', NoneProcessor::class)
-                                            ->addString('passthrough', PassthroughProcessor::class)
-                                            ->addString('radio', RadioProcessor::class)
-                                            ->addString('select', SelectProcessor::class)
-                                            ->addString('text', TextProcessor::class)
-                                            ->addString('user', UserProcessor::class)
-                                            ->addString('imageManipulation', ImageManipulationProcessor::class),
+                                            ->addString('check', CheckProcessor::class, [NotBlankValidator::class])
+                                            ->addString('flex', FlexProcessor::class, [NotBlankValidator::class])
+                                            ->addString('group', GroupProcessor::class, [NotBlankValidator::class])
+                                            ->addString('inline', InlineProcessor::class, [NotBlankValidator::class])
+                                            ->addString('input', InputProcessor::class, [NotBlankValidator::class])
+                                            ->addString('none', NoneProcessor::class, [NotBlankValidator::class])
+                                            ->addString('passthrough', PassthroughProcessor::class, [NotBlankValidator::class])
+                                            ->addString('radio', RadioProcessor::class, [NotBlankValidator::class])
+                                            ->addString('select', SelectProcessor::class, [NotBlankValidator::class])
+                                            ->addString('text', TextProcessor::class, [NotBlankValidator::class])
+                                            ->addString('user', UserProcessor::class, [NotBlankValidator::class])
+                                            ->addString('imageManipulation', ImageManipulationProcessor::class, [NotBlankValidator::class]),
                                      null,
                                      [IterativeTcaProcessorValidator::class]
                                  )

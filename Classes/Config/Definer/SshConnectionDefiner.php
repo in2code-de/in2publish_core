@@ -31,6 +31,7 @@ use In2code\In2publishCore\Config\Node\NodeCollection;
 use In2code\In2publishCore\Config\Validator\FileExistsValidator as FEV;
 use In2code\In2publishCore\Config\Validator\HostNameValidator;
 use In2code\In2publishCore\Config\Validator\IPv4PortValidator;
+use In2code\In2publishCore\Config\Validator\NotBlankValidator;
 
 /**
  * Class SshConnectionDefiner
@@ -46,18 +47,18 @@ class SshConnectionDefiner implements DefinerInterface
                       ->addArray(
                           'sshConnection',
                           Builder::start()
-                                 ->addString('host', 'www.example.com', [HostNameValidator::class => [22]])
-                                 ->addInteger('port', 22, [IPv4PortValidator::class])
-                                 ->addString('username', 'ssh-account')
-                                 ->addString('privateKeyFileAndPathName', '/home/ssh-account/.ssh/id_rsa', [FEV::class])
+                                 ->addString('host', 'www.example.com', [NotBlankValidator::class, HostNameValidator::class => [22]])
+                                 ->addInteger('port', 22, [NotBlankValidator::class, IPv4PortValidator::class])
+                                 ->addString('username', 'ssh-account', [NotBlankValidator::class])
+                                 ->addString('privateKeyFileAndPathName', '/home/ssh-account/.ssh/id_rsa', [NotBlankValidator::class, FEV::class])
                                  ->addString(
                                      'publicKeyFileAndPathName',
                                      '/home/ssh-account/.ssh/id_rsa.pub',
-                                     [FEV::class]
+                                     [NotBlankValidator::class, FEV::class]
                                  )
                                  ->addString('privateKeyPassphrase', '')
-                                 ->addString('foreignKeyFingerprint', '00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00')
-                                 ->addString('foreignKeyFingerprintHashingMethod', 'SSH2_FINGERPRINT_MD5')
+                                 ->addString('foreignKeyFingerprint', '00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00', [NotBlankValidator::class])
+                                 ->addString('foreignKeyFingerprintHashingMethod', 'SSH2_FINGERPRINT_MD5', [NotBlankValidator::class])
                                  ->addBoolean('ignoreChmodFail', false)
                       )
                       ->end();
