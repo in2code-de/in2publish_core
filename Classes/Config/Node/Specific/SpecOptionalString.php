@@ -42,6 +42,10 @@ class SpecOptionalString extends AbsSpecNode
         if (!is_string($value) && null !== $value) {
             $container->addError('The value is not a string');
         }
+
+        if ('' === $value || null === $value) {
+            $this->skipValidators();
+        }
     }
 
     /**
