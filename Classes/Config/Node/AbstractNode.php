@@ -107,8 +107,6 @@ abstract class AbstractNode implements Node
             $container->addError('Configuration format is wrong');
         } elseif (!array_key_exists($this->name, $value)) {
             $container->addError('Configuration value is not set');
-        } elseif ('' === $value[$this->name] || null === $value[$this->name]) {
-            $container->addError('Configuration value must not be empty');
         } else {
             $this->validateType($container, $value[$this->name]);
             $this->validateByValidators($container, $value);

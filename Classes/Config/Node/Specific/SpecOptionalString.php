@@ -31,7 +31,7 @@ use In2code\In2publishCore\Config\ValidationContainer;
 /**
  * Class SpecString
  */
-class SpecString extends AbsSpecNode
+class SpecOptionalString extends AbsSpecNode
 {
     /**
      * @param ValidationContainer $container
@@ -39,9 +39,7 @@ class SpecString extends AbsSpecNode
      */
     public function validateType(ValidationContainer $container, $value)
     {
-        if ('' === $value || null === $value) {
-            $container->addError('Configuration value must not be empty');
-        } elseif (!is_string($value)) {
+        if (!is_string($value) && null !== $value) {
             $container->addError('The value is not a string');
         }
     }
