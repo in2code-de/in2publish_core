@@ -57,6 +57,11 @@ abstract class AbstractNode implements Node
     protected $default;
 
     /**
+     * @var bool
+     */
+    protected $skipValidators = false;
+
+    /**
      * AbstractNode constructor.
      *
      * @param string $name
@@ -109,8 +114,12 @@ abstract class AbstractNode implements Node
             $container->addError('Configuration value is not set');
         } else {
             $this->validateType($container, $value[$this->name]);
-            $this->validateByValidators($container, $value);
-            $this->nodes->validate($container, $value[$this->name]);
+
+            if (!$this->validatorsShouldBeSkipped()) {
+                $this->validateByValidators($container, $value);
+                $this->nodes->validate($container, $value[$this->name]);
+            }
+
         }
     }
 
@@ -166,4 +175,17 @@ abstract class AbstractNode implements Node
      * @param mixed $value
      */
     abstract protected function validateType(ValidationContainer $container, $value);
+
+    /**
+     * @return bool
+     */
+    public function validatorsShouldBeSkipped()
+    {
+        return $this->skipValidators;
+    }
+
+    public function skipValidators()
+    {
+        $this->skipValidators = true;
+    }
 }
