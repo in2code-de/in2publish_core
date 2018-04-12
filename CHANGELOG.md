@@ -2,8 +2,8 @@
 
 7.0.1:
 
-[BUGFIX] Merge configuration more decently
-[BUGFIX] Handle optional configuration nodes appropriately
+- [BUGFIX] Merge configuration more decently
+- [BUGFIX] Handle optional configuration nodes appropriately
 
 7.0.0:
 
