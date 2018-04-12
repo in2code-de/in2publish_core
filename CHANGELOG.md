@@ -1,5 +1,10 @@
 # In2publish Core Change Log
 
+7.0.1:
+
+[BUGFIX] Merge configuration more decently
+[BUGFIX] Handle optional configuration nodes appropriately
+
 7.0.0:
 
 - [TYPO] Correctly write "applies"
