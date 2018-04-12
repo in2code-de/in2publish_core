@@ -1,5 +1,9 @@
 # In2publish Core Change Log
 
+7.0.2:
+
+- [BUGFIX] Fix markup in changelog file
+
 7.0.1:
 
 - [BUGFIX] Merge configuration more decently
