@@ -117,6 +117,18 @@ class Builder
 
     /**
      * @param string $key
+     * @param string $default
+     * @param array $validators
+     * @return $this
+     */
+    public function addOptionalString($key, $default, array $validators = [])
+    {
+        $this->addNode(Node::T_OPTIONAL_STRING, $key, $default, $validators);
+        return $this;
+    }
+
+    /**
+     * @param string $key
      * @param int $default
      * @param array $validators
      * @return $this

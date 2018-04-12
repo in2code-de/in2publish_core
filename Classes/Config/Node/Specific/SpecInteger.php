@@ -39,7 +39,9 @@ class SpecInteger extends AbsSpecNode
      */
     public function validateType(ValidationContainer $container, $value)
     {
-        if (!is_integer($value)) {
+        if ('' === $value || null === $value) {
+            $container->addError('Configuration value must not be empty');
+        } elseif (!is_integer($value)) {
             $container->addError('The value is not an integer');
         }
     }

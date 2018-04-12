@@ -55,7 +55,7 @@ class SshConnectionDefiner implements DefinerInterface
                                      '/home/ssh-account/.ssh/id_rsa.pub',
                                      [FEV::class]
                                  )
-                                 ->addString('privateKeyPassphrase', '')
+                                 ->addOptionalString('privateKeyPassphrase', '')
                                  ->addString('foreignKeyFingerprint', '00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00')
                                  ->addString('foreignKeyFingerprintHashingMethod', 'SSH2_FINGERPRINT_MD5')
                                  ->addBoolean('ignoreChmodFail', false)

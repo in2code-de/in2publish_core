@@ -33,6 +33,7 @@ use In2code\In2publishCore\Config\Provider\ContextualProvider;
 use In2code\In2publishCore\Config\Provider\ProviderInterface;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\ArrayUtility;
+use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -157,7 +158,7 @@ class ConfigContainer implements SingletonInterface
         $config = [];
         foreach (array_keys($priority) as $class) {
             $providerConfig = $this->providers[$class];
-            \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($config, $providerConfig);
+            $config = ConfigurationUtility::mergeConfiguration($config, $providerConfig);
         }
 
         if (GeneralUtility::makeInstance(ContextService::class)->isLocal()) {
