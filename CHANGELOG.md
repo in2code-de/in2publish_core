@@ -1,5 +1,9 @@
 # In2publish Core Change Log
 
+6.2.3:
+
+- [BUGFIX] MySQL-Strict-Mode: Cache-Clear-Task (and others) are not executed when publishing
+
 6.2.2:
 
 - [BUGFIX] Enable support for flex form relation type inline
