@@ -110,13 +110,18 @@ class TaskRepository
     protected function taskToPropertiesArray(AbstractTask $task)
     {
         $task->modifyConfiguration();
-        return [
+        $properties = [
             'task_type' => get_class($task),
             'configuration' => json_encode($task->getConfiguration()),
-            'execution_begin' => $task->getExecutionBeginForPersistence(),
-            'execution_end' => $task->getExecutionEndForPersistence(),
             'messages' => json_encode($task->getMessages()),
         ];
+        if ($task->getExecutionBeginForPersistence() !== 'NULL') {
+            $properties['execution_begin'] = $task->getExecutionBeginForPersistence();
+        }
+        if ($task->getExecutionEndForPersistence() !== 'NULL') {
+            $properties['execution_end'] = $task->getExecutionEndForPersistence();
+        }
+        return $properties;
     }
 
     /**
