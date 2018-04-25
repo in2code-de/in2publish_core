@@ -1,5 +1,9 @@
 # In2publish Core Change Log
 
+7.0.3:
+
+- [BUGFIX] MySQL-Strict-Mode: Cache-Clear-Task (and others) are not executed when publishing
+
 7.0.2:
 
 - [BUGFIX] Fix markup in changelog file
