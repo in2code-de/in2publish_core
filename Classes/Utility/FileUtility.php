@@ -73,26 +73,26 @@ class FileUtility
             &&
             is_int($keepBackups)
         ) {
-        while (count($backups) >= $keepBackups) {
-            $backupFileName = array_shift($backups);
-            try {
-                if (unlink($backupFileName)) {
-                    static::$logger->notice('Deleted old backup "' . $backupFileName . '"');
-                } else {
-                    static::$logger->error('Could not delete backup "' . $backupFileName . '"');
+            while (count($backups) >= $keepBackups) {
+                $backupFileName = array_shift($backups);
+                try {
+                    if (unlink($backupFileName)) {
+                        static::$logger->notice('Deleted old backup "' . $backupFileName . '"');
+                    } else {
+                        static::$logger->error('Could not delete backup "' . $backupFileName . '"');
+                    }
+                } catch (\Exception $exception) {
+                    static::$logger->critical(
+                        'An error occurred while deletion of "' . $backupFileName . '"',
+                        [
+                            'code' => $exception->getCode(),
+                            'message' => $exception->getMessage(),
+                            'file' => $exception->getFile(),
+                            'line' => $exception->getLine(),
+                        ]
+                    );
                 }
-            } catch (\Exception $exception) {
-                static::$logger->critical(
-                    'An error occurred while deletion of "' . $backupFileName . '"',
-                    [
-                        'code' => $exception->getCode(),
-                        'message' => $exception->getMessage(),
-                        'file' => $exception->getFile(),
-                        'line' => $exception->getLine(),
-                    ]
-                );
             }
-        }
         }
     }
 
