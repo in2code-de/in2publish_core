@@ -25,6 +25,7 @@ namespace In2code\In2publishCore\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use function PHPSTORM_META\type;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\AbstractFile;
@@ -66,6 +67,12 @@ class FileUtility
         static::initializeLogger();
 
         $backups = glob($backupFolder . '*_' . $tableName . '.*');
+
+        if (
+            is_int($backups)
+            &&
+            is_int($keepBackups)
+        ) {
         while (count($backups) >= $keepBackups) {
             $backupFileName = array_shift($backups);
             try {
@@ -85,6 +92,7 @@ class FileUtility
                     ]
                 );
             }
+        }
         }
     }
 
