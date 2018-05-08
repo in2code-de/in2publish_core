@@ -119,7 +119,6 @@ abstract class AbstractNode implements Node
                 $this->validateByValidators($container, $value);
                 $this->nodes->validate($container, $value[$this->name]);
             }
-
         }
     }
 

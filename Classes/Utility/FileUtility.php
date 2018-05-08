@@ -66,24 +66,30 @@ class FileUtility
         static::initializeLogger();
 
         $backups = glob($backupFolder . '*_' . $tableName . '.*');
-        while (count($backups) >= $keepBackups) {
-            $backupFileName = array_shift($backups);
-            try {
-                if (unlink($backupFileName)) {
-                    static::$logger->notice('Deleted old backup "' . $backupFileName . '"');
-                } else {
-                    static::$logger->error('Could not delete backup "' . $backupFileName . '"');
+
+        if (is_int($backups)
+            &&
+            is_int($keepBackups)
+        ) {
+            while (count($backups) >= $keepBackups) {
+                $backupFileName = array_shift($backups);
+                try {
+                    if (unlink($backupFileName)) {
+                        static::$logger->notice('Deleted old backup "' . $backupFileName . '"');
+                    } else {
+                        static::$logger->error('Could not delete backup "' . $backupFileName . '"');
+                    }
+                } catch (\Exception $exception) {
+                    static::$logger->critical(
+                        'An error occurred while deletion of "' . $backupFileName . '"',
+                        [
+                            'code' => $exception->getCode(),
+                            'message' => $exception->getMessage(),
+                            'file' => $exception->getFile(),
+                            'line' => $exception->getLine(),
+                        ]
+                    );
                 }
-            } catch (\Exception $exception) {
-                static::$logger->critical(
-                    'An error occurred while deletion of "' . $backupFileName . '"',
-                    [
-                        'code' => $exception->getCode(),
-                        'message' => $exception->getMessage(),
-                        'file' => $exception->getFile(),
-                        'line' => $exception->getLine(),
-                    ]
-                );
             }
         }
     }

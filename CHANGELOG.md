@@ -1,5 +1,12 @@
 # In2publish Core Change Log
 
+7.0.4:
+
+- [BUGFIX] Avoid endless loop
+- [CLEANUP] Improve indentation
+- [CLEANUP] Remove superfluous class import
+- [CLEANUP] Remove superfluous empty lines
+
 7.0.3:
 
 - [BUGFIX] MySQL-Strict-Mode: Cache-Clear-Task (and others) are not executed when publishing
