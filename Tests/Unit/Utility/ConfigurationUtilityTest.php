@@ -101,9 +101,8 @@ class ConfigurationUtilityTest extends UnitTestCase
         $expectedResult = [
             'foo' => $value5,
             0 => $value1,
-            1 => $value2,
-            2 => $value3,
-            3 => $value4,
+            1 => $value3,
+            2 => $value4,
         ];
 
         // Act
@@ -137,11 +136,9 @@ class ConfigurationUtilityTest extends UnitTestCase
             'sub4' => null,
         ];
         $value2Expected = [
-            0 => 'red',
+            0 => 'black',
             1 => 'rose',
-            999 => 'burgund',
-            1000 => 'black',
-            1001 => 'lila',
+            999 => 'lila',
             'sub1' => 'white',
             'sub2' => 'blue',
             'sub3' => 'grey',
