@@ -158,7 +158,7 @@ class ConfigContainer implements SingletonInterface
         $config = [];
         foreach (array_keys($priority) as $class) {
             $providerConfig = $this->providers[$class];
-            $config = ConfigurationUtility::mergeConfiguration($config, $providerConfig);
+            \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($config, $providerConfig);
         }
 
         if (GeneralUtility::makeInstance(ContextService::class)->isLocal()) {
