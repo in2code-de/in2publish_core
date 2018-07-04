@@ -18,7 +18,15 @@ class ConfigurationUtility
         $result = $original;
 
         foreach ($additional as $key => $value) {
-            $result[$key] = self::getResultingValue($original, $additional, $key);
+            if (!is_int($key)) {
+                // Replace original value
+                $result[$key] = self::getResultingValue($original, $additional, $key);
+            } else {
+                if (!in_array($value, $original, true)) {
+                    // Add additional value
+                    $result[] = self::getResultingValue($original, $additional, $key);
+                }
+            }
         }
 
         return $result;
