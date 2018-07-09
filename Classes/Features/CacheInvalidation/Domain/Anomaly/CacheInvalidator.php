@@ -101,6 +101,9 @@ class CacheInvalidator implements SingletonInterface
             );
             $this->taskRepository->add($clearCacheCommands);
         }
+
+        $this->clearCacheCommands = [];
+        $this->clearCachePids = [];
     }
 
     /**

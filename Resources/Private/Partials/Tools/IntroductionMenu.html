@@ -1,7 +1,7 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
 <f:for each="{publish:tools.getEnabledTools()}" as="entry">
 	<li class="{f:if(condition:'{entry.action} == \'index\'',then:'active')}">
-		<f:link.action action="{entry.action}" controller="{entry.controller}" extensionName="{entry.extensionName}">
+		<f:link.action action="{publish:string.firstInList(entries: entry.action)}" controller="{entry.controller}" extensionName="{entry.extensionName}">
 			<f:translate key="{entry.name}">{entry.name}</f:translate><f:if condition="{entry.description}">: <f:translate key="{entry.description}">{entry.description}</f:translate></f:if>
 		</f:link.action>
 	</li>
