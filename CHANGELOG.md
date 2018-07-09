@@ -1,5 +1,10 @@
 # In2publish Core Change Log
 
+7.0.5:
+
+- [BUGFIX] Reset collected cache clear entries after writing the task
+- [BUGFIX] Use first registered controller actions when creating a link
+
 7.0.4:
 
 - [BUGFIX] Avoid endless loop
