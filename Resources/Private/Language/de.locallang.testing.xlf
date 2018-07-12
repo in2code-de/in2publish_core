@@ -19,7 +19,7 @@
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest -->
 
 			<trans-unit id="configuration.options_valid">
-				<source>The tested configration options are valid.</source>
+				<source>The tested configuration options are valid.</source>
 				<target state="translated">Die getesteten Konfigurationsoptionen sind gültig.</target>
 			</trans-unit>
 			<trans-unit id="configuration.options_invalid">
