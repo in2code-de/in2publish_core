@@ -19,7 +19,7 @@
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest -->
 
 			<trans-unit id="configuration.options_valid">
-				<source>The tested configration options are valid.</source>
+				<source>The tested configuration options are valid.</source>
 				<target state="translated">Die getesteten Konfigurationsoptionen sind gültig.</target>
 			</trans-unit>
 			<trans-unit id="configuration.options_invalid">
@@ -34,11 +34,11 @@
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest -->
 
 			<trans-unit id="configuration.format_okay">
-				<source>The configuration file is well formated and holds all required options.</source>
+				<source>The configuration file is well formatted and holds all required options.</source>
 				<target state="translated">Die Konfiguration ist gültig formatiert und enthält alle Optionen.</target>
 			</trans-unit>
 			<trans-unit id="configuration.format_error">
-				<source>One or more options are not confiured correctly.</source>
+				<source>One or more options are not configured correctly.</source>
 				<target state="translated">Eine oder mehrere Optionen sind nicht korrekt konfiguriert.</target>
 			</trans-unit>
 
@@ -276,8 +276,8 @@
 				<target state="translated">Entfernte Version:</target>
 			</trans-unit>
 			<trans-unit id="application.foreign_configuration_loading_state">
-				<source>The confguration utility has following loading state:</source>
-				<target state="translated">Das Konfiguraionswerkzeug hat folgenden Ladestatus:</target>
+				<source>The configuration utility has following loading state:</source>
+				<target state="translated">Das Konfigurationswerkzeug hat folgenden Ladestatus:</target>
 			</trans-unit>
 			<trans-unit id="application.foreign_utf8_fs">
 				<source>UTF8 filesystem configured for the foreign system, please disable this configuration in Install tool.</source>
