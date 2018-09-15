@@ -206,6 +206,9 @@
 			<trans-unit id="module.m4.registry_flushed">
 				<source>Flushed all related registry entries.</source>
 			</trans-unit>
+			<trans-unit id="module.m4.superfluous_envelopes_flushed">
+				<source>Flushed all superfluous envelopes.</source>
+			</trans-unit>
 
 			<trans-unit id="test_state_error">
 				<source>In2publish might not work as expected.</source>

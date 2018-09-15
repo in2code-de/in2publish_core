@@ -272,6 +272,11 @@
 				<source>Flushed all related registry entries.</source>
 				<target state="translated">Alle zugehörigen Registereinträge wurden gelöscht.</target>
 			</trans-unit>
+			<trans-unit id="module.m4.superfluous_envelopes_flushed">
+				<source>Flushed all superfluous envelopes.</source>
+				<target state="translated">Alle überflüssigen Envelopes wurden gelöscht.</target>
+			</trans-unit>
+
 
 			<trans-unit id="test_state_error">
 				<source>In2publish might not work as expected.</source>
