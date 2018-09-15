@@ -98,9 +98,7 @@ call_user_func(
                 $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca.description', 'Tools', 'tca');
                 $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca.description', 'Tools', 'clearTcaCaches');
                 $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry.description', 'Tools', 'flushRegistry');
-                if ($letterbox->hasUnAnsweredEnvelopes()) {
-                    $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes.description', 'Tools', 'flushEnvelopes');
-                }
+                $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes.description', 'Tools', 'flushEnvelopes');
             }
 
 
