@@ -73,7 +73,7 @@ class ConfigurationUtilityTest extends UnitTestCase
         $result = ConfigurationUtility::mergeConfiguration($original, $additional);
 
         // Assert
-        $this->assertEquals($expectedResult, $result);
+        $this->assertSame($expectedResult, $result);
     }
 
     /**
@@ -117,7 +117,7 @@ class ConfigurationUtilityTest extends UnitTestCase
      * @test
      * @covers ::mergeConfiguration()
      */
-    public function canMergenNestedArraysRecursively()
+    public function canMergeNestedArraysRecursively()
     {
         $value1 = 'lorem';
         $value2original = [
@@ -170,5 +170,34 @@ class ConfigurationUtilityTest extends UnitTestCase
 
         // Assert
         $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @test
+     */
+    public function sortsValuesByDefinedOrder()
+    {
+        $original = [
+            'foo' => 'bar',
+            'baz' => 'bem',
+            'boo' => 13,
+            52 => 'fem',
+            13 => 'bam',
+            754 => 274,
+        ];
+        $expectedResult = $additional = [
+            754 => 274,
+            'baz' => 'bem',
+            52 => 'fem',
+            'boo' => 13,
+            13 => 'bam',
+            'foo' => 'bar',
+        ];
+
+        // Act
+        $result = ConfigurationUtility::mergeConfiguration($original, $additional);
+
+        // Assert
+        $this->assertSame($expectedResult, $result);
     }
 }

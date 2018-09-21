@@ -39,12 +39,12 @@ class ConfigurationUtility
         uksort(
             $result,
             function ($left, $right) use ($keyOrder) {
-
                 if (!isset($keyOrder[$left])
                     || !isset($keyOrder[$right])
                     || $keyOrder[$left] === $keyOrder[$right]
                 ) {
-                    return 0;
+                    // Be deterministic. If 0 is returned the array will be reversed
+                    return 1;
                 }
                 return $keyOrder[$left] < $keyOrder[$right] ? -1 : 1;
             }
@@ -64,10 +64,7 @@ class ConfigurationUtility
         $originalValue = array_key_exists($key, $original) ? $original[$key] : null;
         $additionalValue = array_key_exists($key, $additional) ? $additional[$key] : null;
 
-        if (is_array($originalValue)
-            &&
-            is_array($additionalValue)
-        ) {
+        if (is_array($originalValue) && is_array($additionalValue)) {
             // Merge recursively
             $result = self::mergeConfiguration($originalValue, $additionalValue);
         } else {
