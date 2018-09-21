@@ -242,4 +242,28 @@ class ConfigurationUtilityTest extends UnitTestCase
         // Assert
         $this->assertSame($expectedResult, $result);
     }
+
+    /**
+     * @test
+     */
+    public function valuesAreRemovedIfTheValueIsUnset()
+    {
+        $original = [
+            'foo' => 'bar',
+            'baz' => 'bem',
+        ];
+        $additional = [
+            'foo' => '__UNSET',
+        ];
+
+        $expectedResult = [
+            'baz' => 'bem',
+        ];
+
+        // Act
+        $result = ConfigurationUtility::mergeConfiguration($original, $additional);
+
+        // Assert
+        $this->assertSame($expectedResult, $result);
+    }
 }
