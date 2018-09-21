@@ -15,6 +15,10 @@ class ConfigurationUtility
      */
     public static function mergeConfiguration(array $original, array $additional)
     {
+        if (empty($additional)) {
+            return $original;
+        }
+
         $result = $original;
 
         foreach ($additional as $key => $value) {
@@ -28,6 +32,21 @@ class ConfigurationUtility
                 }
             }
         }
+
+        $keyOrder = array_flip(array_keys($additional));
+        uksort(
+            $result,
+            function ($left, $right) use ($keyOrder) {
+
+                if (!isset($keyOrder[$left])
+                    || !isset($keyOrder[$right])
+                    || $keyOrder[$left] === $keyOrder[$right]
+                ) {
+                    return 0;
+                }
+                return $keyOrder[$left] < $keyOrder[$right] ? -1 : 1;
+            }
+        );
 
         return $result;
     }
