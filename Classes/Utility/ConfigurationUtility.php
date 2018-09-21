@@ -31,7 +31,27 @@ class ConfigurationUtility
         }
 
         $result = $original;
+        $result = self::overruleResultByAdditional($original, $additional, $result);
+        $result = self::sortResultArrayByAdditionalKeyOrder($result, $original, $additional);
 
+        if (array_key_exists('definition', $additional)) {
+            foreach ($result['definition'] as $key => $value) {
+                unset($result['definition'][$key]);
+                $result['definition'][(int)$key] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $original
+     * @param array $additional
+     * @param $result
+     * @return array
+     */
+    protected static function overruleResultByAdditional(array $original, array $additional, $result)
+    {
         foreach ($additional as $key => $value) {
             if ($value === '__UNSET') {
                 unset($result[$key]);
@@ -45,34 +65,6 @@ class ConfigurationUtility
                 }
             }
         }
-
-        $additionalKeys = array_keys($additional);
-        $originalKeys = array_keys($original);
-        $originalKeys = array_diff($originalKeys, $additionalKeys);
-        $keyOrder = array_merge($additionalKeys, $originalKeys);
-        $keyOrder = array_flip($keyOrder);
-
-        uksort(
-            $result,
-            function ($left, $right) use ($keyOrder) {
-                if (!isset($keyOrder[$left])
-                    || !isset($keyOrder[$right])
-                    || $keyOrder[$left] === $keyOrder[$right]
-                ) {
-                    // Be deterministic. If 0 is returned the array will be reversed
-                    return 1;
-                }
-                return $keyOrder[$left] < $keyOrder[$right] ? -1 : 1;
-            }
-        );
-
-        if (array_key_exists('definition', $additional)) {
-            foreach ($result['definition'] as $key => $value) {
-                unset($result['definition'][$key]);
-                $result['definition'][(int)$key] = $value;
-            }
-        }
-
         return $result;
     }
 
@@ -95,6 +87,36 @@ class ConfigurationUtility
             $result = $additionalValue;
         }
 
+        return $result;
+    }
+
+    /**
+     * @param array $result
+     * @param array $original
+     * @param array $additional
+     * @return mixed
+     */
+    protected static function sortResultArrayByAdditionalKeyOrder(array $result, array $original, array $additional)
+    {
+        $additionalKeys = array_keys($additional);
+        $originalKeys = array_keys($original);
+        $originalKeys = array_diff($originalKeys, $additionalKeys);
+        $keyOrder = array_merge($additionalKeys, $originalKeys);
+        $keyOrder = array_flip($keyOrder);
+
+        uksort(
+            $result,
+            function ($left, $right) use ($keyOrder) {
+                if (!isset($keyOrder[$left])
+                    || !isset($keyOrder[$right])
+                    || $keyOrder[$left] === $keyOrder[$right]
+                ) {
+                    // Be deterministic. If 0 is returned the array will be reversed
+                    return 1;
+                }
+                return $keyOrder[$left] < $keyOrder[$right] ? -1 : 1;
+            }
+        );
         return $result;
     }
 }
