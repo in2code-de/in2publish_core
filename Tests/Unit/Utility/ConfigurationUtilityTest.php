@@ -64,9 +64,9 @@ class ConfigurationUtilityTest extends UnitTestCase
             'baz' => $value4,
         ];
         $expectedResult = [
-            'foo' => $value1,
             'bar' => $value3,
             'baz' => $value4,
+            'foo' => $value1,
         ];
 
         // Act
@@ -111,6 +111,48 @@ class ConfigurationUtilityTest extends UnitTestCase
 
         // Assert
         $this->assertEquals($expectedResult, $result);
+    }
+
+    /**
+     * @test
+     * @covers ::mergeConfiguration()
+     */
+    public function doesOverwriteNumericKeysOfDefinitionArrays()
+    {
+        $original = [
+            'definition' => [
+                5 => 'strawberries',
+                8 => 'apples',
+                19 => 'bananas',
+                1 => 'nuts',
+            ],
+        ];
+
+        $additional = [
+            'definition' => [
+                2 => 'mango',
+                8 => 'pear',
+                4 => 'peach',
+                1 => 'passionfruit',
+            ],
+        ];
+
+        $expectedResult = [
+            'definition' => [
+                2 => 'mango',
+                8 => 'pear',
+                4 => 'peach',
+                1 => 'passionfruit',
+                5 => 'strawberries',
+                19 => 'bananas',
+            ],
+        ];
+
+        // Act
+        $result = ConfigurationUtility::mergeConfiguration($original, $additional);
+
+        // Assert
+        $this->assertSame($expectedResult, $result);
     }
 
     /**

@@ -19,6 +19,17 @@ class ConfigurationUtility
             return $original;
         }
 
+        if (array_key_exists('definition', $additional)) {
+            foreach ($additional['definition'] as $key => $value) {
+                unset($additional['definition'][$key]);
+                $additional['definition']['0' . $key] = $value;
+            }
+            foreach ($original['definition'] as $key => $value) {
+                unset($original['definition'][$key]);
+                $original['definition']['0' . $key] = $value;
+            }
+        }
+
         $result = $original;
 
         foreach ($additional as $key => $value) {
@@ -35,7 +46,12 @@ class ConfigurationUtility
             }
         }
 
-        $keyOrder = array_flip(array_keys($additional));
+        $additionalKeys = array_keys($additional);
+        $originalKeys = array_keys($original);
+        $originalKeys = array_diff($originalKeys, $additionalKeys);
+        $keyOrder = array_merge($additionalKeys, $originalKeys);
+        $keyOrder = array_flip($keyOrder);
+
         uksort(
             $result,
             function ($left, $right) use ($keyOrder) {
@@ -49,6 +65,13 @@ class ConfigurationUtility
                 return $keyOrder[$left] < $keyOrder[$right] ? -1 : 1;
             }
         );
+
+        if (array_key_exists('definition', $additional)) {
+            foreach ($result['definition'] as $key => $value) {
+                unset($result['definition'][$key]);
+                $result['definition'][(int)$key] = $value;
+            }
+        }
 
         return $result;
     }
