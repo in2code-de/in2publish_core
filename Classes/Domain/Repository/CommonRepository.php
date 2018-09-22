@@ -35,7 +35,7 @@ use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\FileUtility;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
@@ -97,12 +97,12 @@ class CommonRepository extends BaseRepository
     protected $signalSlotDispatcher;
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
     protected $localDatabase = null;
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
     protected $foreignDatabase = null;
 
@@ -114,14 +114,14 @@ class CommonRepository extends BaseRepository
     protected $skipRecords = [];
 
     /**
-     * @param DatabaseConnection $localDatabase
-     * @param DatabaseConnection $foreignDatabase
+     * @param Connection $localDatabase
+     * @param Connection $foreignDatabase
      * @param string $tableName
      * @param string $identifierFieldName
      */
     public function __construct(
-        DatabaseConnection $localDatabase,
-        DatabaseConnection $foreignDatabase,
+        Connection $localDatabase,
+        Connection $foreignDatabase,
         $tableName,
         $identifierFieldName = 'uid'
     ) {
@@ -225,7 +225,7 @@ class CommonRepository extends BaseRepository
      * "$propertyName" equals $propertyValue
      * Add table name
      *
-     * @param DatabaseConnection $databaseConnection
+     * @param Connection $connection
      * @param string $tableName
      * @param string $propertyName
      * @param mixed $propertyValue
@@ -237,7 +237,7 @@ class CommonRepository extends BaseRepository
      * @return array
      */
     protected function findPropertiesByPropertyAndTablename(
-        DatabaseConnection $databaseConnection,
+        Connection $connection,
         $tableName,
         $propertyName,
         $propertyValue,
@@ -250,7 +250,7 @@ class CommonRepository extends BaseRepository
         $currentTableName = $this->tableName;
         $this->tableName = $tableName;
         $properties = $this->findPropertiesByProperty(
-            $databaseConnection,
+            $connection,
             $propertyName,
             $propertyValue,
             $additionalWhere,
@@ -266,20 +266,20 @@ class CommonRepository extends BaseRepository
     /**
      * Find the last record by property and table name
      *
-     * @param DatabaseConnection $databaseConnection
+     * @param Connection $connection
      * @param string $tableName
      * @param string $propertyName
      * @param mixed $propertyValue
      * @return array
      */
     public function findLastPropertiesByPropertyAndTableName(
-        DatabaseConnection $databaseConnection,
+        Connection $connection,
         $tableName,
         $propertyName,
         $propertyValue
     ) {
         $properties = $this->findPropertiesByPropertyAndTablename(
-            $databaseConnection,
+            $connection,
             $tableName,
             $propertyName,
             $propertyValue,
