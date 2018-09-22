@@ -51,7 +51,7 @@ class LocalInstanceTest implements TestCaseInterface
         }
 
         $excludedTables = GeneralUtility::makeInstance(ConfigContainer::class)->get('excludeRelatedTables');
-        $localTables = $localDatabase->admin_get_tables();
+        $localTables = array_flip($localDatabase->getSchemaManager()->listTableNames());
 
         $missingTables = [];
 

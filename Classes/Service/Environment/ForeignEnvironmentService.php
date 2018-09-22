@@ -68,9 +68,7 @@ class ForeignEnvironmentService
      */
     public function getDatabaseInitializationCommands()
     {
-        if ($this->cache
-            &&
-            $this->cache->has('foreign_db_init')) {
+        if ($this->cache && $this->cache->has('foreign_db_init')) {
             return $this->cache->get('foreign_db_init');
         }
 
@@ -80,7 +78,7 @@ class ForeignEnvironmentService
         );
         $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
 
-        $decodedDbInit = [];
+        $decodedDbInit = '';
         if ($response->isSuccessful()) {
             $encodedDbInit = 'W10=';
             foreach ($response->getOutput() as $line) {
@@ -89,7 +87,7 @@ class ForeignEnvironmentService
                     break;
                 }
             }
-            $decodedDbInit = json_decode(base64_decode($encodedDbInit), true);
+            $decodedDbInit = implode('; ', json_decode(base64_decode($encodedDbInit), true));
             $this->cache->set('foreign_db_init', $decodedDbInit, [], 86400);
         } else {
             $this->logger->error(
@@ -102,7 +100,7 @@ class ForeignEnvironmentService
             );
         }
 
-        return implode('; ', $decodedDbInit);
+        return $decodedDbInit;
     }
 
     /**

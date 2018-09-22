@@ -31,7 +31,7 @@ use In2code\In2publishCore\Domain\Factory\TaskFactory;
 use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -42,9 +42,9 @@ class TaskRepository
     const TASK_TABLE_NAME = 'tx_in2code_in2publish_task';
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
-    protected $databaseConnection = null;
+    protected $connection = null;
 
     /**
      * @var TaskFactory
@@ -57,6 +57,11 @@ class TaskRepository
     protected $contextService = null;
 
     /**
+     * @var string
+     */
+    protected $creationDate = 'string';
+
+    /**
      * TaskRepository constructor.
      */
     public function __construct()
@@ -64,9 +69,9 @@ class TaskRepository
         $this->contextService = GeneralUtility::makeInstance(ContextService::class);
         $this->taskFactory = GeneralUtility::makeInstance(TaskFactory::class);
         if ($this->contextService->isForeign()) {
-            $this->databaseConnection = DatabaseUtility::buildLocalDatabaseConnection();
+            $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
         } elseif ($this->contextService->isLocal()) {
-            $this->databaseConnection = DatabaseUtility::buildForeignDatabaseConnection();
+            $this->connection = DatabaseUtility::buildForeignDatabaseConnection();
         }
         $now = new \DateTime('now');
         $this->creationDate = $now->format('Y-m-d H:i:s');
@@ -80,7 +85,7 @@ class TaskRepository
      */
     public function add(AbstractTask $task)
     {
-        $this->databaseConnection->exec_INSERTquery(
+        $this->connection->insert(
             static::TASK_TABLE_NAME,
             array_merge($this->taskToPropertiesArray($task), ['creation_date' => $this->creationDate])
         );
@@ -94,10 +99,10 @@ class TaskRepository
      */
     public function update(AbstractTask $task)
     {
-        $this->databaseConnection->exec_UPDATEquery(
+        $this->connection->update(
             static::TASK_TABLE_NAME,
-            'uid=' . $task->getUid(),
-            $this->taskToPropertiesArray($task)
+            $this->taskToPropertiesArray($task),
+            ['uid' => $task->getUid()]
         );
     }
 
@@ -133,17 +138,27 @@ class TaskRepository
      */
     public function findByExecutionBegin(\DateTime $executionBegin = null)
     {
+        $query = $this->connection->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+
         if ($executionBegin instanceof \DateTime) {
-            $whereClause = 'execution_begin=' . $executionBegin->format('Y-m-d H:i:s');
+            $formattedExecutionBegin = $query->createNamedParameter($executionBegin->format('Y-m-d H:i:s'));
+            $predicates = $query->expr()->like('execution_begin', $formattedExecutionBegin);
         } else {
-            $whereClause = '(execution_begin IS NULL OR execution_begin LIKE "0000-00-00 00:00:00")';
+            $predicates = $query->expr()->orX(
+                [
+                    $query->expr()->isNull('execution_begin'),
+                    $query->expr()->like('execution_begin', $query->createNamedParameter('0000-00-00 00:00:00')),
+                ]
+            );
         }
+
         $taskObjects = [];
-        $tasksPropertiesArray = (array)$this->databaseConnection->exec_SELECTgetRows(
-            '*',
-            static::TASK_TABLE_NAME,
-            $whereClause
-        );
+        $tasksPropertiesArray = $query->select('*')
+                                      ->from(static::TASK_TABLE_NAME)
+                                      ->where($predicates)
+                                      ->execute()
+                                      ->fetchAll();
         foreach ($tasksPropertiesArray as $taskProperties) {
             $taskObjects[] = $this->taskFactory->convertToObject($taskProperties);
         }

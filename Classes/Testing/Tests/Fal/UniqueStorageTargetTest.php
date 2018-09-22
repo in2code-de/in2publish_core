@@ -36,7 +36,6 @@ use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Reflection\Exception;
-use TYPO3\CMS\Extbase\Reflection\PropertyReflection;
 
 /**
  * Class UniqueStorageTargetTest
@@ -80,7 +79,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
                 $skippedStorages[] = $storageObject->getName();
                 continue;
             }
-            $driverProperty = new PropertyReflection(get_class($storageObject), 'driver');
+            $driverProperty = new \ReflectionProperty(get_class($storageObject), 'driver');
             $driverProperty->setAccessible(true);
             /** @var DriverInterface $localDriver */
             $localDriver = $driverProperty->getValue($storageObject);

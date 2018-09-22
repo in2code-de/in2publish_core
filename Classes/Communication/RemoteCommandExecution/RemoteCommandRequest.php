@@ -90,7 +90,7 @@ class RemoteCommandRequest
             'TYPO3_CONTEXT' => $configContainer->get('foreign.context'),
             'IN2PUBLISH_CONTEXT' => 'Foreign',
         ];
-        $this->dispatcher = './typo3/cli_dispatch.phpsh extbase';
+        $this->dispatcher = './../vendor/bin/typo3';
         $this->command = $command;
         $this->arguments = $arguments;
         $this->options = $options;

@@ -117,8 +117,6 @@ class In2publishCoreDefiner implements DefinerInterface
         'tx_extensionmanager_domain_model_extension',
         'tx_extensionmanager_domain_model_repository',
         'sys_domain',
-        'sys_note',
-        'tx_rsaauth_keys',
         'cache_treelist',
         'tx_in2publishcore_log',
         'tx_in2code_in2publish_task',

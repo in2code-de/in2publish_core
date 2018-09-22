@@ -30,7 +30,7 @@ use In2code\In2publishCore\Testing\Data\RequiredTablesDataProvider;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -45,7 +45,7 @@ class LocalDatabaseTest implements TestCaseInterface
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
 
-        if (!($localDatabase instanceof DatabaseConnection)) {
+        if (!($localDatabase instanceof Connection)) {
             return new TestResult('database.local_inaccessible', TestResult::ERROR);
         }
 
@@ -54,7 +54,7 @@ class LocalDatabaseTest implements TestCaseInterface
         }
 
         $expectedTables = GeneralUtility::makeInstance(RequiredTablesDataProvider::class)->getRequiredTables();
-        $actualTables = array_keys($localDatabase->admin_get_tables());
+        $actualTables = array_keys($localDatabase->getSchemaManager()->listTableNames());
 
         $missingTables = [];
         foreach ($expectedTables as $expectedTable) {

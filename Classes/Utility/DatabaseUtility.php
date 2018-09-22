@@ -51,7 +51,6 @@ class DatabaseUtility
 
     /**
      * @return Connection
-     * @throws DBALException
      */
     public static function buildForeignDatabaseConnection()
     {
@@ -119,7 +118,6 @@ class DatabaseUtility
     /**
      * @param $side
      * @return null|Connection
-     * @throws DBALException
      */
     public static function buildDatabaseConnectionForSide($side)
     {
@@ -135,7 +133,6 @@ class DatabaseUtility
     /**
      * @param Connection $connection
      * @param string $tableName
-     * @throws DBALException
      */
     public static function backupTable(Connection $connection, $tableName)
     {
@@ -169,7 +166,6 @@ class DatabaseUtility
      * @param Connection $connection
      * @param $tableName
      * @param $backupFolder
-     * @throws DBALException
      */
     protected static function createBackup(Connection $connection, $tableName, $backupFolder)
     {
@@ -284,11 +280,9 @@ class DatabaseUtility
         $tableName = str_replace("'", '', $tableName);
         $tableName = str_replace('"', '', $tableName);
 
-        $allTables = $connection->getSchemaManager()->listTables();
-        foreach ($allTables as $table) {
-            if ($table->getName() === $tableName) {
-                return $tableName;
-            }
+        $allTables = $connection->getSchemaManager()->listTableNames();
+        if (in_array($tableName, $allTables)) {
+            return $tableName;
         }
         throw new \InvalidArgumentException(
             sprintf(

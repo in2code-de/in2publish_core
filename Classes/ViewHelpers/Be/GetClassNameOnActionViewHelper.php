@@ -33,19 +33,27 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 class GetClassNameOnActionViewHelper extends AbstractViewHelper
 {
     /**
+     *
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('actionName', 'string', 'action name to compare with current action', true);
+        $this->registerArgument('className', 'string', 'class name if action fits', false, ' btn-primary');
+        $this->registerArgument('fallbackClassName', 'string', 'fallback class name', false, ' btn-default');
+    }
+
+    /**
      * Return className if actionName fits to current action
      *
-     * @param string $actionName action name to compare with current action
-     * @param string $className class name that should be returned if action fits
-     * @param string $fallbackClassName fallback class name if action does not fit
      * @return string
      */
-    public function render($actionName, $className = ' btn-primary', $fallbackClassName = ' btn-default')
+    public function render()
     {
-        if ($this->getCurrentActionName() === $actionName) {
-            return $className;
+        if ($this->getCurrentActionName() === $this->arguments['actionName']) {
+            return $this->arguments['className'];
         }
-        return $fallbackClassName;
+        return $this->arguments['fallbackClassName'];
     }
 
     /**
@@ -53,6 +61,6 @@ class GetClassNameOnActionViewHelper extends AbstractViewHelper
      */
     protected function getCurrentActionName()
     {
-        return $this->controllerContext->getRequest()->getControllerActionName();
+        return $this->renderingContext->getControllerAction();
     }
 }

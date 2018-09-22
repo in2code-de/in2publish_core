@@ -43,7 +43,7 @@ class ForeignSysDomainTest implements TestCaseInterface
     {
         $foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
 
-        if ($foreignDatabase->exec_SELECTcountRows('*', 'sys_domain', 'hidden=0') === 0) {
+        if ($foreignDatabase->count('*', 'sys_domain', ['hidden' => 0]) === 0) {
             return new TestResult('application.foreign_sys_domain_missing', TestResult::ERROR);
         }
         return new TestResult('application.foreign_sys_domain_configured');

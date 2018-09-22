@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -80,10 +81,10 @@ class Letterbox
 
         $uid = (int)$envelope->getUid();
 
-        if (0 === $uid || 0 === $database->exec_SELECTcountRows('uid', static::TABLE, 'uid=' . $uid)) {
-            if (true === $database->exec_INSERTquery(static::TABLE, $envelope->toArray())) {
+        if (0 === $uid || 0 === $database->count('uid', static::TABLE, ['uid' => $uid])) {
+            if (1 === $database->insert(static::TABLE, $envelope->toArray())) {
                 if ($uid <= 0) {
-                    $uid = $database->sql_insert_id();
+                    $uid = $database->lastInsertId();
                     $envelope->setUid($uid);
                 }
                 return $uid;
@@ -92,19 +93,19 @@ class Letterbox
                     'Failed to send envelope [' . $uid . ']',
                     [
                         'envelope' => $envelope->toArray(),
-                        'error' => $database->sql_error(),
-                        'errno' => $database->sql_errno(),
+                        'error' => $database->errorInfo(),
+                        'errno' => $database->errorCode(),
                     ]
                 );
             }
         } else {
-            if (false === $database->exec_UPDATEquery(static::TABLE, 'uid=' . $uid, $envelope->toArray())) {
+            if (1 === $database->update(static::TABLE, ['uid' => $uid], $envelope->toArray())) {
                 $this->logger->error(
                     'Failed to update envelope [' . $uid . ']',
                     [
                         'envelope' => $envelope->toArray(),
-                        'error' => $database->sql_error(),
-                        'errno' => $database->sql_errno(),
+                        'error' => $database->errorInfo(),
+                        'errno' => $database->errorCode(),
                     ]
                 );
             } else {
@@ -129,23 +130,25 @@ class Letterbox
             $database = DatabaseUtility::buildForeignDatabaseConnection();
         }
 
-        $envelopeData = $database->exec_SELECTgetSingleRow(
-            'command,request,response,uid',
-            static::TABLE,
-            'uid=' . $uid
-        );
+        $envelopeData = $database
+            ->select(
+                ['command', 'request', 'response', 'uid'],
+                static::TABLE,
+                ['uid' => $uid]
+            )
+            ->fetch();
 
         if (is_array($envelopeData)) {
             $envelope = Envelope::fromArray($envelopeData);
             if (!$this->keepEnvelopes && $burnEnvelope) {
-                $database->exec_DELETEquery(static::TABLE, 'uid=' . $uid);
+                $database->delete(static::TABLE, ['uid' => $uid]);
             }
         } else {
             $this->logger->error(
-                'Failed to receive envelope [' . $uid . '] "' . $database->sql_error() . '"',
+                'Failed to receive envelope [' . $uid . '] "' . $database->errorInfo() . '"',
                 [
-                    'error' => $database->sql_error(),
-                    'errno' => $database->sql_errno(),
+                    'error' => $database->errorInfo(),
+                    'errno' => $database->errorCode(),
                 ]
             );
             $envelope = false;
@@ -164,8 +167,11 @@ class Letterbox
             $database = DatabaseUtility::buildLocalDatabaseConnection();
         }
 
-        if ($database instanceof DatabaseConnection && $database->isConnected()) {
-            return $database->exec_SELECTcountRows('uid', static::TABLE, 'response IS NOT NULL');
+        if ($database instanceof Connection && $database->isConnected()) {
+            $query = $database->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->count('uid')->from(static::TABLE)->where($query->expr()->isNotNull('response'));
+            return $query->execute()->fetch() > 0;
         }
         return false;
     }

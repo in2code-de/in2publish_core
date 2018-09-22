@@ -32,7 +32,7 @@ use In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -47,7 +47,7 @@ class ForeignDatabaseTest implements TestCaseInterface
     {
         $foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
 
-        if (!($foreignDatabase instanceof DatabaseConnection)) {
+        if (!($foreignDatabase instanceof Connection)) {
             return new TestResult('database.foreign_inaccessible', TestResult::ERROR);
         }
 
@@ -56,7 +56,7 @@ class ForeignDatabaseTest implements TestCaseInterface
         }
 
         $expectedTables = GeneralUtility::makeInstance(RequiredTablesDataProvider::class)->getRequiredTables();
-        $actualTables = array_keys($foreignDatabase->admin_get_tables());
+        $actualTables = array_keys($foreignDatabase->getSchemaManager()->listTableNames());
 
         $missingTables = [];
         foreach ($expectedTables as $expectedTable) {

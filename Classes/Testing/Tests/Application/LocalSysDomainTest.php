@@ -43,7 +43,7 @@ class LocalSysDomainTest implements TestCaseInterface
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
 
-        if ($localDatabase->exec_SELECTcountRows('*', 'sys_domain', 'hidden=0') === 0) {
+        if ($localDatabase->count('*', 'sys_domain', ['hidden' => 0]) === 0) {
             return new TestResult('application.local_sys_domain_missing', TestResult::ERROR);
         }
         return new TestResult('application.local_sys_domain_configured');

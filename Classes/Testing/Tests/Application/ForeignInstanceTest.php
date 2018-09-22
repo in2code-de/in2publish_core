@@ -56,7 +56,6 @@ class ForeignInstanceTest implements TestCaseInterface
 
     /**
      * @return TestResult
-     * @throws \TYPO3\CMS\Core\Package\Exception
      */
     public function run()
     {
