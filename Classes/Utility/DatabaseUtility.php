@@ -80,8 +80,10 @@ class DatabaseUtility
 
                 try {
                     $foreignConnection = $connectionPool->getConnectionByName('in2publish_foreign');
-                    foreach ($foreignConnection->getEventManager()->getListeners() as $event => $listener) {
-                        $foreignConnection->getEventManager()->removeEventListener($event, $listener);
+                    foreach ($foreignConnection->getEventManager()->getListeners() as $event => $listeners) {
+                        foreach ($listeners as $listener) {
+                            $foreignConnection->getEventManager()->removeEventListener($event, $listener);
+                        }
                     }
                     static::$foreignConnection = $foreignConnection;
                 } catch (DBALException $e) {
