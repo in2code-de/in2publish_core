@@ -1,4 +1,5 @@
 <?php
+
 namespace In2code\In2publishCore\Service\Environment;
 
 /***************************************************************
@@ -69,8 +70,7 @@ class ForeignEnvironmentService
     {
         if ($this->cache
             &&
-            $this->cache->has('foreign_db_init'))
-        {
+            $this->cache->has('foreign_db_init')) {
             return $this->cache->get('foreign_db_init');
         }
 
@@ -101,6 +101,7 @@ class ForeignEnvironmentService
                 ]
             );
         }
+
         return $decodedDbInit;
     }
 
@@ -148,6 +149,7 @@ class ForeignEnvironmentService
 
             $this->cache->set('create_masks', $createMasks, [], 86400);
         }
+
         return (array)$this->cache->get('create_masks');
     }
 
@@ -189,6 +191,7 @@ class ForeignEnvironmentService
                 $values[$key] = $value;
             }
         }
+
         return $values;
     }
 }
