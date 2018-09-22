@@ -64,7 +64,7 @@ class ForeignEnvironmentService
     }
 
     /**
-     * @return array
+     * @return string
      */
     public function getDatabaseInitializationCommands()
     {
@@ -102,7 +102,7 @@ class ForeignEnvironmentService
             );
         }
 
-        return $decodedDbInit;
+        return implode('; ', $decodedDbInit);
     }
 
     /**

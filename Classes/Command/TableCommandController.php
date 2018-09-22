@@ -31,7 +31,7 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDis
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Service\Database\DatabaseSchemaService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -46,12 +46,12 @@ class TableCommandController extends AbstractCommandController
     const EXIT_REMOTE_BACKUP_FAILED = 221;
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
     protected $localDatabase = null;
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
     protected $foreignDatabase = null;
 
@@ -158,18 +158,18 @@ class TableCommandController extends AbstractCommandController
     }
 
     /**
-     * @param DatabaseConnection $fromDatabase
-     * @param DatabaseConnection $toDatabase
+     * @param Connection $fromDatabase
+     * @param Connection $toDatabase
      * @param string $tableName
      *
      * @return bool
      */
-    protected function copyTableContents(DatabaseConnection $fromDatabase, DatabaseConnection $toDatabase, $tableName)
+    protected function copyTableContents(Connection $fromDatabase, Connection $toDatabase, $tableName)
     {
         if ($this->truncateTable($toDatabase, $tableName)) {
-            $queryResult = $fromDatabase->exec_SELECTquery('*', $tableName, '1=1');
-            $this->logger->notice('Successfully truncated table, importing ' . $queryResult->num_rows . ' rows');
-            while (($row = $fromDatabase->sql_fetch_assoc($queryResult))) {
+            $queryResult = $fromDatabase->select(['*'], $tableName);
+            $this->logger->notice('Successfully truncated table, importing ' . $queryResult->rowCount() . ' rows');
+            while (($row = $queryResult->fetch())) {
                 if (($success = $this->insertRow($toDatabase, $tableName, $row)) !== true) {
                     $this->logger->critical(
                         'Failed to import row into "' . $tableName . '"',
@@ -188,26 +188,27 @@ class TableCommandController extends AbstractCommandController
     /**
      * Returns TRUE on success or FALSE on failure
      *
-     * @param DatabaseConnection $databaseConnection
+     * @param Connection $connection
      * @param string $tableName
      * @param array $row
      * @return bool
      */
-    protected function insertRow(DatabaseConnection $databaseConnection, $tableName, array $row)
+    protected function insertRow(Connection $connection, $tableName, array $row)
     {
-        return $databaseConnection->exec_INSERTquery($tableName, $row);
+        return $connection->insert($tableName, $row);
     }
 
     /**
      * Returns TRUE on success or FALSE on failure
      *
-     * @param DatabaseConnection $databaseConnection
+     * @param Connection $connection
      * @param $tableName
      * @return bool
      */
-    protected function truncateTable(DatabaseConnection $databaseConnection, $tableName)
+    protected function truncateTable(Connection $connection, $tableName)
     {
-        return $databaseConnection->exec_TRUNCATEquery($tableName);
+        $connection->truncate($tableName);
+        return true;
     }
 
     /**

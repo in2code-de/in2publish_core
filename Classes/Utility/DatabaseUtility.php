@@ -25,9 +25,11 @@ namespace In2code\In2publishCore\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Doctrine\DBAL\DBALException;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -43,76 +45,79 @@ class DatabaseUtility
     protected static $logger = null;
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
-    protected static $foreignDatabase = null;
+    protected static $foreignConnection = null;
 
     /**
-     * @return DatabaseConnection
+     * @return Connection
+     * @throws DBALException
      */
     public static function buildForeignDatabaseConnection()
     {
         static::initializeLogger();
-        if (static::$foreignDatabase === null) {
+        if (static::$foreignConnection === null) {
             $configuration = GeneralUtility::makeInstance(ConfigContainer::class)->get('foreign.database');
             if (null === $configuration) {
                 static::$logger->warning('Can not instantiate the foreign database connection without a configuration');
-                static::$foreignDatabase = null;
+                static::$foreignConnection = null;
             } else {
-                static::$foreignDatabase = GeneralUtility::makeInstance(DatabaseConnection::class);
-                static::$foreignDatabase->setDatabaseHost($configuration['hostname']);
-                static::$foreignDatabase->setDatabaseName($configuration['name']);
-                static::$foreignDatabase->setDatabasePassword($configuration['password']);
-                static::$foreignDatabase->setDatabaseUsername($configuration['username']);
-                static::$foreignDatabase->setDatabasePort($configuration['port']);
-
+                $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
                 $foreignEnvService = GeneralUtility::makeInstance(ForeignEnvironmentService::class);
-                static::$foreignDatabase->setInitializeCommandsAfterConnect(
-                    $foreignEnvService->getDatabaseInitializationCommands()
-                );
+                $initCommands = $foreignEnvService->getDatabaseInitializationCommands();
+
+                if (!in_array('in2publish_foreign', $connectionPool->getConnectionNames())) {
+                    $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['in2publish_foreign'] = [
+                        'dbname' => $configuration['name'],
+                        'driver' => 'mysqli',
+                        'host' => $configuration['hostname'],
+                        'password' => $configuration['password'],
+                        'port' => $configuration['port'],
+                        'user' => $configuration['username'],
+                    ];
+                }
+                $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['in2publish_foreign']['initCommands'] = $initCommands;
 
                 try {
-                    @static::$foreignDatabase->connectDB();
-                } catch (\Exception $e) {
-                    static::$logger->error($e->getMessage());
-                    static::$foreignDatabase = null;
+                    $foreignConnection = $connectionPool->getConnectionByName('in2publish_foreign');
+                    foreach ($foreignConnection->getEventManager()->getListeners() as $event => $listener) {
+                        $foreignConnection->getEventManager()->removeEventListener($event, $listener);
+                    }
+                    static::$foreignConnection = $foreignConnection;
+                } catch (DBALException $e) {
+                    static::$foreignConnection = null;
                 }
             }
         }
 
-        return static::$foreignDatabase;
+        return static::$foreignConnection;
     }
 
     /**
-     * @param string $string
-     * @param string $tableName
+     * @param $string
      * @return string
      */
-    public static function quoteString($string, $tableName)
+    public static function quoteString($string)
     {
-        return static::buildLocalDatabaseConnection()->quoteStr($string, $tableName);
+        return static::buildLocalDatabaseConnection()->quote($string);
     }
 
     /**
-     * @return DatabaseConnection|null
-     * @SuppressWarnings(PHPMD.Superglobals)
+     * @return null|Connection
      */
     public static function buildLocalDatabaseConnection()
     {
-        $database = null;
-        if (isset($GLOBALS['TYPO3_DB']) && $GLOBALS['TYPO3_DB'] instanceof DatabaseConnection) {
-            /** @var DatabaseConnection $database */
-            $database = $GLOBALS['TYPO3_DB'];
-            if (!$database->isConnected()) {
-                $database->connectDB();
-            }
+        try {
+            return GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionByName('Default');
+        } catch (DBALException $e) {
+            return null;
         }
-        return $database;
     }
 
     /**
-     * @param string $side
-     * @return DatabaseConnection
+     * @param $side
+     * @return null|Connection
+     * @throws DBALException
      */
     public static function buildDatabaseConnectionForSide($side)
     {
@@ -126,13 +131,13 @@ class DatabaseUtility
     }
 
     /**
-     * @param DatabaseConnection $databaseConnection
+     * @param Connection $connection
      * @param string $tableName
-     * @throws \Exception
+     * @throws DBALException
      */
-    public static function backupTable(DatabaseConnection $databaseConnection, $tableName)
+    public static function backupTable(Connection $connection, $tableName)
     {
-        $tableName = static::sanitizeTable($databaseConnection, $tableName);
+        $tableName = static::sanitizeTable($connection, $tableName);
         static::initializeLogger();
 
         $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
@@ -140,7 +145,7 @@ class DatabaseUtility
         $backupFolder = rtrim($configContainer->get('backup.publishTableCommand.backupLocation'), '/') . '/';
         FileUtility::cleanUpBackups($keepBackups, $tableName, $backupFolder);
         if ($keepBackups > 0) {
-            static::createBackup($databaseConnection, $tableName, $backupFolder);
+            static::createBackup($connection, $tableName, $backupFolder);
         } else {
             static::$logger->notice('Skipping backup for "' . $tableName . '", because keepBackups=0');
         }
@@ -159,12 +164,12 @@ class DatabaseUtility
     }
 
     /**
-     * @param DatabaseConnection $databaseConnection
-     * @param string $tableName
-     * @param string $backupFolder
-     * @return void
+     * @param Connection $connection
+     * @param $tableName
+     * @param $backupFolder
+     * @throws DBALException
      */
-    protected static function createBackup(DatabaseConnection $databaseConnection, $tableName, $backupFolder)
+    protected static function createBackup(Connection $connection, $tableName, $backupFolder)
     {
         $fileName = time() . '_' . $tableName . '.sql';
 
@@ -180,7 +185,7 @@ class DatabaseUtility
                     'addDropTable' => $addDropTable,
                     'zipBackup' => $zipBackup,
                 ],
-                'hostInfo' => $databaseConnection->getDatabaseHandle()->host_info,
+                'hostInfo' => $connection->getHost(),
             ]
         );
         $data =
@@ -194,17 +199,17 @@ class DatabaseUtility
             $data .= 'DROP TABLE IF EXISTS ' . $tableName . ';' . PHP_EOL;
         }
 
-        $res = $databaseConnection->admin_query('SHOW CREATE TABLE ' . $tableName);
-        $result = $res->fetch_row();
+        $res = $connection->query('SHOW CREATE TABLE ' . $tableName);
+        $result = $res->fetchAll();
 
-        $data .= $result[1] . ';' . PHP_EOL;
+        $data .= $result[0]['Create Table'] . ';' . PHP_EOL;
 
-        $resultSet = $databaseConnection->exec_SELECTquery('*', $tableName, '1=1');
+        $resultSet = $connection->select(['*'], $tableName);
 
-        while (($row = $databaseConnection->sql_fetch_assoc($resultSet))) {
+        while (($row = $resultSet->fetch())) {
             $data .=
                 'INSERT INTO ' . $tableName . ' VALUES (' .
-                implode(',', $databaseConnection->fullQuoteArray($row, $tableName)) .
+                implode(',', array_map([$connection, 'quote'], $row)) .
                 ');' . PHP_EOL;
         }
 
@@ -267,19 +272,21 @@ class DatabaseUtility
     }
 
     /**
-     * @param DatabaseConnection $databaseConnection
+     * @param Connection $connection
      * @param string $tableName
-     * @return string
+     * @return mixed|string
      */
-    protected static function sanitizeTable(DatabaseConnection $databaseConnection, $tableName)
+    protected static function sanitizeTable(Connection $connection, $tableName)
     {
         $tableName = stripslashes($tableName);
         $tableName = str_replace("'", '', $tableName);
         $tableName = str_replace('"', '', $tableName);
 
-        $allTables = $databaseConnection->admin_get_tables();
-        if (array_key_exists($tableName, $allTables)) {
-            return $tableName;
+        $allTables = $connection->getSchemaManager()->listTables();
+        foreach ($allTables as $table) {
+            if ($table->getName() === $tableName) {
+                return $tableName;
+            }
         }
         throw new \InvalidArgumentException(
             sprintf(

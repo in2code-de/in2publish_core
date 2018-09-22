@@ -309,7 +309,7 @@ abstract class BaseRepository
      */
     protected function quoteString($string)
     {
-        return DatabaseUtility::quoteString($string, $this->tableName);
+        return DatabaseUtility::quoteString($string);
     }
 
     /**

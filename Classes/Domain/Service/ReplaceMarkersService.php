@@ -104,7 +104,7 @@ class ReplaceMarkersService
                     if ($propertyValue === null) {
                         $propertyValue = $record->getForeignProperty($propertyName);
                     }
-                    return DatabaseUtility::quoteString($propertyValue, $record->getTableName());
+                    return DatabaseUtility::quoteString($propertyValue);
                 },
                 $string
             );
