@@ -78,7 +78,7 @@ abstract class BaseRepository
      * the given database connection where the column
      * "$propertyName" equals $propertyValue
      *
-     * @param Connection $databaseConnection
+     * @param Connection $connection
      * @param string $propertyName
      * @param mixed $propertyValue
      * @param string $additionalWhere
@@ -170,23 +170,32 @@ abstract class BaseRepository
         $limit = '',
         $indexField = 'uid'
     ) {
-        $whereParts = [];
-        foreach ($properties as $propertyName => $propertyValue) {
-            $whereParts[] = $connection->quoteStr($propertyName, $this->tableName) . ' LIKE '
-                            . $connection->fullQuoteStr($propertyValue, $this->tableName);
-        }
         if (empty($orderBy)) {
             $orderBy = $this->tcaService->getSortingField($this->tableName);
         }
-        return (array)$connection->exec_SELECTgetRows(
-            '*',
-            $this->tableName,
-            implode(' AND ', $whereParts) . $additionalWhere,
-            $groupBy,
-            $orderBy,
-            $limit,
-            $indexField
-        );
+
+        $query = $connection->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $query->select('*')
+              ->from($this->tableName)
+              ->andWhere($additionalWhere);
+
+        foreach ($properties as $propertyName => $propertyValue) {
+            $query->andWhere($query->expr()->like($propertyName, $query->createNamedParameter($propertyValue)));
+        }
+
+        if (!empty($groupBy)) {
+            $query->groupBy($groupBy);
+        }
+        if (!empty($orderBy)) {
+            $order = explode(' ', $orderBy);
+            $query->orderBy($order[0], $order[1] ?? null);
+        }
+        if (!empty($limit)) {
+            $query->setMaxResults((int)$limit);
+        }
+        $rows = $query->execute()->fetchAll();
+        return array_combine(array_column($rows, $indexField), $rows);
     }
 
     /**
@@ -206,24 +215,16 @@ abstract class BaseRepository
         if (strpos($identifier, ',') !== false) {
             $identifierArray = Record::splitCombinedIdentifier($identifier);
 
-            $whereArray = [];
-
-            foreach ($identifierArray as $property => $value) {
-                $whereArray[] = $property . ' LIKE "' . $this->quoteString($value) . '"';
-            }
-
-            $whereClause = implode(' AND ', $whereArray);
-
-            $success = (bool)$connection->exec_UPDATEquery(
+            $success = (bool)$connection->update(
                 $this->tableName,
-                $whereClause,
-                $properties
+                $properties,
+                $identifierArray
             );
         } else {
-            $success = (bool)$connection->exec_UPDATEquery(
+            $success = (bool)$connection->update(
                 $this->tableName,
-                'uid=' . $identifier,
-                $properties
+                $properties,
+                ['uid' => $identifier]
             );
         }
         if (!$success) {
@@ -243,7 +244,7 @@ abstract class BaseRepository
      */
     protected function addRecord(Connection $connection, array $properties)
     {
-        $success = (bool)$connection->exec_INSERTquery($this->tableName, $properties);
+        $success = (bool)$connection->insert($this->tableName, $properties);
         if (!$success) {
             $this->logFailedQuery(__METHOD__, $connection);
         }
@@ -270,21 +271,13 @@ abstract class BaseRepository
         if (strpos($identifier, ',') !== false) {
             $identifierArray = Record::splitCombinedIdentifier($identifier);
 
-            $whereArray = [];
-
-            foreach ($identifierArray as $property => $value) {
-                $whereArray[] = $property . ' LIKE "' . $this->quoteString($value) . '"';
-            }
-
-            $whereClause = implode(' AND ', $whereArray);
-
-            $success = (bool)$connection->exec_DELETEquery($this->tableName, $whereClause);
+            $success = (bool)$connection->delete($this->tableName, $identifierArray);
             if (!$success) {
                 $this->logFailedQuery(__METHOD__, $connection);
             }
             return $success;
         } else {
-            $success = (bool)$connection->exec_DELETEquery($this->tableName, 'uid=' . (int)$identifier);
+            $success = (bool)$connection->delete($this->tableName, ['uid' => (int)$identifier]);
             if (!$success) {
                 $this->logFailedQuery(__METHOD__, $connection);
             }
@@ -301,10 +294,10 @@ abstract class BaseRepository
      */
     protected function countRecord(Connection $connection, $identifier)
     {
-        $result = $connection->exec_SELECTcountRows(
+        $result = $connection->count(
             '*',
             $this->tableName,
-            $this->identifierFieldName . ' LIKE ' . $connection->fullQuoteStr($identifier, $this->tableName)
+            [$this->identifierFieldName => $identifier]
         );
         if (false === $result) {
             $this->logFailedQuery(__METHOD__, $connection);
@@ -336,8 +329,8 @@ abstract class BaseRepository
         $this->logger->critical(
             $method . ': Query failed.',
             [
-                'errno' => $connection->sql_errno(),
-                'error' => $connection->sql_error(),
+                'errno' => $connection->errorCode(),
+                'error' => $connection->errorInfo(),
                 'tableName' => $this->tableName,
             ]
         );

@@ -33,6 +33,7 @@ use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -59,12 +60,12 @@ class SysLogPublisher
     protected $logger = null;
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
     protected $localDatabase = null;
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
     protected $foreignDatabase = null;
 
@@ -106,7 +107,7 @@ class SysLogPublisher
         if ($tableName === 'pages') {
             $sysLogRow = $this->getLastLocalSysLogProperties($record, ['uid']);
             if (!empty($sysLogRow)) {
-                $this->foreignDatabase->exec_INSERTquery($this->sysLogTableName, $sysLogRow);
+                $this->foreignDatabase->insert($this->sysLogTableName, $sysLogRow);
                 $this->logger->notice(
                     'sys_log table automatically published',
                     ['tableName' => $tableName, 'identifier' => $record->getIdentifier()]
