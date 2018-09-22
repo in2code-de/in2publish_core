@@ -43,14 +43,24 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
     protected $languageService = null;
 
     /**
+     *
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('fieldName', 'string', 'The field name to get the localized label from', true);
+        $this->registerArgument('tableName', 'string', 'The table name in which the field can be found', true);
+    }
+
+    /**
      * Get field name from locallang and TCA definition
      *
-     * @param string $fieldName
-     * @param string $tableName
      * @return string
      */
-    public function render($fieldName, $tableName)
+    public function render()
     {
+        $fieldName = $this->arguments['fieldName'];
+        $tableName = $this->arguments['tableName'];
         $label = ucfirst($fieldName);
 
         if (!empty($this->tca[$tableName]['columns'][$fieldName]['label'])) {

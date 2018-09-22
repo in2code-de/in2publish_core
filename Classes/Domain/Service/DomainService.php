@@ -129,18 +129,21 @@ class DomainService
     {
         $rootLine = BackendUtility::BEgetRootLine($identifier);
         foreach ($rootLine as $page) {
-            $databaseConnection = DatabaseUtility::buildDatabaseConnectionForSide($stagingLevel);
-            if (null === $databaseConnection) {
+            $connection = DatabaseUtility::buildDatabaseConnectionForSide($stagingLevel);
+            if (null === $connection) {
                 // Error: not connected
                 return '';
             }
-            $domainRecord = $databaseConnection->exec_SELECTgetSingleRow(
-                'domainName',
-                static::TABLE_NAME,
-                'pid=' . (int)$page['uid'] . ' AND hidden=0',
-                '',
-                'sorting'
-            );
+            $domainRecord = $connection
+                ->select(
+                    ['domainName'],
+                    static::TABLE_NAME,
+                    ['pid' => (int)$page['uid'], 'hidden' => 0],
+                    [],
+                    ['sorting' => 'asc'],
+                    1
+                )
+                ->fetch();
             if (isset($domainRecord['domainName'])) {
                 return $domainRecord['domainName'];
             }

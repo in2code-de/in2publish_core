@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\ViewHelpers\Attribute;
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -41,16 +42,25 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
     protected $escapeOutput = false;
 
     /**
+     *
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('record', RecordInterface::class, 'record of which to get the dirty properties', true);
+    }
+
+    /**
      * Get data attributes for i-icon
      *
      * @param Record $record
      * @return string
      */
-    public function render(Record $record)
+    public function render()
     {
         $attributesString = 'data-action="opendirtypropertieslistcontainer"';
         if (GeneralUtility::makeInstance(ConfigContainer::class)->get('factory.simpleOverviewAndAjax')) {
-            $attributesString .= $this->getDataAttributesForSimpleOverviewAndAjax($record);
+            $attributesString .= $this->getDataAttributesForSimpleOverviewAndAjax($this->arguments['record']);
         }
         return $attributesString;
     }

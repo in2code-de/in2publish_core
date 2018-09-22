@@ -62,14 +62,17 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
     {
         parent::initializeArguments();
         $this->registerUniversalTagAttributes();
+        $this->registerArgument('identifier', 'string', 'The uid of the page to compare', true);
     }
 
     /**
      * @param integer $identifier
      * @return string
      */
-    public function render($identifier)
+    public function render()
     {
+        $identifier = $this->arguments['identifier'];
+
         $domain = '//' . $this->domainService->getDomainFromPageIdentifier($identifier, 'local');
         $script = '/index.php?';
 

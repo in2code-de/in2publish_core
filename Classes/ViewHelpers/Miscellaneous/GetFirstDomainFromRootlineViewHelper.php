@@ -25,7 +25,7 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\DomainService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -48,16 +48,25 @@ class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
         $this->domainService = GeneralUtility::makeInstance(DomainService::class);
     }
 
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('record', RecordInterface::class, 'The record to search in its rootLine', true);
+        $this->registerArgument('stagingLevel', 'string', '"local" or "foreign"', false, 'local');
+        $this->registerArgument('addProtocol', 'bool', 'Prepend http(s)://? Defaults to true', false, true);
+    }
+
     /**
      * Get domain from rootline without trailing slash
      *
-     * @param Record $record
-     * @param string $stagingLevel "local" or "foreign"
-     * @param bool $addProtocol
      * @return string
      */
-    public function render(Record $record, $stagingLevel = 'local', $addProtocol = true)
+    public function render()
     {
-        return $this->domainService->getFirstDomain($record, $stagingLevel, $addProtocol);
+        return $this->domainService->getFirstDomain(
+            $this->arguments['record'],
+            $this->arguments['stagingLevel'],
+            $this->arguments['addProtocol']
+        );
     }
 }

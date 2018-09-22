@@ -25,7 +25,7 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\TableConfiguration\LabelService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -49,14 +49,22 @@ class GetLabelFieldFromRecordViewHelper extends AbstractViewHelper
     }
 
     /**
+     *
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('record', RecordInterface::class, 'The record whith the property', true);
+        $this->registerArgument('stagingLevel', 'string', '"local" (default) or "foreign"', false, 'local');
+    }
+
+    /**
      * Get label field from record
      *
-     * @param Record $record
-     * @param string $stagingLevel "local" or "foreign"
      * @return string
      */
-    public function render(Record $record, $stagingLevel = 'local')
+    public function render()
     {
-        return $this->labelService->getLabelField($record, $stagingLevel);
+        return $this->labelService->getLabelField($this->arguments['record'], $this->arguments['stagingLevel']);
     }
 }

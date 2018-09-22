@@ -26,6 +26,7 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -41,22 +42,46 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
     protected $emptyFieldValue = '---';
 
     /**
+     *
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('record', RecordInterface::class, 'The record with the desired property value', true);
+        $this->registerArgument('propertyName', 'string', 'The name of the desired property', true);
+        $this->registerArgument('stagingLevel', 'string', 'Fetch the local or the foreign property', false, 'local');
+        $this->registerArgument('fallbackProperty', 'string', 'Fetch this if the primary prop is empty', false, null);
+    }
+
+    /**
      * Get property of array
      *
-     * @param \In2code\In2publishCore\Domain\Model\Record $record
-     * @param string $propertyName
-     * @param string $stagingLevel
-     * @param string $fallbackProperty Property to use if $propertyName is empty. Takes effect before
-     *     fallbackRootPageTitle
      * @return string
      */
-    public function render(Record $record, $propertyName, $stagingLevel = 'local', $fallbackProperty = null)
+    public function render()
+    {
+        $record = $this->arguments['record'];
+        $propertyName = $this->arguments['propertyName'];
+        $stagingLevel = $this->arguments['stagingLevel'];
+        $fallbackProperty = $this->arguments['fallbackProperty'];
+
+        return $this->getProperty($record, $propertyName, $stagingLevel, $fallbackProperty);
+    }
+
+    /**
+     * @param Record $record
+     * @param $propertyName
+     * @param $stagingLevel
+     * @param $fallbackProperty
+     * @return string
+     */
+    protected function getProperty(Record $record, $propertyName, $stagingLevel, $fallbackProperty)
     {
         $properties = ObjectAccess::getProperty($record, ucfirst($stagingLevel) . 'Properties');
         if (isset($properties[$propertyName])) {
             $value = $properties[$propertyName];
             if (empty($value) && null !== $fallbackProperty) {
-                $value = $this->render($record, $fallbackProperty, $stagingLevel);
+                $value = $this->getProperty($record, $fallbackProperty, $stagingLevel);
             }
             return $value;
         }

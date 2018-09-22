@@ -34,14 +34,22 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 class HasChangedRecordsViewHelper extends AbstractViewHelper
 {
     /**
+     *
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('records', 'array', 'The records to test for changes', true);
+    }
+
+    /**
      * Check if there are changed records
      *
-     * @param array $records
      * @return bool
      */
-    public function render(array $records)
+    public function render()
     {
-        foreach ($records as $record) {
+        foreach ($this->arguments['records'] as $record) {
             /** @var Record $record */
             if ($record->isChanged()) {
                 return true;

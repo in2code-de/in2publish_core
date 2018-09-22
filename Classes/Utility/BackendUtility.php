@@ -164,20 +164,20 @@ class BackendUtility
      */
     public static function buildUndoUri($table, $identifier)
     {
-        $module = GeneralUtility::_GP('M');
+        $route = GeneralUtility::_GP('route') ?: GeneralUtility::_GP('M');
 
         $returnParameters = [
             'id' => GeneralUtility::_GP('id'),
         ];
         foreach (GeneralUtility::_GET() as $name => $value) {
-            if (is_array($value) && false !== strpos(strtolower($name), strtolower($module))) {
+            if (is_array($value) && false !== strpos(strtolower($name), strtolower($route))) {
                 $returnParameters[$name] = $value;
             }
         }
 
         $uriParameters = [
             'element' => $table . ':' . $identifier,
-            'returnUrl' => BackendUtilityCore::getModuleUrl($module, $returnParameters),
+            'returnUrl' => BackendUtilityCore::getModuleUrl($route, $returnParameters),
         ];
 
         return BackendUtilityCore::getModuleUrl('record_history', $uriParameters);

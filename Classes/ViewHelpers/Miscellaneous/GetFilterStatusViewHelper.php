@@ -39,14 +39,24 @@ class GetFilterStatusViewHelper extends AbstractViewHelper
     protected $backendUser = null;
 
     /**
+     *
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('filter', 'string', 'The filter name', true);
+        $this->registerArgument('key', 'string', 'The filter type', false, 'records');
+    }
+
+    /**
      * Get filter status
      *
-     * @param string $filter
-     * @param string $key "records" or "files"
      * @return bool
      */
-    public function render($filter, $key = 'records')
+    public function render()
     {
+        $key = $this->arguments['key'];
+        $filter = $this->arguments['filter'];
         return $this->backendUser->getSessionData('in2publish_filter_' . $key . '_' . $filter) === true;
     }
 

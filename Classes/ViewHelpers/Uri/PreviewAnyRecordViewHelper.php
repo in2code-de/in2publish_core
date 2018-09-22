@@ -35,18 +35,27 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 class PreviewAnyRecordViewHelper extends AbstractViewHelper
 {
     /**
+     *
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('identifier', 'int', 'uid of the record to preview', true);
+        $this->registerArgument('tableName', 'string', 'table name of the record to preview', true);
+    }
+
+    /**
      * Build uri for any record preview on [removed] and
      * respect settings of Page TSConfig TCEMAIN.preview
-     *
-     * @param int $identifier
-     * @param string $tableName
      *
      * @return false|string false if not configuration found, otherwise URI
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function render($identifier, $tableName)
+    public function render()
     {
+        $identifier = $this->arguments['identifier'];
+        $tableName = $this->arguments['tableName'];
         if ($this->isPreviewTsConfigExisting($tableName)) {
             $pageTsConfig = BackendUtility::getPagesTSconfig($this->getCurrentPageIdentifier());
             $configuration = $pageTsConfig['TCEMAIN.']['preview.'][$tableName . '.'];

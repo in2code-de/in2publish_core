@@ -39,15 +39,26 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
     protected $tableConfiguration = [];
 
     /**
+     *
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('fieldName', 'string', 'The field name to get the localized label from', true);
+        $this->registerArgument('tableName', 'string', 'The table name in which the field can be found', true);
+    }
+
+    /**
      * Get formatted output by TCA definition
      *
-     * @param string $fieldName
-     * @param string $tableName
      * @return string
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    public function render($fieldName, $tableName)
+    public function render()
     {
+        $fieldName = $this->arguments['fieldName'];
+        $tableName = $this->arguments['tableName'];
+
         $this->tableConfiguration = $GLOBALS['TCA'][$tableName]['columns'][$fieldName];
         $value = trim($this->renderChildren());
 
