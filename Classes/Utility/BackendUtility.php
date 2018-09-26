@@ -87,7 +87,7 @@ class BackendUtility
         }
 
         // get id from record ?data[tt_content][13]=foo
-        if (null !== ($data = GeneralUtility::_GP('data')) && is_array($data)) {
+        if (null !== ($data = GeneralUtility::_GP('data')) && is_array($data) && 'upload' !== key($data)) {
             $table = key($data);
             $result = DatabaseUtility
                 ::buildLocalDatabaseConnection()
