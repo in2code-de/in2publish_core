@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Domain\Service;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -41,28 +40,15 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class ReplaceMarkersService
 {
     /**
-     * @var DatabaseConnection
-     */
-    protected $localDatabase = null;
-
-    /**
-     * @var DatabaseConnection
-     */
-    protected $foreignDatabase = null;
-
-    /**
      * @var Logger
      */
     protected $logger = null;
 
     /**
-     * @param DatabaseConnection $localDatabase
-     * @param DatabaseConnection $foreignDatabase
+     * ReplaceMarkersService constructor.
      */
-    public function __construct(DatabaseConnection $localDatabase, DatabaseConnection $foreignDatabase)
+    public function __construct()
     {
-        $this->localDatabase = $localDatabase;
-        $this->foreignDatabase = $foreignDatabase;
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
     }
 
@@ -195,7 +181,8 @@ class ReplaceMarkersService
      */
     protected function getCurrentRecordPageId(RecordInterface $record)
     {
-        return ($record->hasLocalProperty('pid') ?
-            $record->getLocalProperty('pid') : $record->getForeignProperty('pid'));
+        return ($record->hasLocalProperty('pid')
+            ? $record->getLocalProperty('pid')
+            : $record->getForeignProperty('pid'));
     }
 }
