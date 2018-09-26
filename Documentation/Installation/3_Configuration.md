@@ -12,6 +12,20 @@ Note:
 > If you want to separate your configuration depending on the in2publish version, you could also use **LocalConfiguration_[version].yaml** and **ForeignConfiguration_[version].yaml** for a defined version. That could help you for your future deployments. E.g. LocalConfiguration_1.2.3.yaml
 > Since 7.0 you don't have to provide the full version number. You can omit the patch version (last number) or the patch and minor version (last two nubers).
 
+## Configuration (provided by the Configuration Providers) is merged recursively
+
+The configuration arrays provided by the available Configuration Providers are generelly merged recursively following the following rules:
+
+* The value of items having an identical ALPHANUMERIC key will be REPLACED
+* The value of items having an identical NUMERIC key will be ADDED   
+* Setting a configuration value to "__UNSET" will remove this configuration from the resulting configuration array
+
+### Special treatment of "definition" configuration keys
+
+As of in2publish_core 7.1 every configuration key named "definition" is (compared to the rules noted above) treated specially:
+
+* The value of items having an identical NUMERIC key will be REPLACED
+
 # Extension Configuration
 
 The extension configuration is split in 2 parts. Basic and Local.
