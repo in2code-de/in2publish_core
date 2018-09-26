@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Domain\Service\Environment;
  ***************************************************************/
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 
 /**
@@ -37,16 +38,16 @@ class SysFileService extends AbstractService
     const TABLE_NAME = 'sys_file';
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
-    protected $databaseConnection = null;
+    protected $connection = null;
 
     /**
      * SysFileService constructor.
      */
     public function __construct()
     {
-        $this->databaseConnection = DatabaseUtility::buildLocalDatabaseConnection();
+        $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
     }
 
     /**
@@ -57,15 +58,14 @@ class SysFileService extends AbstractService
     {
         $oldIdentifierPath = $this->getIdentifierFromAbsolutePath($oldFolder);
         $newIdentifierPath = $this->getIdentifierFromAbsolutePath($newFolder);
-        $rows = $this->databaseConnection->exec_SELECTgetRows(
-            'uid,identifier',
-            static::TABLE_NAME,
-            'identifier like "%' . $oldIdentifierPath . '%"'
-        );
+        $query = $this->connection->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $where = $query->expr()->like('identifier', $query->createNamedParameter("%$oldIdentifierPath%"));
+        $rows = $query->select('uid', 'identifier')->from(self::TABLE_NAME)->where($where)->execute()->fetchAll();
         foreach ($rows as $row) {
-            $this->databaseConnection->exec_UPDATEquery(
+            $this->connection->update(
                 static::TABLE_NAME,
-                'uid=' . (int)$row['uid'],
+                ['uid' => (int)$row['uid']],
                 $this->getArgumentsForSysFileFromPath($row, $oldIdentifierPath, $newIdentifierPath)
             );
         }
@@ -79,16 +79,16 @@ class SysFileService extends AbstractService
     {
         $oldIdentifier = $this->getIdentifierFromAbsolutePath($oldFile);
         $newIdentifier = $this->getIdentifierFromAbsolutePath($newFile);
-        $rows = $this->databaseConnection->exec_SELECTgetRows(
-            'uid',
+        $rows = $this->connection->select(
+            ['uid'],
             static::TABLE_NAME,
-            'identifier = "' . $oldIdentifier . '"'
+            ['identifier ' => '"' . $oldIdentifier . '"']
         );
         foreach ($rows as $row) {
-            $this->databaseConnection->exec_UPDATEquery(
+            $this->connection->update(
                 static::TABLE_NAME,
-                'uid=' . (int)$row['uid'],
-                $this->getArgumentsForSysFileFromFile($newIdentifier)
+                $this->getArgumentsForSysFileFromFile($newIdentifier),
+                ['uid' => (int)$row['uid']]
             );
         }
     }
