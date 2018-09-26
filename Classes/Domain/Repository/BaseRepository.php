@@ -42,6 +42,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 abstract class BaseRepository
 {
+    const ADDITIONAL_ORDER_BY_PATTER = '/(?P<where>.*)ORDER BY (?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/i';
+
     /**
      * The table name to use for any SELECT, INSERT, UPDATE and DELETE query
      *
@@ -104,10 +106,13 @@ abstract class BaseRepository
             return $propertyArray;
         }
         $sortingField = $this->tcaService->getSortingField($this->tableName);
-        if (empty($orderBy) && !empty($sortingField) && stripos($additionalWhere, 'ORDER BY') === false) {
+        if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTER, $additionalWhere, $matches)) {
+            $additionalWhere = $matches['where'];
+            $orderBy = $matches['col'] . strtoupper($matches['dir'] ?? ' ASC');
+        }
+        if (empty($orderBy) && !empty($sortingField)) {
             $orderBy = $sortingField . ' ASC';
         }
-
         $additionalWhere = trim($additionalWhere);
         if ('AND' === substr($additionalWhere, 0, 3)) {
             $additionalWhere = trim(substr($additionalWhere, 3));
