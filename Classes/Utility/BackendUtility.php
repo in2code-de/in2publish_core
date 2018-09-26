@@ -89,11 +89,14 @@ class BackendUtility
         // get id from record ?data[tt_content][13]=foo
         if (null !== ($data = GeneralUtility::_GP('data')) && is_array($data)) {
             $table = key($data);
-            $result = DatabaseUtility::buildLocalDatabaseConnection()->exec_SELECTgetSingleRow(
-                'pid',
-                $table,
-                'uid=' . (int)key($data[$table])
-            );
+            $result = DatabaseUtility
+                ::buildLocalDatabaseConnection()
+                ->select(
+                    ['pid'],
+                    $table,
+                    ['uid' => (int)key($data[$table])]
+                )
+                ->fetch();
             if (false !== $result && isset($result['pid'])) {
                 return (int)$result['pid'];
             }
@@ -106,11 +109,14 @@ class BackendUtility
                 if ($rollbackData[0] === 'pages') {
                     return (int)$rollbackData[1];
                 } else {
-                    $result = DatabaseUtility::buildLocalDatabaseConnection()->exec_SELECTgetSingleRow(
-                        'pid',
-                        $rollbackData[0],
-                        'uid=' . (int)$rollbackData[1]
-                    );
+                    $result = DatabaseUtility
+                        ::buildLocalDatabaseConnection()
+                        ->select(
+                            ['pid'],
+                            $rollbackData[0],
+                            ['uid' => (int)$rollbackData[1]]
+                        )
+                        ->fetch();
                     if (false !== $result && isset($result['pid'])) {
                         return (int)$result['pid'];
                     }
@@ -121,11 +127,14 @@ class BackendUtility
         // Assume the record has been imported via DataHandler on the CLI
         // Also, this is the last fallback strategy
         if (!empty($table) && MathUtility::canBeInterpretedAsInteger($identifier)) {
-            $row = DatabaseUtility::buildLocalDatabaseConnection()->exec_SELECTgetSingleRow(
-                'pid',
-                $table,
-                'uid=' . (int)$identifier
-            );
+            $row = DatabaseUtility
+                ::buildLocalDatabaseConnection()
+                ->select(
+                    ['pid'],
+                    $rollbackData[0],
+                    ['uid' => (int)$identifier]
+                )
+                ->fetch();
             if (isset($row['pid'])) {
                 return (int)$row['pid'];
             }
