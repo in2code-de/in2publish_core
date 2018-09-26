@@ -187,6 +187,7 @@ class Letterbox
             $database = DatabaseUtility::buildLocalDatabaseConnection();
         }
         $query = $database->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
         $query->delete(static::TABLE)->where($query->expr()->isNotNull('response'))->execute();
     }
 }
