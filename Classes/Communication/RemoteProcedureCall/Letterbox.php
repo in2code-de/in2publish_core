@@ -186,6 +186,7 @@ class Letterbox
         } else {
             $database = DatabaseUtility::buildLocalDatabaseConnection();
         }
-        $database->exec_DELETEquery(static::TABLE, 'response IS NOT NULL');
+        $query = $database->createQueryBuilder();
+        $query->delete(static::TABLE)->where($query->expr()->isNotNull('response'))->execute();
     }
 }
