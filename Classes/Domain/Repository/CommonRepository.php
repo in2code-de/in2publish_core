@@ -1337,12 +1337,7 @@ class CommonRepository extends BaseRepository
                     $records = array_merge(
                         $records,
                         $this->convertPropertyArraysToRecords(
-                            $this->findPropertiesByProperty(
-                                $this->localDatabase,
-                                'uid',
-                                $uid,
-                                $whereClause
-                            ),
+                            $this->findPropertiesByProperty($this->localDatabase, 'uid', $uid, $whereClause),
                             $this->findPropertiesByProperty($this->foreignDatabase, 'uid', $uid, $whereClause)
                         )
                     );
