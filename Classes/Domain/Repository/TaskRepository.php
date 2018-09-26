@@ -146,10 +146,8 @@ class TaskRepository
             $predicates = $query->expr()->like('execution_begin', $formattedExecutionBegin);
         } else {
             $predicates = $query->expr()->orX(
-                [
-                    $query->expr()->isNull('execution_begin'),
-                    $query->expr()->like('execution_begin', $query->createNamedParameter('0000-00-00 00:00:00')),
-                ]
+                $query->expr()->isNull('execution_begin'),
+                $query->expr()->like('execution_begin', $query->createNamedParameter('0000-00-00 00:00:00'))
             );
         }
 
