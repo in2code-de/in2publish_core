@@ -32,9 +32,9 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Error\Http\ServiceUnavailableException;
-use TYPO3\CMS\Core\TimeTracker\NullTimeTracker;
+use TYPO3\CMS\Core\TimeTracker\TimeTracker;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\CacheService;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -47,9 +47,9 @@ use TYPO3\CMS\Frontend\Utility\EidUtility;
 class RealUrlTask extends AbstractTask
 {
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
-    protected $databaseConnection = null;
+    protected $connection = null;
 
     /**
      * @return void
@@ -80,7 +80,7 @@ class RealUrlTask extends AbstractTask
      */
     protected function executeTask()
     {
-        $this->databaseConnection = DatabaseUtility::buildLocalDatabaseConnection();
+        $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
         $pid = $this->configuration['identifier'];
         $rootline = BackendUtility::BEgetRootLine($pid);
         $host = BackendUtility::firstDomainRecord($rootline);
@@ -89,7 +89,7 @@ class RealUrlTask extends AbstractTask
         $cacheService = GeneralUtility::makeInstance(CacheService::class);
 
         if (!is_object($GLOBALS['TT'])) {
-            $GLOBALS['TT'] = GeneralUtility::makeInstance(NullTimeTracker::class);
+            $GLOBALS['TT'] = GeneralUtility::makeInstance(TimeTracker::class, false);
         }
 
         $GLOBALS['TSFE'] = GeneralUtility::makeInstance(
@@ -156,7 +156,7 @@ class RealUrlTask extends AbstractTask
         ];
         foreach ($realUrlTables as $table) {
             if (DatabaseUtility::isTableExistingOnLocal($table)) {
-                $this->databaseConnection->exec_DELETEquery($table, 'page_id=' . (int)$pageUid);
+                $this->connection->delete($table, ['page_id' => (int)$pageUid]);
             }
         }
     }
