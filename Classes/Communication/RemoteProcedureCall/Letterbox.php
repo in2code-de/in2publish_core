@@ -99,7 +99,9 @@ class Letterbox
                 );
             }
         } else {
-            if (1 === $database->update(static::TABLE, ['uid' => $uid], $envelope->toArray())) {
+            if (1 === $database->update(static::TABLE, $envelope->toArray(), ['uid' => $uid])) {
+                return true;
+            } else {
                 $this->logger->error(
                     'Failed to update envelope [' . $uid . ']',
                     [
@@ -108,8 +110,6 @@ class Letterbox
                         'errno' => $database->errorCode(),
                     ]
                 );
-            } else {
-                return true;
             }
         }
         return false;
