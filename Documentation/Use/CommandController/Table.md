@@ -11,3 +11,11 @@ Refer to the backup section of LocalConfiguration.yaml and ForeignConfiguration.
 
 Since 4.4.0: cleanup tables Command: Deletes all entries from all in2publish_* tables which are older than a given time and obsolete. (without optimize).
 When executed on Local then Local's and Foreign's database is cleaned up, when executed on Foreign only Foreign's tables are cleaned up.
+
+
+
+| Command            | Result                                  |
+|--------------------|-----------------------------------------|
+| table:publish      | Copies a table from stage to production |
+| table:import       | copies a table from production to stage |                                          
+| table:backup       | Stores a backup of the complete local table into the configured directory |

@@ -1,4 +1,5 @@
 <?php
+
 namespace In2code\In2publishCore\Controller;
 
 /***************************************************************
@@ -161,6 +162,12 @@ class ToolsController extends ActionController
     public function flushEnvelopesAction()
     {
         GeneralUtility::makeInstance(Letterbox::class)->removeAnsweredEnvelopes();
+        $this->addFlashMessage(
+            LocalizationUtility::translate(
+                'module.m4.superfluous_envelopes_flushed',
+                'in2publish_core'
+            )
+        );
         try {
             $this->redirect('index');
         } catch (UnsupportedRequestTypeException $e) {

@@ -15,10 +15,47 @@ class ConfigurationUtility
      */
     public static function mergeConfiguration(array $original, array $additional)
     {
-        $result = $original;
+        if (empty($additional)) {
+            return $original;
+        }
 
+        if (array_key_exists('definition', $additional)) {
+            foreach ($additional['definition'] as $key => $value) {
+                unset($additional['definition'][$key]);
+                $additional['definition']['0' . $key] = $value;
+            }
+            foreach ($original['definition'] as $key => $value) {
+                unset($original['definition'][$key]);
+                $original['definition']['0' . $key] = $value;
+            }
+        }
+
+        $result = $original;
+        $result = self::overruleResultByAdditional($original, $additional, $result);
+        $result = self::sortResultArrayByAdditionalKeyOrder($result, $original, $additional);
+
+        if (array_key_exists('definition', $additional)) {
+            foreach ($result['definition'] as $key => $value) {
+                unset($result['definition'][$key]);
+                $result['definition'][(int)$key] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $original
+     * @param array $additional
+     * @param $result
+     * @return array
+     */
+    protected static function overruleResultByAdditional(array $original, array $additional, $result)
+    {
         foreach ($additional as $key => $value) {
-            if (!is_int($key)) {
+            if ($value === '__UNSET') {
+                unset($result[$key]);
+            } elseif (!is_int($key)) {
                 // Replace original value
                 $result[$key] = self::getResultingValue($original, $additional, $key);
             } else {
@@ -28,7 +65,6 @@ class ConfigurationUtility
                 }
             }
         }
-
         return $result;
     }
 
@@ -43,10 +79,7 @@ class ConfigurationUtility
         $originalValue = array_key_exists($key, $original) ? $original[$key] : null;
         $additionalValue = array_key_exists($key, $additional) ? $additional[$key] : null;
 
-        if (is_array($originalValue)
-            &&
-            is_array($additionalValue)
-        ) {
+        if (is_array($originalValue) && is_array($additionalValue)) {
             // Merge recursively
             $result = self::mergeConfiguration($originalValue, $additionalValue);
         } else {
@@ -54,6 +87,36 @@ class ConfigurationUtility
             $result = $additionalValue;
         }
 
+        return $result;
+    }
+
+    /**
+     * @param array $result
+     * @param array $original
+     * @param array $additional
+     * @return mixed
+     */
+    protected static function sortResultArrayByAdditionalKeyOrder(array $result, array $original, array $additional)
+    {
+        $additionalKeys = array_keys($additional);
+        $originalKeys = array_keys($original);
+        $originalKeys = array_diff($originalKeys, $additionalKeys);
+        $keyOrder = array_merge($additionalKeys, $originalKeys);
+        $keyOrder = array_flip($keyOrder);
+
+        uksort(
+            $result,
+            function ($left, $right) use ($keyOrder) {
+                if (!isset($keyOrder[$left])
+                    || !isset($keyOrder[$right])
+                    || $keyOrder[$left] === $keyOrder[$right]
+                ) {
+                    // Be deterministic. If 0 is returned the array will be reversed
+                    return 1;
+                }
+                return $keyOrder[$left] < $keyOrder[$right] ? -1 : 1;
+            }
+        );
         return $result;
     }
 }

@@ -20,8 +20,7 @@ When calling the extbase help function without any context, you will at least th
 
     status:all
     status:version
-    status:configuration
-    status:configurationraw
+    status:globalConfiguration
 
 To call a command, you need to provide an extra environment variable named "IN2PUBLISH_CONTEXT".
 Here is an example::
@@ -40,4 +39,4 @@ Hint:
 
 > If you have conflicting CommandController names you can add the extension name to clarify which one should be called:
 
-    IN2PUBLISH_CONTEXT=Local ./typo3/cli_dispatch.phpsh extbase in2publish_core:status:configuration
+    IN2PUBLISH_CONTEXT=Local ./typo3/cli_dispatch.phpsh extbase in2publish_core:status:globalConfiguration

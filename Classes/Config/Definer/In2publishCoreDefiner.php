@@ -201,6 +201,7 @@ class In2publishCoreDefiner implements DefinerInterface
                                      Builder::start()
                                             ->addBoolean('filterButtons', true)
                                  )
+                                 ->addString('titleField', 'title')
                       )
                       ->addArray(
                           'module',

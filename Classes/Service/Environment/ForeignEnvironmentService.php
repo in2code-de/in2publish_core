@@ -1,4 +1,5 @@
 <?php
+
 namespace In2code\In2publishCore\Service\Environment;
 
 /***************************************************************
@@ -67,7 +68,9 @@ class ForeignEnvironmentService
      */
     public function getDatabaseInitializationCommands()
     {
-        if ($this->cache->has('foreign_db_init')) {
+        if ($this->cache
+            &&
+            $this->cache->has('foreign_db_init')) {
             return $this->cache->get('foreign_db_init');
         }
 
@@ -98,6 +101,7 @@ class ForeignEnvironmentService
                 ]
             );
         }
+
         return $decodedDbInit;
     }
 
@@ -145,6 +149,7 @@ class ForeignEnvironmentService
 
             $this->cache->set('create_masks', $createMasks, [], 86400);
         }
+
         return (array)$this->cache->get('create_masks');
     }
 
@@ -157,7 +162,10 @@ class ForeignEnvironmentService
      */
     protected function getCache()
     {
-        return GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
+        $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
+        if ($cacheManager->hasCache('in2publish_core')) {
+            return $cacheManager->getCache('in2publish_core');
+        }
     }
 
     /**
@@ -183,6 +191,7 @@ class ForeignEnvironmentService
                 $values[$key] = $value;
             }
         }
+
         return $values;
     }
 }
