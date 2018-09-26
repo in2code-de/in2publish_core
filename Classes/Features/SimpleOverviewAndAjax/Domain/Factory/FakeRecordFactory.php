@@ -33,8 +33,6 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository\TableCacheRepository;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\ArrayUtility;
-use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -43,16 +41,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class FakeRecordFactory
 {
     const PAGE_TABLE_NAME = 'pages';
-
-    /**
-     * @var DatabaseConnection
-     */
-    protected $localDatabase = null;
-
-    /**
-     * @var DatabaseConnection
-     */
-    protected $foreignDatabase = null;
 
     /**
      * @var TableCacheRepository
@@ -81,8 +69,6 @@ class FakeRecordFactory
      */
     public function __construct()
     {
-        $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-        $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->tableCacheRepository = GeneralUtility::makeInstance(TableCacheRepository::class);
         $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
         $this->config = GeneralUtility::makeInstance(ConfigContainer::class)->get();
