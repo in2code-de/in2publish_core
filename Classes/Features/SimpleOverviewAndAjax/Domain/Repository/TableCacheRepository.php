@@ -28,7 +28,7 @@ namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repositor
  ***************************************************************/
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /**
@@ -65,25 +65,6 @@ class TableCacheRepository implements SingletonInterface
     protected $foreignCache = [];
 
     /**
-     * @var DatabaseConnection
-     */
-    protected $localDatabase = null;
-
-    /**
-     * @var DatabaseConnection
-     */
-    protected $foreignDatabase = null;
-
-    /**
-     * FakeRepository constructor.
-     */
-    public function __construct()
-    {
-        $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-        $this->foreignDatabase = $this->getForeignDatabaseConnection();
-    }
-
-    /**
      * Get properties from cache by given tableName and uid
      *
      * @param string $tableName
@@ -97,13 +78,15 @@ class TableCacheRepository implements SingletonInterface
         if (!empty($cache[$tableName][$uniqueIdentifier])) {
             return $cache[$tableName][$uniqueIdentifier];
         }
-        $database = $this->getDatabase($databaseName);
-        if ($database instanceof DatabaseConnection) {
-            $row = (array)$database->exec_SELECTgetSingleRow(
-                '*',
-                $tableName,
-                'uid=' . (int)$uniqueIdentifier
-            );
+        $connection = DatabaseUtility::buildDatabaseConnectionForSide($databaseName);
+        if ($connection instanceof Connection) {
+            $row = $connection
+                ->select(
+                    ['*'],
+                    $tableName,
+                    ['uid' => (int)$uniqueIdentifier]
+                )
+                ->fetchAll();
             if (isset($row[0]) && $row[0] === false) {
                 return [];
             }
@@ -124,17 +107,18 @@ class TableCacheRepository implements SingletonInterface
      */
     public function findByPid($tableName, $pageIdentifier, $databaseName = 'local')
     {
-        $database = $this->getDatabase($databaseName);
-        if ($database instanceof DatabaseConnection) {
-            $rows = (array)$database->exec_SELECTgetRows(
-                '*',
-                $tableName,
-                'pid=' . (int)$pageIdentifier,
-                '',
-                'uid',
-                '',
-                'uid'
-            );
+        $connection = DatabaseUtility::buildDatabaseConnectionForSide($databaseName);
+        if ($connection instanceof Connection) {
+            $rows = (array)$connection
+                ->select(
+                    ['*'],
+                    $tableName,
+                    ['pid' => (int)$pageIdentifier],
+                    [],
+                    ['uid']
+                )
+                ->fetchAll();
+            $rows = array_combine(array_column($rows, 'uid'), $rows);
             $this->cacheRecords($tableName, $rows, $databaseName);
         } else {
             $rows = [];
@@ -177,19 +161,6 @@ class TableCacheRepository implements SingletonInterface
 
     /**
      * @param string $databaseName
-     * @return DatabaseConnection
-     */
-    protected function getDatabase($databaseName = 'local')
-    {
-        $database = $this->localDatabase;
-        if ($databaseName === 'foreign') {
-            $database = $this->foreignDatabase;
-        }
-        return $database;
-    }
-
-    /**
-     * @param string $databaseName
      * @return array
      */
     protected function getCache($databaseName = 'local')
@@ -199,14 +170,5 @@ class TableCacheRepository implements SingletonInterface
             $cache = $this->foreignCache;
         }
         return $cache;
-    }
-
-    /**
-     * @return DatabaseConnection
-     * @codeCoverageIgnore
-     */
-    protected function getForeignDatabaseConnection()
-    {
-        return DatabaseUtility::buildForeignDatabaseConnection();
     }
 }
