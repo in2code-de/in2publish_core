@@ -142,7 +142,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
      */
     protected function fetchStorages(Connection $connection)
     {
-        $rows = (array)$connection->select(['*'], 'sys_file_storage', ['deleted'=>0])->fetchAll();
+        $rows = (array)$connection->select(['*'], 'sys_file_storage', ['deleted' => 0])->fetchAll();
         return array_combine(array_column($rows, 'uid'), $rows);
     }
 }
