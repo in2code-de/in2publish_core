@@ -37,45 +37,6 @@ use TYPO3\CMS\Core\Tests\UnitTestCase;
 class DatabaseSchemaServiceTest extends UnitTestCase
 {
     /**
-     * @covers ::__construct
-     * @covers ::getDatabaseSchema
-     */
-    public function testGetDatabaseSchemaBuildArrayOfTableAndFieldInformation()
-    {
-        $this->buildDatabaseMock();
-
-        $expected = [
-            'foo' => [
-                '_TABLEINFO' => [],
-                'faz' => ['name' => 'faz'],
-            ],
-            'bar' => [
-                '_TABLEINFO' => [],
-                'raz' => ['name' => 'naz'],
-            ],
-        ];
-
-        /** @var VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheFrontend */
-        $cacheFrontend = $this->getMockBuilder(VariableFrontend::class)
-                              ->setMethods(['has', 'get', 'set'])
-                              ->disableOriginalConstructor()
-                              ->getMock();
-        // set return value to true to execute the cache->get() lines
-        $cacheFrontend->method('has')->willReturn(true);
-        $cacheFrontend->method('get')->willReturn(false);
-
-        /** @var DatabaseSchemaService|\PHPUnit_Framework_MockObject_MockObject $schemaService */
-        $schemaService = $this->getMockBuilder(DatabaseSchemaService::class)
-                              ->setMethods(['getCache'])
-                              ->disableOriginalConstructor()
-                              ->getMock();
-        $schemaService->method('getCache')->willReturn($cacheFrontend);
-        $schemaService->__construct();
-
-        $this->assertSame($expected, $schemaService->getDatabaseSchema());
-    }
-
-    /**
      * @covers ::tableExists
      */
     public function testTableExistsReturnsTrueIfTableExistsInSchema()

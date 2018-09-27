@@ -26,9 +26,8 @@ namespace In2code\In2publishCore\Service\Configuration;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use In2code\In2publishCore\Service\Database\DatabaseSchemaService;
+use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
 
 /**
@@ -173,27 +172,32 @@ class TcaService implements SingletonInterface
     }
 
     /**
-     * Returns all table names that are not in the exclusion list and that have a pid and uid field
+     * Returns all table names that are not in the exclusion list and that have
+     * a pid and uid field
      *
-     * @param array $exceptTableNames
-     * @return array
+     * @param string[] $exceptTableNames
+     * @return string[]
      */
-    public function getAllTableNamesWithPidAndUidField(array $exceptTableNames = [])
+    public function getAllTableNamesWithPidAndUidField(array $exceptTableNames = []): array
     {
-        $databaseSchema = $this->getDatabaseSchema();
-        $allTableNames = [];
+        $result = [];
 
-        foreach (array_keys($databaseSchema) as $tableName) {
-            if (isset($databaseSchema[$tableName]['pid']) && isset($databaseSchema[$tableName]['uid'])) {
-                $allTableNames[] = $tableName;
+        $database = DatabaseUtility::buildLocalDatabaseConnection();
+        if ($database) {
+            foreach ($database->getSchemaManager()->listTables() as $table) {
+                if (
+                    $table->hasColumn('uid')
+                    &&
+                    $table->hasColumn('pid')
+                    &&
+                    !\in_array($table->getName(), $exceptTableNames, true)
+                ) {
+                    $result[] = $table->getName();
+                }
             }
         }
 
-        if (!empty($exceptTableNames)) {
-            return array_diff($allTableNames, $exceptTableNames);
-        }
-
-        return $allTableNames;
+        return $result;
     }
 
     /**
@@ -290,14 +294,5 @@ class TcaService implements SingletonInterface
             return $GLOBALS['LANG']->sL($label);
         }
         return '';
-    }
-
-    /**
-     * @return array
-     * @codeCoverageIgnore
-     */
-    protected function getDatabaseSchema()
-    {
-        return GeneralUtility::makeInstance(DatabaseSchemaService::class)->getDatabaseSchema();
     }
 }

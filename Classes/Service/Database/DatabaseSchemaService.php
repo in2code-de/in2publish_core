@@ -53,40 +53,11 @@ class DatabaseSchemaService implements SingletonInterface
         $this->cache = $this->getCache();
     }
 
-    /**
-     * @param string $tableName
-     * @return bool
-     */
-    public function tableExists($tableName)
+    public function tableExists(string $tableName): bool
     {
-        $schema = $this->getDatabaseSchema();
-        return isset($schema[$tableName]);
-    }
+        $database = DatabaseUtility::buildLocalDatabaseConnection();
 
-    /**
-     * @return array
-     */
-    public function getDatabaseSchema()
-    {
-        $schema = false;
-        if ($this->cache->has('database_schema')) {
-            $schema = $this->cache->get('database_schema');
-        }
-
-        if (false === $schema) {
-            $database = DatabaseUtility::buildLocalDatabaseConnection();
-
-            $schema = [];
-            foreach ($database->admin_get_tables() as $tableName => $tableInfo) {
-                $schema[$tableName]['_TABLEINFO'] = $tableInfo;
-                foreach ($database->admin_get_fields($tableName) as $fieldName => $fieldInfo) {
-                    $schema[$tableName][$fieldName] = $fieldInfo;
-                }
-            }
-            $this->cache->set('database_schema', $schema);
-        }
-
-        return $schema;
+        return $database ? $database->getSchemaManager()->tablesExist([$tableName]) : false;
     }
 
     /**
