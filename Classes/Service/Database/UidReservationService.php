@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Service\Database;
 
 /***************************************************************
@@ -26,49 +27,42 @@ namespace In2code\In2publishCore\Service\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Doctrine\DBAL\DBALException;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
 
-/**
- * Class UidReservationService
- */
 class UidReservationService
 {
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
-    protected $localDatabase = null;
+    protected $localDatabaseConnection;
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
-    protected $foreignDatabase = null;
+    protected $foreignDatabaseConnection;
 
     /**
      * @var array
      */
     protected $cache = [];
 
-    /**
-     * IdentifierReservationService constructor.
-     */
     public function __construct()
     {
-        $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-        $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
+        $this->localDatabaseConnection = DatabaseUtility::buildLocalDatabaseConnection();
+        $this->foreignDatabaseConnection = DatabaseUtility::buildForeignDatabaseConnection();
     }
 
     /**
      * Increases the auto increment value on local and foreign DB
      * until it's two numbers higher than the highest taken uid.
-     *
-     * @return int
      */
-    public function getReservedUid()
+    public function getReservedUid(): int
     {
         $nextAutoIncrement = (int)max(
-            $this->fetchSysFileAutoIncrementFromDatabase($this->localDatabase),
-            $this->fetchSysFileAutoIncrementFromDatabase($this->foreignDatabase)
+            $this->fetchSysFileAutoIncrementFromDatabase($this->localDatabaseConnection),
+            $this->fetchSysFileAutoIncrementFromDatabase($this->foreignDatabaseConnection)
         );
 
         do {
@@ -82,70 +76,72 @@ class UidReservationService
         return $possibleUid;
     }
 
-    /**
-     * @param DatabaseConnection $databaseConnection
-     * @return string
-     */
-    protected function determineDatabaseOfConnection(DatabaseConnection $databaseConnection)
+    protected function determineDatabaseOfConnection(Connection $databaseConnection): string
     {
         $cacheKey = spl_object_hash($databaseConnection);
         if (!isset($this->cache[$cacheKey])) {
-            $queryResult = $databaseConnection->admin_query('SELECT DATABASE() as db_name;');
-            if (false === $queryResult) {
-                throw new \RuntimeException('Could not select database name from target database', 1475242213);
-            }
-            $resultData = $queryResult->fetch_assoc();
-            if (!isset($resultData['db_name'])) {
-                throw new \RuntimeException('Could not fetch database name from query result', 1475242337);
-            }
-            $this->cache[$cacheKey] = $resultData['db_name'];
+            $this->cache[$cacheKey] = $databaseConnection->getDatabase();
         }
         return $this->cache[$cacheKey];
     }
 
-    /**
-     * @param int $autoIncrement
-     */
-    protected function setAutoIncrement($autoIncrement)
+    protected function setAutoIncrement(int $autoIncrement)
     {
-        foreach ([$this->localDatabase, $this->foreignDatabase] as $databaseConnection) {
-            $success = $databaseConnection->admin_query(
-                'ALTER TABLE sys_file AUTO_INCREMENT = ' . (int)$autoIncrement
-            );
-            if (false === $success) {
+        $statement = 'ALTER TABLE sys_file AUTO_INCREMENT = ' . $autoIncrement;
+        /** @var Connection $databaseConnection */
+        foreach ([$this->localDatabaseConnection, $this->foreignDatabaseConnection] as $databaseConnection) {
+            try {
+                $databaseConnection
+                    ->prepare($statement)
+                    ->execute()
+                ;
+            } catch (DBALException $e) {
                 throw new \RuntimeException('Failed to increase auto_increment on sys_file', 1475248851);
             }
         }
     }
 
-    /**
-     * @param int $uid
-     * @return bool
-     */
-    protected function isUidFree($uid)
+    protected function isUidFree(int $uid): bool
     {
-        return 0 === $this->localDatabase->exec_SELECTcountRows('uid', 'sys_file', 'uid=' . (int)$uid)
-               && 0 === $this->foreignDatabase->exec_SELECTcountRows('uid', 'sys_file', 'uid=' . (int)$uid);
+        /** @var Connection $databaseConnection */
+        foreach ([$this->localDatabaseConnection, $this->foreignDatabaseConnection] as $databaseConnection) {
+            $queryBuilder = $databaseConnection->createQueryBuilder();
+            $numberOfRows = $queryBuilder
+                ->count('uid')
+                ->from('sys_file')
+                ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid)))
+                ->execute()
+                ->fetchColumn(0)
+            ;
+
+            if (0 !== $numberOfRows) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
-    /**
-     * @param DatabaseConnection $databaseConnection
-     * @return int
-     */
-    protected function fetchSysFileAutoIncrementFromDatabase(DatabaseConnection $databaseConnection)
+    protected function fetchSysFileAutoIncrementFromDatabase(Connection $databaseConnection): int
     {
-        $queryResult = $databaseConnection->admin_query(
-            'SHOW TABLE STATUS FROM '
-            . '`' . $this->determineDatabaseOfConnection($databaseConnection) . '`'
-            . ' WHERE name LIKE "sys_file";'
+        $statement = sprintf(
+            'SHOW TABLE STATUS FROM `%s` WHERE name LIKE "sys_file";',
+            $this->determineDatabaseOfConnection($databaseConnection)
         );
-        if (false === $queryResult) {
+
+        try {
+            $tableStatus = $databaseConnection
+                ->prepare($statement)
+                ->execute()
+            ;
+        } catch (DBALException $e) {
             throw new \RuntimeException('Could not select table status from database', 1475242494);
         }
-        $resultData = $queryResult->fetch_assoc();
-        if (!isset($resultData['Auto_increment'])) {
+
+        if (!isset($tableStatus['Auto_increment'])) {
             throw new \RuntimeException('Could not fetch Auto_increment value from query result', 1475242706);
         }
-        return (int)$resultData['Auto_increment'];
+
+        return (int)$tableStatus['Auto_increment'];
     }
 }
