@@ -115,7 +115,7 @@ class TableCacheRepository implements SingletonInterface
                     $tableName,
                     ['pid' => (int)$pageIdentifier],
                     [],
-                    ['uid']
+                    ['uid' => 'ASC']
                 )
                 ->fetchAll();
             $rows = array_combine(array_column($rows, 'uid'), $rows);
