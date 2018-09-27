@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Utility;
 
 /***************************************************************
@@ -31,15 +32,12 @@ use TYPO3\CMS\Core\Resource\AbstractFile;
 use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class FileUtility
- */
 class FileUtility
 {
     /**
      * @var Logger
      */
-    protected static $logger = null;
+    protected static $logger;
 
     /**
      * @return void
@@ -48,20 +46,15 @@ class FileUtility
     {
         if (static::$logger === null) {
             static::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(
-                get_called_class()
+                \get_called_class()
             );
         }
     }
 
     /**
      * Removes old Backups which are no longer needed
-     *
-     * @param int $keepBackups
-     * @param string $tableName
-     * @param string $backupFolder
-     * @return void
      */
-    public static function cleanUpBackups($keepBackups, $tableName, $backupFolder)
+    public static function cleanUpBackups(int $keepBackups, string $tableName, string $backupFolder)
     {
         static::initializeLogger();
 
@@ -69,9 +62,9 @@ class FileUtility
 
         if (\is_array($backups)
             &&
-            is_int($keepBackups)
+            \is_int($keepBackups)
         ) {
-            while (count($backups) >= $keepBackups) {
+            while (\count($backups) >= $keepBackups) {
                 $backupFileName = array_shift($backups);
                 try {
                     if (unlink($backupFileName)) {
@@ -99,11 +92,8 @@ class FileUtility
      *      'folder/folder2' => '/folder/folder2',
      *      '/folder/folder2/' => '/folder/folder2'
      *      '' => '/'
-     *
-     * @param $folder
-     * @return string
      */
-    public static function getCleanFolder($folder)
+    public static function getCleanFolder(string $folder): string
     {
         $folder = trim($folder, '/');
         if (empty($folder)) {
@@ -112,11 +102,7 @@ class FileUtility
         return '/' . $folder . '/';
     }
 
-    /**
-     * @param FileInterface $file
-     * @return array
-     */
-    public static function extractFileInformation(FileInterface $file)
+    public static function extractFileInformation(FileInterface $file): array
     {
 
         $size = array_pop($file->getStorage()->getFileInfoByIdentifier($file->getIdentifier(), ['size']));
@@ -124,7 +110,7 @@ class FileUtility
         $info = [
             'identifier' => $file->getIdentifier(),
             'storage' => $file->getStorage()->getUid(),
-            'size' => $size === null ? 0 : $size,
+            'size' => $size ?? 0,
             'name' => $file->getName(),
         ];
 
@@ -137,11 +123,7 @@ class FileUtility
         return $info;
     }
 
-    /**
-     * @param array $files
-     * @return array
-     */
-    public static function extractFilesInformation(array $files)
+    public static function extractFilesInformation(array $files): array
     {
         $newIndex = [];
         foreach ($files as $file) {

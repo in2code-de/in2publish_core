@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Utility;
 
 /***************************************************************
@@ -29,19 +30,9 @@ namespace In2code\In2publishCore\Utility;
 
 use TYPO3\CMS\Core\Utility\MathUtility;
 
-/**
- * Class ArrayUtility
- */
 class ArrayUtility
 {
-    /**
-     * Remove from array by its given key
-     *
-     * @param array $array
-     * @param array|NULL $keysToRemove
-     * @return array
-     */
-    public static function removeFromArrayByKey(array $array, array $keysToRemove = [])
+    public static function removeFromArrayByKey(array $array, array $keysToRemove = []): array
     {
         foreach ($keysToRemove as $key) {
             if (array_key_exists($key, $array)) {
@@ -55,11 +46,8 @@ class ArrayUtility
      * Normalizes an array. Values which are equal to false or true will be
      * converted into booleans, integer like strings into integer values
      * and empty values will be removed from the array
-     *
-     * @param array $array
-     * @return array
      */
-    public static function normalizeArray(array $array)
+    public static function normalizeArray(array $array): array
     {
         foreach ($array as $key => &$value) {
             switch (gettype($value)) {

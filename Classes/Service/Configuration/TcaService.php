@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Service\Configuration;
 
 /***************************************************************
@@ -28,11 +29,8 @@ namespace In2code\In2publishCore\Service\Configuration;
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Lang\LanguageService;
+use \TYPO3\CMS\Core\Localization\LanguageService;
 
-/**
- * Class TableConfigurationArrayService
- */
 class TcaService implements SingletonInterface
 {
     /**
@@ -45,9 +43,6 @@ class TcaService implements SingletonInterface
      */
     protected $tableNames = [];
 
-    /**
-     * TcaService constructor.
-     */
     public function __construct()
     {
         $this->tca = $this->getTca();
@@ -55,24 +50,30 @@ class TcaService implements SingletonInterface
     }
 
     /**
-     * @param array $exceptTableNames
-     * @return array
+     * @param string[] $exceptTableNames
+     * @return string[]
      */
-    public function getAllTableNamesAllowedOnRootLevel(array $exceptTableNames = [])
+    public function getAllTableNamesAllowedOnRootLevel(array $exceptTableNames = []): array
     {
         $rootLevelTables = [];
         foreach ($this->tca as $tableName => $tableConfiguration) {
-            if (!in_array($tableName, $exceptTableNames)) {
-                if (!empty($tableConfiguration['ctrl']['rootLevel'])) {
-                    if (in_array($tableConfiguration['ctrl']['rootLevel'], [1, -1, true])) {
-                        $rootLevelTables[] = $tableName;
-                    }
-                }
+            if (
+                !empty($tableConfiguration['ctrl']['rootLevel'])
+                &&
+                !\in_array($tableName, $exceptTableNames, true)
+                &&
+                \in_array(
+                    $tableConfiguration['ctrl']['rootLevel'],
+                    [1, -1, true],
+                    true
+                )
+            ) {
+                $rootLevelTables[] = $tableName;
             }
         }
 
         // always add pages, even if they are excluded
-        if (!in_array('pages', $rootLevelTables)) {
+        if (!\in_array('pages', $rootLevelTables, true)) {
             $rootLevelTables[] = 'pages';
         }
         return $rootLevelTables;
@@ -94,12 +95,9 @@ class TcaService implements SingletonInterface
     }
 
     /**
-     * Get label_alt field name from table
-     *
-     * @param string $tableName
      * @return string Field name of the configured label_alt field or empty string if not set
      */
-    public function getLabelAltFieldFromTable($tableName)
+    public function getLabelAltFieldFromTable(string $tableName): string
     {
         $labelAltField = '';
         if (!empty($this->tca[$tableName]['ctrl']['label_alt'])) {
@@ -109,12 +107,9 @@ class TcaService implements SingletonInterface
     }
 
     /**
-     * Get title field name from table
-     *
-     * @param string $tableName
      * @return string Field name of the configured title field or empty string if not set
      */
-    public function getTitleFieldFromTable($tableName)
+    public function getTitleFieldFromTable(string $tableName): string
     {
         $titleField = '';
         if (!empty($this->tca[$tableName]['ctrl']['title'])) {
@@ -123,13 +118,7 @@ class TcaService implements SingletonInterface
         return $titleField;
     }
 
-    /**
-     * Get sorting field from TCA definition
-     *
-     * @param string $tableName
-     * @return string
-     */
-    public function getSortingField($tableName)
+    public function getSortingField(string $tableName): string
     {
         $sortingField = '';
         if (!empty($this->tca[$tableName]['ctrl']['sortby'])) {
@@ -140,13 +129,7 @@ class TcaService implements SingletonInterface
         return $sortingField;
     }
 
-    /**
-     * Get deleted field from TCA definition
-     *
-     * @param string $tableName
-     * @return string
-     */
-    public function getDeletedField($tableName)
+    public function getDeletedField(string $tableName): string
     {
         $deleteField = '';
         if (!empty($this->tca[$tableName]['ctrl']['delete'])) {
@@ -156,13 +139,9 @@ class TcaService implements SingletonInterface
     }
 
     /**
-     * Get the disabled field from TCA.
      * Records whose deleted field evaluate to true will not be shown in the frontend.
-     *
-     * @param string $tableName
-     * @return string
      */
-    public function getDisableField($tableName)
+    public function getDisableField(string $tableName): string
     {
         $deleteField = '';
         if (!empty($this->tca[$tableName]['ctrl']['enablecolumns']['disabled'])) {
@@ -201,10 +180,9 @@ class TcaService implements SingletonInterface
     }
 
     /**
-     * @param string $table
      * @return array|null
      */
-    public function getConfigurationArrayForTable($table)
+    public function getConfigurationArrayForTable(string $table)
     {
         if (isset($this->tca[$table])) {
             return $this->tca[$table];
@@ -213,11 +191,9 @@ class TcaService implements SingletonInterface
     }
 
     /**
-     * @param string $table
-     * @param string $column
      * @return array|null
      */
-    public function getColumnConfigurationForTableColumn($table, $column)
+    public function getColumnConfigurationForTableColumn(string $table, string $column)
     {
         if (isset($this->tca[$table]['columns'][$column])) {
             return $this->tca[$table]['columns'][$column];
@@ -228,10 +204,9 @@ class TcaService implements SingletonInterface
     /**
      * Returns all table names that are not in the exclusion list
      *
-     * @param array $exceptTableNames
-     * @return array
+     * @param string[] $exceptTableNames
      */
-    public function getAllTableNames(array $exceptTableNames = [])
+    public function getAllTableNames(array $exceptTableNames = []): array
     {
         if (!empty($exceptTableNames)) {
             return array_diff($this->tableNames, $exceptTableNames);
@@ -241,11 +216,8 @@ class TcaService implements SingletonInterface
 
     /**
      * Get table name from locallang and TCA definition
-     *
-     * @param string $tableName
-     * @return string
      */
-    public function getTableLabel($tableName)
+    public function getTableLabel(string $tableName): string
     {
         $label = ucfirst($tableName);
 
@@ -261,34 +233,27 @@ class TcaService implements SingletonInterface
         return $label;
     }
 
-    /**
-     * @param string $tableName
-     * @return bool
-     */
-    public function isHiddenRootTable($tableName)
+    public function isHiddenRootTable(string $tableName): bool
     {
         return isset($this->tca[$tableName]['ctrl']['hideTable'])
                && isset($this->tca[$tableName]['ctrl']['rootLevel'])
                && true === (bool)$this->tca[$tableName]['ctrl']['hideTable']
-               && in_array($this->tca[$tableName]['ctrl']['rootLevel'], [1, -1]);
+               && \in_array($this->tca[$tableName]['ctrl']['rootLevel'], [1, -1], true);
     }
 
     /**
-     * @return array[]
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    protected function getTca()
+    protected function getTca(): array
     {
         return isset($GLOBALS['TCA']) ? $GLOBALS['TCA'] : [];
     }
 
     /**
-     * @param string $label
-     * @return string
      * @SuppressWarnings("PHPMD.Superglobals")
      * @codeCoverageIgnore
      */
-    protected function localizeLabel($label)
+    protected function localizeLabel(string $label): string
     {
         if ($GLOBALS['LANG'] instanceof LanguageService) {
             return $GLOBALS['LANG']->sL($label);

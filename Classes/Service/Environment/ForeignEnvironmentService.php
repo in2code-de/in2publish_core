@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace In2code\In2publishCore\Service\Environment;
 
 /***************************************************************
@@ -38,23 +38,22 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Used to receive static information about the foreign environment like configuration values or server variables
+ * Used to receive static information about the foreign environment like
+ * configuration values or server variables
  */
 class ForeignEnvironmentService
 {
     /**
      * @var FrontendInterface
      */
-    protected $cache = null;
+    protected $cache;
 
     /**
      * @var Logger
      */
-    protected $logger = null;
+    protected $logger;
 
     /**
-     * ForeignEnvironmentService constructor.
-     *
      * @throws NoSuchCacheException
      */
     public function __construct()
@@ -63,10 +62,7 @@ class ForeignEnvironmentService
         $this->logger = $this->getLogger();
     }
 
-    /**
-     * @return string
-     */
-    public function getDatabaseInitializationCommands()
+    public function getDatabaseInitializationCommands(): string
     {
         if ($this->cache && $this->cache->has('foreign_db_init')) {
             return $this->cache->get('foreign_db_init');
@@ -104,11 +100,9 @@ class ForeignEnvironmentService
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function getCreateMasks()
+    public function getCreateMasks(): array
     {
         if (!$this->cache->has('create_masks')) {
             $request = GeneralUtility::makeInstance(
@@ -167,20 +161,14 @@ class ForeignEnvironmentService
     }
 
     /**
-     * @return Logger
-     *
      * @codeCoverageIgnore
      */
-    protected function getLogger()
+    protected function getLogger(): Logger
     {
         return GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
     }
 
-    /**
-     * @param array $output
-     * @return array
-     */
-    protected function tokenizeResponse(array $output)
+    protected function tokenizeResponse(array $output): array
     {
         $values = [];
         foreach ($output as $line) {

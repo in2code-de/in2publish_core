@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Service\Database;
 
 /***************************************************************
@@ -33,19 +34,14 @@ use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class DatabaseSchemaService
- */
 class DatabaseSchemaService implements SingletonInterface
 {
     /**
      * @var FrontendInterface
      */
-    protected $cache = null;
+    protected $cache;
 
     /**
-     * DatabaseSchemaService constructor.
-     *
      * @throws NoSuchCacheException
      */
     public function __construct()
@@ -61,14 +57,12 @@ class DatabaseSchemaService implements SingletonInterface
     }
 
     /**
-     * @return FrontendInterface
-     *
      * @throws NoSuchCacheException
      *
      * @codeCoverageIgnore
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function getCache()
+    protected function getCache(): FrontendInterface
     {
         return GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
     }

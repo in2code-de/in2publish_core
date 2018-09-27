@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Utility;
 
 /***************************************************************
@@ -31,28 +32,22 @@ use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class StorageDriverExtractor
- */
 class StorageDriverExtractor
 {
     /**
-     * @param ResourceStorage $localStorage
-     * @return DriverInterface
      * @throws \ReflectionException
      */
-    public static function getLocalDriver(ResourceStorage $localStorage)
+    public static function getLocalDriver(ResourceStorage $localStorage): DriverInterface
     {
-        $driverProperty = new \ReflectionProperty(get_class($localStorage), 'driver');
+        $driverProperty = new \ReflectionProperty(\get_class($localStorage), 'driver');
         $driverProperty->setAccessible(true);
         return $driverProperty->getValue($localStorage);
     }
 
     /**
-     * @param ResourceStorage $localStorage
      * @return DriverInterface|RemoteFileAbstractionLayerDriver
      */
-    public static function getForeignDriver(ResourceStorage $localStorage)
+    public static function getForeignDriver(ResourceStorage $localStorage): DriverInterface
     {
         $foreignDriver = GeneralUtility::makeInstance(RemoteFileAbstractionLayerDriver::class);
         $foreignDriver->setStorageUid($localStorage->getUid());

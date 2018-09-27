@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Utility;
 
 /***************************************************************
@@ -34,25 +35,19 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class DatabaseUtility
- */
 class DatabaseUtility
 {
     /**
      * @var Logger
      */
-    protected static $logger = null;
+    protected static $logger;
 
     /**
      * @var Connection
      */
-    protected static $foreignConnection = null;
+    protected static $foreignConnection;
 
-    /**
-     * @return Connection
-     */
-    public static function buildForeignDatabaseConnection()
+    public static function buildForeignDatabaseConnection(): Connection
     {
         static::initializeLogger();
         if (static::$foreignConnection === null) {
@@ -65,7 +60,7 @@ class DatabaseUtility
                 $foreignEnvService = GeneralUtility::makeInstance(ForeignEnvironmentService::class);
                 $initCommands = $foreignEnvService->getDatabaseInitializationCommands();
 
-                if (!in_array('in2publish_foreign', $connectionPool->getConnectionNames())) {
+                if (!\in_array('in2publish_foreign', $connectionPool->getConnectionNames(), true)) {
                     $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['in2publish_foreign'] = [
                         'dbname' => $configuration['name'],
                         'driver' => 'mysqli',
@@ -94,11 +89,7 @@ class DatabaseUtility
         return static::$foreignConnection;
     }
 
-    /**
-     * @param $string
-     * @return string
-     */
-    public static function quoteString($string)
+    public static function quoteString(string $string): string
     {
         return static::buildLocalDatabaseConnection()->quote($string);
     }
@@ -130,11 +121,7 @@ class DatabaseUtility
         }
     }
 
-    /**
-     * @param Connection $connection
-     * @param string $tableName
-     */
-    public static function backupTable(Connection $connection, $tableName)
+    public static function backupTable(Connection $connection, string $tableName)
     {
         $tableName = static::sanitizeTable($connection, $tableName);
         static::initializeLogger();
@@ -152,22 +139,17 @@ class DatabaseUtility
 
     /**
      * Check if a table is existing on local database
-     *
-     * @param string $tableName
-     * @return bool
      */
-    public static function isTableExistingOnLocal($tableName)
+    public static function isTableExistingOnLocal(string $tableName): bool
     {
         $allTables = static::buildLocalDatabaseConnection()->admin_get_tables();
         return array_key_exists($tableName, $allTables);
     }
 
     /**
-     * @param Connection $connection
-     * @param $tableName
-     * @param $backupFolder
+     * @throws DBALException
      */
-    protected static function createBackup(Connection $connection, $tableName, $backupFolder)
+    protected static function createBackup(Connection $connection, string $tableName, string $backupFolder)
     {
         $fileName = time() . '_' . $tableName . '.sql';
 
@@ -257,9 +239,6 @@ class DatabaseUtility
         }
     }
 
-    /**
-     * @return void
-     */
     protected static function initializeLogger()
     {
         if (static::$logger === null) {
@@ -270,11 +249,9 @@ class DatabaseUtility
     }
 
     /**
-     * @param Connection $connection
-     * @param string $tableName
      * @return mixed|string
      */
-    protected static function sanitizeTable(Connection $connection, $tableName)
+    protected static function sanitizeTable(Connection $connection, string $tableName)
     {
         $tableName = stripslashes($tableName);
         $tableName = str_replace("'", '', $tableName);

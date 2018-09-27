@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Utility;
 
 /***************************************************************
@@ -29,9 +30,6 @@ use TYPO3\CMS\Backend\Utility\BackendUtility as BackendUtilityCore;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
-/**
- * Class BackendUtility
- */
 class BackendUtility
 {
     /**
@@ -145,12 +143,8 @@ class BackendUtility
 
     /**
      * Create an URI to edit a record
-     *
-     * @param string $tableName
-     * @param int $identifier
-     * @return string
      */
-    public static function buildEditUri($tableName, $identifier)
+    public static function buildEditUri(string $tableName, int $identifier): string
     {
         $uriParameters = [
             'edit' => [
@@ -166,12 +160,8 @@ class BackendUtility
 
     /**
      * Create an URI to undo a record
-     *
-     * @param string $table
-     * @param int $identifier
-     * @return string
      */
-    public static function buildUndoUri($table, $identifier)
+    public static function buildUndoUri(string $table, int $identifier): string
     {
         $route = GeneralUtility::_GP('route') ?: GeneralUtility::_GP('M');
 
@@ -179,7 +169,7 @@ class BackendUtility
             'id' => GeneralUtility::_GP('id'),
         ];
         foreach (GeneralUtility::_GET() as $name => $value) {
-            if (is_array($value) && false !== strpos(strtolower($name), strtolower($route))) {
+            if (\is_array($value) && false !== strpos(strtolower($name), strtolower($route))) {
                 $returnParameters[$name] = $value;
             }
         }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Service\Environment;
 
 /***************************************************************
@@ -33,9 +34,6 @@ use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class EnvironmentService
- */
 class EnvironmentService implements SingletonInterface
 {
     const STATE_TESTS_FAILING = 'tests_failing';
@@ -46,20 +44,14 @@ class EnvironmentService implements SingletonInterface
     /**
      * @var Registry
      */
-    protected $registry = null;
+    protected $registry;
 
-    /**
-     * EnvironmentService constructor.
-     */
     public function __construct()
     {
         $this->registry = $this->getRegistry();
     }
 
-    /**
-     * @param bool $success
-     */
-    public function setTestResult($success)
+    public function setTestResult(bool $success)
     {
         $this->registry->set(
             'tx_in2publishcore',
@@ -72,10 +64,7 @@ class EnvironmentService implements SingletonInterface
         );
     }
 
-    /**
-     * @return array
-     */
-    public function getTestStatus()
+    public function getTestStatus(): array
     {
         $statusArray = [];
         $testResults = $this->registry->get('tx_in2publishcore', 'test_result', false);
@@ -95,10 +84,7 @@ class EnvironmentService implements SingletonInterface
         return $statusArray;
     }
 
-    /**
-     * @return string
-     */
-    protected function getPackagesHash()
+    protected function getPackagesHash(): string
     {
         return sha1(json_encode($this->getActivePackagesArray()));
     }
@@ -108,27 +94,23 @@ class EnvironmentService implements SingletonInterface
      *
      * @codeCoverageIgnore
      */
-    protected function getActivePackagesArray()
+    protected function getActivePackagesArray(): array
     {
         return GeneralUtility::makeInstance(PackageManager::class)->getActivePackages();
     }
 
     /**
-     * @return string
-     *
      * @codeCoverageIgnore
      */
-    protected function getConfigurationHash()
+    protected function getConfigurationHash(): string
     {
         return sha1(serialize(GeneralUtility::makeInstance(ConfigContainer::class)->get()));
     }
 
     /**
-     * @return Registry
-     *
      * @codeCoverageIgnore
      */
-    protected function getRegistry()
+    protected function getRegistry(): Registry
     {
         return GeneralUtility::makeInstance(Registry::class);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Log\Processor;
 
 /***************************************************************
@@ -30,17 +31,9 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Log\LogRecord;
 use TYPO3\CMS\Core\Log\Processor\AbstractProcessor;
 
-/**
- * Class BackendUserProcessor
- */
 class BackendUserProcessor extends AbstractProcessor
 {
-    /**
-     * @param LogRecord $logRecord
-     *
-     * @return LogRecord
-     */
-    public function processLogRecord(LogRecord $logRecord)
+    public function processLogRecord(LogRecord $logRecord): LogRecord
     {
         $backendUser = $this->getBackendUser();
         if ($backendUser instanceof BackendUserAuthentication) {
@@ -50,20 +43,18 @@ class BackendUserProcessor extends AbstractProcessor
                 $data = 'NO UID';
             }
         } else {
-            $data = gettype($backendUser);
+            $data = \gettype($backendUser);
             if ($data === 'object') {
-                $data = get_class($backendUser);
+                $data = \get_class($backendUser);
             }
         }
         return $logRecord->addData(['be_user' => $data]);
     }
 
     /**
-     * @return BackendUserAuthentication
-     *
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    protected function getBackendUser()
+    protected function getBackendUser(): BackendUserAuthentication
     {
         return $GLOBALS['BE_USER'];
     }

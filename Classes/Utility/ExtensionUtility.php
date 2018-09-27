@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Utility;
 
 /***************************************************************
@@ -28,9 +29,6 @@ namespace In2code\In2publishCore\Utility;
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
-/**
- * Class ExtensionUtility
- */
 class ExtensionUtility
 {
     /**
@@ -38,13 +36,9 @@ class ExtensionUtility
      *
      * @see ExtensionManagementUtility::getExtensionVersion()
      *
-     * @param string $extension
-     *
-     * @return string
-     *
      * @SuppressWarnings(PHPMD.CamelCaseVariableName)
      */
-    public static function getExtensionVersion($extension)
+    public static function getExtensionVersion(string $extension): string
     {
         $EM_CONF = [];
         $_EXTKEY = $extension;

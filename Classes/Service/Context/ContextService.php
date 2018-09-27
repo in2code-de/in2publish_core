@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace In2code\In2publishCore\Service\Context;
 
 /***************************************************************
@@ -29,9 +31,6 @@ namespace In2code\In2publishCore\Service\Context;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class ContextService
- */
 class ContextService implements SingletonInterface
 {
     const LOCAL = 'Local';
@@ -44,24 +43,18 @@ class ContextService implements SingletonInterface
      */
     protected $context = self::FOREIGN;
 
-    /**
-     * Determines and stores the current context
-     */
     public function __construct()
     {
         $this->context = $this->determineContext();
     }
 
-    /**
-     * @return string
-     */
-    public function getContext()
+    public function getContext(): string
     {
         return $this->context;
     }
 
     /**
-     * @return string
+     * @return string|bool
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
@@ -70,7 +63,7 @@ class ContextService implements SingletonInterface
         $environmentVariable = getenv(static::ENV_VAR_NAME) ?: getenv(static::REDIRECT_ENV_VAR_NAME) ?: false;
         if (false === $environmentVariable) {
             return static::FOREIGN;
-        } elseif (in_array($environmentVariable, [static::LOCAL, static::FOREIGN])) {
+        } elseif (\in_array($environmentVariable, [static::LOCAL, static::FOREIGN], true)) {
             return $environmentVariable;
         } elseif (GeneralUtility::getApplicationContext()->isProduction()) {
             return static::FOREIGN;
@@ -79,26 +72,17 @@ class ContextService implements SingletonInterface
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function isForeign()
+    public function isForeign(): bool
     {
         return static::FOREIGN === $this->context;
     }
 
-    /**
-     * @return bool
-     */
-    public function isLocal()
+    public function isLocal(): bool
     {
         return static::LOCAL === $this->context;
     }
 
-    /**
-     * @return bool
-     */
-    public function isContextDefined()
+    public function isContextDefined(): bool
     {
         return (false !== getenv(static::ENV_VAR_NAME)) || (false !== getenv(static::REDIRECT_ENV_VAR_NAME));
     }

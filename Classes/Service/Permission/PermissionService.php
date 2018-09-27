@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Service\Permission;
 
 /***************************************************************
@@ -34,24 +35,19 @@ use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
-/**
- * Class PermissionService
- */
 class PermissionService
 {
     /**
      * @var LoggerInterface
      */
-    protected $logger = null;
+    protected $logger;
 
     /**
      * @var Dispatcher
      */
-    protected $dispatcher = null;
+    protected $dispatcher;
 
     /**
-     * PermissionService constructor.
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
@@ -62,10 +58,8 @@ class PermissionService
 
     /**
      * Returns true if the current user is allowed to publish
-     *
-     * @return bool
      */
-    public function isUserAllowedToPublish()
+    public function isUserAllowedToPublish(): bool
     {
         $votes = ['yes' => 0, 'no' => 0];
 
