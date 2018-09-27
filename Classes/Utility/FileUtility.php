@@ -67,7 +67,7 @@ class FileUtility
 
         $backups = glob($backupFolder . '*_' . $tableName . '.*');
 
-        if (is_int($backups)
+        if (\is_array($backups)
             &&
             is_int($keepBackups)
         ) {
