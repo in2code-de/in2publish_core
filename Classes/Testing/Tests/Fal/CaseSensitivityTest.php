@@ -99,11 +99,11 @@ class CaseSensitivityTest implements TestCaseInterface
 
     /**
      * @param array $storages
-     * @param string $key
+     * @param int $key
      * @param string $side
      * @return array
      */
-    protected function getConfiguration(array $storages, string $key, string $side): array
+    protected function getConfiguration(array $storages, int $key, string $side): array
     {
         return $this->flexFormService->convertFlexFormContentToArray($storages[$side][$key]['configuration']);
     }
