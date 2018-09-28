@@ -85,7 +85,7 @@ class TcaService implements SingletonInterface
      * @param string $tableName
      * @return string Field name of the configured label field or empty string if not set
      */
-    public function getLabelFieldFromTable($tableName)
+    public function getLabelFieldFromTable(string $tableName): string
     {
         $labelField = '';
         if (!empty($this->tca[$tableName]['ctrl']['label'])) {

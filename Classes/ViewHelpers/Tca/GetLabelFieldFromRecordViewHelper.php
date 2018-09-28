@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Tca;
 
 /***************************************************************
@@ -28,7 +29,7 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\TableConfiguration\LabelService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Class GetLabelFieldFromRecordViewHelper
@@ -40,9 +41,6 @@ class GetLabelFieldFromRecordViewHelper extends AbstractViewHelper
      */
     protected $labelService;
 
-    /**
-     * GetLabelFieldFromRecordViewHelper constructor.
-     */
     public function __construct()
     {
         $this->labelService = GeneralUtility::makeInstance(LabelService::class);
@@ -63,7 +61,7 @@ class GetLabelFieldFromRecordViewHelper extends AbstractViewHelper
      *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         return $this->labelService->getLabelField($this->arguments['record'], $this->arguments['stagingLevel']);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Uri;
 
 /***************************************************************
@@ -27,7 +28,7 @@ namespace In2code\In2publishCore\ViewHelpers\Uri;
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Class PreviewAnyRecordViewHelper
@@ -76,7 +77,7 @@ class PreviewAnyRecordViewHelper extends AbstractViewHelper
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function isPreviewTsConfigExisting($tableName)
+    protected function isPreviewTsConfigExisting(string $tableName): bool
     {
         $pageTsConfig = BackendUtility::getPagesTSconfig($this->getCurrentPageIdentifier());
         return !empty($pageTsConfig['TCEMAIN.']['preview.'][$tableName . '.']);
@@ -87,7 +88,7 @@ class PreviewAnyRecordViewHelper extends AbstractViewHelper
      *
      * @return int
      */
-    protected function getCurrentPageIdentifier()
+    protected function getCurrentPageIdentifier(): int
     {
         return (int)GeneralUtility::_GP('id');
     }
@@ -108,7 +109,7 @@ class PreviewAnyRecordViewHelper extends AbstractViewHelper
      * @param string $uri
      * @return string
      */
-    protected function buildAdditionalParamsString($configuration, $uri)
+    protected function buildAdditionalParamsString(array $configuration, string $uri): string
     {
         $additionalConfig = (array)$configuration['additionalGetParameters.'];
         foreach ($additionalConfig as $additionalKey => $additionalValue) {
@@ -132,7 +133,7 @@ class PreviewAnyRecordViewHelper extends AbstractViewHelper
      * @param $string
      * @return string
      */
-    protected static function removeLastDot($string)
+    protected static function removeLastDot(string $string): string
     {
         if (substr($string, -1) === '.') {
             $string = substr($string, 0, -1);

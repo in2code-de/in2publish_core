@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\File;
 
 /***************************************************************
@@ -31,21 +32,16 @@ use In2code\In2publishCore\Domain\Service\DomainService;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class BuildResourcePathViewHelper
- */
 class BuildResourcePathViewHelper extends AbstractViewHelper
 {
     /**
      * @var DomainService
      */
-    protected $domainService = null;
+    protected $domainService;
 
     /**
-     * BuildResourcePathViewHelper constructor.
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function initialize()
@@ -61,7 +57,7 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function render(Record $record, $stagingLevel = 'local')
+    public function render(Record $record, string $stagingLevel = 'local'): string
     {
         $resourceUrl = '';
         if ('sys_file' === $record->getTableName()) {

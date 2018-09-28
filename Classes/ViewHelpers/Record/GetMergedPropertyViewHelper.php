@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Record;
 
 /***************************************************************
@@ -26,11 +27,8 @@ namespace In2code\In2publishCore\ViewHelpers\Record;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Model\Record;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetMergedPropertyViewHelper
- */
 class GetMergedPropertyViewHelper extends AbstractViewHelper
 {
     /**
@@ -40,7 +38,7 @@ class GetMergedPropertyViewHelper extends AbstractViewHelper
      * @param string $propertyName
      * @return mixed
      */
-    public function render(Record $record, $propertyName)
+    public function render(Record $record, string $propertyName)
     {
         return $record->getMergedProperty($propertyName);
     }

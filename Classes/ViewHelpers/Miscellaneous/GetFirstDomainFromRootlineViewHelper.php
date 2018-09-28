@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 
 /***************************************************************
@@ -28,11 +29,8 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\DomainService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetFirstDomainFromRootlineViewHelper
- */
 class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
 {
     /**
@@ -40,9 +38,6 @@ class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
      */
     protected $domainService;
 
-    /**
-     * GetFirstDomainFromRootlineViewHelper constructor.
-     */
     public function __construct()
     {
         $this->domainService = GeneralUtility::makeInstance(DomainService::class);
@@ -61,7 +56,7 @@ class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
      *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         return $this->domainService->getFirstDomain(
             $this->arguments['record'],

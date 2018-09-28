@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Condition;
 
 /***************************************************************
@@ -27,11 +28,8 @@ namespace In2code\In2publishCore\ViewHelpers\Condition;
 
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * IsUserAllowedToPublishViewHelper
- */
 class IsUserAllowedToPublishViewHelper extends AbstractViewHelper
 {
     /**
@@ -41,7 +39,7 @@ class IsUserAllowedToPublishViewHelper extends AbstractViewHelper
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function render()
+    public function render(): bool
     {
         return GeneralUtility::makeInstance(PermissionService::class)->isUserAllowedToPublish();
     }

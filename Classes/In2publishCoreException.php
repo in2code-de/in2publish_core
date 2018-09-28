@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore;
 
 /***************************************************************
@@ -26,9 +27,6 @@ namespace In2code\In2publishCore;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-/**
- * Class In2publishCoreException
- */
 class In2publishCoreException extends \Exception
 {
 }

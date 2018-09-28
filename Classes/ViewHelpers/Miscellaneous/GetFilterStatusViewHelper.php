@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 
 /***************************************************************
@@ -26,17 +27,14 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  ***************************************************************/
 
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetFilterStatusViewHelper
- */
 class GetFilterStatusViewHelper extends AbstractViewHelper
 {
     /**
      * @var BackendUserAuthentication
      */
-    protected $backendUser = null;
+    protected $backendUser;
 
     /**
      *
@@ -53,7 +51,7 @@ class GetFilterStatusViewHelper extends AbstractViewHelper
      *
      * @return bool
      */
-    public function render()
+    public function render(): bool
     {
         $key = $this->arguments['key'];
         $filter = $this->arguments['filter'];
@@ -61,8 +59,6 @@ class GetFilterStatusViewHelper extends AbstractViewHelper
     }
 
     /**
-     * Initialize
-     *
      * @return void
      */
     public function initialize()
@@ -74,7 +70,7 @@ class GetFilterStatusViewHelper extends AbstractViewHelper
      * @return BackendUserAuthentication
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function getBackendUser()
+    protected function getBackendUser(): BackendUserAuthentication
     {
         return $GLOBALS['BE_USER'];
     }

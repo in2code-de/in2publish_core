@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Tools;
 
 /***************************************************************
@@ -28,17 +29,14 @@ namespace In2code\In2publishCore\ViewHelpers\Tools;
 
 use In2code\In2publishCore\Tools\ToolsRegistry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetEnabledToolsViewHelper
- */
 class GetEnabledToolsViewHelper extends AbstractViewHelper
 {
     /**
      * @return array
      */
-    public function render()
+    public function render(): array
     {
         return GeneralUtility::makeInstance(ToolsRegistry::class)->getTools();
     }

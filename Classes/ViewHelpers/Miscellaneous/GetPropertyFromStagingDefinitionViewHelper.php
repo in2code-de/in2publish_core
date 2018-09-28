@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 
 /***************************************************************
@@ -29,11 +30,8 @@ use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetPropertyFromStagingDefinitionViewHelper
- */
 class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
 {
     /**
@@ -58,7 +56,7 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
      *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         $record = $this->arguments['record'];
         $propertyName = $this->arguments['propertyName'];
@@ -75,7 +73,7 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
      * @param $fallbackProperty
      * @return string
      */
-    protected function getProperty(Record $record, $propertyName, $stagingLevel, $fallbackProperty)
+    protected function getProperty(Record $record, string $propertyName, string $stagingLevel, string $fallbackProperty): string
     {
         $properties = ObjectAccess::getProperty($record, ucfirst($stagingLevel) . 'Properties');
         if (isset($properties[$propertyName])) {
@@ -96,7 +94,7 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
      * @param string $stagingLevel
      * @return string
      */
-    protected function fallbackRootPageTitle(Record $record, $propertyName, $stagingLevel = 'local')
+    protected function fallbackRootPageTitle(Record $record, string $propertyName, string $stagingLevel = 'local'): string
     {
         if ($record->getTableName() === 'pages' && $record->getIdentifier() === 0 && $propertyName === 'title') {
             if ($stagingLevel === 'local') {
@@ -112,7 +110,7 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
      * @return string
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function getSiteName()
+    protected function getSiteName(): string
     {
         return $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];
     }

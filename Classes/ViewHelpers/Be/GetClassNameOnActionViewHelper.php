@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Be;
 
 /***************************************************************
@@ -25,11 +26,8 @@ namespace In2code\In2publishCore\ViewHelpers\Be;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetClassNameOnActionViewHelper
- */
 class GetClassNameOnActionViewHelper extends AbstractViewHelper
 {
     /**
@@ -48,7 +46,7 @@ class GetClassNameOnActionViewHelper extends AbstractViewHelper
      *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         if ($this->getCurrentActionName() === $this->arguments['actionName']) {
             return $this->arguments['className'];
@@ -59,7 +57,7 @@ class GetClassNameOnActionViewHelper extends AbstractViewHelper
     /**
      * @return string
      */
-    protected function getCurrentActionName()
+    protected function getCurrentActionName(): string
     {
         return $this->renderingContext->getControllerAction();
     }

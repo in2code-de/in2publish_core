@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Attribute;
 
 /***************************************************************
@@ -26,11 +27,8 @@ namespace In2code\In2publishCore\ViewHelpers\Attribute;
  ***************************************************************/
 
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class PublishingDataAttributesViewHelper
- */
 class PublishingDataAttributesViewHelper extends AbstractViewHelper
 {
     /**
@@ -38,7 +36,7 @@ class PublishingDataAttributesViewHelper extends AbstractViewHelper
      *
      * @return array
      */
-    public function render()
+    public function render(): array
     {
         return [
             'data-in2publish-confirm' => LocalizationUtility::translate('confirm_publish_pages', 'in2publish_core'),

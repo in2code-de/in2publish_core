@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 
 /***************************************************************
@@ -25,11 +26,8 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetT3VersionViewHelper
- */
 class GetT3VersionViewHelper extends AbstractViewHelper
 {
     /**

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 
 /***************************************************************
@@ -26,11 +27,8 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Model\Record;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class HasChangedRecordsViewHelper
- */
 class HasChangedRecordsViewHelper extends AbstractViewHelper
 {
     /**
@@ -47,7 +45,7 @@ class HasChangedRecordsViewHelper extends AbstractViewHelper
      *
      * @return bool
      */
-    public function render()
+    public function render(): bool
     {
         foreach ($this->arguments['records'] as $record) {
             /** @var Record $record */

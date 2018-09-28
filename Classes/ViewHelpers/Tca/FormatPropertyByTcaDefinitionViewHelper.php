@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Tca;
 
 /***************************************************************
@@ -26,11 +27,8 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
  ***************************************************************/
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class FormatPropertyByTcaDefinitionViewHelper
- */
 class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
 {
     /**
@@ -54,7 +52,7 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
      * @return string
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    public function render()
+    public function render(): string
     {
         $fieldName = $this->arguments['fieldName'];
         $tableName = $this->arguments['tableName'];

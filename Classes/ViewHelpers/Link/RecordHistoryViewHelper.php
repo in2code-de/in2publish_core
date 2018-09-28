@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Link;
 
 /***************************************************************
@@ -28,9 +29,6 @@ namespace In2code\In2publishCore\ViewHelpers\Link;
 
 use In2code\In2publishCore\Utility\BackendUtility;
 
-/**
- * Class UndoUriViewHelper
- */
 class RecordHistoryViewHelper extends AbstractRecordActionLinkViewHelper
 {
     /**
@@ -41,7 +39,7 @@ class RecordHistoryViewHelper extends AbstractRecordActionLinkViewHelper
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function buildUri($table, $identifier)
+    protected function buildUri(string $table, int $identifier): string
     {
         return BackendUtility::buildUndoUri($table, $identifier);
     }

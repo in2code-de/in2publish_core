@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Uri;
 
 /***************************************************************
@@ -28,12 +29,9 @@ namespace In2code\In2publishCore\ViewHelpers\Uri;
 
 use In2code\In2publishCore\Domain\Service\DomainService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3\CMS\Frontend\Page\CacheHashCalculator;
 
-/**
- * Class CompareUriViewHelper
- */
 class CompareUriViewHelper extends AbstractTagBasedViewHelper
 {
     /**
@@ -46,9 +44,6 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
      */
     protected $domainService;
 
-    /**
-     * GetFirstDomainFromRootlineViewHelper constructor.
-     */
     public function __construct()
     {
         $this->domainService = GeneralUtility::makeInstance(DomainService::class);
@@ -66,10 +61,9 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
     }
 
     /**
-     * @param integer $identifier
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         $identifier = $this->arguments['identifier'];
 

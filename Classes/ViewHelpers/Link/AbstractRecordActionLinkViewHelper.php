@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Link;
 
 /***************************************************************
@@ -27,12 +28,9 @@ namespace In2code\In2publishCore\ViewHelpers\Link;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
-use TYPO3\CMS\Fluid\Core\ViewHelper\Exception;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
 
-/**
- * Class AbstractRecordActionLinkViewHelper
- */
 abstract class AbstractRecordActionLinkViewHelper extends AbstractTagBasedViewHelper
 {
     /**
@@ -55,7 +53,7 @@ abstract class AbstractRecordActionLinkViewHelper extends AbstractTagBasedViewHe
     /**
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         if (!empty($this->arguments['record'])) {
             /** @var RecordInterface $record */
@@ -77,5 +75,5 @@ abstract class AbstractRecordActionLinkViewHelper extends AbstractTagBasedViewHe
      * @param string $table
      * @param int $identifier
      */
-    abstract protected function buildUri($table, $identifier);
+    abstract protected function buildUri(string $table, int $identifier);
 }

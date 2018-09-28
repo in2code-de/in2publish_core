@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Tca;
 
 /***************************************************************
@@ -25,11 +26,9 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetFieldLabelFromLocallangViewHelper
- */
 class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
 {
     /**
@@ -38,9 +37,9 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
     protected $tca = [];
 
     /**
-     * @var \TYPO3\CMS\Lang\LanguageService
+     * @var LanguageService
      */
-    protected $languageService = null;
+    protected $languageService;
 
     /**
      *
@@ -57,7 +56,7 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
      *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         $fieldName = $this->arguments['fieldName'];
         $tableName = $this->arguments['tableName'];
@@ -75,8 +74,6 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
     }
 
     /**
-     * Initialize
-     *
      * @return void
      *
      * @SuppressWarnings("PHPMD.Superglobals")

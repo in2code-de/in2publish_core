@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 
 /***************************************************************
@@ -27,19 +28,16 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class ExecutionTimeViewHelper
- */
 class ExecutionTimeViewHelper extends AbstractViewHelper
 {
     /**
      * @return float
      */
-    public function render()
+    public function render(): float
     {
         return GeneralUtility::makeInstance(ExecutionTimeService::class)
-                             ->getExecutionTime();
+            ->getExecutionTime();
     }
 }

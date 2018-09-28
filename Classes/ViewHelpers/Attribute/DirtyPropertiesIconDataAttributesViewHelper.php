@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Attribute;
 
 /***************************************************************
@@ -32,9 +33,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class DirtyPropertiesIconDataAttributesViewHelper
- */
 class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
 {
     /**
@@ -73,7 +71,7 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
      * @param Record $record
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         $attributesString = 'data-action="opendirtypropertieslistcontainer"';
         if (GeneralUtility::makeInstance(ConfigContainer::class)->get('factory.simpleOverviewAndAjax')) {
@@ -86,7 +84,7 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
      * @param Record $record
      * @return string
      */
-    protected function getDataAttributesForSimpleOverviewAndAjax(Record $record)
+    protected function getDataAttributesForSimpleOverviewAndAjax(Record $record): string
     {
         $attributesString = ' data-action-ajax-uri="' . $this->getAjaxUri($record) . '"';
         $attributesString .= ' data-action-ajax-result=".' . $this->getAjaxContainerClassName($record) . '"';
@@ -98,7 +96,7 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
      * @param Record $record
      * @return string
      */
-    protected function getAjaxUri(Record $record)
+    protected function getAjaxUri(Record $record): string
     {
         return $this
             ->controllerContext
@@ -114,7 +112,7 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
      * @param Record $record
      * @return string
      */
-    protected function getAjaxContainerClassName(Record $record)
+    protected function getAjaxContainerClassName(Record $record): string
     {
         return 'simpleOverviewAndAjaxContainerForRecord' . $record->getTableName() . $record->getIdentifier();
     }

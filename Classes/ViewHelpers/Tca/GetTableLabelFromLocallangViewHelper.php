@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Tca;
 
 /***************************************************************
@@ -27,21 +28,15 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
 
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetTableLabelFromLocallangViewHelper
- */
 class GetTableLabelFromLocallangViewHelper extends AbstractViewHelper
 {
     /**
      * @var TcaService
      */
-    protected $tcaService = null;
+    protected $tcaService;
 
-    /**
-     * GetTableLabelFromLocallangViewHelper constructor.
-     */
     public function __construct()
     {
         $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
@@ -61,7 +56,7 @@ class GetTableLabelFromLocallangViewHelper extends AbstractViewHelper
      *
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         return $this->tcaService->getTableLabel($this->arguments['tableName']);
     }
