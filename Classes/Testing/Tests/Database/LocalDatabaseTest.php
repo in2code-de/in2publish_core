@@ -52,7 +52,7 @@ class LocalDatabaseTest implements TestCaseInterface
         }
 
         $expectedTables = GeneralUtility::makeInstance(RequiredTablesDataProvider::class)->getRequiredTables();
-        $actualTables = array_keys($localDatabase->getSchemaManager()->listTableNames());
+        $actualTables = $localDatabase->getSchemaManager()->listTableNames();
 
         $missingTables = [];
         foreach ($expectedTables as $expectedTable) {
