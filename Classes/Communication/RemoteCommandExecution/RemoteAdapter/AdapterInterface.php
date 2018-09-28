@@ -30,9 +30,6 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdap
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
 
-/**
- * Interface AdapterInterface
- */
 interface AdapterInterface
 {
     /**
@@ -45,5 +42,5 @@ interface AdapterInterface
      *
      * @return RemoteCommandResponse
      */
-    public function execute(RemoteCommandRequest $request);
+    public function execute(RemoteCommandRequest $request): RemoteCommandResponse;
 }

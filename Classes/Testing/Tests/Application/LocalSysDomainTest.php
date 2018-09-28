@@ -32,15 +32,12 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 
-/**
- * Class LocalSysDomainTest
- */
 class LocalSysDomainTest implements TestCaseInterface
 {
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
 
@@ -53,7 +50,7 @@ class LocalSysDomainTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LocalDatabaseTest::class,

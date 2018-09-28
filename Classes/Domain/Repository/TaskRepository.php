@@ -113,7 +113,7 @@ class TaskRepository
      * @param AbstractTask $task
      * @return array
      */
-    protected function taskToPropertiesArray(AbstractTask $task)
+    protected function taskToPropertiesArray(AbstractTask $task): array
     {
         $task->modifyConfiguration();
         $properties = [

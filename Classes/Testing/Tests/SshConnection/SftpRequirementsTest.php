@@ -30,17 +30,14 @@ namespace In2code\In2publishCore\Testing\Tests\SshConnection;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 
-/**
- * Class SftpRequirementsTest
- */
 class SftpRequirementsTest implements TestCaseInterface
 {
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
-        if (false == (bool)ini_get('allow_url_fopen')) {
+        if (false === (bool)ini_get('allow_url_fopen')) {
             return new TestResult(
                 'sftp_requirements.allow_url_fopen_disabled',
                 TestResult::ERROR
@@ -56,7 +53,7 @@ class SftpRequirementsTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             SshFunctionAvailabilityTest::class,

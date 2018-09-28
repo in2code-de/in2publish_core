@@ -29,9 +29,6 @@ namespace In2code\In2publishCore\Config\Node\Specific;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
-/**
- * Class SpecBoolean
- */
 class SpecBoolean extends AbsSpecNode
 {
     /**
@@ -40,7 +37,7 @@ class SpecBoolean extends AbsSpecNode
      */
     public function validateType(ValidationContainer $container, $value)
     {
-        if (!is_bool($value)) {
+        if (!\is_bool($value)) {
             $container->addError('The value is not a boolean');
         }
     }
@@ -50,7 +47,7 @@ class SpecBoolean extends AbsSpecNode
      *
      * @return bool
      */
-    public function cast($value)
+    public function cast($value): bool
     {
         return (bool)$value;
     }

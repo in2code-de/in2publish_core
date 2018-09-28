@@ -31,15 +31,12 @@ use In2code\In2publishCore\Communication\TemporaryAssetTransmission\Transmission
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 
-/**
- * Class TransmissionAdapterTest
- */
 class TransmissionAdapterTest implements TestCaseInterface
 {
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         return new TestResult('adapter.all_transmission_adapter_tests__passed');
     }
@@ -49,7 +46,7 @@ class TransmissionAdapterTest implements TestCaseInterface
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         $dependencies = [
             AdapterSelectionTest::class,

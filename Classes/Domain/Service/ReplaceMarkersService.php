@@ -63,7 +63,7 @@ class ReplaceMarkersService
      * @param string $string
      * @return string
      */
-    public function replaceMarkers(RecordInterface $record, $string)
+    public function replaceMarkers(RecordInterface $record, $string): string
     {
         if (strpos($string, '#') !== false) {
             $string = $this->replaceRecFieldMarker($record, $string);
@@ -80,7 +80,7 @@ class ReplaceMarkersService
      * @param string $string
      * @return string
      */
-    protected function replaceRecFieldMarker(RecordInterface $record, $string)
+    protected function replaceRecFieldMarker(RecordInterface $record, $string): string
     {
         if (strstr($string, '###REC_FIELD_')) {
             $string = preg_replace_callback(
@@ -165,7 +165,7 @@ class ReplaceMarkersService
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function getStoragePidFromPage($pageId)
+    protected function getStoragePidFromPage($pageId): int
     {
         $rootLine = BackendUtility::BEgetRootLine($pageId);
         foreach ($rootLine as $page) {

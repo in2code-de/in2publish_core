@@ -66,7 +66,7 @@ class ValidationContainer
     /**
      * @return string[]
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }

@@ -36,9 +36,6 @@ use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
-/**
- * Class FalStorageTestSubjectsProvider
- */
 class FalStorageTestSubjectsProvider implements SingletonInterface
 {
     const PURPOSE_CASE_SENSITIVITY = 'caseSensitivity';
@@ -49,7 +46,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     /**
      * @var Dispatcher
      */
-    protected $signalSlotDispatcher = null;
+    protected $signalSlotDispatcher;
 
     /**
      * @var array
@@ -66,9 +63,6 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
      */
     protected $initialized = false;
 
-    /**
-     * FalStorageTestSubjectsProvider constructor.
-     */
     public function __construct()
     {
         $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
@@ -77,7 +71,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     /**
      * @return array
      */
-    public function getStoragesForCaseSensitivityTest()
+    public function getStoragesForCaseSensitivityTest(): array
     {
         return $this->getStorages(static::PURPOSE_CASE_SENSITIVITY);
     }
@@ -85,7 +79,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     /**
      * @return array
      */
-    public function getStoragesForDriverTest()
+    public function getStoragesForDriverTest(): array
     {
         return $this->getStorages(static::PURPOSE_DRIVER);
     }
@@ -93,7 +87,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     /**
      * @return array
      */
-    public function getStoragesForMissingStoragesTest()
+    public function getStoragesForMissingStoragesTest(): array
     {
         return $this->getStorages(static::PURPOSE_MISSING);
     }
@@ -101,7 +95,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     /**
      * @return array
      */
-    public function getStoragesForUniqueTargetTest()
+    public function getStoragesForUniqueTargetTest(): array
     {
         return $this->getStorages(static::PURPOSE_UNIQUE_TARGET);
     }
@@ -110,7 +104,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
      * @param $purpose
      * @return array
      */
-    protected function getStorages($purpose)
+    protected function getStorages($purpose): array
     {
         if (false === $this->initialized) {
             $this->initialized = true;
@@ -141,7 +135,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
      * @param Connection $connection
      * @return array
      */
-    protected function fetchStorages(Connection $connection)
+    protected function fetchStorages(Connection $connection): array
     {
         $rows = (array)$connection->select(['*'], 'sys_file_storage', ['deleted' => 0])->fetchAll();
         return array_combine(array_column($rows, 'uid'), $rows);

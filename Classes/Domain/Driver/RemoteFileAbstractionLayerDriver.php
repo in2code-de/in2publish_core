@@ -160,7 +160,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
     /**
      * @return bool
      */
-    public function isOnline()
+    public function isOnline(): bool
     {
         return true === (bool)$this->remoteDriverSettings['is_online'];
     }
@@ -763,7 +763,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $folderIdentifier
      * @return string
      */
-    protected function getFolderExistsCacheIdentifier($folderIdentifier)
+    protected function getFolderExistsCacheIdentifier($folderIdentifier): string
     {
         return 'folderExists|' . $folderIdentifier;
     }
@@ -772,7 +772,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $folderIdentifier
      * @return string
      */
-    protected function getGetFoldersInFolderCacheIdentifier($folderIdentifier)
+    protected function getGetFoldersInFolderCacheIdentifier($folderIdentifier): string
     {
         return 'getFoldersInFolder|' . $folderIdentifier;
     }
@@ -781,7 +781,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $folderIdentifier
      * @return string
      */
-    protected function getGetFilesInFolderCacheIdentifier($folderIdentifier)
+    protected function getGetFilesInFolderCacheIdentifier($folderIdentifier): string
     {
         return 'getFilesInFolder|' . $folderIdentifier;
     }
@@ -790,7 +790,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $fileIdentifier
      * @return string
      */
-    protected function getFileExistsCacheIdentifier($fileIdentifier)
+    protected function getFileExistsCacheIdentifier($fileIdentifier): string
     {
         return 'fileExists|' . $fileIdentifier;
     }
@@ -799,7 +799,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $identifier
      * @return string
      */
-    protected function getGetPermissionsCacheIdentifier($identifier)
+    protected function getGetPermissionsCacheIdentifier($identifier): string
     {
         return 'getPermissions|' . $identifier;
     }
@@ -808,7 +808,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $fileIdentifier
      * @return string
      */
-    protected function getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier)
+    protected function getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier): string
     {
         return 'getFileInfoByIdentifier|' . $fileIdentifier;
     }
@@ -817,7 +817,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $folderIdentifier
      * @return string
      */
-    protected function getGetFolderInfoByIdentifierCacheIdentifier($folderIdentifier)
+    protected function getGetFolderInfoByIdentifierCacheIdentifier($folderIdentifier): string
     {
         return 'getFolderInfoByIdentifier|' . $folderIdentifier;
     }
@@ -827,7 +827,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $hashAlgorithm
      * @return string
      */
-    protected function getHashCacheIdentifier($fileIdentifier, $hashAlgorithm)
+    protected function getHashCacheIdentifier($fileIdentifier, $hashAlgorithm): string
     {
         return 'hash|' . $fileIdentifier . '|' . $hashAlgorithm;
     }
@@ -836,7 +836,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $identifier
      * @return string
      */
-    protected function getGetPublicUrlCacheIdentifier($identifier)
+    protected function getGetPublicUrlCacheIdentifier($identifier): string
     {
         return 'getPublicUrl|' . $identifier;
     }

@@ -33,19 +33,13 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class IdenticalDriverTest
- */
 class IdenticalDriverTest implements TestCaseInterface
 {
     /**
      * @var FalStorageTestSubjectsProvider
      */
-    protected $testSubjectProvider = null;
+    protected $testSubjectProvider;
 
-    /**
-     * ResourceStorageTest constructor.
-     */
     public function __construct()
     {
         $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);
@@ -54,7 +48,7 @@ class IdenticalDriverTest implements TestCaseInterface
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $storages = $this->testSubjectProvider->getStoragesForDriverTest();
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
@@ -94,7 +88,7 @@ class IdenticalDriverTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             CaseSensitivityTest::class,

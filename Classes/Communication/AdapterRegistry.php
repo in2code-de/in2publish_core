@@ -114,7 +114,7 @@ class AdapterRegistry implements SingletonInterface
      *
      * @return bool
      */
-    public function registerAdapter($type, $key, $adapter, $label, array $tests = [])
+    public function registerAdapter($type, $key, $adapter, $label, array $tests = []): bool
     {
         if (!isset($this->adapterMap[$type])) {
             $this->logger->alert(
@@ -150,7 +150,7 @@ class AdapterRegistry implements SingletonInterface
     /**
      * @return string[][]
      */
-    public function getAdapterInfo()
+    public function getAdapterInfo(): array
     {
         $adapterInfo = [];
         foreach ($this->adapter as $type => $adapters) {
@@ -204,7 +204,7 @@ class AdapterRegistry implements SingletonInterface
     /**
      * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config['adapter.'];
     }
@@ -214,7 +214,7 @@ class AdapterRegistry implements SingletonInterface
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function getLanguageService()
+    protected function getLanguageService(): LanguageService
     {
         return $GLOBALS['LANG'];
     }

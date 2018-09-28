@@ -92,7 +92,7 @@ class FileStorageService extends AbstractService
     /**
      * @return array
      */
-    public function getNonAllowedFolders()
+    public function getNonAllowedFolders(): array
     {
         return $this->nonAllowedFolders;
     }
@@ -100,7 +100,7 @@ class FileStorageService extends AbstractService
     /**
      * @return array
      */
-    public function getNonAllowedFiles()
+    public function getNonAllowedFiles(): array
     {
         return $this->nonAllowedFiles;
     }
@@ -128,7 +128,7 @@ class FileStorageService extends AbstractService
      * @param string $pathAndFilename
      * @return string
      */
-    protected function getNewFileName($pathAndFilename)
+    protected function getNewFileName($pathAndFilename): string
     {
         $newPathAndFilename = $this->recommendedFileName($pathAndFilename);
         if (is_file($newPathAndFilename)) {
@@ -143,7 +143,7 @@ class FileStorageService extends AbstractService
      * @param string $folderName
      * @return string
      */
-    protected function getNewFolderName($folderName)
+    protected function getNewFolderName($folderName): string
     {
         $newFolderName = $this->recommendedFolderName($folderName);
         if (is_dir($newFolderName)) {
@@ -159,7 +159,7 @@ class FileStorageService extends AbstractService
      * @param string $fileStorage
      * @return array
      */
-    protected function getFilesAndFoldersRecursive($fileStorage)
+    protected function getFilesAndFoldersRecursive($fileStorage): array
     {
         return GeneralUtility::getAllFilesAndFoldersInPath(
             [],
@@ -174,7 +174,7 @@ class FileStorageService extends AbstractService
      * @param string $fileAndFolder
      * @return bool
      */
-    protected function isNonAllowedFile($fileAndFolder)
+    protected function isNonAllowedFile($fileAndFolder): bool
     {
         $parts = explode('/', $fileAndFolder);
         $file = array_pop($parts);
@@ -185,7 +185,7 @@ class FileStorageService extends AbstractService
      * @param string $folder
      * @return bool
      */
-    protected function isNonAllowedFolder($folder)
+    protected function isNonAllowedFolder($folder): bool
     {
         return $folder !== $this->recommendedFolderName($folder);
     }
@@ -194,7 +194,7 @@ class FileStorageService extends AbstractService
      * @param string $folder
      * @return string
      */
-    protected function recommendedFolderName($folder)
+    protected function recommendedFolderName($folder): string
     {
         $folder = str_replace(array_keys($this->rewriteCharacters), array_values($this->rewriteCharacters), $folder);
         return preg_replace($this->pattern, $this->substituteCharacter, $folder);
@@ -204,7 +204,7 @@ class FileStorageService extends AbstractService
      * @param string $filename
      * @return string
      */
-    protected function recommendedFileName($filename)
+    protected function recommendedFileName($filename): string
     {
         $filename = str_replace(
             array_keys($this->rewriteCharacters),

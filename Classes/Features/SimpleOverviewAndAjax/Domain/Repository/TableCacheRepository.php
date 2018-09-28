@@ -73,7 +73,7 @@ class TableCacheRepository implements SingletonInterface
      * @param string $databaseName
      * @return array
      */
-    public function findByUid($tableName, $uniqueIdentifier, $databaseName = 'local')
+    public function findByUid($tableName, $uniqueIdentifier, $databaseName = 'local'): array
     {
         $cache = $this->getCache($databaseName);
         if (!empty($cache[$tableName][$uniqueIdentifier])) {
@@ -106,7 +106,7 @@ class TableCacheRepository implements SingletonInterface
      * @param string $databaseName
      * @return array
      */
-    public function findByPid($tableName, $pageIdentifier, $databaseName = 'local')
+    public function findByPid($tableName, $pageIdentifier, $databaseName = 'local'): array
     {
         $connection = DatabaseUtility::buildDatabaseConnectionForSide($databaseName);
         if ($connection instanceof Connection) {
@@ -164,7 +164,7 @@ class TableCacheRepository implements SingletonInterface
      * @param string $databaseName
      * @return array
      */
-    protected function getCache($databaseName = 'local')
+    protected function getCache($databaseName = 'local'): array
     {
         $cache = $this->localCache;
         if ($databaseName === 'foreign') {

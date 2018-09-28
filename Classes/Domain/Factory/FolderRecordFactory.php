@@ -113,7 +113,7 @@ class FolderRecordFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function initializeDependenciesAndGetFolder($identifier)
+    protected function initializeDependenciesAndGetFolder($identifier): Folder
     {
         // Grab the resource factory to get the FAL driver of the selected folder "FAL style"
         $resourceFactory = ResourceFactory::getInstance();
@@ -162,7 +162,7 @@ class FolderRecordFactory
      * @param string|null $identifier
      * @return RecordInterface
      */
-    public function makeInstance($identifier)
+    public function makeInstance($identifier): RecordInterface
     {
         /*
          * IMPORTANT NOTICES (a.k.a "never forget about this"-Notices):
@@ -241,7 +241,7 @@ class FolderRecordFactory
      * @param RecordInterface[] $files
      * @return RecordInterface[]
      */
-    protected function filterFileRecords(array $files)
+    protected function filterFileRecords(array $files): array
     {
         foreach ($files as $index => $file) {
             $fdb = $file->foreignRecordExists();
@@ -350,7 +350,7 @@ class FolderRecordFactory
      * @param RecordInterface[] $files
      * @return array
      */
-    protected function buildIndexedIdentifiersList(array $files)
+    protected function buildIndexedIdentifiersList(array $files): array
     {
         $indexedIdentifiers = ['local' => [], 'foreign' => [], 'both' => []];
 
@@ -390,7 +390,7 @@ class FolderRecordFactory
      * @param array $indices
      * @return array
      */
-    protected function determineIdentifiersOnlyOnDisk(array $diskIdentifiers, array $indices)
+    protected function determineIdentifiersOnlyOnDisk(array $diskIdentifiers, array $indices): array
     {
         $allIndices = array_merge($indices['local'], $indices['foreign'], $indices['both']);
         $diskIdentifiers['local'] = array_diff($diskIdentifiers['local'], $allIndices);
@@ -407,7 +407,7 @@ class FolderRecordFactory
      * @param RecordInterface[] $files
      * @return RecordInterface[]
      */
-    protected function convertAndAddOnlyDiskIdentifiersToFileRecords(array $onlyDiskIdentifiers, array $files)
+    protected function convertAndAddOnlyDiskIdentifiersToFileRecords(array $onlyDiskIdentifiers, array $files): array
     {
         foreach (['local', 'foreign', 'both'] as $side) {
             if (!empty($onlyDiskIdentifiers[$side])) {
@@ -432,7 +432,7 @@ class FolderRecordFactory
      * @param string $identifier
      * @return array
      */
-    protected function buildDiskIdentifiersList($identifier)
+    protected function buildDiskIdentifiersList($identifier): array
     {
         $diskIdentifiers = [
             'local' => $this->getFilesIdentifiersInFolder($identifier, $this->localDriver),
@@ -452,7 +452,7 @@ class FolderRecordFactory
      * @param DriverInterface $driver
      * @return array
      */
-    protected function getFilesIdentifiersInFolder($identifier, DriverInterface $driver)
+    protected function getFilesIdentifiersInFolder($identifier, DriverInterface $driver): array
     {
         if ($driver->folderExists($identifier)) {
             $identifierList = array_values($driver->getFilesInFolder($identifier));
@@ -467,7 +467,7 @@ class FolderRecordFactory
      * @param string $identifier
      * @return array
      */
-    protected function getSubFolderRecordInstances($identifier)
+    protected function getSubFolderRecordInstances($identifier): array
     {
         $subFolderIdentifiers = array_merge(
             $this->getSubFolderIdentifiers($this->localDriver, $identifier),
@@ -488,7 +488,7 @@ class FolderRecordFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function makePhysicalFolderInstance($identifier, $depth)
+    protected function makePhysicalFolderInstance($identifier, $depth): RecordInterface
     {
         return GeneralUtility::makeInstance(
             Record::class,
@@ -505,7 +505,7 @@ class FolderRecordFactory
      * @param string $identifier
      * @return array
      */
-    protected function getSubFolderIdentifiers(DriverInterface $driver, $identifier)
+    protected function getSubFolderIdentifiers(DriverInterface $driver, $identifier): array
     {
         if ($driver->folderExists($identifier)) {
             $identifierList = $driver->getFoldersInFolder($identifier);
@@ -521,7 +521,7 @@ class FolderRecordFactory
      * @param string $identifier
      * @return array
      */
-    protected function getFolderInfoByIdentifier(DriverInterface $driver, $identifier)
+    protected function getFolderInfoByIdentifier(DriverInterface $driver, $identifier): array
     {
         if ($driver->folderExists($identifier)) {
             $info = $driver->getFolderInfoByIdentifier($identifier);
@@ -573,7 +573,7 @@ class FolderRecordFactory
      * @return array
      * @internal param DatabaseConnection $targetDatabase
      */
-    protected function reclaimSysFileEntriesBySide(array $onlyDiskIdentifiers, $hashedIdentifier, array $files, $side)
+    protected function reclaimSysFileEntriesBySide(array $onlyDiskIdentifiers, $hashedIdentifier, array $files, $side): array
     {
         // the chance is vanishing low to find a file by its identifier in the database
         // because they should have been found by the folder hash already, but i'm a
@@ -622,7 +622,7 @@ class FolderRecordFactory
      * @param RecordInterface[] $files
      * @return RecordInterface[]
      */
-    protected function mergeSysFileByIdentifier(array $files)
+    protected function mergeSysFileByIdentifier(array $files): array
     {
         $identifierList = [];
 
@@ -708,7 +708,7 @@ class FolderRecordFactory
      * @param RecordInterface $file
      * @return bool
      */
-    protected function isLocalIndexWithMatchingDuplicateIndexOnForeign(array $identifierList, RecordInterface $file)
+    protected function isLocalIndexWithMatchingDuplicateIndexOnForeign(array $identifierList, RecordInterface $file): bool
     {
         return null !== ($localIdentifier = $file->getLocalProperty('identifier'))
                && null !== ($localUid = $file->getLocalProperty('uid'))
@@ -750,7 +750,7 @@ class FolderRecordFactory
      * @param array $logData
      * @return array
      */
-    protected function enrichWithForeignDatabaseErrorInformation(array $logData)
+    protected function enrichWithForeignDatabaseErrorInformation(array $logData): array
     {
         return array_merge(
             $logData,
@@ -763,7 +763,7 @@ class FolderRecordFactory
      * @param int $newUid
      * @return bool
      */
-    protected function updateForeignIndex($oldUid, $newUid)
+    protected function updateForeignIndex($oldUid, $newUid): bool
     {
         return (bool)$this->foreignDatabase->exec_UPDATEquery('sys_file', 'uid=' . $oldUid, ['uid' => $newUid]);
     }
@@ -773,7 +773,7 @@ class FolderRecordFactory
      * @param int $newUid
      * @return bool
      */
-    protected function updateForeignReference($oldUid, $newUid)
+    protected function updateForeignReference($oldUid, $newUid): bool
     {
         return (bool)$this->foreignDatabase->exec_UPDATEquery(
             'sys_file_reference',
@@ -786,7 +786,7 @@ class FolderRecordFactory
      * @param int $oldUid
      * @return int
      */
-    protected function countForeignReferences($oldUid)
+    protected function countForeignReferences($oldUid): int
     {
         $count = $this->foreignDatabase->exec_SELECTcountRows(
             'uid',
@@ -807,7 +807,7 @@ class FolderRecordFactory
      * @param int $newUid
      * @return int
      */
-    protected function countForeignIndices($newUid)
+    protected function countForeignIndices($newUid): int
     {
         if (false === ($count = $this->foreignDatabase->exec_SELECTcountRows('uid', 'sys_file', 'uid=' . $newUid))) {
             $this->logger->critical(
@@ -824,7 +824,7 @@ class FolderRecordFactory
      * @param array $identifierList
      * @return array
      */
-    protected function convertIdentifiers(DriverInterface $driver, array $identifierList)
+    protected function convertIdentifiers(DriverInterface $driver, array $identifierList): array
     {
         if (!$driver->isCaseSensitiveFileSystem()) {
             return array_map('strtolower', $identifierList);

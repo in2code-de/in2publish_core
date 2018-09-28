@@ -86,7 +86,7 @@ abstract class AbsGenNode extends AbstractNode
      *
      * @return string[]|int[]|bool[]|array[]
      */
-    public function getDefaults()
+    public function getDefaults(): array
     {
         return [];
     }
@@ -96,7 +96,7 @@ abstract class AbsGenNode extends AbstractNode
      *
      * @param array[]|bool[]|int[]|string[] $value
      */
-    public function unsetDefaults(&$value)
+    public function unsetDefaults(array &$value)
     {
     }
 

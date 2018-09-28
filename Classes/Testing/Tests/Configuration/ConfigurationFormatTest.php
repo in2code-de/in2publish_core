@@ -33,15 +33,12 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class ConfigurationFormatTest
- */
 class ConfigurationFormatTest implements TestCaseInterface
 {
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $container = GeneralUtility::makeInstance(ValidationContainer::class);
         $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
@@ -60,7 +57,7 @@ class ConfigurationFormatTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [];
     }

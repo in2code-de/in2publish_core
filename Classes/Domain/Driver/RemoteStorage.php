@@ -71,7 +71,7 @@ class RemoteStorage implements ResourceStorageInterface
      * @param string $identifier
      * @return bool
      */
-    public function hasFolder($storage, $identifier)
+    public function hasFolder($storage, $identifier): bool
     {
         if (!isset(static::$cache[$storage][$identifier][static::HAS_FOLDER_KEY])) {
             $result = $this->executeEnvelope(
@@ -92,7 +92,7 @@ class RemoteStorage implements ResourceStorageInterface
      * @param string $identifier
      * @return array
      */
-    public function getFoldersInFolder($storage, $identifier)
+    public function getFoldersInFolder($storage, $identifier): array
     {
         if (!isset(static::$cache[$storage][$identifier][static::SUB_FOLDERS_KEY])) {
             $result = $this->executeEnvelope(
@@ -110,7 +110,7 @@ class RemoteStorage implements ResourceStorageInterface
      * @param string $identifier
      * @return array
      */
-    public function getFilesInFolder($storage, $identifier)
+    public function getFilesInFolder($storage, $identifier): array
     {
         if (!isset(static::$cache[$storage][$identifier][static::FILES_KEY])) {
             $result = $this->executeEnvelope(
@@ -128,7 +128,7 @@ class RemoteStorage implements ResourceStorageInterface
      * @param string $identifier
      * @return array
      */
-    public function getFile($storage, $identifier)
+    public function getFile($storage, $identifier): array
     {
         if (!isset(static::$cache[$storage][$identifier][static::FILES_KEY][$identifier])) {
             $result = $this->executeEnvelope(

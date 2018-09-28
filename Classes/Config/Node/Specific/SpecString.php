@@ -29,9 +29,6 @@ namespace In2code\In2publishCore\Config\Node\Specific;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
-/**
- * Class SpecString
- */
 class SpecString extends AbsSpecNode
 {
     /**
@@ -42,7 +39,7 @@ class SpecString extends AbsSpecNode
     {
         if ('' === $value || null === $value) {
             $container->addError('Configuration value must not be empty');
-        } elseif (!is_string($value)) {
+        } elseif (!\is_string($value)) {
             $container->addError('The value is not a string');
         }
     }
@@ -52,7 +49,7 @@ class SpecString extends AbsSpecNode
      *
      * @return string
      */
-    public function cast($value)
+    public function cast($value): string
     {
         return (string)$value;
     }

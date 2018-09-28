@@ -148,7 +148,7 @@ class CommonRepository extends BaseRepository
      * @param string $tableName
      * @return RecordInterface
      */
-    public function findByIdentifier($identifier, $tableName = null)
+    public function findByIdentifier($identifier, $tableName = null): RecordInterface
     {
         if ($tableName !== null) {
             $this->tableName = $tableName;
@@ -171,7 +171,7 @@ class CommonRepository extends BaseRepository
      * @param mixed $propertyValue
      * @return RecordInterface[]
      */
-    public function findByProperty($propertyName, $propertyValue)
+    public function findByProperty($propertyName, $propertyValue): array
     {
         if ($this->shouldSkipFindByProperty($propertyName, $propertyValue)) {
             return [];
@@ -196,7 +196,7 @@ class CommonRepository extends BaseRepository
      *
      * @return RecordInterface[]
      */
-    public function findByProperties(array $properties, $simulateRoot = false)
+    public function findByProperties(array $properties, $simulateRoot = false): array
     {
         if ($simulateRoot) {
             $this->recordFactory->simulateRootRecord();
@@ -247,7 +247,7 @@ class CommonRepository extends BaseRepository
         $orderBy = '',
         $limit = '',
         $indexField = 'uid'
-    ) {
+    ): array {
         $currentTableName = $this->tableName;
         $this->tableName = $tableName;
         $properties = $this->findPropertiesByProperty(
@@ -278,7 +278,7 @@ class CommonRepository extends BaseRepository
         $tableName,
         $propertyName,
         $propertyValue
-    ) {
+    ): array {
         $properties = $this->findPropertiesByPropertyAndTablename(
             $connection,
             $tableName,
@@ -314,7 +314,7 @@ class CommonRepository extends BaseRepository
      * @param array $foreignProperties
      * @return RecordInterface[]
      */
-    protected function convertPropertyArraysToRecords(array $localProperties, array $foreignProperties)
+    protected function convertPropertyArraysToRecords(array $localProperties, array $foreignProperties): array
     {
         $keysToIterate = array_unique(array_merge(array_keys($localProperties), array_keys($foreignProperties)));
 
@@ -377,7 +377,7 @@ class CommonRepository extends BaseRepository
      * @param array $excludedTableNames
      * @return RecordInterface
      */
-    public function enrichRecordWithRelatedRecords(RecordInterface $record, array $excludedTableNames)
+    public function enrichRecordWithRelatedRecords(RecordInterface $record, array $excludedTableNames): RecordInterface
     {
         if ($this->shouldSkipSearchingForRelatedRecords($record)) {
             return $record;
@@ -492,7 +492,7 @@ class CommonRepository extends BaseRepository
      * @param array $excludedTableNames
      * @return array
      */
-    protected function fetchRelatedRecordsByRte($bodyText, array $excludedTableNames)
+    protected function fetchRelatedRecordsByRte($bodyText, array $excludedTableNames): array
     {
         $relatedRecords = [];
         // if RTE is enabled
@@ -547,7 +547,7 @@ class CommonRepository extends BaseRepository
      * @param array $excludedTableNames
      * @return RecordInterface
      */
-    public function enrichPageRecord(RecordInterface $record, array $excludedTableNames)
+    public function enrichPageRecord(RecordInterface $record, array $excludedTableNames): RecordInterface
     {
         if ($this->shouldSkipEnrichingPageRecord($record)) {
             return $record;
@@ -570,7 +570,7 @@ class CommonRepository extends BaseRepository
      * @param array $columnConfiguration
      * @return string
      */
-    protected function getFlexFormDefinitionSource(RecordInterface $record, array $columnConfiguration)
+    protected function getFlexFormDefinitionSource(RecordInterface $record, array $columnConfiguration): string
     {
         $dsArray = $columnConfiguration['ds'];
         if (!isset($columnConfiguration['ds_pointerField'])) {
@@ -616,7 +616,7 @@ class CommonRepository extends BaseRepository
      * @param string $flexFormSource
      * @return string
      */
-    protected function resolveFlexFormSource($flexFormSource)
+    protected function resolveFlexFormSource($flexFormSource): string
     {
         $flexFormString = '';
         if (!is_string($flexFormSource)) {
@@ -727,7 +727,7 @@ class CommonRepository extends BaseRepository
      * @param array $flexFormDefinition
      * @return array
      */
-    protected function flattenFlexFormDefinition(array $flexFormDefinition)
+    protected function flattenFlexFormDefinition(array $flexFormDefinition): array
     {
         $flattenedDefinition = [];
         foreach ($flexFormDefinition as $sheetDefinition) {
@@ -770,7 +770,7 @@ class CommonRepository extends BaseRepository
      * @param string $fieldKey
      * @return array
      */
-    protected function flattenFieldFlexForm(array $flattenedDefinition, array $fieldDefinition, $fieldKey)
+    protected function flattenFieldFlexForm(array $flattenedDefinition, array $fieldDefinition, $fieldKey): array
     {
         // default FlexForm for a single field
         if (array_key_exists('TCEforms', $fieldDefinition)) {
@@ -800,7 +800,7 @@ class CommonRepository extends BaseRepository
      * @param array $flexFormDefinition
      * @return array
      */
-    protected function filterFlexFormDefinition(array $flexFormDefinition)
+    protected function filterFlexFormDefinition(array $flexFormDefinition): array
     {
         foreach ($flexFormDefinition as $key => $config) {
             if (empty($config['type'])
@@ -868,7 +868,7 @@ class CommonRepository extends BaseRepository
      * @param string $column
      * @return array
      */
-    protected function getLocalFlexFormDataFromRecord(RecordInterface $record, $column)
+    protected function getLocalFlexFormDataFromRecord(RecordInterface $record, $column): array
     {
         /** @var FlexFormService $flexFormService */
         $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
@@ -898,7 +898,7 @@ class CommonRepository extends BaseRepository
         $column,
         array $excludedTableNames,
         array $columnConfiguration
-    ) {
+    ): array {
         $records = [];
 
         $localFlexFormData = $this->getLocalFlexFormDataFromRecord($record, $column);
@@ -998,7 +998,7 @@ class CommonRepository extends BaseRepository
         array $excludedTableNames,
         $propertyName,
         array $overrideIdentifiers = []
-    ) {
+    ): array {
         /** @var RecordInterface[] $records */
         $records = [];
         $tableName = '';
@@ -1185,7 +1185,7 @@ class CommonRepository extends BaseRepository
         $propertyName,
         array $excludedTableNames,
         $flexFormData = ''
-    ) {
+    ): array {
         $records = [];
         switch ($columnConfiguration['internal_type']) {
             case 'db':
@@ -1261,11 +1261,8 @@ class CommonRepository extends BaseRepository
         RecordInterface $record,
         $propertyName,
         $flexFormData
-    ) {
-        $prefix = '';
-        if (!empty($columnConfiguration['uploadfolder'])) {
-            $prefix = FileUtility::getCleanFolder($columnConfiguration['uploadfolder']);
-        }
+    ): array {
+        $uploadFolder = FileUtility::getCleanFolder($columnConfiguration['uploadfolder']);
         if (empty($flexFormData)) {
             $fileNames = GeneralUtility::trimExplode(',', $record->getLocalProperty($propertyName), true);
         } else {
@@ -1296,7 +1293,7 @@ class CommonRepository extends BaseRepository
         $propertyName,
         array $excludedTableNames,
         $overrideIdByRecord = false
-    ) {
+    ): array {
         $tableName = $columnConfiguration['foreign_table'];
         if (in_array($tableName, $excludedTableNames)) {
             return [];
@@ -1359,7 +1356,7 @@ class CommonRepository extends BaseRepository
         array $columnConfiguration,
         RecordInterface $record,
         array $excludedTableNames
-    ) {
+    ): array {
         $previousTableName = $this->replaceTableName($columnConfiguration['MM']);
 
         // log not supported TCA function
@@ -1442,7 +1439,7 @@ class CommonRepository extends BaseRepository
         $recordTableName,
         $recordIdentifier,
         array $excludedTableNames
-    ) {
+    ): array {
         $tableName = $columnConfiguration['foreign_table'];
         if (in_array($tableName, $excludedTableNames)) {
             return [];
@@ -1507,7 +1504,7 @@ class CommonRepository extends BaseRepository
         $recordTableName,
         $recordIdentifier,
         array $excludedTableNames
-    ) {
+    ): array {
         if (!empty($columnConfiguration['foreign_field'])
             || !empty($columnConfiguration['foreign_selector'])
             || !empty($columnConfiguration['foreign_record_defaults'])
@@ -1574,7 +1571,7 @@ class CommonRepository extends BaseRepository
         $recordTableName,
         $recordIdentifier,
         array $excludedTableNames
-    ) {
+    ): array {
         /** @var RecordInterface $mmRecord */
         foreach ($relationRecords as $mmRecord) {
             $localUid = $mmRecord->getLocalProperty('uid_foreign');
@@ -1611,7 +1608,7 @@ class CommonRepository extends BaseRepository
      * @param string $tableName
      * @return RecordInterface
      */
-    protected function findByIdentifierInOtherTable($identifier, $tableName)
+    protected function findByIdentifierInOtherTable($identifier, $tableName): RecordInterface
     {
         $previousIdFieldName = $this->identifierFieldName;
         $this->identifierFieldName = 'uid';
@@ -1629,7 +1626,7 @@ class CommonRepository extends BaseRepository
      * @param array $foreignProperties
      * @return bool
      */
-    protected function isIgnoredRecord(array $localProperties, array $foreignProperties)
+    protected function isIgnoredRecord(array $localProperties, array $foreignProperties): bool
     {
         if ($this->isDeletedAndUnchangedRecord($localProperties, $foreignProperties)
             || $this->isRemovedAndDeletedRecord($localProperties, $foreignProperties)
@@ -1647,7 +1644,7 @@ class CommonRepository extends BaseRepository
      * @param array $foreignProps
      * @return bool
      */
-    protected function isRemovedAndDeletedRecord(array $localProps, array $foreignProps)
+    protected function isRemovedAndDeletedRecord(array $localProps, array $foreignProps): bool
     {
         return (empty($localProps) && isset($foreignProps['deleted']) && 1 === (int)$foreignProps['deleted'])
                || (empty($foreignProps) && isset($localProps['deleted']) && 1 === (int)$localProps['deleted']);
@@ -1661,7 +1658,7 @@ class CommonRepository extends BaseRepository
      * @param array $foreignProperties
      * @return bool
      */
-    protected function isDeletedAndUnchangedRecord(array $localProperties, array $foreignProperties)
+    protected function isDeletedAndUnchangedRecord(array $localProperties, array $foreignProperties): bool
     {
         return $localProperties['deleted'] === '1' && !count(array_diff($localProperties, $foreignProperties));
     }
@@ -1828,7 +1825,7 @@ class CommonRepository extends BaseRepository
      * @param array $foreignProperties
      * @return RecordInterface
      */
-    protected function convertToRecord(array $localProperties, array $foreignProperties)
+    protected function convertToRecord(array $localProperties, array $foreignProperties): RecordInterface
     {
         return $this->recordFactory->makeInstance($this, $localProperties, $foreignProperties);
     }
@@ -1893,7 +1890,7 @@ class CommonRepository extends BaseRepository
      * @param array $columnConfiguration
      * @return string
      */
-    protected function getLocalField(array $columnConfiguration)
+    protected function getLocalField(array $columnConfiguration): string
     {
         $localField = 'uid_local';
         if (!empty($columnConfiguration['MM_opposite_field'])) {
@@ -1908,7 +1905,7 @@ class CommonRepository extends BaseRepository
      * @param array $columnConfiguration
      * @return string
      */
-    protected function getForeignField(array $columnConfiguration)
+    protected function getForeignField(array $columnConfiguration): string
     {
         $localField = 'uid_foreign';
         if (!empty($columnConfiguration['MM_opposite_field'])) {
@@ -1933,7 +1930,7 @@ class CommonRepository extends BaseRepository
      * @param string $identifier
      * @return bool
      */
-    protected function shouldSkipFindByIdentifier($identifier)
+    protected function shouldSkipFindByIdentifier($identifier): bool
     {
         return $this->should('shouldSkipFindByIdentifier', ['identifier' => $identifier]);
     }
@@ -1945,7 +1942,7 @@ class CommonRepository extends BaseRepository
      * @param mixed $propertyValue
      * @return bool
      */
-    protected function shouldSkipFindByProperty($propertyName, $propertyValue)
+    protected function shouldSkipFindByProperty($propertyName, $propertyValue): bool
     {
         $arguments = ['propertyName' => $propertyName, 'propertyValue' => $propertyValue];
         return $this->should('shouldSkipFindByProperty', $arguments);
@@ -1957,7 +1954,7 @@ class CommonRepository extends BaseRepository
      * @param RecordInterface $record
      * @return bool
      */
-    protected function shouldSkipSearchingForRelatedRecords(RecordInterface $record)
+    protected function shouldSkipSearchingForRelatedRecords(RecordInterface $record): bool
     {
         return $this->should('shouldSkipSearchingForRelatedRecords', ['record' => $record]);
     }
@@ -1974,7 +1971,7 @@ class CommonRepository extends BaseRepository
         RecordInterface $record,
         $propertyName,
         array $columnConfiguration
-    ) {
+    ): bool {
         $arguments = [
             'record' => $record,
             'propertyName' => $propertyName,
@@ -1989,7 +1986,7 @@ class CommonRepository extends BaseRepository
      * @param RecordInterface $record
      * @return bool
      */
-    protected function shouldSkipEnrichingPageRecord(RecordInterface $record)
+    protected function shouldSkipEnrichingPageRecord(RecordInterface $record): bool
     {
         return $this->should('shouldSkipEnrichingPageRecord', ['record' => $record]);
     }
@@ -2001,7 +1998,7 @@ class CommonRepository extends BaseRepository
      * @param string $tableName
      * @return bool
      */
-    protected function shouldSkipSearchingForRelatedRecordByTable(RecordInterface $record, $tableName)
+    protected function shouldSkipSearchingForRelatedRecordByTable(RecordInterface $record, $tableName): bool
     {
         return $this->should(
             'shouldSkipSearchingForRelatedRecordByTable',
@@ -2016,7 +2013,7 @@ class CommonRepository extends BaseRepository
      * @param string $tableName
      * @return bool
      */
-    protected function shouldSkipRecord(RecordInterface $record, $tableName)
+    protected function shouldSkipRecord(RecordInterface $record, $tableName): bool
     {
         return $this->should('shouldSkipRecord', ['record' => $record, 'tableName' => $tableName]);
     }
@@ -2028,7 +2025,7 @@ class CommonRepository extends BaseRepository
      * @param array $foreignProperties
      * @return bool
      */
-    protected function shouldIgnoreRecord(array $localProperties, array $foreignProperties)
+    protected function shouldIgnoreRecord(array $localProperties, array $foreignProperties): bool
     {
         return $this->should(
             'shouldIgnoreRecord',
@@ -2054,7 +2051,7 @@ class CommonRepository extends BaseRepository
      * @param array $arguments additional arguments to be passed to the slot
      * @return bool If no vote was received false will be returned
      */
-    protected function should($signal, array $arguments)
+    protected function should($signal, array $arguments): bool
     {
         $signalArguments = $this->signalSlotDispatcher->dispatch(
             __CLASS__,
@@ -2068,7 +2065,7 @@ class CommonRepository extends BaseRepository
      * @param string $tableName
      * @return CommonRepository
      */
-    public static function getDefaultInstance($tableName = 'pages')
+    public static function getDefaultInstance($tableName = 'pages'): CommonRepository
     {
         return GeneralUtility::makeInstance(
             CommonRepository::class,

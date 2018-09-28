@@ -76,7 +76,7 @@ class LogController extends \VerteXVaaR\Logs\Controller\LogController
      *
      * @return array
      */
-    protected function getViewProperty($extbaseConfig, $setting)
+    protected function getViewProperty($extbaseConfig, $setting): array
     {
         if (isset($this->txLogsViewConfig[$setting])) {
             ksort($this->txLogsViewConfig[$setting]);

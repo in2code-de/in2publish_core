@@ -49,7 +49,7 @@ class GenInteger extends AbsGenNode
      * @param array[]|bool[]|int[]|string[] $value
      * @return array[]|bool[]|int[]|string[]
      */
-    public function cast($value)
+    public function cast($value): array
     {
         $tmp = [];
         foreach ($value as $key => $var) {

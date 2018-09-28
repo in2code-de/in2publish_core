@@ -81,7 +81,7 @@ class FlushFrontendPageCacheTask extends AbstractTask
      * @SuppressWarnings(PHPMD.Superglobals)
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function getDataHandler()
+    protected function getDataHandler(): DataHandler
     {
         /** @var DataHandler $dataHandler */
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);

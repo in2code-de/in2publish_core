@@ -32,15 +32,12 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 
-/**
- * Class DatabaseDifferencesTest
- */
 class DatabaseDifferencesTest implements TestCaseInterface
 {
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
@@ -79,7 +76,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
             $tableDifferences = [];
 
             foreach ($diffOnLocal as $tableName => $fieldArray) {
-                if (isset($fieldArray['fields']) && is_array($fieldArray['fields'])) {
+                if (isset($fieldArray['fields']) && \is_array($fieldArray['fields'])) {
                     foreach ($fieldArray['fields'] as $fieldName => $fieldProperties) {
                         $fieldExistsOnLocal = isset($localTableInfo[$tableName]['fields'][$fieldName]);
                         $fieldExistsOnForeign = isset($foreignTableInfo[$tableName]['fields'][$fieldName]);
@@ -98,8 +95,10 @@ class DatabaseDifferencesTest implements TestCaseInterface
                             continue;
                         }
 
-                        unset($diffOnLocal[$tableName]['fields'][$fieldName]);
-                        unset($diffOnForeign[$tableName]['fields'][$fieldName]);
+                        unset(
+                            $diffOnLocal[$tableName]['fields'][$fieldName],
+                            $diffOnForeign[$tableName]['fields'][$fieldName]
+                        );
                     }
                 }
 
@@ -127,19 +126,21 @@ class DatabaseDifferencesTest implements TestCaseInterface
                             continue;
                         }
 
-                        unset($diffOnLocal[$tableName]['table'][$propertyName]);
-                        unset($diffOnForeign[$tableName]['table'][$propertyName]);
+                        unset(
+                            $diffOnLocal[$tableName]['table'][$propertyName],
+                            $diffOnForeign[$tableName]['table'][$propertyName]
+                        );
                     }
                 }
             }
 
             foreach ($diffOnForeign as $tableName => $fieldArray) {
-                if (isset($fieldArray['fields']) && is_array($fieldArray['fields'])) {
+                if (\is_array($fieldArray['fields']) && isset($fieldArray['fields'])) {
                     foreach (array_keys($fieldArray['fields']) as $fieldOnlyOnForeign) {
                         $fieldDifferences[] = $tableName . '.' . $fieldOnlyOnForeign . ': Only exists on foreign';
                     }
                 }
-                if (isset($fieldArray['table']) && is_array($fieldArray['fields'])) {
+                if (\is_array($fieldArray['fields']) && isset($fieldArray['table'])) {
                     foreach (array_keys($fieldArray['table']) as $propOnlyOnForeign) {
                         $fieldDifferences[] = 'Table property ' . $tableName . '.' . $propOnlyOnForeign
                                               . ': Only exists on foreign';
@@ -167,15 +168,15 @@ class DatabaseDifferencesTest implements TestCaseInterface
      * @param array $right
      * @return array
      */
-    public function identifyDifferences(array $left, array $right)
+    public function identifyDifferences(array $left, array $right): array
     {
         $differences = [];
 
         foreach ($left as $leftKey => $leftValue) {
             if (array_key_exists($leftKey, $right)) {
-                if (is_array($leftValue)) {
+                if (\is_array($leftValue)) {
                     $subDifferences = $this->identifyDifferences($leftValue, $right[$leftKey]);
-                    if (count($subDifferences)) {
+                    if (\count($subDifferences)) {
                         $differences[$leftKey] = $subDifferences;
                     }
                 } else {
@@ -195,9 +196,9 @@ class DatabaseDifferencesTest implements TestCaseInterface
      * @param Connection $foreign
      * @return bool
      */
-    protected function areDifferentDatabases(Connection $local, Connection $foreign)
+    protected function areDifferentDatabases(Connection $local, Connection $foreign): bool
     {
-        $random = (int)mt_rand(1, PHP_INT_MAX);
+        $random = mt_rand(1, PHP_INT_MAX);
         $local->insert(
             'tx_in2code_in2publish_task',
             [
@@ -229,7 +230,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
      * @param Connection $database
      * @return array
      */
-    protected function readTableStructure(Connection $database)
+    protected function readTableStructure(Connection $database): array
     {
         $tableStructure = [];
         $tables = $database->getSchemaManager()->listTables();
@@ -270,7 +271,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LocalDatabaseTest::class,

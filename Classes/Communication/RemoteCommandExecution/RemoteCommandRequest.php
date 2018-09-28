@@ -108,7 +108,7 @@ class RemoteCommandRequest
     /**
      * @return string
      */
-    public function getPathToPhp()
+    public function getPathToPhp(): string
     {
         return $this->usePhp ? $this->pathToPhp : '';
     }
@@ -116,7 +116,7 @@ class RemoteCommandRequest
     /**
      * @return string
      */
-    public function getWorkingDirectory()
+    public function getWorkingDirectory(): string
     {
         return $this->workingDirectory;
     }
@@ -124,7 +124,7 @@ class RemoteCommandRequest
     /**
      * @return array
      */
-    public function getEnvironmentVariables()
+    public function getEnvironmentVariables(): array
     {
         return $this->environmentVariables;
     }
@@ -132,7 +132,7 @@ class RemoteCommandRequest
     /**
      * @return string
      */
-    public function getDispatcher()
+    public function getDispatcher(): string
     {
         return $this->dispatcher;
     }
@@ -156,7 +156,7 @@ class RemoteCommandRequest
     /**
      * @return string
      */
-    public function getCommand()
+    public function getCommand(): string
     {
         return $this->command;
     }
@@ -172,7 +172,7 @@ class RemoteCommandRequest
     /**
      * @return bool
      */
-    public function hasArguments()
+    public function hasArguments(): bool
     {
         return !empty($this->arguments);
     }
@@ -180,7 +180,7 @@ class RemoteCommandRequest
     /**
      * @return array
      */
-    public function getArguments()
+    public function getArguments(): array
     {
         return $this->arguments;
     }
@@ -205,7 +205,7 @@ class RemoteCommandRequest
     /**
      * @return bool
      */
-    public function hasOptions()
+    public function hasOptions(): bool
     {
         return !empty($this->options);
     }
@@ -213,7 +213,7 @@ class RemoteCommandRequest
     /**
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }

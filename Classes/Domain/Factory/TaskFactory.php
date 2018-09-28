@@ -43,7 +43,7 @@ class TaskFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function convertToObject(array $taskProperties)
+    public function convertToObject(array $taskProperties): AbstractTask
     {
         $className = $taskProperties['task_type'];
         $configuration = json_decode($taskProperties['configuration'], true);

@@ -30,9 +30,6 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class GroupProcessor
- */
 class GroupProcessor extends AbstractProcessor
 {
     const INTERNAL_TYPE = 'internal_type';
@@ -78,7 +75,7 @@ class GroupProcessor extends AbstractProcessor
      * @param array $config
      * @return bool
      */
-    public function canPreProcess(array $config)
+    public function canPreProcess(array $config): bool
     {
         if (!parent::canPreProcess($config)) {
             return false;
@@ -100,7 +97,7 @@ class GroupProcessor extends AbstractProcessor
      * @param array $config
      * @return bool
      */
-    protected function canPreProcessInternalTypeFile(array $config)
+    protected function canPreProcessInternalTypeFile(array $config): bool
     {
         if (empty($config[static::UPLOAD_FOLDER])) {
             $this->lastReasons[static::INTERNAL_TYPE] =
@@ -114,7 +111,7 @@ class GroupProcessor extends AbstractProcessor
      * @param array $config
      * @return bool
      */
-    protected function canPreProcessInternalTypeDb(array $config)
+    protected function canPreProcessInternalTypeDb(array $config): bool
     {
         $referencesAllowed = isset($config[static::ALLOWED]);
         $referencesTable = isset($config[static::FOREIGN_TABLE]);
@@ -131,7 +128,7 @@ class GroupProcessor extends AbstractProcessor
      * @param string $table
      * @return bool
      */
-    public function canPreProcessInternalTypeDbTable($table)
+    public function canPreProcessInternalTypeDbTable(string $table): bool
     {
         if (!TcaProcessingService::tableExists($table)) {
             $this->lastReasons[static::INTERNAL_TYPE] =
@@ -145,7 +142,7 @@ class GroupProcessor extends AbstractProcessor
      * @param string $allowed
      * @return bool
      */
-    protected function canPreProcessInternalTypeDbAllowed($allowed)
+    protected function canPreProcessInternalTypeDbAllowed(string $allowed): bool
     {
         if ($allowed === '') {
             $this->lastReasons[static::INTERNAL_TYPE] = '"allowed" is empty, there is no table to match';

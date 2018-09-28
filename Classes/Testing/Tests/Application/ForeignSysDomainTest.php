@@ -32,15 +32,12 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 
-/**
- * Class ForeignSysDomainTest
- */
 class ForeignSysDomainTest implements TestCaseInterface
 {
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
 
@@ -53,7 +50,7 @@ class ForeignSysDomainTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             ForeignDatabaseTest::class,

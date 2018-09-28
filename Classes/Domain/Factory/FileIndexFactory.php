@@ -88,7 +88,7 @@ class FileIndexFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function makeInstanceForSide($side, $identifier)
+    public function makeInstanceForSide($side, $identifier): RecordInterface
     {
         $foreignProperties = [];
         $localProperties = [];
@@ -162,7 +162,7 @@ class FileIndexFactory
      * @param int $uid Predefined UID
      * @return array
      */
-    public function getFileIndexArray($identifier, $side, $uid = 0)
+    public function getFileIndexArray($identifier, $side, $uid = 0): array
     {
         $fileInfo = $this->getDriverSpecificFileInfo($identifier, $side);
 
@@ -244,7 +244,7 @@ class FileIndexFactory
      * @param array $fileInfo
      * @return int
      */
-    protected function determineFileType(array $fileInfo)
+    protected function determineFileType(array $fileInfo): int
     {
         list($fileType) = explode('/', $fileInfo['mime_type']);
         switch (strtolower($fileType)) {
@@ -275,7 +275,7 @@ class FileIndexFactory
      * @param string $side
      * @return array
      */
-    protected function getDriverSpecificFileInfo($identifier, $side)
+    protected function getDriverSpecificFileInfo($identifier, $side): array
     {
         if ($side === 'local') {
             $driver = $this->localDriver;
@@ -299,7 +299,7 @@ class FileIndexFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function getUidReservationService()
+    protected function getUidReservationService(): UidReservationService
     {
         return GeneralUtility::makeInstance(UidReservationService::class);
     }

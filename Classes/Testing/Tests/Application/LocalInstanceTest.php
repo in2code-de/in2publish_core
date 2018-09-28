@@ -34,16 +34,13 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class LocalInstanceTest
- */
 class LocalInstanceTest implements TestCaseInterface
 {
     /**
      * @return TestResult
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    public function run()
+    public function run(): TestResult
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
 
@@ -76,7 +73,7 @@ class LocalInstanceTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LocalDatabaseTest::class,

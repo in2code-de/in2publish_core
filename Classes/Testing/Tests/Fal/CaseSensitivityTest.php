@@ -30,27 +30,21 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Service\FlexFormService;
 
-/**
- * Class CaseSensitivityTest
- */
 class CaseSensitivityTest implements TestCaseInterface
 {
     /**
      * @var FlexFormService
      */
-    protected $flexFormService = null;
+    protected $flexFormService;
 
     /**
      * @var FalStorageTestSubjectsProvider
      */
-    protected $testSubjectProvider = null;
+    protected $testSubjectProvider;
 
-    /**
-     * ResourceStorageTest constructor.
-     */
     public function __construct()
     {
         $this->flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
@@ -60,7 +54,7 @@ class CaseSensitivityTest implements TestCaseInterface
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $storages = $this->testSubjectProvider->getStoragesForCaseSensitivityTest();
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
@@ -96,7 +90,7 @@ class CaseSensitivityTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             MissingStoragesTest::class,
@@ -109,7 +103,7 @@ class CaseSensitivityTest implements TestCaseInterface
      * @param string $side
      * @return array
      */
-    protected function getConfiguration(array $storages, $key, $side)
+    protected function getConfiguration(array $storages, string $key, string $side): array
     {
         return $this->flexFormService->convertFlexFormContentToArray($storages[$side][$key]['configuration']);
     }

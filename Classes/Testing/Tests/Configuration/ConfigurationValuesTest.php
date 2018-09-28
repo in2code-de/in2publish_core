@@ -57,7 +57,7 @@ class ConfigurationValuesTest implements TestCaseInterface
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $errors = [];
 
@@ -78,7 +78,7 @@ class ConfigurationValuesTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             ConfigurationFormatTest::class,

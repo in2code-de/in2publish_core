@@ -29,9 +29,6 @@ namespace In2code\In2publishCore\Config\Node\Specific;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
-/**
- * Class SpecInteger
- */
 class SpecInteger extends AbsSpecNode
 {
     /**
@@ -42,7 +39,7 @@ class SpecInteger extends AbsSpecNode
     {
         if ('' === $value || null === $value) {
             $container->addError('Configuration value must not be empty');
-        } elseif (!is_integer($value)) {
+        } elseif (!\is_int($value)) {
             $container->addError('The value is not an integer');
         }
     }
@@ -52,7 +49,7 @@ class SpecInteger extends AbsSpecNode
      *
      * @return int
      */
-    public function cast($value)
+    public function cast($value): int
     {
         return (int)$value;
     }

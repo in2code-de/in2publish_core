@@ -68,7 +68,7 @@ class NodeCollection extends \ArrayObject implements Node
      * @param string $path
      * @return Node|NodeCollection
      */
-    public function getNodePath($path)
+    public function getNodePath(string $path): Node
     {
         if (empty($path)) {
             return $this;
@@ -99,7 +99,7 @@ class NodeCollection extends \ArrayObject implements Node
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return spl_object_hash($this);
     }
@@ -119,7 +119,7 @@ class NodeCollection extends \ArrayObject implements Node
     /**
      * @return string[]|int[]|bool[]|array[]
      */
-    public function getDefaults()
+    public function getDefaults(): array
     {
         $defaults = [];
         /** @var Node $node */
@@ -143,7 +143,7 @@ class NodeCollection extends \ArrayObject implements Node
      * @param array[]|bool[]|int[]|string[] $value
      * @return array[]|bool[]|int[]|string[]
      */
-    public function cast($value)
+    public function cast($value): array
     {
         $tmp = [];
         foreach ($this as $key => $node) {
@@ -162,7 +162,7 @@ class NodeCollection extends \ArrayObject implements Node
     /**
      * @param array[]|bool[]|int[]|string[] $value
      */
-    public function unsetDefaults(&$value)
+    public function unsetDefaults(array &$value)
     {
         /** @var Node $node */
         foreach ($this as $key => $node) {

@@ -81,7 +81,7 @@ abstract class AbstractNode implements Node
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -90,7 +90,7 @@ abstract class AbstractNode implements Node
      * @param string $path
      * @return Node
      */
-    public function getNodePath($path)
+    public function getNodePath(string $path): Node
     {
         return $this->nodes->getNodePath($path);
     }
@@ -109,7 +109,7 @@ abstract class AbstractNode implements Node
      */
     public function validate(ValidationContainer $container, $value)
     {
-        if (!is_array($value)) {
+        if (!\is_array($value)) {
             $container->addError('Configuration format is wrong');
         } elseif (!array_key_exists($this->name, $value)) {
             $container->addError('Configuration value is not set');
@@ -131,14 +131,14 @@ abstract class AbstractNode implements Node
     protected function validateByValidators(ValidationContainer $container, $value)
     {
         foreach ($this->validators as $classOrIndex => $optionsOrClass) {
-            if (is_string($classOrIndex) && class_exists($classOrIndex) && is_array($optionsOrClass)) {
+            if (\is_array($optionsOrClass) && \is_string($classOrIndex) && class_exists($classOrIndex)) {
                 $args = array_merge([$classOrIndex], $optionsOrClass);
             } elseif (class_exists($optionsOrClass)) {
                 $args = [$optionsOrClass];
             } else {
                 continue;
             }
-            $validator = call_user_func_array([GeneralUtility::class, 'makeInstance'], $args);
+            $validator = \call_user_func_array([GeneralUtility::class, 'makeInstance'], $args);
             if ($validator instanceof ValidatorInterface) {
                 $validator->validate($container, $value[$this->name]);
             }
@@ -147,13 +147,14 @@ abstract class AbstractNode implements Node
 
     /**
      * @param Node $node
+     * @throws In2publishCoreException
      */
     public function merge(Node $node)
     {
         if (!empty($node->default)) {
             if (empty($this->default)) {
                 $this->default = $node->default;
-            } elseif (is_array($this->default) && is_array($node->default)) {
+            } elseif (\is_array($this->default) && \is_array($node->default)) {
                 $this->default = array_merge($this->default, $node->default);
             } else {
                 throw new In2publishCoreException('Can not merge properties');
@@ -179,7 +180,7 @@ abstract class AbstractNode implements Node
     /**
      * @return bool
      */
-    public function validatorsShouldBeSkipped()
+    public function validatorsShouldBeSkipped(): bool
     {
         return $this->skipValidators;
     }

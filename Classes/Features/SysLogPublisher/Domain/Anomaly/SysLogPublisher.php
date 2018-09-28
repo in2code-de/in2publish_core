@@ -123,7 +123,7 @@ class SysLogPublisher
      * @param array $removeProperties
      * @return array
      */
-    protected function getLastLocalSysLogProperties(Record $record, array $removeProperties = [])
+    protected function getLastLocalSysLogProperties(Record $record, array $removeProperties = []): array
     {
         $row = $this->commonRepository->findLastPropertiesByPropertyAndTableName(
             $this->localDatabase,

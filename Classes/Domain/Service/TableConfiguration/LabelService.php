@@ -63,7 +63,7 @@ class LabelService
      * @param string $stagingLevel "local" or "foreign"
      * @return string
      */
-    public function getLabelField($record, $stagingLevel = 'local')
+    public function getLabelField($record, $stagingLevel = 'local'): string
     {
         $tableName = $record->getTableName();
 
@@ -92,7 +92,7 @@ class LabelService
      * @param string $tableName
      * @return array
      */
-    protected function getLabelFieldsFromTableConfiguration($tableName)
+    protected function getLabelFieldsFromTableConfiguration($tableName): array
     {
         $labelField = $this->tcaService->getLabelFieldFromTable($tableName);
         $labelAltField = $this->tcaService->getLabelAltFieldFromTable($tableName);

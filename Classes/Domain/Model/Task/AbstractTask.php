@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Domain\Model\Task;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+
 use In2code\In2publishCore\Utility\ArrayUtility;
 
 /**
@@ -48,17 +49,17 @@ abstract class AbstractTask
     /**
      * @var \DateTime
      */
-    protected $creationDate = null;
+    protected $creationDate;
 
     /**
      * @var \DateTime
      */
-    protected $executionBegin = null;
+    protected $executionBegin;
 
     /**
      * @var \DateTime
      */
-    protected $executionEnd = null;
+    protected $executionEnd;
 
     /**
      * @var array
@@ -69,7 +70,7 @@ abstract class AbstractTask
      * @param array $configuration
      * @param int $uid
      */
-    final public function __construct(array $configuration, $uid = 0)
+    final public function __construct(array $configuration, int $uid = 0)
     {
         $this->configuration = $configuration;
         $this->uid = $uid;
@@ -80,7 +81,7 @@ abstract class AbstractTask
      *
      * @return bool
      */
-    final public function execute()
+    final public function execute(): bool
     {
         $this->beforeExecute();
         $success = $this->executeTask();
@@ -98,7 +99,7 @@ abstract class AbstractTask
      *
      * @return bool
      */
-    abstract protected function executeTask();
+    abstract protected function executeTask(): bool;
 
     /**
      * @return void
@@ -119,7 +120,7 @@ abstract class AbstractTask
     /**
      * @return int
      */
-    final public function getUid()
+    final public function getUid(): int
     {
         return $this->uid;
     }
@@ -139,7 +140,7 @@ abstract class AbstractTask
     /**
      * @return \DateTime
      */
-    final public function getCreationDate()
+    final public function getCreationDate(): \DateTime
     {
         return $this->creationDate;
     }
@@ -148,7 +149,7 @@ abstract class AbstractTask
      * @param \DateTime $creationDate
      * @return AbstractTask
      */
-    final public function setCreationDate(\DateTime $creationDate)
+    final public function setCreationDate(\DateTime $creationDate): AbstractTask
     {
         $this->creationDate = $creationDate;
         return $this;
@@ -157,7 +158,7 @@ abstract class AbstractTask
     /**
      * @return \DateTime
      */
-    final public function getExecutionBegin()
+    final public function getExecutionBegin(): \DateTime
     {
         return $this->executionBegin;
     }
@@ -165,7 +166,7 @@ abstract class AbstractTask
     /**
      * @return string
      */
-    final public function getExecutionBeginForPersistence()
+    final public function getExecutionBeginForPersistence(): string
     {
         if ($this->executionBegin instanceof \DateTime) {
             return $this->executionBegin->format('Y-m-d H:i:s');
@@ -177,7 +178,7 @@ abstract class AbstractTask
      * @param \DateTime $executionBegin
      * @return AbstractTask
      */
-    final public function setExecutionBegin(\DateTime $executionBegin = null)
+    final public function setExecutionBegin(\DateTime $executionBegin = null): AbstractTask
     {
         $this->executionBegin = $executionBegin;
         return $this;
@@ -186,7 +187,7 @@ abstract class AbstractTask
     /**
      * @return \DateTime
      */
-    final public function getExecutionEnd()
+    final public function getExecutionEnd(): \DateTime
     {
         return $this->executionEnd;
     }
@@ -194,7 +195,7 @@ abstract class AbstractTask
     /**
      * @return string
      */
-    final public function getExecutionEndForPersistence()
+    final public function getExecutionEndForPersistence(): string
     {
         if ($this->executionEnd instanceof \DateTime) {
             return $this->executionEnd->format('Y-m-d H:i:s');
@@ -206,7 +207,7 @@ abstract class AbstractTask
      * @param \DateTime $executionEnd
      * @return AbstractTask
      */
-    final public function setExecutionEnd(\DateTime $executionEnd = null)
+    final public function setExecutionEnd(\DateTime $executionEnd = null): AbstractTask
     {
         $this->executionEnd = $executionEnd;
         return $this;
@@ -215,7 +216,7 @@ abstract class AbstractTask
     /**
      * @return array
      */
-    final public function getMessages()
+    final public function getMessages(): array
     {
         return $this->messages;
     }
@@ -224,7 +225,7 @@ abstract class AbstractTask
      * @param string $messages
      * @return AbstractTask
      */
-    final public function setMessages($messages)
+    final public function setMessages($messages): AbstractTask
     {
         $this->messages = $messages;
         return $this;

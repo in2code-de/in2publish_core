@@ -94,7 +94,7 @@ class FileProvider implements ProviderInterface
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function getConfigFilePath()
+    protected function getConfigFilePath(): string
     {
         $path = 'typo3conf/AdditionalConfiguration/';
         if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core'])) {

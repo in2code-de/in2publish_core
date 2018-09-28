@@ -73,7 +73,7 @@ class RemoteCommandDispatcher implements SingletonInterface
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function dispatch(RemoteCommandRequest $request)
+    public function dispatch(RemoteCommandRequest $request): RemoteCommandResponse
     {
         if (null === $this->adapter) {
             $this->logger->debug('Lazy initializing SshAdapter');

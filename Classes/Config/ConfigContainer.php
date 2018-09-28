@@ -82,7 +82,7 @@ class ConfigContainer implements SingletonInterface
     /**
      * @return array
      */
-    protected function getConfig()
+    protected function getConfig(): array
     {
         if (null !== $this->config) {
             return $this->config;
@@ -122,7 +122,7 @@ class ConfigContainer implements SingletonInterface
      *
      * @return array
      */
-    public function getContextFreeConfig()
+    public function getContextFreeConfig(): array
     {
         $priority = [];
         foreach ($this->providers as $class => $config) {
@@ -152,7 +152,7 @@ class ConfigContainer implements SingletonInterface
      * @param array $priority
      * @return array|array[]|bool[]|int[]|string[] Sorted, merged and type casted configuration.
      */
-    protected function processConfig(array $priority)
+    protected function processConfig(array $priority): array
     {
         asort($priority);
 

@@ -165,7 +165,7 @@ class PhysicalFilePublisher implements SingletonInterface
      *
      * @return bool
      */
-    protected function replaceFileWithChangedCopy(Record $record, $storage, $logData)
+    protected function replaceFileWithChangedCopy(Record $record, $storage, $logData): bool
     {
         $old = $record->getForeignProperty('identifier');
         $new = $record->getLocalProperty('identifier');
@@ -189,7 +189,7 @@ class PhysicalFilePublisher implements SingletonInterface
      *
      * @return bool
      */
-    protected function removeFileFromForeign($storage, $logData, $identifier)
+    protected function removeFileFromForeign($storage, $logData, $identifier): bool
     {
         if (true === $result = $this->filePublisherService->removeForeignFile($storage, $identifier)) {
             $this->logger->info('Removed remote file', $logData);
@@ -206,7 +206,7 @@ class PhysicalFilePublisher implements SingletonInterface
      *
      * @return bool
      */
-    protected function addFileToForeign($storage, $logData, $identifier)
+    protected function addFileToForeign($storage, $logData, $identifier): bool
     {
         if (true === $result = $this->filePublisherService->addFileToForeign($storage, $identifier)) {
             $this->logger->info('Added file to foreign', $logData);
@@ -223,7 +223,7 @@ class PhysicalFilePublisher implements SingletonInterface
      *
      * @return bool
      */
-    protected function updateFileOnForeign($storage, $logData, $identifier)
+    protected function updateFileOnForeign($storage, $logData, $identifier): bool
     {
         if (true === $result = $this->filePublisherService->updateFileOnForeign($storage, $identifier)) {
             $this->logger->info('Updated file on foreign', $logData);
@@ -240,7 +240,7 @@ class PhysicalFilePublisher implements SingletonInterface
      *
      * @return bool
      */
-    protected function moveForeignFile(Record $record, $storage, $logData)
+    protected function moveForeignFile(Record $record, $storage, $logData): bool
     {
         $old = $record->getForeignProperty('identifier');
         $new = $record->getLocalProperty('identifier');

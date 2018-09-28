@@ -102,7 +102,7 @@ class SysFileService extends AbstractService
      * @param string $newIdentifierPath
      * @return array
      */
-    protected function getArgumentsForSysFileFromPath(array $row, $oldIdentifierPath, $newIdentifierPath)
+    protected function getArgumentsForSysFileFromPath(array $row, $oldIdentifierPath, $newIdentifierPath): array
     {
         $identifier = $row['identifier'];
         return [
@@ -118,7 +118,7 @@ class SysFileService extends AbstractService
      * @param string $newIdentifier
      * @return array
      */
-    protected function getArgumentsForSysFileFromFile($newIdentifier)
+    protected function getArgumentsForSysFileFromFile($newIdentifier): array
     {
         return [
             'identifier' => $newIdentifier,
@@ -135,7 +135,7 @@ class SysFileService extends AbstractService
      * @param string $path
      * @return string
      */
-    protected function getIdentifierFromAbsolutePath($path)
+    protected function getIdentifierFromAbsolutePath($path): string
     {
         $path = $this->changeAbsoluteToRelativePath($path);
         $path = $this->removeFirstFolderFromPath($path);
@@ -146,7 +146,7 @@ class SysFileService extends AbstractService
      * @param string $path
      * @return string
      */
-    protected function changeAbsoluteToRelativePath($path)
+    protected function changeAbsoluteToRelativePath($path): string
     {
         return str_replace(PATH_site, '', $path);
     }

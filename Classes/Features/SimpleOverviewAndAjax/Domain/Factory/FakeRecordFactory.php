@@ -81,7 +81,7 @@ class FakeRecordFactory
      * @param int $identifier
      * @return Record
      */
-    public function buildFromStartPage($identifier)
+    public function buildFromStartPage($identifier): Record
     {
         $record = $this->getSingleFakeRecordFromPageIdentifier($identifier);
         $this->addRelatedRecords($record);
@@ -116,7 +116,7 @@ class FakeRecordFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function getSingleFakeRecordFromPageIdentifier($identifier)
+    protected function getSingleFakeRecordFromPageIdentifier($identifier): Record
     {
         $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier, 'local');
         $propertiesForeign = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier, 'foreign');
@@ -157,7 +157,7 @@ class FakeRecordFactory
      * @param Record $record
      * @return bool
      */
-    protected function pageIsNew(Record $record)
+    protected function pageIsNew(Record $record): bool
     {
         $propertiesLocal = $this->tableCacheRepository->findByUid(
             static::PAGE_TABLE_NAME,
@@ -178,7 +178,7 @@ class FakeRecordFactory
      * @param int $identifier
      * @return array
      */
-    protected function getChildrenPages($identifier)
+    protected function getChildrenPages($identifier): array
     {
         $rows = $this->tableCacheRepository->findByPid(static::PAGE_TABLE_NAME, $identifier);
         $rows = $this->sortRowsBySorting($rows);
@@ -197,7 +197,7 @@ class FakeRecordFactory
      * @param string $tableName
      * @return bool
      */
-    protected function isRecordDeleted($pageIdentifier, $databaseName, $tableName = self::PAGE_TABLE_NAME)
+    protected function isRecordDeleted($pageIdentifier, $databaseName, $tableName = self::PAGE_TABLE_NAME): bool
     {
         $tcaTable = $this->tcaService->getConfigurationArrayForTable($tableName);
         if (!empty($tcaTable['ctrl']['delete'])) {
@@ -213,7 +213,7 @@ class FakeRecordFactory
      * @param int $pageIdentifier
      * @return bool
      */
-    protected function pageHasMoved($pageIdentifier)
+    protected function pageHasMoved($pageIdentifier): bool
     {
         $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $pageIdentifier, 'local');
         $propertiesForeign = $this->tableCacheRepository->findByUid(
@@ -231,7 +231,7 @@ class FakeRecordFactory
      * @param int $pageIdentifier
      * @return bool
      */
-    protected function shouldSkipChildrenPage($pageIdentifier)
+    protected function shouldSkipChildrenPage($pageIdentifier): bool
     {
         return !$this->isRecordDeletedOnBothInstances($pageIdentifier, static::PAGE_TABLE_NAME)
                && !$this->isRecordDeletedOnLocalAndNonExistingOnForeign($pageIdentifier);
@@ -243,7 +243,7 @@ class FakeRecordFactory
      * @param int $pageIdentifier
      * @return bool
      */
-    protected function pageIsDeletedOnLocalOnly($pageIdentifier)
+    protected function pageIsDeletedOnLocalOnly($pageIdentifier): bool
     {
         $deletedLocal = $this->isRecordDeleted($pageIdentifier, 'local');
         if ($deletedLocal) {
@@ -259,7 +259,7 @@ class FakeRecordFactory
      * @param int $pageIdentifier
      * @return bool
      */
-    protected function pageHasChanged($pageIdentifier)
+    protected function pageHasChanged($pageIdentifier): bool
     {
         $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $pageIdentifier, 'local');
         $propertiesForeign = $this->tableCacheRepository->findByUid(
@@ -279,7 +279,7 @@ class FakeRecordFactory
      * @param Record $record
      * @return bool
      */
-    protected function pageContentRecordsHasChanged(Record $record)
+    protected function pageContentRecordsHasChanged(Record $record): bool
     {
         $tables = $this->tcaService->getAllTableNamesWithPidAndUidField(
             array_merge($this->config['excludeRelatedTables'], ['pages'])
@@ -302,7 +302,7 @@ class FakeRecordFactory
      * @param string $table
      * @return bool
      */
-    protected function areDifferentArrays(array $arrayLocal, array $arrayForeign, $table)
+    protected function areDifferentArrays(array $arrayLocal, array $arrayForeign, $table): bool
     {
         $newLocal = $newForeign = [];
 
@@ -345,7 +345,7 @@ class FakeRecordFactory
      * @param array $rows
      * @return array
      */
-    protected function sortRowsBySorting($rows)
+    protected function sortRowsBySorting($rows): array
     {
         uasort(
             $rows,
@@ -363,7 +363,7 @@ class FakeRecordFactory
      * @param string $table
      * @return array
      */
-    protected function removeIgnoreFieldsFromArray(array $properties, $table)
+    protected function removeIgnoreFieldsFromArray(array $properties, $table): array
     {
         if (!empty($this->config['ignoreFieldsForDifferenceView'][$table])) {
             $ignoreFields = $this->config['ignoreFieldsForDifferenceView'][$table];
@@ -379,7 +379,7 @@ class FakeRecordFactory
      * @param string $tableName
      * @return bool
      */
-    protected function isRecordDeletedOnLocalAndNonExistingOnForeign($identifier, $tableName = self::PAGE_TABLE_NAME)
+    protected function isRecordDeletedOnLocalAndNonExistingOnForeign($identifier, $tableName = self::PAGE_TABLE_NAME): bool
     {
         if ($this->isRecordDeleted($identifier, 'local', $tableName)) {
             $properties = $this->tableCacheRepository->findByUid($tableName, $identifier, 'foreign');
@@ -397,7 +397,7 @@ class FakeRecordFactory
      * @param string $tableName
      * @return bool
      */
-    protected function isRecordDeletedOnBothInstances($identifier, $tableName)
+    protected function isRecordDeletedOnBothInstances($identifier, $tableName): bool
     {
         return $this->isRecordDeleted($identifier, 'local', $tableName)
                && $this->isRecordDeleted($identifier, 'foreign', $tableName);

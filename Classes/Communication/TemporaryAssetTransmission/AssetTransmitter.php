@@ -76,7 +76,7 @@ class AssetTransmitter implements SingletonInterface
      *     \TYPO3\CMS\Core\Resource\Driver\DriverInterface::getFileForLocalProcessing)
      * @return string Absolute path of the transmitted file on foreign
      */
-    public function transmitTemporaryFile($source)
+    public function transmitTemporaryFile($source): string
     {
         $this->logger->info('Transmission of file requested', ['source' => $source]);
 

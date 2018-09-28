@@ -57,7 +57,7 @@ class FilePublisherService
      * @param string $fileIdentifier
      * @return bool
      */
-    public function removeForeignFile($storage, $fileIdentifier)
+    public function removeForeignFile($storage, $fileIdentifier): bool
     {
         $this->remoteFalDriver->setStorageUid($storage);
         $this->remoteFalDriver->initialize();
@@ -72,7 +72,7 @@ class FilePublisherService
      * @param string $fileIdentifier
      * @return bool
      */
-    public function addFileToForeign($storage, $fileIdentifier)
+    public function addFileToForeign($storage, $fileIdentifier): bool
     {
         $this->remoteFalDriver->setStorageUid($storage);
         $this->remoteFalDriver->initialize();
@@ -98,7 +98,7 @@ class FilePublisherService
      * @param string $fileIdentifier
      * @return bool
      */
-    public function updateFileOnForeign($storage, $fileIdentifier)
+    public function updateFileOnForeign($storage, $fileIdentifier): bool
     {
         $this->remoteFalDriver->setStorageUid($storage);
         $this->remoteFalDriver->initialize();
@@ -115,7 +115,7 @@ class FilePublisherService
      * @param string $newFileName
      * @return bool
      */
-    public function moveForeignFile($storage, $fileIdentifier, $targetFolderId, $newFileName)
+    public function moveForeignFile($storage, $fileIdentifier, $targetFolderId, $newFileName): bool
     {
         $this->remoteFalDriver->setStorageUid($storage);
         $this->remoteFalDriver->initialize();
@@ -128,7 +128,7 @@ class FilePublisherService
      * @param string $fileIdentifier
      * @return string
      */
-    protected function transferTemporaryFile($storage, $fileIdentifier)
+    protected function transferTemporaryFile($storage, $fileIdentifier): string
     {
         $source = $this->getLocalReadableFilePathForIdentifier($storage, $fileIdentifier);
 
@@ -143,7 +143,7 @@ class FilePublisherService
      * @param string $fileIdentifier
      * @return string
      */
-    protected function getLocalReadableFilePathForIdentifier($storage, $fileIdentifier)
+    protected function getLocalReadableFilePathForIdentifier($storage, $fileIdentifier): string
     {
         return ResourceFactory::getInstance()
                               ->getStorageObject($storage)

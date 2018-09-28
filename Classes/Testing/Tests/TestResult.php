@@ -29,9 +29,6 @@ namespace In2code\In2publishCore\Testing\Tests;
 
 use In2code\In2publishCore\Testing\Utility\TestLabelLocalizer;
 
-/**
- * Class TestResult
- */
 class TestResult
 {
     const OK = 'ok';
@@ -57,7 +54,7 @@ class TestResult
     /**
      * @var array|null
      */
-    protected $labelArguments = null;
+    protected $labelArguments;
 
     /**
      * Error constructor.
@@ -83,7 +80,7 @@ class TestResult
     /**
      * @return string
      */
-    public function getSeverity()
+    public function getSeverity(): string
     {
         return $this->severity;
     }
@@ -91,7 +88,7 @@ class TestResult
     /**
      * @return string
      */
-    public function getSeverityLabel()
+    public function getSeverityLabel(): string
     {
         if (version_compare(TYPO3_version, '8.0.0', '>=')) {
             switch ($this->severity) {
@@ -108,7 +105,7 @@ class TestResult
     /**
      * @param string $severity
      */
-    public function setSeverity($severity)
+    public function setSeverity(string $severity)
     {
         $this->severity = $severity;
     }
@@ -116,7 +113,7 @@ class TestResult
     /**
      * @return string
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
@@ -124,12 +121,12 @@ class TestResult
     /**
      * @param string $label
      */
-    public function setLabel($label)
+    public function setLabel(string $label)
     {
         $this->label = $label;
     }
 
-    public function getTranslatedLabel()
+    public function getTranslatedLabel(): string
     {
         return TestLabelLocalizer::translate($this->label, $this->labelArguments);
     }
@@ -137,7 +134,7 @@ class TestResult
     /**
      * @return string
      */
-    public function getMessages()
+    public function getMessages(): string
     {
         return $this->messages;
     }
@@ -153,7 +150,7 @@ class TestResult
     /**
      * @return string
      */
-    public function getTranslatedMessages()
+    public function getTranslatedMessages(): string
     {
         $translatedMessages = [];
         foreach ($this->messages as $message) {

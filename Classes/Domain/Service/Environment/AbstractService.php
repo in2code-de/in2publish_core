@@ -72,7 +72,7 @@ abstract class AbstractService
      * @param string $folder
      * @return string
      */
-    protected function removeFirstFolderFromPath($folder)
+    protected function removeFirstFolderFromPath($folder): string
     {
         $folder = ltrim($folder, '/');
         $parts = explode('/', $folder);
@@ -86,7 +86,7 @@ abstract class AbstractService
      * @param string $folder
      * @return string
      */
-    protected function removeLastFolderFromPath($folder)
+    protected function removeLastFolderFromPath($folder): string
     {
         if (!$this->isFolder($folder)) {
             $folder = $this->getPathFromPathAndFilename($folder);
@@ -101,7 +101,7 @@ abstract class AbstractService
      * @param string $pathAndFilename
      * @return string
      */
-    protected function getPathFromPathAndFilename($pathAndFilename)
+    protected function getPathFromPathAndFilename($pathAndFilename): string
     {
         return dirname($pathAndFilename) . '/';
     }
@@ -110,7 +110,7 @@ abstract class AbstractService
      * @param string $pathAndFilename
      * @return string
      */
-    protected function getFilenameFromPathAndFilename($pathAndFilename)
+    protected function getFilenameFromPathAndFilename($pathAndFilename): string
     {
         $pathParts = pathinfo($pathAndFilename);
         return $pathParts['basename'];
@@ -120,7 +120,7 @@ abstract class AbstractService
      * @param string $fileOrFolder
      * @return bool
      */
-    protected function isFolder($fileOrFolder)
+    protected function isFolder($fileOrFolder): bool
     {
         return substr($fileOrFolder, -1) === '/';
     }

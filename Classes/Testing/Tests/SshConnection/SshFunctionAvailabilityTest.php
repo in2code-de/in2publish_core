@@ -30,15 +30,12 @@ namespace In2code\In2publishCore\Testing\Tests\SshConnection;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 
-/**
- * Class SshFunctionAvailabilityTest
- */
 class SshFunctionAvailabilityTest implements TestCaseInterface
 {
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $sshFunctions = [
             'ssh2_connect',
@@ -50,7 +47,7 @@ class SshFunctionAvailabilityTest implements TestCaseInterface
         ];
 
         foreach ($sshFunctions as $index => $sshFunction) {
-            if (function_exists($sshFunction)) {
+            if (\function_exists($sshFunction)) {
                 unset($sshFunctions[$index]);
             }
         }
@@ -59,7 +56,7 @@ class SshFunctionAvailabilityTest implements TestCaseInterface
             return new TestResult('ssh_connection.functions_missing', TestResult::ERROR);
         }
 
-        if (!function_exists('ssh2_sftp_chmod')) {
+        if (!\function_exists('ssh2_sftp_chmod')) {
             return new TestResult(
                 'ssh_connection.chmod_missing',
                 TestResult::WARNING,
@@ -73,7 +70,7 @@ class SshFunctionAvailabilityTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [];
     }

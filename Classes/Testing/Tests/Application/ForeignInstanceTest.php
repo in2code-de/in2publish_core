@@ -37,19 +37,13 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class ForeignInstanceTest
- */
 class ForeignInstanceTest implements TestCaseInterface
 {
     /**
      * @var RemoteCommandDispatcher
      */
-    protected $rceDispatcher = null;
+    protected $rceDispatcher;
 
-    /**
-     * ForeignInstanceTest constructor.
-     */
     public function __construct()
     {
         $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
@@ -58,7 +52,7 @@ class ForeignInstanceTest implements TestCaseInterface
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, StatusCommandController::ALL_COMMAND);
         $response = $this->rceDispatcher->dispatch($request);
@@ -135,7 +129,7 @@ class ForeignInstanceTest implements TestCaseInterface
      * @param array $output
      * @return array
      */
-    protected function tokenizeResponse(array $output)
+    protected function tokenizeResponse(array $output): array
     {
         $values = [];
         foreach ($output as $line) {
@@ -150,7 +144,7 @@ class ForeignInstanceTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             RemoteAdapterTest::class,

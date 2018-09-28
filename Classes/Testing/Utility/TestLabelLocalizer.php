@@ -29,9 +29,6 @@ namespace In2code\In2publishCore\Testing\Utility;
 
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
-/**
- * Class TestLabelLocalizer
- */
 class TestLabelLocalizer
 {
     /**
@@ -40,7 +37,7 @@ class TestLabelLocalizer
      *
      * @return string
      */
-    public static function translate($key, array $arguments = null)
+    public static function translate($key, array $arguments = null): string
     {
         if (0 === strpos($key, 'LLL')) {
             $label = (string)LocalizationUtility::translate($key, 'in2publish_core', $arguments);

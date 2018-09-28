@@ -64,7 +64,7 @@ class RemoteCommandResponse
     /**
      * @return array
      */
-    public function getOutput()
+    public function getOutput(): array
     {
         return $this->output;
     }
@@ -72,7 +72,7 @@ class RemoteCommandResponse
     /**
      * @return string
      */
-    public function getOutputString()
+    public function getOutputString(): string
     {
         return implode(PHP_EOL, $this->output);
     }
@@ -88,7 +88,7 @@ class RemoteCommandResponse
     /**
      * @return array
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }
@@ -104,7 +104,7 @@ class RemoteCommandResponse
     /**
      * @return string
      */
-    public function getErrorsString()
+    public function getErrorsString(): string
     {
         return implode(PHP_EOL, $this->errors);
     }
@@ -112,7 +112,7 @@ class RemoteCommandResponse
     /**
      * @return bool
      */
-    public function isSuccessful()
+    public function isSuccessful(): bool
     {
         return 0 === $this->exitStatus;
     }
@@ -120,7 +120,7 @@ class RemoteCommandResponse
     /**
      * @return int
      */
-    public function getExitStatus()
+    public function getExitStatus(): int
     {
         return $this->exitStatus;
     }
@@ -137,7 +137,7 @@ class RemoteCommandResponse
      * @param array|string $response
      * @return array
      */
-    protected function convertAndSanitizeResponse($response)
+    protected function convertAndSanitizeResponse($response): array
     {
         if (is_string($response)) {
             $response = explode("\n", $response);

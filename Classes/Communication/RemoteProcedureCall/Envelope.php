@@ -75,7 +75,7 @@ class Envelope
     /**
      * @return int
      */
-    public function getUid()
+    public function getUid(): int
     {
         return $this->uid;
     }
@@ -94,7 +94,7 @@ class Envelope
     /**
      * @return string
      */
-    public function getCommand()
+    public function getCommand(): string
     {
         return $this->command;
     }
@@ -151,7 +151,7 @@ class Envelope
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_filter(
             [
@@ -167,7 +167,7 @@ class Envelope
      * @param array $values
      * @return Envelope
      */
-    public static function fromArray(array $values)
+    public static function fromArray(array $values): Envelope
     {
         $object = new Envelope('', []);
         foreach (['uid', 'command', 'request', 'response'] as $property) {

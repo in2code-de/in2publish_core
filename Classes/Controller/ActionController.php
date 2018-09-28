@@ -40,8 +40,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 
 /**
- * class ActionController
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
@@ -49,7 +47,7 @@ abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
     /**
      * @var Logger
      */
-    protected $logger = null;
+    protected $logger;
 
     /**
      * @var ConfigContainer
@@ -115,7 +113,7 @@ abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
     /**
      * Deactivate error messages in flash messages by explicitly returning false
      *
-     * @return string
+     * @return string|bool
      */
     protected function getErrorFlashMessage()
     {

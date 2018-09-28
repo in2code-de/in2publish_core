@@ -38,7 +38,7 @@ class TestCaseService
     /**
      * @return TestCaseInterface[]
      */
-    public function getTests()
+    public function getTests(): array
     {
         $tests = $this->getTestObjects();
         $orderedTests = [];
@@ -74,7 +74,7 @@ class TestCaseService
      * @param array $orderedTests
      * @return bool
      */
-    protected function isDependencyMissing(array $dependencies, array $orderedTests)
+    protected function isDependencyMissing(array $dependencies, array $orderedTests): bool
     {
         foreach ($dependencies as $dependency) {
             if (!isset($orderedTests[$dependency])) {
@@ -87,7 +87,7 @@ class TestCaseService
     /**
      * @return TestCaseInterface[]
      */
-    protected function getTestObjects()
+    protected function getTestObjects(): array
     {
         $tests = [];
         foreach ($this->getTestClasses() as $class) {
@@ -106,7 +106,7 @@ class TestCaseService
      * @return array
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    protected function getTestClasses()
+    protected function getTestClasses(): array
     {
         return $GLOBALS['in2publish_core']['tests'];
     }

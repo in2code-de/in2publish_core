@@ -31,9 +31,6 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class AbstractProcessor
- */
 abstract class AbstractProcessor implements ProcessorInterface
 {
     /**
@@ -84,7 +81,7 @@ abstract class AbstractProcessor implements ProcessorInterface
      * @param array $config
      * @return array
      */
-    public function preProcess(array $config)
+    public function preProcess(array $config): array
     {
         $return = [];
         foreach ($this->getImportantFields() as $field) {
@@ -99,7 +96,7 @@ abstract class AbstractProcessor implements ProcessorInterface
      * @param array $config
      * @return bool
      */
-    public function canPreProcess(array $config)
+    public function canPreProcess(array $config): bool
     {
         $this->lastReasons = [];
         foreach ($this->forbidden as $reason => $key) {
@@ -115,7 +112,6 @@ abstract class AbstractProcessor implements ProcessorInterface
         return empty($this->lastReasons);
     }
 
-
     /**********************************************
      *
      *    STUFF YOU SHOULD NOT WORRY ABOUT
@@ -125,11 +121,8 @@ abstract class AbstractProcessor implements ProcessorInterface
     /**
      * @var Logger
      */
-    protected $logger = null;
+    protected $logger;
 
-    /**
-     * AbstractProcessor constructor.
-     */
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
@@ -140,7 +133,7 @@ abstract class AbstractProcessor implements ProcessorInterface
      *
      * @return bool
      */
-    public function canHoldRelations()
+    public function canHoldRelations(): bool
     {
         return $this->canHoldRelations;
     }
@@ -148,7 +141,7 @@ abstract class AbstractProcessor implements ProcessorInterface
     /**
      * @return array
      */
-    public function getLastReasons()
+    public function getLastReasons(): array
     {
         return $this->lastReasons;
     }
@@ -156,7 +149,7 @@ abstract class AbstractProcessor implements ProcessorInterface
     /**
      * @return array
      */
-    protected function getImportantFields()
+    protected function getImportantFields(): array
     {
         return array_merge($this->required, $this->allowed);
     }

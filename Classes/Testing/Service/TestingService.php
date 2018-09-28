@@ -54,7 +54,7 @@ class TestingService
      *
      * @throws In2publishCoreException
      */
-    public function runAllTests()
+    public function runAllTests(): array
     {
         $failedTests = [];
         $skippedTests = [];
@@ -109,7 +109,7 @@ class TestingService
      * @param array $failedTests
      * @return bool
      */
-    protected function hasDependencyFailed(array $dependencies, array $failedTests)
+    protected function hasDependencyFailed(array $dependencies, array $failedTests): bool
     {
         foreach ($dependencies as $dependency) {
             if (isset($failedTests[$dependency])) {

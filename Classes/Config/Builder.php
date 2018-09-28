@@ -73,7 +73,7 @@ class Builder
     /**
      * @return NodeCollection
      */
-    public function end()
+    public function end(): NodeCollection
     {
         return $this->nodes;
     }
@@ -85,7 +85,7 @@ class Builder
      * @param array $validators
      * @return $this
      */
-    public function addArray($name, Builder $nodes, $default = null, array $validators = [])
+    public function addArray($name, Builder $nodes, $default = null, array $validators = []): self
     {
         $this->addNode(Node::T_ARRAY, $name, $default, $validators, $nodes);
         return $this;
@@ -98,7 +98,7 @@ class Builder
      * @param array $validators
      * @return $this
      */
-    public function addStrictArray($name, Builder $nodes, $default = null, array $validators = [])
+    public function addStrictArray($name, Builder $nodes, $default = null, array $validators = []): self
     {
         $this->addNode(Node::T_STRICT_ARRAY, $name, $default, $validators, $nodes);
         return $this;
@@ -110,7 +110,7 @@ class Builder
      * @param array $validators
      * @return $this
      */
-    public function addString($key, $default, array $validators = [])
+    public function addString($key, $default, array $validators = []): self
     {
         $this->addNode(Node::T_STRING, $key, $default, $validators);
         return $this;
@@ -122,7 +122,7 @@ class Builder
      * @param array $validators
      * @return $this
      */
-    public function addOptionalString($key, $default, array $validators = [])
+    public function addOptionalString($key, $default, array $validators = []): self
     {
         $this->addNode(Node::T_OPTIONAL_STRING, $key, $default, $validators);
         return $this;
@@ -134,7 +134,7 @@ class Builder
      * @param array $validators
      * @return $this
      */
-    public function addInteger($key, $default, array $validators = [])
+    public function addInteger($key, $default, array $validators = []): self
     {
         $this->addNode(Node::T_INTEGER, $key, $default, $validators);
         return $this;
@@ -146,7 +146,7 @@ class Builder
      * @param array $validators
      * @return $this
      */
-    public function addBoolean($key, $default, array $validators = [])
+    public function addBoolean($key, $default, array $validators = []): self
     {
         $this->addNode(Node::T_BOOLEAN, $key, $default, $validators);
         return $this;
@@ -160,7 +160,7 @@ class Builder
      * @param Builder|null $builder
      * @return $this
      */
-    public function addNode($type, $name, $default = null, $validators = [], Builder $builder = null)
+    public function addNode($type, $name, $default = null, $validators = [], Builder $builder = null): self
     {
         if ($builder instanceof Builder) {
             $nodes = $builder->end();
@@ -177,7 +177,7 @@ class Builder
      * @param string $type
      * @return $this
      */
-    public function addGenericScalar($keyType, $type = Node::T_STRING)
+    public function addGenericScalar($keyType, $type = Node::T_STRING): self
     {
         $valueNode = Builder::start()->addNode($type, '*:' . $type)->end();
         $keyNode = AbsGenNode::fromType($keyType, '*:' . $keyType, $valueNode, null);
@@ -190,7 +190,7 @@ class Builder
      * @param Builder $nodes
      * @return $this
      */
-    public function addGenericArray($keyType, Builder $nodes)
+    public function addGenericArray($keyType, Builder $nodes): self
     {
         $valueNodes = Builder::start()->addArray('*:' . $keyType, $nodes)->end();
         $keyNode = AbsGenNode::fromType($keyType, '*:' . $keyType, $valueNodes, null);

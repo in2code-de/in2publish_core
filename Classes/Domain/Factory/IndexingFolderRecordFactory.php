@@ -92,7 +92,7 @@ class IndexingFolderRecordFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function makeInstance($dir = null)
+    public function makeInstance($dir = null): RecordInterface
     {
         // determine current folder
         $resourceFactory = ResourceFactory::getInstance();
@@ -174,7 +174,7 @@ class IndexingFolderRecordFactory
      * @param string $side
      * @return array
      */
-    protected function updateFilesByMovedRecords(array $records, array $files, $side)
+    protected function updateFilesByMovedRecords(array $records, array $files, $side): array
     {
         $relatedFolders = [];
 
@@ -238,7 +238,7 @@ class IndexingFolderRecordFactory
      * @param RecordInterface[] $records
      * @return array
      */
-    public function filterRecords(array $localFiles, array $remoteFiles, array $records)
+    public function filterRecords(array $localFiles, array $remoteFiles, array $records): array
     {
         $filesOnDisk = array_unique(array_merge(array_keys($localFiles), array_keys($remoteFiles)));
 

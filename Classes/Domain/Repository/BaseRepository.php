@@ -100,7 +100,7 @@ abstract class BaseRepository
         $orderBy = '',
         $limit = '',
         $indexField = 'uid'
-    ) {
+    ): array {
         $propertyArray = [];
 
         if (empty($this->tableName)) {
@@ -175,7 +175,7 @@ abstract class BaseRepository
         $orderBy = '',
         $limit = '',
         $indexField = 'uid'
-    ) {
+    ): array {
         if (empty($orderBy)) {
             $orderBy = $this->tcaService->getSortingField($this->tableName);
         }
@@ -215,7 +215,7 @@ abstract class BaseRepository
      * @param array $properties
      * @return bool
      */
-    protected function updateRecord(Connection $connection, $identifier, array $properties)
+    protected function updateRecord(Connection $connection, $identifier, array $properties): bool
     {
         // deal with MM records, they have (in2publish internal) combined identifiers
         if (strpos($identifier, ',') !== false) {
@@ -248,7 +248,7 @@ abstract class BaseRepository
      * @param array $properties
      * @return bool
      */
-    protected function addRecord(Connection $connection, array $properties)
+    protected function addRecord(Connection $connection, array $properties): bool
     {
         $success = (bool)$connection->insert($this->tableName, $properties);
         if (!$success) {
@@ -318,7 +318,7 @@ abstract class BaseRepository
      * @param string $string
      * @return string
      */
-    protected function quoteString($string)
+    protected function quoteString($string): string
     {
         return DatabaseUtility::quoteString($string);
     }
@@ -351,7 +351,7 @@ abstract class BaseRepository
     /**
      * @return string
      */
-    public function getTableName()
+    public function getTableName(): string
     {
         return $this->tableName;
     }
@@ -360,7 +360,7 @@ abstract class BaseRepository
      * @param string $tableName
      * @return BaseRepository
      */
-    public function setTableName($tableName)
+    public function setTableName($tableName): BaseRepository
     {
         $this->tableName = $tableName;
         return $this;
@@ -370,7 +370,7 @@ abstract class BaseRepository
      * @param string $tableName
      * @return string
      */
-    public function replaceTableName($tableName)
+    public function replaceTableName($tableName): string
     {
         $replacedTableName = $this->tableName;
         $this->tableName = $tableName;
@@ -380,7 +380,7 @@ abstract class BaseRepository
     /**
      * @return string
      */
-    public function getIdentifierFieldName()
+    public function getIdentifierFieldName(): string
     {
         return $this->identifierFieldName;
     }

@@ -29,9 +29,6 @@ namespace In2code\In2publishCore\Config\Node;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
-/**
- * Interface Node
- */
 interface Node
 {
     const T_ARRAY = 'array';
@@ -51,7 +48,7 @@ interface Node
     /**
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * @param Node $node
@@ -63,12 +60,12 @@ interface Node
      * @param string $path
      * @return Node
      */
-    public function getNodePath($path);
+    public function getNodePath(string $path): Node;
 
     /**
      * @return string[]|int[]|bool[]|array[]
      */
-    public function getDefaults();
+    public function getDefaults(): array;
 
     /**
      * @param Node $node
@@ -85,5 +82,5 @@ interface Node
     /**
      * @param string[]|int[]|bool[]|array[] $value
      */
-    public function unsetDefaults(&$value);
+    public function unsetDefaults(array &$value);
 }

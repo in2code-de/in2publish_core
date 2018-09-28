@@ -34,20 +34,17 @@ use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class SshAdapter
- */
 class SshAdapter extends SshBaseAdapter implements AdapterInterface
 {
     /**
      * @var null|resource
      */
-    protected $sshSession = null;
+    protected $sshSession;
 
     /**
      * @var null|resource
      */
-    protected $sftSession = null;
+    protected $sftSession;
 
     /**
      * @var array
@@ -63,7 +60,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
      * @return bool
      * @throws In2publishCoreException
      */
-    public function copyFileToRemote($source, $target)
+    public function copyFileToRemote(string $source, string $target): bool
     {
         if (null === $this->sshSession) {
             $this->logger->debug('Lazy initializing SshAdapter ssh session');
@@ -76,11 +73,11 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
             $this->createMasks['folderOct'] = $createMasks['folder'];
         }
 
-        $this->ensureTargetFolderExists(dirname($target));
+        $this->ensureTargetFolderExists(\dirname($target));
 
         $sourceStream = fopen($source, 'r');
 
-        if (!is_resource($sourceStream)) {
+        if (!\is_resource($sourceStream)) {
             $this->logger->error('Could not open local file for reading', ['source' => $source]);
             throw new In2publishCoreException('Could not open stream on local file "' . $source . '"', 1425466802);
         }
@@ -92,7 +89,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
             throw new In2publishCoreException('Could not open stream on foreign: "' . $exception . '"', 1425467980);
         }
 
-        if (!is_resource($targetStream)) {
+        if (!\is_resource($targetStream)) {
             $this->logger->error('Could not open foreign file for reading', ['source' => $source]);
             throw new In2publishCoreException('Could not open stream on foreign file "' . $target . '"', 1425466826);
         }
@@ -128,10 +125,10 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
      * @param string $target
      * @return bool
      */
-    protected function setRemoteFilePermissions($target)
+    protected function setRemoteFilePermissions(string $target): bool
     {
         // ssh2_sftp_chmod since PECL ssh2 >= 0.12 but has bugs in PHP 7
-        if (PHP_MAJOR_VERSION < 7 && function_exists('ssh2_sftp_chmod')) {
+        if (PHP_MAJOR_VERSION < 7 && \function_exists('ssh2_sftp_chmod')) {
             if (ssh2_sftp_chmod($this->sftSession, $target, $this->createMasks['fileOct'])) {
                 return true;
             } else {
@@ -173,7 +170,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
      * @param string $folder
      * @return bool
      */
-    protected function ensureTargetFolderExists($folder)
+    protected function ensureTargetFolderExists(string $folder): bool
     {
         if (!$this->remoteFolderExists($folder)) {
             return $this->createRemoteFolder($folder);
@@ -185,7 +182,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
      * @param string $folder
      * @return bool
      */
-    protected function remoteFolderExists($folder)
+    protected function remoteFolderExists(string $folder): bool
     {
         return is_dir('ssh2.sftp://' . ((int)$this->sftSession) . $folder);
     }
@@ -194,7 +191,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
      * @param string $folder
      * @return bool
      */
-    protected function createRemoteFolder($folder)
+    protected function createRemoteFolder(string $folder): bool
     {
         return ssh2_sftp_mkdir($this->sftSession, $folder, $this->config['fol'], true);
     }
@@ -204,10 +201,12 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
      */
     protected function disconnect()
     {
-        if (is_resource($this->sshSession)) {
+        if (\is_resource($this->sshSession)) {
             ssh2_exec($this->sshSession, 'exit');
         }
-        unset($this->sshSession);
-        unset($this->sftSession);
+        unset(
+            $this->sshSession,
+            $this->sftSession
+        );
     }
 }

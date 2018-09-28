@@ -33,19 +33,14 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class SshConnectionTest
- */
 class SshConnectionTest implements TestCaseInterface
 {
     /**
      * @var RemoteCommandDispatcher
      */
-    protected $rceDispatcher = null;
+    protected $rceDispatcher;
 
     /**
-     * ForeignInstanceTest constructor.
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
@@ -58,7 +53,7 @@ class SshConnectionTest implements TestCaseInterface
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function run()
+    public function run(): TestResult
     {
         $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
         $request->setDispatcher('');
@@ -128,7 +123,7 @@ class SshConnectionTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             SshFunctionAvailabilityTest::class,

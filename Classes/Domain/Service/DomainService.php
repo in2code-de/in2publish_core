@@ -100,7 +100,7 @@ class DomainService
      * @param string $stagingLevel
      * @return string
      */
-    protected function getFirstDomainInRootLineFromRelatedRecords(RecordInterface $record, $stagingLevel)
+    protected function getFirstDomainInRootLineFromRelatedRecords(RecordInterface $record, $stagingLevel): string
     {
         $relatedRecords = $record->getRelatedRecords();
         $domainRecordValues = [];
@@ -126,7 +126,7 @@ class DomainService
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function getDomainFromPageIdentifier($identifier, $stagingLevel)
+    public function getDomainFromPageIdentifier($identifier, $stagingLevel): string
     {
         $rootLine = BackendUtility::BEgetRootLine($identifier);
         foreach ($rootLine as $page) {

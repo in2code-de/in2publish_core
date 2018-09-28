@@ -60,7 +60,7 @@ class ExecutionTimeService implements SingletonInterface
     /**
      * @return float
      */
-    public function getExecutionTime()
+    public function getExecutionTime(): float
     {
         if (null === $this->startTime) {
             GeneralUtility::makeInstance(LogManager::class)

@@ -258,7 +258,7 @@ class DatabaseUtility
         $tableName = str_replace('"', '', $tableName);
 
         $allTables = $connection->getSchemaManager()->listTableNames();
-        if (in_array($tableName, $allTables)) {
+        if (\in_array($tableName, $allTables, true)) {
             return $tableName;
         }
         throw new \InvalidArgumentException(

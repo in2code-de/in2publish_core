@@ -155,7 +155,7 @@ class TcaProcessingService
     /**
      * @return TcaProcessingService
      */
-    public static function getInstance()
+    public static function getInstance(): TcaProcessingService
     {
         if (static::$instance === null) {
             static::$instance = new static;
@@ -254,7 +254,7 @@ class TcaProcessingService
     /**
      * @return array
      */
-    public static function getIncompatibleTca()
+    public static function getIncompatibleTca(): array
     {
         return static::getInstance()->incompatibleTca;
     }
@@ -262,7 +262,7 @@ class TcaProcessingService
     /**
      * @return array
      */
-    public static function getCompatibleTca()
+    public static function getCompatibleTca(): array
     {
         return static::getInstance()->compatibleTca;
     }
@@ -270,7 +270,7 @@ class TcaProcessingService
     /**
      * @return array
      */
-    public static function getControls()
+    public static function getControls(): array
     {
         return static::getInstance()->controls;
     }
@@ -278,7 +278,7 @@ class TcaProcessingService
     /**
      * @return array
      */
-    public static function getAllTables()
+    public static function getAllTables(): array
     {
         return array_keys(static::getCompleteTca());
     }
@@ -287,7 +287,7 @@ class TcaProcessingService
      * @param string $table
      * @return bool
      */
-    public static function tableExists($table)
+    public static function tableExists($table): bool
     {
         return array_key_exists($table, static::getCompleteTca());
     }
@@ -306,7 +306,7 @@ class TcaProcessingService
      * @return array
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public static function getCompleteTcaForTable($tableName)
+    public static function getCompleteTcaForTable($tableName): array
     {
         return $GLOBALS[static::TCA][$tableName];
     }
@@ -315,7 +315,7 @@ class TcaProcessingService
      * @param string $table
      * @return array
      */
-    public static function getColumnsFor($table)
+    public static function getColumnsFor($table): array
     {
         return (array)static::getInstance()->compatibleTca[$table];
     }
@@ -324,7 +324,7 @@ class TcaProcessingService
      * @param string $table
      * @return array
      */
-    public static function getControlsFor($table)
+    public static function getControlsFor($table): array
     {
         return static::getInstance()->controls[$table];
     }
@@ -333,7 +333,7 @@ class TcaProcessingService
      * @param string $table
      * @return bool
      */
-    public static function hasDeleteField($table)
+    public static function hasDeleteField($table): bool
     {
         return (static::getInstance()->controls[$table][static::DELETE] !== '');
     }
@@ -342,7 +342,7 @@ class TcaProcessingService
      * @param string $table
      * @return string
      */
-    public static function getDeleteField($table)
+    public static function getDeleteField($table): string
     {
         return static::getInstance()->controls[$table][static::DELETE];
     }

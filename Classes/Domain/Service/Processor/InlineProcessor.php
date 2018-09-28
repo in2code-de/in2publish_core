@@ -27,9 +27,6 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-/**
- * Class InlineProcessor
- */
 class InlineProcessor extends AbstractProcessor
 {
     const FOREIGN_FIELD = 'foreign_field';
@@ -68,7 +65,7 @@ class InlineProcessor extends AbstractProcessor
      * @param array $config
      * @return bool
      */
-    public function canPreProcess(array $config)
+    public function canPreProcess(array $config): bool
     {
         parent::canPreProcess($config);
         if (array_key_exists(static::MM, $config) && array_key_exists(static::FOREIGN_FIELD, $config)) {

@@ -34,15 +34,12 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class LocalDatabaseAccessTest
- */
 class LocalDatabaseTest implements TestCaseInterface
 {
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
 
@@ -59,7 +56,7 @@ class LocalDatabaseTest implements TestCaseInterface
 
         $missingTables = [];
         foreach ($expectedTables as $expectedTable) {
-            if (!in_array($expectedTable, $actualTables)) {
+            if (!\in_array($expectedTable, $actualTables, true)) {
                 $missingTables[] = $expectedTable;
             }
         }
@@ -78,7 +75,7 @@ class LocalDatabaseTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [];
     }

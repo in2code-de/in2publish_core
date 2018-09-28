@@ -86,7 +86,7 @@ class EnvelopeDispatcher
      * @param Envelope $envelope
      * @return bool
      */
-    public function dispatch(Envelope $envelope)
+    public function dispatch(Envelope $envelope): bool
     {
         $command = $envelope->getCommand();
         if (method_exists($this, $command)) {
@@ -101,7 +101,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function folderExists(array $request)
+    protected function folderExists(array $request): array
     {
         $storage = $this->getStorage($request);
         $driver = $this->getStorageDriver($storage);
@@ -142,7 +142,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function getPermissions(array $request)
+    protected function getPermissions(array $request): array
     {
         $storage = $this->getStorage($request);
         return $this->getStorageDriver($storage)->getPermissions($request['identifier']);
@@ -152,7 +152,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function getFoldersInFolder(array $request)
+    protected function getFoldersInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
         unset($request['storage']);
@@ -164,7 +164,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function fileExists(array $request)
+    protected function fileExists(array $request): array
     {
         $storage = $this->getStorage($request);
         $driver = $this->getStorageDriver($storage);
@@ -211,7 +211,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function getFilesInFolder(array $request)
+    protected function getFilesInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
         unset($request['storage']);
@@ -232,7 +232,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function getFileInfoByIdentifier(array $request)
+    protected function getFileInfoByIdentifier(array $request): array
     {
         $storage = $this->getStorage($request);
         unset($request['storage']);
@@ -244,7 +244,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function hash(array $request)
+    protected function hash(array $request): array
     {
         $storage = $this->getStorage($request);
         unset($request['storage']);
@@ -344,7 +344,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function batchPrefetchFiles(array $request)
+    protected function batchPrefetchFiles(array $request): array
     {
         $storage = $this->getStorage($request);
         $storage->setEvaluatePermissions(false);
@@ -369,7 +369,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return string
      */
-    protected function moveFileWithinStorage(array $request)
+    protected function moveFileWithinStorage(array $request): string
     {
         $storage = $this->getStorage($request);
         $driver = $this->getStorageDriver($storage);
@@ -391,7 +391,7 @@ class EnvelopeDispatcher
      * @param ResourceStorage $storage
      * @return DriverInterface
      */
-    protected function getStorageDriver(ResourceStorage $storage)
+    protected function getStorageDriver(ResourceStorage $storage): DriverInterface
     {
         $driverReflection = new \ReflectionProperty(get_class($storage), 'driver');
         $driverReflection->setAccessible(true);
@@ -424,7 +424,7 @@ class EnvelopeDispatcher
      * @param array $identifierList
      * @return array
      */
-    protected function convertIdentifiers(DriverInterface $driver, array $identifierList)
+    protected function convertIdentifiers(DriverInterface $driver, array $identifierList): array
     {
         if (!$driver->isCaseSensitiveFileSystem()) {
             $identifierList = array_map(
@@ -443,7 +443,7 @@ class EnvelopeDispatcher
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function getStorage(array $request)
+    protected function getStorage(array $request): ResourceStorage
     {
         $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
         $storage->setEvaluatePermissions(false);
@@ -454,7 +454,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    public function getStorageHasFolder(array $request)
+    public function getStorageHasFolder(array $request): array
     {
         $hasFolder = $this->getStorage($request)->hasFolder($request['identifier']);
         // pre-fetching sub folders and files for later use if storage exists (we know this will be required)
@@ -478,7 +478,7 @@ class EnvelopeDispatcher
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function getStorageGetFoldersInFolder(array $request)
+    public function getStorageGetFoldersInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
         $folders = $storage->getFoldersInFolder($storage->getFolder($request['identifier']));
@@ -491,7 +491,7 @@ class EnvelopeDispatcher
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function getStorageGetFilesInFolder(array $request)
+    public function getStorageGetFilesInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
         $files = $storage->getFilesInFolder($storage->getFolder($request['identifier']));
@@ -504,7 +504,7 @@ class EnvelopeDispatcher
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function getStorageGetFile(array $request)
+    public function getStorageGetFile(array $request): array
     {
         $storage = $this->getStorage($request);
         if ($storage->hasFile($request['identifier'])) {
@@ -518,7 +518,7 @@ class EnvelopeDispatcher
      * @return string
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function getSetDbInit()
+    public function getSetDbInit(): string
     {
         if (!empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['setDBinit'])) {
             return $GLOBALS['TYPO3_CONF_VARS']['SYS']['setDBinit'];

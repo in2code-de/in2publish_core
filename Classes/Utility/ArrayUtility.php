@@ -76,18 +76,18 @@ class ArrayUtility
      */
     public static function getValueByPath(array &$array, $path)
     {
-        if (is_string($path)) {
+        if (\is_string($path)) {
             $path = explode('.', $path);
-        } elseif (!is_array($path)) {
+        } elseif (!\is_array($path)) {
             throw new \InvalidArgumentException(
-                'getValueByPath() expects $path to be string or array, "' . gettype($path) . '" given.',
+                'getValueByPath() expects $path to be string or array, "' . \gettype($path) . '" given.',
                 1495098452
             );
         }
         $key = array_shift($path);
         if (isset($array[$key])) {
             if (!empty($path)) {
-                return is_array($array[$key]) ? static::getValueByPath($array[$key], $path) : null;
+                return \is_array($array[$key]) ? static::getValueByPath($array[$key], $path) : null;
             }
             return $array[$key];
         } else {
@@ -110,7 +110,7 @@ class ArrayUtility
             $value = false;
         } elseif (MathUtility::canBeInterpretedAsInteger($value)) {
             $value = (int)$value;
-        } elseif (strlen($value) === 0 || strtolower($value) === 'null') {
+        } elseif (\strlen($value) === 0 || strtolower($value) === 'null') {
             unset($array[$key]);
         }
         return $value;

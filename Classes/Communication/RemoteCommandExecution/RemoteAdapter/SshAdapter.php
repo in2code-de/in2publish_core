@@ -33,15 +33,12 @@ use In2code\In2publishCore\Communication\Shared\SshBaseAdapter;
 use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class SshAdapter
- */
 class SshAdapter extends SshBaseAdapter implements AdapterInterface
 {
     /**
      * @var resource
      */
-    protected $session = null;
+    protected $session;
 
     /**
      * @param RemoteCommandRequest $request
@@ -50,7 +47,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function execute(RemoteCommandRequest $request)
+    public function execute(RemoteCommandRequest $request): RemoteCommandResponse
     {
         if (null === $this->session) {
             $this->logger->debug('Lazy initializing SshAdapter ssh session');
@@ -122,7 +119,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
      */
     protected function disconnect()
     {
-        if (is_resource($this->session)) {
+        if (\is_resource($this->session)) {
             ssh2_exec($this->session, 'exit');
         }
         unset($this->session);

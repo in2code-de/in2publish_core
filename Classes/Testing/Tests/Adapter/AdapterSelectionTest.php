@@ -35,19 +35,13 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class AdapterSelectionTest
- */
 class AdapterSelectionTest implements TestCaseInterface
 {
     /**
      * @var AdapterRegistry
      */
-    protected $adapterRegistry = null;
+    protected $adapterRegistry;
 
-    /**
-     * AdapterSelectionTest constructor.
-     */
     public function __construct()
     {
         $this->adapterRegistry = GeneralUtility::makeInstance(AdapterRegistry::class);
@@ -56,10 +50,10 @@ class AdapterSelectionTest implements TestCaseInterface
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $config = $this->adapterRegistry->getConfig();
-        if (!is_array($config) || !array_key_exists('remote', $config) || !array_key_exists('transmission', $config)) {
+        if (!\is_array($config) || !array_key_exists('remote', $config) || !array_key_exists('transmission', $config)) {
             return new TestResult('adapter.adapter_selection.config_error', TestResult::ERROR);
         }
 
@@ -91,7 +85,7 @@ class AdapterSelectionTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [];
     }

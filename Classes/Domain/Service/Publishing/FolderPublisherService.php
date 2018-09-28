@@ -43,7 +43,7 @@ class FolderPublisherService
      * @param string $combinedIdentifier
      * @return bool
      */
-    public function publish($combinedIdentifier)
+    public function publish($combinedIdentifier): bool
     {
         list($storage, $folderIdentifier) = GeneralUtility::trimExplode(':', $combinedIdentifier);
 

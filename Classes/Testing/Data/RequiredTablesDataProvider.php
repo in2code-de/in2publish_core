@@ -33,24 +33,18 @@ use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
-/**
- * Class RequiredTablesDataProvider
- */
 class RequiredTablesDataProvider implements SingletonInterface
 {
     /**
      * @var Dispatcher
      */
-    protected $dispatcher = null;
+    protected $dispatcher;
 
     /**
      * @var array
      */
     protected $cache = [];
 
-    /**
-     * ConfigurationIsCompleteTest constructor.
-     */
     public function __construct()
     {
         $this->dispatcher = GeneralUtility::makeInstance(Dispatcher::class);
@@ -59,9 +53,9 @@ class RequiredTablesDataProvider implements SingletonInterface
     /**
      * @return array
      */
-    public function getRequiredTables()
+    public function getRequiredTables(): array
     {
-        if ((empty($this->cache))) {
+        if (empty($this->cache)) {
             $requiredTables = [
                 'tx_in2publishcore_log',
                 'tx_in2code_in2publish_task',
@@ -77,7 +71,7 @@ class RequiredTablesDataProvider implements SingletonInterface
      * @param array $tables
      * @return array
      */
-    protected function overruleTables(array $tables)
+    protected function overruleTables(array $tables): array
     {
         try {
             list($tables) = $this->dispatcher->dispatch(__CLASS__, 'overruleTables', [$tables]);

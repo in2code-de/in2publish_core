@@ -170,7 +170,7 @@ class RecordFactory
         array $localProperties,
         array $foreignProperties,
         array $additionalProperties = []
-    ) {
+    ): RecordInterface {
         if (false === $this->isRootRecord) {
             $this->isRootRecord = true;
             $isRootRecord = true;
@@ -294,7 +294,7 @@ class RecordFactory
      * @param CommonRepository $commonRepository
      * @return RecordInterface
      */
-    protected function findRelatedRecordsForContentRecord(RecordInterface $record, CommonRepository $commonRepository)
+    protected function findRelatedRecordsForContentRecord(RecordInterface $record, CommonRepository $commonRepository): RecordInterface
     {
         if ($this->relatedRecordsDepth < $this->config['maximumContentRecursion']) {
             $this->relatedRecordsDepth++;
@@ -313,7 +313,7 @@ class RecordFactory
      * @param CommonRepository $commonRepository
      * @return RecordInterface
      */
-    protected function findRelatedRecordsForPageRecord(Record $record, CommonRepository $commonRepository)
+    protected function findRelatedRecordsForPageRecord(Record $record, CommonRepository $commonRepository): RecordInterface
     {
         if ($record->getIdentifier() === 0) {
             $tableNamesToExclude =
@@ -372,7 +372,7 @@ class RecordFactory
         $identifier,
         array $localProperties,
         array $foreignProperties
-    ) {
+    ): bool {
         $hasBeenMoved = false;
         // 1. it was created already
         if (!empty($this->runtimeCache[$tableName][$identifier]) && !in_array($tableName, $this->excludedTableNames)) {
@@ -441,7 +441,7 @@ class RecordFactory
      * @param array $foreignProperties
      * @return int
      */
-    protected function getMergedIdentifierValue($commonRepository, array $localProperties, array $foreignProperties)
+    protected function getMergedIdentifierValue($commonRepository, array $localProperties, array $foreignProperties): int
     {
         if ($commonRepository->getTableName() === 'sys_file') {
             $identifierFieldName = 'uid';
@@ -480,7 +480,7 @@ class RecordFactory
      * @param int $mergedIdentifier
      * @return bool
      */
-    protected function isLooping($instanceTableName, $mergedIdentifier)
+    protected function isLooping($instanceTableName, $mergedIdentifier): bool
     {
         // loop detection of records waiting for instantiation completion
         if (!empty($this->instantiationQueue[$instanceTableName])

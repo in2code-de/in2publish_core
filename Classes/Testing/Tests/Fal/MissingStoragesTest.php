@@ -34,19 +34,13 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class MissingStoragesTest
- */
 class MissingStoragesTest implements TestCaseInterface
 {
     /**
      * @var FalStorageTestSubjectsProvider
      */
-    protected $testSubjectProvider = null;
+    protected $testSubjectProvider;
 
-    /**
-     * ResourceStorageTest constructor.
-     */
     public function __construct()
     {
         $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);
@@ -55,7 +49,7 @@ class MissingStoragesTest implements TestCaseInterface
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $storages = $this->testSubjectProvider->getStoragesForMissingStoragesTest();
         $messages = $this->getMissing($storages, [], 'local');
@@ -71,7 +65,7 @@ class MissingStoragesTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LocalDatabaseTest::class,
@@ -85,7 +79,7 @@ class MissingStoragesTest implements TestCaseInterface
      * @param string $side
      * @return array
      */
-    protected function getMissing(array $storages, array $messages, $side)
+    protected function getMissing(array $storages, array $messages, string $side): array
     {
         $opposite = $side === 'local' ? 'foreign' : 'local';
         $missingOnSide = array_diff(array_keys($storages[$opposite]), array_keys($storages[$side]));

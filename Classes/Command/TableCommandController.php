@@ -177,9 +177,9 @@ class TableCommandController extends AbstractCommandController
      * @param Connection $connection
      * @param string $tableName
      * @param array $row
-     * @return bool
+     * @return int
      */
-    protected function insertRow(Connection $connection, $tableName, array $row)
+    protected function insertRow(Connection $connection, string $tableName, array $row): int
     {
         return $connection->insert($tableName, $row);
     }
@@ -191,7 +191,7 @@ class TableCommandController extends AbstractCommandController
      * @param $tableName
      * @return bool
      */
-    protected function truncateTable(Connection $connection, $tableName)
+    protected function truncateTable(Connection $connection, string $tableName): bool
     {
         $connection->truncate($tableName);
         return true;

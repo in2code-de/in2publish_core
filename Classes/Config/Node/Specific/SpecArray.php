@@ -30,9 +30,6 @@ namespace In2code\In2publishCore\Config\Node\Specific;
 use In2code\In2publishCore\Config\ValidationContainer;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 
-/**
- * Class SpecArray
- */
 class SpecArray extends AbsSpecNode
 {
     /**
@@ -41,7 +38,7 @@ class SpecArray extends AbsSpecNode
      */
     public function validateType(ValidationContainer $container, $value)
     {
-        if (!is_array($value)) {
+        if (!\is_array($value)) {
             $container->addError('The value is not an array');
         }
     }
@@ -49,7 +46,7 @@ class SpecArray extends AbsSpecNode
     /**
      * @return string[]|int[]|bool[]|array[]
      */
-    public function getDefaults()
+    public function getDefaults(): array
     {
         $defaults = [];
         if (null !== $this->default) {
@@ -68,7 +65,7 @@ class SpecArray extends AbsSpecNode
      *
      * @return array
      */
-    public function cast($value)
+    public function cast($value): array
     {
         return $this->nodes->cast($value);
     }
@@ -76,12 +73,12 @@ class SpecArray extends AbsSpecNode
     /**
      * @param array[]|bool[]|int[]|string[] $value
      */
-    public function unsetDefaults(&$value)
+    public function unsetDefaults(array &$value)
     {
         $this->nodes->unsetDefaults($value[$this->name]);
         if (null !== $this->default) {
             foreach ($this->default as $defValue) {
-                if (in_array($defValue, $value[$this->name])) {
+                if (\in_array($defValue, $value[$this->name], true)) {
                     unset($value[$this->name][array_search($defValue, $value[$this->name])]);
                 }
             }

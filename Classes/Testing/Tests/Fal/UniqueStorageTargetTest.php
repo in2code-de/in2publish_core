@@ -36,21 +36,14 @@ use ReflectionException;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Reflection\Exception;
 
-/**
- * Class UniqueStorageTargetTest
- */
 class UniqueStorageTargetTest implements TestCaseInterface
 {
     /**
      * @var FalStorageTestSubjectsProvider
      */
-    protected $testSubjectProvider = null;
+    protected $testSubjectProvider;
 
-    /**
-     * ResourceStorageTest constructor.
-     */
     public function __construct()
     {
         $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);
@@ -59,9 +52,8 @@ class UniqueStorageTargetTest implements TestCaseInterface
     /**
      * @return TestResult
      * @throws ReflectionException
-     * @throws Exception
      */
-    public function run()
+    public function run(): TestResult
     {
         $storages = $this->testSubjectProvider->getStoragesForUniqueTargetTest();
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
@@ -154,7 +146,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             ForeignInstanceTest::class,
