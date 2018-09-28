@@ -33,9 +33,6 @@ use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class FlushNewsCacheTask
- */
 class FlushNewsCacheTask extends AbstractTask
 {
     /**
@@ -56,7 +53,7 @@ class FlushNewsCacheTask extends AbstractTask
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function executeTask()
+    protected function executeTask(): bool
     {
         /** @var CacheManager $cacheManager */
         $cacheManager = GeneralUtility::makeInstance(CacheManager::class);

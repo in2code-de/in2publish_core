@@ -42,15 +42,12 @@ use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Utility\EidUtility;
 
-/**
- * Class RealUrlTask
- */
 class RealUrlTask extends AbstractTask
 {
     /**
      * @var Connection
      */
-    protected $connection = null;
+    protected $connection;
 
     /**
      * @return void
@@ -79,7 +76,7 @@ class RealUrlTask extends AbstractTask
      *
      * @throws ServiceUnavailableException
      */
-    protected function executeTask()
+    protected function executeTask(): bool
     {
         $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
         $pid = $this->configuration['identifier'];
@@ -143,7 +140,7 @@ class RealUrlTask extends AbstractTask
      * @param int $pageUid
      * @return void
      */
-    protected function cleanAllRealUrlCachesForPageIdentifier($pageUid)
+    protected function cleanAllRealUrlCachesForPageIdentifier(int $pageUid)
     {
         $realUrlTables = [
             // realurl < 2.2
@@ -157,7 +154,7 @@ class RealUrlTask extends AbstractTask
         ];
         foreach ($realUrlTables as $table) {
             if (DatabaseUtility::isTableExistingOnLocal($table)) {
-                $this->connection->delete($table, ['page_id' => (int)$pageUid]);
+                $this->connection->delete($table, ['page_id' => $pageUid]);
             }
         }
     }

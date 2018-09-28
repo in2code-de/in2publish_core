@@ -32,9 +32,6 @@ use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class RefIndexUpdateTask
- */
 class RefIndexUpdateTask extends AbstractTask
 {
     /**
@@ -65,7 +62,7 @@ class RefIndexUpdateTask extends AbstractTask
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function executeTask()
+    protected function executeTask(): bool
     {
         $count = 0;
         $refIndexObj = GeneralUtility::makeInstance(ReferenceIndex::class);

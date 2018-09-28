@@ -321,7 +321,7 @@ class CommonRepository extends BaseRepository
         $foundRecords = [];
 
         foreach ($keysToIterate as $key) {
-            if (strpos($key, ',') === false) {
+            if (strpos((string) $key, ',') === false) {
                 if (empty($localProperties[$key])) {
                     $propertyArray = $this->findPropertiesByProperty($this->localDatabase, 'uid', $key);
                     if (!empty($propertyArray[$key])) {
@@ -1307,7 +1307,7 @@ class CommonRepository extends BaseRepository
             $recordIdentifier = $record->getMergedProperty($propertyName);
         }
 
-        if ($recordIdentifier !== null && trim($recordIdentifier) !== '' && (int)$recordIdentifier > 0) {
+        if ($recordIdentifier !== null && trim((string)$recordIdentifier) !== '' && (int)$recordIdentifier > 0) {
             // if the relation is an MM type, then select all identifiers from the MM table
             if (!empty($columnConfiguration['MM'])) {
                 $records = $this->fetchRelatedRecordsBySelectMm($columnConfiguration, $record, $excludedTableNames);

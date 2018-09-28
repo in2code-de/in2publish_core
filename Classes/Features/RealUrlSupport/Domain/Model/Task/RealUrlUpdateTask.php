@@ -32,9 +32,6 @@ use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class RealUrlUpdateTask
- */
 class RealUrlUpdateTask extends AbstractTask
 {
     /**
@@ -63,7 +60,7 @@ class RealUrlUpdateTask extends AbstractTask
     /**
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function executeTask()
+    protected function executeTask(): bool
     {
         $realUrlDataHandler = GeneralUtility::makeInstance(\DmitryDulepov\Realurl\Hooks\DataHandler::class);
         $cdh = GeneralUtility::makeInstance(DataHandler::class);

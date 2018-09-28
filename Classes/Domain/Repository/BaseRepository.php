@@ -211,14 +211,14 @@ abstract class BaseRepository
      * overwrite any value given in $properties where uid = $identifier
      *
      * @param Connection $connection
-     * @param int $identifier
+     * @param int|string $identifier
      * @param array $properties
      * @return bool
      */
     protected function updateRecord(Connection $connection, $identifier, array $properties): bool
     {
         // deal with MM records, they have (in2publish internal) combined identifiers
-        if (strpos($identifier, ',') !== false) {
+        if (strpos((string)$identifier, ',') !== false) {
             $identifierArray = Record::splitCombinedIdentifier($identifier);
 
             $success = (bool)$connection->update(
