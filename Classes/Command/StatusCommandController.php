@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Command;
 
 /***************************************************************
@@ -46,8 +47,6 @@ class StatusCommandController extends AbstractCommandController
     /**
      * Prints all information about the in2publish system
      * NOTE: This command is used for internal operations in in2publish_core
-     *
-     * @return void
      *
      * @internal
      */
@@ -106,9 +105,7 @@ class StatusCommandController extends AbstractCommandController
         );
         $this->outputLine(
             'adminOnly: '
-            . (isset($GLOBALS['TYPO3_CONF_VARS']['BE']['adminOnly'])
-                ? $GLOBALS['TYPO3_CONF_VARS']['BE']['adminOnly']
-                : 'empty')
+            . ($GLOBALS['TYPO3_CONF_VARS']['BE']['adminOnly'] ?? 'empty')
         );
     }
 

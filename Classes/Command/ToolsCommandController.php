@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Command;
 
 /***************************************************************
@@ -31,9 +32,6 @@ use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class ToolsCommandController
- */
 class ToolsCommandController extends AbstractCommandController
 {
     const TESTS_FAILED = 240;

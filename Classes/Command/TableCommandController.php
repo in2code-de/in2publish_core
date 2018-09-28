@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Command;
 
 /***************************************************************
@@ -48,17 +49,17 @@ class TableCommandController extends AbstractCommandController
     /**
      * @var Connection
      */
-    protected $localDatabase = null;
+    protected $localDatabase;
 
     /**
      * @var Connection
      */
-    protected $foreignDatabase = null;
+    protected $foreignDatabase;
 
     /**
      * @var DatabaseSchemaService
      */
-    protected $dbSchemaService = null;
+    protected $dbSchemaService;
 
     /**
      * @throws \Exception
@@ -80,13 +81,9 @@ class TableCommandController extends AbstractCommandController
      *
      *      Copies a complete table from stage to production and overwrites all old entries!
      *
-     * @param string $tableName
-     *
-     * @return void
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function publishCommand($tableName)
+    public function publishCommand(string $tableName)
     {
         $this->checkLocalContext();
         $this->checkTableExists($tableName);
@@ -135,15 +132,11 @@ class TableCommandController extends AbstractCommandController
      *
      *      Copies a complete table from production to stage and overwrites all old entries!
      *
-     * @param string $tableName
-     *
-     * @return void
-     *
      * @throws \Exception
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function importCommand($tableName)
+    public function importCommand(string $tableName)
     {
         $this->checkLocalContext();
         $this->checkTableExists($tableName);
@@ -157,14 +150,7 @@ class TableCommandController extends AbstractCommandController
         }
     }
 
-    /**
-     * @param Connection $fromDatabase
-     * @param Connection $toDatabase
-     * @param string $tableName
-     *
-     * @return bool
-     */
-    protected function copyTableContents(Connection $fromDatabase, Connection $toDatabase, $tableName)
+    protected function copyTableContents(Connection $fromDatabase, Connection $toDatabase, string $tableName): bool
     {
         if ($this->truncateTable($toDatabase, $tableName)) {
             $queryResult = $fromDatabase->select(['*'], $tableName);
@@ -214,23 +200,16 @@ class TableCommandController extends AbstractCommandController
     /**
      * Stores a backup of the complete local table into the configured directory
      *
-     * @param string $tableName
-     *
-     * @return void
-     *
      * @throws \Exception
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function backupCommand($tableName)
+    public function backupCommand(string $tableName)
     {
         $this->logger->notice('Called Backup Table Command for table "' . $tableName . '"');
         DatabaseUtility::backupTable($this->localDatabase, $tableName);
     }
 
-    /**
-     *
-     */
     protected function checkLocalContext()
     {
         if (!$this->contextService->isLocal()) {
@@ -239,10 +218,7 @@ class TableCommandController extends AbstractCommandController
         }
     }
 
-    /**
-     * @param $tableName
-     */
-    protected function checkTableExists($tableName)
+    protected function checkTableExists(string $tableName)
     {
         if (!$this->dbSchemaService->tableExists($tableName)) {
             $this->outputLine('The table does not exist');

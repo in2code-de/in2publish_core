@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Command;
 
 /***************************************************************
@@ -44,8 +45,6 @@ class PublishTasksRunnerCommandController extends AbstractCommandController
     protected $taskRepository;
 
     /**
-     * PublishTasksRunnerCommandController constructor.
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
@@ -61,7 +60,6 @@ class PublishTasksRunnerCommandController extends AbstractCommandController
      * backend module, including any error message of failed tasks
      * NOTE: This command is used for internal operations in in2publish_core
      *
-     * @return void
      * @internal
      */
     public function runTasksInQueueCommand()

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Command;
 
 /***************************************************************
@@ -30,9 +31,6 @@ use In2code\In2publishCore\Communication\RemoteProcedureCall\EnvelopeDispatcher;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class RpcCommandController
- */
 class RpcCommandController extends AbstractCommandController
 {
     const EXIT_ENVELOPE_MISSING = 230;
@@ -43,16 +41,14 @@ class RpcCommandController extends AbstractCommandController
     /**
      * @var Letterbox
      */
-    protected $letterbox = null;
+    protected $letterbox;
 
     /**
      * @var EnvelopeDispatcher
      */
-    protected $envelopeDispatcher = null;
+    protected $envelopeDispatcher;
 
     /**
-     * RpcCommandController constructor.
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
@@ -66,7 +62,7 @@ class RpcCommandController extends AbstractCommandController
      * @param int $uid Envelope identifier
      * @internal
      */
-    public function executeCommand($uid = 0)
+    public function executeCommand(int $uid = 0)
     {
         if (!$this->contextService->isForeign()) {
             $this->logger->warning('RPC called but context is not Foreign');
