@@ -98,9 +98,9 @@ class DomainService
      *
      * @param RecordInterface $record
      * @param string $stagingLevel
-     * @return string
+     * @return string|null
      */
-    protected function getFirstDomainInRootLineFromRelatedRecords(RecordInterface $record, $stagingLevel): string
+    protected function getFirstDomainInRootLineFromRelatedRecords(RecordInterface $record, $stagingLevel)
     {
         $relatedRecords = $record->getRelatedRecords();
         $domainRecordValues = [];
