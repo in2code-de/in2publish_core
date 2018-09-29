@@ -146,9 +146,9 @@ class CommonRepository extends BaseRepository
      *
      * @param int $identifier
      * @param string $tableName
-     * @return RecordInterface
+     * @return RecordInterface|null
      */
-    public function findByIdentifier($identifier, $tableName = null): RecordInterface
+    public function findByIdentifier($identifier, $tableName = null)
     {
         if ($tableName !== null) {
             $this->tableName = $tableName;
@@ -1823,9 +1823,9 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
-     * @return RecordInterface
+     * @return RecordInterface|null
      */
-    protected function convertToRecord(array $localProperties, array $foreignProperties): RecordInterface
+    protected function convertToRecord(array $localProperties, array $foreignProperties)
     {
         return $this->recordFactory->makeInstance($this, $localProperties, $foreignProperties);
     }
