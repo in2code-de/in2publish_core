@@ -163,14 +163,14 @@ class RecordFactory
      * @param array $foreignProperties Properties of the record from foreign Database
      * @param array $additionalProperties array of not persisted properties
      *
-     * @return RecordInterface
+     * @return RecordInterface|null
      */
     public function makeInstance(
         CommonRepository $commonRepository,
         array $localProperties,
         array $foreignProperties,
         array $additionalProperties = []
-    ): RecordInterface {
+    ) {
         if (false === $this->isRootRecord) {
             $this->isRootRecord = true;
             $isRootRecord = true;
