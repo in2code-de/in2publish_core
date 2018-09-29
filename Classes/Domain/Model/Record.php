@@ -655,9 +655,9 @@ class Record implements RecordInterface
     }
 
     /**
-     * @return RecordInterface
+     * @return RecordInterface|null
      */
-    public function getParentRecord(): RecordInterface
+    public function getParentRecord()
     {
         return $this->parentRecord;
     }
