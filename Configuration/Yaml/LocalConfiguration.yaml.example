@@ -248,8 +248,8 @@ sshConnection:
   # absolute path to local ssh key belonging to the private above
   publicKeyFileAndPathName: /full/path/to/public/ssh/key/id_rsa.pub
 
-  # private key password, NULL if none set
-  privateKeyPassphrase: NULL
+  # private key password, empty string if none set
+  privateKeyPassphrase: ''
 
   # Key fingerprint of the production server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection.
   # You don't need to keep the colons

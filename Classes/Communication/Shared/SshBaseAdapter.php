@@ -217,9 +217,6 @@ abstract class SshBaseAdapter
      */
     protected function validateSshParameter($config)
     {
-        if (empty($config['privateKeyPassphrase'])) {
-            $config['privateKeyPassphrase'] = null;
-        }
         if (empty($config['foreignKeyFingerprint'])) {
             throw new In2publishCoreException('SSH Connection: Option foreignKeyFingerprint is empty', 1425400689);
         } elseif (strpos($config['foreignKeyFingerprint'], ':') !== false) {
