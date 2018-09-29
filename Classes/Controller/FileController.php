@@ -129,7 +129,7 @@ class FileController extends AbstractController
                     LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
                     LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
                 );
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->addFlashMessage(
                     LocalizationUtility::translate('file_publishing.failure.file', 'in2publish_core', [$identifier]),
                     LocalizationUtility::translate('file_publishing.failure', 'in2publish_core')

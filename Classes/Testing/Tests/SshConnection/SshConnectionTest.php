@@ -61,7 +61,7 @@ class SshConnectionTest implements TestCaseInterface
 
         try {
             $response = $this->rceDispatcher->dispatch($request);
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             return new TestResult(
                 'ssh_connection.connection_failed',
                 TestResult::ERROR,

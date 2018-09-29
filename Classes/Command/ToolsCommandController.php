@@ -52,7 +52,7 @@ class ToolsCommandController extends AbstractCommandController
                     break;
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $testingResults = [];
             $success = false;
         }

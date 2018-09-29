@@ -73,7 +73,7 @@ class PublishTasksRunnerCommandController extends AbstractCommandController
                 $success = $task->execute();
                 $result[] = 'Task ' . $task->getUid() . $success ? ' was executed successfully' : ' failed';
                 $result[] = $task->getMessages();
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $result[] = $e->getMessage();
             }
             $this->taskRepository->update($task);

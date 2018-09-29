@@ -72,7 +72,7 @@ class FileUtility
                     } else {
                         static::$logger->error('Could not delete backup "' . $backupFileName . '"');
                     }
-                } catch (\Exception $exception) {
+                } catch (\Throwable $exception) {
                     static::$logger->critical(
                         'An error occurred while deletion of "' . $backupFileName . '"',
                         [

@@ -69,7 +69,7 @@ abstract class SshBaseAdapter
     /**
      * SshBaseAdapter constructor.
      *
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function __construct()
     {
@@ -78,7 +78,7 @@ abstract class SshBaseAdapter
 
         try {
             $this->config = $this->getValidatedConfig();
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             $this->logger->error(
                 'Invalid SSH connection configuration detected',
                 ['message' => $exception->getMessage()]

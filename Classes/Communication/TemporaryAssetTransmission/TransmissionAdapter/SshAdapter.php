@@ -84,7 +84,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
 
         try {
             $targetStream = fopen('ssh2.sftp://' . ((int)$this->sftSession) . $target, 'w');
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             $this->logger->critical('Caught exception while trying to open sftp stream', ['exception' => $exception]);
             throw new In2publishCoreException('Could not open stream on foreign: "' . $exception . '"', 1425467980);
         }

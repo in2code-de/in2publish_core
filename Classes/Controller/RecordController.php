@@ -179,7 +179,7 @@ class RecordController extends AbstractController
                 $record,
                 array_merge($this->configContainer->get('excludeRelatedTables'), $exceptTableNames)
             );
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             $this->logger->error('Error while publishing', ['exception' => $exception]);
             $this->addFlashMessage($exception->getMessage(), AbstractMessage::ERROR);
         }

@@ -80,7 +80,7 @@ class RemoteCommandDispatcher implements SingletonInterface
             try {
                 $adapterClass = $this->adapterRegistry->getAdapter(AdapterInterface::class);
                 $this->adapter = GeneralUtility::makeInstance($adapterClass);
-            } catch (\Exception $exception) {
+            } catch (\Throwable $exception) {
                 $this->logger->debug('SshAdapter initialization failed. See previous log for reason.');
                 return GeneralUtility::makeInstance(RemoteCommandResponse::class, [], [$exception->getMessage()], 1);
             }

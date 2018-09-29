@@ -456,7 +456,7 @@ class CommonRepository extends BaseRepository
 
             try {
                 $record->addRelatedRecords($relatedRecords);
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $this->logger->emergency(
                     'Exception thrown while adding related record: ' . $e->getMessage(),
                     [
@@ -1671,7 +1671,7 @@ class CommonRepository extends BaseRepository
      * @param array $excludedTables
      * @param array $alreadyVisited
      * @return void
-     * @throws \Exception
+     * @throws \Throwable
      */
     public function publishRecordRecursive(
         RecordInterface $record,
@@ -1694,7 +1694,7 @@ class CommonRepository extends BaseRepository
                 'publishRecordRecursiveEnd',
                 [$record, $this]
             );
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             $this->logger->critical(
                 'Publishing single record failed',
                 [
