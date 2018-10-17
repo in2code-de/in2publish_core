@@ -84,11 +84,12 @@ class BackendUtility
             }
         }
 
+        $localConnection = DatabaseUtility::buildLocalDatabaseConnection();
+
         // get id from record ?data[tt_content][13]=foo
         if (null !== ($data = GeneralUtility::_GP('data')) && is_array($data) && 'upload' !== key($data)) {
             $table = key($data);
-            $result = DatabaseUtility
-                ::buildLocalDatabaseConnection()
+            $result = $localConnection
                 ->select(
                     ['pid'],
                     $table,
@@ -107,8 +108,7 @@ class BackendUtility
                 if ($rollbackData[0] === 'pages') {
                     return (int)$rollbackData[1];
                 } else {
-                    $result = DatabaseUtility
-                        ::buildLocalDatabaseConnection()
+                    $result = $localConnection
                         ->select(
                             ['pid'],
                             $rollbackData[0],
@@ -125,8 +125,7 @@ class BackendUtility
         // Assume the record has been imported via DataHandler on the CLI
         // Also, this is the last fallback strategy
         if (!empty($table) && MathUtility::canBeInterpretedAsInteger($identifier)) {
-            $row = DatabaseUtility
-                ::buildLocalDatabaseConnection()
+            $row = $localConnection
                 ->select(
                     ['pid'],
                     $table,
