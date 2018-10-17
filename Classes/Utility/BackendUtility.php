@@ -129,7 +129,7 @@ class BackendUtility
                 ::buildLocalDatabaseConnection()
                 ->select(
                     ['pid'],
-                    $rollbackData[0],
+                    $table,
                     ['uid' => (int)$identifier]
                 )
                 ->fetch();
