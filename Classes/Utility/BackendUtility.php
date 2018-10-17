@@ -85,9 +85,10 @@ class BackendUtility
         }
 
         $localConnection = DatabaseUtility::buildLocalDatabaseConnection();
+        $tableNames = $localConnection->getSchemaManager()->listTableNames();
 
         // get id from record ?data[tt_content][13]=foo
-        if (null !== ($data = GeneralUtility::_GP('data')) && is_array($data) && 'upload' !== key($data)) {
+        if (null !== ($data = GeneralUtility::_GP('data')) && is_array($data) && in_array(key($data), $tableNames)) {
             $table = key($data);
             $result = $localConnection
                 ->select(
@@ -104,7 +105,7 @@ class BackendUtility
         // get id from rollback ?element=tt_content:42
         if (null !== ($rollbackFields = GeneralUtility::_GP('element')) && is_string($rollbackFields)) {
             $rollbackData = explode(':', $rollbackFields);
-            if (count($rollbackData) > 1) {
+            if (count($rollbackData) > 1 && in_array($rollbackData[0], $tableNames)) {
                 if ($rollbackData[0] === 'pages') {
                     return (int)$rollbackData[1];
                 } else {
