@@ -652,7 +652,9 @@ class CommonRepository extends BaseRepository
      */
     protected function getFlexFormDefinition(RecordInterface $record, $column, array $columnConfiguration)
     {
-        if (class_exists(FlexFormTools::class) && isset($columnConfiguration['ds_pointerField'])) {
+        if (method_exists(FlexFormTools::class, 'getDataStructureIdentifier')
+            && isset($columnConfiguration['ds_pointerField'])
+        ) {
             /** @var FlexFormTools $flexFormTools */
             $flexFormTools = GeneralUtility::makeInstance(FlexFormTools::class);
             $dataStructIdentifier = $flexFormTools->getDataStructureIdentifier(
