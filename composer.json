@@ -82,7 +82,8 @@
 			"web-dir": ".Build/Web"
 		},
 		"branch-alias": {
-			"dev-master": "7.1.x-dev"
+			"dev-master": "7.1.x-dev",
+			"dev-develop": "7.1.x-dev"
 		}
 	}
 }
