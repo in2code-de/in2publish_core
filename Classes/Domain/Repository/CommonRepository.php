@@ -1162,6 +1162,7 @@ class CommonRepository extends BaseRepository
                     GeneralUtility::trimExplode(',', $flexFormData, true)
                 );
                 break;
+            case 'file_reference':
             case 'file':
                 $fileAndPathNames = $this->getFileAndPathNames(
                     $columnConfiguration,
@@ -1226,18 +1227,20 @@ class CommonRepository extends BaseRepository
         $propertyName,
         $flexFormData
     ) {
-        $uploadFolder = FileUtility::getCleanFolder($columnConfiguration['uploadfolder']);
+        $prefix = '';
+        if (!empty($columnConfiguration['uploadfolder'])) {
+            $prefix = FileUtility::getCleanFolder($columnConfiguration['uploadfolder']);
+        }
         if (empty($flexFormData)) {
             $fileNames = GeneralUtility::trimExplode(',', $record->getLocalProperty($propertyName), true);
         } else {
             $fileNames = GeneralUtility::trimExplode(',', $flexFormData, true);
         }
         foreach ($fileNames as $key => $filename) {
-            $fileNames[$key] = $uploadFolder . $filename;
-
             // Force indexing of the record
-            GeneralUtility::makeInstance(ResourceFactory::class)
-                          ->getFileObjectFromCombinedIdentifier($fileNames[$key]);
+            $fileNames[$key] = GeneralUtility::makeInstance(ResourceFactory::class)
+                                             ->getFileObjectFromCombinedIdentifier($prefix . $filename)
+                                             ->getIdentifier();
         }
         return $fileNames;
     }
