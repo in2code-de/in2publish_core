@@ -1,5 +1,20 @@
 # In2publish Core Change Log
 
+7.1.1:
+* [TASK] branch alias for develop
+
+
+7.1.0:
+- [FEATURE] allow usage of nav_title in record index view
+- [FEATURE] Enable numeric index overrule if the arrays key is named "definition"
+- [BUGFIX] Add a possibility to unset unwanted array values
+- [BUGFIX] Sort configs by the order of the overruling config
+- [DOCS] Add infos about in2publish extbase commands
+- [DOCS] Add documentation about how configuration is merged
+- [TASK] Add missing flash message for tools modulue
+- [BUGFIX] Avoid error while activating the extension due to not existent cache
+- [TYPO] Fix typos in testing xlf
+
 7.0.5:
 
 - [BUGFIX] Reset collected cache clear entries after writing the task
