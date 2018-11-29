@@ -47,7 +47,7 @@ Scheduler: Can't call commandController from the cli or cronjob but it works in 
 You have to add the environment variable for all CLI calls of commandControllers
 Example call with environment variable (for the stage system):
 
-    IN2PUBLISH_CONTEXT=Local ./typo3/cli_dispatch.phpsh extbase status:version
+    IN2PUBLISH_CONTEXT=Local ../vendor/bin/typo3 status:version
 
 Where can i get the Foreign Key Fingerprint
 -------------------------------------------

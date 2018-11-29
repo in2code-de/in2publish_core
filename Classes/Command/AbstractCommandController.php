@@ -75,8 +75,8 @@ abstract class AbstractCommandController extends CommandController
                 . php_sapi_name() . ' without the IN2PUBLISH_CONTEXT environment variable'
             );
             $this->outputLine(
-                'You have to specify a context before running this ("Local" or "Foreign"). Example: '
-                . 'command like "IN2PUBLISH_CONTEXT=Local ./typo3/cli_dispatch.phpsh extbase help"'
+                'You have to specify a context before running this ("Local" or "Foreign"). Example: command like '
+                . '"IN2PUBLISH_CONTEXT=Local ../vendor/bin/typo3 help"'
             );
             $this->sendAndExit(static::EXIT_NO_CONTEXT);
         }

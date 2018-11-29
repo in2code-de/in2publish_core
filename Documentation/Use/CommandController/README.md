@@ -12,7 +12,7 @@ Some command controllers are intended for CLI usage, some as scheduler tasks. Th
 ## General
 
 All command controllers require the in2publish context variable IN2PUBLISH_CONTEXT set the the applicable context.
-Extbase will show you any executable command with ``./typo3/cli_dispatch.phpsh extbase help``
+Extbase will show you any executable command with ``../vendor/bin/typo3 help``
 The backend user "_cli_lowlevel" is required.
 
 The command controllers depend on the context variable, because they have to access the matching configuration.
@@ -25,7 +25,7 @@ When calling the extbase help function without any context, you will at least th
 To call a command, you need to provide an extra environment variable named "IN2PUBLISH_CONTEXT".
 Here is an example::
 
-    IN2PUBLISH_CONTEXT=Local ./typo3/cli_dispatch.phpsh extbase status:version
+    IN2PUBLISH_CONTEXT=Local ../vendor/bin/typo3 status:version
 
 The example command will boot in2publish with the local configuration and print the current version. The output should look like this::
 
@@ -39,4 +39,4 @@ Hint:
 
 > If you have conflicting CommandController names you can add the extension name to clarify which one should be called:
 
-    IN2PUBLISH_CONTEXT=Local ./typo3/cli_dispatch.phpsh extbase in2publish_core:status:globalConfiguration
+    IN2PUBLISH_CONTEXT=Local ../vendor/bin/typo3 in2publish_core:status:globalConfiguration

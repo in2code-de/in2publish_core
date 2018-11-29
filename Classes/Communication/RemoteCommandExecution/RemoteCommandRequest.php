@@ -32,7 +32,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_merge;
 
 /**
- * Wrapper for a callable command (commands are the string after "./typo3/cli_dispatch.phpsh").
+ * Wrapper for a callable command (commands are the string after "bin/typo3").
  */
 class RemoteCommandRequest
 {
@@ -95,7 +95,8 @@ class RemoteCommandRequest
                 'IN2PUBLISH_CONTEXT' => 'Foreign',
             ]
         );
-        $this->dispatcher = './../vendor/bin/typo3';
+        $composerRoot = (getenv('TYPO3_PATH_COMPOSER_ROOT')) ?: dirname(__DIR__);
+        $this->dispatcher = $composerRoot . '/vendor/bin/typo3';
         $this->command = $command;
         $this->arguments = $arguments;
         $this->options = $options;
