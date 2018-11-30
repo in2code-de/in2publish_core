@@ -649,7 +649,7 @@ class Record implements RecordInterface
      * @return mixed
      * @codeCoverageIgnore
      */
-    public function getColumnsTca()
+    public function getColumnsTca(): array
     {
         return TcaProcessingService::getColumnsFor($this->tableName);
     }

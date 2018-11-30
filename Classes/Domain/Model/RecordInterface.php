@@ -58,7 +58,7 @@ interface RecordInterface
     /**
      * @return string
      */
-    public function getState();
+    public function getState(): string;
 
     /**
      * @param string $state
@@ -168,7 +168,7 @@ interface RecordInterface
     /**
      * @return string
      */
-    public function getTableName();
+    public function getTableName(): string;
 
     /**
      * Get a property from both local and foreign of this Record.
@@ -187,7 +187,7 @@ interface RecordInterface
     /**
      * @return RecordInterface[][]
      */
-    public function getRelatedRecords();
+    public function getRelatedRecords(): array;
 
     /**
      * NOTICE: This will not work if debug.disableParentRecords is disabled!
@@ -207,13 +207,13 @@ interface RecordInterface
     /**
      * @return bool
      */
-    public function isChanged();
+    public function isChanged(): bool;
 
     /**
      * @param RecordInterface[] $relatedRecordsFlat
      * @return RecordInterface[]
      */
-    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = []);
+    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = []): array;
 
     /**
      * Returns the given records from the list of related records if the relation is direct.
@@ -222,21 +222,21 @@ interface RecordInterface
      * @param RecordInterface $record
      * @return RecordInterface Returns always itself
      */
-    public function removeRelatedRecord(RecordInterface $record);
+    public function removeRelatedRecord(RecordInterface $record): RecordInterface;
 
     /**
      * Check if there is a local record
      *
      * @return bool
      */
-    public function localRecordExists();
+    public function localRecordExists(): bool;
 
     /**
      * Check if there is a foreign record
      *
      * @return bool
      */
-    public function foreignRecordExists();
+    public function foreignRecordExists(): bool;
 
     /**
      * @param string $table
@@ -244,7 +244,7 @@ interface RecordInterface
      * @param mixed $value
      * @return RecordInterface[]
      */
-    public function getRelatedRecordByTableAndProperty($table, $property, $value);
+    public function getRelatedRecordByTableAndProperty($table, $property, $value): array;
 
     /**
      * @param RecordInterface $record
@@ -258,12 +258,12 @@ interface RecordInterface
      * @param RecordInterface[] $relatedRecords
      * @return RecordInterface
      */
-    public function addRelatedRecords(array $relatedRecords);
+    public function addRelatedRecords(array $relatedRecords): RecordInterface;
 
     /**
      * @return bool
      */
-    public function isParentRecordLocked();
+    public function isParentRecordLocked(): bool;
 
     /**
      * Returns if this record or children record has changed in any way if added or changed or deleted
@@ -271,24 +271,24 @@ interface RecordInterface
      * @param array $alreadyVisited
      * @return bool
      */
-    public function isChangedRecursive(array &$alreadyVisited = []);
+    public function isChangedRecursive(array &$alreadyVisited = []): bool;
 
     /**
      * @param RecordInterface $parentRecord
      * @return Record
      */
-    public function setParentRecord(RecordInterface $parentRecord);
+    public function setParentRecord(RecordInterface $parentRecord): RecordInterface;
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function getColumnsTca();
+    public function getColumnsTca(): array;
 
     /**
      * @param string $propertyName
      * @return bool
      */
-    public function hasAdditionalProperty($propertyName);
+    public function hasAdditionalProperty($propertyName): bool;
 
     /**
      * @param string $side
