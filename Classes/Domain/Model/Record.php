@@ -1054,7 +1054,7 @@ class Record implements RecordInterface
      * @param RecordInterface[] $relatedRecordsFlat
      * @return RecordInterface[]
      */
-    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = []): RecordInterface
+    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = []): array
     {
         foreach ($this->getRelatedRecords() as $relatedRecords) {
             foreach ($relatedRecords as $relatedRecord) {
