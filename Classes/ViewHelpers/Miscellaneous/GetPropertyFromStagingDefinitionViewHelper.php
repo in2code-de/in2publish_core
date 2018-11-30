@@ -48,7 +48,7 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
         $this->registerArgument('record', RecordInterface::class, 'The record with the desired property value', true);
         $this->registerArgument('propertyName', 'string', 'The name of the desired property', true);
         $this->registerArgument('stagingLevel', 'string', 'Fetch the local or the foreign property', false, 'local');
-        $this->registerArgument('fallbackProperty', 'string', 'Fetch this if the primary prop is empty', false, null);
+        $this->registerArgument('fallbackProperty', 'string', 'Fetch this if the primary prop is empty', false, '');
     }
 
     /**
@@ -68,22 +68,27 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
 
     /**
      * @param Record $record
-     * @param $propertyName
-     * @param $stagingLevel
-     * @param $fallbackProperty
+     * @param string $propertyName
+     * @param string $stagingLevel
+     * @param string|null $fallbackProperty
      * @return string
      */
-    protected function getProperty(Record $record, string $propertyName, string $stagingLevel, string $fallbackProperty): string
-    {
+    protected function getProperty(
+        Record $record,
+        string $propertyName,
+        string $stagingLevel,
+        string $fallbackProperty
+    ): string {
         $properties = ObjectAccess::getProperty($record, ucfirst($stagingLevel) . 'Properties');
         if (isset($properties[$propertyName])) {
             $value = $properties[$propertyName];
-            if (empty($value) && null !== $fallbackProperty) {
-                $value = $this->getProperty($record, $fallbackProperty, $stagingLevel);
+            if (empty($value) && !empty($fallbackProperty)) {
+                $value = $this->getProperty($record, $fallbackProperty, $stagingLevel, '');
             }
-            return $value;
+        } else {
+            $value = $this->fallbackRootPageTitle($record, $propertyName, $stagingLevel);
         }
-        return $this->fallbackRootPageTitle($record, $propertyName, $stagingLevel);
+        return (string)$value;
     }
 
     /**
@@ -94,8 +99,11 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
      * @param string $stagingLevel
      * @return string
      */
-    protected function fallbackRootPageTitle(Record $record, string $propertyName, string $stagingLevel = 'local'): string
-    {
+    protected function fallbackRootPageTitle(
+        Record $record,
+        string $propertyName,
+        string $stagingLevel = 'local'
+    ): string {
         if ($record->getTableName() === 'pages' && $record->getIdentifier() === 0 && $propertyName === 'title') {
             if ($stagingLevel === 'local') {
                 return $this->getSiteName();
