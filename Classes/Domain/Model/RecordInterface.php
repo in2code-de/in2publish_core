@@ -89,7 +89,7 @@ interface RecordInterface
      * @param array $localProperties
      * @return RecordInterface
      */
-    public function setLocalProperties(array $localProperties);
+    public function setLocalProperties(array $localProperties): RecordInterface;
 
     /**
      * @return array
@@ -114,7 +114,7 @@ interface RecordInterface
      * @param array $foreignProperties
      * @return RecordInterface
      */
-    public function setForeignProperties(array $foreignProperties);
+    public function setForeignProperties(array $foreignProperties): RecordInterface;
 
     /**
      * @return RecordInterface
