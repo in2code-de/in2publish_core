@@ -5,3 +5,4 @@
 * [Installation](Installation/)
 * [Use](Use/)
 * [FAQ](FAQ.md)
+* [Upgrade](Upgrade/)

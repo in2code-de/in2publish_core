@@ -82,7 +82,6 @@ ignoreFieldsForDifferenceView:
     - crdate
     - cruser_id
     - SYS_LASTCHANGED
-    - l18n_cfg
   physical_folder:
     - absolutePath
     - ino
