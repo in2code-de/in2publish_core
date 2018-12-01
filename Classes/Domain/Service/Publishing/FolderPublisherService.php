@@ -54,7 +54,9 @@ class FolderPublisherService
         // Determine if the folder should get published or deleted.
         // If it exists locally then create it on foreign else remove it.
         if (ResourceFactory::getInstance()->getStorageObject($storage)->hasFolder($folderIdentifier)) {
-            $success = $remoteFalDriver->createFolder(basename($folderIdentifier), dirname($folderIdentifier), true);
+            $success = $folderIdentifier === $remoteFalDriver->createFolder(basename($folderIdentifier),
+                dirname($folderIdentifier), true);
+
         } else {
             $success = $remoteFalDriver->deleteFolder($folderIdentifier, true);
         }
