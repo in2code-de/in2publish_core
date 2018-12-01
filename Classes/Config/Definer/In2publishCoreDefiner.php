@@ -142,7 +142,7 @@ class In2publishCoreDefiner implements DefinerInterface
                                             ->addString('name', 'database_123')
                                             ->addString('username', 'username_123')
                                             ->addString('password', 'Password_123')
-                                            ->addString('hostname', '127.0.0.1', [HostNameValidator::class => [3306]])
+                                            ->addString('hostname', '127.0.0.1')
                                             ->addInteger('port', 3306, [IPv4PortValidator::class])
                                  )
                       )
