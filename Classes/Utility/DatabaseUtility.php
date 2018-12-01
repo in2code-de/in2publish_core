@@ -184,7 +184,9 @@ class DatabaseUtility
 
         $data .= $result[0]['Create Table'] . ';' . PHP_EOL;
 
-        $resultSet = $connection->select(['*'], $tableName);
+        $query = $connection->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $resultSet = $query->select('*')->from($tableName)->execute();
 
         while (($row = $resultSet->fetch())) {
             $data .=

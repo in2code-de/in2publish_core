@@ -136,7 +136,13 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
      */
     protected function fetchStorages(Connection $connection): array
     {
-        $rows = (array)$connection->select(['*'], 'sys_file_storage', ['deleted' => 0])->fetchAll();
+        $query = $connection->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $rows = $query->select('*')
+                      ->from('sys_file_storage')
+                      ->where($query->expr()->eq('deleted', 0))
+                      ->execute()
+                      ->fetchAll(\PDO::FETCH_ASSOC);
         return array_combine(array_column($rows, 'uid'), $rows);
     }
 }

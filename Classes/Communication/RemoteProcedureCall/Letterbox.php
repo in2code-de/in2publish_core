@@ -131,14 +131,14 @@ class Letterbox
             $database = DatabaseUtility::buildForeignDatabaseConnection();
         }
 
-        $envelopeData = $database
-            ->select(
-                ['command', 'request', 'response', 'uid'],
-                static::TABLE,
-                ['uid' => $uid]
-            )
-            ->fetch();
-
+        $query = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $envelopeData = $query->select('command', 'request', 'response', 'uid')
+                              ->from(static::TABLE)
+                              ->where($query->expr()->eq('uid', (int)$uid))
+                              ->setMaxResults(1)
+                              ->execute()
+                              ->fetch(\PDO::FETCH_ASSOC);
         if (is_array($envelopeData)) {
             $envelope = Envelope::fromArray($envelopeData);
             if (!$this->keepEnvelopes && $burnEnvelope) {

@@ -135,16 +135,16 @@ class DomainService
                 // Error: not connected
                 return '';
             }
-            $domainRecord = $connection
-                ->select(
-                    ['domainName'],
-                    static::TABLE_NAME,
-                    ['pid' => (int)$page['uid'], 'hidden' => 0],
-                    [],
-                    ['sorting' => 'asc'],
-                    1
-                )
-                ->fetch();
+            $query = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $domainRecord = $query->select('domainName')
+                                  ->from(static::TABLE_NAME)
+                                  ->where($query->expr()->eq('pid', (int)$page['uid']))
+                                  ->andWhere('hidden', 0)
+                                  ->orderBy('sorting', 'ASC')
+                                  ->setMaxResults(1)
+                                  ->execute()
+                                  ->fetch(\PDO::FETCH_ASSOC);
             if (isset($domainRecord['domainName'])) {
                 return $domainRecord['domainName'];
             }

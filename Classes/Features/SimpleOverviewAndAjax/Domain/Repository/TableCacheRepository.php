@@ -81,13 +81,13 @@ class TableCacheRepository implements SingletonInterface
         }
         $connection = DatabaseUtility::buildDatabaseConnectionForSide($databaseName);
         if ($connection instanceof Connection) {
-            $row = $connection
-                ->select(
-                    ['*'],
-                    $tableName,
-                    ['uid' => (int)$uniqueIdentifier]
-                )
-                ->fetchAll();
+            $query = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $row = $query->select('*')
+                         ->from($tableName)
+                         ->where($query->expr()->eq('uid', (int)$uniqueIdentifier))
+                         ->execute()
+                         ->fetchAll(\PDO::FETCH_ASSOC);
             if (isset($row[0]) && $row[0] === false) {
                 return [];
             }
@@ -110,15 +110,14 @@ class TableCacheRepository implements SingletonInterface
     {
         $connection = DatabaseUtility::buildDatabaseConnectionForSide($databaseName);
         if ($connection instanceof Connection) {
-            $rows = (array)$connection
-                ->select(
-                    ['*'],
-                    $tableName,
-                    ['pid' => (int)$pageIdentifier],
-                    [],
-                    ['uid' => 'ASC']
-                )
-                ->fetchAll();
+            $query = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $rows = $query->select('*')
+                          ->from($tableName)
+                          ->where($query->expr()->eq('pid', (int)$pageIdentifier))
+                          ->orderBy('uid', 'ASC')
+                          ->execute()
+                          ->fetchAll(\PDO::FETCH_ASSOC);
             $rows = array_combine(array_column($rows, 'uid'), $rows);
             $this->cacheRecords($tableName, $rows, $databaseName);
         } else {

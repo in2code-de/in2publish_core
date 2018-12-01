@@ -207,14 +207,13 @@ class DatabaseDifferencesTest implements TestCaseInterface
             ]
         );
         $uid = (int)$local->lastInsertId();
-        $results = $foreign->select(
-            ['*'],
-            'tx_in2code_in2publish_task',
-            ['task_type' => '"Backend Test"']
-        );
-
+        $query = $foreign->createQueryBuilder();
+        $statement = $query->select('*')
+                           ->from('tx_in2code_in2publish_task')
+                           ->where($query->expr()->eq('task_type', $query->createNamedParameter('Backend Test')))
+                           ->execute();
         $identical = false;
-        foreach ($results->fetchAll() as $result) {
+        while ($result = $statement->fetch(\PDO::FETCH_ASSOC)) {
             if ($uid === (int)$result['uid'] && $random === (int)$result['configuration']) {
                 $identical = true;
                 break;

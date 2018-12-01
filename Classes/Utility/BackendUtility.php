@@ -90,13 +90,14 @@ class BackendUtility
         // get id from record ?data[tt_content][13]=foo
         if (null !== ($data = GeneralUtility::_GP('data')) && is_array($data) && in_array(key($data), $tableNames)) {
             $table = key($data);
-            $result = $localConnection
-                ->select(
-                    ['pid'],
-                    $table,
-                    ['uid' => (int)key($data[$table])]
-                )
-                ->fetch();
+            $query = $localConnection->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $result = $query->select('pid')
+                            ->from($table)
+                            ->where($query->expr()->eq('uid', (int)key($data[$table])))
+                            ->setMaxResults(1)
+                            ->execute()
+                            ->fetch(\PDO::FETCH_ASSOC);
             if (false !== $result && isset($result['pid'])) {
                 return (int)$result['pid'];
             }
@@ -109,13 +110,14 @@ class BackendUtility
                 if ($rollbackData[0] === 'pages') {
                     return (int)$rollbackData[1];
                 } else {
-                    $result = $localConnection
-                        ->select(
-                            ['pid'],
-                            $rollbackData[0],
-                            ['uid' => (int)$rollbackData[1]]
-                        )
-                        ->fetch();
+                    $query = $localConnection->createQueryBuilder();
+                    $query->getRestrictions()->removeAll();
+                    $result = $query->select('pid')
+                                    ->from($rollbackData[0])
+                                    ->where($query->expr()->eq('uid', (int)$rollbackData[1]))
+                                    ->setMaxResults(1)
+                                    ->execute()
+                                    ->fetch(\PDO::FETCH_ASSOC);
                     if (false !== $result && isset($result['pid'])) {
                         return (int)$result['pid'];
                     }
@@ -126,13 +128,14 @@ class BackendUtility
         // Assume the record has been imported via DataHandler on the CLI
         // Also, this is the last fallback strategy
         if (!empty($table) && MathUtility::canBeInterpretedAsInteger($identifier)) {
-            $row = $localConnection
-                ->select(
-                    ['pid'],
-                    $table,
-                    ['uid' => (int)$identifier]
-                )
-                ->fetch();
+            $query = $localConnection->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $row = $query->select('pid')
+                         ->from($table)
+                         ->where($query->expr()->eq('uid', (int)$identifier))
+                         ->setMaxResults(1)
+                         ->execute()
+                         ->fetch(\PDO::FETCH_ASSOC);
             if (isset($row['pid'])) {
                 return (int)$row['pid'];
             }

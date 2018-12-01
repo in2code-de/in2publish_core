@@ -132,17 +132,14 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
                 ],
             ];
         } else {
-            $this->remoteDriverSettings = DatabaseUtility
-                ::buildForeignDatabaseConnection()
-                ->select(
-                    ['*'],
-                    'sys_file_storage',
-                    ['uid' => (int)$this->storageUid],
-                    [],
-                    [],
-                    1
-                )
-                ->fetch();
+            $query = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $this->remoteDriverSettings = $query->select('*')
+                                                ->from('sys_file_storage')
+                                                ->where($query->expr()->eq('uid', (int)$this->storageUid))
+                                                ->setMaxResults(1)
+                                                ->execute()
+                                                ->fetch(\PDO::FETCH_ASSOC);
             $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
             $driverConfiguration = $flexFormService->convertFlexFormContentToArray(
                 $this->remoteDriverSettings['configuration']

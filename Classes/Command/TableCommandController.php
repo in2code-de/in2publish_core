@@ -153,9 +153,11 @@ class TableCommandController extends AbstractCommandController
     protected function copyTableContents(Connection $fromDatabase, Connection $toDatabase, string $tableName): bool
     {
         if ($this->truncateTable($toDatabase, $tableName)) {
-            $queryResult = $fromDatabase->select(['*'], $tableName);
+            $query = $fromDatabase->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $queryResult = $query->select('*')->from($tableName)->execute();
             $this->logger->notice('Successfully truncated table, importing ' . $queryResult->rowCount() . ' rows');
-            while (($row = $queryResult->fetch())) {
+            while ($row = $queryResult->fetch()) {
                 if (($success = $this->insertRow($toDatabase, $tableName, $row)) !== true) {
                     $this->logger->critical(
                         'Failed to import row into "' . $tableName . '"',

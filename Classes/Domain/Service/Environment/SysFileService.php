@@ -80,12 +80,15 @@ class SysFileService extends AbstractService
     {
         $oldIdentifier = $this->getIdentifierFromAbsolutePath($oldFile);
         $newIdentifier = $this->getIdentifierFromAbsolutePath($newFile);
-        $rows = $this->connection->select(
-            ['uid'],
-            static::TABLE_NAME,
-            ['identifier ' => '"' . $oldIdentifier . '"']
-        );
-        foreach ($rows as $row) {
+
+        $query = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $statement = $query->select('uid')
+                           ->from(static::TABLE_NAME)
+                           ->where($query->expr()->eq('identifier', $query->createNamedParameter($oldIdentifier)))
+                           ->setMaxResults(1)
+                           ->execute();
+        while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
             $this->connection->update(
                 static::TABLE_NAME,
                 $this->getArgumentsForSysFileFromFile($newIdentifier),
