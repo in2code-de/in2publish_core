@@ -274,7 +274,7 @@ abstract class BaseRepository
      */
     protected function deleteRecord(Connection $connection, $identifier)
     {
-        if (strpos($identifier, ',') !== false) {
+        if (strpos((string)$identifier, ',') !== false) {
             $identifierArray = Record::splitCombinedIdentifier($identifier);
 
             $success = (bool)$connection->delete($this->tableName, $identifierArray);
