@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Service\Database;
 
 /***************************************************************
@@ -82,6 +83,7 @@ class UidReservationService
         if (!isset($this->cache[$cacheKey])) {
             $this->cache[$cacheKey] = $databaseConnection->getDatabase();
         }
+
         return $this->cache[$cacheKey];
     }
 
@@ -93,8 +95,7 @@ class UidReservationService
             try {
                 $databaseConnection
                     ->prepare($statement)
-                    ->execute()
-                ;
+                    ->execute();
             } catch (DBALException $e) {
                 throw new \RuntimeException('Failed to increase auto_increment on sys_file', 1475248851);
             }
@@ -111,8 +112,7 @@ class UidReservationService
                 ->from('sys_file')
                 ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid)))
                 ->execute()
-                ->fetchColumn(0)
-            ;
+                ->fetchColumn(0);
 
             if (0 !== $numberOfRows) {
                 return false;
@@ -130,14 +130,13 @@ class UidReservationService
         );
 
         try {
-            $tableStatus = $databaseConnection
-                ->prepare($statement)
-                ->execute()
-            ;
+            /** @var \Doctrine\DBAL\Statement $tableQuery */
+            $tableQuery = $databaseConnection->prepare($statement);
+            $tableQuery->execute();
+            $tableStatus = $tableQuery->fetch();
         } catch (DBALException $e) {
             throw new \RuntimeException('Could not select table status from database', 1475242494);
         }
-
         if (!isset($tableStatus['Auto_increment'])) {
             throw new \RuntimeException('Could not fetch Auto_increment value from query result', 1475242706);
         }
