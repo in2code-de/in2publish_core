@@ -336,7 +336,7 @@ abstract class BaseRepository
             $method . ': Query failed.',
             [
                 'errno' => $connection->errorCode(),
-                'error' => $connection->errorInfo(),
+                'error' => json_encode($connection->errorInfo()),
                 'tableName' => $this->tableName,
             ]
         );

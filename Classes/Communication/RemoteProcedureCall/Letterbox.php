@@ -94,7 +94,7 @@ class Letterbox
                     'Failed to send envelope [' . $uid . ']',
                     [
                         'envelope' => $envelope->toArray(),
-                        'error' => $database->errorInfo(),
+                        'error' => json_encode($database->errorInfo()),
                         'errno' => $database->errorCode(),
                     ]
                 );
@@ -107,7 +107,7 @@ class Letterbox
                     'Failed to update envelope [' . $uid . ']',
                     [
                         'envelope' => $envelope->toArray(),
-                        'error' => $database->errorInfo(),
+                        'error' => json_encode($database->errorInfo()),
                         'errno' => $database->errorCode(),
                     ]
                 );
@@ -146,9 +146,9 @@ class Letterbox
             }
         } else {
             $this->logger->error(
-                'Failed to receive envelope [' . $uid . '] "' . $database->errorInfo() . '"',
+                'Failed to receive envelope [' . $uid . '] "' . json_encode($database->errorInfo()) . '"',
                 [
-                    'error' => $database->errorInfo(),
+                    'error' => json_encode($database->errorInfo()),
                     'errno' => $database->errorCode(),
                 ]
             );
