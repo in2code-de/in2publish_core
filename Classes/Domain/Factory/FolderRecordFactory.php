@@ -573,8 +573,12 @@ class FolderRecordFactory
      * @return array
      * @internal param DatabaseConnection $targetDatabase
      */
-    protected function reclaimSysFileEntriesBySide(array $onlyDiskIdentifiers, $hashedIdentifier, array $files, $side): array
-    {
+    protected function reclaimSysFileEntriesBySide(
+        array $onlyDiskIdentifiers,
+        $hashedIdentifier,
+        array $files,
+        $side
+    ): array {
         // the chance is vanishing low to find a file by its identifier in the database
         // because they should have been found by the folder hash already, but i'm a
         // generous developer and allow FAL to completely fuck up the folder hash
@@ -590,9 +594,9 @@ class FolderRecordFactory
                         // The folder hash on foreign might be correctly different e.g. in case the file was moved!
                         $property = $sysFileEntry->getPropertyBySideIdentifier($side, 'folder_hash');
                         if (null !== $property) {
-                            DatabaseUtility::buildDatabaseConnectionForSide($side)->exec_UPDATEquery(
+                            DatabaseUtility::buildDatabaseConnectionForSide($side)->update(
                                 'sys_file',
-                                'uid=' . $sysFileEntry->getIdentifier(),
+                                ['uid' => (int)$sysFileEntry->getIdentifier()],
                                 ['folder_hash' => $hashedIdentifier]
                             );
                             $properties = $sysFileEntry->getPropertiesBySideIdentifier($side);
@@ -754,7 +758,7 @@ class FolderRecordFactory
     {
         return array_merge(
             $logData,
-            ['error' => $this->foreignDatabase->sql_error(), 'errno' => $this->foreignDatabase->sql_errno()]
+            ['error' => json_encode($this->foreignDatabase->errorInfo()),'errno' => $this->foreignDatabase->errorCode()]
         );
     }
 
@@ -765,7 +769,11 @@ class FolderRecordFactory
      */
     protected function updateForeignIndex($oldUid, $newUid): bool
     {
-        return (bool)$this->foreignDatabase->exec_UPDATEquery('sys_file', 'uid=' . $oldUid, ['uid' => $newUid]);
+        return (bool)$this->foreignDatabase->update(
+            'sys_file',
+            ['uid' => (int)$newUid],
+            ['uid' => (int)$oldUid]
+        );
     }
 
     /**
@@ -775,10 +783,10 @@ class FolderRecordFactory
      */
     protected function updateForeignReference($oldUid, $newUid): bool
     {
-        return (bool)$this->foreignDatabase->exec_UPDATEquery(
+        return (bool)$this->foreignDatabase->update(
             'sys_file_reference',
-            'table_local LIKE "sys_file" AND uid_local=' . $oldUid,
-            ['uid_local' => $newUid]
+            ['uid' => (int)$newUid],
+            ['uid_local' => (int)$oldUid, 'table_local' => 'sys_file']
         );
     }
 
@@ -788,11 +796,15 @@ class FolderRecordFactory
      */
     protected function countForeignReferences($oldUid): int
     {
-        $count = $this->foreignDatabase->exec_SELECTcountRows(
-            'uid',
-            'sys_file_reference',
-            'table_local LIKE "sys_file" AND uid_local=' . $oldUid
-        );
+        $query = $this->foreignDatabase->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $count = $query->count('*')
+            ->from('sys_file_reference')
+            ->where($query->expr()->eq('table_local',$query->createNamedParameter('sys_file')))
+            ->andWhere($query->expr()->eq('uid_local',$query->createNamedParameter($oldUid)))
+            ->execute()
+            ->fetchColumn(0);
+
         if (false === $count) {
             $this->logger->critical(
                 'Could not count foreign references by uid',
@@ -809,7 +821,14 @@ class FolderRecordFactory
      */
     protected function countForeignIndices($newUid): int
     {
-        if (false === ($count = $this->foreignDatabase->exec_SELECTcountRows('uid', 'sys_file', 'uid=' . $newUid))) {
+        $query = $this->foreignDatabase->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+
+        if (false === ($count = $query->count('uid')
+                ->from('sys_file')
+                ->where($query->expr()->eq('uid', $query->createNamedParameter($newUid)))
+                ->execute()
+                ->fetchColumn(0))) {
             $this->logger->critical(
                 'Could not count foreign indices by uid',
                 $this->enrichWithForeignDatabaseErrorInformation(['uid', $newUid])
