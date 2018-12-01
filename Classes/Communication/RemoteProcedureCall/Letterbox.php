@@ -131,7 +131,7 @@ class Letterbox
             $database = DatabaseUtility::buildForeignDatabaseConnection();
         }
 
-        $query = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+        $query = $database->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $envelopeData = $query->select('command', 'request', 'response', 'uid')
                               ->from(static::TABLE)
