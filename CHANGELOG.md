@@ -1,6 +1,6 @@
 # In2publish Core Change Log
 
-* [!!!][BUGFIX] Change default configuration for pages ignoreFieldsForDifferenceView 
+ - [!!!][BUGFIX] Change default configuration for pages ignoreFieldsForDifferenceView 
 
 7.1.1:
 * [TASK] branch alias for develop

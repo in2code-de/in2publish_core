@@ -82,7 +82,6 @@ class In2publishCoreDefiner implements DefinerInterface
             'crdate',
             'cruser_id',
             'SYS_LASTCHANGED',
-            'l18n_cfg',
         ],
         'physical_folder' => [
             'absolutePath',
