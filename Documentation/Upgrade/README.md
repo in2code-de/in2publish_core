@@ -1,9 +1,8 @@
 # Upgrade
 
-## Upgrade from  <=7.x to version 8.x
+## Upgrade from  <=7.x to version 7.2.0
 
 Please check your configuration for the setting 
-
 
 > Ignore this fields for DIFF view
 >
@@ -13,8 +12,5 @@ Please check your configuration for the setting
 >
 >     l18n_cfg
 
-
 This default setting in version 7 (or older) prevents, that the page setting "hide default translation" is not published.
 This is not intended. We recommend to remove this configuration.
-
-
