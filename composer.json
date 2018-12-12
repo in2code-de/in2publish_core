@@ -28,6 +28,10 @@
 		{
 			"name": "Alex Kellner",
 			"email": "alexander.kellner@in2code.de"
+		},
+		{
+			"name": "Stefan Busemann",
+			"email": "stefan.busemann@in2code.de"
 		}
 	],
 	"type": "typo3-cms-extension",
@@ -82,8 +86,8 @@
 			"web-dir": ".Build/Web"
 		},
 		"branch-alias": {
-			"dev-master": "7.1.x-dev",
-			"dev-develop": "7.1.x-dev"
+			"dev-master": "7.2.x-dev",
+			"dev-develop": "7.2.x-dev"
 		}
 	}
 }
