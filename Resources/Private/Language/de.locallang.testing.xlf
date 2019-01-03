@@ -175,20 +175,20 @@
 				<target state="translated">Der folgende Fehler wurde von der SSH Verbindung gemeldet:</target>
 			</trans-unit>
 			<trans-unit id="ssh_connection.invalid_php">
-				<source>The path to php seems to be wrong (option: sshConnection.pathToPhp).</source>
-				<target state="translated">Der Pfad zu PHP stimmt möglicherweise nicht (Option: sshConnection.pathToPhp).</target>
+				<source>The path to php seems to be wrong (option: foreign.pathToPhp).</source>
+				<target state="translated">Der Pfad zu PHP stimmt möglicherweise nicht (Option: foreign.pathToPhp).</target>
 			</trans-unit>
 			<trans-unit id="ssh_connection.php_test_error_message">
 				<source>The test returned following error message:</source>
 				<target state="translated">Der Test hat folgende Fehlermeldung zurück gegeben:</target>
 			</trans-unit>
 			<trans-unit id="ssh_connection.foreign_document_root_wrong">
-				<source>The foreign document root could not be validated, because typical TYPO3 folders are missing (option: sshConnection.foreignRootPath).</source>
-				<target state="translated">Das Webverzeichnis des entfernten Systems konnte nicht verifiziert werden, da typische TYPO3-Verzeichnisse fehlen (Option: sshConnection.foreignRootPath).</target>
+				<source>The foreign document root could not be validated, because typical TYPO3 folders are missing (option: foreign.rootPath).</source>
+				<target state="translated">Das Webverzeichnis des entfernten Systems konnte nicht verifiziert werden, da typische TYPO3-Verzeichnisse fehlen (Option: foreign.rootPath).</target>
 			</trans-unit>
 			<trans-unit id="ssh_connection.foreign_document_root_missing">
-				<source>The foreign document root could not be validated, because the configured folder "%s" does not exist (option: sshConnection.foreignRootPath).</source>
-				<target state="translated">Das Webverzeichnis des entfernten Systems konnte nicht verifiziert werden, da das konfigurierte Verzeichnis "%s" nicht existiert (Option: sshConnection.foreignRootPath).</target>
+				<source>The foreign document root could not be validated, because the configured folder "%s" does not exist (option: foreign.rootPath).</source>
+				<target state="translated">Das Webverzeichnis des entfernten Systems konnte nicht verifiziert werden, da das konfigurierte Verzeichnis "%s" nicht existiert (Option: foreign.rootPath).</target>
 			</trans-unit>
 			<trans-unit id="ssh_connection.foreign_document_validation_error">
 				<source>Could not validate the foreign document root for other reasons.</source>
