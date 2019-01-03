@@ -82,14 +82,14 @@ class ForeignEnvironmentService
 
         $decodedDbInit = [];
         if ($response->isSuccessful()) {
-            $encodedDbInit = 'W10=';
+            $encodedDbInit = 'W10='; // = base64 encoded empty array ("[]")
             foreach ($response->getOutput() as $line) {
                 if (false !== strpos($line, 'DBinit: ')) {
                     $encodedDbInit = GeneralUtility::trimExplode(':', $line)[1];
                     break;
                 }
             }
-            $decodedDbInit = json_decode(base64_decode($encodedDbInit), true);
+            $decodedDbInit = (array)json_decode(base64_decode($encodedDbInit), true);
             $this->cache->set('foreign_db_init', $decodedDbInit, [], 86400);
         } else {
             $this->logger->error(
