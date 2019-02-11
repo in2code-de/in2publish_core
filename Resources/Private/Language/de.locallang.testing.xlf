@@ -229,7 +229,7 @@
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\LocalSysDomainTest -->
 
 			<trans-unit id="application.local_sys_domain_missing">
-				<source>No valid sys_domain entry has been on the local system.</source>
+				<source>No valid sys_domain entry has been found on the local system.</source>
 				<target state="translated">Es wurde kein gültiger sys_domain Eintrag im lokalen System gefunden.</target>
 			</trans-unit>
 			<trans-unit id="application.local_sys_domain_configured">
