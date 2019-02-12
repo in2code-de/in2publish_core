@@ -115,6 +115,11 @@ class CommonRepository extends BaseRepository
     protected $skipRecords = [];
 
     /**
+     * @var array
+     */
+    protected $visitedRecords = [];
+
+    /**
      * @param Connection $localDatabase
      * @param Connection $foreignDatabase
      * @param string $tableName
@@ -1669,15 +1674,11 @@ class CommonRepository extends BaseRepository
      *
      * @param RecordInterface $record
      * @param array $excludedTables
-     * @param array $alreadyVisited
      * @return void
      * @throws \Throwable
      */
-    public function publishRecordRecursive(
-        RecordInterface $record,
-        array $excludedTables = ['pages'],
-        array $alreadyVisited = []
-    ) {
+    public function publishRecordRecursive(RecordInterface $record, array $excludedTables = ['pages'])
+    {
         try {
             // Dispatch Anomaly
             $this->signalSlotDispatcher->dispatch(
@@ -1686,7 +1687,7 @@ class CommonRepository extends BaseRepository
                 [$record, $this]
             );
 
-            $this->publishRecordRecursiveInternal($record, $excludedTables, $alreadyVisited);
+            $this->publishRecordRecursiveInternal($record, $excludedTables);
 
             // Dispatch Anomaly
             $this->signalSlotDispatcher->dispatch(
@@ -1711,23 +1712,19 @@ class CommonRepository extends BaseRepository
     /**
      * @param RecordInterface $record
      * @param array $excludedTables
-     * @param array $alreadyVisited
      * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
      * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException
      */
-    protected function publishRecordRecursiveInternal(
-        RecordInterface $record,
-        array $excludedTables,
-        array $alreadyVisited
-    ) {
+    protected function publishRecordRecursiveInternal(RecordInterface $record, array $excludedTables)
+    {
         $tableName = $record->getTableName();
 
-        if (!empty($alreadyVisited[$tableName])) {
-            if (in_array($record->getIdentifier(), $alreadyVisited[$tableName])) {
+        if (!empty($this->visitedRecords[$tableName])) {
+            if (in_array($record->getIdentifier(), $this->visitedRecords[$tableName])) {
                 return;
             }
         }
-        $alreadyVisited[$tableName][] = $record->getIdentifier();
+        $this->visitedRecords[$tableName][] = $record->getIdentifier();
 
         if (!$this->shouldSkipRecord($record, $tableName)) {
             // Dispatch Anomaly
@@ -1790,7 +1787,7 @@ class CommonRepository extends BaseRepository
         }
 
         // publish all related records
-        $this->publishRelatedRecordsRecursive($record, $excludedTables, $alreadyVisited);
+        $this->publishRelatedRecordsRecursive($record, $excludedTables);
     }
 
     /**
@@ -1799,19 +1796,15 @@ class CommonRepository extends BaseRepository
      *
      * @param RecordInterface $record
      * @param array $excludedTables
-     * @param array $alreadyVisited
      * @return void
      */
-    protected function publishRelatedRecordsRecursive(
-        RecordInterface $record,
-        array $excludedTables,
-        array $alreadyVisited = []
-    ) {
+    protected function publishRelatedRecordsRecursive(RecordInterface $record, array $excludedTables)
+    {
         foreach ($record->getRelatedRecords() as $tableName => $relatedRecords) {
             if (!in_array($tableName, $excludedTables) && is_array($relatedRecords)) {
                 /** @var RecordInterface $relatedRecord */
                 foreach ($relatedRecords as $relatedRecord) {
-                    $this->publishRecordRecursiveInternal($relatedRecord, $excludedTables, $alreadyVisited);
+                    $this->publishRecordRecursiveInternal($relatedRecord, $excludedTables);
                 }
             }
         }
