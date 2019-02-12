@@ -50,8 +50,8 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
      * @var array
      */
     protected $createMasks = [
-        'fileOct' => '0000',
-        'folderOct' => '0000',
+        'decimalFileMask' => 0000,
+        'decimalFolderMask' => 0000,
     ];
 
     /**
@@ -69,8 +69,8 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
 
             $this->logger->debug('Setting create masks');
             $createMasks = GeneralUtility::makeInstance(ForeignEnvironmentService::class)->getCreateMasks();
-            $this->createMasks['fileOct'] = $createMasks['file'];
-            $this->createMasks['folderOct'] = $createMasks['folder'];
+            $this->createMasks['decimalFileMask'] = octdec($createMasks['file']);
+            $this->createMasks['decimalFolderMask'] = octdec($createMasks['folder']);
         }
 
         $this->ensureTargetFolderExists(\dirname($target));
@@ -129,7 +129,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
     {
         // ssh2_sftp_chmod since PECL ssh2 >= 0.12 but has bugs in PHP 7
         if (PHP_MAJOR_VERSION < 7 && \function_exists('ssh2_sftp_chmod')) {
-            if (ssh2_sftp_chmod($this->sftSession, $target, $this->createMasks['fileOct'])) {
+            if (ssh2_sftp_chmod($this->sftSession, $target, $this->createMasks['decimalFolderMask'])) {
                 return true;
             } else {
                 $this->logger->error('Failed to set response via ssh2_sftp_chmod');
@@ -139,7 +139,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
                 RemoteCommandRequest::class,
                 'chmod',
                 [],
-                [$this->createMasks['fileOct'], $target]
+                [decoct($this->createMasks['decimalFileMask']), $target]
             );
             $request->usePhp(false);
             $request->setDispatcher('');
@@ -156,7 +156,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
                         'output' => $response->getOutput(),
                         'errors' => $response->getErrors(),
                         'exit_status' => $response->getExitStatus(),
-                        'file_mask_octal' => $this->createMasks['fileOct'],
+                        'file_mask_octal' => decoct($this->createMasks['decimalFileMask']),
                         'target' => $target,
                     ]
                 );
@@ -193,7 +193,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
      */
     protected function createRemoteFolder(string $folder): bool
     {
-        return ssh2_sftp_mkdir($this->sftSession, $folder, $this->config['fol'], true);
+        return ssh2_sftp_mkdir($this->sftSession, $folder, $this->createMasks['decimalFolderMask'], true);
     }
 
     /**
