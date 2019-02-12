@@ -31,7 +31,6 @@ use In2code\In2publishCore\Config\Builder;
 use In2code\In2publishCore\Config\Node\Node;
 use In2code\In2publishCore\Config\Node\NodeCollection;
 use In2code\In2publishCore\Config\Validator\DirectoryExistsValidator;
-use In2code\In2publishCore\Config\Validator\HostNameValidator;
 use In2code\In2publishCore\Config\Validator\IntegerInRangeValidator;
 use In2code\In2publishCore\Config\Validator\IPv4PortValidator;
 use In2code\In2publishCore\Config\Validator\IterativeTcaProcessorValidator;
