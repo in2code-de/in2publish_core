@@ -45,6 +45,7 @@ use In2code\In2publishCore\Domain\Service\Processor\NoneProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\PassthroughProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\RadioProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\SelectProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\SlugProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\TextProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\UserProcessor;
 
@@ -250,7 +251,8 @@ class In2publishCoreDefiner implements DefinerInterface
                                             ->addString('select', SelectProcessor::class)
                                             ->addString('text', TextProcessor::class)
                                             ->addString('user', UserProcessor::class)
-                                            ->addString('imageManipulation', ImageManipulationProcessor::class),
+                                            ->addString('imageManipulation', ImageManipulationProcessor::class)
+                                            ->addString('slug', SlugProcessor::class),
                                      null,
                                      [IterativeTcaProcessorValidator::class]
                                  )

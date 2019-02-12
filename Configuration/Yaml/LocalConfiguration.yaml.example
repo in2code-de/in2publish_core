@@ -346,3 +346,4 @@ tca:
     text: 'In2code\In2publishCore\Domain\Service\Processor\TextProcessor'
     user: 'In2code\In2publishCore\Domain\Service\Processor\UserProcessor'
     imageManipulation: 'In2code\In2publishCore\Domain\Service\Processor\ImageManipulationProcessor'
+    slug: 'In2code\In2publishCore\Domain\Service\Processor\SlugProcessor'
