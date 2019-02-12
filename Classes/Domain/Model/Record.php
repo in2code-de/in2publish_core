@@ -1088,4 +1088,20 @@ class Record implements RecordInterface
     {
         return $this->configContainer->get('debug.disableParentRecords');
     }
+
+    /**
+     * @return int
+     */
+    public function getPageIdentifier(): int
+    {
+        if ($this->isPagesTable()) {
+            return $this->getIdentifier();
+        }
+        if ($this->hasLocalProperty('pid')) {
+            return (int)$this->getLocalProperty('pid');
+        } elseif ($this->hasForeignProperty('pid')) {
+            return (int)$this->getForeignProperty('pid');
+        }
+        return 0;
+    }
 }

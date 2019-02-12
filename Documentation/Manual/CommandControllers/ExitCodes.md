@@ -10,6 +10,7 @@
 * `231`: No argument `uid` was given to identify an RPC/Envelope. The command must contain a `uid` like `rpc:execute 4`.
 * `232`: Executing the RPC/Envelope failed. More information should be available in the logs.
 * `240`: At least one test failed, so in2publish_core is not ready to be used.
+* `250`: No site configuration could be found for the given page id.
 
 ## API stability
 

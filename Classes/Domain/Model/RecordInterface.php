@@ -55,6 +55,8 @@ interface RecordInterface
         array $additionalProperties
     );
 
+    public function isPagesTable(): bool;
+
     /**
      * @return string
      */
@@ -302,4 +304,11 @@ interface RecordInterface
      * @return void
      */
     public function lockParentRecord();
+
+    /**
+     * Returns the pid the record is stored in or the uid if the record is a page
+     *
+     * @return int
+     */
+    public function getPageIdentifier(): int;
 }

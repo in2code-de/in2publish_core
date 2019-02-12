@@ -27,24 +27,203 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use In2code\In2publishCore\Command\StatusCommandController;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
+use In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class ForeignSysDomainTest
+ */
 class ForeignSysDomainTest implements TestCaseInterface
 {
+    const DOMAIN_TYPE_NONE = 'none';
+    const DOMAIN_TYPE_LEGACY = 'legacy';
+    const DOMAIN_TYPE_SITE = 'site';
+    const DOMAIN_TYPE_SLASH_BASE = 'base';
+
+    /**
+     * @var RemoteCommandDispatcher
+     */
+    protected $rceDispatcher;
+
+    /**
+     * @var Connection
+     */
+    protected $foreignConnection = null;
+
+    /**
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     */
+    public function __construct()
+    {
+        $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
+        $this->foreignConnection = DatabaseUtility::buildForeignDatabaseConnection();
+    }
+
     /**
      * @return TestResult
      */
     public function run(): TestResult
     {
-        $foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
+        $statement = $this->foreignConnection->select(['uid'], 'pages', ['is_siteroot' => '1']);
+        if (!$statement->execute()) {
+            return new TestResult('application.foreign_sites_query_error');
+        }
+        $pageIds = array_column($statement->fetchAll(\PDO::FETCH_ASSOC), 'uid');
+        if (empty($pageIds)) {
+            return new TestResult('application.no_sites_found', TestResult::WARNING);
+        }
 
-        if ($foreignDatabase->count('*', 'sys_domain', ['hidden' => 0]) === 0) {
+        if (version_compare(TYPO3_branch, '9.3', '>=')) {
+            try {
+                $shortSiteConfig = $this->getForeignSiteConfig();
+            } catch (ForeignSiteConfigUnavailableException $exception) {
+                return new TestResult(
+                    'application.foreign_site_config_error',
+                    TestResult::ERROR,
+                    [
+                        'error' => $exception->getErrorString(),
+                        'ouput' => $exception->getOutputString(),
+                        'status' => (string)$exception->getExitStatus(),
+                    ]
+                );
+            }
+
+            $pageIdToBaseMapping = array_combine(
+                array_column($shortSiteConfig, 'rootPageId'),
+                array_column($shortSiteConfig, 'base')
+            );
+
+            $results = [];
+            foreach ($pageIds as $pageId) {
+                $domainType = 'none';
+                if (isset($pageIdToBaseMapping[$pageId])) {
+                    if ($pageIdToBaseMapping[$pageId] === '/') {
+                        $domainType = self::DOMAIN_TYPE_SLASH_BASE;
+                    } else {
+                        $domainType = self::DOMAIN_TYPE_SITE;
+                    }
+                } else {
+                    if (0 < $this->foreignConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
+                        $domainType = self::DOMAIN_TYPE_LEGACY;
+                    }
+                }
+                $results[$domainType][] = $pageId;
+            }
+
+            $messages = $this->getMessagesForSitesWithoutDomain($results);
+            $messages = array_merge($messages, $this->getMessagesForSitesWithSlashBase($results));
+            $messages = array_merge($messages, $this->getMessagesForSitesWithSysDomain($results));
+            $messages = array_merge($messages, $this->getMessagesForSitesWithConfig($results));
+
+            if (!empty($results[self::DOMAIN_TYPE_NONE])) {
+                return new TestResult('application.foreign_sites_config_missing', TestResult::ERROR, $messages);
+            }
+
+            if (!empty($results[self::DOMAIN_TYPE_SLASH_BASE])) {
+                return new TestResult('application.foreign_site_config_slash', TestResult::ERROR, $messages);
+            }
+
+            if (!empty($results[self::DOMAIN_TYPE_LEGACY])) {
+                return new TestResult('application.foreign_sites_config_legacy', TestResult::WARNING, $messages);
+            }
+
+            return new TestResult('application.foreign_sites_config', TestResult::OK, $messages);
+        }
+
+        // TYPO3 v8 or lower
+        if ($this->foreignConnection->count('*', 'sys_domain', ['hidden' => 0]) === 0) {
             return new TestResult('application.foreign_sys_domain_missing', TestResult::ERROR);
         }
         return new TestResult('application.foreign_sys_domain_configured');
+    }
+
+    /**
+     * @return array
+     * @throws ForeignSiteConfigUnavailableException
+     */
+    public function getForeignSiteConfig(): array
+    {
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
+        $request->setCommand(StatusCommandController::SHORT_SITE_CONFIGURATION);
+
+        $response = $this->rceDispatcher->dispatch($request);
+
+        if ($response->isSuccessful()) {
+            $responseParts = GeneralUtility::trimExplode(':', $response->getOutputString());
+            $base64encoded = $responseParts[1];
+            $jsonEncoded = base64_decode($base64encoded);
+            $shortSiteConfig = json_decode($jsonEncoded, true);
+        } else {
+            throw ForeignSiteConfigUnavailableException::fromFailedRceResponse($response);
+        }
+        return $shortSiteConfig;
+    }
+
+    /**
+     * @param $results
+     * @return array
+     */
+    public function getMessagesForSitesWithConfig($results): array
+    {
+        $messages = [];
+        if (!empty($results[self::DOMAIN_TYPE_SITE])) {
+            foreach ($results[self::DOMAIN_TYPE_SITE] as $pageId) {
+                $messages[] = 'OK: The foreign root page ' . $pageId . ' has a site configuration.';
+            }
+        }
+        return $messages;
+    }
+
+    protected function getMessagesForSitesWithSlashBase(array $results)
+    {
+        $messages = [];
+        if (!empty($results[self::DOMAIN_TYPE_SLASH_BASE])) {
+            foreach ($results[self::DOMAIN_TYPE_SLASH_BASE] as $pageId) {
+                $messages[] = 'ERROR: The foreign root page ' . $pageId
+                              . ' has a site configuration with "/" as base.';
+            }
+        }
+        return $messages;
+    }
+
+    /**
+     * @param $results
+     * @return array
+     */
+    public function getMessagesForSitesWithSysDomain($results): array
+    {
+        $messages = [];
+        if (!empty($results[self::DOMAIN_TYPE_LEGACY])) {
+            foreach ($results[self::DOMAIN_TYPE_LEGACY] as $pageId) {
+                $messages[] = 'WARNING: The foreign root page ' . $pageId
+                              . ' has no site configuration but a legacy domain.';
+            }
+        }
+        return $messages;
+    }
+
+    /**
+     * @param $results
+     * @return array
+     */
+    public function getMessagesForSitesWithoutDomain($results): array
+    {
+        $messages = [];
+        if (!empty($results[self::DOMAIN_TYPE_NONE])) {
+            foreach ($results[self::DOMAIN_TYPE_NONE] as $pageId) {
+                $messages[] = 'ERROR: The foreign root page ' . $pageId
+                              . ' is missing a site configuration (and sys_domain).';
+            }
+        }
+        return $messages;
     }
 
     /**
@@ -54,6 +233,7 @@ class ForeignSysDomainTest implements TestCaseInterface
     {
         return [
             ForeignDatabaseTest::class,
+            SshConnectionTest::class,
         ];
     }
 }

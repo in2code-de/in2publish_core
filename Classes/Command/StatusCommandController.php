@@ -29,6 +29,9 @@ namespace In2code\In2publishCore\Command;
  ***************************************************************/
 
 use In2code\In2publishCore\Utility\ExtensionUtility;
+use TYPO3\CMS\Core\Exception\SiteNotFoundException;
+use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class StatusCommandController (always enabled)
@@ -43,6 +46,9 @@ class StatusCommandController extends AbstractCommandController
     const GLOBAL_CONFIGURATION = 'in2publish_core:status:globalconfiguration';
     const TYPO3_VERSION = 'in2publish_core:status:typo3version';
     const DB_INIT_QUERY_ENCODED = 'in2publish_core:status:dbInitQueryEncoded';
+    const SHORT_SITE_CONFIGURATION = 'in2publish_core:status:shortsiteconfiguration';
+    const SITE_CONFIGURATION = 'in2publish_core:status:siteconfiguration';
+    const EXIT_NO_SITE = 250;
 
     /**
      * Prints all information about the in2publish system
@@ -57,6 +63,7 @@ class StatusCommandController extends AbstractCommandController
         $this->globalConfigurationCommand();
         $this->typo3VersionCommand();
         $this->dbInitQueryEncodedCommand();
+        $this->shortSiteConfigurationCommand();
     }
 
     /**
@@ -139,5 +146,36 @@ class StatusCommandController extends AbstractCommandController
             }
         }
         $this->outputLine('DBinit: ' . base64_encode(json_encode($dbInit)));
+    }
+
+    /**
+     * Prints a base64 encoded json array containing all configured sites
+     */
+    public function shortSiteConfigurationCommand()
+    {
+        $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+        $shortInfo = [];
+        foreach ($siteFinder->getAllSites() as $site) {
+            $shortInfo[$site->getIdentifier()] = [
+                'base' => $site->getBase()->__toString(),
+                'rootPageId' => $site->getRootPageId(),
+            ];
+        }
+        $this->outputLine('ShortSiteConfig: ' . base64_encode(json_encode($shortInfo)));
+    }
+
+    /**
+     * Returns a serialized site config for the given page id
+     * @param int $pageId
+     */
+    public function siteConfigurationCommand(int $pageId)
+    {
+        $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+        try {
+            $site = $siteFinder->getSiteByPageId($pageId);
+        } catch (SiteNotFoundException $e) {
+            $this->sendAndExit(static::EXIT_NO_SITE);
+        }
+        $this->outputLine('Site: ' . base64_encode(serialize($site)));
     }
 }

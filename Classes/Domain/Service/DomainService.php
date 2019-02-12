@@ -32,6 +32,8 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Exception\SiteNotFoundException;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
@@ -70,6 +72,28 @@ class DomainService
      */
     public function getFirstDomain(RecordInterface $record, $stagingLevel = self::LEVEL_LOCAL, $addProtocol = true)
     {
+        if (version_compare(TYPO3_branch, '9.3', '>=')) {
+            if ($stagingLevel === self::LEVEL_LOCAL) {
+                $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+                try {
+                    $site = $siteFinder->getSiteByPageId($record->getPageIdentifier());
+                } catch (SiteNotFoundException $e) {
+                }
+            } else {
+                $foreignSiteFinder = GeneralUtility::makeInstance(ForeignSiteFinder::class);
+                try {
+                    $site = $foreignSiteFinder->getSiteBaseByPageId($record->getPageIdentifier());
+                } catch (SiteNotFoundException $e) {
+                }
+            }
+            if (isset($site)) {
+                $uri = (string)$site->getBase()->withScheme('');
+                if (!$addProtocol) {
+                    $uri = ltrim($uri, '/');
+                }
+                return rtrim($uri, '/');
+            }
+        }
         switch ($record->getTableName()) {
             case 'pages':
                 $domainName = $this->getFirstDomainInRootLineFromRelatedRecords($record, $stagingLevel);
@@ -135,12 +159,12 @@ class DomainService
                 // Error: not connected
                 return '';
             }
-            $query = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+            $query = $connection->createQueryBuilder();
             $query->getRestrictions()->removeAll();
             $domainRecord = $query->select('domainName')
                                   ->from(static::TABLE_NAME)
                                   ->where($query->expr()->eq('pid', (int)$page['uid']))
-                                  ->andWhere('hidden', 0)
+                                  ->andWhere($query->expr()->eq('hidden', 0))
                                   ->orderBy('sorting', 'ASC')
                                   ->setMaxResults(1)
                                   ->execute()
