@@ -34,6 +34,7 @@ use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\FileUtility;
+use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -640,35 +641,52 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * TODO: Replace this whole monstrous thing with FlexFormTools upon dropping TYPO3 v7
+     * TODO: Drop this whole monstrous except the FlexFormTools part upon dropping TYPO3 v7
      *
      * Get flex form configuration from file or reference
      *
      * @param RecordInterface $record
+     * @param string $column
      * @param array $columnConfiguration
      * @return array|mixed
      */
-    protected function getFlexFormDefinition(RecordInterface $record, array $columnConfiguration)
+    protected function getFlexFormDefinition(RecordInterface $record, $column, array $columnConfiguration)
     {
-        $flexFormDefinition = [];
-        $flexFormSource = $this->getFlexFormDefinitionSource($record, $columnConfiguration);
-        if ($flexFormSource !== '') {
-            $flexFormString = $this->resolveFlexFormSource($flexFormSource);
-            if ($flexFormString === '') {
-                $this->logger->warning(
-                    'The FlexForm was empty',
-                    [
-                        'tableName' => $record->getTableName(),
-                        'identifier' => $record->getIdentifier(),
-                        'flexFormSource' => $flexFormSource,
-                    ]
-                );
-                return $flexFormDefinition;
-            }
-            $flexFormDefinition = GeneralUtility::xml2array($flexFormString);
-        }
-        if (isset($flexFormDefinition['sheets'])) {
+        if (method_exists(FlexFormTools::class, 'getDataStructureIdentifier')
+            && isset($columnConfiguration['ds_pointerField'])
+        ) {
+            /** @var FlexFormTools $flexFormTools */
+            $flexFormTools = GeneralUtility::makeInstance(FlexFormTools::class);
+            $dataStructIdentifier = $flexFormTools->getDataStructureIdentifier(
+                ['config' => $columnConfiguration],
+                $record->getTableName(),
+                $column,
+                $record->getLocalProperties()
+            );
+            $flexFormDefinition = $flexFormTools->parseDataStructureByIdentifier($dataStructIdentifier);
             $flexFormDefinition = $flexFormDefinition['sheets'];
+        } else {
+            $flexFormDefinition = [];
+            $flexFormSource = $this->getFlexFormDefinitionSource($record, $columnConfiguration);
+            if ($flexFormSource !== '') {
+                $flexFormString = $this->resolveFlexFormSource($flexFormSource);
+                if ($flexFormString === '') {
+                    $this->logger->warning(
+                        'The FlexForm was empty',
+                        [
+                            'tableName' => $record->getTableName(),
+                            'identifier' => $record->getIdentifier(),
+                            'flexFormSource' => $flexFormSource,
+                        ]
+                    );
+
+                    return $flexFormDefinition;
+                }
+                $flexFormDefinition = GeneralUtility::xml2array($flexFormString);
+            }
+            if (isset($flexFormDefinition['sheets'])) {
+                $flexFormDefinition = $flexFormDefinition['sheets'];
+            }
         }
 
         $flexFormDefinition = $this->flattenFlexFormDefinition((array)$flexFormDefinition);
@@ -858,7 +876,7 @@ class CommonRepository extends BaseRepository
             return $records;
         }
 
-        $flexFormDefinition = $this->getFlexFormDefinition($record, $columnConfiguration);
+        $flexFormDefinition = $this->getFlexFormDefinition($record, $column, $columnConfiguration);
         if (empty($flexFormDefinition)) {
             return $records;
         }
@@ -1144,6 +1162,7 @@ class CommonRepository extends BaseRepository
                     GeneralUtility::trimExplode(',', $flexFormData, true)
                 );
                 break;
+            case 'file_reference':
             case 'file':
                 $fileAndPathNames = $this->getFileAndPathNames(
                     $columnConfiguration,
@@ -1208,18 +1227,20 @@ class CommonRepository extends BaseRepository
         $propertyName,
         $flexFormData
     ) {
-        $uploadFolder = FileUtility::getCleanFolder($columnConfiguration['uploadfolder']);
+        $prefix = '';
+        if (!empty($columnConfiguration['uploadfolder'])) {
+            $prefix = FileUtility::getCleanFolder($columnConfiguration['uploadfolder']);
+        }
         if (empty($flexFormData)) {
             $fileNames = GeneralUtility::trimExplode(',', $record->getLocalProperty($propertyName), true);
         } else {
             $fileNames = GeneralUtility::trimExplode(',', $flexFormData, true);
         }
         foreach ($fileNames as $key => $filename) {
-            $fileNames[$key] = $uploadFolder . $filename;
-
             // Force indexing of the record
-            GeneralUtility::makeInstance(ResourceFactory::class)
-                          ->getFileObjectFromCombinedIdentifier($fileNames[$key]);
+            $fileNames[$key] = GeneralUtility::makeInstance(ResourceFactory::class)
+                                             ->getFileObjectFromCombinedIdentifier($prefix . $filename)
+                                             ->getIdentifier();
         }
         return $fileNames;
     }
