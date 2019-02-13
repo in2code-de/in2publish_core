@@ -65,16 +65,20 @@ class LocalSysDomainTest implements TestCaseInterface
      */
     public function run(): TestResult
     {
-        $statement = $this->localConnection->select(['uid'], 'pages', ['is_siteroot' => '1']);
-        if (!$statement->execute()) {
-            return new TestResult('application.local_sites_query_error', TestResult::ERROR);
-        }
-        $pageIds = array_column($statement->fetchAll(\PDO::FETCH_ASSOC), 'uid');
-        if (empty($pageIds)) {
-            return new TestResult('application.no_sites_found', TestResult::WARNING);
-        }
-
         if (version_compare(TYPO3_branch, '9.3', '>=')) {
+            $statement = $this->localConnection->select(
+                ['uid'],
+                'pages',
+                ['is_siteroot' => '1', 'sys_language_uid' => '0']
+            );
+            if (!$statement->execute()) {
+                return new TestResult('application.local_sites_query_error', TestResult::ERROR);
+            }
+            $pageIds = array_column($statement->fetchAll(\PDO::FETCH_ASSOC), 'uid');
+            if (empty($pageIds)) {
+                return new TestResult('application.no_sites_found', TestResult::WARNING);
+            }
+
             $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
 
             $results = [];
@@ -109,8 +113,19 @@ class LocalSysDomainTest implements TestCaseInterface
         }
 
         // TYPO3 v8 or lower
-        if ($this->localConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
-            return new TestResult('application.local_sys_domain_missing', TestResult::ERROR);
+        $statement = $this->localConnection->select(['uid'], 'pages', ['is_siteroot' => '1']);
+        if (!$statement->execute()) {
+            return new TestResult('application.local_sites_query_error', TestResult::ERROR);
+        }
+        $pageIds = array_column($statement->fetchAll(\PDO::FETCH_ASSOC), 'uid');
+        if (empty($pageIds)) {
+            return new TestResult('application.no_sites_found', TestResult::WARNING);
+        }
+
+        foreach ($pageIds as $pageId) {
+            if ($this->localConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
+                return new TestResult('application.local_sys_domain_missing', TestResult::ERROR);
+            }
         }
         return new TestResult('application.local_sys_domain_configured');
     }
