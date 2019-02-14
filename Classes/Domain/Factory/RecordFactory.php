@@ -294,8 +294,10 @@ class RecordFactory
      * @param CommonRepository $commonRepository
      * @return RecordInterface
      */
-    protected function findRelatedRecordsForContentRecord(RecordInterface $record, CommonRepository $commonRepository): RecordInterface
-    {
+    protected function findRelatedRecordsForContentRecord(
+        RecordInterface $record,
+        CommonRepository $commonRepository
+    ): RecordInterface {
         if ($this->relatedRecordsDepth < $this->config['maximumContentRecursion']) {
             $this->relatedRecordsDepth++;
             $excludedTableNames = $this->excludedTableNames;
@@ -313,8 +315,10 @@ class RecordFactory
      * @param CommonRepository $commonRepository
      * @return RecordInterface
      */
-    protected function findRelatedRecordsForPageRecord(Record $record, CommonRepository $commonRepository): RecordInterface
-    {
+    protected function findRelatedRecordsForPageRecord(
+        Record $record,
+        CommonRepository $commonRepository
+    ): RecordInterface {
         if ($record->getIdentifier() === 0) {
             $tableNamesToExclude =
                 array_merge(
@@ -441,8 +445,11 @@ class RecordFactory
      * @param array $foreignProperties
      * @return int
      */
-    protected function getMergedIdentifierValue($commonRepository, array $localProperties, array $foreignProperties): int
-    {
+    protected function getMergedIdentifierValue(
+        $commonRepository,
+        array $localProperties,
+        array $foreignProperties
+    ): int {
         if ($commonRepository->getTableName() === 'sys_file') {
             $identifierFieldName = 'uid';
         } else {

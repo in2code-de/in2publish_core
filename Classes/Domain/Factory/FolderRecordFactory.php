@@ -712,8 +712,10 @@ class FolderRecordFactory
      * @param RecordInterface $file
      * @return bool
      */
-    protected function isLocalIndexWithMatchingDuplicateIndexOnForeign(array $identifierList, RecordInterface $file): bool
-    {
+    protected function isLocalIndexWithMatchingDuplicateIndexOnForeign(
+        array $identifierList,
+        RecordInterface $file
+    ): bool {
         return null !== ($localIdentifier = $file->getLocalProperty('identifier'))
                && null !== ($localUid = $file->getLocalProperty('uid'))
                // There is a foreign record with the same identifier
@@ -758,7 +760,10 @@ class FolderRecordFactory
     {
         return array_merge(
             $logData,
-            ['error' => json_encode($this->foreignDatabase->errorInfo()),'errno' => $this->foreignDatabase->errorCode()]
+            [
+                'error' => json_encode($this->foreignDatabase->errorInfo()),
+                'errno' => $this->foreignDatabase->errorCode(),
+            ]
         );
     }
 
@@ -799,11 +804,11 @@ class FolderRecordFactory
         $query = $this->foreignDatabase->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $count = $query->count('*')
-            ->from('sys_file_reference')
-            ->where($query->expr()->eq('table_local',$query->createNamedParameter('sys_file')))
-            ->andWhere($query->expr()->eq('uid_local',$query->createNamedParameter($oldUid)))
-            ->execute()
-            ->fetchColumn(0);
+                       ->from('sys_file_reference')
+                       ->where($query->expr()->eq('table_local', $query->createNamedParameter('sys_file')))
+                       ->andWhere($query->expr()->eq('uid_local', $query->createNamedParameter($oldUid)))
+                       ->execute()
+                       ->fetchColumn(0);
 
         if (false === $count) {
             $this->logger->critical(
@@ -824,11 +829,12 @@ class FolderRecordFactory
         $query = $this->foreignDatabase->createQueryBuilder();
         $query->getRestrictions()->removeAll();
 
-        if (false === ($count = $query->count('uid')
-                ->from('sys_file')
-                ->where($query->expr()->eq('uid', $query->createNamedParameter($newUid)))
-                ->execute()
-                ->fetchColumn(0))) {
+        $count = $query->count('uid')
+                       ->from('sys_file')
+                       ->where($query->expr()->eq('uid', $query->createNamedParameter($newUid)))
+                       ->execute()
+                       ->fetchColumn(0);
+        if (false === $count) {
             $this->logger->critical(
                 'Could not count foreign indices by uid',
                 $this->enrichWithForeignDatabaseErrorInformation(['uid', $newUid])

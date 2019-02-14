@@ -63,16 +63,9 @@ class TcaService implements SingletonInterface
     {
         $rootLevelTables = [];
         foreach ($this->tca as $tableName => $tableConfiguration) {
-            if (
-                !empty($tableConfiguration['ctrl']['rootLevel'])
-                &&
-                !\in_array($tableName, $exceptTableNames, true)
-                &&
-                \in_array(
-                    $tableConfiguration['ctrl']['rootLevel'],
-                    [1, -1, true],
-                    true
-                )
+            if (!empty($tableConfiguration['ctrl']['rootLevel'])
+                && !\in_array($tableName, $exceptTableNames, true)
+                && \in_array($tableConfiguration['ctrl']['rootLevel'], [1, -1, true], true)
             ) {
                 $rootLevelTables[] = $tableName;
             }
@@ -178,12 +171,9 @@ class TcaService implements SingletonInterface
         $database = DatabaseUtility::buildLocalDatabaseConnection();
         if ($database) {
             foreach ($database->getSchemaManager()->listTables() as $table) {
-                if (
-                    $table->hasColumn('uid')
-                    &&
-                    $table->hasColumn('pid')
-                    &&
-                    !\in_array($table->getName(), $exceptTableNames, true)
+                if ($table->hasColumn('uid')
+                    && $table->hasColumn('pid')
+                    && !\in_array($table->getName(), $exceptTableNames, true)
                 ) {
                     $result[] = $table->getName();
                 }

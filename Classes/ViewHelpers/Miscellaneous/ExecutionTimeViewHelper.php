@@ -40,7 +40,6 @@ class ExecutionTimeViewHelper extends AbstractViewHelper
      */
     public function render(): float
     {
-        return GeneralUtility::makeInstance(ExecutionTimeService::class)
-            ->getExecutionTime();
+        return GeneralUtility::makeInstance(ExecutionTimeService::class)->getExecutionTime();
     }
 }

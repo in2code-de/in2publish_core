@@ -168,7 +168,6 @@ class ConfigContainer implements SingletonInterface
             $config = $this->getForeignDefinition()->cast($config);
         }
 
-
         return $config;
     }
 

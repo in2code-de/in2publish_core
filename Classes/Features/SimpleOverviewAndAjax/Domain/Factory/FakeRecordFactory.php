@@ -379,8 +379,10 @@ class FakeRecordFactory
      * @param string $tableName
      * @return bool
      */
-    protected function isRecordDeletedOnLocalAndNonExistingOnForeign($identifier, $tableName = self::PAGE_TABLE_NAME): bool
-    {
+    protected function isRecordDeletedOnLocalAndNonExistingOnForeign(
+        $identifier,
+        $tableName = self::PAGE_TABLE_NAME
+    ): bool {
         if ($this->isRecordDeleted($identifier, 'local', $tableName)) {
             $properties = $this->tableCacheRepository->findByUid($tableName, $identifier, 'foreign');
             if (empty($properties)) {
