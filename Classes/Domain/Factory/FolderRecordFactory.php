@@ -35,7 +35,7 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\StorageDriverExtractor;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
@@ -62,7 +62,7 @@ class FolderRecordFactory
     protected $commonRepository;
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
     protected $foreignDatabase;
 

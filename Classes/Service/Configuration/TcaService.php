@@ -28,8 +28,8 @@ namespace In2code\In2publishCore\Service\Configuration;
  ***************************************************************/
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\SingletonInterface;
-use \TYPO3\CMS\Core\Localization\LanguageService;
 
 /**
  * Class TcaService
