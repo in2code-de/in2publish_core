@@ -59,7 +59,6 @@ abstract class AbstractCommandController extends CommandController
      */
     public function __construct()
     {
-        parent::__construct();
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->contextService = GeneralUtility::makeInstance(ContextService::class);
     }
