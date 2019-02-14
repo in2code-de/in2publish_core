@@ -151,7 +151,7 @@ class ForeignSysDomainTest implements TestCaseInterface
             return new TestResult('application.no_sites_found', TestResult::WARNING);
         }
         foreach ($pageIds as $pageId) {
-            if ($this->foreignConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
+            if (0 === $this->foreignConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
                 return new TestResult('application.foreign_sys_domain_missing', TestResult::ERROR);
             }
         }

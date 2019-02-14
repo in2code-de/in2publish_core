@@ -123,7 +123,7 @@ class LocalSysDomainTest implements TestCaseInterface
         }
 
         foreach ($pageIds as $pageId) {
-            if ($this->localConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
+            if (0 === $this->localConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
                 return new TestResult('application.local_sys_domain_missing', TestResult::ERROR);
             }
         }
