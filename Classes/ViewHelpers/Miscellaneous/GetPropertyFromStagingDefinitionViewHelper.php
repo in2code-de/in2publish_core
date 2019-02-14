@@ -32,6 +32,9 @@ use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+/**
+ * Class GetPropertyFromStagingDefinitionViewHelper
+ */
 class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
 {
     /**

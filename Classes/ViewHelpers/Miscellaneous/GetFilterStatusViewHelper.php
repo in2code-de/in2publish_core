@@ -29,6 +29,9 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+/**
+ * Class GetFilterStatusViewHelper
+ */
 class GetFilterStatusViewHelper extends AbstractViewHelper
 {
     /**

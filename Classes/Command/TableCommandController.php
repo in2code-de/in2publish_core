@@ -150,6 +150,12 @@ class TableCommandController extends AbstractCommandController
         }
     }
 
+    /**
+     * @param Connection $fromDatabase
+     * @param Connection $toDatabase
+     * @param string $tableName
+     * @return bool
+     */
     protected function copyTableContents(Connection $fromDatabase, Connection $toDatabase, string $tableName): bool
     {
         if ($this->truncateTable($toDatabase, $tableName)) {
@@ -212,6 +218,9 @@ class TableCommandController extends AbstractCommandController
         DatabaseUtility::backupTable($this->localDatabase, $tableName);
     }
 
+    /**
+     *
+     */
     protected function checkLocalContext()
     {
         if (!$this->contextService->isLocal()) {
@@ -220,6 +229,9 @@ class TableCommandController extends AbstractCommandController
         }
     }
 
+    /**
+     * @param string $tableName
+     */
     protected function checkTableExists(string $tableName)
     {
         if (!$this->dbSchemaService->tableExists($tableName)) {

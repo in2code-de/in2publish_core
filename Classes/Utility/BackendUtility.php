@@ -30,6 +30,9 @@ use TYPO3\CMS\Backend\Utility\BackendUtility as BackendUtilityCore;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
+/**
+ * Class BackendUtility
+ */
 class BackendUtility
 {
     /**

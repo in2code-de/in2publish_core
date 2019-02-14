@@ -31,6 +31,9 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class AbstractProcessor
+ */
 abstract class AbstractProcessor implements ProcessorInterface
 {
     /**
@@ -123,6 +126,9 @@ abstract class AbstractProcessor implements ProcessorInterface
      */
     protected $logger;
 
+    /**
+     * AbstractProcessor constructor.
+     */
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);

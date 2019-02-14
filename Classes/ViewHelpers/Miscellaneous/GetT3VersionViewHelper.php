@@ -28,6 +28,9 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+/**
+ * Class GetT3VersionViewHelper
+ */
 class GetT3VersionViewHelper extends AbstractViewHelper
 {
     /**

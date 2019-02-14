@@ -34,6 +34,9 @@ use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class DatabaseSchemaService
+ */
 class DatabaseSchemaService implements SingletonInterface
 {
     /**
@@ -49,6 +52,10 @@ class DatabaseSchemaService implements SingletonInterface
         $this->cache = $this->getCache();
     }
 
+    /**
+     * @param string $tableName
+     * @return bool
+     */
     public function tableExists(string $tableName): bool
     {
         $database = DatabaseUtility::buildLocalDatabaseConnection();

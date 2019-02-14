@@ -29,6 +29,9 @@ namespace In2code\In2publishCore\ViewHelpers\Link;
 
 use In2code\In2publishCore\Utility\BackendUtility;
 
+/**
+ * Class EditRecordViewHelper
+ */
 class EditRecordViewHelper extends AbstractRecordActionLinkViewHelper
 {
     /**

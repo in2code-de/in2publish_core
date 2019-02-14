@@ -30,6 +30,9 @@ use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+/**
+ * Class ExecutionTimeViewHelper
+ */
 class ExecutionTimeViewHelper extends AbstractViewHelper
 {
     /**

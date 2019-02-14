@@ -29,6 +29,9 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 use In2code\In2publishCore\Domain\Model\Record;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+/**
+ * Class HasChangedRecordsViewHelper
+ */
 class HasChangedRecordsViewHelper extends AbstractViewHelper
 {
     /**

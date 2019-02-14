@@ -33,6 +33,9 @@ use In2code\In2publishCore\Communication\Shared\SshBaseAdapter;
 use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class SshAdapter
+ */
 class SshAdapter extends SshBaseAdapter implements AdapterInterface
 {
     /**

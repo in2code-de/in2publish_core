@@ -31,6 +31,9 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use \TYPO3\CMS\Core\Localization\LanguageService;
 
+/**
+ * Class TcaService
+ */
 class TcaService implements SingletonInterface
 {
     /**
@@ -43,6 +46,9 @@ class TcaService implements SingletonInterface
      */
     protected $tableNames = [];
 
+    /**
+     * TcaService constructor.
+     */
     public function __construct()
     {
         $this->tca = $this->getTca();
@@ -118,6 +124,10 @@ class TcaService implements SingletonInterface
         return $titleField;
     }
 
+    /**
+     * @param string $tableName
+     * @return string
+     */
     public function getSortingField(string $tableName): string
     {
         $sortingField = '';
@@ -129,6 +139,10 @@ class TcaService implements SingletonInterface
         return $sortingField;
     }
 
+    /**
+     * @param string $tableName
+     * @return string
+     */
     public function getDeletedField(string $tableName): string
     {
         $deleteField = '';
@@ -233,6 +247,10 @@ class TcaService implements SingletonInterface
         return $label;
     }
 
+    /**
+     * @param string $tableName
+     * @return bool
+     */
     public function isHiddenRootTable(string $tableName): bool
     {
         return isset($this->tca[$tableName]['ctrl']['hideTable'])

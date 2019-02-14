@@ -31,6 +31,9 @@ use In2code\In2publishCore\Communication\RemoteProcedureCall\EnvelopeDispatcher;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class RpcCommandController
+ */
 class RpcCommandController extends AbstractCommandController
 {
     const EXIT_ENVELOPE_MISSING = 230;

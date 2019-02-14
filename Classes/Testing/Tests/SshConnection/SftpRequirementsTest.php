@@ -30,6 +30,9 @@ namespace In2code\In2publishCore\Testing\Tests\SshConnection;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 
+/**
+ * Class SftpRequirementsTest
+ */
 class SftpRequirementsTest implements TestCaseInterface
 {
     /**

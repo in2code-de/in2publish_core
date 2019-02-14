@@ -34,6 +34,9 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+/**
+ * Class BuildResourcePathViewHelper
+ */
 class BuildResourcePathViewHelper extends AbstractViewHelper
 {
     /**

@@ -30,6 +30,9 @@ namespace In2code\In2publishCore\Service\Context;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class ContextService
+ */
 class ContextService implements SingletonInterface
 {
     const LOCAL = 'Local';
@@ -42,11 +45,17 @@ class ContextService implements SingletonInterface
      */
     protected $context = self::FOREIGN;
 
+    /**
+     * ContextService constructor.
+     */
     public function __construct()
     {
         $this->context = $this->determineContext();
     }
 
+    /**
+     * @return string
+     */
     public function getContext(): string
     {
         return $this->context;
@@ -71,16 +80,25 @@ class ContextService implements SingletonInterface
         }
     }
 
+    /**
+     * @return bool
+     */
     public function isForeign(): bool
     {
         return static::FOREIGN === $this->context;
     }
 
+    /**
+     * @return bool
+     */
     public function isLocal(): bool
     {
         return static::LOCAL === $this->context;
     }
 
+    /**
+     * @return bool
+     */
     public function isContextDefined(): bool
     {
         return (false !== getenv(static::ENV_VAR_NAME)) || (false !== getenv(static::REDIRECT_ENV_VAR_NAME));

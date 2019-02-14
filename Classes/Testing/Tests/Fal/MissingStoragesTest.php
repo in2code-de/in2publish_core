@@ -34,6 +34,9 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class MissingStoragesTest
+ */
 class MissingStoragesTest implements TestCaseInterface
 {
     /**
@@ -41,6 +44,9 @@ class MissingStoragesTest implements TestCaseInterface
      */
     protected $testSubjectProvider;
 
+    /**
+     * MissingStoragesTest constructor.
+     */
     public function __construct()
     {
         $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);

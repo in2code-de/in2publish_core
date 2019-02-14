@@ -29,6 +29,9 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+/**
+ * Class GetFieldLabelFromLocallangViewHelper
+ */
 class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
 {
     /**

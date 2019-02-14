@@ -28,6 +28,9 @@ namespace In2code\In2publishCore\ViewHelpers\Be;
 
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+/**
+ * Class GetClassNameOnActionViewHelper
+ */
 class GetClassNameOnActionViewHelper extends AbstractViewHelper
 {
     /**

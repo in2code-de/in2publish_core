@@ -245,6 +245,7 @@ abstract class SshBaseAdapter
     abstract protected function disconnect();
 
     /**
+     *
      */
     public function __destruct()
     {

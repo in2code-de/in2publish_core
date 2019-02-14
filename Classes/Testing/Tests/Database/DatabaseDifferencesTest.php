@@ -32,6 +32,9 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 
+/**
+ * Class DatabaseDifferencesTest
+ */
 class DatabaseDifferencesTest implements TestCaseInterface
 {
     /**

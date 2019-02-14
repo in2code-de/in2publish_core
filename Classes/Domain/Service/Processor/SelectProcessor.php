@@ -27,6 +27,9 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+/**
+ * Class SelectProcessor
+ */
 class SelectProcessor extends AbstractProcessor
 {
     /**

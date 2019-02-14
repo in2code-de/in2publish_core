@@ -32,6 +32,9 @@ use TYPO3\CMS\Core\Resource\AbstractFile;
 use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class FileUtility
+ */
 class FileUtility
 {
     /**

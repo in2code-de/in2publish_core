@@ -27,6 +27,9 @@ namespace In2code\In2publishCore\Config\Node\Specific;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+/**
+ * Class SpecStrictArray
+ */
 class SpecStrictArray extends SpecArray
 {
     /**

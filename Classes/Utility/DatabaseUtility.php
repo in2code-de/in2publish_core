@@ -35,6 +35,9 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class DatabaseUtility
+ */
 class DatabaseUtility
 {
     /**

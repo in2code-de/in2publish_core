@@ -31,6 +31,9 @@ use In2code\In2publishCore\Domain\Service\DomainService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+/**
+ * Class GetFirstDomainFromRootlineViewHelper
+ */
 class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
 {
     /**
@@ -38,11 +41,17 @@ class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
      */
     protected $domainService;
 
+    /**
+     * GetFirstDomainFromRootlineViewHelper constructor.
+     */
     public function __construct()
     {
         $this->domainService = GeneralUtility::makeInstance(DomainService::class);
     }
 
+    /**
+     *
+     */
     public function initializeArguments()
     {
         parent::initializeArguments();

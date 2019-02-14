@@ -30,6 +30,9 @@ use In2code\In2publishCore\Service\Configuration\TcaService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+/**
+ * Class GetTableLabelFromLocallangViewHelper
+ */
 class GetTableLabelFromLocallangViewHelper extends AbstractViewHelper
 {
     /**
@@ -37,6 +40,9 @@ class GetTableLabelFromLocallangViewHelper extends AbstractViewHelper
      */
     protected $tcaService;
 
+    /**
+     * GetTableLabelFromLocallangViewHelper constructor.
+     */
     public function __construct()
     {
         $this->tcaService = GeneralUtility::makeInstance(TcaService::class);

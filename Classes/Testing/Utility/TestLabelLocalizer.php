@@ -29,6 +29,9 @@ namespace In2code\In2publishCore\Testing\Utility;
 
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
+/**
+ * Class TestLabelLocalizer
+ */
 class TestLabelLocalizer
 {
     /**

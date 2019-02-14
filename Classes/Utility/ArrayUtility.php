@@ -30,6 +30,9 @@ namespace In2code\In2publishCore\Utility;
 
 use TYPO3\CMS\Core\Utility\MathUtility;
 
+/**
+ * Class ArrayUtility
+ */
 class ArrayUtility
 {
     public static function removeFromArrayByKey(array $array, array $keysToRemove = []): array

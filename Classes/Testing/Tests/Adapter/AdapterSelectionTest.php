@@ -35,6 +35,9 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class AdapterSelectionTest
+ */
 class AdapterSelectionTest implements TestCaseInterface
 {
     /**
@@ -42,6 +45,9 @@ class AdapterSelectionTest implements TestCaseInterface
      */
     protected $adapterRegistry;
 
+    /**
+     * AdapterSelectionTest constructor.
+     */
     public function __construct()
     {
         $this->adapterRegistry = GeneralUtility::makeInstance(AdapterRegistry::class);

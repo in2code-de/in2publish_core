@@ -30,6 +30,9 @@ namespace In2code\In2publishCore\Config\Node\Specific;
 use In2code\In2publishCore\Config\ValidationContainer;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 
+/**
+ * Class SpecArray
+ */
 class SpecArray extends AbsSpecNode
 {
     /**

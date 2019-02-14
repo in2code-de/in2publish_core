@@ -34,6 +34,9 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class LocalDatabaseTest
+ */
 class LocalDatabaseTest implements TestCaseInterface
 {
     /**

@@ -29,6 +29,9 @@ namespace In2code\In2publishCore\Config\Node\Generic;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
+/**
+ * Class GenString
+ */
 class GenString extends AbsGenNode
 {
     /**

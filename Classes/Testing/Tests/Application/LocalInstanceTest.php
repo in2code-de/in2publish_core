@@ -34,6 +34,9 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class LocalInstanceTest
+ */
 class LocalInstanceTest implements TestCaseInterface
 {
     /**

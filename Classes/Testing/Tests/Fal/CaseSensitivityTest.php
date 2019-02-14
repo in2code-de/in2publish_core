@@ -33,6 +33,9 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class CaseSensitivityTest
+ */
 class CaseSensitivityTest implements TestCaseInterface
 {
     /**
@@ -45,6 +48,9 @@ class CaseSensitivityTest implements TestCaseInterface
      */
     protected $testSubjectProvider;
 
+    /**
+     * CaseSensitivityTest constructor.
+     */
     public function __construct()
     {
         $this->flexFormService = GeneralUtility::makeInstance(FlexFormService::class);

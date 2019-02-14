@@ -41,6 +41,9 @@ class GetLabelFieldFromRecordViewHelper extends AbstractViewHelper
      */
     protected $labelService;
 
+    /**
+     * GetLabelFieldFromRecordViewHelper constructor.
+     */
     public function __construct()
     {
         $this->labelService = GeneralUtility::makeInstance(LabelService::class);

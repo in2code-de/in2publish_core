@@ -33,6 +33,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+/**
+ * Class DirtyPropertiesIconDataAttributesViewHelper
+ */
 class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
 {
     /**

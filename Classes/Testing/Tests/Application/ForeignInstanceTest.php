@@ -37,6 +37,9 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class ForeignInstanceTest
+ */
 class ForeignInstanceTest implements TestCaseInterface
 {
     /**
@@ -44,6 +47,9 @@ class ForeignInstanceTest implements TestCaseInterface
      */
     protected $rceDispatcher;
 
+    /**
+     * ForeignInstanceTest constructor.
+     */
     public function __construct()
     {
         $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);

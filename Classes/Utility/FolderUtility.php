@@ -28,8 +28,15 @@ namespace In2code\In2publishCore\Utility;
 
 use TYPO3\CMS\Core\Resource\FolderInterface;
 
+/**
+ * Class FolderUtility
+ */
 class FolderUtility
 {
+    /**
+     * @param FolderInterface $folder
+     * @return array
+     */
     public static function extractFolderInformation(FolderInterface $folder): array
     {
         return [
@@ -40,6 +47,10 @@ class FolderUtility
         ];
     }
 
+    /**
+     * @param array $folders
+     * @return array
+     */
     public static function extractFoldersInformation(array $folders): array
     {
         foreach ($folders as $index => $folder) {

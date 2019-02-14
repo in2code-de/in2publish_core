@@ -62,6 +62,9 @@ class ForeignEnvironmentService
         $this->logger = $this->getLogger();
     }
 
+    /**
+     * @return string
+     */
     public function getDatabaseInitializationCommands(): string
     {
         if ($this->cache && $this->cache->has('foreign_db_init')) {
@@ -168,6 +171,10 @@ class ForeignEnvironmentService
         return GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
     }
 
+    /**
+     * @param array $output
+     * @return array
+     */
     protected function tokenizeResponse(array $output): array
     {
         $values = [];

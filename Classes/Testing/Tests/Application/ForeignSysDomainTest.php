@@ -195,6 +195,10 @@ class ForeignSysDomainTest implements TestCaseInterface
         return $messages;
     }
 
+    /**
+     * @param array $results
+     * @return array
+     */
     protected function getMessagesForSitesWithSlashBase(array $results)
     {
         $messages = [];

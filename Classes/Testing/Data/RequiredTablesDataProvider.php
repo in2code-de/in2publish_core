@@ -33,6 +33,9 @@ use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
+/**
+ * Class RequiredTablesDataProvider
+ */
 class RequiredTablesDataProvider implements SingletonInterface
 {
     /**
@@ -45,6 +48,9 @@ class RequiredTablesDataProvider implements SingletonInterface
      */
     protected $cache = [];
 
+    /**
+     * RequiredTablesDataProvider constructor.
+     */
     public function __construct()
     {
         $this->dispatcher = GeneralUtility::makeInstance(Dispatcher::class);

@@ -33,6 +33,9 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class SshConnectionTest
+ */
 class SshConnectionTest implements TestCaseInterface
 {
     /**

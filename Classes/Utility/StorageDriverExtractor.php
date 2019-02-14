@@ -32,6 +32,9 @@ use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class StorageDriverExtractor
+ */
 class StorageDriverExtractor
 {
     /**

@@ -35,6 +35,9 @@ use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
+/**
+ * Class FalStorageTestSubjectsProvider
+ */
 class FalStorageTestSubjectsProvider implements SingletonInterface
 {
     const PURPOSE_CASE_SENSITIVITY = 'caseSensitivity';
@@ -62,6 +65,9 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
      */
     protected $initialized = false;
 
+    /**
+     * FalStorageTestSubjectsProvider constructor.
+     */
     public function __construct()
     {
         $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);

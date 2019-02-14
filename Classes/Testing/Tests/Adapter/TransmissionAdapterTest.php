@@ -31,6 +31,9 @@ use In2code\In2publishCore\Communication\TemporaryAssetTransmission\Transmission
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 
+/**
+ * Class TransmissionAdapterTest
+ */
 class TransmissionAdapterTest implements TestCaseInterface
 {
     /**

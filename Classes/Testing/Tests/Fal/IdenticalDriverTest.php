@@ -33,6 +33,9 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class IdenticalDriverTest
+ */
 class IdenticalDriverTest implements TestCaseInterface
 {
     /**
@@ -40,6 +43,9 @@ class IdenticalDriverTest implements TestCaseInterface
      */
     protected $testSubjectProvider;
 
+    /**
+     * IdenticalDriverTest constructor.
+     */
     public function __construct()
     {
         $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);

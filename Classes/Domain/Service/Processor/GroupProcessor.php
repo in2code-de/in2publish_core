@@ -30,6 +30,9 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class GroupProcessor
+ */
 class GroupProcessor extends AbstractProcessor
 {
     const INTERNAL_TYPE = 'internal_type';

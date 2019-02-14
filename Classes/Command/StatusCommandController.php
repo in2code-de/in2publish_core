@@ -166,6 +166,7 @@ class StatusCommandController extends AbstractCommandController
 
     /**
      * Returns a serialized site config for the given page id
+     *
      * @param int $pageId
      */
     public function siteConfigurationCommand(int $pageId)

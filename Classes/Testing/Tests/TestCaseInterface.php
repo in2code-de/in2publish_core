@@ -27,6 +27,9 @@ namespace In2code\In2publishCore\Testing\Tests;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+/**
+ * Interface TestCaseInterface
+ */
 interface TestCaseInterface
 {
     /**

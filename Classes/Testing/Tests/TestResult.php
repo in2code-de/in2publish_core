@@ -29,6 +29,9 @@ namespace In2code\In2publishCore\Testing\Tests;
 
 use In2code\In2publishCore\Testing\Utility\TestLabelLocalizer;
 
+/**
+ * Class TestResult
+ */
 class TestResult
 {
     const OK = 'ok';
@@ -126,6 +129,9 @@ class TestResult
         $this->label = $label;
     }
 
+    /**
+     * @return string
+     */
     public function getTranslatedLabel(): string
     {
         return TestLabelLocalizer::translate($this->label, $this->labelArguments);

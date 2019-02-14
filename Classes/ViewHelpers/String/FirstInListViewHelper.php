@@ -30,6 +30,9 @@ namespace In2code\In2publishCore\ViewHelpers\String;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
 
+/**
+ * Class FirstInListViewHelper
+ */
 class FirstInListViewHelper extends AbstractViewHelper
 {
     /**

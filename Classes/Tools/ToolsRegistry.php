@@ -32,6 +32,9 @@ use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
+/**
+ * Class ToolsRegistry
+ */
 class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcessingHookInterface
 {
     /**
@@ -39,6 +42,9 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
      */
     protected $entries = [];
 
+    /**
+     * ToolsRegistry constructor.
+     */
     public function __construct()
     {
         $this->registerHookForPostProcessing();
@@ -64,16 +70,25 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
         ];
     }
 
+    /**
+     * @return array
+     */
     public function getTools(): array
     {
         return $this->entries;
     }
 
+    /**
+     * @param string $name
+     */
     public function removeTool(string $name)
     {
         unset($this->entries[$name]);
     }
 
+    /**
+     *
+     */
     public function processData()
     {
         $controllerActions = [];

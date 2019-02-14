@@ -29,6 +29,9 @@ namespace In2code\In2publishCore\Config\Node;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
+/**
+ * Interface Node
+ */
 interface Node
 {
     const T_ARRAY = 'array';

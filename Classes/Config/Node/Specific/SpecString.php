@@ -29,6 +29,9 @@ namespace In2code\In2publishCore\Config\Node\Specific;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
+/**
+ * Class SpecString
+ */
 class SpecString extends AbsSpecNode
 {
     /**

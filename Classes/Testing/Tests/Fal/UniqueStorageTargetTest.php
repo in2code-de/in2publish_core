@@ -37,6 +37,9 @@ use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class UniqueStorageTargetTest
+ */
 class UniqueStorageTargetTest implements TestCaseInterface
 {
     /**
@@ -44,6 +47,9 @@ class UniqueStorageTargetTest implements TestCaseInterface
      */
     protected $testSubjectProvider;
 
+    /**
+     * UniqueStorageTargetTest constructor.
+     */
     public function __construct()
     {
         $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);

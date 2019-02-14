@@ -34,6 +34,9 @@ use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * Class EnvironmentService
+ */
 class EnvironmentService implements SingletonInterface
 {
     const STATE_TESTS_FAILING = 'tests_failing';
@@ -46,11 +49,17 @@ class EnvironmentService implements SingletonInterface
      */
     protected $registry;
 
+    /**
+     * EnvironmentService constructor.
+     */
     public function __construct()
     {
         $this->registry = $this->getRegistry();
     }
 
+    /**
+     * @param bool $success
+     */
     public function setTestResult(bool $success)
     {
         $this->registry->set(
@@ -64,6 +73,9 @@ class EnvironmentService implements SingletonInterface
         );
     }
 
+    /**
+     * @return array
+     */
     public function getTestStatus(): array
     {
         $statusArray = [];
@@ -84,6 +96,9 @@ class EnvironmentService implements SingletonInterface
         return $statusArray;
     }
 
+    /**
+     * @return string
+     */
     protected function getPackagesHash(): string
     {
         return sha1(json_encode($this->getActivePackagesArray()));

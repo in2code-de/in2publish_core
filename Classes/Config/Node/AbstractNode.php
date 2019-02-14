@@ -125,6 +125,7 @@ abstract class AbstractNode implements Node
 
     /**
      * TODO: use "..." when available for GeneralUtility::makeInstance
+     *
      * @param ValidationContainer $container
      * @param $value
      */
@@ -185,6 +186,9 @@ abstract class AbstractNode implements Node
         return $this->skipValidators;
     }
 
+    /**
+     *
+     */
     public function skipValidators()
     {
         $this->skipValidators = true;

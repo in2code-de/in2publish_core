@@ -55,6 +55,9 @@ interface RecordInterface
         array $additionalProperties
     );
 
+    /**
+     * @return bool
+     */
     public function isPagesTable(): bool;
 
     /**

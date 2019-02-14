@@ -32,6 +32,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3\CMS\Frontend\Page\CacheHashCalculator;
 
+/**
+ * Class CompareUriViewHelper
+ */
 class CompareUriViewHelper extends AbstractTagBasedViewHelper
 {
     /**
@@ -44,6 +47,9 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
      */
     protected $domainService;
 
+    /**
+     * CompareUriViewHelper constructor.
+     */
     public function __construct()
     {
         $this->domainService = GeneralUtility::makeInstance(DomainService::class);

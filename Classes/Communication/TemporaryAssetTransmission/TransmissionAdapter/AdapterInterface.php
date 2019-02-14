@@ -27,6 +27,9 @@ namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission\Transm
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+/**
+ * Interface AdapterInterface
+ */
 interface AdapterInterface
 {
     /**

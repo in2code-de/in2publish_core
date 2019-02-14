@@ -31,6 +31,9 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\Ad
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 
+/**
+ * Class RemoteAdapterTest
+ */
 class RemoteAdapterTest implements TestCaseInterface
 {
     /**

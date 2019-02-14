@@ -29,6 +29,9 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+/**
+ * Class FormatPropertyByTcaDefinitionViewHelper
+ */
 class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
 {
     /**

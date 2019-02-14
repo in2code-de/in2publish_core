@@ -27,6 +27,9 @@ namespace In2code\In2publishCore;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+/**
+ * Class In2publishCoreException
+ */
 class In2publishCoreException extends \Exception
 {
 }
