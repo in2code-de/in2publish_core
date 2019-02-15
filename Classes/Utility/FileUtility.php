@@ -48,9 +48,7 @@ class FileUtility
     protected static function initializeLogger()
     {
         if (static::$logger === null) {
-            static::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(
-                \get_called_class()
-            );
+            static::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         }
     }
 
