@@ -139,13 +139,8 @@ class StatusCommandController extends AbstractCommandController
     public function dbInitQueryEncodedCommand()
     {
         $dbInit = [];
-        if (!empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['setDBinit'])) {
-            $dbInit = $GLOBALS['TYPO3_CONF_VARS']['SYS']['setDBinit'];
-        }
-        if (version_compare(TYPO3_version, '8.1.0') >= 0) {
-            if (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'])) {
-                $dbInit = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'];
-            }
+        if (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'])) {
+            $dbInit = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'];
         }
         $this->outputLine('DBinit: ' . base64_encode(json_encode($dbInit)));
     }
