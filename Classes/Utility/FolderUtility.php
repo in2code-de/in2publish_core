@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Utility;
  ***************************************************************/
 
 use TYPO3\CMS\Core\Resource\FolderInterface;
+use function sprintf;
 
 /**
  * Class FolderUtility

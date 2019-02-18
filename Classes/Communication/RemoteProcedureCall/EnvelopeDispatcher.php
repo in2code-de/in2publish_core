@@ -31,12 +31,22 @@ use In2code\In2publishCore\Domain\Driver\RemoteStorage;
 use In2code\In2publishCore\Domain\Factory\FileIndexFactory;
 use In2code\In2publishCore\Utility\FileUtility;
 use In2code\In2publishCore\Utility\FolderUtility;
+use ReflectionProperty;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
+use function array_map;
+use function basename;
+use function call_user_func;
+use function call_user_func_array;
+use function dirname;
+use function get_class;
+use function is_callable;
+use function method_exists;
+use function strtolower;
 
 /**
  * Class EnvelopeDispatcher
@@ -393,7 +403,7 @@ class EnvelopeDispatcher
      */
     protected function getStorageDriver(ResourceStorage $storage): DriverInterface
     {
-        $driverReflection = new \ReflectionProperty(get_class($storage), 'driver');
+        $driverReflection = new ReflectionProperty(get_class($storage), 'driver');
         $driverReflection->setAccessible(true);
         /** @var DriverInterface $driver */
         return $driverReflection->getValue($storage);

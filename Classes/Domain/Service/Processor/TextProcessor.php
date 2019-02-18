@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use function strpos;
 
 /**
  * Class TextProcessor

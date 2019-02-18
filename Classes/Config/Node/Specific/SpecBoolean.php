@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Config\Node\Specific;
  ***************************************************************/
 
 use In2code\In2publishCore\Config\ValidationContainer;
+use function is_bool;
 
 /**
  * Class SpecBoolean
@@ -40,7 +41,7 @@ class SpecBoolean extends AbsSpecNode
      */
     public function validateType(ValidationContainer $container, $value)
     {
-        if (!\is_bool($value)) {
+        if (!is_bool($value)) {
             $container->addError('The value is not a boolean');
         }
     }

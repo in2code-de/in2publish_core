@@ -46,6 +46,10 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_key_exists;
+use function array_keys;
+use function class_exists;
+use function is_array;
 
 /**
  * Class TcaProcessingService

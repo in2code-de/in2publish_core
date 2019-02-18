@@ -28,9 +28,12 @@ namespace In2code\In2publishCore\Utility;
  ***************************************************************/
 
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
+use ReflectionException;
+use ReflectionProperty;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function get_class;
 
 /**
  * Class StorageDriverExtractor
@@ -38,11 +41,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class StorageDriverExtractor
 {
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public static function getLocalDriver(ResourceStorage $localStorage): DriverInterface
     {
-        $driverProperty = new \ReflectionProperty(\get_class($localStorage), 'driver');
+        $driverProperty = new ReflectionProperty(get_class($localStorage), 'driver');
         $driverProperty->setAccessible(true);
         return $driverProperty->getValue($localStorage);
     }

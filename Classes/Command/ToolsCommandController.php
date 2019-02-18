@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Command;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use Throwable;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -55,7 +56,7 @@ class ToolsCommandController extends AbstractCommandController
                     break;
                 }
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $testingResults = [];
             $success = false;
         }

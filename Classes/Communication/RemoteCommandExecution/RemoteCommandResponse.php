@@ -2,6 +2,13 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
 
+use InvalidArgumentException;
+use function array_values;
+use function explode;
+use function filter_var;
+use function implode;
+use function is_string;
+
 /***************************************************************
  * Copyright notice
  *
@@ -142,7 +149,7 @@ class RemoteCommandResponse
         if (is_string($response)) {
             $response = explode("\n", $response);
         } elseif (!is_array($response)) {
-            throw new \InvalidArgumentException('Can not add output that is neither an array nor string', 1493829409);
+            throw new InvalidArgumentException('Can not add output that is neither an array nor string', 1493829409);
         } else {
             // reset keys to represent line numbers
             $response = array_values($response);

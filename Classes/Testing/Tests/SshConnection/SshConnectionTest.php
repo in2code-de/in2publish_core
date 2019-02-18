@@ -31,7 +31,10 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDis
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use Throwable;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_diff;
+use function strpos;
 
 /**
  * Class SshConnectionTest
@@ -64,7 +67,7 @@ class SshConnectionTest implements TestCaseInterface
 
         try {
             $response = $this->rceDispatcher->dispatch($request);
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             return new TestResult(
                 'ssh_connection.connection_failed',
                 TestResult::ERROR,

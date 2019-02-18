@@ -35,6 +35,11 @@ use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository\Tabl
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_diff;
+use function array_merge;
+use function strnatcmp;
+use function strpos;
+use function uasort;
 
 /**
  * Class FakeRecordFactory to fake a record tree with just the information from local and just the pages

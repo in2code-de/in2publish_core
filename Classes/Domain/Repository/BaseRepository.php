@@ -35,6 +35,15 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_column;
+use function array_combine;
+use function explode;
+use function json_encode;
+use function preg_match;
+use function strpos;
+use function strtoupper;
+use function substr;
+use function trim;
 
 /**
  * Class BaseRepository. Inherit from this repository to execute methods

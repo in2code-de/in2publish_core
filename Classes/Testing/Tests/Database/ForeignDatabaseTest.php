@@ -35,6 +35,8 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_merge;
+use function in_array;
 
 /**
  * Class ForeignDatabaseTest
@@ -61,7 +63,7 @@ class ForeignDatabaseTest implements TestCaseInterface
 
         $missingTables = [];
         foreach ($expectedTables as $expectedTable) {
-            if (!\in_array($expectedTable, $actualTables, true)) {
+            if (!in_array($expectedTable, $actualTables, true)) {
                 $missingTables[] = $expectedTable;
             }
         }

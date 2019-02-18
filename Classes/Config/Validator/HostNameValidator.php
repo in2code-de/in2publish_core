@@ -28,6 +28,9 @@ namespace In2code\In2publishCore\Config\Validator;
  ***************************************************************/
 
 use In2code\In2publishCore\Config\ValidationContainer;
+use function fclose;
+use function fsockopen;
+use function is_resource;
 
 /**
  * Class HostNameValidator

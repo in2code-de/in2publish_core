@@ -31,11 +31,16 @@ namespace In2code\In2publishCore\Domain\Service;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use PDO;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
+use function array_shift;
+use function ltrim;
+use function rtrim;
+use function version_compare;
 
 /**
  * Class DomainService
@@ -168,7 +173,7 @@ class DomainService
                                   ->orderBy('sorting', 'ASC')
                                   ->setMaxResults(1)
                                   ->execute()
-                                  ->fetch(\PDO::FETCH_ASSOC);
+                                  ->fetch(PDO::FETCH_ASSOC);
             if (isset($domainRecord['domainName'])) {
                 return $domainRecord['domainName'];
             }

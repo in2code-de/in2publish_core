@@ -28,6 +28,8 @@ namespace In2code\In2publishCore\Config\Validator;
  ***************************************************************/
 
 use In2code\In2publishCore\Config\ValidationContainer;
+use function file_exists;
+use function is_dir;
 
 /**
  * Class DirectoryExistsValidator

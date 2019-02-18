@@ -33,10 +33,15 @@ use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Service\Database\UidReservationService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use LogicException;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
+use function array_intersect_key;
+use function explode;
+use function strtolower;
+use function time;
 
 /**
  * Class FileIndexFactory
@@ -155,12 +160,12 @@ class FileIndexFactory
     /**
      * This method is mostly a copy of an indexer method
      *
-     * @see \TYPO3\CMS\Core\Resource\Index\Indexer::gatherFileInformationArray
-     *
      * @param string $identifier
      * @param $side
      * @param int $uid Predefined UID
      * @return array
+     * @see \TYPO3\CMS\Core\Resource\Index\Indexer::gatherFileInformationArray
+     *
      */
     public function getFileIndexArray($identifier, $side, $uid = 0): array
     {
@@ -239,10 +244,10 @@ class FileIndexFactory
     /**
      * Adapted copy of
      *
-     * @see \TYPO3\CMS\Core\Resource\Index\Indexer::getFileType
-     *
      * @param array $fileInfo
      * @return int
+     * @see \TYPO3\CMS\Core\Resource\Index\Indexer::getFileType
+     *
      */
     protected function determineFileType(array $fileInfo): int
     {
@@ -282,7 +287,7 @@ class FileIndexFactory
         } elseif ($side === 'foreign') {
             $driver = $this->foreignDriver;
         } else {
-            throw new \LogicException('Unsupported side "' . $side . '"', 1476106674);
+            throw new LogicException('Unsupported side "' . $side . '"', 1476106674);
         }
 
         if ($driver->fileExists($identifier)) {

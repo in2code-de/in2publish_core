@@ -36,6 +36,10 @@ use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function base64_decode;
+use function implode;
+use function json_decode;
+use function strpos;
 
 /**
  * Used to receive static information about the foreign environment like

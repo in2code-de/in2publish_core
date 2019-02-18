@@ -29,8 +29,11 @@ namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repositor
  ***************************************************************/
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
+use function array_column;
+use function array_combine;
 
 /**
  * Class TableCacheRepository can save table values to runtime. So another db query may not needed
@@ -87,7 +90,7 @@ class TableCacheRepository implements SingletonInterface
                          ->from($tableName)
                          ->where($query->expr()->eq('uid', (int)$uniqueIdentifier))
                          ->execute()
-                         ->fetchAll(\PDO::FETCH_ASSOC);
+                         ->fetchAll(PDO::FETCH_ASSOC);
             if (isset($row[0]) && $row[0] === false) {
                 return [];
             }
@@ -117,7 +120,7 @@ class TableCacheRepository implements SingletonInterface
                           ->where($query->expr()->eq('pid', (int)$pageIdentifier))
                           ->orderBy('uid', 'ASC')
                           ->execute()
-                          ->fetchAll(\PDO::FETCH_ASSOC);
+                          ->fetchAll(PDO::FETCH_ASSOC);
             $rows = array_combine(array_column($rows, 'uid'), $rows);
             $this->cacheRecords($tableName, $rows, $databaseName);
         } else {

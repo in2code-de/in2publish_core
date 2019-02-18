@@ -32,6 +32,10 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\FlexFormService;
+use function array_keys;
+use function array_merge;
+use function array_unique;
+use function sprintf;
 
 /**
  * Class CaseSensitivityTest

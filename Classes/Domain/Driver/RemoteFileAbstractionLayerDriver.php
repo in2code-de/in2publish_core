@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Domain\Driver;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Exception;
 use In2code\In2publishCore\Command\RpcCommandController;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
@@ -35,11 +36,18 @@ use In2code\In2publishCore\Communication\RemoteProcedureCall\EnvelopeDispatcher;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use InvalidArgumentException;
+use LogicException;
+use PDO;
+use RuntimeException;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Service\FlexFormService;
+use function array_keys;
+use function is_array;
+use function sprintf;
 
 /**
  * Class RemoteFileAbstractionLayerDriver
@@ -139,7 +147,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
                                                 ->where($query->expr()->eq('uid', (int)$this->storageUid))
                                                 ->setMaxResults(1)
                                                 ->execute()
-                                                ->fetch(\PDO::FETCH_ASSOC);
+                                                ->fetch(PDO::FETCH_ASSOC);
             // TODO: Replace with \TYPO3\CMS\Core\Service\FlexFormService upon dropping TYPO3 v8
             $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
             $driverConfiguration = $flexFormService->convertFlexFormContentToArray(
@@ -148,7 +156,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
             ArrayUtility::mergeRecursiveWithOverrule($this->configuration, $driverConfiguration);
         }
         if (!is_array($this->remoteDriverSettings)) {
-            throw new \LogicException(
+            throw new LogicException(
                 'Could not find the remote storage with UID "' . $this->storageUid . '"',
                 1474470724
             );
@@ -245,8 +253,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * Checks if a folder exists.
      *
      * @param string $folderIdentifier
-     * @throws \Exception
      * @return bool
+     * @throws Exception
      */
     public function folderExists($folderIdentifier)
     {
@@ -415,7 +423,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @return array
      *
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function getPermissions($identifier)
     {
@@ -443,7 +451,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
     {
         $callback = function () use ($fileIdentifier, $propertiesToExtract) {
             if (!$this->fileExists($fileIdentifier)) {
-                throw new \InvalidArgumentException('File ' . $fileIdentifier . ' does not exist.', 1476199721);
+                throw new InvalidArgumentException('File ' . $fileIdentifier . ' does not exist.', 1476199721);
             } else {
                 return $this->executeEnvelope(
                     new Envelope(
@@ -516,12 +524,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         $sortRev = false
     ) {
         if (0 !== $start || 0 !== $max || false !== $recursive || !empty($fnFc) || '' !== $sort || false !== $sortRev) {
-            throw new \InvalidArgumentException('This Driver does not support optional arguments', 1476202118);
+            throw new InvalidArgumentException('This Driver does not support optional arguments', 1476202118);
         }
 
         $callback = function () use ($folderIdentifier) {
             if (!$this->folderExists($folderIdentifier)) {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     'Cannot list items in directory ' . $folderIdentifier . ' - does not exist or is no directory',
                     1475235331
                 );
@@ -568,7 +576,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         $sortRev = false
     ) {
         if (0 !== $start || 0 !== $max || false !== $recursive || !empty($fnFc) || '' !== $sort || false !== $sortRev) {
-            throw new \InvalidArgumentException('This Driver does not support optional arguments', 1476201945);
+            throw new InvalidArgumentException('This Driver does not support optional arguments', 1476201945);
         }
 
         $callback = function () use ($folderIdentifier) {
@@ -697,7 +705,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
@@ -721,7 +729,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         $response = $this->rceDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf(
                     'Could not execute RPC [%d]. Errors and Output: %s %s',
                     $uid,

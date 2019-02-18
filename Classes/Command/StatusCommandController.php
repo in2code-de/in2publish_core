@@ -32,6 +32,10 @@ use In2code\In2publishCore\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function base64_encode;
+use function json_encode;
+use function serialize;
+use function version_compare;
 
 /**
  * Class StatusCommandController (always enabled)

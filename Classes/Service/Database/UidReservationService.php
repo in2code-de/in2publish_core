@@ -29,8 +29,13 @@ namespace In2code\In2publishCore\Service\Database;
  ***************************************************************/
 
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Statement;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use RuntimeException;
 use TYPO3\CMS\Core\Database\Connection;
+use function max;
+use function spl_object_hash;
+use function sprintf;
 
 /**
  * Class UidReservationService
@@ -110,7 +115,7 @@ class UidReservationService
                     ->prepare($statement)
                     ->execute();
             } catch (DBALException $e) {
-                throw new \RuntimeException('Failed to increase auto_increment on sys_file', 1475248851);
+                throw new RuntimeException('Failed to increase auto_increment on sys_file', 1475248851);
             }
         }
     }
@@ -151,15 +156,15 @@ class UidReservationService
         );
 
         try {
-            /** @var \Doctrine\DBAL\Statement $tableQuery */
+            /** @var Statement $tableQuery */
             $tableQuery = $databaseConnection->prepare($statement);
             $tableQuery->execute();
             $tableStatus = $tableQuery->fetch();
         } catch (DBALException $e) {
-            throw new \RuntimeException('Could not select table status from database', 1475242494);
+            throw new RuntimeException('Could not select table status from database', 1475242494);
         }
         if (!isset($tableStatus['Auto_increment'])) {
-            throw new \RuntimeException('Could not fetch Auto_increment value from query result', 1475242706);
+            throw new RuntimeException('Could not fetch Auto_increment value from query result', 1475242706);
         }
 
         return (int)$tableStatus['Auto_increment'];

@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\ViewHelpers\String;
 
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
+use function explode;
 
 /**
  * Class FirstInListViewHelper

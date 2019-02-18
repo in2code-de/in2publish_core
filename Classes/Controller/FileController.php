@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Exception;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
 use In2code\In2publishCore\Domain\Factory\FolderRecordFactory;
@@ -35,6 +36,8 @@ use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
+use RuntimeException;
+use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
@@ -42,6 +45,8 @@ use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use function preg_match;
+use function strpos;
 
 /**
  * The FileController is responsible for the "Publish Files" Backend module "m2"
@@ -114,13 +119,13 @@ class FileController extends AbstractController
             $relatedRecords = $record->getRelatedRecordByTableAndProperty('sys_file', 'identifier', $identifier);
 
             if (0 === ($recordsCount = count($relatedRecords))) {
-                throw new \RuntimeException('Did not find any record matching the publishing arguments', 1475656572);
+                throw new RuntimeException('Did not find any record matching the publishing arguments', 1475656572);
             } elseif (1 === $recordsCount) {
                 $relatedRecord = reset($relatedRecords);
             } elseif (isset($relatedRecords[$uid])) {
                 $relatedRecord = $relatedRecords[$uid];
             } else {
-                throw new \RuntimeException('Did not find an exact record match for the given arguments', 1475588793);
+                throw new RuntimeException('Did not find an exact record match for the given arguments', 1475588793);
             }
 
             try {
@@ -129,7 +134,7 @@ class FileController extends AbstractController
                     LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
                     LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
                 );
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $this->addFlashMessage(
                     LocalizationUtility::translate('file_publishing.failure.file', 'in2publish_core', [$identifier]),
                     LocalizationUtility::translate('file_publishing.failure', 'in2publish_core')
@@ -188,9 +193,9 @@ class FileController extends AbstractController
     }
 
     /**
-     * @param \Exception $exception
+     * @param Exception $exception
      */
-    protected function displayTooManyFilesError(\Exception $exception)
+    protected function displayTooManyFilesError(Exception $exception)
     {
         if (1 === preg_match(static::EXCEPTION_MESSAGE_PATTERN, $exception->getMessage(), $matches)) {
             // Do not remove the space at the end of ') ', because it can't

@@ -26,9 +26,23 @@ namespace In2code\In2publishCore\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use PDO;
 use TYPO3\CMS\Backend\Utility\BackendUtility as BackendUtilityCore;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
+use function array_keys;
+use function count;
+use function explode;
+use function in_array;
+use function is_array;
+use function is_numeric;
+use function is_string;
+use function key;
+use function parse_str;
+use function parse_url;
+use function stristr;
+use function strpos;
+use function strtolower;
 
 /**
  * Class BackendUtility
@@ -100,7 +114,7 @@ class BackendUtility
                             ->where($query->expr()->eq('uid', (int)key($data[$table])))
                             ->setMaxResults(1)
                             ->execute()
-                            ->fetch(\PDO::FETCH_ASSOC);
+                            ->fetch(PDO::FETCH_ASSOC);
             if (false !== $result && isset($result['pid'])) {
                 return (int)$result['pid'];
             }
@@ -120,7 +134,7 @@ class BackendUtility
                                     ->where($query->expr()->eq('uid', (int)$rollbackData[1]))
                                     ->setMaxResults(1)
                                     ->execute()
-                                    ->fetch(\PDO::FETCH_ASSOC);
+                                    ->fetch(PDO::FETCH_ASSOC);
                     if (false !== $result && isset($result['pid'])) {
                         return (int)$result['pid'];
                     }
@@ -138,7 +152,7 @@ class BackendUtility
                          ->where($query->expr()->eq('uid', (int)$identifier))
                          ->setMaxResults(1)
                          ->execute()
-                         ->fetch(\PDO::FETCH_ASSOC);
+                         ->fetch(PDO::FETCH_ASSOC);
             if (isset($row['pid'])) {
                 return (int)$row['pid'];
             }
@@ -175,7 +189,7 @@ class BackendUtility
             'id' => GeneralUtility::_GP('id'),
         ];
         foreach (GeneralUtility::_GET() as $name => $value) {
-            if (\is_array($value) && false !== strpos(strtolower($name), strtolower($route))) {
+            if (is_array($value) && false !== strpos(strtolower($name), strtolower($route))) {
                 $returnParameters[$name] = $value;
             }
         }

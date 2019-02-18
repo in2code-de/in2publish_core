@@ -31,6 +31,8 @@ use In2code\In2publishCore\Communication\TemporaryAssetTransmission\AssetTransmi
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function basename;
+use function dirname;
 
 /**
  * Class FilePublisherService

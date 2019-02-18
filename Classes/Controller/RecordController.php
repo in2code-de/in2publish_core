@@ -33,6 +33,7 @@ use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Factory\FakeRecordFactory;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Permission\PermissionService;
+use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
@@ -40,6 +41,9 @@ use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use function array_merge;
+use function rawurldecode;
+use function strpos;
 
 /**
  * Content publishing Controller. Any action is for the "Publish Records" Backend module "m1"
@@ -177,7 +181,7 @@ class RecordController extends AbstractController
                 $record,
                 array_merge($this->configContainer->get('excludeRelatedTables'), $exceptTableNames)
             );
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->logger->error('Error while publishing', ['exception' => $exception]);
             $this->addFlashMessage($exception->getMessage(), AbstractMessage::ERROR);
         }

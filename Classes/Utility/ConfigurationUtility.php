@@ -2,6 +2,16 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Utility;
 
+use function array_diff;
+use function array_flip;
+use function array_key_exists;
+use function array_keys;
+use function array_merge;
+use function in_array;
+use function is_array;
+use function is_int;
+use function uksort;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -72,10 +82,10 @@ class ConfigurationUtility
         foreach ($additional as $key => $value) {
             if ($value === '__UNSET') {
                 unset($result[$key]);
-            } elseif (!\is_int($key)) {
+            } elseif (!is_int($key)) {
                 // Replace original value
                 $result[$key] = self::getResultingValue($original, $additional, $key);
-            } elseif (!\in_array($value, $original, true)) {
+            } elseif (!in_array($value, $original, true)) {
                 // Add additional value
                 $result[] = self::getResultingValue($original, $additional, $key);
             }
@@ -94,7 +104,7 @@ class ConfigurationUtility
         $originalValue = array_key_exists($key, $original) ? $original[$key] : null;
         $additionalValue = array_key_exists($key, $additional) ? $additional[$key] : null;
 
-        if (\is_array($originalValue) && \is_array($additionalValue)) {
+        if (is_array($originalValue) && is_array($additionalValue)) {
             // Merge recursively
             $result = self::mergeConfiguration($originalValue, $additionalValue);
         } else {

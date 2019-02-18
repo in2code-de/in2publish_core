@@ -40,6 +40,15 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_keys;
+use function array_merge;
+use function array_unique;
+use function count;
+use function dirname;
+use function in_array;
+use function sprintf;
+use function strpos;
+use function substr;
 
 /**
  * This class describes an alternative workflow for the FAL diff and publishing mechanism.

@@ -29,6 +29,8 @@ namespace In2code\In2publishCore\ViewHelpers\Uri;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use function is_array;
+use function substr;
 
 /**
  * Class PreviewAnyRecordViewHelper

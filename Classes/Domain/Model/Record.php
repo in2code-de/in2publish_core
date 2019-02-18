@@ -30,7 +30,24 @@ namespace In2code\In2publishCore\Domain\Model;
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use LogicException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_diff;
+use function array_filter;
+use function array_key_exists;
+use function array_keys;
+use function array_merge;
+use function array_unique;
+use function count;
+use function explode;
+use function implode;
+use function in_array;
+use function is_array;
+use function is_null;
+use function is_string;
+use function strlen;
+use function strpos;
+use function uasort;
 
 /**
  * The most important class of this application. A Record is a Database
@@ -240,7 +257,7 @@ class Record implements RecordInterface
     public function getStateRecursive(array &$alreadyVisited = []): string
     {
         if (!empty($alreadyVisited[$this->tableName])) {
-            if (\in_array($this->getIdentifier(), $alreadyVisited[$this->tableName])) {
+            if (in_array($this->getIdentifier(), $alreadyVisited[$this->tableName])) {
                 return static::RECORD_STATE_UNCHANGED;
             }
         }
@@ -358,7 +375,7 @@ class Record implements RecordInterface
             case 'foreign':
                 return $this->getForeignProperties();
             default:
-                throw new \LogicException('Can not get properties from undefined side "' . $side . '"', 1475858502);
+                throw new LogicException('Can not get properties from undefined side "' . $side . '"', 1475858502);
         }
     }
 
@@ -375,7 +392,7 @@ class Record implements RecordInterface
             case 'foreign':
                 return $this->getForeignProperty($propertyName);
             default:
-                throw new \LogicException(
+                throw new LogicException(
                     'Can not get property "' . $propertyName . '" from undefined side "' . $side . '"',
                     1475858834
                 );
@@ -408,7 +425,7 @@ class Record implements RecordInterface
                 $this->setForeignProperties($properties);
                 break;
             default:
-                throw new \LogicException('Can not set properties for undefined side "' . $side . '"', 1475857626);
+                throw new LogicException('Can not set properties for undefined side "' . $side . '"', 1475857626);
         }
         return $this;
     }
@@ -431,7 +448,7 @@ class Record implements RecordInterface
         // reset dirty properties first
         $this->dirtyProperties = [];
         $ignoreFields = $this->getIgnoreFields();
-        if (!\is_array($ignoreFields)) {
+        if (!is_array($ignoreFields)) {
             $ignoreFields = [];
         }
         $propertyNames =
@@ -712,7 +729,7 @@ class Record implements RecordInterface
             $uid = $this->getForeignProperty('uid');
         } else {
             $combinedIdentifier = static::createCombinedIdentifier($this->localProperties, $this->foreignProperties);
-            if (\strlen($combinedIdentifier) > 0) {
+            if (strlen($combinedIdentifier) > 0) {
                 return $combinedIdentifier;
             }
         }
@@ -1010,7 +1027,7 @@ class Record implements RecordInterface
     protected function getRecordPath(RecordInterface $record = null): string
     {
         $path = '';
-        if (!\is_null($record)) {
+        if (!is_null($record)) {
             $path = '/ ' . $record->getTableName() . ' [' . $record->getIdentifier() . '] ';
             $path = $this->getRecordPath($record->getParentRecord()) . $path;
         }

@@ -32,6 +32,7 @@ use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\FileUtility;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
@@ -150,7 +151,7 @@ class FalIndexPostProcessor implements SingletonInterface
         if (null !== ($storageUid = $record->getLocalProperty('storage'))) {
             try {
                 $storages[$storageUid] = $this->resourceFactory->getStorageObject($storageUid);
-            } catch (\InvalidArgumentException $exception) {
+            } catch (InvalidArgumentException $exception) {
                 $this->logger->warning(
                     'Storage or driver for record does not exist',
                     [

@@ -28,6 +28,8 @@ namespace In2code\In2publishCore\Config\Node\Generic;
  ***************************************************************/
 
 use In2code\In2publishCore\Config\ValidationContainer;
+use function is_string;
+use function reset;
 
 /**
  * Class GenString
@@ -40,7 +42,7 @@ class GenString extends AbsGenNode
      */
     protected function validateKey(ValidationContainer $container, $value)
     {
-        if (!\is_string($value)) {
+        if (!is_string($value)) {
             $container->addError('Key is not a string');
         }
     }

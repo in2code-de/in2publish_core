@@ -28,12 +28,15 @@ namespace In2code\In2publishCore\Domain\Repository;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Exception;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\FileUtility;
+use Throwable;
+use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidIdentifierException;
 use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidParentRowException;
 use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidParentRowLoopException;
 use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidParentRowRootException;
@@ -48,6 +51,30 @@ use TYPO3\CMS\Extbase\Service\FlexFormService;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
+use function array_diff;
+use function array_filter;
+use function array_key_exists;
+use function array_keys;
+use function array_merge;
+use function array_push;
+use function array_shift;
+use function array_unique;
+use function count;
+use function explode;
+use function gettype;
+use function implode;
+use function in_array;
+use function is_array;
+use function is_file;
+use function is_readable;
+use function is_string;
+use function key;
+use function preg_match_all;
+use function reset;
+use function strlen;
+use function strpos;
+use function substr;
+use function trim;
 
 /**
  * CommonRepository - actions in foreign and local database
@@ -465,7 +492,7 @@ class CommonRepository extends BaseRepository
 
             try {
                 $record->addRelatedRecords($relatedRecords);
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $this->logger->emergency(
                     'Exception thrown while adding related record: ' . $e->getMessage(),
                     [
@@ -662,7 +689,7 @@ class CommonRepository extends BaseRepository
      * @throws InvalidParentRowRootException
      * @throws InvalidPointerFieldValueException
      * @throws InvalidTcaException
-     * @throws \TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidIdentifierException
+     * @throws InvalidIdentifierException
      */
     protected function getFlexFormDefinition(RecordInterface $record, $column, array $columnConfiguration)
     {
@@ -877,7 +904,7 @@ class CommonRepository extends BaseRepository
      * @param array $excludedTableNames
      * @param array $columnConfiguration
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     protected function fetchRelatedRecordsByFlexForm(
         RecordInterface $record,
@@ -931,7 +958,7 @@ class CommonRepository extends BaseRepository
      * @param $config
      * @param mixed $flexFormData
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getRecordsByFlexFormRelation(
         RecordInterface $record,
@@ -1163,7 +1190,7 @@ class CommonRepository extends BaseRepository
      * @param array $excludedTableNames
      * @param string $flexFormData
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     protected function fetchRelatedRecordsByGroup(
         array $columnConfiguration,
@@ -1421,7 +1448,7 @@ class CommonRepository extends BaseRepository
      * @param int $recordIdentifier
      * @param array $excludedTableNames
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     protected function fetchRelatedRecordsByInline(
         array $columnConfiguration,
@@ -1659,7 +1686,7 @@ class CommonRepository extends BaseRepository
      * @param RecordInterface $record
      * @param array $excludedTables
      * @return void
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function publishRecordRecursive(RecordInterface $record, array $excludedTables = ['pages'])
     {
@@ -1679,7 +1706,7 @@ class CommonRepository extends BaseRepository
                 'publishRecordRecursiveEnd',
                 [$record, $this]
             );
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->logger->critical(
                 'Publishing single record failed',
                 [
@@ -1696,8 +1723,8 @@ class CommonRepository extends BaseRepository
     /**
      * @param RecordInterface $record
      * @param array $excludedTables
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException
+     * @throws InvalidSlotException
+     * @throws InvalidSlotReturnException
      */
     protected function publishRecordRecursiveInternal(RecordInterface $record, array $excludedTables)
     {
@@ -1902,10 +1929,10 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param string $identifier
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
     protected function shouldSkipFindByIdentifier($identifier): bool
     {
@@ -1913,11 +1940,11 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param string $propertyName
      * @param mixed $propertyValue
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
     protected function shouldSkipFindByProperty($propertyName, $propertyValue): bool
     {
@@ -1926,10 +1953,10 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param RecordInterface $record
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
     protected function shouldSkipSearchingForRelatedRecords(RecordInterface $record): bool
     {
@@ -1937,12 +1964,12 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param RecordInterface $record
      * @param string $propertyName
      * @param array $columnConfiguration
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
     protected function shouldSkipSearchingForRelatedRecordsByProperty(
         RecordInterface $record,
@@ -1958,10 +1985,10 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param RecordInterface $record
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
     protected function shouldSkipEnrichingPageRecord(RecordInterface $record): bool
     {
@@ -1969,11 +1996,11 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param RecordInterface $record
      * @param string $tableName
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
     protected function shouldSkipSearchingForRelatedRecordByTable(RecordInterface $record, $tableName): bool
     {
@@ -1984,11 +2011,11 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param RecordInterface $record
      * @param string $tableName
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
     protected function shouldSkipRecord(RecordInterface $record, $tableName): bool
     {
@@ -1996,11 +2023,11 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param array $localProperties
      * @param array $foreignProperties
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
     protected function shouldIgnoreRecord(array $localProperties, array $foreignProperties): bool
     {

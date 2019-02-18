@@ -32,7 +32,21 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandReq
 use In2code\In2publishCore\Communication\Shared\SshBaseAdapter;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
+use Throwable;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function decoct;
+use function dirname;
+use function filesize;
+use function fopen;
+use function function_exists;
+use function is_dir;
+use function is_resource;
+use function octdec;
+use function ssh2_exec;
+use function ssh2_sftp;
+use function ssh2_sftp_chmod;
+use function ssh2_sftp_mkdir;
+use function stream_copy_to_stream;
 
 /**
  * Class SshAdapter
@@ -76,23 +90,23 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
             $this->createMasks['decimalFolderMask'] = octdec($createMasks['folder']);
         }
 
-        $this->ensureTargetFolderExists(\dirname($target));
+        $this->ensureTargetFolderExists(dirname($target));
 
         $sourceStream = fopen($source, 'r');
 
-        if (!\is_resource($sourceStream)) {
+        if (!is_resource($sourceStream)) {
             $this->logger->error('Could not open local file for reading', ['source' => $source]);
             throw new In2publishCoreException('Could not open stream on local file "' . $source . '"', 1425466802);
         }
 
         try {
             $targetStream = fopen('ssh2.sftp://' . ((int)$this->sftSession) . $target, 'w');
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->logger->critical('Caught exception while trying to open sftp stream', ['exception' => $exception]);
             throw new In2publishCoreException('Could not open stream on foreign: "' . $exception . '"', 1425467980);
         }
 
-        if (!\is_resource($targetStream)) {
+        if (!is_resource($targetStream)) {
             $this->logger->error('Could not open foreign file for reading', ['source' => $source]);
             throw new In2publishCoreException('Could not open stream on foreign file "' . $target . '"', 1425466826);
         }
@@ -131,7 +145,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
     protected function setRemoteFilePermissions(string $target): bool
     {
         // ssh2_sftp_chmod since PECL ssh2 >= 0.12 but has bugs in PHP 7
-        if (PHP_MAJOR_VERSION < 7 && \function_exists('ssh2_sftp_chmod')) {
+        if (PHP_MAJOR_VERSION < 7 && function_exists('ssh2_sftp_chmod')) {
             if (ssh2_sftp_chmod($this->sftSession, $target, $this->createMasks['decimalFolderMask'])) {
                 return true;
             } else {
@@ -204,7 +218,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
      */
     protected function disconnect()
     {
-        if (\is_resource($this->sshSession)) {
+        if (is_resource($this->sshSession)) {
             ssh2_exec($this->sshSession, 'exit');
         }
         unset(

@@ -34,6 +34,9 @@ use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_key_exists;
+use function class_exists;
+use function is_array;
 
 /**
  * Class AdapterSelectionTest
@@ -59,7 +62,7 @@ class AdapterSelectionTest implements TestCaseInterface
     public function run(): TestResult
     {
         $config = $this->adapterRegistry->getConfig();
-        if (!\is_array($config) || !array_key_exists('remote', $config) || !array_key_exists('transmission', $config)) {
+        if (!is_array($config) || !array_key_exists('remote', $config) || !array_key_exists('transmission', $config)) {
             return new TestResult('adapter.adapter_selection.config_error', TestResult::ERROR);
         }
 

@@ -40,6 +40,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
+use function array_diff;
+use function array_filter;
+use function array_merge;
+use function in_array;
+use function strlen;
 
 /**
  * RecordFactory: This class is responsible for create instances of Record.

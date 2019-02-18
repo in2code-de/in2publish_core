@@ -30,6 +30,8 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_key_exists;
+use function array_merge;
 
 /**
  * Class AbstractProcessor

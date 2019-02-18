@@ -28,6 +28,10 @@ namespace In2code\In2publishCore\Config\Provider;
  ***************************************************************/
 
 use In2code\In2publishCore\Utility\ExtensionUtility;
+use Spyc;
+use function explode;
+use function file_exists;
+use function implode;
 
 /**
  * Class VersionedFileProvider
@@ -54,7 +58,7 @@ class VersionedFileProvider extends FileProvider
         foreach ($candidates as $candidate) {
             $file = $path . $this->contextService->getContext() . 'Configuration_' . $candidate . '.yaml';
             if (file_exists($file)) {
-                return \Spyc::YAMLLoad($file);
+                return Spyc::YAMLLoad($file);
             }
         }
 

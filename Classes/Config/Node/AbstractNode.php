@@ -31,6 +31,12 @@ use In2code\In2publishCore\Config\ValidationContainer;
 use In2code\In2publishCore\Config\Validator\ValidatorInterface;
 use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_key_exists;
+use function array_merge;
+use function call_user_func_array;
+use function class_exists;
+use function is_array;
+use function is_string;
 
 /**
  * Class AbstractNode
@@ -109,7 +115,7 @@ abstract class AbstractNode implements Node
      */
     public function validate(ValidationContainer $container, $value)
     {
-        if (!\is_array($value)) {
+        if (!is_array($value)) {
             $container->addError('Configuration format is wrong');
         } elseif (!array_key_exists($this->name, $value)) {
             $container->addError('Configuration value is not set');
@@ -132,14 +138,14 @@ abstract class AbstractNode implements Node
     protected function validateByValidators(ValidationContainer $container, $value)
     {
         foreach ($this->validators as $classOrIndex => $optionsOrClass) {
-            if (\is_array($optionsOrClass) && \is_string($classOrIndex) && class_exists($classOrIndex)) {
+            if (is_array($optionsOrClass) && is_string($classOrIndex) && class_exists($classOrIndex)) {
                 $args = array_merge([$classOrIndex], $optionsOrClass);
             } elseif (class_exists($optionsOrClass)) {
                 $args = [$optionsOrClass];
             } else {
                 continue;
             }
-            $validator = \call_user_func_array([GeneralUtility::class, 'makeInstance'], $args);
+            $validator = call_user_func_array([GeneralUtility::class, 'makeInstance'], $args);
             if ($validator instanceof ValidatorInterface) {
                 $validator->validate($container, $value[$this->name]);
             }
@@ -155,7 +161,7 @@ abstract class AbstractNode implements Node
         if (!empty($node->default)) {
             if (empty($this->default)) {
                 $this->default = $node->default;
-            } elseif (\is_array($this->default) && \is_array($node->default)) {
+            } elseif (is_array($this->default) && is_array($node->default)) {
                 $this->default = array_merge($this->default, $node->default);
             } else {
                 throw new In2publishCoreException('Can not merge properties');

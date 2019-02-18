@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Command;
 
 use In2code\In2publishCore\Domain\Service\Environment\FileStorageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function preg_replace;
 
 /**
  * Class EnvironmentCommandController (always enabled)

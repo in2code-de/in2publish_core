@@ -28,6 +28,8 @@ namespace In2code\In2publishCore\Testing\Tests;
  ***************************************************************/
 
 use In2code\In2publishCore\Testing\Utility\TestLabelLocalizer;
+use function implode;
+use function version_compare;
 
 /**
  * Class TestResult

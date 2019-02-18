@@ -31,6 +31,8 @@ use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
+use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -49,12 +51,12 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
     protected $controllerContext;
 
     /**
-     * @param \TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface $renderingContext
+     * @param RenderingContextInterface $renderingContext
      */
-    public function setRenderingContext(\TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface $renderingContext)
+    public function setRenderingContext(RenderingContextInterface $renderingContext)
     {
         parent::setRenderingContext($renderingContext);
-        if ($renderingContext instanceof \TYPO3\CMS\Fluid\Core\Rendering\RenderingContext) {
+        if ($renderingContext instanceof RenderingContext) {
             $this->controllerContext = $renderingContext->getControllerContext();
         }
     }

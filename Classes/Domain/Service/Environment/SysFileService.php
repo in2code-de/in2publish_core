@@ -28,8 +28,11 @@ namespace In2code\In2publishCore\Domain\Service\Environment;
  ***************************************************************/
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
+use function sha1;
+use function str_replace;
 
 /**
  * Class SysFileService finds not allowed file entries in sys_file
@@ -88,7 +91,7 @@ class SysFileService extends AbstractService
                            ->where($query->expr()->eq('identifier', $query->createNamedParameter($oldIdentifier)))
                            ->setMaxResults(1)
                            ->execute();
-        while ($row = $statement->fetch(\PDO::FETCH_ASSOC)) {
+        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
             $this->connection->update(
                 static::TABLE_NAME,
                 $this->getArgumentsForSysFileFromFile($newIdentifier),

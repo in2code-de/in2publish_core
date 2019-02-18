@@ -34,6 +34,10 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function preg_replace_callback;
+use function str_replace;
+use function strpos;
+use function strstr;
 
 /**
  * Replace markers in TCA definition

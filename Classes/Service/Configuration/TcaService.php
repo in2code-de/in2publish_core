@@ -30,6 +30,10 @@ namespace In2code\In2publishCore\Service\Configuration;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\SingletonInterface;
+use function array_diff;
+use function array_keys;
+use function in_array;
+use function ucfirst;
 
 /**
  * Class TcaService
@@ -64,15 +68,15 @@ class TcaService implements SingletonInterface
         $rootLevelTables = [];
         foreach ($this->tca as $tableName => $tableConfiguration) {
             if (!empty($tableConfiguration['ctrl']['rootLevel'])
-                && !\in_array($tableName, $exceptTableNames, true)
-                && \in_array($tableConfiguration['ctrl']['rootLevel'], [1, -1, true], true)
+                && !in_array($tableName, $exceptTableNames, true)
+                && in_array($tableConfiguration['ctrl']['rootLevel'], [1, -1, true], true)
             ) {
                 $rootLevelTables[] = $tableName;
             }
         }
 
         // always add pages, even if they are excluded
-        if (!\in_array('pages', $rootLevelTables, true)) {
+        if (!in_array('pages', $rootLevelTables, true)) {
             $rootLevelTables[] = 'pages';
         }
         return $rootLevelTables;
@@ -173,7 +177,7 @@ class TcaService implements SingletonInterface
             foreach ($database->getSchemaManager()->listTables() as $table) {
                 if ($table->hasColumn('uid')
                     && $table->hasColumn('pid')
-                    && !\in_array($table->getName(), $exceptTableNames, true)
+                    && !in_array($table->getName(), $exceptTableNames, true)
                 ) {
                     $result[] = $table->getName();
                 }
@@ -246,7 +250,7 @@ class TcaService implements SingletonInterface
         return isset($this->tca[$tableName]['ctrl']['hideTable'])
                && isset($this->tca[$tableName]['ctrl']['rootLevel'])
                && true === (bool)$this->tca[$tableName]['ctrl']['hideTable']
-               && \in_array($this->tca[$tableName]['ctrl']['rootLevel'], [1, -1], true);
+               && in_array($this->tca[$tableName]['ctrl']['rootLevel'], [1, -1], true);
     }
 
     /**

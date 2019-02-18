@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\SshConnection;
 
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use function function_exists;
 
 /**
  * Class SshFunctionAvailabilityTest
@@ -50,7 +51,7 @@ class SshFunctionAvailabilityTest implements TestCaseInterface
         ];
 
         foreach ($sshFunctions as $index => $sshFunction) {
-            if (\function_exists($sshFunction)) {
+            if (function_exists($sshFunction)) {
                 unset($sshFunctions[$index]);
             }
         }
@@ -59,7 +60,7 @@ class SshFunctionAvailabilityTest implements TestCaseInterface
             return new TestResult('ssh_connection.functions_missing', TestResult::ERROR);
         }
 
-        if (!\function_exists('ssh2_sftp_chmod')) {
+        if (!function_exists('ssh2_sftp_chmod')) {
             return new TestResult(
                 'ssh_connection.chmod_missing',
                 TestResult::WARNING,

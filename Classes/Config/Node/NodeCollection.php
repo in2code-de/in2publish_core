@@ -27,15 +27,22 @@ namespace In2code\In2publishCore\Config\Node;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use ArrayObject;
 use In2code\In2publishCore\Config\Node\Generic\AbsGenNode;
 use In2code\In2publishCore\Config\Node\Specific\AbsSpecNode;
 use In2code\In2publishCore\Config\ValidationContainer;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use function array_key_exists;
+use function array_shift;
+use function explode;
+use function implode;
+use function is_array;
+use function spl_object_hash;
 
 /**
  * Class NodeCollection
  */
-class NodeCollection extends \ArrayObject implements Node
+class NodeCollection extends ArrayObject implements Node
 {
     /**
      * NodeCollection constructor.

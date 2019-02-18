@@ -26,11 +26,20 @@ namespace In2code\In2publishCore\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Throwable;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\AbstractFile;
 use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_pop;
+use function array_shift;
+use function count;
+use function glob;
+use function is_array;
+use function is_int;
+use function sprintf;
+use function trim;
 
 /**
  * Class FileUtility
@@ -61,10 +70,10 @@ class FileUtility
 
         $backups = glob($backupFolder . '*_' . $tableName . '.*');
 
-        if (\is_array($backups)
-            && \is_int($keepBackups)
+        if (is_array($backups)
+            && is_int($keepBackups)
         ) {
-            while (\count($backups) >= $keepBackups) {
+            while (count($backups) >= $keepBackups) {
                 $backupFileName = array_shift($backups);
                 try {
                     if (unlink($backupFileName)) {
@@ -72,7 +81,7 @@ class FileUtility
                     } else {
                         static::$logger->error('Could not delete backup "' . $backupFileName . '"');
                     }
-                } catch (\Throwable $exception) {
+                } catch (Throwable $exception) {
                     static::$logger->critical(
                         'An error occurred while deletion of "' . $backupFileName . '"',
                         [

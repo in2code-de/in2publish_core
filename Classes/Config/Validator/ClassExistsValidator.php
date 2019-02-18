@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Config\Validator;
  ***************************************************************/
 
 use In2code\In2publishCore\Config\ValidationContainer;
+use function class_exists;
 
 /**
  * Class ClassExistsValidator

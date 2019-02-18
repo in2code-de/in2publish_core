@@ -31,10 +31,14 @@ use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_column;
+use function array_merge;
+use function version_compare;
 
 /**
  * Class LocalSysDomainTest
@@ -74,7 +78,7 @@ class LocalSysDomainTest implements TestCaseInterface
             if (!$statement->execute()) {
                 return new TestResult('application.local_sites_query_error', TestResult::ERROR);
             }
-            $pageIds = array_column($statement->fetchAll(\PDO::FETCH_ASSOC), 'uid');
+            $pageIds = array_column($statement->fetchAll(PDO::FETCH_ASSOC), 'uid');
             if (empty($pageIds)) {
                 return new TestResult('application.no_sites_found', TestResult::WARNING);
             }
@@ -117,7 +121,7 @@ class LocalSysDomainTest implements TestCaseInterface
         if (!$statement->execute()) {
             return new TestResult('application.local_sites_query_error', TestResult::ERROR);
         }
-        $pageIds = array_column($statement->fetchAll(\PDO::FETCH_ASSOC), 'uid');
+        $pageIds = array_column($statement->fetchAll(PDO::FETCH_ASSOC), 'uid');
         if (empty($pageIds)) {
             return new TestResult('application.no_sites_found', TestResult::WARNING);
         }

@@ -28,6 +28,8 @@ namespace In2code\In2publishCore\Config\Validator;
  ***************************************************************/
 
 use In2code\In2publishCore\Config\ValidationContainer;
+use ZipArchive;
+use function class_exists;
 
 /**
  * Class ZipExtensionInstalledValidator
@@ -40,7 +42,7 @@ class ZipExtensionInstalledValidator implements ValidatorInterface
      */
     public function validate(ValidationContainer $container, $value)
     {
-        if ($value && !class_exists(\ZipArchive::class)) {
+        if ($value && !class_exists(ZipArchive::class)) {
             $container->addError('Zip Backup is enabled but the PHP Extension zip does not seem to be installed');
         }
     }

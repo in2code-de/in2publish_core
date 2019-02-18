@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Config\Node\Specific;
 
+use function array_key_exists;
+
 /***************************************************************
  * Copyright notice
  *

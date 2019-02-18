@@ -28,12 +28,15 @@ namespace In2code\In2publishCore\Testing\Data;
  ***************************************************************/
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
+use function array_column;
+use function array_combine;
 
 /**
  * Class FalStorageTestSubjectsProvider
@@ -148,7 +151,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
                       ->from('sys_file_storage')
                       ->where($query->expr()->eq('deleted', 0))
                       ->execute()
-                      ->fetchAll(\PDO::FETCH_ASSOC);
+                      ->fetchAll(PDO::FETCH_ASSOC);
         return array_combine(array_column($rows, 'uid'), $rows);
     }
 }

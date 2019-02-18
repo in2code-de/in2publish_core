@@ -33,6 +33,7 @@ use In2code\In2publishCore\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Features\RefIndexUpdate\Domain\Model\Task\RefIndexUpdateTask;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function is_int;
 
 /**
  * Class RefIndexUpdater

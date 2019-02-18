@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Factory\Exception;
 
+use Exception;
+
 /***************************************************************
  * Copyright notice
  *
@@ -30,6 +32,6 @@ namespace In2code\In2publishCore\Domain\Factory\Exception;
 /**
  * Class TooManyFilesException
  */
-class TooManyForeignFilesException extends \Exception
+class TooManyForeignFilesException extends Exception
 {
 }

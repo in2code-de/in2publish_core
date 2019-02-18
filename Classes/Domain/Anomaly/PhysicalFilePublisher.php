@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Domain\Anomaly;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Exception;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\Publishing\FilePublisherService;
@@ -35,6 +36,12 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_merge;
+use function basename;
+use function dirname;
+use function is_numeric;
+use function sprintf;
+use function strpos;
 
 /**
  * Class PhysicalFilePublisher
@@ -79,7 +86,7 @@ class PhysicalFilePublisher implements SingletonInterface
      *
      * @return null Returns always null, because slot return values (arrays) are remapped and booleans are not allowed
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */

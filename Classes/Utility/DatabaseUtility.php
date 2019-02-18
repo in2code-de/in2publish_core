@@ -29,11 +29,27 @@ namespace In2code\In2publishCore\Utility;
 use Doctrine\DBAL\DBALException;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
+use InvalidArgumentException;
+use LogicException;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use ZipArchive;
+use function array_key_exists;
+use function array_map;
+use function class_exists;
+use function file_put_contents;
+use function filesize;
+use function implode;
+use function in_array;
+use function is_file;
+use function rtrim;
+use function sprintf;
+use function str_replace;
+use function stripslashes;
+use function time;
 
 /**
  * Class DatabaseUtility
@@ -63,7 +79,7 @@ class DatabaseUtility
                 $foreignEnvService = GeneralUtility::makeInstance(ForeignEnvironmentService::class);
                 $initCommands = $foreignEnvService->getDatabaseInitializationCommands();
 
-                if (!\in_array('in2publish_foreign', $connectionPool->getConnectionNames(), true)) {
+                if (!in_array('in2publish_foreign', $connectionPool->getConnectionNames(), true)) {
                     $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['in2publish_foreign'] = [
                         'dbname' => $configuration['name'],
                         'driver' => 'mysqli',
@@ -120,7 +136,7 @@ class DatabaseUtility
         } elseif ($side === 'foreign') {
             return static::buildForeignDatabaseConnection();
         } else {
-            throw new \LogicException('Unsupported side "' . $side . '"', 1476118055);
+            throw new LogicException('Unsupported side "' . $side . '"', 1476118055);
         }
     }
 
@@ -203,8 +219,8 @@ class DatabaseUtility
         if ($zipBackup === true) {
             if (class_exists('ZipArchive')) {
                 $zipFileName = $backupFolder . $fileName . '.zip';
-                $zip = new \ZipArchive();
-                if ($zip->open($zipFileName, \ZipArchive::CREATE) === true) {
+                $zip = new ZipArchive();
+                if ($zip->open($zipFileName, ZipArchive::CREATE) === true) {
                     $zip->addFromString($fileName, $data);
                     $backupWritten = $zip->close();
                     if ($backupWritten === true) {
@@ -261,10 +277,10 @@ class DatabaseUtility
         $tableName = str_replace('"', '', $tableName);
 
         $allTables = $connection->getSchemaManager()->listTableNames();
-        if (\in_array($tableName, $allTables, true)) {
+        if (in_array($tableName, $allTables, true)) {
             return $tableName;
         }
-        throw new \InvalidArgumentException(
+        throw new InvalidArgumentException(
             sprintf(
                 'The given table name was not properly escaped or does not exist. Given table name: %s',
                 $tableName

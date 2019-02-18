@@ -30,7 +30,9 @@ namespace In2code\In2publishCore\Command;
 
 use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use Throwable;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function json_encode;
 
 /**
  * Class PublishTasksRunnerCommandController (enabled on foreign)
@@ -73,7 +75,7 @@ class PublishTasksRunnerCommandController extends AbstractCommandController
                 $success = $task->execute();
                 $result[] = 'Task ' . $task->getUid() . $success ? ' was executed successfully' : ' failed';
                 $result[] = $task->getMessages();
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $result[] = $e->getMessage();
             }
             $this->taskRepository->update($task);

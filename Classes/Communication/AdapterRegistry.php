@@ -39,6 +39,13 @@ use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Lang\LanguageService;
+use function array_column;
+use function array_combine;
+use function array_keys;
+use function in_array;
+use function is_array;
+use function is_subclass_of;
+use function unserialize;
 
 /**
  * Class AdapterRegistry

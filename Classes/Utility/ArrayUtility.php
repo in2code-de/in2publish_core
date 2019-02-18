@@ -28,7 +28,16 @@ namespace In2code\In2publishCore\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use InvalidArgumentException;
 use TYPO3\CMS\Core\Utility\MathUtility;
+use function array_key_exists;
+use function array_shift;
+use function explode;
+use function gettype;
+use function is_array;
+use function is_string;
+use function strlen;
+use function strtolower;
 
 /**
  * Class ArrayUtility
@@ -79,18 +88,18 @@ class ArrayUtility
      */
     public static function getValueByPath(array &$array, $path)
     {
-        if (\is_string($path)) {
+        if (is_string($path)) {
             $path = explode('.', $path);
-        } elseif (!\is_array($path)) {
-            throw new \InvalidArgumentException(
-                'getValueByPath() expects $path to be string or array, "' . \gettype($path) . '" given.',
+        } elseif (!is_array($path)) {
+            throw new InvalidArgumentException(
+                'getValueByPath() expects $path to be string or array, "' . gettype($path) . '" given.',
                 1495098452
             );
         }
         $key = array_shift($path);
         if (isset($array[$key])) {
             if (!empty($path)) {
-                return \is_array($array[$key]) ? static::getValueByPath($array[$key], $path) : null;
+                return is_array($array[$key]) ? static::getValueByPath($array[$key], $path) : null;
             }
             return $array[$key];
         } else {
@@ -113,7 +122,7 @@ class ArrayUtility
             $value = false;
         } elseif (MathUtility::canBeInterpretedAsInteger($value)) {
             $value = (int)$value;
-        } elseif (\strlen($value) === 0 || strtolower($value) === 'null') {
+        } elseif (strlen($value) === 0 || strtolower($value) === 'null') {
             unset($array[$key]);
         }
         return $value;

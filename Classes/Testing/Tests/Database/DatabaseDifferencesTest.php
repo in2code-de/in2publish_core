@@ -30,7 +30,16 @@ namespace In2code\In2publishCore\Testing\Tests\Database;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use PDO;
 use TYPO3\CMS\Core\Database\Connection;
+use function array_diff;
+use function array_key_exists;
+use function array_keys;
+use function array_merge;
+use function count;
+use function is_array;
+use function mt_rand;
+use function strpos;
 
 /**
  * Class DatabaseDifferencesTest
@@ -79,7 +88,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
             $tableDifferences = [];
 
             foreach ($diffOnLocal as $tableName => $fieldArray) {
-                if (isset($fieldArray['fields']) && \is_array($fieldArray['fields'])) {
+                if (isset($fieldArray['fields']) && is_array($fieldArray['fields'])) {
                     foreach ($fieldArray['fields'] as $fieldName => $fieldProperties) {
                         $fieldExistsOnLocal = isset($localTableInfo[$tableName]['fields'][$fieldName]);
                         $fieldExistsOnForeign = isset($foreignTableInfo[$tableName]['fields'][$fieldName]);
@@ -138,12 +147,12 @@ class DatabaseDifferencesTest implements TestCaseInterface
             }
 
             foreach ($diffOnForeign as $tableName => $fieldArray) {
-                if (\is_array($fieldArray['fields']) && isset($fieldArray['fields'])) {
+                if (is_array($fieldArray['fields']) && isset($fieldArray['fields'])) {
                     foreach (array_keys($fieldArray['fields']) as $fieldOnlyOnForeign) {
                         $fieldDifferences[] = $tableName . '.' . $fieldOnlyOnForeign . ': Only exists on foreign';
                     }
                 }
-                if (\is_array($fieldArray['fields']) && isset($fieldArray['table'])) {
+                if (is_array($fieldArray['fields']) && isset($fieldArray['table'])) {
                     foreach (array_keys($fieldArray['table']) as $propOnlyOnForeign) {
                         $fieldDifferences[] = 'Table property ' . $tableName . '.' . $propOnlyOnForeign
                                               . ': Only exists on foreign';
@@ -177,9 +186,9 @@ class DatabaseDifferencesTest implements TestCaseInterface
 
         foreach ($left as $leftKey => $leftValue) {
             if (array_key_exists($leftKey, $right)) {
-                if (\is_array($leftValue)) {
+                if (is_array($leftValue)) {
                     $subDifferences = $this->identifyDifferences($leftValue, $right[$leftKey]);
-                    if (\count($subDifferences)) {
+                    if (count($subDifferences)) {
                         $differences[$leftKey] = $subDifferences;
                     }
                 } else {
@@ -216,7 +225,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
                            ->where($query->expr()->eq('task_type', $query->createNamedParameter('Backend Test')))
                            ->execute();
         $identical = false;
-        while ($result = $statement->fetch(\PDO::FETCH_ASSOC)) {
+        while ($result = $statement->fetch(PDO::FETCH_ASSOC)) {
             if ($uid === (int)$result['uid'] && $random === (int)$result['configuration']) {
                 $identical = true;
                 break;

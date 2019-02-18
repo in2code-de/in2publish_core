@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Testing\Tests\Adapter;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use function array_merge;
 
 /**
  * Class RemoteAdapterTest

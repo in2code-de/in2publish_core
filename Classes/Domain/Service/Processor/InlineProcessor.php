@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Service\Processor;
 
+use function array_key_exists;
+
 /***************************************************************
  * Copyright notice
  *

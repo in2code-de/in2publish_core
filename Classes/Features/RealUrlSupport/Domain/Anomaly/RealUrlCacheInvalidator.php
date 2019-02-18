@@ -35,6 +35,7 @@ use In2code\In2publishCore\Features\RealUrlSupport\Domain\Model\Task\RealUrlTask
 use In2code\In2publishCore\Features\RealUrlSupport\Domain\Model\Task\RealUrlUpdateTask;
 use In2code\In2publishCore\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function in_array;
 
 /**
  * Class RealUrlCacheInvalidator

@@ -27,11 +27,22 @@ namespace In2code\In2publishCore\Communication\Shared;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Exception;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
 use Psr\Log\LoggerInterface;
+use Throwable;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function in_array;
+use function is_resource;
+use function sprintf;
+use function ssh2_auth_pubkey_file;
+use function ssh2_connect;
+use function ssh2_fingerprint;
+use function str_replace;
+use function strpos;
+use function strtoupper;
 
 /**
  * Class SshBaseAdapter
@@ -69,7 +80,7 @@ abstract class SshBaseAdapter
     /**
      * SshBaseAdapter constructor.
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function __construct()
     {
@@ -78,7 +89,7 @@ abstract class SshBaseAdapter
 
         try {
             $this->config = $this->getValidatedConfig();
-        } catch (\Throwable $exception) {
+        } catch (Throwable $exception) {
             $this->logger->error(
                 'Invalid SSH connection configuration detected',
                 ['message' => $exception->getMessage()]
@@ -146,7 +157,7 @@ abstract class SshBaseAdapter
     /**
      * Validates that all configuration values are set and contain correct values
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getValidatedConfig()
     {

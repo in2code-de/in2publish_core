@@ -28,7 +28,14 @@ namespace In2code\In2publishCore\Testing\Service;
  ***************************************************************/
 
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
+use InvalidArgumentException;
+use LogicException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_diff;
+use function array_keys;
+use function array_merge;
+use function array_unique;
+use function is_subclass_of;
 
 /**
  * Class TestCaseService
@@ -62,7 +69,7 @@ class TestCaseService
             }
 
             if (0 === $resolvedDependencies) {
-                throw new \LogicException('Can not resolve testing dependencies', 1470066529);
+                throw new LogicException('Can not resolve testing dependencies', 1470066529);
             }
         }
 
@@ -92,7 +99,7 @@ class TestCaseService
         $tests = [];
         foreach ($this->getTestClasses() as $class) {
             if (!is_subclass_of($class, TestCaseInterface::class)) {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     'The test class ' . $class . ' must implement the TestCaseInterface',
                     1470244507
                 );

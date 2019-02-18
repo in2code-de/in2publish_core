@@ -33,9 +33,15 @@ use In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use ReflectionException;
+use ReflectionProperty;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_keys;
+use function array_merge;
+use function array_unique;
+use function ltrim;
+use function uniqid;
 
 /**
  * Class UniqueStorageTargetTest
@@ -78,7 +84,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
                 $skippedStorages[] = $storageObject->getName();
                 continue;
             }
-            $driverProperty = new \ReflectionProperty(get_class($storageObject), 'driver');
+            $driverProperty = new ReflectionProperty(get_class($storageObject), 'driver');
             $driverProperty->setAccessible(true);
             /** @var DriverInterface $localDriver */
             $localDriver = $driverProperty->getValue($storageObject);

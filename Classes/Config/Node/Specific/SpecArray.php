@@ -29,6 +29,9 @@ namespace In2code\In2publishCore\Config\Node\Specific;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use function array_search;
+use function in_array;
+use function is_array;
 
 /**
  * Class SpecArray
@@ -41,7 +44,7 @@ class SpecArray extends AbsSpecNode
      */
     public function validateType(ValidationContainer $container, $value)
     {
-        if (!\is_array($value)) {
+        if (!is_array($value)) {
             $container->addError('The value is not an array');
         }
     }
@@ -81,7 +84,7 @@ class SpecArray extends AbsSpecNode
         $this->nodes->unsetDefaults($value[$this->name]);
         if (null !== $this->default) {
             foreach ($this->default as $defValue) {
-                if (\in_array($defValue, $value[$this->name], true)) {
+                if (in_array($defValue, $value[$this->name], true)) {
                     unset($value[$this->name][array_search($defValue, $value[$this->name])]);
                 }
             }

@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Domain\Service;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function microtime;
 
 /**
  * Class ExecutionTimeService

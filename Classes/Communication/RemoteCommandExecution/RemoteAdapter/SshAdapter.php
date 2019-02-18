@@ -32,6 +32,17 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRes
 use In2code\In2publishCore\Communication\Shared\SshBaseAdapter;
 use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_pop;
+use function escapeshellarg;
+use function escapeshellcmd;
+use function fclose;
+use function is_resource;
+use function preg_match;
+use function rtrim;
+use function ssh2_exec;
+use function ssh2_fetch_stream;
+use function stream_get_contents;
+use function stream_set_blocking;
 
 /**
  * Class SshAdapter
@@ -122,7 +133,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
      */
     protected function disconnect()
     {
-        if (\is_resource($this->session)) {
+        if (is_resource($this->session)) {
             ssh2_exec($this->session, 'exit');
         }
         unset($this->session);

@@ -36,6 +36,9 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function base64_decode;
+use function explode;
+use function unserialize;
 
 /**
  * Class ForeignSiteFinder

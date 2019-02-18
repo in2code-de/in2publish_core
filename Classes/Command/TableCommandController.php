@@ -28,12 +28,15 @@ namespace In2code\In2publishCore\Command;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use Exception;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Service\Database\DatabaseSchemaService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_filter;
+use function implode;
 
 /**
  * Class TableCommandController (enabled on local and foreign)
@@ -62,7 +65,7 @@ class TableCommandController extends AbstractCommandController
     protected $dbSchemaService;
 
     /**
-     * @throws \Exception
+     * @throws Exception
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
@@ -132,7 +135,7 @@ class TableCommandController extends AbstractCommandController
      *
      *      Copies a complete table from production to stage and overwrites all old entries!
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
@@ -208,7 +211,7 @@ class TableCommandController extends AbstractCommandController
     /**
      * Stores a backup of the complete local table into the configured directory
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */

@@ -28,6 +28,9 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use function nl2br;
+use function strftime;
+use function trim;
 
 /**
  * Class FormatPropertyByTcaDefinitionViewHelper

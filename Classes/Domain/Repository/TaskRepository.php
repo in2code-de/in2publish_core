@@ -28,12 +28,16 @@ namespace In2code\In2publishCore\Domain\Repository;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use DateTime;
 use In2code\In2publishCore\Domain\Factory\TaskFactory;
 use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_merge;
+use function get_class;
+use function json_encode;
 
 /**
  * Class TaskRepository
@@ -74,7 +78,7 @@ class TaskRepository
         } elseif ($this->contextService->isLocal()) {
             $this->connection = DatabaseUtility::buildForeignDatabaseConnection();
         }
-        $now = new \DateTime('now');
+        $now = new DateTime('now');
         $this->creationDate = $now->format('Y-m-d H:i:s');
     }
 
@@ -134,15 +138,15 @@ class TaskRepository
      * NULL: finds all Tasks which were not executed
      * DateTime: finds all Tasks which were executed on the given Time
      *
-     * @param \DateTime $executionBegin
+     * @param DateTime $executionBegin
      * @return array|NULL
      */
-    public function findByExecutionBegin(\DateTime $executionBegin = null)
+    public function findByExecutionBegin(DateTime $executionBegin = null)
     {
         $query = $this->connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
 
-        if ($executionBegin instanceof \DateTime) {
+        if ($executionBegin instanceof DateTime) {
             $formattedExecutionBegin = $query->createNamedParameter($executionBegin->format('Y-m-d H:i:s'));
             $predicates = $query->expr()->like('execution_begin', $formattedExecutionBegin);
         } else {

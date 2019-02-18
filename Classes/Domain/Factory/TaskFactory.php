@@ -28,8 +28,10 @@ namespace In2code\In2publishCore\Domain\Factory;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use DateTime;
 use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function json_decode;
 
 /**
  * converts database rows from tx_in2code_in2publish_task into Task objects
@@ -50,16 +52,16 @@ class TaskFactory
 
         /** @var AbstractTask $object */
         $object = GeneralUtility::makeInstance($className, $configuration, $taskProperties['uid']);
-        $object->setCreationDate(new \DateTime($taskProperties['creation_date']));
+        $object->setCreationDate(new DateTime($taskProperties['creation_date']));
 
         if ($taskProperties['messages']) {
             $object->setMessages(json_decode($taskProperties['messages'], true));
         }
         if ($taskProperties['execution_begin']) {
-            $object->setExecutionBegin(new \DateTime($taskProperties['execution_begin']));
+            $object->setExecutionBegin(new DateTime($taskProperties['execution_begin']));
         }
         if ($taskProperties['execution_end']) {
-            $object->setExecutionEnd(new \DateTime($taskProperties['execution_end']));
+            $object->setExecutionEnd(new DateTime($taskProperties['execution_end']));
         }
 
         return $object;

@@ -31,9 +31,11 @@ use In2code\In2publishCore\Communication\AdapterRegistry;
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface;
 use In2code\In2publishCore\Config\ConfigContainer;
 use Psr\Log\LoggerInterface;
+use Throwable;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function uniqid;
 
 /**
  * Class AssetTransmitter
@@ -85,7 +87,7 @@ class AssetTransmitter implements SingletonInterface
             try {
                 $adapterClass = $this->adapterRegistry->getAdapter(AdapterInterface::class);
                 $this->adapter = GeneralUtility::makeInstance($adapterClass);
-            } catch (\Throwable $exception) {
+            } catch (Throwable $exception) {
                 $this->logger->debug('SshAdapter initialization failed. See previous log for reason.');
             }
         }

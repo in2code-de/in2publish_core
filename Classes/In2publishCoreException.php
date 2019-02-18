@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore;
 
+use Exception;
+
 /***************************************************************
  * Copyright notice
  *
@@ -30,6 +32,6 @@ namespace In2code\In2publishCore;
 /**
  * Class In2publishCoreException
  */
-class In2publishCoreException extends \Exception
+class In2publishCoreException extends Exception
 {
 }

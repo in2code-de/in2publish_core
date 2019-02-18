@@ -2,6 +2,16 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Service\Environment;
 
+use function array_pop;
+use function array_shift;
+use function dirname;
+use function explode;
+use function implode;
+use function ltrim;
+use function pathinfo;
+use function rtrim;
+use function substr;
+
 /***************************************************************
  *  Copyright notice
  *

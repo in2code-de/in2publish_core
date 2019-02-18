@@ -28,6 +28,19 @@ namespace In2code\In2publishCore\Domain\Service\Environment;
  ***************************************************************/
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_key_exists;
+use function array_keys;
+use function array_pop;
+use function array_values;
+use function explode;
+use function is_dir;
+use function is_file;
+use function pathinfo;
+use function preg_replace;
+use function rename;
+use function rtrim;
+use function str_replace;
+use function uniqid;
 
 /**
  * Class FileStorageEnvironmentService finds not allowed entries in files and folders

@@ -30,10 +30,13 @@ namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function is_array;
+use function json_encode;
 
 /**
  * Class Letterbox
@@ -137,7 +140,7 @@ class Letterbox
                               ->where($query->expr()->eq('uid', (int)$uid))
                               ->setMaxResults(1)
                               ->execute()
-                              ->fetch(\PDO::FETCH_ASSOC);
+                              ->fetch(PDO::FETCH_ASSOC);
         if (is_array($envelopeData)) {
             $envelope = Envelope::fromArray($envelopeData);
             if (!$this->keepEnvelopes && $burnEnvelope) {

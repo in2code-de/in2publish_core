@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Domain\Model\Task;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use DateTime;
 use In2code\In2publishCore\Utility\ArrayUtility;
 
 /**
@@ -47,17 +48,17 @@ abstract class AbstractTask
     protected $configuration = [];
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $creationDate;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $executionBegin;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $executionEnd;
 
@@ -106,7 +107,7 @@ abstract class AbstractTask
      */
     final protected function beforeExecute()
     {
-        $this->executionBegin = new \DateTime();
+        $this->executionBegin = new DateTime();
     }
 
     /**
@@ -114,7 +115,7 @@ abstract class AbstractTask
      */
     final protected function afterExecute()
     {
-        $this->executionEnd = new \DateTime();
+        $this->executionEnd = new DateTime();
     }
 
     /**
@@ -138,27 +139,27 @@ abstract class AbstractTask
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    final public function getCreationDate(): \DateTime
+    final public function getCreationDate(): DateTime
     {
         return $this->creationDate;
     }
 
     /**
-     * @param \DateTime $creationDate
+     * @param DateTime $creationDate
      * @return AbstractTask
      */
-    final public function setCreationDate(\DateTime $creationDate): AbstractTask
+    final public function setCreationDate(DateTime $creationDate): AbstractTask
     {
         $this->creationDate = $creationDate;
         return $this;
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    final public function getExecutionBegin(): \DateTime
+    final public function getExecutionBegin(): DateTime
     {
         return $this->executionBegin;
     }
@@ -168,26 +169,26 @@ abstract class AbstractTask
      */
     final public function getExecutionBeginForPersistence(): string
     {
-        if ($this->executionBegin instanceof \DateTime) {
+        if ($this->executionBegin instanceof DateTime) {
             return $this->executionBegin->format('Y-m-d H:i:s');
         }
         return 'NULL';
     }
 
     /**
-     * @param \DateTime $executionBegin
+     * @param DateTime $executionBegin
      * @return AbstractTask
      */
-    final public function setExecutionBegin(\DateTime $executionBegin = null): AbstractTask
+    final public function setExecutionBegin(DateTime $executionBegin = null): AbstractTask
     {
         $this->executionBegin = $executionBegin;
         return $this;
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    final public function getExecutionEnd(): \DateTime
+    final public function getExecutionEnd(): DateTime
     {
         return $this->executionEnd;
     }
@@ -197,17 +198,17 @@ abstract class AbstractTask
      */
     final public function getExecutionEndForPersistence(): string
     {
-        if ($this->executionEnd instanceof \DateTime) {
+        if ($this->executionEnd instanceof DateTime) {
             return $this->executionEnd->format('Y-m-d H:i:s');
         }
         return 'NULL';
     }
 
     /**
-     * @param \DateTime $executionEnd
+     * @param DateTime $executionEnd
      * @return AbstractTask
      */
-    final public function setExecutionEnd(\DateTime $executionEnd = null): AbstractTask
+    final public function setExecutionEnd(DateTime $executionEnd = null): AbstractTask
     {
         $this->executionEnd = $executionEnd;
         return $this;
