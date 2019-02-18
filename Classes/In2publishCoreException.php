@@ -4,7 +4,7 @@ namespace In2code\In2publishCore;
 
 use Exception;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -27,7 +27,7 @@ use Exception;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 /**
  * Class In2publishCoreException

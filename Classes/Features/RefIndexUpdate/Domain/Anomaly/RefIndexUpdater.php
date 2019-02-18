@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Features\RefIndexUpdate\Domain\Anomaly;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2017 in2code.de and the following authors:
@@ -26,7 +26,7 @@ namespace In2code\In2publishCore\Features\RefIndexUpdate\Domain\Anomaly;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;

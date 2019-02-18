@@ -7,7 +7,7 @@ use function array_filter;
 use function serialize;
 use function unserialize;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -30,7 +30,7 @@ use function unserialize;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 /**
  * Class Envelope

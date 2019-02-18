@@ -1,7 +1,7 @@
 <?php
 namespace In2code\In2publishCore\Tests\Unit\Service\Environment;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +24,7 @@ namespace In2code\In2publishCore\Tests\Unit\Service\Environment;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use TYPO3\CMS\Core\Registry;

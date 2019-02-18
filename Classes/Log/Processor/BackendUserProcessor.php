@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Log\Processor;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -25,7 +25,7 @@ namespace In2code\In2publishCore\Log\Processor;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Log\LogRecord;

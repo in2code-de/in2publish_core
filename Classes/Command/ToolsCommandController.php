@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Command;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2017 in2code.de and the following authors:
@@ -25,7 +25,7 @@ namespace In2code\In2publishCore\Command;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Testing\Service\TestingService;

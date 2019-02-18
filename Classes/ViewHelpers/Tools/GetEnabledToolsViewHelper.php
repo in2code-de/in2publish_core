@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Tools;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2017 in2code.de and the following authors:
@@ -25,7 +25,7 @@ namespace In2code\In2publishCore\ViewHelpers\Tools;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Tools\ToolsRegistry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

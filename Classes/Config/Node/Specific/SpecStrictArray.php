@@ -4,7 +4,7 @@ namespace In2code\In2publishCore\Config\Node\Specific;
 
 use function array_key_exists;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -27,7 +27,7 @@ use function array_key_exists;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 /**
  * Class SpecStrictArray

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Features\RealUrlSupport\Domain\Model\Task;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2015 in2code.de
@@ -26,7 +26,7 @@ namespace In2code\In2publishCore\Features\RealUrlSupport\Domain\Model\Task;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\RecordInterface;

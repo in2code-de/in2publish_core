@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Service\Processor;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:

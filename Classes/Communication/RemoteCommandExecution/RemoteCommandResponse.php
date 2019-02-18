@@ -9,7 +9,7 @@ use function filter_var;
 use function implode;
 use function is_string;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -32,7 +32,7 @@ use function is_string;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 /**
  * Class RemoteCommandResponse
