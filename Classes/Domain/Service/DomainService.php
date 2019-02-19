@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Domain\Service;
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use PDO;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -77,27 +78,9 @@ class DomainService
      */
     public function getFirstDomain(RecordInterface $record, $stagingLevel = self::LEVEL_LOCAL, $addProtocol = true)
     {
-        if (version_compare(TYPO3_branch, '9.3', '>=')) {
-            if ($stagingLevel === self::LEVEL_LOCAL) {
-                $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
-                try {
-                    $site = $siteFinder->getSiteByPageId($record->getPageIdentifier());
-                } catch (SiteNotFoundException $e) {
-                }
-            } else {
-                $foreignSiteFinder = GeneralUtility::makeInstance(ForeignSiteFinder::class);
-                try {
-                    $site = $foreignSiteFinder->getSiteBaseByPageId($record->getPageIdentifier());
-                } catch (SiteNotFoundException $e) {
-                }
-            }
-            if (isset($site)) {
-                $uri = (string)$site->getBase()->withScheme('');
-                if (!$addProtocol) {
-                    $uri = ltrim($uri, '/');
-                }
-                return rtrim($uri, '/');
-            }
+        $uri = $this->getDomainFromSiteConfigByPageId($record->getPageIdentifier(), $stagingLevel, $addProtocol);
+        if (!empty($uri)) {
+            return $uri;
         }
         switch ($record->getTableName()) {
             case 'pages':
@@ -120,6 +103,43 @@ class DomainService
         }
 
         return $domainName;
+    }
+
+    /**
+     * @param int $pageIdentifier
+     * @param string $stagingLevel
+     * @param bool $addProtocol
+     * @return string
+     * @throws In2publishCoreException
+     */
+    protected function getDomainFromSiteConfigByPageId(
+        int $pageIdentifier,
+        string $stagingLevel,
+        bool $addProtocol
+    ): string {
+        if (version_compare(TYPO3_branch, '9.3', '>=')) {
+            if ($stagingLevel === self::LEVEL_LOCAL) {
+                $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+                try {
+                    $site = $siteFinder->getSiteByPageId($pageIdentifier);
+                } catch (SiteNotFoundException $e) {
+                }
+            } else {
+                $foreignSiteFinder = GeneralUtility::makeInstance(ForeignSiteFinder::class);
+                try {
+                    $site = $foreignSiteFinder->getSiteBaseByPageId($pageIdentifier);
+                } catch (SiteNotFoundException $e) {
+                }
+            }
+            if (isset($site)) {
+                $uri = (string)$site->getBase()->withScheme('');
+                if (!$addProtocol) {
+                    $uri = ltrim($uri, '/');
+                }
+                return rtrim($uri, '/');
+            }
+        }
+        return '';
     }
 
     /**
@@ -157,6 +177,10 @@ class DomainService
      */
     public function getDomainFromPageIdentifier($identifier, $stagingLevel): string
     {
+        $uri = $this->getDomainFromSiteConfigByPageId($identifier, $stagingLevel, false);
+        if (!empty($uri)) {
+            return $uri;
+        }
         $rootLine = BackendUtility::BEgetRootLine($identifier);
         foreach ($rootLine as $page) {
             $connection = DatabaseUtility::buildDatabaseConnectionForSide($stagingLevel);
