@@ -84,7 +84,7 @@ class TableCacheRepository implements SingletonInterface
         }
         $connection = DatabaseUtility::buildDatabaseConnectionForSide($databaseName);
         if ($connection instanceof Connection) {
-            $query = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+            $query = $connection->createQueryBuilder();
             $query->getRestrictions()->removeAll();
             $row = $query->select('*')
                          ->from($tableName)
