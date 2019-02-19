@@ -2,8 +2,6 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore;
 
-use Exception;
-
 /*
  * Copyright notice
  *
@@ -28,6 +26,8 @@ use Exception;
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  */
+
+use Exception;
 
 /**
  * Class In2publishCoreException
