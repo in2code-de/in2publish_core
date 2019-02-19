@@ -145,6 +145,9 @@ class FakeRecordFactory
      */
     protected function guessState(Record $record)
     {
+        if (0 === $record->getIdentifier()) {
+            return;
+        }
         if ($this->pageIsNew($record)) {
             $record->setState(RecordInterface::RECORD_STATE_ADDED);
         } elseif ($this->pageIsDeletedOnLocalOnly($record->getIdentifier())) {
