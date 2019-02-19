@@ -89,9 +89,10 @@ class TableCacheRepository implements SingletonInterface
             $row = $query->select('*')
                          ->from($tableName)
                          ->where($query->expr()->eq('uid', (int)$uniqueIdentifier))
+                         ->setMaxResults(1)
                          ->execute()
-                         ->fetchAll(PDO::FETCH_ASSOC);
-            if (isset($row[0]) && $row[0] === false) {
+                         ->fetch(PDO::FETCH_ASSOC);
+            if (empty($row)) {
                 return [];
             }
             $this->cacheSingleRecord($tableName, $uniqueIdentifier, $row, $databaseName);
