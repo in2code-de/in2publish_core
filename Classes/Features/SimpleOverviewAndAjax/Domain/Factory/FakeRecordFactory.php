@@ -355,7 +355,7 @@ class FakeRecordFactory
         uasort(
             $rows,
             function ($row1, $row2) {
-                return strnatcmp($row1['sorting'], $row2['sorting']);
+                return strnatcmp((string)$row1['sorting'], (string)$row2['sorting']);
             }
         );
         return $rows;
