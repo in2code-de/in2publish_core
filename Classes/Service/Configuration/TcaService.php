@@ -164,7 +164,7 @@ class TcaService implements SingletonInterface
     /**
      * Returns all table names that are not in the exclusion list and that have
      * a pid and uid field
-     *
+     * TODO: Cache the result because `$database->getSchemaManager()->listTables()` is expensive
      * @param string[] $exceptTableNames
      * @return string[]
      */
