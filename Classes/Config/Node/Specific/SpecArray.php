@@ -83,9 +83,22 @@ class SpecArray extends AbsSpecNode
     {
         $this->nodes->unsetDefaults($value[$this->name]);
         if (null !== $this->default) {
-            foreach ($this->default as $defValue) {
-                if (in_array($defValue, $value[$this->name], true)) {
-                    unset($value[$this->name][array_search($defValue, $value[$this->name])]);
+            if ($this->name === 'definition') {
+                $newValue = [];
+                foreach ($this->default as $key => $defValue) {
+                    if (!in_array($defValue, $value[$this->name], true)) {
+                        $newValue[$this->name][$key] = '__UNSET';
+                    }
+                }
+                foreach ($value[$this->name] as $var) {
+                    $newValue[$this->name][] = $var;
+                }
+                $value = $newValue;
+            } else {
+                foreach ($this->default as $defValue) {
+                    if (in_array($defValue, $value[$this->name], true)) {
+                        unset($value[$this->name][array_search($defValue, $value[$this->name])]);
+                    }
                 }
             }
         }
