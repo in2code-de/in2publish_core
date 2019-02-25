@@ -61,6 +61,7 @@ class TcaService implements SingletonInterface
 
     /**
      * @param string[] $exceptTableNames
+     *
      * @return string[]
      */
     public function getAllTableNamesAllowedOnRootLevel(array $exceptTableNames = []): array
@@ -86,43 +87,59 @@ class TcaService implements SingletonInterface
      * Get label field name from table
      *
      * @param string $tableName
+     *
      * @return string Field name of the configured label field or empty string if not set
      */
     public function getLabelFieldFromTable(string $tableName): string
     {
-        $labelField = '';
         if (!empty($this->tca[$tableName]['ctrl']['label'])) {
-            $labelField = $this->tca[$tableName]['ctrl']['label'];
+            return $this->tca[$tableName]['ctrl']['label'];
         }
-        return $labelField;
-    }
-
-    /**
-     * @return string Field name of the configured label_alt field or empty string if not set
-     */
-    public function getLabelAltFieldFromTable(string $tableName): string
-    {
-        $labelAltField = '';
-        if (!empty($this->tca[$tableName]['ctrl']['label_alt'])) {
-            $labelAltField = $this->tca[$tableName]['ctrl']['label_alt'];
-        }
-        return $labelAltField;
-    }
-
-    /**
-     * @return string Field name of the configured title field or empty string if not set
-     */
-    public function getTitleFieldFromTable(string $tableName): string
-    {
-        $titleField = '';
-        if (!empty($this->tca[$tableName]['ctrl']['title'])) {
-            $titleField = $this->tca[$tableName]['ctrl']['title'];
-        }
-        return $titleField;
+        return '';
     }
 
     /**
      * @param string $tableName
+     *
+     * @return string Field name of the configured label_alt field or empty string if not set
+     */
+    public function getLabelAltFieldFromTable(string $tableName): string
+    {
+        if (!empty($this->tca[$tableName]['ctrl']['label_alt'])) {
+            return $this->tca[$tableName]['ctrl']['label_alt'];
+        }
+        return '';
+    }
+
+    /**
+     * @param string $tableName
+     *
+     * @return bool
+     */
+    public function getLabelAltForceFromTable(string $tableName): bool
+    {
+        if (isset($this->tca[$tableName]['ctrl']['label_alt_force'])) {
+            return (bool)$this->tca[$tableName]['ctrl']['label_alt_force'];
+        }
+        return false;
+    }
+
+    /**
+     * @param string $tableName
+     *
+     * @return string Field name of the configured title field or empty string if not set
+     */
+    public function getTitleFieldFromTable(string $tableName): string
+    {
+        if (!empty($this->tca[$tableName]['ctrl']['title'])) {
+            return $this->tca[$tableName]['ctrl']['title'];
+        }
+        return '';
+    }
+
+    /**
+     * @param string $tableName
+     *
      * @return string
      */
     public function getSortingField(string $tableName): string
@@ -138,6 +155,7 @@ class TcaService implements SingletonInterface
 
     /**
      * @param string $tableName
+     *
      * @return string
      */
     public function getDeletedField(string $tableName): string
@@ -165,7 +183,9 @@ class TcaService implements SingletonInterface
      * Returns all table names that are not in the exclusion list and that have
      * a pid and uid field
      * TODO: Cache the result because `$database->getSchemaManager()->listTables()` is expensive
+     *
      * @param string[] $exceptTableNames
+     *
      * @return string[]
      */
     public function getAllTableNamesWithPidAndUidField(array $exceptTableNames = []): array
@@ -243,6 +263,7 @@ class TcaService implements SingletonInterface
 
     /**
      * @param string $tableName
+     *
      * @return bool
      */
     public function isHiddenRootTable(string $tableName): bool
