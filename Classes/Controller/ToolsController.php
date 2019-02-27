@@ -43,6 +43,7 @@ use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use function implode;
+use const PHP_EOL;
 
 /**
  * The ToolsController is the controller of the Backend Module "Publish Tools" "m3"
@@ -58,6 +59,7 @@ class ToolsController extends ActionController
 
     /**
      * @param ViewInterface $view
+     *
      * @return void
      */
     protected function initializeView(ViewInterface $view)
@@ -80,7 +82,7 @@ class ToolsController extends ActionController
         }
         if (!empty($messages)) {
             $this->addFlashMessage(
-                implode('<br/>', $messages),
+                implode(PHP_EOL, $messages),
                 LocalizationUtility::translate('test_state_error', 'in2publish_core'),
                 AbstractMessage::ERROR
             );
