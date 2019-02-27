@@ -30,8 +30,8 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
 use In2code\In2publishCore\Command\StatusCommandController;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
-use In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -188,6 +188,7 @@ class ForeignSysDomainTest implements TestCaseInterface
 
     /**
      * @param $results
+     *
      * @return array
      */
     public function getMessagesForSitesWithConfig($results): array
@@ -203,6 +204,7 @@ class ForeignSysDomainTest implements TestCaseInterface
 
     /**
      * @param array $results
+     *
      * @return array
      */
     protected function getMessagesForSitesWithSlashBase(array $results)
@@ -219,6 +221,7 @@ class ForeignSysDomainTest implements TestCaseInterface
 
     /**
      * @param $results
+     *
      * @return array
      */
     public function getMessagesForSitesWithSysDomain($results): array
@@ -235,6 +238,7 @@ class ForeignSysDomainTest implements TestCaseInterface
 
     /**
      * @param $results
+     *
      * @return array
      */
     public function getMessagesForSitesWithoutDomain($results): array
@@ -256,7 +260,7 @@ class ForeignSysDomainTest implements TestCaseInterface
     {
         return [
             ForeignDatabaseTest::class,
-            SshConnectionTest::class,
+            RemoteAdapterTest::class,
         ];
     }
 }
