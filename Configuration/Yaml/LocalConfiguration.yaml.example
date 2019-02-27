@@ -16,6 +16,11 @@ foreign:
   # TYPO3_CONTEXT environment variable to preprend to remote CLI calls
   context: Production
 
+  # Additional environment variables to set before executing a remote cli command. The keys are the variable names
+  envVars: []
+    # MY_VAR: myValue
+    # MY_ENV:
+
   # Set your production systems database credentials here. If you use port forwarding to
   # the server where the database is installed, the host is 127.0.0.1 and the port is your forwarded port.
   database:

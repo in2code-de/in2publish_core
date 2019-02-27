@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_merge;
 
 /**
  * Wrapper for a callable command (commands are the string after "./typo3/cli_dispatch.phpsh").
@@ -87,10 +88,13 @@ class RemoteCommandRequest
         $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         $this->pathToPhp = $configContainer->get('foreign.pathToPhp');
         $this->workingDirectory = $configContainer->get('foreign.rootPath');
-        $this->environmentVariables = [
-            'TYPO3_CONTEXT' => $configContainer->get('foreign.context'),
-            'IN2PUBLISH_CONTEXT' => 'Foreign',
-        ];
+        $this->environmentVariables = array_merge(
+            $configContainer->get('foreign.envVars'),
+            [
+                'TYPO3_CONTEXT' => $configContainer->get('foreign.context'),
+                'IN2PUBLISH_CONTEXT' => 'Foreign',
+            ]
+        );
         $this->dispatcher = './../vendor/bin/typo3';
         $this->command = $command;
         $this->arguments = $arguments;
