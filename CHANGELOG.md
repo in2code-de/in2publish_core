@@ -1,11 +1,16 @@
 # In2publish Core Change Log
 
+- [FEATURE] Support FlexForm Sections and DCE with arbitrary el keys
+- [FEATURE] Support file_reference used by flux for file relations
+- [BUGFIX] Check for the method instead of the already existing class
+- [BUGFIX] Add fluidtypo3/flux support for TYPO3 gte v8
+- [TASK] Allow support for PHP version 7.3
+
 7.2.0:
- - [!!!][BUGFIX] Change default configuration for pages ignoreFieldsForDifferenceView - please read upgrade instruction
+- [!!!][BUGFIX] Change default configuration for pages ignoreFieldsForDifferenceView - please read upgrade instruction
 
 7.1.1:
-* [TASK] branch alias for develop
-
+- [TASK] branch alias for develop
 
 7.1.0:
 - [FEATURE] allow usage of nav_title in record index view
