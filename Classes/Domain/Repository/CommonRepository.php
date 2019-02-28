@@ -34,6 +34,7 @@ use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\FileUtility;
+use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -640,35 +641,52 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * TODO: Replace this whole monstrous thing with FlexFormTools upon dropping TYPO3 v7
+     * TODO: Drop this whole monstrous except the FlexFormTools part upon dropping TYPO3 v7
      *
      * Get flex form configuration from file or reference
      *
      * @param RecordInterface $record
+     * @param string $column
      * @param array $columnConfiguration
      * @return array|mixed
      */
-    protected function getFlexFormDefinition(RecordInterface $record, array $columnConfiguration)
+    protected function getFlexFormDefinition(RecordInterface $record, $column, array $columnConfiguration)
     {
-        $flexFormDefinition = [];
-        $flexFormSource = $this->getFlexFormDefinitionSource($record, $columnConfiguration);
-        if ($flexFormSource !== '') {
-            $flexFormString = $this->resolveFlexFormSource($flexFormSource);
-            if ($flexFormString === '') {
-                $this->logger->warning(
-                    'The FlexForm was empty',
-                    [
-                        'tableName' => $record->getTableName(),
-                        'identifier' => $record->getIdentifier(),
-                        'flexFormSource' => $flexFormSource,
-                    ]
-                );
-                return $flexFormDefinition;
-            }
-            $flexFormDefinition = GeneralUtility::xml2array($flexFormString);
-        }
-        if (isset($flexFormDefinition['sheets'])) {
+        if (method_exists(FlexFormTools::class, 'getDataStructureIdentifier')
+            && isset($columnConfiguration['ds_pointerField'])
+        ) {
+            /** @var FlexFormTools $flexFormTools */
+            $flexFormTools = GeneralUtility::makeInstance(FlexFormTools::class);
+            $dataStructIdentifier = $flexFormTools->getDataStructureIdentifier(
+                ['config' => $columnConfiguration],
+                $record->getTableName(),
+                $column,
+                $record->getLocalProperties()
+            );
+            $flexFormDefinition = $flexFormTools->parseDataStructureByIdentifier($dataStructIdentifier);
             $flexFormDefinition = $flexFormDefinition['sheets'];
+        } else {
+            $flexFormDefinition = [];
+            $flexFormSource = $this->getFlexFormDefinitionSource($record, $columnConfiguration);
+            if ($flexFormSource !== '') {
+                $flexFormString = $this->resolveFlexFormSource($flexFormSource);
+                if ($flexFormString === '') {
+                    $this->logger->warning(
+                        'The FlexForm was empty',
+                        [
+                            'tableName' => $record->getTableName(),
+                            'identifier' => $record->getIdentifier(),
+                            'flexFormSource' => $flexFormSource,
+                        ]
+                    );
+
+                    return $flexFormDefinition;
+                }
+                $flexFormDefinition = GeneralUtility::xml2array($flexFormString);
+            }
+            if (isset($flexFormDefinition['sheets'])) {
+                $flexFormDefinition = $flexFormDefinition['sheets'];
+            }
         }
 
         $flexFormDefinition = $this->flattenFlexFormDefinition((array)$flexFormDefinition);
@@ -763,14 +781,12 @@ class CommonRepository extends BaseRepository
                 foreach (array_keys($fieldDefinition) as $subKey) {
                     if (array_key_exists('el', $fieldDefinition[$subKey])) {
                         foreach ($fieldDefinition[$subKey]['el'] as $subFieldKey => $subFieldDefinition) {
-                            for ($i = 1; $i < 20; $i++) {
-                                $newFieldKey = $fieldKey . '.' . $i . '.' . $subKey . '.' . $subFieldKey;
-                                $flattenedDefinition = $this->flattenFieldFlexForm(
-                                    $flattenedDefinition,
-                                    $subFieldDefinition,
-                                    $newFieldKey
-                                );
-                            }
+                            $newFieldKey = $fieldKey . '.[ANY].' . $subKey . '.' . $subFieldKey;
+                            $flattenedDefinition = $this->flattenFieldFlexForm(
+                                $flattenedDefinition,
+                                $subFieldDefinition,
+                                $newFieldKey
+                            );
                         }
                     }
                 }
@@ -801,16 +817,47 @@ class CommonRepository extends BaseRepository
      * @param array $flexFormDefinition
      * @return array
      */
-    protected function getFlexFormDataByDefinition(array $originalData, array $flexFormDefinition)
+    protected function getFlexFormDataByDefinition(array $originalData, array $flexFormDefinition): array
     {
         $flexFormData = [];
-        foreach (array_keys($flexFormDefinition) as $key) {
-            $data = ArrayUtility::getValueByPath($originalData, $key);
-            if (!empty($data)) {
-                $flexFormData[$key] = $data;
-            }
+        $keys = array_keys($flexFormDefinition);
+        foreach ($keys as $key) {
+            $indexStack = explode('.', $key);
+            $flexFormData[$key] = $this->getValueByIndexStack($indexStack, $originalData);
         }
         return $flexFormData;
+    }
+
+    /**
+     * @param array $indexStack
+     * @param array $data
+     * @param array $pathStack
+     * @return mixed
+     */
+    protected function getValueByIndexStack(array $indexStack, array $data, array &$pathStack = [])
+    {
+        $workingData = $data;
+        while ($index = array_shift($indexStack)) {
+            if ($index === '[ANY]') {
+                foreach ($workingData as $subtreeIndex => $subtreeWorkingData) {
+                    unset($workingData[$subtreeIndex]);
+                    $tmp = $pathStack;
+                    array_push($pathStack, $subtreeIndex);
+                    $value = $this->getValueByIndexStack($indexStack, $subtreeWorkingData, $pathStack);
+                    $workingData[implode('.', $pathStack)] = $value;
+                    $pathStack = $tmp;
+                }
+                return $workingData;
+            } else {
+                array_push($pathStack, $index);
+                if (array_key_exists($index, $workingData)) {
+                    $workingData = $workingData[$index];
+                } else {
+                    return null;
+                }
+            }
+        }
+        return $workingData;
     }
 
     /**
@@ -858,7 +905,7 @@ class CommonRepository extends BaseRepository
             return $records;
         }
 
-        $flexFormDefinition = $this->getFlexFormDefinition($record, $columnConfiguration);
+        $flexFormDefinition = $this->getFlexFormDefinition($record, $column, $columnConfiguration);
         if (empty($flexFormDefinition)) {
             return $records;
         }
@@ -870,63 +917,68 @@ class CommonRepository extends BaseRepository
 
         foreach ($flexFormDefinition as $key => $config) {
             if (!empty($flexFormData[$key])) {
-                switch ($config['type']) {
-                    case 'select':
-                        $records = array_merge(
-                            $records,
-                            $this->fetchRelatedRecordsBySelect(
-                                $config,
-                                $record,
-                                $flexFormData[$key],
-                                $excludedTableNames,
-                                true
-                            )
-                        );
-                        break;
-                    case 'inline':
-                        $records = array_merge(
-                            $records,
-                            $this->fetchRelatedRecordsByInline(
-                                $config,
-                                $record->getTableName(),
-                                $record->getIdentifier(),
-                                $excludedTableNames
-                            )
-                        );
-                        break;
-                    case 'group':
-                        $records = array_merge(
-                            $records,
-                            $this->fetchRelatedRecordsByGroup(
-                                $config,
-                                $record,
-                                $column,
-                                $excludedTableNames,
-                                $flexFormData[$key]
-                            )
-                        );
-                        break;
-                    case 'input':
-                        $records = array_merge(
-                            $records,
-                            $this->fetchRelatedRecordsByRte(
-                                $flexFormData[$key],
-                                $excludedTableNames
-                            )
-                        );
-                        break;
-                    default:
-                        $this->logger->emergency(
-                            'A weird error occurred. An unsupported FlexForm type sneaked through the FlexForm filter',
-                            [
-                                'sheetConfiguration' => $config,
-                                'column' => $column,
-                                'tableName' => $record->getTableName(),
-                                'identifier' => $record->getIdentifier(),
-                            ]
-                        );
+                if (false === strpos($key, '[ANY]')) {
+                    $currentFlexFormData = [$flexFormData[$key]];
+                } else {
+                    $currentFlexFormData = $flexFormData[$key];
+                }
+                foreach ($currentFlexFormData as $currentFlexFormDatum) {
+                    $newRecords = $this->getRecordsByFlexFormRelation(
+                        $record,
+                        $column,
+                        $excludedTableNames,
+                        $config,
+                        $currentFlexFormDatum
+                    );
+                    $records = array_merge($records, $newRecords);
                 }
             }
+        }
+        return $records;
+    }
+
+    /**
+     * @param RecordInterface $record
+     * @param $column
+     * @param array $exclTables
+     * @param $config
+     * @param mixed $flexFormData
+     * @return array
+     * @throws \Exception
+     */
+    protected function getRecordsByFlexFormRelation(
+        RecordInterface $record,
+        $column,
+        array $exclTables,
+        $config,
+        $flexFormData
+    ): array {
+        $records = [];
+        $recTable = $record->getTableName();
+        $recordId = $record->getIdentifier();
+        switch ($config['type']) {
+            case 'select':
+                $records = $this->fetchRelatedRecordsBySelect($config, $record, $flexFormData, $exclTables, true);
+                break;
+            case 'inline':
+                $records = $this->fetchRelatedRecordsByInline($config, $recTable, $recordId, $exclTables);
+                break;
+            case 'group':
+                $records = $this->fetchRelatedRecordsByGroup($config, $record, $column, $exclTables, $flexFormData);
+                break;
+            case 'input':
+                $records = $this->fetchRelatedRecordsByRte($flexFormData, $exclTables);
+                break;
+            default:
+                $this->logger->emergency(
+                    'A weird error occurred. An unsupported FlexForm type sneaked through the FlexForm filter',
+                    [
+                        'sheetConfiguration' => $config,
+                        'column' => $column,
+                        'tableName' => $recTable,
+                        'identifier' => $recordId,
+                    ]
+                );
         }
         return $records;
     }
@@ -1144,6 +1196,7 @@ class CommonRepository extends BaseRepository
                     GeneralUtility::trimExplode(',', $flexFormData, true)
                 );
                 break;
+            case 'file_reference':
             case 'file':
                 $fileAndPathNames = $this->getFileAndPathNames(
                     $columnConfiguration,
@@ -1208,18 +1261,20 @@ class CommonRepository extends BaseRepository
         $propertyName,
         $flexFormData
     ) {
-        $uploadFolder = FileUtility::getCleanFolder($columnConfiguration['uploadfolder']);
+        $prefix = '';
+        if (!empty($columnConfiguration['uploadfolder'])) {
+            $prefix = FileUtility::getCleanFolder($columnConfiguration['uploadfolder']);
+        }
         if (empty($flexFormData)) {
             $fileNames = GeneralUtility::trimExplode(',', $record->getLocalProperty($propertyName), true);
         } else {
             $fileNames = GeneralUtility::trimExplode(',', $flexFormData, true);
         }
         foreach ($fileNames as $key => $filename) {
-            $fileNames[$key] = $uploadFolder . $filename;
-
             // Force indexing of the record
-            GeneralUtility::makeInstance(ResourceFactory::class)
-                          ->getFileObjectFromCombinedIdentifier($fileNames[$key]);
+            $fileNames[$key] = GeneralUtility::makeInstance(ResourceFactory::class)
+                                             ->getFileObjectFromCombinedIdentifier($prefix . $filename)
+                                             ->getIdentifier();
         }
         return $fileNames;
     }
