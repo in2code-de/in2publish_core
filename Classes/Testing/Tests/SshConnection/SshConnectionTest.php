@@ -29,12 +29,12 @@ namespace In2code\In2publishCore\Testing\Tests\SshConnection;
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use Throwable;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_diff;
-use function strpos;
 
 /**
  * Class SshConnectionTest
@@ -47,11 +47,17 @@ class SshConnectionTest implements TestCaseInterface
     protected $rceDispatcher;
 
     /**
+     * @var ConfigContainer
+     */
+    protected $configContainer = null;
+
+    /**
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
         $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
+        $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
     }
 
     /**
@@ -63,7 +69,9 @@ class SshConnectionTest implements TestCaseInterface
     {
         $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
         $request->setDispatcher('');
-        $request->setOption('-v');
+        $request->usePhp(false);
+        $request->setCommand('echo ""');
+        $request->setEnvironmentVariables([]);
 
         try {
             $response = $this->rceDispatcher->dispatch($request);
@@ -75,24 +83,31 @@ class SshConnectionTest implements TestCaseInterface
             );
         }
 
-        // this is the first time a RCE is executed so we have to tes exactly here for the missing do root folder
+        // This is the first time a RCE is executed so we have to test here for the missing document root folder
         if (!$response->isSuccessful()) {
-            if (false !== strpos($response->getErrorsString(), 'No such file or directory')) {
-                return new TestResult(
-                    'ssh_connection.foreign_document_root_missing',
-                    TestResult::ERROR,
-                    [],
-                    [$request->getWorkingDirectory()]
-                );
-            } else {
-                return new TestResult(
-                    'ssh_connection.invalid_php',
-                    TestResult::ERROR,
-                    ['ssh_connection.php_test_error_message', $response->getErrorsString()]
-                );
-            }
+            return new TestResult(
+                'ssh_connection.foreign_document_root_missing',
+                TestResult::ERROR,
+                [$response->getErrorsString()],
+                [$request->getWorkingDirectory()]
+            );
         }
 
+        // Test the php binary
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
+        $request->setDispatcher('');
+        $request->setCommand('-v');
+        $response = $this->rceDispatcher->dispatch($request);
+
+        if (!$response->isSuccessful()) {
+            return new TestResult(
+                'ssh_connection.invalid_php',
+                TestResult::ERROR,
+                ['ssh_connection.php_test_error_message', $response->getErrorsString()]
+            );
+        }
+
+        // Probe for required TYPO3 indicators
         $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'ls');
         $request->usePhp(false);
         $request->setDispatcher('');
