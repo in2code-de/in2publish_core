@@ -137,6 +137,11 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addString('pathToPhp', '/usr/bin/env php')
                                  ->addString('context', 'Production/Live')
                                  ->addArray(
+                                     'envVars',
+                                     Builder::start()->addGenericScalar(Node::T_STRING, Node::T_STRING),
+                                     []
+                                 )
+                                 ->addArray(
                                      'database',
                                      Builder::start()
                                             ->addString('name', 'database_123')
