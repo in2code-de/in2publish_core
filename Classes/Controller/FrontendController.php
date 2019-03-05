@@ -28,8 +28,6 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
-
 /**
  * Class FrontendController
  */
@@ -43,6 +41,6 @@ class FrontendController extends AbstractController
      */
     public function previewAction($identifier = 1)
     {
-        $this->view->assign('record', CommonRepository::getDefaultInstance()->findByIdentifier($identifier));
+        $this->view->assign('identifier', $identifier);
     }
 }
