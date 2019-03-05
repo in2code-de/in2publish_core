@@ -80,7 +80,7 @@ class LocalSysDomainTest implements TestCaseInterface
             }
             $pageIds = array_column($statement->fetchAll(PDO::FETCH_ASSOC), 'uid');
             if (empty($pageIds)) {
-                return new TestResult('application.no_sites_found', TestResult::WARNING);
+                return new TestResult('application.no_local_sites_found', TestResult::WARNING);
             }
 
             $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
@@ -123,7 +123,7 @@ class LocalSysDomainTest implements TestCaseInterface
         }
         $pageIds = array_column($statement->fetchAll(PDO::FETCH_ASSOC), 'uid');
         if (empty($pageIds)) {
-            return new TestResult('application.no_sites_found', TestResult::WARNING);
+            return new TestResult('application.no_local_sites_found', TestResult::WARNING);
         }
 
         foreach ($pageIds as $pageId) {

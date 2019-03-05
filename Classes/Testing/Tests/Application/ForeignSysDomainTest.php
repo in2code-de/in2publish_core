@@ -89,7 +89,7 @@ class ForeignSysDomainTest implements TestCaseInterface
             }
             $pageIds = array_column($statement->fetchAll(PDO::FETCH_ASSOC), 'uid');
             if (empty($pageIds)) {
-                return new TestResult('application.no_sites_found', TestResult::WARNING);
+                return new TestResult('application.no_foreign_sites_found', TestResult::WARNING);
             }
             try {
                 $shortSiteConfig = $this->getForeignSiteConfig();
@@ -154,7 +154,7 @@ class ForeignSysDomainTest implements TestCaseInterface
         }
         $pageIds = array_column($statement->fetchAll(PDO::FETCH_ASSOC), 'uid');
         if (empty($pageIds)) {
-            return new TestResult('application.no_sites_found', TestResult::WARNING);
+            return new TestResult('application.no_foreign_sites_found', TestResult::WARNING);
         }
         foreach ($pageIds as $pageId) {
             if (0 === $this->foreignConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
