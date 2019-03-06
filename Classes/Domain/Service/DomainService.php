@@ -41,6 +41,7 @@ use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use function array_shift;
 use function ltrim;
 use function rtrim;
+use function trim;
 use function version_compare;
 
 /**
@@ -209,7 +210,11 @@ class DomainService
                                   ->execute()
                                   ->fetch(PDO::FETCH_ASSOC);
             if (isset($domainRecord['domainName'])) {
-                return $domainRecord['domainName'];
+                $uri = trim($domainRecord['domainName'], '/');
+                if ($addProtocol) {
+                    $uri = (GeneralUtility::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://') . $uri;
+                }
+                return $uri;
             }
         }
         return '';
