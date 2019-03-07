@@ -1,5 +1,121 @@
 # In2publish Core Change Log
 
+8.0.0:
+- [META] Set the EM conf version number to 8.0.0
+- [!!!][FEATURE] Support TYPO3 v8 & v9
+- [BUGFIX] Fix the compare view by using the right domain and protocol
+- [BUGFIX] Add the protocol after domains if required
+- [BUGFIX] Use the request host if the local site is configured with "/"
+- [BUGFIX] Do not resolve the page record instance and support site configs
+- [BUGFIX] Test the php binary and foreign document root separately
+- [FEATURE] Allow the definition of arbitrary environment variables
+- [BUGFIX] Use correct label IDs for missing root pages
+- [DOCS] Add an example documentation about the __UNSET feature
+- [CLEANUP] Always use the default TYPO3 flash message renderer
+- [BUGFIX] Decouple the ForeignSysDomainTest from the SshConnection by requiring the virtual remote connection test
+- [FEATURE] Add getLabelAltForceFromTable to the TCA Service
+- [BUGFIX] Use the unset feature to remove not selected elements from definition sections
+- [COMMENT] Add caching todo for performance
+- [META] Update extension dependencies to the correct TYPO3 and PHP versions
+- [BUGFIX] Don't query for page uid 0 rows
+- [BUGFIX] Ensure arguments passed to strnatcmp are strings
+- [BUGFIX] Limit the query and select only the first row when querying for records by uid
+- [BUGFIX] Use the correct side's DB connection
+- [BUGFIX] Identify the pages domain also from site configurations
+- [CODESTLYE] Move all imports between class doc block and copyright comment
+- [COMMENT] Update all copyright notices from docblock to comment
+- [REFACTOR] Import all functions
+- [COMMENT] Remove auto-generate todos
+- [CLEANUP] Remove TYPO3 v7 setDBinit access from db init status command
+- [REFACTOR] Use the already late static bound class constant instead of get_called_class
+- [BUGFIX] Exclude the site configuration from the statusall command in TYPO3 v8
+- [BUGFIX] Remove the call to the non existing parent constructor in AbstractCommandController
+- [BUGFIX] Add missing comparison value to check the sys_domain count for TYPO3 v8
+- [BUGFIX] Use the extbase FlexFormService as long as supporting TYPO3 v8
+- [CODESTYLE] Wrap long lines and fix comparison line breaks in accordance to PSR-2
+- [CLEANUP] Remove unused imports
+- [COMMENT] Add missing doc blocks
+- [CLEANUP] Remove unused import
+- [BUGFIX] Ignore translated pages in the local and foreign domain test for TYPO3 v9
+- [FEATURE] Support flux file relations
+- [FEATURE] Add TYPO3 v9 slug TCA processor
+- [CLEANUP] Remove unused import from In2publishCoreDefiner
+- [BUGFIX] Check for already visited records not only hierachy downwards
+- [FEATURE] Fix sys_domain fetching and support TYPO3 v9 site configurations
+- [BUGFIX] Convert file and folder mask internally to integers (strict types)
+- [TYPO] Add missing "found" in sys_domain check label
+- Update .travis.yml
+- [BUGFIX] Remove HostNameValidator for Foreign DB Definer
+- [BUGFIX] Use the determined connection for retrieving envelopes in the letterbox
+- [BUGFIX] Convert all query error info arrays to json encoded strings
+- [BUGFIX] Prevent missing query results by always removing all default constaints
+- [BUGFIX] Use DBAL for FolderRecordFactory
+- [BUGFIX] validate return value of remoteFalDriver->createFolder
+- [BUGFIX] Make BuildResourcePathViewHelper compatible for TYPO3 V9
+- [BUGFIX] Add typecast for deleteRecord operation
+- [DOCS] Add Known isuses for ile deletion process
+- [BUGFIX] Make GetMergedPropertyViewHelper V9 compatible
+- [BUGFIX] UidReservationService: Add fetch statemment to receive result
+- [TASK] Add missing return type hints in RecordInterface
+- [TASK] Add all return type declarations to the RecordInterface
+- [BUGFIX] Set correct return type Record::addChangedRelatedRecordsRecursive
+- [TASK] Require at least php 7.0
+- [BUGFIX] Ensure GetPropertyFromStagingDefinitionViewHelper::getProperty returns a string
+- [BUGFIX] Check if arbitrary table names passed by _GP are actually a table
+- [REFACTOR] Build the local db connection once in BackendUtility::getPageIdentifier
+- [BUGFIX] Use the provided table to query for a PID
+- [BUGFIX] Remove wrong type hints from CommonRepository
+- [BUGFIX] Remove the return type hint from RecordFactory::makeInstance because it can also return null
+- [BUGFIX] Cast the property to quote to string before passing it to ::quoteString
+- [BUGFIX] Allow getFirstDomainInRootLineFromRelatedRecords to return null
+- [BUGFIX] Allow Record::getParentRecord to return null
+- [BUGFIX] Let an empty PK secret stay a string since ssh2_auth_pubkey_file expects it
+- [CLEANUP] Remove unused and legacy impoirt of DatabaseConnection in Fal test
+- [BUGFIX] Catch all throwables instead of just exceptions
+- [BUGFIX] Fix wrong argument type hint
+- [BUGFIX] Fix wrong retrieval of table names
+- [TASK] Add missing strict type declarations
+- [CLEANUP] Refactor and cleanup various classes
+- [CLEANUP] Refactor various classes
+- [BUGFIX] Fix type check in business logic of cleanUpBackups()
+- [TASK] Migrate UidReservationService to DBAL
+- [TASK] Ensure that the ControllerContext is available when needed
+- [CLEANUP] Fix deprecation warning
+- [BUGFIX] Fix orderBy method argument
+- [TASK] Avoid error in Publish Overview module
+- [BUGFIX] Fix version constraints for typo3/cms-core
+- [CLEANUP] Remove the unused DatabaseConnection import from SysLogPublisher
+- [FEATURE] Rewrite the TableCacheRepo to use dbal
+- [FEATURE] Update the RealUrlTask to clear caches with dbal
+- [CLEANUP] Remove the unused db connections from the FakeRecordFactory
+- [BUGFIX] Remove all restrictions prior to envelope burning
+- [FEATURE] Migrate the SysFileService to dbal
+- [FEATURE] Switch Letterbox Envelop burning to dbal
+- [FEATURE] Migrate to the cores FlexFormService
+- [BUGFIX] Add missing command controller parent constructor call to trigger deprecation notices
+- [CODESTYLE] Add missing surrounding whitespace in ::fetchStorages
+- [BUGFIX] Pass the update arguments in the correct order in Letterox::sendEnvelope
+- [FEAUTRE] Update FileIndexFactory to use dbal
+- [FEATURE] Extract order by statements from the additional where clause
+- [CODESTYLE] Write first of twice method call also in one line
+- [REFACTOR] Remove the unused database connections from the ReplaceMarkerService constructor
+- [BUGFIX] Exclude file uploads from pid detection
+- [BUGFIX] Pass the task where expressions unpackable
+- [FEATURE] Use dbal for all queries in the BackendUtility
+- [FEATURE] Change alle view helpers and db accesses to be able to run tests
+- [FEATURE] Use dbal insert method in SysLogPublisher
+- [BUGFIX] Rewrite the basic set of view helpers used in the overview module
+- [FEATURE] Rewrite findPropertiesByProperty to work with dbal
+- [BUGFIX] Remove all listeners from the foreign connection
+- [FEATURE] Replace the legacy database connection with dbal in the DatabaseUtility
+- [BUGFIX] Replace ExtensionManagementUtility::extRelPath with ExtensionManagementUtility::extPath
+- [UPDATE] Require TYPO3 v8 to v9
+- [RELEASE] Version 7.3.0 with PHP 7.3, DCE and Flux support
+
+
+7.3.0:
+- [RELEASE] Version 7.3.0 with PHP 7.3, DCE and Flux support
+- [META] Update version information and changelog for the 7.30 release
 - [FEATURE] Support FlexForm Sections and DCE with arbitrary el keys
 - [FEATURE] Support file_reference used by flux for file relations
 - [BUGFIX] Check for the method instead of the already existing class
