@@ -1,32 +1,34 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Anomaly;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * Copyright notice
  *
- *  (c) 2015 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>,
- *  Oliver Eglseder <oliver.eglseder@in2code.de>
+ * (c) 2015 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>,
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  All rights reserved
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
+use Exception;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\Publishing\FilePublisherService;
@@ -34,6 +36,12 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_merge;
+use function basename;
+use function dirname;
+use function is_numeric;
+use function sprintf;
+use function strpos;
 
 /**
  * Class PhysicalFilePublisher
@@ -78,7 +86,7 @@ class PhysicalFilePublisher implements SingletonInterface
      *
      * @return null Returns always null, because slot return values (arrays) are remapped and booleans are not allowed
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
@@ -164,7 +172,7 @@ class PhysicalFilePublisher implements SingletonInterface
      *
      * @return bool
      */
-    protected function replaceFileWithChangedCopy(Record $record, $storage, $logData)
+    protected function replaceFileWithChangedCopy(Record $record, $storage, $logData): bool
     {
         $old = $record->getForeignProperty('identifier');
         $new = $record->getLocalProperty('identifier');
@@ -188,7 +196,7 @@ class PhysicalFilePublisher implements SingletonInterface
      *
      * @return bool
      */
-    protected function removeFileFromForeign($storage, $logData, $identifier)
+    protected function removeFileFromForeign($storage, $logData, $identifier): bool
     {
         if (true === $result = $this->filePublisherService->removeForeignFile($storage, $identifier)) {
             $this->logger->info('Removed remote file', $logData);
@@ -205,7 +213,7 @@ class PhysicalFilePublisher implements SingletonInterface
      *
      * @return bool
      */
-    protected function addFileToForeign($storage, $logData, $identifier)
+    protected function addFileToForeign($storage, $logData, $identifier): bool
     {
         if (true === $result = $this->filePublisherService->addFileToForeign($storage, $identifier)) {
             $this->logger->info('Added file to foreign', $logData);
@@ -222,7 +230,7 @@ class PhysicalFilePublisher implements SingletonInterface
      *
      * @return bool
      */
-    protected function updateFileOnForeign($storage, $logData, $identifier)
+    protected function updateFileOnForeign($storage, $logData, $identifier): bool
     {
         if (true === $result = $this->filePublisherService->updateFileOnForeign($storage, $identifier)) {
             $this->logger->info('Updated file on foreign', $logData);
@@ -239,7 +247,7 @@ class PhysicalFilePublisher implements SingletonInterface
      *
      * @return bool
      */
-    protected function moveForeignFile(Record $record, $storage, $logData)
+    protected function moveForeignFile(Record $record, $storage, $logData): bool
     {
         $old = $record->getForeignProperty('identifier');
         $new = $record->getLocalProperty('identifier');

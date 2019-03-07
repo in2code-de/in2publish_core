@@ -1,31 +1,32 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Factory;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * Copyright notice
  *
- *  (c) 2016 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>,
- *  Oliver Eglseder <oliver.eglseder@in2code.de>
+ * (c) 2016 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>,
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  All rights reserved
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\Record;
@@ -33,9 +34,12 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository\TableCacheRepository;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\ArrayUtility;
-use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_diff;
+use function array_merge;
+use function strnatcmp;
+use function strpos;
+use function uasort;
 
 /**
  * Class FakeRecordFactory to fake a record tree with just the information from local and just the pages
@@ -43,16 +47,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class FakeRecordFactory
 {
     const PAGE_TABLE_NAME = 'pages';
-
-    /**
-     * @var DatabaseConnection
-     */
-    protected $localDatabase = null;
-
-    /**
-     * @var DatabaseConnection
-     */
-    protected $foreignDatabase = null;
 
     /**
      * @var TableCacheRepository
@@ -81,8 +75,6 @@ class FakeRecordFactory
      */
     public function __construct()
     {
-        $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-        $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->tableCacheRepository = GeneralUtility::makeInstance(TableCacheRepository::class);
         $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
         $this->config = GeneralUtility::makeInstance(ConfigContainer::class)->get();
@@ -94,7 +86,7 @@ class FakeRecordFactory
      * @param int $identifier
      * @return Record
      */
-    public function buildFromStartPage($identifier)
+    public function buildFromStartPage($identifier): Record
     {
         $record = $this->getSingleFakeRecordFromPageIdentifier($identifier);
         $this->addRelatedRecords($record);
@@ -129,7 +121,7 @@ class FakeRecordFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function getSingleFakeRecordFromPageIdentifier($identifier)
+    protected function getSingleFakeRecordFromPageIdentifier($identifier): Record
     {
         $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier, 'local');
         $propertiesForeign = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier, 'foreign');
@@ -153,6 +145,9 @@ class FakeRecordFactory
      */
     protected function guessState(Record $record)
     {
+        if (0 === $record->getIdentifier()) {
+            return;
+        }
         if ($this->pageIsNew($record)) {
             $record->setState(RecordInterface::RECORD_STATE_ADDED);
         } elseif ($this->pageIsDeletedOnLocalOnly($record->getIdentifier())) {
@@ -170,7 +165,7 @@ class FakeRecordFactory
      * @param Record $record
      * @return bool
      */
-    protected function pageIsNew(Record $record)
+    protected function pageIsNew(Record $record): bool
     {
         $propertiesLocal = $this->tableCacheRepository->findByUid(
             static::PAGE_TABLE_NAME,
@@ -191,7 +186,7 @@ class FakeRecordFactory
      * @param int $identifier
      * @return array
      */
-    protected function getChildrenPages($identifier)
+    protected function getChildrenPages($identifier): array
     {
         $rows = $this->tableCacheRepository->findByPid(static::PAGE_TABLE_NAME, $identifier);
         $rows = $this->sortRowsBySorting($rows);
@@ -210,7 +205,7 @@ class FakeRecordFactory
      * @param string $tableName
      * @return bool
      */
-    protected function isRecordDeleted($pageIdentifier, $databaseName, $tableName = self::PAGE_TABLE_NAME)
+    protected function isRecordDeleted($pageIdentifier, $databaseName, $tableName = self::PAGE_TABLE_NAME): bool
     {
         $tcaTable = $this->tcaService->getConfigurationArrayForTable($tableName);
         if (!empty($tcaTable['ctrl']['delete'])) {
@@ -226,7 +221,7 @@ class FakeRecordFactory
      * @param int $pageIdentifier
      * @return bool
      */
-    protected function pageHasMoved($pageIdentifier)
+    protected function pageHasMoved($pageIdentifier): bool
     {
         $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $pageIdentifier, 'local');
         $propertiesForeign = $this->tableCacheRepository->findByUid(
@@ -244,7 +239,7 @@ class FakeRecordFactory
      * @param int $pageIdentifier
      * @return bool
      */
-    protected function shouldSkipChildrenPage($pageIdentifier)
+    protected function shouldSkipChildrenPage($pageIdentifier): bool
     {
         return !$this->isRecordDeletedOnBothInstances($pageIdentifier, static::PAGE_TABLE_NAME)
                && !$this->isRecordDeletedOnLocalAndNonExistingOnForeign($pageIdentifier);
@@ -256,7 +251,7 @@ class FakeRecordFactory
      * @param int $pageIdentifier
      * @return bool
      */
-    protected function pageIsDeletedOnLocalOnly($pageIdentifier)
+    protected function pageIsDeletedOnLocalOnly($pageIdentifier): bool
     {
         $deletedLocal = $this->isRecordDeleted($pageIdentifier, 'local');
         if ($deletedLocal) {
@@ -272,7 +267,7 @@ class FakeRecordFactory
      * @param int $pageIdentifier
      * @return bool
      */
-    protected function pageHasChanged($pageIdentifier)
+    protected function pageHasChanged($pageIdentifier): bool
     {
         $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $pageIdentifier, 'local');
         $propertiesForeign = $this->tableCacheRepository->findByUid(
@@ -292,7 +287,7 @@ class FakeRecordFactory
      * @param Record $record
      * @return bool
      */
-    protected function pageContentRecordsHasChanged(Record $record)
+    protected function pageContentRecordsHasChanged(Record $record): bool
     {
         $tables = $this->tcaService->getAllTableNamesWithPidAndUidField(
             array_merge($this->config['excludeRelatedTables'], ['pages'])
@@ -315,7 +310,7 @@ class FakeRecordFactory
      * @param string $table
      * @return bool
      */
-    protected function areDifferentArrays(array $arrayLocal, array $arrayForeign, $table)
+    protected function areDifferentArrays(array $arrayLocal, array $arrayForeign, $table): bool
     {
         $newLocal = $newForeign = [];
 
@@ -358,12 +353,12 @@ class FakeRecordFactory
      * @param array $rows
      * @return array
      */
-    protected function sortRowsBySorting($rows)
+    protected function sortRowsBySorting($rows): array
     {
         uasort(
             $rows,
             function ($row1, $row2) {
-                return strnatcmp($row1['sorting'], $row2['sorting']);
+                return strnatcmp((string)$row1['sorting'], (string)$row2['sorting']);
             }
         );
         return $rows;
@@ -376,7 +371,7 @@ class FakeRecordFactory
      * @param string $table
      * @return array
      */
-    protected function removeIgnoreFieldsFromArray(array $properties, $table)
+    protected function removeIgnoreFieldsFromArray(array $properties, $table): array
     {
         if (!empty($this->config['ignoreFieldsForDifferenceView'][$table])) {
             $ignoreFields = $this->config['ignoreFieldsForDifferenceView'][$table];
@@ -392,8 +387,10 @@ class FakeRecordFactory
      * @param string $tableName
      * @return bool
      */
-    protected function isRecordDeletedOnLocalAndNonExistingOnForeign($identifier, $tableName = self::PAGE_TABLE_NAME)
-    {
+    protected function isRecordDeletedOnLocalAndNonExistingOnForeign(
+        $identifier,
+        $tableName = self::PAGE_TABLE_NAME
+    ): bool {
         if ($this->isRecordDeleted($identifier, 'local', $tableName)) {
             $properties = $this->tableCacheRepository->findByUid($tableName, $identifier, 'foreign');
             if (empty($properties)) {
@@ -410,7 +407,7 @@ class FakeRecordFactory
      * @param string $tableName
      * @return bool
      */
-    protected function isRecordDeletedOnBothInstances($identifier, $tableName)
+    protected function isRecordDeletedOnBothInstances($identifier, $tableName): bool
     {
         return $this->isRecordDeleted($identifier, 'local', $tableName)
                && $this->isRecordDeleted($identifier, 'foreign', $tableName);

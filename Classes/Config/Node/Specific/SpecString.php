@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Config\Node\Specific;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -24,9 +25,10 @@ namespace In2code\In2publishCore\Config\Node\Specific;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\ValidationContainer;
+use function is_string;
 
 /**
  * Class SpecString
@@ -51,7 +53,7 @@ class SpecString extends AbsSpecNode
      *
      * @return string
      */
-    public function cast($value)
+    public function cast($value): string
     {
         return (string)$value;
     }

@@ -1,32 +1,33 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * Copyright notice
  *
- *  (c) 2015 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>,
- *  Oliver Eglseder <oliver.eglseder@in2code.de>
+ * (c) 2015 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>,
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Class GetFilterStatusViewHelper
@@ -36,23 +37,31 @@ class GetFilterStatusViewHelper extends AbstractViewHelper
     /**
      * @var BackendUserAuthentication
      */
-    protected $backendUser = null;
+    protected $backendUser;
+
+    /**
+     *
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('filter', 'string', 'The filter name', true);
+        $this->registerArgument('key', 'string', 'The filter type', false, 'records');
+    }
 
     /**
      * Get filter status
      *
-     * @param string $filter
-     * @param string $key "records" or "files"
      * @return bool
      */
-    public function render($filter, $key = 'records')
+    public function render(): bool
     {
+        $key = $this->arguments['key'];
+        $filter = $this->arguments['filter'];
         return $this->backendUser->getSessionData('in2publish_filter_' . $key . '_' . $filter) === true;
     }
 
     /**
-     * Initialize
-     *
      * @return void
      */
     public function initialize()
@@ -64,7 +73,7 @@ class GetFilterStatusViewHelper extends AbstractViewHelper
      * @return BackendUserAuthentication
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function getBackendUser()
+    protected function getBackendUser(): BackendUserAuthentication
     {
         return $GLOBALS['BE_USER'];
     }

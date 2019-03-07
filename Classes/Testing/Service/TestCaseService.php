@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Testing\Service;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,10 +25,17 @@ namespace In2code\In2publishCore\Testing\Service;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
+use InvalidArgumentException;
+use LogicException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_diff;
+use function array_keys;
+use function array_merge;
+use function array_unique;
+use function is_subclass_of;
 
 /**
  * Class TestCaseService
@@ -37,7 +45,7 @@ class TestCaseService
     /**
      * @return TestCaseInterface[]
      */
-    public function getTests()
+    public function getTests(): array
     {
         $tests = $this->getTestObjects();
         $orderedTests = [];
@@ -61,7 +69,7 @@ class TestCaseService
             }
 
             if (0 === $resolvedDependencies) {
-                throw new \LogicException('Can not resolve testing dependencies', 1470066529);
+                throw new LogicException('Can not resolve testing dependencies', 1470066529);
             }
         }
 
@@ -73,7 +81,7 @@ class TestCaseService
      * @param array $orderedTests
      * @return bool
      */
-    protected function isDependencyMissing(array $dependencies, array $orderedTests)
+    protected function isDependencyMissing(array $dependencies, array $orderedTests): bool
     {
         foreach ($dependencies as $dependency) {
             if (!isset($orderedTests[$dependency])) {
@@ -86,12 +94,12 @@ class TestCaseService
     /**
      * @return TestCaseInterface[]
      */
-    protected function getTestObjects()
+    protected function getTestObjects(): array
     {
         $tests = [];
         foreach ($this->getTestClasses() as $class) {
             if (!is_subclass_of($class, TestCaseInterface::class)) {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     'The test class ' . $class . ' must implement the TestCaseInterface',
                     1470244507
                 );
@@ -105,7 +113,7 @@ class TestCaseService
      * @return array
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    protected function getTestClasses()
+    protected function getTestClasses(): array
     {
         return $GLOBALS['in2publish_core']['tests'];
     }

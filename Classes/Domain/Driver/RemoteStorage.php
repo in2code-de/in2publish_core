@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Driver;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,8 +25,9 @@ namespace In2code\In2publishCore\Domain\Driver;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
+use Exception;
 use In2code\In2publishCore\Command\RpcCommandController;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
@@ -33,6 +35,7 @@ use In2code\In2publishCore\Communication\RemoteProcedureCall\Envelope;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\EnvelopeDispatcher;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\In2publishCoreException;
+use RuntimeException;
 use TYPO3\CMS\Core\Resource\ResourceStorageInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -70,7 +73,7 @@ class RemoteStorage implements ResourceStorageInterface
      * @param string $identifier
      * @return bool
      */
-    public function hasFolder($storage, $identifier)
+    public function hasFolder($storage, $identifier): bool
     {
         if (!isset(static::$cache[$storage][$identifier][static::HAS_FOLDER_KEY])) {
             $result = $this->executeEnvelope(
@@ -91,7 +94,7 @@ class RemoteStorage implements ResourceStorageInterface
      * @param string $identifier
      * @return array
      */
-    public function getFoldersInFolder($storage, $identifier)
+    public function getFoldersInFolder($storage, $identifier): array
     {
         if (!isset(static::$cache[$storage][$identifier][static::SUB_FOLDERS_KEY])) {
             $result = $this->executeEnvelope(
@@ -109,7 +112,7 @@ class RemoteStorage implements ResourceStorageInterface
      * @param string $identifier
      * @return array
      */
-    public function getFilesInFolder($storage, $identifier)
+    public function getFilesInFolder($storage, $identifier): array
     {
         if (!isset(static::$cache[$storage][$identifier][static::FILES_KEY])) {
             $result = $this->executeEnvelope(
@@ -127,7 +130,7 @@ class RemoteStorage implements ResourceStorageInterface
      * @param string $identifier
      * @return array
      */
-    public function getFile($storage, $identifier)
+    public function getFile($storage, $identifier): array
     {
         if (!isset(static::$cache[$storage][$identifier][static::FILES_KEY][$identifier])) {
             $result = $this->executeEnvelope(
@@ -146,7 +149,7 @@ class RemoteStorage implements ResourceStorageInterface
      *
      * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
@@ -170,7 +173,7 @@ class RemoteStorage implements ResourceStorageInterface
         $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
 
         if (!$response->isSuccessful()) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'Could not execute RPC [' . $uid . ']. An error occurred on foreign: ' . $response->getErrorsString(),
                 1476281965
             );

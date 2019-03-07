@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Features\RefIndexUpdate\Domain\Model\Task;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2017 in2code.de and the following authors:
@@ -25,7 +26,7 @@ namespace In2code\In2publishCore\Features\RefIndexUpdate\Domain\Model\Task;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
@@ -64,7 +65,7 @@ class RefIndexUpdateTask extends AbstractTask
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function executeTask()
+    protected function executeTask(): bool
     {
         $count = 0;
         $refIndexObj = GeneralUtility::makeInstance(ReferenceIndex::class);

@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Testing\Tests\Adapter;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2017 in2code.de and the following authors:
@@ -24,16 +25,18 @@ namespace In2code\In2publishCore\Testing\Tests\Adapter;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Communication\AdapterRegistry;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface as RemoteAdapter;
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface as TransAdapt;
-use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_key_exists;
+use function class_exists;
+use function is_array;
 
 /**
  * Class AdapterSelectionTest
@@ -43,7 +46,7 @@ class AdapterSelectionTest implements TestCaseInterface
     /**
      * @var AdapterRegistry
      */
-    protected $adapterRegistry = null;
+    protected $adapterRegistry;
 
     /**
      * AdapterSelectionTest constructor.
@@ -56,7 +59,7 @@ class AdapterSelectionTest implements TestCaseInterface
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $config = $this->adapterRegistry->getConfig();
         if (!is_array($config) || !array_key_exists('remote', $config) || !array_key_exists('transmission', $config)) {
@@ -91,7 +94,7 @@ class AdapterSelectionTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [];
     }

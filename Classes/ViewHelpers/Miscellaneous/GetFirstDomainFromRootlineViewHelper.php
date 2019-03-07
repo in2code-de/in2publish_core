@@ -1,34 +1,35 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * Copyright notice
  *
- *  (c) 2015 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>,
- *  Oliver Eglseder <oliver.eglseder@in2code.de>
+ * (c) 2015 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>,
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
-use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Service\DomainService;
+use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Class GetFirstDomainFromRootlineViewHelper
@@ -49,15 +50,28 @@ class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
     }
 
     /**
+     *
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('identifier', 'int', 'The page uid to search in its rootLine', true);
+        $this->registerArgument('stagingLevel', 'string', '"local" or "foreign"', false, 'local');
+        $this->registerArgument('addProtocol', 'bool', 'Prepend http(s)://? Defaults to true', false, true);
+    }
+
+    /**
      * Get domain from rootline without trailing slash
      *
-     * @param Record $record
-     * @param string $stagingLevel "local" or "foreign"
-     * @param bool $addProtocol
      * @return string
+     * @throws In2publishCoreException
      */
-    public function render(Record $record, $stagingLevel = 'local', $addProtocol = true)
+    public function render(): string
     {
-        return $this->domainService->getFirstDomain($record, $stagingLevel, $addProtocol);
+        return $this->domainService->getDomainFromPageIdentifier(
+            $this->arguments['identifier'],
+            $this->arguments['stagingLevel'],
+            $this->arguments['addProtocol']
+        );
     }
 }

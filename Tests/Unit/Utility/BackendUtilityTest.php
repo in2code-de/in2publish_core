@@ -1,7 +1,7 @@
 <?php
 namespace In2code\In2publishCore\Tests\Unit\Utility;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +24,7 @@ namespace In2code\In2publishCore\Tests\Unit\Utility;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\DatabaseConnection;

@@ -1,30 +1,41 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Service\Environment;
 
-/***************************************************************
- *  Copyright notice
+use function array_pop;
+use function array_shift;
+use function dirname;
+use function explode;
+use function implode;
+use function ltrim;
+use function pathinfo;
+use function rtrim;
+use function substr;
+
+/*
+ * Copyright notice
  *
- *  (c) 2015 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>
+ * (c) 2015 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>
  *
- *  All rights reserved
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
 /**
  * Class AbstractService
@@ -71,7 +82,7 @@ abstract class AbstractService
      * @param string $folder
      * @return string
      */
-    protected function removeFirstFolderFromPath($folder)
+    protected function removeFirstFolderFromPath($folder): string
     {
         $folder = ltrim($folder, '/');
         $parts = explode('/', $folder);
@@ -85,7 +96,7 @@ abstract class AbstractService
      * @param string $folder
      * @return string
      */
-    protected function removeLastFolderFromPath($folder)
+    protected function removeLastFolderFromPath($folder): string
     {
         if (!$this->isFolder($folder)) {
             $folder = $this->getPathFromPathAndFilename($folder);
@@ -100,7 +111,7 @@ abstract class AbstractService
      * @param string $pathAndFilename
      * @return string
      */
-    protected function getPathFromPathAndFilename($pathAndFilename)
+    protected function getPathFromPathAndFilename($pathAndFilename): string
     {
         return dirname($pathAndFilename) . '/';
     }
@@ -109,7 +120,7 @@ abstract class AbstractService
      * @param string $pathAndFilename
      * @return string
      */
-    protected function getFilenameFromPathAndFilename($pathAndFilename)
+    protected function getFilenameFromPathAndFilename($pathAndFilename): string
     {
         $pathParts = pathinfo($pathAndFilename);
         return $pathParts['basename'];
@@ -119,7 +130,7 @@ abstract class AbstractService
      * @param string $fileOrFolder
      * @return bool
      */
-    protected function isFolder($fileOrFolder)
+    protected function isFolder($fileOrFolder): bool
     {
         return substr($fileOrFolder, -1) === '/';
     }

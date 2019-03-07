@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\String;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2017 in2code.de and the following authors:
@@ -24,10 +25,11 @@ namespace In2code\In2publishCore\ViewHelpers\String;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3\CMS\Fluid\Core\ViewHelper\Exception;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
+use function explode;
 
 /**
  * Class FirstInListViewHelper
@@ -46,7 +48,7 @@ class FirstInListViewHelper extends AbstractViewHelper
     /**
      * @return string
      */
-    public function render()
+    public function render(): string
     {
         $arguments = $this->arguments['entries'];
         $list = explode(',', $arguments, 2);

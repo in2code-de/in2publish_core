@@ -1,31 +1,32 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Model;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * Copyright notice
  *
- *  (c) 2015 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>,
- *  Oliver Eglseder <oliver.eglseder@in2code.de>
+ * (c) 2015 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>,
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  All rights reserved
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
 /**
  * RecordInterface
@@ -55,9 +56,14 @@ interface RecordInterface
     );
 
     /**
+     * @return bool
+     */
+    public function isPagesTable(): bool;
+
+    /**
      * @return string
      */
-    public function getState();
+    public function getState(): string;
 
     /**
      * @param string $state
@@ -88,7 +94,7 @@ interface RecordInterface
      * @param array $localProperties
      * @return RecordInterface
      */
-    public function setLocalProperties(array $localProperties);
+    public function setLocalProperties(array $localProperties): RecordInterface;
 
     /**
      * @return array
@@ -113,7 +119,7 @@ interface RecordInterface
      * @param array $foreignProperties
      * @return RecordInterface
      */
-    public function setForeignProperties(array $foreignProperties);
+    public function setForeignProperties(array $foreignProperties): RecordInterface;
 
     /**
      * @return RecordInterface
@@ -167,7 +173,7 @@ interface RecordInterface
     /**
      * @return string
      */
-    public function getTableName();
+    public function getTableName(): string;
 
     /**
      * Get a property from both local and foreign of this Record.
@@ -186,7 +192,7 @@ interface RecordInterface
     /**
      * @return RecordInterface[][]
      */
-    public function getRelatedRecords();
+    public function getRelatedRecords(): array;
 
     /**
      * NOTICE: This will not work if debug.disableParentRecords is disabled!
@@ -206,13 +212,13 @@ interface RecordInterface
     /**
      * @return bool
      */
-    public function isChanged();
+    public function isChanged(): bool;
 
     /**
      * @param RecordInterface[] $relatedRecordsFlat
      * @return RecordInterface[]
      */
-    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = []);
+    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = []): array;
 
     /**
      * Returns the given records from the list of related records if the relation is direct.
@@ -221,21 +227,21 @@ interface RecordInterface
      * @param RecordInterface $record
      * @return RecordInterface Returns always itself
      */
-    public function removeRelatedRecord(RecordInterface $record);
+    public function removeRelatedRecord(RecordInterface $record): RecordInterface;
 
     /**
      * Check if there is a local record
      *
      * @return bool
      */
-    public function localRecordExists();
+    public function localRecordExists(): bool;
 
     /**
      * Check if there is a foreign record
      *
      * @return bool
      */
-    public function foreignRecordExists();
+    public function foreignRecordExists(): bool;
 
     /**
      * @param string $table
@@ -243,7 +249,7 @@ interface RecordInterface
      * @param mixed $value
      * @return RecordInterface[]
      */
-    public function getRelatedRecordByTableAndProperty($table, $property, $value);
+    public function getRelatedRecordByTableAndProperty($table, $property, $value): array;
 
     /**
      * @param RecordInterface $record
@@ -257,12 +263,12 @@ interface RecordInterface
      * @param RecordInterface[] $relatedRecords
      * @return RecordInterface
      */
-    public function addRelatedRecords(array $relatedRecords);
+    public function addRelatedRecords(array $relatedRecords): RecordInterface;
 
     /**
      * @return bool
      */
-    public function isParentRecordLocked();
+    public function isParentRecordLocked(): bool;
 
     /**
      * Returns if this record or children record has changed in any way if added or changed or deleted
@@ -270,24 +276,24 @@ interface RecordInterface
      * @param array $alreadyVisited
      * @return bool
      */
-    public function isChangedRecursive(array &$alreadyVisited = []);
+    public function isChangedRecursive(array &$alreadyVisited = []): bool;
 
     /**
      * @param RecordInterface $parentRecord
      * @return Record
      */
-    public function setParentRecord(RecordInterface $parentRecord);
+    public function setParentRecord(RecordInterface $parentRecord): RecordInterface;
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function getColumnsTca();
+    public function getColumnsTca(): array;
 
     /**
      * @param string $propertyName
      * @return bool
      */
-    public function hasAdditionalProperty($propertyName);
+    public function hasAdditionalProperty($propertyName): bool;
 
     /**
      * @param string $side
@@ -301,4 +307,11 @@ interface RecordInterface
      * @return void
      */
     public function lockParentRecord();
+
+    /**
+     * Returns the pid the record is stored in or the uid if the record is a page
+     *
+     * @return int
+     */
+    public function getPageIdentifier(): int;
 }

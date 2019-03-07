@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Testing\Tests\Adapter;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2017 in2code.de and the following authors:
@@ -24,11 +25,12 @@ namespace In2code\In2publishCore\Testing\Tests\Adapter;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use function array_merge;
 
 /**
  * Class TransmissionAdapterTest
@@ -38,7 +40,7 @@ class TransmissionAdapterTest implements TestCaseInterface
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         return new TestResult('adapter.all_transmission_adapter_tests__passed');
     }
@@ -48,7 +50,7 @@ class TransmissionAdapterTest implements TestCaseInterface
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         $dependencies = [
             AdapterSelectionTest::class,

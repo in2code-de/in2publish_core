@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Utility;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Utility;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
@@ -38,13 +39,9 @@ class ExtensionUtility
      *
      * @see ExtensionManagementUtility::getExtensionVersion()
      *
-     * @param string $extension
-     *
-     * @return string
-     *
      * @SuppressWarnings(PHPMD.CamelCaseVariableName)
      */
-    public static function getExtensionVersion($extension)
+    public static function getExtensionVersion(string $extension): string
     {
         $EM_CONF = [];
         $_EXTKEY = $extension;

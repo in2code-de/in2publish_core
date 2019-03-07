@@ -229,12 +229,32 @@
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\LocalSysDomainTest -->
 
 			<trans-unit id="application.local_sys_domain_missing">
-				<source>No valid sys_domain entry has been on the local system.</source>
+				<source>No valid sys_domain entry has been found on the local system.</source>
 				<target state="translated">Es wurde kein gültiger sys_domain Eintrag im lokalen System gefunden.</target>
 			</trans-unit>
 			<trans-unit id="application.local_sys_domain_configured">
 				<source>A valid sys_domain entry has been found on the local system.</source>
 				<target state="translated">Es wurde ein gültiger sys_domain Eintrag im lokalen System gefunden.</target>
+			</trans-unit>
+			<trans-unit id="application.local_sites_config_missing">
+				<source>One or more root pages are missing their site configuration and have no sys_domain entry.</source>
+				<target state="translated">Eine oder mehrere Startseiten haben keine Seitenkonfiguration und auch keine konfigurierte Domain.</target>
+			</trans-unit>
+			<trans-unit id="application.local_sites_config_legacy">
+				<source>All root pages have a domain but some are configured by legacy sys_domain entries.</source>
+				<target state="translated">Alle Startseiten haben Domains, manche sind jedoch über veraltete sys_domain-Einträge konfiguriert.</target>
+			</trans-unit>
+			<trans-unit id="application.local_sites_config">
+				<source>All sites have been found to be configured via site configuration.</source>
+				<target state="translated">Alle Startseiten verfügen über eine gültige Site Configuration.</target>
+			</trans-unit>
+			<trans-unit id="application.no_local_sites_found">
+				<source>No root pages have been found.</source>
+				<target state="translated">Es wurden keine Startseiten gefunden.</target>
+			</trans-unit>
+			<trans-unit id="application.local_sites_query_error">
+				<source>An error occurred in the root site detection query.</source>
+				<target state="translated">Ein Fehler ist in der Startseiten-Suche aufgetreten.</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest -->
@@ -313,6 +333,38 @@
 			<trans-unit id="application.foreign_sys_domain_configured">
 				<source>A valid sys_domain entry has been found on the foreign system.</source>
 				<target state="translated">Es wurde ein gültiger sys_domain Eintrag im entfernte System gefunden.</target>
+			</trans-unit>
+			<trans-unit id="application.no_foreign_sites_found">
+				<source>No root pages have been found on the foreign system.</source>
+				<target state="translated">Es wurden keine Startseiten auf dem entfernten System gefunden.</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_sites_query_error">
+				<source>An error occurred in the root site detection query.</source>
+				<target state="translated">Ein Fehler ist in der Startseiten-Suche aufgetreten</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_site_config_error">
+				<source>An error occurred during site configuration detection.</source>
+				<target state="translated">Ein Fehler ist beim Auslesen der Seitenkonfiguration auf dem entfernten System aufgetreten.</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_site_config_slash">
+				<source>At least one foreign root page has a site configuration without a full base domain.</source>
+				<target state="translated">Mindestens eine Startseite auf dem entfernten System hat eine Startseite ohne einer vollen Basis-Domain.</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_sites_config_legacy">
+				<source>All foreign root pages have a domain but some are configured by legacy sys_domain entries.</source>
+				<target state="translated">Alle Startseiten des entfernten Systems haben Domains, manche sind jedoch über veraltete sys_domain-Einträge konfiguriert.</target>
+			</trans-unit>
+			<trans-unit id="foreign_sites_config_missing">
+				<source>One or more foreign root pages are missing site configurations (and sys_domains).</source>
+				<target state="translated">Bei einer oder mehreren Startseiten des entfernten Systems fehlen Seitenkonfigurationen (und sys_domains).</target>
+			</trans-unit>
+			<trans-unit id="foreign_sites_config_legacy">
+				<source>All foreign root pages have domains configured but at least one of them has a onyl legacy sys_domain.</source>
+				<target state="translated">Für alle fremden Stammseiten des entfernten Systems sind Domains konfiguriert, aber mindestens eine von ihnen hat eine veraltete sys_domain.</target>
+			</trans-unit>
+			<trans-unit id="foreign_sites_config">
+				<source>All foreign root pages have a site configuration.</source>
+				<target state="translated">Alle fremden Stammseiten des entfernten Systems verfügen über eine Site-Konfiguration.</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest
@@ -401,7 +453,7 @@
 			</trans-unit>
 			<trans-unit id="fal.test_file_upload_failed">
 				<source>Could not upload a testfile to a FAL storage. Please assure write and read permissions on the storages root level folder.</source>
-				<target state="translated">Die Testdatei konnte nicht hochgeladen werden. Bitte stellen sie sicher, dass TYPO3 Schreib- und Leserechte im Wurzelverzeichnis der FAL Storage hat.</target>
+				<target state="translated">Die Testdatei konnte nicht hochgeladen werden. Bitte stellen sie sicher, dass TYPO3 Schreib- und Leserechte im Startverzeichnis der FAL Storage hat.</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest -->

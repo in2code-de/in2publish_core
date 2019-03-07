@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Link;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2017 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\ViewHelpers\Link;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Utility\BackendUtility;
 
@@ -41,7 +42,7 @@ class EditRecordViewHelper extends AbstractRecordActionLinkViewHelper
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function buildUri($table, $identifier)
+    protected function buildUri(string $table, int $identifier): string
     {
         return BackendUtility::buildEditUri($table, $identifier);
     }

@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,18 +25,28 @@ namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
 use In2code\In2publishCore\Domain\Factory\FileIndexFactory;
 use In2code\In2publishCore\Utility\FileUtility;
 use In2code\In2publishCore\Utility\FolderUtility;
+use ReflectionProperty;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
+use function array_map;
+use function basename;
+use function call_user_func;
+use function call_user_func_array;
+use function dirname;
+use function get_class;
+use function is_callable;
+use function method_exists;
+use function strtolower;
 
 /**
  * Class EnvelopeDispatcher
@@ -85,7 +96,7 @@ class EnvelopeDispatcher
      * @param Envelope $envelope
      * @return bool
      */
-    public function dispatch(Envelope $envelope)
+    public function dispatch(Envelope $envelope): bool
     {
         $command = $envelope->getCommand();
         if (method_exists($this, $command)) {
@@ -100,7 +111,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function folderExists(array $request)
+    protected function folderExists(array $request): array
     {
         $storage = $this->getStorage($request);
         $driver = $this->getStorageDriver($storage);
@@ -141,7 +152,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function getPermissions(array $request)
+    protected function getPermissions(array $request): array
     {
         $storage = $this->getStorage($request);
         return $this->getStorageDriver($storage)->getPermissions($request['identifier']);
@@ -151,7 +162,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function getFoldersInFolder(array $request)
+    protected function getFoldersInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
         unset($request['storage']);
@@ -163,7 +174,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function fileExists(array $request)
+    protected function fileExists(array $request): array
     {
         $storage = $this->getStorage($request);
         $driver = $this->getStorageDriver($storage);
@@ -210,7 +221,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function getFilesInFolder(array $request)
+    protected function getFilesInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
         unset($request['storage']);
@@ -231,7 +242,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function getFileInfoByIdentifier(array $request)
+    protected function getFileInfoByIdentifier(array $request): array
     {
         $storage = $this->getStorage($request);
         unset($request['storage']);
@@ -243,7 +254,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function hash(array $request)
+    protected function hash(array $request): array
     {
         $storage = $this->getStorage($request);
         unset($request['storage']);
@@ -343,7 +354,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    protected function batchPrefetchFiles(array $request)
+    protected function batchPrefetchFiles(array $request): array
     {
         $storage = $this->getStorage($request);
         $storage->setEvaluatePermissions(false);
@@ -368,7 +379,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return string
      */
-    protected function moveFileWithinStorage(array $request)
+    protected function moveFileWithinStorage(array $request): string
     {
         $storage = $this->getStorage($request);
         $driver = $this->getStorageDriver($storage);
@@ -390,9 +401,9 @@ class EnvelopeDispatcher
      * @param ResourceStorage $storage
      * @return DriverInterface
      */
-    protected function getStorageDriver(ResourceStorage $storage)
+    protected function getStorageDriver(ResourceStorage $storage): DriverInterface
     {
-        $driverReflection = new \ReflectionProperty(get_class($storage), 'driver');
+        $driverReflection = new ReflectionProperty(get_class($storage), 'driver');
         $driverReflection->setAccessible(true);
         /** @var DriverInterface $driver */
         return $driverReflection->getValue($storage);
@@ -423,7 +434,7 @@ class EnvelopeDispatcher
      * @param array $identifierList
      * @return array
      */
-    protected function convertIdentifiers(DriverInterface $driver, array $identifierList)
+    protected function convertIdentifiers(DriverInterface $driver, array $identifierList): array
     {
         if (!$driver->isCaseSensitiveFileSystem()) {
             $identifierList = array_map(
@@ -442,7 +453,7 @@ class EnvelopeDispatcher
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function getStorage(array $request)
+    protected function getStorage(array $request): ResourceStorage
     {
         $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
         $storage->setEvaluatePermissions(false);
@@ -453,7 +464,7 @@ class EnvelopeDispatcher
      * @param array $request
      * @return array
      */
-    public function getStorageHasFolder(array $request)
+    public function getStorageHasFolder(array $request): array
     {
         $hasFolder = $this->getStorage($request)->hasFolder($request['identifier']);
         // pre-fetching sub folders and files for later use if storage exists (we know this will be required)
@@ -477,7 +488,7 @@ class EnvelopeDispatcher
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function getStorageGetFoldersInFolder(array $request)
+    public function getStorageGetFoldersInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
         $folders = $storage->getFoldersInFolder($storage->getFolder($request['identifier']));
@@ -490,7 +501,7 @@ class EnvelopeDispatcher
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function getStorageGetFilesInFolder(array $request)
+    public function getStorageGetFilesInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
         $files = $storage->getFilesInFolder($storage->getFolder($request['identifier']));
@@ -503,7 +514,7 @@ class EnvelopeDispatcher
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function getStorageGetFile(array $request)
+    public function getStorageGetFile(array $request): array
     {
         $storage = $this->getStorage($request);
         if ($storage->hasFile($request['identifier'])) {
@@ -517,7 +528,7 @@ class EnvelopeDispatcher
      * @return string
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function getSetDbInit()
+    public function getSetDbInit(): string
     {
         if (!empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['setDBinit'])) {
             return $GLOBALS['TYPO3_CONF_VARS']['SYS']['setDBinit'];

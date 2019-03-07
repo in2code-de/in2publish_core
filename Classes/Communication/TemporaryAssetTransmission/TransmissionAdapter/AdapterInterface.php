@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2017 in2code.de and the following authors:
@@ -24,8 +25,11 @@ namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission\Transm
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
+/**
+ * Interface AdapterInterface
+ */
 interface AdapterInterface
 {
     /**
@@ -33,5 +37,5 @@ interface AdapterInterface
      * @param string $target Absolute path of the writable file on foreign
      * @return bool
      */
-    public function copyFileToRemote($source, $target);
+    public function copyFileToRemote(string $source, string $target): bool;
 }

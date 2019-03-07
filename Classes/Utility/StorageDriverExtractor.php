@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Utility;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,12 +25,15 @@ namespace In2code\In2publishCore\Utility;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
+use ReflectionException;
+use ReflectionProperty;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function get_class;
 
 /**
  * Class StorageDriverExtractor
@@ -37,22 +41,19 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class StorageDriverExtractor
 {
     /**
-     * @param ResourceStorage $localStorage
-     * @return DriverInterface
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
-    public static function getLocalDriver(ResourceStorage $localStorage)
+    public static function getLocalDriver(ResourceStorage $localStorage): DriverInterface
     {
-        $driverProperty = new \ReflectionProperty(get_class($localStorage), 'driver');
+        $driverProperty = new ReflectionProperty(get_class($localStorage), 'driver');
         $driverProperty->setAccessible(true);
         return $driverProperty->getValue($localStorage);
     }
 
     /**
-     * @param ResourceStorage $localStorage
      * @return DriverInterface|RemoteFileAbstractionLayerDriver
      */
-    public static function getForeignDriver(ResourceStorage $localStorage)
+    public static function getForeignDriver(ResourceStorage $localStorage): DriverInterface
     {
         $foreignDriver = GeneralUtility::makeInstance(RemoteFileAbstractionLayerDriver::class);
         $foreignDriver->setStorageUid($localStorage->getUid());

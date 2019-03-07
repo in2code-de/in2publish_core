@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Config\Definer;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -24,13 +25,12 @@ namespace In2code\In2publishCore\Config\Definer;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\Builder;
 use In2code\In2publishCore\Config\Node\Node;
 use In2code\In2publishCore\Config\Node\NodeCollection;
 use In2code\In2publishCore\Config\Validator\DirectoryExistsValidator;
-use In2code\In2publishCore\Config\Validator\HostNameValidator;
 use In2code\In2publishCore\Config\Validator\IntegerInRangeValidator;
 use In2code\In2publishCore\Config\Validator\IPv4PortValidator;
 use In2code\In2publishCore\Config\Validator\IterativeTcaProcessorValidator;
@@ -45,6 +45,7 @@ use In2code\In2publishCore\Domain\Service\Processor\NoneProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\PassthroughProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\RadioProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\SelectProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\SlugProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\TextProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\UserProcessor;
 
@@ -117,8 +118,6 @@ class In2publishCoreDefiner implements DefinerInterface
         'tx_extensionmanager_domain_model_extension',
         'tx_extensionmanager_domain_model_repository',
         'sys_domain',
-        'sys_note',
-        'tx_rsaauth_keys',
         'cache_treelist',
         'tx_in2publishcore_log',
         'tx_in2code_in2publish_task',
@@ -138,12 +137,17 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addString('pathToPhp', '/usr/bin/env php')
                                  ->addString('context', 'Production/Live')
                                  ->addArray(
+                                     'envVars',
+                                     Builder::start()->addGenericScalar(Node::T_STRING, Node::T_STRING),
+                                     []
+                                 )
+                                 ->addArray(
                                      'database',
                                      Builder::start()
                                             ->addString('name', 'database_123')
                                             ->addString('username', 'username_123')
                                             ->addString('password', 'Password_123')
-                                            ->addString('hostname', '127.0.0.1', [HostNameValidator::class => [3306]])
+                                            ->addString('hostname', '127.0.0.1')
                                             ->addInteger('port', 3306, [IPv4PortValidator::class])
                                  )
                       )
@@ -252,7 +256,8 @@ class In2publishCoreDefiner implements DefinerInterface
                                             ->addString('select', SelectProcessor::class)
                                             ->addString('text', TextProcessor::class)
                                             ->addString('user', UserProcessor::class)
-                                            ->addString('imageManipulation', ImageManipulationProcessor::class),
+                                            ->addString('imageManipulation', ImageManipulationProcessor::class)
+                                            ->addString('slug', SlugProcessor::class),
                                      null,
                                      [IterativeTcaProcessorValidator::class]
                                  )

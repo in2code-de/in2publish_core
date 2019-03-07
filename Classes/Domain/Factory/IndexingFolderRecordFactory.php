@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Factory;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Domain\Factory;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
@@ -39,6 +40,15 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_keys;
+use function array_merge;
+use function array_unique;
+use function count;
+use function dirname;
+use function in_array;
+use function sprintf;
+use function strpos;
+use function substr;
 
 /**
  * This class describes an alternative workflow for the FAL diff and publishing mechanism.
@@ -91,7 +101,7 @@ class IndexingFolderRecordFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function makeInstance($dir = null)
+    public function makeInstance($dir = null): RecordInterface
     {
         // determine current folder
         $resourceFactory = ResourceFactory::getInstance();
@@ -173,7 +183,7 @@ class IndexingFolderRecordFactory
      * @param string $side
      * @return array
      */
-    protected function updateFilesByMovedRecords(array $records, array $files, $side)
+    protected function updateFilesByMovedRecords(array $records, array $files, $side): array
     {
         $relatedFolders = [];
 
@@ -237,7 +247,7 @@ class IndexingFolderRecordFactory
      * @param RecordInterface[] $records
      * @return array
      */
-    public function filterRecords(array $localFiles, array $remoteFiles, array $records)
+    public function filterRecords(array $localFiles, array $remoteFiles, array $records): array
     {
         $filesOnDisk = array_unique(array_merge(array_keys($localFiles), array_keys($remoteFiles)));
 

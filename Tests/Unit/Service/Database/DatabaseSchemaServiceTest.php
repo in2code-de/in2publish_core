@@ -1,7 +1,7 @@
 <?php
 namespace In2code\In2publishCore\Tests\Unit\Service\Database;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +24,7 @@ namespace In2code\In2publishCore\Tests\Unit\Service\Database;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Service\Database\DatabaseSchemaService;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
@@ -36,45 +36,6 @@ use TYPO3\CMS\Core\Tests\UnitTestCase;
  */
 class DatabaseSchemaServiceTest extends UnitTestCase
 {
-    /**
-     * @covers ::__construct
-     * @covers ::getDatabaseSchema
-     */
-    public function testGetDatabaseSchemaBuildArrayOfTableAndFieldInformation()
-    {
-        $this->buildDatabaseMock();
-
-        $expected = [
-            'foo' => [
-                '_TABLEINFO' => [],
-                'faz' => ['name' => 'faz'],
-            ],
-            'bar' => [
-                '_TABLEINFO' => [],
-                'raz' => ['name' => 'naz'],
-            ],
-        ];
-
-        /** @var VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheFrontend */
-        $cacheFrontend = $this->getMockBuilder(VariableFrontend::class)
-                              ->setMethods(['has', 'get', 'set'])
-                              ->disableOriginalConstructor()
-                              ->getMock();
-        // set return value to true to execute the cache->get() lines
-        $cacheFrontend->method('has')->willReturn(true);
-        $cacheFrontend->method('get')->willReturn(false);
-
-        /** @var DatabaseSchemaService|\PHPUnit_Framework_MockObject_MockObject $schemaService */
-        $schemaService = $this->getMockBuilder(DatabaseSchemaService::class)
-                              ->setMethods(['getCache'])
-                              ->disableOriginalConstructor()
-                              ->getMock();
-        $schemaService->method('getCache')->willReturn($cacheFrontend);
-        $schemaService->__construct();
-
-        $this->assertSame($expected, $schemaService->getDatabaseSchema());
-    }
-
     /**
      * @covers ::tableExists
      */

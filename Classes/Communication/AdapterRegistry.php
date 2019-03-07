@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Communication;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2017 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Communication;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface as RceAdapter;
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface as TatAdapter;
@@ -38,6 +39,13 @@ use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Lang\LanguageService;
+use function array_column;
+use function array_combine;
+use function array_keys;
+use function in_array;
+use function is_array;
+use function is_subclass_of;
+use function unserialize;
 
 /**
  * Class AdapterRegistry
@@ -113,7 +121,7 @@ class AdapterRegistry implements SingletonInterface
      *
      * @return bool
      */
-    public function registerAdapter($type, $key, $adapter, $label, array $tests = [])
+    public function registerAdapter($type, $key, $adapter, $label, array $tests = []): bool
     {
         if (!isset($this->adapterMap[$type])) {
             $this->logger->alert(
@@ -149,7 +157,7 @@ class AdapterRegistry implements SingletonInterface
     /**
      * @return string[][]
      */
-    public function getAdapterInfo()
+    public function getAdapterInfo(): array
     {
         $adapterInfo = [];
         foreach ($this->adapter as $type => $adapters) {
@@ -203,7 +211,7 @@ class AdapterRegistry implements SingletonInterface
     /**
      * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config['adapter.'];
     }
@@ -213,7 +221,7 @@ class AdapterRegistry implements SingletonInterface
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function getLanguageService()
+    protected function getLanguageService(): LanguageService
     {
         return $GLOBALS['LANG'];
     }

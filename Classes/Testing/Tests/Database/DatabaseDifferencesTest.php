@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Testing\Tests\Database;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,12 +25,21 @@ namespace In2code\In2publishCore\Testing\Tests\Database;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use PDO;
+use TYPO3\CMS\Core\Database\Connection;
+use function array_diff;
+use function array_key_exists;
+use function array_keys;
+use function array_merge;
+use function count;
+use function is_array;
+use function mt_rand;
+use function strpos;
 
 /**
  * Class DatabaseDifferencesTest
@@ -39,7 +49,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
@@ -48,41 +58,8 @@ class DatabaseDifferencesTest implements TestCaseInterface
             return new TestResult('database.local_and_foreign_identical', TestResult::ERROR);
         }
 
-        $tableInfoBlackList = array_flip(
-            [
-                'Version',
-                'Rows',
-                'Avg_row_length',
-                'Data_length',
-                'Max_data_length',
-                'Index_length',
-                'Data_free',
-                'Auto_increment',
-                'Create_time',
-                'Update_time',
-                'Check_time',
-                'Checksum',
-                'Comment',
-            ]
-        );
-
-        $fieldInfoBlackList = array_flip(
-            [
-                'Create_time',
-                'Rows',
-                'Avg_row_length',
-                'Auto_increment',
-                'Data_length',
-                'Index_length',
-                'Data_free',
-                'Update_time',
-                'Check_time',
-                'Comment',
-            ]
-        );
-
-        $localTableInfo = $this->readTableStructure($localDatabase, $tableInfoBlackList, $fieldInfoBlackList);
-        $foreignTableInfo = $this->readTableStructure($foreignDatabase, $tableInfoBlackList, $fieldInfoBlackList);
+        $localTableInfo = $this->readTableStructure($localDatabase);
+        $foreignTableInfo = $this->readTableStructure($foreignDatabase);
 
         $localTables = array_keys($localTableInfo);
         $foreignTables = array_keys($foreignTableInfo);
@@ -130,8 +107,10 @@ class DatabaseDifferencesTest implements TestCaseInterface
                             continue;
                         }
 
-                        unset($diffOnLocal[$tableName]['fields'][$fieldName]);
-                        unset($diffOnForeign[$tableName]['fields'][$fieldName]);
+                        unset(
+                            $diffOnLocal[$tableName]['fields'][$fieldName],
+                            $diffOnForeign[$tableName]['fields'][$fieldName]
+                        );
                     }
                 }
 
@@ -159,19 +138,21 @@ class DatabaseDifferencesTest implements TestCaseInterface
                             continue;
                         }
 
-                        unset($diffOnLocal[$tableName]['table'][$propertyName]);
-                        unset($diffOnForeign[$tableName]['table'][$propertyName]);
+                        unset(
+                            $diffOnLocal[$tableName]['table'][$propertyName],
+                            $diffOnForeign[$tableName]['table'][$propertyName]
+                        );
                     }
                 }
             }
 
             foreach ($diffOnForeign as $tableName => $fieldArray) {
-                if (isset($fieldArray['fields']) && is_array($fieldArray['fields'])) {
+                if (is_array($fieldArray['fields']) && isset($fieldArray['fields'])) {
                     foreach (array_keys($fieldArray['fields']) as $fieldOnlyOnForeign) {
                         $fieldDifferences[] = $tableName . '.' . $fieldOnlyOnForeign . ': Only exists on foreign';
                     }
                 }
-                if (isset($fieldArray['table']) && is_array($fieldArray['fields'])) {
+                if (is_array($fieldArray['fields']) && isset($fieldArray['table'])) {
                     foreach (array_keys($fieldArray['table']) as $propOnlyOnForeign) {
                         $fieldDifferences[] = 'Table property ' . $tableName . '.' . $propOnlyOnForeign
                                               . ': Only exists on foreign';
@@ -199,7 +180,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
      * @param array $right
      * @return array
      */
-    public function identifyDifferences(array $left, array $right)
+    public function identifyDifferences(array $left, array $right): array
     {
         $differences = [];
 
@@ -223,68 +204,74 @@ class DatabaseDifferencesTest implements TestCaseInterface
     }
 
     /**
-     * @param DatabaseConnection $local
-     * @param DatabaseConnection $foreign
+     * @param Connection $local
+     * @param Connection $foreign
      * @return bool
      */
-    protected function areDifferentDatabases(DatabaseConnection $local, DatabaseConnection $foreign)
+    protected function areDifferentDatabases(Connection $local, Connection $foreign): bool
     {
-        $random = (int)mt_rand(1, PHP_INT_MAX);
-        $local->exec_INSERTquery(
+        $random = mt_rand(1, PHP_INT_MAX);
+        $local->insert(
             'tx_in2code_in2publish_task',
             [
                 'task_type' => 'Backend Test',
                 'configuration' => $random,
             ]
         );
-        $uid = (int)$local->sql_insert_id();
-        $results = (array)$foreign->exec_SELECTgetRows(
-            '*',
-            'tx_in2code_in2publish_task',
-            'task_type LIKE "Backend Test"'
-        );
-
+        $uid = (int)$local->lastInsertId();
+        $query = $foreign->createQueryBuilder();
+        $statement = $query->select('*')
+                           ->from('tx_in2code_in2publish_task')
+                           ->where($query->expr()->eq('task_type', $query->createNamedParameter('Backend Test')))
+                           ->execute();
         $identical = false;
-        foreach ($results as $result) {
+        while ($result = $statement->fetch(PDO::FETCH_ASSOC)) {
             if ($uid === (int)$result['uid'] && $random === (int)$result['configuration']) {
                 $identical = true;
                 break;
             }
         }
-        $local->exec_DELETEquery('tx_in2code_in2publish_task', 'task_type LIKE "Backend Test"');
-        $foreign->exec_DELETEquery('tx_in2code_in2publish_task', 'task_type LIKE "Backend Test"');
+        $local->delete('tx_in2code_in2publish_task', ['task_type' => '"Backend Test"']);
+        $foreign->delete('tx_in2code_in2publish_task', ['task_type' => '"Backend Test"']);
 
         return $identical;
     }
 
     /**
-     * @param DatabaseConnection $database
-     * @param array $tableInfoBlackList
-     * @param array $fieldInfoBlackList
+     * @param Connection $database
      * @return array
      */
-    protected function readTableStructure(
-        DatabaseConnection $database,
-        array $tableInfoBlackList,
-        array $fieldInfoBlackList
-    ) {
+    protected function readTableStructure(Connection $database): array
+    {
         $tableStructure = [];
-        $tables = $database->admin_get_tables();
+        $tables = $database->getSchemaManager()->listTables();
 
-        foreach ($tables as $tableName => $tableInfo) {
+        foreach ($tables as $table) {
+            $tableName = $table->getName();
             // ignore deleted tables
             if (0 === strpos($tableName, 'zzz_')) {
                 continue;
             }
             $fieldStructure = [];
 
-            $fields = $database->admin_get_fields($tableName);
-            foreach ($fields as $fieldName => $fieldInfo) {
-                $fieldStructure[$fieldName] = array_diff_key($fieldInfo, $fieldInfoBlackList);
+            $fields = $database->getSchemaManager()->listTableColumns($tableName);
+            foreach ($fields as $field) {
+                $fieldName = $field->getName();
+                $fieldStructure[$fieldName] = [
+                    'length' => $field->getLength(),
+                    'unsigned' => $field->getUnsigned(),
+                    'scale' => $field->getScale(),
+                    'precision' => $field->getPrecision(),
+                    'notnull' => $field->getNotnull(),
+                    'fixed' => $field->getFixed(),
+                    'default' => $field->getDefault(),
+                    'type' => $field->getType(),
+                    'comment' => $field->getComment(),
+                ];
             }
 
             $tableStructure[$tableName] = [
-                'table' => array_diff_key($tableInfo, $tableInfoBlackList),
+                'table' => $table->getOptions(),
                 'fields' => $fieldStructure,
             ];
         }
@@ -295,7 +282,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LocalDatabaseTest::class,

@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Config\Definer;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Config\Definer;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\Builder;
 use In2code\In2publishCore\Config\Definer\DefinerInterface;

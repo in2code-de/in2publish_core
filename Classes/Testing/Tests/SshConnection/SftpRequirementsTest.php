@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Testing\Tests\SshConnection;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,10 +25,11 @@ namespace In2code\In2publishCore\Testing\Tests\SshConnection;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use function ini_get;
 
 /**
  * Class SftpRequirementsTest
@@ -37,9 +39,9 @@ class SftpRequirementsTest implements TestCaseInterface
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
-        if (false == (bool)ini_get('allow_url_fopen')) {
+        if (false === (bool)ini_get('allow_url_fopen')) {
             return new TestResult(
                 'sftp_requirements.allow_url_fopen_disabled',
                 TestResult::ERROR
@@ -55,7 +57,7 @@ class SftpRequirementsTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             SshFunctionAvailabilityTest::class,

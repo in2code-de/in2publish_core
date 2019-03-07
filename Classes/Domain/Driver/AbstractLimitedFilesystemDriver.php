@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Driver;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2017 in2code.de and the following authors:
@@ -24,14 +25,13 @@ namespace In2code\In2publishCore\Domain\Driver;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
+use BadMethodCallException;
 use TYPO3\CMS\Core\Resource\Driver\AbstractHierarchicalFilesystemDriver;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 
 /**
- * Class AbstractLimitedFilesystemDriver
- *
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFilesystemDriver implements DriverInterface
@@ -41,9 +41,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @return string
      */
-    public function getDefaultFolder()
+    public function getDefaultFolder(): string
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201277);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201277);
     }
 
     /**
@@ -55,9 +55,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function renameFolder($folderIdentifier, $newName)
+    public function renameFolder($folderIdentifier, $newName): array
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201295);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201295);
     }
 
     /**
@@ -70,9 +70,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function countFilesInFolder($folderIdentifier, $recursive = false, array $filterCallbacks = [])
+    public function countFilesInFolder($folderIdentifier, $recursive = false, array $filterCallbacks = []): int
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201312);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201312);
     }
 
     /**
@@ -85,9 +85,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function countFoldersInFolder($folderIdentifier, $recursive = false, array $fnFc = [])
+    public function countFoldersInFolder($folderIdentifier, $recursive = false, array $fnFc = []): int
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201325);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201325);
     }
 
     /**
@@ -99,9 +99,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getFolderInFolder($folderName, $folderIdentifier)
+    public function getFolderInFolder($folderName, $folderIdentifier): string
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201370);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201370);
     }
 
     /**
@@ -113,9 +113,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getFileInFolder($fileName, $folderIdentifier)
+    public function getFileInFolder($fileName, $folderIdentifier): string
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201421);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201421);
     }
 
     /**
@@ -130,7 +130,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      */
     public function dumpFileContents($identifier)
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201434);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201434);
     }
 
     /**
@@ -148,9 +148,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function isWithin($folderIdentifier, $identifier)
+    public function isWithin($folderIdentifier, $identifier): bool
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201437);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201437);
     }
 
     /**
@@ -164,9 +164,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getFileContents($fileIdentifier)
+    public function getFileContents($fileIdentifier): string
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201459);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201459);
     }
 
     /**
@@ -178,9 +178,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function setFileContents($fileIdentifier, $contents)
+    public function setFileContents($fileIdentifier, $contents): int
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201462);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201462);
     }
 
     /**
@@ -192,9 +192,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function fileExistsInFolder($fileName, $folderIdentifier)
+    public function fileExistsInFolder($fileName, $folderIdentifier): bool
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201464);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201464);
     }
 
     /**
@@ -206,9 +206,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function folderExistsInFolder($folderName, $folderIdentifier)
+    public function folderExistsInFolder($folderName, $folderIdentifier): bool
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201467);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201467);
     }
 
     /**
@@ -224,9 +224,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getFileForLocalProcessing($fileIdentifier, $writable = true)
+    public function getFileForLocalProcessing($fileIdentifier, $writable = true): string
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201472);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201472);
     }
 
     /**
@@ -239,9 +239,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function moveFolderWithinStorage($sourceIdentifier, $targetIdentifier, $newFolderName)
+    public function moveFolderWithinStorage($sourceIdentifier, $targetIdentifier, $newFolderName): array
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201494);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201494);
     }
 
     /**
@@ -254,9 +254,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function copyFolderWithinStorage($sourceIdentifier, $targetIdentifier, $newFolderName)
+    public function copyFolderWithinStorage($sourceIdentifier, $targetIdentifier, $newFolderName): bool
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201496);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201496);
     }
 
     /**
@@ -268,9 +268,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function createFile($fileName, $parentIdentifier)
+    public function createFile($fileName, $parentIdentifier): string
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201512);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201512);
     }
 
     /**
@@ -285,9 +285,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function copyFileWithinStorage($fileIdentifier, $targetIdentifier, $fileName)
+    public function copyFileWithinStorage($fileIdentifier, $targetIdentifier, $fileName): string
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201516);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201516);
     }
 
     /**
@@ -298,9 +298,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function isFolderEmpty($folderIdentifier)
+    public function isFolderEmpty($folderIdentifier): bool
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201527);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201527);
     }
 
     /**
@@ -311,9 +311,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function mergeConfigurationCapabilities($capabilities)
+    public function mergeConfigurationCapabilities($capabilities): int
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201544);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201544);
     }
 
     /**
@@ -325,7 +325,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      */
     public function processConfiguration()
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201555);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201555);
     }
 
     /**
@@ -336,9 +336,9 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function hasCapability($capability)
+    public function hasCapability($capability): bool
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201628);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201628);
     }
 
     /**
@@ -348,8 +348,8 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getRootLevelFolder()
+    public function getRootLevelFolder(): string
     {
-        throw new \BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201635);
+        throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201635);
     }
 }

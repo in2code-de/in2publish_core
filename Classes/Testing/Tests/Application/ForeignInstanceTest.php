@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Testing\Tests\Application;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Command\StatusCommandController;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
@@ -35,6 +36,7 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function strpos;
 
 /**
  * Class ForeignInstanceTest
@@ -44,7 +46,7 @@ class ForeignInstanceTest implements TestCaseInterface
     /**
      * @var RemoteCommandDispatcher
      */
-    protected $rceDispatcher = null;
+    protected $rceDispatcher;
 
     /**
      * ForeignInstanceTest constructor.
@@ -56,9 +58,8 @@ class ForeignInstanceTest implements TestCaseInterface
 
     /**
      * @return TestResult
-     * @throws \TYPO3\CMS\Core\Package\Exception
      */
-    public function run()
+    public function run(): TestResult
     {
         $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, StatusCommandController::ALL_COMMAND);
         $response = $this->rceDispatcher->dispatch($request);
@@ -135,7 +136,7 @@ class ForeignInstanceTest implements TestCaseInterface
      * @param array $output
      * @return array
      */
-    protected function tokenizeResponse(array $output)
+    protected function tokenizeResponse(array $output): array
     {
         $values = [];
         foreach ($output as $line) {
@@ -150,7 +151,7 @@ class ForeignInstanceTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             RemoteAdapterTest::class,

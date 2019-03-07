@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Testing\Tests;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Testing\Tests;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 /**
  * Interface TestCaseInterface
@@ -34,10 +35,10 @@ interface TestCaseInterface
     /**
      * @return TestResult Returns a TestResult object holding all information about the failure or success
      */
-    public function run();
+    public function run(): TestResult;
 
     /**
      * @return array List of test classes that need to pass before this test can be executed
      */
-    public function getDependencies();
+    public function getDependencies(): array;
 }

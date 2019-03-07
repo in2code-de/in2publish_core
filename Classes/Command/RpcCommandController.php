@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Command;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Command;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Communication\RemoteProcedureCall\EnvelopeDispatcher;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
@@ -43,16 +44,14 @@ class RpcCommandController extends AbstractCommandController
     /**
      * @var Letterbox
      */
-    protected $letterbox = null;
+    protected $letterbox;
 
     /**
      * @var EnvelopeDispatcher
      */
-    protected $envelopeDispatcher = null;
+    protected $envelopeDispatcher;
 
     /**
-     * RpcCommandController constructor.
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
@@ -66,7 +65,7 @@ class RpcCommandController extends AbstractCommandController
      * @param int $uid Envelope identifier
      * @internal
      */
-    public function executeCommand($uid = 0)
+    public function executeCommand(int $uid = 0)
     {
         if (!$this->contextService->isForeign()) {
             $this->logger->warning('RPC called but context is not Foreign');

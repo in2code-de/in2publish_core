@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Testing\Tests\Application;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
@@ -32,6 +33,8 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_flip;
+use function array_merge;
 
 /**
  * Class LocalInstanceTest
@@ -42,7 +45,7 @@ class LocalInstanceTest implements TestCaseInterface
      * @return TestResult
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    public function run()
+    public function run(): TestResult
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
 
@@ -51,7 +54,7 @@ class LocalInstanceTest implements TestCaseInterface
         }
 
         $excludedTables = GeneralUtility::makeInstance(ConfigContainer::class)->get('excludeRelatedTables');
-        $localTables = $localDatabase->admin_get_tables();
+        $localTables = array_flip($localDatabase->getSchemaManager()->listTableNames());
 
         $missingTables = [];
 
@@ -75,7 +78,7 @@ class LocalInstanceTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LocalDatabaseTest::class,

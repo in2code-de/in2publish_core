@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,10 +25,11 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_merge;
 
 /**
  * Wrapper for a callable command (commands are the string after "./typo3/cli_dispatch.phpsh").
@@ -86,11 +88,14 @@ class RemoteCommandRequest
         $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         $this->pathToPhp = $configContainer->get('foreign.pathToPhp');
         $this->workingDirectory = $configContainer->get('foreign.rootPath');
-        $this->environmentVariables = [
-            'TYPO3_CONTEXT' => $configContainer->get('foreign.context'),
-            'IN2PUBLISH_CONTEXT' => 'Foreign',
-        ];
-        $this->dispatcher = './typo3/cli_dispatch.phpsh extbase';
+        $this->environmentVariables = array_merge(
+            $configContainer->get('foreign.envVars'),
+            [
+                'TYPO3_CONTEXT' => $configContainer->get('foreign.context'),
+                'IN2PUBLISH_CONTEXT' => 'Foreign',
+            ]
+        );
+        $this->dispatcher = './../vendor/bin/typo3';
         $this->command = $command;
         $this->arguments = $arguments;
         $this->options = $options;
@@ -107,7 +112,7 @@ class RemoteCommandRequest
     /**
      * @return string
      */
-    public function getPathToPhp()
+    public function getPathToPhp(): string
     {
         return $this->usePhp ? $this->pathToPhp : '';
     }
@@ -115,7 +120,7 @@ class RemoteCommandRequest
     /**
      * @return string
      */
-    public function getWorkingDirectory()
+    public function getWorkingDirectory(): string
     {
         return $this->workingDirectory;
     }
@@ -123,7 +128,7 @@ class RemoteCommandRequest
     /**
      * @return array
      */
-    public function getEnvironmentVariables()
+    public function getEnvironmentVariables(): array
     {
         return $this->environmentVariables;
     }
@@ -131,7 +136,7 @@ class RemoteCommandRequest
     /**
      * @return string
      */
-    public function getDispatcher()
+    public function getDispatcher(): string
     {
         return $this->dispatcher;
     }
@@ -155,7 +160,7 @@ class RemoteCommandRequest
     /**
      * @return string
      */
-    public function getCommand()
+    public function getCommand(): string
     {
         return $this->command;
     }
@@ -171,7 +176,7 @@ class RemoteCommandRequest
     /**
      * @return bool
      */
-    public function hasArguments()
+    public function hasArguments(): bool
     {
         return !empty($this->arguments);
     }
@@ -179,7 +184,7 @@ class RemoteCommandRequest
     /**
      * @return array
      */
-    public function getArguments()
+    public function getArguments(): array
     {
         return $this->arguments;
     }
@@ -204,7 +209,7 @@ class RemoteCommandRequest
     /**
      * @return bool
      */
-    public function hasOptions()
+    public function hasOptions(): bool
     {
         return !empty($this->options);
     }
@@ -212,7 +217,7 @@ class RemoteCommandRequest
     /**
      * @return array
      */
-    public function getOptions()
+    public function getOptions(): array
     {
         return $this->options;
     }

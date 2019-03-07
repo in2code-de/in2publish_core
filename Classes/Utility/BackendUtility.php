@@ -1,33 +1,48 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Utility;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * Copyright notice
  *
- *  (c) 2015 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>,
- *  Oliver Eglseder <oliver.eglseder@in2code.de>
+ * (c) 2015 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>,
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
+use PDO;
 use TYPO3\CMS\Backend\Utility\BackendUtility as BackendUtilityCore;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
+use function array_keys;
+use function count;
+use function explode;
+use function in_array;
+use function is_array;
+use function is_numeric;
+use function is_string;
+use function key;
+use function parse_str;
+use function parse_url;
+use function stristr;
+use function strpos;
+use function strtolower;
 
 /**
  * Class BackendUtility
@@ -86,14 +101,20 @@ class BackendUtility
             }
         }
 
+        $localConnection = DatabaseUtility::buildLocalDatabaseConnection();
+        $tableNames = $localConnection->getSchemaManager()->listTableNames();
+
         // get id from record ?data[tt_content][13]=foo
-        if (null !== ($data = GeneralUtility::_GP('data')) && is_array($data)) {
+        if (null !== ($data = GeneralUtility::_GP('data')) && is_array($data) && in_array(key($data), $tableNames)) {
             $table = key($data);
-            $result = DatabaseUtility::buildLocalDatabaseConnection()->exec_SELECTgetSingleRow(
-                'pid',
-                $table,
-                'uid=' . (int)key($data[$table])
-            );
+            $query = $localConnection->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $result = $query->select('pid')
+                            ->from($table)
+                            ->where($query->expr()->eq('uid', (int)key($data[$table])))
+                            ->setMaxResults(1)
+                            ->execute()
+                            ->fetch(PDO::FETCH_ASSOC);
             if (false !== $result && isset($result['pid'])) {
                 return (int)$result['pid'];
             }
@@ -102,15 +123,18 @@ class BackendUtility
         // get id from rollback ?element=tt_content:42
         if (null !== ($rollbackFields = GeneralUtility::_GP('element')) && is_string($rollbackFields)) {
             $rollbackData = explode(':', $rollbackFields);
-            if (count($rollbackData) > 1) {
+            if (count($rollbackData) > 1 && in_array($rollbackData[0], $tableNames)) {
                 if ($rollbackData[0] === 'pages') {
                     return (int)$rollbackData[1];
                 } else {
-                    $result = DatabaseUtility::buildLocalDatabaseConnection()->exec_SELECTgetSingleRow(
-                        'pid',
-                        $rollbackData[0],
-                        'uid=' . (int)$rollbackData[1]
-                    );
+                    $query = $localConnection->createQueryBuilder();
+                    $query->getRestrictions()->removeAll();
+                    $result = $query->select('pid')
+                                    ->from($rollbackData[0])
+                                    ->where($query->expr()->eq('uid', (int)$rollbackData[1]))
+                                    ->setMaxResults(1)
+                                    ->execute()
+                                    ->fetch(PDO::FETCH_ASSOC);
                     if (false !== $result && isset($result['pid'])) {
                         return (int)$result['pid'];
                     }
@@ -121,11 +145,14 @@ class BackendUtility
         // Assume the record has been imported via DataHandler on the CLI
         // Also, this is the last fallback strategy
         if (!empty($table) && MathUtility::canBeInterpretedAsInteger($identifier)) {
-            $row = DatabaseUtility::buildLocalDatabaseConnection()->exec_SELECTgetSingleRow(
-                'pid',
-                $table,
-                'uid=' . (int)$identifier
-            );
+            $query = $localConnection->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $row = $query->select('pid')
+                         ->from($table)
+                         ->where($query->expr()->eq('uid', (int)$identifier))
+                         ->setMaxResults(1)
+                         ->execute()
+                         ->fetch(PDO::FETCH_ASSOC);
             if (isset($row['pid'])) {
                 return (int)$row['pid'];
             }
@@ -136,12 +163,8 @@ class BackendUtility
 
     /**
      * Create an URI to edit a record
-     *
-     * @param string $tableName
-     * @param int $identifier
-     * @return string
      */
-    public static function buildEditUri($tableName, $identifier)
+    public static function buildEditUri(string $tableName, int $identifier): string
     {
         $uriParameters = [
             'edit' => [
@@ -157,27 +180,23 @@ class BackendUtility
 
     /**
      * Create an URI to undo a record
-     *
-     * @param string $table
-     * @param int $identifier
-     * @return string
      */
-    public static function buildUndoUri($table, $identifier)
+    public static function buildUndoUri(string $table, int $identifier): string
     {
-        $module = GeneralUtility::_GP('M');
+        $route = GeneralUtility::_GP('route') ?: GeneralUtility::_GP('M');
 
         $returnParameters = [
             'id' => GeneralUtility::_GP('id'),
         ];
         foreach (GeneralUtility::_GET() as $name => $value) {
-            if (is_array($value) && false !== strpos(strtolower($name), strtolower($module))) {
+            if (is_array($value) && false !== strpos(strtolower($name), strtolower($route))) {
                 $returnParameters[$name] = $value;
             }
         }
 
         $uriParameters = [
             'element' => $table . ':' . $identifier,
-            'returnUrl' => BackendUtilityCore::getModuleUrl($module, $returnParameters),
+            'returnUrl' => BackendUtilityCore::getModuleUrl($route, $returnParameters),
         ];
 
         return BackendUtilityCore::getModuleUrl('record_history', $uriParameters);

@@ -1,8 +1,10 @@
 <?php
-
+declare(strict_types=1);
 namespace In2code\In2publishCore\Config\Node\Specific;
 
-/***************************************************************
+use function array_key_exists;
+
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -25,7 +27,7 @@ namespace In2code\In2publishCore\Config\Node\Specific;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 /**
  * Class SpecStrictArray
@@ -35,7 +37,7 @@ class SpecStrictArray extends SpecArray
     /**
      * @param array[]|bool[]|int[]|string[] $value
      */
-    public function unsetDefaults(&$value)
+    public function unsetDefaults(array &$value)
     {
         $this->nodes->unsetDefaults($value[$this->name]);
         if (null !== $this->default) {

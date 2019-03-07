@@ -1,33 +1,36 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Uri;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * Copyright notice
  *
- *  (c) 2016 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>,
- *  Oliver Eglseder <oliver.eglseder@in2code.de>
+ * (c) 2016 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>,
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use function is_array;
+use function substr;
 
 /**
  * Class PreviewAnyRecordViewHelper
@@ -35,18 +38,27 @@ use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
 class PreviewAnyRecordViewHelper extends AbstractViewHelper
 {
     /**
+     *
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerArgument('identifier', 'int', 'uid of the record to preview', true);
+        $this->registerArgument('tableName', 'string', 'table name of the record to preview', true);
+    }
+
+    /**
      * Build uri for any record preview on [removed] and
      * respect settings of Page TSConfig TCEMAIN.preview
-     *
-     * @param int $identifier
-     * @param string $tableName
      *
      * @return false|string false if not configuration found, otherwise URI
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function render($identifier, $tableName)
+    public function render()
     {
+        $identifier = $this->arguments['identifier'];
+        $tableName = $this->arguments['tableName'];
         if ($this->isPreviewTsConfigExisting($tableName)) {
             $pageTsConfig = BackendUtility::getPagesTSconfig($this->getCurrentPageIdentifier());
             $configuration = $pageTsConfig['TCEMAIN.']['preview.'][$tableName . '.'];
@@ -67,7 +79,7 @@ class PreviewAnyRecordViewHelper extends AbstractViewHelper
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function isPreviewTsConfigExisting($tableName)
+    protected function isPreviewTsConfigExisting(string $tableName): bool
     {
         $pageTsConfig = BackendUtility::getPagesTSconfig($this->getCurrentPageIdentifier());
         return !empty($pageTsConfig['TCEMAIN.']['preview.'][$tableName . '.']);
@@ -78,7 +90,7 @@ class PreviewAnyRecordViewHelper extends AbstractViewHelper
      *
      * @return int
      */
-    protected function getCurrentPageIdentifier()
+    protected function getCurrentPageIdentifier(): int
     {
         return (int)GeneralUtility::_GP('id');
     }
@@ -99,7 +111,7 @@ class PreviewAnyRecordViewHelper extends AbstractViewHelper
      * @param string $uri
      * @return string
      */
-    protected function buildAdditionalParamsString($configuration, $uri)
+    protected function buildAdditionalParamsString(array $configuration, string $uri): string
     {
         $additionalConfig = (array)$configuration['additionalGetParameters.'];
         foreach ($additionalConfig as $additionalKey => $additionalValue) {
@@ -123,7 +135,7 @@ class PreviewAnyRecordViewHelper extends AbstractViewHelper
      * @param $string
      * @return string
      */
-    protected static function removeLastDot($string)
+    protected static function removeLastDot(string $string): string
     {
         if (substr($string, -1) === '.') {
             $string = substr($string, 0, -1);

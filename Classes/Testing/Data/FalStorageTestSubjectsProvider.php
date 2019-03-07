@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Testing\Data;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,15 +25,18 @@ namespace In2code\In2publishCore\Testing\Data;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use PDO;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
+use function array_column;
+use function array_combine;
 
 /**
  * Class FalStorageTestSubjectsProvider
@@ -47,7 +51,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     /**
      * @var Dispatcher
      */
-    protected $signalSlotDispatcher = null;
+    protected $signalSlotDispatcher;
 
     /**
      * @var array
@@ -75,7 +79,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     /**
      * @return array
      */
-    public function getStoragesForCaseSensitivityTest()
+    public function getStoragesForCaseSensitivityTest(): array
     {
         return $this->getStorages(static::PURPOSE_CASE_SENSITIVITY);
     }
@@ -83,7 +87,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     /**
      * @return array
      */
-    public function getStoragesForDriverTest()
+    public function getStoragesForDriverTest(): array
     {
         return $this->getStorages(static::PURPOSE_DRIVER);
     }
@@ -91,7 +95,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     /**
      * @return array
      */
-    public function getStoragesForMissingStoragesTest()
+    public function getStoragesForMissingStoragesTest(): array
     {
         return $this->getStorages(static::PURPOSE_MISSING);
     }
@@ -99,16 +103,16 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     /**
      * @return array
      */
-    public function getStoragesForUniqueTargetTest()
+    public function getStoragesForUniqueTargetTest(): array
     {
         return $this->getStorages(static::PURPOSE_UNIQUE_TARGET);
     }
 
     /**
-     * @param string $purpose
+     * @param $purpose
      * @return array
      */
-    protected function getStorages($purpose)
+    protected function getStorages($purpose): array
     {
         if (false === $this->initialized) {
             $this->initialized = true;
@@ -136,11 +140,18 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     }
 
     /**
-     * @param DatabaseConnection $databaseConnection
+     * @param Connection $connection
      * @return array
      */
-    protected function fetchStorages(DatabaseConnection $databaseConnection)
+    protected function fetchStorages(Connection $connection): array
     {
-        return (array)$databaseConnection->exec_SELECTgetRows('*', 'sys_file_storage', 'deleted=0', '', '', '', 'uid');
+        $query = $connection->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $rows = $query->select('*')
+                      ->from('sys_file_storage')
+                      ->where($query->expr()->eq('deleted', 0))
+                      ->execute()
+                      ->fetchAll(PDO::FETCH_ASSOC);
+        return array_combine(array_column($rows, 'uid'), $rows);
     }
 }

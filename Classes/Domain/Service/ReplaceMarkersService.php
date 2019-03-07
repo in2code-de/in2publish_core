@@ -1,39 +1,43 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Service;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * Copyright notice
  *
- *  (c) 2015 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>,
- *  Oliver Eglseder <oliver.eglseder@in2code.de>
+ * (c) 2015 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>,
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  All rights reserved
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function preg_replace_callback;
+use function str_replace;
+use function strpos;
+use function strstr;
 
 /**
  * Replace markers in TCA definition
@@ -41,28 +45,15 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class ReplaceMarkersService
 {
     /**
-     * @var DatabaseConnection
-     */
-    protected $localDatabase = null;
-
-    /**
-     * @var DatabaseConnection
-     */
-    protected $foreignDatabase = null;
-
-    /**
      * @var Logger
      */
     protected $logger = null;
 
     /**
-     * @param DatabaseConnection $localDatabase
-     * @param DatabaseConnection $foreignDatabase
+     * ReplaceMarkersService constructor.
      */
-    public function __construct(DatabaseConnection $localDatabase, DatabaseConnection $foreignDatabase)
+    public function __construct()
     {
-        $this->localDatabase = $localDatabase;
-        $this->foreignDatabase = $foreignDatabase;
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
     }
 
@@ -76,7 +67,7 @@ class ReplaceMarkersService
      * @param string $string
      * @return string
      */
-    public function replaceMarkers(RecordInterface $record, $string)
+    public function replaceMarkers(RecordInterface $record, $string): string
     {
         if (strpos($string, '#') !== false) {
             $string = $this->replaceRecFieldMarker($record, $string);
@@ -93,7 +84,7 @@ class ReplaceMarkersService
      * @param string $string
      * @return string
      */
-    protected function replaceRecFieldMarker(RecordInterface $record, $string)
+    protected function replaceRecFieldMarker(RecordInterface $record, $string): string
     {
         if (strstr($string, '###REC_FIELD_')) {
             $string = preg_replace_callback(
@@ -104,7 +95,7 @@ class ReplaceMarkersService
                     if ($propertyValue === null) {
                         $propertyValue = $record->getForeignProperty($propertyName);
                     }
-                    return DatabaseUtility::quoteString($propertyValue, $record->getTableName());
+                    return DatabaseUtility::quoteString((string)$propertyValue);
                 },
                 $string
             );
@@ -178,7 +169,7 @@ class ReplaceMarkersService
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function getStoragePidFromPage($pageId)
+    protected function getStoragePidFromPage($pageId): int
     {
         $rootLine = BackendUtility::BEgetRootLine($pageId);
         foreach ($rootLine as $page) {
@@ -195,7 +186,8 @@ class ReplaceMarkersService
      */
     protected function getCurrentRecordPageId(RecordInterface $record)
     {
-        return ($record->hasLocalProperty('pid') ?
-            $record->getLocalProperty('pid') : $record->getForeignProperty('pid'));
+        return ($record->hasLocalProperty('pid')
+            ? $record->getLocalProperty('pid')
+            : $record->getForeignProperty('pid'));
     }
 }

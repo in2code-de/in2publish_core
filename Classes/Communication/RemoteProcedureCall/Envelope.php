@@ -1,7 +1,13 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
 
-/***************************************************************
+use LogicException;
+use function array_filter;
+use function serialize;
+use function unserialize;
+
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +30,7 @@ namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 /**
  * Class Envelope
@@ -74,7 +80,7 @@ class Envelope
     /**
      * @return int
      */
-    public function getUid()
+    public function getUid(): int
     {
         return $this->uid;
     }
@@ -85,7 +91,7 @@ class Envelope
     public function setUid($uid)
     {
         if (0 !== $this->uid) {
-            throw new \LogicException('Can not overrule an envelope\'s uid', 1474386795);
+            throw new LogicException('Can not overrule an envelope\'s uid', 1474386795);
         }
         $this->uid = (int)$uid;
     }
@@ -93,7 +99,7 @@ class Envelope
     /**
      * @return string
      */
-    public function getCommand()
+    public function getCommand(): string
     {
         return $this->command;
     }
@@ -104,7 +110,7 @@ class Envelope
     public function setCommand($command)
     {
         if ('' !== $this->command) {
-            throw new \LogicException('Can not overrule an envelope\'s command', 1474386882);
+            throw new LogicException('Can not overrule an envelope\'s command', 1474386882);
         }
         $this->command = (string)$command;
     }
@@ -123,7 +129,7 @@ class Envelope
     public function setRequest(array $request)
     {
         if ('' !== $this->request) {
-            throw new \LogicException('Can not overrule an envelope\'s request', 1474386975);
+            throw new LogicException('Can not overrule an envelope\'s request', 1474386975);
         }
         $this->request = serialize($request);
     }
@@ -142,7 +148,7 @@ class Envelope
     public function setResponse($response)
     {
         if ('' !== $this->response) {
-            throw new \LogicException('Can not overrule an envelope\'s response', 1474386986);
+            throw new LogicException('Can not overrule an envelope\'s response', 1474386986);
         }
         $this->response = serialize($response);
     }
@@ -150,7 +156,7 @@ class Envelope
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_filter(
             [
@@ -166,7 +172,7 @@ class Envelope
      * @param array $values
      * @return Envelope
      */
-    public static function fromArray(array $values)
+    public static function fromArray(array $values): Envelope
     {
         $object = new Envelope('', []);
         foreach (['uid', 'command', 'request', 'response'] as $property) {

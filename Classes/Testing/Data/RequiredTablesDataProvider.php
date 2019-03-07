@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Testing\Data;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Testing\Data;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -40,7 +41,7 @@ class RequiredTablesDataProvider implements SingletonInterface
     /**
      * @var Dispatcher
      */
-    protected $dispatcher = null;
+    protected $dispatcher;
 
     /**
      * @var array
@@ -48,7 +49,7 @@ class RequiredTablesDataProvider implements SingletonInterface
     protected $cache = [];
 
     /**
-     * ConfigurationIsCompleteTest constructor.
+     * RequiredTablesDataProvider constructor.
      */
     public function __construct()
     {
@@ -58,9 +59,9 @@ class RequiredTablesDataProvider implements SingletonInterface
     /**
      * @return array
      */
-    public function getRequiredTables()
+    public function getRequiredTables(): array
     {
-        if ((empty($this->cache))) {
+        if (empty($this->cache)) {
             $requiredTables = [
                 'tx_in2publishcore_log',
                 'tx_in2code_in2publish_task',
@@ -76,7 +77,7 @@ class RequiredTablesDataProvider implements SingletonInterface
      * @param array $tables
      * @return array
      */
-    protected function overruleTables(array $tables)
+    protected function overruleTables(array $tables): array
     {
         try {
             list($tables) = $this->dispatcher->dispatch(__CLASS__, 'overruleTables', [$tables]);

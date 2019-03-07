@@ -1,8 +1,8 @@
 <?php
-
+declare(strict_types=1);
 namespace In2code\In2publishCore\Service\Environment;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -25,7 +25,7 @@ namespace In2code\In2publishCore\Service\Environment;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Command\StatusCommandController;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
@@ -36,25 +36,28 @@ use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function base64_decode;
+use function implode;
+use function json_decode;
+use function strpos;
 
 /**
- * Used to receive static information about the foreign environment like configuration values or server variables
+ * Used to receive static information about the foreign environment like
+ * configuration values or server variables
  */
 class ForeignEnvironmentService
 {
     /**
      * @var FrontendInterface
      */
-    protected $cache = null;
+    protected $cache;
 
     /**
      * @var Logger
      */
-    protected $logger = null;
+    protected $logger;
 
     /**
-     * ForeignEnvironmentService constructor.
-     *
      * @throws NoSuchCacheException
      */
     public function __construct()
@@ -64,13 +67,11 @@ class ForeignEnvironmentService
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getDatabaseInitializationCommands()
+    public function getDatabaseInitializationCommands(): string
     {
-        if ($this->cache
-            &&
-            $this->cache->has('foreign_db_init')) {
+        if ($this->cache && $this->cache->has('foreign_db_init')) {
             return $this->cache->get('foreign_db_init');
         }
 
@@ -80,7 +81,7 @@ class ForeignEnvironmentService
         );
         $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
 
-        $decodedDbInit = [];
+        $decodedDbInit = '';
         if ($response->isSuccessful()) {
             $encodedDbInit = 'W10=';
             foreach ($response->getOutput() as $line) {
@@ -89,7 +90,7 @@ class ForeignEnvironmentService
                     break;
                 }
             }
-            $decodedDbInit = json_decode(base64_decode($encodedDbInit), true);
+            $decodedDbInit = implode('; ', json_decode(base64_decode($encodedDbInit), true));
             $this->cache->set('foreign_db_init', $decodedDbInit, [], 86400);
         } else {
             $this->logger->error(
@@ -106,11 +107,9 @@ class ForeignEnvironmentService
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function getCreateMasks()
+    public function getCreateMasks(): array
     {
         if (!$this->cache->has('create_masks')) {
             $request = GeneralUtility::makeInstance(
@@ -169,11 +168,9 @@ class ForeignEnvironmentService
     }
 
     /**
-     * @return Logger
-     *
      * @codeCoverageIgnore
      */
-    protected function getLogger()
+    protected function getLogger(): Logger
     {
         return GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
     }
@@ -182,7 +179,7 @@ class ForeignEnvironmentService
      * @param array $output
      * @return array
      */
-    protected function tokenizeResponse(array $output)
+    protected function tokenizeResponse(array $output): array
     {
         $values = [];
         foreach ($output as $line) {

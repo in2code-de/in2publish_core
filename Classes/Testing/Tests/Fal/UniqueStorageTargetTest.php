@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Testing\Tests\Fal;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
@@ -32,11 +33,15 @@ use In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use ReflectionException;
+use ReflectionProperty;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Reflection\Exception;
-use TYPO3\CMS\Extbase\Reflection\PropertyReflection;
+use function array_keys;
+use function array_merge;
+use function array_unique;
+use function ltrim;
+use function uniqid;
 
 /**
  * Class UniqueStorageTargetTest
@@ -46,10 +51,10 @@ class UniqueStorageTargetTest implements TestCaseInterface
     /**
      * @var FalStorageTestSubjectsProvider
      */
-    protected $testSubjectProvider = null;
+    protected $testSubjectProvider;
 
     /**
-     * ResourceStorageTest constructor.
+     * UniqueStorageTargetTest constructor.
      */
     public function __construct()
     {
@@ -59,9 +64,8 @@ class UniqueStorageTargetTest implements TestCaseInterface
     /**
      * @return TestResult
      * @throws ReflectionException
-     * @throws Exception
      */
-    public function run()
+    public function run(): TestResult
     {
         $storages = $this->testSubjectProvider->getStoragesForUniqueTargetTest();
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
@@ -80,7 +84,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
                 $skippedStorages[] = $storageObject->getName();
                 continue;
             }
-            $driverProperty = new PropertyReflection(get_class($storageObject), 'driver');
+            $driverProperty = new ReflectionProperty(get_class($storageObject), 'driver');
             $driverProperty->setAccessible(true);
             /** @var DriverInterface $localDriver */
             $localDriver = $driverProperty->getValue($storageObject);
@@ -154,7 +158,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             ForeignInstanceTest::class,

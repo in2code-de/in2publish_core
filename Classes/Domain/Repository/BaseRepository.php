@@ -1,39 +1,49 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Repository;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * Copyright notice
  *
- *  (c) 2015 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>,
- *  Oliver Eglseder <oliver.eglseder@in2code.de>
+ * (c) 2015 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>,
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  All rights reserved
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_column;
+use function array_combine;
+use function explode;
+use function json_encode;
+use function preg_match;
+use function strpos;
+use function strtoupper;
+use function substr;
+use function trim;
 
 /**
  * Class BaseRepository. Inherit from this repository to execute methods
@@ -42,6 +52,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 abstract class BaseRepository
 {
+    const ADDITIONAL_ORDER_BY_PATTER = '/(?P<where>.*)ORDER BY (?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/i';
+
     /**
      * The table name to use for any SELECT, INSERT, UPDATE and DELETE query
      *
@@ -78,7 +90,7 @@ abstract class BaseRepository
      * the given database connection where the column
      * "$propertyName" equals $propertyValue
      *
-     * @param DatabaseConnection $databaseConnection
+     * @param Connection $connection
      * @param string $propertyName
      * @param mixed $propertyValue
      * @param string $additionalWhere
@@ -89,7 +101,7 @@ abstract class BaseRepository
      * @return array
      */
     protected function findPropertiesByProperty(
-        DatabaseConnection $databaseConnection,
+        Connection $connection,
         $propertyName,
         $propertyValue,
         $additionalWhere = '',
@@ -97,50 +109,65 @@ abstract class BaseRepository
         $orderBy = '',
         $limit = '',
         $indexField = 'uid'
-    ) {
-        if (!empty($this->tableName)) {
-            $propertyNameQuoted = $this->quoteString($propertyName);
-            $propertyValueQuoted = $this->quoteString($propertyValue);
-            $sortingField = $this->tcaService->getSortingField($this->tableName);
-            if (empty($orderBy) && !empty($sortingField) && stripos($additionalWhere, 'ORDER BY') === false) {
-                $orderBy = $sortingField . ' ASC';
-            }
-            if (strpos($indexField, ',')) {
-                $combinedIdentifier = explode(',', $indexField);
-                $rows = (array)$databaseConnection->exec_SELECTgetRows(
-                    '*',
-                    $this->tableName,
-                    $propertyNameQuoted . ' LIKE "' . $propertyValueQuoted . '" ' . $additionalWhere,
-                    $groupBy,
-                    $orderBy,
-                    $limit,
-                    ''
-                );
-                $propertyArray = [];
-                foreach ($rows as $row) {
-                    $identifierArray = [];
-                    foreach ($combinedIdentifier as $identifierFieldName) {
-                        $identifierArray[] = $row[$identifierFieldName];
-                    }
-                    $propertyArray[implode(',', $identifierArray)] = $row;
-                }
-                return $propertyArray;
-            }
-            return (array)$databaseConnection->exec_SELECTgetRows(
-                '*',
-                $this->tableName,
-                $propertyNameQuoted . ' LIKE "' . $propertyValueQuoted . '" ' . $additionalWhere,
-                $groupBy,
-                $orderBy,
-                $limit,
-                $indexField
-            );
+    ): array {
+        $propertyArray = [];
+
+        if (empty($this->tableName)) {
+            return $propertyArray;
         }
-        return [];
+        $sortingField = $this->tcaService->getSortingField($this->tableName);
+        if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTER, $additionalWhere, $matches)) {
+            $additionalWhere = $matches['where'];
+            $orderBy = $matches['col'] . strtoupper($matches['dir'] ?? ' ASC');
+        }
+        if (empty($orderBy) && !empty($sortingField)) {
+            $orderBy = $sortingField . ' ASC';
+        }
+        $additionalWhere = trim($additionalWhere);
+        if ('AND' === substr($additionalWhere, 0, 3)) {
+            $additionalWhere = trim(substr($additionalWhere, 3));
+        }
+
+        $query = $connection->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $query->select('*')
+              ->from($this->tableName)
+              ->where($query->expr()->like($propertyName, $query->createNamedParameter($propertyValue)))
+              ->andWhere($additionalWhere);
+
+        if (!empty($groupBy)) {
+            $query->groupBy($groupBy);
+        }
+        if (!empty($orderBy)) {
+            $order = explode(' ', $orderBy);
+            $query->orderBy($order[0], $order[1] ?? null);
+        }
+        if (!empty($limit)) {
+            $query->setMaxResults((int)$limit);
+        }
+        $rows = $query->execute()->fetchAll();
+
+        if (strpos($indexField, ',')) {
+            $combinedIdentifier = explode(',', $indexField);
+            foreach ($rows as $row) {
+                $identifierArray = [];
+                foreach ($combinedIdentifier as $identifierFieldName) {
+                    $identifierArray[] = $row[$identifierFieldName];
+                }
+                $propertyArray[implode(',', $identifierArray)] = $row;
+            }
+            return $propertyArray;
+        } else {
+            foreach ($rows as $row) {
+                $propertyArray[$row[$indexField]] = $row;
+            }
+        }
+
+        return $propertyArray;
     }
 
     /**
-     * @param DatabaseConnection $databaseConnection
+     * @param Connection $connection
      * @param array $properties
      * @param string $additionalWhere
      * @param string $groupBy
@@ -150,31 +177,40 @@ abstract class BaseRepository
      * @return array
      */
     public function findPropertiesByProperties(
-        DatabaseConnection $databaseConnection,
+        Connection $connection,
         array $properties,
         $additionalWhere = '',
         $groupBy = '',
         $orderBy = '',
         $limit = '',
         $indexField = 'uid'
-    ) {
-        $whereParts = [];
-        foreach ($properties as $propertyName => $propertyValue) {
-            $whereParts[] = $databaseConnection->quoteStr($propertyName, $this->tableName) . ' LIKE '
-                            . $databaseConnection->fullQuoteStr($propertyValue, $this->tableName);
-        }
+    ): array {
         if (empty($orderBy)) {
             $orderBy = $this->tcaService->getSortingField($this->tableName);
         }
-        return (array)$databaseConnection->exec_SELECTgetRows(
-            '*',
-            $this->tableName,
-            implode(' AND ', $whereParts) . $additionalWhere,
-            $groupBy,
-            $orderBy,
-            $limit,
-            $indexField
-        );
+
+        $query = $connection->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $query->select('*')
+              ->from($this->tableName)
+              ->andWhere($additionalWhere);
+
+        foreach ($properties as $propertyName => $propertyValue) {
+            $query->andWhere($query->expr()->like($propertyName, $query->createNamedParameter($propertyValue)));
+        }
+
+        if (!empty($groupBy)) {
+            $query->groupBy($groupBy);
+        }
+        if (!empty($orderBy)) {
+            $order = explode(' ', $orderBy);
+            $query->orderBy($order[0], $order[1] ?? null);
+        }
+        if (!empty($limit)) {
+            $query->setMaxResults((int)$limit);
+        }
+        $rows = $query->execute()->fetchAll();
+        return array_combine(array_column($rows, $indexField), $rows);
     }
 
     /**
@@ -183,39 +219,31 @@ abstract class BaseRepository
      * Executes an UPDATE query on the given database connection. This method will
      * overwrite any value given in $properties where uid = $identifier
      *
-     * @param DatabaseConnection $databaseConnection
-     * @param int $identifier
+     * @param Connection $connection
+     * @param int|string $identifier
      * @param array $properties
      * @return bool
      */
-    protected function updateRecord(DatabaseConnection $databaseConnection, $identifier, array $properties)
+    protected function updateRecord(Connection $connection, $identifier, array $properties): bool
     {
         // deal with MM records, they have (in2publish internal) combined identifiers
-        if (strpos($identifier, ',') !== false) {
+        if (strpos((string)$identifier, ',') !== false) {
             $identifierArray = Record::splitCombinedIdentifier($identifier);
 
-            $whereArray = [];
-
-            foreach ($identifierArray as $property => $value) {
-                $whereArray[] = $property . ' LIKE "' . $this->quoteString($value) . '"';
-            }
-
-            $whereClause = implode(' AND ', $whereArray);
-
-            $success = (bool)$databaseConnection->exec_UPDATEquery(
+            $success = (bool)$connection->update(
                 $this->tableName,
-                $whereClause,
-                $properties
+                $properties,
+                $identifierArray
             );
         } else {
-            $success = (bool)$databaseConnection->exec_UPDATEquery(
+            $success = (bool)$connection->update(
                 $this->tableName,
-                'uid=' . $identifier,
-                $properties
+                $properties,
+                ['uid' => $identifier]
             );
         }
         if (!$success) {
-            $this->logFailedQuery(__METHOD__, $databaseConnection);
+            $this->logFailedQuery(__METHOD__, $connection);
         }
         return $success;
     }
@@ -225,15 +253,15 @@ abstract class BaseRepository
      * $properties will be inserted into a new row.
      * if there's no UID it will be set by auto_increment
      *
-     * @param DatabaseConnection $databaseConnection
+     * @param Connection $connection
      * @param array $properties
      * @return bool
      */
-    protected function addRecord(DatabaseConnection $databaseConnection, array $properties)
+    protected function addRecord(Connection $connection, array $properties): bool
     {
-        $success = (bool)$databaseConnection->exec_INSERTquery($this->tableName, $properties);
+        $success = (bool)$connection->insert($this->tableName, $properties);
         if (!$success) {
-            $this->logFailedQuery(__METHOD__, $databaseConnection);
+            $this->logFailedQuery(__METHOD__, $connection);
         }
         return $success;
     }
@@ -248,33 +276,25 @@ abstract class BaseRepository
      * If you want to delete a row "the normal way" set
      * propertiesArray('deleted' => TRUE) and use updateRecord()
      *
-     * @param DatabaseConnection $databaseConnection
+     * @param Connection $connection
      * @param int $identifier
      * @return bool
      * @internal param string $deleteFieldName
      */
-    protected function deleteRecord(DatabaseConnection $databaseConnection, $identifier)
+    protected function deleteRecord(Connection $connection, $identifier)
     {
-        if (strpos($identifier, ',') !== false) {
+        if (strpos((string)$identifier, ',') !== false) {
             $identifierArray = Record::splitCombinedIdentifier($identifier);
 
-            $whereArray = [];
-
-            foreach ($identifierArray as $property => $value) {
-                $whereArray[] = $property . ' LIKE "' . $this->quoteString($value) . '"';
-            }
-
-            $whereClause = implode(' AND ', $whereArray);
-
-            $success = (bool)$databaseConnection->exec_DELETEquery($this->tableName, $whereClause);
+            $success = (bool)$connection->delete($this->tableName, $identifierArray);
             if (!$success) {
-                $this->logFailedQuery(__METHOD__, $databaseConnection);
+                $this->logFailedQuery(__METHOD__, $connection);
             }
             return $success;
         } else {
-            $success = (bool)$databaseConnection->exec_DELETEquery($this->tableName, 'uid=' . (int)$identifier);
+            $success = (bool)$connection->delete($this->tableName, ['uid' => (int)$identifier]);
             if (!$success) {
-                $this->logFailedQuery(__METHOD__, $databaseConnection);
+                $this->logFailedQuery(__METHOD__, $connection);
             }
             return $success;
         }
@@ -283,19 +303,19 @@ abstract class BaseRepository
     /**
      * Does not support identifier array!
      *
-     * @param DatabaseConnection $databaseConnection
+     * @param Connection $connection
      * @param string|int $identifier
      * @return bool|int
      */
-    protected function countRecord(DatabaseConnection $databaseConnection, $identifier)
+    protected function countRecord(Connection $connection, $identifier)
     {
-        $result = $databaseConnection->exec_SELECTcountRows(
+        $result = $connection->count(
             '*',
             $this->tableName,
-            $this->identifierFieldName . ' LIKE ' . $databaseConnection->fullQuoteStr($identifier, $this->tableName)
+            [$this->identifierFieldName => $identifier]
         );
         if (false === $result) {
-            $this->logFailedQuery(__METHOD__, $databaseConnection);
+            $this->logFailedQuery(__METHOD__, $connection);
             return false;
         }
         return (int)$result;
@@ -307,25 +327,25 @@ abstract class BaseRepository
      * @param string $string
      * @return string
      */
-    protected function quoteString($string)
+    protected function quoteString($string): string
     {
-        return DatabaseUtility::quoteString($string, $this->tableName);
+        return DatabaseUtility::quoteString($string);
     }
 
     /**
      * Logs a failed database query with all retrievable information
      *
      * @param $method
-     * @param DatabaseConnection $databaseConnection
+     * @param Connection $connection
      * @return void
      */
-    protected function logFailedQuery($method, DatabaseConnection $databaseConnection)
+    protected function logFailedQuery($method, Connection $connection)
     {
         $this->logger->critical(
             $method . ': Query failed.',
             [
-                'errno' => $databaseConnection->sql_errno(),
-                'error' => $databaseConnection->sql_error(),
+                'errno' => $connection->errorCode(),
+                'error' => json_encode($connection->errorInfo()),
                 'tableName' => $this->tableName,
             ]
         );
@@ -340,7 +360,7 @@ abstract class BaseRepository
     /**
      * @return string
      */
-    public function getTableName()
+    public function getTableName(): string
     {
         return $this->tableName;
     }
@@ -349,7 +369,7 @@ abstract class BaseRepository
      * @param string $tableName
      * @return BaseRepository
      */
-    public function setTableName($tableName)
+    public function setTableName($tableName): BaseRepository
     {
         $this->tableName = $tableName;
         return $this;
@@ -359,7 +379,7 @@ abstract class BaseRepository
      * @param string $tableName
      * @return string
      */
-    public function replaceTableName($tableName)
+    public function replaceTableName($tableName): string
     {
         $replacedTableName = $this->tableName;
         $this->tableName = $tableName;
@@ -369,7 +389,7 @@ abstract class BaseRepository
     /**
      * @return string
      */
-    public function getIdentifierFieldName()
+    public function getIdentifierFieldName(): string
     {
         return $this->identifierFieldName;
     }

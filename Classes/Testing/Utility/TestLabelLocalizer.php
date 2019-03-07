@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Testing\Utility;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,9 +25,10 @@ namespace In2code\In2publishCore\Testing\Utility;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use function strpos;
 
 /**
  * Class TestLabelLocalizer
@@ -39,7 +41,7 @@ class TestLabelLocalizer
      *
      * @return string
      */
-    public static function translate($key, array $arguments = null)
+    public static function translate($key, array $arguments = null): string
     {
         if (0 === strpos($key, 'LLL')) {
             $label = (string)LocalizationUtility::translate($key, 'in2publish_core', $arguments);

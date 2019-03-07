@@ -1,41 +1,49 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Repository;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * Copyright notice
  *
- *  (c) 2015 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>,
- *  Oliver Eglseder <oliver.eglseder@in2code.de>
+ * (c) 2015 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>,
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  All rights reserved
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
+use Exception;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
-use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\FileUtility;
+use Throwable;
+use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidIdentifierException;
+use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidParentRowException;
+use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidParentRowLoopException;
+use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidParentRowRootException;
+use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidPointerFieldValueException;
+use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidTcaException;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
@@ -43,6 +51,30 @@ use TYPO3\CMS\Extbase\Service\FlexFormService;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
+use function array_diff;
+use function array_filter;
+use function array_key_exists;
+use function array_keys;
+use function array_merge;
+use function array_push;
+use function array_shift;
+use function array_unique;
+use function count;
+use function explode;
+use function gettype;
+use function implode;
+use function in_array;
+use function is_array;
+use function is_file;
+use function is_readable;
+use function is_string;
+use function key;
+use function preg_match_all;
+use function reset;
+use function strlen;
+use function strpos;
+use function substr;
+use function trim;
 
 /**
  * CommonRepository - actions in foreign and local database
@@ -97,12 +129,12 @@ class CommonRepository extends BaseRepository
     protected $signalSlotDispatcher;
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
     protected $localDatabase = null;
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
     protected $foreignDatabase = null;
 
@@ -114,14 +146,19 @@ class CommonRepository extends BaseRepository
     protected $skipRecords = [];
 
     /**
-     * @param DatabaseConnection $localDatabase
-     * @param DatabaseConnection $foreignDatabase
+     * @var array
+     */
+    protected $visitedRecords = [];
+
+    /**
+     * @param Connection $localDatabase
+     * @param Connection $foreignDatabase
      * @param string $tableName
      * @param string $identifierFieldName
      */
     public function __construct(
-        DatabaseConnection $localDatabase,
-        DatabaseConnection $foreignDatabase,
+        Connection $localDatabase,
+        Connection $foreignDatabase,
         $tableName,
         $identifierFieldName = 'uid'
     ) {
@@ -145,7 +182,7 @@ class CommonRepository extends BaseRepository
      *
      * @param int $identifier
      * @param string $tableName
-     * @return RecordInterface
+     * @return RecordInterface|null
      */
     public function findByIdentifier($identifier, $tableName = null)
     {
@@ -170,7 +207,7 @@ class CommonRepository extends BaseRepository
      * @param mixed $propertyValue
      * @return RecordInterface[]
      */
-    public function findByProperty($propertyName, $propertyValue)
+    public function findByProperty($propertyName, $propertyValue): array
     {
         if ($this->shouldSkipFindByProperty($propertyName, $propertyValue)) {
             return [];
@@ -195,7 +232,7 @@ class CommonRepository extends BaseRepository
      *
      * @return RecordInterface[]
      */
-    public function findByProperties(array $properties, $simulateRoot = false)
+    public function findByProperties(array $properties, $simulateRoot = false): array
     {
         if ($simulateRoot) {
             $this->recordFactory->simulateRootRecord();
@@ -225,7 +262,7 @@ class CommonRepository extends BaseRepository
      * "$propertyName" equals $propertyValue
      * Add table name
      *
-     * @param DatabaseConnection $databaseConnection
+     * @param Connection $connection
      * @param string $tableName
      * @param string $propertyName
      * @param mixed $propertyValue
@@ -237,7 +274,7 @@ class CommonRepository extends BaseRepository
      * @return array
      */
     protected function findPropertiesByPropertyAndTablename(
-        DatabaseConnection $databaseConnection,
+        Connection $connection,
         $tableName,
         $propertyName,
         $propertyValue,
@@ -246,11 +283,11 @@ class CommonRepository extends BaseRepository
         $orderBy = '',
         $limit = '',
         $indexField = 'uid'
-    ) {
+    ): array {
         $currentTableName = $this->tableName;
         $this->tableName = $tableName;
         $properties = $this->findPropertiesByProperty(
-            $databaseConnection,
+            $connection,
             $propertyName,
             $propertyValue,
             $additionalWhere,
@@ -266,20 +303,20 @@ class CommonRepository extends BaseRepository
     /**
      * Find the last record by property and table name
      *
-     * @param DatabaseConnection $databaseConnection
+     * @param Connection $connection
      * @param string $tableName
      * @param string $propertyName
      * @param mixed $propertyValue
      * @return array
      */
     public function findLastPropertiesByPropertyAndTableName(
-        DatabaseConnection $databaseConnection,
+        Connection $connection,
         $tableName,
         $propertyName,
         $propertyValue
-    ) {
+    ): array {
         $properties = $this->findPropertiesByPropertyAndTablename(
-            $databaseConnection,
+            $connection,
             $tableName,
             $propertyName,
             $propertyValue,
@@ -313,14 +350,14 @@ class CommonRepository extends BaseRepository
      * @param array $foreignProperties
      * @return RecordInterface[]
      */
-    protected function convertPropertyArraysToRecords(array $localProperties, array $foreignProperties)
+    protected function convertPropertyArraysToRecords(array $localProperties, array $foreignProperties): array
     {
         $keysToIterate = array_unique(array_merge(array_keys($localProperties), array_keys($foreignProperties)));
 
         $foundRecords = [];
 
         foreach ($keysToIterate as $key) {
-            if (strpos($key, ',') === false) {
+            if (strpos((string)$key, ',') === false) {
                 if (empty($localProperties[$key])) {
                     $propertyArray = $this->findPropertiesByProperty($this->localDatabase, 'uid', $key);
                     if (!empty($propertyArray[$key])) {
@@ -376,7 +413,7 @@ class CommonRepository extends BaseRepository
      * @param array $excludedTableNames
      * @return RecordInterface
      */
-    public function enrichRecordWithRelatedRecords(RecordInterface $record, array $excludedTableNames)
+    public function enrichRecordWithRelatedRecords(RecordInterface $record, array $excludedTableNames): RecordInterface
     {
         if ($this->shouldSkipSearchingForRelatedRecords($record)) {
             return $record;
@@ -455,7 +492,7 @@ class CommonRepository extends BaseRepository
 
             try {
                 $record->addRelatedRecords($relatedRecords);
-            } catch (\Exception $e) {
+            } catch (Throwable $e) {
                 $this->logger->emergency(
                     'Exception thrown while adding related record: ' . $e->getMessage(),
                     [
@@ -491,7 +528,7 @@ class CommonRepository extends BaseRepository
      * @param array $excludedTableNames
      * @return array
      */
-    protected function fetchRelatedRecordsByRte($bodyText, array $excludedTableNames)
+    protected function fetchRelatedRecordsByRte($bodyText, array $excludedTableNames): array
     {
         $relatedRecords = [];
         // if RTE is enabled
@@ -546,7 +583,7 @@ class CommonRepository extends BaseRepository
      * @param array $excludedTableNames
      * @return RecordInterface
      */
-    public function enrichPageRecord(RecordInterface $record, array $excludedTableNames)
+    public function enrichPageRecord(RecordInterface $record, array $excludedTableNames): RecordInterface
     {
         if ($this->shouldSkipEnrichingPageRecord($record)) {
             return $record;
@@ -569,7 +606,7 @@ class CommonRepository extends BaseRepository
      * @param array $columnConfiguration
      * @return string
      */
-    protected function getFlexFormDefinitionSource(RecordInterface $record, array $columnConfiguration)
+    protected function getFlexFormDefinitionSource(RecordInterface $record, array $columnConfiguration): string
     {
         $dsArray = $columnConfiguration['ds'];
         if (!isset($columnConfiguration['ds_pointerField'])) {
@@ -615,7 +652,7 @@ class CommonRepository extends BaseRepository
      * @param string $flexFormSource
      * @return string
      */
-    protected function resolveFlexFormSource($flexFormSource)
+    protected function resolveFlexFormSource($flexFormSource): string
     {
         $flexFormString = '';
         if (!is_string($flexFormSource)) {
@@ -641,54 +678,30 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * TODO: Drop this whole monstrous except the FlexFormTools part upon dropping TYPO3 v7
-     *
      * Get flex form configuration from file or reference
      *
      * @param RecordInterface $record
      * @param string $column
      * @param array $columnConfiguration
-     * @return array|mixed
+     * @return array
+     * @throws InvalidParentRowException
+     * @throws InvalidParentRowLoopException
+     * @throws InvalidParentRowRootException
+     * @throws InvalidPointerFieldValueException
+     * @throws InvalidTcaException
+     * @throws InvalidIdentifierException
      */
     protected function getFlexFormDefinition(RecordInterface $record, $column, array $columnConfiguration)
     {
-        if (method_exists(FlexFormTools::class, 'getDataStructureIdentifier')
-            && isset($columnConfiguration['ds_pointerField'])
-        ) {
-            /** @var FlexFormTools $flexFormTools */
-            $flexFormTools = GeneralUtility::makeInstance(FlexFormTools::class);
-            $dataStructIdentifier = $flexFormTools->getDataStructureIdentifier(
-                ['config' => $columnConfiguration],
-                $record->getTableName(),
-                $column,
-                $record->getLocalProperties()
-            );
-            $flexFormDefinition = $flexFormTools->parseDataStructureByIdentifier($dataStructIdentifier);
-            $flexFormDefinition = $flexFormDefinition['sheets'];
-        } else {
-            $flexFormDefinition = [];
-            $flexFormSource = $this->getFlexFormDefinitionSource($record, $columnConfiguration);
-            if ($flexFormSource !== '') {
-                $flexFormString = $this->resolveFlexFormSource($flexFormSource);
-                if ($flexFormString === '') {
-                    $this->logger->warning(
-                        'The FlexForm was empty',
-                        [
-                            'tableName' => $record->getTableName(),
-                            'identifier' => $record->getIdentifier(),
-                            'flexFormSource' => $flexFormSource,
-                        ]
-                    );
-
-                    return $flexFormDefinition;
-                }
-                $flexFormDefinition = GeneralUtility::xml2array($flexFormString);
-            }
-            if (isset($flexFormDefinition['sheets'])) {
-                $flexFormDefinition = $flexFormDefinition['sheets'];
-            }
-        }
-
+        $flexFormTools = GeneralUtility::makeInstance(FlexFormTools::class);
+        $dataStructIdentifier = $flexFormTools->getDataStructureIdentifier(
+            ['config' => $columnConfiguration],
+            $record->getTableName(),
+            $column,
+            $record->getLocalProperties()
+        );
+        $flexFormDefinition = $flexFormTools->parseDataStructureByIdentifier($dataStructIdentifier);
+        $flexFormDefinition = $flexFormDefinition['sheets'];
         $flexFormDefinition = $this->flattenFlexFormDefinition((array)$flexFormDefinition);
         $flexFormDefinition = $this->filterFlexFormDefinition($flexFormDefinition);
         return $flexFormDefinition;
@@ -726,7 +739,7 @@ class CommonRepository extends BaseRepository
      * @param array $flexFormDefinition
      * @return array
      */
-    protected function flattenFlexFormDefinition(array $flexFormDefinition)
+    protected function flattenFlexFormDefinition(array $flexFormDefinition): array
     {
         $flattenedDefinition = [];
         foreach ($flexFormDefinition as $sheetDefinition) {
@@ -769,7 +782,7 @@ class CommonRepository extends BaseRepository
      * @param string $fieldKey
      * @return array
      */
-    protected function flattenFieldFlexForm(array $flattenedDefinition, array $fieldDefinition, $fieldKey)
+    protected function flattenFieldFlexForm(array $flattenedDefinition, array $fieldDefinition, $fieldKey): array
     {
         // default FlexForm for a single field
         if (array_key_exists('TCEforms', $fieldDefinition)) {
@@ -799,7 +812,7 @@ class CommonRepository extends BaseRepository
      * @param array $flexFormDefinition
      * @return array
      */
-    protected function filterFlexFormDefinition(array $flexFormDefinition)
+    protected function filterFlexFormDefinition(array $flexFormDefinition): array
     {
         foreach ($flexFormDefinition as $key => $config) {
             if (empty($config['type'])
@@ -867,9 +880,10 @@ class CommonRepository extends BaseRepository
      * @param string $column
      * @return array
      */
-    protected function getLocalFlexFormDataFromRecord(RecordInterface $record, $column)
+    protected function getLocalFlexFormDataFromRecord(RecordInterface $record, $column): array
     {
         /** @var FlexFormService $flexFormService */
+        // TODO: Replace with \TYPO3\CMS\Core\Service\FlexFormService upon dropping TYPO3 v8
         $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
 
         $localFlexFormData = [];
@@ -890,14 +904,14 @@ class CommonRepository extends BaseRepository
      * @param array $excludedTableNames
      * @param array $columnConfiguration
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     protected function fetchRelatedRecordsByFlexForm(
         RecordInterface $record,
         $column,
         array $excludedTableNames,
         array $columnConfiguration
-    ) {
+    ): array {
         $records = [];
 
         $localFlexFormData = $this->getLocalFlexFormDataFromRecord($record, $column);
@@ -944,7 +958,7 @@ class CommonRepository extends BaseRepository
      * @param $config
      * @param mixed $flexFormData
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getRecordsByFlexFormRelation(
         RecordInterface $record,
@@ -997,7 +1011,7 @@ class CommonRepository extends BaseRepository
         array $excludedTableNames,
         $propertyName,
         array $overrideIdentifiers = []
-    ) {
+    ): array {
         /** @var RecordInterface[] $records */
         $records = [];
         $tableName = '';
@@ -1176,7 +1190,7 @@ class CommonRepository extends BaseRepository
      * @param array $excludedTableNames
      * @param string $flexFormData
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     protected function fetchRelatedRecordsByGroup(
         array $columnConfiguration,
@@ -1184,7 +1198,7 @@ class CommonRepository extends BaseRepository
         $propertyName,
         array $excludedTableNames,
         $flexFormData = ''
-    ) {
+    ): array {
         $records = [];
         switch ($columnConfiguration['internal_type']) {
             case 'db':
@@ -1260,7 +1274,7 @@ class CommonRepository extends BaseRepository
         RecordInterface $record,
         $propertyName,
         $flexFormData
-    ) {
+    ): array {
         $prefix = '';
         if (!empty($columnConfiguration['uploadfolder'])) {
             $prefix = FileUtility::getCleanFolder($columnConfiguration['uploadfolder']);
@@ -1295,7 +1309,7 @@ class CommonRepository extends BaseRepository
         $propertyName,
         array $excludedTableNames,
         $overrideIdByRecord = false
-    ) {
+    ): array {
         $tableName = $columnConfiguration['foreign_table'];
         if (in_array($tableName, $excludedTableNames)) {
             return [];
@@ -1309,7 +1323,7 @@ class CommonRepository extends BaseRepository
             $recordIdentifier = $record->getMergedProperty($propertyName);
         }
 
-        if ($recordIdentifier !== null && trim($recordIdentifier) !== '' && (int)$recordIdentifier > 0) {
+        if ($recordIdentifier !== null && trim((string)$recordIdentifier) !== '' && (int)$recordIdentifier > 0) {
             // if the relation is an MM type, then select all identifiers from the MM table
             if (!empty($columnConfiguration['MM'])) {
                 $records = $this->fetchRelatedRecordsBySelectMm($columnConfiguration, $record, $excludedTableNames);
@@ -1317,11 +1331,7 @@ class CommonRepository extends BaseRepository
                 $whereClause = '';
                 if (!empty($columnConfiguration['foreign_table_where'])) {
                     /** @var ReplaceMarkersService $replaceMarkers */
-                    $replaceMarkers = GeneralUtility::makeInstance(
-                        ReplaceMarkersService::class,
-                        $this->localDatabase,
-                        $this->foreignDatabase
-                    );
+                    $replaceMarkers = GeneralUtility::makeInstance(ReplaceMarkersService::class);
                     $whereClause = $replaceMarkers->replaceMarkers(
                         $record,
                         $columnConfiguration['foreign_table_where']
@@ -1341,12 +1351,7 @@ class CommonRepository extends BaseRepository
                     $records = array_merge(
                         $records,
                         $this->convertPropertyArraysToRecords(
-                            $this->findPropertiesByProperty(
-                                $this->localDatabase,
-                                'uid',
-                                $uid,
-                                $whereClause
-                            ),
+                            $this->findPropertiesByProperty($this->localDatabase, 'uid', $uid, $whereClause),
                             $this->findPropertiesByProperty($this->foreignDatabase, 'uid', $uid, $whereClause)
                         )
                     );
@@ -1367,7 +1372,7 @@ class CommonRepository extends BaseRepository
         array $columnConfiguration,
         RecordInterface $record,
         array $excludedTableNames
-    ) {
+    ): array {
         $previousTableName = $this->replaceTableName($columnConfiguration['MM']);
 
         // log not supported TCA function
@@ -1443,14 +1448,14 @@ class CommonRepository extends BaseRepository
      * @param int $recordIdentifier
      * @param array $excludedTableNames
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     protected function fetchRelatedRecordsByInline(
         array $columnConfiguration,
         $recordTableName,
         $recordIdentifier,
         array $excludedTableNames
-    ) {
+    ): array {
         $tableName = $columnConfiguration['foreign_table'];
         if (in_array($tableName, $excludedTableNames)) {
             return [];
@@ -1515,7 +1520,7 @@ class CommonRepository extends BaseRepository
         $recordTableName,
         $recordIdentifier,
         array $excludedTableNames
-    ) {
+    ): array {
         if (!empty($columnConfiguration['foreign_field'])
             || !empty($columnConfiguration['foreign_selector'])
             || !empty($columnConfiguration['foreign_record_defaults'])
@@ -1582,7 +1587,7 @@ class CommonRepository extends BaseRepository
         $recordTableName,
         $recordIdentifier,
         array $excludedTableNames
-    ) {
+    ): array {
         /** @var RecordInterface $mmRecord */
         foreach ($relationRecords as $mmRecord) {
             $localUid = $mmRecord->getLocalProperty('uid_foreign');
@@ -1619,7 +1624,7 @@ class CommonRepository extends BaseRepository
      * @param string $tableName
      * @return RecordInterface
      */
-    protected function findByIdentifierInOtherTable($identifier, $tableName)
+    protected function findByIdentifierInOtherTable($identifier, $tableName): RecordInterface
     {
         $previousIdFieldName = $this->identifierFieldName;
         $this->identifierFieldName = 'uid';
@@ -1637,7 +1642,7 @@ class CommonRepository extends BaseRepository
      * @param array $foreignProperties
      * @return bool
      */
-    protected function isIgnoredRecord(array $localProperties, array $foreignProperties)
+    protected function isIgnoredRecord(array $localProperties, array $foreignProperties): bool
     {
         if ($this->isDeletedAndUnchangedRecord($localProperties, $foreignProperties)
             || $this->isRemovedAndDeletedRecord($localProperties, $foreignProperties)
@@ -1655,7 +1660,7 @@ class CommonRepository extends BaseRepository
      * @param array $foreignProps
      * @return bool
      */
-    protected function isRemovedAndDeletedRecord(array $localProps, array $foreignProps)
+    protected function isRemovedAndDeletedRecord(array $localProps, array $foreignProps): bool
     {
         return (empty($localProps) && isset($foreignProps['deleted']) && 1 === (int)$foreignProps['deleted'])
                || (empty($foreignProps) && isset($localProps['deleted']) && 1 === (int)$localProps['deleted']);
@@ -1669,7 +1674,7 @@ class CommonRepository extends BaseRepository
      * @param array $foreignProperties
      * @return bool
      */
-    protected function isDeletedAndUnchangedRecord(array $localProperties, array $foreignProperties)
+    protected function isDeletedAndUnchangedRecord(array $localProperties, array $foreignProperties): bool
     {
         return $localProperties['deleted'] === '1' && !count(array_diff($localProperties, $foreignProperties));
     }
@@ -1680,15 +1685,11 @@ class CommonRepository extends BaseRepository
      *
      * @param RecordInterface $record
      * @param array $excludedTables
-     * @param array $alreadyVisited
      * @return void
-     * @throws \Exception
+     * @throws Throwable
      */
-    public function publishRecordRecursive(
-        RecordInterface $record,
-        array $excludedTables = ['pages'],
-        array $alreadyVisited = []
-    ) {
+    public function publishRecordRecursive(RecordInterface $record, array $excludedTables = ['pages'])
+    {
         try {
             // Dispatch Anomaly
             $this->signalSlotDispatcher->dispatch(
@@ -1697,7 +1698,7 @@ class CommonRepository extends BaseRepository
                 [$record, $this]
             );
 
-            $this->publishRecordRecursiveInternal($record, $excludedTables, $alreadyVisited);
+            $this->publishRecordRecursiveInternal($record, $excludedTables);
 
             // Dispatch Anomaly
             $this->signalSlotDispatcher->dispatch(
@@ -1705,7 +1706,7 @@ class CommonRepository extends BaseRepository
                 'publishRecordRecursiveEnd',
                 [$record, $this]
             );
-        } catch (\Exception $exception) {
+        } catch (Throwable $exception) {
             $this->logger->critical(
                 'Publishing single record failed',
                 [
@@ -1722,23 +1723,19 @@ class CommonRepository extends BaseRepository
     /**
      * @param RecordInterface $record
      * @param array $excludedTables
-     * @param array $alreadyVisited
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException
-     * @throws \TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException
+     * @throws InvalidSlotException
+     * @throws InvalidSlotReturnException
      */
-    protected function publishRecordRecursiveInternal(
-        RecordInterface $record,
-        array $excludedTables,
-        array $alreadyVisited
-    ) {
+    protected function publishRecordRecursiveInternal(RecordInterface $record, array $excludedTables)
+    {
         $tableName = $record->getTableName();
 
-        if (!empty($alreadyVisited[$tableName])) {
-            if (in_array($record->getIdentifier(), $alreadyVisited[$tableName])) {
+        if (!empty($this->visitedRecords[$tableName])) {
+            if (in_array($record->getIdentifier(), $this->visitedRecords[$tableName])) {
                 return;
             }
         }
-        $alreadyVisited[$tableName][] = $record->getIdentifier();
+        $this->visitedRecords[$tableName][] = $record->getIdentifier();
 
         if (!$this->shouldSkipRecord($record, $tableName)) {
             // Dispatch Anomaly
@@ -1801,7 +1798,7 @@ class CommonRepository extends BaseRepository
         }
 
         // publish all related records
-        $this->publishRelatedRecordsRecursive($record, $excludedTables, $alreadyVisited);
+        $this->publishRelatedRecordsRecursive($record, $excludedTables);
     }
 
     /**
@@ -1810,19 +1807,15 @@ class CommonRepository extends BaseRepository
      *
      * @param RecordInterface $record
      * @param array $excludedTables
-     * @param array $alreadyVisited
      * @return void
      */
-    protected function publishRelatedRecordsRecursive(
-        RecordInterface $record,
-        array $excludedTables,
-        array $alreadyVisited = []
-    ) {
+    protected function publishRelatedRecordsRecursive(RecordInterface $record, array $excludedTables)
+    {
         foreach ($record->getRelatedRecords() as $tableName => $relatedRecords) {
             if (!in_array($tableName, $excludedTables) && is_array($relatedRecords)) {
                 /** @var RecordInterface $relatedRecord */
                 foreach ($relatedRecords as $relatedRecord) {
-                    $this->publishRecordRecursiveInternal($relatedRecord, $excludedTables, $alreadyVisited);
+                    $this->publishRecordRecursiveInternal($relatedRecord, $excludedTables);
                 }
             }
         }
@@ -1834,7 +1827,7 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
-     * @return RecordInterface
+     * @return RecordInterface|null
      */
     protected function convertToRecord(array $localProperties, array $foreignProperties)
     {
@@ -1901,7 +1894,7 @@ class CommonRepository extends BaseRepository
      * @param array $columnConfiguration
      * @return string
      */
-    protected function getLocalField(array $columnConfiguration)
+    protected function getLocalField(array $columnConfiguration): string
     {
         $localField = 'uid_local';
         if (!empty($columnConfiguration['MM_opposite_field'])) {
@@ -1916,7 +1909,7 @@ class CommonRepository extends BaseRepository
      * @param array $columnConfiguration
      * @return string
      */
-    protected function getForeignField(array $columnConfiguration)
+    protected function getForeignField(array $columnConfiguration): string
     {
         $localField = 'uid_foreign';
         if (!empty($columnConfiguration['MM_opposite_field'])) {
@@ -1936,53 +1929,53 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param string $identifier
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
-    protected function shouldSkipFindByIdentifier($identifier)
+    protected function shouldSkipFindByIdentifier($identifier): bool
     {
         return $this->should('shouldSkipFindByIdentifier', ['identifier' => $identifier]);
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param string $propertyName
      * @param mixed $propertyValue
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
-    protected function shouldSkipFindByProperty($propertyName, $propertyValue)
+    protected function shouldSkipFindByProperty($propertyName, $propertyValue): bool
     {
         $arguments = ['propertyName' => $propertyName, 'propertyValue' => $propertyValue];
         return $this->should('shouldSkipFindByProperty', $arguments);
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param RecordInterface $record
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
-    protected function shouldSkipSearchingForRelatedRecords(RecordInterface $record)
+    protected function shouldSkipSearchingForRelatedRecords(RecordInterface $record): bool
     {
         return $this->should('shouldSkipSearchingForRelatedRecords', ['record' => $record]);
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param RecordInterface $record
      * @param string $propertyName
      * @param array $columnConfiguration
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
     protected function shouldSkipSearchingForRelatedRecordsByProperty(
         RecordInterface $record,
         $propertyName,
         array $columnConfiguration
-    ) {
+    ): bool {
         $arguments = [
             'record' => $record,
             'propertyName' => $propertyName,
@@ -1992,24 +1985,24 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param RecordInterface $record
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
-    protected function shouldSkipEnrichingPageRecord(RecordInterface $record)
+    protected function shouldSkipEnrichingPageRecord(RecordInterface $record): bool
     {
         return $this->should('shouldSkipEnrichingPageRecord', ['record' => $record]);
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param RecordInterface $record
      * @param string $tableName
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
-    protected function shouldSkipSearchingForRelatedRecordByTable(RecordInterface $record, $tableName)
+    protected function shouldSkipSearchingForRelatedRecordByTable(RecordInterface $record, $tableName): bool
     {
         return $this->should(
             'shouldSkipSearchingForRelatedRecordByTable',
@@ -2018,25 +2011,25 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param RecordInterface $record
      * @param string $tableName
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
-    protected function shouldSkipRecord(RecordInterface $record, $tableName)
+    protected function shouldSkipRecord(RecordInterface $record, $tableName): bool
     {
         return $this->should('shouldSkipRecord', ['record' => $record, 'tableName' => $tableName]);
     }
 
     /**
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      * @param array $localProperties
      * @param array $foreignProperties
      * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
      */
-    protected function shouldIgnoreRecord(array $localProperties, array $foreignProperties)
+    protected function shouldIgnoreRecord(array $localProperties, array $foreignProperties): bool
     {
         return $this->should(
             'shouldIgnoreRecord',
@@ -2062,7 +2055,7 @@ class CommonRepository extends BaseRepository
      * @param array $arguments additional arguments to be passed to the slot
      * @return bool If no vote was received false will be returned
      */
-    protected function should($signal, array $arguments)
+    protected function should($signal, array $arguments): bool
     {
         $signalArguments = $this->signalSlotDispatcher->dispatch(
             __CLASS__,
@@ -2076,7 +2069,7 @@ class CommonRepository extends BaseRepository
      * @param string $tableName
      * @return CommonRepository
      */
-    public static function getDefaultInstance($tableName = 'pages')
+    public static function getDefaultInstance($tableName = 'pages'): CommonRepository
     {
         return GeneralUtility::makeInstance(
             CommonRepository::class,

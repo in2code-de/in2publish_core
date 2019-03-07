@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Uri;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2017 in2code.de and the following authors:
@@ -24,12 +25,13 @@ namespace In2code\In2publishCore\ViewHelpers\Uri;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Domain\Service\DomainService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3\CMS\Frontend\Page\CacheHashCalculator;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+use function http_build_query;
 
 /**
  * Class CompareUriViewHelper
@@ -47,7 +49,7 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
     protected $domainService;
 
     /**
-     * GetFirstDomainFromRootlineViewHelper constructor.
+     * CompareUriViewHelper constructor.
      */
     public function __construct()
     {
@@ -62,14 +64,16 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
     {
         parent::initializeArguments();
         $this->registerUniversalTagAttributes();
+        $this->registerArgument('identifier', 'string', 'The uid of the page to compare', true);
     }
 
     /**
-     * @param integer $identifier
      * @return string
      */
-    public function render($identifier)
+    public function render(): string
     {
+        $identifier = $this->arguments['identifier'];
+
         $domain = '//' . $this->domainService->getDomainFromPageIdentifier($identifier, 'local');
         $script = '/index.php?';
 

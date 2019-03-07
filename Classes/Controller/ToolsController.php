@@ -1,32 +1,32 @@
 <?php
-
+declare(strict_types=1);
 namespace In2code\In2publishCore\Controller;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * Copyright notice
  *
- *  (c) 2015 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>,
- *  Oliver Eglseder <oliver.eglseder@in2code.de>
+ * (c) 2015 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>,
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  All rights reserved
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
@@ -42,6 +42,8 @@ use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use function implode;
+use const PHP_EOL;
 
 /**
  * The ToolsController is the controller of the Backend Module "Publish Tools" "m3"
@@ -57,6 +59,7 @@ class ToolsController extends ActionController
 
     /**
      * @param ViewInterface $view
+     *
      * @return void
      */
     protected function initializeView(ViewInterface $view)
@@ -79,7 +82,7 @@ class ToolsController extends ActionController
         }
         if (!empty($messages)) {
             $this->addFlashMessage(
-                implode('<br/>', $messages),
+                implode(PHP_EOL, $messages),
                 LocalizationUtility::translate('test_state_error', 'in2publish_core'),
                 AbstractMessage::ERROR
             );

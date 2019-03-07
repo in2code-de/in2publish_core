@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Config\Node;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -24,17 +25,24 @@ namespace In2code\In2publishCore\Config\Node;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
+use ArrayObject;
 use In2code\In2publishCore\Config\Node\Generic\AbsGenNode;
 use In2code\In2publishCore\Config\Node\Specific\AbsSpecNode;
 use In2code\In2publishCore\Config\ValidationContainer;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use function array_key_exists;
+use function array_shift;
+use function explode;
+use function implode;
+use function is_array;
+use function spl_object_hash;
 
 /**
  * Class NodeCollection
  */
-class NodeCollection extends \ArrayObject implements Node
+class NodeCollection extends ArrayObject implements Node
 {
     /**
      * NodeCollection constructor.
@@ -67,7 +75,7 @@ class NodeCollection extends \ArrayObject implements Node
      * @param string $path
      * @return Node|NodeCollection
      */
-    public function getNodePath($path)
+    public function getNodePath(string $path): Node
     {
         if (empty($path)) {
             return $this;
@@ -98,7 +106,7 @@ class NodeCollection extends \ArrayObject implements Node
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return spl_object_hash($this);
     }
@@ -118,7 +126,7 @@ class NodeCollection extends \ArrayObject implements Node
     /**
      * @return string[]|int[]|bool[]|array[]
      */
-    public function getDefaults()
+    public function getDefaults(): array
     {
         $defaults = [];
         /** @var Node $node */
@@ -142,7 +150,7 @@ class NodeCollection extends \ArrayObject implements Node
      * @param array[]|bool[]|int[]|string[] $value
      * @return array[]|bool[]|int[]|string[]
      */
-    public function cast($value)
+    public function cast($value): array
     {
         $tmp = [];
         foreach ($this as $key => $node) {
@@ -161,7 +169,7 @@ class NodeCollection extends \ArrayObject implements Node
     /**
      * @param array[]|bool[]|int[]|string[] $value
      */
-    public function unsetDefaults(&$value)
+    public function unsetDefaults(array &$value)
     {
         /** @var Node $node */
         foreach ($this as $key => $node) {

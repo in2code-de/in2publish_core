@@ -16,6 +16,11 @@ foreign:
   # TYPO3_CONTEXT environment variable to preprend to remote CLI calls
   context: Production
 
+  # Additional environment variables to set before executing a remote cli command. The keys are the variable names
+  envVars: []
+    # MY_VAR: myValue
+    # MY_ENV:
+
   # Set your production systems database credentials here. If you use port forwarding to
   # the server where the database is installed, the host is 127.0.0.1 and the port is your forwarded port.
   database:
@@ -43,10 +48,10 @@ excludeRelatedTables:
   - sys_domain
   - sys_history
   - sys_log
-  - sys_note
+  #- sys_note
   - tx_extensionmanager_domain_model_extension
   - tx_extensionmanager_domain_model_repository
-  - tx_rsaauth_keys
+  #- tx_rsaauth_keys
   - cache_treelist
   - tx_in2publishcore_log
   - tx_in2code_in2publish_task
@@ -248,8 +253,8 @@ sshConnection:
   # absolute path to local ssh key belonging to the private above
   publicKeyFileAndPathName: /full/path/to/public/ssh/key/id_rsa.pub
 
-  # private key password, NULL if none set
-  privateKeyPassphrase: NULL
+  # private key password, empty string if none set
+  privateKeyPassphrase: ''
 
   # Key fingerprint of the production server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection.
   # You don't need to keep the colons
@@ -346,3 +351,4 @@ tca:
     text: 'In2code\In2publishCore\Domain\Service\Processor\TextProcessor'
     user: 'In2code\In2publishCore\Domain\Service\Processor\UserProcessor'
     imageManipulation: 'In2code\In2publishCore\Domain\Service\Processor\ImageManipulationProcessor'
+    slug: 'In2code\In2publishCore\Domain\Service\Processor\SlugProcessor'

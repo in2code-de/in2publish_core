@@ -1,32 +1,46 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Service\Environment;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * Copyright notice
  *
- *  (c) 2015 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>
+ * (c) 2015 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>
  *
- *  All rights reserved
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_key_exists;
+use function array_keys;
+use function array_pop;
+use function array_values;
+use function explode;
+use function is_dir;
+use function is_file;
+use function pathinfo;
+use function preg_replace;
+use function rename;
+use function rtrim;
+use function str_replace;
+use function uniqid;
 
 /**
  * Class FileStorageEnvironmentService finds not allowed entries in files and folders
@@ -91,7 +105,7 @@ class FileStorageService extends AbstractService
     /**
      * @return array
      */
-    public function getNonAllowedFolders()
+    public function getNonAllowedFolders(): array
     {
         return $this->nonAllowedFolders;
     }
@@ -99,7 +113,7 @@ class FileStorageService extends AbstractService
     /**
      * @return array
      */
-    public function getNonAllowedFiles()
+    public function getNonAllowedFiles(): array
     {
         return $this->nonAllowedFiles;
     }
@@ -127,7 +141,7 @@ class FileStorageService extends AbstractService
      * @param string $pathAndFilename
      * @return string
      */
-    protected function getNewFileName($pathAndFilename)
+    protected function getNewFileName($pathAndFilename): string
     {
         $newPathAndFilename = $this->recommendedFileName($pathAndFilename);
         if (is_file($newPathAndFilename)) {
@@ -142,7 +156,7 @@ class FileStorageService extends AbstractService
      * @param string $folderName
      * @return string
      */
-    protected function getNewFolderName($folderName)
+    protected function getNewFolderName($folderName): string
     {
         $newFolderName = $this->recommendedFolderName($folderName);
         if (is_dir($newFolderName)) {
@@ -158,7 +172,7 @@ class FileStorageService extends AbstractService
      * @param string $fileStorage
      * @return array
      */
-    protected function getFilesAndFoldersRecursive($fileStorage)
+    protected function getFilesAndFoldersRecursive($fileStorage): array
     {
         return GeneralUtility::getAllFilesAndFoldersInPath(
             [],
@@ -173,7 +187,7 @@ class FileStorageService extends AbstractService
      * @param string $fileAndFolder
      * @return bool
      */
-    protected function isNonAllowedFile($fileAndFolder)
+    protected function isNonAllowedFile($fileAndFolder): bool
     {
         $parts = explode('/', $fileAndFolder);
         $file = array_pop($parts);
@@ -184,7 +198,7 @@ class FileStorageService extends AbstractService
      * @param string $folder
      * @return bool
      */
-    protected function isNonAllowedFolder($folder)
+    protected function isNonAllowedFolder($folder): bool
     {
         return $folder !== $this->recommendedFolderName($folder);
     }
@@ -193,7 +207,7 @@ class FileStorageService extends AbstractService
      * @param string $folder
      * @return string
      */
-    protected function recommendedFolderName($folder)
+    protected function recommendedFolderName($folder): string
     {
         $folder = str_replace(array_keys($this->rewriteCharacters), array_values($this->rewriteCharacters), $folder);
         return preg_replace($this->pattern, $this->substituteCharacter, $folder);
@@ -203,7 +217,7 @@ class FileStorageService extends AbstractService
      * @param string $filename
      * @return string
      */
-    protected function recommendedFileName($filename)
+    protected function recommendedFileName($filename): string
     {
         $filename = str_replace(
             array_keys($this->rewriteCharacters),

@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Config\Node\Specific;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -24,9 +25,10 @@ namespace In2code\In2publishCore\Config\Node\Specific;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\ValidationContainer;
+use function is_bool;
 
 /**
  * Class SpecBoolean
@@ -49,7 +51,7 @@ class SpecBoolean extends AbsSpecNode
      *
      * @return bool
      */
-    public function cast($value)
+    public function cast($value): bool
     {
         return (bool)$value;
     }

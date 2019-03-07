@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Factory;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Domain\Factory;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
@@ -34,7 +35,9 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\StorageDriverExtractor;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use LogicException;
+use RuntimeException;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
@@ -42,6 +45,13 @@ use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_diff;
+use function array_intersect;
+use function array_map;
+use function array_merge;
+use function array_values;
+use function json_encode;
+use function sprintf;
 
 /**
  * Class FolderRecordFactory
@@ -61,7 +71,7 @@ class FolderRecordFactory
     protected $commonRepository;
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
     protected $foreignDatabase;
 
@@ -112,7 +122,7 @@ class FolderRecordFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function initializeDependenciesAndGetFolder($identifier)
+    protected function initializeDependenciesAndGetFolder($identifier): Folder
     {
         // Grab the resource factory to get the FAL driver of the selected folder "FAL style"
         $resourceFactory = ResourceFactory::getInstance();
@@ -161,7 +171,7 @@ class FolderRecordFactory
      * @param string|null $identifier
      * @return RecordInterface
      */
-    public function makeInstance($identifier)
+    public function makeInstance($identifier): RecordInterface
     {
         /*
          * IMPORTANT NOTICES (a.k.a "never forget about this"-Notices):
@@ -240,7 +250,7 @@ class FolderRecordFactory
      * @param RecordInterface[] $files
      * @return RecordInterface[]
      */
-    protected function filterFileRecords(array $files)
+    protected function filterFileRecords(array $files): array
     {
         foreach ($files as $index => $file) {
             $fdb = $file->foreignRecordExists();
@@ -266,13 +276,13 @@ class FolderRecordFactory
                 continue;
             } elseif (!$ldb && $lfs && !$ffs && !$fdb) {
                 // CODE: [1] OLFS; Fixed earlier. See [4] OL
-                throw new \LogicException(
+                throw new LogicException(
                     'The FAL case OLFS is impossible due to prior record transformation',
                     1475178450
                 );
             } elseif (!$ldb && !$lfs && $ffs && !$fdb) {
                 // CODE: [2] OFFS; Fixed earlier. See [9] OF
-                throw new \LogicException(
+                throw new LogicException(
                     'The FAL case OFFS is impossible due to prior record transformation',
                     1475250513
                 );
@@ -284,7 +294,7 @@ class FolderRecordFactory
                 // CODE: [4] OL; Nothing to do here. The record exists only on local and will be displayed correctly.
             } elseif ($ldb && !$lfs && $ffs && !$fdb) {
                 // CODE: [5] LDFF; Foreign disk file got indexed, local database record is ignored. See [9] OF.
-                throw new \LogicException(
+                throw new LogicException(
                     'The FAL case LDFF is impossible due to prior record transformation',
                     1475252172
                 );
@@ -294,13 +304,13 @@ class FolderRecordFactory
                 continue;
             } elseif (!$ldb && $lfs && $ffs && !$fdb) {
                 // CODE: [7] OFS; Both disk files were indexed. See [14] ALL
-                throw new \LogicException(
+                throw new LogicException(
                     'The FAL case OFS is impossible due to prior record transformation',
                     1475572486
                 );
             } elseif (!$ldb && $lfs && !$ffs && $fdb) {
                 // CODE: [8] LFFD. Ignored foreign database record, indexed local disk file. See [11] NFFS
-                throw new \LogicException(
+                throw new LogicException(
                     'The FAL case LFFD is impossible due to prior record transformation',
                     1475573724
                 );
@@ -308,7 +318,7 @@ class FolderRecordFactory
                 // CODE: [9] OF; Nothing to do here;
             } elseif ($ldb && $lfs && $ffs && !$fdb) {
                 // CODE: [10] NFDB; Indexed the foreign file. See [14] ALL
-                throw new \LogicException(
+                throw new LogicException(
                     'The FAL case NFDB is impossible due to prior record transformation',
                     1475576764
                 );
@@ -320,7 +330,7 @@ class FolderRecordFactory
                 $file->setLocalProperties([])->setDirtyProperties()->calculateState();
             } elseif (!$ldb && $lfs && $ffs && $fdb) {
                 // CODE: [13] NLDB; Indexed the local disk file. See [14] ALL
-                throw new \LogicException(
+                throw new LogicException(
                     'The FAL case NLDB is impossible due to prior record transformation',
                     1475578482
                 );
@@ -349,7 +359,7 @@ class FolderRecordFactory
      * @param RecordInterface[] $files
      * @return array
      */
-    protected function buildIndexedIdentifiersList(array $files)
+    protected function buildIndexedIdentifiersList(array $files): array
     {
         $indexedIdentifiers = ['local' => [], 'foreign' => [], 'both' => []];
 
@@ -389,7 +399,7 @@ class FolderRecordFactory
      * @param array $indices
      * @return array
      */
-    protected function determineIdentifiersOnlyOnDisk(array $diskIdentifiers, array $indices)
+    protected function determineIdentifiersOnlyOnDisk(array $diskIdentifiers, array $indices): array
     {
         $allIndices = array_merge($indices['local'], $indices['foreign'], $indices['both']);
         $diskIdentifiers['local'] = array_diff($diskIdentifiers['local'], $allIndices);
@@ -406,7 +416,7 @@ class FolderRecordFactory
      * @param RecordInterface[] $files
      * @return RecordInterface[]
      */
-    protected function convertAndAddOnlyDiskIdentifiersToFileRecords(array $onlyDiskIdentifiers, array $files)
+    protected function convertAndAddOnlyDiskIdentifiersToFileRecords(array $onlyDiskIdentifiers, array $files): array
     {
         foreach (['local', 'foreign', 'both'] as $side) {
             if (!empty($onlyDiskIdentifiers[$side])) {
@@ -431,7 +441,7 @@ class FolderRecordFactory
      * @param string $identifier
      * @return array
      */
-    protected function buildDiskIdentifiersList($identifier)
+    protected function buildDiskIdentifiersList($identifier): array
     {
         $diskIdentifiers = [
             'local' => $this->getFilesIdentifiersInFolder($identifier, $this->localDriver),
@@ -451,7 +461,7 @@ class FolderRecordFactory
      * @param DriverInterface $driver
      * @return array
      */
-    protected function getFilesIdentifiersInFolder($identifier, DriverInterface $driver)
+    protected function getFilesIdentifiersInFolder($identifier, DriverInterface $driver): array
     {
         if ($driver->folderExists($identifier)) {
             $identifierList = array_values($driver->getFilesInFolder($identifier));
@@ -466,7 +476,7 @@ class FolderRecordFactory
      * @param string $identifier
      * @return array
      */
-    protected function getSubFolderRecordInstances($identifier)
+    protected function getSubFolderRecordInstances($identifier): array
     {
         $subFolderIdentifiers = array_merge(
             $this->getSubFolderIdentifiers($this->localDriver, $identifier),
@@ -487,7 +497,7 @@ class FolderRecordFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function makePhysicalFolderInstance($identifier, $depth)
+    protected function makePhysicalFolderInstance($identifier, $depth): RecordInterface
     {
         return GeneralUtility::makeInstance(
             Record::class,
@@ -504,7 +514,7 @@ class FolderRecordFactory
      * @param string $identifier
      * @return array
      */
-    protected function getSubFolderIdentifiers(DriverInterface $driver, $identifier)
+    protected function getSubFolderIdentifiers(DriverInterface $driver, $identifier): array
     {
         if ($driver->folderExists($identifier)) {
             $identifierList = $driver->getFoldersInFolder($identifier);
@@ -520,7 +530,7 @@ class FolderRecordFactory
      * @param string $identifier
      * @return array
      */
-    protected function getFolderInfoByIdentifier(DriverInterface $driver, $identifier)
+    protected function getFolderInfoByIdentifier(DriverInterface $driver, $identifier): array
     {
         if ($driver->folderExists($identifier)) {
             $info = $driver->getFolderInfoByIdentifier($identifier);
@@ -572,8 +582,12 @@ class FolderRecordFactory
      * @return array
      * @internal param DatabaseConnection $targetDatabase
      */
-    protected function reclaimSysFileEntriesBySide(array $onlyDiskIdentifiers, $hashedIdentifier, array $files, $side)
-    {
+    protected function reclaimSysFileEntriesBySide(
+        array $onlyDiskIdentifiers,
+        $hashedIdentifier,
+        array $files,
+        $side
+    ): array {
         // the chance is vanishing low to find a file by its identifier in the database
         // because they should have been found by the folder hash already, but i'm a
         // generous developer and allow FAL to completely fuck up the folder hash
@@ -589,9 +603,9 @@ class FolderRecordFactory
                         // The folder hash on foreign might be correctly different e.g. in case the file was moved!
                         $property = $sysFileEntry->getPropertyBySideIdentifier($side, 'folder_hash');
                         if (null !== $property) {
-                            DatabaseUtility::buildDatabaseConnectionForSide($side)->exec_UPDATEquery(
+                            DatabaseUtility::buildDatabaseConnectionForSide($side)->update(
                                 'sys_file',
-                                'uid=' . $sysFileEntry->getIdentifier(),
+                                ['uid' => (int)$sysFileEntry->getIdentifier()],
                                 ['folder_hash' => $hashedIdentifier]
                             );
                             $properties = $sysFileEntry->getPropertiesBySideIdentifier($side);
@@ -621,7 +635,7 @@ class FolderRecordFactory
      * @param RecordInterface[] $files
      * @return RecordInterface[]
      */
-    protected function mergeSysFileByIdentifier(array $files)
+    protected function mergeSysFileByIdentifier(array $files): array
     {
         $identifierList = [];
 
@@ -707,8 +721,10 @@ class FolderRecordFactory
      * @param RecordInterface $file
      * @return bool
      */
-    protected function isLocalIndexWithMatchingDuplicateIndexOnForeign(array $identifierList, RecordInterface $file)
-    {
+    protected function isLocalIndexWithMatchingDuplicateIndexOnForeign(
+        array $identifierList,
+        RecordInterface $file
+    ): bool {
         return null !== ($localIdentifier = $file->getLocalProperty('identifier'))
                && null !== ($localUid = $file->getLocalProperty('uid'))
                // There is a foreign record with the same identifier
@@ -749,11 +765,14 @@ class FolderRecordFactory
      * @param array $logData
      * @return array
      */
-    protected function enrichWithForeignDatabaseErrorInformation(array $logData)
+    protected function enrichWithForeignDatabaseErrorInformation(array $logData): array
     {
         return array_merge(
             $logData,
-            ['error' => $this->foreignDatabase->sql_error(), 'errno' => $this->foreignDatabase->sql_errno()]
+            [
+                'error' => json_encode($this->foreignDatabase->errorInfo()),
+                'errno' => $this->foreignDatabase->errorCode(),
+            ]
         );
     }
 
@@ -762,9 +781,13 @@ class FolderRecordFactory
      * @param int $newUid
      * @return bool
      */
-    protected function updateForeignIndex($oldUid, $newUid)
+    protected function updateForeignIndex($oldUid, $newUid): bool
     {
-        return (bool)$this->foreignDatabase->exec_UPDATEquery('sys_file', 'uid=' . $oldUid, ['uid' => $newUid]);
+        return (bool)$this->foreignDatabase->update(
+            'sys_file',
+            ['uid' => (int)$newUid],
+            ['uid' => (int)$oldUid]
+        );
     }
 
     /**
@@ -772,12 +795,12 @@ class FolderRecordFactory
      * @param int $newUid
      * @return bool
      */
-    protected function updateForeignReference($oldUid, $newUid)
+    protected function updateForeignReference($oldUid, $newUid): bool
     {
-        return (bool)$this->foreignDatabase->exec_UPDATEquery(
+        return (bool)$this->foreignDatabase->update(
             'sys_file_reference',
-            'table_local LIKE "sys_file" AND uid_local=' . $oldUid,
-            ['uid_local' => $newUid]
+            ['uid' => (int)$newUid],
+            ['uid_local' => (int)$oldUid, 'table_local' => 'sys_file']
         );
     }
 
@@ -785,19 +808,23 @@ class FolderRecordFactory
      * @param int $oldUid
      * @return int
      */
-    protected function countForeignReferences($oldUid)
+    protected function countForeignReferences($oldUid): int
     {
-        $count = $this->foreignDatabase->exec_SELECTcountRows(
-            'uid',
-            'sys_file_reference',
-            'table_local LIKE "sys_file" AND uid_local=' . $oldUid
-        );
+        $query = $this->foreignDatabase->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $count = $query->count('*')
+                       ->from('sys_file_reference')
+                       ->where($query->expr()->eq('table_local', $query->createNamedParameter('sys_file')))
+                       ->andWhere($query->expr()->eq('uid_local', $query->createNamedParameter($oldUid)))
+                       ->execute()
+                       ->fetchColumn(0);
+
         if (false === $count) {
             $this->logger->critical(
                 'Could not count foreign references by uid',
                 $this->enrichWithForeignDatabaseErrorInformation(['uid', $oldUid])
             );
-            throw new \RuntimeException('Could not count foreign references by uid', 1476097402);
+            throw new RuntimeException('Could not count foreign references by uid', 1476097402);
         }
         return (int)$count;
     }
@@ -806,14 +833,22 @@ class FolderRecordFactory
      * @param int $newUid
      * @return int
      */
-    protected function countForeignIndices($newUid)
+    protected function countForeignIndices($newUid): int
     {
-        if (false === ($count = $this->foreignDatabase->exec_SELECTcountRows('uid', 'sys_file', 'uid=' . $newUid))) {
+        $query = $this->foreignDatabase->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+
+        $count = $query->count('uid')
+                       ->from('sys_file')
+                       ->where($query->expr()->eq('uid', $query->createNamedParameter($newUid)))
+                       ->execute()
+                       ->fetchColumn(0);
+        if (false === $count) {
             $this->logger->critical(
                 'Could not count foreign indices by uid',
                 $this->enrichWithForeignDatabaseErrorInformation(['uid', $newUid])
             );
-            throw new \RuntimeException('Could not count foreign indices by uid', 1476097373);
+            throw new RuntimeException('Could not count foreign indices by uid', 1476097373);
         }
         return (int)$count;
     }
@@ -823,7 +858,7 @@ class FolderRecordFactory
      * @param array $identifierList
      * @return array
      */
-    protected function convertIdentifiers(DriverInterface $driver, array $identifierList)
+    protected function convertIdentifiers(DriverInterface $driver, array $identifierList): array
     {
         if (!$driver->isCaseSensitiveFileSystem()) {
             return array_map('strtolower', $identifierList);

@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2017 in2code.de and the following authors:
@@ -24,15 +25,17 @@ namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Communication\AdapterRegistry;
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface;
 use In2code\In2publishCore\Config\ConfigContainer;
 use Psr\Log\LoggerInterface;
+use Throwable;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function uniqid;
 
 /**
  * Class AssetTransmitter
@@ -75,7 +78,7 @@ class AssetTransmitter implements SingletonInterface
      *     \TYPO3\CMS\Core\Resource\Driver\DriverInterface::getFileForLocalProcessing)
      * @return string Absolute path of the transmitted file on foreign
      */
-    public function transmitTemporaryFile($source)
+    public function transmitTemporaryFile($source): string
     {
         $this->logger->info('Transmission of file requested', ['source' => $source]);
 
@@ -84,7 +87,7 @@ class AssetTransmitter implements SingletonInterface
             try {
                 $adapterClass = $this->adapterRegistry->getAdapter(AdapterInterface::class);
                 $this->adapter = GeneralUtility::makeInstance($adapterClass);
-            } catch (\Exception $exception) {
+            } catch (Throwable $exception) {
                 $this->logger->debug('SshAdapter initialization failed. See previous log for reason.');
             }
         }

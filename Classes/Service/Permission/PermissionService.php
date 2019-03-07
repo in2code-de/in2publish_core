@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Service\Permission;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Service\Permission;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Controller\AbstractController;
 use Psr\Log\LoggerInterface;
@@ -42,16 +43,14 @@ class PermissionService
     /**
      * @var LoggerInterface
      */
-    protected $logger = null;
+    protected $logger;
 
     /**
      * @var Dispatcher
      */
-    protected $dispatcher = null;
+    protected $dispatcher;
 
     /**
-     * PermissionService constructor.
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
@@ -62,10 +61,8 @@ class PermissionService
 
     /**
      * Returns true if the current user is allowed to publish
-     *
-     * @return bool
      */
-    public function isUserAllowedToPublish()
+    public function isUserAllowedToPublish(): bool
     {
         $votes = ['yes' => 0, 'no' => 0];
 

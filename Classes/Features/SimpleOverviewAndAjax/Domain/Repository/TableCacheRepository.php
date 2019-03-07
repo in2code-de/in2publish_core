@@ -1,35 +1,39 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * Copyright notice
  *
- *  (c) 2016 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>,
- *  Oliver Eglseder <oliver.eglseder@in2code.de>
+ * (c) 2016 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>,
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  All rights reserved
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use PDO;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
+use function array_column;
+use function array_combine;
 
 /**
  * Class TableCacheRepository can save table values to runtime. So another db query may not needed
@@ -65,25 +69,6 @@ class TableCacheRepository implements SingletonInterface
     protected $foreignCache = [];
 
     /**
-     * @var DatabaseConnection
-     */
-    protected $localDatabase = null;
-
-    /**
-     * @var DatabaseConnection
-     */
-    protected $foreignDatabase = null;
-
-    /**
-     * FakeRepository constructor.
-     */
-    public function __construct()
-    {
-        $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-        $this->foreignDatabase = $this->getForeignDatabaseConnection();
-    }
-
-    /**
      * Get properties from cache by given tableName and uid
      *
      * @param string $tableName
@@ -91,20 +76,23 @@ class TableCacheRepository implements SingletonInterface
      * @param string $databaseName
      * @return array
      */
-    public function findByUid($tableName, $uniqueIdentifier, $databaseName = 'local')
+    public function findByUid($tableName, $uniqueIdentifier, $databaseName = 'local'): array
     {
         $cache = $this->getCache($databaseName);
         if (!empty($cache[$tableName][$uniqueIdentifier])) {
             return $cache[$tableName][$uniqueIdentifier];
         }
-        $database = $this->getDatabase($databaseName);
-        if ($database instanceof DatabaseConnection) {
-            $row = (array)$database->exec_SELECTgetSingleRow(
-                '*',
-                $tableName,
-                'uid=' . (int)$uniqueIdentifier
-            );
-            if (isset($row[0]) && $row[0] === false) {
+        $connection = DatabaseUtility::buildDatabaseConnectionForSide($databaseName);
+        if ($connection instanceof Connection) {
+            $query = $connection->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $row = $query->select('*')
+                         ->from($tableName)
+                         ->where($query->expr()->eq('uid', (int)$uniqueIdentifier))
+                         ->setMaxResults(1)
+                         ->execute()
+                         ->fetch(PDO::FETCH_ASSOC);
+            if (empty($row)) {
                 return [];
             }
             $this->cacheSingleRecord($tableName, $uniqueIdentifier, $row, $databaseName);
@@ -122,19 +110,19 @@ class TableCacheRepository implements SingletonInterface
      * @param string $databaseName
      * @return array
      */
-    public function findByPid($tableName, $pageIdentifier, $databaseName = 'local')
+    public function findByPid($tableName, $pageIdentifier, $databaseName = 'local'): array
     {
-        $database = $this->getDatabase($databaseName);
-        if ($database instanceof DatabaseConnection) {
-            $rows = (array)$database->exec_SELECTgetRows(
-                '*',
-                $tableName,
-                'pid=' . (int)$pageIdentifier,
-                '',
-                'uid',
-                '',
-                'uid'
-            );
+        $connection = DatabaseUtility::buildDatabaseConnectionForSide($databaseName);
+        if ($connection instanceof Connection) {
+            $query = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $rows = $query->select('*')
+                          ->from($tableName)
+                          ->where($query->expr()->eq('pid', (int)$pageIdentifier))
+                          ->orderBy('uid', 'ASC')
+                          ->execute()
+                          ->fetchAll(PDO::FETCH_ASSOC);
+            $rows = array_combine(array_column($rows, 'uid'), $rows);
             $this->cacheRecords($tableName, $rows, $databaseName);
         } else {
             $rows = [];
@@ -177,36 +165,14 @@ class TableCacheRepository implements SingletonInterface
 
     /**
      * @param string $databaseName
-     * @return DatabaseConnection
-     */
-    protected function getDatabase($databaseName = 'local')
-    {
-        $database = $this->localDatabase;
-        if ($databaseName === 'foreign') {
-            $database = $this->foreignDatabase;
-        }
-        return $database;
-    }
-
-    /**
-     * @param string $databaseName
      * @return array
      */
-    protected function getCache($databaseName = 'local')
+    protected function getCache($databaseName = 'local'): array
     {
         $cache = $this->localCache;
         if ($databaseName === 'foreign') {
             $cache = $this->foreignCache;
         }
         return $cache;
-    }
-
-    /**
-     * @return DatabaseConnection
-     * @codeCoverageIgnore
-     */
-    protected function getForeignDatabaseConnection()
-    {
-        return DatabaseUtility::buildForeignDatabaseConnection();
     }
 }

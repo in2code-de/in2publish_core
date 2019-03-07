@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Driver;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,8 +25,9 @@ namespace In2code\In2publishCore\Domain\Driver;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
+use Exception;
 use In2code\In2publishCore\Command\RpcCommandController;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
@@ -34,11 +36,18 @@ use In2code\In2publishCore\Communication\RemoteProcedureCall\EnvelopeDispatcher;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use InvalidArgumentException;
+use LogicException;
+use PDO;
+use RuntimeException;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Service\FlexFormService;
+use function array_keys;
+use function is_array;
+use function sprintf;
 
 /**
  * Class RemoteFileAbstractionLayerDriver
@@ -131,11 +140,15 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
                 ],
             ];
         } else {
-            $this->remoteDriverSettings = DatabaseUtility::buildForeignDatabaseConnection()->exec_SELECTgetSingleRow(
-                '*',
-                'sys_file_storage',
-                'uid=' . (int)$this->storageUid
-            );
+            $query = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $this->remoteDriverSettings = $query->select('*')
+                                                ->from('sys_file_storage')
+                                                ->where($query->expr()->eq('uid', (int)$this->storageUid))
+                                                ->setMaxResults(1)
+                                                ->execute()
+                                                ->fetch(PDO::FETCH_ASSOC);
+            // TODO: Replace with \TYPO3\CMS\Core\Service\FlexFormService upon dropping TYPO3 v8
             $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
             $driverConfiguration = $flexFormService->convertFlexFormContentToArray(
                 $this->remoteDriverSettings['configuration']
@@ -143,7 +156,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
             ArrayUtility::mergeRecursiveWithOverrule($this->configuration, $driverConfiguration);
         }
         if (!is_array($this->remoteDriverSettings)) {
-            throw new \LogicException(
+            throw new LogicException(
                 'Could not find the remote storage with UID "' . $this->storageUid . '"',
                 1474470724
             );
@@ -153,7 +166,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
     /**
      * @return bool
      */
-    public function isOnline()
+    public function isOnline(): bool
     {
         return true === (bool)$this->remoteDriverSettings['is_online'];
     }
@@ -240,8 +253,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * Checks if a folder exists.
      *
      * @param string $folderIdentifier
-     * @throws \Exception
      * @return bool
+     * @throws Exception
      */
     public function folderExists($folderIdentifier)
     {
@@ -410,7 +423,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @return array
      *
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function getPermissions($identifier)
     {
@@ -438,7 +451,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
     {
         $callback = function () use ($fileIdentifier, $propertiesToExtract) {
             if (!$this->fileExists($fileIdentifier)) {
-                throw new \InvalidArgumentException('File ' . $fileIdentifier . ' does not exist.', 1476199721);
+                throw new InvalidArgumentException('File ' . $fileIdentifier . ' does not exist.', 1476199721);
             } else {
                 return $this->executeEnvelope(
                     new Envelope(
@@ -511,12 +524,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         $sortRev = false
     ) {
         if (0 !== $start || 0 !== $max || false !== $recursive || !empty($fnFc) || '' !== $sort || false !== $sortRev) {
-            throw new \InvalidArgumentException('This Driver does not support optional arguments', 1476202118);
+            throw new InvalidArgumentException('This Driver does not support optional arguments', 1476202118);
         }
 
         $callback = function () use ($folderIdentifier) {
             if (!$this->folderExists($folderIdentifier)) {
-                throw new \InvalidArgumentException(
+                throw new InvalidArgumentException(
                     'Cannot list items in directory ' . $folderIdentifier . ' - does not exist or is no directory',
                     1475235331
                 );
@@ -563,7 +576,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         $sortRev = false
     ) {
         if (0 !== $start || 0 !== $max || false !== $recursive || !empty($fnFc) || '' !== $sort || false !== $sortRev) {
-            throw new \InvalidArgumentException('This Driver does not support optional arguments', 1476201945);
+            throw new InvalidArgumentException('This Driver does not support optional arguments', 1476201945);
         }
 
         $callback = function () use ($folderIdentifier) {
@@ -692,7 +705,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
@@ -716,7 +729,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         $response = $this->rceDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 sprintf(
                     'Could not execute RPC [%d]. Errors and Output: %s %s',
                     $uid,
@@ -756,7 +769,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $folderIdentifier
      * @return string
      */
-    protected function getFolderExistsCacheIdentifier($folderIdentifier)
+    protected function getFolderExistsCacheIdentifier($folderIdentifier): string
     {
         return 'folderExists|' . $folderIdentifier;
     }
@@ -765,7 +778,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $folderIdentifier
      * @return string
      */
-    protected function getGetFoldersInFolderCacheIdentifier($folderIdentifier)
+    protected function getGetFoldersInFolderCacheIdentifier($folderIdentifier): string
     {
         return 'getFoldersInFolder|' . $folderIdentifier;
     }
@@ -774,7 +787,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $folderIdentifier
      * @return string
      */
-    protected function getGetFilesInFolderCacheIdentifier($folderIdentifier)
+    protected function getGetFilesInFolderCacheIdentifier($folderIdentifier): string
     {
         return 'getFilesInFolder|' . $folderIdentifier;
     }
@@ -783,7 +796,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $fileIdentifier
      * @return string
      */
-    protected function getFileExistsCacheIdentifier($fileIdentifier)
+    protected function getFileExistsCacheIdentifier($fileIdentifier): string
     {
         return 'fileExists|' . $fileIdentifier;
     }
@@ -792,7 +805,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $identifier
      * @return string
      */
-    protected function getGetPermissionsCacheIdentifier($identifier)
+    protected function getGetPermissionsCacheIdentifier($identifier): string
     {
         return 'getPermissions|' . $identifier;
     }
@@ -801,7 +814,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $fileIdentifier
      * @return string
      */
-    protected function getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier)
+    protected function getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier): string
     {
         return 'getFileInfoByIdentifier|' . $fileIdentifier;
     }
@@ -810,7 +823,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $folderIdentifier
      * @return string
      */
-    protected function getGetFolderInfoByIdentifierCacheIdentifier($folderIdentifier)
+    protected function getGetFolderInfoByIdentifierCacheIdentifier($folderIdentifier): string
     {
         return 'getFolderInfoByIdentifier|' . $folderIdentifier;
     }
@@ -820,7 +833,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $hashAlgorithm
      * @return string
      */
-    protected function getHashCacheIdentifier($fileIdentifier, $hashAlgorithm)
+    protected function getHashCacheIdentifier($fileIdentifier, $hashAlgorithm): string
     {
         return 'hash|' . $fileIdentifier . '|' . $hashAlgorithm;
     }
@@ -829,7 +842,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $identifier
      * @return string
      */
-    protected function getGetPublicUrlCacheIdentifier($identifier)
+    protected function getGetPublicUrlCacheIdentifier($identifier): string
     {
         return 'getPublicUrl|' . $identifier;
     }

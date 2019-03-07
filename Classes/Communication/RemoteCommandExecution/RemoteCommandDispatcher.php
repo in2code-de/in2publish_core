@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,14 +25,16 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Communication\AdapterRegistry;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface;
+use Throwable;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function microtime;
 
 /**
  * Class RemoteCommandDispatcher
@@ -72,14 +75,14 @@ class RemoteCommandDispatcher implements SingletonInterface
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function dispatch(RemoteCommandRequest $request)
+    public function dispatch(RemoteCommandRequest $request): RemoteCommandResponse
     {
         if (null === $this->adapter) {
             $this->logger->debug('Lazy initializing SshAdapter');
             try {
                 $adapterClass = $this->adapterRegistry->getAdapter(AdapterInterface::class);
                 $this->adapter = GeneralUtility::makeInstance($adapterClass);
-            } catch (\Exception $exception) {
+            } catch (Throwable $exception) {
                 $this->logger->debug('SshAdapter initialization failed. See previous log for reason.');
                 return GeneralUtility::makeInstance(RemoteCommandResponse::class, [], [$exception->getMessage()], 1);
             }
