@@ -26,8 +26,8 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\DomainService;
+use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
@@ -55,7 +55,7 @@ class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument('record', RecordInterface::class, 'The record to search in its rootLine', true);
+        $this->registerArgument('identifier', 'int', 'The page uid to search in its rootLine', true);
         $this->registerArgument('stagingLevel', 'string', '"local" or "foreign"', false, 'local');
         $this->registerArgument('addProtocol', 'bool', 'Prepend http(s)://? Defaults to true', false, true);
     }
@@ -64,11 +64,12 @@ class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
      * Get domain from rootline without trailing slash
      *
      * @return string
+     * @throws In2publishCoreException
      */
     public function render(): string
     {
-        return $this->domainService->getFirstDomain(
-            $this->arguments['record'],
+        return $this->domainService->getDomainFromPageIdentifier(
+            $this->arguments['identifier'],
             $this->arguments['stagingLevel'],
             $this->arguments['addProtocol']
         );

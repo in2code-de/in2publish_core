@@ -41,6 +41,7 @@ use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use function array_shift;
 use function ltrim;
 use function rtrim;
+use function trim;
 use function version_compare;
 
 /**
@@ -133,6 +134,13 @@ class DomainService
             }
             if (isset($site)) {
                 $uri = (string)$site->getBase()->withScheme('');
+                if ('/' === $uri && $stagingLevel === self::LEVEL_LOCAL) {
+                    if ($addProtocol) {
+                        $uri = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
+                    } else {
+                        $uri = GeneralUtility::getIndpEnv('HTTP_HOST');
+                    }
+                }
                 if (!$addProtocol) {
                     $uri = ltrim($uri, '/');
                 }
@@ -171,13 +179,16 @@ class DomainService
      * @param int $identifier UID of a pages record
      * @param string $stagingLevel
      *
+     * @param bool $addProtocol
      * @return string
+     *
+     * @throws In2publishCoreException
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function getDomainFromPageIdentifier($identifier, $stagingLevel): string
+    public function getDomainFromPageIdentifier($identifier, $stagingLevel, bool $addProtocol = false): string
     {
-        $uri = $this->getDomainFromSiteConfigByPageId($identifier, $stagingLevel, false);
+        $uri = $this->getDomainFromSiteConfigByPageId($identifier, $stagingLevel, $addProtocol);
         if (!empty($uri)) {
             return $uri;
         }
@@ -199,7 +210,11 @@ class DomainService
                                   ->execute()
                                   ->fetch(PDO::FETCH_ASSOC);
             if (isset($domainRecord['domainName'])) {
-                return $domainRecord['domainName'];
+                $uri = trim($domainRecord['domainName'], '/');
+                if ($addProtocol) {
+                    $uri = (GeneralUtility::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://') . $uri;
+                }
+                return $uri;
             }
         }
         return '';
