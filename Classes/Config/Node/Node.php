@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Config\Node;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Config\Node;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
@@ -50,7 +51,7 @@ interface Node
     /**
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * @param Node $node
@@ -62,12 +63,12 @@ interface Node
      * @param string $path
      * @return Node
      */
-    public function getNodePath($path);
+    public function getNodePath(string $path): Node;
 
     /**
      * @return string[]|int[]|bool[]|array[]
      */
-    public function getDefaults();
+    public function getDefaults(): array;
 
     /**
      * @param Node $node
@@ -84,5 +85,5 @@ interface Node
     /**
      * @param string[]|int[]|bool[]|array[] $value
      */
-    public function unsetDefaults(&$value);
+    public function unsetDefaults(array &$value);
 }

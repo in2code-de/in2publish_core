@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Service\Processor;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,9 +25,10 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use function strpos;
 
 /**
  * Class TextProcessor
@@ -46,7 +48,7 @@ class TextProcessor extends AbstractProcessor
      * @param array $config
      * @return bool
      */
-    public function canPreProcess(array $config)
+    public function canPreProcess(array $config): bool
     {
         $canPreProcess = parent::canPreProcess($config);
         if ($canPreProcess) {
@@ -64,7 +66,7 @@ class TextProcessor extends AbstractProcessor
      * @param array $config
      * @return bool
      */
-    protected function hasRteWizard(array $config)
+    protected function hasRteWizard(array $config): bool
     {
         return !empty($config[static::WIZARDS][static::RTE]);
     }
@@ -73,7 +75,7 @@ class TextProcessor extends AbstractProcessor
      * @param array $config
      * @return bool
      */
-    protected function hasDefaultExtrasRte(array $config)
+    protected function hasDefaultExtrasRte(array $config): bool
     {
         if (isset($config[TcaProcessingService::DEFAULT_EXTRAS])) {
             return false !== strpos($config[TcaProcessingService::DEFAULT_EXTRAS], static::RTE_DEFAULT_EXTRAS);

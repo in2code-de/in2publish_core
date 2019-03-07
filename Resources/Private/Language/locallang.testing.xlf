@@ -186,12 +186,25 @@
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\LocalSysDomainTest -->
 
 			<trans-unit id="application.local_sys_domain_missing">
-				<source>No valid sys_domain entry has been on the local system.</source>
-				<target state="translated">Es wurde kein gültiger sys_domain Eintrag im lokalen System gefunden.</target>
+				<source>No valid sys_domain entry has been found on the local system.</source>
 			</trans-unit>
 			<trans-unit id="application.local_sys_domain_configured">
 				<source>A valid sys_domain entry has been found on the local system.</source>
-				<target state="translated">Es wurde ein gültiger sys_domain Eintrag im lokalen System gefunden.</target>
+			</trans-unit>
+			<trans-unit id="application.local_sites_config_missing">
+				<source>One or more root pages are missing their site configuration and have no sys_domain entry.</source>
+			</trans-unit>
+			<trans-unit id="application.local_sites_config_legacy">
+				<source>All root pages have a domain but some are configured by legacy sys_domain entries.</source>
+			</trans-unit>
+			<trans-unit id="application.local_sites_config">
+				<source>All sites have been found to be configured via site configuration.</source>
+			</trans-unit>
+			<trans-unit id="application.no_local_sites_found">
+				<source>No root pages have been found.</source>
+			</trans-unit>
+			<trans-unit id="application.local_sites_query_error">
+				<source>An error occurred in the root site detection query.</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest -->
@@ -252,6 +265,30 @@
 			</trans-unit>
 			<trans-unit id="application.foreign_sys_domain_configured">
 				<source>A valid sys_domain entry has been found on the foreign system.</source>
+			</trans-unit>
+			<trans-unit id="application.no_foreign_sites_found">
+				<source>No root pages have been found on the foreign system.</source>
+			</trans-unit>
+			<trans-unit id="application.foreign_sites_query_error">
+				<source>An error occurred in the root site detection query.</source>
+			</trans-unit>
+			<trans-unit id="application.foreign_site_config_error">
+				<source>An error occurred during site configuration detection.</source>
+			</trans-unit>
+			<trans-unit id="application.foreign_site_config_slash">
+				<source>At least one foreign root page has a site configuration without a full base domain.</source>
+			</trans-unit>
+			<trans-unit id="application.foreign_sites_config_legacy">
+				<source>All foreign root pages have a domain but some are configured by legacy sys_domain entries.</source>
+			</trans-unit>
+			<trans-unit id="foreign_sites_config_missing">
+				<source>One or more foreign root pages are missing site configurations (and sys_domains).</source>
+			</trans-unit>
+			<trans-unit id="foreign_sites_config_legacy">
+				<source>All foreign root pages have domains configured but at least one of them has a onyl legacy sys_domain.</source>
+			</trans-unit>
+			<trans-unit id="foreign_sites_config">
+				<source>All foreign root pages have a site configuration.</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest

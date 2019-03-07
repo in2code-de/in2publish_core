@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Service\Environment;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Service\Environment;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use TYPO3\CMS\Core\Package\PackageInterface;
@@ -32,6 +33,9 @@ use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function json_encode;
+use function serialize;
+use function sha1;
 
 /**
  * Class EnvironmentService
@@ -46,7 +50,7 @@ class EnvironmentService implements SingletonInterface
     /**
      * @var Registry
      */
-    protected $registry = null;
+    protected $registry;
 
     /**
      * EnvironmentService constructor.
@@ -59,7 +63,7 @@ class EnvironmentService implements SingletonInterface
     /**
      * @param bool $success
      */
-    public function setTestResult($success)
+    public function setTestResult(bool $success)
     {
         $this->registry->set(
             'tx_in2publishcore',
@@ -75,7 +79,7 @@ class EnvironmentService implements SingletonInterface
     /**
      * @return array
      */
-    public function getTestStatus()
+    public function getTestStatus(): array
     {
         $statusArray = [];
         $testResults = $this->registry->get('tx_in2publishcore', 'test_result', false);
@@ -98,7 +102,7 @@ class EnvironmentService implements SingletonInterface
     /**
      * @return string
      */
-    protected function getPackagesHash()
+    protected function getPackagesHash(): string
     {
         return sha1(json_encode($this->getActivePackagesArray()));
     }
@@ -108,27 +112,23 @@ class EnvironmentService implements SingletonInterface
      *
      * @codeCoverageIgnore
      */
-    protected function getActivePackagesArray()
+    protected function getActivePackagesArray(): array
     {
         return GeneralUtility::makeInstance(PackageManager::class)->getActivePackages();
     }
 
     /**
-     * @return string
-     *
      * @codeCoverageIgnore
      */
-    protected function getConfigurationHash()
+    protected function getConfigurationHash(): string
     {
         return sha1(serialize(GeneralUtility::makeInstance(ConfigContainer::class)->get()));
     }
 
     /**
-     * @return Registry
-     *
      * @codeCoverageIgnore
      */
-    protected function getRegistry()
+    protected function getRegistry(): Registry
     {
         return GeneralUtility::makeInstance(Registry::class);
     }

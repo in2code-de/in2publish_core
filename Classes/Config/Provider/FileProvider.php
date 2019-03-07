@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Config\Provider;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -24,11 +25,17 @@ namespace In2code\In2publishCore\Config\Provider;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Service\Context\ContextService;
+use Spyc;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function class_exists;
+use function file_exists;
+use function rtrim;
+use function strpos;
+use function unserialize;
 
 /**
  * Class FileProvider
@@ -46,7 +53,7 @@ class FileProvider implements ProviderInterface
     public function __construct()
     {
         $this->contextService = GeneralUtility::makeInstance(ContextService::class);
-        if (!class_exists(\Spyc::class)) {
+        if (!class_exists(Spyc::class)) {
             $spyc = ExtensionManagementUtility::extPath('in2publish_core', 'Resources/Private/Libraries/Spyc/Spyc.php');
             if (file_exists($spyc)) {
                 require_once($spyc);
@@ -67,14 +74,14 @@ class FileProvider implements ProviderInterface
      */
     public function getConfig()
     {
-        if (!class_exists(\Spyc::class)) {
+        if (!class_exists(Spyc::class)) {
             return [];
         }
 
         $file = $this->getConfigFilePath() . $this->contextService->getContext() . 'Configuration.yaml';
 
         if (file_exists($file)) {
-            return \Spyc::YAMLLoad($file);
+            return Spyc::YAMLLoad($file);
         }
 
         return [];
@@ -93,7 +100,7 @@ class FileProvider implements ProviderInterface
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function getConfigFilePath()
+    protected function getConfigFilePath(): string
     {
         $path = 'typo3conf/AdditionalConfiguration/';
         if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core'])) {

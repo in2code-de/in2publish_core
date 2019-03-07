@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Service;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2015 in2code.de and the following authors:
- *  Alex Kellner <alexander.kellner@in2code.de>
+ * Alex Kellner <alexander.kellner@in2code.de>
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -25,11 +26,12 @@ namespace In2code\In2publishCore\Domain\Service;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function microtime;
 
 /**
  * Class ExecutionTimeService
@@ -59,7 +61,7 @@ class ExecutionTimeService implements SingletonInterface
     /**
      * @return float
      */
-    public function getExecutionTime()
+    public function getExecutionTime(): float
     {
         if (null === $this->startTime) {
             GeneralUtility::makeInstance(LogManager::class)

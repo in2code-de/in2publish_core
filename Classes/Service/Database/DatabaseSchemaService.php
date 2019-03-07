@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Service\Database;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Service\Database;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -41,11 +42,9 @@ class DatabaseSchemaService implements SingletonInterface
     /**
      * @var FrontendInterface
      */
-    protected $cache = null;
+    protected $cache;
 
     /**
-     * DatabaseSchemaService constructor.
-     *
      * @throws NoSuchCacheException
      */
     public function __construct()
@@ -57,47 +56,20 @@ class DatabaseSchemaService implements SingletonInterface
      * @param string $tableName
      * @return bool
      */
-    public function tableExists($tableName)
+    public function tableExists(string $tableName): bool
     {
-        $schema = $this->getDatabaseSchema();
-        return isset($schema[$tableName]);
+        $database = DatabaseUtility::buildLocalDatabaseConnection();
+
+        return $database ? $database->getSchemaManager()->tablesExist([$tableName]) : false;
     }
 
     /**
-     * @return array
-     */
-    public function getDatabaseSchema()
-    {
-        $schema = false;
-        if ($this->cache->has('database_schema')) {
-            $schema = $this->cache->get('database_schema');
-        }
-
-        if (false === $schema) {
-            $database = DatabaseUtility::buildLocalDatabaseConnection();
-
-            $schema = [];
-            foreach ($database->admin_get_tables() as $tableName => $tableInfo) {
-                $schema[$tableName]['_TABLEINFO'] = $tableInfo;
-                foreach ($database->admin_get_fields($tableName) as $fieldName => $fieldInfo) {
-                    $schema[$tableName][$fieldName] = $fieldInfo;
-                }
-            }
-            $this->cache->set('database_schema', $schema);
-        }
-
-        return $schema;
-    }
-
-    /**
-     * @return FrontendInterface
-     *
      * @throws NoSuchCacheException
      *
      * @codeCoverageIgnore
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function getCache()
+    protected function getCache(): FrontendInterface
     {
         return GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
     }

@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Testing\Tests\Fal;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
@@ -32,6 +33,9 @@ use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_diff;
+use function array_keys;
+use function sprintf;
 
 /**
  * Class MissingStoragesTest
@@ -41,10 +45,10 @@ class MissingStoragesTest implements TestCaseInterface
     /**
      * @var FalStorageTestSubjectsProvider
      */
-    protected $testSubjectProvider = null;
+    protected $testSubjectProvider;
 
     /**
-     * ResourceStorageTest constructor.
+     * MissingStoragesTest constructor.
      */
     public function __construct()
     {
@@ -54,7 +58,7 @@ class MissingStoragesTest implements TestCaseInterface
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $storages = $this->testSubjectProvider->getStoragesForMissingStoragesTest();
         $messages = $this->getMissing($storages, [], 'local');
@@ -70,7 +74,7 @@ class MissingStoragesTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LocalDatabaseTest::class,
@@ -84,7 +88,7 @@ class MissingStoragesTest implements TestCaseInterface
      * @param string $side
      * @return array
      */
-    protected function getMissing(array $storages, array $messages, $side)
+    protected function getMissing(array $storages, array $messages, string $side): array
     {
         $opposite = $side === 'local' ? 'foreign' : 'local';
         $missingOnSide = array_diff(array_keys($storages[$opposite]), array_keys($storages[$side]));

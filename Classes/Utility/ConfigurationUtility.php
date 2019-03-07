@@ -1,6 +1,43 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Utility;
 
+use function array_diff;
+use function array_flip;
+use function array_key_exists;
+use function array_keys;
+use function array_merge;
+use function in_array;
+use function is_array;
+use function is_int;
+use function uksort;
+
+/*
+ * Copyright notice
+ *
+ * (c) 2018 in2code.de
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
+ *
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ *
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
+
+/**
+ * Class ConfigurationUtility
+ */
 class ConfigurationUtility
 {
     /**
@@ -8,12 +45,8 @@ class ConfigurationUtility
      *
      * - the value of items having an identical ALPHANUMERIC key will be REPLACED
      * - the value of items having an identical NUMERIC key will be ADDED
-     *
-     * @param array $original
-     * @param array $additional
-     * @return array
      */
-    public static function mergeConfiguration(array $original, array $additional)
+    public static function mergeConfiguration(array $original, array $additional): array
     {
         if (empty($additional)) {
             return $original;
@@ -44,13 +77,7 @@ class ConfigurationUtility
         return $result;
     }
 
-    /**
-     * @param array $original
-     * @param array $additional
-     * @param $result
-     * @return array
-     */
-    protected static function overruleResultByAdditional(array $original, array $additional, $result)
+    protected static function overruleResultByAdditional(array $original, array $additional, $result): array
     {
         foreach ($additional as $key => $value) {
             if ($value === '__UNSET') {
@@ -58,11 +85,9 @@ class ConfigurationUtility
             } elseif (!is_int($key)) {
                 // Replace original value
                 $result[$key] = self::getResultingValue($original, $additional, $key);
-            } else {
-                if (!in_array($value, $original, true)) {
-                    // Add additional value
-                    $result[] = self::getResultingValue($original, $additional, $key);
-                }
+            } elseif (!in_array($value, $original, true)) {
+                // Add additional value
+                $result[] = self::getResultingValue($original, $additional, $key);
             }
         }
         return $result;
@@ -91,9 +116,6 @@ class ConfigurationUtility
     }
 
     /**
-     * @param array $result
-     * @param array $original
-     * @param array $additional
      * @return mixed
      */
     protected static function sortResultArrayByAdditionalKeyOrder(array $result, array $original, array $additional)

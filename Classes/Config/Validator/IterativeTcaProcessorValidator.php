@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Config\Validator;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -24,10 +25,12 @@ namespace In2code\In2publishCore\Config\Validator;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\ValidationContainer;
 use In2code\In2publishCore\Domain\Service\Processor\ProcessorInterface;
+use function class_exists;
+use function is_subclass_of;
 
 /**
  * Class RecursiveTcaProcessorValidator

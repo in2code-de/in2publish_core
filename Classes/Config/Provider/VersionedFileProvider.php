@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Config\Provider;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -24,9 +25,13 @@ namespace In2code\In2publishCore\Config\Provider;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Utility\ExtensionUtility;
+use Spyc;
+use function explode;
+use function file_exists;
+use function implode;
 
 /**
  * Class VersionedFileProvider
@@ -53,7 +58,7 @@ class VersionedFileProvider extends FileProvider
         foreach ($candidates as $candidate) {
             $file = $path . $this->contextService->getContext() . 'Configuration_' . $candidate . '.yaml';
             if (file_exists($file)) {
-                return \Spyc::YAMLLoad($file);
+                return Spyc::YAMLLoad($file);
             }
         }
 

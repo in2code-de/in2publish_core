@@ -29,7 +29,7 @@ call_user_func(
         $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Service\Context\ContextService::class);
         $pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Page\PageRenderer::class);
         $pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
-        $pageRenderer->addCssFile(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('in2publish_core') . 'Resources/Public/Css/Modules.css');
+        $pageRenderer->addCssFile(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('in2publish_core', 'Resources/Public/Css/Modules.css'));
 
 
         /*********************************** register basic command controllers ***********************************/

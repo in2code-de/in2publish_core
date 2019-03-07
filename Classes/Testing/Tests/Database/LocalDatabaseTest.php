@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Testing\Tests\Database;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,28 +25,30 @@ namespace In2code\In2publishCore\Testing\Tests\Database;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Testing\Data\RequiredTablesDataProvider;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_merge;
+use function in_array;
 
 /**
- * Class LocalDatabaseAccessTest
+ * Class LocalDatabaseTest
  */
 class LocalDatabaseTest implements TestCaseInterface
 {
     /**
      * @return TestResult
      */
-    public function run()
+    public function run(): TestResult
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
 
-        if (!($localDatabase instanceof DatabaseConnection)) {
+        if (!($localDatabase instanceof Connection)) {
             return new TestResult('database.local_inaccessible', TestResult::ERROR);
         }
 
@@ -54,11 +57,11 @@ class LocalDatabaseTest implements TestCaseInterface
         }
 
         $expectedTables = GeneralUtility::makeInstance(RequiredTablesDataProvider::class)->getRequiredTables();
-        $actualTables = array_keys($localDatabase->admin_get_tables());
+        $actualTables = $localDatabase->getSchemaManager()->listTableNames();
 
         $missingTables = [];
         foreach ($expectedTables as $expectedTable) {
-            if (!in_array($expectedTable, $actualTables)) {
+            if (!in_array($expectedTable, $actualTables, true)) {
                 $missingTables[] = $expectedTable;
             }
         }
@@ -77,7 +80,7 @@ class LocalDatabaseTest implements TestCaseInterface
     /**
      * @return array
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [];
     }

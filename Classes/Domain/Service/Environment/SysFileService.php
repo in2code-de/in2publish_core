@@ -1,33 +1,38 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Service\Environment;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * Copyright notice
  *
- *  (c) 2015 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>
+ * (c) 2015 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>
  *
- *  All rights reserved
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use PDO;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
+use function sha1;
+use function str_replace;
 
 /**
  * Class SysFileService finds not allowed file entries in sys_file
@@ -37,16 +42,16 @@ class SysFileService extends AbstractService
     const TABLE_NAME = 'sys_file';
 
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
-    protected $databaseConnection = null;
+    protected $connection = null;
 
     /**
      * SysFileService constructor.
      */
     public function __construct()
     {
-        $this->databaseConnection = DatabaseUtility::buildLocalDatabaseConnection();
+        $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
     }
 
     /**
@@ -57,15 +62,14 @@ class SysFileService extends AbstractService
     {
         $oldIdentifierPath = $this->getIdentifierFromAbsolutePath($oldFolder);
         $newIdentifierPath = $this->getIdentifierFromAbsolutePath($newFolder);
-        $rows = $this->databaseConnection->exec_SELECTgetRows(
-            'uid,identifier',
-            static::TABLE_NAME,
-            'identifier like "%' . $oldIdentifierPath . '%"'
-        );
+        $query = $this->connection->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $where = $query->expr()->like('identifier', $query->createNamedParameter("%$oldIdentifierPath%"));
+        $rows = $query->select('uid', 'identifier')->from(self::TABLE_NAME)->where($where)->execute()->fetchAll();
         foreach ($rows as $row) {
-            $this->databaseConnection->exec_UPDATEquery(
+            $this->connection->update(
                 static::TABLE_NAME,
-                'uid=' . (int)$row['uid'],
+                ['uid' => (int)$row['uid']],
                 $this->getArgumentsForSysFileFromPath($row, $oldIdentifierPath, $newIdentifierPath)
             );
         }
@@ -79,16 +83,19 @@ class SysFileService extends AbstractService
     {
         $oldIdentifier = $this->getIdentifierFromAbsolutePath($oldFile);
         $newIdentifier = $this->getIdentifierFromAbsolutePath($newFile);
-        $rows = $this->databaseConnection->exec_SELECTgetRows(
-            'uid',
-            static::TABLE_NAME,
-            'identifier = "' . $oldIdentifier . '"'
-        );
-        foreach ($rows as $row) {
-            $this->databaseConnection->exec_UPDATEquery(
+
+        $query = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $statement = $query->select('uid')
+                           ->from(static::TABLE_NAME)
+                           ->where($query->expr()->eq('identifier', $query->createNamedParameter($oldIdentifier)))
+                           ->setMaxResults(1)
+                           ->execute();
+        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+            $this->connection->update(
                 static::TABLE_NAME,
-                'uid=' . (int)$row['uid'],
-                $this->getArgumentsForSysFileFromFile($newIdentifier)
+                $this->getArgumentsForSysFileFromFile($newIdentifier),
+                ['uid' => (int)$row['uid']]
             );
         }
     }
@@ -101,7 +108,7 @@ class SysFileService extends AbstractService
      * @param string $newIdentifierPath
      * @return array
      */
-    protected function getArgumentsForSysFileFromPath(array $row, $oldIdentifierPath, $newIdentifierPath)
+    protected function getArgumentsForSysFileFromPath(array $row, $oldIdentifierPath, $newIdentifierPath): array
     {
         $identifier = $row['identifier'];
         return [
@@ -117,7 +124,7 @@ class SysFileService extends AbstractService
      * @param string $newIdentifier
      * @return array
      */
-    protected function getArgumentsForSysFileFromFile($newIdentifier)
+    protected function getArgumentsForSysFileFromFile($newIdentifier): array
     {
         return [
             'identifier' => $newIdentifier,
@@ -134,7 +141,7 @@ class SysFileService extends AbstractService
      * @param string $path
      * @return string
      */
-    protected function getIdentifierFromAbsolutePath($path)
+    protected function getIdentifierFromAbsolutePath($path): string
     {
         $path = $this->changeAbsoluteToRelativePath($path);
         $path = $this->removeFirstFolderFromPath($path);
@@ -145,7 +152,7 @@ class SysFileService extends AbstractService
      * @param string $path
      * @return string
      */
-    protected function changeAbsoluteToRelativePath($path)
+    protected function changeAbsoluteToRelativePath($path): string
     {
         return str_replace(PATH_site, '', $path);
     }

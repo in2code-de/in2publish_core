@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,15 +25,18 @@ namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use PDO;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function is_array;
+use function json_encode;
 
 /**
  * Class Letterbox
@@ -80,10 +84,10 @@ class Letterbox
 
         $uid = (int)$envelope->getUid();
 
-        if (0 === $uid || 0 === $database->exec_SELECTcountRows('uid', static::TABLE, 'uid=' . $uid)) {
-            if (true === $database->exec_INSERTquery(static::TABLE, $envelope->toArray())) {
+        if (0 === $uid || 0 === $database->count('uid', static::TABLE, ['uid' => $uid])) {
+            if (1 === $database->insert(static::TABLE, $envelope->toArray())) {
                 if ($uid <= 0) {
-                    $uid = $database->sql_insert_id();
+                    $uid = $database->lastInsertId();
                     $envelope->setUid($uid);
                 }
                 return $uid;
@@ -92,23 +96,23 @@ class Letterbox
                     'Failed to send envelope [' . $uid . ']',
                     [
                         'envelope' => $envelope->toArray(),
-                        'error' => $database->sql_error(),
-                        'errno' => $database->sql_errno(),
+                        'error' => json_encode($database->errorInfo()),
+                        'errno' => $database->errorCode(),
                     ]
                 );
             }
         } else {
-            if (false === $database->exec_UPDATEquery(static::TABLE, 'uid=' . $uid, $envelope->toArray())) {
+            if (1 === $database->update(static::TABLE, $envelope->toArray(), ['uid' => $uid])) {
+                return true;
+            } else {
                 $this->logger->error(
                     'Failed to update envelope [' . $uid . ']',
                     [
                         'envelope' => $envelope->toArray(),
-                        'error' => $database->sql_error(),
-                        'errno' => $database->sql_errno(),
+                        'error' => json_encode($database->errorInfo()),
+                        'errno' => $database->errorCode(),
                     ]
                 );
-            } else {
-                return true;
             }
         }
         return false;
@@ -129,23 +133,25 @@ class Letterbox
             $database = DatabaseUtility::buildForeignDatabaseConnection();
         }
 
-        $envelopeData = $database->exec_SELECTgetSingleRow(
-            'command,request,response,uid',
-            static::TABLE,
-            'uid=' . $uid
-        );
-
+        $query = $database->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $envelopeData = $query->select('command', 'request', 'response', 'uid')
+                              ->from(static::TABLE)
+                              ->where($query->expr()->eq('uid', (int)$uid))
+                              ->setMaxResults(1)
+                              ->execute()
+                              ->fetch(PDO::FETCH_ASSOC);
         if (is_array($envelopeData)) {
             $envelope = Envelope::fromArray($envelopeData);
             if (!$this->keepEnvelopes && $burnEnvelope) {
-                $database->exec_DELETEquery(static::TABLE, 'uid=' . $uid);
+                $database->delete(static::TABLE, ['uid' => $uid]);
             }
         } else {
             $this->logger->error(
-                'Failed to receive envelope [' . $uid . '] "' . $database->sql_error() . '"',
+                'Failed to receive envelope [' . $uid . '] "' . json_encode($database->errorInfo()) . '"',
                 [
-                    'error' => $database->sql_error(),
-                    'errno' => $database->sql_errno(),
+                    'error' => json_encode($database->errorInfo()),
+                    'errno' => $database->errorCode(),
                 ]
             );
             $envelope = false;
@@ -164,8 +170,11 @@ class Letterbox
             $database = DatabaseUtility::buildLocalDatabaseConnection();
         }
 
-        if ($database instanceof DatabaseConnection && $database->isConnected()) {
-            return $database->exec_SELECTcountRows('uid', static::TABLE, 'response IS NOT NULL');
+        if ($database instanceof Connection && $database->isConnected()) {
+            $query = $database->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->count('uid')->from(static::TABLE)->where($query->expr()->isNotNull('response'));
+            return $query->execute()->fetch() > 0;
         }
         return false;
     }
@@ -180,6 +189,8 @@ class Letterbox
         } else {
             $database = DatabaseUtility::buildLocalDatabaseConnection();
         }
-        $database->exec_DELETEquery(static::TABLE, 'response IS NOT NULL');
+        $query = $database->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $query->delete(static::TABLE)->where($query->expr()->isNotNull('response'))->execute();
     }
 }

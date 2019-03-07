@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Features\RealUrlSupport\Domain\Model\Task;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2015 in2code.de
@@ -25,21 +26,23 @@ namespace In2code\In2publishCore\Features\RealUrlSupport\Domain\Model\Task;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Database\DatabaseConnection;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Error\Http\ServiceUnavailableException;
-use TYPO3\CMS\Core\TimeTracker\NullTimeTracker;
+use TYPO3\CMS\Core\TimeTracker\TimeTracker;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\CacheService;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Utility\EidUtility;
+use function is_object;
+use function ltrim;
 
 /**
  * Class RealUrlTask
@@ -47,9 +50,9 @@ use TYPO3\CMS\Frontend\Utility\EidUtility;
 class RealUrlTask extends AbstractTask
 {
     /**
-     * @var DatabaseConnection
+     * @var Connection
      */
-    protected $databaseConnection = null;
+    protected $connection;
 
     /**
      * @return void
@@ -78,9 +81,9 @@ class RealUrlTask extends AbstractTask
      *
      * @throws ServiceUnavailableException
      */
-    protected function executeTask()
+    protected function executeTask(): bool
     {
-        $this->databaseConnection = DatabaseUtility::buildLocalDatabaseConnection();
+        $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
         $pid = $this->configuration['identifier'];
         $rootline = BackendUtility::BEgetRootLine($pid);
         $host = BackendUtility::firstDomainRecord($rootline);
@@ -89,7 +92,7 @@ class RealUrlTask extends AbstractTask
         $cacheService = GeneralUtility::makeInstance(CacheService::class);
 
         if (!is_object($GLOBALS['TT'])) {
-            $GLOBALS['TT'] = GeneralUtility::makeInstance(NullTimeTracker::class);
+            $GLOBALS['TT'] = GeneralUtility::makeInstance(TimeTracker::class, false);
         }
 
         $GLOBALS['TSFE'] = GeneralUtility::makeInstance(
@@ -142,7 +145,7 @@ class RealUrlTask extends AbstractTask
      * @param int $pageUid
      * @return void
      */
-    protected function cleanAllRealUrlCachesForPageIdentifier($pageUid)
+    protected function cleanAllRealUrlCachesForPageIdentifier(int $pageUid)
     {
         $realUrlTables = [
             // realurl < 2.2
@@ -156,7 +159,7 @@ class RealUrlTask extends AbstractTask
         ];
         foreach ($realUrlTables as $table) {
             if (DatabaseUtility::isTableExistingOnLocal($table)) {
-                $this->databaseConnection->exec_DELETEquery($table, 'page_id=' . (int)$pageUid);
+                $this->connection->delete($table, ['page_id' => $pageUid]);
             }
         }
     }

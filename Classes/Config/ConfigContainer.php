@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Config;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Config;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\Definer\DefinerInterface;
 use In2code\In2publishCore\Config\Node\Node;
@@ -36,6 +37,8 @@ use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_keys;
+use function asort;
 
 /**
  * Class ConfigContainer
@@ -81,7 +84,7 @@ class ConfigContainer implements SingletonInterface
     /**
      * @return array
      */
-    protected function getConfig()
+    protected function getConfig(): array
     {
         if (null !== $this->config) {
             return $this->config;
@@ -121,7 +124,7 @@ class ConfigContainer implements SingletonInterface
      *
      * @return array
      */
-    public function getContextFreeConfig()
+    public function getContextFreeConfig(): array
     {
         $priority = [];
         foreach ($this->providers as $class => $config) {
@@ -151,7 +154,7 @@ class ConfigContainer implements SingletonInterface
      * @param array $priority
      * @return array|array[]|bool[]|int[]|string[] Sorted, merged and type casted configuration.
      */
-    protected function processConfig(array $priority)
+    protected function processConfig(array $priority): array
     {
         asort($priority);
 
@@ -166,7 +169,6 @@ class ConfigContainer implements SingletonInterface
         } else {
             $config = $this->getForeignDefinition()->cast($config);
         }
-
 
         return $config;
     }

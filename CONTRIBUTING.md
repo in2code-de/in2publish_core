@@ -17,7 +17,7 @@
 Replace all `|TAG|` with the correct value
 
 ```
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) |CURRENTYEAR| in2code.de and the following authors:
@@ -40,5 +40,5 @@ Replace all `|TAG|` with the correct value
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 ```

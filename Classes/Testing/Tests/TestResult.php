@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Testing\Tests;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,9 +25,11 @@ namespace In2code\In2publishCore\Testing\Tests;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Testing\Utility\TestLabelLocalizer;
+use function implode;
+use function version_compare;
 
 /**
  * Class TestResult
@@ -56,7 +59,7 @@ class TestResult
     /**
      * @var array|null
      */
-    protected $labelArguments = null;
+    protected $labelArguments;
 
     /**
      * Error constructor.
@@ -82,7 +85,7 @@ class TestResult
     /**
      * @return string
      */
-    public function getSeverity()
+    public function getSeverity(): string
     {
         return $this->severity;
     }
@@ -90,7 +93,7 @@ class TestResult
     /**
      * @return string
      */
-    public function getSeverityLabel()
+    public function getSeverityLabel(): string
     {
         if (version_compare(TYPO3_version, '8.0.0', '>=')) {
             switch ($this->severity) {
@@ -107,7 +110,7 @@ class TestResult
     /**
      * @param string $severity
      */
-    public function setSeverity($severity)
+    public function setSeverity(string $severity)
     {
         $this->severity = $severity;
     }
@@ -115,7 +118,7 @@ class TestResult
     /**
      * @return string
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
@@ -123,12 +126,15 @@ class TestResult
     /**
      * @param string $label
      */
-    public function setLabel($label)
+    public function setLabel(string $label)
     {
         $this->label = $label;
     }
 
-    public function getTranslatedLabel()
+    /**
+     * @return string
+     */
+    public function getTranslatedLabel(): string
     {
         return TestLabelLocalizer::translate($this->label, $this->labelArguments);
     }
@@ -136,7 +142,7 @@ class TestResult
     /**
      * @return string
      */
-    public function getMessages()
+    public function getMessages(): string
     {
         return $this->messages;
     }
@@ -152,7 +158,7 @@ class TestResult
     /**
      * @return string
      */
-    public function getTranslatedMessages()
+    public function getTranslatedMessages(): string
     {
         $translatedMessages = [];
         foreach ($this->messages as $message) {

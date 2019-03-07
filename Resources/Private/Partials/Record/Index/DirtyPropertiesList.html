@@ -20,11 +20,11 @@
 					<publish:Link.RecordHistory class="in2publish-notextdecoration" record="{record}"><i class="in2publish-icon-history"></i><f:translate key="dirty_properties_history_page">Page History</f:translate></publish:Link.RecordHistory>
 					<f:if condition="{record.localPreviewAvailable}">
 						<f:then>
-							<f:link.external class="in2publish-notextdecoration" uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local',addProtocol:'0')}/index.php?id={record.identifier}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
+							<f:link.external class="in2publish-notextdecoration" uri="{publish:Miscellaneous.GetFirstDomainFromRootline(identifier:record.pageIdentifier,stagingLevel:'local',addProtocol:'0')}/index.php?id={record.identifier}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
 						</f:then>
 						<f:else>
 							<f:if condition="{publish:Uri.PreviewAnyRecord(tableName:record.tableName,identifier:record.identifier)}">
-								<f:link.external class="in2publish-notextdecoration" uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local',addProtocol:'0')}/{publish:Uri.PreviewAnyRecord(tableName:record.tableName,identifier:record.identifier)}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
+								<f:link.external class="in2publish-notextdecoration" uri="{publish:Miscellaneous.GetFirstDomainFromRootline(identifier:record.pageIdentifier,stagingLevel:'local',addProtocol:'0')}/{publish:Uri.PreviewAnyRecord(tableName:record.tableName,identifier:record.identifier)}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
 							</f:if>
 							<publish:Link.EditRecord class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_edit',default:'edit')}" record="{record}"><i class="in2publish-icon-edit"></i><f:translate key="dirty_properties_edit_main">edit</f:translate></publish:Link.EditRecord>
 						</f:else>
@@ -96,7 +96,7 @@
 							<f:if condition="{record.localPreviewAvailable}">
 								<publish:uri.compareUri identifier="{record.identifier}" class="in2publish-notextdecoration"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_compare">Compare</f:translate></publish:uri.compareUri>
 							</f:if>
-							<f:link.external class="in2publish-notextdecoration" uri="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'foreign',addProtocol:'0')}/index.php?id={record.identifier}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
+							<f:link.external class="in2publish-notextdecoration" uri="{publish:Miscellaneous.GetFirstDomainFromRootline(identifier:record.pageIdentifier,stagingLevel:'foreign',addProtocol:'0')}/index.php?id={record.identifier}" target="_blank"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_page">Preview</f:translate></f:link.external>
 						</f:then>
 						<f:else>
 							&nbsp;

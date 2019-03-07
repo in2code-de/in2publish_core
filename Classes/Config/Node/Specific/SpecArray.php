@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Config\Node\Specific;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -24,10 +25,13 @@ namespace In2code\In2publishCore\Config\Node\Specific;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\ValidationContainer;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use function array_search;
+use function in_array;
+use function is_array;
 
 /**
  * Class SpecArray
@@ -48,7 +52,7 @@ class SpecArray extends AbsSpecNode
     /**
      * @return string[]|int[]|bool[]|array[]
      */
-    public function getDefaults()
+    public function getDefaults(): array
     {
         $defaults = [];
         if (null !== $this->default) {
@@ -67,7 +71,7 @@ class SpecArray extends AbsSpecNode
      *
      * @return array
      */
-    public function cast($value)
+    public function cast($value): array
     {
         return $this->nodes->cast($value);
     }
@@ -75,13 +79,26 @@ class SpecArray extends AbsSpecNode
     /**
      * @param array[]|bool[]|int[]|string[] $value
      */
-    public function unsetDefaults(&$value)
+    public function unsetDefaults(array &$value)
     {
         $this->nodes->unsetDefaults($value[$this->name]);
         if (null !== $this->default) {
-            foreach ($this->default as $defValue) {
-                if (in_array($defValue, $value[$this->name])) {
-                    unset($value[$this->name][array_search($defValue, $value[$this->name])]);
+            if ($this->name === 'definition') {
+                $newValue = [];
+                foreach ($this->default as $key => $defValue) {
+                    if (!in_array($defValue, $value[$this->name], true)) {
+                        $newValue[$this->name][$key] = '__UNSET';
+                    }
+                }
+                foreach ($value[$this->name] as $var) {
+                    $newValue[$this->name][] = $var;
+                }
+                $value = $newValue;
+            } else {
+                foreach ($this->default as $defValue) {
+                    if (in_array($defValue, $value[$this->name], true)) {
+                        unset($value[$this->name][array_search($defValue, $value[$this->name])]);
+                    }
                 }
             }
         }

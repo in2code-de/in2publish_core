@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Features\RealUrlSupport\Domain\Model\Task;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Features\RealUrlSupport\Domain\Model\Task;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
@@ -62,7 +63,7 @@ class RealUrlUpdateTask extends AbstractTask
     /**
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function executeTask()
+    protected function executeTask(): bool
     {
         $realUrlDataHandler = GeneralUtility::makeInstance(\DmitryDulepov\Realurl\Hooks\DataHandler::class);
         $cdh = GeneralUtility::makeInstance(DataHandler::class);

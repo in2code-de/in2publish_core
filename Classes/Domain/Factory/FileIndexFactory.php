@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Factory;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Domain\Factory;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
@@ -32,10 +33,15 @@ use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Service\Database\UidReservationService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use LogicException;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
+use function array_intersect_key;
+use function explode;
+use function strtolower;
+use function time;
 
 /**
  * Class FileIndexFactory
@@ -87,7 +93,7 @@ class FileIndexFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function makeInstanceForSide($side, $identifier)
+    public function makeInstanceForSide($side, $identifier): RecordInterface
     {
         $foreignProperties = [];
         $localProperties = [];
@@ -154,14 +160,14 @@ class FileIndexFactory
     /**
      * This method is mostly a copy of an indexer method
      *
-     * @see \TYPO3\CMS\Core\Resource\Index\Indexer::gatherFileInformationArray
-     *
      * @param string $identifier
      * @param $side
      * @param int $uid Predefined UID
      * @return array
+     * @see \TYPO3\CMS\Core\Resource\Index\Indexer::gatherFileInformationArray
+     *
      */
-    public function getFileIndexArray($identifier, $side, $uid = 0)
+    public function getFileIndexArray($identifier, $side, $uid = 0): array
     {
         $fileInfo = $this->getDriverSpecificFileInfo($identifier, $side);
 
@@ -225,10 +231,10 @@ class FileIndexFactory
         if ($this->contextService->isLocal()) {
             $databaseConnection = DatabaseUtility::buildDatabaseConnectionForSide($side);
 
-            if (0 === $count = $databaseConnection->exec_SELECTcountRows('uid', 'sys_file', 'uid=' . $uid)) {
-                $databaseConnection->exec_INSERTquery('sys_file', $fileInfo);
+            if (0 === $count = $databaseConnection->count('uid', 'sys_file', ['uid' => $uid])) {
+                $databaseConnection->insert('sys_file', $fileInfo);
             } elseif ($count > 0) {
-                $databaseConnection->exec_UPDATEquery('sys_file', 'uid=' . $uid, $fileInfo);
+                $databaseConnection->update('sys_file', ['uid' => $uid], $fileInfo);
             }
         }
 
@@ -238,12 +244,12 @@ class FileIndexFactory
     /**
      * Adapted copy of
      *
-     * @see \TYPO3\CMS\Core\Resource\Index\Indexer::getFileType
-     *
      * @param array $fileInfo
      * @return int
+     * @see \TYPO3\CMS\Core\Resource\Index\Indexer::getFileType
+     *
      */
-    protected function determineFileType(array $fileInfo)
+    protected function determineFileType(array $fileInfo): int
     {
         list($fileType) = explode('/', $fileInfo['mime_type']);
         switch (strtolower($fileType)) {
@@ -274,14 +280,14 @@ class FileIndexFactory
      * @param string $side
      * @return array
      */
-    protected function getDriverSpecificFileInfo($identifier, $side)
+    protected function getDriverSpecificFileInfo($identifier, $side): array
     {
         if ($side === 'local') {
             $driver = $this->localDriver;
         } elseif ($side === 'foreign') {
             $driver = $this->foreignDriver;
         } else {
-            throw new \LogicException('Unsupported side "' . $side . '"', 1476106674);
+            throw new LogicException('Unsupported side "' . $side . '"', 1476106674);
         }
 
         if ($driver->fileExists($identifier)) {
@@ -298,7 +304,7 @@ class FileIndexFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function getUidReservationService()
+    protected function getUidReservationService(): UidReservationService
     {
         return GeneralUtility::makeInstance(UidReservationService::class);
     }

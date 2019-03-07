@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Service\Publishing;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Domain\Service\Publishing;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
@@ -32,6 +33,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
+use function basename;
+use function dirname;
 
 /**
  * Class FolderPublisherService
@@ -42,7 +45,7 @@ class FolderPublisherService
      * @param string $combinedIdentifier
      * @return bool
      */
-    public function publish($combinedIdentifier)
+    public function publish($combinedIdentifier): bool
     {
         list($storage, $folderIdentifier) = GeneralUtility::trimExplode(':', $combinedIdentifier);
 
@@ -53,7 +56,12 @@ class FolderPublisherService
         // Determine if the folder should get published or deleted.
         // If it exists locally then create it on foreign else remove it.
         if (ResourceFactory::getInstance()->getStorageObject($storage)->hasFolder($folderIdentifier)) {
-            $success = $remoteFalDriver->createFolder(basename($folderIdentifier), dirname($folderIdentifier), true);
+            $createdFolder = $remoteFalDriver->createFolder(
+                basename($folderIdentifier),
+                dirname($folderIdentifier),
+                true
+            );
+            $success = $folderIdentifier === $createdFolder;
         } else {
             $success = $remoteFalDriver->deleteFolder($folderIdentifier, true);
         }

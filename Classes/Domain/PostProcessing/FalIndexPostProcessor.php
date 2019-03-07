@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\PostProcessing;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,13 +25,14 @@ namespace In2code\In2publishCore\Domain\PostProcessing;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
 use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\FileUtility;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
@@ -139,7 +141,7 @@ class FalIndexPostProcessor implements SingletonInterface
      *
      * @return ResourceStorage
      */
-    protected function getStorage(RecordInterface $record)
+    protected function getStorage(RecordInterface $record): ResourceStorage
     {
         static $storages = [];
         if (!isset($storages[0])) {
@@ -149,7 +151,7 @@ class FalIndexPostProcessor implements SingletonInterface
         if (null !== ($storageUid = $record->getLocalProperty('storage'))) {
             try {
                 $storages[$storageUid] = $this->resourceFactory->getStorageObject($storageUid);
-            } catch (\InvalidArgumentException $exception) {
+            } catch (InvalidArgumentException $exception) {
                 $this->logger->warning(
                     'Storage or driver for record does not exist',
                     [

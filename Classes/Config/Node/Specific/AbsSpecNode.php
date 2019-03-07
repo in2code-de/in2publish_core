@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Config\Node\Specific;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -24,12 +25,13 @@ namespace In2code\In2publishCore\Config\Node\Specific;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\Node\AbstractNode;
 use In2code\In2publishCore\Config\Node\Node;
 use In2code\In2publishCore\Config\Node\NodeCollection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_key_exists;
 
 /**
  * Class AbsSpecNode
@@ -64,7 +66,7 @@ abstract class AbsSpecNode extends AbstractNode
     /**
      * @return string[]|int[]|bool[]|array[]
      */
-    public function getDefaults()
+    public function getDefaults(): array
     {
         return [$this->name => $this->default];
     }
@@ -72,7 +74,7 @@ abstract class AbsSpecNode extends AbstractNode
     /**
      * @param array[]|bool[]|int[]|string[] $value
      */
-    public function unsetDefaults(&$value)
+    public function unsetDefaults(array &$value)
     {
         if (null !== $this->default
             && array_key_exists($this->name, $value)

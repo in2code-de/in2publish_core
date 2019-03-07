@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,13 +25,24 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdap
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
 use In2code\In2publishCore\Communication\Shared\SshBaseAdapter;
 use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_pop;
+use function escapeshellarg;
+use function escapeshellcmd;
+use function fclose;
+use function is_resource;
+use function preg_match;
+use function rtrim;
+use function ssh2_exec;
+use function ssh2_fetch_stream;
+use function stream_get_contents;
+use function stream_set_blocking;
 
 /**
  * Class SshAdapter
@@ -40,7 +52,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
     /**
      * @var resource
      */
-    protected $session = null;
+    protected $session;
 
     /**
      * @param RemoteCommandRequest $request
@@ -49,7 +61,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function execute(RemoteCommandRequest $request)
+    public function execute(RemoteCommandRequest $request): RemoteCommandResponse
     {
         if (null === $this->session) {
             $this->logger->debug('Lazy initializing SshAdapter ssh session');

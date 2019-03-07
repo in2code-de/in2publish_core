@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Config\Node;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2018 in2code.de and the following authors:
@@ -24,12 +25,18 @@ namespace In2code\In2publishCore\Config\Node;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Config\ValidationContainer;
 use In2code\In2publishCore\Config\Validator\ValidatorInterface;
 use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_key_exists;
+use function array_merge;
+use function call_user_func_array;
+use function class_exists;
+use function is_array;
+use function is_string;
 
 /**
  * Class AbstractNode
@@ -80,7 +87,7 @@ abstract class AbstractNode implements Node
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -89,7 +96,7 @@ abstract class AbstractNode implements Node
      * @param string $path
      * @return Node
      */
-    public function getNodePath($path)
+    public function getNodePath(string $path): Node
     {
         return $this->nodes->getNodePath($path);
     }
@@ -124,13 +131,14 @@ abstract class AbstractNode implements Node
 
     /**
      * TODO: use "..." when available for GeneralUtility::makeInstance
+     *
      * @param ValidationContainer $container
      * @param $value
      */
     protected function validateByValidators(ValidationContainer $container, $value)
     {
         foreach ($this->validators as $classOrIndex => $optionsOrClass) {
-            if (is_string($classOrIndex) && class_exists($classOrIndex) && is_array($optionsOrClass)) {
+            if (is_array($optionsOrClass) && is_string($classOrIndex) && class_exists($classOrIndex)) {
                 $args = array_merge([$classOrIndex], $optionsOrClass);
             } elseif (class_exists($optionsOrClass)) {
                 $args = [$optionsOrClass];
@@ -146,6 +154,7 @@ abstract class AbstractNode implements Node
 
     /**
      * @param Node $node
+     * @throws In2publishCoreException
      */
     public function merge(Node $node)
     {
@@ -178,11 +187,14 @@ abstract class AbstractNode implements Node
     /**
      * @return bool
      */
-    public function validatorsShouldBeSkipped()
+    public function validatorsShouldBeSkipped(): bool
     {
         return $this->skipValidators;
     }
 
+    /**
+     *
+     */
     public function skipValidators()
     {
         $this->skipValidators = true;

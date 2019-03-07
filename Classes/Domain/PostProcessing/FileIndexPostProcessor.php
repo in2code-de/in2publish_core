@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\PostProcessing;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,17 +25,19 @@ namespace In2code\In2publishCore\Domain\PostProcessing;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Domain\Factory\FileIndexFactory;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\StorageDriverExtractor;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_chunk;
 
 /**
  * Class FileIndexPostProcessor
@@ -93,7 +96,7 @@ class FileIndexPostProcessor implements SingletonInterface
             } elseif (!isset($storages[$uid])) {
                 try {
                     $storages[$uid] = $resourceFactory->getStorageObject($uid);
-                } catch (\InvalidArgumentException $exception) {
+                } catch (InvalidArgumentException $exception) {
                     $skipStorages[$uid] = [];
                     $skipStorages[$uid][] = $record->getTableName() . '[' . $record->getIdentifier() . ']';
                     $this->logger->critical(

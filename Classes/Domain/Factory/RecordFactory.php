@@ -1,31 +1,32 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Factory;
 
-/***************************************************************
- *  Copyright notice
+/*
+ * Copyright notice
  *
- *  (c) 2015 in2code.de
- *  Alex Kellner <alexander.kellner@in2code.de>,
- *  Oliver Eglseder <oliver.eglseder@in2code.de>
+ * (c) 2015 in2code.de
+ * Alex Kellner <alexander.kellner@in2code.de>,
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
- *  All rights reserved
+ * All rights reserved
  *
- *  This script is part of the TYPO3 project. The TYPO3 project is
- *  free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 3 of the License, or
- *  (at your option) any later version.
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The GNU General Public License can be found at
- *  http://www.gnu.org/copyleft/gpl.html.
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
  *
- *  This script is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\NullRecord;
@@ -39,6 +40,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
+use function array_diff;
+use function array_filter;
+use function array_merge;
+use function in_array;
+use function strlen;
 
 /**
  * RecordFactory: This class is responsible for create instances of Record.
@@ -162,7 +168,7 @@ class RecordFactory
      * @param array $foreignProperties Properties of the record from foreign Database
      * @param array $additionalProperties array of not persisted properties
      *
-     * @return RecordInterface
+     * @return RecordInterface|null
      */
     public function makeInstance(
         CommonRepository $commonRepository,
@@ -293,8 +299,10 @@ class RecordFactory
      * @param CommonRepository $commonRepository
      * @return RecordInterface
      */
-    protected function findRelatedRecordsForContentRecord(RecordInterface $record, CommonRepository $commonRepository)
-    {
+    protected function findRelatedRecordsForContentRecord(
+        RecordInterface $record,
+        CommonRepository $commonRepository
+    ): RecordInterface {
         if ($this->relatedRecordsDepth < $this->config['maximumContentRecursion']) {
             $this->relatedRecordsDepth++;
             $excludedTableNames = $this->excludedTableNames;
@@ -312,8 +320,10 @@ class RecordFactory
      * @param CommonRepository $commonRepository
      * @return RecordInterface
      */
-    protected function findRelatedRecordsForPageRecord(Record $record, CommonRepository $commonRepository)
-    {
+    protected function findRelatedRecordsForPageRecord(
+        Record $record,
+        CommonRepository $commonRepository
+    ): RecordInterface {
         if ($record->getIdentifier() === 0) {
             $tableNamesToExclude =
                 array_merge(
@@ -371,7 +381,7 @@ class RecordFactory
         $identifier,
         array $localProperties,
         array $foreignProperties
-    ) {
+    ): bool {
         $hasBeenMoved = false;
         // 1. it was created already
         if (!empty($this->runtimeCache[$tableName][$identifier]) && !in_array($tableName, $this->excludedTableNames)) {
@@ -440,8 +450,11 @@ class RecordFactory
      * @param array $foreignProperties
      * @return int
      */
-    protected function getMergedIdentifierValue($commonRepository, array $localProperties, array $foreignProperties)
-    {
+    protected function getMergedIdentifierValue(
+        $commonRepository,
+        array $localProperties,
+        array $foreignProperties
+    ): int {
         if ($commonRepository->getTableName() === 'sys_file') {
             $identifierFieldName = 'uid';
         } else {
@@ -479,7 +492,7 @@ class RecordFactory
      * @param int $mergedIdentifier
      * @return bool
      */
-    protected function isLooping($instanceTableName, $mergedIdentifier)
+    protected function isLooping($instanceTableName, $mergedIdentifier): bool
     {
         // loop detection of records waiting for instantiation completion
         if (!empty($this->instantiationQueue[$instanceTableName])

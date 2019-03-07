@@ -37,8 +37,8 @@
 	"type": "typo3-cms-extension",
 	"license": "GPL-3.0-or-later",
 	"require": {
-		"php": ">=5.5",
-		"typo3/cms": ">=7.6.0 <9.0.0, !=8.3.0"
+		"php": "^7.0",
+		"typo3/cms-core": "^8.7.0 || ^9.5.0"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^4.8",
@@ -56,9 +56,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"In2code\\In2publishCore\\Tests\\": "Tests",
-			"TYPO3\\CMS\\Core\\Tests\\": ".Build/vendor/typo3/cms/typo3/sysext/core/Tests/",
-			"TYPO3\\CMS\\Fluid\\Tests\\": ".Build/vendor/typo3/cms/typo3/sysext/fluid/Tests/"
+			"In2code\\In2publishCore\\Tests\\": "Tests"
 		}
 	},
 	"config": {
@@ -81,13 +79,9 @@
 		]
 	},
 	"extra": {
-		"typo3/cms": {
-			"cms-package-dir": "{$vendor-dir}/typo3/cms",
-			"web-dir": ".Build/Web"
-		},
 		"branch-alias": {
-			"dev-master": "7.3.x-dev",
-			"dev-develop": "7.3.x-dev"
+			"dev-master": "8.0.x-dev",
+			"dev-develop": "8.0.x-dev"
 		}
 	}
 }

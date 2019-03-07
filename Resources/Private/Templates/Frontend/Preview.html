@@ -9,6 +9,6 @@
 		</form>
 	</div>
 
-	<iframe frameborder="0" src="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'local')}/index.php?id={record.identifier}" class="preview_stage"></iframe>
-	<iframe frameborder="0" src="{publish:Miscellaneous.GetFirstDomainFromRootline(record:record,stagingLevel:'foreign')}/index.php?id={record.identifier}" class="preview_production"></iframe>
+	<iframe frameborder="0" src="{publish:Miscellaneous.GetFirstDomainFromRootline(identifier:identifier,stagingLevel:'local')}/index.php?id={identifier}" class="preview_stage"></iframe>
+	<iframe frameborder="0" src="{publish:Miscellaneous.GetFirstDomainFromRootline(identifier:identifier,stagingLevel:'foreign')}/index.php?id={identifier}" class="preview_production"></iframe>
 </div>

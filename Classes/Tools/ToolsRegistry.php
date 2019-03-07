@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Tools;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2017 in2code.de and the following authors:
@@ -24,7 +25,7 @@ namespace In2code\In2publishCore\Tools;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use TYPO3\CMS\Core\Database\TableConfigurationPostProcessingHookInterface;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -58,8 +59,13 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function addTool($name, $description, $controller, $action, $extensionName = 'in2publish_core')
-    {
+    public function addTool(
+        string $name,
+        string $description,
+        string $controller,
+        string $action,
+        string $extensionName = 'in2publish_core'
+    ) {
         $this->entries[$name] = [
             'name' => $name,
             'description' => $description,
@@ -72,7 +78,7 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
     /**
      * @return array
      */
-    public function getTools()
+    public function getTools(): array
     {
         return $this->entries;
     }
@@ -80,7 +86,7 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
     /**
      * @param string $name
      */
-    public function removeTool($name)
+    public function removeTool(string $name)
     {
         unset($this->entries[$name]);
     }

@@ -1,7 +1,8 @@
 <?php
+declare(strict_types=1);
 namespace In2code\In2publishCore\Domain\Service\Publishing;
 
-/***************************************************************
+/*
  * Copyright notice
  *
  * (c) 2016 in2code.de and the following authors:
@@ -24,12 +25,14 @@ namespace In2code\In2publishCore\Domain\Service\Publishing;
  * GNU General Public License for more details.
  *
  * This copyright notice MUST APPEAR in all copies of the script!
- ***************************************************************/
+ */
 
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\AssetTransmitter;
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function basename;
+use function dirname;
 
 /**
  * Class FilePublisherService
@@ -56,7 +59,7 @@ class FilePublisherService
      * @param string $fileIdentifier
      * @return bool
      */
-    public function removeForeignFile($storage, $fileIdentifier)
+    public function removeForeignFile($storage, $fileIdentifier): bool
     {
         $this->remoteFalDriver->setStorageUid($storage);
         $this->remoteFalDriver->initialize();
@@ -71,7 +74,7 @@ class FilePublisherService
      * @param string $fileIdentifier
      * @return bool
      */
-    public function addFileToForeign($storage, $fileIdentifier)
+    public function addFileToForeign($storage, $fileIdentifier): bool
     {
         $this->remoteFalDriver->setStorageUid($storage);
         $this->remoteFalDriver->initialize();
@@ -97,7 +100,7 @@ class FilePublisherService
      * @param string $fileIdentifier
      * @return bool
      */
-    public function updateFileOnForeign($storage, $fileIdentifier)
+    public function updateFileOnForeign($storage, $fileIdentifier): bool
     {
         $this->remoteFalDriver->setStorageUid($storage);
         $this->remoteFalDriver->initialize();
@@ -114,7 +117,7 @@ class FilePublisherService
      * @param string $newFileName
      * @return bool
      */
-    public function moveForeignFile($storage, $fileIdentifier, $targetFolderId, $newFileName)
+    public function moveForeignFile($storage, $fileIdentifier, $targetFolderId, $newFileName): bool
     {
         $this->remoteFalDriver->setStorageUid($storage);
         $this->remoteFalDriver->initialize();
@@ -127,7 +130,7 @@ class FilePublisherService
      * @param string $fileIdentifier
      * @return string
      */
-    protected function transferTemporaryFile($storage, $fileIdentifier)
+    protected function transferTemporaryFile($storage, $fileIdentifier): string
     {
         $source = $this->getLocalReadableFilePathForIdentifier($storage, $fileIdentifier);
 
@@ -142,7 +145,7 @@ class FilePublisherService
      * @param string $fileIdentifier
      * @return string
      */
-    protected function getLocalReadableFilePathForIdentifier($storage, $fileIdentifier)
+    protected function getLocalReadableFilePathForIdentifier($storage, $fileIdentifier): string
     {
         return ResourceFactory::getInstance()
                               ->getStorageObject($storage)
