@@ -76,7 +76,7 @@ abstract class AbstractCommandController extends CommandController
             );
             $this->outputLine(
                 'You have to specify a context before running this ("Local" or "Foreign"). Example: '
-                . 'command like "IN2PUBLISH_CONTEXT=Local ./typo3/cli_dispatch.phpsh extbase help"'
+                . 'command like "IN2PUBLISH_CONTEXT=Local ./vendor/bin/typo3 in2publish_core:status:version"'
             );
             $this->sendAndExit(static::EXIT_NO_CONTEXT);
         }
