@@ -36,6 +36,7 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use PDO;
+use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_column;
@@ -70,7 +71,11 @@ class ForeignSysDomainTest implements TestCaseInterface
     public function __construct()
     {
         $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
-        $this->foreignConnection = DatabaseUtility::buildForeignDatabaseConnection();
+        try {
+            $this->foreignConnection = DatabaseUtility::buildForeignDatabaseConnection();
+        } catch (Throwable $throwable) {
+            // Dependency ForeignDatabaseTest will fail if this fails
+        }
     }
 
     /**
