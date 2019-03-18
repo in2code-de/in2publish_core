@@ -35,6 +35,7 @@ use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Tools\ToolsRegistry;
+use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -52,6 +53,8 @@ use const PHP_EOL;
  */
 class ToolsController extends ActionController
 {
+    const LOG_INIT_DB_ERROR = 'Error while initialization. The Database is not correctly configured';
+
     /**
      * @var array
      */
@@ -66,7 +69,11 @@ class ToolsController extends ActionController
     {
         parent::initializeView($view);
         $letterbox = GeneralUtility::makeInstance(Letterbox::class);
-        $this->view->assign('canFlushEnvelopes', $letterbox->hasUnAnsweredEnvelopes());
+        try {
+            $this->view->assign('canFlushEnvelopes', $letterbox->hasUnAnsweredEnvelopes());
+        } catch (Throwable $throwable) {
+            $this->logger->error(self::LOG_INIT_DB_ERROR, ['exception' => $throwable]);
+        }
     }
 
     /**
