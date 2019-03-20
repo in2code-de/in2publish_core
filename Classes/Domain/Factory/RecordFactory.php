@@ -448,13 +448,13 @@ class RecordFactory
      * @param CommonRepository $commonRepository
      * @param array $localProperties
      * @param array $foreignProperties
-     * @return int
+     * @return int|string
      */
     protected function getMergedIdentifierValue(
         $commonRepository,
         array $localProperties,
         array $foreignProperties
-    ): int {
+    ) {
         if ($commonRepository->getTableName() === 'sys_file') {
             $identifierFieldName = 'uid';
         } else {
