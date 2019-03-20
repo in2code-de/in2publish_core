@@ -62,6 +62,7 @@ use function array_unique;
 use function count;
 use function explode;
 use function gettype;
+use function htmlspecialchars_decode;
 use function implode;
 use function in_array;
 use function is_array;
@@ -69,6 +70,8 @@ use function is_file;
 use function is_readable;
 use function is_string;
 use function key;
+use function parse_str;
+use function parse_url;
 use function preg_match_all;
 use function reset;
 use function strlen;
@@ -182,6 +185,7 @@ class CommonRepository extends BaseRepository
      *
      * @param int $identifier
      * @param string $tableName
+     *
      * @return RecordInterface|null
      */
     public function findByIdentifier($identifier, $tableName = null)
@@ -205,6 +209,7 @@ class CommonRepository extends BaseRepository
      *
      * @param string $propertyName
      * @param mixed $propertyValue
+     *
      * @return RecordInterface[]
      */
     public function findByProperty($propertyName, $propertyValue): array
@@ -271,6 +276,7 @@ class CommonRepository extends BaseRepository
      * @param string $orderBy
      * @param string $limit
      * @param string $indexField
+     *
      * @return array
      */
     protected function findPropertiesByPropertyAndTablename(
@@ -307,6 +313,7 @@ class CommonRepository extends BaseRepository
      * @param string $tableName
      * @param string $propertyName
      * @param mixed $propertyValue
+     *
      * @return array
      */
     public function findLastPropertiesByPropertyAndTableName(
@@ -348,6 +355,7 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
+     *
      * @return RecordInterface[]
      */
     protected function convertPropertyArraysToRecords(array $localProperties, array $foreignProperties): array
@@ -411,6 +419,7 @@ class CommonRepository extends BaseRepository
      *
      * @param RecordInterface $record
      * @param array $excludedTableNames
+     *
      * @return RecordInterface
      */
     public function enrichRecordWithRelatedRecords(RecordInterface $record, array $excludedTableNames): RecordInterface
@@ -526,6 +535,7 @@ class CommonRepository extends BaseRepository
      *
      * @param string $bodyText
      * @param array $excludedTableNames
+     *
      * @return array
      */
     protected function fetchRelatedRecordsByRte($bodyText, array $excludedTableNames): array
@@ -572,7 +582,37 @@ class CommonRepository extends BaseRepository
                 }
             }
         }
-        return $relatedRecords;
+        if (strpos($bodyText, 't3://') !== false) {
+            preg_match_all('~(?P<URN>t3://[^\s]+)~', $bodyText, $matches);
+            array_shift($matches);
+            if (!empty($matches)) {
+                foreach ($matches['URN'] as $urn) {
+                    // Do NOT use LinkService because the URN might either be not local or not available
+                    $urnParsed = parse_url($urn);
+                    parse_str(htmlspecialchars_decode($urnParsed['query']), $data);
+                    switch ($urnParsed['host']) {
+                        case 'file':
+                            if (isset($data['uid'])) {
+                                $previousTableName = $this->replaceTableName('sys_file');
+                                $relatedRecords[] = $this->findByIdentifier($data['uid']);
+                                $this->tableName = $previousTableName;
+                            }
+                            break;
+                        case 'page':
+                            if (isset($data['uid'])) {
+                                $previousTableName = $this->replaceTableName('pages');
+                                $relatedRecords[] = $this->findByIdentifier($data['uid']);
+                                $this->tableName = $previousTableName;
+                            }
+                            break;
+                        default:
+                            // do not handle any other relation type
+                    }
+                }
+            }
+        }
+        // Filter probable null values (e.g. the page linked in the TYPO3 URN is the page currently in enrichment mode)
+        return array_filter($relatedRecords);
     }
 
     /**
@@ -581,6 +621,7 @@ class CommonRepository extends BaseRepository
      *
      * @param RecordInterface $record
      * @param array $excludedTableNames
+     *
      * @return RecordInterface
      */
     public function enrichPageRecord(RecordInterface $record, array $excludedTableNames): RecordInterface
@@ -604,6 +645,7 @@ class CommonRepository extends BaseRepository
     /**
      * @param RecordInterface $record
      * @param array $columnConfiguration
+     *
      * @return string
      */
     protected function getFlexFormDefinitionSource(RecordInterface $record, array $columnConfiguration): string
@@ -650,6 +692,7 @@ class CommonRepository extends BaseRepository
 
     /**
      * @param string $flexFormSource
+     *
      * @return string
      */
     protected function resolveFlexFormSource($flexFormSource): string
@@ -683,6 +726,7 @@ class CommonRepository extends BaseRepository
      * @param RecordInterface $record
      * @param string $column
      * @param array $columnConfiguration
+     *
      * @return array
      * @throws InvalidParentRowException
      * @throws InvalidParentRowLoopException
@@ -737,6 +781,7 @@ class CommonRepository extends BaseRepository
      *      )
      *
      * @param array $flexFormDefinition
+     *
      * @return array
      */
     protected function flattenFlexFormDefinition(array $flexFormDefinition): array
@@ -780,6 +825,7 @@ class CommonRepository extends BaseRepository
      * @param array $flattenedDefinition
      * @param array $fieldDefinition
      * @param string $fieldKey
+     *
      * @return array
      */
     protected function flattenFieldFlexForm(array $flattenedDefinition, array $fieldDefinition, $fieldKey): array
@@ -810,6 +856,7 @@ class CommonRepository extends BaseRepository
 
     /**
      * @param array $flexFormDefinition
+     *
      * @return array
      */
     protected function filterFlexFormDefinition(array $flexFormDefinition): array
@@ -828,6 +875,7 @@ class CommonRepository extends BaseRepository
     /**
      * @param array $originalData
      * @param array $flexFormDefinition
+     *
      * @return array
      */
     protected function getFlexFormDataByDefinition(array $originalData, array $flexFormDefinition): array
@@ -845,6 +893,7 @@ class CommonRepository extends BaseRepository
      * @param array $indexStack
      * @param array $data
      * @param array $pathStack
+     *
      * @return mixed
      */
     protected function getValueByIndexStack(array $indexStack, array $data, array &$pathStack = [])
@@ -878,6 +927,7 @@ class CommonRepository extends BaseRepository
      *
      * @param RecordInterface $record
      * @param string $column
+     *
      * @return array
      */
     protected function getLocalFlexFormDataFromRecord(RecordInterface $record, $column): array
@@ -903,6 +953,7 @@ class CommonRepository extends BaseRepository
      * @param string $column
      * @param array $excludedTableNames
      * @param array $columnConfiguration
+     *
      * @return array
      * @throws Exception
      */
@@ -957,6 +1008,7 @@ class CommonRepository extends BaseRepository
      * @param array $exclTables
      * @param $config
      * @param mixed $flexFormData
+     *
      * @return array
      * @throws Exception
      */
@@ -1003,6 +1055,7 @@ class CommonRepository extends BaseRepository
      * @param array $excludedTableNames
      * @param string $propertyName
      * @param array $overrideIdentifiers
+     *
      * @return RecordInterface[]
      */
     protected function fetchRelatedRecordsByGroupTypeDb(
@@ -1189,6 +1242,7 @@ class CommonRepository extends BaseRepository
      * @param string $propertyName
      * @param array $excludedTableNames
      * @param string $flexFormData
+     *
      * @return array
      * @throws Exception
      */
@@ -1267,6 +1321,7 @@ class CommonRepository extends BaseRepository
      * @param RecordInterface $record
      * @param string $propertyName
      * @param string $flexFormData
+     *
      * @return array
      */
     protected function getFileAndPathNames(
@@ -1301,6 +1356,7 @@ class CommonRepository extends BaseRepository
      * @param string $propertyName
      * @param array $excludedTableNames
      * @param bool $overrideIdByRecord
+     *
      * @return array
      */
     protected function fetchRelatedRecordsBySelect(
@@ -1366,6 +1422,7 @@ class CommonRepository extends BaseRepository
      * @param array $columnConfiguration
      * @param RecordInterface $record
      * @param array $excludedTableNames
+     *
      * @return array
      */
     protected function fetchRelatedRecordsBySelectMm(
@@ -1447,6 +1504,7 @@ class CommonRepository extends BaseRepository
      * @param string $recordTableName
      * @param int $recordIdentifier
      * @param array $excludedTableNames
+     *
      * @return array
      * @throws Exception
      */
@@ -1513,6 +1571,7 @@ class CommonRepository extends BaseRepository
      * @param $recordTableName
      * @param $recordIdentifier
      * @param array $excludedTableNames
+     *
      * @return array
      */
     protected function fetchRelatedRecordsByInlineMm(
@@ -1579,6 +1638,7 @@ class CommonRepository extends BaseRepository
      * @param string $recordTableName
      * @param string $recordIdentifier
      * @param array $excludedTableNames
+     *
      * @return array
      */
     protected function fetchOriginalRecordsForInlineRecord(
@@ -1622,6 +1682,7 @@ class CommonRepository extends BaseRepository
      *
      * @param int $identifier
      * @param string $tableName
+     *
      * @return RecordInterface
      */
     protected function findByIdentifierInOtherTable($identifier, $tableName): RecordInterface
@@ -1640,6 +1701,7 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
+     *
      * @return bool
      */
     protected function isIgnoredRecord(array $localProperties, array $foreignProperties): bool
@@ -1658,6 +1720,7 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProps
      * @param array $foreignProps
+     *
      * @return bool
      */
     protected function isRemovedAndDeletedRecord(array $localProps, array $foreignProps): bool
@@ -1672,6 +1735,7 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
+     *
      * @return bool
      */
     protected function isDeletedAndUnchangedRecord(array $localProperties, array $foreignProperties): bool
@@ -1685,6 +1749,7 @@ class CommonRepository extends BaseRepository
      *
      * @param RecordInterface $record
      * @param array $excludedTables
+     *
      * @return void
      * @throws Throwable
      */
@@ -1723,6 +1788,7 @@ class CommonRepository extends BaseRepository
     /**
      * @param RecordInterface $record
      * @param array $excludedTables
+     *
      * @throws InvalidSlotException
      * @throws InvalidSlotReturnException
      */
@@ -1807,6 +1873,7 @@ class CommonRepository extends BaseRepository
      *
      * @param RecordInterface $record
      * @param array $excludedTables
+     *
      * @return void
      */
     protected function publishRelatedRecordsRecursive(RecordInterface $record, array $excludedTables)
@@ -1827,6 +1894,7 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
+     *
      * @return RecordInterface|null
      */
     protected function convertToRecord(array $localProperties, array $foreignProperties)
@@ -1839,6 +1907,7 @@ class CommonRepository extends BaseRepository
      * foreign Database with all record properties
      *
      * @param RecordInterface $record
+     *
      * @return void
      */
     protected function updateForeignRecord(RecordInterface $record)
@@ -1853,6 +1922,7 @@ class CommonRepository extends BaseRepository
      * foreign database with all record properties
      *
      * @param RecordInterface $record
+     *
      * @return void
      */
     protected function addForeignRecord(RecordInterface $record)
@@ -1870,6 +1940,7 @@ class CommonRepository extends BaseRepository
      * must be enabled in the Configuration
      *
      * @param RecordInterface $record
+     *
      * @return void
      */
     protected function deleteForeignRecord(RecordInterface $record)
@@ -1892,6 +1963,7 @@ class CommonRepository extends BaseRepository
      * Get local field for mm tables (and switch name if "MM_opposite_field" is set)
      *
      * @param array $columnConfiguration
+     *
      * @return string
      */
     protected function getLocalField(array $columnConfiguration): string
@@ -1907,6 +1979,7 @@ class CommonRepository extends BaseRepository
      * Get foreign field for mm tables (and switch name if "MM_opposite_field" is set)
      *
      * @param array $columnConfiguration
+     *
      * @return string
      */
     protected function getForeignField(array $columnConfiguration): string
@@ -1930,6 +2003,7 @@ class CommonRepository extends BaseRepository
 
     /**
      * @param string $identifier
+     *
      * @return bool
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
@@ -1942,6 +2016,7 @@ class CommonRepository extends BaseRepository
     /**
      * @param string $propertyName
      * @param mixed $propertyValue
+     *
      * @return bool
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
@@ -1954,6 +2029,7 @@ class CommonRepository extends BaseRepository
 
     /**
      * @param RecordInterface $record
+     *
      * @return bool
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
@@ -1967,6 +2043,7 @@ class CommonRepository extends BaseRepository
      * @param RecordInterface $record
      * @param string $propertyName
      * @param array $columnConfiguration
+     *
      * @return bool
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
@@ -1986,6 +2063,7 @@ class CommonRepository extends BaseRepository
 
     /**
      * @param RecordInterface $record
+     *
      * @return bool
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
@@ -1998,6 +2076,7 @@ class CommonRepository extends BaseRepository
     /**
      * @param RecordInterface $record
      * @param string $tableName
+     *
      * @return bool
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
@@ -2013,6 +2092,7 @@ class CommonRepository extends BaseRepository
     /**
      * @param RecordInterface $record
      * @param string $tableName
+     *
      * @return bool
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
@@ -2025,6 +2105,7 @@ class CommonRepository extends BaseRepository
     /**
      * @param array $localProperties
      * @param array $foreignProperties
+     *
      * @return bool
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
@@ -2053,6 +2134,7 @@ class CommonRepository extends BaseRepository
      *
      * @param string $signal Name of the registered signal to dispatch
      * @param array $arguments additional arguments to be passed to the slot
+     *
      * @return bool If no vote was received false will be returned
      */
     protected function should($signal, array $arguments): bool
@@ -2067,6 +2149,7 @@ class CommonRepository extends BaseRepository
 
     /**
      * @param string $tableName
+     *
      * @return CommonRepository
      */
     public static function getDefaultInstance($tableName = 'pages'): CommonRepository

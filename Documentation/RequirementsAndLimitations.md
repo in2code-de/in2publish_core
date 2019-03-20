@@ -60,7 +60,7 @@ Here's a list of currently known limitations, but without claim of completeness:
 * Multi Head / Multi Target publishing: in2publish-core can not diff against or publish to more than a single target.
 * Moved/Renamed folders can not be detected. The folder on foreign will be marked as deleted, the one on local will be shown marked new. If you delete the folder from foreign all files within will be removed with their parent folder. Publish files in the Publish Files Module from the renamed folder on local to move them.
 * Sorting of records: If a record is published from stage to live, the current value of the column "sorting" is published. This can lead to duplicate or different sorting values between stage and live. Background: If the sorting of a record within a page is changed, all sorting values in all affected records might get changed. As we want to publish only a single record of this page, we prevent the publication of all affected records.
----
+
 ---
 
 #### Footnotes:

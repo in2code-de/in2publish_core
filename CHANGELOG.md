@@ -1,6 +1,22 @@
 # In2publish Core Change Log
 
+8.0.1:
+
+- [META] Set the EM conf version number to 8.0.1
+- [BUGFIX] Add missing getter for language related fields in TcaService
+- [BUGFIX] Delay in2publish_core configuration until autoload information is available
+- [BUGFIX] Prevent (elevated) errors when the extConf is not yet set
+- [BUGFIX] Support non-composer installations by using the core/bin/typo3 cli (resolves #58)
+- [BUGFIX] Prevent exceptions during test instantiation
+- [BUGFIX] Catch the TypeError thrown in the Publish Tools Module when DB is not reachable
+- [TASK] Set version to 8.0.0-dev
+- [BUGFIX] Support TYPO3 URNs
+- [DOCS] Rename foreign options in error messages
+- [DOCS] Update docs to reflect new TYPO3 cli interaction (fixes #53 #54)
+- [RELEASE] Version 8.0.0 with TYPO3 v8 & v9 support
+
 8.0.0:
+
 - [META] Set the EM conf version number to 8.0.0
 - [!!!][FEATURE] Support TYPO3 v8 & v9
 - [BUGFIX] Fix the compare view by using the right domain and protocol
@@ -112,8 +128,8 @@
 - [UPDATE] Require TYPO3 v8 to v9
 - [RELEASE] Version 7.3.0 with PHP 7.3, DCE and Flux support
 
-
 7.3.0:
+
 - [RELEASE] Version 7.3.0 with PHP 7.3, DCE and Flux support
 - [META] Update version information and changelog for the 7.30 release
 - [FEATURE] Support FlexForm Sections and DCE with arbitrary el keys
@@ -123,12 +139,15 @@
 - [TASK] Allow support for PHP version 7.3
 
 7.2.0:
+
 - [!!!][BUGFIX] Change default configuration for pages ignoreFieldsForDifferenceView - please read upgrade instruction
 
 7.1.1:
+
 - [TASK] branch alias for develop
 
 7.1.0:
+
 - [FEATURE] allow usage of nav_title in record index view
 - [FEATURE] Enable numeric index overrule if the arrays key is named "definition"
 - [BUGFIX] Add a possibility to unset unwanted array values

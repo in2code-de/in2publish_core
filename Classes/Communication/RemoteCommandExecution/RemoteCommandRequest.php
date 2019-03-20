@@ -30,9 +30,10 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
 use In2code\In2publishCore\Config\ConfigContainer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_merge;
+use const PATH_site;
 
 /**
- * Wrapper for a callable command (commands are the string after "./typo3/cli_dispatch.phpsh").
+ * Wrapper for a callable command (commands are the string after "./vendor/bin/typo3").
  */
 class RemoteCommandRequest
 {
@@ -95,7 +96,8 @@ class RemoteCommandRequest
                 'IN2PUBLISH_CONTEXT' => 'Foreign',
             ]
         );
-        $this->dispatcher = './../vendor/bin/typo3';
+        // TODO: Replace "PATH_site .'typo3/sysext' " with Environment::getFrameworkBasePath
+        $this->dispatcher = PATH_site . 'typo3/sysext/core/bin/typo3';
         $this->command = $command;
         $this->arguments = $arguments;
         $this->options = $options;

@@ -1,8 +1,6 @@
-FAQ
-===
+# FAQ
 
-Publisher backend modules are not visible?
-------------------------------------------
+## Publisher backend modules are not visible?
 
 Please check if you have set the environment variables on your server for the stage system via htaccess:
 
@@ -19,8 +17,7 @@ putenv('IN2PUBLISH_CONTEXT=Local');
 See https://github.com/in2code-de/in2publish_core/blob/master/Documentation/Installation/Preparation.md#os-requirements
 for details
 
-How to delete caches of a page in production?
----------------------------------------------
+## How to delete caches of a page in production?
 
 in2publish (Enterprise Version) includes the Remote Cache Control (short: RCC) feature.
 This allows you to clear specific caches on remote as easy an configurable as the clear cache controls in you Local's backend.
@@ -41,16 +38,14 @@ that was published. In this case you can use clearCacheCmd in Page TSConfig on t
 See https://docs.typo3.org/typo3cms/TSconfigReference/PageTsconfig/TCEmain/Index.html#clearcachecmd for the original
 documentation
 
-Scheduler: Can't call commandController from the cli or cronjob but it works in the scheduler module?
------------------------------------------------------------------------------------------------------
+## Scheduler: Can't call commandController from the cli or cronjob but it works in the scheduler module?
 
 You have to add the environment variable for all CLI calls of commandControllers
 Example call with environment variable (for the stage system):
 
-    IN2PUBLISH_CONTEXT=Local ./typo3/cli_dispatch.phpsh extbase status:version
+    IN2PUBLISH_CONTEXT=Local ./vendor/bin/typo3 in2publish_core:status:version
 
-Where can i get the Foreign Key Fingerprint
--------------------------------------------
+## Where can i get the Foreign Key Fingerprint
 
 The Foreign Key Fingerprint is, as the name states, a hash of the public ssh key from the **foreign** system's ssh server.
 You can generate the hash with following command on your **foreign** server (example command!): `ssh-keygen -E md5 -lf /etc/ssh/ssh_host_rsa_key.pub`
@@ -59,8 +54,7 @@ Hint:
 
 > You can omit the colons of the hash.
 
-How do i enable SSH Daemon on my Mac?
--------------------------------------
+## How do i enable SSH Daemon on my Mac?
 
 Enable login for all users (not recommended) or just the user you configured in sshConnection.username
 
@@ -70,22 +64,19 @@ Got to "System Preferences" -> "Sharing" -> enable "Remote Login"
 Older versions of OS X:
 Go to "System Preferences" -> "Internet & Networking" -> "Sharing" -> enable "Remote Login"
 
-Can i use files with umlauts and special characters?
------------------------------------------------------
+## Can i use files with umlauts and special characters?
 
 No.
 Since file names will be passed as arguments on the command line and we are very strict about that for safety reasons, we support only file and folder names that are accepted by TYPO3 when the option `UTF8filesystem` is set to false.
 You can convert your existing files with the EnvironmentCommandController.
 
-How can i publish content from Live to Stage?
----------------------------------------------
+## How can i publish content from Live to Stage?
 
 You can't (kind of).
 If you want to transfer user generated content from Live to Stage you can use the TableCommandController (available in the Scheduler for example) or write your own scripts.
 But be aware that the table:import command overwrites one table with another. It does not keep relations (it does not even resolve them) and it does not merge data. It is just a simple and stupid table copy task.
 
-How do i handle user generated content?
----------------------------------------
+## How do i handle user generated content?
 
 **CAUTION: in2publish_core does not handle user generated content. If record UIDs match any data will be overwritten!**
 

@@ -169,14 +169,43 @@ class TcaService implements SingletonInterface
 
     /**
      * Records whose deleted field evaluate to true will not be shown in the frontend.
+     *
+     * @param string $tableName
+     *
+     * @return string
      */
     public function getDisableField(string $tableName): string
     {
-        $deleteField = '';
         if (!empty($this->tca[$tableName]['ctrl']['enablecolumns']['disabled'])) {
-            $deleteField = $this->tca[$tableName]['ctrl']['enablecolumns']['disabled'];
+            return $this->tca[$tableName]['ctrl']['enablecolumns']['disabled'];
         }
-        return $deleteField;
+        return '';
+    }
+
+    /**
+     * @param string $tableName
+     *
+     * @return string
+     */
+    public function getLanguageField(string $tableName): string
+    {
+        if (!empty($this->tca[$tableName]['ctrl']['languageField'])) {
+            return $this->tca[$tableName]['ctrl']['languageField'];
+        }
+        return '';
+    }
+
+    /**
+     * @param string $tableName
+     *
+     * @return string
+     */
+    public function getTransOrigPointerField(string $tableName): string
+    {
+        if (!empty($this->tca[$tableName]['ctrl']['transOrigPointerField'])) {
+            return $this->tca[$tableName]['ctrl']['transOrigPointerField'];
+        }
+        return '';
     }
 
     /**

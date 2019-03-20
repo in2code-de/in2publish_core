@@ -1,10 +1,10 @@
 #
-#    Example Configuration for in2publish
+#    Example Configuration for in2publish on local
 #
 
 ---
 
-# Database access
+# PHP & Database settings on foreign server (for SSH access see "sshConnection")
 foreign:
 
   # root path of the foreign TYPO3 CMS instance

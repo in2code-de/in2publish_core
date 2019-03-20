@@ -13,8 +13,14 @@ call_user_func(
                 'transmission' => 'ssh',
             ]
         ];
-        if (is_array($setConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core']))) {
-            \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($extConf, $setConf);
+        if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core'])) {
+            if (is_array($setConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core']))) {
+                \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($extConf, $setConf);
+            }
+        }
+        if (!class_exists(\In2code\In2publishCore\Service\Context\ContextService::class)) {
+            // Early return when installing per ZIP: autoload is not yet generated
+            return;
         }
         $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Service\Context\ContextService::class);
 
