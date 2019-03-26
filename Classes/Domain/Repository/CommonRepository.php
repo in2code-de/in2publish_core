@@ -473,10 +473,11 @@ class CommonRepository extends BaseRepository
                     // fall through because fetch by RTE already supports "file:x" links
                 case 'text':
                     // TODO: use some kind of merged property to check against changed foreign RTE relations
-                    $relatedRecords = $this->fetchRelatedRecordsByRte(
-                        $record->getLocalProperty($propertyName),
-                        $excludedTableNames
-                    );
+                    $relatedRecords = [];
+                    $bodyText = trim((string)$record->getLocalProperty($propertyName));
+                    if (!empty($bodyText)) {
+                        $relatedRecords = $this->fetchRelatedRecordsByRte($bodyText, $excludedTableNames);
+                    }
                     break;
                 default:
                     $relatedRecords = [];
@@ -538,7 +539,7 @@ class CommonRepository extends BaseRepository
      *
      * @return array
      */
-    protected function fetchRelatedRecordsByRte($bodyText, array $excludedTableNames): array
+    protected function fetchRelatedRecordsByRte(string $bodyText, array $excludedTableNames): array
     {
         $relatedRecords = [];
         // if RTE is enabled
@@ -1033,7 +1034,9 @@ class CommonRepository extends BaseRepository
                 $records = $this->fetchRelatedRecordsByGroup($config, $record, $column, $exclTables, $flexFormData);
                 break;
             case 'input':
-                $records = $this->fetchRelatedRecordsByRte($flexFormData, $exclTables);
+                if (is_string($flexFormData)) {
+                    $records = $this->fetchRelatedRecordsByRte($flexFormData, $exclTables);
+                }
                 break;
             default:
                 $this->logger->emergency(

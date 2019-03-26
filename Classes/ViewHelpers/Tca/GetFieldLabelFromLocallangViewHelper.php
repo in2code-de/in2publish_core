@@ -26,7 +26,7 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Lang\LanguageService;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use function ucfirst;
 

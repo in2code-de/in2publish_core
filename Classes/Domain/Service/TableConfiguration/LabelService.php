@@ -83,7 +83,7 @@ class LabelService
         foreach ($fields as $field) {
             $recordProperties = ObjectAccess::getProperty($record, $stagingLevel . 'Properties');
             if (!empty($recordProperties[$field])) {
-                return $recordProperties[$field];
+                return (string)$recordProperties[$field];
             }
         }
         return $this->emptyFieldValue;

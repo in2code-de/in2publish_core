@@ -28,6 +28,8 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  */
 
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function in_array;
 use function strpos;
 
 /**
@@ -46,6 +48,7 @@ class TextProcessor extends AbstractProcessor
 
     /**
      * @param array $config
+     *
      * @return bool
      */
     public function canPreProcess(array $config): bool
@@ -54,7 +57,8 @@ class TextProcessor extends AbstractProcessor
         if ($canPreProcess) {
             $hasDefaultExtrasRte = $this->hasDefaultExtrasRte($config);
             $hasRteWizard = $this->hasRteWizard($config);
-            if (!$hasDefaultExtrasRte && !$hasRteWizard) {
+            $hasSoftRef = $this->hasSoftRef($config);
+            if (!$hasDefaultExtrasRte && !$hasRteWizard && !$hasSoftRef) {
                 $this->lastReasons[static::WIZARDS] = 'only the RTE is supported for relation resolving';
                 $canPreProcess = false;
             }
@@ -64,6 +68,7 @@ class TextProcessor extends AbstractProcessor
 
     /**
      * @param array $config
+     *
      * @return bool
      */
     protected function hasRteWizard(array $config): bool
@@ -73,12 +78,31 @@ class TextProcessor extends AbstractProcessor
 
     /**
      * @param array $config
+     *
      * @return bool
      */
     protected function hasDefaultExtrasRte(array $config): bool
     {
         if (isset($config[TcaProcessingService::DEFAULT_EXTRAS])) {
             return false !== strpos($config[TcaProcessingService::DEFAULT_EXTRAS], static::RTE_DEFAULT_EXTRAS);
+        }
+        return false;
+    }
+
+    /**
+     * @param array $config
+     *
+     * @return bool
+     */
+    protected function hasSoftRef(array $config): bool
+    {
+        if (isset($config[TcaProcessingService::SOFT_REF])) {
+            $softReferences = GeneralUtility::trimExplode(',', $config[TcaProcessingService::SOFT_REF]);
+            foreach ($softReferences as $softReference) {
+                if (in_array($softReference, ['typolink_tag', 'images'])) {
+                    return true;
+                }
+            }
         }
         return false;
     }

@@ -67,6 +67,7 @@ class TcaProcessingService
     const CACHE_KEY_TCA_PROCESSORS = 'tca_processors';
     const CACHE_KEY_CONTROLS = 'controls';
     const DEFAULT_EXTRAS = 'defaultExtras';
+    const SOFT_REF = 'softref';
 
     /**
      * @var TcaProcessingService
