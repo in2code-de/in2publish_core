@@ -1,5 +1,16 @@
 # In2publish Core Change Log
 
+8.0.2:
+
+- [META] Set the EM conf version number to 8.0.2
+- [BUGFIX] Prevent compression of already optimized CSS files
+- [BUGFIX] Inlcude input fields with softref in the canHoldRelation array
+- [BUGFIX] Ensure the inspected text for RTE relations is a string
+- [BUGFIX] Use legacy LanguageService namespace as long as TYPO3 v8 is supoprted
+- [BUGFIX] Ensure the LabelService returns a string
+- [BUGFIX] Remove strict type declaration for merged identifier
+- [RELEASE] Version 8.0.1 with ZIP-installation fixes, TYPO3 URN support and initialization error handling
+
 8.0.1:
 
 - [META] Set the EM conf version number to 8.0.1
