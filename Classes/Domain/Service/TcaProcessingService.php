@@ -201,57 +201,70 @@ class TcaProcessingService
                 $this->controls[$table][static::DELETE] = '';
             }
 
-            foreach ($tableConfiguration[static::COLUMNS] as $column => $columnConfiguration) {
-                // if the column has no config section like sys_file_metadata[columns][height]
-                if (!isset($columnConfiguration[static::CONFIG])) {
-                    $this->incompatibleTca[$table][$column] = 'Columns without config section can not hold relations';
-                    continue;
-                }
-
-                $config = $columnConfiguration[static::CONFIG];
-                $config[static::DEFAULT_EXTRAS] = isset($columnConfiguration[static::DEFAULT_EXTRAS])
-                    ? $columnConfiguration[static::DEFAULT_EXTRAS]
-                    : null;
-                $type = $config[static::TYPE];
-
-                // If there's no processor for the type it is not a standard type of TYPO3
-                // The incident will be logged and the field will be skipped
-                if (empty($this->processors[$type])) {
-                    if (!is_string($type)) {
-                        $type = gettype($type);
-                    }
-                    $this->logger->critical(
-                        'No Processor for "' . $type . '" found. Skipping configuration',
-                        [
-                            'table' => $table,
-                            'column' => $column,
-                        ]
-                    );
-                    continue;
-                }
-
-                // if the field potentially holds relations
-                if ($this->processors[$type]->canHoldRelations()) {
-                    // check if the field is configured for holding relations
-                    if ($this->processors[$type]->canPreProcess($config)) {
-                        // Set the preprocessed values
-                        $this->compatibleTca[$table][$column] = $this->processors[$type]->preProcess($config);
-                        $this->compatibleTca[$table][$column][static::TYPE] = $type;
-                    } else {
-                        // Set the reasons why it can not be pre processed. Useful for Extension authors
-                        foreach ($this->processors[$type]->getLastReasons() as $key => $reason) {
-                            $this->incompatibleTca[$table][$column]['type'] = $type;
-                            $this->incompatibleTca[$table][$column]['reasons'][$key] = $reason;
-                        }
-                    }
-                } else {
-                    $this->incompatibleTca[$table][$column] = 'The type "' . $type . '" can not hold relations';
-                }
+            if (isset($tableConfiguration[static::COLUMNS]) && is_array($tableConfiguration[static::COLUMNS])) {
+                $this->preProcessTcaColumns($tableConfiguration[static::COLUMNS], $table);
+            } else {
+                $this->logger->warning('A table without columns section was given to pre process', ['table' => $table]);
             }
 
             // set an empty array as default, prevents NULL values
             if (empty($this->compatibleTca[$table])) {
                 $this->compatibleTca[$table] = [];
+            }
+        }
+    }
+
+    /**
+     * @param array $columnsConfiguration
+     * @param string $table
+     */
+    protected function preProcessTcaColumns(array $columnsConfiguration, string $table)
+    {
+        foreach ($columnsConfiguration as $column => $columnConfiguration) {
+            // if the column has no config section like sys_file_metadata[columns][height]
+            if (!isset($columnConfiguration[static::CONFIG])) {
+                $this->incompatibleTca[$table][$column] = 'Columns without config section can not hold relations';
+                continue;
+            }
+
+            $config = $columnConfiguration[static::CONFIG];
+            $config[static::DEFAULT_EXTRAS] = isset($columnConfiguration[static::DEFAULT_EXTRAS])
+                ? $columnConfiguration[static::DEFAULT_EXTRAS]
+                : null;
+            $type = $config[static::TYPE];
+
+            // If there's no processor for the type it is not a standard type of TYPO3
+            // The incident will be logged and the field will be skipped
+            if (empty($this->processors[$type])) {
+                if (!is_string($type)) {
+                    $type = gettype($type);
+                }
+                $this->logger->critical(
+                    'No Processor for "' . $type . '" found. Skipping configuration',
+                    [
+                        'table' => $table,
+                        'column' => $column,
+                    ]
+                );
+                continue;
+            }
+
+            // if the field potentially holds relations
+            if ($this->processors[$type]->canHoldRelations()) {
+                // check if the field is configured for holding relations
+                if ($this->processors[$type]->canPreProcess($config)) {
+                    // Set the preprocessed values
+                    $this->compatibleTca[$table][$column] = $this->processors[$type]->preProcess($config);
+                    $this->compatibleTca[$table][$column][static::TYPE] = $type;
+                } else {
+                    // Set the reasons why it can not be pre processed. Useful for Extension authors
+                    foreach ($this->processors[$type]->getLastReasons() as $key => $reason) {
+                        $this->incompatibleTca[$table][$column]['type'] = $type;
+                        $this->incompatibleTca[$table][$column]['reasons'][$key] = $reason;
+                    }
+                }
+            } else {
+                $this->incompatibleTca[$table][$column] = 'The type "' . $type . '" can not hold relations';
             }
         }
     }
@@ -290,6 +303,7 @@ class TcaProcessingService
 
     /**
      * @param string $table
+     *
      * @return bool
      */
     public static function tableExists($table): bool
@@ -308,6 +322,7 @@ class TcaProcessingService
 
     /**
      * @param string $tableName
+     *
      * @return array
      * @SuppressWarnings(PHPMD.Superglobals)
      */
@@ -318,6 +333,7 @@ class TcaProcessingService
 
     /**
      * @param string $table
+     *
      * @return array
      */
     public static function getColumnsFor($table): array
@@ -327,6 +343,7 @@ class TcaProcessingService
 
     /**
      * @param string $table
+     *
      * @return array
      */
     public static function getControlsFor($table): array
@@ -336,6 +353,7 @@ class TcaProcessingService
 
     /**
      * @param string $table
+     *
      * @return bool
      */
     public static function hasDeleteField($table): bool
@@ -345,6 +363,7 @@ class TcaProcessingService
 
     /**
      * @param string $table
+     *
      * @return string
      */
     public static function getDeleteField($table): string
