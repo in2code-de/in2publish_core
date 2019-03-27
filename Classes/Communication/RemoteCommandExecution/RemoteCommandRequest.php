@@ -96,8 +96,7 @@ class RemoteCommandRequest
                 'IN2PUBLISH_CONTEXT' => 'Foreign',
             ]
         );
-        // TODO: Replace "PATH_site .'typo3/sysext' " with Environment::getFrameworkBasePath
-        $this->dispatcher = PATH_site . 'typo3/sysext/core/bin/typo3';
+        $this->dispatcher = 'typo3/sysext/core/bin/typo3';
         $this->command = $command;
         $this->arguments = $arguments;
         $this->options = $options;
