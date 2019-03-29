@@ -1686,9 +1686,9 @@ class CommonRepository extends BaseRepository
      * @param int $identifier
      * @param string $tableName
      *
-     * @return RecordInterface
+     * @return RecordInterface|null
      */
-    protected function findByIdentifierInOtherTable($identifier, $tableName): RecordInterface
+    protected function findByIdentifierInOtherTable($identifier, $tableName)
     {
         $previousIdFieldName = $this->identifierFieldName;
         $this->identifierFieldName = 'uid';
