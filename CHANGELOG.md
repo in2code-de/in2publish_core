@@ -1,5 +1,14 @@
 # In2publish Core Change Log
 
+8.0.3:
+
+- [META] Set the EM conf version number to 8.0.3
+- [DOCS] Add known issues in the overview module in TYPO3 v9
+- [BUGFIX] Enhance the T3 URN detection regex
+- [BUGFIX] Use relative path of the foreign working directory to dispatch CLI calls (fixes #62, fixes #61)
+- [BUGFIX] Prevent errors on empty user TCA
+- [RELEASE] Version 8.0.2 with strict_types, production settings, softref and LL fixes
+
 8.0.2:
 
 - [META] Set the EM conf version number to 8.0.2

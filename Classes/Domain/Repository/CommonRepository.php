@@ -584,7 +584,7 @@ class CommonRepository extends BaseRepository
             }
         }
         if (strpos($bodyText, 't3://') !== false) {
-            preg_match_all('~(?P<URN>t3://[^\s]+)~', $bodyText, $matches);
+            preg_match_all('~(?P<URN>t3://[^\s"]+)~', $bodyText, $matches);
             array_shift($matches);
             if (!empty($matches)) {
                 foreach ($matches['URN'] as $urn) {
