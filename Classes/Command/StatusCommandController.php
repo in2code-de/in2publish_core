@@ -49,7 +49,7 @@ class StatusCommandController extends AbstractCommandController
     const CREATE_MASKS_COMMAND = 'in2publish_core:status:createmasks';
     const GLOBAL_CONFIGURATION = 'in2publish_core:status:globalconfiguration';
     const TYPO3_VERSION = 'in2publish_core:status:typo3version';
-    const DB_INIT_QUERY_ENCODED = 'in2publish_core:status:dbInitQueryEncoded';
+    const DB_INIT_QUERY_ENCODED = 'in2publish_core:status:dbinitqueryencoded';
     const SHORT_SITE_CONFIGURATION = 'in2publish_core:status:shortsiteconfiguration';
     const SITE_CONFIGURATION = 'in2publish_core:status:siteconfiguration';
     const EXIT_NO_SITE = 250;
