@@ -93,7 +93,7 @@ call_user_func(
                 $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test.description', 'Tools', 'test');
                 $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration.description', 'Tools', 'configuration');
                 if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('logs')) {
-                    $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.logs', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.logs.description', 'Log', 'filter,delete');
+                    $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.logs', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.logs.description', 'Log', 'filter,delete,deleteAlike');
                 }
                 $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca.description', 'Tools', 'tca');
                 $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca.description', 'Tools', 'clearTcaCaches');
