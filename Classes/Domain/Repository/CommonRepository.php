@@ -111,6 +111,8 @@ use function trim;
  */
 class CommonRepository extends BaseRepository
 {
+    const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)~';
+
     /**
      * @var RecordFactory
      */
@@ -584,9 +586,8 @@ class CommonRepository extends BaseRepository
             }
         }
         if (strpos($bodyText, 't3://') !== false) {
-            preg_match_all('~(?P<URN>t3://[^\s"]+)~', $bodyText, $matches);
-            array_shift($matches);
-            if (!empty($matches)) {
+            preg_match_all(self::REGEX_T3URN, $bodyText, $matches);
+            if (!empty($matches['URN'])) {
                 foreach ($matches['URN'] as $urn) {
                     // Do NOT use LinkService because the URN might either be not local or not available
                     $urnParsed = parse_url($urn);
