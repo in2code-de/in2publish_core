@@ -160,6 +160,12 @@
 			<trans-unit id="ssh_connection.foreign_document_validation_error_reason">
 				<source>The command returned following message:</source>
 			</trans-unit>
+			<trans-unit id="ssh_connection.wrong_context">
+				<source>The configured foreign TYPO3 context "%s" is invalid</source>
+			</trans-unit>
+			<trans-unit id="ssh_connection.dispatcher_unknown_error">
+				<source>Calling the remote CLI dispatcher resulted in an unknown error</source>
+			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\LocalInstanceTest
 				 && \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest -->
