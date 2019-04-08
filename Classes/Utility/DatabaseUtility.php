@@ -66,7 +66,10 @@ class DatabaseUtility
      */
     protected static $foreignConnection;
 
-    public static function buildForeignDatabaseConnection(): Connection
+    /**
+     * @return Connection|null
+     */
+    public static function buildForeignDatabaseConnection()
     {
         static::initializeLogger();
         if (static::$foreignConnection === null) {
@@ -99,7 +102,9 @@ class DatabaseUtility
                         }
                     }
                     static::$foreignConnection = $foreignConnection;
+                    $foreignConnection->connect();
                 } catch (DBALException $e) {
+                    static::$logger->critical('Can not connect to foreign database', ['exception' => $e]);
                     static::$foreignConnection = null;
                 }
             }
