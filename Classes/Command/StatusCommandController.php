@@ -134,7 +134,7 @@ class StatusCommandController extends AbstractCommandController
     }
 
     /**
-     * Prints TYPO3 version
+     * Prints the initCommands as json and base64 encoded string
      * NOTE: This command is used for internal operations in in2publish_core
      *
      * @internal
@@ -142,7 +142,7 @@ class StatusCommandController extends AbstractCommandController
      */
     public function dbInitQueryEncodedCommand()
     {
-        $dbInit = [];
+        $dbInit = '';
         if (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'])) {
             $dbInit = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'];
         }
