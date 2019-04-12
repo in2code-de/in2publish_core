@@ -112,7 +112,9 @@ class FolderRecordFactory
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->commonRepository = CommonRepository::getDefaultInstance('sys_file');
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
-        $this->configuration = GeneralUtility::makeInstance(ConfigContainer::class)->get('factory.fal');
+        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+        $this->configuration = $configContainer->get('factory.fal');
+        $this->threshold = $configContainer->get('factory.fal.folderFileLimit');
     }
 
     /**

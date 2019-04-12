@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
@@ -74,6 +75,14 @@ class IndexingFolderRecordFactory
      * @var int
      */
     protected $threshold = 150;
+
+    /**
+     * IndexingFolderRecordFactory constructor.
+     */
+    public function __construct()
+    {
+        $this->threshold = GeneralUtility::makeInstance(ConfigContainer::class)->get('factory.fal.folderFileLimit');
+    }
 
     /**
      * @param ResourceStorage $localStorage

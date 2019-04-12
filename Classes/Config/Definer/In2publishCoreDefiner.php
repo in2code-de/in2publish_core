@@ -182,6 +182,7 @@ class In2publishCoreDefiner implements DefinerInterface
                                             ->addBoolean('autoRepairFolderHash', false)
                                             ->addBoolean('mergeSysFileByIdentifier', false)
                                             ->addBoolean('enableSysFileReferenceUpdate', false)
+                                            ->addInteger('folderFileLimit', 150, [IntegerInRangeValidator::class => [1]])
                                  )
                       )
                       ->addArray(
