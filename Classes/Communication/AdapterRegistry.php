@@ -107,8 +107,10 @@ class AdapterRegistry implements SingletonInterface
         if (!isset($GLOBALS['in2publish_core']['tests'])) {
             $GLOBALS['in2publish_core']['tests'] = [];
         }
-        if (is_array($setConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core']))) {
-            ArrayUtility::mergeRecursiveWithOverrule($this->config, $setConf, false);
+        if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core'])) {
+            if (is_array($setConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core']))) {
+                ArrayUtility::mergeRecursiveWithOverrule($this->config, $setConf, false);
+            }
         }
     }
 
