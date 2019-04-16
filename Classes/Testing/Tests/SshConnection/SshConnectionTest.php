@@ -118,7 +118,6 @@ class SshConnectionTest implements TestCaseInterface
             $documentRootFiles = GeneralUtility::trimExplode("\n", $response->getOutputString());
 
             $requiredNames = [
-                'fileadmin',
                 'typo3',
                 'index.php',
                 'typo3conf',
