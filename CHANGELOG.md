@@ -1,4 +1,28 @@
 # In2publish Core Change Log
+8.1.0:
+
+- [META] Set the branch alias version number to 8.1.x-dev
+- [META] Set the EM conf version number to 8.1.0
+- [BUGFIX] Log folderFileLimit exceeding, always render the flash message, clean up controller
+- [BUGFIX] Do not search for the fileadmin folder in foreign instance tests (fixes #64)
+- [CLEANUP] Remove the unused threshold from FodlerRecordFactory
+- [TASK] Update year in copyright footer
+- [BUGFIX] Let DBAL take care of identifier escaping
+- [BUGFIX] Use the connection for the staging level not a new local one
+- [FEATURE] Introduce a configuration option for the folder file limit
+- [BUGFIX] Check the extConf array before accessing it
+- [META] Update extension icon (upgrade to SVG)
+- [CLEANUP] Remove superfluous empty line from locallang.testing.xlf
+- [BUGFIX] Add test to check if the foreign dispatcher is callable and the context is correct
+- [BUGFIX] Support lowercase (case insensitive) "and" in TCA additional where clauses
+- [BUGFIX] Allow buildForeignDatabaseConnection to return null and log connection exceptions (fixes #60, fixes #59)
+- [BUGFIX] Allow the deleteAlike action from EXT:logs in the tools module
+- [BUGFIX] Set strings as default DB initCommands and process it that way (fixes #63)
+- [TASK] Improve T3URN detection regex and move it to a constant
+- [BUGFIX] Use lowercase command identifier
+- [BUGFIX] Remove type hint and add null type to the return annotation of CommonRepository::findByIdentifierInOtherTable
+- [RELEASE] Version 8.0.3 with TCA user error prevention, CLI dispatching fix and T3URN parsing enhancement
+
 
 8.0.3:
 
