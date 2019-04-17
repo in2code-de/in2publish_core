@@ -231,8 +231,8 @@ class DatabaseDifferencesTest implements TestCaseInterface
                 break;
             }
         }
-        $local->delete('tx_in2code_in2publish_task', ['task_type' => '"Backend Test"']);
-        $foreign->delete('tx_in2code_in2publish_task', ['task_type' => '"Backend Test"']);
+        $local->delete('tx_in2code_in2publish_task', ['task_type' => 'Backend Test']);
+        $foreign->delete('tx_in2code_in2publish_task', ['task_type' => 'Backend Test']);
 
         return $identical;
     }

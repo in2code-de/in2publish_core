@@ -209,6 +209,16 @@ factory:
     #   Changes are persisted immediately before the publish file module is rendered.
     enableSysFileReferenceUpdate: FALSE
 
+    # Configuration for the limit on files inside a single folder.
+    #
+    # CAUTION: If set too high in2publish_core will can prevent database field overflows and crash the application!
+    #
+    # The field containing the data written on foreign is of type longtext. But it contains a lot of information like
+    # identifier (path in the storage), storage, size, name (filename) and uid. If you have more than 150 files in a
+    # folder and it is deeply nested the information will grow very quick and will eventually exceed the field length
+    # and lead to exceptions and may leave your instance in an unusable state.
+    folderFileLimit: 150
+
 
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
 filePreviewDomainName:

@@ -35,6 +35,7 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use Throwable;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_diff;
+use function preg_match;
 
 /**
  * Class SshConnectionTest
@@ -117,7 +118,6 @@ class SshConnectionTest implements TestCaseInterface
             $documentRootFiles = GeneralUtility::trimExplode("\n", $response->getOutputString());
 
             $requiredNames = [
-                'fileadmin',
                 'typo3',
                 'index.php',
                 'typo3conf',
@@ -136,6 +136,26 @@ class SshConnectionTest implements TestCaseInterface
                     $response->getErrorsString(),
                 ]
             );
+        }
+
+        // Actually call the foreign cli dispatcher
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'help');
+        $response = $this->rceDispatcher->dispatch($request);
+        if (!$response->isSuccessful()) {
+            if (1 === preg_match('~The given context "(.*)" was not valid~ ', $response->getOutputString(), $match)) {
+                return new TestResult(
+                    'ssh_connection.wrong_context',
+                    TestResult::ERROR,
+                    $response->getErrors(),
+                    [$match[1]]
+                );
+            } else {
+                return new TestResult(
+                    'ssh_connection.dispatcher_unknown_error',
+                    TestResult::ERROR,
+                    $response->getErrors()
+                );
+            }
         }
 
         return new TestResult('ssh_connection.connection_successful');

@@ -40,6 +40,7 @@ use function array_combine;
 use function explode;
 use function json_encode;
 use function preg_match;
+use function stripos;
 use function strpos;
 use function strtoupper;
 use function substr;
@@ -98,6 +99,7 @@ abstract class BaseRepository
      * @param string $orderBy
      * @param string $limit
      * @param string $indexField
+     *
      * @return array
      */
     protected function findPropertiesByProperty(
@@ -124,7 +126,7 @@ abstract class BaseRepository
             $orderBy = $sortingField . ' ASC';
         }
         $additionalWhere = trim($additionalWhere);
-        if ('AND' === substr($additionalWhere, 0, 3)) {
+        if (0 === stripos($additionalWhere, 'and')) {
             $additionalWhere = trim(substr($additionalWhere, 3));
         }
 

@@ -96,13 +96,6 @@ class FolderRecordFactory
     protected $fileIndexFactory = null;
 
     /**
-     * Maximum number of files which are supported to exist in a single folder
-     *
-     * @var int
-     */
-    protected $threshold = 150;
-
-    /**
      * FolderRecordFactory constructor.
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
@@ -864,30 +857,5 @@ class FolderRecordFactory
             return array_map('strtolower', $identifierList);
         }
         return $identifierList;
-    }
-
-    /**
-     * @param array $files
-     * @param string $folderIdentifier
-     * @param string $side
-     * @throws TooManyForeignFilesException
-     * @throws TooManyLocalFilesException
-     */
-    protected function checkFileCount(array $files, $folderIdentifier, $side)
-    {
-        $count = count($files);
-        if ($count > $this->threshold) {
-            if ($side === 'foreign') {
-                throw new TooManyForeignFilesException(
-                    sprintf('The folder "%s" has too many files (%d)', $folderIdentifier, $count),
-                    1491310782
-                );
-            } else {
-                throw new TooManyLocalFilesException(
-                    sprintf('The folder "%s" has too many files (%d)', $folderIdentifier, $count),
-                    1491310787
-                );
-            }
-        }
     }
 }

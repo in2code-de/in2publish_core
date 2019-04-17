@@ -27,7 +27,9 @@ namespace In2code\In2publishCore\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
+use In2code\In2publishCore\Domain\Factory\Exception\TooManyFilesException;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
 use In2code\In2publishCore\Domain\Model\Record;
@@ -36,6 +38,7 @@ use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\FileUtility;
 use In2code\In2publishCore\Utility\FolderUtility;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
+use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
@@ -76,6 +79,14 @@ class IndexingFolderRecordFactory
     protected $threshold = 150;
 
     /**
+     * IndexingFolderRecordFactory constructor.
+     */
+    public function __construct()
+    {
+        $this->threshold = GeneralUtility::makeInstance(ConfigContainer::class)->get('factory.fal.folderFileLimit');
+    }
+
+    /**
      * @param ResourceStorage $localStorage
      */
     public function overruleLocalStorage(ResourceStorage $localStorage)
@@ -96,8 +107,8 @@ class IndexingFolderRecordFactory
      *
      * @return RecordInterface
      *
-     * @throws TooManyForeignFilesException
-     * @throws TooManyLocalFilesException
+     * @throws TooManyFilesException
+     * @throws InsufficientFolderAccessPermissionsException
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
@@ -323,23 +334,16 @@ class IndexingFolderRecordFactory
      * @param array $files
      * @param string $folderIdentifier
      * @param string $side
-     * @throws TooManyForeignFilesException
-     * @throws TooManyLocalFilesException
+     * @throws TooManyFilesException
      */
     protected function checkFileCount(array $files, $folderIdentifier, $side)
     {
         $count = count($files);
         if ($count > $this->threshold) {
             if ($side === 'foreign') {
-                throw new TooManyForeignFilesException(
-                    sprintf('The folder "%s" has too many files (%d)', $folderIdentifier, $count),
-                    1491308552
-                );
+                throw TooManyForeignFilesException::fromFolder($folderIdentifier, $count, $this->threshold);
             } else {
-                throw new TooManyLocalFilesException(
-                    sprintf('The folder "%s" has too many files (%d)', $folderIdentifier, $count),
-                    1491308555
-                );
+                throw TooManyLocalFilesException::fromFolder($folderIdentifier, $count, $this->threshold);
             }
         }
     }

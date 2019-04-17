@@ -27,11 +27,10 @@ namespace In2code\In2publishCore\Domain\Factory\Exception;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Exception;
-
 /**
- * Class TooManyFilesException
+ * Class TooManyForeignFilesException
  */
-class TooManyForeignFilesException extends Exception
+class TooManyForeignFilesException extends TooManyFilesException
 {
+    const CODE = 1555492770;
 }
