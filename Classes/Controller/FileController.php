@@ -28,9 +28,7 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Exception;
-use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
-use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
+use In2code\In2publishCore\Domain\Factory\Exception\TooManyFilesException;
 use In2code\In2publishCore\Domain\Factory\FolderRecordFactory;
 use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
@@ -39,13 +37,13 @@ use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
 use RuntimeException;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use function preg_match;
 use function strpos;
 
 /**
@@ -164,51 +162,58 @@ class FileController extends AbstractController
 
     /**
      * @param string $identifier CombinedIdentifier as FAL would use it
+     *
      * @return RecordInterface|null The record or null if it can not be handled
+     * @throws InsufficientFolderAccessPermissionsException
      */
     protected function tryToGetFolderInstance($identifier)
     {
-        try {
-            if (false === $this->configContainer->get('factory.fal.reserveSysFileUids')) {
-                $record = GeneralUtility::makeInstance(IndexingFolderRecordFactory::class)->makeInstance($identifier);
-            } else {
-                $record = GeneralUtility::makeInstance(FolderRecordFactory::class)->makeInstance($identifier);
-            }
+        if (false === $this->configContainer->get('factory.fal.reserveSysFileUids')) {
             try {
-                $this->signalSlotDispatcher->dispatch(
-                    FileController::class,
-                    'folderInstanceCreated',
-                    [$record]
-                );
-            } catch (InvalidSlotException $e) {
-            } catch (InvalidSlotReturnException $e) {
+                $record = GeneralUtility::makeInstance(IndexingFolderRecordFactory::class)->makeInstance($identifier);
+            } catch (TooManyFilesException $exception) {
+                $this->renderTooManyFilesFlashMessage($exception);
+                return null;
             }
-            return $record;
-        } catch (TooManyLocalFilesException $exception) {
-            $this->displayTooManyFilesError($exception);
-        } catch (TooManyForeignFilesException $exception) {
-            $this->displayTooManyFilesError($exception);
+        } else {
+            $record = GeneralUtility::makeInstance(FolderRecordFactory::class)->makeInstance($identifier);
         }
-        return null;
+        $this->emitFolderInstanceCreated($record);
+        return $record;
     }
 
     /**
-     * @param Exception $exception
+     * @param TooManyFilesException $exception
      */
-    protected function displayTooManyFilesError(Exception $exception)
+    protected function renderTooManyFilesFlashMessage(TooManyFilesException $exception)
     {
-        if (1 === preg_match(static::EXCEPTION_MESSAGE_PATTERN, $exception->getMessage(), $matches)) {
-            // Do not remove the space at the end of ') ', because it can't
-            // be included dynamically in the label where this value is used!
-            $arguments = [$matches['folder'], '(' . $matches['number'] . ') '];
-        } else {
-            $arguments = [GeneralUtility::_GP('id'), ''];
-        }
-
+        $arguments = [
+            'folder' => $exception->getFolder(),
+            'filesCount' => $exception->getCount(),
+            'threshold' => $exception->getThreshold(),
+        ];
         $this->addFlashMessage(
             LocalizationUtility::translate('file_publishing.too_many_files', 'in2publish_core', $arguments),
             LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
             AbstractMessage::WARNING
         );
+        $arguments['exception'] = $exception;
+        $this->logger->warning('The folder file limit has been exceeded', $arguments);
+    }
+
+    /**
+     * @param RecordInterface $record
+     */
+    protected function emitFolderInstanceCreated(RecordInterface $record)
+    {
+        try {
+            $this->signalSlotDispatcher->dispatch(
+                FileController::class,
+                'folderInstanceCreated',
+                [$record]
+            );
+        } catch (InvalidSlotException $e) {
+        } catch (InvalidSlotReturnException $e) {
+        }
     }
 }

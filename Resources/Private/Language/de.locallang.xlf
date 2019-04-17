@@ -333,8 +333,8 @@
 				<target state="translated">Die Datei %s konnte nicht vollständig publiziert werden.</target>
 			</trans-unit>
 			<trans-unit id="file_publishing.too_many_files">
-				<source>The folder %s contains too many files %sto process. The limit of files in a folder is 150 files per folder, but you should not have more than 100 files in a single folder.</source>
-				<target state="translated">Das Verzeichnis %s enthält zu viele Dateien %sum es zu verarbeiten. Das Dateilimit beträgt 150 Dateien pro Verzeichnis, es sollten jedoch generell nicht mehr als 100 Dateien in einem einzelnen Verzeichnis liegen.</target>
+				<source>The folder %s contains too many files (%d) to process. The limit of files in a folder is %d files per folder.</source>
+				<target state="translated">Das Verzeichnis %s enthält zu viele Dateien (%d) um es zu verarbeiten. Das Dateilimit beträgt %d Dateien pro Verzeichnis.</target>
 			</trans-unit>
 
 			<trans-unit id="publishing.tasks_failure">
