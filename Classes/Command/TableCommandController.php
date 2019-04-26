@@ -170,7 +170,7 @@ class TableCommandController extends AbstractCommandController
             $queryResult = $query->select('*')->from($tableName)->execute();
             $this->logger->notice('Successfully truncated table, importing ' . $queryResult->rowCount() . ' rows');
             while ($row = $queryResult->fetch()) {
-                if (($success = $this->insertRow($toDatabase, $tableName, $row)) !== true) {
+                if (($success = $this->insertRow($toDatabase, $tableName, $row)) !== 1) {
                     $this->logger->critical(
                         'Failed to import row into "' . $tableName . '"',
                         [
@@ -186,7 +186,7 @@ class TableCommandController extends AbstractCommandController
     }
 
     /**
-     * Returns TRUE on success or FALSE on failure
+     * Returns the number of affected rows.
      *
      * @param Connection $connection
      * @param string $tableName
