@@ -414,6 +414,17 @@
 				<target state="translated">Probleme mit Beachtung der Groß- Kleinschreibung entdeckt.</target>
 			</trans-unit>
 
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\DefaultStorageIsConfiguredTest -->
+
+			<trans-unit id="fal.default_storage.configured">
+				<source>A FAL storage has been marked as default.</source>
+				<target state="translated">Eine FAL-Storage wurde als Standard markiert.</target>
+			</trans-unit>
+			<trans-unit id="fal.default_storage.missing">
+				<source>The default storage could not be detected, because no file storage is marked as default.</source>
+				<target state="translated">Die Standard-FAL-Storage konnte nicht identifiziert werden, da keine als Standard markiert ist.</target>
+			</trans-unit>
+
 			<!-- \In2code\In2publishCore\Testing\Tests\Fal\IdenticalDriverTest -->
 
 			<trans-unit id="fal.driver_matching">

@@ -328,6 +328,15 @@
 				<source>Case sensitivity errors detected.</source>
 			</trans-unit>
 
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\DefaultStorageIsConfiguredTest -->
+
+			<trans-unit id="fal.default_storage.configured">
+				<source>A FAL storage has been marked as default.</source>
+			</trans-unit>
+			<trans-unit id="fal.default_storage.missing">
+				<source>The default storage could not be detected, because no file storage is marked as default.</source>
+			</trans-unit>
+
 			<!-- \In2code\In2publishCore\Testing\Tests\Fal\IdenticalDriverTest -->
 
 			<trans-unit id="fal.driver_matching">
