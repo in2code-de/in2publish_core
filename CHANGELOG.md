@@ -1,4 +1,18 @@
 # In2publish Core Change Log
+
+8.1.1:
+
+- [META] Set the EM conf version number to 8.1.0
+- [BUGFIX] Detect the cli dispatcher automatically, add an override option
+- [BUGFIX] SimpleOverviewAndAjax: Deleted pages should be shown as deleted and not moved
+- [BUGFIX] Prevent the log table from filling up with false positives during the ImportTableCommand.
+- [BUGFIX] Add the missing configuration definition for the foreign configuration (backup settings)
+- [CLEANUP] Remove any traces of the formerly per yaml defined log level setting
+- [BUGFIX] Add test to detect the missing default FAL storage
+- [BUGFIX] Prevent exceptions for missing annotations
+- [BUGFIX] Ensure the strftime value is an integer
+- [RELEASE] Version 8.1.0 with configurable folder file limit
+
 8.1.0:
 
 - [META] Set the branch alias version number to 8.1.x-dev
