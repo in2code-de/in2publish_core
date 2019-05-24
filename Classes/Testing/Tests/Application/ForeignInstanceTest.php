@@ -71,6 +71,16 @@ class ForeignInstanceTest implements TestCaseInterface
                     TestResult::ERROR,
                     ['application.foreign_cli_lowlevel_user_missing_message', $response->getOutputString()]
                 );
+            } elseif (false !== strpos($response->getOutputString(), 'Could not open input file')) {
+                return new TestResult(
+                    'application.foreign_cli_dispatcher_wrong_path',
+                    TestResult::ERROR,
+                    [
+                        'application.foreign_cli_dispatcher_error_message',
+                        $response->getOutputString(),
+                        $response->getErrorsString(),
+                    ]
+                );
             } else {
                 return new TestResult(
                     'application.foreign_cli_dispatcher_not_callable',

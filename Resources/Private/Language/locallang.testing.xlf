@@ -226,6 +226,9 @@
 			<trans-unit id="application.foreign_cli_dispatcher_not_callable">
 				<source>Could not call the CLI dispatcher on foreign because of an unexpected error.</source>
 			</trans-unit>
+			<trans-unit id="application.foreign_cli_dispatcher_wrong_path">
+				<source>Could not call the CLI dispatcher on foreign. Please configure "foreign.dispatcher" correctly.</source>
+			</trans-unit>
 			<trans-unit id="application.foreign_cli_dispatcher_error_message">
 				<source>The call to the dispatcher returned following message:</source>
 			</trans-unit>
