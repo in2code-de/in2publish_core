@@ -176,9 +176,6 @@
 			<trans-unit id="module.m4.overview">
 				<source>Overview</source>
 			</trans-unit>
-			<trans-unit id="module.m4.overview.logLevel">
-				<source>Loglevel</source>
-			</trans-unit>
 			<trans-unit id="module.m4.filter">
 				<source>Filter</source>
 			</trans-unit>

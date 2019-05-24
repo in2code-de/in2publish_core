@@ -16,6 +16,10 @@ foreign:
   # TYPO3_CONTEXT environment variable to preprend to remote CLI calls
   context: Production
 
+  # OPTIONAL. This value is detected automatically. Configuration only required when automatic detection fails to
+  # identify the dispatcher location correctly. Enter the relative path from the document root to the dispatcher.
+  dispatcher:
+
   # Additional environment variables to set before executing a remote cli command. The keys are the variable names
   envVars: []
     # MY_VAR: myValue

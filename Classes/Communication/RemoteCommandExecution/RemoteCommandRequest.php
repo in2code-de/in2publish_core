@@ -30,7 +30,9 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
 use In2code\In2publishCore\Config\ConfigContainer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_merge;
+use function file_exists;
 use const PATH_site;
+use const TYPO3_COMPOSER_MODE;
 
 /**
  * Wrapper for a callable command (commands are the string after "./vendor/bin/typo3").
@@ -96,7 +98,15 @@ class RemoteCommandRequest
                 'IN2PUBLISH_CONTEXT' => 'Foreign',
             ]
         );
-        $this->dispatcher = 'typo3/sysext/core/bin/typo3';
+        if ($dispatcher = $configContainer->get('foreign.dispatcher')) {
+            $this->dispatcher = $dispatcher;
+        } elseif (true === TYPO3_COMPOSER_MODE && file_exists(PATH_site . 'vendor/bin/typo3')) {
+            $this->dispatcher = './vendor/bin/typo3';
+        } elseif (true === TYPO3_COMPOSER_MODE && file_exists(PATH_site . '../vendor/bin/typo3')) {
+            $this->dispatcher = './../vendor/bin/typo3';
+        } else {
+            $this->dispatcher = 'typo3/sysext/core/bin/typo3';
+        }
         $this->command = $command;
         $this->arguments = $arguments;
         $this->options = $options;

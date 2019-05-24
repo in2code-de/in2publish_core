@@ -136,6 +136,7 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addString('rootPath', '/var/www/html')
                                  ->addString('pathToPhp', '/usr/bin/env php')
                                  ->addString('context', 'Production/Live')
+                                 ->addOptionalString('dispatcher', '')
                                  ->addArray(
                                      'envVars',
                                      Builder::start()->addGenericScalar(Node::T_STRING, Node::T_STRING),
@@ -271,6 +272,23 @@ class In2publishCoreDefiner implements DefinerInterface
      */
     public function getForeignDefinition()
     {
-        return Builder::start()->end();
+        return Builder::start()
+                      ->addArray(
+                          'backup',
+                          Builder::start()
+                                 ->addArray(
+                                     'publishTableCommand',
+                                     Builder::start()
+                                            ->addInteger('keepBackups', 2, [IntegerInRangeValidator::class => [0, 10]])
+                                            ->addString(
+                                                'backupLocation',
+                                                '/app/foreign/backup',
+                                                [DirectoryExistsValidator::class]
+                                            )
+                                            ->addBoolean('addDropTable', true)
+                                            ->addBoolean('zipBackup', true, [ZipExtensionInstalledValidator::class])
+                                 )
+                      )
+                      ->end();
     }
 }

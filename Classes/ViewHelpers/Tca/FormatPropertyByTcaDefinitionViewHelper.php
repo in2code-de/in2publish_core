@@ -94,7 +94,7 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
             || GeneralUtility::inList($this->tableConfiguration['config']['eval'], 'date')
         ) {
             if ($value !== '0') {
-                $value = strftime('%d.%m.%Y', $value);
+                $value = strftime('%d.%m.%Y', (int)$value);
             }
         }
         if (GeneralUtility::inList($this->tableConfiguration['config']['eval'], 'password')) {

@@ -283,6 +283,10 @@
 				<source>Could not call the CLI dispatcher on foreign because of an unexpected error.</source>
 				<target state="translated">Der CLI dispatcher konnte auf dem entfernten System aufgrund eines unbekannten Fehlers nicht aufgerufen werden.</target>
 			</trans-unit>
+			<trans-unit id="application.foreign_cli_dispatcher_wrong_path">
+				<source>Could not call the CLI dispatcher on foreign. Please configure "foreign.dispatcher" correctly.</source>
+				<target state="translated">Der CLI dispatcher konnte auf dem entfernten System nicht aufgerufen werden. Die Option "foreign.dispatcher" muss korrekt konfiguriert werden.</target>
+			</trans-unit>
 			<trans-unit id="application.foreign_cli_dispatcher_error_message">
 				<source>The call to the dispatcher returned following message:</source>
 				<target state="translated">Der Aufruf des Dispatcher gab folgenden Nachricht zurück:</target>
@@ -412,6 +416,17 @@
 			<trans-unit id="fal.case_sensitivity_mismatch">
 				<source>Case sensitivity errors detected.</source>
 				<target state="translated">Probleme mit Beachtung der Groß- Kleinschreibung entdeckt.</target>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Fal\DefaultStorageIsConfiguredTest -->
+
+			<trans-unit id="fal.default_storage.configured">
+				<source>A FAL storage has been marked as default.</source>
+				<target state="translated">Eine FAL-Storage wurde als Standard markiert.</target>
+			</trans-unit>
+			<trans-unit id="fal.default_storage.missing">
+				<source>The default storage could not be detected, because no file storage is marked as default.</source>
+				<target state="translated">Die Standard-FAL-Storage konnte nicht identifiziert werden, da keine als Standard markiert ist.</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Fal\IdenticalDriverTest -->

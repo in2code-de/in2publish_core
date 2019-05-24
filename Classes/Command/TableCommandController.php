@@ -84,6 +84,8 @@ class TableCommandController extends AbstractCommandController
      *
      *      Copies a complete table from stage to production and overwrites all old entries!
      *
+     * @param string $tableName
+     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function publishCommand(string $tableName)
@@ -135,6 +137,7 @@ class TableCommandController extends AbstractCommandController
      *
      *      Copies a complete table from production to stage and overwrites all old entries!
      *
+     * @param string $tableName
      * @throws Exception
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
@@ -167,7 +170,7 @@ class TableCommandController extends AbstractCommandController
             $queryResult = $query->select('*')->from($tableName)->execute();
             $this->logger->notice('Successfully truncated table, importing ' . $queryResult->rowCount() . ' rows');
             while ($row = $queryResult->fetch()) {
-                if (($success = $this->insertRow($toDatabase, $tableName, $row)) !== true) {
+                if (($success = $this->insertRow($toDatabase, $tableName, $row)) !== 1) {
                     $this->logger->critical(
                         'Failed to import row into "' . $tableName . '"',
                         [
@@ -183,7 +186,7 @@ class TableCommandController extends AbstractCommandController
     }
 
     /**
-     * Returns TRUE on success or FALSE on failure
+     * Returns the number of affected rows.
      *
      * @param Connection $connection
      * @param string $tableName
@@ -199,7 +202,7 @@ class TableCommandController extends AbstractCommandController
      * Returns TRUE on success or FALSE on failure
      *
      * @param Connection $connection
-     * @param $tableName
+     * @param string $tableName
      * @return bool
      */
     protected function truncateTable(Connection $connection, string $tableName): bool
@@ -211,6 +214,7 @@ class TableCommandController extends AbstractCommandController
     /**
      * Stores a backup of the complete local table into the configured directory
      *
+     * @param string $tableName
      * @throws Exception
      *
      * @SuppressWarnings(PHPMD.StaticAccess)

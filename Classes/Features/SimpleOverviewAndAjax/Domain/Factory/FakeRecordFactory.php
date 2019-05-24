@@ -210,7 +210,7 @@ class FakeRecordFactory
         $tcaTable = $this->tcaService->getConfigurationArrayForTable($tableName);
         if (!empty($tcaTable['ctrl']['delete'])) {
             $properties = $this->tableCacheRepository->findByUid($tableName, $pageIdentifier, $databaseName);
-            return $properties[$tcaTable['ctrl']['delete']] === '1';
+            return $properties[$tcaTable['ctrl']['delete']] === 1;
         }
         return false;
     }

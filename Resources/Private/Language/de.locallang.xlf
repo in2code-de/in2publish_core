@@ -232,10 +232,6 @@
 				<source>Overview</source>
 				<target state="translated">Übersicht</target>
 			</trans-unit>
-			<trans-unit id="module.m4.overview.logLevel">
-				<source>Loglevel</source>
-				<target state="translated">Logging Ebene</target>
-			</trans-unit>
 			<trans-unit id="module.m4.filter">
 				<source>Filter</source>
 				<target state="translated">Filter</target>
