@@ -112,6 +112,7 @@ use function trim;
 class CommonRepository extends BaseRepository
 {
     const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)~';
+    const SIGNAL_RELATION_RESOLVER_RTE = 'relationResolverRTE';
 
     /**
      * @var RecordFactory
@@ -613,6 +614,11 @@ class CommonRepository extends BaseRepository
                 }
             }
         }
+        $this->signalSlotDispatcher->dispatch(
+            CommonRepository::class,
+            self::SIGNAL_RELATION_RESOLVER_RTE,
+            [$this, $bodyText, $excludedTableNames, &$relatedRecords]
+        );
         // Filter probable null values (e.g. the page linked in the TYPO3 URN is the page currently in enrichment mode)
         return array_filter($relatedRecords);
     }
