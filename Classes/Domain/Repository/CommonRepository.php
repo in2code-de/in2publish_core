@@ -865,8 +865,9 @@ class CommonRepository extends BaseRepository
     {
         foreach ($flexFormDefinition as $key => $config) {
             if (empty($config['type'])
-                || !(in_array($config['type'], ['select', 'group', 'inline'])
-                     || ($config['type'] === 'input' && !empty($config['wizards'])))
+                // Treat input and text always as field with relation because we can't access defaultExtras
+                // settings here and better assume it's a RTE field
+                || !in_array($config['type'], ['select', 'group', 'inline', 'input', 'text'])
             ) {
                 unset($flexFormDefinition[$key]);
             }
@@ -1034,6 +1035,8 @@ class CommonRepository extends BaseRepository
             case 'group':
                 $records = $this->fetchRelatedRecordsByGroup($config, $record, $column, $exclTables, $flexFormData);
                 break;
+            case 'text':
+                // input and text are both treated as RTE
             case 'input':
                 if (is_string($flexFormData)) {
                     $records = $this->fetchRelatedRecordsByRte($flexFormData, $exclTables);
