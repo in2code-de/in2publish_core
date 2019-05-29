@@ -910,6 +910,13 @@ class CommonRepository extends BaseRepository
         $workingData = $data;
         while ($index = array_shift($indexStack)) {
             if ($index === '[ANY]') {
+                if (!is_array($workingData)) {
+                    // $workingData is unpacked by the else part and can be any data type.
+                    // If th index is [ANY] $workingData is expected to be an array.
+                    // TYPO3 saves empty arrays as non self-closing <el> xml tags whose value parses to string,
+                    // not back to empty arrays, that's why values can be string instead of array.
+                    return null;
+                }
                 foreach ($workingData as $subtreeIndex => $subtreeWorkingData) {
                     unset($workingData[$subtreeIndex]);
                     $tmp = $pathStack;
