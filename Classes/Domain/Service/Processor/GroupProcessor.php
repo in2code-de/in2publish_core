@@ -39,6 +39,7 @@ class GroupProcessor extends AbstractProcessor
     const INTERNAL_TYPE = 'internal_type';
     const INTERNAL_TYPE_DB = 'db';
     const INTERNAL_TYPE_FILE = 'file';
+    const INTERNAL_TYPE_FILE_REFERENCE = 'file_reference';
     const ALLOWED = 'allowed';
     const UPLOAD_FOLDER = 'uploadfolder';
 
@@ -93,6 +94,9 @@ class GroupProcessor extends AbstractProcessor
         } elseif ($internalType === static::INTERNAL_TYPE_FILE) {
             return $this->canPreProcessInternalTypeFile($config);
         }
+        else if($internalType === static::INTERNAL_TYPE_FILE_REFERENCE) {
+            return $this->canPreProcessInternalTypeFileReference($config);
+        }
 
         $this->lastReasons[static::INTERNAL_TYPE] = 'The internal type "' . $internalType . '" is not supported';
         return false;
@@ -107,7 +111,21 @@ class GroupProcessor extends AbstractProcessor
     {
         if (empty($config[static::UPLOAD_FOLDER])) {
             $this->lastReasons[static::INTERNAL_TYPE] =
-                'group internal type file without "uploadfolder" can not be resolved';
+                'The internal type "' . static::INTERNAL_TYPE_FILE . '" is missing an "uploadfolder" and can not be resolved';
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @param array $config
+     * @return bool
+     */
+    protected function canPreProcessInternalTypeFileReference(array $config)
+    {
+        if (false === empty($config[static::UPLOAD_FOLDER])) {
+            $this->lastReasons[static::INTERNAL_TYPE] =
+                'The internal type "' . static::INTERNAL_TYPE_FILE_REFERENCE . '" has an unwanted "uploadfolder" and can not be resolved';
             return false;
         }
         return true;
