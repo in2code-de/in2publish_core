@@ -1573,12 +1573,7 @@ class CommonRepository extends BaseRepository
         $foreignField = $columnConfiguration['foreign_field'];
 
         $records = $this->convertPropertyArraysToRecords(
-            $this->findPropertiesByProperty(
-                $this->localDatabase,
-                $foreignField,
-                $recordIdentifier,
-                $whereClause
-            ),
+            $this->findPropertiesByProperty($this->localDatabase, $foreignField, $recordIdentifier, $whereClause),
             $this->findPropertiesByProperty($this->foreignDatabase, $foreignField, $recordIdentifier, $whereClause)
         );
 
