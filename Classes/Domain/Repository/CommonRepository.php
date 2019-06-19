@@ -1597,7 +1597,6 @@ class CommonRepository extends BaseRepository
     ): array {
         if (!empty($columnConfiguration['foreign_field'])
             || !empty($columnConfiguration['foreign_selector'])
-            || !empty($columnConfiguration['foreign_record_defaults'])
             || !empty($columnConfiguration['filter'])
             || !empty($columnConfiguration['foreign_types'])
             || !empty($columnConfiguration['foreign_types'])
@@ -1605,7 +1604,7 @@ class CommonRepository extends BaseRepository
         ) {
             $this->logger->error(
                 'Inline MM relations with foreign_field, foreign_types, symmetric_field, filter, '
-                . 'foreign_table_field, foreign_record_defaults or foreign_selector are not supported',
+                . 'foreign_table_field or foreign_selector are not supported',
                 [
                     'columnConfiguration' => $columnConfiguration,
                     'recordTableName' => $recordTableName,
