@@ -452,8 +452,9 @@ class CommonRepository extends BaseRepository
                     $relatedRecords = $this->fetchRelatedRecordsByInline(
                         $columnConfiguration,
                         $recordTableName,
-                        $record->getIdentifier(),
-                        $excludedTableNames
+                        $record,
+                        $excludedTableNames,
+                        $propertyName
                     );
                     break;
                 case 'group':
@@ -1043,7 +1044,7 @@ class CommonRepository extends BaseRepository
                 $records = $this->fetchRelatedRecordsBySelect($config, $record, $flexFormData, $exclTables, true);
                 break;
             case 'inline':
-                $records = $this->fetchRelatedRecordsByInline($config, $recTable, $recordId, $exclTables);
+                $records = $this->fetchRelatedRecordsByInline($config, $recTable, $record, $exclTables, $column);
                 break;
             case 'group':
                 $records = $this->fetchRelatedRecordsByGroup($config, $record, $column, $exclTables, $flexFormData);
@@ -1134,11 +1135,7 @@ class CommonRepository extends BaseRepository
                         $records = array_merge(
                             $records,
                             $this->convertPropertyArraysToRecords(
-                                $this->findPropertiesByProperty(
-                                    $this->localDatabase,
-                                    'uid',
-                                    $identifier
-                                ),
+                                $this->findPropertiesByProperty($this->localDatabase, 'uid', $identifier),
                                 $this->findPropertiesByProperty($this->foreignDatabase, 'uid', $identifier)
                             )
                         );
@@ -1522,18 +1519,20 @@ class CommonRepository extends BaseRepository
      *
      * @param array $columnConfiguration
      * @param string $recordTableName
-     * @param int $recordIdentifier
+     * @param RecordInterface $record
      * @param array $excludedTableNames
+     * @param string $propertyName
      *
      * @return array
-     * @throws Exception
      */
     protected function fetchRelatedRecordsByInline(
         array $columnConfiguration,
         $recordTableName,
-        $recordIdentifier,
-        array $excludedTableNames
+        RecordInterface $record,
+        array $excludedTableNames,
+        string $propertyName
     ): array {
+        $recordIdentifier = $record->getIdentifier();
         $tableName = $columnConfiguration['foreign_table'];
         if (in_array($tableName, $excludedTableNames)) {
             return [];
@@ -1568,6 +1567,19 @@ class CommonRepository extends BaseRepository
         $whereClause = '';
         if (!empty($where)) {
             $whereClause = ' AND ' . implode(' AND ', $where);
+        }
+
+        if (empty($columnConfiguration['foreign_field'])) {
+            $records = [];
+            $localList = $record->getLocalProperty($propertyName);
+            $localList = GeneralUtility::trimExplode(',', $localList, true);
+            $foreignList = $record->getForeignProperty($propertyName);
+            $foreignList = GeneralUtility::trimExplode(',', $foreignList, true);
+            $identifierList = array_unique(array_merge($localList, $foreignList));
+            foreach ($identifierList as $uid) {
+                $records[] = $this->findByIdentifier($uid);
+            }
+            return $records;
         }
 
         $foreignField = $columnConfiguration['foreign_field'];
