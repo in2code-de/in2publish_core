@@ -617,11 +617,31 @@ class CommonRepository extends BaseRepository
                 }
             }
         }
-        $this->signalSlotDispatcher->dispatch(
-            CommonRepository::class,
-            self::SIGNAL_RELATION_RESOLVER_RTE,
-            [$this, $bodyText, $excludedTableNames, &$relatedRecords]
-        );
+        try {
+            $this->signalSlotDispatcher->dispatch(
+                CommonRepository::class,
+                self::SIGNAL_RELATION_RESOLVER_RTE,
+                [$this, $bodyText, $excludedTableNames, &$relatedRecords]
+            );
+        } catch (InvalidSlotException $e) {
+            $this->logger->error(
+                'Exception during signal dispatching',
+                [
+                    'exception' => $e,
+                    'signalClass' => CommonRepository::class,
+                    'signalName' => self::SIGNAL_RELATION_RESOLVER_RTE,
+                ]
+            );
+        } catch (InvalidSlotReturnException $e) {
+            $this->logger->error(
+                'Exception during signal dispatching',
+                [
+                    'exception' => $e,
+                    'signalClass' => CommonRepository::class,
+                    'signalName' => self::SIGNAL_RELATION_RESOLVER_RTE,
+                ]
+            );
+        }
         // Filter probable null values (e.g. the page linked in the TYPO3 URN is the page currently in enrichment mode)
         return array_filter($relatedRecords);
     }
