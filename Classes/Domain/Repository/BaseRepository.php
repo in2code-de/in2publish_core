@@ -53,7 +53,7 @@ use function trim;
  */
 abstract class BaseRepository
 {
-    const ADDITIONAL_ORDER_BY_PATTER = '/(?P<where>.*)ORDER BY (?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/i';
+    const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/i';
 
     /**
      * The table name to use for any SELECT, INSERT, UPDATE and DELETE query
@@ -118,7 +118,7 @@ abstract class BaseRepository
             return $propertyArray;
         }
         $sortingField = $this->tcaService->getSortingField($this->tableName);
-        if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTER, $additionalWhere, $matches)) {
+        if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
             $additionalWhere = $matches['where'];
             $orderBy = $matches['col'] . strtoupper($matches['dir'] ?? ' ASC');
         }
