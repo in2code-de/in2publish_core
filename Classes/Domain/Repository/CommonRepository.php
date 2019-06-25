@@ -66,8 +66,6 @@ use function htmlspecialchars_decode;
 use function implode;
 use function in_array;
 use function is_array;
-use function is_file;
-use function is_readable;
 use function is_string;
 use function key;
 use function parse_str;
@@ -597,16 +595,20 @@ class CommonRepository extends BaseRepository
                     switch ($urnParsed['host']) {
                         case 'file':
                             if (isset($data['uid'])) {
-                                $previousTableName = $this->replaceTableName('sys_file');
-                                $relatedRecords[] = $this->findByIdentifier($data['uid']);
-                                $this->tableName = $previousTableName;
+                                if (!in_array('sys_file', $excludedTableNames)) {
+                                    $previousTableName = $this->replaceTableName('sys_file');
+                                    $relatedRecords[] = $this->findByIdentifier($data['uid']);
+                                    $this->tableName = $previousTableName;
+                                }
                             }
                             break;
                         case 'page':
                             if (isset($data['uid'])) {
-                                $previousTableName = $this->replaceTableName('pages');
-                                $relatedRecords[] = $this->findByIdentifier($data['uid']);
-                                $this->tableName = $previousTableName;
+                                if (!in_array('pages', $excludedTableNames)) {
+                                    $previousTableName = $this->replaceTableName('pages');
+                                    $relatedRecords[] = $this->findByIdentifier($data['uid']);
+                                    $this->tableName = $previousTableName;
+                                }
                             }
                             break;
                         default:
@@ -615,11 +617,31 @@ class CommonRepository extends BaseRepository
                 }
             }
         }
-        $this->signalSlotDispatcher->dispatch(
-            CommonRepository::class,
-            self::SIGNAL_RELATION_RESOLVER_RTE,
-            [$this, $bodyText, $excludedTableNames, &$relatedRecords]
-        );
+        try {
+            $this->signalSlotDispatcher->dispatch(
+                CommonRepository::class,
+                self::SIGNAL_RELATION_RESOLVER_RTE,
+                [$this, $bodyText, $excludedTableNames, &$relatedRecords]
+            );
+        } catch (InvalidSlotException $e) {
+            $this->logger->error(
+                'Exception during signal dispatching',
+                [
+                    'exception' => $e,
+                    'signalClass' => CommonRepository::class,
+                    'signalName' => self::SIGNAL_RELATION_RESOLVER_RTE,
+                ]
+            );
+        } catch (InvalidSlotReturnException $e) {
+            $this->logger->error(
+                'Exception during signal dispatching',
+                [
+                    'exception' => $e,
+                    'signalClass' => CommonRepository::class,
+                    'signalName' => self::SIGNAL_RELATION_RESOLVER_RTE,
+                ]
+            );
+        }
         // Filter probable null values (e.g. the page linked in the TYPO3 URN is the page currently in enrichment mode)
         return array_filter($relatedRecords);
     }
@@ -649,84 +671,6 @@ class CommonRepository extends BaseRepository
             $this->tableName = $previousTableName;
         }
         return $record;
-    }
-
-    /**
-     * @param RecordInterface $record
-     * @param array $columnConfiguration
-     *
-     * @return string
-     */
-    protected function getFlexFormDefinitionSource(RecordInterface $record, array $columnConfiguration): string
-    {
-        $dsArray = $columnConfiguration['ds'];
-        if (!isset($columnConfiguration['ds_pointerField'])) {
-            return $dsArray['default'];
-        }
-        $pointerFields = GeneralUtility::trimExplode(',', $columnConfiguration['ds_pointerField']);
-        $pointerFieldsCount = count($pointerFields);
-        if ($pointerFieldsCount === 2) {
-            // stage wins! Only use local properties.
-            // Usually "list_type"
-            $firstPointerValue = $record->getLocalProperty($pointerFields[0]);
-            // Usually "CType"
-            $secondPointerValue = $record->getLocalProperty($pointerFields[1]);
-
-            // Intentionally named and used this way (mainly for code sniffer :D)
-            $possibleCombination = 'default';
-
-            $possibleCombinations = [
-                $firstPointerValue . ',' . $secondPointerValue,
-                $firstPointerValue . ',*',
-                '*,' . $secondPointerValue,
-                $firstPointerValue,
-                $possibleCombination,
-            ];
-
-            $definitionSource = null;
-
-            foreach ($possibleCombinations as $possibleCombination) {
-                if (!empty($dsArray[$possibleCombination])) {
-                    $definitionSource = $dsArray[$possibleCombination];
-                    break;
-                }
-            }
-        } elseif ($pointerFieldsCount === 1) {
-            $definitionSource = $dsArray[$record->getLocalProperty($pointerFields[0])];
-        } else {
-            $definitionSource = '';
-        }
-        return (string)$definitionSource;
-    }
-
-    /**
-     * @param string $flexFormSource
-     *
-     * @return string
-     */
-    protected function resolveFlexFormSource($flexFormSource): string
-    {
-        $flexFormString = '';
-        if (!is_string($flexFormSource)) {
-            return $flexFormString;
-        }
-        if (substr($flexFormSource, 0, 5) == 'FILE:') {
-            $flexFormSource = GeneralUtility::getFileAbsFileName(substr($flexFormSource, 5));
-            if (is_file($flexFormSource)) {
-                if (is_readable($flexFormSource)) {
-                    $flexFormString = file_get_contents($flexFormSource);
-                } else {
-                    $this->logger->error('The FlexForm file ' . $flexFormSource . ' is not readable');
-                    return $flexFormString;
-                }
-            } else {
-                $this->logger->error('The FlexForm file ' . $flexFormSource . ' does not exist');
-                return $flexFormString;
-            }
-        } else {
-            $flexFormString = $flexFormSource;
-        }
-        return $flexFormString;
     }
 
     /**
