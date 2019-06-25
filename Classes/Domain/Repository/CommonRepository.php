@@ -597,16 +597,20 @@ class CommonRepository extends BaseRepository
                     switch ($urnParsed['host']) {
                         case 'file':
                             if (isset($data['uid'])) {
-                                $previousTableName = $this->replaceTableName('sys_file');
-                                $relatedRecords[] = $this->findByIdentifier($data['uid']);
-                                $this->tableName = $previousTableName;
+                                if (!in_array('sys_file', $excludedTableNames)) {
+                                    $previousTableName = $this->replaceTableName('sys_file');
+                                    $relatedRecords[] = $this->findByIdentifier($data['uid']);
+                                    $this->tableName = $previousTableName;
+                                }
                             }
                             break;
                         case 'page':
                             if (isset($data['uid'])) {
-                                $previousTableName = $this->replaceTableName('pages');
-                                $relatedRecords[] = $this->findByIdentifier($data['uid']);
-                                $this->tableName = $previousTableName;
+                                if (!in_array('pages', $excludedTableNames)) {
+                                    $previousTableName = $this->replaceTableName('pages');
+                                    $relatedRecords[] = $this->findByIdentifier($data['uid']);
+                                    $this->tableName = $previousTableName;
+                                }
                             }
                             break;
                         default:
