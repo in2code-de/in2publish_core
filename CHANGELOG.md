@@ -1,5 +1,14 @@
 # In2publish Core Change Log
 
+8.2.2:
+
+- [META] Set the EM conf version number to 8.2.2
+- [BUGFIX] Improve the "order by" additional_where regex to support newlines
+- [BUGFIX] Try dispatch the RTE relation resolver signal and log exceptions
+- [CLEANUP] Remove unused methods getFlexFormDefinitionSource and resolveFlexFormSource from CommonRepository
+- [BUGFIX] Respect excludedTableNames when resolving string (RTE) releations
+- [RELEASE] Version 8.2.1 with non-composer mode compat
+
 8.2.1:
 
 - [META] Set the EM conf version number to 8.2.1
