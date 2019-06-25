@@ -1,5 +1,22 @@
 # In2publish Core Change Log
 
+8.2.0:
+
+- [META] Set the EM conf version number to 8.2.0
+- [CLEANUP] Remove duplicate condition from if statement
+- [BUGFIX] Ensure type safety on UID identifier value
+- [BUGFIX] Support inline relations without foreign_field
+- [CLEANUP] Ignore foreign_record_defaults because it was removed in TYPO3 v8
+- [BUGFIX] Fix string concatenation and inline if priority issue
+- [REFACTOR] Remove line breaks from function call
+- [BUGFIX] Use lazy quantifier for TCA marker matching
+- [DOCS] Add a guide to help developers understand and create publishing tasks
+- [BUGFIX] Ignore FlexForm Data that was parsed into wrong data types by TYPO3
+- [META] Set the branch alias version number to 8.2.x-dev
+- [FEATURE] Add signal to enable additional RTE content relation examination
+- [BUGFIX] Support any RTE configuration in FlexForm text/input fields
+- [RELEASE] Version 8.1.1 with test enhancements, type safety and CLI dispatcher autodetect
+
 8.1.1:
 
 - [META] Set the EM conf version number to 8.1.0

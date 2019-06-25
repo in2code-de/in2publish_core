@@ -88,7 +88,7 @@ class ReplaceMarkersService
     {
         if (strstr($string, '###REC_FIELD_')) {
             $string = preg_replace_callback(
-                '~###REC_FIELD_(.*)###~',
+                '~###REC_FIELD_(.*?)###~',
                 function ($matches) use ($record) {
                     $propertyName = $matches[1];
                     $propertyValue = $record->getLocalProperty($propertyName);

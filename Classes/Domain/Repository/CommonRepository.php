@@ -112,6 +112,7 @@ use function trim;
 class CommonRepository extends BaseRepository
 {
     const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)~';
+    const SIGNAL_RELATION_RESOLVER_RTE = 'relationResolverRTE';
 
     /**
      * @var RecordFactory
@@ -451,8 +452,9 @@ class CommonRepository extends BaseRepository
                     $relatedRecords = $this->fetchRelatedRecordsByInline(
                         $columnConfiguration,
                         $recordTableName,
-                        $record->getIdentifier(),
-                        $excludedTableNames
+                        $record,
+                        $excludedTableNames,
+                        $propertyName
                     );
                     break;
                 case 'group':
@@ -613,6 +615,11 @@ class CommonRepository extends BaseRepository
                 }
             }
         }
+        $this->signalSlotDispatcher->dispatch(
+            CommonRepository::class,
+            self::SIGNAL_RELATION_RESOLVER_RTE,
+            [$this, $bodyText, $excludedTableNames, &$relatedRecords]
+        );
         // Filter probable null values (e.g. the page linked in the TYPO3 URN is the page currently in enrichment mode)
         return array_filter($relatedRecords);
     }
@@ -865,8 +872,9 @@ class CommonRepository extends BaseRepository
     {
         foreach ($flexFormDefinition as $key => $config) {
             if (empty($config['type'])
-                || !(in_array($config['type'], ['select', 'group', 'inline'])
-                     || ($config['type'] === 'input' && !empty($config['wizards'])))
+                // Treat input and text always as field with relation because we can't access defaultExtras
+                // settings here and better assume it's a RTE field
+                || !in_array($config['type'], ['select', 'group', 'inline', 'input', 'text'])
             ) {
                 unset($flexFormDefinition[$key]);
             }
@@ -903,6 +911,13 @@ class CommonRepository extends BaseRepository
         $workingData = $data;
         while ($index = array_shift($indexStack)) {
             if ($index === '[ANY]') {
+                if (!is_array($workingData)) {
+                    // $workingData is unpacked by the else part and can be any data type.
+                    // If th index is [ANY] $workingData is expected to be an array.
+                    // TYPO3 saves empty arrays as non self-closing <el> xml tags whose value parses to string,
+                    // not back to empty arrays, that's why values can be string instead of array.
+                    return null;
+                }
                 foreach ($workingData as $subtreeIndex => $subtreeWorkingData) {
                     unset($workingData[$subtreeIndex]);
                     $tmp = $pathStack;
@@ -1029,11 +1044,13 @@ class CommonRepository extends BaseRepository
                 $records = $this->fetchRelatedRecordsBySelect($config, $record, $flexFormData, $exclTables, true);
                 break;
             case 'inline':
-                $records = $this->fetchRelatedRecordsByInline($config, $recTable, $recordId, $exclTables);
+                $records = $this->fetchRelatedRecordsByInline($config, $recTable, $record, $exclTables, $column);
                 break;
             case 'group':
                 $records = $this->fetchRelatedRecordsByGroup($config, $record, $column, $exclTables, $flexFormData);
                 break;
+            case 'text':
+                // input and text are both treated as RTE
             case 'input':
                 if (is_string($flexFormData)) {
                     $records = $this->fetchRelatedRecordsByRte($flexFormData, $exclTables);
@@ -1118,11 +1135,7 @@ class CommonRepository extends BaseRepository
                         $records = array_merge(
                             $records,
                             $this->convertPropertyArraysToRecords(
-                                $this->findPropertiesByProperty(
-                                    $this->localDatabase,
-                                    'uid',
-                                    $identifier
-                                ),
+                                $this->findPropertiesByProperty($this->localDatabase, 'uid', $identifier),
                                 $this->findPropertiesByProperty($this->foreignDatabase, 'uid', $identifier)
                             )
                         );
@@ -1506,18 +1519,20 @@ class CommonRepository extends BaseRepository
      *
      * @param array $columnConfiguration
      * @param string $recordTableName
-     * @param int $recordIdentifier
+     * @param RecordInterface $record
      * @param array $excludedTableNames
+     * @param string $propertyName
      *
      * @return array
-     * @throws Exception
      */
     protected function fetchRelatedRecordsByInline(
         array $columnConfiguration,
         $recordTableName,
-        $recordIdentifier,
-        array $excludedTableNames
+        RecordInterface $record,
+        array $excludedTableNames,
+        string $propertyName
     ): array {
+        $recordIdentifier = $record->getIdentifier();
         $tableName = $columnConfiguration['foreign_table'];
         if (in_array($tableName, $excludedTableNames)) {
             return [];
@@ -1554,15 +1569,23 @@ class CommonRepository extends BaseRepository
             $whereClause = ' AND ' . implode(' AND ', $where);
         }
 
+        if (empty($columnConfiguration['foreign_field'])) {
+            $records = [];
+            $localList = $record->getLocalProperty($propertyName);
+            $localList = GeneralUtility::trimExplode(',', $localList, true);
+            $foreignList = $record->getForeignProperty($propertyName);
+            $foreignList = GeneralUtility::trimExplode(',', $foreignList, true);
+            $identifierList = array_unique(array_merge($localList, $foreignList));
+            foreach ($identifierList as $uid) {
+                $records[] = $this->findByIdentifier((int)$uid);
+            }
+            return $records;
+        }
+
         $foreignField = $columnConfiguration['foreign_field'];
 
         $records = $this->convertPropertyArraysToRecords(
-            $this->findPropertiesByProperty(
-                $this->localDatabase,
-                $foreignField,
-                $recordIdentifier,
-                $whereClause
-            ),
+            $this->findPropertiesByProperty($this->localDatabase, $foreignField, $recordIdentifier, $whereClause),
             $this->findPropertiesByProperty($this->foreignDatabase, $foreignField, $recordIdentifier, $whereClause)
         );
 
@@ -1586,15 +1609,13 @@ class CommonRepository extends BaseRepository
     ): array {
         if (!empty($columnConfiguration['foreign_field'])
             || !empty($columnConfiguration['foreign_selector'])
-            || !empty($columnConfiguration['foreign_record_defaults'])
             || !empty($columnConfiguration['filter'])
-            || !empty($columnConfiguration['foreign_types'])
             || !empty($columnConfiguration['foreign_types'])
             || !empty($columnConfiguration['foreign_table_field'])
         ) {
             $this->logger->error(
                 'Inline MM relations with foreign_field, foreign_types, symmetric_field, filter, '
-                . 'foreign_table_field, foreign_record_defaults or foreign_selector are not supported',
+                . 'foreign_table_field or foreign_selector are not supported',
                 [
                     'columnConfiguration' => $columnConfiguration,
                     'recordTableName' => $recordTableName,

@@ -37,17 +37,11 @@ class InlineProcessor extends AbstractProcessor
     const FOREIGN_FIELD = 'foreign_field';
     const FOREIGN_MATCH_FIELDS = 'foreign_match_fields';
     const FOREIGN_TABLE_FIELD = 'foreign_table_field';
-    const MM = 'MM';
 
     /**
      * @var bool
      */
     protected $canHoldRelations = true;
-
-    /**
-     * @var array
-     */
-    protected $forbidden = [];
 
     /**
      * @var array
@@ -65,21 +59,4 @@ class InlineProcessor extends AbstractProcessor
         self::FOREIGN_TABLE_FIELD,
         self::MM,
     ];
-
-    /**
-     * @param array $config
-     * @return bool
-     */
-    public function canPreProcess(array $config): bool
-    {
-        parent::canPreProcess($config);
-        if (array_key_exists(static::MM, $config) && array_key_exists(static::FOREIGN_FIELD, $config)) {
-            $this->lastReasons[static::FOREIGN_FIELD] = 'foreign_field is not allowed here because of a given MM table';
-        }
-        if (!(array_key_exists(static::MM, $config) || array_key_exists(static::FOREIGN_FIELD, $config))) {
-            $this->lastReasons[static::FOREIGN_FIELD] = 'foreign_field or MM table must be set for type "inline"';
-        }
-
-        return empty($this->lastReasons);
-    }
 }

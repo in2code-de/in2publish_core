@@ -73,7 +73,7 @@ class PublishTasksRunnerCommandController extends AbstractCommandController
         foreach ($tasksToExecute as $task) {
             try {
                 $success = $task->execute();
-                $result[] = 'Task ' . $task->getUid() . $success ? ' was executed successfully' : ' failed';
+                $result[] = 'Task ' . $task->getUid() . ($success ? ' was executed successfully' : ' failed');
                 $result[] = $task->getMessages();
             } catch (Throwable $e) {
                 $result[] = $e->getMessage();
