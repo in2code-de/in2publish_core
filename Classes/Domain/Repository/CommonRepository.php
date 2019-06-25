@@ -1577,7 +1577,7 @@ class CommonRepository extends BaseRepository
             $foreignList = GeneralUtility::trimExplode(',', $foreignList, true);
             $identifierList = array_unique(array_merge($localList, $foreignList));
             foreach ($identifierList as $uid) {
-                $records[] = $this->findByIdentifier($uid);
+                $records[] = $this->findByIdentifier((int)$uid);
             }
             return $records;
         }
