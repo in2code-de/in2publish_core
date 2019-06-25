@@ -1611,7 +1611,6 @@ class CommonRepository extends BaseRepository
             || !empty($columnConfiguration['foreign_selector'])
             || !empty($columnConfiguration['filter'])
             || !empty($columnConfiguration['foreign_types'])
-            || !empty($columnConfiguration['foreign_types'])
             || !empty($columnConfiguration['foreign_table_field'])
         ) {
             $this->logger->error(
