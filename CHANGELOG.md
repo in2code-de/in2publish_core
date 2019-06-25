@@ -1,5 +1,11 @@
 # In2publish Core Change Log
 
+8.2.1:
+
+- [META] Set the EM conf version number to 8.2.1
+- [BUGFIX] Check if the constant TYPO3_COMPOSER_MODE exists before acessing it
+- [RELEASE] Version 8.2.0 with new signal, better RTE and inline-relation support
+
 8.2.0:
 
 - [META] Set the EM conf version number to 8.2.0
