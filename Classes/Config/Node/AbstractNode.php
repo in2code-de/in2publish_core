@@ -131,8 +131,6 @@ abstract class AbstractNode implements Node
     }
 
     /**
-     * TODO: use "..." when available for GeneralUtility::makeInstance
-     *
      * @param ValidationContainer $container
      * @param $value
      */
@@ -146,7 +144,7 @@ abstract class AbstractNode implements Node
             } else {
                 continue;
             }
-            $validator = call_user_func_array([GeneralUtility::class, 'makeInstance'], $args);
+            $validator = GeneralUtility::makeInstance(...$args);
             if ($validator instanceof ValidatorInterface) {
                 $validator->validate($container, $value[$this->name]);
             }
