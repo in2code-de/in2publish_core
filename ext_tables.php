@@ -37,7 +37,6 @@ call_user_func(
 
         /*********************************** register basic command controllers ***********************************/
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \In2code\In2publishCore\Command\StatusCommandController::class;
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \In2code\In2publishCore\Command\EnvironmentCommandController::class;
         $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = \In2code\In2publishCore\Command\TableCommandController::class;
 
 

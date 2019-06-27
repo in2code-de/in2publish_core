@@ -64,12 +64,6 @@ Got to "System Preferences" -> "Sharing" -> enable "Remote Login"
 Older versions of OS X:
 Go to "System Preferences" -> "Internet & Networking" -> "Sharing" -> enable "Remote Login"
 
-## Can i use files with umlauts and special characters?
-
-No.
-Since file names will be passed as arguments on the command line and we are very strict about that for safety reasons, we support only file and folder names that are accepted by TYPO3 when the option `UTF8filesystem` is set to false.
-You can convert your existing files with the EnvironmentCommandController.
-
 ## How can i publish content from Live to Stage?
 
 You can't (kind of).

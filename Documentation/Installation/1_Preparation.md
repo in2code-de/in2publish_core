@@ -89,11 +89,6 @@ Appendix to `Environment variable`:
 
 > This line is optional (on foreign), since `IN2PUBLISH_CONTEXT` defaults to `Foreign`
 
-## TYPO3 Requirements
-
-Your TYPO3 installation must not use the `UTF8filesystem` option.
-If you currently use that feature set `$GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'] = false` and run the rewrite commands from the EnvironmentCommandController to convert all umlauts and special characters.
-
 ## How to create the Public and Private Key pair
 
 Hint:
