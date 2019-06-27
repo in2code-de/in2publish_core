@@ -11,7 +11,7 @@
 	"license": "GPL-3.0-or-later",
 	"require": {
 		"php": "^7.0",
-		"typo3/cms-core": "^8.7.0 || ^9.5.0"
+		"typo3/cms-core": "^9.5.0 || ^10.0"
 	},
 	"require-dev": {
 		"typo3/testing-framework": "^4.13",
