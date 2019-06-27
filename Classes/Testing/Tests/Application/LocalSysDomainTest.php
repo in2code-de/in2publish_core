@@ -38,7 +38,6 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_column;
 use function array_merge;
-use function version_compare;
 
 /**
  * Class LocalSysDomainTest
@@ -69,55 +68,11 @@ class LocalSysDomainTest implements TestCaseInterface
      */
     public function run(): TestResult
     {
-        if (version_compare(TYPO3_branch, '9.3', '>=')) {
-            $statement = $this->localConnection->select(
-                ['uid'],
-                'pages',
-                ['is_siteroot' => '1', 'sys_language_uid' => '0']
-            );
-            if (!$statement->execute()) {
-                return new TestResult('application.local_sites_query_error', TestResult::ERROR);
-            }
-            $pageIds = array_column($statement->fetchAll(PDO::FETCH_ASSOC), 'uid');
-            if (empty($pageIds)) {
-                return new TestResult('application.no_local_sites_found', TestResult::WARNING);
-            }
-
-            $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
-
-            $results = [];
-            foreach ($pageIds as $pageId) {
-                $domainType = self::DOMAIN_TYPE_NONE;
-
-                try {
-                    $siteFinder->getSiteByRootPageId($pageId);
-                    $domainType = self::DOMAIN_TYPE_SITE;
-                } catch (SiteNotFoundException $exception) {
-                    if (0 < $this->localConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
-                        $domainType = self::DOMAIN_TYPE_LEGACY;
-                    }
-                }
-
-                $results[$domainType][] = $pageId;
-            }
-
-            $messages = $this->getMessagesForSitesWithoutDomain($results);
-            $messages = array_merge($messages, $this->getMessagesForSitesWithSysDomain($results));
-            $messages = array_merge($messages, $this->getMessagesForSitesWithConfig($results));
-
-            if (!empty($results[self::DOMAIN_TYPE_NONE])) {
-                return new TestResult('application.local_sites_config_missing', TestResult::ERROR, $messages);
-            }
-
-            if (!empty($results[self::DOMAIN_TYPE_LEGACY])) {
-                return new TestResult('application.local_sites_config_legacy', TestResult::WARNING, $messages);
-            }
-
-            return new TestResult('application.local_sites_config', TestResult::OK, $messages);
-        }
-
-        // TYPO3 v8 or lower
-        $statement = $this->localConnection->select(['uid'], 'pages', ['is_siteroot' => '1']);
+        $statement = $this->localConnection->select(
+            ['uid'],
+            'pages',
+            ['is_siteroot' => '1', 'sys_language_uid' => '0']
+        );
         if (!$statement->execute()) {
             return new TestResult('application.local_sites_query_error', TestResult::ERROR);
         }
@@ -126,12 +81,37 @@ class LocalSysDomainTest implements TestCaseInterface
             return new TestResult('application.no_local_sites_found', TestResult::WARNING);
         }
 
+        $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+
+        $results = [];
         foreach ($pageIds as $pageId) {
-            if (0 === $this->localConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
-                return new TestResult('application.local_sys_domain_missing', TestResult::ERROR);
+            $domainType = self::DOMAIN_TYPE_NONE;
+
+            try {
+                $siteFinder->getSiteByRootPageId($pageId);
+                $domainType = self::DOMAIN_TYPE_SITE;
+            } catch (SiteNotFoundException $exception) {
+                if (0 < $this->localConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
+                    $domainType = self::DOMAIN_TYPE_LEGACY;
+                }
             }
+
+            $results[$domainType][] = $pageId;
         }
-        return new TestResult('application.local_sys_domain_configured');
+
+        $messages = $this->getMessagesForSitesWithoutDomain($results);
+        $messages = array_merge($messages, $this->getMessagesForSitesWithSysDomain($results));
+        $messages = array_merge($messages, $this->getMessagesForSitesWithConfig($results));
+
+        if (!empty($results[self::DOMAIN_TYPE_NONE])) {
+            return new TestResult('application.local_sites_config_missing', TestResult::ERROR, $messages);
+        }
+
+        if (!empty($results[self::DOMAIN_TYPE_LEGACY])) {
+            return new TestResult('application.local_sites_config_legacy', TestResult::WARNING, $messages);
+        }
+
+        return new TestResult('application.local_sites_config', TestResult::OK, $messages);
     }
 
     /**

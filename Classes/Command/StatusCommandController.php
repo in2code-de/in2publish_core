@@ -40,7 +40,6 @@ use function array_column;
 use function base64_encode;
 use function json_encode;
 use function serialize;
-use function version_compare;
 
 /**
  * Class StatusCommandController (always enabled)
@@ -74,9 +73,7 @@ class StatusCommandController extends AbstractCommandController
         $this->globalConfigurationCommand();
         $this->typo3VersionCommand();
         $this->dbInitQueryEncodedCommand();
-        if (version_compare(TYPO3_branch, '9.3', '>=')) {
-            $this->shortSiteConfigurationCommand();
-        }
+        $this->shortSiteConfigurationCommand();
     }
 
     /**
@@ -161,19 +158,15 @@ class StatusCommandController extends AbstractCommandController
      */
     public function shortSiteConfigurationCommand()
     {
-        if (version_compare(TYPO3_branch, '9.3', '>=')) {
-            $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
-            $shortInfo = [];
-            foreach ($siteFinder->getAllSites() as $site) {
-                $shortInfo[$site->getIdentifier()] = [
-                    'base' => $site->getBase()->__toString(),
-                    'rootPageId' => $site->getRootPageId(),
-                ];
-            }
-            $this->outputLine('ShortSiteConfig: ' . base64_encode(json_encode($shortInfo)));
-        } else {
-            $this->outputLine('Site configurations do not exist in TYPO3 v8');
+        $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+        $shortInfo = [];
+        foreach ($siteFinder->getAllSites() as $site) {
+            $shortInfo[$site->getIdentifier()] = [
+                'base' => $site->getBase()->__toString(),
+                'rootPageId' => $site->getRootPageId(),
+            ];
         }
+        $this->outputLine('ShortSiteConfig: ' . base64_encode(json_encode($shortInfo)));
     }
 
     /**
@@ -183,17 +176,13 @@ class StatusCommandController extends AbstractCommandController
      */
     public function siteConfigurationCommand(int $pageId)
     {
-        if (version_compare(TYPO3_branch, '9.3', '>=')) {
-            $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
-            try {
-                $site = $siteFinder->getSiteByPageId($pageId);
-            } catch (SiteNotFoundException $e) {
-                $this->sendAndExit(static::EXIT_NO_SITE);
-            }
-            $this->outputLine('Site: ' . base64_encode(serialize($site)));
-        } else {
-            $this->outputLine('Site configurations do not exist in TYPO3 v8');
+        $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+        try {
+            $site = $siteFinder->getSiteByPageId($pageId);
+        } catch (SiteNotFoundException $e) {
+            $this->sendAndExit(static::EXIT_NO_SITE);
         }
+        $this->outputLine('Site: ' . base64_encode(serialize($site)));
     }
 
     /**

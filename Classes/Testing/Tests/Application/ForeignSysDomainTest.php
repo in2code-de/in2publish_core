@@ -43,7 +43,6 @@ use function array_column;
 use function array_merge;
 use function base64_decode;
 use function json_decode;
-use function version_compare;
 
 /**
  * Class ForeignSysDomainTest
@@ -83,75 +82,11 @@ class ForeignSysDomainTest implements TestCaseInterface
      */
     public function run(): TestResult
     {
-        if (version_compare(TYPO3_branch, '9.3', '>=')) {
-            $statement = $this->foreignConnection->select(
-                ['uid'],
-                'pages',
-                ['is_siteroot' => '1', 'sys_language_uid' => '0']
-            );
-            if (!$statement->execute()) {
-                return new TestResult('application.foreign_sites_query_error');
-            }
-            $pageIds = array_column($statement->fetchAll(PDO::FETCH_ASSOC), 'uid');
-            if (empty($pageIds)) {
-                return new TestResult('application.no_foreign_sites_found', TestResult::WARNING);
-            }
-            try {
-                $shortSiteConfig = $this->getForeignSiteConfig();
-            } catch (ForeignSiteConfigUnavailableException $exception) {
-                return new TestResult(
-                    'application.foreign_site_config_error',
-                    TestResult::ERROR,
-                    [
-                        'error' => $exception->getErrorString(),
-                        'ouput' => $exception->getOutputString(),
-                        'status' => (string)$exception->getExitStatus(),
-                    ]
-                );
-            }
-
-            $pageIdToBaseMapping = array_combine(
-                array_column($shortSiteConfig, 'rootPageId'),
-                array_column($shortSiteConfig, 'base')
-            );
-
-            $results = [];
-            foreach ($pageIds as $pageId) {
-                $domainType = 'none';
-                if (isset($pageIdToBaseMapping[$pageId])) {
-                    if ($pageIdToBaseMapping[$pageId] === '/') {
-                        $domainType = self::DOMAIN_TYPE_SLASH_BASE;
-                    } else {
-                        $domainType = self::DOMAIN_TYPE_SITE;
-                    }
-                } elseif (0 < $this->foreignConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
-                    $domainType = self::DOMAIN_TYPE_LEGACY;
-                }
-                $results[$domainType][] = $pageId;
-            }
-
-            $messages = $this->getMessagesForSitesWithoutDomain($results);
-            $messages = array_merge($messages, $this->getMessagesForSitesWithSlashBase($results));
-            $messages = array_merge($messages, $this->getMessagesForSitesWithSysDomain($results));
-            $messages = array_merge($messages, $this->getMessagesForSitesWithConfig($results));
-
-            if (!empty($results[self::DOMAIN_TYPE_NONE])) {
-                return new TestResult('application.foreign_sites_config_missing', TestResult::ERROR, $messages);
-            }
-
-            if (!empty($results[self::DOMAIN_TYPE_SLASH_BASE])) {
-                return new TestResult('application.foreign_site_config_slash', TestResult::ERROR, $messages);
-            }
-
-            if (!empty($results[self::DOMAIN_TYPE_LEGACY])) {
-                return new TestResult('application.foreign_sites_config_legacy', TestResult::WARNING, $messages);
-            }
-
-            return new TestResult('application.foreign_sites_config', TestResult::OK, $messages);
-        }
-
-        // TYPO3 v8 or lower
-        $statement = $this->foreignConnection->select(['uid'], 'pages', ['is_siteroot' => '1']);
+        $statement = $this->foreignConnection->select(
+            ['uid'],
+            'pages',
+            ['is_siteroot' => '1', 'sys_language_uid' => '0']
+        );
         if (!$statement->execute()) {
             return new TestResult('application.foreign_sites_query_error');
         }
@@ -159,12 +94,58 @@ class ForeignSysDomainTest implements TestCaseInterface
         if (empty($pageIds)) {
             return new TestResult('application.no_foreign_sites_found', TestResult::WARNING);
         }
-        foreach ($pageIds as $pageId) {
-            if (0 === $this->foreignConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
-                return new TestResult('application.foreign_sys_domain_missing', TestResult::ERROR);
-            }
+        try {
+            $shortSiteConfig = $this->getForeignSiteConfig();
+        } catch (ForeignSiteConfigUnavailableException $exception) {
+            return new TestResult(
+                'application.foreign_site_config_error',
+                TestResult::ERROR,
+                [
+                    'error' => $exception->getErrorString(),
+                    'ouput' => $exception->getOutputString(),
+                    'status' => (string)$exception->getExitStatus(),
+                ]
+            );
         }
-        return new TestResult('application.foreign_sys_domain_configured');
+
+        $pageIdToBaseMapping = array_combine(
+            array_column($shortSiteConfig, 'rootPageId'),
+            array_column($shortSiteConfig, 'base')
+        );
+
+        $results = [];
+        foreach ($pageIds as $pageId) {
+            $domainType = 'none';
+            if (isset($pageIdToBaseMapping[$pageId])) {
+                if ($pageIdToBaseMapping[$pageId] === '/') {
+                    $domainType = self::DOMAIN_TYPE_SLASH_BASE;
+                } else {
+                    $domainType = self::DOMAIN_TYPE_SITE;
+                }
+            } elseif (0 < $this->foreignConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
+                $domainType = self::DOMAIN_TYPE_LEGACY;
+            }
+            $results[$domainType][] = $pageId;
+        }
+
+        $messages = $this->getMessagesForSitesWithoutDomain($results);
+        $messages = array_merge($messages, $this->getMessagesForSitesWithSlashBase($results));
+        $messages = array_merge($messages, $this->getMessagesForSitesWithSysDomain($results));
+        $messages = array_merge($messages, $this->getMessagesForSitesWithConfig($results));
+
+        if (!empty($results[self::DOMAIN_TYPE_NONE])) {
+            return new TestResult('application.foreign_sites_config_missing', TestResult::ERROR, $messages);
+        }
+
+        if (!empty($results[self::DOMAIN_TYPE_SLASH_BASE])) {
+            return new TestResult('application.foreign_site_config_slash', TestResult::ERROR, $messages);
+        }
+
+        if (!empty($results[self::DOMAIN_TYPE_LEGACY])) {
+            return new TestResult('application.foreign_sites_config_legacy', TestResult::WARNING, $messages);
+        }
+
+        return new TestResult('application.foreign_sites_config', TestResult::OK, $messages);
     }
 
     /**

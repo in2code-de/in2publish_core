@@ -202,12 +202,6 @@
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\LocalSysDomainTest -->
 
-			<trans-unit id="application.local_sys_domain_missing">
-				<source>No valid sys_domain entry has been found on the local system.</source>
-			</trans-unit>
-			<trans-unit id="application.local_sys_domain_configured">
-				<source>A valid sys_domain entry has been found on the local system.</source>
-			</trans-unit>
 			<trans-unit id="application.local_sites_config_missing">
 				<source>One or more root pages are missing their site configuration and have no sys_domain entry.</source>
 			</trans-unit>
@@ -295,12 +289,6 @@
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignSysDomainTest -->
 
-			<trans-unit id="application.foreign_sys_domain_missing">
-				<source>No valid sys_domain entry has been found on the foreign system.</source>
-			</trans-unit>
-			<trans-unit id="application.foreign_sys_domain_configured">
-				<source>A valid sys_domain entry has been found on the foreign system.</source>
-			</trans-unit>
 			<trans-unit id="application.no_foreign_sites_found">
 				<source>No root pages have been found on the foreign system.</source>
 			</trans-unit>

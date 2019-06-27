@@ -42,7 +42,6 @@ use function array_shift;
 use function ltrim;
 use function rtrim;
 use function trim;
-use function version_compare;
 
 /**
  * Class DomainService
@@ -121,34 +120,32 @@ class DomainService
         string $stagingLevel,
         bool $addProtocol
     ): string {
-        if (version_compare(TYPO3_branch, '9.3', '>=')) {
-            if ($stagingLevel === self::LEVEL_LOCAL) {
-                $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
-                try {
-                    $site = $siteFinder->getSiteByPageId($pageIdentifier);
-                } catch (SiteNotFoundException $e) {
-                }
-            } else {
-                $foreignSiteFinder = GeneralUtility::makeInstance(ForeignSiteFinder::class);
-                try {
-                    $site = $foreignSiteFinder->getSiteBaseByPageId($pageIdentifier);
-                } catch (SiteNotFoundException $e) {
+        if ($stagingLevel === self::LEVEL_LOCAL) {
+            $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+            try {
+                $site = $siteFinder->getSiteByPageId($pageIdentifier);
+            } catch (SiteNotFoundException $e) {
+            }
+        } else {
+            $foreignSiteFinder = GeneralUtility::makeInstance(ForeignSiteFinder::class);
+            try {
+                $site = $foreignSiteFinder->getSiteBaseByPageId($pageIdentifier);
+            } catch (SiteNotFoundException $e) {
+            }
+        }
+        if (isset($site)) {
+            $uri = (string)$site->getBase()->withScheme('');
+            if ('/' === $uri && $stagingLevel === self::LEVEL_LOCAL) {
+                if ($addProtocol) {
+                    $uri = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
+                } else {
+                    $uri = GeneralUtility::getIndpEnv('HTTP_HOST');
                 }
             }
-            if (isset($site)) {
-                $uri = (string)$site->getBase()->withScheme('');
-                if ('/' === $uri && $stagingLevel === self::LEVEL_LOCAL) {
-                    if ($addProtocol) {
-                        $uri = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
-                    } else {
-                        $uri = GeneralUtility::getIndpEnv('HTTP_HOST');
-                    }
-                }
-                if (!$addProtocol) {
-                    $uri = ltrim($uri, '/');
-                }
-                return rtrim($uri, '/');
+            if (!$addProtocol) {
+                $uri = ltrim($uri, '/');
             }
+            return rtrim($uri, '/');
         }
         return '';
     }

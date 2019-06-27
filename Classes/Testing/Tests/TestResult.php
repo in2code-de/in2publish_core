@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Testing\Tests;
 
 use In2code\In2publishCore\Testing\Utility\TestLabelLocalizer;
 use function implode;
-use function version_compare;
 
 /**
  * Class TestResult
@@ -96,16 +95,12 @@ class TestResult
      */
     public function getSeverityLabel(): string
     {
-        if (version_compare(TYPO3_version, '8.0.0', '>=')) {
-            switch ($this->severity) {
-                case self::OK:
-                    return 'success';
-                case self::ERROR:
-                    return 'danger';
-            }
+        switch ($this->severity) {
+            case self::OK:
+                return 'success';
+            case self::ERROR:
+                return 'danger';
         }
-
-        return $this->severity;
     }
 
     /**
