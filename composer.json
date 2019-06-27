@@ -10,7 +10,7 @@
 	"type": "typo3-cms-extension",
 	"license": "GPL-3.0-or-later",
 	"require": {
-		"php": "^7.0",
+		"php": "^7.2",
 		"typo3/cms-core": "^9.5.0 || ^10.0"
 	},
 	"require-dev": {
