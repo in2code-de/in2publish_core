@@ -817,7 +817,7 @@ class CommonRepository extends BaseRepository
      * @param array $flexFormDefinition
      * @return array
      */
-    protected function getFlexFormDataByDefinition(array $originalData, array $flexFormDefinition): array
+    protected function getFlexFormDataByDefinition(array $originalData, array $flexFormDefinition)
     {
         $flexFormData = [];
         $keys = array_keys($flexFormDefinition);
@@ -952,7 +952,7 @@ class CommonRepository extends BaseRepository
         array $exclTables,
         $config,
         $flexFormData
-    ): array {
+    ) {
         $records = [];
         $recTable = $record->getTableName();
         $recordId = $record->getIdentifier();
