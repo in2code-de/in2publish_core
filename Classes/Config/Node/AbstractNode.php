@@ -162,7 +162,7 @@ abstract class AbstractNode implements Node
             if (empty($this->default)) {
                 $this->default = $node->default;
             } elseif (is_array($this->default) && is_array($node->default)) {
-                $this->default = array_merge($this->default, $node->default);
+                $this->default = $this->mergeArrays($this->default, $node->default);
             } else {
                 throw new In2publishCoreException('Can not merge properties');
             }
@@ -176,6 +176,17 @@ abstract class AbstractNode implements Node
                 }
             }
         }
+    }
+
+    /**
+     * @param array $original
+     * @param array $additional
+     *
+     * @return array
+     */
+    public function mergeArrays(array $original, array $additional): array
+    {
+        return array_merge($original, $additional);
     }
 
     /**

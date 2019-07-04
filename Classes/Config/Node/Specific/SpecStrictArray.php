@@ -2,8 +2,6 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Config\Node\Specific;
 
-use function array_key_exists;
-
 /*
  * Copyright notice
  *
@@ -29,6 +27,12 @@ use function array_key_exists;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Config\Node\Node;
+use In2code\In2publishCore\In2publishCoreException;
+use In2code\In2publishCore\Utility\ConfigurationUtility;
+use function array_key_exists;
+use function is_array;
+
 /**
  * Class SpecStrictArray
  */
@@ -52,5 +56,18 @@ class SpecStrictArray extends SpecArray
         if (empty($value[$this->name])) {
             unset($value[$this->name]);
         }
+    }
+
+    /**
+     * @param array $original
+     * @param array $additional
+     *
+     * @return array
+     */
+    public function mergeArrays(array $original, array $additional): array
+    {
+        $original = ['definition' => $original];
+        $additional = ['definition' => $additional];
+        return $this->default = ConfigurationUtility::mergeConfiguration($original, $additional)['definition'];
     }
 }

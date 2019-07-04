@@ -44,6 +44,7 @@ interface Node
     /**
      * @param ValidationContainer $container
      * @param mixed $value
+     *
      * @return void
      */
     public function validate(ValidationContainer $container, $value);
@@ -55,12 +56,14 @@ interface Node
 
     /**
      * @param Node $node
+     *
      * @return void
      */
     public function addNode(Node $node);
 
     /**
      * @param string $path
+     *
      * @return Node
      */
     public function getNodePath(string $path): Node;
@@ -72,12 +75,22 @@ interface Node
 
     /**
      * @param Node $node
+     *
      * @return void
      */
     public function merge(Node $node);
 
     /**
+     * @param array $original
+     * @param array $additional
+     *
+     * @return array
+     */
+    public function mergeArrays(array $original, array $additional): array;
+
+    /**
      * @param string[]|int[]|bool[]|array[] $value
+     *
      * @return string[]|int[]|bool[]|array[]
      */
     public function cast($value);
