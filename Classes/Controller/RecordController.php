@@ -32,8 +32,10 @@ use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Factory\FakeRecordFactory;
 use In2code\In2publishCore\In2publishCoreException;
+use In2code\In2publishCore\Log\Processor\PublishingFailureCollector;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use Throwable;
+use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
@@ -41,7 +43,9 @@ use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use function array_keys;
 use function array_merge;
+use function implode;
 use function rawurldecode;
 use function strpos;
 
@@ -96,6 +100,7 @@ class RecordController extends AbstractController
      *
      * @param int $identifier record identifier
      * @param string $tableName
+     *
      * @return void
      */
     public function detailAction($identifier, $tableName)
@@ -146,7 +151,7 @@ class RecordController extends AbstractController
             } catch (UnsupportedRequestTypeException $e) {
             }
         }
-        $this->addSuccessFlashMessageAndRedirectToIndex();
+        $this->addFlashMessagesAndRedirectToIndex();
     }
 
     /**
@@ -192,13 +197,59 @@ class RecordController extends AbstractController
      * Add success message and redirect to indexAction
      *
      * @throws StopActionException
+     *
+     * @SuppressWarnings(PHPMD.LongVariable)
      */
-    protected function addSuccessFlashMessageAndRedirectToIndex()
+    protected function addFlashMessagesAndRedirectToIndex()
     {
-        $this->addFlashMessage(LocalizationUtility::translate('record_published', 'in2publish_core'));
+        $publishingFailureCollector = GeneralUtility::makeInstance(PublishingFailureCollector::class);
+        $failures = $publishingFailureCollector->getFailures();
+
+        if (empty($failures)) {
+            $message = '';
+            $title = LocalizationUtility::translate('record_published', 'in2publish_core');
+            $severity = AbstractMessage::OK;
+        } else {
+            $message = '"' . implode('"; "', array_keys($failures)) . '"';
+            $title = LocalizationUtility::translate('record_publishing_failure', 'in2publish_core');
+            $severity = $this->translateLogLevelToSeverity($publishingFailureCollector->getMostCriticalLogLevel());
+        }
+        $this->addFlashMessage($message, $title, $severity);
+
         try {
             $this->redirect('index');
         } catch (UnsupportedRequestTypeException $e) {
         }
+    }
+
+    /**
+     * @param int $logLevel
+     *
+     * @return int
+     */
+    protected function translateLogLevelToSeverity(int $logLevel): int
+    {
+        switch ($logLevel) {
+            case LogLevel::DEBUG:
+                $severity = AbstractMessage::NOTICE;
+                break;
+            case LogLevel::INFO:
+                $severity = AbstractMessage::OK;
+                break;
+            case LogLevel::NOTICE:
+                $severity = AbstractMessage::INFO;
+                break;
+            case LogLevel::WARNING:
+                $severity = AbstractMessage::WARNING;
+                break;
+            case LogLevel::ERROR:
+            case LogLevel::CRITICAL:
+            case LogLevel::ALERT:
+            case LogLevel::EMERGENCY:
+            default:
+                $severity = AbstractMessage::ERROR;
+                break;
+        }
+        return $severity;
     }
 }

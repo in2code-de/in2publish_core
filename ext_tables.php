@@ -20,7 +20,10 @@ call_user_func(
         /************************************************ Init Logging ************************************************/
         $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'] = [
             'writerConfiguration' => [$extConf['logLevel'] => [\TYPO3\CMS\Core\Log\Writer\DatabaseWriter::class => ['logTable' => 'tx_in2publishcore_log']]],
-            'processorConfiguration' => [$extConf['logLevel'] => [\In2code\In2publishCore\Log\Processor\BackendUserProcessor::class => []]],
+            'processorConfiguration' => [$extConf['logLevel'] => [
+                \In2code\In2publishCore\Log\Processor\BackendUserProcessor::class => [],
+                \In2code\In2publishCore\Log\Processor\PublishingFailureCollector::class => [],
+            ]],
         ];
 
 
