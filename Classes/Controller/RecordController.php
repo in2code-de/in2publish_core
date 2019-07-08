@@ -35,7 +35,6 @@ use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Log\Processor\PublishingFailureCollector;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use Throwable;
-use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
@@ -220,36 +219,5 @@ class RecordController extends AbstractController
             $this->redirect('index');
         } catch (UnsupportedRequestTypeException $e) {
         }
-    }
-
-    /**
-     * @param int $logLevel
-     *
-     * @return int
-     */
-    protected function translateLogLevelToSeverity(int $logLevel): int
-    {
-        switch ($logLevel) {
-            case LogLevel::DEBUG:
-                $severity = AbstractMessage::NOTICE;
-                break;
-            case LogLevel::INFO:
-                $severity = AbstractMessage::OK;
-                break;
-            case LogLevel::NOTICE:
-                $severity = AbstractMessage::INFO;
-                break;
-            case LogLevel::WARNING:
-                $severity = AbstractMessage::WARNING;
-                break;
-            case LogLevel::ERROR:
-            case LogLevel::CRITICAL:
-            case LogLevel::ALERT:
-            case LogLevel::EMERGENCY:
-            default:
-                $severity = AbstractMessage::ERROR;
-                break;
-        }
-        return $severity;
     }
 }

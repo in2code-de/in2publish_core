@@ -32,6 +32,7 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDis
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\Arguments;
@@ -156,5 +157,36 @@ abstract class AbstractController extends ActionController
                 AbstractMessage::ERROR
             );
         }
+    }
+
+    /**
+     * @param int $logLevel
+     *
+     * @return int
+     */
+    protected function translateLogLevelToSeverity(int $logLevel): int
+    {
+        switch ($logLevel) {
+            case LogLevel::DEBUG:
+                $severity = AbstractMessage::NOTICE;
+                break;
+            case LogLevel::INFO:
+                $severity = AbstractMessage::OK;
+                break;
+            case LogLevel::NOTICE:
+                $severity = AbstractMessage::INFO;
+                break;
+            case LogLevel::WARNING:
+                $severity = AbstractMessage::WARNING;
+                break;
+            case LogLevel::ERROR:
+            case LogLevel::CRITICAL:
+            case LogLevel::ALERT:
+            case LogLevel::EMERGENCY:
+            default:
+                $severity = AbstractMessage::ERROR;
+                break;
+        }
+        return $severity;
     }
 }
