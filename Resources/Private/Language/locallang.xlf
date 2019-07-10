@@ -157,6 +157,34 @@
 				<source>Use this module to collect information which will be required or useful to solve a bug or problem.</source>
 			</trans-unit>
 
+			<trans-unit id="system_info.show">
+				<source>Show the system info</source>
+			</trans-unit>
+			<trans-unit id="system_info.download">
+				<source>Download the system info</source>
+			</trans-unit>
+			<trans-unit id="system_info.decode">
+				<source>Decode the system info JSON</source>
+			</trans-unit>
+			<trans-unit id="system_info.decode.json">
+				<source>JSON string</source>
+			</trans-unit>
+			<trans-unit id="system_info.decode.decode">
+				<source>Decode!</source>
+			</trans-unit>
+			<trans-unit id="system_info.decode.json_error">
+				<source>Error during json decoding</source>
+			</trans-unit>
+			<trans-unit id="system_info.decode.json_error.details">
+				<source>JSON decode error #%d: %s</source>
+			</trans-unit>
+			<trans-unit id="system_info.upload.file">
+				<source>SysInfo JSON file</source>
+			</trans-unit>
+			<trans-unit id="system_info.upload.upload">
+				<source>Upload!</source>
+			</trans-unit>
+
 			<trans-unit id="record.state.unchanged">
 				<source>Record unchanged</source>
 			</trans-unit>

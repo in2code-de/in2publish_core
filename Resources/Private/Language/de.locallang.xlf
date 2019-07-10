@@ -207,6 +207,43 @@
 				<target state="translated">Anzeige von Informationen welche erforderlich oder nützlich sind Probleme zu identifizieren und sie zu beheben.</target>
 			</trans-unit>
 
+			<trans-unit id="system_info.show">
+				<source>Show the system info</source>
+				<target state="translated">Systeminformationen anzeigen</target>
+			</trans-unit>
+			<trans-unit id="system_info.download">
+				<source>Download the system info</source>
+				<target state="translated">Systeminformationen herunterladen</target>
+			</trans-unit>
+			<trans-unit id="system_info.decode">
+				<source>Decode the system info JSON</source>
+				<target state="translated">JSON dekodieren</target>
+			</trans-unit>
+			<trans-unit id="system_info.decode.json">
+				<source>JSON string</source>
+				<target state="translated">JSON Text</target>
+			</trans-unit>
+			<trans-unit id="system_info.decode.decode">
+				<source>Decode!</source>
+				<target state="translated">Dekodieren</target>
+			</trans-unit>
+			<trans-unit id="system_info.decode.json_error">
+				<source>Error during json decoding</source>
+				<target state="translated">Fehler während des dekodierens</target>
+			</trans-unit>
+			<trans-unit id="system_info.decode.json_error.details">
+				<source>JSON decode error #%d: %s</source>
+				<target state="translated">JSON dekodierfehler #%d: %s</target>
+			</trans-unit>
+			<trans-unit id="system_info.upload.file">
+				<source>SysInfo JSON file</source>
+				<target state="translated">Systeminformationen JSON Datei</target>
+			</trans-unit>
+			<trans-unit id="system_info.upload.upload">
+				<source>Upload!</source>
+				<target state="translated">Hochladen!</target>
+			</trans-unit>
+
 			<trans-unit id="record.state.unchanged">
 				<source>Record unchanged</source>
 				<target state="translated">Unverändert</target>
