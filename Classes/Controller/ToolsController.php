@@ -50,6 +50,8 @@ use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Extensionmanager\Utility\ListUtility;
 use function array_merge;
+use function class_exists;
+use function defined;
 use function file_get_contents;
 use function flush;
 use function gmdate;
@@ -73,6 +75,7 @@ use function unserialize;
 use const PHP_EOL;
 use const PHP_OS;
 use const PHP_VERSION;
+use const TYPO3_COMPOSER_MODE;
 
 /**
  * The ToolsController is the controller of the Backend Module "Publish Tools" "m3"
@@ -323,10 +326,13 @@ class ToolsController extends ActionController
         ];
         foreach ($protectedValues as $protectedValue) {
             foreach ([&$full, &$pers] as &$cfgArray) {
-                $value = ArrayUtility::getValueByPath($cfgArray, $protectedValue, '.');
-                if (!empty($value)) {
-                    $value = 'xxxxxxxx (masked)';
-                    $cfgArray = ArrayUtility::setValueByPath($cfgArray, $protectedValue, $value, '.');
+                try {
+                    $value = ArrayUtility::getValueByPath($cfgArray, $protectedValue, '.');
+                    if (!empty($value)) {
+                        $value = 'xxxxxxxx (masked)';
+                        $cfgArray = ArrayUtility::setValueByPath($cfgArray, $protectedValue, $value, '.');
+                    }
+                } catch (\Throwable $e) {
                 }
             }
         }
@@ -341,6 +347,10 @@ class ToolsController extends ActionController
         foreach ($connectionPool->getConnectionNames() as $connectionName) {
             $databases[$connectionName] = $connectionPool->getConnectionByName($connectionName)->getServerVersion();
         }
+
+        $composerMode = class_exists(Environment::class)
+            ? Environment::isComposerMode()
+            : defined('TYPO3_COMPOSER_MODE') && true === TYPO3_COMPOSER_MODE;
 
         $logQueryBuilder = $connectionPool->getQueryBuilderForTable('tx_in2publishcore_log');
         $logs = $logQueryBuilder->select('*')
@@ -370,7 +380,7 @@ class ToolsController extends ActionController
             'PHP Version' => PHP_VERSION,
             'Database Version' => $databases,
             'Application Context' => GeneralUtility::getApplicationContext()->__toString(),
-            'Composer mode' => Environment::isComposerMode(),
+            'Composer mode' => $composerMode,
             'Operating System' => PHP_OS . ' ' . php_uname('r'),
             'extensions' => $extensions,
             'extConf' => $extConf,
