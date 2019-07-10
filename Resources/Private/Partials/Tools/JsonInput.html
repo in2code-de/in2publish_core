@@ -1,0 +1,10 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+	<f:form action="decode" method="post">
+		<div class="form-group">
+			<label for="json_input">JSON</label>
+			<f:form.textarea id="json_input" class="form-control" name="json" value="{infoJson}" />
+			<small>Enter the JSON string here to see what it contains</small>
+		</div>
+		<f:form.submit value="Decode" class="btn btn-primary" />
+	</f:form>
+</html>

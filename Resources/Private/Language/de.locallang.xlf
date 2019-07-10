@@ -198,6 +198,14 @@
 				<source>Removes all registry entries which store information about the local and foreign environment. You must run the test after flushing these.</source>
 				<target state="translated">Löscht alle Registereinträge, welche Informationen über das lokale und entfernte System vorhalten. Danach müssen die Tests erneut ausgeführt werden.</target>
 			</trans-unit>
+			<trans-unit id="moduleselector.system_info">
+				<source>System information</source>
+				<target state="translated">Systeminformationen</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.system_info.description">
+				<source>Use this module to collect information which will be required or useful to solve a bug or problem.</source>
+				<target state="translated">Anzeige von Informationen welche erforderlich oder nützlich sind Probleme zu identifizieren und sie zu beheben.</target>
+			</trans-unit>
 
 			<trans-unit id="record.state.unchanged">
 				<source>Record unchanged</source>

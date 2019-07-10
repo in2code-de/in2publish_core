@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
@@ -36,15 +37,26 @@ use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Tools\ToolsRegistry;
 use Throwable;
+use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Registry;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use TYPO3\CMS\Extensionmanager\Utility\ListUtility;
+use function array_merge;
 use function implode;
+use function json_decode;
+use function json_encode;
+use function php_uname;
 use const PHP_EOL;
+use const PHP_OS;
+use const PHP_VERSION;
 
 /**
  * The ToolsController is the controller of the Backend Module "Publish Tools" "m3"
@@ -182,5 +194,113 @@ class ToolsController extends ActionController
             $this->redirect('index');
         } catch (UnsupportedRequestTypeException $e) {
         }
+    }
+
+    public function systemInfoAction()
+    {
+        $info = [
+            'packages' => $this->getPackagesInfoArray(),
+            'testStatus' => $this->getTests(),
+            'config' => $this->getConfig(),
+            'systemInformation' => $this->getSysInfo(),
+        ];
+        $this->view->assign('info', $info);
+        $this->view->assign('json', json_encode($info));
+        $this->view->assign('showDecode', Environment::getContext()->isDevelopment());
+    }
+
+    /**
+     * @param string $json
+     */
+    public function decodeAction(string $json = '')
+    {
+        $this->view->assign('info', json_decode($json, true));
+        $this->view->assign('infoJson', $json);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getPackagesInfoArray(): array
+    {
+        $listUtility = $this->objectManager->get(ListUtility::class);
+        $packages = $listUtility->getAvailableAndInstalledExtensionsWithAdditionalInformation();
+        $packageInfo = [];
+        foreach ($packages as $package) {
+            $packageInfo[$package['key']] = [
+                'title' => $package['title'],
+                'state' => $package['state'],
+                'version' => $package['version'],
+                'installed' => $package['installed'],
+            ];
+        }
+        return $packageInfo;
+    }
+
+    protected function getSysInfo()
+    {
+        $databases = [];
+        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+        foreach ($connectionPool->getConnectionNames() as $connectionName) {
+            $databases[$connectionName] = $connectionPool->getConnectionByName($connectionName)->getServerVersion();
+        }
+        return [
+            'TYPO3 Version' => VersionNumberUtility::getCurrentTypo3Version(),
+            '$_SERVER ' => $_SERVER,
+            'PHP Version' => PHP_VERSION,
+            'Database Connections' => $databases,
+            'Application Context' => GeneralUtility::getApplicationContext()->__toString(),
+            'Composer mode' => Environment::isComposerMode(),
+            'Operating System' => PHP_OS . ' ' . php_uname('r'),
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getConfig(): array
+    {
+        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+        $full = $configContainer->getContextFreeConfig();
+        $pers = $configContainer->get();
+
+        $protectedValues = [
+            'foreign.database.password',
+            'sshConnection.privateKeyPassphrase',
+        ];
+        foreach ($protectedValues as $protectedValue) {
+            foreach ([&$full, &$pers] as &$cfgArray) {
+                $value = ArrayUtility::getValueByPath($cfgArray, $protectedValue, '.');
+                if (!empty($value)) {
+                    $value = 'xxxxxxxx (masked)';
+                    $cfgArray = ArrayUtility::setValueByPath($cfgArray, $protectedValue, $value, '.');
+                }
+            }
+        }
+        return [
+            'personal' => $pers,
+            'full' => $full,
+        ];
+    }
+
+    protected function getTests()
+    {
+        $return = [];
+        $testingService = new TestingService();
+        $testingResults = $testingService->runAllTests();
+        foreach ($testingResults as $testClass => $testingResult) {
+            $severityString = '[' . $testingResult->getSeverityLabel() . '] ';
+            $message = '[' . $testingResult->getTranslatedLabel() . '] ' . $testingResult->getTranslatedMessages();
+
+            $return[$testingResult->getSeverity()][$severityString . $testClass] = $message;
+        }
+
+        $sortedResult = [];
+        foreach ([TestResult::ERROR, TestResult::WARNING, TestResult::SKIPPED, TestResult::OK] as $severity) {
+            if (isset($return[$severity])) {
+                $sortedResult = array_merge($sortedResult, $return[$severity]);
+            }
+        }
+        return $sortedResult;
     }
 }
