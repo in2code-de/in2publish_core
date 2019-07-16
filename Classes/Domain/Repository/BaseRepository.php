@@ -176,6 +176,7 @@ abstract class BaseRepository
      * @param string $orderBy
      * @param string $limit
      * @param string $indexField
+     *
      * @return array
      */
     public function findPropertiesByProperties(
@@ -224,6 +225,7 @@ abstract class BaseRepository
      * @param Connection $connection
      * @param int|string $identifier
      * @param array $properties
+     *
      * @return bool
      */
     protected function updateRecord(Connection $connection, $identifier, array $properties): bool
@@ -257,6 +259,7 @@ abstract class BaseRepository
      *
      * @param Connection $connection
      * @param array $properties
+     *
      * @return bool
      */
     protected function addRecord(Connection $connection, array $properties): bool
@@ -280,6 +283,7 @@ abstract class BaseRepository
      *
      * @param Connection $connection
      * @param int $identifier
+     *
      * @return bool
      * @internal param string $deleteFieldName
      */
@@ -307,6 +311,7 @@ abstract class BaseRepository
      *
      * @param Connection $connection
      * @param string|int $identifier
+     *
      * @return bool|int
      */
     protected function countRecord(Connection $connection, $identifier)
@@ -327,6 +332,7 @@ abstract class BaseRepository
      * Quote string: escapes bad characters
      *
      * @param string $string
+     *
      * @return string
      */
     protected function quoteString($string): string
@@ -339,6 +345,7 @@ abstract class BaseRepository
      *
      * @param $method
      * @param Connection $connection
+     *
      * @return void
      */
     protected function logFailedQuery($method, Connection $connection)
@@ -369,6 +376,7 @@ abstract class BaseRepository
 
     /**
      * @param string $tableName
+     *
      * @return BaseRepository
      */
     public function setTableName($tableName): BaseRepository
@@ -379,6 +387,7 @@ abstract class BaseRepository
 
     /**
      * @param string $tableName
+     *
      * @return string
      */
     public function replaceTableName($tableName): string
