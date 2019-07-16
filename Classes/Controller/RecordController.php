@@ -34,6 +34,7 @@ use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Factory\FakeRec
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Log\Processor\PublishingFailureCollector;
 use In2code\In2publishCore\Service\Permission\PermissionService;
+use In2code\In2publishCore\Utility\LogUtility;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -211,7 +212,7 @@ class RecordController extends AbstractController
         } else {
             $message = '"' . implode('"; "', array_keys($failures)) . '"';
             $title = LocalizationUtility::translate('record_publishing_failure', 'in2publish_core');
-            $severity = $this->translateLogLevelToSeverity($publishingFailureCollector->getMostCriticalLogLevel());
+            $severity = LogUtility::translateLogLevelToSeverity($publishingFailureCollector->getMostCriticalLogLevel());
         }
         $this->addFlashMessage($message, $title, $severity);
 

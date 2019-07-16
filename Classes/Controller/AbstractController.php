@@ -158,35 +158,4 @@ abstract class AbstractController extends ActionController
             );
         }
     }
-
-    /**
-     * @param int $logLevel
-     *
-     * @return int
-     */
-    protected function translateLogLevelToSeverity(int $logLevel): int
-    {
-        switch ($logLevel) {
-            case LogLevel::DEBUG:
-                $severity = AbstractMessage::NOTICE;
-                break;
-            case LogLevel::INFO:
-                $severity = AbstractMessage::OK;
-                break;
-            case LogLevel::NOTICE:
-                $severity = AbstractMessage::INFO;
-                break;
-            case LogLevel::WARNING:
-                $severity = AbstractMessage::WARNING;
-                break;
-            case LogLevel::ERROR:
-            case LogLevel::CRITICAL:
-            case LogLevel::ALERT:
-            case LogLevel::EMERGENCY:
-            default:
-                $severity = AbstractMessage::ERROR;
-                break;
-        }
-        return $severity;
-    }
 }
