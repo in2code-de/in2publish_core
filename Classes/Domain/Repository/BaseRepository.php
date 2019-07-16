@@ -232,22 +232,22 @@ abstract class BaseRepository
         if (strpos((string)$identifier, ',') !== false) {
             $identifierArray = Record::splitCombinedIdentifier($identifier);
 
-            $success = (bool)$connection->update(
+            $connection->update(
                 $this->tableName,
                 $properties,
                 $identifierArray
             );
         } else {
-            $success = (bool)$connection->update(
+            $connection->update(
                 $this->tableName,
                 $properties,
                 ['uid' => $identifier]
             );
         }
-        if (!$success) {
+        if (0 < $connection->errorCode()) {
             $this->logFailedQuery(__METHOD__, $connection);
         }
-        return $success;
+        return true;
     }
 
     /**
