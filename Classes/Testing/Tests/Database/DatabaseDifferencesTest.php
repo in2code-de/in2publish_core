@@ -270,8 +270,11 @@ class DatabaseDifferencesTest implements TestCaseInterface
                 ];
             }
 
+            $tableOptions = $table->getOptions();
+            unset($tableOptions['autoincrement']);
+            unset($tableOptions['comment']);
             $tableStructure[$tableName] = [
-                'table' => $table->getOptions(),
+                'table' => $tableOptions,
                 'fields' => $fieldStructure,
             ];
         }
