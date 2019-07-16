@@ -2,16 +2,6 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Utility;
 
-use function array_diff;
-use function array_flip;
-use function array_key_exists;
-use function array_keys;
-use function array_merge;
-use function in_array;
-use function is_array;
-use function is_int;
-use function uksort;
-
 /*
  * Copyright notice
  *
@@ -34,6 +24,16 @@ use function uksort;
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  */
+
+use function array_diff;
+use function array_flip;
+use function array_key_exists;
+use function array_keys;
+use function array_merge;
+use function in_array;
+use function is_array;
+use function is_int;
+use function uksort;
 
 /**
  * Class ConfigurationUtility
@@ -97,6 +97,7 @@ class ConfigurationUtility
      * @param array $original
      * @param array $additional
      * @param mixed $key
+     *
      * @return array|mixed|null
      */
     private static function getResultingValue(array $original, array $additional, $key)
