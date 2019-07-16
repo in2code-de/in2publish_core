@@ -36,6 +36,7 @@ use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Tools\ToolsRegistry;
+use In2code\In2publishCore\Utility\DatabaseUtility;
 use Throwable;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -375,6 +376,38 @@ class ToolsController extends ActionController
             $logsFormatted[$message] = json_decode($logDataJson, true);
         }
 
+        $schema = [];
+        foreach (['local', 'foreign'] as $side) {
+            $schemaManager = DatabaseUtility::buildDatabaseConnectionForSide($side)->getSchemaManager();
+            foreach ($schemaManager->listTables() as $table) {
+                $schema[$side][$table->getName()]['options'] = $table->getOptions();
+                foreach ($table->getColumns() as $column) {
+                    $schema[$side][$table->getName()]['columns'][$column->getName()] = $column->toArray();
+                }
+                foreach ($table->getIndexes() as $index) {
+                    $columns = [];
+                    foreach ($index->getColumns() as $column) {
+                        $columns[] = $column->getName();
+                    }
+                    $schema[$side][$table->getName()]['indexes'][$index->getName()] = [
+                        'column' => $columns,
+                        'isPrimary' => $index->isPrimary(),
+                        'isSimple' => $index->isSimpleIndex(),
+                        'isUnique' => $index->isUnique(),
+                        'isQuoted' => $index->isQuoted(),
+                        'options' => $index->getOptions(),
+                        'flags' => $index->getFlags(),
+                    ];
+                }
+                foreach ($table->getForeignKeys() as $foreignKey) {
+                    $schema[$side][$table->getName()]['fk'][$foreignKey->getName()] = [
+                        'isQuoted' => $foreignKey->isQuoted(),
+                        'options' => $foreignKey->getOptions(),
+                    ];
+                }
+            }
+        }
+
         return [
             'TYPO3 Version' => VersionNumberUtility::getCurrentTypo3Version(),
             'PHP Version' => PHP_VERSION,
@@ -392,6 +425,7 @@ class ToolsController extends ActionController
             'logs' => $logsFormatted,
             'personal config' => $pers,
             'TCA' => $GLOBALS['TCA'],
+            'schema' => $schema,
         ];
     }
 }
