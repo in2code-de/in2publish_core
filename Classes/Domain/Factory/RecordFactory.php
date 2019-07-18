@@ -44,7 +44,10 @@ use function array_diff;
 use function array_filter;
 use function array_merge;
 use function in_array;
+use function sprintf;
 use function strlen;
+use function trigger_error;
+use const E_USER_DEPRECATED;
 
 /**
  * RecordFactory: This class is responsible for create instances of Record.
@@ -54,6 +57,8 @@ use function strlen;
  */
 class RecordFactory
 {
+    const DEPRECATION_METHOD_NO_TABLE_ARG = 'Calling %s without tableName is deprecated. tableName will be a non-optional argument in in2publish_core version 10.';
+
     /**
      * Runtime cache to cache already created Records
      * Structure:
@@ -167,6 +172,7 @@ class RecordFactory
      * @param array $localProperties Properties of the record from local Database
      * @param array $foreignProperties Properties of the record from foreign Database
      * @param array $additionalProperties array of not persisted properties
+     * @param string|null $tableName
      *
      * @return RecordInterface|null
      */
@@ -174,7 +180,8 @@ class RecordFactory
         CommonRepository $commonRepository,
         array $localProperties,
         array $foreignProperties,
-        array $additionalProperties = []
+        array $additionalProperties = [],
+        string $tableName = null
     ) {
         if (false === $this->isRootRecord) {
             $this->isRootRecord = true;
@@ -184,14 +191,22 @@ class RecordFactory
         }
         // one of the property arrays might be empty,
         // to get the identifier we have to take a look into both arrays
-        $mergedIdentifier = $this->getMergedIdentifierValue($commonRepository, $localProperties, $foreignProperties);
+        $mergedIdentifier = $this->getMergedIdentifierValue(
+            $commonRepository,
+            $localProperties,
+            $foreignProperties,
+            $tableName
+        );
 
-        $instanceTableName = $commonRepository->getTableName();
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_METHOD_NO_TABLE_ARG, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $commonRepository->getTableName();
+        }
 
         // detects if an instance has been moved upwards or downwards
         // a hierarchy, corrects the relations and sets the records state to "moved"
         $hasBeenMoved = $this->detectAndAlterMovedInstance(
-            $instanceTableName,
+            $tableName,
             $mergedIdentifier,
             $localProperties,
             $foreignProperties
@@ -199,27 +214,27 @@ class RecordFactory
 
         // internal cache: if the record has been instantiated already
         // it will set in here. This ensures a singleton
-        if (($instanceTableName === 'pages' || $mergedIdentifier > 0)
-            && !empty($this->runtimeCache[$instanceTableName][$mergedIdentifier])
+        if (($tableName === 'pages' || $mergedIdentifier > 0)
+            && !empty($this->runtimeCache[$tableName][$mergedIdentifier])
         ) {
-            $instance = $this->runtimeCache[$instanceTableName][$mergedIdentifier];
+            $instance = $this->runtimeCache[$tableName][$mergedIdentifier];
         } else {
             // detect if the Record to instantiate is already in instantiation
-            if ($this->isLooping($instanceTableName, $mergedIdentifier)) {
+            if ($this->isLooping($tableName, $mergedIdentifier)) {
                 return null;
             }
 
-            $depth = $instanceTableName === 'pages' ? $this->pagesDepth : $this->relatedRecordsDepth;
+            $depth = $tableName === 'pages' ? $this->pagesDepth : $this->relatedRecordsDepth;
             $additionalProperties += ['depth' => $depth];
 
             // do not use objectManager->get because of performance issues. Additionally,
             // we just do not need it, because there is no dependency injection
             $instance = GeneralUtility::makeInstance(
                 Record::class,
-                $instanceTableName,
+                $tableName,
                 $localProperties,
                 $foreignProperties,
-                (array)$this->tcaService->getConfigurationArrayForTable($instanceTableName),
+                (array)$this->tcaService->getConfigurationArrayForTable($tableName),
                 $additionalProperties
             );
 
@@ -245,22 +260,20 @@ class RecordFactory
              *      sys_file_processedfile:
              *          needed for RTE magic images - relation to original image
              */
-            $tableConfiguration = $this->tcaService->getConfigurationArrayForTable($instanceTableName);
+            $tableConfiguration = $this->tcaService->getConfigurationArrayForTable($tableName);
             if (empty($tableConfiguration)) {
-                switch ($instanceTableName) {
+                switch ($tableName) {
                     case 'sys_file_processedfile':
-                        $previousTableName = $commonRepository->replaceTableName('sys_file');
-                        $instance->addRelatedRecord(
-                            $commonRepository->findByIdentifier($instance->getLocalProperty('original'))
-                        );
-                        $commonRepository->setTableName($previousTableName);
+                        $identifier = $instance->getLocalProperty('original');
+                        $record = $commonRepository->findByIdentifier($identifier, 'sys_file');
+                        $instance->addRelatedRecord($record);
                         break;
                     default:
                 }
             } else {
                 if ($this->currentDepth < $this->config['maximumOverallRecursion']) {
                     $this->currentDepth++;
-                    if ($instanceTableName === 'pages') {
+                    if ($tableName === 'pages') {
                         $instance = $this->findRelatedRecordsForPageRecord($instance, $commonRepository);
                     } else {
                         $instance = $this->findRelatedRecordsForContentRecord($instance, $commonRepository);
@@ -279,8 +292,8 @@ class RecordFactory
                     );
                 }
             }
-            $this->finishedInstantiation($instanceTableName, $mergedIdentifier);
-            $this->runtimeCache[$instanceTableName][$mergedIdentifier] = $instance;
+            $this->finishedInstantiation($tableName, $mergedIdentifier);
+            $this->runtimeCache[$tableName][$mergedIdentifier] = $instance;
         }
         if (true === $isRootRecord && true === $this->isRootRecord) {
             $this->isRootRecord = false;
@@ -297,6 +310,7 @@ class RecordFactory
     /**
      * @param RecordInterface $record
      * @param CommonRepository $commonRepository
+     *
      * @return RecordInterface
      */
     protected function findRelatedRecordsForContentRecord(
@@ -318,6 +332,7 @@ class RecordFactory
     /**
      * @param Record $record
      * @param CommonRepository $commonRepository
+     *
      * @return RecordInterface
      */
     protected function findRelatedRecordsForPageRecord(
@@ -374,6 +389,7 @@ class RecordFactory
      * @param string $identifier
      * @param array $localProperties
      * @param array $foreignProperties
+     *
      * @return bool
      */
     protected function detectAndAlterMovedInstance(
@@ -448,14 +464,22 @@ class RecordFactory
      * @param CommonRepository $commonRepository
      * @param array $localProperties
      * @param array $foreignProperties
+     *
+     * @param string|null $tableName
+     *
      * @return int|string
      */
     protected function getMergedIdentifierValue(
         $commonRepository,
         array $localProperties,
-        array $foreignProperties
+        array $foreignProperties,
+        string $tableName = null
     ) {
-        if ($commonRepository->getTableName() === 'sys_file') {
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_METHOD_NO_TABLE_ARG, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $commonRepository->getTableName();
+        }
+        if ($tableName === 'sys_file') {
             $identifierFieldName = 'uid';
         } else {
             $identifierFieldName = $commonRepository->getIdentifierFieldName();
@@ -474,7 +498,7 @@ class RecordFactory
                         'Could not merge identifier values',
                         [
                             'identifierFieldName' => $identifierFieldName,
-                            'tableName' => $commonRepository->getTableName(),
+                            'tableName' => $tableName,
                             'localProperties' => $localProperties,
                             'foreignProperties' => $foreignProperties,
                         ]
@@ -490,6 +514,7 @@ class RecordFactory
     /**
      * @param string $instanceTableName
      * @param int $mergedIdentifier
+     *
      * @return bool
      */
     protected function isLooping($instanceTableName, $mergedIdentifier): bool
@@ -518,6 +543,7 @@ class RecordFactory
     /**
      * @param string $instanceTableName
      * @param int $mergedIdentifier
+     *
      * @return void
      */
     protected function finishedInstantiation($instanceTableName, $mergedIdentifier)
@@ -536,6 +562,7 @@ class RecordFactory
      *
      * @param string $tableName
      * @param string|int $identifier
+     *
      * @return RecordInterface|null
      */
     public function getCachedRecord($tableName, $identifier)
