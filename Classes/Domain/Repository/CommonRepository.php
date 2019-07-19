@@ -168,17 +168,20 @@ class CommonRepository extends BaseRepository
         Connection $localDatabase,
         Connection $foreignDatabase,
         string $tableName = null,
-        $identifierFieldName = 'uid'
+        string $identifierFieldName = null
     ) {
         if (null !== $tableName) {
             trigger_error(sprintf(self::DEPRECATION_PARAMETER, 'tableName', __METHOD__), E_USER_DEPRECATED);
+        }
+        if (null !== $identifierFieldName) {
+            trigger_error(sprintf(self::DEPRECATION_PARAMETER, 'identifierFieldName', __METHOD__), E_USER_DEPRECATED);
         }
         parent::__construct();
         $this->recordFactory = GeneralUtility::makeInstance(RecordFactory::class);
         $this->resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
         $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
-        $this->identifierFieldName = $identifierFieldName;
+        $this->identifierFieldName = $identifierFieldName ?: $this->identifierFieldName;
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
         if ($foreignDatabase === null || !$foreignDatabase->isConnected()) {
@@ -195,11 +198,17 @@ class CommonRepository extends BaseRepository
      *
      * @param int $identifier
      * @param string|null $tableName
+     * @param string $idFieldName
      *
      * @return RecordInterface|null
      */
-    public function findByIdentifier($identifier, string $tableName = null)
+    public function findByIdentifier($identifier, string $tableName = null, $idFieldName = 'uid')
     {
+        // TODO: Remove any `identifierFieldName` related stuff from this method with in2publish_core version 10.
+        //  It is only required to maintain the function of the deprecated getter of this property.
+        $previousIdFieldName = $this->identifierFieldName;
+        $this->identifierFieldName = $idFieldName;
+
         if (null === $tableName) {
             trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
             $tableName = $this->tableName;
@@ -209,7 +218,7 @@ class CommonRepository extends BaseRepository
         }
         $local = $this->findPropertiesByProperty(
             $this->localDatabase,
-            $this->identifierFieldName,
+            $idFieldName,
             $identifier,
             '',
             '',
@@ -221,7 +230,7 @@ class CommonRepository extends BaseRepository
         $local = empty($local) ? [] : reset($local);
         $foreign = $this->findPropertiesByProperty(
             $this->foreignDatabase,
-            $this->identifierFieldName,
+            $idFieldName,
             $identifier,
             '',
             '',
@@ -231,7 +240,9 @@ class CommonRepository extends BaseRepository
             $tableName
         );
         $foreign = empty($foreign) ? [] : reset($foreign);
-        return $this->convertToRecord($local, $foreign, $tableName);
+        $records = $this->convertToRecord($local, $foreign, $tableName, $idFieldName);
+        $this->identifierFieldName = $previousIdFieldName;
+        return $records;
     }
 
     /**
@@ -527,6 +538,8 @@ class CommonRepository extends BaseRepository
             if ($this->shouldSkipSearchingForRelatedRecordsByProperty($record, $propertyName, $columnConfiguration)) {
                 continue;
             }
+            // TODO: Remove any `identifierFieldName` related stuff from this method with in2publish_core version 10.
+            //  It is only required to maintain the function of the deprecated getter of this property.
             $previousIdFieldName = $this->identifierFieldName;
             $this->identifierFieldName = 'uid';
             switch ($columnConfiguration['type']) {
@@ -1255,7 +1268,7 @@ class CommonRepository extends BaseRepository
                         continue;
                     }
                     if (!in_array($originalTableName, $excludedTableNames)) {
-                        $originalRecord = $this->findByIdentifierInOtherTable($localUid, $originalTableName);
+                        $originalRecord = $this->findByIdentifier($localUid, $originalTableName);
                         if ($originalRecord !== null) {
                             $relatedRecord->addRelatedRecord($originalRecord);
                         }
@@ -1343,10 +1356,7 @@ class CommonRepository extends BaseRepository
                     $flexFormData
                 );
                 foreach ($fileAndPathNames as $fileAndPathName) {
-                    $previousIdFieldName = $this->identifierFieldName;
-                    $this->identifierFieldName = 'identifier';
-                    $record = $this->findByIdentifier($fileAndPathName, 'sys_file');
-                    $this->identifierFieldName = $previousIdFieldName;
+                    $record = $this->findByIdentifier($fileAndPathName, 'sys_file', 'identifier');
                     if ($record instanceof RecordInterface) {
                         $recordIdentifier = $record->getIdentifier();
 
@@ -1570,7 +1580,7 @@ class CommonRepository extends BaseRepository
             $originalTableName = $columnConfiguration['foreign_table'];
             if (!in_array($originalTableName, $excludedTableNames)) {
                 $identifier = $relationRecord->getMergedProperty($foreignField);
-                $originalRecord = $this->findByIdentifierInOtherTable($identifier, $originalTableName);
+                $originalRecord = $this->findByIdentifier($identifier, $originalTableName);
                 if ($originalRecord !== null) {
                     $relationRecord->addRelatedRecord($originalRecord);
                 }
@@ -1775,7 +1785,7 @@ class CommonRepository extends BaseRepository
 
             $originalTableName = $columnConfiguration['foreign_table'];
             if (!in_array($originalTableName, $excludedTableNames)) {
-                $originalRecord = $this->findByIdentifierInOtherTable($localUid, $columnConfiguration['foreign_table']);
+                $originalRecord = $this->findByIdentifier($localUid, $columnConfiguration['foreign_table']);
                 if ($originalRecord !== null) {
                     $mmRecord->addRelatedRecord($originalRecord);
                 }
@@ -1792,14 +1802,16 @@ class CommonRepository extends BaseRepository
      * @param string $tableName
      *
      * @return RecordInterface|null
+     *
+     * @deprecated Method will be removed in in2publish_core version 10. Use `findByIdentifier` instead.
      */
     protected function findByIdentifierInOtherTable($identifier, $tableName)
     {
-        $previousIdFieldName = $this->identifierFieldName;
-        $this->identifierFieldName = 'uid';
-        $relatedRecord = $this->findByIdentifier($identifier, $tableName);
-        $this->identifierFieldName = $previousIdFieldName;
-        return $relatedRecord;
+        trigger_error(
+            sprintf(self::DEPRECATION_METHOD, __METHOD__) . ' Use `findByIdentifier` instead.',
+            E_USER_DEPRECATED
+        );
+        return $this->findByIdentifier($identifier, $tableName);
     }
 
     /**
@@ -2004,16 +2016,28 @@ class CommonRepository extends BaseRepository
      * @param array $localProperties
      * @param array $foreignProperties
      * @param string|null $tableName
+     * @param string $idFieldName
      *
      * @return RecordInterface|null
      */
-    protected function convertToRecord(array $localProperties, array $foreignProperties, string $tableName = null)
-    {
+    protected function convertToRecord(
+        array $localProperties,
+        array $foreignProperties,
+        string $tableName = null,
+        string $idFieldName = 'uid'
+    ) {
         if (null === $tableName) {
             trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
             $tableName = $this->tableName;
         }
-        return $this->recordFactory->makeInstance($this, $localProperties, $foreignProperties, [], $tableName);
+        return $this->recordFactory->makeInstance(
+            $this,
+            $localProperties,
+            $foreignProperties,
+            [],
+            $tableName,
+            $idFieldName
+        );
     }
 
     /**

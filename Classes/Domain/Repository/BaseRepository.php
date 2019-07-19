@@ -65,11 +65,17 @@ abstract class BaseRepository
      * The table name to use for any SELECT, INSERT, UPDATE and DELETE query
      *
      * @var string
+     *
+     * @deprecated This property is deprecated and will be removed in in2publish_core version 10.
+     *  Use the available method arguments instead.
      */
     protected $tableName = '';
 
     /**
      * @var string
+     *
+     * @deprecated This property is deprecated and will be removed in in2publish_core version 10.
+     *  Use the available method arguments instead.
      */
     protected $identifierFieldName = 'uid';
 
@@ -354,7 +360,7 @@ abstract class BaseRepository
      *
      * @return bool|int
      */
-    protected function countRecord(Connection $connection, $identifier, string $tableName = null)
+    protected function countRecord(Connection $connection, $identifier, string $tableName = null, $idFieldName = 'uid')
     {
         if (null === $tableName) {
             trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
@@ -363,7 +369,7 @@ abstract class BaseRepository
         $result = $connection->count(
             '*',
             $tableName,
-            [$this->identifierFieldName => $identifier]
+            [$idFieldName => $identifier]
         );
         if (false === $result) {
             $this->logFailedQuery(__METHOD__, $connection, $tableName);
@@ -454,6 +460,7 @@ abstract class BaseRepository
      */
     public function getIdentifierFieldName(): string
     {
+        trigger_error(sprintf(static::DEPRECATION_METHOD, __METHOD__), E_USER_DEPRECATED);
         return $this->identifierFieldName;
     }
 }

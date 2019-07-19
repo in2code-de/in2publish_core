@@ -173,6 +173,7 @@ class RecordFactory
      * @param array $foreignProperties Properties of the record from foreign Database
      * @param array $additionalProperties array of not persisted properties
      * @param string|null $tableName
+     * @param string $idFieldName
      *
      * @return RecordInterface|null
      */
@@ -181,7 +182,8 @@ class RecordFactory
         array $localProperties,
         array $foreignProperties,
         array $additionalProperties = [],
-        string $tableName = null
+        string $tableName = null,
+        string $idFieldName = 'uid'
     ) {
         if (false === $this->isRootRecord) {
             $this->isRootRecord = true;
@@ -195,7 +197,8 @@ class RecordFactory
             $commonRepository,
             $localProperties,
             $foreignProperties,
-            $tableName
+            $tableName,
+            $idFieldName
         );
 
         if (null === $tableName) {
@@ -464,8 +467,8 @@ class RecordFactory
      * @param CommonRepository $commonRepository
      * @param array $localProperties
      * @param array $foreignProperties
-     *
      * @param string|null $tableName
+     * @param string $idFieldName
      *
      * @return int|string
      */
@@ -473,21 +476,20 @@ class RecordFactory
         $commonRepository,
         array $localProperties,
         array $foreignProperties,
-        string $tableName = null
+        string $tableName = null,
+        string $idFieldName = 'uid'
     ) {
         if (null === $tableName) {
             trigger_error(sprintf(static::DEPRECATION_METHOD_NO_TABLE_ARG, __METHOD__), E_USER_DEPRECATED);
             $tableName = $commonRepository->getTableName();
         }
         if ($tableName === 'sys_file') {
-            $identifierFieldName = 'uid';
-        } else {
-            $identifierFieldName = $commonRepository->getIdentifierFieldName();
+            $idFieldName = 'uid';
         }
-        if (!empty($localProperties[$identifierFieldName])) {
-            return $localProperties[$identifierFieldName];
-        } elseif (!empty($foreignProperties[$identifierFieldName])) {
-            return $foreignProperties[$identifierFieldName];
+        if (!empty($localProperties[$idFieldName])) {
+            return $localProperties[$idFieldName];
+        } elseif (!empty($foreignProperties[$idFieldName])) {
+            return $foreignProperties[$idFieldName];
         } else {
             $combinedIdentifier = Record::createCombinedIdentifier($localProperties, $foreignProperties);
             if (strlen($combinedIdentifier) === 0) {
@@ -497,7 +499,7 @@ class RecordFactory
                     $this->logger->error(
                         'Could not merge identifier values',
                         [
-                            'identifierFieldName' => $identifierFieldName,
+                            'identifierFieldName' => $idFieldName,
                             'tableName' => $tableName,
                             'localProperties' => $localProperties,
                             'foreignProperties' => $foreignProperties,
