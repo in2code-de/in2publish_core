@@ -30,12 +30,19 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
 use In2code\In2publishCore\Command\StatusCommandController;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_diff_assoc;
+use function array_keys;
+use function base64_decode;
+use function hash;
+use function implode;
+use function json_decode;
 use function strpos;
 
 /**
@@ -131,6 +138,27 @@ class ForeignInstanceTest implements TestCaseInterface
             );
         }
 
+        if (isset($foreign['dbInfo'])) {
+            $foreignDbConfig = json_decode(base64_decode($foreign['dbInfo']), true);
+            $salt = $foreignDbConfig['salt'];
+            unset($foreignDbConfig['salt']);
+
+            $localDbConfig = GeneralUtility::makeInstance(ConfigContainer::class)->get('foreign.database');
+            $localDbConfig['password'] = hash('sha256', $salt . $localDbConfig['password']);
+
+            $differentConfig = array_diff_assoc($localDbConfig, $foreignDbConfig);
+
+            if (!empty($differentConfig)) {
+                $keys = array_keys($differentConfig);
+                return new TestResult(
+                    'application.db_connection_differences',
+                    TestResult::ERROR,
+                    ['application.db_config'],
+                    [implode(',', $keys)]
+                );
+            }
+        }
+
         if (isset($foreign['adminOnly']) && '0' === $foreign['adminOnly']) {
             return new TestResult(
                 'application.foreign_admin_mode',
@@ -144,6 +172,7 @@ class ForeignInstanceTest implements TestCaseInterface
 
     /**
      * @param array $output
+     *
      * @return array
      */
     protected function tokenizeResponse(array $output): array
