@@ -40,11 +40,14 @@ use function array_combine;
 use function explode;
 use function json_encode;
 use function preg_match;
+use function sprintf;
 use function stripos;
 use function strpos;
 use function strtoupper;
 use function substr;
+use function trigger_error;
 use function trim;
+use const E_USER_DEPRECATED;
 
 /**
  * Class BaseRepository. Inherit from this repository to execute methods
@@ -54,16 +57,25 @@ use function trim;
 abstract class BaseRepository
 {
     const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/i';
+    const DEPRECATION_TABLE_NAME_FIELD = 'The field BaseRepository::$tableName is deprecated and will be removed in in2publish_core version 10. Please use the methods tableName argument instead. Method: %s';
+    const DEPRECATION_METHOD = 'The method %s is deprecated and will be removed in in2publish_core version 10.';
+    const DEPRECATION_PARAMETER = 'The parameter %s of method %s is deprecated and will be removed in in2publish_core version 10.';
 
     /**
      * The table name to use for any SELECT, INSERT, UPDATE and DELETE query
      *
      * @var string
+     *
+     * @deprecated This property is deprecated and will be removed in in2publish_core version 10.
+     *  Use the available method arguments instead.
      */
     protected $tableName = '';
 
     /**
      * @var string
+     *
+     * @deprecated This property is deprecated and will be removed in in2publish_core version 10.
+     *  Use the available method arguments instead.
      */
     protected $identifierFieldName = 'uid';
 
@@ -99,6 +111,7 @@ abstract class BaseRepository
      * @param string $orderBy
      * @param string $limit
      * @param string $indexField
+     * @param string|null $tableName
      *
      * @return array
      */
@@ -110,14 +123,20 @@ abstract class BaseRepository
         $groupBy = '',
         $orderBy = '',
         $limit = '',
-        $indexField = 'uid'
+        $indexField = 'uid',
+        string $tableName = null
     ): array {
         $propertyArray = [];
 
-        if (empty($this->tableName)) {
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $this->tableName;
+        }
+
+        if (empty($tableName)) {
             return $propertyArray;
         }
-        $sortingField = $this->tcaService->getSortingField($this->tableName);
+        $sortingField = $this->tcaService->getSortingField($tableName);
         if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
             $additionalWhere = $matches['where'];
             $orderBy = $matches['col'] . strtoupper($matches['dir'] ?? ' ASC');
@@ -133,7 +152,7 @@ abstract class BaseRepository
         $query = $connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $query->select('*')
-              ->from($this->tableName)
+              ->from($tableName)
               ->where($query->expr()->like($propertyName, $query->createNamedParameter($propertyValue)))
               ->andWhere($additionalWhere);
 
@@ -176,6 +195,8 @@ abstract class BaseRepository
      * @param string $orderBy
      * @param string $limit
      * @param string $indexField
+     * @param string|null $tableName
+     *
      * @return array
      */
     public function findPropertiesByProperties(
@@ -185,16 +206,22 @@ abstract class BaseRepository
         $groupBy = '',
         $orderBy = '',
         $limit = '',
-        $indexField = 'uid'
+        $indexField = 'uid',
+        string $tableName = null
     ): array {
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $this->tableName;
+        }
+
         if (empty($orderBy)) {
-            $orderBy = $this->tcaService->getSortingField($this->tableName);
+            $orderBy = $this->tcaService->getSortingField($tableName);
         }
 
         $query = $connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $query->select('*')
-              ->from($this->tableName)
+              ->from($tableName)
               ->andWhere($additionalWhere);
 
         foreach ($properties as $propertyName => $propertyValue) {
@@ -224,30 +251,40 @@ abstract class BaseRepository
      * @param Connection $connection
      * @param int|string $identifier
      * @param array $properties
+     * @param string|null $tableName
+     *
      * @return bool
      */
-    protected function updateRecord(Connection $connection, $identifier, array $properties): bool
-    {
+    protected function updateRecord(
+        Connection $connection,
+        $identifier,
+        array $properties,
+        string $tableName = null
+    ): bool {
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $this->tableName;
+        }
         // deal with MM records, they have (in2publish internal) combined identifiers
         if (strpos((string)$identifier, ',') !== false) {
             $identifierArray = Record::splitCombinedIdentifier($identifier);
 
-            $success = (bool)$connection->update(
-                $this->tableName,
+            $connection->update(
+                $tableName,
                 $properties,
                 $identifierArray
             );
         } else {
-            $success = (bool)$connection->update(
-                $this->tableName,
+            $connection->update(
+                $tableName,
                 $properties,
                 ['uid' => $identifier]
             );
         }
-        if (!$success) {
-            $this->logFailedQuery(__METHOD__, $connection);
+        if (0 < $connection->errorCode()) {
+            $this->logFailedQuery(__METHOD__, $connection, $tableName);
         }
-        return $success;
+        return true;
     }
 
     /**
@@ -257,13 +294,19 @@ abstract class BaseRepository
      *
      * @param Connection $connection
      * @param array $properties
+     * @param string|null $tableName
+     *
      * @return bool
      */
-    protected function addRecord(Connection $connection, array $properties): bool
+    protected function addRecord(Connection $connection, array $properties, string $tableName = null): bool
     {
-        $success = (bool)$connection->insert($this->tableName, $properties);
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $this->tableName;
+        }
+        $success = (bool)$connection->insert($tableName, $properties);
         if (!$success) {
-            $this->logFailedQuery(__METHOD__, $connection);
+            $this->logFailedQuery(__METHOD__, $connection, $tableName);
         }
         return $success;
     }
@@ -280,23 +323,29 @@ abstract class BaseRepository
      *
      * @param Connection $connection
      * @param int $identifier
+     * @param string|null $tableName
+     *
      * @return bool
      * @internal param string $deleteFieldName
      */
-    protected function deleteRecord(Connection $connection, $identifier)
+    protected function deleteRecord(Connection $connection, $identifier, string $tableName = null)
     {
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $this->tableName;
+        }
         if (strpos((string)$identifier, ',') !== false) {
             $identifierArray = Record::splitCombinedIdentifier($identifier);
 
-            $success = (bool)$connection->delete($this->tableName, $identifierArray);
+            $success = (bool)$connection->delete($tableName, $identifierArray);
             if (!$success) {
-                $this->logFailedQuery(__METHOD__, $connection);
+                $this->logFailedQuery(__METHOD__, $connection, $tableName);
             }
             return $success;
         } else {
-            $success = (bool)$connection->delete($this->tableName, ['uid' => (int)$identifier]);
+            $success = (bool)$connection->delete($tableName, ['uid' => (int)$identifier]);
             if (!$success) {
-                $this->logFailedQuery(__METHOD__, $connection);
+                $this->logFailedQuery(__METHOD__, $connection, $tableName);
             }
             return $success;
         }
@@ -307,17 +356,23 @@ abstract class BaseRepository
      *
      * @param Connection $connection
      * @param string|int $identifier
+     * @param string|null $tableName
+     *
      * @return bool|int
      */
-    protected function countRecord(Connection $connection, $identifier)
+    protected function countRecord(Connection $connection, $identifier, string $tableName = null, $idFieldName = 'uid')
     {
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $this->tableName;
+        }
         $result = $connection->count(
             '*',
-            $this->tableName,
-            [$this->identifierFieldName => $identifier]
+            $tableName,
+            [$idFieldName => $identifier]
         );
         if (false === $result) {
-            $this->logFailedQuery(__METHOD__, $connection);
+            $this->logFailedQuery(__METHOD__, $connection, $tableName);
             return false;
         }
         return (int)$result;
@@ -327,6 +382,7 @@ abstract class BaseRepository
      * Quote string: escapes bad characters
      *
      * @param string $string
+     *
      * @return string
      */
     protected function quoteString($string): string
@@ -339,16 +395,22 @@ abstract class BaseRepository
      *
      * @param $method
      * @param Connection $connection
+     * @param string|null $tableName
+     *
      * @return void
      */
-    protected function logFailedQuery($method, Connection $connection)
+    protected function logFailedQuery($method, Connection $connection, string $tableName = null)
     {
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $this->tableName;
+        }
         $this->logger->critical(
             $method . ': Query failed.',
             [
                 'errno' => $connection->errorCode(),
                 'error' => json_encode($connection->errorInfo()),
-                'tableName' => $this->tableName,
+                'tableName' => $tableName,
             ]
         );
     }
@@ -364,25 +426,30 @@ abstract class BaseRepository
      */
     public function getTableName(): string
     {
+        trigger_error(sprintf(static::DEPRECATION_METHOD, __METHOD__), E_USER_DEPRECATED);
         return $this->tableName;
     }
 
     /**
      * @param string $tableName
+     *
      * @return BaseRepository
      */
     public function setTableName($tableName): BaseRepository
     {
+        trigger_error(sprintf(static::DEPRECATION_METHOD, __METHOD__), E_USER_DEPRECATED);
         $this->tableName = $tableName;
         return $this;
     }
 
     /**
      * @param string $tableName
+     *
      * @return string
      */
     public function replaceTableName($tableName): string
     {
+        trigger_error(sprintf(static::DEPRECATION_METHOD, __METHOD__), E_USER_DEPRECATED);
         $replacedTableName = $this->tableName;
         $this->tableName = $tableName;
         return $replacedTableName;
@@ -393,6 +460,7 @@ abstract class BaseRepository
      */
     public function getIdentifierFieldName(): string
     {
+        trigger_error(sprintf(static::DEPRECATION_METHOD, __METHOD__), E_USER_DEPRECATED);
         return $this->identifierFieldName;
     }
 }

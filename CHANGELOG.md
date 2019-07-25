@@ -1,5 +1,23 @@
 # In2publish Core Change Log
 
+8.3.0:
+
+- [META] Set the EM conf version number to 8.3.0
+- [META] Set the branch alias version number to 8.3.x-dev
+- [BUGFIX] Use TYPO3 v9 compat version of the random generator
+- [FEATURE] Add test to detect if the used foreign database is different from foreign.database setting
+- [DEPRECATION] Prepare removal of BaseRepository::identifierFieldName by deprecating it
+- [DEPRECATION] Prepare removal of BaseRepository::tableName by deprecating it
+- [CLEANUP] Remove unused constant with regex to parse a specific exception message
+- [BUGFIX] Ensure the pid is an int for all requests except for file related modules
+- [COMMENT] Add empty lines before return annotations
+- [BUGFIX] Do not treat the number of affected rows as error information
+- [COMMENT] Place copyright comment in ConfigurationUtility above imports
+- [BUGFIX] Ignore the table's autoincrement and comment when comparing databases
+- [BUGFIX] Respect definition keys when merging default config values
+- [BUGFIX] Set correct return type annotation for moveForeignFile
+- [RELEASE] Version 8.2.2 with multiline regex fix, exclude tables in RTE relations
+
 8.2.2:
 
 - [META] Set the EM conf version number to 8.2.2

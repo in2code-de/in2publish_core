@@ -53,7 +53,10 @@ use function strpos;
  */
 class FileController extends AbstractController
 {
-    const EXCEPTION_MESSAGE_PATTERN = '~The folder "(?P<folder>[^"]+)" has too many files(?: \((?P<number>\d+)\))?~';
+    /**
+     * @var bool
+     */
+    protected $forcePidInteger = false;
 
     /**
      * @SuppressWarnings(PHPMD.StaticAccess)

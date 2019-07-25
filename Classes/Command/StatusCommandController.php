@@ -29,13 +29,16 @@ namespace In2code\In2publishCore\Command;
  */
 
 use In2code\In2publishCore\Utility\ExtensionUtility;
+use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function base64_encode;
+use function hash;
 use function json_encode;
 use function serialize;
 use function version_compare;
+use const TYPO3_branch;
 
 /**
  * Class StatusCommandController (always enabled)
@@ -70,6 +73,7 @@ class StatusCommandController extends AbstractCommandController
         if (version_compare(TYPO3_branch, '9.3', '>=')) {
             $this->shortSiteConfigurationCommand();
         }
+        $this->dbInfoCommand();
     }
 
     /**
@@ -187,5 +191,23 @@ class StatusCommandController extends AbstractCommandController
         } else {
             $this->outputLine('Site configurations do not exist in TYPO3 v8');
         }
+    }
+
+    /**
+     * Return the configured database connection information (password is hashed with salt)
+     */
+    public function dbInfoCommand()
+    {
+        $connectionInfo = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default'];
+        $salt = GeneralUtility::makeInstance(Random::class)->generateRandomHexString(16);
+        $result = [
+            'name' => $connectionInfo['dbname'],
+            'username' => $connectionInfo['user'],
+            'password' => hash('sha256', $salt . $connectionInfo['password']),
+            'hostname' => $connectionInfo['host'],
+            'port' => $connectionInfo['port'],
+            'salt' => $salt,
+        ];
+        $this->outputLine('dbInfo: ' . base64_encode(json_encode($result)));
     }
 }

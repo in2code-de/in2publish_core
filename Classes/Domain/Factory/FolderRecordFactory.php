@@ -103,7 +103,7 @@ class FolderRecordFactory
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->commonRepository = CommonRepository::getDefaultInstance('sys_file');
+        $this->commonRepository = CommonRepository::getDefaultInstance();
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->configuration = GeneralUtility::makeInstance(ConfigContainer::class)->get('factory.fal');
     }
@@ -189,10 +189,8 @@ class FolderRecordFactory
         $record->addRelatedRecords($this->getSubFolderRecordInstances($identifier));
 
         // Now let's find all files inside of the selected folder by the folders hash.
-        $files = $this->commonRepository->findByProperties(
-            ['folder_hash' => $hashedIdentifier, 'storage' => $storageUid],
-            true
-        );
+        $properties = ['folder_hash' => $hashedIdentifier, 'storage' => $storageUid];
+        $files = $this->commonRepository->findByProperties($properties, true, 'sys_file');
 
         // FEATURE: mergeSysFileByIdentifier and enableSysFileReferenceUpdate
         if (true === $this->configuration['mergeSysFileByIdentifier']) {
@@ -585,7 +583,8 @@ class FolderRecordFactory
         // because they should have been found by the folder hash already, but i'm a
         // generous developer and allow FAL to completely fuck up the folder hash
         foreach ($onlyDiskIdentifiers[$side] as $index => $onlyDiskIdentifier) {
-            $disconnectedSysFiles = $this->commonRepository->findByProperty('identifier', $onlyDiskIdentifier);
+            $disconnectedSysFiles = $this->commonRepository
+                ->findByProperty('identifier', $onlyDiskIdentifier, 'sys_file');
             // if a sys_file record could be reclaimed use it
             if (!empty($disconnectedSysFiles)) {
                 // repair the entry a.k.a reconnect it by updating the folder hash

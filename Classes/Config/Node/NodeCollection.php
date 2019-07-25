@@ -147,6 +147,19 @@ class NodeCollection extends ArrayObject implements Node
     }
 
     /**
+     * NodeCollections will never "collide" because they don't have names
+     *
+     * @param array $original
+     * @param array $additional
+     *
+     * @return array
+     */
+    public function mergeArrays(array $original, array $additional): array
+    {
+        return $original;
+    }
+
+    /**
      * @param array[]|bool[]|int[]|string[] $value
      * @return array[]|bool[]|int[]|string[]
      */

@@ -82,7 +82,7 @@ class RecordController extends AbstractController
         $this->logger->debug('Called indexAction');
         TcaProcessingService::getInstance();
         if (!$this->configContainer->get('factory.simpleOverviewAndAjax')) {
-            $record = $this->commonRepository->findByIdentifier($this->pid);
+            $record = $this->commonRepository->findByIdentifier($this->pid, 'pages');
         } else {
             $record = GeneralUtility::makeInstance(FakeRecordFactory::class)->buildFromStartPage($this->pid);
         }
@@ -168,7 +168,7 @@ class RecordController extends AbstractController
      */
     protected function publishRecord($identifier, array $exceptTableNames = [])
     {
-        $record = $this->commonRepository->findByIdentifier($identifier);
+        $record = $this->commonRepository->findByIdentifier($identifier, 'pages');
 
         try {
             $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforePublishing', [$this, $record]);

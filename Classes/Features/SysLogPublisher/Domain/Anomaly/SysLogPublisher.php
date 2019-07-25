@@ -92,7 +92,6 @@ class SysLogPublisher
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->commonRepository = CommonRepository::getDefaultInstance();
-        $this->commonRepository->setTableName($this->sysLogTableName);
     }
 
     /**

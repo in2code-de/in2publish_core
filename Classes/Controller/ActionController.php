@@ -38,6 +38,7 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
+use function is_int;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -63,6 +64,11 @@ abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
     protected $pid = 0;
 
     /**
+     * @var bool
+     */
+    protected $forcePidInteger = true;
+
+    /**
      * Creates a logger for the instantiated controller object.
      * When extending from this class and using an own constructor don't forget
      * to call this constructor method at the end of your own implementation
@@ -74,7 +80,12 @@ abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
         parent::__construct();
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-        $this->pid = BackendUtility::getPageIdentifier();
+        $pid = BackendUtility::getPageIdentifier();
+        if (true === $this->forcePidInteger && !is_int($pid)) {
+            $this->logger->warning('Page identifier is not an int. Falling back to 0.', ['pid' => $this->pid]);
+            $pid = 0;
+        }
+        $this->pid = $pid;
         GeneralUtility::makeInstance(ExecutionTimeService::class)->start();
     }
 

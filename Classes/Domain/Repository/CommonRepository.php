@@ -72,10 +72,13 @@ use function parse_str;
 use function parse_url;
 use function preg_match_all;
 use function reset;
+use function sprintf;
 use function strlen;
 use function strpos;
 use function substr;
+use function trigger_error;
 use function trim;
+use const E_USER_DEPRECATED;
 
 /**
  * CommonRepository - actions in foreign and local database
@@ -111,6 +114,7 @@ class CommonRepository extends BaseRepository
 {
     const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)~';
     const SIGNAL_RELATION_RESOLVER_RTE = 'relationResolverRTE';
+    const DEPRECATION_METHOD_FPBPATN = 'CommonRepository::findPropertiesByPropertyAndTablename is deprecated and will be removed in in2publish_core version 10. Use BaseRepository::findPropertiesByProperty instead';
 
     /**
      * @var RecordFactory
@@ -157,27 +161,35 @@ class CommonRepository extends BaseRepository
     /**
      * @param Connection $localDatabase
      * @param Connection $foreignDatabase
-     * @param string $tableName
+     * @param string|null $tableName
      * @param string $identifierFieldName
      */
     public function __construct(
         Connection $localDatabase,
         Connection $foreignDatabase,
-        $tableName,
-        $identifierFieldName = 'uid'
+        string $tableName = null,
+        string $identifierFieldName = null
     ) {
+        if (null !== $tableName) {
+            trigger_error(sprintf(self::DEPRECATION_PARAMETER, 'tableName', __METHOD__), E_USER_DEPRECATED);
+        }
+        if (null !== $identifierFieldName) {
+            trigger_error(sprintf(self::DEPRECATION_PARAMETER, 'identifierFieldName', __METHOD__), E_USER_DEPRECATED);
+        }
         parent::__construct();
         $this->recordFactory = GeneralUtility::makeInstance(RecordFactory::class);
         $this->resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
         $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
-        $this->identifierFieldName = $identifierFieldName;
+        $this->identifierFieldName = $identifierFieldName ?: $this->identifierFieldName;
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
         if ($foreignDatabase === null || !$foreignDatabase->isConnected()) {
             $this->foreignDatabase = $localDatabase;
         }
-        $this->setTableName($tableName);
+        if (null !== $tableName) {
+            $this->setTableName($tableName);
+        }
     }
 
     /**
@@ -185,23 +197,52 @@ class CommonRepository extends BaseRepository
      * Returns exactly one Record.
      *
      * @param int $identifier
-     * @param string $tableName
+     * @param string|null $tableName
+     * @param string $idFieldName
      *
      * @return RecordInterface|null
      */
-    public function findByIdentifier($identifier, $tableName = null)
+    public function findByIdentifier($identifier, string $tableName = null, $idFieldName = 'uid')
     {
-        if ($tableName !== null) {
-            $this->tableName = $tableName;
+        // TODO: Remove any `identifierFieldName` related stuff from this method with in2publish_core version 10.
+        //  It is only required to maintain the function of the deprecated getter of this property.
+        $previousIdFieldName = $this->identifierFieldName;
+        $this->identifierFieldName = $idFieldName;
+
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $this->tableName;
         }
-        if ($this->shouldSkipFindByIdentifier($identifier)) {
+        if ($this->shouldSkipFindByIdentifier($identifier, $tableName)) {
             return GeneralUtility::makeInstance(NullRecord::class, $tableName);
         }
-        $local = $this->findPropertiesByProperty($this->localDatabase, $this->identifierFieldName, $identifier);
+        $local = $this->findPropertiesByProperty(
+            $this->localDatabase,
+            $idFieldName,
+            $identifier,
+            '',
+            '',
+            '',
+            '',
+            'uid',
+            $tableName
+        );
         $local = empty($local) ? [] : reset($local);
-        $foreign = $this->findPropertiesByProperty($this->foreignDatabase, $this->identifierFieldName, $identifier);
+        $foreign = $this->findPropertiesByProperty(
+            $this->foreignDatabase,
+            $idFieldName,
+            $identifier,
+            '',
+            '',
+            '',
+            '',
+            'uid',
+            $tableName
+        );
         $foreign = empty($foreign) ? [] : reset($foreign);
-        return $this->convertToRecord($local, $foreign);
+        $records = $this->convertToRecord($local, $foreign, $tableName, $idFieldName);
+        $this->identifierFieldName = $previousIdFieldName;
+        return $records;
     }
 
     /**
@@ -210,22 +251,47 @@ class CommonRepository extends BaseRepository
      *
      * @param string $propertyName
      * @param mixed $propertyValue
+     * @param string|null $tableName
      *
      * @return RecordInterface[]
      */
-    public function findByProperty($propertyName, $propertyValue): array
+    public function findByProperty($propertyName, $propertyValue, string $tableName = null): array
     {
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $this->tableName;
+        }
         if ($this->shouldSkipFindByProperty($propertyName, $propertyValue)) {
             return [];
         }
         if ($propertyName === 'uid'
-            && $record = $this->recordFactory->getCachedRecord($this->tableName, $propertyValue)
+            && $record = $this->recordFactory->getCachedRecord($tableName, $propertyValue)
         ) {
             return $record;
         }
-        $localProperties = $this->findPropertiesByProperty($this->localDatabase, $propertyName, $propertyValue);
-        $foreignProperties = $this->findPropertiesByProperty($this->foreignDatabase, $propertyName, $propertyValue);
-        return $this->convertPropertyArraysToRecords($localProperties, $foreignProperties);
+        $localProperties = $this->findPropertiesByProperty(
+            $this->localDatabase,
+            $propertyName,
+            $propertyValue,
+            '',
+            '',
+            '',
+            '',
+            'uid',
+            $tableName
+        );
+        $foreignProperties = $this->findPropertiesByProperty(
+            $this->foreignDatabase,
+            $propertyName,
+            $propertyValue,
+            '',
+            '',
+            '',
+            '',
+            'uid',
+            $tableName
+        );
+        return $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName);
     }
 
     /**
@@ -235,11 +301,16 @@ class CommonRepository extends BaseRepository
      * @param array $properties
      * @param bool $simulateRoot Simulate an existent root record to prevent filePostProcessing
      *  in the RecordFactory for each single Record
+     * @param string|null $tableName
      *
      * @return RecordInterface[]
      */
-    public function findByProperties(array $properties, $simulateRoot = false): array
+    public function findByProperties(array $properties, $simulateRoot = false, string $tableName = null): array
     {
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $this->tableName;
+        }
         if ($simulateRoot) {
             $this->recordFactory->simulateRootRecord();
         }
@@ -249,13 +320,13 @@ class CommonRepository extends BaseRepository
             }
         }
         if (isset($properties['uid'])
-            && $record = $this->recordFactory->getCachedRecord($this->tableName, $properties['uid'])
+            && $record = $this->recordFactory->getCachedRecord($tableName, $properties['uid'])
         ) {
             return $record;
         }
-        $localProperties = $this->findPropertiesByProperties($this->localDatabase, $properties);
-        $foreignProperties = $this->findPropertiesByProperties($this->foreignDatabase, $properties);
-        $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties);
+        $localProperties = $this->findPropertiesByProperties($this->localDatabase, $properties, $tableName);
+        $foreignProperties = $this->findPropertiesByProperties($this->foreignDatabase, $properties, $tableName);
+        $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName);
         if ($simulateRoot) {
             $this->recordFactory->endSimulation();
         }
@@ -279,6 +350,9 @@ class CommonRepository extends BaseRepository
      * @param string $indexField
      *
      * @return array
+     *
+     * @deprecated CommonRepository::findPropertiesByPropertyAndTablename is deprecated and will be removed in
+     *  in2publish_core version 10. Use BaseRepository::findPropertiesByProperty instead
      */
     protected function findPropertiesByPropertyAndTablename(
         Connection $connection,
@@ -291,8 +365,7 @@ class CommonRepository extends BaseRepository
         $limit = '',
         $indexField = 'uid'
     ): array {
-        $currentTableName = $this->tableName;
-        $this->tableName = $tableName;
+        trigger_error(self::DEPRECATION_METHOD_FPBPATN, E_USER_DEPRECATED);
         $properties = $this->findPropertiesByProperty(
             $connection,
             $propertyName,
@@ -301,9 +374,9 @@ class CommonRepository extends BaseRepository
             $groupBy,
             $orderBy,
             $limit,
-            $indexField
+            $indexField,
+            $tableName
         );
-        $this->tableName = $currentTableName;
         return $properties;
     }
 
@@ -323,15 +396,16 @@ class CommonRepository extends BaseRepository
         $propertyName,
         $propertyValue
     ): array {
-        $properties = $this->findPropertiesByPropertyAndTablename(
+        $properties = $this->findPropertiesByProperty(
             $connection,
-            $tableName,
             $propertyName,
             $propertyValue,
             '',
             '',
             'uid desc',
-            '1'
+            '1',
+            'uid',
+            $tableName
         );
         $firstKey = key($properties);
         if ($firstKey !== null) {
@@ -356,11 +430,19 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
+     * @param string|null $tableName
      *
      * @return RecordInterface[]
      */
-    protected function convertPropertyArraysToRecords(array $localProperties, array $foreignProperties): array
-    {
+    protected function convertPropertyArraysToRecords(
+        array $localProperties,
+        array $foreignProperties,
+        string $tableName = null
+    ): array {
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $this->tableName;
+        }
         $keysToIterate = array_unique(array_merge(array_keys($localProperties), array_keys($foreignProperties)));
 
         $foundRecords = [];
@@ -368,16 +450,36 @@ class CommonRepository extends BaseRepository
         foreach ($keysToIterate as $key) {
             if (strpos((string)$key, ',') === false) {
                 if (empty($localProperties[$key])) {
-                    $propertyArray = $this->findPropertiesByProperty($this->localDatabase, 'uid', $key);
+                    $propertyArray = $this->findPropertiesByProperty(
+                        $this->localDatabase,
+                        'uid',
+                        $key,
+                        '',
+                        '',
+                        '',
+                        '',
+                        'uid',
+                        $tableName
+                    );
                     if (!empty($propertyArray[$key])) {
                         $localProperties[$key] = $propertyArray[$key];
                     }
                 }
                 if (empty($foreignProperties[$key])) {
-                    $propertyArray = $this->findPropertiesByProperty($this->foreignDatabase, 'uid', $key);
+                    $propertyArray = $this->findPropertiesByProperty(
+                        $this->foreignDatabase,
+                        'uid',
+                        $key,
+                        '',
+                        '',
+                        '',
+                        '',
+                        'uid',
+                        $tableName
+                    );
                     if (!empty($propertyArray[$key])) {
                         $foreignProperties[$key] = $propertyArray[$key];
-                        if ('sys_file_metadata' === $this->tableName
+                        if ('sys_file_metadata' === $tableName
                             && isset($localProperties[$key]['file'])
                             && isset($foreignProperties[$key]['file'])
                             && (int)$localProperties[$key]['file'] !== (int)$foreignProperties[$key]['file']
@@ -388,7 +490,7 @@ class CommonRepository extends BaseRepository
                             $this->logger->warning(
                                 'Fixed possibly broken relation by replacing it with another possibly broken relation',
                                 [
-                                    'table' => $this->tableName,
+                                    'table' => $tableName,
                                     'key (UID)' => $key,
                                     'file_local' => $localProperties[$key]['file'],
                                     'file_foreign' => $foreignProperties[$key]['file'],
@@ -398,10 +500,11 @@ class CommonRepository extends BaseRepository
                     }
                 }
             }
-            if (!$this->isIgnoredRecord((array)$localProperties[$key], (array)$foreignProperties[$key])) {
+            if (!$this->isIgnoredRecord((array)$localProperties[$key], (array)$foreignProperties[$key], $tableName)) {
                 $foundRecords[$key] = $this->convertToRecord(
                     (array)$localProperties[$key],
-                    (array)$foreignProperties[$key]
+                    (array)$foreignProperties[$key],
+                    $tableName
                 );
             }
         }
@@ -435,6 +538,8 @@ class CommonRepository extends BaseRepository
             if ($this->shouldSkipSearchingForRelatedRecordsByProperty($record, $propertyName, $columnConfiguration)) {
                 continue;
             }
+            // TODO: Remove any `identifierFieldName` related stuff from this method with in2publish_core version 10.
+            //  It is only required to maintain the function of the deprecated getter of this property.
             $previousIdFieldName = $this->identifierFieldName;
             $this->identifierFieldName = 'uid';
             switch ($columnConfiguration['type']) {
@@ -555,17 +660,16 @@ class CommonRepository extends BaseRepository
             }
             if (count($matches) > 0) {
                 if (!in_array('sys_file_processedfile', $excludedTableNames)) {
-                    $previousTableName = $this->replaceTableName('sys_file_processedfile');
                     foreach ($matches as $match) {
                         if (!empty($match)) {
                             // replace fileadmin if present. It has been replaced by the storage field (FAL)
                             if (strpos($match, 'fileadmin') === 0) {
                                 $match = substr($match, 9);
                             }
-                            $relatedRecords = array_merge($relatedRecords, $this->findByProperty('identifier', $match));
+                            $relatedProcFiles = $this->findByProperty('identifier', $match, 'sys_file_processedfile');
+                            $relatedRecords = array_merge($relatedRecords, $relatedProcFiles);
                         }
                     }
-                    $this->tableName = $previousTableName;
                 }
             }
         }
@@ -577,11 +681,9 @@ class CommonRepository extends BaseRepository
             $matches = array_filter($matches);
             if (count($matches) > 0) {
                 if (!in_array('sys_file', $excludedTableNames)) {
-                    $previousTableName = $this->replaceTableName('sys_file');
                     foreach ($matches as $match) {
-                        $relatedRecords[] = $this->findByIdentifier($match);
+                        $relatedRecords[] = $this->findByIdentifier($match, 'sys_file');
                     }
-                    $this->tableName = $previousTableName;
                 }
             }
         }
@@ -596,18 +698,14 @@ class CommonRepository extends BaseRepository
                         case 'file':
                             if (isset($data['uid'])) {
                                 if (!in_array('sys_file', $excludedTableNames)) {
-                                    $previousTableName = $this->replaceTableName('sys_file');
-                                    $relatedRecords[] = $this->findByIdentifier($data['uid']);
-                                    $this->tableName = $previousTableName;
+                                    $relatedRecords[] = $this->findByIdentifier($data['uid'], 'sys_file');
                                 }
                             }
                             break;
                         case 'page':
                             if (isset($data['uid'])) {
                                 if (!in_array('pages', $excludedTableNames)) {
-                                    $previousTableName = $this->replaceTableName('pages');
-                                    $relatedRecords[] = $this->findByIdentifier($data['uid']);
-                                    $this->tableName = $previousTableName;
+                                    $relatedRecords[] = $this->findByIdentifier($data['uid'], 'pages');
                                 }
                             }
                             break;
@@ -665,10 +763,8 @@ class CommonRepository extends BaseRepository
             if ($this->shouldSkipSearchingForRelatedRecordByTable($record, $tableName)) {
                 continue;
             }
-            $previousTableName = $this->replaceTableName($tableName);
-            $relatedRecords = $this->findByProperty('pid', $recordIdentifier);
+            $relatedRecords = $this->findByProperty('pid', $recordIdentifier, $tableName);
             $record->addRelatedRecords($relatedRecords);
-            $this->tableName = $previousTableName;
         }
         return $record;
     }
@@ -1064,7 +1160,6 @@ class CommonRepository extends BaseRepository
                     }
                 }
                 foreach ($identifierToTableMap as $tableName => $identifiers) {
-                    $previousTableName = $this->replaceTableName($tableName);
                     if ($columnConfiguration['MM']) {
                         $this->logger->alert(
                             'Missing implementation: GROUP MM',
@@ -1076,15 +1171,31 @@ class CommonRepository extends BaseRepository
                         );
                     }
                     foreach ($identifiers as $identifier) {
-                        $records = array_merge(
-                            $records,
-                            $this->convertPropertyArraysToRecords(
-                                $this->findPropertiesByProperty($this->localDatabase, 'uid', $identifier),
-                                $this->findPropertiesByProperty($this->foreignDatabase, 'uid', $identifier)
-                            )
+                        $localProperties = $this->findPropertiesByProperty(
+                            $this->localDatabase,
+                            'uid',
+                            $identifier,
+                            '',
+                            '',
+                            '',
+                            '',
+                            'uid',
+                            $tableName
                         );
+                        $foreignProps = $this->findPropertiesByProperty(
+                            $this->foreignDatabase,
+                            'uid',
+                            $identifier,
+                            '',
+                            '',
+                            '',
+                            '',
+                            'uid',
+                            $tableName
+                        );
+                        $found = $this->convertPropertyArraysToRecords($localProperties, $foreignProps, $tableName);
+                        $records = array_merge($records, $found);
                     }
-                    $this->tableName = $previousTableName;
                 }
             }
         } else {
@@ -1111,30 +1222,30 @@ class CommonRepository extends BaseRepository
                         ]
                     );
                 }
-                $previousTable = $this->replaceTableName($columnConfiguration['MM']);
-                $records = $this->convertPropertyArraysToRecords(
-                    $this->findPropertiesByProperty(
-                        $this->localDatabase,
-                        $this->getLocalField($columnConfiguration),
-                        $record->getIdentifier(),
-                        '',
-                        '',
-                        '',
-                        '',
-                        'uid_local,uid_foreign'
-                    ),
-                    $this->findPropertiesByProperty(
-                        $this->foreignDatabase,
-                        $this->getLocalField($columnConfiguration),
-                        $record->getIdentifier(),
-                        '',
-                        '',
-                        '',
-                        '',
-                        'uid_local,uid_foreign'
-                    )
+                $mmTableName = $columnConfiguration['MM'];
+                $localProperties = $this->findPropertiesByProperty(
+                    $this->localDatabase,
+                    $this->getLocalField($columnConfiguration),
+                    $record->getIdentifier(),
+                    '',
+                    '',
+                    '',
+                    '',
+                    'uid_local,uid_foreign',
+                    $mmTableName
                 );
-                $this->tableName = $previousTable;
+                $foreignProperties = $this->findPropertiesByProperty(
+                    $this->foreignDatabase,
+                    $this->getLocalField($columnConfiguration),
+                    $record->getIdentifier(),
+                    '',
+                    '',
+                    '',
+                    '',
+                    'uid_local,uid_foreign',
+                    $mmTableName
+                );
+                $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $mmTableName);
                 /** @var RecordInterface $relatedRecord */
                 foreach ($records as $relatedRecord) {
                     if ($relatedRecord->hasLocalProperty('tablenames')) {
@@ -1150,21 +1261,20 @@ class CommonRepository extends BaseRepository
                             'Detected different UIDs in fetchRelatedRecordsByGroup',
                             [
                                 'columnConfiguration' => $columnConfiguration,
-                                'recordTableName' => $this->tableName,
+                                'recordTableName' => $originalTableName,
                                 'relatedRecordIdentifier' => $relatedRecord->getIdentifier(),
                             ]
                         );
                         continue;
                     }
                     if (!in_array($originalTableName, $excludedTableNames)) {
-                        $originalRecord = $this->findByIdentifierInOtherTable($localUid, $originalTableName);
+                        $originalRecord = $this->findByIdentifier($localUid, $originalTableName);
                         if ($originalRecord !== null) {
                             $relatedRecord->addRelatedRecord($originalRecord);
                         }
                     }
                 }
             } else {
-                $previousTableName = $this->replaceTableName($tableName);
                 if (!empty($overrideIdentifiers)) {
                     $identifiers = $overrideIdentifiers;
                 } else {
@@ -1176,19 +1286,31 @@ class CommonRepository extends BaseRepository
                     );
                 }
                 foreach ($identifiers as $identifier) {
-                    $records = array_merge(
-                        $records,
-                        $this->convertPropertyArraysToRecords(
-                            $this->findPropertiesByProperty(
-                                $this->localDatabase,
-                                'uid',
-                                $identifier
-                            ),
-                            $this->findPropertiesByProperty($this->foreignDatabase, 'uid', $identifier)
-                        )
+                    $localProperties = $this->findPropertiesByProperty(
+                        $this->localDatabase,
+                        'uid',
+                        $identifier,
+                        '',
+                        '',
+                        '',
+                        '',
+                        'uid',
+                        $tableName
                     );
+                    $foreignProperties = $this->findPropertiesByProperty(
+                        $this->foreignDatabase,
+                        'uid',
+                        $identifier,
+                        '',
+                        '',
+                        '',
+                        '',
+                        'uid',
+                        $tableName
+                    );
+                    $found = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName);
+                    $records = array_merge($records, $found);
                 }
-                $this->tableName = $previousTableName;
             }
         }
         return $records;
@@ -1234,11 +1356,7 @@ class CommonRepository extends BaseRepository
                     $flexFormData
                 );
                 foreach ($fileAndPathNames as $fileAndPathName) {
-                    $previousTableName = $this->replaceTableName('sys_file');
-                    $previousIdFieldName = $this->identifierFieldName;
-                    $this->identifierFieldName = 'identifier';
-                    $record = $this->findByIdentifier($fileAndPathName);
-                    $this->identifierFieldName = $previousIdFieldName;
+                    $record = $this->findByIdentifier($fileAndPathName, 'sys_file', 'identifier');
                     if ($record instanceof RecordInterface) {
                         $recordIdentifier = $record->getIdentifier();
 
@@ -1247,8 +1365,8 @@ class CommonRepository extends BaseRepository
                         // Solution: Re-fetch the record by its UID, so we ensure we can overwrite the foreign record,
                         // given the relation is broken
                         if (RecordInterface::RECORD_STATE_ADDED === $record->getState()) {
-                            $this->recordFactory->forgetCachedRecord($this->getTableName(), $recordIdentifier);
-                            $record = $this->findByIdentifier($recordIdentifier);
+                            $this->recordFactory->forgetCachedRecord('sys_file', $recordIdentifier);
+                            $record = $this->findByIdentifier($recordIdentifier, 'sys_file');
                             if (RecordInterface::RECORD_STATE_ADDED !== $record->getState()) {
                                 $this->logger->notice(
                                     'Detected broken record relation between local and foreign. '
@@ -1259,7 +1377,6 @@ class CommonRepository extends BaseRepository
                         }
                         $records[$recordIdentifier] = $record;
                     }
-                    $this->tableName = $previousTableName;
                 }
                 break;
             default:
@@ -1328,10 +1445,10 @@ class CommonRepository extends BaseRepository
         $overrideIdByRecord = false
     ): array {
         $tableName = $columnConfiguration['foreign_table'];
-        if (in_array($tableName, $excludedTableNames)) {
+        // FlexForms without `foreign_table` sneak through the TCA pre processing
+        if (empty($tableName) || in_array($tableName, $excludedTableNames)) {
             return [];
         }
-        $previousTableName = $this->replaceTableName($tableName);
         $records = [];
 
         if ($overrideIdByRecord) {
@@ -1365,17 +1482,33 @@ class CommonRepository extends BaseRepository
                     $uidArray = $recordIdentifier;
                 }
                 foreach ($uidArray as $uid) {
-                    $records = array_merge(
-                        $records,
-                        $this->convertPropertyArraysToRecords(
-                            $this->findPropertiesByProperty($this->localDatabase, 'uid', $uid, $whereClause),
-                            $this->findPropertiesByProperty($this->foreignDatabase, 'uid', $uid, $whereClause)
-                        )
+                    $localProperties = $this->findPropertiesByProperty(
+                        $this->localDatabase,
+                        'uid',
+                        $uid,
+                        $whereClause,
+                        '',
+                        '',
+                        '',
+                        'uid',
+                        $tableName
                     );
+                    $foreignProperties = $this->findPropertiesByProperty(
+                        $this->foreignDatabase,
+                        'uid',
+                        $uid,
+                        $whereClause,
+                        '',
+                        '',
+                        '',
+                        'uid',
+                        $tableName
+                    );
+                    $found = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName);
+                    $records = array_merge($records, $found);
                 }
             }
         }
-        $this->tableName = $previousTableName;
         return $records;
     }
 
@@ -1391,7 +1524,7 @@ class CommonRepository extends BaseRepository
         RecordInterface $record,
         array $excludedTableNames
     ): array {
-        $previousTableName = $this->replaceTableName($columnConfiguration['MM']);
+        $tableName = $columnConfiguration['MM'];
 
         // log not supported TCA function
         if (!empty($columnConfiguration['MM_table_where'])) {
@@ -1416,28 +1549,29 @@ class CommonRepository extends BaseRepository
         if (strlen($additionalWhere) > 0) {
             $additionalWhere = ' AND ' . $additionalWhere;
         }
-        $records = $this->convertPropertyArraysToRecords(
-            $this->findPropertiesByProperty(
-                $this->localDatabase,
-                $this->getLocalField($columnConfiguration),
-                $record->getIdentifier(),
-                $additionalWhere,
-                '',
-                '',
-                '',
-                'uid_local,uid_foreign'
-            ),
-            $this->findPropertiesByProperty(
-                $this->foreignDatabase,
-                $this->getLocalField($columnConfiguration),
-                $record->getIdentifier(),
-                $additionalWhere,
-                '',
-                '',
-                '',
-                'uid_local,uid_foreign'
-            )
+        $localProperties = $this->findPropertiesByProperty(
+            $this->localDatabase,
+            $this->getLocalField($columnConfiguration),
+            $record->getIdentifier(),
+            $additionalWhere,
+            '',
+            '',
+            '',
+            'uid_local,uid_foreign',
+            $tableName
         );
+        $foreignProperties = $this->findPropertiesByProperty(
+            $this->foreignDatabase,
+            $this->getLocalField($columnConfiguration),
+            $record->getIdentifier(),
+            $additionalWhere,
+            '',
+            '',
+            '',
+            'uid_local,uid_foreign',
+            $tableName
+        );
+        $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName);
 
         $foreignField = $this->getForeignField($columnConfiguration);
 
@@ -1446,14 +1580,13 @@ class CommonRepository extends BaseRepository
             $originalTableName = $columnConfiguration['foreign_table'];
             if (!in_array($originalTableName, $excludedTableNames)) {
                 $identifier = $relationRecord->getMergedProperty($foreignField);
-                $originalRecord = $this->findByIdentifierInOtherTable($identifier, $originalTableName);
+                $originalRecord = $this->findByIdentifier($identifier, $originalTableName);
                 if ($originalRecord !== null) {
                     $relationRecord->addRelatedRecord($originalRecord);
                 }
             }
         }
 
-        $this->tableName = $previousTableName;
         return $records;
     }
 
@@ -1481,7 +1614,6 @@ class CommonRepository extends BaseRepository
         if (in_array($tableName, $excludedTableNames)) {
             return [];
         }
-        $previousTableName = $this->replaceTableName($tableName);
 
         $where = [];
 
@@ -1492,7 +1624,6 @@ class CommonRepository extends BaseRepository
                 $recordIdentifier,
                 $excludedTableNames
             );
-            $this->tableName = $previousTableName;
             return $records;
         }
 
@@ -1521,19 +1652,37 @@ class CommonRepository extends BaseRepository
             $foreignList = GeneralUtility::trimExplode(',', $foreignList, true);
             $identifierList = array_unique(array_merge($localList, $foreignList));
             foreach ($identifierList as $uid) {
-                $records[] = $this->findByIdentifier((int)$uid);
+                $records[] = $this->findByIdentifier((int)$uid, $tableName);
             }
             return $records;
         }
 
         $foreignField = $columnConfiguration['foreign_field'];
 
-        $records = $this->convertPropertyArraysToRecords(
-            $this->findPropertiesByProperty($this->localDatabase, $foreignField, $recordIdentifier, $whereClause),
-            $this->findPropertiesByProperty($this->foreignDatabase, $foreignField, $recordIdentifier, $whereClause)
+        $localProperties = $this->findPropertiesByProperty(
+            $this->localDatabase,
+            $foreignField,
+            $recordIdentifier,
+            $whereClause,
+            '',
+            '',
+            '',
+            'uid',
+            $tableName
         );
+        $foreignProperties = $this->findPropertiesByProperty(
+            $this->foreignDatabase,
+            $foreignField,
+            $recordIdentifier,
+            $whereClause,
+            '',
+            '',
+            '',
+            'uid',
+            $tableName
+        );
+        $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName);
 
-        $this->tableName = $previousTableName;
         return $records;
     }
 
@@ -1567,29 +1716,30 @@ class CommonRepository extends BaseRepository
                 ]
             );
         }
-        $previousTable = $this->replaceTableName($columnConfiguration['MM']);
-        $relationRecords = $this->convertPropertyArraysToRecords(
-            $this->findPropertiesByProperty(
-                $this->localDatabase,
-                'uid_local',
-                $recordIdentifier,
-                '',
-                '',
-                '',
-                '',
-                'uid_local,uid_foreign'
-            ),
-            $this->findPropertiesByProperty(
-                $this->foreignDatabase,
-                'uid_local',
-                $recordIdentifier,
-                '',
-                '',
-                '',
-                '',
-                'uid_local,uid_foreign'
-            )
+        $tableName = $columnConfiguration['MM'];
+        $localProperties = $this->findPropertiesByProperty(
+            $this->localDatabase,
+            'uid_local',
+            $recordIdentifier,
+            '',
+            '',
+            '',
+            '',
+            'uid_local,uid_foreign',
+            $tableName
         );
+        $foreignProperties = $this->findPropertiesByProperty(
+            $this->foreignDatabase,
+            'uid_local',
+            $recordIdentifier,
+            '',
+            '',
+            '',
+            '',
+            'uid_local,uid_foreign',
+            $tableName
+        );
+        $relationRecords = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName);
         $this->fetchOriginalRecordsForInlineRecord(
             $relationRecords,
             $columnConfiguration,
@@ -1597,7 +1747,6 @@ class CommonRepository extends BaseRepository
             $recordIdentifier,
             $excludedTableNames
         );
-        $this->tableName = $previousTable;
         return $relationRecords;
     }
 
@@ -1636,7 +1785,7 @@ class CommonRepository extends BaseRepository
 
             $originalTableName = $columnConfiguration['foreign_table'];
             if (!in_array($originalTableName, $excludedTableNames)) {
-                $originalRecord = $this->findByIdentifierInOtherTable($localUid, $columnConfiguration['foreign_table']);
+                $originalRecord = $this->findByIdentifier($localUid, $columnConfiguration['foreign_table']);
                 if ($originalRecord !== null) {
                     $mmRecord->addRelatedRecord($originalRecord);
                 }
@@ -1653,16 +1802,16 @@ class CommonRepository extends BaseRepository
      * @param string $tableName
      *
      * @return RecordInterface|null
+     *
+     * @deprecated Method will be removed in in2publish_core version 10. Use `findByIdentifier` instead.
      */
     protected function findByIdentifierInOtherTable($identifier, $tableName)
     {
-        $previousIdFieldName = $this->identifierFieldName;
-        $this->identifierFieldName = 'uid';
-        $previousTableName = $this->replaceTableName($tableName);
-        $relatedRecord = $this->findByIdentifier($identifier);
-        $this->setTableName($previousTableName);
-        $this->identifierFieldName = $previousIdFieldName;
-        return $relatedRecord;
+        trigger_error(
+            sprintf(self::DEPRECATION_METHOD, __METHOD__) . ' Use `findByIdentifier` instead.',
+            E_USER_DEPRECATED
+        );
+        return $this->findByIdentifier($identifier, $tableName);
     }
 
     /**
@@ -1670,14 +1819,19 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
+     * @param string|null $tableName
      *
      * @return bool
      */
-    protected function isIgnoredRecord(array $localProperties, array $foreignProperties): bool
+    protected function isIgnoredRecord(array $localProperties, array $foreignProperties, string $tableName = null): bool
     {
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $this->tableName;
+        }
         if ($this->isDeletedAndUnchangedRecord($localProperties, $foreignProperties)
             || $this->isRemovedAndDeletedRecord($localProperties, $foreignProperties)
-            || $this->shouldIgnoreRecord($localProperties, $foreignProperties)
+            || $this->shouldIgnoreRecord($localProperties, $foreignProperties, $tableName)
         ) {
             return true;
         }
@@ -1797,15 +1951,13 @@ class CommonRepository extends BaseRepository
                 $this->logger->notice(
                     'Removing duplicate index from remote',
                     [
-                        'tableName' => $record->getTableName(),
+                        'tableName' => $tableName,
                         'local_uid' => $record->getLocalProperty('uid'),
                         'foreign_uid' => $record->getForeignProperty('uid'),
                     ]
                 );
                 // remove duplicate remote index
-                $previousTableName = $this->replaceTableName($record->getTableName());
-                $this->deleteRecord($this->foreignDatabase, $record->getForeignProperty('uid'));
-                $this->setTableName($previousTableName);
+                $this->deleteRecord($this->foreignDatabase, $record->getForeignProperty('uid'), $tableName);
             }
 
             if ($state === RecordInterface::RECORD_STATE_CHANGED || $state === RecordInterface::RECORD_STATE_MOVED) {
@@ -1863,12 +2015,29 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
+     * @param string|null $tableName
+     * @param string $idFieldName
      *
      * @return RecordInterface|null
      */
-    protected function convertToRecord(array $localProperties, array $foreignProperties)
-    {
-        return $this->recordFactory->makeInstance($this, $localProperties, $foreignProperties);
+    protected function convertToRecord(
+        array $localProperties,
+        array $foreignProperties,
+        string $tableName = null,
+        string $idFieldName = 'uid'
+    ) {
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $this->tableName;
+        }
+        return $this->recordFactory->makeInstance(
+            $this,
+            $localProperties,
+            $foreignProperties,
+            [],
+            $tableName,
+            $idFieldName
+        );
     }
 
     /**
@@ -1881,9 +2050,10 @@ class CommonRepository extends BaseRepository
      */
     protected function updateForeignRecord(RecordInterface $record)
     {
-        $previousTableName = $this->replaceTableName($record->getTableName());
-        $this->updateRecord($this->foreignDatabase, $record->getIdentifier(), $record->getLocalProperties());
-        $this->setTableName($previousTableName);
+        $identifier = $record->getIdentifier();
+        $properties = $record->getLocalProperties();
+        $tableName = $record->getTableName();
+        $this->updateRecord($this->foreignDatabase, $identifier, $properties, $tableName);
     }
 
     /**
@@ -1896,9 +2066,9 @@ class CommonRepository extends BaseRepository
      */
     protected function addForeignRecord(RecordInterface $record)
     {
-        $previousTableName = $this->replaceTableName($record->getTableName());
-        $this->addRecord($this->foreignDatabase, $record->getLocalProperties());
-        $this->setTableName($previousTableName);
+        $tableName = $record->getTableName();
+        $properties = $record->getLocalProperties();
+        $this->addRecord($this->foreignDatabase, $properties, $tableName);
     }
 
     /**
@@ -1914,18 +2084,18 @@ class CommonRepository extends BaseRepository
      */
     protected function deleteForeignRecord(RecordInterface $record)
     {
+        $identifier = $record->getIdentifier();
+        $tableName = $record->getTableName();
         $this->logger->notice(
             'Deleting foreign record',
             [
                 'localProperties' => $record->getLocalProperties(),
                 'foreignProperties' => $record->getForeignProperties(),
-                'tableName' => $record->getTableName(),
-                'identifier' => $record->getIdentifier(),
+                'identifier' => $identifier,
+                'tableName' => $tableName,
             ]
         );
-        $previousTableName = $this->replaceTableName($record->getTableName());
-        $this->deleteRecord($this->foreignDatabase, $record->getIdentifier());
-        $this->setTableName($previousTableName);
+        $this->deleteRecord($this->foreignDatabase, $identifier, $tableName);
     }
 
     /**
@@ -1972,14 +2142,18 @@ class CommonRepository extends BaseRepository
 
     /**
      * @param string $identifier
+     * @param string|null $tableName
      *
      * @return bool
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      */
-    protected function shouldSkipFindByIdentifier($identifier): bool
+    protected function shouldSkipFindByIdentifier($identifier, string $tableName = null): bool
     {
-        return $this->should('shouldSkipFindByIdentifier', ['identifier' => $identifier]);
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $this->tableName;
+        }
+        return $this->should('shouldSkipFindByIdentifier', ['identifier' => $identifier, 'tableName' => $tableName]);
     }
 
     /**
@@ -2074,19 +2248,26 @@ class CommonRepository extends BaseRepository
     /**
      * @param array $localProperties
      * @param array $foreignProperties
+     * @param string|null $tableName
      *
      * @return bool
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
      */
-    protected function shouldIgnoreRecord(array $localProperties, array $foreignProperties): bool
-    {
+    protected function shouldIgnoreRecord(
+        array $localProperties,
+        array $foreignProperties,
+        string $tableName = null
+    ): bool {
+        if (null === $tableName) {
+            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
+            $tableName = $this->tableName;
+        }
         return $this->should(
             'shouldIgnoreRecord',
             [
                 'localProperties' => $localProperties,
                 'foreignProperties' => $foreignProperties,
-                'tableName' => $this->tableName,
+                'tableName' => $tableName,
             ]
         );
     }
@@ -2117,12 +2298,15 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * @param string $tableName
+     * @param string|null $tableName
      *
      * @return CommonRepository
      */
-    public static function getDefaultInstance($tableName = 'pages'): CommonRepository
+    public static function getDefaultInstance($tableName = null): CommonRepository
     {
+        if (null !== $tableName) {
+            trigger_error(sprintf(self::DEPRECATION_PARAMETER, 'tableName', __METHOD__), E_USER_DEPRECATED);
+        }
         return GeneralUtility::makeInstance(
             CommonRepository::class,
             DatabaseUtility::buildLocalDatabaseConnection(),

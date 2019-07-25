@@ -176,10 +176,8 @@ class IndexingFolderRecordFactory
             $rootFolder->addRelatedRecord($subFolder);
         }
 
-        $records = CommonRepository::getDefaultInstance('sys_file')->findByProperties(
-            ['folder_hash' => $localFolder->getHashedIdentifier(), 'storage' => $storageUid],
-            true
-        );
+        $properties = ['folder_hash' => $localFolder->getHashedIdentifier(), 'storage' => $storageUid];
+        $records = CommonRepository::getDefaultInstance()->findByProperties($properties, true, 'sys_file');
         $records = $this->filterRecords($localFiles, $remoteFiles, $records);
         $rootFolder->addRelatedRecords($records);
 
