@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Command;
  */
 
 use In2code\In2publishCore\Utility\ExtensionUtility;
+use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -198,7 +199,7 @@ class StatusCommandController extends AbstractCommandController
     public function dbInfoCommand()
     {
         $connectionInfo = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default'];
-        $salt = GeneralUtility::getRandomHexString(16);
+        $salt = GeneralUtility::makeInstance(Random::class)->generateRandomHexString(16);
         $result = [
             'name' => $connectionInfo['dbname'],
             'username' => $connectionInfo['user'],

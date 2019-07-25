@@ -269,7 +269,7 @@
 				<source>The configured database is different from the actual used database.</source>
 			</trans-unit>
 			<trans-unit id="application.db_connection_differences">
-				<source>The database connection configured in the LocalConfiguration.yaml (or Config Wizard) differs from the actually used database connection on foreign. Please check the local configuration and that the foreign configuration is set independently of conditions or that these conditions are also true in the CLI context (e.g. the .htaccess file will not be evaluated in the CLI context). Following keys differ: %s</source>
+				<source>The database connection configured in the LocalConfiguration.yaml (or Config Wizard) differs from the actually used database connection on foreign. Please check the local configuration and that the foreign configuration is set independently of conditions or that these conditions are also true in the CLI context (e.g. the .htaccess file will not be evaluated in the CLI context). Following keys differ: </source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignSysDomainTest -->

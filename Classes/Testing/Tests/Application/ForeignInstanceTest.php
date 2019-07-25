@@ -44,6 +44,7 @@ use function hash;
 use function implode;
 use function json_decode;
 use function strpos;
+use const PHP_EOL;
 
 /**
  * Class ForeignInstanceTest
@@ -149,12 +150,14 @@ class ForeignInstanceTest implements TestCaseInterface
             $differentConfig = array_diff_assoc($localDbConfig, $foreignDbConfig);
 
             if (!empty($differentConfig)) {
-                $keys = array_keys($differentConfig);
+                $diff = [];
+                foreach (array_keys($differentConfig) as $key) {
+                    $diff[] = $key . ' Local: ' . $localDbConfig[$key] . ' Foreign: ' . $foreignDbConfig[$key];
+                }
                 return new TestResult(
-                    'application.db_connection_differences',
+                    'application.db_config',
                     TestResult::ERROR,
-                    ['application.db_config'],
-                    [implode(',', $keys)]
+                    ['application.db_connection_differences', implode(PHP_EOL, $diff)]
                 );
             }
         }
