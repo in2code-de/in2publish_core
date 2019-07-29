@@ -40,6 +40,7 @@ use function count;
 use function is_array;
 use function mt_rand;
 use function strpos;
+use const PHP_INT_MAX;
 
 /**
  * Class DatabaseDifferencesTest
@@ -178,6 +179,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
     /**
      * @param array $left
      * @param array $right
+     *
      * @return array
      */
     public function identifyDifferences(array $left, array $right): array
@@ -206,6 +208,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
     /**
      * @param Connection $local
      * @param Connection $foreign
+     *
      * @return bool
      */
     protected function areDifferentDatabases(Connection $local, Connection $foreign): bool
@@ -239,6 +242,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
 
     /**
      * @param Connection $database
+     *
      * @return array
      */
     protected function readTableStructure(Connection $database): array

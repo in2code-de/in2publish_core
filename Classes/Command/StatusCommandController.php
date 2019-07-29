@@ -28,17 +28,17 @@ namespace In2code\In2publishCore\Command;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
+use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\ExtensionUtility;
-use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function array_column;
 use function base64_encode;
-use function hash;
 use function json_encode;
 use function serialize;
 use function version_compare;
-use const TYPO3_branch;
 
 /**
  * Class StatusCommandController (always enabled)
@@ -55,6 +55,7 @@ class StatusCommandController extends AbstractCommandController
     const DB_INIT_QUERY_ENCODED = 'in2publish_core:status:dbinitqueryencoded';
     const SHORT_SITE_CONFIGURATION = 'in2publish_core:status:shortsiteconfiguration';
     const SITE_CONFIGURATION = 'in2publish_core:status:siteconfiguration';
+    const DB_CONFIG_TEST = 'in2publish_core:status:dbconfigtest';
     const EXIT_NO_SITE = 250;
 
     /**
@@ -73,7 +74,6 @@ class StatusCommandController extends AbstractCommandController
         if (version_compare(TYPO3_branch, '9.3', '>=')) {
             $this->shortSiteConfigurationCommand();
         }
-        $this->dbInfoCommand();
     }
 
     /**
@@ -194,20 +194,19 @@ class StatusCommandController extends AbstractCommandController
     }
 
     /**
-     * Return the configured database connection information (password is hashed with salt)
+     * Reads from the local task table and writes all found hashes for the db config test
+     *
+     * @internal
      */
-    public function dbInfoCommand()
+    public function dbConfigTestCommand()
     {
-        $connectionInfo = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default'];
-        $salt = GeneralUtility::makeInstance(Random::class)->generateRandomHexString(16);
-        $result = [
-            'name' => $connectionInfo['dbname'],
-            'username' => $connectionInfo['user'],
-            'password' => hash('sha256', $salt . $connectionInfo['password']),
-            'hostname' => $connectionInfo['host'],
-            'port' => $connectionInfo['port'],
-            'salt' => $salt,
-        ];
-        $this->outputLine('dbInfo: ' . base64_encode(json_encode($result)));
+        $queryBuilder = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+        $predicates = $queryBuilder->expr()->eq(
+            'task_type',
+            $queryBuilder->createNamedParameter(ForeignDatabaseConfigTest::DB_CONFIG_TEST_TYPE)
+        );
+        $queryBuilder->select('*')->from('tx_in2code_in2publish_task')->where($predicates);
+        $result = $queryBuilder->execute()->fetchAll();
+        $this->outputLine('DB Config: ' . base64_encode(json_encode(array_column($result, 'configuration'))));
     }
 }

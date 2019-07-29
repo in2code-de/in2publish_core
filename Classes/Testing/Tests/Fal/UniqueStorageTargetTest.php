@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
 
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
+use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
@@ -161,6 +162,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
     public function getDependencies(): array
     {
         return [
+            ForeignDatabaseConfigTest::class,
             ForeignInstanceTest::class,
             MissingStoragesTest::class,
             CaseSensitivityTest::class,
