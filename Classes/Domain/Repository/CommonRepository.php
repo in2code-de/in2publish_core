@@ -324,8 +324,26 @@ class CommonRepository extends BaseRepository
         ) {
             return $record;
         }
-        $localProperties = $this->findPropertiesByProperties($this->localDatabase, $properties, $tableName);
-        $foreignProperties = $this->findPropertiesByProperties($this->foreignDatabase, $properties, $tableName);
+        $localProperties = $this->findPropertiesByProperties(
+            $this->localDatabase,
+            $properties,
+            '',
+            '',
+            '',
+            '',
+            'uid',
+            $tableName
+        );
+        $foreignProperties = $this->findPropertiesByProperties(
+            $this->foreignDatabase,
+            $properties,
+            '',
+            '',
+            '',
+            '',
+            'uid',
+            $tableName
+        );
         $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName);
         if ($simulateRoot) {
             $this->recordFactory->endSimulation();
