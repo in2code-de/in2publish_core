@@ -1,5 +1,15 @@
 # In2publish Core Change Log
 
+8.3.1:
+
+- [META] Set the EM conf version number to 8.3.1
+- [BUGFIX] Collect errors during publishing and display to the user if sth. went wrong
+- [REFACTOR] Move the loglevel to message severity translator method to an Utility method
+- [REFACTOR] Move the log level to severity converter to the abstract controller
+- [BUGFIX] Display publishing errors in the flash message after publishing
+- [BUGFIX] Rely on database values to check if connections are identical
+- [RELEASE] Version 8.3.0 with new DB test, deprecations and test/type fixes
+
 8.3.0:
 
 - [META] Set the EM conf version number to 8.3.0
