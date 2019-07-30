@@ -1,5 +1,11 @@
 # In2publish Core Change Log
 
+8.3.2:
+
+- [META] Set the EM conf version number to 8.3.1
+- [BUGFIX] Add missing method call arguments
+- [RELEASE] Version 8.3.1 with better publishing feedback and false negative test fix
+
 8.3.1:
 
 - [META] Set the EM conf version number to 8.3.1
