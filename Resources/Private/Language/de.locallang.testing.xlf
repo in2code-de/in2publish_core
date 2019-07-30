@@ -265,6 +265,25 @@
 				<target state="translated">Ein Fehler ist in der Startseiten-Suche aufgetreten.</target>
 			</trans-unit>
 
+			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest -->
+
+			<trans-unit id="application.foreign_database_config.success">
+				<source>The database on foreign is configured correctly in the CLI context.</source>
+				<target state="translated">Die Datenbank auf dem entfernten System ist im Konsolenkontext korrekt konfiguriert.</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_database_config.unexpected_error">
+				<source>An unexpected error occurred during the CLI context database configuration test.</source>
+				<target state="translated">Ein unerwarteter Fehler ist während des Konfigurationstest der Datenbank auf Konsolenebene aufgetreten.</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_database_config.failure">
+				<source>The foreign database in2publish_core connects to and the database used on foreign are different.</source>
+				<target state="translated">Die entfernte Datenbank auf die sich in2publish_core verbindet ist nicht die gleiche Datenbank auf die sich das entfernte System verbindet.</target>
+			</trans-unit>
+			<trans-unit id="application.foreign_database_config.configuration_invalid">
+				<source>The database connection configured in the LocalConfiguration.yaml (or Config Wizard) differs from the actually used database connection on foreign. Please check the local configuration and that the foreign configuration is set independently of conditions or that these conditions are also true in the CLI context (e.g. the .htaccess file will not be evaluated in the CLI context).</source>
+				<target state="translated">Die lokal konfigurierten und auf dem entfernten System tatsächlich verwendeten Datenbankzugangsdaten unterscheiden sich. Bitte stellen Sie sicher, dass die in der LocalConfiguration.yaml (oder dem Konfigurationseditor) definierten Zugangsdaten korrekt sind und die auf dem entfernten System gesetztn Zugangsdaten unabhängig von einer Bedingung gesetzt wird oder diese Bedingung auf im Konsolenkontext zutrifft (z.B .htaccess wird nicht auf der Konsole ausgewertet).</target>
+			</trans-unit>
+
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest -->
 
 			<trans-unit id="application.foreign_system_validated">
@@ -334,14 +353,6 @@
 			<trans-unit id="application.editor_login_possible">
 				<source>Since adminMode is not set to "2" it is possible for regular backend users to log in, if they have an account on foreign.</source>
 				<target state="translated">Da adminMode nicht auf "2" gesetzt ist, ist es normalen Backend-Benutzern möglich sich auf dem entfernten System einzuloggen, sofern sie dort einen benutzer haben.</target>
-			</trans-unit>
-			<trans-unit id="application.db_config">
-				<source>The configured database is different from the actual used database.</source>
-				<target state="translated">Die konfigurierte Datenbank unterscheidet sich von der tatsächlich verwendeten Datenbank.</target>
-			</trans-unit>
-			<trans-unit id="application.db_connection_differences">
-				<source>The database connection configured in the LocalConfiguration.yaml (or Config Wizard) differs from the actually used database connection on foreign. Please check the local configuration and that the foreign configuration is set independently of conditions or that these conditions are also true in the CLI context (e.g. the .htaccess file will not be evaluated in the CLI context). Following keys differ: </source>
-				<target state="translated">Die lokal konfigurierten und auf dem entfernten System tatsächlich verwendeten Datenbankzugangsdaten unterscheiden sich. Bitte stellen Sie sicher, dass die in der LocalConfiguration.yaml (oder dem Konfigurationseditor) definierten Zugangsdaten korrekt sind und die auf dem entfernten System gesetztn Zugangsdaten unabhängig von einer Bedingung gesetzt wird oder diese Bedingung auf im Konsolenkontext zutrifft (z.B .htaccess wird nicht auf der Konsole ausgewertet). Following optionen unterscheiden sich: </target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignSysDomainTest -->
