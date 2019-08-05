@@ -63,7 +63,14 @@ div.typo3-fullDoc {
   select {
     color: $tundora;
   }
+
+  &-select {
+    #typo3-docheader &.module-docheader-bar {
+      overflow: initial;
+    }
+  }
 }
+
 
 .in2publish-backend *,
 .in2publish-backend *:before,
