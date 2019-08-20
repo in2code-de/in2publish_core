@@ -1,0 +1,16 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+	<f:layout name="ToolsWhite" />
+
+	<f:section name="content">
+		<f:link.action class="btn btn-default" action="sysInfoShow"><f:translate id="system_info.show">system_info.show</f:translate></f:link.action>
+		<f:link.action class="btn btn-default" action="sysInfoDownload"><f:translate id="system_info.download">system_info.download</f:translate></f:link.action>
+		<f:link.action class="btn btn-default" action="sysInfoDecode"><f:translate id="system_info.decode">system_info.decode</f:translate></f:link.action>
+		<f:form action="sysInfoUpload" enctype="multipart/form-data" method="post">
+			<div class="form-group">
+				<label for="json_file"><f:translate id="system_info.upload.file">system_info.upload.file</f:translate></label>
+				<f:form.upload class="form-control" name="jsonFile" />
+			</div>
+			<f:form.submit class="btn btn-default" value="{system_info.upload.upload -> f:translate(id:'system_info.upload.upload')}" />
+		</f:form>
+	</f:section>
+</html>
