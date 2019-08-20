@@ -1,5 +1,19 @@
 # In2publish Core Change Log
 
+8.4.0:
+
+- [META] Set the EM conf version number to 8.4.0
+- [META] Set the branch alias version number to 8.4.x-dev
+- [FEATURE] Add tools module to export relevant debugging information
+- [BUGFIX] Add missing test class key to tests that returned warnings
+- [BUGFIX] Use the column names as they are returned (as string)
+- [FEATURE] Add the database schema to the sysInfo output
+- [BUGFIX] Ignore missing config paths when masking protected values and fallback for TYPO3 < v9
+- [FEATURE] Add sysinfo download and upload possibilities
+- [FEATURE] Add system information module which contains server, system, and TYPO3-information as well as test results
+- [BUGFIX] Tools menu: show all entries in smaller view
+- [RELEASE] Version 8.3.2 with findPropertiesByProperties method call fix
+
 8.3.2:
 
 - [META] Set the EM conf version number to 8.3.1
