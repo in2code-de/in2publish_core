@@ -385,12 +385,8 @@ class ToolsController extends ActionController
                     $schema[$side][$table->getName()]['columns'][$column->getName()] = $column->toArray();
                 }
                 foreach ($table->getIndexes() as $index) {
-                    $columns = [];
-                    foreach ($index->getColumns() as $column) {
-                        $columns[] = $column->getName();
-                    }
                     $schema[$side][$table->getName()]['indexes'][$index->getName()] = [
-                        'column' => $columns,
+                        'columns' => $index->getColumns(),
                         'isPrimary' => $index->isPrimary(),
                         'isSimple' => $index->isSimpleIndex(),
                         'isUnique' => $index->isUnique(),
