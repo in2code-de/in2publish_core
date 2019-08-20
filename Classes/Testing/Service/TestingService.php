@@ -96,7 +96,7 @@ class TestingService
                 if ($severity === TestResult::OK) {
                     $successfulTests[$testClass] = $result;
                 } elseif ($severity === TestResult::WARNING) {
-                    $warningTests[] = $result;
+                    $warningTests[$testClass] = $result;
                 } else {
                     $failedTests[$testClass] = $result;
                 }
