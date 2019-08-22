@@ -59,7 +59,7 @@ call_user_func(
                     'm1',
                     '',
                     [
-                        'Record' => 'index,detail,publishRecord,publishRecordRecursive,toggleFilterStatusAndRedirectToIndex',
+                        'Record' => 'index,detail,publishRecord,toggleFilterStatusAndRedirectToIndex',
                     ],
                     [
                         'access' => 'user,group',
