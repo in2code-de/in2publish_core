@@ -493,9 +493,9 @@ class RecordFactory
         } else {
             $combinedIdentifier = Record::createCombinedIdentifier($localProperties, $foreignProperties);
             if (strlen($combinedIdentifier) === 0) {
-                $localProperties = array_filter($localProperties);
-                $foreignProperties = array_filter($foreignProperties);
-                if (!empty($localProperties) && !empty($foreignProperties)) {
+                $filteredLocalProps = array_filter($localProperties);
+                $filteredForeignProps = array_filter($foreignProperties);
+                if (!empty($filteredLocalProps) && !empty($filteredForeignProps)) {
                     $this->logger->error(
                         'Could not merge identifier values',
                         [
