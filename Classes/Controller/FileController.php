@@ -130,7 +130,7 @@ class FileController extends AbstractController
             }
 
             try {
-                CommonRepository::getDefaultInstance('sys_file')->publishRecordRecursive($relatedRecord);
+                CommonRepository::getDefaultInstance()->publishRecordRecursive($relatedRecord);
                 $this->addFlashMessage(
                     LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
                     LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
