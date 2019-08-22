@@ -217,7 +217,7 @@ class RecordController extends AbstractController
         $this->addFlashMessage($message, $title, $severity);
 
         try {
-            $this->redirect('index');
+            $this->redirect('index', 'Record');
         } catch (UnsupportedRequestTypeException $e) {
         }
     }
