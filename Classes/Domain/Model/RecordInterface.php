@@ -216,9 +216,11 @@ interface RecordInterface
 
     /**
      * @param RecordInterface[] $relatedRecordsFlat
+     * @param array $done
+     *
      * @return RecordInterface[]
      */
-    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = []): array;
+    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = [], array &$done = []): array;
 
     /**
      * Returns the given records from the list of related records if the relation is direct.
