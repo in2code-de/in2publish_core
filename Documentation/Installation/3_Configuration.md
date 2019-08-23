@@ -65,7 +65,7 @@ First you need to know which keys these values have. Go to the Tools Module to i
 You see that `be_groups` has the index `0` and `be_users` has `1`.
 Now you create or edit your LocalConfiguration.yaml file and add the following section:
 
-```yaml
+```YAML
 excludeRelatedTables:
   0: __UNSET
   1: __UNSET

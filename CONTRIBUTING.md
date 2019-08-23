@@ -16,7 +16,7 @@
 
 Replace all `|TAG|` with the correct value
 
-```
+```PHP
 /*
  * Copyright notice
  *

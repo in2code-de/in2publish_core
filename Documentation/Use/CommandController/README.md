@@ -17,7 +17,7 @@ The TYPO3 cli bin will show you any executable command with `./vendor/bin/typo3`
 The command controllers depend on the context variable, because they have to access the matching configuration.
 When calling the TYPO3 cli  bin without any context, you will at least these commands:
 
-```
+```TEXT
 in2publish_core:environment:rewritenonutf8charactersforfiles
 in2publish_core:environment:rewritenonutf8charactersforfolders
 in2publish_core:publishtasksrunner:runtasksinqueue
@@ -38,13 +38,13 @@ in2publish_core:table:publish
 To call a command, you need to provide an extra environment variable named "IN2PUBLISH_CONTEXT".
 Here is an example::
 
-```
+```SHELL SCRIPT
 IN2PUBLISH_CONTEXT=Local ./vendor/bin/typo3 in2publish_core:status:version
 ```
 
 The example command will boot in2publish with the local configuration and print the current version. The output should look like this:
 
-```
+```TEXT
 Version: 8.0.0
 ```
 
