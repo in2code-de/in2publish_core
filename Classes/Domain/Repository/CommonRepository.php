@@ -240,7 +240,7 @@ class CommonRepository extends BaseRepository
             $tableName
         );
         $foreign = empty($foreign) ? [] : reset($foreign);
-        $records = $this->convertToRecord($local, $foreign, $tableName, $idFieldName);
+        $records = $this->recordFactory->makeInstance($this, $local, $foreign, [], $tableName, $idFieldName);
         $this->identifierFieldName = $previousIdFieldName;
         return $records;
     }
@@ -519,10 +519,13 @@ class CommonRepository extends BaseRepository
                 }
             }
             if (!$this->isIgnoredRecord((array)$localProperties[$key], (array)$foreignProperties[$key], $tableName)) {
-                $foundRecords[$key] = $this->convertToRecord(
+                $foundRecords[$key] = $this->recordFactory->makeInstance(
+                    $this,
                     (array)$localProperties[$key],
                     (array)$foreignProperties[$key],
-                    $tableName
+                    [],
+                    $tableName,
+                    'uid'
                 );
             }
         }
@@ -2037,6 +2040,8 @@ class CommonRepository extends BaseRepository
      * @param string $idFieldName
      *
      * @return RecordInterface|null
+     *
+     * @deprecated This method will be removed in in2publish_core version 10. Use `$this->recordFactory->makeInstance`.
      */
     protected function convertToRecord(
         array $localProperties,
@@ -2044,6 +2049,7 @@ class CommonRepository extends BaseRepository
         string $tableName = null,
         string $idFieldName = 'uid'
     ) {
+        trigger_error(sprintf(static::DEPRECATION_METHOD, __METHOD__), E_USER_DEPRECATED);
         if (null === $tableName) {
             trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
             $tableName = $this->tableName;
