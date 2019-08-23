@@ -1,5 +1,21 @@
 # In2publish Core Change Log
 
+8.4.1:
+
+- [META] Set the EM conf version number to 8.4.1
+- [DOCS] Add all missing code block language annotations
+- [DEPRECTATION] Prepare removal of CommonRepository::convertToRecord by deprecating it
+- [BUGFIX] Add missing methods isForeignRecordDeleted isLocalRecordDeleted to RecordInterface
+- [BUGFIX] Include the MM_opposite_field in TCA type group preprocessing
+- [BUGFIX] Prevent infinite recursion in addChangedRelatedRecordsRecursive
+- [CLEANUP] Remove the publishRecordRecursive action from the allowed module actions (enterprise feature)
+- [BUGFIX] Ensure redirects to the index action target the RecordController
+- [CLEANUP] Remove unused LogLevel import from AbstractController
+- [BUGFIX] Hide pages which are deleted and do not contain pages in the overview module
+- [BUGFIX] Remove deprecated table name argument from CommonRepository::getDefaultInstance
+- [BUGFIX] Log all properties if a combined identifier could not be constructed
+- [RELEASE] Version 8.4.0 with sysinfo export and fix disappearing tool buttons
+
 8.4.0:
 
 - [META] Set the EM conf version number to 8.4.0

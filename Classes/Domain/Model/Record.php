@@ -45,6 +45,7 @@ use function in_array;
 use function is_array;
 use function is_null;
 use function is_string;
+use function spl_object_id;
 use function strlen;
 use function strpos;
 use function uasort;
@@ -1069,9 +1070,11 @@ class Record implements RecordInterface
 
     /**
      * @param RecordInterface[] $relatedRecordsFlat
+     * @param array $done
+     *
      * @return RecordInterface[]
      */
-    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = []): array
+    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = [], array &$done = []): array
     {
         foreach ($this->getRelatedRecords() as $relatedRecords) {
             foreach ($relatedRecords as $relatedRecord) {
@@ -1080,7 +1083,11 @@ class Record implements RecordInterface
                         $relatedRecordsFlat[] = $relatedRecord;
                     }
                 }
-                $relatedRecordsFlat = $relatedRecord->addChangedRelatedRecordsRecursive($relatedRecordsFlat);
+                $splObjectId = spl_object_id($relatedRecord);
+                if (!isset($done[$splObjectId])) {
+                    $done[$splObjectId] = true;
+                    $relatedRecordsFlat = $relatedRecord->addChangedRelatedRecordsRecursive($relatedRecordsFlat, $done);
+                }
             }
         }
         return $relatedRecordsFlat;

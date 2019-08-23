@@ -142,7 +142,7 @@ $ssDispatcher->connect(
 
 #### Task Class
 
-``` PHP
+```PHP
 <?php
 declare(strict_types=1);
 namespace YourVendor\YourPackage\Domain\Task;

@@ -67,6 +67,7 @@ interface RecordInterface
 
     /**
      * @param string $state
+     *
      * @return RecordInterface
      */
     public function setState($state);
@@ -78,6 +79,7 @@ interface RecordInterface
 
     /**
      * @param string $propertyName
+     *
      * @return bool
      */
     public function hasLocalProperty($propertyName);
@@ -86,12 +88,14 @@ interface RecordInterface
      * Returns a specific local property by name or NULL if it is not set
      *
      * @param string $propertyName
+     *
      * @return mixed
      */
     public function getLocalProperty($propertyName);
 
     /**
      * @param array $localProperties
+     *
      * @return RecordInterface
      */
     public function setLocalProperties(array $localProperties): RecordInterface;
@@ -103,6 +107,7 @@ interface RecordInterface
 
     /**
      * @param string $propertyName
+     *
      * @return bool
      */
     public function hasForeignProperty($propertyName);
@@ -111,12 +116,14 @@ interface RecordInterface
      * Returns a specific foreign property by name or NULL if it is not set
      *
      * @param string $propertyName
+     *
      * @return mixed
      */
     public function getForeignProperty($propertyName);
 
     /**
      * @param array $foreignProperties
+     *
      * @return RecordInterface
      */
     public function setForeignProperties(array $foreignProperties): RecordInterface;
@@ -137,6 +144,16 @@ interface RecordInterface
     public function calculateState();
 
     /**
+     * @return bool
+     */
+    public function isForeignRecordDeleted(): bool;
+
+    /**
+     * @return bool
+     */
+    public function isLocalRecordDeleted(): bool;
+
+    /**
      * Returns an identifier unique in the records table.
      *
      * @return @return int|string
@@ -146,6 +163,7 @@ interface RecordInterface
     /**
      * @param string $side
      * @param array $properties
+     *
      * @return $this
      */
     public function setPropertiesBySideIdentifier($side, array $properties);
@@ -153,12 +171,14 @@ interface RecordInterface
     /**
      * @param string $side
      * @param string $propertyName
+     *
      * @return mixed
      */
     public function getPropertyBySideIdentifier($side, $propertyName);
 
     /**
      * @param string $propertyName
+     *
      * @return mixed
      */
     public function getAdditionalProperty($propertyName);
@@ -166,6 +186,7 @@ interface RecordInterface
     /**
      * @param string $propertyName
      * @param mixed $propertyValue
+     *
      * @return RecordInterface
      */
     public function addAdditionalProperty($propertyName, $propertyValue);
@@ -185,6 +206,7 @@ interface RecordInterface
      *      STRING: strings concatenated with a comma
      *
      * @param $propertyName
+     *
      * @return mixed
      */
     public function getMergedProperty($propertyName);
@@ -216,15 +238,18 @@ interface RecordInterface
 
     /**
      * @param RecordInterface[] $relatedRecordsFlat
+     * @param array $done
+     *
      * @return RecordInterface[]
      */
-    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = []): array;
+    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = [], array &$done = []): array;
 
     /**
      * Returns the given records from the list of related records if the relation is direct.
      * The record is not removed recursively.
      *
      * @param RecordInterface $record
+     *
      * @return RecordInterface Returns always itself
      */
     public function removeRelatedRecord(RecordInterface $record): RecordInterface;
@@ -247,12 +272,14 @@ interface RecordInterface
      * @param string $table
      * @param string $property
      * @param mixed $value
+     *
      * @return RecordInterface[]
      */
     public function getRelatedRecordByTableAndProperty($table, $property, $value): array;
 
     /**
      * @param RecordInterface $record
+     *
      * @return mixed
      */
     public function addRelatedRecord(RecordInterface $record);
@@ -261,6 +288,7 @@ interface RecordInterface
      * Adds a bunch of records
      *
      * @param RecordInterface[] $relatedRecords
+     *
      * @return RecordInterface
      */
     public function addRelatedRecords(array $relatedRecords): RecordInterface;
@@ -274,12 +302,14 @@ interface RecordInterface
      * Returns if this record or children record has changed in any way if added or changed or deleted
      *
      * @param array $alreadyVisited
+     *
      * @return bool
      */
     public function isChangedRecursive(array &$alreadyVisited = []): bool;
 
     /**
      * @param RecordInterface $parentRecord
+     *
      * @return Record
      */
     public function setParentRecord(RecordInterface $parentRecord): RecordInterface;
@@ -291,12 +321,14 @@ interface RecordInterface
 
     /**
      * @param string $propertyName
+     *
      * @return bool
      */
     public function hasAdditionalProperty($propertyName): bool;
 
     /**
      * @param string $side
+     *
      * @return array
      */
     public function getPropertiesBySideIdentifier($side);

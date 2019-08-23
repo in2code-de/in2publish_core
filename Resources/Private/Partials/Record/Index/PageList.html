@@ -57,9 +57,11 @@
 	<f:if condition="{record.relatedRecords.pages}">
 		<ul class="in2publish-unstyledlist in2publish-list-level in2publish-list-level--{record.additionalProperties.depth}">
 			<f:for each="{record.relatedRecords.pages}" as="pageRecord">
-				<li>
-					<f:render partial="Record/Index/PageList" arguments="{record:pageRecord, config:config}" />
-				</li>
+				<f:if condition="!({pageRecord.localRecordDeleted} && {pageRecord.foreignRecordDeleted} && !{pageRecord.changedRecursive})">
+					<li>
+						<f:render partial="Record/Index/PageList" arguments="{record:pageRecord, config:config}" />
+					</li>
+				</f:if>
 			</f:for>
 		</ul>
 	</f:if>

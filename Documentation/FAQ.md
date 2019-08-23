@@ -4,13 +4,13 @@
 
 Please check if you have set the environment variables on your server for the stage system via htaccess:
 
-```
+```SHELL SCRIPT
 SetEnv IN2PUBLISH_CONTEXT Local
 ```
 
 or AdditionalConfiguration.php:
 
-```
+```SHELL SCRIPT
 putenv('IN2PUBLISH_CONTEXT=Local');
 ```
 
