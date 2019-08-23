@@ -73,6 +73,7 @@ class GroupProcessor extends AbstractProcessor
         self::MM_MATCH_FIELDS,
         self::MM_TABLE_WHERE,
         self::UPLOAD_FOLDER,
+        self::MM_OPPOSITE_FIELD,
     ];
 
     /**
