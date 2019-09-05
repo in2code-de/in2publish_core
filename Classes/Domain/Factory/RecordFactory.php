@@ -240,6 +240,9 @@ class RecordFactory
                 (array)$this->tcaService->getConfigurationArrayForTable($tableName),
                 $additionalProperties
             );
+            if (true === $isRootRecord && true === $this->isRootRecord) {
+                $instance->addAdditionalProperty('isRoot', true);
+            }
 
             if ($instance->getIdentifier() !== 0
                 && !$instance->localRecordExists()
@@ -300,7 +303,6 @@ class RecordFactory
         }
         if (true === $isRootRecord && true === $this->isRootRecord) {
             $this->isRootRecord = false;
-            $instance->addAdditionalProperty('isRoot', true);
             try {
                 $this->signalSlotDispatcher->dispatch(__CLASS__, 'rootRecordFinished', [$this, $instance]);
             } catch (InvalidSlotException $e) {
@@ -359,6 +361,32 @@ class RecordFactory
         // The relation should come from the record via TCA not via the PID relation to the page.
         if (!$this->config['includeSysFileReference']) {
             $tableNamesToExclude[] = 'sys_file_reference';
+        }
+        if (version_compare(TYPO3_branch, '9.5', '>=')
+            && $record->getAdditionalProperty('isRoot')
+            && 'pages' === $record->getTableName()
+        ) {
+            $tcaService = GeneralUtility::makeInstance(TcaService::class);
+            $languageField = $tcaService->getLanguageField('pages');
+            if (!empty($languageField)) {
+                $language = $record->getLocalProperty($languageField);
+                if (null === $language) {
+                    $language = $record->getForeignProperty($languageField);
+                }
+                if (null !== $language && 0 === (int)$language) {
+                    $fieldName = $tcaService->getTransOrigPointerField('pages');
+                    if ($fieldName) {
+                        $translatedRecords = $commonRepository->findByProperties(
+                            [$fieldName => $record->getIdentifier()],
+                            false,
+                            'pages'
+                        );
+                        foreach ($translatedRecords as $translatedRecord) {
+                            $record->addRelatedRecordRaw($translatedRecord, 'pages_language_overlay');
+                        }
+                    }
+                }
+            }
         }
         // if page recursion depth reached
         if ($this->pagesDepth < $this->config['maximumPageRecursion'] && $this->pageRecursionEnabled) {
