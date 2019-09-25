@@ -55,10 +55,12 @@ use function class_exists;
 use function defined;
 use function file_get_contents;
 use function flush;
+use function gettype;
 use function gmdate;
 use function header;
 use function implode;
 use function is_array;
+use function is_string;
 use function json_decode;
 use function json_encode;
 use function json_last_error;
@@ -340,7 +342,11 @@ class ToolsController extends ActionController
 
         $extConf = [];
         foreach ($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'] as $extKey => $extConfs) {
-            $extConf[$extKey] = unserialize($extConfs);
+            if (is_string($extConfs)) {
+                $extConf[$extKey] = unserialize($extConfs);
+            } else {
+                $extConf[$extKey] = 'NOT UNSERIALIZEABLE: ' . gettype($extConfs);
+            }
         }
 
         $databases = [];

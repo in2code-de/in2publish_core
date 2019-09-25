@@ -1,5 +1,15 @@
 # In2publish Core Change Log
 
+8.4.2:
+
+- [META] Set the EM conf version number to 8.4.2
+- [BUGFIX] Ensure the unserialized extConf is a string
+- [BUGFIX] Replace spl_object_id (PHP 7.2) with spl_object_hash (PHP 5.2)
+- [BUGFIX] Ignore (match) multiline WHERE parts in additional_where clauses
+- [BUGFIX] Ensure files are indexed at least once (reserveSysFileUids disabled)
+- [BUGFIX] Add translated pages of TYPO3 v9 as fake pages_language_overlay records
+- [RELEASE] Version 8.4.1 with deprecation, loop fix and MM_opposite_field for group relations
+
 8.4.1:
 
 - [META] Set the EM conf version number to 8.4.1

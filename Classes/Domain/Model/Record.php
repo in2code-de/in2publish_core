@@ -45,7 +45,7 @@ use function in_array;
 use function is_array;
 use function is_null;
 use function is_string;
-use function spl_object_id;
+use function spl_object_hash;
 use function strlen;
 use function strpos;
 use function uasort;
@@ -1083,9 +1083,9 @@ class Record implements RecordInterface
                         $relatedRecordsFlat[] = $relatedRecord;
                     }
                 }
-                $splObjectId = spl_object_id($relatedRecord);
-                if (!isset($done[$splObjectId])) {
-                    $done[$splObjectId] = true;
+                $splObjectHash = spl_object_hash($relatedRecord);
+                if (!isset($done[$splObjectHash])) {
+                    $done[$splObjectHash] = true;
                     $relatedRecordsFlat = $relatedRecord->addChangedRelatedRecordsRecursive($relatedRecordsFlat, $done);
                 }
             }
