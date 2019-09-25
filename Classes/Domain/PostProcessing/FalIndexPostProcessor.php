@@ -39,8 +39,6 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use function json_encode;
-use function md5;
 
 /**
  * Class FalIndexPostProcessor
@@ -79,9 +77,8 @@ class FalIndexPostProcessor implements SingletonInterface
      */
     public function registerInstance(RecordFactory $recordFactory, RecordInterface $instance)
     {
-        $hash = md5(json_encode([$instance->getTableName(), $instance->getIdentifier()]));
-        if (!isset($this->registeredInstances[$hash]) && 'sys_file' === $instance->getTableName()) {
-            $this->registeredInstances[$hash] = $instance;
+        if ('sys_file' === $instance->getTableName()) {
+            $this->registeredInstances[$instance->getIdentifier()] = $instance;
         }
     }
 
