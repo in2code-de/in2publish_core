@@ -267,7 +267,7 @@ class CommonRepository extends BaseRepository
         if ($propertyName === 'uid'
             && $record = $this->recordFactory->getCachedRecord($tableName, $propertyValue)
         ) {
-            return $record;
+            return [$record];
         }
         $localProperties = $this->findPropertiesByProperty(
             $this->localDatabase,
@@ -322,7 +322,7 @@ class CommonRepository extends BaseRepository
         if (isset($properties['uid'])
             && $record = $this->recordFactory->getCachedRecord($tableName, $properties['uid'])
         ) {
-            return $record;
+            return [$record];
         }
         $localProperties = $this->findPropertiesByProperties(
             $this->localDatabase,
