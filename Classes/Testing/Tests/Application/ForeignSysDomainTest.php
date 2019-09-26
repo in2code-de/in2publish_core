@@ -124,10 +124,8 @@ class ForeignSysDomainTest implements TestCaseInterface
                     } else {
                         $domainType = self::DOMAIN_TYPE_SITE;
                     }
-                } else {
-                    if (0 < $this->foreignConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
-                        $domainType = self::DOMAIN_TYPE_LEGACY;
-                    }
+                } elseif (0 < $this->foreignConnection->count('*', 'sys_domain', ['hidden' => 0, 'pid' => $pageId])) {
+                    $domainType = self::DOMAIN_TYPE_LEGACY;
                 }
                 $results[$domainType][] = $pageId;
             }

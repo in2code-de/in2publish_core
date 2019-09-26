@@ -903,20 +903,18 @@ class CommonRepository extends BaseRepository
         // default FlexForm for a single field
         if (array_key_exists('TCEforms', $fieldDefinition)) {
             $flattenedDefinition[$fieldKey] = $fieldDefinition['TCEforms']['config'];
-        } else {
+        } elseif (array_key_exists('el', $fieldDefinition)) {
             // advanced FlexForm for a single field with n subfields
-            if (array_key_exists('el', $fieldDefinition)) {
-                $fieldDefinition = $fieldDefinition['el'];
-                foreach (array_keys($fieldDefinition) as $subKey) {
-                    if (array_key_exists('el', $fieldDefinition[$subKey])) {
-                        foreach ($fieldDefinition[$subKey]['el'] as $subFieldKey => $subFieldDefinition) {
-                            $newFieldKey = $fieldKey . '.[ANY].' . $subKey . '.' . $subFieldKey;
-                            $flattenedDefinition = $this->flattenFieldFlexForm(
-                                $flattenedDefinition,
-                                $subFieldDefinition,
-                                $newFieldKey
-                            );
-                        }
+            $fieldDefinition = $fieldDefinition['el'];
+            foreach (array_keys($fieldDefinition) as $subKey) {
+                if (array_key_exists('el', $fieldDefinition[$subKey])) {
+                    foreach ($fieldDefinition[$subKey]['el'] as $subFieldKey => $subFieldDefinition) {
+                        $newFieldKey = $fieldKey . '.[ANY].' . $subKey . '.' . $subFieldKey;
+                        $flattenedDefinition = $this->flattenFieldFlexForm(
+                            $flattenedDefinition,
+                            $subFieldDefinition,
+                            $newFieldKey
+                        );
                     }
                 }
             }

@@ -276,27 +276,25 @@ class RecordFactory
                         break;
                     default:
                 }
-            } else {
-                if ($this->currentDepth < $this->config['maximumOverallRecursion']) {
-                    $this->currentDepth++;
-                    if ($tableName === 'pages') {
-                        $instance = $this->findRelatedRecordsForPageRecord($instance, $commonRepository);
-                    } else {
-                        $instance = $this->findRelatedRecordsForContentRecord($instance, $commonRepository);
-                    }
-                    $this->currentDepth--;
+            } elseif ($this->currentDepth < $this->config['maximumOverallRecursion']) {
+                $this->currentDepth++;
+                if ($tableName === 'pages') {
+                    $instance = $this->findRelatedRecordsForPageRecord($instance, $commonRepository);
                 } else {
-                    $this->logger->emergency(
-                        'Reached maximumOverallRecursion. This should not happen since maximumOverallRecursion ' .
-                        'is considered deprecated and will be removed',
-                        [
-                            'table' => $instance->getTableName(),
-                            'depth' => $instance->getAdditionalProperty('depth'),
-                            'currentOverallRecursion' => $this->currentDepth,
-                            'maximumOverallRecursion' => $this->config['maximumOverallRecursion'],
-                        ]
-                    );
+                    $instance = $this->findRelatedRecordsForContentRecord($instance, $commonRepository);
                 }
+                $this->currentDepth--;
+            } else {
+                $this->logger->emergency(
+                    'Reached maximumOverallRecursion. This should not happen since maximumOverallRecursion ' .
+                    'is considered deprecated and will be removed',
+                    [
+                        'table' => $instance->getTableName(),
+                        'depth' => $instance->getAdditionalProperty('depth'),
+                        'currentOverallRecursion' => $this->currentDepth,
+                        'maximumOverallRecursion' => $this->config['maximumOverallRecursion'],
+                    ]
+                );
             }
             $this->finishedInstantiation($tableName, $mergedIdentifier);
             $this->runtimeCache[$tableName][$mergedIdentifier] = $instance;
@@ -448,22 +446,20 @@ class RecordFactory
                 }
                 // 3. it is modified
             } elseif ($record->getState() !== RecordInterface::RECORD_STATE_UNCHANGED) {
-                // 2. it has only foreign properties && 4. the missing properties are given
                 if ($record->foreignRecordExists() && empty($foreignProperties) && !empty($localProperties)) {
+                    // 2. it has only foreign properties && 4. the missing properties are given
                     // the current relation is set wrong. This record is referenced
                     // by the record which is parent on the foreign side
                     $record->getParentRecord()->removeRelatedRecord($record);
                     $record->setLocalProperties($localProperties);
                     $hasBeenMoved = true;
-                } else {
+                } elseif ($record->localRecordExists() && empty($localProperties) && !empty($foreignProperties)) {
                     // 2. it has only local properties && 4. the missing properties are given
-                    if ($record->localRecordExists() && empty($localProperties) && !empty($foreignProperties)) {
-                        $record->setForeignProperties($foreignProperties);
-                        // the current parent is correct, prevent changes to
-                        // parentRecord or adding the record to other records as relation
-                        $record->lockParentRecord();
-                        $hasBeenMoved = true;
-                    }
+                    $record->setForeignProperties($foreignProperties);
+                    // the current parent is correct, prevent changes to
+                    // parentRecord or adding the record to other records as relation
+                    $record->lockParentRecord();
+                    $hasBeenMoved = true;
                 }
                 if ($hasBeenMoved) {
                     // re-calculate dirty properties
@@ -479,10 +475,8 @@ class RecordFactory
         } elseif (!empty($localProperties['pid']) && !empty($foreignProperties['pid'])) {
             if ($localProperties['pid'] !== $foreignProperties['pid']) {
                 $hasBeenMoved = true;
-            } else {
-                if ($localProperties['sorting'] !== $foreignProperties['sorting']) {
-                    $hasBeenMoved = true;
-                }
+            } elseif ($localProperties['sorting'] !== $foreignProperties['sorting']) {
+                $hasBeenMoved = true;
             }
         }
         return $hasBeenMoved;

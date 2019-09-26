@@ -771,27 +771,21 @@ class Record implements RecordInterface
                     $localValueArray = explode(',', $localValue);
                     $foreignValueArray = explode(',', $foreignValue);
                     $value = implode(',', array_filter(array_merge($localValueArray, $foreignValueArray)));
-                } else {
-                    if ($localValue === '0' && $foreignValue !== '0') {
-                        $value = $foreignValue;
-                    } elseif ($localValue !== '0' && $foreignValue === '0') {
-                        $value = $localValue;
-                    } else {
-                        if (strlen($localValue) > 0 && strlen($foreignValue) > 0) {
-                            $value = implode(',', [$localValue, $foreignValue]);
-                        } elseif (!$localValue && $foreignValue) {
-                            $value = $foreignValue;
-                        } else {
-                            $value = $localValue;
-                        }
-                    }
-                }
-            } else {
-                if (!$localValue && $foreignValue) {
+                } elseif ($localValue === '0' && $foreignValue !== '0') {
+                    $value = $foreignValue;
+                } elseif ($localValue !== '0' && $foreignValue === '0') {
+                    $value = $localValue;
+                } elseif (strlen($localValue) > 0 && strlen($foreignValue) > 0) {
+                    $value = implode(',', [$localValue, $foreignValue]);
+                } elseif (!$localValue && $foreignValue) {
                     $value = $foreignValue;
                 } else {
                     $value = $localValue;
                 }
+            } elseif (!$localValue && $foreignValue) {
+                $value = $foreignValue;
+            } else {
+                $value = $localValue;
             }
         } else {
             $value = $localValue;

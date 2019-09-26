@@ -129,10 +129,8 @@ class FileStorageService extends AbstractService
                     $fileOrFolder = $this->renameParentPathInFileOrFolder($fileOrFolder);
                     $this->nonAllowedFolders[$fileOrFolder] = $this->getNewFolderName($fileOrFolder);
                 }
-            } else {
-                if ($this->isNonAllowedFile($fileOrFolder)) {
-                    $this->nonAllowedFiles[$fileOrFolder] = $this->getNewFileName($fileOrFolder);
-                }
+            } elseif ($this->isNonAllowedFile($fileOrFolder)) {
+                $this->nonAllowedFiles[$fileOrFolder] = $this->getNewFileName($fileOrFolder);
             }
         }
     }

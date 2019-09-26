@@ -101,19 +101,17 @@ class Letterbox
                     ]
                 );
             }
+        } elseif (1 === $database->update(static::TABLE, $envelope->toArray(), ['uid' => $uid])) {
+            return true;
         } else {
-            if (1 === $database->update(static::TABLE, $envelope->toArray(), ['uid' => $uid])) {
-                return true;
-            } else {
-                $this->logger->error(
-                    'Failed to update envelope [' . $uid . ']',
-                    [
-                        'envelope' => $envelope->toArray(),
-                        'error' => json_encode($database->errorInfo()),
-                        'errno' => $database->errorCode(),
-                    ]
-                );
-            }
+            $this->logger->error(
+                'Failed to update envelope [' . $uid . ']',
+                [
+                    'envelope' => $envelope->toArray(),
+                    'error' => json_encode($database->errorInfo()),
+                    'errno' => $database->errorCode(),
+                ]
+            );
         }
         return false;
     }
