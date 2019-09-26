@@ -49,7 +49,6 @@ use function array_unique;
 use function count;
 use function dirname;
 use function in_array;
-use function sprintf;
 use function strpos;
 use function substr;
 

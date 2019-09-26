@@ -28,8 +28,6 @@ namespace In2code\In2publishCore\Domain\Factory;
  */
 
 use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
-use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
