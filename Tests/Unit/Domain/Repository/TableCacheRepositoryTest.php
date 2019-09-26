@@ -27,30 +27,24 @@ namespace In2code\In2publishCore\Tests\Unit\Domain\Repository;
  */
 
 use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository\TableCacheRepository;
-use PHPUnit_Framework_MockObject_MockObject;
-use TYPO3\CMS\Core\Tests\UnitTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * @coversDefaultClass TableCacheRepository
  */
 class TableCacheRepositoryTest extends UnitTestCase
 {
-    /**
-     * @param null $foreignDatabase
-     *
-     * @return TableCacheRepository
-     */
-    protected function getTableCacheRepositoryInstance($foreignDatabase = null)
+    protected function getTableCacheRepositoryInstance(): TableCacheRepository
     {
-        /** @var TableCacheRepository|PHPUnit_Framework_MockObject_MockObject $mock */
+        /** @var TableCacheRepository|MockObject $mock */
         $mock = $this
             ->getMockBuilder(TableCacheRepository::class)
-            ->setMethods(['getForeignDatabaseConnection'])
+            ->setMethods(['getConnection'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $mock->method('getForeignDatabaseConnection')->willReturn($foreignDatabase);
-        $mock->__construct();
+        $mock->method('getConnection')->willReturn(null);
 
         return $mock;
     }

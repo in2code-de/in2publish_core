@@ -27,7 +27,7 @@ namespace In2code\In2publishCore\Tests\Unit\Utility;
  */
 
 use In2code\In2publishCore\Utility\ArrayUtility;
-use TYPO3\CMS\Core\Tests\UnitTestCase;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Utility\ArrayUtility

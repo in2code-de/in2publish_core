@@ -26,10 +26,13 @@ namespace In2code\In2publishCore\Tests\Unit\Service\Configuration;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use In2code\In2publishCore\Service\Configuration\TcaService;
-use PHPUnit_Framework_MockObject_MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 use stdClass;
-use TYPO3\CMS\Core\Tests\UnitTestCase;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Service\Configuration\TcaService
@@ -273,30 +276,19 @@ class TcaServiceTest extends UnitTestCase
      */
     public function testGetAllTableNamesWithPidAndUidFieldReturnsExpectedTables()
     {
-        /** @var PHPUnit_Framework_MockObject_MockObject|TcaService $tcaService */
-        $tcaService = $this->getMockBuilder(TcaService::class)->setMethods(['getDatabaseSchema'])->getMock();
+        /** @var MockObject|TcaService $tcaService */
+        $tcaService = $this->getMockBuilder(TcaService::class)->setMethods(['getDatabaseSchemaTables'])->getMock();
 
+        $intType = Type::getType(Type::INTEGER);
         $databaseSchema = [
-            'foo' => [
-                'pid' => [],
-                'uid' => [],
-            ],
-            'bar' => [
-                'pid' => [],
-                'uid' => [],
-            ],
-            'baz' => [
-                'tstamp' => [],
-            ],
-            'boo' => [
-                'pid' => [],
-            ],
-            'far' => [
-                'uid' => [],
-            ],
+            new Table('foo', [new Column('uid', $intType), new Column('pid', $intType)]),
+            new Table('bar', [new Column('uid', $intType), new Column('pid', $intType)]),
+            new Table('baz', [new Column('tstamp', $intType)]),
+            new Table('boo', [new Column('pid', $intType)]),
+            new Table('far', [new Column('uid', $intType)]),
         ];
 
-        $tcaService->method('getDatabaseSchema')->will($this->returnValue($databaseSchema));
+        $tcaService->method('getDatabaseSchemaTables')->will($this->returnValue($databaseSchema));
 
         // ignore array keys
         $this->assertSame(['foo', 'bar'], array_values($tcaService->getAllTableNamesWithPidAndUidField()));
@@ -308,41 +300,27 @@ class TcaServiceTest extends UnitTestCase
      */
     public function testGetAllTableNamesWithPidAndUidFieldReturnsExpectedTablesExceptExcludedTables()
     {
-        /** @var PHPUnit_Framework_MockObject_MockObject|TcaService $tcaService */
-        $tcaService = $this->getMockBuilder(TcaService::class)->setMethods(['getDatabaseSchema'])->getMock();
+        /** @var MockObject|TcaService $tcaService */
+        $tcaService = $this->getMockBuilder(TcaService::class)->setMethods(['getDatabaseSchemaTables'])->getMock();
 
+        $intType = Type::getType(Type::INTEGER);
         $databaseSchema = [
-            'foo' => [
-                'pid' => [],
-                'uid' => [],
-            ],
-            'bar' => [
-                'pid' => [],
-                'uid' => [],
-            ],
-            'baz' => [
-                'uid' => [],
-            ],
-            'faz' => [
-                'pid' => [],
-            ],
-            'boo' => [
-                'pid' => [],
-                'uid' => [],
-            ],
+            new Table('foo', [new Column('uid', $intType), new Column('pid', $intType)]),
+            new Table('bar', [new Column('uid', $intType), new Column('pid', $intType)]),
+            new Table('baz', [new Column('uid', $intType)]),
+            new Table('boo', [new Column('uid', $intType), new Column('pid', $intType)]),
+            new Table('faz', [new Column('pid', $intType)]),
         ];
 
         $excludedTables = [
             'bar',
         ];
 
-        $tcaService->method('getDatabaseSchema')->will($this->returnValue($databaseSchema));
+        $tcaService->method('getDatabaseSchemaTables')->will($this->returnValue($databaseSchema));
 
         // ignore array keys
-        $this->assertSame(
-            ['foo', 'boo'],
-            array_values($tcaService->getAllTableNamesWithPidAndUidField($excludedTables))
-        );
+        $tables = $tcaService->getAllTableNamesWithPidAndUidField($excludedTables);
+        $this->assertSame(['foo', 'boo'], array_values($tables));
     }
 
     /**
@@ -363,7 +341,7 @@ class TcaServiceTest extends UnitTestCase
     {
         $this->setTca(['foo' => ['ctrl' => ['title' => 'bar']]]);
 
-        /** @var PHPUnit_Framework_MockObject_MockObject|TcaService $tcaService */
+        /** @var MockObject|TcaService $tcaService */
         $tcaService = $this->getMockBuilder(TcaService::class)->setMethods(['localizeLabel'])->getMock();
         $tcaService->method('localizeLabel')->will($this->returnValue('bazinga'));
 

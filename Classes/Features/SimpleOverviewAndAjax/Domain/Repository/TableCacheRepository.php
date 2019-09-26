@@ -82,7 +82,7 @@ class TableCacheRepository implements SingletonInterface
         if (!empty($cache[$tableName][$uniqueIdentifier])) {
             return $cache[$tableName][$uniqueIdentifier];
         }
-        $connection = DatabaseUtility::buildDatabaseConnectionForSide($databaseName);
+        $connection = $this->getConnection($databaseName);
         if ($connection instanceof Connection) {
             $query = $connection->createQueryBuilder();
             $query->getRestrictions()->removeAll();
@@ -112,7 +112,7 @@ class TableCacheRepository implements SingletonInterface
      */
     public function findByPid($tableName, $pageIdentifier, $databaseName = 'local'): array
     {
-        $connection = DatabaseUtility::buildDatabaseConnectionForSide($databaseName);
+        $connection = $this->getConnection($databaseName);
         if ($connection instanceof Connection) {
             $query = $connection->createQueryBuilder();
             $query->getRestrictions()->removeAll();
@@ -174,5 +174,15 @@ class TableCacheRepository implements SingletonInterface
             $cache = $this->foreignCache;
         }
         return $cache;
+    }
+
+    /**
+     * @param $databaseName
+     *
+     * @return Connection|null
+     */
+    protected function getConnection($databaseName)
+    {
+        return DatabaseUtility::buildDatabaseConnectionForSide($databaseName);
     }
 }

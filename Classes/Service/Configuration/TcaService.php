@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Service\Configuration;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Doctrine\DBAL\Schema\Table;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Lang\LanguageService;
@@ -221,15 +222,14 @@ class TcaService implements SingletonInterface
     {
         $result = [];
 
-        $database = DatabaseUtility::buildLocalDatabaseConnection();
-        if ($database) {
-            foreach ($database->getSchemaManager()->listTables() as $table) {
-                if ($table->hasColumn('uid')
-                    && $table->hasColumn('pid')
-                    && !in_array($table->getName(), $exceptTableNames, true)
-                ) {
-                    $result[] = $table->getName();
-                }
+        $tables = $this->getDatabaseSchemaTables();
+
+        foreach ($tables as $table) {
+            if ($table->hasColumn('uid')
+                && $table->hasColumn('pid')
+                && !in_array($table->getName(), $exceptTableNames, true)
+            ) {
+                $result[] = $table->getName();
             }
         }
 
@@ -321,5 +321,18 @@ class TcaService implements SingletonInterface
             return $GLOBALS['LANG']->sL($label);
         }
         return '';
+    }
+
+    /**
+     * @return Table[]
+     */
+    public function getDatabaseSchemaTables(): array
+    {
+        $tables = [];
+        $database = DatabaseUtility::buildLocalDatabaseConnection();
+        if ($database) {
+            $tables = $database->getSchemaManager()->listTables();
+        }
+        return $tables;
     }
 }

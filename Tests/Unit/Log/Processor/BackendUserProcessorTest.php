@@ -31,7 +31,7 @@ use stdClass;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogRecord;
-use TYPO3\CMS\Core\Tests\UnitTestCase;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Log\Processor\BackendUserProcessor
@@ -59,25 +59,6 @@ class BackendUserProcessorTest extends UnitTestCase
         $log = $backendUserProcessor->processLogRecord($log);
 
         $this->assertSame(['be_user' => $expectedBeUserUid], $log->getData());
-    }
-
-    /**
-     * @covers ::__construct
-     * @covers ::getBackendUser
-     * @covers ::processLogRecord
-     * @SuppressWarnings("PHPMD.Superglobals")
-     */
-    public function testBackendUserProcessorAddsBackendUserClassToLogEntryDataIfNotBackendUserAuthentication()
-    {
-        // preparation
-        $GLOBALS['BE_USER'] = new stdClass();
-
-        $backendUserProcessor = new BackendUserProcessor();
-
-        $log = new LogRecord('Foo.Bar', LogLevel::DEBUG, 'baz', []);
-        $log = $backendUserProcessor->processLogRecord($log);
-
-        $this->assertSame(['be_user' => 'stdClass'], $log->getData());
     }
 
     /**
