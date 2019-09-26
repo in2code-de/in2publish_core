@@ -90,6 +90,8 @@ class DatabaseUtility
                         'password' => $configuration['password'],
                         'port' => $configuration['port'],
                         'user' => $configuration['username'],
+                        'charset' => $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['charset'],
+                        'tableoptions' => $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['tableoptions'],
                     ];
                 }
                 $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['in2publish_foreign']['initCommands'] = $initCommands;
