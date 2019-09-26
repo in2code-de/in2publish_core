@@ -279,6 +279,7 @@ class ToolsController extends ActionController
 
     public function sysInfoUploadAction()
     {
+        /** @var array $file */
         $file = $this->request->getArgument('jsonFile');
         $content = file_get_contents($file['tmp_name']);
         $this->forward('sysInfoDecode', null, null, ['json' => $content]);
