@@ -24,7 +24,7 @@
 				<source>
 					Log level.:
 					The log level determines the lower bound of severity for log entries to be written.
-					Selecting a "higher" log level reduces the amount of logs and information beeing written to the database.
+					Selecting a "higher" log level reduces the amount of logs and information being written to the database.
 				</source>
 			</trans-unit>
 			<trans-unit id="adapter.remote">
