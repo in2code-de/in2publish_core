@@ -30,6 +30,8 @@ use In2code\In2publishCore\Domain\Model\Record;
 use LogicException;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
+use function version_compare;
+use const PHP_VERSION;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Domain\Model\Record
@@ -41,6 +43,7 @@ class RecordTest extends UnitTestCase
     /**
      * @param mixed $getIgnoreFields
      * @param bool $isParentRecordDisabled
+     *
      * @return Record
      */
     protected function getRecordStub($getIgnoreFields, $isParentRecordDisabled = false)
@@ -1315,6 +1318,31 @@ class RecordTest extends UnitTestCase
 
         $related3 = $this->getRecordStub([]);
         $related3->__construct('tt_content', ['uid' => 6], ['uid' => 6], [], []);
+
+        $record->addRelatedRecords([$related1, $related2, $related3]);
+
+        $this->assertSame([$related1, $related2], $record->getChangedRelatedRecordsFlat());
+    }
+
+    /**
+     * @covers ::getChangedRelatedRecordsFlat
+     * @covers ::addChangedRelatedRecordsRecursive
+     * @depends testGetChangedRelatedRecordsFlatReturnsFlatArrayOfChangedRelatedRecords
+     */
+    public function testGetChangedRelatedRecordsFlatReturnsFlatArrayOfChangedRelatedRecordsWithoutDuplicates()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $related1 = $this->getRecordStub([]);
+        $related1->__construct('tt_content', ['uid' => 1, 'foo' => 'bar'], ['uid' => 1], [], []);
+
+        $related2 = $this->getRecordStub([]);
+        $related2->__construct('tt_content', [], ['uid' => 2], [], []);
+
+        $related3 = $this->getRecordStub([]);
+        $related3->__construct('tt_content', ['uid' => 6], ['uid' => 6], [], []);
+        $related3->addRelatedRecord($related1);
 
         $record->addRelatedRecords([$related1, $related2, $related3]);
 

@@ -38,6 +38,7 @@ use function array_key_exists;
 use function array_keys;
 use function array_merge;
 use function array_unique;
+use function array_values;
 use function count;
 use function explode;
 use function implode;
@@ -1039,7 +1040,7 @@ class Record implements RecordInterface
         if ($this->isChanged()) {
             $relatedRecordsFlat[] = $this;
         }
-        return $this->addChangedRelatedRecordsRecursive($relatedRecordsFlat);
+        return array_values($this->addChangedRelatedRecordsRecursive($relatedRecordsFlat));
     }
 
     /**
@@ -1072,12 +1073,12 @@ class Record implements RecordInterface
     {
         foreach ($this->getRelatedRecords() as $relatedRecords) {
             foreach ($relatedRecords as $relatedRecord) {
+                $splObjectHash = spl_object_hash($relatedRecord);
                 if ($relatedRecord->isChanged()) {
-                    if (!in_array($relatedRecord, $relatedRecordsFlat)) {
-                        $relatedRecordsFlat[] = $relatedRecord;
+                    if (!isset($relatedRecordsFlat[$splObjectHash])) {
+                        $relatedRecordsFlat[$splObjectHash] = $relatedRecord;
                     }
                 }
-                $splObjectHash = spl_object_hash($relatedRecord);
                 if (!isset($done[$splObjectHash])) {
                     $done[$splObjectHash] = true;
                     $relatedRecordsFlat = $relatedRecord->addChangedRelatedRecordsRecursive($relatedRecordsFlat, $done);
