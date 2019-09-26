@@ -63,7 +63,7 @@ class Builder
     }
 
     /**
-     * @return static
+     * @return Builder
      */
     public static function start()
     {
