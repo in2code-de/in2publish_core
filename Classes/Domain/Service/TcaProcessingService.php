@@ -163,7 +163,7 @@ class TcaProcessingService
     public static function getInstance(): TcaProcessingService
     {
         if (static::$instance === null) {
-            static::$instance = new static;
+            static::$instance = new static();
             static::$instance->preProcessTca();
         }
         return static::$instance;
