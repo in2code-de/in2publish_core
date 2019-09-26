@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Tests\Unit\Service\Environment;
  */
 
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
+use PHPUnit_Framework_MockObject_MockObject;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 
@@ -42,7 +43,7 @@ class EnvironmentServiceTest extends UnitTestCase
      */
     public function testSetTestResultStoresTestResultCurrentConfigAndPackagesHashIntoRegistry()
     {
-        /** @var EnvironmentService|\PHPUnit_Framework_MockObject_MockObject $environmentService */
+        /** @var EnvironmentService|PHPUnit_Framework_MockObject_MockObject $environmentService */
         $environmentService = $this->getMockBuilder(EnvironmentService::class)->setMethods(
             ['getActivePackagesArray', 'getConfigurationHash', 'getRegistry']
         )->disableOriginalConstructor()->getMock();
@@ -53,7 +54,7 @@ class EnvironmentServiceTest extends UnitTestCase
         $configurationArray = ['boo' => ['far' => ['faz' => 'fuz']]];
         $configurationHash = sha1(serialize($configurationArray));
 
-        /** @var Registry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        /** @var Registry|PHPUnit_Framework_MockObject_MockObject $registry */
         $registry = $this->getMockBuilder(Registry::class)->setMethods(['set'])->getMock();
         $registry->expects($this->once())->method('set')->with(
             'tx_in2publishcore',
@@ -173,7 +174,7 @@ class EnvironmentServiceTest extends UnitTestCase
      */
     public function testGetTestResultReturnsExpectedValue($expected, $registryReturn)
     {
-        /** @var EnvironmentService|\PHPUnit_Framework_MockObject_MockObject $environmentService */
+        /** @var EnvironmentService|PHPUnit_Framework_MockObject_MockObject $environmentService */
         $environmentService = $this->getMockBuilder(EnvironmentService::class)->setMethods(
             ['getActivePackagesArray', 'getConfigurationHash', 'getRegistry']
         )->disableOriginalConstructor()->getMock();
@@ -183,7 +184,7 @@ class EnvironmentServiceTest extends UnitTestCase
         $configurationArray = ['boo' => ['far' => ['faz' => 'fuz']]];
         $configurationHash = sha1(serialize($configurationArray));
 
-        /** @var Registry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        /** @var Registry|PHPUnit_Framework_MockObject_MockObject $registry */
         $registry = $this->getMockBuilder(Registry::class)->setMethods(['get'])->getMock();
         $registry->expects($this->once())->method('get')->willReturn($registryReturn);
 

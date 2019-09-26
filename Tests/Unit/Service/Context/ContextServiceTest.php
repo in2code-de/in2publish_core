@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Tests\Unit\Service\Context;
 
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Tests\Helper\TestingHelper;
+use LogicException;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 
 /**
@@ -87,7 +88,7 @@ class ContextServiceTest extends UnitTestCase
         TestingHelper::setApplicationContext('Development');
 
         $this->setExpectedException(
-            \LogicException::class,
+            LogicException::class,
             'The defined in2publish context is not supported',
             1469717011
         );

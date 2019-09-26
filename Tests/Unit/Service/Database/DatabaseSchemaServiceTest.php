@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Tests\Unit\Service\Database;
  */
 
 use In2code\In2publishCore\Service\Database\DatabaseSchemaService;
+use PHPUnit_Framework_MockObject_MockObject;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Database\DatabaseConnection;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
@@ -41,14 +42,14 @@ class DatabaseSchemaServiceTest extends UnitTestCase
      */
     public function testTableExistsReturnsTrueIfTableExistsInSchema()
     {
-        /** @var VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheFrontend */
+        /** @var VariableFrontend|PHPUnit_Framework_MockObject_MockObject $cacheFrontend */
         $cacheFrontend = $this->getMockBuilder(VariableFrontend::class)
                               ->setMethods(['has', 'get', 'set'])
                               ->disableOriginalConstructor()
                               ->getMock();
         $cacheFrontend->method('has')->willReturn(false);
 
-        /** @var DatabaseSchemaService|\PHPUnit_Framework_MockObject_MockObject $schemaService */
+        /** @var DatabaseSchemaService|PHPUnit_Framework_MockObject_MockObject $schemaService */
         $schemaService = $this->getMockBuilder(DatabaseSchemaService::class)
                               ->setMethods(['getCache', 'getDatabaseSchema'])
                               ->disableOriginalConstructor()
@@ -64,14 +65,14 @@ class DatabaseSchemaServiceTest extends UnitTestCase
      */
     public function testTableExistsReturnsFalseIfTableDoesNotExist()
     {
-        /** @var VariableFrontend|\PHPUnit_Framework_MockObject_MockObject $cacheFrontend */
+        /** @var VariableFrontend|PHPUnit_Framework_MockObject_MockObject $cacheFrontend */
         $cacheFrontend = $this->getMockBuilder(VariableFrontend::class)
                               ->setMethods(['has', 'get', 'set'])
                               ->disableOriginalConstructor()
                               ->getMock();
         $cacheFrontend->method('has')->willReturn(false);
 
-        /** @var DatabaseSchemaService|\PHPUnit_Framework_MockObject_MockObject $schemaService */
+        /** @var DatabaseSchemaService|PHPUnit_Framework_MockObject_MockObject $schemaService */
         $schemaService = $this->getMockBuilder(DatabaseSchemaService::class)
                               ->setMethods(['getCache', 'getDatabaseSchema'])
                               ->disableOriginalConstructor()

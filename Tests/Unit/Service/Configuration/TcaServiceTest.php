@@ -27,6 +27,8 @@ namespace In2code\In2publishCore\Tests\Unit\Service\Configuration;
  */
 
 use In2code\In2publishCore\Service\Configuration\TcaService;
+use PHPUnit_Framework_MockObject_MockObject;
+use stdClass;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 
 /**
@@ -271,7 +273,7 @@ class TcaServiceTest extends UnitTestCase
      */
     public function testGetAllTableNamesWithPidAndUidFieldReturnsExpectedTables()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TcaService $tcaService */
+        /** @var PHPUnit_Framework_MockObject_MockObject|TcaService $tcaService */
         $tcaService = $this->getMockBuilder(TcaService::class)->setMethods(['getDatabaseSchema'])->getMock();
 
         $databaseSchema = [
@@ -306,7 +308,7 @@ class TcaServiceTest extends UnitTestCase
      */
     public function testGetAllTableNamesWithPidAndUidFieldReturnsExpectedTablesExceptExcludedTables()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TcaService $tcaService */
+        /** @var PHPUnit_Framework_MockObject_MockObject|TcaService $tcaService */
         $tcaService = $this->getMockBuilder(TcaService::class)->setMethods(['getDatabaseSchema'])->getMock();
 
         $databaseSchema = [
@@ -361,7 +363,7 @@ class TcaServiceTest extends UnitTestCase
     {
         $this->setTca(['foo' => ['ctrl' => ['title' => 'bar']]]);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TcaService $tcaService */
+        /** @var PHPUnit_Framework_MockObject_MockObject|TcaService $tcaService */
         $tcaService = $this->getMockBuilder(TcaService::class)->setMethods(['localizeLabel'])->getMock();
         $tcaService->method('localizeLabel')->will($this->returnValue('bazinga'));
 
@@ -388,7 +390,7 @@ class TcaServiceTest extends UnitTestCase
             'ctrl' => [
                 'delete' => 'whee',
             ],
-            'same' => new \stdClass(),
+            'same' => new stdClass(),
         ];
         $this->setTca(['foo' => $expected]);
 

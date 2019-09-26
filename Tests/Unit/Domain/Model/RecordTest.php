@@ -27,6 +27,8 @@ namespace In2code\In2publishCore\Tests\Unit\Domain\Model;
  */
 
 use In2code\In2publishCore\Domain\Model\Record;
+use LogicException;
+use PHPUnit_Framework_MockObject_MockObject;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
 
 /**
@@ -925,7 +927,7 @@ class RecordTest extends UnitTestCase
         $root = $this->getRecordStub([]);
         $root->__construct('pages', ['uid' => 1], ['uid' => 1], [], []);
 
-        /** @var Record|\PHPUnit_Framework_MockObject_MockObject $stub1 */
+        /** @var Record|PHPUnit_Framework_MockObject_MockObject $stub1 */
         $stub1 = $this->getMockBuilder(Record::class)
                       ->setMethods(['getIgnoreFields', 'isParentRecordDisabled', 'isChanged'])
                       ->disableOriginalConstructor()
@@ -936,7 +938,7 @@ class RecordTest extends UnitTestCase
 
         $stub1->expects($this->once())->method('isChanged');
 
-        /** @var Record|\PHPUnit_Framework_MockObject_MockObject $stub2 */
+        /** @var Record|PHPUnit_Framework_MockObject_MockObject $stub2 */
         $stub2 = $this->getMockBuilder(Record::class)
                       ->setMethods(['getIgnoreFields', 'isParentRecordDisabled', 'isChanged'])
                       ->disableOriginalConstructor()
@@ -1566,7 +1568,7 @@ class RecordTest extends UnitTestCase
         $stub->__construct('pages', [], [], [], []);
 
         $this->setExpectedException(
-            \LogicException::class,
+            LogicException::class,
             'Can not set properties for undefined side "foo"',
             1475857626
         );
@@ -1611,7 +1613,7 @@ class RecordTest extends UnitTestCase
         $stub->__construct('pages', [], [], [], []);
 
         $this->setExpectedException(
-            \LogicException::class,
+            LogicException::class,
             'Can not get Properties from undefined side "foo"',
             1475858502
         );
@@ -1654,7 +1656,7 @@ class RecordTest extends UnitTestCase
         $record->__construct('pages', [], [], [], []);
 
         $this->setExpectedException(
-            \LogicException::class,
+            LogicException::class,
             'Can not get property "bar" from undefined side "foo"',
             1475858834
         );

@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Doctrine\DBAL\DBALException;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
@@ -286,7 +287,7 @@ class ToolsController extends ActionController
     /**
      * @return array
      * @throws In2publishCoreException
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     protected function getFullInfo(): array
     {
@@ -335,7 +336,7 @@ class ToolsController extends ActionController
                         $value = 'xxxxxxxx (masked)';
                         $cfgArray = ArrayUtility::setValueByPath($cfgArray, $protectedValue, $value, '.');
                     }
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                 }
             }
         }
