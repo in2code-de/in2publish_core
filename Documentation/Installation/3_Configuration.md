@@ -11,11 +11,11 @@ You just need to create the file and set values that differ from the default con
 Note:
 > If you want to separate your configuration depending on the in2publish version, you could also use **LocalConfiguration_[version].yaml** and **ForeignConfiguration_[version].yaml** for a version specific configuration.
 > That could help you for your future deployments. E.g. LocalConfiguration_1.2.3.yaml
-> Since 7.0 you don't have to provide the full version number. You can omit the patch version (last number: LocalConfiguration_1.2.yaml) or the patch and minor version (last two nubers: LocalConfiguration_1.yaml).
+> Since 7.0 you don't have to provide the full version number. You can omit the patch version (last number: LocalConfiguration_1.2.yaml) or the patch and minor version (last two numbers: LocalConfiguration_1.yaml).
 
 ## Configuration (provided by the Configuration Providers) is merged recursively
 
-The configuration arrays provided by the available Configuration Providers are generelly merged recursively following the following rules:
+The configuration arrays provided by the available Configuration Providers are generally merged recursively following the following rules:
 
 * The value of items having an identical ALPHANUMERIC key will be REPLACED
 * The value of items having an identical NUMERIC key will be ADDED   
