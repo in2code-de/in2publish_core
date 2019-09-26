@@ -13,7 +13,7 @@ if (!file_exists($autoload = $webRoot . 'vendor/autoload.php')
     );
 }
 
-$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'] = array();
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'] = [];
 
 require($autoload);
 

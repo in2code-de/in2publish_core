@@ -44,8 +44,8 @@ class BackendUtilityTest extends UnitTestCase
     public function testGetPageIdentifierReturnsZeroIfNoPidCanBeFound()
     {
         // assure there are no values to get a pid from
-        $_POST = array();
-        $_GET = array();
+        $_POST = [];
+        $_GET = [];
 
         $this->assertSame(0, BackendUtility::getPageIdentifier());
     }
@@ -81,7 +81,7 @@ class BackendUtilityTest extends UnitTestCase
         $databaseMock->expects($this->once())
                      ->method('exec_SELECTgetSingleRow')
                      ->with('pid', 'tt_content', 'uid=13')
-                     ->willReturn(array('pid' => $expectedPid));
+                     ->willReturn(['pid' => $expectedPid]);
 
         $_POST['element'] = 'tt_content:13';
         $GLOBALS['TYPO3_DB'] = $databaseMock;
@@ -170,7 +170,7 @@ class BackendUtilityTest extends UnitTestCase
         $databaseMock->expects($this->once())
                      ->method('exec_SELECTgetSingleRow')
                      ->with('pid', 'tt_content', 'uid=16')
-                     ->willReturn(array('pid' => 14));
+                     ->willReturn(['pid' => 14]);
 
         $_POST['data']['tt_content']['16'] = 'bar';
         $GLOBALS['TYPO3_DB'] = $databaseMock;
@@ -324,11 +324,11 @@ class BackendUtilityTest extends UnitTestCase
      */
     public function testGetPageIdentifierReturnsZeroIfCmdParameterIsEmpty()
     {
-        $_POST['cmd'] = array();
+        $_POST['cmd'] = [];
 
         $this->assertSame(0, BackendUtility::getPageIdentifier());
 
-        $_POST['cmd']['pages'] = array();
+        $_POST['cmd']['pages'] = [];
 
         $this->assertSame(0, BackendUtility::getPageIdentifier());
     }

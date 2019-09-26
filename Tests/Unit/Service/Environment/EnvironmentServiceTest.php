@@ -58,11 +58,11 @@ class EnvironmentServiceTest extends UnitTestCase
         $registry->expects($this->once())->method('set')->with(
             'tx_in2publishcore',
             'test_result',
-            array(
+            [
                 'success' => true,
                 'packages_hash' => $packagesHash,
                 'configuration_hash' => $configurationHash,
-            )
+            ]
         );
 
         $environmentService->method('getRegistry')->willReturn($registry);
