@@ -6,18 +6,7 @@ if (!defined('TYPO3_MODE')) {
 call_user_func(
     function () {
         // @codingStandardsIgnoreStart @formatter:off
-        $extConf = [
-            'disableUserConfig' => false,
-            'adapter.' => [
-                'remote' => 'ssh',
-                'transmission' => 'ssh',
-            ]
-        ];
-        if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core'])) {
-            if (is_array($setConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core']))) {
-                \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($extConf, $setConf);
-            }
-        }
+        $extConf = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class)->get('in2publish_core');
         if (!class_exists(\In2code\In2publishCore\Service\Context\ContextService::class)) {
             // Early return when installing per ZIP: autoload is not yet generated
             return;

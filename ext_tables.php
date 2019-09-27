@@ -10,11 +10,9 @@ call_user_func(
         if (TYPO3_MODE !== 'BE' || TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_INSTALL) {
             return;
         }
-
-        $extConf = ['logLevel' => 5];
-        if (is_array($setConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core']))) {
-            \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule($extConf, $setConf);
-        }
+        // TODO: extConf
+        $extensionConfiguration = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class);
+        $extConf = $extensionConfiguration->get('in2publish_core');
 
 
         /************************************************ Init Logging ************************************************/
