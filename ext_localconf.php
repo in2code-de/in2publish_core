@@ -23,6 +23,23 @@
         \In2code\In2publishCore\Communication\AdapterRegistry::class
     );
 
+    /************************************************** Init Logging **************************************************/
+    $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'] = [
+        'writerConfiguration' => [
+            $extConf['logLevel'] => [
+                \TYPO3\CMS\Core\Log\Writer\DatabaseWriter::class => [
+                    'logTable' => 'tx_in2publishcore_log',
+                ],
+            ],
+        ],
+        'processorConfiguration' => [
+            $extConf['logLevel'] => [
+                \In2code\In2publishCore\Log\Processor\BackendUserProcessor::class => [],
+                \In2code\In2publishCore\Log\Processor\PublishingFailureCollector::class => [],
+            ],
+        ],
+    ];
+
     /**************************************** Register Config Definer/Provider ****************************************/
     $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\In2publishCoreDefiner::class);
     $configContainer->registerDefiner(
