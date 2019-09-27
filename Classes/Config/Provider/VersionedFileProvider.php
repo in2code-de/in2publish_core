@@ -45,7 +45,7 @@ class VersionedFileProvider extends FileProvider
      */
     public function getConfig()
     {
-        $path = $this->getConfigFilePath();
+        $path = $this->getResolvedFilePath();
 
         $version = ExtensionUtility::getExtensionVersion('in2publish_core');
         list($major, $minor, $patch) = explode('.', $version);
