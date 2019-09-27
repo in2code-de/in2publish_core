@@ -40,9 +40,6 @@ call_user_func(
         if ($contextService->isForeign() || ('ssh' === $extConf['adapter.']['remote'] || 'ssh' === $extConf['adapter.']['transmission'])) {
             $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\SshConnectionDefiner::class);
         }
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('realurl')) {
-            $configContainer->registerDefiner(\In2code\In2publishCore\Features\RealUrlSupport\Config\Definer\RealUrlDefiner::class);
-        }
 
         $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\DefaultProvider::class);
         $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\FileProvider::class);

@@ -128,9 +128,6 @@ call_user_func(
                 $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveBeforePublishing', \In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly\NewsCacheInvalidator::class, 'registerClearCacheTasks', false);
                 $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveEnd', \In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly\NewsCacheInvalidator::class, 'writeClearCacheTask', false);
             }
-            if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('realurl')) {
-                $signalSlotDispatcher->connect(\In2code\In2publishCore\Domain\Repository\CommonRepository::class, 'publishRecordRecursiveAfterPublishing', \In2code\In2publishCore\Features\RealUrlSupport\Domain\Anomaly\RealUrlCacheInvalidator::class, 'registerClearRealUrlCacheTask', false);
-            }
 
             /***************************************** Tests Registration *****************************************/
             $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Adapter\AdapterSelectionTest::class;
