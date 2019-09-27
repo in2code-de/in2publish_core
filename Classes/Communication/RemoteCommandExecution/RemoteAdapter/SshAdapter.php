@@ -49,6 +49,8 @@ use function stream_set_blocking;
  */
 class SshAdapter extends SshBaseAdapter implements AdapterInterface
 {
+    public const ADAPTER_KEY = 'ssh';
+
     /**
      * @var resource
      */

@@ -35,6 +35,8 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRes
  */
 interface AdapterInterface
 {
+    public const ADAPTER_TYPE = 'remote';
+
     /**
      * Classes of this type must not require any constructor arguments
      */

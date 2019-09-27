@@ -62,8 +62,8 @@ call_user_func(
         /*********************************** Register Communication Adapter ***********************************/
         $adapterRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Communication\AdapterRegistry::class);
         $adapterRegistry->registerAdapter(
-            'remote',
-            'ssh',
+            \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter::ADAPTER_TYPE,
+            \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter::ADAPTER_KEY,
             \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter::class,
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.remote.ssh',
             [
@@ -72,8 +72,8 @@ call_user_func(
             ]
         );
         $adapterRegistry->registerAdapter(
-            'transmission',
-            'ssh',
+            \In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::ADAPTER_TYPE,
+            \In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::ADAPTER_KEY,
             \In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::class,
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.transmission.ssh',
             [

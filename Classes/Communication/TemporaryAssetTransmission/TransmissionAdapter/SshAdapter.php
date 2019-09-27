@@ -53,6 +53,8 @@ use function stream_copy_to_stream;
  */
 class SshAdapter extends SshBaseAdapter implements AdapterInterface
 {
+    public const ADAPTER_KEY = 'ssh';
+
     /**
      * @var null|resource
      */
