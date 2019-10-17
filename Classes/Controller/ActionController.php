@@ -38,6 +38,7 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
+use function is_callable;
 use function is_int;
 
 /**
@@ -77,7 +78,9 @@ abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
      */
     public function __construct()
     {
-        parent::__construct();
+        if (method_exists(parent::class, '__construct')) {
+            parent::__construct();
+        }
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         $pid = BackendUtility::getPageIdentifier();
