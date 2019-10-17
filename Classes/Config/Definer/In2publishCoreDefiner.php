@@ -48,6 +48,7 @@ use In2code\In2publishCore\Domain\Service\Processor\SelectProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\SlugProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\TextProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\UserProcessor;
+use function version_compare;
 
 /**
  * Class In2publishCoreDefiner
@@ -117,12 +118,21 @@ class In2publishCoreDefiner implements DefinerInterface
         'sys_log',
         'tx_extensionmanager_domain_model_extension',
         'tx_extensionmanager_domain_model_repository',
-        'sys_domain',
         'cache_treelist',
         'tx_in2publishcore_log',
         'tx_in2code_in2publish_task',
         'tx_in2code_in2publish_envelope',
     ];
+
+    /**
+     * In2publishCoreDefiner constructor.
+     */
+    public function __construct()
+    {
+        if (version_compare(TYPO3_branch, '10.0', '<')) {
+            $this->defaultIgnoredTables[] = 'sys_domain';
+        }
+    }
 
     /**
      * @return NodeCollection
@@ -183,7 +193,11 @@ class In2publishCoreDefiner implements DefinerInterface
                                             ->addBoolean('autoRepairFolderHash', false)
                                             ->addBoolean('mergeSysFileByIdentifier', false)
                                             ->addBoolean('enableSysFileReferenceUpdate', false)
-                                            ->addInteger('folderFileLimit', 150, [IntegerInRangeValidator::class => [1]])
+                                            ->addInteger(
+                                                'folderFileLimit',
+                                                150,
+                                                [IntegerInRangeValidator::class => [1]]
+                                            )
                                  )
                       )
                       ->addArray(

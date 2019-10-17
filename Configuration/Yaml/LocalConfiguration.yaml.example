@@ -51,7 +51,6 @@ foreign:
 excludeRelatedTables:
   - be_groups
   - be_users
-  - sys_domain
   - sys_history
   - sys_log
   #- sys_note
