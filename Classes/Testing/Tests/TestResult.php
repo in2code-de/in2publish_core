@@ -98,6 +98,8 @@ class TestResult
         switch ($this->severity) {
             case self::OK:
                 return 'success';
+            case self::WARNING:
+                return 'warning';
             case self::SKIPPED:
                 return 'notice';
             case self::ERROR:
