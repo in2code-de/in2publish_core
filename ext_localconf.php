@@ -23,6 +23,11 @@
         \In2code\In2publishCore\Communication\AdapterRegistry::class
     );
 
+    /************************************************** Init Caching **************************************************/
+    if (!isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'])) {
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['in2publish_core'] = [];
+    }
+
     /************************************************** Init Logging **************************************************/
     $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'] = [
         'writerConfiguration' => [
@@ -47,7 +52,8 @@
     );
     $configContainer->registerDefiner(\In2code\In2publishCore\Features\WarningOnForeign\Config\Definer\WarningOnForeignDefiner::class);
     if ($contextService->isForeign()
-        || ('ssh' === $extConf['adapter']['remote'] || 'ssh' === $extConf['adapter']['transmission'])
+        || 'ssh' === $extConf['adapter']['remote']
+        || 'ssh' === $extConf['adapter']['transmission']
     ) {
         $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\SshConnectionDefiner::class);
     }
