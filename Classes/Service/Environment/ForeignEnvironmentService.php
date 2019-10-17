@@ -185,7 +185,7 @@ class ForeignEnvironmentService
         $values = [];
         foreach ($output as $line) {
             if (false !== strpos($line, ':')) {
-                list ($key, $value) = GeneralUtility::trimExplode(':', $line);
+                list($key, $value) = GeneralUtility::trimExplode(':', $line);
                 $values[$key] = $value;
             }
         }
