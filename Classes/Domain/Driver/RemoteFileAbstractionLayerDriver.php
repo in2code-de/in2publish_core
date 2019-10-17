@@ -292,7 +292,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * further check is done here! After a successful the original file must
      * not exist anymore.
      *
-     * @param string $localFilePath (within PATH_site)
+     * @param string $localFilePath (within \TYPO3\CMS\Core\Core\Environment::getPublicPath())
      * @param string $targetFolderId
      * @param string $newFileName optional, if not given original name is used
      * @param bool $removeOriginal if set the original file will be removed
@@ -611,7 +611,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 
     /**
      * Returns the public URL to a file.
-     * Either fully qualified URL or relative to PATH_site (rawurlencoded).
+     * Either fully qualified URL or relative to \TYPO3\CMS\Core\Core\Environment::getPublicPath() (rawurlencoded).
      *
      * @param string $identifier
      *

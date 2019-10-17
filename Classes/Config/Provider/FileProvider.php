@@ -122,7 +122,7 @@ class FileProvider implements ProviderInterface
         } elseif (0 !== strpos($path, '/') && 0 !== strpos($path, '../')) {
             $path = GeneralUtility::getFileAbsFileName($path);
         } elseif (0 === strpos($path, '../')) {
-            $path = PATH_site . $path;
+            $path = Environment::getPublicPath() . '/' . $path;
         }
         return rtrim($path, '/') . '/';
     }
