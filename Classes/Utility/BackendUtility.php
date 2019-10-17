@@ -27,7 +27,8 @@ namespace In2code\In2publishCore\Utility;
  */
 
 use PDO;
-use TYPO3\CMS\Backend\Utility\BackendUtility as BackendUtilityCore;
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use function array_keys;
@@ -163,26 +164,42 @@ class BackendUtility
 
     /**
      * Create an URI to edit a record
+     *
+     * @param string $tableName
+     * @param int $identifier
+     *
+     * @return string
+     * @throws RouteNotFoundException
      */
     public static function buildEditUri(string $tableName, int $identifier): string
     {
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+
         $uriParameters = [
             'edit' => [
                 $tableName => [
                     $identifier => 'edit',
                 ],
             ],
-            'returnUrl' => BackendUtilityCore::getModuleUrl('web_In2publishCoreM1'),
+            'returnUrl' => $uriBuilder->buildUriFromRoute('web_In2publishCoreM1')->__toString(),
         ];
-        $editUri = BackendUtilityCore::getModuleUrl('record_edit', $uriParameters);
-        return $editUri;
+        $editUri = $uriBuilder->buildUriFromRoute('record_edit', $uriParameters);
+        return $editUri->__toString();
     }
 
     /**
      * Create an URI to undo a record
+     *
+     * @param string $table
+     * @param int $identifier
+     *
+     * @return string
+     * @throws RouteNotFoundException
      */
     public static function buildUndoUri(string $table, int $identifier): string
     {
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+
         $route = GeneralUtility::_GP('route') ?: GeneralUtility::_GP('M');
 
         $returnParameters = [
@@ -196,9 +213,10 @@ class BackendUtility
 
         $uriParameters = [
             'element' => $table . ':' . $identifier,
-            'returnUrl' => BackendUtilityCore::getModuleUrl($route, $returnParameters),
+            'returnUrl' => $uriBuilder->buildUriFromRoutePath($route, $returnParameters)->__toString(),
         ];
 
-        return BackendUtilityCore::getModuleUrl('record_history', $uriParameters);
+        $undoRui = $uriBuilder->buildUriFromRoute('record_history', $uriParameters);
+        return $undoRui->__toString();
     }
 }
