@@ -27,7 +27,7 @@ namespace In2code\In2publishCore\Domain\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Command\StatusCommandController;
+use In2code\In2publishCore\Command\Status\SiteConfigurationCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\In2publishCoreException;
@@ -76,12 +76,12 @@ class ForeignSiteFinder
         $cacheKey = 'site_config_' . $pageId;
         if (!$this->cache->has($cacheKey)) {
             $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
-            $request->setCommand(StatusCommandController::SITE_CONFIGURATION);
+            $request->setCommand(SiteConfigurationCommand::IDENTIFIER);
             $request->setOption((string)$pageId);
 
             $response = $this->rceDispatcher->dispatch($request);
 
-            if ($response->getExitStatus() === StatusCommandController::EXIT_NO_SITE) {
+            if ($response->getExitStatus() === SiteConfigurationCommand::EXIT_NO_SITE) {
                 $site = false;
             } elseif ($response->isSuccessful()) {
                 $responseText = $response->getOutputString();

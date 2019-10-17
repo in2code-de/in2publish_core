@@ -3,7 +3,7 @@
     /***************************************************** Guards *****************************************************/
     if (!defined('TYPO3_REQUESTTYPE')) {
         die('Access denied.');
-    } elseif (!(TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_BE)) {
+    } elseif (!(TYPO3_REQUESTTYPE & (TYPO3_REQUESTTYPE_BE | TYPO3_REQUESTTYPE_CLI))) {
         return;
     }
     if (!class_exists(\In2code\In2publishCore\Service\Context\ContextService::class)) {

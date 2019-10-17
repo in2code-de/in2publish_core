@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Domain\Driver;
  */
 
 use Exception;
+use In2code\In2publishCore\Command\RemoteProcedureCall\ExecuteCommand;
 use In2code\In2publishCore\Command\RpcCommandController;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
@@ -738,7 +739,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 
         $request = GeneralUtility::makeInstance(
             RemoteCommandRequest::class,
-            RpcCommandController::EXECUTE_COMMAND,
+            ExecuteCommand::IDENTIFIER,
             [],
             [$uid]
         );

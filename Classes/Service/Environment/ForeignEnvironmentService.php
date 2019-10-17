@@ -27,7 +27,8 @@ namespace In2code\In2publishCore\Service\Environment;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Command\StatusCommandController;
+use In2code\In2publishCore\Command\Status\CreateMasksCommand;
+use In2code\In2publishCore\Command\Status\DbInitQueryEncodedCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -76,7 +77,7 @@ class ForeignEnvironmentService
 
         $request = GeneralUtility::makeInstance(
             RemoteCommandRequest::class,
-            StatusCommandController::DB_INIT_QUERY_ENCODED
+            DbInitQueryEncodedCommand::IDENTIFIER
         );
         $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
 
@@ -114,7 +115,7 @@ class ForeignEnvironmentService
         if (!$this->cache->has('create_masks')) {
             $request = GeneralUtility::makeInstance(
                 RemoteCommandRequest::class,
-                StatusCommandController::CREATE_MASKS_COMMAND
+                CreateMasksCommand::IDENTIFIER
             );
             $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
 

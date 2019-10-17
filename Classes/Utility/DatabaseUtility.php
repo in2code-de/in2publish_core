@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Utility;
 
 use Doctrine\DBAL\DBALException;
 use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use InvalidArgumentException;
 use LogicException;
@@ -295,5 +296,59 @@ class DatabaseUtility
             ),
             1493891084
         );
+    }
+
+    /**
+     * @param Connection $fromDatabase
+     * @param Connection $toDatabase
+     * @param string $tableName
+     *
+     * @return int The number of affected rows
+     *
+     * @throws In2publishCoreException
+     */
+    public static function copyTableContents(Connection $fromDatabase, Connection $toDatabase, string $tableName): int
+    {
+        $rows = 0;
+        if (static::truncateTable($toDatabase, $tableName)) {
+            $query = $fromDatabase->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $queryResult = $query->select('*')->from($tableName)->execute();
+            $rows = $queryResult->rowCount();
+            while ($row = $queryResult->fetch()) {
+                if (1 !== static::insertRow($toDatabase, $tableName, $row)) {
+                    throw new In2publishCoreException('Failed to import row into "' . $tableName . '"', 1562570305);
+                }
+            }
+        }
+        return $rows;
+    }
+
+    /**
+     * Returns TRUE on success or FALSE on failure
+     *
+     * @param Connection $connection
+     * @param string $tableName
+     *
+     * @return bool
+     */
+    protected static function truncateTable(Connection $connection, string $tableName): bool
+    {
+        $connection->truncate($tableName);
+        return true;
+    }
+
+    /**
+     * Returns the number of affected rows.
+     *
+     * @param Connection $connection
+     * @param string $tableName
+     * @param array $row
+     *
+     * @return int
+     */
+    protected static function insertRow(Connection $connection, string $tableName, array $row): int
+    {
+        return $connection->insert($tableName, $row);
     }
 }

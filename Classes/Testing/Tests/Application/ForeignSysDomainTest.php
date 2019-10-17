@@ -27,7 +27,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Command\StatusCommandController;
+use In2code\In2publishCore\Command\Status\ShortSiteConfigurationCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
@@ -155,7 +155,7 @@ class ForeignSysDomainTest implements TestCaseInterface
     public function getForeignSiteConfig(): array
     {
         $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
-        $request->setCommand(StatusCommandController::SHORT_SITE_CONFIGURATION);
+        $request->setCommand(ShortSiteConfigurationCommand::IDENTIFIER);
 
         $response = $this->rceDispatcher->dispatch($request);
 

@@ -27,7 +27,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Command\StatusCommandController;
+use In2code\In2publishCore\Command\Status\DbConfigTestCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
@@ -72,7 +72,7 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
         $row = ['task_type' => self::DB_CONFIG_TEST_TYPE, 'configuration' => $random];
         $connection->insert('tx_in2code_in2publish_task', $row);
 
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, StatusCommandController::DB_CONFIG_TEST);
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, DbConfigTestCommand::IDENTIFIER);
         $response = $this->rceDispatcher->dispatch($request);
 
         if ($response->isSuccessful()) {
