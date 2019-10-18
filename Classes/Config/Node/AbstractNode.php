@@ -33,7 +33,6 @@ use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_key_exists;
 use function array_merge;
-use function call_user_func_array;
 use function class_exists;
 use function is_array;
 use function is_string;

@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Domain\Driver;
 
 use Exception;
 use In2code\In2publishCore\Command\RemoteProcedureCall\ExecuteCommand;
-use In2code\In2publishCore\Command\RpcCommandController;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Envelope;

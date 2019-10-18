@@ -44,9 +44,7 @@ use function array_column;
 use function array_combine;
 use function array_keys;
 use function in_array;
-use function is_array;
 use function is_subclass_of;
-use function unserialize;
 
 /**
  * Class AdapterRegistry

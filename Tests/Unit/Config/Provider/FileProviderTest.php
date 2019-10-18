@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Tests\Unit\Config\Provider;
 
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
-use function str_replace;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Config\Provider\FileProvider
