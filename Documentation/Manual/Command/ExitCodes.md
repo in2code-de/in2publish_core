@@ -2,8 +2,6 @@
 
 ## List of exit codes
 
-* `210`: No context has been defined for in2publish_core. Set IN2PUBLISH_CONTEXT before calling a command controller on the cli.
-* `211`: The called command does is not available in the given context. (You are most probably on the wrong server).
 * `220`: The table you tried to publish or import does not exist on the target database.
 * `221`: An error ocurred while backing up the table on remote.
 * `230`: The RPC/Envelope identified by the argument `uid` did not exist.
