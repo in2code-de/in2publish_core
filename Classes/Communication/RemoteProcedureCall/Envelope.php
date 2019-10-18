@@ -2,11 +2,6 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
 
-use LogicException;
-use function array_filter;
-use function serialize;
-use function unserialize;
-
 /*
  * Copyright notice
  *
@@ -31,6 +26,11 @@ use function unserialize;
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  */
+
+use LogicException;
+use function array_filter;
+use function serialize;
+use function unserialize;
 
 /**
  * Class Envelope

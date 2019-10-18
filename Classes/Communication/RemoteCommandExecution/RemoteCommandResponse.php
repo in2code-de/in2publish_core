@@ -2,13 +2,6 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
 
-use InvalidArgumentException;
-use function array_values;
-use function explode;
-use function filter_var;
-use function implode;
-use function is_string;
-
 /*
  * Copyright notice
  *
@@ -33,6 +26,13 @@ use function is_string;
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  */
+
+use InvalidArgumentException;
+use function array_values;
+use function explode;
+use function filter_var;
+use function implode;
+use function is_string;
 
 /**
  * Class RemoteCommandResponse
