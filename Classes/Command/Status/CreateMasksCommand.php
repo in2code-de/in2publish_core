@@ -33,11 +33,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateMasksCommand extends Command
 {
+    public const DESCRIPTION = 'Prints the configured fileCreateMask and folderCreateMask';
     public const IDENTIFIER = 'in2publish_core:status:createmasks';
 
     protected function configure()
     {
-        $this->setDescription('Prints the configured fileCreateMask and folderCreateMask')
+        $this->setDescription(self::DESCRIPTION)
              ->setHidden(true);
     }
 

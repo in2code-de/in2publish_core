@@ -35,11 +35,12 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AllCommand extends Command
 {
+    public const DESCRIPTION = 'Prints the configured fileCreateMask and folderCreateMask';
     public const IDENTIFIER = 'in2publish_core:status:all';
 
     protected function configure()
     {
-        $this->setDescription('Prints the configured fileCreateMask and folderCreateMask')
+        $this->setDescription(self::DESCRIPTION)
              ->setHidden(true);
     }
 

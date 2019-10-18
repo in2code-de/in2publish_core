@@ -15,13 +15,13 @@ use const PHP_EOL;
 
 class TestCommand extends Command
 {
-    public const EXIT_TESTS_FAILED = 240;
-    public const IDENTIFIER = 'in2publish_core:tools:test';
-    protected const DESCRIPTION = <<<'TXT'
+    public const DESCRIPTION = <<<'TXT'
 Executes the in2publish_core backend tests.
 Enable verbose mode if you want to see a success message.
 For scripted testing check the exit code of this command.
 TXT;
+    public const EXIT_TESTS_FAILED = 240;
+    public const IDENTIFIER = 'in2publish_core:tools:test';
 
     protected function configure()
     {

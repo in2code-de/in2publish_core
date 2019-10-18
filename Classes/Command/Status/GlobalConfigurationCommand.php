@@ -33,11 +33,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GlobalConfigurationCommand extends Command
 {
+    public const DESCRIPTION = 'Prints global configuration values';
     public const IDENTIFIER = 'in2publish_core:status:globalconfiguration';
 
     protected function configure()
     {
-        $this->setDescription('Prints global configuration values')
+        $this->setDescription(self::DESCRIPTION)
              ->setHidden(true);
     }
 

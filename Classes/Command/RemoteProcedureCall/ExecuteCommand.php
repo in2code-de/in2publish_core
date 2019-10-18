@@ -40,34 +40,33 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ExecuteCommand extends Command
 {
-    const EXIT_ENVELOPE_MISSING = 230;
-    const EXIT_UID_MISSING = 231;
-    const EXIT_EXECUTION_FAILED = 232;
-    const EXIT_WRONG_CONTEXT = 211;
+    public const ARG_UID = 'uid';
+    public const ARG_UID_DESCRIPTION = 'Uid of the envelope to execute';
+    public const DESCRIPTION = 'Receives an envelope and executes the contained command';
+    public const EXIT_ENVELOPE_MISSING = 230;
+    public const EXIT_UID_MISSING = 231;
+    public const EXIT_EXECUTION_FAILED = 232;
     public const IDENTIFIER = 'in2publish_core:rpc:execute';
-    const ARG_UID = 'uid';
 
     protected function configure()
     {
-        $this->setDescription('Receives an envelope and executes the contained command')
+        $this->setDescription(self::DESCRIPTION)
              ->setHidden(true)
-             ->addArgument(self::ARG_UID, InputArgument::REQUIRED, 'Uid of the envelope to execute');
+             ->addArgument(self::ARG_UID, InputArgument::REQUIRED, self::ARG_UID_DESCRIPTION);
+    }
+
+    public function isEnabled()
+    {
+        return GeneralUtility::makeInstance(ContextService::class)->isForeign();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $contextService = GeneralUtility::makeInstance(ContextService::class);
-        $letterbox = GeneralUtility::makeInstance(Letterbox::class);
-        $envelopeDispatcher = GeneralUtility::makeInstance(EnvelopeDispatcher::class);
-
         $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
 
-        if (!$contextService->isForeign()) {
-            $logger->warning('RPC called but context is not Foreign');
-            $errOutput->writeln('This command is available on Foreign only');
-            return static::EXIT_WRONG_CONTEXT;
-        }
+        $logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
+        $letterbox = GeneralUtility::makeInstance(Letterbox::class);
+        $envelopeDispatcher = GeneralUtility::makeInstance(EnvelopeDispatcher::class);
 
         $uid = $input->getArgument(static::ARG_UID);
 

@@ -41,14 +41,16 @@ use function serialize;
 
 class SiteConfigurationCommand extends Command
 {
-    protected const ARG_PAGE_ID = 'pageId';
+    public const ARG_PAGE_ID = 'pageId';
+    public const ARG_PAGE_ID_DESCRIPTION = 'The page id to retrieve the site config for';
+    public const DESCRIPTION = 'Prints the version number of the currently installed in2publish_core extension';
     public const EXIT_NO_SITE = 250;
     public const IDENTIFIER = 'in2publish_core:status:siteconfiguration';
 
     protected function configure()
     {
-        $this->setDescription('Prints the version number of the currently installed in2publish_core extension')
-             ->addArgument(self::ARG_PAGE_ID, InputArgument::REQUIRED, 'The page id to retrieve the site config for')
+        $this->setDescription(self::DESCRIPTION)
+             ->addArgument(self::ARG_PAGE_ID, InputArgument::REQUIRED, self::ARG_PAGE_ID_DESCRIPTION)
              ->setHidden(true);
     }
 
@@ -71,5 +73,6 @@ class SiteConfigurationCommand extends Command
         }
         $output->writeln('Site: ' . base64_encode(serialize($site)));
         $output->writeln('Version: ' . ExtensionUtility::getExtensionVersion('in2publish_core'));
+        return 0;
     }
 }

@@ -37,11 +37,12 @@ use function json_encode;
 
 class DbConfigTestCommand extends Command
 {
+    public const DESCRIPTION = 'Reads from the local task table and writes all found hashes for the db config test';
     public const IDENTIFIER = 'in2publish_core:status:dbconfigtest';
 
     protected function configure()
     {
-        $this->setDescription('Reads from the local task table and writes all found hashes for the db config test')
+        $this->setDescription(self::DESCRIPTION)
              ->setHidden(true);
     }
 

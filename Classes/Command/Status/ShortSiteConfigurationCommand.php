@@ -37,11 +37,12 @@ use function json_encode;
 
 class ShortSiteConfigurationCommand extends Command
 {
+    public const DESCRIPTION = 'Prints a base64 encoded json array containing all configured sites';
     public const IDENTIFIER = 'in2publish_core:status:shortsiteconfiguration';
 
     protected function configure()
     {
-        $this->setDescription('Prints a base64 encoded json array containing all configured sites')
+        $this->setDescription(self::DESCRIPTION)
              ->setHidden(true);
     }
 

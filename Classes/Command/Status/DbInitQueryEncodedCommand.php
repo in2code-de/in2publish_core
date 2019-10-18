@@ -35,11 +35,12 @@ use function json_encode;
 
 class DbInitQueryEncodedCommand extends Command
 {
+    public const DESCRIPTION = 'Prints the initCommands as json and base64 encoded string';
     public const IDENTIFIER = 'in2publish_core:status:dbinitqueryencoded';
 
     protected function configure()
     {
-        $this->setDescription('Prints the initCommands as json and base64 encoded string')
+        $this->setDescription(self::DESCRIPTION)
              ->setHidden(true);
     }
 
