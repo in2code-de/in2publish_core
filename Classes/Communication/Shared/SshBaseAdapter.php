@@ -28,12 +28,15 @@ namespace In2code\In2publishCore\Communication\Shared;
  */
 
 use Exception;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
 use Psr\Log\LoggerInterface;
 use Throwable;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function escapeshellarg;
+use function escapeshellcmd;
 use function in_array;
 use function is_resource;
 use function sprintf;
@@ -152,6 +155,38 @@ abstract class SshBaseAdapter
         }
 
         return $session;
+    }
+
+    /**
+     * @param RemoteCommandRequest $request
+     *
+     * @return string
+     */
+    protected function prepareCommand(RemoteCommandRequest $request): string
+    {
+        $command = '';
+
+        foreach ($request->getEnvironmentVariables() as $name => $value) {
+            $command .= 'export ' . escapeshellcmd($name) . '=' . escapeshellarg($value) . '; ';
+        }
+
+        $command .= 'cd ' . escapeshellarg($request->getWorkingDirectory()) . ' && ';
+        $command .= escapeshellcmd($request->getPathToPhp()) . ' ';
+        $command .= escapeshellcmd($request->getDispatcher()) . ' ';
+        $command .= escapeshellcmd($request->getCommand());
+
+        if ($request->hasOptions()) {
+            foreach ($request->getOptions() as $option) {
+                $command .= ' ' . escapeshellcmd($option);
+            }
+        }
+
+        if ($request->hasArguments()) {
+            foreach ($request->getArguments() as $name => $value) {
+                $command .= ' ' . escapeshellcmd($name) . '=' . escapeshellarg($value);
+            }
+        }
+        return $command;
     }
 
     /**

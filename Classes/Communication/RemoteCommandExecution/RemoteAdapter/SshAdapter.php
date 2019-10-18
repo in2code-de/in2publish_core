@@ -33,8 +33,6 @@ use In2code\In2publishCore\Communication\Shared\SshBaseAdapter;
 use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_pop;
-use function escapeshellarg;
-use function escapeshellcmd;
 use function fclose;
 use function is_resource;
 use function preg_match;
@@ -79,28 +77,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
             }
         }
 
-        $command = '';
-
-        foreach ($request->getEnvironmentVariables() as $name => $value) {
-            $command .= 'export ' . escapeshellcmd($name) . '=' . escapeshellarg($value) . '; ';
-        }
-
-        $command .= 'cd ' . escapeshellarg($request->getWorkingDirectory()) . ' && ';
-        $command .= escapeshellcmd($request->getPathToPhp()) . ' ';
-        $command .= escapeshellcmd($request->getDispatcher()) . ' ';
-        $command .= escapeshellcmd($request->getCommand());
-
-        if ($request->hasOptions()) {
-            foreach ($request->getOptions() as $option) {
-                $command .= ' ' . escapeshellcmd($option);
-            }
-        }
-
-        if ($request->hasArguments()) {
-            foreach ($request->getArguments() as $name => $value) {
-                $command .= ' ' . escapeshellcmd($name) . '=' . escapeshellarg($value);
-            }
-        }
+        $command = $this->prepareCommand($request);
 
         $command = rtrim($command, ';') . '; echo -en "\n"CODE_$?_CODE;';
 
