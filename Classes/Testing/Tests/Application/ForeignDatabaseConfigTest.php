@@ -46,7 +46,7 @@ use function strpos;
  */
 class ForeignDatabaseConfigTest implements TestCaseInterface
 {
-    const DB_CONFIG_TEST_TYPE = 'DB Config Test';
+    public const DB_CONFIG_TEST_TYPE = 'DB Config Test';
 
     /**
      * @var RemoteCommandDispatcher

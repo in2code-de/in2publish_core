@@ -56,10 +56,10 @@ use const E_USER_DEPRECATED;
  */
 abstract class BaseRepository
 {
-    const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
-    const DEPRECATION_TABLE_NAME_FIELD = 'The field BaseRepository::$tableName is deprecated and will be removed in in2publish_core version 10. Please use the methods tableName argument instead. Method: %s';
-    const DEPRECATION_METHOD = 'The method %s is deprecated and will be removed in in2publish_core version 10.';
-    const DEPRECATION_PARAMETER = 'The parameter %s of method %s is deprecated and will be removed in in2publish_core version 10.';
+    public const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
+    public const DEPRECATION_TABLE_NAME_FIELD = 'The field BaseRepository::$tableName is deprecated and will be removed in in2publish_core version 10. Please use the methods tableName argument instead. Method: %s';
+    public const DEPRECATION_METHOD = 'The method %s is deprecated and will be removed in in2publish_core version 10.';
+    public const DEPRECATION_PARAMETER = 'The parameter %s of method %s is deprecated and will be removed in in2publish_core version 10.';
 
     /**
      * The table name to use for any SELECT, INSERT, UPDATE and DELETE query

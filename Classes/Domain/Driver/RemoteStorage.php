@@ -44,9 +44,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RemoteStorage implements ResourceStorageInterface
 {
-    const SUB_FOLDERS_KEY = 'subFolders';
-    const FILES_KEY = 'files';
-    const HAS_FOLDER_KEY = 'hasFolder';
+    public const SUB_FOLDERS_KEY = 'subFolders';
+    public const FILES_KEY = 'files';
+    public const HAS_FOLDER_KEY = 'hasFolder';
 
     /**
      * @var Letterbox

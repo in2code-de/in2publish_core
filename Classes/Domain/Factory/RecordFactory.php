@@ -57,7 +57,7 @@ use const E_USER_DEPRECATED;
  */
 class RecordFactory
 {
-    const DEPRECATION_METHOD_NO_TABLE_ARG = 'Calling %s without tableName is deprecated. tableName will be a non-optional argument in in2publish_core version 10.';
+    public const DEPRECATION_METHOD_NO_TABLE_ARG = 'Calling %s without tableName is deprecated. tableName will be a non-optional argument in in2publish_core version 10.';
 
     /**
      * Runtime cache to cache already created Records

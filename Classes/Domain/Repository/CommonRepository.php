@@ -112,9 +112,9 @@ use const E_USER_DEPRECATED;
  */
 class CommonRepository extends BaseRepository
 {
-    const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)~';
-    const SIGNAL_RELATION_RESOLVER_RTE = 'relationResolverRTE';
-    const DEPRECATION_METHOD_FPBPATN = 'CommonRepository::findPropertiesByPropertyAndTablename is deprecated and will be removed in in2publish_core version 10. Use BaseRepository::findPropertiesByProperty instead';
+    public const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)~';
+    public const SIGNAL_RELATION_RESOLVER_RTE = 'relationResolverRTE';
+    public const DEPRECATION_METHOD_FPBPATN = 'CommonRepository::findPropertiesByPropertyAndTablename is deprecated and will be removed in in2publish_core version 10. Use BaseRepository::findPropertiesByProperty instead';
 
     /**
      * @var RecordFactory

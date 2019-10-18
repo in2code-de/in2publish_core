@@ -39,7 +39,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class ConfigurationValuesTest implements TestCaseInterface
 {
-    const PROCESSOR_INTERFACE = ProcessorInterface::class;
+    public const PROCESSOR_INTERFACE = ProcessorInterface::class;
 
     /**
      * @var array

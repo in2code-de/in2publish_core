@@ -49,7 +49,7 @@ use function is_bool;
  */
 abstract class AbstractController extends ActionController
 {
-    const BLANK_ACTION = 'blankAction';
+    public const BLANK_ACTION = 'blankAction';
 
     /**
      * @var BackendUserAuthentication

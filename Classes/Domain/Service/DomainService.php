@@ -48,9 +48,9 @@ use function trim;
  */
 class DomainService
 {
-    const TABLE_NAME = 'sys_domain';
-    const LEVEL_LOCAL = 'local';
-    const LEVEL_FOREIGN = 'foreign';
+    public const TABLE_NAME = 'sys_domain';
+    public const LEVEL_LOCAL = 'local';
+    public const LEVEL_FOREIGN = 'foreign';
 
     /**
      * Get domain from root line without trailing slash

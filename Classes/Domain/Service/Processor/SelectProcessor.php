@@ -37,9 +37,9 @@ class SelectProcessor extends AbstractProcessor
      */
     protected $canHoldRelations = true;
 
-    const ALLOW_NON_ID_VALUES = 'allowNonIdValues';
-    const FILE_FOLDER = 'fileFolder';
-    const SPECIAL = 'special';
+    public const ALLOW_NON_ID_VALUES = 'allowNonIdValues';
+    public const FILE_FOLDER = 'fileFolder';
+    public const SPECIAL = 'special';
 
     /**
      * @var array

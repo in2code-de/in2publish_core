@@ -32,7 +32,7 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  */
 class InputProcessor extends AbstractProcessor
 {
-    const WIZARDS = 'wizards';
+    public const WIZARDS = 'wizards';
 
     /**
      * Overwrite and set TRUE for types like "select" or "inline"

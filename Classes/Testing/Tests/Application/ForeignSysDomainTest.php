@@ -49,10 +49,10 @@ use function json_decode;
  */
 class ForeignSysDomainTest implements TestCaseInterface
 {
-    const DOMAIN_TYPE_NONE = 'none';
-    const DOMAIN_TYPE_LEGACY = 'legacy';
-    const DOMAIN_TYPE_SITE = 'site';
-    const DOMAIN_TYPE_SLASH_BASE = 'base';
+    public const DOMAIN_TYPE_NONE = 'none';
+    public const DOMAIN_TYPE_LEGACY = 'legacy';
+    public const DOMAIN_TYPE_SITE = 'site';
+    public const DOMAIN_TYPE_SLASH_BASE = 'base';
 
     /**
      * @var RemoteCommandDispatcher

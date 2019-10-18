@@ -35,10 +35,10 @@ use function implode;
  */
 class TestResult
 {
-    const OK = 'ok';
-    const WARNING = 'warning';
-    const ERROR = 'error';
-    const SKIPPED = 'notice';
+    public const OK = 'ok';
+    public const WARNING = 'warning';
+    public const ERROR = 'error';
+    public const SKIPPED = 'notice';
 
     /**
      * @var string

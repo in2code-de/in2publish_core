@@ -37,9 +37,9 @@ use function strpos;
  */
 class TextProcessor extends AbstractProcessor
 {
-    const RTE_DEFAULT_EXTRAS = 'richtext';
-    const WIZARDS = 'wizards';
-    const RTE = 'RTE';
+    public const RTE_DEFAULT_EXTRAS = 'richtext';
+    public const WIZARDS = 'wizards';
+    public const RTE = 'RTE';
 
     /**
      * @var bool

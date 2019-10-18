@@ -32,5 +32,5 @@ namespace In2code\In2publishCore\Domain\Factory\Exception;
  */
 class TooManyForeignFilesException extends TooManyFilesException
 {
-    const CODE = 1555492770;
+    public const CODE = 1555492770;
 }

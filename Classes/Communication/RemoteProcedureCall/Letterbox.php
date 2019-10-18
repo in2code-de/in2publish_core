@@ -43,7 +43,7 @@ use function json_encode;
  */
 class Letterbox
 {
-    const TABLE = 'tx_in2code_in2publish_envelope';
+    public const TABLE = 'tx_in2code_in2publish_envelope';
 
     /**
      * @var ContextService

@@ -33,12 +33,12 @@ namespace In2code\In2publishCore\Domain\Model;
  */
 interface RecordInterface
 {
-    const RECORD_STATE_UNCHANGED = 'unchanged';
-    const RECORD_STATE_CHANGED = 'changed';
-    const RECORD_STATE_ADDED = 'added';
-    const RECORD_STATE_DELETED = 'deleted';
-    const RECORD_STATE_MOVED = 'moved';
-    const RECORD_STATE_MOVED_AND_CHANGED = 'moved-and-changed';
+    public const RECORD_STATE_UNCHANGED = 'unchanged';
+    public const RECORD_STATE_CHANGED = 'changed';
+    public const RECORD_STATE_ADDED = 'added';
+    public const RECORD_STATE_DELETED = 'deleted';
+    public const RECORD_STATE_MOVED = 'moved';
+    public const RECORD_STATE_MOVED_AND_CHANGED = 'moved-and-changed';
 
     /**
      * @param string $tableName

@@ -35,8 +35,8 @@ use In2code\In2publishCore\In2publishCoreException;
  */
 class ForeignSiteConfigUnavailableException extends In2publishCoreException
 {
-    const MESSAGE = 'An error occurred during fetching the remote site configuration';
-    const CODE = 1549900962;
+    public const MESSAGE = 'An error occurred during fetching the remote site configuration';
+    public const CODE = 1549900962;
 
     /**
      * @var string

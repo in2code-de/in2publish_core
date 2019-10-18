@@ -43,10 +43,10 @@ use function array_combine;
  */
 class FalStorageTestSubjectsProvider implements SingletonInterface
 {
-    const PURPOSE_CASE_SENSITIVITY = 'caseSensitivity';
-    const PURPOSE_DRIVER = 'driver';
-    const PURPOSE_MISSING = 'missing';
-    const PURPOSE_UNIQUE_TARGET = 'uniqueTarget';
+    public const PURPOSE_CASE_SENSITIVITY = 'caseSensitivity';
+    public const PURPOSE_DRIVER = 'driver';
+    public const PURPOSE_MISSING = 'missing';
+    public const PURPOSE_UNIQUE_TARGET = 'uniqueTarget';
 
     /**
      * @var Dispatcher

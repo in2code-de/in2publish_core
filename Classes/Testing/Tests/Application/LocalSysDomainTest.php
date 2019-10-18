@@ -44,9 +44,9 @@ use function array_merge;
  */
 class LocalSysDomainTest implements TestCaseInterface
 {
-    const DOMAIN_TYPE_NONE = 'none';
-    const DOMAIN_TYPE_LEGACY = 'legacy';
-    const DOMAIN_TYPE_SITE = 'site';
+    public const DOMAIN_TYPE_NONE = 'none';
+    public const DOMAIN_TYPE_LEGACY = 'legacy';
+    public const DOMAIN_TYPE_SITE = 'site';
 
     /**
      * @var Connection

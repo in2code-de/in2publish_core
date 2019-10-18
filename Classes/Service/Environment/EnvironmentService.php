@@ -42,10 +42,10 @@ use function sha1;
  */
 class EnvironmentService implements SingletonInterface
 {
-    const STATE_TESTS_FAILING = 'tests_failing';
-    const STATE_TESTS_NEVER_RAN = 'tests_never_ran';
-    const STATE_PACKAGES_CHANGED = 'environment_changed';
-    const STATE_CONFIGURATION_CHANGED = 'configuration_changed';
+    public const STATE_TESTS_FAILING = 'tests_failing';
+    public const STATE_TESTS_NEVER_RAN = 'tests_never_ran';
+    public const STATE_PACKAGES_CHANGED = 'environment_changed';
+    public const STATE_CONFIGURATION_CHANGED = 'configuration_changed';
 
     /**
      * @var Registry

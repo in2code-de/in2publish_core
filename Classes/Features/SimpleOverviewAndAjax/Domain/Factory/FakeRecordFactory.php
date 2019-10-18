@@ -46,7 +46,7 @@ use function uasort;
  */
 class FakeRecordFactory
 {
-    const PAGE_TABLE_NAME = 'pages';
+    public const PAGE_TABLE_NAME = 'pages';
 
     /**
      * @var TableCacheRepository

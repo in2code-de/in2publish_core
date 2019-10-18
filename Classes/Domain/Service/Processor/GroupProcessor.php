@@ -36,11 +36,11 @@ use function strpos;
  */
 class GroupProcessor extends AbstractProcessor
 {
-    const INTERNAL_TYPE = 'internal_type';
-    const INTERNAL_TYPE_DB = 'db';
-    const INTERNAL_TYPE_FILE = 'file';
-    const ALLOWED = 'allowed';
-    const UPLOAD_FOLDER = 'uploadfolder';
+    public const INTERNAL_TYPE = 'internal_type';
+    public const INTERNAL_TYPE_DB = 'db';
+    public const INTERNAL_TYPE_FILE = 'file';
+    public const ALLOWED = 'allowed';
+    public const UPLOAD_FOLDER = 'uploadfolder';
 
     /**
      * @var bool

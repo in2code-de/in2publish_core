@@ -44,7 +44,7 @@ use function json_encode;
  */
 class TaskRepository
 {
-    const TASK_TABLE_NAME = 'tx_in2code_in2publish_task';
+    public const TASK_TABLE_NAME = 'tx_in2code_in2publish_task';
 
     /**
      * @var Connection

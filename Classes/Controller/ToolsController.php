@@ -87,7 +87,7 @@ use const TYPO3_COMPOSER_MODE;
  */
 class ToolsController extends ActionController
 {
-    const LOG_INIT_DB_ERROR = 'Error while initialization. The Database is not correctly configured';
+    public const LOG_INIT_DB_ERROR = 'Error while initialization. The Database is not correctly configured';
 
     /**
      * @var array

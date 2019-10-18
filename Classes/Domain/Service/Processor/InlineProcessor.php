@@ -32,10 +32,10 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  */
 class InlineProcessor extends AbstractProcessor
 {
-    const FOREIGN_FIELD = 'foreign_field';
-    const FOREIGN_MATCH_FIELDS = 'foreign_match_fields';
-    const FOREIGN_TABLE_FIELD = 'foreign_table_field';
-    const SYMMETRIC_FIELD = 'symmetric_field';
+    public const FOREIGN_FIELD = 'foreign_field';
+    public const FOREIGN_MATCH_FIELDS = 'foreign_match_fields';
+    public const FOREIGN_TABLE_FIELD = 'foreign_table_field';
+    public const SYMMETRIC_FIELD = 'symmetric_field';
 
     /**
      * @var bool
