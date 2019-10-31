@@ -9,6 +9,16 @@ modules:
         - \In2code\In2publishCore\Tests\Helper\Unit
         - \In2code\In2publishCore\Tests\Helper\TYPO3
         - \In2code\In2publishCore\Tests\Helper\In2publishCore
+        - Db:
+            dsn: 'sqlite:Tests/_data/test.db'
+            user: ''
+            password: ''
+            dump: 'Tests/_data/dump-sqlite.sql'
+            populate: true
+            cleanup: true
+            reconnect: true
+            waitlock: 10
+#            populator: 'mysql -u $user -h $host $dbname < $dump'
     step_decorators: ~
 
 coverage:

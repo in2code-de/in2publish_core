@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Tests\In2code\In2publishCore\Utility;
 use Codeception\Test\Unit;
 use In2code\In2publishCore\Tests\UnitTester;
 use In2code\In2publishCore\Utility\BackendUtility;
-use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Utility\BackendUtility
@@ -45,6 +44,10 @@ class BackendUtilityTest extends Unit
     protected function _before()
     {
         $this->tester->setUp();
+        $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default'] = [
+            'driver' => 'pdo_sqlite',
+            'url' => 'sqlite3:////repo/in2publish_core/Tests/_data/test.db',
+        ];
     }
 
     protected function _after()
@@ -60,7 +63,6 @@ class BackendUtilityTest extends Unit
      */
     public function testGetPageIdentifierReturnsZeroIfNoPidCanBeFound()
     {
-        $this->markTestSkipped('Can not mock the ConnectionPool');
         // assure there are no values to get a pid from
         $_POST = [];
         $_GET = [];
@@ -76,34 +78,13 @@ class BackendUtilityTest extends Unit
      */
     public function testGetPageIdentifierReturnsPidForRollbackRequests()
     {
-        $this->markTestSkipped('Can not mock the ConnectionPool');
-        /** @var DatabaseConnection|MockObject $databaseMock */
-        $databaseMock = $this->getMockBuilder(DatabaseConnection::class)
-                             ->setMethods(['exec_SELECTgetSingleRow', 'isConnected', 'connectDB'])
-                             ->getMock();
-
-        $databaseMock
-            ->expects($this->any())
-            ->method('isConnected')
-            ->willReturn(true);
-
-        $databaseMock
-            ->expects($this->any())
-            ->method('connectDB')
-            ->willReturn(true);
-
         $expectedPid = 4;
+        $table = 'tt_content';
+        $uid = 13;
 
-        /**
-         * @see \TYPO3\CMS\Core\Database\DatabaseConnection::exec_SELECTgetSingleRow
-         */
-        $databaseMock->expects($this->once())
-                     ->method('exec_SELECTgetSingleRow')
-                     ->with('pid', 'tt_content', 'uid=13')
-                     ->willReturn(['pid' => $expectedPid]);
+        $this->tester->haveInDatabase($table, ['uid' => $uid, 'pid' => $expectedPid]);
 
-        $_POST['element'] = 'tt_content:13';
-        $GLOBALS['TYPO3_DB'] = $databaseMock;
+        $_POST['element'] = '' . $table . ':' . $uid . '';
 
         $this->assertSame($expectedPid, BackendUtility::getPageIdentifier());
     }
@@ -116,7 +97,6 @@ class BackendUtilityTest extends Unit
      */
     public function testGetPageIdentifierReturnsZeroIfRollbackRequestIsInvalid()
     {
-        $this->markTestSkipped('Can not mock the ConnectionPool');
         $_POST['element'] = '13';
 
         $this->assertSame(0, BackendUtility::getPageIdentifier());
@@ -130,32 +110,7 @@ class BackendUtilityTest extends Unit
      */
     public function testGetPageIdentifierReturnsZeroIfRollbackRecordDoesNotExist()
     {
-        $this->markTestSkipped('Can not mock the ConnectionPool');
-        /** @var DatabaseConnection|MockObject $databaseMock */
-        $databaseMock = $this->getMockBuilder(DatabaseConnection::class)
-                             ->setMethods(['exec_SELECTgetSingleRow', 'isConnected', 'connectDB'])
-                             ->getMock();
-
-        $databaseMock
-            ->expects($this->any())
-            ->method('isConnected')
-            ->willReturn(true);
-
-        $databaseMock
-            ->expects($this->any())
-            ->method('connectDB')
-            ->willReturn(true);
-
-        /**
-         * @see \TYPO3\CMS\Core\Database\DatabaseConnection::exec_SELECTgetSingleRow
-         */
-        $databaseMock->expects($this->once())
-                     ->method('exec_SELECTgetSingleRow')
-                     ->with('pid', 'tt_content', 'uid=13')
-                     ->willReturn(false);
-
         $_POST['element'] = 'tt_content:13';
-        $GLOBALS['TYPO3_DB'] = $databaseMock;
 
         $this->assertSame(0, BackendUtility::getPageIdentifier());
     }
@@ -168,34 +123,10 @@ class BackendUtilityTest extends Unit
      */
     public function testGetPageIdentifierReturnsPidFromRecordInDataValues()
     {
-        $this->markTestSkipped('Can not mock the ConnectionPool');
-        /** @var DatabaseConnection|MockObject $databaseMock */
-        $databaseMock = $this->getMockBuilder(DatabaseConnection::class)
-                             ->setMethods(['exec_SELECTgetSingleRow', 'isConnected', 'connectDB'])
-                             ->getMock();
-
-        $databaseMock
-            ->expects($this->any())
-            ->method('isConnected')
-            ->willReturn(true);
-
-        $databaseMock
-            ->expects($this->any())
-            ->method('connectDB')
-            ->willReturn(true);
-
         $expectedPid = 14;
-
-        /**
-         * @see \TYPO3\CMS\Core\Database\DatabaseConnection::exec_SELECTgetSingleRow
-         */
-        $databaseMock->expects($this->once())
-                     ->method('exec_SELECTgetSingleRow')
-                     ->with('pid', 'tt_content', 'uid=16')
-                     ->willReturn(['pid' => 14]);
+        $this->tester->haveInDatabase('tt_content', ['uid' => 16, 'pid' => $expectedPid]);
 
         $_POST['data']['tt_content']['16'] = 'bar';
-        $GLOBALS['TYPO3_DB'] = $databaseMock;
 
         $this->assertSame($expectedPid, BackendUtility::getPageIdentifier());
     }
@@ -208,32 +139,9 @@ class BackendUtilityTest extends Unit
      */
     public function testGetPageIdentifierReturnsZeroIfTheRecordCanNotBeFound()
     {
-        $this->markTestSkipped('Can not mock the ConnectionPool');
-        /** @var DatabaseConnection|MockObject $databaseMock */
-        $databaseMock = $this->getMockBuilder(DatabaseConnection::class)
-                             ->setMethods(['exec_SELECTgetSingleRow', 'isConnected', 'connectDB'])
-                             ->getMock();
-
-        $databaseMock
-            ->expects($this->any())
-            ->method('isConnected')
-            ->willReturn(true);
-
-        $databaseMock
-            ->expects($this->any())
-            ->method('connectDB')
-            ->willReturn(true);
-
-        /**
-         * @see \TYPO3\CMS\Core\Database\DatabaseConnection::exec_SELECTgetSingleRow
-         */
-        $databaseMock->expects($this->once())
-                     ->method('exec_SELECTgetSingleRow')
-                     ->with('pid', 'tt_content', 'uid=16')
-                     ->willReturn(false);
+        $this->tester->cantSeeInDatabase('tt_content', ['uid' => 16]);
 
         $_POST['data']['tt_content']['16'] = 'bar';
-        $GLOBALS['TYPO3_DB'] = $databaseMock;
 
         $this->assertSame(0, BackendUtility::getPageIdentifier());
     }
@@ -246,31 +154,7 @@ class BackendUtilityTest extends Unit
      */
     public function testGetPageIdentifierReturnsZeroIfTheRecordCanBeFound()
     {
-        $this->markTestSkipped('Can not mock the ConnectionPool');
-        /** @var DatabaseConnection|MockObject $databaseMock */
-        $databaseMock = $this->getMockBuilder(DatabaseConnection::class)
-                             ->setMethods(['exec_SELECTgetSingleRow', 'isConnected', 'connectDB'])
-                             ->getMock();
-
-        $databaseMock
-            ->expects($this->any())
-            ->method('isConnected')
-            ->willReturn(true);
-
-        $databaseMock
-            ->expects($this->any())
-            ->method('connectDB')
-            ->willReturn(true);
-
-        /**
-         * @see \TYPO3\CMS\Core\Database\DatabaseConnection::exec_SELECTgetSingleRow
-         */
-        $databaseMock->expects($this->once())
-                     ->method('exec_SELECTgetSingleRow')
-                     ->with('pid', 'tt_content', 'uid=321')
-                     ->willReturn(['pid' => '2']);
-
-        $GLOBALS['TYPO3_DB'] = $databaseMock;
+        $this->tester->haveInDatabase('tt_content', ['uid' => 321, 'pid' => 2]);
 
         $this->assertSame(2, BackendUtility::getPageIdentifier(321, 'tt_content'));
     }
@@ -296,7 +180,6 @@ class BackendUtilityTest extends Unit
      */
     public function testGetPageIdentifierReturnsZeroIfRedirectParameterDoesNotContainAnId()
     {
-        $this->markTestSkipped('Can not mock the ConnectionPool');
         $_POST['redirect'] = 'script.php?param1=a&param2=2';
 
         $this->assertSame(0, BackendUtility::getPageIdentifier());
@@ -310,7 +193,6 @@ class BackendUtilityTest extends Unit
      */
     public function testGetPageIdentifierReturnsZeroIfRedirectIdParameterIsEmpty()
     {
-        $this->markTestSkipped('Can not mock the ConnectionPool');
         $_POST['redirect'] = 'script.php?param1=a&id=&param2=2';
 
         $this->assertSame(0, BackendUtility::getPageIdentifier());
@@ -350,7 +232,6 @@ class BackendUtilityTest extends Unit
      */
     public function testGetPageIdentifierReturnsZeroIfCmdParameterIsEmpty()
     {
-        $this->markTestSkipped('Can not mock the ConnectionPool');
         $_POST['cmd'] = [];
 
         $this->assertSame(0, BackendUtility::getPageIdentifier());
@@ -405,31 +286,7 @@ class BackendUtilityTest extends Unit
      */
     public function testGetPageIdentifierReturnsZeroIfAnyMethodFails()
     {
-        $this->markTestSkipped('Can not mock the ConnectionPool');
-        /** @var DatabaseConnection|MockObject $databaseMock */
-        $databaseMock = $this->getMockBuilder(DatabaseConnection::class)
-                             ->setMethods(['exec_SELECTgetSingleRow', 'isConnected', 'connectDB'])
-                             ->getMock();
-
-        $databaseMock
-            ->expects($this->any())
-            ->method('isConnected')
-            ->willReturn(true);
-
-        $databaseMock
-            ->expects($this->any())
-            ->method('connectDB')
-            ->willReturn(true);
-
-        /**
-         * @see \TYPO3\CMS\Core\Database\DatabaseConnection::exec_SELECTgetSingleRow
-         */
-        $databaseMock->expects($this->once())
-                     ->method('exec_SELECTgetSingleRow')
-                     ->with('pid', 'tt_content', 'uid=321')
-                     ->willReturn(false);
-
-        $GLOBALS['TYPO3_DB'] = $databaseMock;
+        $this->tester->cantSeeInDatabase('tt_content', ['uid' => 321]);
 
         $this->assertSame(0, BackendUtility::getPageIdentifier(321, 'tt_content'));
     }
