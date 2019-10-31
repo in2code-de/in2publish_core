@@ -44,9 +44,10 @@ class BackendUtilityTest extends Unit
     protected function _before()
     {
         $this->tester->setUp();
+        $file = getcwd() . '/Tests/_data/test.db';
         $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default'] = [
             'driver' => 'pdo_sqlite',
-            'url' => 'sqlite3:////repo/in2publish_core/Tests/_data/test.db',
+            'url' => 'sqlite3:////' . $file,
         ];
     }
 
