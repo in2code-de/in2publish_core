@@ -1,0 +1,18 @@
+# Codeception Test Suite Configuration
+#
+# Suite for unit or integration tests.
+
+actor: UnitTester
+modules:
+    enabled:
+        - Asserts
+        - \In2code\In2publishCore\Tests\Helper\Unit
+        - \In2code\In2publishCore\Tests\Helper\TYPO3
+        - \In2code\In2publishCore\Tests\Helper\In2publishCore
+    step_decorators: ~
+
+coverage:
+  enabled: true
+  remote: true
+  include:
+    - Classes/*
