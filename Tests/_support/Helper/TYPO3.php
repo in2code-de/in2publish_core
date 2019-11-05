@@ -5,19 +5,13 @@ namespace In2code\In2publishCore\Tests\Helper;
 use Codeception\Module;
 use ReflectionClass;
 use RuntimeException;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Cache\Backend\NullBackend;
-use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
-use TYPO3\CMS\Core\Configuration\ConfigurationManager;
-use TYPO3\CMS\Core\Core\ApplicationContext;
 use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
-use TYPO3\CMS\Core\Package\FailsafePackageManager;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use TYPO3\TestingFramework\Core\DatabaseConnectionWrapper;
 use TYPO3\TestingFramework\Core\Testbase;
 
 class TYPO3 extends Module
@@ -207,6 +201,7 @@ class TYPO3 extends Module
     protected $frameworkExtensionsToLoad = [
         'Resources/Core/Functional/Extensions/json_response',
     ];
+
     /**
      * Array of test/fixture folder or file paths that should be linked for a test.
      *
@@ -246,7 +241,8 @@ class TYPO3 extends Module
      *   // Copy an entire directory recursive to fileadmin
      *   'typo3/sysext/lowlevel/Tests/Functional/Fixtures/testImages/' => 'fileadmin/',
      *   // Copy a single file into some deep destination directory
-     *   'typo3/sysext/lowlevel/Tests/Functional/Fixtures/testImage/someImage.jpg' => 'fileadmin/_processed_/0/a/someImage.jpg',
+     *   'typo3/sysext/lowlevel/Tests/Functional/Fixtures/testImage/someImage.jpg' =>
+     * 'fileadmin/_processed_/0/a/someImage.jpg',
      * ]
      *
      * @var string[]
@@ -312,7 +308,6 @@ class TYPO3 extends Module
             // in a test case, so environment is set up only once per test case.
             GeneralUtility::purgeInstances();
             $testbase->setUpBasicTypo3Bootstrap($instancePath);
-            $testbase->initializeTestDatabaseAndTruncateTables();
             Bootstrap::initializeBackendRouter();
             $testbase->loadExtensionTables();
         } else {
@@ -340,8 +335,11 @@ class TYPO3 extends Module
             $localConfiguration['SYS']['trustedHostsPattern'] = '.*';
             $localConfiguration['SYS']['encryptionKey'] = 'i-am-not-a-secure-encryption-key';
             $localConfiguration['SYS']['caching']['cacheConfigurations']['extbase_object']['backend'] = NullBackend::class;
-            $testbase->setUpLocalConfiguration($instancePath, $localConfiguration, $this->configurationToUseInTestInstance);
-
+            $testbase->setUpLocalConfiguration(
+                $instancePath,
+                $localConfiguration,
+                $this->configurationToUseInTestInstance
+            );
 
             $defaultCoreExtensionsToLoad = [
                 'core',
@@ -376,7 +374,7 @@ PHP;
             $testbase->setUpBasicTypo3Bootstrap($instancePath);
             Bootstrap::initializeBackendRouter();
             $testbase->loadExtensionTables();
-//            $testbase->createDatabaseStructure();
+            //            $testbase->createDatabaseStructure();
         }
     }
 
@@ -527,5 +525,15 @@ PHP;
             $this->backedUpEnvironment['currentScript'],
             $this->backedUpEnvironment['isOsWindows'] ? 'WINDOWS' : 'UNIX'
         );
+    }
+
+    public function setBackendAdmin()
+    {
+        $backendUserAuthentication = new BackendUserAuthentication();
+        $backendUserAuthentication->user = [
+            'uid' => 1,
+            'admin' => 1,
+        ];
+        $GLOBALS['BE_USER'] = $backendUserAuthentication;
     }
 }

@@ -19,7 +19,7 @@ modules:
             reconnect: true
             waitlock: 10
             databases:
-              db2:
+              foreign:
                 dsn: 'sqlite:Tests/_data/foreign.db'
                 user: ''
                 password: ''
