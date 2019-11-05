@@ -28,6 +28,7 @@ setUpDockerComposeDotEnv() {
     echo "DOCKER_PHP_IMAGE=${DOCKER_PHP_IMAGE}" >> .env
     echo "EXTRA_TEST_OPTIONS=${EXTRA_TEST_OPTIONS}" >> .env
     echo "SCRIPT_VERBOSE=${SCRIPT_VERBOSE}" >> .env
+    echo "IN2PUBLISH_CONTEXT=Local" >> .env
 }
 
 # Load help text into $HELP
