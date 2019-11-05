@@ -281,6 +281,7 @@ class TYPO3 extends Module
      */
     public function setUpFunctional()
     {
+        putenv('IN2PUBLISH_CONTEXT=Local');
         if (!defined('ORIGINAL_ROOT')) {
             define('ORIGINAL_ROOT', getcwd() . '/.Build/public/');
         }

@@ -11,6 +11,9 @@ use In2code\In2publishCore\Tests\UnitTester;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Domain\Repository\CommonRepository
+ */
 class CommonRepositoryTest extends Unit
 {
     /**
@@ -44,6 +47,11 @@ class CommonRepositoryTest extends Unit
         $this->tester->tearDown();
     }
 
+    /**
+     * @covers ::findByIdentifier
+     * @covers ::findPropertiesByProperty
+     * @covers ::enrichPageRecord
+     */
     public function testPageToContentRelationViaPid()
     {
         $this->tester->haveInDatabase('pages', ['uid' => 1]);
@@ -66,6 +74,13 @@ class CommonRepositoryTest extends Unit
         $this->assertSame(4, $ttContentRecord->getIdentifier());
     }
 
+    /**
+     * @covers ::findByIdentifier
+     * @covers ::findPropertiesByProperty
+     * @covers ::enrichRecordWithRelatedRecords
+     * @covers ::fetchRelatedRecordsBySelect
+     * @covers ::fetchRelatedRecordsByInline
+     */
     public function testContentToImageRelationViaTCA()
     {
         $this->tester->haveInDatabase('tt_content', ['uid' => 13]);
