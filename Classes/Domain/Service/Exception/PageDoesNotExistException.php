@@ -37,8 +37,14 @@ class PageDoesNotExistException extends In2publishCoreException
     protected const MESSAGE = 'A page with ID %d does not exist on %s';
     public const CODE = 1573811622;
 
-    public static function forMissingPage(int $pid, string $side)
+    /**
+     * @param int $pid
+     * @param string $side
+     *
+     * @return PageDoesNotExistException
+     */
+    public static function forMissingPage(int $pid, string $side): self
     {
-        return new self(sprintf(self::MESSAGE, $uid, $side), self::CODE);
+        return new self(sprintf(self::MESSAGE, $pid, $side), self::CODE);
     }
 }
