@@ -253,6 +253,7 @@ class DomainService implements SingletonInterface
         $parentField = $GLOBALS['TCA']['pages']['ctrl']['transOrigPointerField'];
 
         $query = DatabaseUtility::buildDatabaseConnectionForSide($stagingLevel)->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
         $query->select($languageField, $parentField)
               ->from('pages')
               ->where($query->expr()->eq('uid', $query->createNamedParameter($pageIdentifier)))
