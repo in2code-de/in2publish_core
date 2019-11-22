@@ -106,6 +106,7 @@ class SysFileService extends AbstractService
      * @param array $row
      * @param string $oldIdentifierPath
      * @param string $newIdentifierPath
+     *
      * @return array
      */
     protected function getArgumentsForSysFileFromPath(array $row, $oldIdentifierPath, $newIdentifierPath): array
@@ -122,6 +123,7 @@ class SysFileService extends AbstractService
      * Build array with values for a sys_file update
      *
      * @param string $newIdentifier
+     *
      * @return array
      */
     protected function getArgumentsForSysFileFromFile($newIdentifier): array
@@ -139,6 +141,7 @@ class SysFileService extends AbstractService
      * 2) substitute first folder (e.g. fileadmin)
      *
      * @param string $path
+     *
      * @return string
      */
     protected function getIdentifierFromAbsolutePath($path): string
@@ -150,6 +153,7 @@ class SysFileService extends AbstractService
 
     /**
      * @param string $path
+     *
      * @return string
      */
     protected function changeAbsoluteToRelativePath($path): string

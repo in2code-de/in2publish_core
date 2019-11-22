@@ -197,6 +197,7 @@ class Record implements RecordInterface
 
     /**
      * @param string $tableName
+     *
      * @return RecordInterface
      */
     public function setTableName($tableName): RecordInterface
@@ -223,6 +224,7 @@ class Record implements RecordInterface
 
     /**
      * @param string $state
+     *
      * @return RecordInterface
      */
     public function setState($state): RecordInterface
@@ -254,6 +256,7 @@ class Record implements RecordInterface
      * even if the first changed related record is added or deleted
      *
      * @param array $alreadyVisited
+     *
      * @return string
      */
     public function getStateRecursive(array &$alreadyVisited = []): string
@@ -285,6 +288,7 @@ class Record implements RecordInterface
      *        if added or changed or deleted
      *
      * @param array $alreadyVisited
+     *
      * @return bool
      */
     public function isChangedRecursive(array &$alreadyVisited = []): bool
@@ -304,6 +308,7 @@ class Record implements RecordInterface
      * Returns a specific local property by name or NULL if it is not set
      *
      * @param string $propertyName
+     *
      * @return mixed
      */
     public function getLocalProperty($propertyName)
@@ -316,6 +321,7 @@ class Record implements RecordInterface
 
     /**
      * @param string $propertyName
+     *
      * @return bool
      */
     public function hasLocalProperty($propertyName): bool
@@ -325,6 +331,7 @@ class Record implements RecordInterface
 
     /**
      * @param array $localProperties
+     *
      * @return RecordInterface
      */
     public function setLocalProperties(array $localProperties): RecordInterface
@@ -346,6 +353,7 @@ class Record implements RecordInterface
      * Returns a specific foreign property by name or NULL if it is not set
      *
      * @param string $propertyName
+     *
      * @return mixed
      */
     public function getForeignProperty($propertyName)
@@ -358,6 +366,7 @@ class Record implements RecordInterface
 
     /**
      * @param string $propertyName
+     *
      * @return bool
      */
     public function hasForeignProperty($propertyName)
@@ -367,6 +376,7 @@ class Record implements RecordInterface
 
     /**
      * @param string $side
+     *
      * @return array
      */
     public function getPropertiesBySideIdentifier($side)
@@ -384,6 +394,7 @@ class Record implements RecordInterface
     /**
      * @param string $side
      * @param string $propertyName
+     *
      * @return mixed
      */
     public function getPropertyBySideIdentifier($side, $propertyName)
@@ -403,6 +414,7 @@ class Record implements RecordInterface
 
     /**
      * @param array $foreignProperties
+     *
      * @return RecordInterface
      */
     public function setForeignProperties(array $foreignProperties): RecordInterface
@@ -415,6 +427,7 @@ class Record implements RecordInterface
     /**
      * @param string $side
      * @param array $properties
+     *
      * @return $this
      */
     public function setPropertiesBySideIdentifier($side, array $properties): RecordInterface
@@ -474,6 +487,7 @@ class Record implements RecordInterface
 
     /**
      * @param string $propertyName
+     *
      * @return bool
      */
     protected function isDirtyProperty($propertyName): bool
@@ -493,6 +507,7 @@ class Record implements RecordInterface
 
     /**
      * @param array $additionalProperties
+     *
      * @return RecordInterface
      */
     public function setAdditionalProperties(array $additionalProperties): RecordInterface
@@ -504,6 +519,7 @@ class Record implements RecordInterface
 
     /**
      * @param string $propertyName
+     *
      * @return mixed
      */
     public function getAdditionalProperty($propertyName)
@@ -516,6 +532,7 @@ class Record implements RecordInterface
 
     /**
      * @param string $propertyName
+     *
      * @return bool
      */
     public function hasAdditionalProperty($propertyName): bool
@@ -526,6 +543,7 @@ class Record implements RecordInterface
     /**
      * @param $propertyName
      * @param $propertyValue
+     *
      * @return RecordInterface
      */
     public function addAdditionalProperty($propertyName, $propertyValue): RecordInterface
@@ -564,6 +582,7 @@ class Record implements RecordInterface
      * @param string $table
      * @param string $property
      * @param mixed $value
+     *
      * @return RecordInterface[]
      */
     public function getRelatedRecordByTableAndProperty($table, $property, $value): array
@@ -588,6 +607,7 @@ class Record implements RecordInterface
      * when parentRecord is locked nothing will happen
      *
      * @param RecordInterface $record
+     *
      * @return void
      */
     public function addRelatedRecord(RecordInterface $record)
@@ -611,6 +631,7 @@ class Record implements RecordInterface
      *
      * @param RecordInterface $record
      * @param string $tableName
+     *
      * @return void
      */
     public function addRelatedRecordRaw(RecordInterface $record, $tableName = 'pages')
@@ -622,6 +643,7 @@ class Record implements RecordInterface
      * Adds a bunch of records
      *
      * @param RecordInterface[] $relatedRecords
+     *
      * @return RecordInterface
      */
     public function addRelatedRecords(array $relatedRecords): RecordInterface
@@ -634,6 +656,7 @@ class Record implements RecordInterface
 
     /**
      * @param RecordInterface $record
+     *
      * @return RecordInterface
      */
     public function removeRelatedRecord(RecordInterface $record): RecordInterface
@@ -683,6 +706,7 @@ class Record implements RecordInterface
 
     /**
      * @param RecordInterface $parentRecord
+     *
      * @return RecordInterface
      */
     public function setParentRecord(RecordInterface $parentRecord): RecordInterface
@@ -748,6 +772,7 @@ class Record implements RecordInterface
      *      STRING: strings concatenated with a comma
      *
      * @param $propertyName
+     *
      * @return mixed
      */
     public function getMergedProperty($propertyName)
@@ -859,6 +884,7 @@ class Record implements RecordInterface
 
     /**
      * @param array $properties
+     *
      * @return bool
      */
     protected function isRecordMarkedAsDeletedByProperties(array $properties): bool
@@ -900,6 +926,7 @@ class Record implements RecordInterface
 
     /**
      * @param array $properties
+     *
      * @return bool
      */
     protected function isRecordMarkedAsDisabledByProperties(array $properties): bool
@@ -941,6 +968,7 @@ class Record implements RecordInterface
      * Checks if the given property array represents an existing Record
      *
      * @param array $properties
+     *
      * @return bool
      */
     protected function isRecordRepresentByProperties(array $properties): bool
@@ -965,6 +993,7 @@ class Record implements RecordInterface
     /**
      * @param array $localProperties
      * @param array $foreignProperties
+     *
      * @return string
      */
     public static function createCombinedIdentifier(array $localProperties, array $foreignProperties): string
@@ -979,6 +1008,7 @@ class Record implements RecordInterface
 
     /**
      * @param $combinedIdentifier
+     *
      * @return array
      */
     public static function splitCombinedIdentifier($combinedIdentifier): array
@@ -997,6 +1027,7 @@ class Record implements RecordInterface
     /**
      * @param $tableName
      * @param callable $compareFunction
+     *
      * @return void
      */
     public function sortRelatedRecords($tableName, $compareFunction)
@@ -1018,6 +1049,7 @@ class Record implements RecordInterface
 
     /**
      * @param RecordInterface|null $record
+     *
      * @return string
      */
     protected function getRecordPath(RecordInterface $record = null): string

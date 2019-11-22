@@ -65,6 +65,7 @@ class ReplaceMarkersService
      *
      * @param RecordInterface $record
      * @param string $string
+     *
      * @return string
      */
     public function replaceMarkers(RecordInterface $record, $string): string
@@ -82,6 +83,7 @@ class ReplaceMarkersService
      *
      * @param RecordInterface $record
      * @param string $string
+     *
      * @return string
      */
     protected function replaceRecFieldMarker(RecordInterface $record, $string): string
@@ -108,6 +110,7 @@ class ReplaceMarkersService
      *
      * @param RecordInterface $record
      * @param $string
+     *
      * @return mixed
      */
     protected function replaceGeneralMarkers(RecordInterface $record, $string)
@@ -151,6 +154,7 @@ class ReplaceMarkersService
      * Log if markers are not substituted or if there are errors
      *
      * @param $string
+     *
      * @return void
      */
     protected function checkForMarkersAndErrors($string)
@@ -182,6 +186,7 @@ class ReplaceMarkersService
 
     /**
      * @param RecordInterface $record
+     *
      * @return mixed
      */
     protected function getCurrentRecordPageId(RecordInterface $record)

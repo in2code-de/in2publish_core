@@ -109,6 +109,7 @@ class TestingService
     /**
      * @param array $dependencies
      * @param array $failedTests
+     *
      * @return bool
      */
     protected function hasDependencyFailed(array $dependencies, array $failedTests): bool

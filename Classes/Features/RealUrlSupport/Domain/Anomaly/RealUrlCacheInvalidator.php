@@ -73,6 +73,7 @@ class RealUrlCacheInvalidator
     /**
      * @param string $tableName
      * @param RecordInterface $record
+     *
      * @return void
      */
     public function registerClearRealUrlCacheTask($tableName, RecordInterface $record)

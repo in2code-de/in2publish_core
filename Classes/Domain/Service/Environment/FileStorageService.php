@@ -137,6 +137,7 @@ class FileStorageService extends AbstractService
 
     /**
      * @param string $pathAndFilename
+     *
      * @return string
      */
     protected function getNewFileName($pathAndFilename): string
@@ -152,6 +153,7 @@ class FileStorageService extends AbstractService
 
     /**
      * @param string $folderName
+     *
      * @return string
      */
     protected function getNewFolderName($folderName): string
@@ -168,6 +170,7 @@ class FileStorageService extends AbstractService
      * Get all files and folder with recursion level 99
      *
      * @param string $fileStorage
+     *
      * @return array
      */
     protected function getFilesAndFoldersRecursive($fileStorage): array
@@ -183,6 +186,7 @@ class FileStorageService extends AbstractService
 
     /**
      * @param string $fileAndFolder
+     *
      * @return bool
      */
     protected function isNonAllowedFile($fileAndFolder): bool
@@ -194,6 +198,7 @@ class FileStorageService extends AbstractService
 
     /**
      * @param string $folder
+     *
      * @return bool
      */
     protected function isNonAllowedFolder($folder): bool
@@ -203,6 +208,7 @@ class FileStorageService extends AbstractService
 
     /**
      * @param string $folder
+     *
      * @return string
      */
     protected function recommendedFolderName($folder): string
@@ -213,6 +219,7 @@ class FileStorageService extends AbstractService
 
     /**
      * @param string $filename
+     *
      * @return string
      */
     protected function recommendedFileName($filename): string
@@ -228,6 +235,7 @@ class FileStorageService extends AbstractService
     /**
      * @param string $oldFile
      * @param string $newFile
+     *
      * @return void
      */
     protected function renameFile($oldFile, $newFile)
@@ -240,6 +248,7 @@ class FileStorageService extends AbstractService
     /**
      * @param string $oldFolder
      * @param string $newFolder
+     *
      * @return void
      */
     protected function renameFolder($oldFolder, $newFolder)
@@ -253,6 +262,7 @@ class FileStorageService extends AbstractService
      * Rename fileOrFolder if parent path was already renamed
      *
      * @param $fileOrFolder
+     *
      * @return mixed
      */
     protected function renameParentPathInFileOrFolder($fileOrFolder)

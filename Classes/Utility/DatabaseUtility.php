@@ -134,6 +134,7 @@ class DatabaseUtility
 
     /**
      * @param $side
+     *
      * @return null|Connection
      */
     public static function buildDatabaseConnectionForSide($side)

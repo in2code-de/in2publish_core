@@ -55,6 +55,7 @@ class ForeignSiteConfigUnavailableException extends In2publishCoreException
 
     /**
      * @param RemoteCommandResponse $response
+     *
      * @return ForeignSiteConfigUnavailableException
      */
     public static function fromFailedRceResponse(RemoteCommandResponse $response)

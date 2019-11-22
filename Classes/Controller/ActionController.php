@@ -98,6 +98,7 @@ abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
      * @param string $title
      * @param int $severity
      * @param bool $storeInSession
+     *
      * @return void
      */
     public function addFlashMessage($body, $title = '', $severity = AbstractMessage::OK, $storeInSession = true)
@@ -111,6 +112,7 @@ abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
 
     /**
      * @param ViewInterface $view
+     *
      * @return void
      */
     protected function initializeView(ViewInterface $view)

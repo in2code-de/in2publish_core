@@ -78,6 +78,7 @@ class GroupProcessor extends AbstractProcessor
 
     /**
      * @param array $config
+     *
      * @return bool
      */
     public function canPreProcess(array $config): bool
@@ -100,6 +101,7 @@ class GroupProcessor extends AbstractProcessor
 
     /**
      * @param array $config
+     *
      * @return bool
      */
     protected function canPreProcessInternalTypeFile(array $config): bool
@@ -114,6 +116,7 @@ class GroupProcessor extends AbstractProcessor
 
     /**
      * @param array $config
+     *
      * @return bool
      */
     protected function canPreProcessInternalTypeDb(array $config): bool
@@ -131,6 +134,7 @@ class GroupProcessor extends AbstractProcessor
 
     /**
      * @param string $table
+     *
      * @return bool
      */
     public function canPreProcessInternalTypeDbTable(string $table): bool
@@ -145,6 +149,7 @@ class GroupProcessor extends AbstractProcessor
 
     /**
      * @param string $allowed
+     *
      * @return bool
      */
     protected function canPreProcessInternalTypeDbAllowed(string $allowed): bool

@@ -99,6 +99,7 @@ class SysLogPublisher
      *
      * @param string $tableName
      * @param Record $record
+     *
      * @return void
      */
     public function publishSysLog($tableName, Record $record)
@@ -120,6 +121,7 @@ class SysLogPublisher
      *
      * @param Record $record
      * @param array $removeProperties
+     *
      * @return array
      */
     protected function getLastLocalSysLogProperties(Record $record, array $removeProperties = []): array

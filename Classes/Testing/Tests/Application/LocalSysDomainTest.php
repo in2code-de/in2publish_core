@@ -136,6 +136,7 @@ class LocalSysDomainTest implements TestCaseInterface
 
     /**
      * @param $results
+     *
      * @return array
      */
     public function getMessagesForSitesWithConfig($results): array
@@ -151,6 +152,7 @@ class LocalSysDomainTest implements TestCaseInterface
 
     /**
      * @param $results
+     *
      * @return array
      */
     public function getMessagesForSitesWithSysDomain($results): array
@@ -166,6 +168,7 @@ class LocalSysDomainTest implements TestCaseInterface
 
     /**
      * @param $results
+     *
      * @return array
      */
     public function getMessagesForSitesWithoutDomain($results): array

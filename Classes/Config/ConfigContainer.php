@@ -70,6 +70,7 @@ class ConfigContainer implements SingletonInterface
 
     /**
      * @param string $path
+     *
      * @return mixed
      */
     public function get($path = '')
@@ -152,6 +153,7 @@ class ConfigContainer implements SingletonInterface
      * Applies the configuration of each provider in order of priority.
      *
      * @param array $priority
+     *
      * @return array|array[]|bool[]|int[]|string[] Sorted, merged and type casted configuration.
      */
     protected function processConfig(array $priority): array
@@ -175,6 +177,7 @@ class ConfigContainer implements SingletonInterface
 
     /**
      * @param string $path
+     *
      * @return Node|NodeCollection
      */
     public function getLocalDefinition($path = '')
@@ -196,6 +199,7 @@ class ConfigContainer implements SingletonInterface
 
     /**
      * @param string $path
+     *
      * @return Node|NodeCollection
      */
     public function getForeignDefinition($path = '')

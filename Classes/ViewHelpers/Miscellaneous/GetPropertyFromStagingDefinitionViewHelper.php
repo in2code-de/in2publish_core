@@ -75,6 +75,7 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
      * @param string $propertyName
      * @param string $stagingLevel
      * @param string|null $fallbackProperty
+     *
      * @return string
      */
     protected function getProperty(
@@ -101,6 +102,7 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
      * @param Record $record
      * @param string $propertyName
      * @param string $stagingLevel
+     *
      * @return string
      */
     protected function fallbackRootPageTitle(

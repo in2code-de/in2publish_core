@@ -94,6 +94,7 @@ abstract class AbstractNode implements Node
 
     /**
      * @param string $path
+     *
      * @return Node
      */
     public function getNodePath(string $path): Node
@@ -154,6 +155,7 @@ abstract class AbstractNode implements Node
 
     /**
      * @param Node $node
+     *
      * @throws In2publishCoreException
      */
     public function merge(Node $node)

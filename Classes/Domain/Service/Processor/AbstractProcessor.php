@@ -84,6 +84,7 @@ abstract class AbstractProcessor implements ProcessorInterface
      * Overwrite this in your Processor if canHoldRelations is TRUE!
      *
      * @param array $config
+     *
      * @return array
      */
     public function preProcess(array $config): array
@@ -99,6 +100,7 @@ abstract class AbstractProcessor implements ProcessorInterface
 
     /**
      * @param array $config
+     *
      * @return bool
      */
     public function canPreProcess(array $config): bool

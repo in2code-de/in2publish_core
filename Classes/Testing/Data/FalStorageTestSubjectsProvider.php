@@ -110,6 +110,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
 
     /**
      * @param $purpose
+     *
      * @return array
      */
     protected function getStorages($purpose): array
@@ -141,6 +142,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
 
     /**
      * @param Connection $connection
+     *
      * @return array
      */
     protected function fetchStorages(Connection $connection): array

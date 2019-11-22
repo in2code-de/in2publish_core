@@ -40,6 +40,7 @@ class BackendUserProcessor extends AbstractProcessor
 {
     /**
      * @param LogRecord $logRecord
+     *
      * @return LogRecord
      */
     public function processLogRecord(LogRecord $logRecord): LogRecord

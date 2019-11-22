@@ -80,6 +80,7 @@ abstract class AbstractService
      * Remove first folder from path (with beginning slash)
      *
      * @param string $folder
+     *
      * @return string
      */
     protected function removeFirstFolderFromPath($folder): string
@@ -94,6 +95,7 @@ abstract class AbstractService
      * Remove last folder from path (with ending slash)
      *
      * @param string $folder
+     *
      * @return string
      */
     protected function removeLastFolderFromPath($folder): string
@@ -109,6 +111,7 @@ abstract class AbstractService
 
     /**
      * @param string $pathAndFilename
+     *
      * @return string
      */
     protected function getPathFromPathAndFilename($pathAndFilename): string
@@ -118,6 +121,7 @@ abstract class AbstractService
 
     /**
      * @param string $pathAndFilename
+     *
      * @return string
      */
     protected function getFilenameFromPathAndFilename($pathAndFilename): string
@@ -128,6 +132,7 @@ abstract class AbstractService
 
     /**
      * @param string $fileOrFolder
+     *
      * @return bool
      */
     protected function isFolder($fileOrFolder): bool

@@ -72,6 +72,7 @@ class Letterbox
 
     /**
      * @param Envelope $envelope
+     *
      * @return bool|int false for errors, int for successful sent envelopes and true for updated envelopes (yes, ugly)
      */
     public function sendEnvelope(Envelope $envelope)
@@ -119,6 +120,7 @@ class Letterbox
     /**
      * @param int $uid
      * @param bool $burnEnvelope a.k.a. burn after reading, overridden by global debug setting
+     *
      * @return bool|Envelope
      */
     public function receiveEnvelope($uid, $burnEnvelope = true)

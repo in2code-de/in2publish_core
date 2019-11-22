@@ -177,6 +177,7 @@ class ForeignEnvironmentService
 
     /**
      * @param array $output
+     *
      * @return array
      */
     protected function tokenizeResponse(array $output): array

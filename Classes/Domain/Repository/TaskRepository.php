@@ -86,6 +86,7 @@ class TaskRepository
      * Add a new Task to the queue
      *
      * @param AbstractTask $task
+     *
      * @return void
      */
     public function add(AbstractTask $task)
@@ -100,6 +101,7 @@ class TaskRepository
      * Update a Task to set execution time
      *
      * @param AbstractTask $task
+     *
      * @return void
      */
     public function update(AbstractTask $task)
@@ -115,6 +117,7 @@ class TaskRepository
      * TODO: use __toArray in AbstractTask instead
      *
      * @param AbstractTask $task
+     *
      * @return array
      */
     protected function taskToPropertiesArray(AbstractTask $task): array
@@ -139,6 +142,7 @@ class TaskRepository
      * DateTime: finds all Tasks which were executed on the given Time
      *
      * @param DateTime $executionBegin
+     *
      * @return array|NULL
      */
     public function findByExecutionBegin(DateTime $executionBegin = null)

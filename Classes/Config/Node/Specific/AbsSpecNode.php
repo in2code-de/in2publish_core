@@ -56,6 +56,7 @@ abstract class AbsSpecNode extends AbstractNode
      * @param string|int|bool|array $default
      * @param array $validators
      * @param NodeCollection|null $nodes
+     *
      * @return AbsSpecNode|object
      */
     public static function fromType($type, $name, $default, array $validators, NodeCollection $nodes)

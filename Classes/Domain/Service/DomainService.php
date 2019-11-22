@@ -59,6 +59,7 @@ class DomainService
      * @param RecordInterface $record
      * @param string $stagingLevel "local" or "foreign"
      * @param bool $addProtocol
+     *
      * @return string
      */
     private $configContainer;
@@ -75,6 +76,7 @@ class DomainService
      * @param RecordInterface $record
      * @param string $stagingLevel
      * @param bool $addProtocol
+     *
      * @return mixed|string
      */
     public function getFirstDomain(RecordInterface $record, $stagingLevel = self::LEVEL_LOCAL, $addProtocol = true)
@@ -110,6 +112,7 @@ class DomainService
      * @param int $pageIdentifier
      * @param string $stagingLevel
      * @param bool $addProtocol
+     *
      * @return string
      * @throws In2publishCoreException
      */
@@ -155,6 +158,7 @@ class DomainService
      *
      * @param RecordInterface $record
      * @param string $stagingLevel
+     *
      * @return string|null
      */
     protected function getFirstDomainInRootLineFromRelatedRecords(RecordInterface $record, $stagingLevel)
@@ -180,6 +184,7 @@ class DomainService
      * @param string $stagingLevel
      *
      * @param bool $addProtocol
+     *
      * @return string
      *
      * @throws In2publishCoreException

@@ -109,6 +109,7 @@ class PreviewAnyRecordViewHelper extends AbstractViewHelper
      *
      * @param array $configuration
      * @param string $uri
+     *
      * @return string
      */
     protected function buildAdditionalParamsString(array $configuration, string $uri): string
@@ -133,6 +134,7 @@ class PreviewAnyRecordViewHelper extends AbstractViewHelper
      * Remove last . of a string
      *
      * @param $string
+     *
      * @return string
      */
     protected static function removeLastDot(string $string): string

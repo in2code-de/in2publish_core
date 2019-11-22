@@ -66,6 +66,7 @@ class ForeignSiteFinder
 
     /**
      * @param int $pageId
+     *
      * @return Site
      * @throws In2publishCoreException
      * @throws SiteNotFoundException

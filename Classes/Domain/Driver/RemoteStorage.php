@@ -71,6 +71,7 @@ class RemoteStorage implements ResourceStorageInterface
     /**
      * @param int $storage
      * @param string $identifier
+     *
      * @return bool
      */
     public function hasFolder($storage, $identifier): bool
@@ -92,6 +93,7 @@ class RemoteStorage implements ResourceStorageInterface
     /**
      * @param int $storage
      * @param string $identifier
+     *
      * @return array
      */
     public function getFoldersInFolder($storage, $identifier): array
@@ -110,6 +112,7 @@ class RemoteStorage implements ResourceStorageInterface
     /**
      * @param int $storage
      * @param string $identifier
+     *
      * @return array
      */
     public function getFilesInFolder($storage, $identifier): array
@@ -128,6 +131,7 @@ class RemoteStorage implements ResourceStorageInterface
     /**
      * @param int $storage
      * @param string $identifier
+     *
      * @return array
      */
     public function getFile($storage, $identifier): array

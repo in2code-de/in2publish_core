@@ -86,6 +86,7 @@ class MissingStoragesTest implements TestCaseInterface
      * @param array $storages
      * @param array $messages
      * @param string $side
+     *
      * @return array
      */
     protected function getMissing(array $storages, array $messages, string $side): array

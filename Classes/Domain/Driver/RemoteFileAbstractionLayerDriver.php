@@ -104,6 +104,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * Sets the storage uid the driver belongs to
      *
      * @param int $storageUid
+     *
      * @return void
      */
     public function setStorageUid($storageUid)
@@ -210,6 +211,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * Checks if a file exists.
      *
      * @param string $fileIdentifier
+     *
      * @return bool
      */
     public function fileExists($fileIdentifier)
@@ -253,6 +255,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * Checks if a folder exists.
      *
      * @param string $folderIdentifier
+     *
      * @return bool
      * @throws Exception
      */
@@ -295,6 +298,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $newFileName optional, if not given original name is used
      * @param bool $removeOriginal if set the original file will be removed
      *                                after successful operation
+     *
      * @return string the identifier of the new file
      */
     public function addFile($localFilePath, $targetFolderId, $newFileName = '', $removeOriginal = true)
@@ -322,6 +326,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @param string $fileIdentifier
      * @param string $newName The target path (including the file name!)
+     *
      * @return string The identifier of the file after renaming
      */
     public function renameFile($fileIdentifier, $newName)
@@ -347,6 +352,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @param string $fileIdentifier
      * @param string $localFilePath
+     *
      * @return bool TRUE if the operation succeeded
      */
     public function replaceFile($fileIdentifier, $localFilePath)
@@ -373,6 +379,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * this has to be taken care of in the upper layers (e.g. the Storage)!
      *
      * @param string $fileIdentifier
+     *
      * @return bool TRUE if deleting the file succeeded
      */
     public function deleteFile($fileIdentifier)
@@ -394,6 +401,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @param string $fileIdentifier
      * @param string $hashAlgorithm The hash algorithm to use
+     *
      * @return string
      */
     public function hash($fileIdentifier, $hashAlgorithm)
@@ -420,6 +428,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * (keys r, w) of boolean flags
      *
      * @param string $identifier
+     *
      * @return array
      *
      * @return string
@@ -445,6 +454,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $fileIdentifier
      * @param array $propertiesToExtract Array of properties which are be extracted
      *                                   If empty all will be extracted
+     *
      * @return array
      */
     public function getFileInfoByIdentifier($fileIdentifier, array $propertiesToExtract = [])
@@ -473,6 +483,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * Returns information about a file.
      *
      * @param string $folderIdentifier
+     *
      * @return array
      *
      * @throws FolderDoesNotExistException
@@ -512,6 +523,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *                     If a driver does not support the given property, it
      *                     should fall back to "name".
      * @param bool $sortRev TRUE to indicate reverse sorting (last to first)
+     *
      * @return array of FileIdentifiers
      */
     public function getFilesInFolder(
@@ -564,6 +576,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *                     If a driver does not support the given property, it
      *                     should fall back to "name".
      * @param bool $sortRev TRUE to indicate reverse sorting (last to first)
+     *
      * @return array of Folder Identifier
      */
     public function getFoldersInFolder(
@@ -602,6 +615,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * Either fully qualified URL or relative to PATH_site (rawurlencoded).
      *
      * @param string $identifier
+     *
      * @return string
      */
     public function getPublicUrl($identifier)
@@ -625,6 +639,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $newFolderName
      * @param string $parentFolderId
      * @param bool $recursive
+     *
      * @return string the Identifier of the new folder
      */
     public function createFolder($newFolderName, $parentFolderId = '', $recursive = false)
@@ -651,6 +666,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @param string $folderIdentifier
      * @param bool $deleteRecursively
+     *
      * @return bool
      */
     public function deleteFolder($folderIdentifier, $deleteRecursively = false)
@@ -681,6 +697,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $fileIdentifier
      * @param string $targetFolderId
      * @param string $newFileName
+     *
      * @return string
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -754,6 +771,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @param string $identifier
      * @param callable $callback
+     *
      * @return mixed
      */
     protected function cache($identifier, $callback)
@@ -767,6 +785,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 
     /**
      * @param string $folderIdentifier
+     *
      * @return string
      */
     protected function getFolderExistsCacheIdentifier($folderIdentifier): string
@@ -776,6 +795,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 
     /**
      * @param string $folderIdentifier
+     *
      * @return string
      */
     protected function getGetFoldersInFolderCacheIdentifier($folderIdentifier): string
@@ -785,6 +805,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 
     /**
      * @param string $folderIdentifier
+     *
      * @return string
      */
     protected function getGetFilesInFolderCacheIdentifier($folderIdentifier): string
@@ -794,6 +815,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 
     /**
      * @param string $fileIdentifier
+     *
      * @return string
      */
     protected function getFileExistsCacheIdentifier($fileIdentifier): string
@@ -803,6 +825,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 
     /**
      * @param string $identifier
+     *
      * @return string
      */
     protected function getGetPermissionsCacheIdentifier($identifier): string
@@ -812,6 +835,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 
     /**
      * @param string $fileIdentifier
+     *
      * @return string
      */
     protected function getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier): string
@@ -821,6 +845,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 
     /**
      * @param string $folderIdentifier
+     *
      * @return string
      */
     protected function getGetFolderInfoByIdentifierCacheIdentifier($folderIdentifier): string
@@ -831,6 +856,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
     /**
      * @param string $fileIdentifier
      * @param string $hashAlgorithm
+     *
      * @return string
      */
     protected function getHashCacheIdentifier($fileIdentifier, $hashAlgorithm): string
@@ -840,6 +866,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 
     /**
      * @param string $identifier
+     *
      * @return string
      */
     protected function getGetPublicUrlCacheIdentifier($identifier): string

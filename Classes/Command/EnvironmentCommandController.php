@@ -87,6 +87,7 @@ class EnvironmentCommandController extends AbstractCommandController
 
     /**
      * @param FileStorageService $fileStorageService
+     *
      * @return void
      */
     protected function showNonAllowedFolders(FileStorageService $fileStorageService)
@@ -109,6 +110,7 @@ class EnvironmentCommandController extends AbstractCommandController
 
     /**
      * @param FileStorageService $fileStorageService
+     *
      * @return void
      */
     protected function showNonAllowedFiles(FileStorageService $fileStorageService)

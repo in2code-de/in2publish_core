@@ -36,6 +36,7 @@ class FolderUtility
 {
     /**
      * @param FolderInterface $folder
+     *
      * @return array
      */
     public static function extractFolderInformation(FolderInterface $folder): array
@@ -50,6 +51,7 @@ class FolderUtility
 
     /**
      * @param array $folders
+     *
      * @return array
      */
     public static function extractFoldersInformation(array $folders): array

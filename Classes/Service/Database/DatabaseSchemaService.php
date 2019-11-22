@@ -54,6 +54,7 @@ class DatabaseSchemaService implements SingletonInterface
 
     /**
      * @param string $tableName
+     *
      * @return bool
      */
     public function tableExists(string $tableName): bool

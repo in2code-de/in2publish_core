@@ -79,6 +79,7 @@ class TestCaseService
     /**
      * @param array $dependencies
      * @param array $orderedTests
+     *
      * @return bool
      */
     protected function isDependencyMissing(array $dependencies, array $orderedTests): bool
