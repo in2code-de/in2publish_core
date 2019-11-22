@@ -30,8 +30,6 @@ namespace In2code\In2publishCore\Log\Processor;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Log\LogRecord;
 use TYPO3\CMS\Core\Log\Processor\AbstractProcessor;
-use function get_class;
-use function gettype;
 
 /**
  * Class BackendUserProcessor
