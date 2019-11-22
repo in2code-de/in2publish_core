@@ -29,8 +29,8 @@ namespace In2code\In2publishCore\Config\Provider;
 
 use In2code\In2publishCore\Service\Context\ContextService;
 use Spyc;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException as ExtConfPathDoesNotExist;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException as ExtensionNotConfiguredException;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException as ExtConfPathDoesNotExist;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -49,6 +49,7 @@ use const E_USER_DEPRECATED;
 class FileProvider implements ProviderInterface
 {
     protected const DEPRECATION_CONFIG_PATH_TYPO3CONF = 'Storing the content publisher config file in typo3conf is deprecated and considered insecure. Please consider storing your config in the TYPO3\'s config folder.';
+
     /**
      * @var ContextService
      */
