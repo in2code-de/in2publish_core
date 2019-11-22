@@ -102,7 +102,7 @@ class PhysicalFilePublisher implements SingletonInterface
             $identifier = $record->getMergedProperty('identifier');
 
             if (strpos($identifier, ',')) {
-                list($identifier) = GeneralUtility::trimExplode(',', $identifier);
+                [$identifier] = GeneralUtility::trimExplode(',', $identifier);
             }
 
             $combinedIdentifier = sprintf('%d:%s', $storage, $identifier);

@@ -48,7 +48,7 @@ class FolderPublisherService
      */
     public function publish($combinedIdentifier): bool
     {
-        list($storage, $folderIdentifier) = GeneralUtility::trimExplode(':', $combinedIdentifier);
+        [$storage, $folderIdentifier] = GeneralUtility::trimExplode(':', $combinedIdentifier);
 
         $remoteFalDriver = GeneralUtility::makeInstance(RemoteFileAbstractionLayerDriver::class);
         $remoteFalDriver->setStorageUid($storage);

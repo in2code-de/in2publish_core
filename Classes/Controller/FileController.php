@@ -111,7 +111,7 @@ class FileController extends AbstractController
         if (strpos($identifier, ',')) {
             // Just take the local part of the file identifier.
             // We need the local folder identifier to instantiate the folder record.
-            list($identifier) = GeneralUtility::trimExplode(',', $identifier);
+            [$identifier] = GeneralUtility::trimExplode(',', $identifier);
         }
 
         $record = $this->tryToGetFolderInstance($storage . ':/' . ltrim(dirname($identifier), '/'));

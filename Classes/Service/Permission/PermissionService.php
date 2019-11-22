@@ -67,7 +67,7 @@ class PermissionService
         $votes = ['yes' => 0, 'no' => 0];
 
         try {
-            list($votes) = $this->dispatcher->dispatch(
+            [$votes] = $this->dispatcher->dispatch(
                 AbstractController::class,
                 'checkUserAllowedToPublish',
                 [$votes]

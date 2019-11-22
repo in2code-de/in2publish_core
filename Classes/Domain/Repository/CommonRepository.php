@@ -647,7 +647,7 @@ class CommonRepository extends BaseRepository
         }
 
         try {
-            list($record) = $this->signalSlotDispatcher->dispatch(
+            [$record] = $this->signalSlotDispatcher->dispatch(
                 CommonRepository::class,
                 'afterRecordEnrichment',
                 [$record]

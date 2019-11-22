@@ -48,7 +48,7 @@ class VersionedFileProvider extends FileProvider
         $path = $this->getResolvedFilePath();
 
         $version = ExtensionUtility::getExtensionVersion('in2publish_core');
-        list($major, $minor, $patch) = explode('.', $version);
+        [$major, $minor, $patch] = explode('.', $version);
         $candidates = [
             implode('.', [$major, $minor, $patch]),
             implode('.', [$major, $minor]),
