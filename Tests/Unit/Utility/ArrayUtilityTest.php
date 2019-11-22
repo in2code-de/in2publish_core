@@ -54,6 +54,7 @@ class ArrayUtilityTest extends UnitTestCase
      * @param array $array
      * @param array $keysToRemove
      * @param int $countArray count() of manipulated array
+     *
      * @return void
      */
     public function testRemoveFromArrayByKeyRemovesAllEntriesWithTheGivenKeys(

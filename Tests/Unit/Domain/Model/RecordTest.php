@@ -30,8 +30,6 @@ use In2code\In2publishCore\Domain\Model\Record;
 use LogicException;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
-use function version_compare;
-use const PHP_VERSION;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Domain\Model\Record
