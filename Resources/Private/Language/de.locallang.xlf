@@ -45,6 +45,10 @@
 				<source>One or more errors occurred during publishing. Please check the logs.</source>
 				<target state="translated">Ein oder mehrere Fehler traten während des Publizierungsvorgangs auf. Bitte prüfen Sie die Fehlerlogs.</target>
 			</trans-unit>
+			<trans-unit id="relation_resolving_errors">
+				<source>One or more errors occurred during relation resolving. Please check the logs.</source>
+				<target state="translated">Ein oder mehrere Fehler traten auf während die Verknüpfungen aufgelöst wurden. Bitte prüfen Sie die Fehlerlogs.</target>
+			</trans-unit>
 			<trans-unit id="publish_failed">
 				<source>The selected record has been published successfully.</source>
 				<target state="translated">Der ausgewählte Datensatz wurde erfolgreich veröffentlicht.</target>

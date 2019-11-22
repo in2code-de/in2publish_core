@@ -90,7 +90,15 @@ class RecordController extends AbstractController
         } else {
             $record = GeneralUtility::makeInstance(FakeRecordFactory::class)->buildFromStartPage($this->pid);
         }
+        $publishingFailureCollector = GeneralUtility::makeInstance(PublishingFailureCollector::class);
+        $failures = $publishingFailureCollector->getFailures();
 
+        if (!empty($failures)) {
+            $message = '"' . implode('"; "', array_keys($failures)) . '"';
+            $title = LocalizationUtility::translate('relation_resolving_errors', 'in2publish_core');
+            $severity = LogUtility::translateLogLevelToSeverity($publishingFailureCollector->getMostCriticalLogLevel());
+            $this->addFlashMessage($message, $title, $severity);
+        }
         $this->view->assign('record', $record);
     }
 

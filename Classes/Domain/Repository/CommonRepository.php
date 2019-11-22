@@ -506,10 +506,11 @@ class CommonRepository extends BaseRepository
                             // record we log it because it is very very very unlikely for
                             // sys_file_metadata to change their target sys_file entry
                             $this->logger->warning(
-                                'Fixed possibly broken relation by replacing it with another possibly broken relation',
+                                'Identified a sys_file_metadata for a file which has a different UID on foreign.'
+                                . ' The foreign sys_file_metadata will be overwritten and therefore be lost',
                                 [
                                     'table' => $tableName,
-                                    'key (UID)' => $key,
+                                    'key (UID of the local record and the found foreign record)' => $key,
                                     'file_local' => $localProperties[$key]['file'],
                                     'file_foreign' => $foreignProperties[$key]['file'],
                                 ]
