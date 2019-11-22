@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Command\PublishTaskRunner;
 
 use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Service\Context\ContextService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -49,6 +50,11 @@ TXT;
     {
         $this->setHidden(true)
              ->setDescription(static::DESCRIPTION);
+    }
+
+    public function isEnabled()
+    {
+        return GeneralUtility::makeInstance(ContextService::class)->isForeign();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace In2code\In2publishCore\Command\Tools;
 
+use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
@@ -26,6 +27,11 @@ TXT;
     protected function configure()
     {
         $this->setDescription(static::DESCRIPTION);
+    }
+
+    public function isEnabled()
+    {
+        return GeneralUtility::makeInstance(ContextService::class)->isLocal();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
