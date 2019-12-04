@@ -60,6 +60,7 @@ class GroupProcessor extends AbstractProcessor
      */
     protected $required = [
         'the internal type determines the relation target' => self::INTERNAL_TYPE,
+        'MM_opposite_field is set for the foreign side of relations, which must not be resolved' => self::MM_OPPOSITE_FIELD,
     ];
 
     /**
@@ -73,7 +74,6 @@ class GroupProcessor extends AbstractProcessor
         self::MM_MATCH_FIELDS,
         self::MM_TABLE_WHERE,
         self::UPLOAD_FOLDER,
-        self::MM_OPPOSITE_FIELD,
     ];
 
     /**

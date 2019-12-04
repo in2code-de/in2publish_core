@@ -35,11 +35,19 @@ class InlineProcessor extends AbstractProcessor
     const FOREIGN_FIELD = 'foreign_field';
     const FOREIGN_MATCH_FIELDS = 'foreign_match_fields';
     const FOREIGN_TABLE_FIELD = 'foreign_table_field';
+    const SYMMETRIC_FIELD = 'symmetric_field';
 
     /**
      * @var bool
      */
     protected $canHoldRelations = true;
+
+    /**
+     * @var array
+     */
+    protected $forbidden = [
+        'symmetric_field is set on the foreign side of relations, which must not be resolved' => self::SYMMETRIC_FIELD
+    ];
 
     /**
      * @var array
