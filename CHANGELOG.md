@@ -1,5 +1,39 @@
 # In2publish Core Change Log
 
+8.4.3:
+
+- [META] Set the EM conf version number to 8.4.3
+- [BUGFIX] Include single quotes in marker replacement because the value will be quoted itself
+- [BUGFIX] Forbid processing of foreign side relations for inline, select and group
+- [CODESTYLE] Fix whitespace and newline CS issues in SCSS files
+- [CODESTYLE] Fix code style in tests
+- [CODESTYYLE] Correctly indent testing docker-compose.yml
+- [CLEANUP] Remove unused imports from all affected files
+- [CODESTYLE] Introduce empty line before return annotation
+- [BUGFIX] Display errors and warnings also after building the record
+- [BUGFIX] Use the data from the FlexForm to resolve inline elements
+- [BUGFIX] Ensure changedRelatedRecords returns records only once
+- [TEST] Provide docker test env, test runner script, travis config and fix all tests
+- [COMMENT] Annotate correct variable type for ToolsController jsonFile argument
+- [BUGFIX] Fix return value of findByPropert(y|ies) for cached records
+- [COMMENT] Fix return annotation for Builder
+- [CLEANUP] Remove unused instantiation of the letterbox
+- [CLEANUP] Remove unused imports
+- [TYPO] Fix some typos in the docs
+- [BUGFIX] Add missing id for system export button label
+- [DEV] Remove travis test file because these tests are not executed anymore
+- [BUGFIX] Remove superfluous css unit from 0 value
+- [DEV] Add bash script to compile sass in docker
+- [REFACTOR] Import all unnecessary FQCNs
+- [REFACTOR] Use short array syntax
+- [CODESTYLE] Resolve PSR-12 parameter list code style issue
+- [CODESTYLE] Resolve PSR-12 else if code style issues
+- [CODESTYLE] Resolve PSR-12 keyword short form code style issues
+- [BUGFIX] Use the correct charset for the foreign database
+- [TYPO] Fix spelling of being
+- [REFACTOR] Simplify the unique instance registration in FalIndexPostProcessor
+- [RELEASE] Version 8.4.2 with fox for files publishing, multiline additional_where and PHP compat
+
 8.4.2:
 
 - [META] Set the EM conf version number to 8.4.2
