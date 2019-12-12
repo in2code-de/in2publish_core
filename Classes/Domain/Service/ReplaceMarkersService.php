@@ -44,6 +44,9 @@ use function strstr;
  */
 class ReplaceMarkersService
 {
+    // Also replace optional quotes around the REC_FIELD_ because we will quote the actual value
+    const REC_FIELD_REGEX = '~\'?###REC_FIELD_(.*?)###\'?~';
+
     /**
      * @var Logger
      */
@@ -90,7 +93,7 @@ class ReplaceMarkersService
     {
         if (strstr($string, '###REC_FIELD_')) {
             $string = preg_replace_callback(
-                '~###REC_FIELD_(.*?)###~',
+                self::REC_FIELD_REGEX,
                 function ($matches) use ($record) {
                     $propertyName = $matches[1];
                     $propertyValue = $record->getLocalProperty($propertyName);
