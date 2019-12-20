@@ -1,5 +1,11 @@
 # In2publish Core Change Log
 
+8.4.4:
+
+- [META] Set the EM conf version number to 8.4.4
+- [BUGFIX] Move MM_opposite_field to the list of forbidden group fields
+- [RELEASE] Version 8.4.3 with stability fixes
+
 8.4.3:
 
 - [META] Set the EM conf version number to 8.4.3
