@@ -64,6 +64,7 @@ class LabelService
      *
      * @param RecordInterface $record
      * @param string $stagingLevel "local" or "foreign"
+     *
      * @return string
      */
     public function getLabelField($record, $stagingLevel = 'local'): string
@@ -93,6 +94,7 @@ class LabelService
      * Get label fields from a table definition
      *
      * @param string $tableName
+     *
      * @return array
      */
     protected function getLabelFieldsFromTableConfiguration($tableName): array

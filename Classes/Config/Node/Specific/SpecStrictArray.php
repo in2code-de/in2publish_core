@@ -27,11 +27,8 @@ namespace In2code\In2publishCore\Config\Node\Specific;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Config\Node\Node;
-use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use function array_key_exists;
-use function is_array;
 
 /**
  * Class SpecStrictArray

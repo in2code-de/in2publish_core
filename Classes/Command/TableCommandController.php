@@ -138,6 +138,7 @@ class TableCommandController extends AbstractCommandController
      *      Copies a complete table from production to stage and overwrites all old entries!
      *
      * @param string $tableName
+     *
      * @throws Exception
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
@@ -160,6 +161,7 @@ class TableCommandController extends AbstractCommandController
      * @param Connection $fromDatabase
      * @param Connection $toDatabase
      * @param string $tableName
+     *
      * @return bool
      */
     protected function copyTableContents(Connection $fromDatabase, Connection $toDatabase, string $tableName): bool
@@ -191,6 +193,7 @@ class TableCommandController extends AbstractCommandController
      * @param Connection $connection
      * @param string $tableName
      * @param array $row
+     *
      * @return int
      */
     protected function insertRow(Connection $connection, string $tableName, array $row): int
@@ -203,6 +206,7 @@ class TableCommandController extends AbstractCommandController
      *
      * @param Connection $connection
      * @param string $tableName
+     *
      * @return bool
      */
     protected function truncateTable(Connection $connection, string $tableName): bool
@@ -215,6 +219,7 @@ class TableCommandController extends AbstractCommandController
      * Stores a backup of the complete local table into the configured directory
      *
      * @param string $tableName
+     *
      * @throws Exception
      *
      * @SuppressWarnings(PHPMD.StaticAccess)

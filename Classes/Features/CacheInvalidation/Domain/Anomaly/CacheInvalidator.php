@@ -78,6 +78,7 @@ class CacheInvalidator implements SingletonInterface
     /**
      * @param string $tableName
      * @param Record $record
+     *
      * @return void
      */
     public function registerClearCacheTasks($tableName, Record $record)
@@ -114,6 +115,7 @@ class CacheInvalidator implements SingletonInterface
      *
      * @param string $tableName
      * @param Record $record
+     *
      * @return void
      */
     protected function flushPageCache($tableName, Record $record)
@@ -158,6 +160,7 @@ class CacheInvalidator implements SingletonInterface
     /**
      * @param $tableName
      * @param Record $record
+     *
      * @return int|null
      */
     protected function determinePid($tableName, Record $record)

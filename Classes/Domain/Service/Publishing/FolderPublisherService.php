@@ -43,6 +43,7 @@ class FolderPublisherService
 {
     /**
      * @param string $combinedIdentifier
+     *
      * @return bool
      */
     public function publish($combinedIdentifier): bool

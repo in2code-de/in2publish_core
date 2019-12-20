@@ -57,6 +57,7 @@ class FilePublisherService
      *
      * @param int $storage
      * @param string $fileIdentifier
+     *
      * @return bool
      */
     public function removeForeignFile($storage, $fileIdentifier): bool
@@ -72,6 +73,7 @@ class FilePublisherService
      *
      * @param int $storage
      * @param string $fileIdentifier
+     *
      * @return bool
      */
     public function addFileToForeign($storage, $fileIdentifier): bool
@@ -98,6 +100,7 @@ class FilePublisherService
     /**
      * @param string $storage
      * @param string $fileIdentifier
+     *
      * @return bool
      */
     public function updateFileOnForeign($storage, $fileIdentifier): bool
@@ -115,6 +118,7 @@ class FilePublisherService
      * @param string $fileIdentifier
      * @param string $targetFolderId
      * @param string $newFileName
+     *
      * @return string
      */
     public function moveForeignFile($storage, $fileIdentifier, $targetFolderId, $newFileName): string
@@ -128,6 +132,7 @@ class FilePublisherService
     /**
      * @param int $storage
      * @param string $fileIdentifier
+     *
      * @return string
      */
     protected function transferTemporaryFile($storage, $fileIdentifier): string
@@ -143,6 +148,7 @@ class FilePublisherService
     /**
      * @param int $storage
      * @param string $fileIdentifier
+     *
      * @return string
      */
     protected function getLocalReadableFilePathForIdentifier($storage, $fileIdentifier): string

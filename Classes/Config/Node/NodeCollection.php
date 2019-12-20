@@ -73,6 +73,7 @@ class NodeCollection extends ArrayObject implements Node
 
     /**
      * @param string $path
+     *
      * @return Node|NodeCollection
      */
     public function getNodePath(string $path): Node
@@ -161,6 +162,7 @@ class NodeCollection extends ArrayObject implements Node
 
     /**
      * @param array[]|bool[]|int[]|string[] $value
+     *
      * @return array[]|bool[]|int[]|string[]
      */
     public function cast($value): array

@@ -74,6 +74,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
     /**
      * @param string $source
      * @param string $target
+     *
      * @return bool
      * @throws In2publishCoreException
      */
@@ -140,6 +141,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
 
     /**
      * @param string $target
+     *
      * @return bool
      */
     protected function setRemoteFilePermissions(string $target): bool
@@ -185,6 +187,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
 
     /**
      * @param string $folder
+     *
      * @return bool
      */
     protected function ensureTargetFolderExists(string $folder): bool
@@ -197,6 +200,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
 
     /**
      * @param string $folder
+     *
      * @return bool
      */
     protected function remoteFolderExists(string $folder): bool
@@ -206,6 +210,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
 
     /**
      * @param string $folder
+     *
      * @return bool
      */
     protected function createRemoteFolder(string $folder): bool

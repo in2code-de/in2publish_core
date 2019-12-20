@@ -35,6 +35,7 @@ interface AdapterInterface
     /**
      * @param string $source Absolute path of the readable file on local
      * @param string $target Absolute path of the writable file on foreign
+     *
      * @return bool
      */
     public function copyFileToRemote(string $source, string $target): bool;

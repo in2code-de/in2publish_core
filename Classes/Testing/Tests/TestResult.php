@@ -68,6 +68,7 @@ class TestResult
      * @param string $severity
      * @param array $messages Keys of labels for explanations what went wrong.
      * @param array|null $labelArguments
+     *
      * @internal param array|null $arguments
      */
     public function __construct(

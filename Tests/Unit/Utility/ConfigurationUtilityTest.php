@@ -2,7 +2,7 @@
 namespace In2code\In2publishCore\Tests\Unit\Service\Configuration;
 
 use In2code\In2publishCore\Utility\ConfigurationUtility;
-use TYPO3\CMS\Core\Tests\UnitTestCase;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Utility\ConfigurationUtility

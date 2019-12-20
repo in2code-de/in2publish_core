@@ -59,6 +59,7 @@ interface ProcessorInterface
      * Returns TRUE if the specific configuration can hold relations
      *
      * @param array $config
+     *
      * @return bool
      */
     public function canPreProcess(array $config);
@@ -67,6 +68,7 @@ interface ProcessorInterface
      * PreProcess the configuration. Returns an array with only necessary information in an standardized format
      *
      * @param array $config
+     *
      * @return array
      */
     public function preProcess(array $config);

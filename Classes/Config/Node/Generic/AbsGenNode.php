@@ -51,6 +51,7 @@ abstract class AbsGenNode extends AbstractNode
      * @param string $name
      * @param NodeCollection $nodes
      * @param string|int|bool|array $default
+     *
      * @return AbsGenNode|object
      */
     public static function fromType($type, $name, NodeCollection $nodes, $default)
@@ -103,6 +104,7 @@ abstract class AbsGenNode extends AbstractNode
     /**
      * @param ValidationContainer $container
      * @param mixed $value
+     *
      * @return void
      */
     abstract protected function validateKey(ValidationContainer $container, $value);

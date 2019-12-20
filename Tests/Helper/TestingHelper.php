@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\Tests\Helper;
  */
 
 use In2code\In2publishCore\Service\Context\ContextService;
+use ReflectionProperty;
 use TYPO3\CMS\Core\Core\ApplicationContext;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -106,7 +107,7 @@ class TestingHelper
      */
     public static function setStaticProperty($class, $name, $value)
     {
-        $reflectionProperty = new \ReflectionProperty($class, $name);
+        $reflectionProperty = new ReflectionProperty($class, $name);
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($value);
     }

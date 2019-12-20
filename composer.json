@@ -1,38 +1,11 @@
 {
 	"name": "in2code/in2publish_core",
 	"description": "Content publishing extension to connect stage and production server",
-	"keywords": [
-		"TYPO3 CMS",
-		"publishing",
-		"publisher",
-		"stage",
-		"content",
-		"multiserver",
-		"workflow",
-		"workspace",
-		"security",
-		"publish",
-		"synchronization",
-		"stage",
-		"staging",
-		"contentstaging",
-		"headless",
-		"bodyless",
-		"deployment"
-	],
+	"keywords": ["TYPO3 CMS", "publishing", "publisher", "stage", "content", "multiserver", "workflow", "workspace", "security", "publish", "synchronization", "stage", "staging", "contentstaging", "headless", "bodyless", "deployment"],
 	"authors": [
-		{
-			"name": "Oliver Eglseder",
-			"email": "oliver.eglseder@in2code.de"
-		},
-		{
-			"name": "Alex Kellner",
-			"email": "alexander.kellner@in2code.de"
-		},
-		{
-			"name": "Stefan Busemann",
-			"email": "stefan.busemann@in2code.de"
-		}
+		{"name": "Oliver Eglseder", "email": "oliver.eglseder@in2code.de"},
+		{"name": "Alex Kellner", "email": "alexander.kellner@in2code.de"},
+		{"name": "Stefan Busemann", "email": "stefan.busemann@in2code.de"}
 	],
 	"type": "typo3-cms-extension",
 	"license": "GPL-3.0-or-later",
@@ -41,10 +14,7 @@
 		"typo3/cms-core": "^8.7.0 || ^9.5.0"
 	},
 	"require-dev": {
-		"phpunit/phpunit": "^4.8",
-		"squizlabs/php_codesniffer": "^2.7",
-		"phpmd/phpmd": "^2.4",
-		"sebastian/phpcpd": "^2.0"
+		"typo3/testing-framework": "^4.13"
 	},
 	"suggest": {
 		"vertexvaar/logs": "Require version ^1.3. Provides a log reader with lots of filters and options"
@@ -65,23 +35,18 @@
 	},
 	"scripts": {
 		"post-autoload-dump": [
-			"mkdir -p .Build/Web/typo3conf/ext/",
-			"[ -L .Build/Web/typo3conf/ext/in2publish_core ] || ln -snvf ../../../../. .Build/Web/typo3conf/ext/in2publish_core"
-		],
-		"quality-check" : [
-			".Build/bin/phpcpd Classes/ --min-tokens=42",
-			".Build/bin/phpcs Classes/ --standard=PSR2",
-			".Build/bin/phpmd Classes/ text controversial",
-			".Build/bin/phpmd Classes/ text design",
-			".Build/bin/phpmd Classes/ text unusedcode",
-			".Build/bin/phpmd Classes/ text naming",
-			"TYPO3_PATH_WEB=.Build/Web .Build/bin/phpunit -c phpunit.xml.dist"
+			"TYPO3\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare"
 		]
 	},
 	"extra": {
 		"branch-alias": {
 			"dev-master": "8.4.x-dev",
 			"dev-develop": "8.4.x-dev"
+		},
+		"typo3/cms": {
+			"cms-package-dir": "{$vendor-dir}/typo3/cms",
+			"web-dir": ".Build/public",
+			"extension-key": "in2publish_core"
 		}
 	}
 }

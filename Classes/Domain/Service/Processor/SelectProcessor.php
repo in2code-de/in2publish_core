@@ -49,6 +49,7 @@ class SelectProcessor extends AbstractProcessor
         'fileFolder is not supported' => self::FILE_FOLDER,
         'allowNonIdValues can not be resolved by in2publish' => self::ALLOW_NON_ID_VALUES,
         'MM_oppositeUsage is not supported' => self::MM_OPPOSITE_USAGE,
+        'MM_opposite_field is set on the foreign side of relations, which must not be resolved' => self::MM_OPPOSITE_FIELD,
         'special is not supported' => self::SPECIAL,
     ];
 
@@ -68,7 +69,6 @@ class SelectProcessor extends AbstractProcessor
         self::MM_HAS_UID_FIELD,
         self::MM_MATCH_FIELDS,
         self::MM_TABLE_WHERE,
-        self::MM_OPPOSITE_FIELD,
         self::ROOT_LEVEL,
     ];
 }

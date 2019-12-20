@@ -76,6 +76,7 @@ class AssetTransmitter implements SingletonInterface
     /**
      * @param string $source Absolute local path to file(return value of
      *     \TYPO3\CMS\Core\Resource\Driver\DriverInterface::getFileForLocalProcessing)
+     *
      * @return string Absolute path of the transmitted file on foreign
      */
     public function transmitTemporaryFile($source): string

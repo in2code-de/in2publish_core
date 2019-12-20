@@ -74,6 +74,7 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
      * Get data attributes for i-icon
      *
      * @param Record $record
+     *
      * @return string
      */
     public function render(): string
@@ -87,6 +88,7 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
 
     /**
      * @param Record $record
+     *
      * @return string
      */
     protected function getDataAttributesForSimpleOverviewAndAjax(Record $record): string
@@ -99,6 +101,7 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
 
     /**
      * @param Record $record
+     *
      * @return string
      */
     protected function getAjaxUri(Record $record): string
@@ -115,6 +118,7 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
 
     /**
      * @param Record $record
+     *
      * @return string
      */
     protected function getAjaxContainerClassName(Record $record): string

@@ -27,27 +27,32 @@ namespace In2code\In2publishCore\Tests\Unit\Domain\Model;
  */
 
 use In2code\In2publishCore\Domain\Model\Record;
-use TYPO3\CMS\Core\Tests\UnitTestCase;
+use LogicException;
+use PHPUnit\Framework\MockObject\MockObject;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Domain\Model\Record
  */
 class RecordTest extends UnitTestCase
 {
+    protected $resetSingletonInstances = true;
+
     /**
      * @param mixed $getIgnoreFields
      * @param bool $isParentRecordDisabled
+     *
      * @return Record
      */
     protected function getRecordStub($getIgnoreFields, $isParentRecordDisabled = false)
     {
         $stub = $this->getMockBuilder(Record::class)
-                     ->setMethods(['getIgnoreFields', 'isParentRecordDisabled'])
+                     ->setMethods(['getIgnoreFields', 'isParentDisabled'])
                      ->disableOriginalConstructor()
                      ->getMock();
 
         $stub->method('getIgnoreFields')->will($this->returnValue($getIgnoreFields));
-        $stub->method('isParentRecordDisabled')->will($this->returnValue($isParentRecordDisabled));
+        $stub->method('isParentDisabled')->will($this->returnValue($isParentRecordDisabled));
 
         return $stub;
     }
@@ -925,24 +930,24 @@ class RecordTest extends UnitTestCase
         $root = $this->getRecordStub([]);
         $root->__construct('pages', ['uid' => 1], ['uid' => 1], [], []);
 
-        /** @var Record|\PHPUnit_Framework_MockObject_MockObject $stub1 */
+        /** @var Record|MockObject $stub1 */
         $stub1 = $this->getMockBuilder(Record::class)
-                      ->setMethods(['getIgnoreFields', 'isParentRecordDisabled', 'isChanged'])
+                      ->setMethods(['getIgnoreFields', 'isParentDisabled', 'isChanged'])
                       ->disableOriginalConstructor()
                       ->getMock();
         $stub1->method('getIgnoreFields')->will($this->returnValue([]));
-        $stub1->method('isParentRecordDisabled')->will($this->returnValue(false));
+        $stub1->method('isParentDisabled')->will($this->returnValue(false));
         $stub1->__construct('tt_content', ['uid' => 1], ['uid' => 1], [], []);
 
         $stub1->expects($this->once())->method('isChanged');
 
-        /** @var Record|\PHPUnit_Framework_MockObject_MockObject $stub2 */
+        /** @var Record|MockObject $stub2 */
         $stub2 = $this->getMockBuilder(Record::class)
-                      ->setMethods(['getIgnoreFields', 'isParentRecordDisabled', 'isChanged'])
+                      ->setMethods(['getIgnoreFields', 'isParentDisabled', 'isChanged'])
                       ->disableOriginalConstructor()
                       ->getMock();
         $stub2->method('getIgnoreFields')->will($this->returnValue([]));
-        $stub2->method('isParentRecordDisabled')->will($this->returnValue(false));
+        $stub2->method('isParentDisabled')->will($this->returnValue(false));
         $stub2->__construct('tt_content', ['uid' => 2], ['uid' => 2], [], []);
 
         $stub2->expects($this->once())->method('isChanged');
@@ -1319,6 +1324,31 @@ class RecordTest extends UnitTestCase
 
     /**
      * @covers ::getChangedRelatedRecordsFlat
+     * @covers ::addChangedRelatedRecordsRecursive
+     * @depends testGetChangedRelatedRecordsFlatReturnsFlatArrayOfChangedRelatedRecords
+     */
+    public function testGetChangedRelatedRecordsFlatReturnsFlatArrayOfChangedRelatedRecordsWithoutDuplicates()
+    {
+        $record = $this->getRecordStub([]);
+        $record->__construct('pages', [], [], [], []);
+
+        $related1 = $this->getRecordStub([]);
+        $related1->__construct('tt_content', ['uid' => 1, 'foo' => 'bar'], ['uid' => 1], [], []);
+
+        $related2 = $this->getRecordStub([]);
+        $related2->__construct('tt_content', [], ['uid' => 2], [], []);
+
+        $related3 = $this->getRecordStub([]);
+        $related3->__construct('tt_content', ['uid' => 6], ['uid' => 6], [], []);
+        $related3->addRelatedRecord($related1);
+
+        $record->addRelatedRecords([$related1, $related2, $related3]);
+
+        $this->assertSame([$related1, $related2], $record->getChangedRelatedRecordsFlat());
+    }
+
+    /**
+     * @covers ::getChangedRelatedRecordsFlat
      */
     public function testGetChangedRelatedRecordsAddsRootRecordIfChanged()
     {
@@ -1559,17 +1589,14 @@ class RecordTest extends UnitTestCase
      * @covers ::setPropertiesBySideIdentifier
      * @depends testSetForeignPropertiesSetsForeignProperties
      * @depends testGetForeignPropertiesReturnsAllForeignProperties
+     * @expectedException LogicException
+     * @expectedExceptionCode 1475857626
+     * @expectedExceptionMessage Can not set properties for undefined side "foo"
      */
     public function testSetPropertiesBySideThrowsExceptionForUndefinedSide()
     {
         $stub = $this->getRecordStub([]);
         $stub->__construct('pages', [], [], [], []);
-
-        $this->setExpectedException(
-            \LogicException::class,
-            'Can not set properties for undefined side "foo"',
-            1475857626
-        );
 
         $stub->setPropertiesBySideIdentifier('foo', []);
     }
@@ -1611,7 +1638,7 @@ class RecordTest extends UnitTestCase
         $stub->__construct('pages', [], [], [], []);
 
         $this->setExpectedException(
-            \LogicException::class,
+            LogicException::class,
             'Can not get Properties from undefined side "foo"',
             1475858502
         );
@@ -1647,17 +1674,14 @@ class RecordTest extends UnitTestCase
 
     /**
      * @covers ::getPropertyBySideIdentifier
+     * @expectedException LogicException
+     * @expectedExceptionCode 1475858834
+     * @expectedExceptionMessage Can not get property "bar" from undefined side "foo"
      */
     public function testGetPropertyBySideIdentifierThrowsExceptionForUndefinedSide()
     {
         $record = $this->getRecordStub([]);
         $record->__construct('pages', [], [], [], []);
-
-        $this->setExpectedException(
-            \LogicException::class,
-            'Can not get property "bar" from undefined side "foo"',
-            1475858834
-        );
 
         $this->assertSame('bar', $record->getPropertyBySideIdentifier('foo', 'bar'));
     }

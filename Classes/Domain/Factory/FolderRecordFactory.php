@@ -28,8 +28,6 @@ namespace In2code\In2publishCore\Domain\Factory;
  */
 
 use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
-use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
@@ -162,6 +160,7 @@ class FolderRecordFactory
      * I only work with drivers so i don't "accidentally" index files...
      *
      * @param string|null $identifier
+     *
      * @return RecordInterface
      */
     public function makeInstance($identifier): RecordInterface
@@ -239,6 +238,7 @@ class FolderRecordFactory
      *  Prefer $this->localDriver over $foreignDriver where applicable, because it will be faster.
      *
      * @param RecordInterface[] $files
+     *
      * @return RecordInterface[]
      */
     protected function filterFileRecords(array $files): array
@@ -348,6 +348,7 @@ class FolderRecordFactory
      * so files only existing on disk can be determined by diff-ing against this list
      *
      * @param RecordInterface[] $files
+     *
      * @return array
      */
     protected function buildIndexedIdentifiersList(array $files): array
@@ -388,6 +389,7 @@ class FolderRecordFactory
      *
      * @param array $diskIdentifiers
      * @param array $indices
+     *
      * @return array
      */
     protected function determineIdentifiersOnlyOnDisk(array $diskIdentifiers, array $indices): array
@@ -405,6 +407,7 @@ class FolderRecordFactory
      *
      * @param array $onlyDiskIdentifiers
      * @param RecordInterface[] $files
+     *
      * @return RecordInterface[]
      */
     protected function convertAndAddOnlyDiskIdentifiersToFileRecords(array $onlyDiskIdentifiers, array $files): array
@@ -430,6 +433,7 @@ class FolderRecordFactory
      * The resulting array has the three keys: local, foreign and both. Therefore i know where the files were found.
      *
      * @param string $identifier
+     *
      * @return array
      */
     protected function buildDiskIdentifiersList($identifier): array
@@ -450,6 +454,7 @@ class FolderRecordFactory
     /**
      * @param string $identifier
      * @param DriverInterface $driver
+     *
      * @return array
      */
     protected function getFilesIdentifiersInFolder($identifier, DriverInterface $driver): array
@@ -465,6 +470,7 @@ class FolderRecordFactory
      * Factory method to create Record instances from a list of folder identifier
      *
      * @param string $identifier
+     *
      * @return array
      */
     protected function getSubFolderRecordInstances($identifier): array
@@ -503,6 +509,7 @@ class FolderRecordFactory
     /**
      * @param DriverInterface $driver
      * @param string $identifier
+     *
      * @return array
      */
     protected function getSubFolderIdentifiers(DriverInterface $driver, $identifier): array
@@ -519,6 +526,7 @@ class FolderRecordFactory
      *
      * @param DriverInterface $driver
      * @param string $identifier
+     *
      * @return array
      */
     protected function getFolderInfoByIdentifier(DriverInterface $driver, $identifier): array
@@ -570,6 +578,7 @@ class FolderRecordFactory
      * @param $hashedIdentifier
      * @param RecordInterface[] $files
      * @param string $side
+     *
      * @return array
      * @internal param DatabaseConnection $targetDatabase
      */
@@ -625,6 +634,7 @@ class FolderRecordFactory
      * UID of the foreign record can be overwritten to restore a consistent state.
      *
      * @param RecordInterface[] $files
+     *
      * @return RecordInterface[]
      */
     protected function mergeSysFileByIdentifier(array $files): array
@@ -711,6 +721,7 @@ class FolderRecordFactory
      *
      * @param array $identifierList
      * @param RecordInterface $file
+     *
      * @return bool
      */
     protected function isLocalIndexWithMatchingDuplicateIndexOnForeign(
@@ -755,6 +766,7 @@ class FolderRecordFactory
 
     /**
      * @param array $logData
+     *
      * @return array
      */
     protected function enrichWithForeignDatabaseErrorInformation(array $logData): array
@@ -771,6 +783,7 @@ class FolderRecordFactory
     /**
      * @param int $oldUid
      * @param int $newUid
+     *
      * @return bool
      */
     protected function updateForeignIndex($oldUid, $newUid): bool
@@ -785,6 +798,7 @@ class FolderRecordFactory
     /**
      * @param int $oldUid
      * @param int $newUid
+     *
      * @return bool
      */
     protected function updateForeignReference($oldUid, $newUid): bool
@@ -798,6 +812,7 @@ class FolderRecordFactory
 
     /**
      * @param int $oldUid
+     *
      * @return int
      */
     protected function countForeignReferences($oldUid): int
@@ -823,6 +838,7 @@ class FolderRecordFactory
 
     /**
      * @param int $newUid
+     *
      * @return int
      */
     protected function countForeignIndices($newUid): int
@@ -848,6 +864,7 @@ class FolderRecordFactory
     /**
      * @param DriverInterface $driver
      * @param array $identifierList
+     *
      * @return array
      */
     protected function convertIdentifiers(DriverInterface $driver, array $identifierList): array

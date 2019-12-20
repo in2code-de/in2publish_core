@@ -38,6 +38,7 @@
 
 .in2publish-icon-loop-alt4 {
   @extend .icon-loop-alt4;
+
   &:before {
     font-size: 90px !important;
     color: $apple;
@@ -120,6 +121,7 @@
   .in2publish-stagelisting__item__publish--blocked & {
     right: 1px;
     cursor: not-allowed;
+
     &:before {
       content: "\e60a";
     }

@@ -90,6 +90,7 @@ class UidReservationService
 
     /**
      * @param Connection $databaseConnection
+     *
      * @return string
      */
     protected function determineDatabaseOfConnection(Connection $databaseConnection): string
@@ -122,6 +123,7 @@ class UidReservationService
 
     /**
      * @param int $uid
+     *
      * @return bool
      */
     protected function isUidFree(int $uid): bool
@@ -146,6 +148,7 @@ class UidReservationService
 
     /**
      * @param Connection $databaseConnection
+     *
      * @return int
      */
     protected function fetchSysFileAutoIncrementFromDatabase(Connection $databaseConnection): int

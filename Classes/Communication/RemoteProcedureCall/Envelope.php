@@ -170,6 +170,7 @@ class Envelope
 
     /**
      * @param array $values
+     *
      * @return Envelope
      */
     public static function fromArray(array $values): Envelope

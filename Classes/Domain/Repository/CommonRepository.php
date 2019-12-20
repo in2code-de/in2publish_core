@@ -267,7 +267,7 @@ class CommonRepository extends BaseRepository
         if ($propertyName === 'uid'
             && $record = $this->recordFactory->getCachedRecord($tableName, $propertyValue)
         ) {
-            return $record;
+            return [$record];
         }
         $localProperties = $this->findPropertiesByProperty(
             $this->localDatabase,
@@ -322,7 +322,7 @@ class CommonRepository extends BaseRepository
         if (isset($properties['uid'])
             && $record = $this->recordFactory->getCachedRecord($tableName, $properties['uid'])
         ) {
-            return $record;
+            return [$record];
         }
         $localProperties = $this->findPropertiesByProperties(
             $this->localDatabase,
@@ -506,10 +506,11 @@ class CommonRepository extends BaseRepository
                             // record we log it because it is very very very unlikely for
                             // sys_file_metadata to change their target sys_file entry
                             $this->logger->warning(
-                                'Fixed possibly broken relation by replacing it with another possibly broken relation',
+                                'Identified a sys_file_metadata for a file which has a different UID on foreign.'
+                                . ' The foreign sys_file_metadata will be overwritten and therefore be lost',
                                 [
                                     'table' => $tableName,
-                                    'key (UID)' => $key,
+                                    'key (UID of the local record and the found foreign record)' => $key,
                                     'file_local' => $localProperties[$key]['file'],
                                     'file_foreign' => $foreignProperties[$key]['file'],
                                 ]
@@ -903,20 +904,18 @@ class CommonRepository extends BaseRepository
         // default FlexForm for a single field
         if (array_key_exists('TCEforms', $fieldDefinition)) {
             $flattenedDefinition[$fieldKey] = $fieldDefinition['TCEforms']['config'];
-        } else {
+        } elseif (array_key_exists('el', $fieldDefinition)) {
             // advanced FlexForm for a single field with n subfields
-            if (array_key_exists('el', $fieldDefinition)) {
-                $fieldDefinition = $fieldDefinition['el'];
-                foreach (array_keys($fieldDefinition) as $subKey) {
-                    if (array_key_exists('el', $fieldDefinition[$subKey])) {
-                        foreach ($fieldDefinition[$subKey]['el'] as $subFieldKey => $subFieldDefinition) {
-                            $newFieldKey = $fieldKey . '.[ANY].' . $subKey . '.' . $subFieldKey;
-                            $flattenedDefinition = $this->flattenFieldFlexForm(
-                                $flattenedDefinition,
-                                $subFieldDefinition,
-                                $newFieldKey
-                            );
-                        }
+            $fieldDefinition = $fieldDefinition['el'];
+            foreach (array_keys($fieldDefinition) as $subKey) {
+                if (array_key_exists('el', $fieldDefinition[$subKey])) {
+                    foreach ($fieldDefinition[$subKey]['el'] as $subFieldKey => $subFieldDefinition) {
+                        $newFieldKey = $fieldKey . '.[ANY].' . $subKey . '.' . $subFieldKey;
+                        $flattenedDefinition = $this->flattenFieldFlexForm(
+                            $flattenedDefinition,
+                            $subFieldDefinition,
+                            $newFieldKey
+                        );
                     }
                 }
             }
@@ -1105,7 +1104,14 @@ class CommonRepository extends BaseRepository
                 $records = $this->fetchRelatedRecordsBySelect($config, $record, $flexFormData, $exclTables, true);
                 break;
             case 'inline':
-                $records = $this->fetchRelatedRecordsByInline($config, $recTable, $record, $exclTables, $column);
+                $records = $this->fetchRelatedRecordsByInline(
+                    $config,
+                    $recTable,
+                    $record,
+                    $exclTables,
+                    $column,
+                    $flexFormData
+                );
                 break;
             case 'group':
                 $records = $this->fetchRelatedRecordsByGroup($config, $record, $column, $exclTables, $flexFormData);
@@ -1620,6 +1626,7 @@ class CommonRepository extends BaseRepository
      * @param RecordInterface $record
      * @param array $excludedTableNames
      * @param string $propertyName
+     * @param string|null $flexFormData
      *
      * @return array
      */
@@ -1628,7 +1635,8 @@ class CommonRepository extends BaseRepository
         $recordTableName,
         RecordInterface $record,
         array $excludedTableNames,
-        string $propertyName
+        string $propertyName,
+        string $flexFormData = null
     ): array {
         $recordIdentifier = $record->getIdentifier();
         $tableName = $columnConfiguration['foreign_table'];
@@ -1667,11 +1675,15 @@ class CommonRepository extends BaseRepository
 
         if (empty($columnConfiguration['foreign_field'])) {
             $records = [];
-            $localList = $record->getLocalProperty($propertyName);
-            $localList = GeneralUtility::trimExplode(',', $localList, true);
-            $foreignList = $record->getForeignProperty($propertyName);
-            $foreignList = GeneralUtility::trimExplode(',', $foreignList, true);
-            $identifierList = array_unique(array_merge($localList, $foreignList));
+            if (empty($flexFormData)) {
+                $localList = $record->getLocalProperty($propertyName);
+                $localList = GeneralUtility::trimExplode(',', $localList, true);
+                $foreignList = $record->getForeignProperty($propertyName);
+                $foreignList = GeneralUtility::trimExplode(',', $foreignList, true);
+                $identifierList = array_unique(array_merge($localList, $foreignList));
+            } else {
+                $identifierList = GeneralUtility::intExplode(',', $flexFormData);
+            }
             foreach ($identifierList as $uid) {
                 $records[] = $this->findByIdentifier((int)$uid, $tableName);
             }

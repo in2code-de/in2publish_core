@@ -27,9 +27,10 @@ namespace In2code\In2publishCore\Tests\Unit\Log\Processor;
  */
 
 use In2code\In2publishCore\Log\Processor\BackendUserProcessor;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogRecord;
-use TYPO3\CMS\Core\Tests\UnitTestCase;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Log\Processor\BackendUserProcessor
@@ -48,7 +49,7 @@ class BackendUserProcessorTest extends UnitTestCase
 
         // preparation
         $GLOBALS['TYPO3_DB'] = null;
-        $GLOBALS['BE_USER'] = new \TYPO3\CMS\Core\Authentication\BackendUserAuthentication();
+        $GLOBALS['BE_USER'] = new BackendUserAuthentication();
         $GLOBALS['BE_USER']->user = ['uid' => $expectedBeUserUid];
 
         $backendUserProcessor = new BackendUserProcessor();
@@ -65,30 +66,11 @@ class BackendUserProcessorTest extends UnitTestCase
      * @covers ::processLogRecord
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    public function testBackendUserProcessorAddsBackendUserClassToLogEntryDataIfNotBackendUserAuthentication()
-    {
-        // preparation
-        $GLOBALS['BE_USER'] = new \stdClass();
-
-        $backendUserProcessor = new BackendUserProcessor();
-
-        $log = new LogRecord('Foo.Bar', LogLevel::DEBUG, 'baz', []);
-        $log = $backendUserProcessor->processLogRecord($log);
-
-        $this->assertSame(['be_user' => 'stdClass'], $log->getData());
-    }
-
-    /**
-     * @covers ::__construct
-     * @covers ::getBackendUser
-     * @covers ::processLogRecord
-     * @SuppressWarnings("PHPMD.Superglobals")
-     */
     public function testBackendUserProcessorAddsUnkownValueStringToLogEntryIfBackendUserIsKnownButHasNoId()
     {
         // preparation
         $GLOBALS['TYPO3_DB'] = null;
-        $GLOBALS['BE_USER'] = new \TYPO3\CMS\Core\Authentication\BackendUserAuthentication();
+        $GLOBALS['BE_USER'] = new BackendUserAuthentication();
 
         $backendUserProcessor = new BackendUserProcessor();
 

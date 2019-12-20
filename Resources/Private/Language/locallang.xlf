@@ -35,6 +35,9 @@
 			<trans-unit id="record_publishing_failure">
 				<source>One or more errors occurred during publishing. Please check the logs.</source>
 			</trans-unit>
+			<trans-unit id="relation_resolving_errors">
+				<source>One or more errors occurred during relation resolving. Please check the logs.</source>
+			</trans-unit>
 			<trans-unit id="publish_failed">
 				<source>The selected record has been published successfully.</source>
 			</trans-unit>

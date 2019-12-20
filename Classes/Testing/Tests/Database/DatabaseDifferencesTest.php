@@ -193,10 +193,8 @@ class DatabaseDifferencesTest implements TestCaseInterface
                     if (count($subDifferences)) {
                         $differences[$leftKey] = $subDifferences;
                     }
-                } else {
-                    if ($leftValue !== $right[$leftKey]) {
-                        $differences[$leftKey] = $leftValue;
-                    }
+                } elseif ($leftValue !== $right[$leftKey]) {
+                    $differences[$leftKey] = $leftValue;
                 }
             } else {
                 $differences[$leftKey] = $leftValue;

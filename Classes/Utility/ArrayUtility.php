@@ -84,6 +84,7 @@ class ArrayUtility
     /**
      * @param array $array
      * @param string $path
+     *
      * @return mixed
      */
     public static function getValueByPath(array &$array, $path)

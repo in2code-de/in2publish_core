@@ -37,6 +37,7 @@ class FrontendController extends AbstractController
      * Preview action for vertical or horizontal view
      *
      * @param int $identifier
+     *
      * @return void
      */
     public function previewAction($identifier = 1)

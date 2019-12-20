@@ -63,7 +63,7 @@ class Builder
     }
 
     /**
-     * @return static
+     * @return Builder
      */
     public static function start()
     {
@@ -83,6 +83,7 @@ class Builder
      * @param Builder $nodes
      * @param null $default
      * @param array $validators
+     *
      * @return $this
      */
     public function addArray($name, Builder $nodes, $default = null, array $validators = []): self
@@ -96,6 +97,7 @@ class Builder
      * @param Builder $nodes
      * @param null $default
      * @param array $validators
+     *
      * @return $this
      */
     public function addStrictArray($name, Builder $nodes, $default = null, array $validators = []): self
@@ -108,6 +110,7 @@ class Builder
      * @param string $key
      * @param string $default
      * @param array $validators
+     *
      * @return $this
      */
     public function addString($key, $default, array $validators = []): self
@@ -120,6 +123,7 @@ class Builder
      * @param string $key
      * @param string $default
      * @param array $validators
+     *
      * @return $this
      */
     public function addOptionalString($key, $default, array $validators = []): self
@@ -132,6 +136,7 @@ class Builder
      * @param string $key
      * @param int $default
      * @param array $validators
+     *
      * @return $this
      */
     public function addInteger($key, $default, array $validators = []): self
@@ -144,6 +149,7 @@ class Builder
      * @param string $key
      * @param bool $default
      * @param array $validators
+     *
      * @return $this
      */
     public function addBoolean($key, $default, array $validators = []): self
@@ -158,6 +164,7 @@ class Builder
      * @param string|int|bool|array $default
      * @param ValidatorInterface[] $validators
      * @param Builder|null $builder
+     *
      * @return $this
      */
     public function addNode($type, $name, $default = null, $validators = [], Builder $builder = null): self
@@ -175,6 +182,7 @@ class Builder
     /**
      * @param string $keyType
      * @param string $type
+     *
      * @return $this
      */
     public function addGenericScalar($keyType, $type = Node::T_STRING): self
@@ -188,6 +196,7 @@ class Builder
     /**
      * @param string $keyType
      * @param Builder $nodes
+     *
      * @return $this
      */
     public function addGenericArray($keyType, Builder $nodes): self

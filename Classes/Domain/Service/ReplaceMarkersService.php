@@ -44,6 +44,9 @@ use function strstr;
  */
 class ReplaceMarkersService
 {
+    // Also replace optional quotes around the REC_FIELD_ because we will quote the actual value
+    const REC_FIELD_REGEX = '~\'?###REC_FIELD_(.*?)###\'?~';
+
     /**
      * @var Logger
      */
@@ -65,6 +68,7 @@ class ReplaceMarkersService
      *
      * @param RecordInterface $record
      * @param string $string
+     *
      * @return string
      */
     public function replaceMarkers(RecordInterface $record, $string): string
@@ -82,13 +86,14 @@ class ReplaceMarkersService
      *
      * @param RecordInterface $record
      * @param string $string
+     *
      * @return string
      */
     protected function replaceRecFieldMarker(RecordInterface $record, $string): string
     {
         if (strstr($string, '###REC_FIELD_')) {
             $string = preg_replace_callback(
-                '~###REC_FIELD_(.*?)###~',
+                self::REC_FIELD_REGEX,
                 function ($matches) use ($record) {
                     $propertyName = $matches[1];
                     $propertyValue = $record->getLocalProperty($propertyName);
@@ -108,6 +113,7 @@ class ReplaceMarkersService
      *
      * @param RecordInterface $record
      * @param $string
+     *
      * @return mixed
      */
     protected function replaceGeneralMarkers(RecordInterface $record, $string)
@@ -151,6 +157,7 @@ class ReplaceMarkersService
      * Log if markers are not substituted or if there are errors
      *
      * @param $string
+     *
      * @return void
      */
     protected function checkForMarkersAndErrors($string)
@@ -182,6 +189,7 @@ class ReplaceMarkersService
 
     /**
      * @param RecordInterface $record
+     *
      * @return mixed
      */
     protected function getCurrentRecordPageId(RecordInterface $record)

@@ -75,6 +75,7 @@ class RequiredTablesDataProvider implements SingletonInterface
 
     /**
      * @param array $tables
+     *
      * @return array
      */
     protected function overruleTables(array $tables): array

@@ -94,6 +94,7 @@ class EnvelopeDispatcher
 
     /**
      * @param Envelope $envelope
+     *
      * @return bool
      */
     public function dispatch(Envelope $envelope): bool
@@ -109,6 +110,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return array
      */
     protected function folderExists(array $request): array
@@ -150,6 +152,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return array
      */
     protected function getPermissions(array $request): array
@@ -160,6 +163,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return array
      */
     protected function getFoldersInFolder(array $request): array
@@ -172,6 +176,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return array
      */
     protected function fileExists(array $request): array
@@ -219,6 +224,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return array
      */
     protected function getFilesInFolder(array $request): array
@@ -240,6 +246,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return array
      */
     protected function getFileInfoByIdentifier(array $request): array
@@ -252,6 +259,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return array
      */
     protected function hash(array $request): array
@@ -264,6 +272,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return mixed
      */
     protected function createFolder(array $request)
@@ -276,6 +285,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return mixed
      */
     protected function deleteFolder(array $request)
@@ -288,6 +298,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return mixed
      */
     protected function deleteFile(array $request)
@@ -303,6 +314,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return mixed
      */
     protected function addFile(array $request)
@@ -315,6 +327,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return mixed
      */
     protected function replaceFile(array $request)
@@ -327,6 +340,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return mixed
      */
     protected function renameFile(array $request)
@@ -339,6 +353,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return mixed
      */
     protected function getPublicUrl(array $request)
@@ -352,6 +367,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return array
      */
     protected function batchPrefetchFiles(array $request): array
@@ -377,6 +393,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return string
      */
     protected function moveFileWithinStorage(array $request): string
@@ -399,6 +416,7 @@ class EnvelopeDispatcher
 
     /**
      * @param ResourceStorage $storage
+     *
      * @return DriverInterface
      */
     protected function getStorageDriver(ResourceStorage $storage): DriverInterface
@@ -413,6 +431,7 @@ class EnvelopeDispatcher
      * @param $driver
      * @param $identifier
      * @param $storage
+     *
      * @return File|null|object
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
@@ -432,6 +451,7 @@ class EnvelopeDispatcher
     /**
      * @param DriverInterface $driver
      * @param array $identifierList
+     *
      * @return array
      */
     protected function convertIdentifiers(DriverInterface $driver, array $identifierList): array
@@ -449,6 +469,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return ResourceStorage
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
@@ -462,6 +483,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return array
      */
     public function getStorageHasFolder(array $request): array
@@ -484,6 +506,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return array
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
@@ -497,6 +520,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return array
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
@@ -510,6 +534,7 @@ class EnvelopeDispatcher
 
     /**
      * @param array $request
+     *
      * @return array
      *
      * @SuppressWarnings(PHPMD.StaticAccess)

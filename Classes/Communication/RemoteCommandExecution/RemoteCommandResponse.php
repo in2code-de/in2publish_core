@@ -142,6 +142,7 @@ class RemoteCommandResponse
 
     /**
      * @param array|string $response
+     *
      * @return array
      */
     protected function convertAndSanitizeResponse($response): array

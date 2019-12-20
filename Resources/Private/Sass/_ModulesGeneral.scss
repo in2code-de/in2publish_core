@@ -22,6 +22,7 @@ div.typo3-fullDoc {
   &:after {
     clear: both;
   }
+
   &:before,
   &:after {
     content: "";
@@ -60,6 +61,7 @@ div.typo3-fullDoc {
   legend {
     color: $white;
   }
+
   select {
     color: $tundora;
   }
@@ -86,6 +88,7 @@ div.typo3-fullDoc {
 
 .in2publish-module > section {
   margin: 15px 0;
+
   > h3 {
     margin-bottom: 10px;
   }
@@ -129,6 +132,7 @@ a.in2publish-notextdecoration {
   width: 50%;
   float: left;
   text-align: center;
+
   img {
     width: 90px;
     height: auto;
@@ -163,6 +167,7 @@ a.in2publish-notextdecoration {
 
   .in2publish-stagelisting__item--deleted & {
     background-color: $appleblossom;
+
     .in2publish-icon-folder {
       @extend .icon-folder-minus;
     }
@@ -171,10 +176,12 @@ a.in2publish-notextdecoration {
       @extend .icon-file-broken;
     }
   }
+
   .in2publish-stagelisting__item--moved-and-changed &,
   .in2publish-stagelisting__item--changed & {
     background-color: $goldentainoi;
     color: $scorpion;
+
     .in2publish-icon-folder {
       @extend .icon-folder-open;
     }
@@ -296,7 +303,7 @@ a.in2publish-notextdecoration {
   width: 50%;
   float: left;
   line-height: 30px;
-  padding: 0px;
+  padding: 0;
 
   &--full {
     width: 100%;
@@ -319,6 +326,7 @@ a.in2publish-notextdecoration {
 
   > a {
     margin-right: 20px;
+
     &:last-child {
       margin-right: 0;
     }
@@ -358,8 +366,10 @@ a.in2publish-notextdecoration {
       background-color: $salomie;
       color: $tundora;
     }
+
     &__list {
       margin: 12px 0 15px;
+
       li {
         font-size: 14px;
       }
@@ -376,6 +386,7 @@ a.in2publish-notextdecoration {
   margin: 20px 0;
   color: $silverchalice;
   font-size: 80%;
+
   .in2publish-logo {
     float: right;
     width: 160px;

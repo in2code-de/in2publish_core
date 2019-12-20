@@ -49,7 +49,6 @@ use function array_unique;
 use function count;
 use function dirname;
 use function in_array;
-use function sprintf;
 use function strpos;
 use function substr;
 
@@ -190,6 +189,7 @@ class IndexingFolderRecordFactory
      * @param RecordInterface[] $records
      * @param array $files
      * @param string $side
+     *
      * @return array
      */
     protected function updateFilesByMovedRecords(array $records, array $files, $side): array
@@ -254,6 +254,7 @@ class IndexingFolderRecordFactory
      * @param array $localFiles
      * @param array $remoteFiles
      * @param RecordInterface[] $records
+     *
      * @return array
      */
     public function filterRecords(array $localFiles, array $remoteFiles, array $records): array
@@ -332,6 +333,7 @@ class IndexingFolderRecordFactory
      * @param array $files
      * @param string $folderIdentifier
      * @param string $side
+     *
      * @throws TooManyFilesException
      */
     protected function checkFileCount(array $files, $folderIdentifier, $side)

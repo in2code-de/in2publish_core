@@ -163,6 +163,7 @@ class FileIndexFactory
      * @param string $identifier
      * @param $side
      * @param int $uid Predefined UID
+     *
      * @return array
      * @see \TYPO3\CMS\Core\Resource\Index\Indexer::gatherFileInformationArray
      *
@@ -245,6 +246,7 @@ class FileIndexFactory
      * Adapted copy of
      *
      * @param array $fileInfo
+     *
      * @return int
      * @see \TYPO3\CMS\Core\Resource\Index\Indexer::getFileType
      *
@@ -278,6 +280,7 @@ class FileIndexFactory
     /**
      * @param string $identifier
      * @param string $side
+     *
      * @return array
      */
     protected function getDriverSpecificFileInfo($identifier, $side): array

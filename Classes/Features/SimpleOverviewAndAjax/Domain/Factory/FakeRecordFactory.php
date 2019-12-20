@@ -84,6 +84,7 @@ class FakeRecordFactory
      * Build a record tree with a minimum information (try to keep queries reduced)
      *
      * @param int $identifier
+     *
      * @return Record
      */
     public function buildFromStartPage($identifier): Record
@@ -98,6 +99,7 @@ class FakeRecordFactory
      *
      * @param Record $record
      * @param int $currentDepth
+     *
      * @return void
      */
     protected function addRelatedRecords(Record $record, $currentDepth = 0)
@@ -141,6 +143,7 @@ class FakeRecordFactory
      * Try to get state for given record
      *
      * @param Record $record
+     *
      * @return void
      */
     protected function guessState(Record $record)
@@ -163,6 +166,7 @@ class FakeRecordFactory
      * Check if page is new
      *
      * @param Record $record
+     *
      * @return bool
      */
     protected function pageIsNew(Record $record): bool
@@ -184,6 +188,7 @@ class FakeRecordFactory
      * Get all page identifiers from sub pages
      *
      * @param int $identifier
+     *
      * @return array
      */
     protected function getChildrenPages($identifier): array
@@ -203,6 +208,7 @@ class FakeRecordFactory
      * @param int $pageIdentifier
      * @param string $databaseName
      * @param string $tableName
+     *
      * @return bool
      */
     protected function isRecordDeleted($pageIdentifier, $databaseName, $tableName = self::PAGE_TABLE_NAME): bool
@@ -219,6 +225,7 @@ class FakeRecordFactory
      * Compare sorting of a page on both sides. Check if it's different
      *
      * @param int $pageIdentifier
+     *
      * @return bool
      */
     protected function pageHasMoved($pageIdentifier): bool
@@ -237,6 +244,7 @@ class FakeRecordFactory
      * Check if this page should be related or not
      *
      * @param int $pageIdentifier
+     *
      * @return bool
      */
     protected function shouldSkipChildrenPage($pageIdentifier): bool
@@ -249,6 +257,7 @@ class FakeRecordFactory
      * Check if page is deleted on local only
      *
      * @param int $pageIdentifier
+     *
      * @return bool
      */
     protected function pageIsDeletedOnLocalOnly($pageIdentifier): bool
@@ -265,6 +274,7 @@ class FakeRecordFactory
      * Compare rows of a page on both sides. Check if it's different
      *
      * @param int $pageIdentifier
+     *
      * @return bool
      */
     protected function pageHasChanged($pageIdentifier): bool
@@ -285,6 +295,7 @@ class FakeRecordFactory
      * Compare rows of any records on a page. Check if they are different
      *
      * @param Record $record
+     *
      * @return bool
      */
     protected function pageContentRecordsHasChanged(Record $record): bool
@@ -308,6 +319,7 @@ class FakeRecordFactory
      * @param array $arrayLocal
      * @param array $arrayForeign
      * @param string $table
+     *
      * @return bool
      */
     protected function areDifferentArrays(array $arrayLocal, array $arrayForeign, $table): bool
@@ -351,6 +363,7 @@ class FakeRecordFactory
      * Sort rows array by sorting field
      *
      * @param array $rows
+     *
      * @return array
      */
     protected function sortRowsBySorting($rows): array
@@ -369,6 +382,7 @@ class FakeRecordFactory
      *
      * @param array $properties
      * @param string $table
+     *
      * @return array
      */
     protected function removeIgnoreFieldsFromArray(array $properties, $table): array
@@ -385,6 +399,7 @@ class FakeRecordFactory
      *
      * @param int $identifier
      * @param string $tableName
+     *
      * @return bool
      */
     protected function isRecordDeletedOnLocalAndNonExistingOnForeign(
@@ -405,6 +420,7 @@ class FakeRecordFactory
      *
      * @param int $identifier
      * @param string $tableName
+     *
      * @return bool
      */
     protected function isRecordDeletedOnBothInstances($identifier, $tableName): bool

@@ -89,8 +89,6 @@ call_user_func(
 
             /********************************** register tools for the tools mod **********************************/
             if ($configContainer->get('module.m4') !== false) {
-                $letterbox = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox::class);
-
                 $toolsRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Tools\ToolsRegistry::class);
                 $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.index', '', 'Tools', 'index');
                 $toolsRegistry->addTool('LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test', 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test.description', 'Tools', 'test');

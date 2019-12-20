@@ -112,6 +112,7 @@ class CaseSensitivityTest implements TestCaseInterface
      * @param array $storages
      * @param int $key
      * @param string $side
+     *
      * @return array
      */
     protected function getConfiguration(array $storages, int $key, string $side): array

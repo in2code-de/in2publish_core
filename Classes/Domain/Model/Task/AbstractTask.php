@@ -128,6 +128,7 @@ abstract class AbstractTask
 
     /**
      * @param string $path
+     *
      * @return mixed
      */
     final public function getConfiguration($path = '')
@@ -148,6 +149,7 @@ abstract class AbstractTask
 
     /**
      * @param DateTime $creationDate
+     *
      * @return AbstractTask
      */
     final public function setCreationDate(DateTime $creationDate): AbstractTask
@@ -177,6 +179,7 @@ abstract class AbstractTask
 
     /**
      * @param DateTime $executionBegin
+     *
      * @return AbstractTask
      */
     final public function setExecutionBegin(DateTime $executionBegin = null): AbstractTask
@@ -206,6 +209,7 @@ abstract class AbstractTask
 
     /**
      * @param DateTime $executionEnd
+     *
      * @return AbstractTask
      */
     final public function setExecutionEnd(DateTime $executionEnd = null): AbstractTask
@@ -224,6 +228,7 @@ abstract class AbstractTask
 
     /**
      * @param string $messages
+     *
      * @return AbstractTask
      */
     final public function setMessages($messages): AbstractTask
@@ -234,6 +239,7 @@ abstract class AbstractTask
 
     /**
      * @param string $string
+     *
      * @return void
      */
     final public function addMessage($string)

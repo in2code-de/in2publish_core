@@ -60,6 +60,7 @@ class GroupProcessor extends AbstractProcessor
      */
     protected $required = [
         'the internal type determines the relation target' => self::INTERNAL_TYPE,
+        'MM_opposite_field is set for the foreign side of relations, which must not be resolved' => self::MM_OPPOSITE_FIELD,
     ];
 
     /**
@@ -73,11 +74,11 @@ class GroupProcessor extends AbstractProcessor
         self::MM_MATCH_FIELDS,
         self::MM_TABLE_WHERE,
         self::UPLOAD_FOLDER,
-        self::MM_OPPOSITE_FIELD,
     ];
 
     /**
      * @param array $config
+     *
      * @return bool
      */
     public function canPreProcess(array $config): bool
@@ -100,6 +101,7 @@ class GroupProcessor extends AbstractProcessor
 
     /**
      * @param array $config
+     *
      * @return bool
      */
     protected function canPreProcessInternalTypeFile(array $config): bool
@@ -114,6 +116,7 @@ class GroupProcessor extends AbstractProcessor
 
     /**
      * @param array $config
+     *
      * @return bool
      */
     protected function canPreProcessInternalTypeDb(array $config): bool
@@ -131,6 +134,7 @@ class GroupProcessor extends AbstractProcessor
 
     /**
      * @param string $table
+     *
      * @return bool
      */
     public function canPreProcessInternalTypeDbTable(string $table): bool
@@ -145,6 +149,7 @@ class GroupProcessor extends AbstractProcessor
 
     /**
      * @param string $allowed
+     *
      * @return bool
      */
     protected function canPreProcessInternalTypeDbAllowed(string $allowed): bool

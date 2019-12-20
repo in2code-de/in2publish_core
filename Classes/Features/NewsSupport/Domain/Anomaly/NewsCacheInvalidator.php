@@ -66,6 +66,7 @@ class NewsCacheInvalidator implements SingletonInterface
     /**
      * @param string $tableName
      * @param RecordInterface $record
+     *
      * @return void
      */
     public function registerClearCacheTasks($tableName, RecordInterface $record)
@@ -78,6 +79,7 @@ class NewsCacheInvalidator implements SingletonInterface
      *
      * @param string $tableName
      * @param RecordInterface $record
+     *
      * @return void
      */
     protected function flushNewsCache($tableName, RecordInterface $record)

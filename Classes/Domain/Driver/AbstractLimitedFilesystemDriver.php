@@ -51,6 +51,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @param string $folderIdentifier
      * @param string $newName
+     *
      * @return array A map of old to new file identifiers of all affected resources
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -66,6 +67,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      * @param string $folderIdentifier
      * @param bool $recursive
      * @param array $filterCallbacks callbacks for filtering the items
+     *
      * @return int Number of files in folder
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -81,6 +83,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      * @param string $folderIdentifier
      * @param bool $recursive
      * @param array $fnFc callbacks for filtering the items
+     *
      * @return int Number of folders in folder
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -95,6 +98,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @param string $folderName The name of the target folder
      * @param string $folderIdentifier
+     *
      * @return string folder identifier
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -109,6 +113,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @param string $fileName
      * @param string $folderIdentifier
+     *
      * @return string file identifier
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -124,6 +129,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      * buffer before. Will be taken care of by the Storage.
      *
      * @param string $identifier
+     *
      * @return void
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -144,6 +150,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @param string $folderIdentifier
      * @param string $identifier identifier to be checked against $folderIdentifier
+     *
      * @return bool TRUE if $content is within or matches $folderIdentifier
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -160,6 +167,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      * of processing resources and money) for large files.
      *
      * @param string $fileIdentifier
+     *
      * @return string The file contents
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -174,6 +182,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @param string $fileIdentifier
      * @param string $contents
+     *
      * @return int The number of bytes written to the file
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -188,6 +197,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @param string $fileName
      * @param string $folderIdentifier
+     *
      * @return bool
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -202,6 +212,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @param string $folderName
      * @param string $folderIdentifier
+     *
      * @return bool
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -220,6 +231,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *                       operations. This might speed up things, e.g. by using
      *                       a cached local version. Never modify the file if you
      *                       have set this flag!
+     *
      * @return string The path to the file on the local disk
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -235,6 +247,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      * @param string $sourceIdentifier
      * @param string $targetIdentifier
      * @param string $newFolderName
+     *
      * @return array All files which are affected, map of old => new file identifiers
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -250,6 +263,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      * @param string $sourceIdentifier
      * @param string $targetIdentifier
      * @param string $newFolderName
+     *
      * @return bool
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -264,6 +278,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @param string $fileName
      * @param string $parentIdentifier
+     *
      * @return string
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -281,6 +296,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      * @param string $fileIdentifier
      * @param string $targetIdentifier
      * @param string $fileName
+     *
      * @return string the Identifier of the new file
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -294,6 +310,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      * Checks if a folder contains files and (if supported) other folders.
      *
      * @param string $folderIdentifier
+     *
      * @return bool TRUE if there are no files and folders within $folder
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -307,6 +324,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      * Not required
      *
      * @param int $capabilities
+     *
      * @return int
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -332,6 +350,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      * Not required
      *
      * @param int $capability
+     *
      * @return bool
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)

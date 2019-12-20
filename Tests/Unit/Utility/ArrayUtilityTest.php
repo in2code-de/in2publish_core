@@ -27,7 +27,7 @@ namespace In2code\In2publishCore\Tests\Unit\Utility;
  */
 
 use In2code\In2publishCore\Utility\ArrayUtility;
-use TYPO3\CMS\Core\Tests\UnitTestCase;
+use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Utility\ArrayUtility
@@ -54,6 +54,7 @@ class ArrayUtilityTest extends UnitTestCase
      * @param array $array
      * @param array $keysToRemove
      * @param int $countArray count() of manipulated array
+     *
      * @return void
      */
     public function testRemoveFromArrayByKeyRemovesAllEntriesWithTheGivenKeys(

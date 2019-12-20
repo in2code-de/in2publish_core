@@ -63,6 +63,7 @@ class RpcCommandController extends AbstractCommandController
 
     /**
      * @param int $uid Envelope identifier
+     *
      * @internal
      */
     public function executeCommand(int $uid = 0)

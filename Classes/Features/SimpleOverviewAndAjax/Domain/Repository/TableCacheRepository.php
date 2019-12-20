@@ -74,6 +74,7 @@ class TableCacheRepository implements SingletonInterface
      * @param string $tableName
      * @param int $uniqueIdentifier
      * @param string $databaseName
+     *
      * @return array
      */
     public function findByUid($tableName, $uniqueIdentifier, $databaseName = 'local'): array
@@ -82,7 +83,7 @@ class TableCacheRepository implements SingletonInterface
         if (!empty($cache[$tableName][$uniqueIdentifier])) {
             return $cache[$tableName][$uniqueIdentifier];
         }
-        $connection = DatabaseUtility::buildDatabaseConnectionForSide($databaseName);
+        $connection = $this->getConnection($databaseName);
         if ($connection instanceof Connection) {
             $query = $connection->createQueryBuilder();
             $query->getRestrictions()->removeAll();
@@ -108,11 +109,12 @@ class TableCacheRepository implements SingletonInterface
      * @param string $tableName
      * @param int $pageIdentifier
      * @param string $databaseName
+     *
      * @return array
      */
     public function findByPid($tableName, $pageIdentifier, $databaseName = 'local'): array
     {
-        $connection = DatabaseUtility::buildDatabaseConnectionForSide($databaseName);
+        $connection = $this->getConnection($databaseName);
         if ($connection instanceof Connection) {
             $query = $connection->createQueryBuilder();
             $query->getRestrictions()->removeAll();
@@ -136,6 +138,7 @@ class TableCacheRepository implements SingletonInterface
      * @param string $tableName
      * @param array $rows
      * @param string $databaseName
+     *
      * @return void
      */
     protected function cacheRecords($tableName, array $rows, $databaseName = 'local')
@@ -152,6 +155,7 @@ class TableCacheRepository implements SingletonInterface
      * @param int $uid
      * @param array $properties
      * @param string $databaseName
+     *
      * @return void
      */
     protected function cacheSingleRecord($tableName, $uid, array $properties, $databaseName = 'local')
@@ -165,6 +169,7 @@ class TableCacheRepository implements SingletonInterface
 
     /**
      * @param string $databaseName
+     *
      * @return array
      */
     protected function getCache($databaseName = 'local'): array
@@ -174,5 +179,15 @@ class TableCacheRepository implements SingletonInterface
             $cache = $this->foreignCache;
         }
         return $cache;
+    }
+
+    /**
+     * @param $databaseName
+     *
+     * @return Connection|null
+     */
+    protected function getConnection($databaseName)
+    {
+        return DatabaseUtility::buildDatabaseConnectionForSide($databaseName);
     }
 }

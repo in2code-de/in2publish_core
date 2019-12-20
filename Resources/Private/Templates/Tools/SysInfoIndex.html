@@ -8,7 +8,7 @@
 		<f:form action="sysInfoUpload" enctype="multipart/form-data" method="post">
 			<div class="form-group">
 				<label for="json_file"><f:translate id="system_info.upload.file">system_info.upload.file</f:translate></label>
-				<f:form.upload class="form-control" name="jsonFile" />
+				<f:form.upload id="json_file" class="form-control" name="jsonFile" />
 			</div>
 			<f:form.submit class="btn btn-default" value="{system_info.upload.upload -> f:translate(id:'system_info.upload.upload')}" />
 		</f:form>
