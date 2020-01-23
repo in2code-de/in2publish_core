@@ -1,6 +1,8 @@
 #
 #    Example Configuration for in2publish on local
 #
+#    Fields annotated with "@user" can be overridden using PageTS or UserTS
+#
 
 ---
 
@@ -117,13 +119,16 @@ factory:
 
   # [Performance]
   # depth of pages to fetch in hierarchy
+  # @user
   maximumPageRecursion: 2
 
   # maximum number of relations in one chain
+  # @user
   maximumContentRecursion: 6
 
   # maximum number of instance creation recursion.
   # Minimum: maximumPageRecursion + maximumContentRecursion. Will be ignored if lower.
+  # @user
   maximumOverallRecursion: 8
 
   # Resolve properties of records (and pages) which target records from "pages" table
@@ -134,6 +139,7 @@ factory:
   # Overview output will be build mainly from information of the local system. Status will be guessed by simple queries.
   # Details are available through an AJAX request and comparison with the foreign system.
   # Warning: Overview does not include everything (e.g. file records) and is not as robust as on default mode
+  # @user
   simpleOverviewAndAjax: FALSE
 
   # THIS OPTION COMES WITHOUT ANY WARRANTY. USE AT YOUR OWN RISK.
@@ -221,16 +227,19 @@ factory:
     # identifier (path in the storage), storage, size, name (filename) and uid. If you have more than 150 files in a
     # folder and it is deeply nested the information will grow very quick and will eventually exceed the field length
     # and lead to exceptions and may leave your instance in an unusable state.
+    # @user
     folderFileLimit: 150
 
 
 # Set domain names for file preview without leading protocol (e.g. www.domain.org)
+# @user
 filePreviewDomainName:
   local: stage.publishing.localhost.de
   foreign: prod.publishing.localhost.de
 
 
 # Manipulate view
+# @user
 view:
   # Backend module Publish records
   records:
@@ -294,6 +303,7 @@ module:
 
 
 # Debug settings
+# @user
 debug:
 
   # if set to TRUE, parentRecord will not be set for records
