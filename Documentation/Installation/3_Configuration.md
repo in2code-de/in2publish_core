@@ -106,4 +106,24 @@ Here is an example to disable the filter buttons for the publish overview module
 
 ---
 
+**Following settings can be overridden by PageTS and UserTS:**
+   
+ * Debug Settings (debug.*)
+ * Factory recursion settigns (factory.*recursion)
+ * Simple Overview and Ajax (factory.simpleOverviewAndAjax)
+ * Publish Files Module folder file limit (factory.fal.folderFileLimit)
+ * File Preview Domain (Usefull in PageTS) (filePreviewDomainName)
+ * View a) filter buttons b) breadcrumb c) titleField (view.*)
+ 
+**Follwing settings are accessed before any page or user is resolved or must not be changed by UserTS/PageTS:**
+ 
+ * Foreign Instance Settings (foreign.*)
+ * Enabled Modules (module.*)
+ * SSH Connection (sshConnection.*)
+ * ignoreFieldsForDifferenceView
+ * TCA Processors (tca.*)
+ * Tasks (tasks.*)
+ * Backup settings (backup.*)
+ * Factory FAL settings (factory.fal.* except factory.fal.folderFileLimit)
+
 **Continue with [Testing](4_Testing.md)**
