@@ -30,6 +30,9 @@ namespace In2code\In2publishCore\ViewHelpers\Link;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
+use function explode;
+use function is_string;
+use function strpos;
 
 /**
  * Class AbstractRecordActionLinkViewHelper
@@ -66,6 +69,11 @@ abstract class AbstractRecordActionLinkViewHelper extends AbstractTagBasedViewHe
         } else {
             $table = $this->arguments['table'];
             $identifier = $this->arguments['identifier'];
+        }
+
+        // We got a "combined identifier". Take the first number because that is the local uid
+        if (is_string($identifier) && false !== strpos($identifier, ',')) {
+            $identifier = (int)explode(',', $identifier)[0];
         }
 
         $uri = $this->buildUri($table, $identifier);
