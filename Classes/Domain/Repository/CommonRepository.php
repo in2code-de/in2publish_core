@@ -2135,7 +2135,7 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * Get local field for mm tables (and switch name if "MM_opposite_field" is set)
+     * Get local field for mm tables (and switch name if "MM_opposite_field" is set, should be set for categories only)
      *
      * @param array $columnConfiguration
      *
