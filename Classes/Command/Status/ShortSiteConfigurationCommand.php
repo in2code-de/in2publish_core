@@ -57,5 +57,6 @@ class ShortSiteConfigurationCommand extends Command
             ];
         }
         $output->writeln('ShortSiteConfig: ' . base64_encode(json_encode($shortInfo)));
+        return 0;
     }
 }

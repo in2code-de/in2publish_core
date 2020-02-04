@@ -30,5 +30,6 @@ class BackupCommand extends Command
         $logger->notice('Called Backup Table Command for table "' . $tableName . '"');
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         DatabaseUtility::backupTable($localDatabase, $tableName);
+        return 0;
     }
 }

@@ -77,6 +77,7 @@ TXT;
         if (empty($result)) {
             $result[] = 'There was nothing to execute';
         }
-        echo json_encode($result);
+        $output->write(json_encode($result));
+        return 0;
     }
 }

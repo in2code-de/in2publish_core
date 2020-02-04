@@ -49,5 +49,6 @@ class GlobalConfigurationCommand extends Command
             : $GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'];
         $output->writeln('Utf8Filesystem: ' . $utf8fileSystem);
         $output->writeln('adminOnly: ' . ($GLOBALS['TYPO3_CONF_VARS']['BE']['adminOnly'] ?? 'empty'));
+        return 0;
     }
 }

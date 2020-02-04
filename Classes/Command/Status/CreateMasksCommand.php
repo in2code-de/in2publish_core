@@ -46,5 +46,6 @@ class CreateMasksCommand extends Command
     {
         $output->writeln('FileCreateMask: ' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['fileCreateMask']);
         $output->writeln('FolderCreateMask: ' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['folderCreateMask']);
+        return 0;
     }
 }

@@ -46,5 +46,6 @@ class Typo3VersionCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('TYPO3: ' . TYPO3_version);
+        return 0;
     }
 }

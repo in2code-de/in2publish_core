@@ -54,5 +54,6 @@ class AllCommand extends Command
         $commandRegistry->getCommandByIdentifier(DbInitQueryEncodedCommand::IDENTIFIER)->execute($input, $output);
         $commandRegistry->getCommandByIdentifier(ShortSiteConfigurationCommand::IDENTIFIER)->execute($input, $output);
         $commandRegistry->getCommandByIdentifier(DbConfigTestCommand::IDENTIFIER)->execute($input, $output);
+        return 0;
     }
 }

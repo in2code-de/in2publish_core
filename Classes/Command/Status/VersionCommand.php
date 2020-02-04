@@ -46,5 +46,6 @@ class VersionCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('Version: ' . ExtensionUtility::getExtensionVersion('in2publish_core'));
+        return 0;
     }
 }
