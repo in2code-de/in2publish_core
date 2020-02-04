@@ -148,7 +148,7 @@ class RecordController extends AbstractController
      */
     public function publishRecordAction($identifier, $returnUrl = null)
     {
-        $this->logger->notice('publishing record in ' . $this->request->getPluginName(), ['identifier' => $identifier]);
+        $this->logger->info('publishing record in ' . $this->request->getPluginName(), ['identifier' => $identifier]);
         $this->publishRecord($identifier, ['pages']);
         if ($returnUrl !== null) {
             while (strpos($returnUrl, '/') === false || strpos($returnUrl, 'typo3') === false) {
