@@ -137,7 +137,7 @@ abstract class AbstractController extends ActionController
         $response = $dispatcher->dispatch($request);
 
         if ($response->isSuccessful()) {
-            $this->logger->notice('Task execution results', ['output' => $response->getOutput()]);
+            $this->logger->info('Task execution results', ['output' => $response->getOutput()]);
         } else {
             $this->logger->error(
                 'Task execution failed',
