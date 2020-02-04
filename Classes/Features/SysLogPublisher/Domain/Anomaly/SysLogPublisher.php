@@ -108,7 +108,7 @@ class SysLogPublisher
             $sysLogRow = $this->getLastLocalSysLogProperties($record, ['uid']);
             if (!empty($sysLogRow)) {
                 $this->foreignDatabase->insert($this->sysLogTableName, $sysLogRow);
-                $this->logger->notice(
+                $this->logger->info(
                     'sys_log table automatically published',
                     ['tableName' => $tableName, 'identifier' => $record->getIdentifier()]
                 );
