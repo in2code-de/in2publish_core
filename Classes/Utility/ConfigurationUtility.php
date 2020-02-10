@@ -53,6 +53,9 @@ class ConfigurationUtility
         }
 
         if (array_key_exists('definition', $additional)) {
+            if (!is_array($additional['definition'])) {
+                return $original;
+            }
             foreach ($additional['definition'] as $key => $value) {
                 unset($additional['definition'][$key]);
                 $additional['definition']['0' . $key] = $value;
