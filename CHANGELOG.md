@@ -1,5 +1,16 @@
 # In2publish Core Change Log
 
+8.4.5:
+
+- [META] Set the EM conf version number to 8.4.5
+- [BUGFIX] Prevent empty config keys to result in config merge conflicts
+- [DOCS] List options which can be overridden by Page/UserTS
+- [DOCS] Add detailed information about user TS / page TS config options
+- [BUGFIX] Identify and process combined identifier in AbstractRecordActionLinkVH
+- [BUGFIX] Allow relations to sys_catgory despite having MM_opposite_field
+- [DOCS] Annotate config options that can be overridden with PageTS/UserTS
+- [RELEASE] Version 8.4.4 with file publishing fix (group preprocessor)
+
 8.4.4:
 
 - [META] Set the EM conf version number to 8.4.4
