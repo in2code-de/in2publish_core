@@ -10,6 +10,7 @@ use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Tests\UnitTester;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
+use function uniqid;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Domain\Repository\CommonRepository
@@ -117,5 +118,55 @@ class CommonRepositoryTest extends Unit
         $this->assertSame('sys_file', $file->getTableName());
         $this->assertSame(44, $file->getIdentifier());
         $this->assertSame('FooBar.file', $file->getLocalProperty('name'));
+    }
+
+    /**
+     * @covers ::findByIdentifier
+     * @covers ::findPropertiesByProperty
+     * @covers ::enrichRecordWithRelatedRecords
+     * @covers ::fetchRelatedRecordsBySelect
+     * @covers ::fetchRelatedRecordsByInline
+     *
+     * @ticket https://projekte.in2code.de/issues/38658
+     */
+    public function testRelationsToCategoriesAreAlwaysResolved()
+    {
+        $canary = uniqid();
+        $this->tester->haveInDatabase('pages', ['uid' => 5, 'categories' => 1]);
+        $this->tester->haveInDatabase('sys_category', ['uid' => 2, 'items' => 1, 'title' => $canary]);
+        $this->tester->haveInDatabase(
+            'sys_category_record_mm',
+            [
+                'uid_local' => 2,
+                'uid_foreign' => 5,
+                'tablenames' => 'pages',
+                'fieldname' => 'categories',
+            ]
+        );
+
+        $commonRepository = CommonRepository::getDefaultInstance();
+        $record = $commonRepository->findByIdentifier(5, 'pages');
+
+        $this->assertSame('pages', $record->getTableName());
+        $this->assertSame(5, $record->getIdentifier());
+
+        $relatedReferences = $record->getRelatedRecords();
+        $this->assertArrayHasKey('sys_category_record_mm', $relatedReferences);
+
+        $mmRecords = $relatedReferences['sys_category_record_mm'];
+        $this->assertCount(1, $mmRecords);
+        $this->assertArrayHasKey('2,5', $mmRecords);
+
+        $mmRecord = $mmRecords['2,5'];
+        $relatedCategory = $mmRecord->getRelatedRecords();
+        $this->assertArrayHasKey('sys_category', $relatedCategory);
+
+        $categories = $relatedCategory['sys_category'];
+        $this->assertArrayHasKey(2, $categories);
+
+        $category = $categories[2];
+        $this->assertSame('sys_category', $category->getTableName());
+        $this->assertSame(2, $category->getIdentifier());
+        $this->assertSame($canary, $category->getLocalProperty('title'));
     }
 }
