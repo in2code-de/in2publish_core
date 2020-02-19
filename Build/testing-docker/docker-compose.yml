@@ -59,7 +59,9 @@ services:
       - ${HOST_HOME}:${HOST_HOME}
       - /etc/passwd:/etc/passwd:ro
       - /etc/group:/etc/group:ro
-    working_dir: ${ROOT_DIR}/.Build
+    working_dir: ${ROOT_DIR}/
+    env_file:
+      - .env
     command: >
       /bin/sh -c "
         if [ ${SCRIPT_VERBOSE} -eq 1 ]; then
@@ -68,10 +70,10 @@ services:
         php -v | grep '^PHP'
         if [ ${PHP_XDEBUG_ON} -eq 0 ]; then
           php -n -c /etc/php/cli-no-xdebug/php.ini \
-            bin/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/UnitTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
+            .Build/bin/codecept run unit;
         else
           DOCKER_HOST=`route -n | awk '/^0.0.0.0/ { print $$2 }'`
           XDEBUG_CONFIG=\"remote_port=${PHP_XDEBUG_PORT} remote_enable=1 remote_host=$${DOCKER_HOST}\" \
-            bin/phpunit -c vendor/typo3/testing-framework/Resources/Core/Build/UnitTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
+            .Build/bin/codecept run unit;
         fi
       "
