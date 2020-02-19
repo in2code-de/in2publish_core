@@ -376,6 +376,7 @@ PHP;
             Bootstrap::initializeBackendRouter();
             $testbase->loadExtensionTables();
             //            $testbase->createDatabaseStructure();
+            $GLOBALS['TYPO3_CONF_VARS']['LOG'] = [];
         }
     }
 
