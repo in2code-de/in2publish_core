@@ -34,6 +34,18 @@
 				<source>One or more options are not configured correctly.</source>
 			</trans-unit>
 
+			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ForeignConfigurationFormatTest -->
+
+			<trans-unit id="configuration.foreign_format_okay">
+				<source>The foreign configuration file is well formatted and holds all required options.</source>
+			</trans-unit>
+			<trans-unit id="configuration.foreign_format_test_exec_error">
+				<source>The configuration test on foreign could not be executed.</source>
+			</trans-unit>
+			<trans-unit id="configuration.foreign_format_error">
+				<source>One or more options on foreign are not configured correctly.</source>
+			</trans-unit>
+
 			<!-- \In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseAccessTest
 				 && \In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest -->
 
