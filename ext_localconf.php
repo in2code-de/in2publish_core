@@ -36,6 +36,7 @@ call_user_func(
 
         $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\In2publishCoreDefiner::class);
         $configContainer->registerDefiner(\In2code\In2publishCore\Features\SimpleOverviewAndAjax\Config\Definer\SimpleOverviewAndAjaxDefiner::class);
+        $configContainer->registerDefiner(\In2code\In2publishCore\Features\WarningOnForeign\Config\Definer\WarningOnForeignDefiner::class);
         if ($contextService->isForeign() || ('ssh' === $extConf['adapter.']['remote'] || 'ssh' === $extConf['adapter.']['transmission'])) {
             $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\SshConnectionDefiner::class);
         }
