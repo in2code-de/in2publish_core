@@ -23,3 +23,19 @@ backup:
     # If TRUE, backups of tables will be stored in ZIP files instead of plain sql file.
     # saves a lot of disc space.
     zipBackup: TRUE
+
+
+# Features
+features:
+
+  # Toggle different warnings on live, so editors will not change content
+  warningOnForeign:
+
+    # Colorize the dark TYPO3 status bar to attract attention
+    colorizeHeader:
+
+      # Feature toggle
+      enable: FALSE
+
+      # Allowed values: HEX codes (3 or 6 chars), rgb(0, 0, 0), rgba(0, 0, 0, 0), predefined CSS color names (see CssColorValueValidator::$colorNames)
+      color: '#a06e23'
