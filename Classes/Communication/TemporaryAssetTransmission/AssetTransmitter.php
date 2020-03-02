@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission;
  */
 
 use In2code\In2publishCore\Communication\AdapterRegistry;
+use In2code\In2publishCore\Communication\TemporaryAssetTransmission\Exception\FileMissingException;
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface;
 use In2code\In2publishCore\Config\ConfigContainer;
 use Psr\Log\LoggerInterface;
@@ -35,6 +36,7 @@ use Throwable;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use function file_exists;
 use function uniqid;
 
 /**
@@ -78,10 +80,17 @@ class AssetTransmitter implements SingletonInterface
      *     \TYPO3\CMS\Core\Resource\Driver\DriverInterface::getFileForLocalProcessing)
      *
      * @return string Absolute path of the transmitted file on foreign
+     *
+     * @throws FileMissingException
      */
     public function transmitTemporaryFile($source): string
     {
         $this->logger->info('Transmission of file requested', ['source' => $source]);
+
+        if (!file_exists($source)) {
+            $this->logger->error('File does not exist', ['source' => $source]);
+            throw FileMissingException::fromFileName($source);
+        }
 
         if (null === $this->adapter) {
             $this->logger->debug('Lazy initializing SshAdapter');
