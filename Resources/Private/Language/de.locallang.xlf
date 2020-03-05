@@ -27,11 +27,11 @@
 
 			<trans-unit id="label_stage">
 				<source>Stage System</source>
-				<target state="translated">Stage System</target>
+				<target state="translated">Redaktionssystem</target>
 			</trans-unit>
 			<trans-unit id="label_production">
 				<source>Production System</source>
-				<target state="translated">Production System</target>
+				<target state="translated">Produktivsystem</target>
 			</trans-unit>
 			<trans-unit id="error_not_connected">
 				<source>Error: Could not connect to production database!</source>
