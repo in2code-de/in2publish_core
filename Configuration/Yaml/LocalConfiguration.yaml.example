@@ -254,7 +254,7 @@ view:
     # Activate Filter buttons
     filterButtons: TRUE
 
-  # publish module use as title field (for pages) you can set this f.e. to nav_title
+  # The Publish Overview Module uses this field name to display page names. You can change this field to e.g. nav_title
   titleField: title
 
 
