@@ -1,5 +1,33 @@
 # In2publish Core Change Log
 
+8.5.0:
+
+- [META] Set the branch alias version number to 8.5.x-dev
+- [META] Set the EM conf version number to 8.5.0
+- [BUGFIX] Explicitly search for any translation of any records
+- [DOCS] Add docs how to render an alternative field from pages in the POM
+- [BUGFIX] Add missing translation
+- [BUGFIX] Translate "stage" and "production" system to german
+- [BUGFIX] Check if files exist before publishing
+- [FEATURE] Add feature to paint the foreign system typo3 status bar
+- [FEATURE] Add WarningOnLive to color the foreign backend status bar
+- [BUGFIX] Stop any other click handler if publishing confirm was cancelled
+- [FEATURE] Add test to check the foreign configuration format and values
+- [TEST] Add test to ensure sys_categories are always resolved
+- [BUGFIX] Add acceptance and functional tests folders for codeception
+- [TEST] Remove the LOG configuration to prevent log processing and writing
+- [TEST] Use blob instead of mediumblob for compatibility issues
+- [TEST] Restructure tests on codeception basis
+- [DOCS] Add tests run instructions
+- [TESTS] Update coverage for CommonRepository and set IN2PUBLISH_CONTEXT
+- [TESTS] Add IN2PUBLISH_CONTEXT env var to the test runner
+- [TESTS] Test content to image relation resolving
+- [TESTS] Set up second database to test CommonRepository function
+- [TESTS] Make Travis execute the codeception tests
+- [TESTS] Configure sqlite database and enable database depdendent BackenUtility tests
+- [TESTS] Introduce codeception and port all tests
+- [RELEASE] Version 8.4.5 with sys_category publishing fix
+
 8.4.5:
 
 - [META] Set the EM conf version number to 8.4.5
