@@ -42,6 +42,21 @@
 				<target state="translated">Eine oder mehrere Optionen sind nicht korrekt konfiguriert.</target>
 			</trans-unit>
 
+			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ForeignConfigurationFormatTest -->
+
+			<trans-unit id="configuration.foreign_format_okay">
+				<source>The foreign configuration file is well formatted and holds all required options.</source>
+				<target state="translated">Die Konfiguration auf dem entfernten System is gültig formatiert und enthält alle Optionen.</target>
+			</trans-unit>
+			<trans-unit id="configuration.foreign_format_test_exec_error">
+				<source>The configuration test on foreign could not be executed.</source>
+				<target state="translated">Beim testen der Konfiguration auf dem entfernten System ist ein Fehler aufgetreten.</target>
+			</trans-unit>
+			<trans-unit id="configuration.foreign_format_error">
+				<source>One or more options on foreign are not configured correctly.</source>
+				<target state="translated">Eine oder mehrere Optionen auf dem entfernten System sind nicht korrekt konfiguriert.</target>
+			</trans-unit>
+
 			<!-- \In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseAccessTest
 				 && \In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest -->
 

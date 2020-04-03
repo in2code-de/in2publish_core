@@ -28,6 +28,8 @@ namespace In2code\In2publishCore\Command;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Config\ValidationContainer;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\ExtensionUtility;
@@ -56,6 +58,7 @@ class StatusCommandController extends AbstractCommandController
     const SHORT_SITE_CONFIGURATION = 'in2publish_core:status:shortsiteconfiguration';
     const SITE_CONFIGURATION = 'in2publish_core:status:siteconfiguration';
     const DB_CONFIG_TEST = 'in2publish_core:status:dbconfigtest';
+    const CONFIG_FORMAT_TEST = 'in2publish_core:status:configformattest';
     const EXIT_NO_SITE = 250;
 
     /**
@@ -208,5 +211,19 @@ class StatusCommandController extends AbstractCommandController
         $queryBuilder->select('*')->from('tx_in2code_in2publish_task')->where($predicates);
         $result = $queryBuilder->execute()->fetchAll();
         $this->outputLine('DB Config: ' . base64_encode(json_encode(array_column($result, 'configuration'))));
+    }
+
+    /**
+     * Tests the configuration on foreign for its format
+     */
+    public function configFormatTestCommand()
+    {
+        $container = GeneralUtility::makeInstance(ValidationContainer::class);
+        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+        $definition = $configContainer->getForeignDefinition();
+        $actual = GeneralUtility::makeInstance(ConfigContainer::class)->get();
+        $definition->validate($container, $actual);
+        $errors = $container->getErrors();
+        $this->outputLine('Config Format Test: ' . base64_encode(json_encode($errors)));
     }
 }

@@ -131,6 +131,8 @@ define([
 				if (element.data('in2publish-confirm')) {
 					if (element.hasClass('in2publish-stagelisting__item__publish--blocked') || !confirm(element.data('in2publish-confirm'))) {
 						event.preventDefault();
+						event.stopPropagation();
+						event.stopImmediatePropagation();
 						return;
 					}
 				}

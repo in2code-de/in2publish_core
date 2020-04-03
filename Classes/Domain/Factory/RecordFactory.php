@@ -326,6 +326,9 @@ class RecordFactory
             if (false === $this->config['resolvePageRelations']) {
                 $excludedTableNames[] = 'pages';
             }
+
+            $this->findTranslations($record, $commonRepository);
+
             $record = $commonRepository->enrichRecordWithRelatedRecords($record, $excludedTableNames);
             $this->relatedRecordsDepth--;
         }
@@ -364,27 +367,7 @@ class RecordFactory
             && $record->getAdditionalProperty('isRoot')
             && 'pages' === $record->getTableName()
         ) {
-            $tcaService = GeneralUtility::makeInstance(TcaService::class);
-            $languageField = $tcaService->getLanguageField('pages');
-            if (!empty($languageField)) {
-                $language = $record->getLocalProperty($languageField);
-                if (null === $language) {
-                    $language = $record->getForeignProperty($languageField);
-                }
-                if (null !== $language && 0 === (int)$language) {
-                    $fieldName = $tcaService->getTransOrigPointerField('pages');
-                    if ($fieldName) {
-                        $translatedRecords = $commonRepository->findByProperties(
-                            [$fieldName => $record->getIdentifier()],
-                            false,
-                            'pages'
-                        );
-                        foreach ($translatedRecords as $translatedRecord) {
-                            $record->addRelatedRecordRaw($translatedRecord, 'pages_language_overlay');
-                        }
-                    }
-                }
-            }
+            $this->findTranslations($record, $commonRepository, 'pages_language_overlay');
         }
         // if page recursion depth reached
         if ($this->pagesDepth < $this->config['maximumPageRecursion'] && $this->pageRecursionEnabled) {
@@ -640,6 +623,42 @@ class RecordFactory
             );
         } catch (InvalidSlotException $e) {
         } catch (InvalidSlotReturnException $e) {
+        }
+    }
+
+    /**
+     * @param RecordInterface $record
+     * @param CommonRepository $commonRepository
+     * @param string|null $forceRelatedRecordTable
+     */
+    protected function findTranslations(
+        RecordInterface $record,
+        CommonRepository $commonRepository,
+        string $forceRelatedRecordTable = null
+    ) {
+        $tableName = $record->getTableName();
+
+        $tcaService = GeneralUtility::makeInstance(TcaService::class);
+
+        $languageField = $tcaService->getLanguageField($tableName);
+        if (!empty($languageField)) {
+            $language = $record->getLocalProperty($languageField);
+            if (null === $language) {
+                $language = $record->getForeignProperty($languageField);
+            }
+            if (null !== $language && 0 === (int)$language) {
+                $fieldName = $tcaService->getTransOrigPointerField($tableName);
+                if ($fieldName) {
+                    $translatedRecords = $commonRepository->findByProperties(
+                        [$fieldName => $record->getIdentifier()],
+                        false,
+                        $tableName
+                    );
+                    foreach ($translatedRecords as $translatedRecord) {
+                        $record->addRelatedRecordRaw($translatedRecord, $forceRelatedRecordTable ?? $tableName);
+                    }
+                }
+            }
         }
     }
 }

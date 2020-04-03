@@ -28,17 +28,27 @@ namespace In2code\In2publishCore\Domain\Service\Publishing;
  */
 
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\AssetTransmitter;
+use In2code\In2publishCore\Communication\TemporaryAssetTransmission\Exception\FileMissingException;
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
+use In2code\In2publishCore\Domain\Service\Publishing\Exception\UnexpectedMissingFileException;
+use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function basename;
 use function dirname;
+use function file_exists;
 
 /**
  * Class FilePublisherService
  */
 class FilePublisherService
 {
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger = null;
+
     /**
      * @var RemoteFileAbstractionLayerDriver
      */
@@ -49,6 +59,7 @@ class FilePublisherService
      */
     public function __construct()
     {
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->remoteFalDriver = GeneralUtility::makeInstance(RemoteFileAbstractionLayerDriver::class);
     }
 
@@ -81,7 +92,11 @@ class FilePublisherService
         $this->remoteFalDriver->setStorageUid($storage);
         $this->remoteFalDriver->initialize();
 
-        $temporaryIdentifier = $this->transferTemporaryFile($storage, $fileIdentifier);
+        try {
+            $temporaryIdentifier = $this->transferTemporaryFile($storage, $fileIdentifier);
+        } catch (FileMissingException | UnexpectedMissingFileException $e) {
+            return false;
+        }
 
         $folderIdentifier = dirname($fileIdentifier);
         if (!$this->remoteFalDriver->folderExists($folderIdentifier)) {
@@ -108,7 +123,11 @@ class FilePublisherService
         $this->remoteFalDriver->setStorageUid($storage);
         $this->remoteFalDriver->initialize();
 
-        $temporaryIdentifier = $this->transferTemporaryFile($storage, $fileIdentifier);
+        try {
+            $temporaryIdentifier = $this->transferTemporaryFile($storage, $fileIdentifier);
+        } catch (FileMissingException | UnexpectedMissingFileException $e) {
+            return false;
+        }
 
         return $this->remoteFalDriver->replaceFile($fileIdentifier, $temporaryIdentifier);
     }
@@ -134,15 +153,25 @@ class FilePublisherService
      * @param string $fileIdentifier
      *
      * @return string
+     *
+     * @throws UnexpectedMissingFileException
+     * @throws FileMissingException
      */
     protected function transferTemporaryFile($storage, $fileIdentifier): string
     {
         $source = $this->getLocalReadableFilePathForIdentifier($storage, $fileIdentifier);
 
-        $assetTransmitter = GeneralUtility::makeInstance(AssetTransmitter::class);
-        $target = $assetTransmitter->transmitTemporaryFile($source);
+        if (!file_exists($source)) {
+            $this->logger->error(
+                'A file that should be published does not exist',
+                [$storage => $storage, 'fileIdentifier' => $fileIdentifier]
+            );
+            throw UnexpectedMissingFileException::fromFileIdentifierAndStorage($fileIdentifier, $storage);
+        }
 
-        return $target;
+        $assetTransmitter = GeneralUtility::makeInstance(AssetTransmitter::class);
+
+        return $assetTransmitter->transmitTemporaryFile($source);
     }
 
     /**
