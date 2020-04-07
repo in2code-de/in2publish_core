@@ -132,6 +132,9 @@ class DomainService implements SingletonInterface
         string $stagingLevel,
         bool $addProtocol
     ): string {
+        if (0 === $pageIdentifier) {
+            return '';
+        }
         $pageIdentifier = $this->determineDefaultLanguagePageIdentifier($pageIdentifier, $stagingLevel);
 
         if ($stagingLevel === self::LEVEL_LOCAL) {
@@ -204,6 +207,9 @@ class DomainService implements SingletonInterface
      */
     public function getDomainFromPageIdentifier($identifier, $stagingLevel, bool $addProtocol = false): string
     {
+        if (0 === $identifier) {
+            return '';
+        }
         $uri = $this->getDomainFromSiteConfigByPageId($identifier, $stagingLevel, $addProtocol);
         if (empty($uri) && version_compare(TYPO3_branch, '10', '<')) {
             $rootLine = BackendUtility::BEgetRootLine($identifier);
