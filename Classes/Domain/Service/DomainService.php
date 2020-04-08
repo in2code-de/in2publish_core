@@ -135,7 +135,11 @@ class DomainService implements SingletonInterface
         if (0 === $pageIdentifier) {
             return '';
         }
-        $pageIdentifier = $this->determineDefaultLanguagePageIdentifier($pageIdentifier, $stagingLevel);
+        try {
+            $pageIdentifier = $this->determineDefaultLanguagePageIdentifier($pageIdentifier, $stagingLevel);
+        } catch (PageDoesNotExistException $e) {
+            return '';
+        }
 
         if ($stagingLevel === self::LEVEL_LOCAL) {
             $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
