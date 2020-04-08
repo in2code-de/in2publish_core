@@ -150,20 +150,21 @@ class DomainService implements SingletonInterface
             } catch (SiteNotFoundException $e) {
             }
         }
-        if (isset($site)) {
-            $uri = (string)$site->getBase()->withScheme('');
-            if ('/' === $uri && $stagingLevel === self::LEVEL_LOCAL) {
-                if ($addProtocol) {
-                    $uri = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
-                } else {
-                    $uri = GeneralUtility::getIndpEnv('HTTP_HOST');
-                }
-            }
-            if (!$addProtocol) {
-                $uri = ltrim($uri, '/');
-            }
-            $uri = rtrim($uri, '/');
+        if (!isset($site)) {
+            return '';
         }
+        $uri = (string)$site->getBase()->withScheme('');
+        if ('/' === $uri && $stagingLevel === self::LEVEL_LOCAL) {
+            if ($addProtocol) {
+                $uri = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
+            } else {
+                $uri = GeneralUtility::getIndpEnv('HTTP_HOST');
+            }
+        }
+        if (!$addProtocol) {
+            $uri = ltrim($uri, '/');
+        }
+        $uri = rtrim($uri, '/');
         return $uri;
     }
 
