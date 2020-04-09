@@ -1057,6 +1057,16 @@ class CommonRepository extends BaseRepository
             return $records;
         }
 
+        if ($this->shouldSkipSearchingForRelatedRecordsByFlexForm(
+            $record,
+            $column,
+            $columnConfiguration,
+            $flexFormDefinition,
+            $flexFormData
+        )) {
+            return $records;
+        }
+
         foreach ($flexFormDefinition as $key => $config) {
             if (!empty($flexFormData[$key])) {
                 if (false === strpos($key, '[ANY]')) {
@@ -1096,6 +1106,10 @@ class CommonRepository extends BaseRepository
         $config,
         $flexFormData
     ): array {
+        if ($this->shouldSkipSearchingForRelatedRecordsByFlexFormProperty($record, $config, $flexFormData)) {
+            return [];
+        }
+
         $records = [];
         $recTable = $record->getTableName();
         $recordId = $record->getIdentifier();
@@ -2238,6 +2252,56 @@ class CommonRepository extends BaseRepository
             'columnConfiguration' => $columnConfiguration,
         ];
         return $this->should('shouldSkipSearchingForRelatedRecordsByProperty', $arguments);
+    }
+
+    /**
+     * @param RecordInterface $record
+     * @param string $column
+     * @param array $columnConfiguration
+     * @param array $flexFormDefinition
+     * @param array $flexFormData
+     *
+     * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
+     */
+    protected function shouldSkipSearchingForRelatedRecordsByFlexForm(
+        RecordInterface $record,
+        $column,
+        $columnConfiguration,
+        $flexFormDefinition,
+        $flexFormData
+    ): bool {
+        $arguments = [
+            'record' => $record,
+            'column' => $column,
+            'columnConfiguration' => $columnConfiguration,
+            'flexFormDefinition' => $flexFormDefinition,
+            'flexFormData' => $flexFormData,
+        ];
+        return $this->should('shouldSkipSearchingForRelatedRecordsByFlexForm', $arguments);
+    }
+
+    /**
+     * @param RecordInterface $record
+     * @param array $config
+     * @param array $flexFormData
+     *
+     * @return bool
+     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
+     *
+     */
+    protected function shouldSkipSearchingForRelatedRecordsByFlexFormProperty(
+        RecordInterface $record,
+        $config,
+        $flexFormData
+    ): bool {
+        $arguments = [
+            'record' => $record,
+            'config' => $config,
+            'flexFormData' => $flexFormData,
+        ];
+        return $this->should('shouldSkipSearchingForRelatedRecordsByFlexFormProperty', $arguments);
     }
 
     /**
