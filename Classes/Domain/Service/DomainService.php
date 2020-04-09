@@ -43,9 +43,12 @@ use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use function array_shift;
 use function ltrim;
 use function rtrim;
+use function sprintf;
+use function trigger_error;
 use function trim;
 use function version_compare;
 
+use const E_USER_DEPRECATED;
 /**
  * Class DomainService
  */
@@ -54,6 +57,7 @@ class DomainService implements SingletonInterface
     public const TABLE_NAME = 'sys_domain';
     public const LEVEL_LOCAL = 'local';
     public const LEVEL_FOREIGN = 'foreign';
+    public const DEPRECATION_METHOD = 'The method %s is deprecated and will be removed in in2publish_core version 11.';
 
     /**
      * Runtime Cache
@@ -87,9 +91,12 @@ class DomainService implements SingletonInterface
      * @param bool $addProtocol
      *
      * @return mixed|string
+     *
+     * @deprecated Use config filePreviewDomainName for sys_file or ::getDomainFromSiteConfigByPageId for anything else.
      */
     public function getFirstDomain(RecordInterface $record, $stagingLevel = self::LEVEL_LOCAL, $addProtocol = true)
     {
+        trigger_error(sprintf(static::DEPRECATION_METHOD, __METHOD__), E_USER_DEPRECATED);
         $uri = $this->getDomainFromSiteConfigByPageId($record->getPageIdentifier(), $stagingLevel, $addProtocol);
         if (!empty($uri)) {
             return $uri;
