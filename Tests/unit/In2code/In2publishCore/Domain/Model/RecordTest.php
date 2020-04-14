@@ -60,7 +60,7 @@ class RecordTest extends Unit
      * @return Record
      */
     protected function getRecordStub($getIgnoreFields, $isParentRecordDisabled = false)
-    {;
+    {
         $stub = $this->getMockBuilder(Record::class)
                      ->setMethods(['getIgnoreFields', 'isParentDisabled'])
                      ->disableOriginalConstructor()

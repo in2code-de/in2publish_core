@@ -1509,7 +1509,8 @@ class CommonRepository extends BaseRepository
                     $replaceMarkers = GeneralUtility::makeInstance(ReplaceMarkersService::class);
                     $whereClause = $replaceMarkers->replaceMarkers(
                         $record,
-                        $columnConfiguration['foreign_table_where']
+                        $columnConfiguration['foreign_table_where'],
+                        $propertyName
                     );
                 }
 
