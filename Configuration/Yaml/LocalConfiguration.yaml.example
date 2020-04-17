@@ -230,7 +230,8 @@ factory:
     folderFileLimit: 150
 
 
-# Set domain names for file preview without leading protocol (e.g. www.domain.org)
+# Set file preview domain. Must be at least a host name. If a scheme is not set it defaults to https.
+# You can include the scheme and also a path if your TYPO3 runs in a sub path (e.g. https://example.com/stuff/)
 # @user
 filePreviewDomainName:
   local: stage.publishing.localhost.de
