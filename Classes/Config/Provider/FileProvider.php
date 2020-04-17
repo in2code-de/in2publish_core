@@ -40,7 +40,8 @@ use function file_exists;
 use function rtrim;
 use function strpos;
 use function substr;
-use function user_error;
+use function trigger_error;
+
 use const E_USER_DEPRECATED;
 
 /**
@@ -115,7 +116,7 @@ class FileProvider implements ProviderInterface
         }
 
         if (false !== strpos($path, 'typo3conf/')) {
-            user_error(self::DEPRECATION_CONFIG_PATH_TYPO3CONF, E_USER_DEPRECATED);
+            trigger_error(self::DEPRECATION_CONFIG_PATH_TYPO3CONF, E_USER_DEPRECATED);
         }
 
         if (0 === strpos($path, 'CONF:')) {
