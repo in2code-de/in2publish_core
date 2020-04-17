@@ -30,14 +30,13 @@ namespace In2code\In2publishCore\Domain\Service;
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Service\Exception\PageDoesNotExistException;
 use In2code\In2publishCore\In2publishCoreException;
+use In2code\In2publishCore\Utility\BackendUtility as BackendUtilityAlias;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use PDO;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Exception\SiteNotFoundException;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use function array_shift;
@@ -49,6 +48,7 @@ use function trim;
 use function version_compare;
 
 use const E_USER_DEPRECATED;
+
 /**
  * Class DomainService
  */
@@ -58,13 +58,6 @@ class DomainService implements SingletonInterface
     public const LEVEL_LOCAL = 'local';
     public const LEVEL_FOREIGN = 'foreign';
     public const DEPRECATION_METHOD = 'The method %s is deprecated and will be removed in in2publish_core version 11.';
-
-    /**
-     * Runtime Cache
-     *
-     * @var array
-     */
-    protected $rtc = [];
 
     /**
      * Get domain from root line without trailing slash
@@ -91,6 +84,8 @@ class DomainService implements SingletonInterface
      * @param bool $addProtocol
      *
      * @return mixed|string
+     *
+     * @throws In2publishCoreException
      *
      * @deprecated Use config filePreviewDomainName for sys_file or ::getDomainFromSiteConfigByPageId for anything else.
      */
@@ -142,26 +137,8 @@ class DomainService implements SingletonInterface
         if (0 === $pageIdentifier) {
             return '';
         }
-        try {
-            $pageIdentifier = $this->determineDefaultLanguagePageIdentifier($pageIdentifier, $stagingLevel);
-        } catch (PageDoesNotExistException $e) {
-            return '';
-        }
-
-        if ($stagingLevel === self::LEVEL_LOCAL) {
-            $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
-            try {
-                $site = $siteFinder->getSiteByPageId($pageIdentifier);
-            } catch (SiteNotFoundException $e) {
-            }
-        } else {
-            $foreignSiteFinder = GeneralUtility::makeInstance(ForeignSiteFinder::class);
-            try {
-                $site = $foreignSiteFinder->getSiteBaseByPageId($pageIdentifier);
-            } catch (SiteNotFoundException $e) {
-            }
-        }
-        if (!isset($site)) {
+        $site = BackendUtilityAlias::getSiteForPageIdentifier($pageIdentifier, $stagingLevel);
+        if (null === $site) {
             return '';
         }
         $uri = (string)$site->getBase()->withScheme('');
@@ -224,66 +201,41 @@ class DomainService implements SingletonInterface
         }
         $uri = $this->getDomainFromSiteConfigByPageId($identifier, $stagingLevel, $addProtocol);
         if (empty($uri) && version_compare(TYPO3_branch, '10', '<')) {
-            $rootLine = BackendUtility::BEgetRootLine($identifier);
-            foreach ($rootLine as $page) {
-                $connection = DatabaseUtility::buildDatabaseConnectionForSide($stagingLevel);
-                if (null !== $connection) {
-                    $query = $connection->createQueryBuilder();
-                    $query->getRestrictions()->removeAll();
-                    $domainRecord = $query->select('domainName')
-                                          ->from(static::TABLE_NAME)
-                                          ->where($query->expr()->eq('pid', (int)$page['uid']))
-                                          ->andWhere($query->expr()->eq('hidden', 0))
-                                          ->orderBy('sorting', 'ASC')
-                                          ->setMaxResults(1)
-                                          ->execute()
-                                          ->fetch(PDO::FETCH_ASSOC);
-                    if (isset($domainRecord['domainName'])) {
-                        $uri = trim($domainRecord['domainName'], '/');
-                        if ($addProtocol) {
-                            $uri = (GeneralUtility::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://') . $uri;
-                        }
-                    }
-                }
+            $uri = $this->fetchInheritedSysDomainNameForPage($identifier, $stagingLevel, $addProtocol);
+            if (null !== $uri && $addProtocol) {
+                $uri = (GeneralUtility::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://') . $uri;
             }
         }
         return $uri;
     }
 
     /**
-     * @param int $pageIdentifier
+     * @param int $identifier
      * @param string $stagingLevel
      *
-     * @return int
-     * @throws PageDoesNotExistException
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
+     * @return string
      */
-    protected function determineDefaultLanguagePageIdentifier(int $pageIdentifier, string $stagingLevel): int
+    public function fetchInheritedSysDomainNameForPage(int $identifier, string $stagingLevel): ?string
     {
-        $origPid = $pageIdentifier;
-
-        if (isset($this->rtc['languageParent'][$stagingLevel][$origPid])) {
-            return $this->rtc['languageParent'][$stagingLevel][$origPid];
+        $rootLine = BackendUtility::BEgetRootLine($identifier);
+        foreach ($rootLine as $page) {
+            $connection = DatabaseUtility::buildDatabaseConnectionForSide($stagingLevel);
+            if (null !== $connection) {
+                $query = $connection->createQueryBuilder();
+                $query->getRestrictions()->removeAll();
+                $domainRecord = $query->select('domainName')
+                                      ->from(static::TABLE_NAME)
+                                      ->where($query->expr()->eq('pid', (int)$page['uid']))
+                                      ->andWhere($query->expr()->eq('hidden', 0))
+                                      ->orderBy('sorting', 'ASC')
+                                      ->setMaxResults(1)
+                                      ->execute()
+                                      ->fetch(PDO::FETCH_ASSOC);
+                if (isset($domainRecord['domainName'])) {
+                    return trim($domainRecord['domainName'], '/');
+                }
+            }
         }
-
-        $languageField = $GLOBALS['TCA']['pages']['ctrl']['languageField'];
-        $parentField = $GLOBALS['TCA']['pages']['ctrl']['transOrigPointerField'];
-
-        $query = DatabaseUtility::buildDatabaseConnectionForSide($stagingLevel)->createQueryBuilder();
-        $query->getRestrictions()->removeAll();
-        $query->select($languageField, $parentField)
-              ->from('pages')
-              ->where($query->expr()->eq('uid', $query->createNamedParameter($pageIdentifier)))
-              ->setMaxResults(1);
-        $page = $query->execute()->fetch();
-
-        if (empty($page)) {
-            throw PageDoesNotExistException::forMissingPage($pageIdentifier, $stagingLevel);
-        } elseif ($page[$languageField] > 0) {
-            $pageIdentifier = (int)$page[$parentField];
-        }
-
-        return $this->rtc['languageParent'][$stagingLevel][$origPid] = $pageIdentifier;
+        return null;
     }
 }
