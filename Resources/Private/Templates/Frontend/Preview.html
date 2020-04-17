@@ -1,14 +1,15 @@
-{namespace publish=In2code\In2publishCore\ViewHelpers}
-<div class="preview_wrap preview_wrap_vertical">
-	<div class="preview_header">
-		<form>
-			<select class="preview_selection_alignment" name="alignment" onchange="document.getElementsByClassName('preview_wrap')[0].className = 'preview_wrap ' + this.value;">
-				<option value="preview_wrap_vertical"><f:translate key="frontend.compare.selection.alignment.vertical">vertical</f:translate></option>
-				<option value="preview_wrap_horizontal"><f:translate key="frontend.compare.selection.alignment.horizontal">horizontal</f:translate></option>
-			</select>
-		</form>
-	</div>
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+	<div class="preview_wrap preview_wrap_vertical">
+		<div class="preview_header">
+			<form>
+				<select class="preview_selection_alignment" name="alignment" onchange="document.getElementsByClassName('preview_wrap')[0].className = 'preview_wrap ' + this.value;">
+					<option value="preview_wrap_vertical"><f:translate key="frontend.compare.selection.alignment.vertical">vertical</f:translate></option>
+					<option value="preview_wrap_horizontal"><f:translate key="frontend.compare.selection.alignment.horizontal">horizontal</f:translate></option>
+				</select>
+			</form>
+		</div>
 
-	<iframe frameborder="0" src="{publish:Miscellaneous.GetFirstDomainFromRootline(identifier:identifier,stagingLevel:'local')}/index.php?id={identifier}" class="preview_stage"></iframe>
-	<iframe frameborder="0" src="{publish:Miscellaneous.GetFirstDomainFromRootline(identifier:identifier,stagingLevel:'foreign')}/index.php?id={identifier}" class="preview_production"></iframe>
-</div>
+		<iframe frameborder="0" src="{local_preview}" class="preview_stage"></iframe>
+		<iframe frameborder="0" src="{foreign_preview}" class="preview_production"></iframe>
+	</div>
+</html>
