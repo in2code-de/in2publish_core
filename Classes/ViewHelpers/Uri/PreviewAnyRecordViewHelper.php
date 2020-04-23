@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 namespace In2code\In2publishCore\ViewHelpers\Uri;
 
@@ -26,20 +27,24 @@ namespace In2code\In2publishCore\ViewHelpers\Uri;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use In2code\In2publishCore\Utility\BackendUtility;
+use In2code\In2publishCore\Utility\UriUtility;
+use In2code\In2publishCore\ViewHelpers\Link\PreviewRecordViewHelper;
+use TYPO3\CMS\Core\Http\Uri;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use function is_array;
-use function substr;
+
+use function sprintf;
+use function trigger_error;
+
+use const E_USER_DEPRECATED;
 
 /**
- * Class PreviewAnyRecordViewHelper
+ * @deprecated
  */
 class PreviewAnyRecordViewHelper extends AbstractViewHelper
 {
-    /**
-     *
-     */
+    protected const DEPRECATED_VIEWHELPER = 'The ViewHelper "%s" is deprecated and will be removed in in2publish_core version 11. Use %s instead.';
+
     public function initializeArguments()
     {
         parent::initializeArguments();
@@ -57,91 +62,21 @@ class PreviewAnyRecordViewHelper extends AbstractViewHelper
      */
     public function render()
     {
+        trigger_error(
+            sprintf(self::DEPRECATED_VIEWHELPER, static::class, PreviewRecordViewHelper::class),
+            E_USER_DEPRECATED
+        );
+
         $identifier = $this->arguments['identifier'];
         $tableName = $this->arguments['tableName'];
-        if ($this->isPreviewTsConfigExisting($tableName)) {
-            $pageTsConfig = BackendUtility::getPagesTSconfig($this->getCurrentPageIdentifier());
-            $configuration = $pageTsConfig['TCEMAIN.']['preview.'][$tableName . '.'];
-            $uri = 'index.php?id=' . (int)$configuration['previewPageId'];
-            $uri .= '&' . $configuration['fieldToParameterMap.']['uid'] . '=' . $identifier;
-            $uri = $this->buildAdditionalParamsString($configuration, $uri);
-            return $uri;
+
+        $uri = BackendUtility::buildPreviewUri($tableName, $identifier, 'local');
+        if (null === $uri) {
+            return '';
         }
-        return false;
-    }
-
-    /**
-     * Check if there is a Page TSConfig in TCEMAIN.preview for given Tablename
-     *
-     * @param string $tableName
-     *
-     * @return bool
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    protected function isPreviewTsConfigExisting(string $tableName): bool
-    {
-        $pageTsConfig = BackendUtility::getPagesTSconfig($this->getCurrentPageIdentifier());
-        return !empty($pageTsConfig['TCEMAIN.']['preview.'][$tableName . '.']);
-    }
-
-    /**
-     * Get current PID of the chosen page - normally $_GET['id']
-     *
-     * @return int
-     */
-    protected function getCurrentPageIdentifier(): int
-    {
-        return (int)GeneralUtility::_GP('id');
-    }
-
-    /**
-     * Build parameters string with additional static parameters
-     *  from configuration like:
-     *      TCEMAIN.preview {
-     *          table {
-     *              additionalGetParameters {
-     *                  tx_news_pi1.controller = News
-     *                  tx_news_pi1.action = detail
-     *              }
-     *          }
-     *      }
-     *
-     * @param array $configuration
-     * @param string $uri
-     *
-     * @return string
-     */
-    protected function buildAdditionalParamsString(array $configuration, string $uri): string
-    {
-        $additionalConfig = (array)$configuration['additionalGetParameters.'];
-        foreach ($additionalConfig as $additionalKey => $additionalValue) {
-            if (!is_array($additionalValue)) {
-                $uri .= '&' . $additionalKey . '=' . $additionalValue;
-            } else {
-                foreach ((array)$additionalConfig[$additionalKey] as $additionalKey2 => $additionalValue2) {
-                    if (!is_array($additionalKey2)) {
-                        $uri .= '&' . static::removeLastDot($additionalKey) . '[' . $additionalKey2 . ']='
-                                . $additionalValue2;
-                    }
-                }
-            }
-        }
-        return $uri;
-    }
-
-    /**
-     * Remove last . of a string
-     *
-     * @param $string
-     *
-     * @return string
-     */
-    protected static function removeLastDot(string $string): string
-    {
-        if (substr($string, -1) === '.') {
-            $string = substr($string, 0, -1);
-        }
-        return $string;
+        $uri = new Uri($uri);
+        $uri = UriUtility::normalizeUri($uri);
+        $uri = $uri->withScheme('')->withHost('');
+        return (string)$uri;
     }
 }

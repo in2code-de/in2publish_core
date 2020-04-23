@@ -7,6 +7,7 @@ use In2code\In2publishCore\Command\Status\ConfigFormatTestCommand;
 use In2code\In2publishCore\Command\Status\CreateMasksCommand;
 use In2code\In2publishCore\Command\Status\DbConfigTestCommand;
 use In2code\In2publishCore\Command\Status\DbInitQueryEncodedCommand;
+use In2code\In2publishCore\Command\Status\EncryptionKeyCommand;
 use In2code\In2publishCore\Command\Status\GlobalConfigurationCommand;
 use In2code\In2publishCore\Command\Status\ShortSiteConfigurationCommand;
 use In2code\In2publishCore\Command\Status\SiteConfigurationCommand;
@@ -44,6 +45,9 @@ return [
     ],
     GlobalConfigurationCommand::IDENTIFIER => [
         'class' => GlobalConfigurationCommand::class,
+    ],
+    EncryptionKeyCommand::IDENTIFIER => [
+        'class' => EncryptionKeyCommand::class,
     ],
     ShortSiteConfigurationCommand::IDENTIFIER => [
         'class' => ShortSiteConfigurationCommand::class,

@@ -32,10 +32,11 @@ namespace In2code\In2publishCore\ViewHelpers\Link;
 use In2code\In2publishCore\Utility\BackendUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
-class PreviewPageViewHelper extends AbstractTagBasedViewHelper
+class PreviewRecordViewHelper extends AbstractTagBasedViewHelper
 {
-    public const ARG_PAGE_IDENTIFIER = 'pageIdentifier';
+    public const ARG_IDENTIFIER = 'identifier';
     public const ARG_STAGING_LEVEL = 'stagingLevel';
+    public const ARG_TABLE = 'table';
 
     protected $tagName = 'a';
 
@@ -47,14 +48,16 @@ class PreviewPageViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
         $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
         $this->registerUniversalTagAttributes();
-        $this->registerArgument(self::ARG_PAGE_IDENTIFIER, 'integer', 'UID the the page to preview');
+        $this->registerArgument(self::ARG_IDENTIFIER, 'integer', 'UID the the page to preview');
         $this->registerArgument(self::ARG_STAGING_LEVEL, 'string', '"local" or "foreign"');
+        $this->registerArgument(self::ARG_TABLE, 'string', 'the records\' table name');
     }
 
     public function render()
     {
         $uri = BackendUtility::buildPreviewUri(
-            $this->arguments[self::ARG_PAGE_IDENTIFIER],
+            $this->arguments[self::ARG_TABLE],
+            $this->arguments[self::ARG_IDENTIFIER],
             $this->arguments[self::ARG_STAGING_LEVEL]
         );
         if (null === $uri) {

@@ -1,12 +1,12 @@
 <?php
+
 declare(strict_types=1);
-namespace In2code\In2publishCore\Controller;
+namespace In2code\In2publishCore\Command\Status;
 
 /*
  * Copyright notice
  *
- * (c) 2016 in2code.de
- * Alex Kellner <alexander.kellner@in2code.de>,
+ * (c) 2020 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -28,26 +28,26 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\In2publishCoreException;
-use In2code\In2publishCore\Utility\BackendUtility;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * Class FrontendController
- */
-class FrontendController extends AbstractController
+use function base64_encode;
+
+class EncryptionKeyCommand extends Command
 {
-    /**
-     * Preview action for vertical or horizontal view
-     *
-     * @param int $identifier
-     *
-     * @return void
-     *
-     * @throws In2publishCoreException
-     */
-    public function previewAction($identifier = 1)
+    public const DESCRIPTION = 'Prints the encryption key as base64 encoded string';
+    public const IDENTIFIER = 'in2publish_core:status:encryptionkey';
+
+    protected function configure()
     {
-        $this->view->assign('local_preview', BackendUtility::buildPreviewUri('pages', $identifier, 'local'));
-        $this->view->assign('foreign_preview', BackendUtility::buildPreviewUri('pages', $identifier, 'foreign'));
+        $this->setDescription(self::DESCRIPTION)
+             ->setHidden(true);
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $output->writeln('EKey: ' . base64_encode($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']));
+        return 0;
     }
 }

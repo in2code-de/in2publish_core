@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Service\Environment;
 
 use In2code\In2publishCore\Command\Status\CreateMasksCommand;
 use In2code\In2publishCore\Command\Status\DbInitQueryEncodedCommand;
+use In2code\In2publishCore\Command\Status\EncryptionKeyCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -151,6 +152,27 @@ class ForeignEnvironmentService
         }
 
         return (array)$this->cache->get('create_masks');
+    }
+
+    public function getEncryptionKey(): ?string
+    {
+        if (!$this->cache->has('encryption_key')) {
+            $encryptionKey = null;
+
+            $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, EncryptionKeyCommand::IDENTIFIER);
+            $dispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
+            $response = $dispatcher->dispatch($request);
+
+            if ($response->isSuccessful()) {
+                $values = $this->tokenizeResponse($response->getOutput());
+                if (!empty($values['EKey'])) {
+                    $encryptionKey = base64_decode($values['EKey']);
+                }
+            }
+            $this->cache->set('encryption_key', $encryptionKey, [], 86400);
+        }
+
+        return $this->cache->get('encryption_key');
     }
 
     /**

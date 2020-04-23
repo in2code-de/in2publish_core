@@ -71,7 +71,7 @@ class ForeignSiteFinder
      * @throws In2publishCoreException
      * @throws SiteNotFoundException
      */
-    public function getSiteBaseByPageId(int $pageId): Site
+    public function getSiteByPageId(int $pageId): Site
     {
         $cacheKey = 'site_config_' . $pageId;
         if (!$this->cache->has($cacheKey)) {

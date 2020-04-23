@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 namespace In2code\In2publishCore\Utility;
 
@@ -27,32 +28,32 @@ namespace In2code\In2publishCore\Utility;
  */
 
 use Closure;
-use In2code\In2publishCore\Domain\Service\DomainService;
-use In2code\In2publishCore\Domain\Service\Exception\PageDoesNotExistException;
-use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\In2publishCoreException;
+use In2code\In2publishCore\Service\Database\RawRecordService;
+use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
+use In2code\In2publishCore\Service\Routing\SiteService;
 use PDO;
 use Throwable;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Backend\Utility\BackendUtility as CoreBackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Context\LanguageAspectFactory;
-use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Http\Uri;
-use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Routing\RouterInterface;
 use TYPO3\CMS\Core\Site\Entity\Site;
-use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Frontend\Page\PageRepository;
+
 use function array_key_exists;
 use function array_keys;
+use function array_replace;
 use function count;
 use function explode;
 use function implode;
@@ -69,6 +70,7 @@ use function stristr;
 use function strpos;
 use function strtolower;
 use function trigger_error;
+
 use function version_compare;
 
 use const E_USER_DEPRECATED;
@@ -79,6 +81,7 @@ use const E_USER_DEPRECATED;
 class BackendUtility
 {
     protected const DEPRECATED_SYS_DOMAIN = 'sys_domain will be removed in TYPO3 v10. Please consider upgrading to site configurations now.';
+    protected const TABLE_SYS_DOMAIN = 'sys_domain';
 
     protected static $rtc = [];
 
@@ -255,42 +258,153 @@ class BackendUtility
     /**
      * Please don't blame me for this.
      *
-     * @param int $pageUid
+     * @param string $table
+     * @param int $identifier
      * @param string $stagingLevel
      *
-     * @return mixed|string|null
+     * @return string|null
      * @throws In2publishCoreException
      */
-    public static function buildPreviewUri(int $pageUid, string $stagingLevel)
+    public static function buildPreviewUri(string $table, int $identifier, string $stagingLevel)
     {
-        $pageRow = self::getPage($stagingLevel, $pageUid);
-        if (empty($pageRow)) {
+        $rawRecordService = GeneralUtility::makeInstance(RawRecordService::class);
+        $row = $rawRecordService->getRawRecord($table, $identifier, $stagingLevel);
+
+        if (empty($row)) {
             return null;
         }
-        $langField = $GLOBALS['TCA']['pages']['ctrl']['languageField'] ?? null;
-        $langParentField = $GLOBALS['TCA']['pages']['ctrl']['transOrigPointerField'] ?? null;
+        $excludeDokTypes = [
+            PageRepository::DOKTYPE_SPACER,
+            PageRepository::DOKTYPE_RECYCLER,
+            PageRepository::DOKTYPE_SYSFOLDER,
+        ];
+        if ('pages' === $table && array_key_exists('doktype', $row) && in_array($row['doktype'], $excludeDokTypes)) {
+            return null;
+        }
 
+        $langField = $GLOBALS['TCA'][$table]['ctrl']['languageField'] ?? null;
+        $langParentField = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] ?? null;
+
+        // Identify language
         $language = 0;
-        if (null !== $langField && array_key_exists($langField, $pageRow)) {
-            $language = $pageRow[$langField];
+        if (null !== $langField && array_key_exists($langField, $row)) {
+            $language = (int)$row[$langField];
+        }
+
+        // Identify language parent
+        $languageParent = $identifier;
+        if ($language > 0 && !empty($langParentField) && array_key_exists($langParentField, $row)) {
+            $languageParent = $row[$langParentField] ?: $languageParent;
+        }
+
+        // Identify PID
+        $pid = $row['pid'];
+        if ('pages' === $table) {
+            $pid = $row['uid'];
             if ($language > 0 && null !== $langParentField) {
-                $pageUid = $pageRow[$langParentField];
+                $pid = $languageParent;
             }
         }
-        $additionalQueryParams['_language'] = $language;
 
-        $site = self::getSiteForPageIdentifier($pageUid, $stagingLevel);
+        $additionalQueryParams = [];
+        $previewConfiguration = CoreBackendUtility::getPagesTSconfig($pid)['TCEMAIN.']['preview.'][$table . '.'] ?? [];
+        $hasPreviewConfiguration = !empty($previewConfiguration);
 
-        if (null === $site) {
-            return self::processLegacySysDomainRecord($pageUid, $stagingLevel);
+        if ('pages' !== $table && !$hasPreviewConfiguration) {
+            // non-page records without preview configuration can't be viewed
+            return null;
         }
 
-        $buildPageUrl = self::getLocalUriClosure($site, $pageUid, $additionalQueryParams);
+        if ($hasPreviewConfiguration) {
+            foreach ($previewConfiguration['fieldToParameterMap.'] ?? [] as $field => $parameterName) {
+                $value = $row[$field];
+                if ($field === 'uid') {
+                    $value = $previewConfiguration['useDefaultLanguageRecord'] ? $languageParent : $identifier;
+                }
+                $additionalQueryParams[$parameterName] = $value;
+            }
+            if (isset($previewConfiguration['additionalGetParameters.'])) {
+                $additionalGetParameters = [];
+                self::parseAdditionalGetParameters(
+                    $additionalGetParameters,
+                    $previewConfiguration['additionalGetParameters.']
+                );
+                $additionalQueryParams = array_replace($additionalQueryParams, $additionalGetParameters);
+            }
+            if (isset($previewConfiguration['previewPageId'])) {
+                $pid = (int)$previewConfiguration['previewPageId'];
+            }
+        }
+
+        // Get site for identified PID
+        $siteService = GeneralUtility::makeInstance(SiteService::class);
+        $site = $siteService->getSiteForPidAndStagingLevel($pid, $stagingLevel);
+
+        if (null === $site) {
+            if (version_compare(TYPO3_branch, '10', '<')) {
+                return self::processLegacySysDomainRecord($pid, $stagingLevel);
+            }
+            return null;
+        }
+
+        $additionalQueryParams['_language'] = $language;
+        $buildPageUrl = self::getLocalUriClosure($site, $pid, $additionalQueryParams);
         if ('foreign' === $stagingLevel) {
-            $buildPageUrl = self::getForeignUriClosure($buildPageUrl, $site, $language, $pageUid);
+            $buildPageUrl = self::getForeignUriClosure($buildPageUrl, $site, $language, $pid);
         }
 
         return $buildPageUrl();
+    }
+
+    protected static function processLegacySysDomainRecord(int $pageUid, string $stagingLevel): ?string
+    {
+        if (false === static::$rtc['sys_domain_deprecation_triggered'] ?? false) {
+            trigger_error(self::DEPRECATED_SYS_DOMAIN, E_USER_DEPRECATED);
+            static::$rtc['sys_domain_deprecation_triggered'] = true;
+        }
+        $logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
+        $logger->notice(
+            'Can not identify site configuration for page.',
+            ['page' => $pageUid, 'stagingLevel' => $stagingLevel]
+        );
+
+        $domainName = self::fetchInheritedSysDomainNameForPage($pageUid, $stagingLevel);
+
+        if (null === $domainName) {
+            return null;
+        }
+        $uri = new Uri($domainName);
+        $uri = UriUtility::normalizeUri($uri);
+        $uri = $uri->withPath(rtrim($uri->getPath(), '/') . '/index.php')
+                   ->withQuery($uri->getQuery() . '&id=' . $pageUid);
+        return (string)$uri;
+    }
+
+    /**
+     * !!! COPY
+     *
+     * @param array $parameters Should be an empty array by default
+     * @param array $typoScript The TypoScript configuration
+     *
+     * @see \TYPO3\CMS\Backend\Controller\EditDocumentController::parseAdditionalGetParameters
+     *
+     * Migrates a set of (possibly nested) GET parameters in TypoScript syntax to a plain array
+     *
+     * This basically removes the trailing dots of sub-array keys in TypoScript.
+     * The result can be used to create a query string with GeneralUtility::implodeArrayForUrl().
+     *
+     */
+    protected static function parseAdditionalGetParameters(array &$parameters, array $typoScript)
+    {
+        foreach ($typoScript as $key => $value) {
+            if (is_array($value)) {
+                $key = rtrim($key, '.');
+                $parameters[$key] = [];
+                self::parseAdditionalGetParameters($parameters[$key], $value);
+            } else {
+                $parameters[$key] = $value;
+            }
+        }
     }
 
     /**
@@ -301,83 +415,6 @@ class BackendUtility
     protected static function getRuntimeCache(): VariableFrontend
     {
         return GeneralUtility::makeInstance(CacheManager::class)->getCache('cache_runtime');
-    }
-
-    /**
-     * @param int $pageIdentifier
-     * @param string $stagingLevel
-     *
-     * @return Site|null
-     * @throws In2publishCoreException
-     */
-    public static function getSiteForPageIdentifier(int $pageIdentifier, string $stagingLevel): ?Site
-    {
-        try {
-            $pageIdentifier = self::determineDefaultLanguagePageIdentifier($pageIdentifier, $stagingLevel);
-        } catch (PageDoesNotExistException $e) {
-            return null;
-        }
-
-        if (isset(self::$rtc['site'][$stagingLevel][$pageIdentifier])) {
-            return self::$rtc['site'][$stagingLevel][$pageIdentifier];
-        }
-
-        $site = null;
-        if ($stagingLevel === DomainService::LEVEL_LOCAL) {
-            $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
-            try {
-                $site = $siteFinder->getSiteByPageId($pageIdentifier);
-            } catch (SiteNotFoundException $e) {
-            }
-        } else {
-            $foreignSiteFinder = GeneralUtility::makeInstance(ForeignSiteFinder::class);
-            try {
-                $site = $foreignSiteFinder->getSiteBaseByPageId($pageIdentifier);
-            } catch (SiteNotFoundException $e) {
-            }
-        }
-        if (!($site instanceof Site)) {
-            $site = null;
-        }
-        return self::$rtc['site'][$stagingLevel][$pageIdentifier] = $site;
-    }
-
-    /**
-     * @param int $pageIdentifier
-     * @param string $stagingLevel
-     *
-     * @return int
-     * @throws PageDoesNotExistException
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
-    public static function determineDefaultLanguagePageIdentifier(
-        int $pageIdentifier,
-        string $stagingLevel
-    ): int {
-        $origPid = $pageIdentifier;
-
-        if (isset(self::$rtc['languageParent'][$stagingLevel][$origPid])) {
-            return self::$rtc['languageParent'][$stagingLevel][$origPid];
-        }
-
-        $languageField = $GLOBALS['TCA']['pages']['ctrl']['languageField'];
-        $parentField = $GLOBALS['TCA']['pages']['ctrl']['transOrigPointerField'];
-
-        $query = DatabaseUtility::buildDatabaseConnectionForSide($stagingLevel)->createQueryBuilder();
-        $query->getRestrictions()->removeAll();
-        $query->select($languageField, $parentField)
-              ->from('pages')
-              ->where($query->expr()->eq('uid', $query->createNamedParameter($pageIdentifier)))
-              ->setMaxResults(1);
-        $page = $query->execute()->fetch();
-
-        if (empty($page)) {
-            throw PageDoesNotExistException::forMissingPage($pageIdentifier, $stagingLevel);
-        } elseif ($page[$languageField] > 0) {
-            $pageIdentifier = (int)$page[$parentField];
-        }
-
-        return self::$rtc['languageParent'][$stagingLevel][$origPid] = $pageIdentifier;
     }
 
     /**
@@ -394,7 +431,7 @@ class BackendUtility
         int $language,
         int $pageUid
     ): Closure {
-        return static function () use ($buildPageUrl, $site, $language, $pageUid): string {
+        return static function () use ($buildPageUrl, $site, $language, $pageUid): ?string {
             // Please forgive me for this ugliest of all hacks. I tried everything.
 
             // temporarily point the pages table to the foreign database connection, to make PageRepository->getPage fetch the foreign page
@@ -408,24 +445,37 @@ class BackendUtility
             $localCache = $runtimeCache->get($cacheIdentifier);
             $runtimeCache->remove($cacheIdentifier);
 
+            $foreignEnvironmentService = GeneralUtility::makeInstance(ForeignEnvironmentService::class);
+            $foreignEncryptionKey = $foreignEnvironmentService->getEncryptionKey();
+            if (empty($foreignEncryptionKey)) {
+                return null;
+            }
+
+            $encryptionKey = $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'];
+            $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] = $foreignEncryptionKey;
             // Build the url with the original callback.
-            $url = $buildPageUrl();
+            try {
+                return $buildPageUrl();
+            } catch (Throwable $exception) {
+            } finally {
+                $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] = $encryptionKey;
 
-            // Restore the cache if it existed or remove the foreign page from the cache.
-            if (false !== $localCache) {
-                $runtimeCache->set($cacheIdentifier, $localCache);
-            } else {
-                $runtimeCache->remove($cacheIdentifier);
+                // Restore the cache if it existed or remove the foreign page from the cache.
+                if (false !== $localCache) {
+                    $runtimeCache->set($cacheIdentifier, $localCache);
+                } else {
+                    $runtimeCache->remove($cacheIdentifier);
+                }
+
+                // Reset the table mapping to make pages point to the local DB again
+                if (null === $backup) {
+                    unset($GLOBALS['TYPO3_CONF_VARS']['DB']['TableMapping']['pages']);
+                } else {
+                    $GLOBALS['TYPO3_CONF_VARS']['DB']['TableMapping']['pages'] = $backup;
+                }
             }
 
-            // Reset the table mapping to make pages point to the local DB again
-            if (null === $backup) {
-                unset($GLOBALS['TYPO3_CONF_VARS']['DB']['TableMapping']['pages']);
-            } else {
-                $GLOBALS['TYPO3_CONF_VARS']['DB']['TableMapping']['pages'] = $backup;
-            }
-
-            return $url;
+            return null;
         };
     }
 
@@ -481,57 +531,25 @@ class BackendUtility
             );
     }
 
-    /**
-     * @param string $stagingLevel
-     * @param int $pageUid
-     *
-     * @return array|null
-     */
-    protected static function getPage(string $stagingLevel, int $pageUid): ?array
+    public static function fetchInheritedSysDomainNameForPage(int $identifier, string $stagingLevel): ?string
     {
-        $connection = DatabaseUtility::buildDatabaseConnectionForSide($stagingLevel);
-        $query = $connection->createQueryBuilder();
-        $query->select('*')->from('pages')->where($query->expr()->eq('uid', $query->createNamedParameter($pageUid)));
-        $statement = $query->execute();
-        return $statement->fetch();
-    }
-
-    protected static function processLegacySysDomainRecord(int $pageUid, string $stagingLevel): ?string
-    {
-        $logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-
-        if (version_compare(TYPO3_branch, '10.0', '>=')) {
-            $logger->error('Can not identify site configuration for page.', ['page' => $pageUid]);
-            // TYPO3 v10 does not have sys_domain records. If no site has been found we can't help it.
-            return null;
+        $rootLine = CoreBackendUtility::BEgetRootLine($identifier);
+        foreach ($rootLine as $page) {
+            $connection = DatabaseUtility::buildDatabaseConnectionForSide($stagingLevel);
+            $query = $connection->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->select('domainName')
+                  ->from(self::TABLE_SYS_DOMAIN)
+                  ->where($query->expr()->eq('pid', (int)$page['uid']))
+                  ->andWhere($query->expr()->eq('hidden', 0))
+                  ->orderBy('sorting', 'ASC')
+                  ->setMaxResults(1);
+            $statement = $query->execute();
+            $domainRecord = $statement->fetch(PDO::FETCH_ASSOC);
+            if (isset($domainRecord['domainName'])) {
+                return trim($domainRecord['domainName'], '/');
+            }
         }
-        self::triggerSysDomainDeprecationOnce();
-        $logger->notice(
-            'Can not identify site configuration for page.',
-            ['page' => $pageUid, 'stagingLevel' => $stagingLevel]
-        );
-
-        $domainName = self::getDomainNameFromSysDomainForPage($pageUid, $stagingLevel);
-        if (null === $domainName) {
-            return null;
-        }
-        $uri = new Uri($domainName);
-        $uri = UriUtility::normalizeUri($uri);
-        $uri = $uri->withPath(rtrim($uri->getPath(), '/') . '/index.php')->withQuery($uri->getQuery() . '&id=' . $pageUid);
-        return (string)$uri;
-    }
-
-    protected static function triggerSysDomainDeprecationOnce(): void
-    {
-        if (false === static::$rtc['sys_domain_deprecation_triggered'] ?? false) {
-            trigger_error(self::DEPRECATED_SYS_DOMAIN, E_USER_DEPRECATED);
-            static::$rtc['sys_domain_deprecation_triggered'] = true;
-        }
-    }
-
-    protected static function getDomainNameFromSysDomainForPage(int $pageUid, string $stagingLevel): ?string
-    {
-        $domainService = GeneralUtility::makeInstance(DomainService::class);
-        return $domainService->fetchInheritedSysDomainNameForPage($pageUid, $stagingLevel);
+        return null;
     }
 }
