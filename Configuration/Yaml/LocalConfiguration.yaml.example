@@ -279,6 +279,9 @@ sshConnection:
   # private key password, empty string if none set
   privateKeyPassphrase: ''
 
+  # You should not disable this check if the FKFP does not change. If the foreign key will change often (e.g. in a docker/k8s/cloud environment) you can disable it at your own risk.
+  enableForeignKeyFingerprintCheck: TRUE
+
   # Key fingerprint of the production server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection.
   # You don't need to keep the colons
   foreignKeyFingerprint: 00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00

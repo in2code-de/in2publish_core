@@ -57,6 +57,7 @@ class SshConnectionDefiner implements DefinerInterface
                                      [FEV::class]
                                  )
                                  ->addOptionalString('privateKeyPassphrase', '')
+                                 ->addBoolean('enableForeignKeyFingerprintCheck', true)
                                  ->addString('foreignKeyFingerprint', '00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00')
                                  ->addString('foreignKeyFingerprintHashingMethod', 'SSH2_FINGERPRINT_MD5')
                                  ->addBoolean('ignoreChmodFail', false)

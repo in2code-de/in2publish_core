@@ -68,6 +68,7 @@ abstract class SshBaseAdapter
         'privateKeyFileAndPathName' => '',
         'publicKeyFileAndPathName' => '',
         'privateKeyPassphrase' => '',
+        'enableForeignKeyFingerprintCheck' => '',
         'foreignKeyFingerprint' => '',
         'foreignKeyFingerprintHashingMethod' => '',
     ];
@@ -119,19 +120,21 @@ abstract class SshBaseAdapter
             );
         }
 
-        $keyFingerPrint = ssh2_fingerprint($session, $this->config['foreignKeyFingerprintHashingMethod']);
-        if ($keyFingerPrint !== $this->config['foreignKeyFingerprint']) {
-            if (true === $this->config['debug']) {
-                throw new In2publishCoreException(
-                    'Identification of foreign host failed, SSH Key Fingerprint mismatch. Actual Fingerprint: "'
-                    . $keyFingerPrint . '"; Configured: "' . $this->config['foreignKeyFingerprint'] . '"',
-                    1426868565
-                );
-            } else {
-                throw new In2publishCoreException(
-                    'Identification of foreign host failed, SSH Key Fingerprint mismatch!!!',
-                    1425401452
-                );
+        if ($this->config['enableForeignKeyFingerprintCheck']) {
+            $keyFingerPrint = ssh2_fingerprint($session, $this->config['foreignKeyFingerprintHashingMethod']);
+            if ($keyFingerPrint !== $this->config['foreignKeyFingerprint']) {
+                if (true === $this->config['debug']) {
+                    throw new In2publishCoreException(
+                        'Identification of foreign host failed, SSH Key Fingerprint mismatch. Actual Fingerprint: "'
+                        . $keyFingerPrint . '"; Configured: "' . $this->config['foreignKeyFingerprint'] . '"',
+                        1426868565
+                    );
+                } else {
+                    throw new In2publishCoreException(
+                        'Identification of foreign host failed, SSH Key Fingerprint mismatch!!!',
+                        1425401452
+                    );
+                }
             }
         }
 
