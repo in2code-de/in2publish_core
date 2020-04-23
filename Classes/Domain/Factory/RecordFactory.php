@@ -363,12 +363,6 @@ class RecordFactory
         if (!$this->config['includeSysFileReference']) {
             $tableNamesToExclude[] = 'sys_file_reference';
         }
-        if (version_compare(TYPO3_branch, '9.5', '>=')
-            && $record->getAdditionalProperty('isRoot')
-            && 'pages' === $record->getTableName()
-        ) {
-            $this->findTranslations($record, $commonRepository, 'pages_language_overlay');
-        }
         // if page recursion depth reached
         if ($this->pagesDepth < $this->config['maximumPageRecursion'] && $this->pageRecursionEnabled) {
             $this->pagesDepth++;
