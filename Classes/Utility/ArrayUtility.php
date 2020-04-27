@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Utility;
 
 /*
@@ -30,6 +32,7 @@ namespace In2code\In2publishCore\Utility;
 
 use InvalidArgumentException;
 use TYPO3\CMS\Core\Utility\MathUtility;
+
 use function array_key_exists;
 use function array_shift;
 use function explode;

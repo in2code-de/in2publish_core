@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Config\Definer;
 
 /*
@@ -48,6 +50,7 @@ use In2code\In2publishCore\Domain\Service\Processor\SelectProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\SlugProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\TextProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\UserProcessor;
+
 use function version_compare;
 
 /**

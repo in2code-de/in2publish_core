@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Features\WarningOnForeign\Config\Validator;
 
 /*
@@ -29,6 +31,7 @@ namespace In2code\In2publishCore\Features\WarningOnForeign\Config\Validator;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 use In2code\In2publishCore\Config\Validator\ValidatorInterface;
+
 use function in_array;
 use function preg_match;
 

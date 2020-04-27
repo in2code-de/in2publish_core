@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Factory;
 
 /*
@@ -31,6 +33,7 @@ namespace In2code\In2publishCore\Domain\Factory;
 use DateTime;
 use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function json_decode;
 
 /**

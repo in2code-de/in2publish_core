@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Service\Processor;
 
 /*
@@ -46,7 +48,7 @@ class InlineProcessor extends AbstractProcessor
      * @var array
      */
     protected $forbidden = [
-        'symmetric_field is set on the foreign side of relations, which must not be resolved' => self::SYMMETRIC_FIELD
+        'symmetric_field is set on the foreign side of relations, which must not be resolved' => self::SYMMETRIC_FIELD,
     ];
 
     /**

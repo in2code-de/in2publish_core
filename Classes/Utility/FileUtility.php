@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Utility;
 
 /*
@@ -32,6 +34,7 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\AbstractFile;
 use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_pop;
 use function array_shift;
 use function count;
@@ -113,7 +116,6 @@ class FileUtility
 
     public static function extractFileInformation(FileInterface $file): array
     {
-
         $size = array_pop($file->getStorage()->getFileInfoByIdentifier($file->getIdentifier(), ['size']));
 
         $info = [

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Features\CacheInvalidation\Domain\Anomaly;
 
 /*
@@ -34,6 +36,7 @@ use In2code\In2publishCore\Features\CacheInvalidation\Domain\Model\Task\FlushFro
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_filter;
 use function implode;
 

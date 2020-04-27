@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Testing\Tests\Configuration;
 
 use In2code\In2publishCore\Command\Status\ConfigFormatTestCommand;
@@ -9,6 +11,7 @@ use In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_merge;
 use function base64_decode;
 use function json_decode;

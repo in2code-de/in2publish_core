@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Service\Configuration;
 
 /*
@@ -31,6 +33,7 @@ use Doctrine\DBAL\Schema\Table;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\SingletonInterface;
+
 use function array_diff;
 use function array_keys;
 use function in_array;

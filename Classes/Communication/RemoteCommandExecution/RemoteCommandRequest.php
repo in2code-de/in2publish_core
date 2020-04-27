@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
 
 /*
@@ -30,9 +32,11 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
 use In2code\In2publishCore\Config\ConfigContainer;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_merge;
 use function defined;
 use function file_exists;
+
 use const TYPO3_COMPOSER_MODE;
 
 /**

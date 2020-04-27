@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Testing\Tests;
 
 /*
@@ -28,6 +30,7 @@ namespace In2code\In2publishCore\Testing\Tests;
  */
 
 use In2code\In2publishCore\Testing\Utility\TestLabelLocalizer;
+
 use function implode;
 
 /**

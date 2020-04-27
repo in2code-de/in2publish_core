@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Utility;
 
 /*
@@ -70,7 +71,6 @@ use function stristr;
 use function strpos;
 use function strtolower;
 use function trigger_error;
-
 use function version_compare;
 
 use const E_USER_DEPRECATED;

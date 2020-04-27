@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Command\Status\Exception;
 
 /*
@@ -28,6 +30,7 @@ namespace In2code\In2publishCore\Command\Status\Exception;
  */
 
 use In2code\In2publishCore\In2publishCoreException;
+
 use function sprintf;
 
 class InvalidPageIdArgumentTypeException extends In2publishCoreException

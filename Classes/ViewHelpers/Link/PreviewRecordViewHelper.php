@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\ViewHelpers\Link;
 
 /*
@@ -28,7 +29,6 @@ namespace In2code\In2publishCore\ViewHelpers\Link;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-
 use In2code\In2publishCore\Utility\BackendUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
@@ -44,8 +44,16 @@ class PreviewRecordViewHelper extends AbstractTagBasedViewHelper
     {
         parent::initializeArguments();
         $this->registerTagAttribute('name', 'string', 'Specifies the name of an anchor');
-        $this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document');
-        $this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
+        $this->registerTagAttribute(
+            'rel',
+            'string',
+            'Specifies the relationship between the current document and the linked document'
+        );
+        $this->registerTagAttribute(
+            'rev',
+            'string',
+            'Specifies the relationship between the linked document and the current document'
+        );
         $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
         $this->registerUniversalTagAttributes();
         $this->registerArgument(self::ARG_IDENTIFIER, 'integer', 'UID the the page to preview');

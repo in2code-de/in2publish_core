@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Config\Node\Specific;
 
 /*
@@ -31,6 +33,7 @@ use In2code\In2publishCore\Config\Node\AbstractNode;
 use In2code\In2publishCore\Config\Node\Node;
 use In2code\In2publishCore\Config\Node\NodeCollection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_key_exists;
 
 /**

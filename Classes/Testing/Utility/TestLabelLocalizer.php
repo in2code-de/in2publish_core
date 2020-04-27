@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Testing\Utility;
 
 /*
@@ -28,6 +30,7 @@ namespace In2code\In2publishCore\Testing\Utility;
  */
 
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+
 use function strpos;
 
 /**

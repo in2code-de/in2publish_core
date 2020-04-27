@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Service\Context;
 
 /*
@@ -30,6 +32,7 @@ namespace In2code\In2publishCore\Service\Context;
 use LogicException;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function getenv;
 use function in_array;
 

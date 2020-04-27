@@ -1,9 +1,11 @@
 <?php
 
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Testing\Tests\Application;
 
 use Doctrine\DBAL\Driver\Statement;
+use Exception;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use PDO;
 use TYPO3\CMS\Core\Database\Connection;
@@ -204,7 +206,7 @@ abstract class AbstractDomainTest
               );
         $statement = $query->execute();
         if (0 !== $statement->errorCode()) {
-            throw new \Exception();
+            throw new Exception();
         }
         return (int)$statement->fetchColumn(0);
     }

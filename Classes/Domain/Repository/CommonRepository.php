@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Repository;
 
 /*
@@ -51,6 +53,7 @@ use TYPO3\CMS\Core\Utility\MathUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
+
 use function array_diff;
 use function array_filter;
 use function array_key_exists;
@@ -78,6 +81,7 @@ use function strpos;
 use function substr;
 use function trigger_error;
 use function trim;
+
 use const E_USER_DEPRECATED;
 
 /**

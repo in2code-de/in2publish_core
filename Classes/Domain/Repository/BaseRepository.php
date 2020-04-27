@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Repository;
 
 /*
@@ -35,6 +37,7 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_column;
 use function array_combine;
 use function explode;
@@ -47,6 +50,7 @@ use function strtoupper;
 use function substr;
 use function trigger_error;
 use function trim;
+
 use const E_USER_DEPRECATED;
 
 /**

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Command\PublishTaskRunner;
 
 /*
@@ -35,6 +37,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function json_encode;
 
 class RunTasksInQueueCommand extends Command

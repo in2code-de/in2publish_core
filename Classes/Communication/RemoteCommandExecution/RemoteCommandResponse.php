@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
 
 /*
@@ -28,6 +30,7 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
  */
 
 use InvalidArgumentException;
+
 use function array_values;
 use function explode;
 use function filter_var;

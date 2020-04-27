@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Service\Processor;
 
 /*
@@ -29,6 +31,7 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
 
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function in_array;
 use function strpos;
 

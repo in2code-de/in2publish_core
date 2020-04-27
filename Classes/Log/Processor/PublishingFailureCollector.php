@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Log\Processor;
 
 /*
@@ -31,6 +33,7 @@ use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogRecord;
 use TYPO3\CMS\Core\Log\Processor\AbstractProcessor;
 use TYPO3\CMS\Core\SingletonInterface;
+
 use function min;
 use function version_compare;
 

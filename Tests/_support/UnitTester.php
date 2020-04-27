@@ -1,7 +1,8 @@
 <?php
+
 namespace In2code\In2publishCore\Tests;
 
-use In2code\In2publishCore\Domain\Model\Record;
+use Codeception\Actor;
 use PHPUnit\Framework\MockObject\MockBuilder;
 use PHPUnit\Framework\TestCase;
 
@@ -20,7 +21,7 @@ use PHPUnit\Framework\TestCase;
  *
  * @SuppressWarnings(PHPMD)
  */
-class UnitTester extends \Codeception\Actor
+class UnitTester extends Actor
 {
     use _generated\UnitTesterActions;
 

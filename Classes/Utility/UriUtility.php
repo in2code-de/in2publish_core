@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Utility;
 
 /*
@@ -26,6 +28,7 @@ namespace In2code\In2publishCore\Utility;
  */
 
 use Psr\Http\Message\UriInterface;
+
 use function explode;
 
 /**

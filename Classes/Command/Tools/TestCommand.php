@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Command\Tools;
 
 use In2code\In2publishCore\Service\Context\ContextService;
@@ -12,6 +14,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use const PHP_EOL;
 
 class TestCommand extends Command

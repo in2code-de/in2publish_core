@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 
 /*
@@ -31,6 +33,7 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
 use function ucfirst;
 
 /**

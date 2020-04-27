@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Controller;
 
 /*
@@ -52,6 +54,7 @@ use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Extensionmanager\Utility\ListUtility;
+
 use function array_keys;
 use function array_merge;
 use function class_exists;
@@ -75,6 +78,7 @@ use function strftime;
 use function strlen;
 use function substr;
 use function time;
+
 use const PHP_EOL;
 use const PHP_OS;
 use const PHP_VERSION;

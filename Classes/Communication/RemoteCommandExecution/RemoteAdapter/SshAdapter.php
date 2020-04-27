@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter;
 
 /*
@@ -32,6 +34,7 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRes
 use In2code\In2publishCore\Communication\Shared\SshBaseAdapter;
 use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_pop;
 use function fclose;
 use function is_resource;

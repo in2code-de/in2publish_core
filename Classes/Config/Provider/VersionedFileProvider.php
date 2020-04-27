@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Config\Provider;
 
 /*
@@ -29,6 +31,7 @@ namespace In2code\In2publishCore\Config\Provider;
 
 use In2code\In2publishCore\Utility\ExtensionUtility;
 use Spyc;
+
 use function explode;
 use function file_exists;
 use function implode;

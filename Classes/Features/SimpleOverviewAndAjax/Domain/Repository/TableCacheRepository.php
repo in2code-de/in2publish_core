@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository;
 
 /*
@@ -32,6 +34,7 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
+
 use function array_column;
 use function array_combine;
 

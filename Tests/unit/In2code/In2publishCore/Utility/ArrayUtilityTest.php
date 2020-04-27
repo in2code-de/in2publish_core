@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Tests\In2code\In2publishCore\Utility;
 
 /*

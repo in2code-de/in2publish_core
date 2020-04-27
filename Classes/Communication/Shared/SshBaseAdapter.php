@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Communication\Shared;
 
 /*
@@ -35,6 +37,7 @@ use Psr\Log\LoggerInterface;
 use Throwable;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function escapeshellarg;
 use function escapeshellcmd;
 use function in_array;
