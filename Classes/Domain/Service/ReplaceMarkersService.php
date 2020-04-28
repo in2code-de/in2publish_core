@@ -125,7 +125,7 @@ class ReplaceMarkersService
     protected function replaceGeneralMarkers(RecordInterface $record, string $string, string $propertyName)
     {
         if (false !== strpos($string, '###CURRENT_PID###')) {
-            if (null !== ($currentPid = $this->getCurrentRecordPageId($record))) {
+            if (null !== ($currentPid = $record->getPageIdentifier())) {
                 $string = str_replace('###CURRENT_PID###', $currentPid, $string);
             }
         }
@@ -135,7 +135,7 @@ class ReplaceMarkersService
             }
         }
         if (false !== strpos($string, '###STORAGE_PID###')) {
-            if (null !== ($storagePid = $this->getStoragePidFromPage($this->getCurrentRecordPageId($record)))) {
+            if (null !== ($storagePid = $this->getStoragePidFromPage($record->getPageIdentifier()))) {
                 $string = str_replace('###STORAGE_PID###', $storagePid, $string);
             }
         }
@@ -212,18 +212,6 @@ class ReplaceMarkersService
             }
         }
         return 0;
-    }
-
-    /**
-     * @param RecordInterface $record
-     *
-     * @return mixed
-     */
-    protected function getCurrentRecordPageId(RecordInterface $record)
-    {
-        return ($record->hasLocalProperty('pid')
-            ? $record->getLocalProperty('pid')
-            : $record->getForeignProperty('pid'));
     }
 
     /**

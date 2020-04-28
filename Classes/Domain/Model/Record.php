@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Domain\Model;
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use In2code\In2publishCore\Service\Configuration\TcaService;
 use LogicException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -617,8 +618,9 @@ class Record implements RecordInterface
     {
         if ($record->localRecordExists() || $record->foreignRecordExists()) {
             if (!$record->isParentRecordLocked()) {
-                if (!($this->tableName === 'pages' && $record->getTableName() === 'pages')
-                    || (((int)$record->getMergedProperty('pid')) === ((int)$this->getIdentifier()))
+                if ($this->tableName !== 'pages'
+                    || $record->getTableName() !== 'pages'
+                    || $record->getPageIdentifier() === $this->getPageIdentifier()
                 ) {
                     if (!$this->isParentDisabled) {
                         $record->setParentRecord($this);
@@ -1149,6 +1151,10 @@ class Record implements RecordInterface
     public function getPageIdentifier(): int
     {
         if ($this->isPagesTable()) {
+            $l10nParent = $this->getL10nParentIdentifier();
+            if (null !== $l10nParent) {
+                return $l10nParent;
+            }
             return $this->getIdentifier();
         }
         if ($this->hasLocalProperty('pid')) {
@@ -1157,5 +1163,26 @@ class Record implements RecordInterface
             return (int)$this->getForeignProperty('pid');
         }
         return 0;
+    }
+
+    protected function getL10nParentIdentifier(): ?int
+    {
+        if ($this->isTranslation()) {
+            $tcaService = GeneralUtility::makeInstance(TcaService::class);
+            $l10nPointer = $tcaService->getTransOrigPointerField($this->tableName);
+            if (!empty($l10nPointer) && array_key_exists($l10nPointer, $this->localProperties)) {
+                return $this->localProperties[$l10nPointer];
+            }
+        }
+        return null;
+    }
+
+    public function isTranslation(): bool
+    {
+        $tcaService = GeneralUtility::makeInstance(TcaService::class);
+        $languageField = $tcaService->getLanguageField($this->tableName);
+        return !empty($languageField)
+               && array_key_exists($languageField, $this->localProperties)
+               && $this->localProperties[$languageField] > 0;
     }
 }

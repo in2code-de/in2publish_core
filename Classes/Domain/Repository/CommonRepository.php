@@ -1488,8 +1488,9 @@ class CommonRepository extends BaseRepository
         $overrideIdByRecord = false
     ): array {
         $tableName = $columnConfiguration['foreign_table'];
-        // FlexForms without `foreign_table` sneak through the TCA pre processing
-        if (empty($tableName) || in_array($tableName, $excludedTableNames)) {
+        $isL10nPointer = $propertyName === $this->tcaService->getTransOrigPointerField($record->getTableName());
+        // Ignore $excludedTableNames if the field points to the record's l10Parent, which is required to be published.
+        if (!$isL10nPointer && (empty($tableName) || in_array($tableName, $excludedTableNames))) {
             return [];
         }
         $records = [];
