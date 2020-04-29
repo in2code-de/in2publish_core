@@ -885,17 +885,37 @@ class RecordTest extends Unit
      * @covers ::addRelatedRecord
      * @depends testAddAndGetRelatedRecordsSetsAndReturnsRelatedRecords
      */
-    public function testAddRelatedRecordDoesNotAddPageToPageRecord()
+    public function testAddRelatedRecordDoesNotAddUnrelatedPageToPageRecord()
     {
         $root = $this->getRecordStub([]);
         $root->__construct('pages', ['uid' => 1], ['uid' => 1], [], []);
 
         $sub = $this->getRecordStub([]);
-        $sub->__construct('pages', ['uid' => 1], [], [], []);
+        $sub->__construct('pages', ['uid' => 200], [], [], []);
 
         $root->addRelatedRecord($sub);
 
         $this->assertSame([], $root->getRelatedRecords());
+    }
+
+    /**
+     * @covers ::addRelatedRecord
+     * @depends testAddAndGetRelatedRecordsSetsAndReturnsRelatedRecords
+     */
+    public function testAddRelatedRecordDoesAddLanguageParentPageToPageRecord()
+    {
+        $GLOBALS['TCA']['pages']['ctrl']['languageField'] = 'lang';
+        $GLOBALS['TCA']['pages']['ctrl']['transOrigPointerField'] = 'lang_parent';
+
+        $root = $this->getRecordStub([]);
+        $root->__construct('pages', ['uid' => 1, 'lang' => 1, 'lang_parent' => 200], ['uid' => 1], [], []);
+
+        $sub = $this->getRecordStub([]);
+        $sub->__construct('pages', ['uid' => 200], [], [], []);
+
+        $root->addRelatedRecord($sub);
+
+        $this->assertSame(['pages' => [200 => $sub]], $root->getRelatedRecords());
     }
 
     /**
@@ -982,7 +1002,7 @@ class RecordTest extends Unit
      * @depends testIsChangedReturnsTrueForAnyOtherStateThanChanged
      * @depends testIsChangedReturnsFalseForUnchangedState
      * @depends testAddAndGetRelatedRecordsSetsAndReturnsRelatedRecords
-     * @depends testAddRelatedRecordDoesNotAddPageToPageRecord
+     * @depends testAddRelatedRecordDoesNotAddUnrelatedPageToPageRecord
      */
     public function testGetStateRecursiveIgnoresRelatedPageRecords()
     {
