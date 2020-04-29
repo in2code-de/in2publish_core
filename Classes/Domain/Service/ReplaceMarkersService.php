@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Service;
 
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de
+ * (c) 2015 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -34,6 +36,7 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function implode;
 use function preg_replace_callback;
 use function str_replace;
@@ -122,7 +125,7 @@ class ReplaceMarkersService
     protected function replaceGeneralMarkers(RecordInterface $record, string $string, string $propertyName)
     {
         if (false !== strpos($string, '###CURRENT_PID###')) {
-            if (null !== ($currentPid = $this->getCurrentRecordPageId($record))) {
+            if (null !== ($currentPid = $record->getPageIdentifier())) {
                 $string = str_replace('###CURRENT_PID###', $currentPid, $string);
             }
         }
@@ -132,7 +135,7 @@ class ReplaceMarkersService
             }
         }
         if (false !== strpos($string, '###STORAGE_PID###')) {
-            if (null !== ($storagePid = $this->getStoragePidFromPage($this->getCurrentRecordPageId($record)))) {
+            if (null !== ($storagePid = $this->getStoragePidFromPage($record->getPageIdentifier()))) {
                 $string = str_replace('###STORAGE_PID###', $storagePid, $string);
             }
         }
@@ -209,18 +212,6 @@ class ReplaceMarkersService
             }
         }
         return 0;
-    }
-
-    /**
-     * @param RecordInterface $record
-     *
-     * @return mixed
-     */
-    protected function getCurrentRecordPageId(RecordInterface $record)
-    {
-        return ($record->hasLocalProperty('pid')
-            ? $record->getLocalProperty('pid')
-            : $record->getForeignProperty('pid'));
     }
 
     /**

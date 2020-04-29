@@ -1,10 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Tests\Helper;
 
 use Codeception\Module;
 use ReflectionClass;
 use RuntimeException;
+use Throwable;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Cache\Backend\NullBackend;
 use TYPO3\CMS\Core\Core\Bootstrap;
@@ -277,7 +280,7 @@ class TYPO3 extends Module
     protected $coreExtensionsToLoad = [];
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function setUpFunctional()
     {
@@ -335,7 +338,8 @@ class TYPO3 extends Module
             $localConfiguration['SYS']['debugExceptionHandler'] = '';
             $localConfiguration['SYS']['trustedHostsPattern'] = '.*';
             $localConfiguration['SYS']['encryptionKey'] = 'i-am-not-a-secure-encryption-key';
-            $localConfiguration['SYS']['caching']['cacheConfigurations']['extbase_object']['backend'] = NullBackend::class;
+            $localConfiguration['SYS']['caching']['cacheConfigurations']['extbase_object']['backend'] =
+                NullBackend::class;
             $testbase->setUpLocalConfiguration(
                 $instancePath,
                 $localConfiguration,

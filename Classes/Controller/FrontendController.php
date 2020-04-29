@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Controller;
 
 /*
  * Copyright notice
  *
- * (c) 2016 in2code.de
+ * (c) 2016 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -28,6 +30,9 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\In2publishCoreException;
+use In2code\In2publishCore\Utility\BackendUtility;
+
 /**
  * Class FrontendController
  */
@@ -39,9 +44,12 @@ class FrontendController extends AbstractController
      * @param int $identifier
      *
      * @return void
+     *
+     * @throws In2publishCoreException
      */
     public function previewAction($identifier = 1)
     {
-        $this->view->assign('identifier', $identifier);
+        $this->view->assign('local_preview', BackendUtility::buildPreviewUri('pages', $identifier, 'local'));
+        $this->view->assign('foreign_preview', BackendUtility::buildPreviewUri('pages', $identifier, 'foreign'));
     }
 }

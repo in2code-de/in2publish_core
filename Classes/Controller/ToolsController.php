@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Controller;
 
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de
+ * (c) 2015 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -39,6 +41,7 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Tools\ToolsRegistry;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Throwable;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
@@ -51,17 +54,17 @@ use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Extensionmanager\Utility\ListUtility;
+
+use function array_keys;
 use function array_merge;
 use function class_exists;
 use function defined;
 use function file_get_contents;
 use function flush;
-use function gettype;
 use function gmdate;
 use function header;
 use function implode;
 use function is_array;
-use function is_string;
 use function json_decode;
 use function json_encode;
 use function json_last_error;
@@ -75,7 +78,7 @@ use function strftime;
 use function strlen;
 use function substr;
 use function time;
-use function unserialize;
+
 use const PHP_EOL;
 use const PHP_OS;
 use const PHP_VERSION;
@@ -88,7 +91,7 @@ use const TYPO3_COMPOSER_MODE;
  */
 class ToolsController extends ActionController
 {
-    const LOG_INIT_DB_ERROR = 'Error while initialization. The Database is not correctly configured';
+    public const LOG_INIT_DB_ERROR = 'Error while initialization. The Database is not correctly configured';
 
     /**
      * @var array
@@ -342,12 +345,13 @@ class ToolsController extends ActionController
             }
         }
 
+        $extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class);
         $extConf = [];
-        foreach ($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'] as $extKey => $extConfs) {
-            if (is_string($extConfs)) {
-                $extConf[$extKey] = unserialize($extConfs);
-            } else {
-                $extConf[$extKey] = 'NOT UNSERIALIZEABLE: ' . gettype($extConfs);
+        foreach (array_keys($GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']) as $extKey) {
+            try {
+                $extConf[$extKey] = $extensionConfiguration->get($extKey);
+            } catch (Throwable $e) {
+                $extConf[$extKey] = 'Exception: ' . $e->getMessage();
             }
         }
 

@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Repository;
 
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de
+ * (c) 2015 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -45,12 +47,13 @@ use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidTcaException;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
+use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
-use TYPO3\CMS\Extbase\Service\FlexFormService;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
+
 use function array_diff;
 use function array_filter;
 use function array_key_exists;
@@ -78,6 +81,7 @@ use function strpos;
 use function substr;
 use function trigger_error;
 use function trim;
+
 use const E_USER_DEPRECATED;
 
 /**
@@ -112,9 +116,9 @@ use const E_USER_DEPRECATED;
  */
 class CommonRepository extends BaseRepository
 {
-    const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)~';
-    const SIGNAL_RELATION_RESOLVER_RTE = 'relationResolverRTE';
-    const DEPRECATION_METHOD_FPBPATN = 'CommonRepository::findPropertiesByPropertyAndTablename is deprecated and will be removed in in2publish_core version 10. Use BaseRepository::findPropertiesByProperty instead';
+    public const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)~';
+    public const SIGNAL_RELATION_RESOLVER_RTE = 'relationResolverRTE';
+    public const DEPRECATION_METHOD_FPBPATN = 'CommonRepository::findPropertiesByPropertyAndTablename is deprecated and will be removed in in2publish_core version 10. Use BaseRepository::findPropertiesByProperty instead';
 
     /**
      * @var RecordFactory
@@ -647,7 +651,7 @@ class CommonRepository extends BaseRepository
         }
 
         try {
-            list($record) = $this->signalSlotDispatcher->dispatch(
+            [$record] = $this->signalSlotDispatcher->dispatch(
                 CommonRepository::class,
                 'afterRecordEnrichment',
                 [$record]
@@ -1009,8 +1013,6 @@ class CommonRepository extends BaseRepository
      */
     protected function getLocalFlexFormDataFromRecord(RecordInterface $record, $column): array
     {
-        /** @var FlexFormService $flexFormService */
-        // TODO: Replace with \TYPO3\CMS\Core\Service\FlexFormService upon dropping TYPO3 v8
         $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
 
         $localFlexFormData = [];
@@ -1486,8 +1488,9 @@ class CommonRepository extends BaseRepository
         $overrideIdByRecord = false
     ): array {
         $tableName = $columnConfiguration['foreign_table'];
-        // FlexForms without `foreign_table` sneak through the TCA pre processing
-        if (empty($tableName) || in_array($tableName, $excludedTableNames)) {
+        $isL10nPointer = $propertyName === $this->tcaService->getTransOrigPointerField($record->getTableName());
+        // Ignore $excludedTableNames if the field points to the record's l10Parent, which is required to be published.
+        if (!$isL10nPointer && (empty($tableName) || in_array($tableName, $excludedTableNames))) {
             return [];
         }
         $records = [];

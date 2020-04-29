@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository;
 
 /*
  * Copyright notice
  *
- * (c) 2016 in2code.de
+ * (c) 2016 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -32,6 +34,7 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
+
 use function array_column;
 use function array_combine;
 

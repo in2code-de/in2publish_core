@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Testing\Data;
 
 /*
@@ -35,6 +37,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
+
 use function array_column;
 use function array_combine;
 
@@ -43,10 +46,10 @@ use function array_combine;
  */
 class FalStorageTestSubjectsProvider implements SingletonInterface
 {
-    const PURPOSE_CASE_SENSITIVITY = 'caseSensitivity';
-    const PURPOSE_DRIVER = 'driver';
-    const PURPOSE_MISSING = 'missing';
-    const PURPOSE_UNIQUE_TARGET = 'uniqueTarget';
+    public const PURPOSE_CASE_SENSITIVITY = 'caseSensitivity';
+    public const PURPOSE_DRIVER = 'driver';
+    public const PURPOSE_MISSING = 'missing';
+    public const PURPOSE_UNIQUE_TARGET = 'uniqueTarget';
 
     /**
      * @var Dispatcher

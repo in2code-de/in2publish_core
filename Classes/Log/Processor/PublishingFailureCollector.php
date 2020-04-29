@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Log\Processor;
 
 /*
@@ -31,13 +33,17 @@ use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogRecord;
 use TYPO3\CMS\Core\Log\Processor\AbstractProcessor;
 use TYPO3\CMS\Core\SingletonInterface;
+
 use function min;
+use function version_compare;
 
 /**
  * Class PublishingErrorProcessor
  */
 class PublishingFailureCollector extends AbstractProcessor implements SingletonInterface
 {
+    public const MINIMUM_LOG_LEVEL = 4;
+
     /**
      * @var array
      */
@@ -46,7 +52,7 @@ class PublishingFailureCollector extends AbstractProcessor implements SingletonI
     /**
      * @var int
      */
-    protected $highestSeverity = LogLevel::DEBUG;
+    protected $highestSeverity = 7;
 
     /**
      * @param LogRecord $logRecord
@@ -55,8 +61,12 @@ class PublishingFailureCollector extends AbstractProcessor implements SingletonI
      */
     public function processLogRecord(LogRecord $logRecord)
     {
-        $this->highestSeverity = min($this->highestSeverity, $logRecord->getLevel());
-        if ($logRecord->getLevel() <= LogLevel::WARNING) {
+        $level = $logRecord->getLevel();
+        if (version_compare(TYPO3_branch, '10.0', '>=')) {
+            $level = LogLevel::normalizeLevel($level);
+        }
+        $this->highestSeverity = min($this->highestSeverity, $level);
+        if ($level <= self::MINIMUM_LOG_LEVEL) {
             $this->failures[$logRecord->getMessage()][] = $logRecord;
         }
         return $logRecord;

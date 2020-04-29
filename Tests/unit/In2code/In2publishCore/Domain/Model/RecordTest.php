@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Tests\In2code\In2publishCore\Domain\Model;
 
 /*
@@ -1233,7 +1235,11 @@ class RecordTest extends Unit
             'only_local_array' => [['foo' => ['baz' => 2]], [], ['baz' => 2]],
             'only_foreign_array' => [[], ['foo' => ['baz' => 2]], ['baz' => 2]],
             'both_same_array' => [['foo' => ['baz' => 2]], ['foo' => ['baz' => 2]], ['baz' => 2]],
-            'different_array' => [['foo' => ['bar' => 'foo']], ['foo' => ['baz' => 'faz']], ['bar' => 'foo', 'baz' => 'faz']],
+            'different_array' => [
+                ['foo' => ['bar' => 'foo']],
+                ['foo' => ['baz' => 'faz']],
+                ['bar' => 'foo', 'baz' => 'faz'],
+            ],
             'local_array_foreign_string' => [['foo' => ['bar' => 'foo']], ['foo' => 'faz'], ['bar' => 'foo', 'faz']],
             'foreign_array_local_string' => [['foo' => 'faz'], ['foo' => ['bar' => 'foo']], ['faz', 'bar' => 'foo']],
             'only_local_list' => [['foo' => '2,3'], [], '2,3'],

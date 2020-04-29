@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Service\Context;
 
 /*
@@ -30,6 +32,7 @@ namespace In2code\In2publishCore\Service\Context;
 use LogicException;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function getenv;
 use function in_array;
 
@@ -38,10 +41,10 @@ use function in_array;
  */
 class ContextService implements SingletonInterface
 {
-    const LOCAL = 'Local';
-    const FOREIGN = 'Foreign';
-    const ENV_VAR_NAME = 'IN2PUBLISH_CONTEXT';
-    const REDIRECT_ENV_VAR_NAME = 'REDIRECT_IN2PUBLISH_CONTEXT';
+    public const LOCAL = 'Local';
+    public const FOREIGN = 'Foreign';
+    public const ENV_VAR_NAME = 'IN2PUBLISH_CONTEXT';
+    public const REDIRECT_ENV_VAR_NAME = 'REDIRECT_IN2PUBLISH_CONTEXT';
 
     /**
      * @var string

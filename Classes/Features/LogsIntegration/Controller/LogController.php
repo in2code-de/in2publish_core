@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Features\LogsIntegration\Controller;
 
 /*
@@ -30,6 +32,7 @@ namespace In2code\In2publishCore\Features\LogsIntegration\Controller;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_reverse;
 use function ksort;
 

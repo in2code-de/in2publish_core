@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission\Exception;
 
 /*
@@ -28,6 +30,7 @@ namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission\Except
  */
 
 use In2code\In2publishCore\In2publishCoreException;
+
 use function sprintf;
 
 class FileMissingException extends In2publishCoreException

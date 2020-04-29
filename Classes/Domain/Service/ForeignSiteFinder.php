@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Service;
 
 /*
@@ -27,7 +29,7 @@ namespace In2code\In2publishCore\Domain\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Command\StatusCommandController;
+use In2code\In2publishCore\Command\Status\SiteConfigurationCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\In2publishCoreException;
@@ -36,6 +38,7 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function base64_decode;
 use function explode;
 use function unserialize;
@@ -71,17 +74,17 @@ class ForeignSiteFinder
      * @throws In2publishCoreException
      * @throws SiteNotFoundException
      */
-    public function getSiteBaseByPageId(int $pageId): Site
+    public function getSiteByPageId(int $pageId): Site
     {
         $cacheKey = 'site_config_' . $pageId;
         if (!$this->cache->has($cacheKey)) {
             $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
-            $request->setCommand(StatusCommandController::SITE_CONFIGURATION);
+            $request->setCommand(SiteConfigurationCommand::IDENTIFIER);
             $request->setOption((string)$pageId);
 
             $response = $this->rceDispatcher->dispatch($request);
 
-            if ($response->getExitStatus() === StatusCommandController::EXIT_NO_SITE) {
+            if ($response->getExitStatus() === SiteConfigurationCommand::EXIT_NO_SITE) {
                 $site = false;
             } elseif ($response->isSuccessful()) {
                 $responseText = $response->getOutputString();

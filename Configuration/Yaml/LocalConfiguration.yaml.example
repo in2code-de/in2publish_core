@@ -51,7 +51,6 @@ foreign:
 excludeRelatedTables:
   - be_groups
   - be_users
-  - sys_domain
   - sys_history
   - sys_log
   #- sys_note
@@ -112,7 +111,9 @@ ignoreFieldsForDifferenceView:
     - creation_date
     - tstamp
     - last_indexed
-
+  sys_file_metadata:
+    - tstamp
+    - crdate
 
 # factory settings (configuration about building relations in in2publish)
 factory:
@@ -231,7 +232,8 @@ factory:
     folderFileLimit: 150
 
 
-# Set domain names for file preview without leading protocol (e.g. www.domain.org)
+# Set file preview domain. Must be at least a host name. If a scheme is not set it defaults to https.
+# You can include the scheme and also a path if your TYPO3 runs in a sub path (e.g. https://example.com/stuff/)
 # @user
 filePreviewDomainName:
   local: stage.publishing.localhost.de
@@ -278,6 +280,9 @@ sshConnection:
 
   # private key password, empty string if none set
   privateKeyPassphrase: ''
+
+  # You should not disable this check if the FKFP does not change. If the foreign key will change often (e.g. in a docker/k8s/cloud environment) you can disable it at your own risk.
+  enableForeignKeyFingerprintCheck: TRUE
 
   # Key fingerprint of the production server for additional authentication check. If this fingerprint does not match in2publish will refuse the connection.
   # You don't need to keep the colons

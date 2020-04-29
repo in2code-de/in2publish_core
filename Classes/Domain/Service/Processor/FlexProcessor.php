@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Service\Processor;
 
 use function array_key_exists;
@@ -39,13 +41,13 @@ class FlexProcessor extends AbstractProcessor
      */
     protected $canHoldRelations = true;
 
-    const DS = 'ds';
-    const DS_POINTER_FIELD = 'ds_pointerField';
-    const DS_POINTER_FIELD_SEARCH_PARENT = 'ds_pointerField_searchParent';
-    const DS_POINTER_FIELD_SEARCH_PARENT_SUB_FIELD = 'ds_pointerField_searchParent_subField';
-    const SEARCH = 'search';
-    const MISSING_POINTER_FIELD = 'can not resolve flexform values without "ds_pointerField" or default value';
-    const DEFAULT_VALUE = 'default';
+    public const DS = 'ds';
+    public const DS_POINTER_FIELD = 'ds_pointerField';
+    public const DS_POINTER_FIELD_SEARCH_PARENT = 'ds_pointerField_searchParent';
+    public const DS_POINTER_FIELD_SEARCH_PARENT_SUB_FIELD = 'ds_pointerField_searchParent_subField';
+    public const SEARCH = 'search';
+    public const MISSING_POINTER_FIELD = 'can not resolve flexform values without "ds_pointerField" or default value';
+    public const DEFAULT_VALUE = 'default';
 
     /**
      * @var array

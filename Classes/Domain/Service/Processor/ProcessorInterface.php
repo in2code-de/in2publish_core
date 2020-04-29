@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Service\Processor;
 
 /*
@@ -32,16 +34,16 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  */
 interface ProcessorInterface
 {
-    const FOREIGN_TABLE = 'foreign_table';
-    const FOREIGN_TABLE_WHERE = 'foreign_table_where';
-    const MM = 'MM';
-    const MM_HAS_UID_FIELD = 'MM_hasUidField';
-    const MM_MATCH_FIELDS = 'MM_match_fields';
-    const MM_TABLE_WHERE = 'MM_table_where';
-    const MM_OPPOSITE_USAGE = 'MM_oppositeUsage';
-    const MM_OPPOSITE_FIELD = 'MM_opposite_field';
-    const ROOT_LEVEL = 'rootLevel';
-    const ITEMS_PROC_FUNC = 'itemsProcFunc';
+    public const FOREIGN_TABLE = 'foreign_table';
+    public const FOREIGN_TABLE_WHERE = 'foreign_table_where';
+    public const MM = 'MM';
+    public const MM_HAS_UID_FIELD = 'MM_hasUidField';
+    public const MM_MATCH_FIELDS = 'MM_match_fields';
+    public const MM_TABLE_WHERE = 'MM_table_where';
+    public const MM_OPPOSITE_USAGE = 'MM_oppositeUsage';
+    public const MM_OPPOSITE_FIELD = 'MM_opposite_field';
+    public const ROOT_LEVEL = 'rootLevel';
+    public const ITEMS_PROC_FUNC = 'itemsProcFunc';
 
     /**
      * The constructor must be public and must not require any arguments

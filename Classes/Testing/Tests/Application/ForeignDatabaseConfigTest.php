@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Testing\Tests\Application;
 
 /*
  * Copyright notice
  *
- * (c) 2019 in2code.de
+ * (c) 2019 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -27,7 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Command\StatusCommandController;
+use In2code\In2publishCore\Command\Status\DbConfigTestCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
@@ -35,6 +37,7 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function base64_decode;
 use function in_array;
 use function is_array;
@@ -46,7 +49,7 @@ use function strpos;
  */
 class ForeignDatabaseConfigTest implements TestCaseInterface
 {
-    const DB_CONFIG_TEST_TYPE = 'DB Config Test';
+    public const DB_CONFIG_TEST_TYPE = 'DB Config Test';
 
     /**
      * @var RemoteCommandDispatcher
@@ -72,7 +75,7 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
         $row = ['task_type' => self::DB_CONFIG_TEST_TYPE, 'configuration' => $random];
         $connection->insert('tx_in2code_in2publish_task', $row);
 
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, StatusCommandController::DB_CONFIG_TEST);
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, DbConfigTestCommand::IDENTIFIER);
         $response = $this->rceDispatcher->dispatch($request);
 
         if ($response->isSuccessful()) {
@@ -108,7 +111,7 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
         $values = [];
         foreach ($output as $line) {
             if (false !== strpos($line, ':')) {
-                list($key, $value) = GeneralUtility::trimExplode(':', $line);
+                [$key, $value] = GeneralUtility::trimExplode(':', $line);
                 $values[$key] = $value;
             }
         }

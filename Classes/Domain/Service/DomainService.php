@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Service;
 
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de
+ * (c) 2015 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -31,27 +33,30 @@ namespace In2code\In2publishCore\Domain\Service;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\In2publishCoreException;
-use In2code\In2publishCore\Utility\DatabaseUtility;
-use PDO;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Exception\SiteNotFoundException;
-use TYPO3\CMS\Core\Site\SiteFinder;
+use In2code\In2publishCore\Service\Routing\SiteService;
+use In2code\In2publishCore\Utility\BackendUtility as BackendUtilityAlias;
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
+
 use function array_shift;
 use function ltrim;
 use function rtrim;
-use function trim;
+use function sprintf;
+use function trigger_error;
 use function version_compare;
 
+use const E_USER_DEPRECATED;
+
 /**
- * Class DomainService
+ * @deprecated Use BackendUtility instead
  */
-class DomainService
+class DomainService implements SingletonInterface
 {
-    const TABLE_NAME = 'sys_domain';
-    const LEVEL_LOCAL = 'local';
-    const LEVEL_FOREIGN = 'foreign';
+    public const TABLE_NAME = 'sys_domain';
+    public const LEVEL_LOCAL = 'local';
+    public const LEVEL_FOREIGN = 'foreign';
+    public const DEPRECATION_METHOD = 'The method %s is deprecated and will be removed in in2publish_core version 11.';
 
     /**
      * Get domain from root line without trailing slash
@@ -78,9 +83,14 @@ class DomainService
      * @param bool $addProtocol
      *
      * @return mixed|string
+     *
+     * @throws In2publishCoreException
+     *
+     * @deprecated Use config filePreviewDomainName for sys_file or ::getDomainFromSiteConfigByPageId for anything else.
      */
     public function getFirstDomain(RecordInterface $record, $stagingLevel = self::LEVEL_LOCAL, $addProtocol = true)
     {
+        trigger_error(sprintf(static::DEPRECATION_METHOD, __METHOD__), E_USER_DEPRECATED);
         $uri = $this->getDomainFromSiteConfigByPageId($record->getPageIdentifier(), $stagingLevel, $addProtocol);
         if (!empty($uri)) {
             return $uri;
@@ -109,6 +119,8 @@ class DomainService
     }
 
     /**
+     * TODO: Caching
+     *
      * @param int $pageIdentifier
      * @param string $stagingLevel
      * @param bool $addProtocol
@@ -116,41 +128,32 @@ class DomainService
      * @return string
      * @throws In2publishCoreException
      */
-    protected function getDomainFromSiteConfigByPageId(
+    public function getDomainFromSiteConfigByPageId(
         int $pageIdentifier,
         string $stagingLevel,
         bool $addProtocol
     ): string {
-        if (version_compare(TYPO3_branch, '9.3', '>=')) {
-            if ($stagingLevel === self::LEVEL_LOCAL) {
-                $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
-                try {
-                    $site = $siteFinder->getSiteByPageId($pageIdentifier);
-                } catch (SiteNotFoundException $e) {
-                }
+        if (0 === $pageIdentifier) {
+            return '';
+        }
+        $siteService = GeneralUtility::makeInstance(SiteService::class);
+        $site = $siteService->getSiteForPidAndStagingLevel($pageIdentifier, $stagingLevel);
+        if (null === $site) {
+            return '';
+        }
+        $uri = (string)$site->getBase()->withScheme('');
+        if ('/' === $uri && $stagingLevel === self::LEVEL_LOCAL) {
+            if ($addProtocol) {
+                $uri = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
             } else {
-                $foreignSiteFinder = GeneralUtility::makeInstance(ForeignSiteFinder::class);
-                try {
-                    $site = $foreignSiteFinder->getSiteBaseByPageId($pageIdentifier);
-                } catch (SiteNotFoundException $e) {
-                }
-            }
-            if (isset($site)) {
-                $uri = (string)$site->getBase()->withScheme('');
-                if ('/' === $uri && $stagingLevel === self::LEVEL_LOCAL) {
-                    if ($addProtocol) {
-                        $uri = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
-                    } else {
-                        $uri = GeneralUtility::getIndpEnv('HTTP_HOST');
-                    }
-                }
-                if (!$addProtocol) {
-                    $uri = ltrim($uri, '/');
-                }
-                return rtrim($uri, '/');
+                $uri = GeneralUtility::getIndpEnv('HTTP_HOST');
             }
         }
-        return '';
+        if (!$addProtocol) {
+            $uri = ltrim($uri, '/');
+        }
+        $uri = rtrim($uri, '/');
+        return $uri;
     }
 
     /**
@@ -189,39 +192,23 @@ class DomainService
      *
      * @throws In2publishCoreException
      *
+     * @deprecated Use BackendUtility::getSiteForPageIdentifier() instead
+     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function getDomainFromPageIdentifier($identifier, $stagingLevel, bool $addProtocol = false): string
     {
+        trigger_error(sprintf(static::DEPRECATION_METHOD, __METHOD__), E_USER_DEPRECATED);
+        if (0 === $identifier) {
+            return '';
+        }
         $uri = $this->getDomainFromSiteConfigByPageId($identifier, $stagingLevel, $addProtocol);
-        if (!empty($uri)) {
-            return $uri;
-        }
-        $rootLine = BackendUtility::BEgetRootLine($identifier);
-        foreach ($rootLine as $page) {
-            $connection = DatabaseUtility::buildDatabaseConnectionForSide($stagingLevel);
-            if (null === $connection) {
-                // Error: not connected
-                return '';
-            }
-            $query = $connection->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $domainRecord = $query->select('domainName')
-                                  ->from(static::TABLE_NAME)
-                                  ->where($query->expr()->eq('pid', (int)$page['uid']))
-                                  ->andWhere($query->expr()->eq('hidden', 0))
-                                  ->orderBy('sorting', 'ASC')
-                                  ->setMaxResults(1)
-                                  ->execute()
-                                  ->fetch(PDO::FETCH_ASSOC);
-            if (isset($domainRecord['domainName'])) {
-                $uri = trim($domainRecord['domainName'], '/');
-                if ($addProtocol) {
-                    $uri = (GeneralUtility::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://') . $uri;
-                }
-                return $uri;
+        if (empty($uri) && version_compare(TYPO3_branch, '10', '<')) {
+            $uri = BackendUtilityAlias::fetchInheritedSysDomainNameForPage($identifier, $stagingLevel);
+            if (null !== $uri && $addProtocol) {
+                $uri = (GeneralUtility::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://') . $uri;
             }
         }
-        return '';
+        return $uri;
     }
 }

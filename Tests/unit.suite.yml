@@ -4,13 +4,23 @@
 
 actor: UnitTester
 modules:
-    enabled:
-        - Asserts
-        - \In2code\In2publishCore\Tests\Helper\Unit
-        - \In2code\In2publishCore\Tests\Helper\TYPO3
-        - \In2code\In2publishCore\Tests\Helper\In2publishCore
-        - Db:
-            dsn: 'sqlite:Tests/_data/local.db'
+  enabled:
+    - Asserts
+    - \In2code\In2publishCore\Tests\Helper\Unit
+    - \In2code\In2publishCore\Tests\Helper\TYPO3
+    - \In2code\In2publishCore\Tests\Helper\In2publishCore
+    - Db:
+        dsn: 'sqlite:Tests/_data/local.db'
+        user: ''
+        password: ''
+        dump: 'Tests/_data/dump-sqlite.sql'
+        populate: true
+        cleanup: true
+        reconnect: true
+        waitlock: 10
+        databases:
+          foreign:
+            dsn: 'sqlite:Tests/_data/foreign.db'
             user: ''
             password: ''
             dump: 'Tests/_data/dump-sqlite.sql'
@@ -18,17 +28,7 @@ modules:
             cleanup: true
             reconnect: true
             waitlock: 10
-            databases:
-              foreign:
-                dsn: 'sqlite:Tests/_data/foreign.db'
-                user: ''
-                password: ''
-                dump: 'Tests/_data/dump-sqlite.sql'
-                populate: true
-                cleanup: true
-                reconnect: true
-                waitlock: 10
-    step_decorators: ~
+  step_decorators: ~
 
 coverage:
   enabled: true

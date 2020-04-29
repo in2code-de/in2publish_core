@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Model;
 
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de
+ * (c) 2015 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -33,12 +35,12 @@ namespace In2code\In2publishCore\Domain\Model;
  */
 interface RecordInterface
 {
-    const RECORD_STATE_UNCHANGED = 'unchanged';
-    const RECORD_STATE_CHANGED = 'changed';
-    const RECORD_STATE_ADDED = 'added';
-    const RECORD_STATE_DELETED = 'deleted';
-    const RECORD_STATE_MOVED = 'moved';
-    const RECORD_STATE_MOVED_AND_CHANGED = 'moved-and-changed';
+    public const RECORD_STATE_UNCHANGED = 'unchanged';
+    public const RECORD_STATE_CHANGED = 'changed';
+    public const RECORD_STATE_ADDED = 'added';
+    public const RECORD_STATE_DELETED = 'deleted';
+    public const RECORD_STATE_MOVED = 'moved';
+    public const RECORD_STATE_MOVED_AND_CHANGED = 'moved-and-changed';
 
     /**
      * @param string $tableName

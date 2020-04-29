@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Driver;
 
 /*
@@ -28,7 +30,7 @@ namespace In2code\In2publishCore\Domain\Driver;
  */
 
 use Exception;
-use In2code\In2publishCore\Command\RpcCommandController;
+use In2code\In2publishCore\Command\RemoteProcedureCall\ExecuteCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Envelope;
@@ -44,9 +46,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class RemoteStorage implements ResourceStorageInterface
 {
-    const SUB_FOLDERS_KEY = 'subFolders';
-    const FILES_KEY = 'files';
-    const HAS_FOLDER_KEY = 'hasFolder';
+    public const SUB_FOLDERS_KEY = 'subFolders';
+    public const FILES_KEY = 'files';
+    public const HAS_FOLDER_KEY = 'hasFolder';
 
     /**
      * @var Letterbox
@@ -170,7 +172,7 @@ class RemoteStorage implements ResourceStorageInterface
 
         $request = GeneralUtility::makeInstance(
             RemoteCommandRequest::class,
-            RpcCommandController::EXECUTE_COMMAND,
+            ExecuteCommand::IDENTIFIER,
             [],
             [$uid]
         );

@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Factory;
 
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de
+ * (c) 2015 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -40,6 +42,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
+
 use function array_diff;
 use function array_filter;
 use function array_merge;
@@ -47,6 +50,7 @@ use function in_array;
 use function sprintf;
 use function strlen;
 use function trigger_error;
+
 use const E_USER_DEPRECATED;
 
 /**
@@ -57,7 +61,7 @@ use const E_USER_DEPRECATED;
  */
 class RecordFactory
 {
-    const DEPRECATION_METHOD_NO_TABLE_ARG = 'Calling %s without tableName is deprecated. tableName will be a non-optional argument in in2publish_core version 10.';
+    public const DEPRECATION_METHOD_NO_TABLE_ARG = 'Calling %s without tableName is deprecated. tableName will be a non-optional argument in in2publish_core version 10.';
 
     /**
      * Runtime cache to cache already created Records
@@ -362,12 +366,6 @@ class RecordFactory
         // The relation should come from the record via TCA not via the PID relation to the page.
         if (!$this->config['includeSysFileReference']) {
             $tableNamesToExclude[] = 'sys_file_reference';
-        }
-        if (version_compare(TYPO3_branch, '9.5', '>=')
-            && $record->getAdditionalProperty('isRoot')
-            && 'pages' === $record->getTableName()
-        ) {
-            $this->findTranslations($record, $commonRepository, 'pages_language_overlay');
         }
         // if page recursion depth reached
         if ($this->pagesDepth < $this->config['maximumPageRecursion'] && $this->pageRecursionEnabled) {

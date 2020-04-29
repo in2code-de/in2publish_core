@@ -251,14 +251,6 @@
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\LocalSysDomainTest -->
 
-			<trans-unit id="application.local_sys_domain_missing">
-				<source>No valid sys_domain entry has been found on the local system.</source>
-				<target state="translated">Es wurde kein gültiger sys_domain Eintrag im lokalen System gefunden.</target>
-			</trans-unit>
-			<trans-unit id="application.local_sys_domain_configured">
-				<source>A valid sys_domain entry has been found on the local system.</source>
-				<target state="translated">Es wurde ein gültiger sys_domain Eintrag im lokalen System gefunden.</target>
-			</trans-unit>
 			<trans-unit id="application.local_sites_config_missing">
 				<source>One or more root pages are missing their site configuration and have no sys_domain entry.</source>
 				<target state="translated">Eine oder mehrere Startseiten haben keine Seitenkonfiguration und auch keine konfigurierte Domain.</target>
@@ -278,6 +270,10 @@
 			<trans-unit id="application.local_sites_query_error">
 				<source>An error occurred in the root site detection query.</source>
 				<target state="translated">Ein Fehler ist in der Startseiten-Suche aufgetreten.</target>
+			</trans-unit>
+			<trans-unit id="application.local_site_config_slash">
+				<source>At least one local root page has a site configuration without a full base domain.</source>
+				<target state="translated">Mindestens eine Startseite auf dem lokalen System hat eine Startseite ohne einer vollen Basis-Domain.</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest -->
@@ -372,14 +368,6 @@
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignSysDomainTest -->
 
-			<trans-unit id="application.foreign_sys_domain_missing">
-				<source>No valid sys_domain entry has been found on the foreign system.</source>
-				<target state="translated">Es wurde kein gültiger sys_domain Eintrag im entfernte System gefunden.</target>
-			</trans-unit>
-			<trans-unit id="application.foreign_sys_domain_configured">
-				<source>A valid sys_domain entry has been found on the foreign system.</source>
-				<target state="translated">Es wurde ein gültiger sys_domain Eintrag im entfernte System gefunden.</target>
-			</trans-unit>
 			<trans-unit id="application.no_foreign_sites_found">
 				<source>No root pages have been found on the foreign system.</source>
 				<target state="translated">Es wurden keine Startseiten auf dem entfernten System gefunden.</target>

@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Controller;
 
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de
+ * (c) 2015 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -44,6 +46,7 @@ use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+
 use function strpos;
 
 /**
@@ -111,7 +114,7 @@ class FileController extends AbstractController
         if (strpos($identifier, ',')) {
             // Just take the local part of the file identifier.
             // We need the local folder identifier to instantiate the folder record.
-            list($identifier) = GeneralUtility::trimExplode(',', $identifier);
+            [$identifier] = GeneralUtility::trimExplode(',', $identifier);
         }
 
         $record = $this->tryToGetFolderInstance($storage . ':/' . ltrim(dirname($identifier), '/'));

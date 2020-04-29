@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Config\Node;
 
 /*
@@ -34,12 +36,12 @@ use In2code\In2publishCore\Config\ValidationContainer;
  */
 interface Node
 {
-    const T_ARRAY = 'array';
-    const T_STRICT_ARRAY = 'strict_array';
-    const T_STRING = 'string';
-    const T_OPTIONAL_STRING = 'optional_string';
-    const T_INTEGER = 'integer';
-    const T_BOOLEAN = 'boolean';
+    public const T_ARRAY = 'array';
+    public const T_STRICT_ARRAY = 'strict_array';
+    public const T_STRING = 'string';
+    public const T_OPTIONAL_STRING = 'optional_string';
+    public const T_INTEGER = 'integer';
+    public const T_BOOLEAN = 'boolean';
 
     /**
      * @param ValidationContainer $container

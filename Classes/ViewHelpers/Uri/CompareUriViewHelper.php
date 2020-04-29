@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\ViewHelpers\Uri;
 
 /*
@@ -27,35 +29,19 @@ namespace In2code\In2publishCore\ViewHelpers\Uri;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Service\DomainService;
+use In2code\In2publishCore\Service\Routing\SiteService;
+use Throwable;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Frontend\Page\CacheHashCalculator;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
-use function http_build_query;
 
-/**
- * Class CompareUriViewHelper
- */
 class CompareUriViewHelper extends AbstractTagBasedViewHelper
 {
+    protected const ARG_IDENTIFIER = 'identifier';
+
     /**
      * @var string
      */
     protected $tagName = 'a';
-
-    /**
-     * @var DomainService
-     */
-    protected $domainService;
-
-    /**
-     * CompareUriViewHelper constructor.
-     */
-    public function __construct()
-    {
-        $this->domainService = GeneralUtility::makeInstance(DomainService::class);
-        parent::__construct();
-    }
 
     /**
      *
@@ -64,33 +50,33 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
     {
         parent::initializeArguments();
         $this->registerUniversalTagAttributes();
-        $this->registerArgument('identifier', 'string', 'The uid of the page to compare', true);
+        $this->registerArgument(self::ARG_IDENTIFIER, 'string', 'The uid of the page to compare', true);
     }
 
-    /**
-     * @return string
-     */
     public function render(): string
     {
-        $identifier = $this->arguments['identifier'];
+        $identifier = $this->arguments[self::ARG_IDENTIFIER];
 
-        $domain = '//' . $this->domainService->getDomainFromPageIdentifier($identifier, 'local');
-        $script = '/index.php?';
-
-        $query = [
-            'id' => $identifier,
-            'tx_in2publishcore_pi1[identifier]' => $identifier,
-            'type' => '9815',
-        ];
-
-        $params = http_build_query($query, '', '&');
-
-        $cacheHash = GeneralUtility::makeInstance(CacheHashCalculator::class);
-        $query['cHash'] = $cacheHash->generateForParameters($params);
-
-        $params = http_build_query($query, '', '&');
-
-        $url = $domain . $script . $params;
+        $siteService = GeneralUtility::makeInstance(SiteService::class);
+        $site = $siteService->getSiteForPidAndStagingLevel($identifier, 'local');
+        if (null === $site) {
+            return '';
+        }
+        $url = '';
+        try {
+            $url = $site->getRouter()->generateUri(
+                $identifier,
+                [
+                    'id' => $identifier,
+                    'tx_in2publishcore_pi1[identifier]' => $identifier,
+                    'type' => 9815,
+                ]
+            );
+        } catch (Throwable $exception) {
+        }
+        if (empty($url)) {
+            return '';
+        }
 
         $this->tag->setContent($this->renderChildren());
         $this->tag->addAttribute('href', $url);

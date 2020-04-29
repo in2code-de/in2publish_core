@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
 
 /*
@@ -28,11 +30,13 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
  */
 
 use In2code\In2publishCore\Config\ConfigContainer;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_merge;
 use function defined;
 use function file_exists;
-use const PATH_site;
+
 use const TYPO3_COMPOSER_MODE;
 
 /**
@@ -102,9 +106,9 @@ class RemoteCommandRequest
         $isComposerMode = defined('TYPO3_COMPOSER_MODE') && true === TYPO3_COMPOSER_MODE;
         if ($dispatcher = $configContainer->get('foreign.dispatcher')) {
             $this->dispatcher = $dispatcher;
-        } elseif ($isComposerMode && file_exists(PATH_site . 'vendor/bin/typo3')) {
+        } elseif ($isComposerMode && file_exists(Environment::getPublicPath() . '/vendor/bin/typo3')) {
             $this->dispatcher = './vendor/bin/typo3';
-        } elseif ($isComposerMode && file_exists(PATH_site . '../vendor/bin/typo3')) {
+        } elseif ($isComposerMode && file_exists(Environment::getPublicPath() . '/../vendor/bin/typo3')) {
             $this->dispatcher = './../vendor/bin/typo3';
         } else {
             $this->dispatcher = 'typo3/sysext/core/bin/typo3';

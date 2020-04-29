@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Features\SysLogPublisher\Domain\Anomaly;
 
 /*
  * Copyright notice
  *
- * (c) 2016 in2code.de
+ * (c) 2016 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -108,7 +110,7 @@ class SysLogPublisher
             $sysLogRow = $this->getLastLocalSysLogProperties($record, ['uid']);
             if (!empty($sysLogRow)) {
                 $this->foreignDatabase->insert($this->sysLogTableName, $sysLogRow);
-                $this->logger->notice(
+                $this->logger->info(
                     'sys_log table automatically published',
                     ['tableName' => $tableName, 'identifier' => $record->getIdentifier()]
                 );

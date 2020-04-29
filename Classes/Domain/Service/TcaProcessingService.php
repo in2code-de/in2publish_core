@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Service;
 
 /*
@@ -46,6 +48,7 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_key_exists;
 use function array_keys;
 use function class_exists;
@@ -56,18 +59,18 @@ use function is_array;
  */
 class TcaProcessingService
 {
-    const COLUMNS = 'columns';
-    const CONFIG = 'config';
-    const CONTROL = 'ctrl';
-    const TYPE = 'type';
-    const TCA = 'TCA';
-    const DELETE = 'delete';
-    const CACHE_KEY_TCA_COMPATIBLE = 'tca_compatible';
-    const CACHE_KEY_TCA_INCOMPATIBLE = 'tca_incompatible';
-    const CACHE_KEY_TCA_PROCESSORS = 'tca_processors';
-    const CACHE_KEY_CONTROLS = 'controls';
-    const DEFAULT_EXTRAS = 'defaultExtras';
-    const SOFT_REF = 'softref';
+    public const COLUMNS = 'columns';
+    public const CONFIG = 'config';
+    public const CONTROL = 'ctrl';
+    public const TYPE = 'type';
+    public const TCA = 'TCA';
+    public const DELETE = 'delete';
+    public const CACHE_KEY_TCA_COMPATIBLE = 'tca_compatible';
+    public const CACHE_KEY_TCA_INCOMPATIBLE = 'tca_incompatible';
+    public const CACHE_KEY_TCA_PROCESSORS = 'tca_processors';
+    public const CACHE_KEY_CONTROLS = 'controls';
+    public const DEFAULT_EXTRAS = 'defaultExtras';
+    public const SOFT_REF = 'softref';
 
     /**
      * @var TcaProcessingService

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Testing\Data;
 
 /*
@@ -81,7 +83,7 @@ class RequiredTablesDataProvider implements SingletonInterface
     protected function overruleTables(array $tables): array
     {
         try {
-            list($tables) = $this->dispatcher->dispatch(__CLASS__, 'overruleTables', [$tables]);
+            [$tables] = $this->dispatcher->dispatch(__CLASS__, 'overruleTables', [$tables]);
         } catch (InvalidSlotException $e) {
         } catch (InvalidSlotReturnException $e) {
         }

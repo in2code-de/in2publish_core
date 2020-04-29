@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Tests\In2code\In2publishCore\Domain\Repository;
 
 use Codeception\Test\Unit;
@@ -8,8 +10,10 @@ use In2code\In2publishCore\Domain\PostProcessing\FalIndexPostProcessor;
 use In2code\In2publishCore\Domain\PostProcessing\FileIndexPostProcessor;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Tests\UnitTester;
+use ReflectionProperty;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
+
 use function uniqid;
 
 /**
@@ -30,7 +34,7 @@ class CommonRepositoryTest extends Unit
         $this->tester->setupIn2publishConfig([]);
         $this->tester->buildForeignDatabaseConnection();
         $dispatcher = GeneralUtility::makeInstance(Dispatcher::class);
-        $reflectionProperty = new \ReflectionProperty(Dispatcher::class, 'slots');
+        $reflectionProperty = new ReflectionProperty(Dispatcher::class, 'slots');
         $reflectionProperty->setAccessible(true);
         $slots = $reflectionProperty->getValue($dispatcher);
         foreach ($slots[RecordFactory::class]['instanceCreated'] as $index => $config) {

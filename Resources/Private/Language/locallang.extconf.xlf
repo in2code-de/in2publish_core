@@ -10,6 +10,7 @@
 					1) Absolute (/var/www/shared/in2publish/),
 					2) Relative (typo3conf/AdditionalConfiguration/)
 					3) Extension source (EXT:in2publish_conf/Resources/Private/Config/)
+					4) Config folder (CONF:in2publish_core/) (Default)
 				</source>
 			</trans-unit>
 			<trans-unit id="disable_user_config">

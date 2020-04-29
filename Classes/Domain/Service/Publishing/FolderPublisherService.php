@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Service\Publishing;
 
 /*
@@ -33,6 +35,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
+
 use function basename;
 use function dirname;
 
@@ -48,7 +51,7 @@ class FolderPublisherService
      */
     public function publish($combinedIdentifier): bool
     {
-        list($storage, $folderIdentifier) = GeneralUtility::trimExplode(':', $combinedIdentifier);
+        [$storage, $folderIdentifier] = GeneralUtility::trimExplode(':', $combinedIdentifier);
 
         $remoteFalDriver = GeneralUtility::makeInstance(RemoteFileAbstractionLayerDriver::class);
         $remoteFalDriver->setStorageUid($storage);

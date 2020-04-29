@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Config\Provider;
 
 /*
@@ -29,6 +31,7 @@ namespace In2code\In2publishCore\Config\Provider;
 
 use In2code\In2publishCore\Utility\ExtensionUtility;
 use Spyc;
+
 use function explode;
 use function file_exists;
 use function implode;
@@ -45,10 +48,10 @@ class VersionedFileProvider extends FileProvider
      */
     public function getConfig()
     {
-        $path = $this->getConfigFilePath();
+        $path = $this->getResolvedFilePath();
 
         $version = ExtensionUtility::getExtensionVersion('in2publish_core');
-        list($major, $minor, $patch) = explode('.', $version);
+        [$major, $minor, $patch] = explode('.', $version);
         $candidates = [
             implode('.', [$major, $minor, $patch]),
             implode('.', [$major, $minor]),

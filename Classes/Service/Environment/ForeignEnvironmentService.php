@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Service\Environment;
 
 /*
@@ -27,7 +29,9 @@ namespace In2code\In2publishCore\Service\Environment;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Command\StatusCommandController;
+use In2code\In2publishCore\Command\Status\CreateMasksCommand;
+use In2code\In2publishCore\Command\Status\DbInitQueryEncodedCommand;
+use In2code\In2publishCore\Command\Status\EncryptionKeyCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -36,6 +40,7 @@ use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function base64_decode;
 use function json_decode;
 use function strpos;
@@ -70,13 +75,13 @@ class ForeignEnvironmentService
      */
     public function getDatabaseInitializationCommands(): string
     {
-        if ($this->cache && $this->cache->has('foreign_db_init')) {
+        if ($this->cache->has('foreign_db_init')) {
             return $this->cache->get('foreign_db_init');
         }
 
         $request = GeneralUtility::makeInstance(
             RemoteCommandRequest::class,
-            StatusCommandController::DB_INIT_QUERY_ENCODED
+            DbInitQueryEncodedCommand::IDENTIFIER
         );
         $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
 
@@ -114,7 +119,7 @@ class ForeignEnvironmentService
         if (!$this->cache->has('create_masks')) {
             $request = GeneralUtility::makeInstance(
                 RemoteCommandRequest::class,
-                StatusCommandController::CREATE_MASKS_COMMAND
+                CreateMasksCommand::IDENTIFIER
             );
             $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
 
@@ -152,6 +157,27 @@ class ForeignEnvironmentService
         return (array)$this->cache->get('create_masks');
     }
 
+    public function getEncryptionKey(): ?string
+    {
+        if (!$this->cache->has('encryption_key')) {
+            $encryptionKey = null;
+
+            $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, EncryptionKeyCommand::IDENTIFIER);
+            $dispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
+            $response = $dispatcher->dispatch($request);
+
+            if ($response->isSuccessful()) {
+                $values = $this->tokenizeResponse($response->getOutput());
+                if (!empty($values['EKey'])) {
+                    $encryptionKey = base64_decode($values['EKey']);
+                }
+            }
+            $this->cache->set('encryption_key', $encryptionKey, [], 86400);
+        }
+
+        return $this->cache->get('encryption_key');
+    }
+
     /**
      * @return FrontendInterface
      *
@@ -159,12 +185,9 @@ class ForeignEnvironmentService
      *
      * @codeCoverageIgnore
      */
-    protected function getCache()
+    protected function getCache(): FrontendInterface
     {
-        $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
-        if ($cacheManager->hasCache('in2publish_core')) {
-            return $cacheManager->getCache('in2publish_core');
-        }
+        return GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
     }
 
     /**
@@ -185,7 +208,7 @@ class ForeignEnvironmentService
         $values = [];
         foreach ($output as $line) {
             if (false !== strpos($line, ':')) {
-                list ($key, $value) = GeneralUtility::trimExplode(':', $line);
+                [$key, $value] = GeneralUtility::trimExplode(':', $line);
                 $values[$key] = $value;
             }
         }

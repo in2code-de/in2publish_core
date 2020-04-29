@@ -17,3 +17,8 @@ Building frontend links in the backend has always been an annoying task, but wit
 
 When selecting a page in the page tree the publish overview will show everything as expected, except for translated pages.
 In TYPO3 9.0 pages_language_overlay was removed and replaced by pages with a sys_language_uid. This is not yet supported. 
+
+## TYPO3 v9 pages sorting detection partially broken
+
+In TYPO3 v9 and up page sorting is sometimes not detected correctly.
+Pages in the Publisher Overview module will not be marked changed/moved.

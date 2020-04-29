@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
 
 /*
@@ -38,6 +40,7 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
+
 use function array_map;
 use function basename;
 use function call_user_func;
@@ -56,33 +59,33 @@ class EnvelopeDispatcher
     /*
      * Non-indexing commands
      */
-    const CMD_FOLDER_EXISTS = 'folderExists';
-    const CMD_FILE_EXISTS = 'fileExists';
-    const CMD_GET_PERMISSIONS = 'getPermissions';
-    const CMD_GET_FOLDERS_IN_FOLDER = 'getFoldersInFolder';
-    const CMD_GET_FILES_IN_FOLDER = 'getFilesInFolder';
-    const CMD_GET_FILE_INFO_BY_IDENTIFIER = 'getFileInfoByIdentifier';
-    const CMD_GET_HASH = 'hash';
-    const CMD_CREATE_FOLDER = 'createFolder';
-    const CMD_DELETE_FOLDER = 'deleteFolder';
-    const CMD_DELETE_FILE = 'deleteFile';
-    const CMD_ADD_FILE = 'addFile';
-    const CMD_REPLACE_FILE = 'replaceFile';
-    const CMD_RENAME_FILE = 'renameFile';
-    const CMD_GET_PUBLIC_URL = 'getPublicUrl';
-    const CMD_BATCH_PREFETCH_FILES = 'batchPrefetchFiles';
-    const CMD_MOVE_FILE_WITHIN_STORAGE = 'moveFileWithinStorage';
+    public const CMD_FOLDER_EXISTS = 'folderExists';
+    public const CMD_FILE_EXISTS = 'fileExists';
+    public const CMD_GET_PERMISSIONS = 'getPermissions';
+    public const CMD_GET_FOLDERS_IN_FOLDER = 'getFoldersInFolder';
+    public const CMD_GET_FILES_IN_FOLDER = 'getFilesInFolder';
+    public const CMD_GET_FILE_INFO_BY_IDENTIFIER = 'getFileInfoByIdentifier';
+    public const CMD_GET_HASH = 'hash';
+    public const CMD_CREATE_FOLDER = 'createFolder';
+    public const CMD_DELETE_FOLDER = 'deleteFolder';
+    public const CMD_DELETE_FILE = 'deleteFile';
+    public const CMD_ADD_FILE = 'addFile';
+    public const CMD_REPLACE_FILE = 'replaceFile';
+    public const CMD_RENAME_FILE = 'renameFile';
+    public const CMD_GET_PUBLIC_URL = 'getPublicUrl';
+    public const CMD_BATCH_PREFETCH_FILES = 'batchPrefetchFiles';
+    public const CMD_MOVE_FILE_WITHIN_STORAGE = 'moveFileWithinStorage';
     /*
      * Indexing commands (using the storage object)
      */
-    const CMD_STORAGE_HAS_FOLDER = 'getStorageHasFolder';
-    const CMD_STORAGE_GET_FOLDERS_IN_FOLDER = 'getStorageGetFoldersInFolder';
-    const CMD_STORAGE_GET_FILES_IN_FOLDER = 'getStorageGetFilesInFolder';
-    const CMD_STORAGE_GET_FILE = 'getStorageGetFile';
+    public const CMD_STORAGE_HAS_FOLDER = 'getStorageHasFolder';
+    public const CMD_STORAGE_GET_FOLDERS_IN_FOLDER = 'getStorageGetFoldersInFolder';
+    public const CMD_STORAGE_GET_FILES_IN_FOLDER = 'getStorageGetFilesInFolder';
+    public const CMD_STORAGE_GET_FILE = 'getStorageGetFile';
     /*
      * Others
      */
-    const CMD_GET_SET_DB_INIT = 'getSetDbInit';
+    public const CMD_GET_SET_DB_INIT = 'getSetDbInit';
 
     /**
      * Limits the amount of files in a folder for pre fetching. If there are more than $prefetchLimit files in

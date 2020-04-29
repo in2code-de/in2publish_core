@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Config\Provider;
 
 /*
@@ -28,7 +30,6 @@ namespace In2code\In2publishCore\Config\Provider;
  */
 
 use In2code\In2publishCore\Utility\ArrayUtility;
-use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -52,9 +53,13 @@ class UserTsProvider implements ProviderInterface, ContextualProvider
      */
     public function getConfig()
     {
-        $userTs = GeneralUtility::removeDotsFromTS(BackendUtility::getModTSconfig(0, 'tx_in2publish'));
-        $userTs = ArrayUtility::normalizeArray((array)$userTs['properties']);
-        return $userTs;
+        $config = [];
+        $userTs = $this->getBackendUser()->getTSConfig();
+        $userTs = GeneralUtility::removeDotsFromTS($userTs);
+        if (isset($userTs['tx_in2publish'])) {
+            $config = ArrayUtility::normalizeArray((array)$userTs['tx_in2publish']);
+        }
+        return $config;
     }
 
     /**
@@ -66,10 +71,12 @@ class UserTsProvider implements ProviderInterface, ContextualProvider
     }
 
     /**
+     * @return BackendUserAuthentication|null
+     *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function getBackendUser()
+    protected function getBackendUser(): ?BackendUserAuthentication
     {
-        return $GLOBALS['BE_USER'];
+        return $GLOBALS['BE_USER'] ?? null;
     }
 }

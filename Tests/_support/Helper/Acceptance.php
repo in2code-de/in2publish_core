@@ -1,4 +1,5 @@
 <?php
+
 namespace In2code\In2publishCore\Tests\Helper;
 
 // here you can define custom actions

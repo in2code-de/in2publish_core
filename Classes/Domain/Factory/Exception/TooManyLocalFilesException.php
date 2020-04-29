@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Factory\Exception;
 
 /*
@@ -32,5 +34,5 @@ namespace In2code\In2publishCore\Domain\Factory\Exception;
  */
 class TooManyLocalFilesException extends TooManyFilesException
 {
-    const CODE = 1555492761;
+    public const CODE = 1555492761;
 }

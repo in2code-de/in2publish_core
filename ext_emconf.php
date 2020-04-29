@@ -1,10 +1,11 @@
 <?php
+
 $EM_CONF[$_EXTKEY] = [
     'title' => 'in2publish Core',
     'description' => 'Content publishing extension to connect stage and production server',
     'category' => 'plugin',
-    'version' => '8.5.0',
-    'state' => 'stable',
+    'version' => '9.0.0-rc2',
+    'state' => 'beta',
     'uploadfolder' => 0,
     'createDirs' => '',
     'clearcacheonload' => 1,
@@ -13,8 +14,8 @@ $EM_CONF[$_EXTKEY] = [
     'author_company' => 'in2code.de',
     'constraints' => [
         'depends' => [
-            'typo3' => '8.7.0-9.5.99',
-            'php' => '7.0.0-7.3.99',
+            'typo3' => '9.5.0-10.99.99',
+            'php' => '7.2.0-7.3.99',
         ],
         'conflicts' => [],
         'suggests' => [],
