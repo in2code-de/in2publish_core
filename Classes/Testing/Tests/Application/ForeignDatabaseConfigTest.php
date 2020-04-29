@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
 /*
  * Copyright notice
  *
- * (c) 2019 in2code.de
+ * (c) 2019 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
