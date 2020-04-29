@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\ViewHelpers\File;
 
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de
+ * (c) 2015 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -26,13 +28,18 @@ namespace In2code\In2publishCore\ViewHelpers\File;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Service\DomainService;
+use In2code\In2publishCore\Utility\UriUtility;
+use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+use function ltrim;
+use function rtrim;
 
 /**
  * Class BuildResourcePathViewHelper
@@ -40,16 +47,19 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 class BuildResourcePathViewHelper extends AbstractViewHelper
 {
     /**
-     * @var DomainService
+     * @var Uri[]
      */
-    protected $domainService;
+    protected $domains;
 
     /**
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function initialize()
     {
-        $this->domainService = GeneralUtility::makeInstance(DomainService::class);
+        $config = GeneralUtility::makeInstance(ConfigContainer::class)->get('filePreviewDomainName');
+        foreach (['local', 'foreign'] as $stagingLevel) {
+            $this->domains[$stagingLevel] = UriUtility::normalizeUri(new Uri($config[$stagingLevel]));
+        }
     }
 
     /**
@@ -69,34 +79,45 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
      */
     public function render(): string
     {
-
         /** @var Record $record */
         $record = $this->arguments['record'];
 
         /** @var string $propertyName */
         $stagingLevel = $this->arguments['stagingLevel'];
 
-        $resourceUrl = '';
-        if ('sys_file' === $record->getTableName()) {
-            if ('local' === $stagingLevel && $record->localRecordExists()) {
-                $storage = $record->getPropertyBySideIdentifier($stagingLevel, 'storage');
-                $identifier = $record->getPropertyBySideIdentifier($stagingLevel, 'identifier');
-
-                $resourceFactory = ResourceFactory::getInstance();
-                /** @var File $file Keep this annotation for the correct method return type generation */
-                $file = $resourceFactory->getFileObjectByStorageAndIdentifier($storage, $identifier);
-                $resourceUrl = $file->getPublicUrl();
-            } elseif ('foreign' === $stagingLevel && $record->foreignRecordExists()) {
-                $storage = $record->getPropertyBySideIdentifier($stagingLevel, 'storage');
-                $identifier = $record->getPropertyBySideIdentifier($stagingLevel, 'identifier');
-
-                $remoteFalDriver = GeneralUtility::makeInstance(RemoteFileAbstractionLayerDriver::class);
-                $remoteFalDriver->setStorageUid($storage);
-                $remoteFalDriver->initialize();
-                $resourceUrl = $remoteFalDriver->getPublicUrl($identifier);
-            }
+        $resourceUrl = null;
+        if ('sys_file' !== $record->getTableName()) {
+            // TODO: maybe throw exception
+            return '';
         }
 
-        return $this->domainService->getFirstDomain($record, $stagingLevel, true) . '/' . $resourceUrl;
+        if ('local' === $stagingLevel && $record->localRecordExists()) {
+            $storage = $record->getPropertyBySideIdentifier($stagingLevel, 'storage');
+            $identifier = $record->getPropertyBySideIdentifier($stagingLevel, 'identifier');
+
+            $resourceFactory = ResourceFactory::getInstance();
+            /** @var File $file Keep this annotation for the correct method return type generation */
+            $file = $resourceFactory->getFileObjectByStorageAndIdentifier($storage, $identifier);
+            $resourceUrl = $file->getPublicUrl();
+        }
+
+        if ('foreign' === $stagingLevel && $record->foreignRecordExists()) {
+            $storage = $record->getPropertyBySideIdentifier($stagingLevel, 'storage');
+            $identifier = $record->getPropertyBySideIdentifier($stagingLevel, 'identifier');
+
+            $remoteFalDriver = GeneralUtility::makeInstance(RemoteFileAbstractionLayerDriver::class);
+            $remoteFalDriver->setStorageUid($storage);
+            $remoteFalDriver->initialize();
+            $resourceUrl = $remoteFalDriver->getPublicUrl($identifier);
+        }
+
+        if (null === $resourceUrl) {
+            // TODO: maybe throw exception
+            return '';
+        }
+
+        $uri = $this->domains[$stagingLevel];
+        $uri = $uri->withPath(rtrim($uri->getPath(), '/') . '/' . ltrim($resourceUrl, '/'));
+        return (string)$uri;
     }
 }

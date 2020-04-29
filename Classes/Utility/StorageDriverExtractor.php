@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Utility;
 
 /*
@@ -33,6 +35,7 @@ use ReflectionProperty;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function get_class;
 
 /**

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
 
 /*
@@ -35,6 +37,7 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function is_array;
 use function json_encode;
 
@@ -43,7 +46,7 @@ use function json_encode;
  */
 class Letterbox
 {
-    const TABLE = 'tx_in2code_in2publish_envelope';
+    public const TABLE = 'tx_in2code_in2publish_envelope';
 
     /**
      * @var ContextService

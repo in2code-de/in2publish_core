@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Factory\Exception;
 
 /*
@@ -28,6 +30,7 @@ namespace In2code\In2publishCore\Domain\Factory\Exception;
  */
 
 use In2code\In2publishCore\In2publishCoreException;
+
 use function sprintf;
 
 /**
@@ -35,8 +38,8 @@ use function sprintf;
  */
 abstract class TooManyFilesException extends In2publishCoreException
 {
-    const CODE = 1555492787;
-    const MESSAGE = 'The folder "%s" has too many files (%d)';
+    public const CODE = 1555492787;
+    public const MESSAGE = 'The folder "%s" has too many files (%d)';
 
     /**
      * @var string

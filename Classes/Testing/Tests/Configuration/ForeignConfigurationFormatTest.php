@@ -1,14 +1,17 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Testing\Tests\Configuration;
 
-use In2code\In2publishCore\Command\StatusCommandController;
+use In2code\In2publishCore\Command\Status\ConfigFormatTestCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_merge;
 use function base64_decode;
 use function json_decode;
@@ -21,11 +24,12 @@ class ForeignConfigurationFormatTest implements TestCaseInterface
         $rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
         $request = GeneralUtility::makeInstance(
             RemoteCommandRequest::class,
-            StatusCommandController::CONFIG_FORMAT_TEST
+            ConfigFormatTestCommand::IDENTIFIER
         );
         $response = $rceDispatcher->dispatch($request);
         $errors = $response->getErrors();
-        $token = $this->tokenizeResponse($response->getOutput());
+        $output = $response->getOutput();
+        $token = $this->tokenizeResponse($output);
 
         if ($response->isSuccessful()) {
             if (isset($token['Config Format Test'])) {
@@ -37,7 +41,7 @@ class ForeignConfigurationFormatTest implements TestCaseInterface
             }
         }
 
-        $messages = array_merge($errors, $token);
+        $messages = array_merge($errors, $output);
         return new TestResult('configuration.foreign_format_test_exec_error', TestResult::ERROR, $messages);
     }
 

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\ViewHelpers\Link;
 
 /*
@@ -30,6 +32,7 @@ namespace In2code\In2publishCore\ViewHelpers\Link;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
+
 use function explode;
 use function is_string;
 use function strpos;

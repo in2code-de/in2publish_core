@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter;
 
 /*
@@ -32,6 +34,8 @@ namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission\Transm
  */
 interface AdapterInterface
 {
+    public const ADAPTER_TYPE = 'transmission';
+
     /**
      * @param string $source Absolute path of the readable file on local
      * @param string $target Absolute path of the writable file on foreign

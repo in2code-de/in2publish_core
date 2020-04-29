@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Tests\In2code\In2publishCore\Domain\Model;
 
 /*
@@ -60,7 +62,7 @@ class RecordTest extends Unit
      * @return Record
      */
     protected function getRecordStub($getIgnoreFields, $isParentRecordDisabled = false)
-    {;
+    {
         $stub = $this->getMockBuilder(Record::class)
                      ->setMethods(['getIgnoreFields', 'isParentDisabled'])
                      ->disableOriginalConstructor()
@@ -883,17 +885,37 @@ class RecordTest extends Unit
      * @covers ::addRelatedRecord
      * @depends testAddAndGetRelatedRecordsSetsAndReturnsRelatedRecords
      */
-    public function testAddRelatedRecordDoesNotAddPageToPageRecord()
+    public function testAddRelatedRecordDoesNotAddUnrelatedPageToPageRecord()
     {
         $root = $this->getRecordStub([]);
         $root->__construct('pages', ['uid' => 1], ['uid' => 1], [], []);
 
         $sub = $this->getRecordStub([]);
-        $sub->__construct('pages', ['uid' => 1], [], [], []);
+        $sub->__construct('pages', ['uid' => 200], [], [], []);
 
         $root->addRelatedRecord($sub);
 
         $this->assertSame([], $root->getRelatedRecords());
+    }
+
+    /**
+     * @covers ::addRelatedRecord
+     * @depends testAddAndGetRelatedRecordsSetsAndReturnsRelatedRecords
+     */
+    public function testAddRelatedRecordDoesAddLanguageParentPageToPageRecord()
+    {
+        $GLOBALS['TCA']['pages']['ctrl']['languageField'] = 'lang';
+        $GLOBALS['TCA']['pages']['ctrl']['transOrigPointerField'] = 'lang_parent';
+
+        $root = $this->getRecordStub([]);
+        $root->__construct('pages', ['uid' => 1, 'lang' => 1, 'lang_parent' => 200], ['uid' => 1], [], []);
+
+        $sub = $this->getRecordStub([]);
+        $sub->__construct('pages', ['uid' => 200], [], [], []);
+
+        $root->addRelatedRecord($sub);
+
+        $this->assertSame(['pages' => [200 => $sub]], $root->getRelatedRecords());
     }
 
     /**
@@ -980,7 +1002,7 @@ class RecordTest extends Unit
      * @depends testIsChangedReturnsTrueForAnyOtherStateThanChanged
      * @depends testIsChangedReturnsFalseForUnchangedState
      * @depends testAddAndGetRelatedRecordsSetsAndReturnsRelatedRecords
-     * @depends testAddRelatedRecordDoesNotAddPageToPageRecord
+     * @depends testAddRelatedRecordDoesNotAddUnrelatedPageToPageRecord
      */
     public function testGetStateRecursiveIgnoresRelatedPageRecords()
     {
@@ -1233,7 +1255,11 @@ class RecordTest extends Unit
             'only_local_array' => [['foo' => ['baz' => 2]], [], ['baz' => 2]],
             'only_foreign_array' => [[], ['foo' => ['baz' => 2]], ['baz' => 2]],
             'both_same_array' => [['foo' => ['baz' => 2]], ['foo' => ['baz' => 2]], ['baz' => 2]],
-            'different_array' => [['foo' => ['bar' => 'foo']], ['foo' => ['baz' => 'faz']], ['bar' => 'foo', 'baz' => 'faz']],
+            'different_array' => [
+                ['foo' => ['bar' => 'foo']],
+                ['foo' => ['baz' => 'faz']],
+                ['bar' => 'foo', 'baz' => 'faz'],
+            ],
             'local_array_foreign_string' => [['foo' => ['bar' => 'foo']], ['foo' => 'faz'], ['bar' => 'foo', 'faz']],
             'foreign_array_local_string' => [['foo' => 'faz'], ['foo' => ['bar' => 'foo']], ['faz', 'bar' => 'foo']],
             'only_local_list' => [['foo' => '2,3'], [], '2,3'],

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Testing\Service;
 
 /*
@@ -31,6 +33,7 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use InvalidArgumentException;
 use LogicException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_diff;
 use function array_keys;
 use function array_merge;

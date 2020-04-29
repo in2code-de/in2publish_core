@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Service\Processor;
 
 /*
@@ -27,9 +29,6 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_key_exists;
 use function array_merge;
 
@@ -126,16 +125,10 @@ abstract class AbstractProcessor implements ProcessorInterface
      **********************************************/
 
     /**
-     * @var Logger
-     */
-    protected $logger;
-
-    /**
      * AbstractProcessor constructor.
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
     }
 
     /**

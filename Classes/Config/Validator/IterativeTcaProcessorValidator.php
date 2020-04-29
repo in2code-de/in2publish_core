@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Config\Validator;
 
 /*
@@ -29,6 +31,7 @@ namespace In2code\In2publishCore\Config\Validator;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 use In2code\In2publishCore\Domain\Service\Processor\ProcessorInterface;
+
 use function class_exists;
 use function is_subclass_of;
 

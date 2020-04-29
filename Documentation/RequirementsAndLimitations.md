@@ -53,12 +53,12 @@ The overview and publishing process requires a lot more resources than a normal 
 Not every difficult or big task can be made faster (or possible) with more RAM, faster disk I/O and better CPUs, resulting in some inevitable limitations.
 Here's a list of currently known limitations, but without claim of completeness:
 
-* TYPO3 setting UTF8filesystem: in2publish_core uses only FAL to publish files to the foreign system. Umlauts and special characters will be replaced by FAL automatically which results in unresolvable differences between your local and foreign files, therefore you are advised to disable this unsupported setting.
 * Foreign side relations. Bidirectional relations have an owning and a foreign side. in2publish_core can only resolve relations and hence publish relations from the owning side or else it will run into a loop.
 * Maximum number of files in a folder: The publish files module can only handle up to 150 files in a single folder. It's recommended to have a maximum of 100 files in a single folder.
   * This limit is configurable as of in2publish_core 8.1.0 but should be used with caution. Read the explanation in the example YAML configuration.
-* User generated Content: You can have user generated on foreign and editorial content on stage on the same table if properly configured. It's possible to publish editorial contents, but not to retreive user generated content.
-* Multi Head / Multi Target publishing: in2publish-core can not diff against or publish to more than a single target.
+  * in2publish (Enterprise Edition) offers a feature that will speed up the Publish Files Module. It processes ~100 files per 0.1 second (limitations apply).
+* User generated Content: You can have user generated on foreign and editorial content on stage on the same table if properly configured. It's possible to publish editorial contents, but not to retrieve user generated content.
+* Multi Head / Multi Target publishing: in2publish-core can not diff against or publish to more than a single target. You can chain instances and publish from A to B and B to C, but not from A to B and C at the same time.
 * Moved/Renamed folders can not be detected. The folder on foreign will be marked as deleted, the one on local will be shown marked new. If you delete the folder from foreign all files within will be removed with their parent folder. Publish files in the Publish Files Module from the renamed folder on local to move them.
 * Sorting of records: If a record is published from stage to live, the current value of the column "sorting" is published. This can lead to duplicate or different sorting values between stage and live. Background: If the sorting of a record within a page is changed, all sorting values in all affected records might get changed. As we want to publish only a single record of this page, we prevent the publication of all affected records.
 

@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Communication\Shared;
 
 /*
@@ -28,12 +30,16 @@ namespace In2code\In2publishCore\Communication\Shared;
  */
 
 use Exception;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
 use Psr\Log\LoggerInterface;
 use Throwable;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+use function escapeshellarg;
+use function escapeshellcmd;
 use function in_array;
 use function is_resource;
 use function sprintf;
@@ -65,6 +71,7 @@ abstract class SshBaseAdapter
         'privateKeyFileAndPathName' => '',
         'publicKeyFileAndPathName' => '',
         'privateKeyPassphrase' => '',
+        'enableForeignKeyFingerprintCheck' => '',
         'foreignKeyFingerprint' => '',
         'foreignKeyFingerprintHashingMethod' => '',
     ];
@@ -116,19 +123,21 @@ abstract class SshBaseAdapter
             );
         }
 
-        $keyFingerPrint = ssh2_fingerprint($session, $this->config['foreignKeyFingerprintHashingMethod']);
-        if ($keyFingerPrint !== $this->config['foreignKeyFingerprint']) {
-            if (true === $this->config['debug']) {
-                throw new In2publishCoreException(
-                    'Identification of foreign host failed, SSH Key Fingerprint mismatch. Actual Fingerprint: "'
-                    . $keyFingerPrint . '"; Configured: "' . $this->config['foreignKeyFingerprint'] . '"',
-                    1426868565
-                );
-            } else {
-                throw new In2publishCoreException(
-                    'Identification of foreign host failed, SSH Key Fingerprint mismatch!!!',
-                    1425401452
-                );
+        if ($this->config['enableForeignKeyFingerprintCheck']) {
+            $keyFingerPrint = ssh2_fingerprint($session, $this->config['foreignKeyFingerprintHashingMethod']);
+            if ($keyFingerPrint !== $this->config['foreignKeyFingerprint']) {
+                if (true === $this->config['debug']) {
+                    throw new In2publishCoreException(
+                        'Identification of foreign host failed, SSH Key Fingerprint mismatch. Actual Fingerprint: "'
+                        . $keyFingerPrint . '"; Configured: "' . $this->config['foreignKeyFingerprint'] . '"',
+                        1426868565
+                    );
+                } else {
+                    throw new In2publishCoreException(
+                        'Identification of foreign host failed, SSH Key Fingerprint mismatch!!!',
+                        1425401452
+                    );
+                }
             }
         }
 
@@ -152,6 +161,38 @@ abstract class SshBaseAdapter
         }
 
         return $session;
+    }
+
+    /**
+     * @param RemoteCommandRequest $request
+     *
+     * @return string
+     */
+    protected function prepareCommand(RemoteCommandRequest $request): string
+    {
+        $command = '';
+
+        foreach ($request->getEnvironmentVariables() as $name => $value) {
+            $command .= 'export ' . escapeshellcmd($name) . '=' . escapeshellarg($value) . '; ';
+        }
+
+        $command .= 'cd ' . escapeshellarg($request->getWorkingDirectory()) . ' && ';
+        $command .= escapeshellcmd($request->getPathToPhp()) . ' ';
+        $command .= escapeshellcmd($request->getDispatcher()) . ' ';
+        $command .= escapeshellcmd($request->getCommand());
+
+        if ($request->hasOptions()) {
+            foreach ($request->getOptions() as $option) {
+                $command .= ' ' . escapeshellcmd($option);
+            }
+        }
+
+        if ($request->hasArguments()) {
+            foreach ($request->getArguments() as $name => $value) {
+                $command .= ' ' . escapeshellcmd($name) . '=' . escapeshellarg($value);
+            }
+        }
+        return $command;
     }
 
     /**

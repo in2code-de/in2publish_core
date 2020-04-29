@@ -6,8 +6,8 @@
 
 actor: AcceptanceTester
 modules:
-    enabled:
-        - PhpBrowser:
-            url: http://localhost/myapp
-        - \In2code\In2publishCore\Tests\Helper\Acceptance
-    step_decorators: ~
+  enabled:
+    - PhpBrowser:
+        url: http://localhost/myapp
+    - \In2code\In2publishCore\Tests\Helper\Acceptance
+  step_decorators: ~

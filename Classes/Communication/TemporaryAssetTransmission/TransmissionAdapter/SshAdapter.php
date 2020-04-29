@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter;
 
 /*
@@ -34,6 +36,7 @@ use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use Throwable;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function decoct;
 use function dirname;
 use function filesize;
@@ -53,6 +56,8 @@ use function stream_copy_to_stream;
  */
 class SshAdapter extends SshBaseAdapter implements AdapterInterface
 {
+    public const ADAPTER_KEY = 'ssh';
+
     /**
      * @var null|resource
      */

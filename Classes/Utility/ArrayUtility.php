@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Utility;
 
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de
+ * (c) 2015 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -30,6 +32,7 @@ namespace In2code\In2publishCore\Utility;
 
 use InvalidArgumentException;
 use TYPO3\CMS\Core\Utility\MathUtility;
+
 use function array_key_exists;
 use function array_shift;
 use function explode;

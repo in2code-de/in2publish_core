@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Repository;
 
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de
+ * (c) 2015 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -35,6 +37,7 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_column;
 use function array_combine;
 use function explode;
@@ -47,6 +50,7 @@ use function strtoupper;
 use function substr;
 use function trigger_error;
 use function trim;
+
 use const E_USER_DEPRECATED;
 
 /**
@@ -56,10 +60,10 @@ use const E_USER_DEPRECATED;
  */
 abstract class BaseRepository
 {
-    const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
-    const DEPRECATION_TABLE_NAME_FIELD = 'The field BaseRepository::$tableName is deprecated and will be removed in in2publish_core version 10. Please use the methods tableName argument instead. Method: %s';
-    const DEPRECATION_METHOD = 'The method %s is deprecated and will be removed in in2publish_core version 10.';
-    const DEPRECATION_PARAMETER = 'The parameter %s of method %s is deprecated and will be removed in in2publish_core version 10.';
+    public const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
+    public const DEPRECATION_TABLE_NAME_FIELD = 'The field BaseRepository::$tableName is deprecated and will be removed in in2publish_core version 10. Please use the methods tableName argument instead. Method: %s';
+    public const DEPRECATION_METHOD = 'The method %s is deprecated and will be removed in in2publish_core version 10.';
+    public const DEPRECATION_PARAMETER = 'The parameter %s of method %s is deprecated and will be removed in in2publish_core version 10.';
 
     /**
      * The table name to use for any SELECT, INSERT, UPDATE and DELETE query

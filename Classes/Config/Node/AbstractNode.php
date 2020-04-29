@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Config\Node;
 
 /*
@@ -31,9 +33,9 @@ use In2code\In2publishCore\Config\ValidationContainer;
 use In2code\In2publishCore\Config\Validator\ValidatorInterface;
 use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_key_exists;
 use function array_merge;
-use function call_user_func_array;
 use function class_exists;
 use function is_array;
 use function is_string;
@@ -131,8 +133,6 @@ abstract class AbstractNode implements Node
     }
 
     /**
-     * TODO: use "..." when available for GeneralUtility::makeInstance
-     *
      * @param ValidationContainer $container
      * @param $value
      */
@@ -146,7 +146,7 @@ abstract class AbstractNode implements Node
             } else {
                 continue;
             }
-            $validator = call_user_func_array([GeneralUtility::class, 'makeInstance'], $args);
+            $validator = GeneralUtility::makeInstance(...$args);
             if ($validator instanceof ValidatorInterface) {
                 $validator->validate($container, $value[$this->name]);
             }

@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Controller;
 
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de
+ * (c) 2015 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -38,6 +40,7 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
+
 use function is_int;
 
 /**
@@ -77,7 +80,9 @@ abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
      */
     public function __construct()
     {
-        parent::__construct();
+        if (method_exists(parent::class, '__construct')) {
+            parent::__construct();
+        }
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         $pid = BackendUtility::getPageIdentifier();

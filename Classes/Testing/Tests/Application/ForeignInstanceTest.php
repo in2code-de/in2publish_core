@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Testing\Tests\Application;
 
 /*
@@ -27,7 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Command\StatusCommandController;
+use In2code\In2publishCore\Command\Status\AllCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
@@ -36,6 +38,7 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function strpos;
 
 /**
@@ -61,7 +64,7 @@ class ForeignInstanceTest implements TestCaseInterface
      */
     public function run(): TestResult
     {
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, StatusCommandController::ALL_COMMAND);
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, AllCommand::IDENTIFIER);
         $response = $this->rceDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {
@@ -152,7 +155,7 @@ class ForeignInstanceTest implements TestCaseInterface
         $values = [];
         foreach ($output as $line) {
             if (false !== strpos($line, ':')) {
-                list ($key, $value) = GeneralUtility::trimExplode(':', $line);
+                [$key, $value] = GeneralUtility::trimExplode(':', $line);
                 $values[$key] = $value;
             }
         }

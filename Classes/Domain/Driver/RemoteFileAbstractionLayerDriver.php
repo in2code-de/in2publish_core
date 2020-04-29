@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Driver;
 
 /*
@@ -28,7 +30,7 @@ namespace In2code\In2publishCore\Domain\Driver;
  */
 
 use Exception;
-use In2code\In2publishCore\Command\RpcCommandController;
+use In2code\In2publishCore\Command\RemoteProcedureCall\ExecuteCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Envelope;
@@ -41,10 +43,11 @@ use LogicException;
 use PDO;
 use RuntimeException;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
+use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
-use TYPO3\CMS\Extbase\Service\FlexFormService;
+
 use function array_keys;
 use function is_array;
 use function sprintf;
@@ -149,7 +152,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
                                                 ->setMaxResults(1)
                                                 ->execute()
                                                 ->fetch(PDO::FETCH_ASSOC);
-            // TODO: Replace with \TYPO3\CMS\Core\Service\FlexFormService upon dropping TYPO3 v8
             $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
             $driverConfiguration = $flexFormService->convertFlexFormContentToArray(
                 $this->remoteDriverSettings['configuration']
@@ -293,7 +295,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * further check is done here! After a successful the original file must
      * not exist anymore.
      *
-     * @param string $localFilePath (within PATH_site)
+     * @param string $localFilePath (within \TYPO3\CMS\Core\Core\Environment::getPublicPath())
      * @param string $targetFolderId
      * @param string $newFileName optional, if not given original name is used
      * @param bool $removeOriginal if set the original file will be removed
@@ -612,7 +614,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 
     /**
      * Returns the public URL to a file.
-     * Either fully qualified URL or relative to PATH_site (rawurlencoded).
+     * Either fully qualified URL or relative to \TYPO3\CMS\Core\Core\Environment::getPublicPath() (rawurlencoded).
      *
      * @param string $identifier
      *
@@ -739,7 +741,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 
         $request = GeneralUtility::makeInstance(
             RemoteCommandRequest::class,
-            RpcCommandController::EXECUTE_COMMAND,
+            ExecuteCommand::IDENTIFIER,
             [],
             [$uid]
         );

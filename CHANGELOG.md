@@ -1,5 +1,96 @@
 # In2publish Core Change Log
 
+9.0.0:
+
+- [META] Set the stability to stable
+- [META] Set the branch alias version number to 9.0.x-dev
+- [META] Set the EM conf version number to 9.0.0
+- [TEST] Update RecordTest to test that adding "language parents" of pages is allowed
+- [!!!][FEATURE] Support TYPO3 v10
+- [BUGFIX] Ignore sys_file_metadata tstamp and crdate by default
+- [COMMENT] Streamline copyright comment according to definition
+- [BUGFIX] Allow searching for l10Parents despite of excluded tables
+- [CODESTYLE] Apply PSR-12 and editorconfig
+- [BUGFIX] Do not add related pages twice
+- [BUGFIX] Use sites for all frontend links
+- [CODESTYLE] Fix line breaks for long line in ext_localconf
+- [FEATURE] Add option to disable the foreign key fingerprint check
+- [BUGFIX] Use the new approach to preview links also in the Compare plugin
+- [BUGFIX] Correctly assemble preview URLs for site & sys_domain based preview links
+- [DOCS] Be more verbose about setting the filePreviewDomainNames
+- [BUGFIX] Ensure the remaining path after extracting the host part from an uri is a string
+- [REFACTOR] Replace user_error with trigger_error
+- [DEPRECTATION] Deprecate unused getFirstDomain from DomainService
+- [BUGFIX] Use normalized Uris to build the file preview URL
+- [BUGFIX] Identify sites without host correctly and also check local
+- [BUGFIX] Return an empty domain if the target page can not be found
+- [BUGFIX] Return an empty domain if the page's site could not be identified
+- [BUGFIX] Early return when searching domains for records with uid 0
+- [RELEASE] Version 9.0.0-rc2 with various bug fixes
+
+9.0.0-rc2:
+
+- [BUGFIX] Change the log level of record publishing logs to info
+- [BUGFIX] Reduce "Task execution results" log severity to info
+- [BUGFIX] Reduce severity of sys_log publishing to info
+- [BUGFIX] Convert TYPO3 v10 log level names to integers for comparison
+- [BUGFIX] Set the log level to the level's name for TYPO3 v10
+- [BUGFIX] Return missing exit code after command execution
+- [CODESTYLE] Reorder imports and add missing blank line in FileProvider
+- [REFACTOR] Use shorthand syntax for array destructuring
+- [CLEANUP] Remove legacy commandController registrations
+- [BUGFIX] Add missing enable condition for context specific commands
+- [CLEANUP] Remove unused logger from all affected files
+- [COMMENT] Add missing license information in RunTasksInQueueCommand
+- [CODESTYLE] Add missing return type in PageDoesNotExistException
+- [BUGFIX] Remove all restrictions for searching page language parents
+- [BUGFIX] Skip definition entries that are not an array
+- [DOCS] Add known issue about broken sorting detection
+- [BUGFIX] Use the language parent to get sites and do not fall back to sys_domain in TYPO3 v10
+- [RELEASE] Version 9.0.0-rc1 with TYPO3 v10 support.
+
+9.0.0-rc1:
+
+- [BUGFIX] Force exception if the in2publish_core cache does not exist
+- [CODESTYLE] Reorder use statements and copyright comments
+- [BUGFIX] Remove second argument for BackendUtility::getPagesTSconfig
+- [REFACTOR] Extract and move SSH command assembling to the parent class
+- [CODESTYLE] Add PSR-12 constant visibility to all class constants
+- [BUGFIX] Use newer LanguageService class namespace
+- [DOCS] Remove stale documentation, update requirements and fix typos
+- [CLEANUP] Remove unwanted file from vcs
+- [CLEANUP] Remove unused function imports and DbUtil::isTableExistingOnLocal method
+- [REFACTOR] Simplify all commands
+- [BUGFIX] Rewrite all CommandControllers as symfony commands
+- [BUGFIX] Use the backend router to process module paths and generate module urls
+- [CODESTYLE] Remove superfluous whitespace after list and braces
+- [BUGFIX] Add mapping for warning test result severity
+- [BUGFIX] Replace PATH_site with Environment::getPublicPath
+- [BUGFIX] Add missing cache initialization
+- [BUGFIX] Call to parent::__construct in the ActionController if it exists
+- [BUGFIX] Remove sys_domain from default ignored tables
+- [UPDATE] Raise supported TYPO3 version to 10.1
+- [BUGFIX] Add missing test result severity class mapping
+- [BUGFIX] Replace removed BackendUtility::getModTSconfig with the new way of accessing user TS
+- [REFACTOR] Move logging conf to ext_localconf, reformat and reorder ext_tables
+- [REFACTOR] Reorder ext_localconf and replace call_user_func with immediate execution
+- [BUGFIX] Replace every access to extConf with the new API method
+- [REFACTOR] Introduce constants for rce/tatpi adapter registration
+- [CLEANUP] Remove RealUrlSupport
+- [DEPRECATION] Deprecate and replace typo3conf as default configuration folder
+- [CLEANUP] Resolve all version_compare calls
+- [CLEANUP] Remove the environment command controller
+- [UPGRADE] Resolve all upgrade TODOs
+- [META] Add branch alias for TYPO3 v10 development
+- [UPDATE] Raise PHP version requirements to at least 7.2 (like TYPO3 v9 minimum)
+- [UPDATE] Raise TYPO3 version constraint to 9-10
+- [BUGFIX] Support PAGE_TSCONFIG_* marker in additional where clause
+- [FEATURE] Introduce new voting signals to skip record resolving by flexform
+- [FEATURE] Add column name to the list of information passed to the slot
+- [CODESTYLE] Remove empty line
+- [FEATURE] Add signals to skip related records in FlexForms
+- [RELEASE] Version 8.5.0 with tests, warningOnLive and don't publish when cancelled
+
 8.5.0:
 
 - [META] Set the branch alias version number to 8.5.x-dev

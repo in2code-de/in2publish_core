@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Testing\Service;
 
 /*
@@ -30,6 +32,7 @@ namespace In2code\In2publishCore\Testing\Service;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_merge;
 use function get_class;
 

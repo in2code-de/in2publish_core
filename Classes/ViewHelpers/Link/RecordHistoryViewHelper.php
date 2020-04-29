@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\ViewHelpers\Link;
 
 /*
@@ -28,6 +30,7 @@ namespace In2code\In2publishCore\ViewHelpers\Link;
  */
 
 use In2code\In2publishCore\Utility\BackendUtility;
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 
 /**
  * Class RecordHistoryViewHelper
@@ -41,6 +44,7 @@ class RecordHistoryViewHelper extends AbstractRecordActionLinkViewHelper
      * @return string
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
+     * @throws RouteNotFoundException
      */
     protected function buildUri(string $table, int $identifier): string
     {

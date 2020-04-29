@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace In2code\In2publishCore\Service\Database;
@@ -33,6 +34,7 @@ use Doctrine\DBAL\Statement;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use RuntimeException;
 use TYPO3\CMS\Core\Database\Connection;
+
 use function max;
 use function spl_object_hash;
 use function sprintf;

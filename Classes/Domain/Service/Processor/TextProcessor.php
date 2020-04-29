@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Service\Processor;
 
 /*
@@ -29,6 +31,7 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
 
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function in_array;
 use function strpos;
 
@@ -37,9 +40,9 @@ use function strpos;
  */
 class TextProcessor extends AbstractProcessor
 {
-    const RTE_DEFAULT_EXTRAS = 'richtext';
-    const WIZARDS = 'wizards';
-    const RTE = 'RTE';
+    public const RTE_DEFAULT_EXTRAS = 'richtext';
+    public const WIZARDS = 'wizards';
+    public const RTE = 'RTE';
 
     /**
      * @var bool

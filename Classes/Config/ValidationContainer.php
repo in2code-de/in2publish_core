@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Config;
 
 /*
@@ -28,6 +30,7 @@ namespace In2code\In2publishCore\Config;
  */
 
 use In2code\In2publishCore\Config\Node\Node;
+
 use function array_pop;
 use function array_push;
 use function implode;

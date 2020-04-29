@@ -1,5 +1,8 @@
 <?php
+
 namespace In2code\In2publishCore\Tests;
+
+use Codeception\Actor;
 
 /**
  * Inherited Methods
@@ -15,12 +18,12 @@ namespace In2code\In2publishCore\Tests;
  * @method void pause()
  *
  * @SuppressWarnings(PHPMD)
-*/
-class AcceptanceTester extends \Codeception\Actor
+ */
+class AcceptanceTester extends Actor
 {
     use _generated\AcceptanceTesterActions;
 
-   /**
-    * Define custom actions here
-    */
+    /**
+     * Define custom actions here
+     */
 }

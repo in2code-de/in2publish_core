@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Testing\Tests\Database;
 
 /*
@@ -32,6 +34,7 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use PDO;
 use TYPO3\CMS\Core\Database\Connection;
+
 use function array_diff;
 use function array_key_exists;
 use function array_keys;
@@ -40,6 +43,7 @@ use function count;
 use function is_array;
 use function mt_rand;
 use function strpos;
+
 use const PHP_INT_MAX;
 
 /**

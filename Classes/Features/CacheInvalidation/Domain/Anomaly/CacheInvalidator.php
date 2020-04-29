@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Features\CacheInvalidation\Domain\Anomaly;
 
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de
+ * (c) 2015 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -31,11 +33,10 @@ namespace In2code\In2publishCore\Features\CacheInvalidation\Domain\Anomaly;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Features\CacheInvalidation\Domain\Model\Task\FlushFrontendPageCacheTask;
-use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_filter;
 use function implode;
 
@@ -44,11 +45,6 @@ use function implode;
  */
 class CacheInvalidator implements SingletonInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger = null;
-
     /**
      * @var TaskRepository
      */
@@ -71,7 +67,6 @@ class CacheInvalidator implements SingletonInterface
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
     }
 

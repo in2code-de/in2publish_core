@@ -34,8 +34,10 @@ Basic must be configured on both sides, whereas "Local" needs to be set only on 
 
 ## Basic
 
-    pathToConfiguration = typo3conf/AdditionalConfiguration/
-    logLevel = 5
+```
+pathToConfiguration = typo3conf/AdditionalConfiguration/
+logLevel = 5
+```
 
 * pathToConfiguration:
   Defines the path where the LocalConfiguration.yaml file on Local and the ForeignConfiguration.yaml on Foreign.
@@ -45,9 +47,11 @@ Basic must be configured on both sides, whereas "Local" needs to be set only on 
 
 ## Local
 
-    disableUserConfig = 0
-    adapter.remote = ssh
-    adapter.transmission = ssh
+```
+disableUserConfig = 0
+adapter.remote = ssh
+adapter.transmission = ssh
+```
 
 * disableUserConfig:
   Disables the UserTsProvider. If checked no UserTS will be merged in the in2publish_core configuration.
@@ -94,16 +98,17 @@ When the UserTS config is enabled, it will overwrite the configuration after Pag
 
 PageTS and UserTs for in2publish starts with **tx_in2publish** followed by the configuration directive to overwrite.
 
-Here is an example to disable the filter buttons for the publish overview module::
+Here is an example to disable the filter buttons for the publish overview module:
 
-    tx_in2publish {
-        view {
-            records {
-                filterButtons = FALSE
-            }
+```
+tx_in2publish {
+    view {
+        records {
+            filterButtons = FALSE
         }
     }
-
+}
+```
 ---
 
 **Following settings can be overridden by PageTS and UserTS:**

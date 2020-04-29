@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Config\Node\Specific;
 
 /*
@@ -28,6 +30,7 @@ namespace In2code\In2publishCore\Config\Node\Specific;
  */
 
 use In2code\In2publishCore\Config\ValidationContainer;
+
 use function is_int;
 
 /**

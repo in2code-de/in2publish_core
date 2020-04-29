@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Service;
 
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de
+ * (c) 2015 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -34,6 +36,8 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+use function implode;
 use function preg_replace_callback;
 use function str_replace;
 use function strpos;
@@ -68,14 +72,15 @@ class ReplaceMarkersService
      *
      * @param RecordInterface $record
      * @param string $string
+     * @param string $propertyName
      *
      * @return string
      */
-    public function replaceMarkers(RecordInterface $record, $string): string
+    public function replaceMarkers(RecordInterface $record, string $string, string $propertyName): string
     {
         if (strpos($string, '#') !== false) {
             $string = $this->replaceRecFieldMarker($record, $string);
-            $string = $this->replaceGeneralMarkers($record, $string);
+            $string = $this->replaceGeneralMarkers($record, $string, $propertyName);
             $this->checkForMarkersAndErrors($string);
         }
         return $string;
@@ -89,7 +94,7 @@ class ReplaceMarkersService
      *
      * @return string
      */
-    protected function replaceRecFieldMarker(RecordInterface $record, $string): string
+    protected function replaceRecFieldMarker(RecordInterface $record, string $string): string
     {
         if (strstr($string, '###REC_FIELD_')) {
             $string = preg_replace_callback(
@@ -112,14 +117,15 @@ class ReplaceMarkersService
      * Replace default marker names
      *
      * @param RecordInterface $record
-     * @param $string
+     * @param string $string
+     * @param string $propertyName
      *
      * @return mixed
      */
-    protected function replaceGeneralMarkers(RecordInterface $record, $string)
+    protected function replaceGeneralMarkers(RecordInterface $record, string $string, string $propertyName)
     {
         if (false !== strpos($string, '###CURRENT_PID###')) {
-            if (null !== ($currentPid = $this->getCurrentRecordPageId($record))) {
+            if (null !== ($currentPid = $record->getPageIdentifier())) {
                 $string = str_replace('###CURRENT_PID###', $currentPid, $string);
             }
         }
@@ -129,24 +135,45 @@ class ReplaceMarkersService
             }
         }
         if (false !== strpos($string, '###STORAGE_PID###')) {
-            if (null !== ($storagePid = $this->getStoragePidFromPage($this->getCurrentRecordPageId($record)))) {
+            if (null !== ($storagePid = $this->getStoragePidFromPage($record->getPageIdentifier()))) {
                 $string = str_replace('###STORAGE_PID###', $storagePid, $string);
+            }
+        }
+        if (false !== strpos($string, '###PAGE_TSCONFIG')) {
+            $marker = [
+                'PAGE_TSCONFIG_ID' => function ($input) {
+                    return (int)$input;
+                },
+                'PAGE_TSCONFIG_IDLIST' => function ($input) {
+                    return implode(
+                        ',',
+                        GeneralUtility::intExplode(',', $input)
+                    );
+                },
+                'PAGE_TSCONFIG_STR' => function ($input) {
+                    return DatabaseUtility::quoteString($input);
+                },
+            ];
+
+            $pageTsConfig = $this->getPagesTsConfig($record->getPageIdentifier());
+            $tableIndex = $record->getTableName() . '.';
+            $fieldIndex = $propertyName . '.';
+            foreach ($marker as $markerName => $filterFunc) {
+                if (false !== strpos($string, '###' . $markerName . '###')) {
+                    $value = $pageTsConfig['TCEFORM.'][$tableIndex][$fieldIndex][$markerName] ?? null;
+                    $cleanValue = $filterFunc($value);
+                    $string = str_replace('###' . $markerName . '###', $cleanValue, $string);
+                }
             }
         }
         $string = str_replace(
             [
                 '###THIS_CID###',
                 '###SITEROOT###',
-                '###PAGE_TSCONFIG_ID###',
-                '###PAGE_TSCONFIG_IDLIST###',
-                '###PAGE_TSCONFIG_STR###',
             ],
             [
                 0,
                 '#_SITEROOT',
-                '#PAGE_TSCONFIG_ID',
-                '#PAGE_TSCONFIG_IDLIST',
-                '#PAGE_TSCONFIG_STR',
             ],
             $string
         );
@@ -188,14 +215,12 @@ class ReplaceMarkersService
     }
 
     /**
-     * @param RecordInterface $record
+     * @param int $pageIdentifier
      *
-     * @return mixed
+     * @return array
      */
-    protected function getCurrentRecordPageId(RecordInterface $record)
+    protected function getPagesTsConfig(int $pageIdentifier): array
     {
-        return ($record->hasLocalProperty('pid')
-            ? $record->getLocalProperty('pid')
-            : $record->getForeignProperty('pid'));
+        return BackendUtility::getPagesTSconfig($pageIdentifier);
     }
 }

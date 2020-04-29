@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Factory;
 
 /*
@@ -43,6 +45,7 @@ use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_diff;
 use function array_intersect;
 use function array_map;
@@ -131,7 +134,7 @@ class FolderRecordFactory
             try {
                 $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
             } catch (FolderDoesNotExistException $exception) {
-                list($storage) = GeneralUtility::trimExplode(':', $identifier);
+                [$storage] = GeneralUtility::trimExplode(':', $identifier);
                 $localStorage = $resourceFactory->getStorageObject($storage);
                 $localFolder = $localStorage->getRootLevelFolder();
             }
@@ -206,7 +209,7 @@ class FolderRecordFactory
         // FEATURE: reclaimSysFileEntries
         if (true === $this->configuration['reclaimSysFileEntries']) {
             foreach (['local', 'foreign'] as $side) {
-                list($onlyDiskIdentifiers, $files) = $this->reclaimSysFileEntriesBySide(
+                [$onlyDiskIdentifiers, $files] = $this->reclaimSysFileEntriesBySide(
                     $onlyDiskIdentifiers,
                     $hashedIdentifier,
                     $files,

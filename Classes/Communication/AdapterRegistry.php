@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Communication;
 
 /*
@@ -33,19 +35,19 @@ use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Adapter\TransmissionAdapterTest;
 use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
-use TYPO3\CMS\Lang\LanguageService;
+
 use function array_column;
 use function array_combine;
 use function array_keys;
 use function in_array;
-use function is_array;
 use function is_subclass_of;
-use function unserialize;
 
 /**
  * Class AdapterRegistry
@@ -88,7 +90,7 @@ class AdapterRegistry implements SingletonInterface
      * @var array
      */
     protected $config = [
-        'adapter.' => [
+        'adapter' => [
             'remote' => 'ssh',
             'transmission' => 'ssh',
         ],
@@ -107,11 +109,8 @@ class AdapterRegistry implements SingletonInterface
         if (!isset($GLOBALS['in2publish_core']['tests'])) {
             $GLOBALS['in2publish_core']['tests'] = [];
         }
-        if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core'])) {
-            if (is_array($setConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['in2publish_core']))) {
-                ArrayUtility::mergeRecursiveWithOverrule($this->config, $setConf, false);
-            }
-        }
+        $setConf = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('in2publish_core');
+        ArrayUtility::mergeRecursiveWithOverrule($this->config, $setConf, false);
     }
 
     /**
@@ -149,7 +148,7 @@ class AdapterRegistry implements SingletonInterface
             'label' => $label,
         ];
 
-        if ($key === $this->config['adapter.'][$type]) {
+        if ($key === $this->config['adapter'][$type]) {
             $this->addTests($tests, $interface);
         }
 
@@ -185,10 +184,10 @@ class AdapterRegistry implements SingletonInterface
             $this->logger->alert('Adapter type is not available', ['interface' => $interface]);
         } else {
             $type = $interfaceTypeMap[$interface];
-            if (!isset($this->adapter[$type][$this->config['adapter.'][$type]]['class'])) {
+            if (!isset($this->adapter[$type][$this->config['adapter'][$type]]['class'])) {
                 $this->logger->critical('No adapter was registered for the requested type', ['type' => $type]);
             } else {
-                return $this->adapter[$type][$this->config['adapter.'][$type]]['class'];
+                return $this->adapter[$type][$this->config['adapter'][$type]]['class'];
             }
         }
         throw new In2publishCoreException('Could not determine adapter or type for ' . $interface, 1507906038);
@@ -215,7 +214,7 @@ class AdapterRegistry implements SingletonInterface
      */
     public function getConfig(): array
     {
-        return $this->config['adapter.'];
+        return $this->config['adapter'];
     }
 
     /**

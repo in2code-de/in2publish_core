@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Controller;
 
 /*
@@ -27,7 +29,7 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Command\PublishTasksRunnerCommandController;
+use In2code\In2publishCore\Command\PublishTaskRunner\RunTasksInQueueCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -39,6 +41,7 @@ use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+
 use function implode;
 use function is_bool;
 
@@ -49,7 +52,7 @@ use function is_bool;
  */
 abstract class AbstractController extends ActionController
 {
-    const BLANK_ACTION = 'blankAction';
+    public const BLANK_ACTION = 'blankAction';
 
     /**
      * @var BackendUserAuthentication
@@ -133,14 +136,11 @@ abstract class AbstractController extends ActionController
     protected function runTasks()
     {
         $dispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
-        $request = GeneralUtility::makeInstance(
-            RemoteCommandRequest::class,
-            PublishTasksRunnerCommandController::RUN_TASKS_COMMAND
-        );
+        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, RunTasksInQueueCommand::IDENTIFIER);
         $response = $dispatcher->dispatch($request);
 
         if ($response->isSuccessful()) {
-            $this->logger->notice('Task execution results', ['output' => $response->getOutput()]);
+            $this->logger->info('Task execution results', ['output' => $response->getOutput()]);
         } else {
             $this->logger->error(
                 'Task execution failed',

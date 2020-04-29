@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Factory;
 
 /*
  * Copyright notice
  *
- * (c) 2016 in2code.de
+ * (c) 2016 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -35,6 +37,7 @@ use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository\Tabl
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_diff;
 use function array_merge;
 use function strnatcmp;
@@ -46,7 +49,7 @@ use function uasort;
  */
 class FakeRecordFactory
 {
-    const PAGE_TABLE_NAME = 'pages';
+    public const PAGE_TABLE_NAME = 'pages';
 
     /**
      * @var TableCacheRepository

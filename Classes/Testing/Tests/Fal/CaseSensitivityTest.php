@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Testing\Tests\Fal;
 
 /*
@@ -30,8 +32,9 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Service\FlexFormService;
+
 use function array_keys;
 use function array_merge;
 use function array_unique;
@@ -57,7 +60,6 @@ class CaseSensitivityTest implements TestCaseInterface
      */
     public function __construct()
     {
-        // TODO: Replace with \TYPO3\CMS\Core\Service\FlexFormService upon dropping TYPO3 v8
         $this->flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
         $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);
     }

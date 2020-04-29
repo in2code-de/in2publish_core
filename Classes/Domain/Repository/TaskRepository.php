@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Repository;
 
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de
+ * (c) 2015 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -35,6 +37,7 @@ use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_merge;
 use function get_class;
 use function json_encode;
@@ -44,7 +47,7 @@ use function json_encode;
  */
 class TaskRepository
 {
-    const TASK_TABLE_NAME = 'tx_in2code_in2publish_task';
+    public const TASK_TABLE_NAME = 'tx_in2code_in2publish_task';
 
     /**
      * @var Connection

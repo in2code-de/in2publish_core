@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Factory;
 
 /*
@@ -38,6 +40,7 @@ use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
+
 use function array_intersect_key;
 use function explode;
 use function strtolower;
@@ -253,7 +256,7 @@ class FileIndexFactory
      */
     protected function determineFileType(array $fileInfo): int
     {
-        list($fileType) = explode('/', $fileInfo['mime_type']);
+        [$fileType] = explode('/', $fileInfo['mime_type']);
         switch (strtolower($fileType)) {
             case 'text':
                 $type = File::FILETYPE_TEXT;

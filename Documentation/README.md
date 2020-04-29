@@ -5,5 +5,4 @@
 * [Installation](Installation/)
 * [Use](Use/)
 * [FAQ](FAQ.md)
-* [Upgrade](Upgrade/)
 * [Known Issues](KnownIssues.md)

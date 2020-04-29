@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Config;
 
 /*
@@ -37,6 +39,7 @@ use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_keys;
 use function asort;
 

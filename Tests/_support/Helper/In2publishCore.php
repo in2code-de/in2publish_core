@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Tests\Helper;
 
 use Codeception\Module;
@@ -9,6 +11,7 @@ use In2code\In2publishCore\Config\Provider\DefaultProvider;
 use In2code\In2publishCore\Config\Provider\ProviderInterface;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use ReflectionClass;
 use ReflectionProperty;
 use TYPO3\CMS\Core\Core\ApplicationContext;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -20,6 +23,7 @@ class In2publishCore extends Module
     {
         $testConfigProvider = new class implements ProviderInterface {
             public $config = [];
+
             public function isAvailable()
             {
                 return true;
@@ -58,7 +62,7 @@ class In2publishCore extends Module
             }
         }
         $foreignConnection->connect();
-        $reflection = new \ReflectionClass(DatabaseUtility::class);
+        $reflection = new ReflectionClass(DatabaseUtility::class);
         $reflectionProperty = $reflection->getProperty('foreignConnection');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue(DatabaseUtility::class, $foreignConnection);

@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Anomaly;
 
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de
+ * (c) 2015 in2code.de and the following authors:
  * Alex Kellner <alexander.kellner@in2code.de>,
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
@@ -36,6 +38,7 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_merge;
 use function basename;
 use function dirname;
@@ -102,7 +105,7 @@ class PhysicalFilePublisher implements SingletonInterface
             $identifier = $record->getMergedProperty('identifier');
 
             if (strpos($identifier, ',')) {
-                list($identifier) = GeneralUtility::trimExplode(',', $identifier);
+                [$identifier] = GeneralUtility::trimExplode(',', $identifier);
             }
 
             $combinedIdentifier = sprintf('%d:%s', $storage, $identifier);

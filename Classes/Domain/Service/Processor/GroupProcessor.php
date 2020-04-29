@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Domain\Service\Processor;
 
 /*
@@ -29,6 +31,7 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
 
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function strpos;
 
 /**
@@ -36,11 +39,11 @@ use function strpos;
  */
 class GroupProcessor extends AbstractProcessor
 {
-    const INTERNAL_TYPE = 'internal_type';
-    const INTERNAL_TYPE_DB = 'db';
-    const INTERNAL_TYPE_FILE = 'file';
-    const ALLOWED = 'allowed';
-    const UPLOAD_FOLDER = 'uploadfolder';
+    public const INTERNAL_TYPE = 'internal_type';
+    public const INTERNAL_TYPE_DB = 'db';
+    public const INTERNAL_TYPE_FILE = 'file';
+    public const ALLOWED = 'allowed';
+    public const UPLOAD_FOLDER = 'uploadfolder';
 
     /**
      * @var bool

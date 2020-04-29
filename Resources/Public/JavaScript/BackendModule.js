@@ -2,7 +2,7 @@
 
 define([
 	'jquery'
-], function($) {
+], function ($) {
 	var In2publishModule = {
 		changedFilter: false,
 		addedFilter: false,
@@ -15,7 +15,7 @@ define([
 		}
 	};
 
-	In2publishModule.initialize = function() {
+	In2publishModule.initialize = function () {
 		In2publishModule.toggleDirtyPropertiesListContainerListener();
 		In2publishModule.setFilterForPageView();
 		In2publishModule.filterButtonsListener();
@@ -23,8 +23,8 @@ define([
 		In2publishModule.ajaxUriListener();
 	};
 
-	In2publishModule.toggleDirtyPropertiesListContainerListener = function() {
-		$('*[data-action="opendirtypropertieslistcontainer"]').click(function() {
+	In2publishModule.toggleDirtyPropertiesListContainerListener = function () {
+		$('*[data-action="opendirtypropertieslistcontainer"]').click(function () {
 			var $containerDropdown = $(this).closest('.in2publish-stagelisting__item').find('.in2publish-stagelisting__dropdown:first');
 			In2publishModule.openOrCloseStageListingDropdownContainer($containerDropdown);
 
@@ -33,7 +33,7 @@ define([
 		});
 	};
 
-	In2publishModule.openOrCloseStageListingDropdownContainer = function($container) {
+	In2publishModule.openOrCloseStageListingDropdownContainer = function ($container) {
 		if ($container.hasClass('in2publish-stagelisting__dropdown--close')) {
 			$('.in2publish-stagelisting__dropdown--open')
 				.removeClass('in2publish-stagelisting__dropdown--open')
@@ -51,7 +51,7 @@ define([
 		}
 	};
 
-	In2publishModule.openOrCloseStageListingMessagesContainer = function($container) {
+	In2publishModule.openOrCloseStageListingMessagesContainer = function ($container) {
 		if ($container.length > 0) {
 			if ($container.hasClass('in2publish-stagelisting__messages--close')) {
 				$('.in2publish-stagelisting__messages--open')
@@ -71,7 +71,7 @@ define([
 		}
 	};
 
-	In2publishModule.setFilterForPageView = function() {
+	In2publishModule.setFilterForPageView = function () {
 		In2publishModule.changedFilter = $('.in2publish-icon-status-changed').hasClass('in2publish-functions-bar--active');
 		In2publishModule.addedFilter = $('.in2publish-icon-status-added').hasClass('in2publish-functions-bar--active');
 		In2publishModule.deletedFilter = $('.in2publish-icon-status-deleted').hasClass('in2publish-functions-bar--active');
@@ -92,9 +92,9 @@ define([
 		}
 	};
 
-	In2publishModule.hideOrShowPages = function(pages, status) {
+	In2publishModule.hideOrShowPages = function (pages, status) {
 		if (status) {
-			pages.each(function() {
+			pages.each(function () {
 				var $this = $(this);
 				$this.show();
 				In2publishModule.showParentPages($this);
@@ -104,7 +104,7 @@ define([
 		}
 	};
 
-	In2publishModule.showParentPages = function(element) {
+	In2publishModule.showParentPages = function (element) {
 		var parentPage = element.parent().closest('ul').siblings('.in2publish-stagelisting__item').parent();
 		if (undefined !== parentPage && parentPage.length) {
 			parentPage.show();
@@ -112,8 +112,8 @@ define([
 		}
 	};
 
-	In2publishModule.filterButtonsListener = function() {
-		$('*[data-action-toggle-filter-status]').click(function(e) {
+	In2publishModule.filterButtonsListener = function () {
+		$('*[data-action-toggle-filter-status]').click(function (e) {
 			e.preventDefault();
 			var $this = $(this);
 			$this.toggleClass('in2publish-functions-bar--active');
@@ -124,10 +124,10 @@ define([
 		});
 	};
 
-	In2publishModule.overlayListener = function() {
-		$('[data-in2publish-confirm]').each(function() {
+	In2publishModule.overlayListener = function () {
+		$('[data-in2publish-confirm]').each(function () {
 			var element = $(this);
-			element.on('click', function(event) {
+			element.on('click', function (event) {
 				if (element.data('in2publish-confirm')) {
 					if (element.hasClass('in2publish-stagelisting__item__publish--blocked') || !confirm(element.data('in2publish-confirm'))) {
 						event.preventDefault();
@@ -143,13 +143,13 @@ define([
 		});
 	};
 
-	In2publishModule.showPreloader = function() {
+	In2publishModule.showPreloader = function () {
 		In2publishModule.objects.preLoader.removeClass('in2publish-preloader--hidden');
 		In2publishModule.objects.typo3DocBody.addClass('stopScrolling');
 	};
 
-	In2publishModule.ajaxUriListener = function() {
-		$('*[data-action-ajax-uri]').click(function(e) {
+	In2publishModule.ajaxUriListener = function () {
+		$('*[data-action-ajax-uri]').click(function (e) {
 			var $this = $(this);
 			var uri = $this.data('action-ajax-uri');
 			if ('href' === uri) {
@@ -167,13 +167,13 @@ define([
 			if (!once || !filled) {
 				$.ajax({
 					url: uri,
-					beforeSend: function() {
+					beforeSend: function () {
 						In2publishModule.showPreloader();
 					},
-					complete: function() {
+					complete: function () {
 						In2publishModule.hidePreLoader();
 					},
-					success: function(data) {
+					success: function (data) {
 						if (data && undefined !== container) {
 							$container.html(data);
 							$container.data('container-filled', true);
@@ -190,12 +190,12 @@ define([
 		});
 	};
 
-	In2publishModule.hidePreLoader = function() {
+	In2publishModule.hidePreLoader = function () {
 		In2publishModule.objects.preLoader.addClass('in2publish-preloader--hidden');
 		In2publishModule.objects.typo3DocBody.removeClass('stopScrolling');
 	};
 
-	$(function() {
+	$(function () {
 		In2publishModule.objects.body = $('body');
 		In2publishModule.objects.preLoader = $('.in2publish-preloader');
 		In2publishModule.objects.typo3DocBody = $('#typo3-docbody');

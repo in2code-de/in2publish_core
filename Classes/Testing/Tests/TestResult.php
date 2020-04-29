@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Testing\Tests;
 
 /*
@@ -28,18 +30,18 @@ namespace In2code\In2publishCore\Testing\Tests;
  */
 
 use In2code\In2publishCore\Testing\Utility\TestLabelLocalizer;
+
 use function implode;
-use function version_compare;
 
 /**
  * Class TestResult
  */
 class TestResult
 {
-    const OK = 'ok';
-    const WARNING = 'warning';
-    const ERROR = 'error';
-    const SKIPPED = 'notice';
+    public const OK = 'ok';
+    public const WARNING = 'warning';
+    public const ERROR = 'error';
+    public const SKIPPED = 'notice';
 
     /**
      * @var string
@@ -96,16 +98,17 @@ class TestResult
      */
     public function getSeverityLabel(): string
     {
-        if (version_compare(TYPO3_version, '8.0.0', '>=')) {
-            switch ($this->severity) {
-                case self::OK:
-                    return 'success';
-                case self::ERROR:
-                    return 'danger';
-            }
+        switch ($this->severity) {
+            case self::OK:
+                return 'success';
+            case self::WARNING:
+                return 'warning';
+            case self::SKIPPED:
+                return 'notice';
+            case self::ERROR:
+            default:
+                return 'danger';
         }
-
-        return $this->severity;
     }
 
     /**

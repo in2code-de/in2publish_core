@@ -1,11 +1,13 @@
 <?php
+
 declare(strict_types=1);
+
 namespace In2code\In2publishCore\Utility;
 
 /*
  * Copyright notice
  *
- * (c) 2018 in2code.de
+ * (c) 2018 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * This script is part of the TYPO3 project. The TYPO3 project is
@@ -52,10 +54,7 @@ class ConfigurationUtility
             return $original;
         }
 
-        if (array_key_exists('definition', $additional)) {
-            if (!is_array($additional['definition'])) {
-                return $original;
-            }
+        if (array_key_exists('definition', $additional) && is_array($additional['definition'])) {
             foreach ($additional['definition'] as $key => $value) {
                 unset($additional['definition'][$key]);
                 $additional['definition']['0' . $key] = $value;
@@ -70,7 +69,7 @@ class ConfigurationUtility
         $result = self::overruleResultByAdditional($original, $additional, $result);
         $result = self::sortResultArrayByAdditionalKeyOrder($result, $original, $additional);
 
-        if (array_key_exists('definition', $additional)) {
+        if (array_key_exists('definition', $additional) && is_array($additional['definition'])) {
             foreach ($result['definition'] as $key => $value) {
                 unset($result['definition'][$key]);
                 $result['definition'][(int)$key] = $value;
