@@ -91,7 +91,7 @@ class Letterbox
         if (0 === $uid || 0 === $database->count('uid', static::TABLE, ['uid' => $uid])) {
             if (1 === $database->insert(static::TABLE, $envelope->toArray())) {
                 if ($uid <= 0) {
-                    $uid = $database->lastInsertId();
+                    $uid = (int)$database->lastInsertId();
                     $envelope->setUid($uid);
                 }
                 return $uid;
