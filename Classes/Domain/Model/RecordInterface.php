@@ -348,4 +348,14 @@ interface RecordInterface
      * @return int
      */
     public function getPageIdentifier(): int;
+
+    /**
+     * Returns the uid of the record this record is attached to:
+     *  * Record is a default language page: pid
+     *  * Record is a translated page: l10n_parent
+     *  * Record is not a page: pid
+     *
+     * @return int
+     */
+    public function getSuperordinatePageIdentifier(): int;
 }
