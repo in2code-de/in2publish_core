@@ -1,5 +1,15 @@
 # In2publish Core Change Log
 
+9.0.1:
+
+- [META] Set the EM conf version number to 9.0.1
+- [BUGFIX] Add page records to pages again
+- [BUGFIX] Add missing type hints for BackendUtility::getDomainFromPageIdentifier
+- [BUGFIX] Pass properties to be merged as strings to string functions
+- [BUGFIX] Ensure the returned uid of a sent envelope is always an int
+- [FEATURE] Add performance tests
+- [RELEASE] Version 9.0.0 with TYPO3 v10 compatiblity
+
 9.0.0:
 
 - [META] Set the stability to stable
