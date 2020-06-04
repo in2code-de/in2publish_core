@@ -196,8 +196,11 @@ class DomainService implements SingletonInterface
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function getDomainFromPageIdentifier($identifier, $stagingLevel, bool $addProtocol = false): string
-    {
+    public function getDomainFromPageIdentifier(
+        int $identifier,
+        string $stagingLevel,
+        bool $addProtocol = false
+    ): string {
         trigger_error(sprintf(static::DEPRECATION_METHOD, __METHOD__), E_USER_DEPRECATED);
         if (0 === $identifier) {
             return '';

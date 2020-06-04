@@ -421,6 +421,55 @@
 				<source>The configuration for the adapters is missing. Please check the other tests and your configuration</source>
 			</trans-unit>
 
+			<!-- \In2code\In2publishCore\Testing\Tests\Performance\RceInitializationPerformanceTest -->
+
+			<trans-unit id="performance.rce_init.init_time">
+				<source>The Remote Command Dispatcher initialization took %f seconds on average</source>
+				<target state="translated">Die Initialisierung des Remote Command Dispatcher benötigt im Schnitt %f Sekunden</target>
+			</trans-unit>
+			<trans-unit id="performance.rce_init.slow_help">
+				<source>
+					A slow Remote Command Dispatcher initialization will degrade the overall execution speed of the Content Publisher.
+					The initialization time depends on the connection speed and ping between your local and foreign instance,
+					as well as the responsiveness of the foreign service that receives the request (e.g. the SSH Server or HTTP Adapter).
+				</source>
+			</trans-unit>
+			<trans-unit id="performance.rce_init.xdebug_enabled">
+				<source>Xdebug is enabled, which can drastically impair the initialization speed. Please disable Xdebug and run this test again.</source>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Performance\ForeignDbInitializationPerformanceTest -->
+
+			<trans-unit id="performance.db_init.init_time">
+				<source>The foreign database initialization took %d microseconds on average</source>
+			</trans-unit>
+			<trans-unit id="performance.db_init.slow_help">
+				<source>
+					A slow database initialization will degrade the overall execution speed of the Content Publisher.
+					The initialization time depends on the connection speed and ping between your local instance and foreign database server,
+					as well as the responsiveness of the foreign database .
+				</source>
+			</trans-unit>
+			<trans-unit id="performance.db_init.xdebug_enabled">
+				<source>Xdebug is enabled, which can drastically impair the initialization speed. Please disable Xdebug and run this test again.</source>
+			</trans-unit>
+
+			<!-- \In2code\In2publishCore\Testing\Tests\Performance\DiskSpeedPerformanceTest -->
+
+			<trans-unit id="performance.fs_io.rw_time">
+				<source>Reading and writing 10 MB took %f microseconds.</source>
+			</trans-unit>
+			<trans-unit id="performance.fs_io.slow_help">
+				<source>
+					A slow file system will degrade the overall execution speed of the Content Publisher.
+					The file system speed depends on your hardware, drivers, actual storage location, disk health and more.
+					You should persist your websites and assets on healthy SSD storage which is physically as well as logically close to the web server.
+				</source>
+			</trans-unit>
+			<trans-unit id="performance.fs_io.xdebug_enabled">
+				<source>Xdebug is enabled, which can drastically impair the test results. Please disable Xdebug and run this test again.</source>
+			</trans-unit>
+
 		</body>
 	</file>
 </xliff>
