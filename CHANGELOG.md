@@ -1,5 +1,11 @@
 # In2publish Core Change Log
 
+9.0.2:
+
+- [META] Set the EM conf version number to 9.0.1
+- [BUGFIX] Ensure all RCE command arguments, options and names are strings
+- [RELEASE] Version 9.0.1 with stability improvements
+
 9.0.1:
 
 - [META] Set the EM conf version number to 9.0.1
