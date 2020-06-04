@@ -173,7 +173,7 @@ abstract class SshBaseAdapter
         $command = '';
 
         foreach ($request->getEnvironmentVariables() as $name => $value) {
-            $command .= 'export ' . escapeshellcmd($name) . '=' . escapeshellarg($value) . '; ';
+            $command .= 'export ' . escapeshellcmd((string)$name) . '=' . escapeshellarg((string)$value) . '; ';
         }
 
         $command .= 'cd ' . escapeshellarg($request->getWorkingDirectory()) . ' && ';
@@ -183,13 +183,13 @@ abstract class SshBaseAdapter
 
         if ($request->hasOptions()) {
             foreach ($request->getOptions() as $option) {
-                $command .= ' ' . escapeshellcmd($option);
+                $command .= ' ' . escapeshellcmd((string)$option);
             }
         }
 
         if ($request->hasArguments()) {
             foreach ($request->getArguments() as $name => $value) {
-                $command .= ' ' . escapeshellcmd($name) . '=' . escapeshellarg($value);
+                $command .= ' ' . escapeshellcmd((string)$name) . '=' . escapeshellarg((string)$value);
             }
         }
         return $command;
