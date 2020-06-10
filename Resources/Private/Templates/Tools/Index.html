@@ -1,16 +1,29 @@
-<f:layout name="Tools" />
+<f:layout name="Tools"/>
 
 Index - Information and Stuff
 
 <f:section name="content">
-		<h2><f:translate key="module_main_title">Publish Content</f:translate> - <f:translate key="module_m4_title">Tools</f:translate></h2>
+	<f:if condition="{supports}">
+		<h2>Getting Help</h2>
 
-		<p><f:translate key="module_m3_index_content">The Tools Module</f:translate></p>
+		<ul>
+		<f:for each="{supports}" as="support">
+			<li><f:format.raw>{support}</f:format.raw></li>
+		</f:for>
+		</ul>
+	</f:if>
 
-		<section class="nav-pills-container">
-			<ul class="nav nav-pills nav-stacked">
-				<f:render partial="Tools/IntroductionMenu" arguments="{_all}" />
-			</ul>
-		</section>
+
+	<h2><f:translate key="module_main_title">Publish Content</f:translate>-<f:translate key="module_m4_title">Tools</f:translate></h2>
+
+	<p>
+		<f:translate key="module_m3_index_content">The Tools Module</f:translate>
+	</p>
+
+	<section class="nav-pills-container">
+		<ul class="nav nav-pills nav-stacked">
+			<f:render partial="Tools/IntroductionMenu" arguments="{_all}"/>
+		</ul>
+	</section>
 </f:section>
 
