@@ -923,6 +923,8 @@ class CommonRepository extends BaseRepository
                     }
                 }
             }
+        } elseif (array_key_exists('config', $fieldDefinition)) {
+            $flattenedDefinition[$fieldKey] = $fieldDefinition['config'];
         }
         return $flattenedDefinition;
     }
