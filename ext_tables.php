@@ -278,4 +278,19 @@
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Performance\RceInitializationPerformanceTest::class;
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Performance\ForeignDbInitializationPerformanceTest::class;
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Performance\DiskSpeedPerformanceTest::class;
+
+
+    /************************************************ Redirect Support ************************************************/
+    $signalSlotDispatcher->connect(
+        \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
+        'addAdditionalRelatedRecords',
+        \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::class,
+        'addRedirectsToPageRecord'
+    );
+    $signalSlotDispatcher->connect(
+        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+        'publishRecordRecursiveBeforePublishing',
+        \In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement::class,
+        'replaceLocalWithForeignSourceHost'
+    );
 })();

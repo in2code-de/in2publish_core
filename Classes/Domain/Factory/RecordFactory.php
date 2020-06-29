@@ -342,6 +342,13 @@ class RecordFactory
             $this->findTranslations($record, $commonRepository);
 
             $record = $commonRepository->enrichRecordWithRelatedRecords($record, $excludedTableNames);
+
+            $this->signalSlotDispatcher->dispatch(
+                RecordFactory::class,
+                'addAdditionalRelatedRecords',
+                [$record, $this]
+            );
+
             $this->relatedRecordsDepth--;
         }
         return $record;
