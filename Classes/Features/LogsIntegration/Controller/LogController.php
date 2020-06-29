@@ -39,7 +39,7 @@ use function ksort;
 /**
  * Class LogController
  */
-class LogController extends \VerteXVaaR\Logs\Controller\LogController
+class LogController extends \CoStack\Logs\Controller\LogController
 {
     /**
      * TODO: Check if the configuration can be accessed and merged somewhere else
