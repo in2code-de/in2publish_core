@@ -277,6 +277,11 @@ class Record implements RecordInterface
         }
         $alreadyVisited[$this->tableName][] = $this->getIdentifier();
         if (!$this->isChanged()) {
+            foreach ($this->getTranslatedRecords() as $translatedRecord) {
+                if ($translatedRecord->isChangedRecursive($alreadyVisited)) {
+                    return static::RECORD_STATE_CHANGED;
+                }
+            }
             foreach ($this->getRelatedRecords() as $tableName => $relatedRecords) {
                 if ($tableName === 'pages') {
                     continue;
