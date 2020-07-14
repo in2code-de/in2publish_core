@@ -53,13 +53,6 @@ class RedirectSourceHostReplacement implements SingletonInterface
 
     protected $rtc = [];
 
-    protected $siteService;
-
-    public function __construct()
-    {
-        $this->siteService = GeneralUtility::makeInstance(SiteService::class);
-    }
-
     public function replaceLocalWithForeignSourceHost(
         string $tableName,
         RecordInterface $record,

@@ -57,7 +57,7 @@ class PageRecordRedirectEnhancer
         $uri = $site->getRouter()->generateUri($pid);
 
         $redirectsRelationResolver = GeneralUtility::makeInstance(RedirectsRelationResolver::class);
-        $redirects = $redirectsRelationResolver->collectRedirectsByUriRecursive($uri);
+        $redirects = $redirectsRelationResolver->collectRedirectsByUriRecursive($pid, $uri);
         $relatedRedirects = [];
 
         foreach ($redirects as $rowSet) {

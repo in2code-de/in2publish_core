@@ -29,8 +29,11 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\RelationResolver;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Http\Message\UriInterface;
+
+use TYPO3\CMS\Core\Http\Uri;
 
 use function array_column;
 use function array_keys;
@@ -54,7 +57,7 @@ class RedirectsRelationResolver
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
     }
 
-    public function collectRedirectsByUriRecursive(UriInterface $uri, array $rows = []): array
+    public function collectRedirectsByUriRecursive(int $pid, UriInterface $uri, array $rows = []): array
     {
         $uriStr = (string)$uri;
         if (isset($this->rtc['seen_uris'][$uriStr])) {
@@ -73,16 +76,24 @@ class RedirectsRelationResolver
         $localRows = array_column($localRows, null, 'uid');
         $localUids = array_keys($localRows);
 
-        $query = $this->foreignDatabase->createQueryBuilder();
-        $query->getRestrictions()->removeAll();
-        $query->select('*')
-              ->from('sys_redirect')
-              ->where($query->expr()->eq('source_host', $query->createNamedParameter($uri->getHost())))
-              ->andWhere($query->expr()->eq('target', $query->createNamedParameter($uri->getPath())));
-        $statement = $query->execute();
-        $foreignRows = $statement->fetchAll();
-        $foreignRows = array_column($foreignRows, null, 'uid');
-        $foreignUids = array_keys($localRows);
+        $url = BackendUtility::buildPreviewUri('pages', $pid, 'foreign');
+        if (null !== $url) {
+            $uri = new Uri($url);
+            $newHost = $uri->getHost();
+
+            $query = $this->foreignDatabase->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->select('*')
+                  ->from('sys_redirect')
+                  ->where($query->expr()->eq('source_host', $query->createNamedParameter($newHost)))
+                  ->andWhere($query->expr()->eq('target', $query->createNamedParameter($uri->getPath())));
+            $statement = $query->execute();
+            $foreignRows = $statement->fetchAll();
+            $foreignRows = array_column($foreignRows, null, 'uid');
+            $foreignUids = array_keys($localRows);
+        } else {
+            $foreignUids = [];
+        }
 
         $found = [];
         foreach (array_unique(array_merge($localUids, $foreignUids)) as $uid) {
@@ -106,7 +117,7 @@ class RedirectsRelationResolver
                 continue;
             }
             $nextUri = $uri->withHost($sourceHost)->withPath($sourcePath);
-            $rows = $this->collectRedirectsByUriRecursive($nextUri, $rows);
+            $rows = $this->collectRedirectsByUriRecursive($pid, $nextUri, $rows);
         }
 
         return $rows;
