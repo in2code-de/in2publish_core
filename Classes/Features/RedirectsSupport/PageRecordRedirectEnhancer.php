@@ -54,6 +54,9 @@ class PageRecordRedirectEnhancer
             return [$record, $recordFactory];
         }
         $site = $this->siteService->getSiteForPidAndStagingLevel($pid, 'local');
+        if (null === $site) {
+            return [$record, $recordFactory];
+        }
         $uri = $site->getRouter()->generateUri($pid);
 
         $redirectsRelationResolver = GeneralUtility::makeInstance(RedirectsRelationResolver::class);
