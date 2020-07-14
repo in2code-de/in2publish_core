@@ -156,6 +156,11 @@ class Record implements RecordInterface
     protected $configContainer;
 
     /**
+     * @var RecordInterface[]
+     */
+    protected $translatedRecords = [];
+
+    /**
      * @param string $tableName
      * @param array $localProperties
      * @param array $foreignProperties
@@ -563,6 +568,23 @@ class Record implements RecordInterface
     public function getRelatedRecords(): array
     {
         return $this->relatedRecords;
+    }
+
+    /**
+     * @return RecordInterface[]
+     */
+    public function getTranslatedRecords(): array
+    {
+        return $this->translatedRecords;
+    }
+
+    /**
+     * @param RecordInterface $record
+     * @return void
+     */
+    public function addTranslatedRecord(RecordInterface $record): void
+    {
+        $this->translatedRecords[$record->getIdentifier()] = $record;
     }
 
     /**
@@ -1205,5 +1227,18 @@ class Record implements RecordInterface
         return !empty($languageField)
                && array_key_exists($languageField, $this->localProperties)
                && $this->localProperties[$languageField] > 0;
+    }
+
+    public function getRecordLanguage(): int
+    {
+        $language = 0;
+
+        $tcaService = GeneralUtility::makeInstance(TcaService::class);
+        $languageField = $tcaService->getLanguageField($this->tableName);
+        if (!empty($languageField) && array_key_exists($languageField, $this->localProperties)) {
+            $language = $this->localProperties[$languageField];
+        }
+
+        return $language;
     }
 }
