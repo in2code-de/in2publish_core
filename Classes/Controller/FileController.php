@@ -81,6 +81,7 @@ class FileController extends AbstractController
     public function publishFolderAction($identifier)
     {
         $success = GeneralUtility::makeInstance(FolderPublisherService::class)->publish($identifier);
+        $this->runTasks();
 
         if ($success) {
             $this->addFlashMessage(
@@ -144,6 +145,7 @@ class FileController extends AbstractController
                     LocalizationUtility::translate('file_publishing.failure', 'in2publish_core')
                 );
             }
+            $this->runTasks();
         }
 
         try {
