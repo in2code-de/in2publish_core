@@ -627,13 +627,9 @@ class RecordFactory
     /**
      * @param RecordInterface $record
      * @param CommonRepository $commonRepository
-     * @param string|null $forceRelatedRecordTable
      */
-    protected function findTranslations(
-        RecordInterface $record,
-        CommonRepository $commonRepository,
-        string $forceRelatedRecordTable = null
-    ) {
+    protected function findTranslations(RecordInterface $record, CommonRepository $commonRepository): void
+    {
         $tableName = $record->getTableName();
 
         $tcaService = GeneralUtility::makeInstance(TcaService::class);
@@ -653,7 +649,7 @@ class RecordFactory
                         $tableName
                     );
                     foreach ($translatedRecords as $translatedRecord) {
-                        $record->addRelatedRecordRaw($translatedRecord, $forceRelatedRecordTable ?? $tableName);
+                        $record->addTranslatedRecord($translatedRecord);
                     }
                 }
             }

@@ -219,6 +219,17 @@ interface RecordInterface
     public function getRelatedRecords(): array;
 
     /**
+     * @return RecordInterface[]
+     */
+    public function getTranslatedRecords(): array;
+
+    /**
+     * @param RecordInterface $record
+     * @return void
+     */
+    public function addTranslatedRecord(RecordInterface $record): void;
+
+    /**
      * NOTICE: This will not work if debug.disableParentRecords is disabled!
      *
      * @return RecordInterface|null
@@ -358,4 +369,6 @@ interface RecordInterface
      * @return int
      */
     public function getSuperordinatePageIdentifier(): int;
+
+    public function getRecordLanguage(): int;
 }
