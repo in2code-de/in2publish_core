@@ -1,5 +1,23 @@
 # In2publish Core Change Log
 
+9.1.0:
+
+- [META] Set the branch alias version number to 9.1.x-dev
+- [META] Set the EM conf version number to 9.1.0
+- [BUGFIX] Run tasks after publishing files and folders
+- [FEATURE] Handle translated records as a special kind of record
+- [BUGFIX] Include translated records in changed state calculation
+- [FEATURE] Identify translations of records as special records, display with flag
+- [BUGFIX] Do not attempt to modify preview URLs of files which already are full qualified
+- [BUGFIX] Inherit the correct FQCN from the changed EXT:logs controller
+- [BUGFIX] Allow FlexForm config arrays without TCEforms index
+- [BUGFIX] Prevent PageTS caching before ext_tables and the TCA is loaded
+- [FEATURE] Show support info in publish tools module index
+- [DOCS] Add known issue about typo3/cms-redirects
+- [BUGFIX] Build compare URIs with the correct arguments for cHash calculation
+- [BUGFIX] Do not rely on the internal implementation of ArrayObject
+- [RELEASE] Version 9.0.2 with fixed RCE option type
+
 9.0.2:
 
 - [META] Set the EM conf version number to 9.0.1
