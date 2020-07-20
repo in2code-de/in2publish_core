@@ -116,6 +116,12 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
             return '';
         }
 
+        // If the URI is absolute we don't need to prefix it.
+        $resourceUri = new Uri($resourceUrl);
+        if (!empty($resourceUri->getHost())) {
+            return $resourceUrl;
+        }
+
         $uri = $this->domains[$stagingLevel];
         $uri = $uri->withPath(rtrim($uri->getPath(), '/') . '/' . ltrim($resourceUrl, '/'));
         return (string)$uri;

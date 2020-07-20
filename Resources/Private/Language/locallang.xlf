@@ -302,6 +302,13 @@
 			<trans-unit id="adapter.transmission.ssh">
 				<source>Secure, reliable and encrypted asset transission</source>
 			</trans-unit>
+
+			<trans-unit id="help.slack_channel">
+				<source><![CDATA[Ask the Community: We have a channel named #ext-in2publish in the official TYPO3 Slack: <a href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></source>
+			</trans-unit>
+			<trans-unit id="help.github_issues">
+				<source><![CDATA[Official documenation for in2publish_core: <a href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

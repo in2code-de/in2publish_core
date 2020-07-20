@@ -29,10 +29,14 @@ namespace In2code\In2publishCore\ViewHelpers\Uri;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Service\Configuration\TcaService;
+use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Service\Routing\SiteService;
 use Throwable;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
+
+use function array_key_exists;
 
 class CompareUriViewHelper extends AbstractTagBasedViewHelper
 {
@@ -57,6 +61,21 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
     {
         $identifier = $this->arguments[self::ARG_IDENTIFIER];
 
+        $rawRecordService = GeneralUtility::makeInstance(RawRecordService::class);
+        $tcaService = GeneralUtility::makeInstance(TcaService::class);
+        $languageField = $tcaService->getLanguageField('pages');
+        $transOrigPointerField = $tcaService->getTransOrigPointerField('pages');
+
+        $language = 0;
+        $route = $identifier;
+        $page = $rawRecordService->getRawRecord('pages', $identifier, 'local');
+        if (array_key_exists($languageField, $page) && $page[$languageField] > 0) {
+            $language = $page[$languageField];
+            if (!empty($page[$transOrigPointerField])) {
+                $route = $page[$transOrigPointerField];
+            }
+        }
+
         $siteService = GeneralUtility::makeInstance(SiteService::class);
         $site = $siteService->getSiteForPidAndStagingLevel($identifier, 'local');
         if (null === $site) {
@@ -65,9 +84,9 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
         $url = '';
         try {
             $url = $site->getRouter()->generateUri(
-                $identifier,
+                $route,
                 [
-                    'id' => $identifier,
+                    '_language' => $language,
                     'tx_in2publishcore_pi1[identifier]' => $identifier,
                     'type' => 9815,
                 ]
@@ -79,7 +98,7 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
         }
 
         $this->tag->setContent($this->renderChildren());
-        $this->tag->addAttribute('href', $url);
+        $this->tag->addAttribute('href', (string)$url);
         $this->tag->addAttribute('target', '_blank');
         return $this->tag->render();
     }

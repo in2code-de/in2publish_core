@@ -16,9 +16,22 @@ Building frontend links in the backend has always been an annoying task, but wit
 ## TYPO3 v9 Publish Overview translated pages
 
 When selecting a page in the page tree the publish overview will show everything as expected, except for translated pages.
-In TYPO3 9.0 pages_language_overlay was removed and replaced by pages with a sys_language_uid. This is not yet supported. 
+In TYPO3 9.0 pages_language_overlay was removed and replaced by pages with a sys_language_uid. This is not yet supported.
 
 ## TYPO3 v9 pages sorting detection partially broken
 
 In TYPO3 v9 and up page sorting is sometimes not detected correctly.
 Pages in the Publisher Overview module will not be marked changed/moved.
+
+## TYPO3 v10 redirects are not publishable
+
+The TYPO3 core extension `typo3/cms-redirects` makes everything completely different than the standard core-way, which
+makes it technically impossible to publish `redirect`-Records without violating at least a dozen rules, the requirement
+to implement a new backend module and new complex relation resolving strategies.
+(one of the rules is, that the content publisher will never alter data during publishing to minimize errors and make
+debugging easier)
+We are aware of this issue and its implications. We are already in contact with the core team to find a solution to this
+problem.
+
+Technical info: Redirects do not have a TCA, they are not persisted using the DataHandler when changing a page slug and
+they are persisted with an instance identifier which is different for the foreign side.

@@ -34,19 +34,35 @@ use In2code\In2publishCore\Utility\BackendUtility as In2publishBackendUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility as CoreBackendUtility;
 use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Database\TableConfigurationPostProcessingHookInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class PageTsProvider
  */
-class PageTsProvider implements ProviderInterface, ContextualProvider
+class PageTsProvider implements ProviderInterface, ContextualProvider, TableConfigurationPostProcessingHookInterface
 {
+    /**
+     * @var bool
+     */
+    protected $locked = true;
+
+    /**
+     * This method is called after loading all ext_tables.php
+     * The PageTS provider is locked until that point to prevent premature loading and therefore caching of the PageTS.
+     * (e.g. flux registers content elements for the NewContentElementWizard dynamically after ext_tables.php loading)
+     */
+    public function processData()
+    {
+        $this->locked = false;
+    }
+
     /**
      * @return bool
      */
     public function isAvailable()
     {
-        return $this->getDatabase() instanceof Connection;
+        return !$this->locked && $this->getDatabase() instanceof Connection;
     }
 
     /**

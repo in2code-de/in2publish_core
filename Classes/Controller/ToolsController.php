@@ -133,6 +133,17 @@ class ToolsController extends ActionController
             );
         }
 
+        $supports = [
+            LocalizationUtility::translate('help.github_issues', 'in2publish_core'),
+            LocalizationUtility::translate('help.slack_channel', 'in2publish_core'),
+        ];
+        [$supports] = $this->signalSlotDispatcher->dispatch(
+            ToolsController::class,
+            'collectSupportPlaces',
+            [$supports]
+        );
+        $this->view->assign('supports', $supports);
+
         $this->view->assign('tools', GeneralUtility::makeInstance(ToolsRegistry::class)->getTools());
     }
 

@@ -923,6 +923,8 @@ class CommonRepository extends BaseRepository
                     }
                 }
             }
+        } elseif (array_key_exists('config', $fieldDefinition)) {
+            $flattenedDefinition[$fieldKey] = $fieldDefinition['config'];
         }
         return $flattenedDefinition;
     }
@@ -2050,6 +2052,9 @@ class CommonRepository extends BaseRepository
      */
     protected function publishRelatedRecordsRecursive(RecordInterface $record, array $excludedTables)
     {
+        foreach ($record->getTranslatedRecords() as $translatedRecord) {
+            $this->publishRecordRecursiveInternal($translatedRecord, $excludedTables);
+        }
         foreach ($record->getRelatedRecords() as $tableName => $relatedRecords) {
             if (!in_array($tableName, $excludedTables) && is_array($relatedRecords)) {
                 /** @var RecordInterface $relatedRecord */
