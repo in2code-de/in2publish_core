@@ -79,6 +79,13 @@ You can see which dynamic configuration provider are available in the Publish To
 The system info export contains this information, too.
 Read more about dynamic configuration provider in the [Dynamic Configuration Guide](../Guides/DynamicConfiguration.md)
 
+## Configuration post processing (since 9.2.0)
+
+Configuration post processing can be required when even custom dynamic configuration provider won't help.
+A config post processor has the power to alter the complete configuration before it is casted and returned.
+You should use this feature with care.
+Read more about custom configuration post processors in the [Configuration Post Processing Guide](../Guides/ConfigurationPostProcessing.md)
+
 ## <a name="unset"></a>Removing default values
 
 in2publish_core's configuration container supports not just overriding default values but also removing them.

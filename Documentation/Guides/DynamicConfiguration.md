@@ -47,7 +47,7 @@ class MyProvider implements DynamicValueProviderInterface
 }
 ```
 
-Register your custom provider in `ext_localconf.php`:
+Register your custom provider in your `ext_localconf.php`:
 
 ```php
 $registry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry::class);
@@ -64,6 +64,10 @@ workflow:
         name: '%myKey(WORKFLOW_SENDER)%'
         email: '%myKey(WORKFLOW_EMAIL)%'
 ```
+
+**Attention:** The dynamic value provider will be called multiple times per request with the same provider string.
+If your dynamic value provider requires some more resources you should definitely consider at least a runtime caching
+mechanism or even the usage of the caching framework.
 
 ## Type Casting
 
