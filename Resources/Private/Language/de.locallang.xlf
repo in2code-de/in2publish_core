@@ -281,6 +281,10 @@
 				<source>Personal Config</source>
 				<target state="translated">Persönliche Konfiguration</target>
 			</trans-unit>
+			<trans-unit id="module.m4.container_config">
+				<source>Container Config</source>
+				<target state="translated">Container Konfiguration</target>
+			</trans-unit>
 			<trans-unit id="module.m4.overview">
 				<source>Overview</source>
 				<target state="translated">Übersicht</target>
