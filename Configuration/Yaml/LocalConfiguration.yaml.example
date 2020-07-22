@@ -31,20 +31,20 @@ foreign:
   # the server where the database is installed, the host is 127.0.0.1 and the port is your forwarded port.
   database:
 
-    # name of the foreign database
-    name: 'database_123'
+    # name of the foreign database. Set value in env var FOREIGN_DB_NAME or directly here.
+    name: '%env(FOREIGN_DB_NAME)%'
 
-    # name of the foreign mysql user
-    username: 'username_123'
+    # name of the foreign mysql user. Set value in env var FOREIGN_DB_USER or directly here.
+    username: '%env(FOREIGN_DB_USER)%'
 
-    # password of the foreign user above
-    password: 'Password_123'
+    # password of the foreign user above. Set value in env var FOREIGN_DB_PASS or directly here.
+    password: '%env(FOREIGN_DB_PASS)%'
 
-    # hostname of the database to connect to.
-    hostname: '127.0.0.1'
+    # hostname of the database to connect to. Set value in env var FOREIGN_DB_HOST or directly here.
+    hostname: '%env(FOREIGN_DB_HOST)%'
 
-    # default: 3306
-    port: 3306
+    # default: 3306. Set value in env var FOREIGN_DB_PORT or directly here.
+    port: '%env(FOREIGN_DB_PORT)%'
 
 
 # Exclude tables from publishing
