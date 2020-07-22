@@ -46,7 +46,9 @@ class BackendUserProcessor extends AbstractProcessor
     public function processLogRecord(LogRecord $logRecord): LogRecord
     {
         $backendUser = $this->getBackendUser();
-        if (!empty($backendUser->user['uid'])) {
+        if (null === $backendUser) {
+            $data = 'unauthorized';
+        } elseif (!empty($backendUser->user['uid'])) {
             $data = $backendUser->user['uid'];
         } else {
             $data = 'NO UID';
@@ -57,8 +59,8 @@ class BackendUserProcessor extends AbstractProcessor
     /**
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    protected function getBackendUser(): BackendUserAuthentication
+    protected function getBackendUser(): ?BackendUserAuthentication
     {
-        return $GLOBALS['BE_USER'];
+        return $GLOBALS['BE_USER'] ?? null;
     }
 }
