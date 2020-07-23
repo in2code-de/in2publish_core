@@ -373,4 +373,6 @@ interface RecordInterface
     public function getRecordLanguage(): int;
 
     public function isPublishable(): bool;
+
+    public function isRemovedFromLocalDatabase(): bool;
 }

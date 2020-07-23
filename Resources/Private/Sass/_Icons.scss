@@ -126,4 +126,11 @@
       content: "\e60a";
     }
   }
+
+  .in2publish-stagelisting__item--removed & {
+
+    &:hover {
+      color: $apple;
+    }
+  }
 }
