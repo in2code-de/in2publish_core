@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Domain\Repository;
  */
 
 use Exception;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
@@ -142,6 +143,11 @@ class CommonRepository extends BaseRepository
     protected $signalSlotDispatcher;
 
     /**
+     * @var ConfigContainer
+     */
+    protected $configContainer = null;
+
+    /**
      * @var Connection
      */
     protected $localDatabase = null;
@@ -186,6 +192,7 @@ class CommonRepository extends BaseRepository
         $this->resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
         $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
+        $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         $this->identifierFieldName = $identifierFieldName ?: $this->identifierFieldName;
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
@@ -1900,6 +1907,9 @@ class CommonRepository extends BaseRepository
      */
     protected function isRemovedAndDeletedRecord(array $localProps, array $foreignProps): bool
     {
+        if ($this->configContainer->get('factory.treatRemovedAndDeletedAsDifference')) {
+            return false;
+        }
         return (empty($localProps) && isset($foreignProps['deleted']) && 1 === (int)$foreignProps['deleted'])
                || (empty($foreignProps) && isset($localProps['deleted']) && 1 === (int)$localProps['deleted']);
     }

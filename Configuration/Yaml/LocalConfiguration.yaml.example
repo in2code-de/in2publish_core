@@ -153,6 +153,9 @@ factory:
   # based on user functions like DCE or fluidcontent.
   includeSysFileReference: FALSE
 
+  # Enable to show records which are deleted on one side and non-existent on the other
+  treatRemovedAndDeletedAsDifference: FALSE
+
   # FAL related settings
   fal:
 
