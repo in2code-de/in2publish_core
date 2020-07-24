@@ -41,6 +41,8 @@ use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function array_combine;
+use function array_fill;
 use function array_keys;
 use function asort;
 
@@ -279,10 +281,32 @@ class ConfigContainer implements SingletonInterface
      */
     public function dump(): array
     {
+        // Clone this instance and reset it
+        $cloned = clone $this;
+        $cloned->config = null;
+        $cloned->providers = array_combine(array_keys($this->providers), array_fill(0, count($this->providers), null));
+        $cloned->definers = array_combine(array_keys($this->definers), array_fill(0, count($this->definers), null));
+        $cloned->postProcessors = array_combine(array_keys($this->postProcessors), array_fill(0, count($this->postProcessors), null));
+        $fullConfig = $cloned->get();
+
+        $priority = [];
+        foreach ($cloned->providers as $class => $config) {
+            $provider = GeneralUtility::makeInstance($class);
+            $priority[$class] = $provider->getPriority();
+        }
+
+        asort($priority);
+
+        $orderedProviderConfig = [];
+        foreach (array_keys($priority) as $class) {
+            $orderedProviderConfig[$class] = $cloned->providers[$class];
+        }
+
         return [
-            'providers' => array_keys($this->providers),
-            'definers' => array_keys($this->definers),
-            'postProcessors' => array_keys($this->postProcessors),
+            'fullConfig' => $fullConfig,
+            'providers' => $orderedProviderConfig,
+            'definers' => array_keys($cloned->definers),
+            'postProcessors' => array_keys($cloned->postProcessors),
         ];
     }
 }

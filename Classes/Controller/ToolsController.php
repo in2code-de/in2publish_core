@@ -178,11 +178,14 @@ class ToolsController extends ActionController
      *
      * @return void
      */
-    public function configurationAction()
+    public function configurationAction(int $emulatePage = null)
     {
+        if (null !== $emulatePage) {
+            $_POST['id'] = $emulatePage;
+        }
         $this->view->assign('containerDump', $this->configContainer->dump());
         $this->view->assign('globalConfig', $this->configContainer->getContextFreeConfig());
-        $this->view->assign('personalConfig', $this->configContainer->get());
+        $this->view->assign('emulatePage', $emulatePage);
     }
 
     /**
@@ -344,6 +347,9 @@ class ToolsController extends ActionController
         $full = $configContainer->getContextFreeConfig();
         $pers = $configContainer->get();
 
+        $containerDump = $configContainer->dump();
+        unset($containerDump['fullConfig']);
+
         $protectedValues = [
             'foreign.database.password',
             'sshConnection.privateKeyPassphrase',
@@ -355,6 +361,17 @@ class ToolsController extends ActionController
                     if (!empty($value)) {
                         $value = 'xxxxxxxx (masked)';
                         $cfgArray = ArrayUtility::setValueByPath($cfgArray, $protectedValue, $value, '.');
+                    }
+                } catch (Throwable $e) {
+                }
+            }
+
+            foreach ($containerDump['providers'] as &$providerCfg) {
+                try {
+                    $value = ArrayUtility::getValueByPath($providerCfg, $protectedValue, '.');
+                    if (!empty($value)) {
+                        $value = 'xxxxxxxx (masked)';
+                        $providerCfg = ArrayUtility::setValueByPath($providerCfg, $protectedValue, $value, '.');
                     }
                 } catch (Throwable $e) {
                 }
@@ -445,7 +462,7 @@ class ToolsController extends ActionController
             'extConf' => $extConf,
             'tests' => $tests,
             'config' => $full,
-            'containerDump' => $configContainer->dump(),
+            'containerDump' => $containerDump,
             'dynamicProvider' => $dynamicProvider,
             '$_SERVER ' => $_SERVER,
             'compatible TCA' => TcaProcessingService::getCompatibleTca(),
