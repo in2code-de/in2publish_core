@@ -24,6 +24,9 @@
     $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class
     );
+    $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+        \TYPO3\CMS\Core\Imaging\IconRegistry::class
+    );
 
     /***************************************** Add JS and CSS for the Backend *****************************************/
     $pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
@@ -223,6 +226,16 @@
             false
         );
     }
+
+
+    /******************************************* Context Menu Publish Entry *******************************************/
+    $GLOBALS['TYPO3_CONF_VARS']['BE']['ContextMenu']['ItemProviders'][1595598780] = \In2code\In2publishCore\Features\ContextMenuPublishEntry\ContextMenu\PublishItemProvider::class;
+    $iconRegistry->registerIcon(
+        'tx_in2publishcore_contextmenupublishentry_publish',
+        \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
+        ['source' => 'EXT:in2publish_core/Resources/Public/Icons/Publish.svg']
+    );
+
 
     /*********************************************** Tests Registration ***********************************************/
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Adapter\AdapterSelectionTest::class;
