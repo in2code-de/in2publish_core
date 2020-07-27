@@ -1,4 +1,6 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
+{namespace be=TYPO3\CMS\Backend\ViewHelpers}
+{namespace core=TYPO3\CMS\Core\ViewHelpers}
 
 <div class="in2publish-stagelisting__dropdown in2publish-stagelisting__dropdown--close in2publish-clearfix">
 
@@ -17,8 +19,13 @@
 		<div class="in2publish-stagelisting__dropdown__actions">
 			<f:if condition="{record.state} != 'deleted'">
 				<f:then>
-					<publish:Link.RecordHistory class="in2publish-notextdecoration" record="{record}"><i class="in2publish-icon-history"></i><f:translate key="dirty_properties_history_page">Page History</f:translate></publish:Link.RecordHistory>
-					<publish:Link.EditRecord class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_edit',default:'edit')}" record="{record}"><i class="in2publish-icon-edit"></i><f:translate key="dirty_properties_edit_main">edit</f:translate></publish:Link.EditRecord>
+					<publish:Link.RecordHistory class="in2publish-notextdecoration" uid="{record.identifier}" table="{record.tableName}"><i class="in2publish-icon-history"></i><f:translate key="dirty_properties_history_page">Page History</f:translate></publish:Link.RecordHistory>
+					<f:if condition="{record.identifier} > 1">
+						<be:link.editRecord class="in2publish-notextdecoration" uid="{record.identifier}" table="{record.tableName}">
+							<i class="in2publish-icon-edit"></i>
+							<f:translate key="dirty_properties_edit" default="edit" />
+						</be:link.editRecord>
+					</f:if>
 					<publish:Link.PreviewRecord class="in2publish-notextdecoration" identifier="{record.identifier}" table="{record.tableName}" stagingLevel="local" target="_blank">
 						<i class="in2publish-icon-eye"></i>
 						<f:translate key="dirty_properties_preview_page">Preview</f:translate>
@@ -44,8 +51,13 @@
 						<f:for each="{record.dirtyProperties}" as="fieldName">
 							<li>
 								<f:if condition="{record.tableName} == 'pages'">
-									<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" record="{record}"><i class="in2publish-icon-history"></i></publish:Link.RecordHistory>
-									<publish:Link.EditRecord class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_edit',default:'edit')}" record="{record}"><i class="in2publish-icon-edit"></i></publish:Link.EditRecord>
+									<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" uid="{record.identifier}" table="{record.tableName}"><i class="in2publish-icon-history"></i></publish:Link.RecordHistory>
+									<f:if condition="{record.identifier} > 1">
+										<be:link.editRecord class="in2publish-notextdecoration" uid="{record.identifier}" table="{record.tableName}">
+											<i class="in2publish-icon-edit"></i>
+											<f:translate key="dirty_properties_edit" default="edit" />
+										</be:link.editRecord>
+									</f:if>
 								</f:if>
 								<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.tableName}" />
 								<publish:Tca.FormatPropertyByTcaDefinition fieldName="{dirtyProperty}" tableName="{record.tableName}">
@@ -68,8 +80,13 @@
 						<f:for each="{relatedRecords}" as="relatedRecord">
 							<f:if condition="{relatedRecord.changed}">
 								<li>
-									<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" record="{relatedRecord}"><i class="in2publish-icon-history"></i></publish:Link.RecordHistory>
-									<publish:Link.EditRecord class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_edit',default:'edit')}" record="{relatedRecord}"><i class="in2publish-icon-edit"></i></publish:Link.EditRecord>
+									<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" uid="{record.identifier}" table="{record.tableName}"><i class="in2publish-icon-history"></i></publish:Link.RecordHistory>
+									<f:if condition="{record.identifier} > 1">
+										<be:link.editRecord class="in2publish-notextdecoration" uid="{record.identifier}" table="{record.tableName}">
+											<i class="in2publish-icon-edit"></i>
+											<f:translate key="dirty_properties_edit" default="edit" />
+										</be:link.editRecord>
+									</f:if>
 									<publish:Tca.GetLabelFieldFromRecord record="{relatedRecord}" stagingLevel="local" />
 								</li>
 							</f:if>
