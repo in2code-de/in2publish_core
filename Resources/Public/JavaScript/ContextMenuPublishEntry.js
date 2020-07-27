@@ -29,13 +29,22 @@ define(function () {
 		url += '&page=' + uid;
 		$.ajax(url).done(function (response) {
 			if (response.success) {
+				if (top && top.TYPO3.Backend && top.TYPO3.Backend.NavigationContainer.PageTree) {
+					top.TYPO3.Backend.NavigationContainer.PageTree.refreshTree();
+				}
 				top.TYPO3.Notification.success(
 					response.message
 				);
 			} else {
-				top.TYPO3.Notification.error(
-					response.message
-				);
+				if (response.error) {
+					top.TYPO3.Notification.error(
+						response.message
+					);
+				} else {
+					top.TYPO3.Notification.warning(
+						response.message
+					)
+				}
 			}
 
 		});

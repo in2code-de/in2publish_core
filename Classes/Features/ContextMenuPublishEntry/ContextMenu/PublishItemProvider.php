@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\ContextMenuPublishEntry\ContextMenu;
 
+use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Service\Permission\PermissionService;
 use TYPO3\CMS\Backend\ContextMenu\ItemProviders\AbstractProvider;
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 class PublishItemProvider extends AbstractProvider
 {
@@ -17,6 +21,14 @@ class PublishItemProvider extends AbstractProvider
             'callbackAction' => 'publishRecord',
         ],
     ];
+
+    protected $permissionService;
+
+    public function __construct(string $table, string $identifier, string $context = '')
+    {
+        parent::__construct($table, $identifier, $context);
+        $this->permissionService = GeneralUtility::makeInstance(PermissionService::class);
+    }
 
     public function canHandle(): bool
     {
@@ -30,12 +42,24 @@ class PublishItemProvider extends AbstractProvider
 
     public function addItems(array $items): array
     {
-        return parent::addItems($items);
+        $signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
+        if ($this->permissionService->isUserAllowedToPublish()) {
+            $votes = $signalSlotDispatcher->dispatch(
+                RecordInterface::class,
+                'isPublishable',
+                [['yes' => 0, 'no' => 0], $this->table, (int)$this->identifier]
+            );
+            if ($votes[0]['yes'] >= $votes[0]['no']) {
+                return parent::addItems($items);
+            }
+        }
+        return $items;
     }
 
     /**
      * @param string $itemName
      * @return array
+     * @throws RouteNotFoundException
      */
     protected function getAdditionalAttributes(string $itemName): array
     {
@@ -48,7 +72,7 @@ class PublishItemProvider extends AbstractProvider
             );
             $attributes += [
                 'data-publish-url' => $publishUrl,
-                'data-callback-module' => 'TYPO3/CMS/In2publishCore/ContextMenuPublishEntry'
+                'data-callback-module' => 'TYPO3/CMS/In2publishCore/ContextMenuPublishEntry',
             ];
         }
         return $attributes;

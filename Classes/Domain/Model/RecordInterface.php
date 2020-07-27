@@ -371,4 +371,6 @@ interface RecordInterface
     public function getSuperordinatePageIdentifier(): int;
 
     public function getRecordLanguage(): int;
+
+    public function isPublishable(): bool;
 }
