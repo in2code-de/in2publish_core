@@ -8,6 +8,14 @@ The configuration is split into three parts:
 As of in2publish_core 7.0 you don't need to copy the whole file anymore.
 You just need to create the file and set values that differ from the default configuration. (Create the file at the location defined in the extension configuration of in2publish_core).
 
+**Security Notice:**
+> The Content Publisher uses a YAML file for the configuration. This file is different from PHP files.
+> YAML files are not executed or processed by the server when called up/opened via an HTTP request.
+> Instead, most servers send the file as a download to the user who called the URL.
+> Please make sure that you prohibit public access to these configuration files via .htaccess, web.config or server configuration (depending on your server).
+> Example:
+> If your configuration file is stored in the folder typo3conf (deprecated), it may be accessible via https://www.yourdomain.tld/typo3conf/LocalConfiguration.yaml
+
 Note:
 > If you want to separate your configuration depending on the in2publish version, you could also use **LocalConfiguration_[version].yaml** and **ForeignConfiguration_[version].yaml** for a version specific configuration.
 > That could help you for your future deployments. E.g. LocalConfiguration_1.2.3.yaml
@@ -18,7 +26,7 @@ Note:
 The configuration arrays provided by the available Configuration Providers are generally merged recursively following the following rules:
 
 * The value of items having an identical ALPHANUMERIC key will be REPLACED
-* The value of items having an identical NUMERIC key will be ADDED   
+* The value of items having an identical NUMERIC key will be ADDED
 * Setting a configuration value to "[__UNSET](#unset)" will remove this configuration from the resulting configuration array
 
 ### Special treatment of "definition" configuration keys
@@ -112,16 +120,16 @@ tx_in2publish {
 ---
 
 **Following settings can be overridden by PageTS and UserTS:**
-   
+
  * Debug Settings (debug.*)
  * Factory recursion settigns (factory.*recursion)
  * Simple Overview and Ajax (factory.simpleOverviewAndAjax)
  * Publish Files Module folder file limit (factory.fal.folderFileLimit)
  * File Preview Domain (Usefull in PageTS) (filePreviewDomainName)
  * View a) filter buttons b) breadcrumb c) titleField (view.*)
- 
+
 **Follwing settings are accessed before any page or user is resolved or must not be changed by UserTS/PageTS:**
- 
+
  * Foreign Instance Settings (foreign.*)
  * Enabled Modules (module.*)
  * SSH Connection (sshConnection.*)
