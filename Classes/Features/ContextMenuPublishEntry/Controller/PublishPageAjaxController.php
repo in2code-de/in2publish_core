@@ -15,6 +15,7 @@ use Throwable;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function json_encode;
 use function sprintf;
@@ -29,17 +30,18 @@ class PublishPageAjaxController
 
         $content = [
             'success' => false,
-            'message' => 'Unknown error',
+            'label' => 'Unknown error',
+            'lArgs' => [],
             'error' => true,
         ];
 
         if (!GeneralUtility::makeInstance(PermissionService::class)->isUserAllowedToPublish()) {
-            $content['message'] = 'You are not allowed to publish this page';
+            $content['label'] = 'context_menu_publish_entry.forbidden';
             $content['error'] = false;
         }
 
         if (null === $page) {
-            $content['message'] = 'No page parameter was transferred';
+            $content['label'] = 'context_menu_publish_entry.missing_page';
         } else {
             try {
                 $commonRepository = CommonRepository::getDefaultInstance();
@@ -57,27 +59,23 @@ class PublishPageAjaxController
                     if ($rceResponse->isSuccessful()) {
                         $content['success'] = true;
                         $content['error'] = false;
-                        $content['message'] =
-                            sprintf(
-                                'Page "%s" successfully published',
-                                BackendUtility::getRecordTitle('pages', $record->getLocalProperties())
-                            );
+                        $content['label'] = 'context_menu_publish_entry.page_published';
+                        $content['lArgs'][] = BackendUtility::getRecordTitle('pages', $record->getLocalProperties());
                     } else {
-                        $content['message'] =
-                            sprintf(
-                                'Error during publishing of page "%s". Please check your logs.',
-                                BackendUtility::getRecordTitle('pages', $record->getLocalProperties())
-                            );
+                        $content['label'] = 'context_menu_publish_entry.publishing_error';
+                        $content['lArgs'][] = BackendUtility::getRecordTitle('pages', $record->getLocalProperties());
                     }
                 } else {
                     $content['error'] = false;
-                    $content['message'] = 'This record is not yet publishable';
+                    $content['label'] = 'context_menu_publish_entry.not_publishable';
                 }
             } catch (Throwable $exception) {
-                $content['message'] = (string)$exception;
+                $content['label'] = (string)$exception;
             }
         }
 
+        $lArgs = !empty($content['lArgs']) ? $content['lArgs'] : null;
+        $content['message'] = LocalizationUtility::translate($content['label'], 'in2publish_core', $lArgs);
         $response->getBody()->write(json_encode($content));
 
         return $response->withHeader('Content-Type', 'application/json');
