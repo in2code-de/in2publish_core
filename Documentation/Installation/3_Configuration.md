@@ -42,7 +42,7 @@ Basic must be configured on both sides, whereas "Local" needs to be set only on 
 
 ## Basic
 
-```
+```typo3_typoscript
 pathToConfiguration = typo3conf/AdditionalConfiguration/
 logLevel = 5
 ```
@@ -55,7 +55,7 @@ logLevel = 5
 
 ## Local
 
-```
+```typo3_typoscript
 disableUserConfig = 0
 adapter.remote = ssh
 adapter.transmission = ssh
@@ -65,6 +65,34 @@ adapter.transmission = ssh
   Disables the UserTsProvider. If checked no UserTS will be merged in the in2publish_core configuration.
 * adapter.remote & adapter.transmission:
   Adapter identifier of the implementation. in2publish_core comes with ssh as default. Other packages like the HTTP-Adapter (in2publish_http) are available from in2code.
+
+## Using environment variables (since 9.2.0)
+
+Using environment variables for the configuration of instance-specific values such as database credentials is good
+practice and common sense. However, the static yaml configuration did not allow the use of environment variables.
+Since in2publish_core 9.2.0 you can now reference envVars in your configuration. The use of env vars is highly
+recommended, especially for the database credentials. Example:
+
+```yaml
+foreign:
+  database:
+    name: '%env(FOREIGN_DB_NAME)%'
+    username: '%env(FOREIGN_DB_USER)%'
+    password: '%env(FOREIGN_DB_PASS)%'
+    hostname: '%env(FOREIGN_DB_HOST)%'
+    port: '%env(FOREIGN_DB_PORT)%'
+```
+
+You can see which dynamic configuration provider are available in the Publish Tools Module -> "Show Configuration".
+The system info export contains this information, too.
+Read more about dynamic configuration provider in the [Dynamic Configuration Guide](../Guides/DynamicConfiguration.md)
+
+## Configuration post processing (since 9.2.0)
+
+Configuration post processing can be required when even custom dynamic configuration provider won't help.
+A config post processor has the power to alter the complete configuration before it is casted and returned.
+You should use this feature with care.
+Read more about custom configuration post processors in the [Configuration Post Processing Guide](../Guides/ConfigurationPostProcessing.md)
 
 ## <a name="unset"></a>Removing default values
 
@@ -77,7 +105,7 @@ First you need to know which keys these values have. Go to the Tools Module to i
 You see that `be_groups` has the index `0` and `be_users` has `1`.
 Now you create or edit your LocalConfiguration.yaml file and add the following section:
 
-```YAML
+```yaml
 excludeRelatedTables:
   0: __UNSET
   1: __UNSET
@@ -108,7 +136,7 @@ PageTS and UserTs for in2publish starts with **tx_in2publish** followed by the c
 
 Here is an example to disable the filter buttons for the publish overview module:
 
-```
+```typo3_typoscript
 tx_in2publish {
     view {
         records {
