@@ -213,6 +213,12 @@
 			<trans-unit id="module.m4.personal_config">
 				<source>Personal Config</source>
 			</trans-unit>
+			<trans-unit id="module.m4.container_dump">
+				<source>Config Container Dump</source>
+			</trans-unit>
+			<trans-unit id="module.m4.emulate_page">
+				<source>Enter Page ID for page specific configuration</source>
+			</trans-unit>
 			<trans-unit id="module.m4.overview">
 				<source>Overview</source>
 			</trans-unit>

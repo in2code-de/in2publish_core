@@ -29,25 +29,56 @@ namespace In2code\In2publishCore\ViewHelpers\Link;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Utility\BackendUtility;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 /**
  * Class RecordHistoryViewHelper
  */
-class RecordHistoryViewHelper extends AbstractRecordActionLinkViewHelper
+class RecordHistoryViewHelper extends AbstractTagBasedViewHelper
 {
     /**
-     * @param string $table
-     * @param int $identifier
-     *
+     * @var string
+     */
+    protected $tagName = 'a';
+
+    /**
+     * {@inheritDoc}
+     */
+    public function initializeArguments()
+    {
+        parent::initializeArguments();
+        $this->registerUniversalTagAttributes();
+        $this->registerArgument('uid', 'int', 'uid of record to be edited', true);
+        $this->registerArgument('table', 'string', 'target database table', true);
+        $this->registerArgument('returnUrl', 'string', 'return to this URL after closing the edit dialog', false, '');
+    }
+
+    /**
      * @return string
      *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      * @throws RouteNotFoundException
      */
-    protected function buildUri(string $table, int $identifier): string
+    public function render(): string
     {
-        return BackendUtility::buildUndoUri($table, $identifier);
+        if ($this->arguments['uid'] < 1) {
+            return '';
+        }
+        if (empty($this->arguments['returnUrl'])) {
+            $this->arguments['returnUrl'] = GeneralUtility::getIndpEnv('REQUEST_URI');
+        }
+
+        $params = [
+            'element' => $this->arguments['table'] . ':' . $this->arguments['uid'],
+            'returnUrl' => $this->arguments['returnUrl'],
+        ];
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+        $uri = (string)$uriBuilder->buildUriFromRoute('record_history', $params);
+        $this->tag->addAttribute('href', $uri);
+        $this->tag->setContent($this->renderChildren());
+        $this->tag->forceClosingTag(true);
+        return $this->tag->render();
     }
 }

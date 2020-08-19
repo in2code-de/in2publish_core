@@ -75,6 +75,15 @@
     if (!$extConf['disableUserConfig']) {
         $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\UserTsProvider::class);
     }
+    $configContainer->registerPostProcessor(\In2code\In2publishCore\Config\PostProcessor\DynamicValuesPostProcessor::class);
+
+    $dynamicValueProviderRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+        \In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry::class
+    );
+    $dynamicValueProviderRegistry->registerDynamicValue(
+        'env',
+        \In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\EnvVarProvider::class
+    );
 
     /******************************************** Configure Compare Plugin ********************************************/
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(

@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Config;
 use In2code\In2publishCore\Config\Definer\DefinerInterface;
 use In2code\In2publishCore\Config\Node\Node;
 use In2code\In2publishCore\Config\Node\NodeCollection;
+use In2code\In2publishCore\Config\PostProcessor\PostProcessorInterface;
 use In2code\In2publishCore\Config\Provider\ContextualProvider;
 use In2code\In2publishCore\Config\Provider\ProviderInterface;
 use In2code\In2publishCore\Service\Context\ContextService;
@@ -40,6 +41,8 @@ use In2code\In2publishCore\Utility\ConfigurationUtility;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function array_combine;
+use function array_fill;
 use function array_keys;
 use function asort;
 
@@ -57,6 +60,11 @@ class ConfigContainer implements SingletonInterface
      * @var DefinerInterface[]
      */
     protected $definers = [];
+
+    /**
+     * @var PostProcessorInterface[]
+     */
+    protected $postProcessors = [];
 
     /**
      * @var array|null
@@ -169,6 +177,16 @@ class ConfigContainer implements SingletonInterface
             $config = ConfigurationUtility::mergeConfiguration($config, $providerConfig);
         }
 
+        foreach ($this->postProcessors as $class => $object) {
+            if (null === $object) {
+                $object = GeneralUtility::makeInstance($class);
+                $this->postProcessors[$class] = $object;
+            }
+            if ($object instanceof PostProcessorInterface) {
+                $config = $object->process($config);
+            }
+        }
+
         if (GeneralUtility::makeInstance(ContextService::class)->isLocal()) {
             $config = $this->getLocalDefinition()->cast($config);
         } else {
@@ -243,5 +261,52 @@ class ConfigContainer implements SingletonInterface
     public function registerDefiner($definer)
     {
         $this->definers[$definer] = null;
+    }
+
+    /**
+     * All post processors must be registered in ext_localconf.php!
+     * PostProcessors must implement the PostProcessorInterface or they won't be called.
+     *
+     * @param string $postProcessor
+     */
+    public function registerPostProcessor(string $postProcessor): void
+    {
+        $this->postProcessors[$postProcessor] = null;
+    }
+
+    /**
+     * Returns the information about all registered classes which are responsible for the resulting configuration.
+     *
+     * @return array
+     */
+    public function dump(): array
+    {
+        // Clone this instance and reset it
+        $cloned = clone $this;
+        $cloned->config = null;
+        $cloned->providers = array_combine(array_keys($this->providers), array_fill(0, count($this->providers), null));
+        $cloned->definers = array_combine(array_keys($this->definers), array_fill(0, count($this->definers), null));
+        $cloned->postProcessors = array_combine(array_keys($this->postProcessors), array_fill(0, count($this->postProcessors), null));
+        $fullConfig = $cloned->get();
+
+        $priority = [];
+        foreach ($cloned->providers as $class => $config) {
+            $provider = GeneralUtility::makeInstance($class);
+            $priority[$class] = $provider->getPriority();
+        }
+
+        asort($priority);
+
+        $orderedProviderConfig = [];
+        foreach (array_keys($priority) as $class) {
+            $orderedProviderConfig[$class] = $cloned->providers[$class];
+        }
+
+        return [
+            'fullConfig' => $fullConfig,
+            'providers' => $orderedProviderConfig,
+            'definers' => array_keys($cloned->definers),
+            'postProcessors' => array_keys($cloned->postProcessors),
+        ];
     }
 }

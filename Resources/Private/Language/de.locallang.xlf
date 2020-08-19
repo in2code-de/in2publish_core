@@ -281,6 +281,14 @@
 				<source>Personal Config</source>
 				<target state="translated">Persönliche Konfiguration</target>
 			</trans-unit>
+			<trans-unit id="module.m4.container_dump">
+				<source>Config Container Dump</source>
+				<target state="translated">Config Container Konfiguration</target>
+			</trans-unit>
+			<trans-unit id="module.m4.emulate_page">
+				<source>Enter Page ID for page specific configuration</source>
+				<target state="translated">Seiten-ID für Seitenspezifische konfiguration angeben</target>
+			</trans-unit>
 			<trans-unit id="module.m4.overview">
 				<source>Overview</source>
 				<target state="translated">Übersicht</target>

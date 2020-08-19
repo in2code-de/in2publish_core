@@ -33,6 +33,7 @@ namespace In2code\In2publishCore\Controller;
 use Doctrine\DBAL\DBALException;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
@@ -40,6 +41,7 @@ use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Tools\ToolsRegistry;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use ReflectionProperty;
 use Throwable;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
@@ -61,6 +63,8 @@ use function class_exists;
 use function defined;
 use function file_get_contents;
 use function flush;
+use function generateUpToDateMimeArray;
+use function get_class;
 use function gmdate;
 use function header;
 use function implode;
@@ -174,10 +178,14 @@ class ToolsController extends ActionController
      *
      * @return void
      */
-    public function configurationAction()
+    public function configurationAction(int $emulatePage = null)
     {
+        if (null !== $emulatePage) {
+            $_POST['id'] = $emulatePage;
+        }
+        $this->view->assign('containerDump', $this->configContainer->dump());
         $this->view->assign('globalConfig', $this->configContainer->getContextFreeConfig());
-        $this->view->assign('personalConfig', $this->configContainer->get());
+        $this->view->assign('emulatePage', $emulatePage);
     }
 
     /**
@@ -339,6 +347,9 @@ class ToolsController extends ActionController
         $full = $configContainer->getContextFreeConfig();
         $pers = $configContainer->get();
 
+        $containerDump = $configContainer->dump();
+        unset($containerDump['fullConfig']);
+
         $protectedValues = [
             'foreign.database.password',
             'sshConnection.privateKeyPassphrase',
@@ -350,6 +361,17 @@ class ToolsController extends ActionController
                     if (!empty($value)) {
                         $value = 'xxxxxxxx (masked)';
                         $cfgArray = ArrayUtility::setValueByPath($cfgArray, $protectedValue, $value, '.');
+                    }
+                } catch (Throwable $e) {
+                }
+            }
+
+            foreach ($containerDump['providers'] as &$providerCfg) {
+                try {
+                    $value = ArrayUtility::getValueByPath($providerCfg, $protectedValue, '.');
+                    if (!empty($value)) {
+                        $value = 'xxxxxxxx (masked)';
+                        $providerCfg = ArrayUtility::setValueByPath($providerCfg, $protectedValue, $value, '.');
                     }
                 } catch (Throwable $e) {
                 }
@@ -427,6 +449,8 @@ class ToolsController extends ActionController
             }
         }
 
+        $dynamicProvider = GeneralUtility::makeInstance(DynamicValueProviderRegistry::class)->getRegisteredClasses();
+
         return [
             'TYPO3 Version' => VersionNumberUtility::getCurrentTypo3Version(),
             'PHP Version' => PHP_VERSION,
@@ -438,6 +462,8 @@ class ToolsController extends ActionController
             'extConf' => $extConf,
             'tests' => $tests,
             'config' => $full,
+            'containerDump' => $containerDump,
+            'dynamicProvider' => $dynamicProvider,
             '$_SERVER ' => $_SERVER,
             'compatible TCA' => TcaProcessingService::getCompatibleTca(),
             'incompatible TCA' => TcaProcessingService::getIncompatibleTca(),

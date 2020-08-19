@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\ViewHelpers\Link;
+namespace In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider;
 
 /*
  * Copyright notice
  *
- * (c) 2017 in2code.de and the following authors:
+ * (c) 2020 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,25 +29,15 @@ namespace In2code\In2publishCore\ViewHelpers\Link;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Utility\BackendUtility;
-use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
+use function getenv;
 
 /**
- * Class EditRecordViewHelper
+ * Replaces configurations values like %env(MYSQL_PASSWORD)% with the env var value of MYSQL_PASSWORD.
  */
-class EditRecordViewHelper extends AbstractRecordActionLinkViewHelper
+class EnvVarProvider implements DynamicValueProviderInterface
 {
-    /**
-     * @param string $table
-     * @param int $identifier
-     *
-     * @return string
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     * @throws RouteNotFoundException
-     */
-    protected function buildUri(string $table, int $identifier): string
+    public function getValueFor(string $string)
     {
-        return BackendUtility::buildEditUri($table, $identifier);
+        return getenv($string);
     }
 }
