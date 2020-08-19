@@ -1,5 +1,23 @@
 # In2publish Core Change Log
 
+9.2.0:
+
+- [META] Set the branch alias version number to 9.1.x-dev
+- [META] Set the EM conf version number to 9.2.0
+- [BUGFIX] Use provided editRecord VH and fix RecordHistory VH return URL
+- [FEATURE] Debug provider specific config in "show config" and sysinfo export
+- [FEATURE] Support the use of env vars in the yaml config
+- [BUGFIX] Allow empty database password (e.g. for local development)
+- [DOCS] Add a security notice about public yaml config files
+- [DOCS] Update the example configuration to encourage the use of env vars
+- [DOCS] Add the guide about configuration post processing
+- [FEATURE] Support the use of env vars in the yaml config
+- [DOCS] Update installation for new core version
+- [FEATURE] Support TCA type group internal_type file_reference
+- [FEATURE] Support internal type file_reference
+- [BIGFIX] Log "unauthorized" if no backend user is yet logged in
+- [RELEASE] Version 9.1.0 with translated record handling and support info
+
 9.1.0:
 
 - [META] Set the branch alias version number to 9.1.x-dev
