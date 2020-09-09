@@ -46,6 +46,7 @@ use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidPointerFieldValueExce
 use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidTcaException;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Database\Query\QueryHelper;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -1512,11 +1513,9 @@ class CommonRepository extends BaseRepository
                 if (!empty($columnConfiguration['foreign_table_where'])) {
                     /** @var ReplaceMarkersService $replaceMarkers */
                     $replaceMarkers = GeneralUtility::makeInstance(ReplaceMarkersService::class);
-                    $whereClause = $replaceMarkers->replaceMarkers(
-                        $record,
-                        $columnConfiguration['foreign_table_where'],
-                        $propertyName
-                    );
+                    $foreignTblWhere = $columnConfiguration['foreign_table_where'];
+                    $foreignTblWhere = QueryHelper::quoteDatabaseIdentifiers($this->localDatabase, $foreignTblWhere);
+                    $whereClause = $replaceMarkers->replaceMarkers($record, $foreignTblWhere, $propertyName);
                 }
 
                 $uidArray = [];
