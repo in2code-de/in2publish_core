@@ -49,12 +49,10 @@ class DiskSpeedPerformanceTest implements TestCaseInterface
 {
     protected const THRESHOLD = [
         'read' => [
-            TestResult::OK => 0.03,
-            TestResult::WARNING => 0.04,
+            TestResult::OK => 0.05,
         ],
         'write' => [
-            TestResult::OK => 0.06,
-            TestResult::WARNING => 0.08,
+            TestResult::OK => 0.1,
         ],
     ];
 
@@ -102,20 +100,12 @@ class DiskSpeedPerformanceTest implements TestCaseInterface
         $messages[] = 'Read: ' . $readTime . ' msec';
         $messages[] = 'Write: ' . $writeTime . ' msec';
 
-        $severity = TestResult::ERROR;
-        if ($readTime < self::THRESHOLD['read'][TestResult::OK]) {
+        $severity = TestResult::WARNING;
+        if (
+            $readTime < self::THRESHOLD['read'][TestResult::OK]
+            && $writeTime < self::THRESHOLD['write'][TestResult::OK]
+        ) {
             $severity = TestResult::OK;
-        } elseif ($readTime < self::THRESHOLD['read'][TestResult::WARNING]) {
-            $severity = TestResult::WARNING;
-        }
-        if ($severity === TestResult::OK) {
-            if ($writeTime < self::THRESHOLD['write'][TestResult::OK]) {
-                $severity = TestResult::OK;
-            } elseif ($writeTime < self::THRESHOLD['write'][TestResult::WARNING]) {
-                $severity = TestResult::WARNING;
-            } elseif ($writeTime >= self::THRESHOLD['write'][TestResult::WARNING]) {
-                $severity = TestResult::ERROR;
-            }
         }
         if ($severity !== TestResult::OK) {
             array_unshift($messages, 'performance.fs_io.slow_help');
