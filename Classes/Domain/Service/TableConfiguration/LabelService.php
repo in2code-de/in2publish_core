@@ -38,6 +38,7 @@ use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use function array_merge;
 use function array_unique;
 use function sprintf;
+use function trim;
 
 /**
  * Class LabelService
@@ -70,11 +71,11 @@ class LabelService
      *
      * @return string
      */
-    public function getLabelField($record, $stagingLevel = 'local'): string
+    public function getLabelField(RecordInterface $record, $stagingLevel = 'local'): string
     {
-        $tableName = $record->getTableName();
+        $table = $record->getTableName();
 
-        if ($tableName === 'sys_file_reference') {
+        if ($table === 'sys_file_reference') {
             return sprintf(
                 '%d [%d,%d]',
                 $record->getPropertyBySideIdentifier($stagingLevel, 'uid'),
@@ -82,15 +83,15 @@ class LabelService
                 $record->getPropertyBySideIdentifier($stagingLevel, 'uid_foreign')
             );
         }
-
-        $fields = $this->getLabelFieldsFromTableConfiguration($tableName);
-        foreach ($fields as $field) {
-            $recordProperties = ObjectAccess::getProperty($record, $stagingLevel . 'Properties');
-            if (!empty($recordProperties[$field])) {
-                return (string)$recordProperties[$field];
-            }
+        $row = ObjectAccess::getProperty($record, $stagingLevel . 'Properties');
+        if (empty($row)) {
+            return $this->emptyFieldValue;
         }
-        return $this->emptyFieldValue;
+        $label = $this->tcaService->getRecordLabel($row, $table);
+        if (trim($label) === '') {
+            $label = $this->emptyFieldValue;
+        }
+        return $label;
     }
 
     /**
