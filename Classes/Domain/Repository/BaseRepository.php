@@ -157,8 +157,10 @@ abstract class BaseRepository
         $query->getRestrictions()->removeAll();
         $query->select('*')
               ->from($tableName)
-              ->where($query->expr()->like($propertyName, $query->createNamedParameter($propertyValue)))
-              ->andWhere($additionalWhere);
+              ->where($query->expr()->like($propertyName, $query->createNamedParameter($propertyValue)));
+        if (!empty($additionalWhere)) {
+            $query->andWhere($additionalWhere);
+        }
 
         if (!empty($groupBy)) {
             $query->groupBy($groupBy);
@@ -225,8 +227,10 @@ abstract class BaseRepository
         $query = $connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $query->select('*')
-              ->from($tableName)
-              ->andWhere($additionalWhere);
+              ->from($tableName);
+        if (!empty($additionalWhere)) {
+            $query->andWhere($additionalWhere);
+        }
 
         foreach ($properties as $propertyName => $propertyValue) {
             $query->andWhere($query->expr()->like($propertyName, $query->createNamedParameter($propertyValue)));
