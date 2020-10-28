@@ -130,7 +130,7 @@ class FolderRecordFactory
             // The root level folder is the "real" default and also respects mount points of the current user.
             $localFolder = $localStorage->getRootLevelFolder();
         } else {
-            // This is the normal case. The identifier identifies the folder inclusive its storage.
+            // This is the normal case. The identifier identifies the folder including its storage.
             try {
                 $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
             } catch (FolderDoesNotExistException $exception) {
@@ -551,7 +551,7 @@ class FolderRecordFactory
     protected function fixIntersectingIdentifiers(array $diskIdentifiers, array $indexedIdentifiers, array $files)
     {
         foreach (['local' => 'foreign', 'foreign' => 'local'] as $diskSide => $indexSide) {
-            // Find intersecting identifiers. These are identifiers only on one disk and teh opposite database.
+            // Find intersecting identifiers. These are identifiers only on one disk and the opposite database.
             $notIndexedIdentifier = array_diff(
                 $diskIdentifiers[$diskSide],
                 $indexedIdentifiers[$diskSide],
