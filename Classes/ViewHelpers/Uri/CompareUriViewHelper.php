@@ -54,12 +54,15 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
     {
         parent::initializeArguments();
         $this->registerUniversalTagAttributes();
-        $this->registerArgument(self::ARG_IDENTIFIER, 'string', 'The uid of the page to compare', true);
+        $this->registerArgument(self::ARG_IDENTIFIER, 'int', 'The uid of the page to compare', true);
     }
 
     public function render(): string
     {
         $identifier = $this->arguments[self::ARG_IDENTIFIER];
+        if (0 === $identifier) {
+            return '';
+        }
 
         $rawRecordService = GeneralUtility::makeInstance(RawRecordService::class);
         $tcaService = GeneralUtility::makeInstance(TcaService::class);
