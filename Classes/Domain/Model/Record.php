@@ -442,7 +442,7 @@ class Record implements RecordInterface
      * @param string $side
      * @param array $properties
      *
-     * @return $this
+     * @return RecordInterface
      */
     public function setPropertiesBySideIdentifier($side, array $properties): RecordInterface
     {
@@ -861,7 +861,7 @@ class Record implements RecordInterface
      *
      * @return void
      */
-    public function calculateState()
+    public function calculateState(): void
     {
         if ($this->tableName === 'sys_file' && !isset($this->additionalProperties['recordDatabaseState'])) {
             if ($this->hasLocalProperty('identifier') && $this->hasForeignProperty('identifier')) {
