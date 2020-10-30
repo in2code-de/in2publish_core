@@ -135,6 +135,7 @@ class EnvelopeDispatcher
                     $files[$fileIdentifier] = [];
                     $files[$fileIdentifier]['hash'] = $driver->hash($fileIdentifier, 'sha1');
                     $files[$fileIdentifier]['info'] = $driver->getFileInfoByIdentifier($fileIdentifier);
+                    // getPublicUrl does not work on CLI and non-public storages https://forge.typo3.org/issues/90330
                     $files[$fileIdentifier]['publicUrl'] = $storage->getPublicUrl($fileObject);
                 }
             }

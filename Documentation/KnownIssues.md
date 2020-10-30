@@ -35,3 +35,9 @@ problem.
 
 Technical info: Redirects do not have a TCA, they are not persisted using the DataHandler when changing a page slug and
 they are persisted with an instance identifier which is different for the foreign side.
+
+## File Preview URLs in Publish Files Module broken for non-public file storages
+
+File Preview URLs rendered for files on Foreign are broken, if the file storage is not marked as public.
+
+Reason: https://forge.typo3.org/issues/90330
