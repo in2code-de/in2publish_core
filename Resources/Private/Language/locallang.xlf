@@ -315,6 +315,22 @@
 			<trans-unit id="help.github_issues">
 				<source><![CDATA[Official documenation for in2publish_core: <a href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
 			</trans-unit>
+
+			<trans-unit id="context_menu_publish_entry.forbidden">
+				<source>You are not allowed to publish this page.</source>
+			</trans-unit>
+			<trans-unit id="context_menu_publish_entry.missing_page">
+				<source>No page parameter was transferred.</source>
+			</trans-unit>
+			<trans-unit id="context_menu_publish_entry.page_published">
+				<source>The page "%s" has been published.</source>
+			</trans-unit>
+			<trans-unit id="context_menu_publish_entry.publishing_error">
+				<source>Error during publishing of page "%s". Please check your logs.</source>
+			</trans-unit>
+			<trans-unit id="context_menu_publish_entry.not_publishable">
+				<source>This record is not yet publishable.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

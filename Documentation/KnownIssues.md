@@ -41,3 +41,12 @@ they are persisted with an instance identifier which is different for the foreig
 File Preview URLs rendered for files on Foreign are broken, if the file storage is not marked as public.
 
 Reason: https://forge.typo3.org/issues/90330
+
+## Context Menu Publishing
+
+The context menu entry must be created very quickly to not degrade the overall context menu performance.
+This means, that the context menu entry does not fully know about all conditions which have to be met for the record
+to be publishable.
+The context menu is created, when the current user is allowed to publish and 3rd party integrations allow the publishing
+of this page. The context menu entry does not take into account if the record is actually changed. Publishing a page
+which has no changes will result in the message "The "

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2015-01-20T12:00:00Z" product-name="in2publish_core">
+		<header/>
+		<body>
+			<trans-unit id="publish_page">
+				<source>Publish this page</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

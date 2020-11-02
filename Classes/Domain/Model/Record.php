@@ -33,8 +33,11 @@ namespace In2code\In2publishCore\Domain\Model;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Service\Configuration\TcaService;
+use In2code\In2publishCore\Service\Permission\PermissionService;
 use LogicException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 use function array_diff;
 use function array_filter;
@@ -1245,5 +1248,23 @@ class Record implements RecordInterface
         }
 
         return $language;
+    }
+
+    public function isPublishable(): bool
+    {
+        if (!$this->isChangedRecursive()) {
+            return false;
+        }
+        $permissionService = GeneralUtility::makeInstance(PermissionService::class);
+        if (!$permissionService->isUserAllowedToPublish()) {
+            return false;
+        }
+        $signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
+        $votes = $signalSlotDispatcher->dispatch(
+            RecordInterface::class,
+            'isPublishable',
+            [['yes' => 0, 'no' => 0], $this->tableName, $this->getIdentifier()]
+        );
+        return $votes[0]['yes'] >= $votes[0]['no'];
     }
 }
