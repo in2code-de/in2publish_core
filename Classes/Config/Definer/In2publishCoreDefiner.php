@@ -285,6 +285,15 @@ class In2publishCoreDefiner implements DefinerInterface
                                      [IterativeTcaProcessorValidator::class]
                                  )
                       )
+                      ->addArray(
+                          'features',
+                          Builder::start()
+                                 ->addArray(
+                                     'contextMenuPublishEntry',
+                                     Builder::start()
+                                            ->addBoolean('enable', false)
+                                 )
+                      )
                       ->end();
     }
 

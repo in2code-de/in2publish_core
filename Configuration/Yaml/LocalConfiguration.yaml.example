@@ -381,3 +381,11 @@ tca:
     user: 'In2code\In2publishCore\Domain\Service\Processor\UserProcessor'
     imageManipulation: 'In2code\In2publishCore\Domain\Service\Processor\ImageManipulationProcessor'
     slug: 'In2code\In2publishCore\Domain\Service\Processor\SlugProcessor'
+
+# Toggle additional features for the content publisher
+features:
+
+  # Adds a new entry to the right click menu in the page tree to quickly publish a single page.
+  contextMenuPublishEntry:
+    # Disabled by default. See Documentation/KnownIssues.md first before activation.
+    enable: FALSE

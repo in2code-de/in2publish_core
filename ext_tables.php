@@ -229,12 +229,14 @@
 
 
     /******************************************* Context Menu Publish Entry *******************************************/
-    $GLOBALS['TYPO3_CONF_VARS']['BE']['ContextMenu']['ItemProviders'][1595598780] = \In2code\In2publishCore\Features\ContextMenuPublishEntry\ContextMenu\PublishItemProvider::class;
-    $iconRegistry->registerIcon(
-        'tx_in2publishcore_contextmenupublishentry_publish',
-        \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
-        ['source' => 'EXT:in2publish_core/Resources/Public/Icons/Publish.svg']
-    );
+    if ($configContainer->get('features.contextMenuPublishEntry.enable')) {
+        $GLOBALS['TYPO3_CONF_VARS']['BE']['ContextMenu']['ItemProviders'][1595598780] = \In2code\In2publishCore\Features\ContextMenuPublishEntry\ContextMenu\PublishItemProvider::class;
+        $iconRegistry->registerIcon(
+            'tx_in2publishcore_contextmenupublishentry_publish',
+            \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
+            ['source' => 'EXT:in2publish_core/Resources/Public/Icons/Publish.svg']
+        );
+    }
 
 
     /*********************************************** Tests Registration ***********************************************/
