@@ -1,5 +1,33 @@
 # In2publish Core Change Log
 
+9.3.0:
+
+- [META] Set the branch alias version number to 9.3.x-dev
+- [META] Set the EM conf version number to 9.3.0
+- [FEATURE] Add option to treat different levels of deletion differently
+- [BUGFIX] Do not retry to search for a site which can not be found
+- [BUGFIX] Correctly detect deleted states of records removed from local
+- [FEATURE] Display removed records with a black background and X-Icon
+- [FEATURE] Add option to treat removal as difference to deletion
+- [FEATURE] Clear caches of all related pages when publishing files
+- [FEATURE] Add file edge cache invalidator
+- [FEATURE] Add publish page option to page tree context menu
+- [FEATURE] Add enable config option for feature contextMenuPublishEntry
+- [FEATURE] Add translations, document dumb menu entry
+- [FEATURE] Ask external voters if a record can be published
+- [WIP][FEATURE] Add a context menu action to publish a page
+- [DOCS] Add known issue about broken foreign file preview urls
+- [BUGFIX] Add missing return type hints in Record/Interface
+- [BUGFIX] Hide duplicate sys_file records
+- [BUGFIX] Skip the attempt to generate a preview URL for page ID 0
+- [TYPO] Fix some typos in FolderRecordFactory developer guide comments
+- [REFACTOR] Move TCA record label construction logic to TcaService
+- [BUGFIX] Add additionWhere only if it's not empty
+- [BUGFIX] Remove error level from performance tests and raise the warning limits
+- [BUGFIX] Use DBAL count method to count instead of SQL function name as column
+- [BUGFIX] Support sql escape sequence in FlexForm foreign_table_where
+- [RELEASE] Version 9.2.0 with env vars, internal_type file_reference and config debug
+
 9.2.0:
 
 - [META] Set the branch alias version number to 9.1.x-dev
