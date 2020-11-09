@@ -226,6 +226,22 @@
             false
         );
     }
+    /** @see \In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly\PublishedFileIdentifierCollector::registerPublishedFile */
+    $signalSlotDispatcher->connect(
+        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+        'publishRecordRecursiveAfterPublishing',
+        \In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly\PublishedFileIdentifierCollector::class,
+        'registerPublishedFile',
+        false
+    );
+    /** @see \In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly\PublishedFileIdentifierCollector::writeFlushFileEdgeCacheTask */
+    $signalSlotDispatcher->connect(
+        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+        'publishRecordRecursiveEnd',
+        \In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly\PublishedFileIdentifierCollector::class,
+        'writeFlushFileEdgeCacheTask',
+        false
+    );
 
 
     /******************************************* Context Menu Publish Entry *******************************************/
