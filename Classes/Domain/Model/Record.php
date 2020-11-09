@@ -1267,4 +1267,9 @@ class Record implements RecordInterface
         );
         return $votes[0]['yes'] >= $votes[0]['no'];
     }
+
+    public function isRemovedFromLocalDatabase(): bool
+    {
+        return $this->isForeignRecordDeleted() && !$this->isRecordRepresentByProperties($this->localProperties);
+    }
 }

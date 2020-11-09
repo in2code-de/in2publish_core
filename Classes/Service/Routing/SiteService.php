@@ -40,6 +40,7 @@ use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function array_key_exists;
 use function version_compare;
 
 use const TYPO3_branch;
@@ -97,7 +98,7 @@ class SiteService implements SingletonInterface
 
     protected function fetchSiteBySide(int $pid, string $side): ?Site
     {
-        if (!isset($this->cache['site'][$side][$pid])) {
+        if (!array_key_exists($pid, $this->cache['site'][$side] ?? [])) {
             $site = null;
             $siteFinder = GeneralUtility::makeInstance(self::SITE_FINDER[$side]);
             try {

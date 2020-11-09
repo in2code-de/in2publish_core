@@ -177,6 +177,18 @@ a.in2publish-notextdecoration {
     }
   }
 
+  .in2publish-stagelisting__item--removed & {
+    background-color: $black;
+
+    .in2publish-icon-folder {
+      @extend .icon-file-broken;
+    }
+
+    .in2publish-icon-file {
+      @extend .icon-file-broken;
+    }
+  }
+
   .in2publish-stagelisting__item--moved-and-changed &,
   .in2publish-stagelisting__item--changed & {
     background-color: $goldentainoi;
