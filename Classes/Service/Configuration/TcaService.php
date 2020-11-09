@@ -34,8 +34,11 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\SingletonInterface;
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_diff;
 use function array_keys;
+use function implode;
 use function in_array;
 use function ucfirst;
 
@@ -126,6 +129,32 @@ class TcaService implements SingletonInterface
             return (bool)$this->tca[$tableName]['ctrl']['label_alt_force'];
         }
         return false;
+    }
+
+    /**
+     * @param array $row
+     * @param string $table
+     * @return string
+     */
+    public function getRecordLabel(array $row, string $table): string
+    {
+        $labelField = $this->getLabelFieldFromTable($table);
+        $labelAltField = $this->getLabelAltFieldFromTable($table);
+        $labelAltFields = GeneralUtility::trimExplode(',', $labelAltField, true);
+        $labelAltForce = $this->getLabelAltForceFromTable($table);
+
+        $labels = [];
+        if (!empty($row[$labelField])) {
+            $labels[] = $row[$labelField];
+        }
+        if (empty($labels) || true === $labelAltForce) {
+            foreach ($labelAltFields as $labelAltField) {
+                if (!empty($row[$labelAltField])) {
+                    $labels[] = $row[$labelAltField];
+                }
+            }
+        }
+        return implode(', ', $labels);
     }
 
     /**

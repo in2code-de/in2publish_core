@@ -46,8 +46,7 @@ use function xdebug_is_enabled;
 class ForeignDbInitializationPerformanceTest implements TestCaseInterface
 {
     protected const THRESHOLD = [
-        TestResult::OK => 1200,
-        TestResult::WARNING => 1900,
+        TestResult::OK => 1400,
     ];
 
     public function run(): TestResult
@@ -72,11 +71,9 @@ class ForeignDbInitializationPerformanceTest implements TestCaseInterface
         $messages[] = 'Fastest: ' . $times[0] . ' msec';
         $messages[] = 'Slowest: ' . $times[9] . ' msec';
 
-        $severity = TestResult::ERROR;
+        $severity = TestResult::WARNING;
         if ($median < self::THRESHOLD[TestResult::OK]) {
             $severity = TestResult::OK;
-        } elseif ($median < self::THRESHOLD[TestResult::WARNING]) {
-            $severity = TestResult::WARNING;
         }
         if ($severity !== TestResult::OK) {
             array_unshift($messages, 'performance.db_init.slow_help');

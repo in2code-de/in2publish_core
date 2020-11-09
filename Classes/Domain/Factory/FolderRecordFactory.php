@@ -130,7 +130,7 @@ class FolderRecordFactory
             // The root level folder is the "real" default and also respects mount points of the current user.
             $localFolder = $localStorage->getRootLevelFolder();
         } else {
-            // This is the normal case. The identifier identifies the folder inclusive its storage.
+            // This is the normal case. The identifier identifies the folder including its storage.
             try {
                 $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
             } catch (FolderDoesNotExistException $exception) {
@@ -193,6 +193,9 @@ class FolderRecordFactory
         // Now let's find all files inside of the selected folder by the folders hash.
         $properties = ['folder_hash' => $hashedIdentifier, 'storage' => $storageUid];
         $files = $this->commonRepository->findByProperties($properties, true, 'sys_file');
+
+        // Identify sys_file entries with identical identifiers and add all duplicates as related record.
+        $files = $this->moveSameSysFileRecordsToRelatedRecords($files);
 
         // FEATURE: mergeSysFileByIdentifier and enableSysFileReferenceUpdate
         if (true === $this->configuration['mergeSysFileByIdentifier']) {
@@ -551,7 +554,7 @@ class FolderRecordFactory
     protected function fixIntersectingIdentifiers(array $diskIdentifiers, array $indexedIdentifiers, array $files)
     {
         foreach (['local' => 'foreign', 'foreign' => 'local'] as $diskSide => $indexSide) {
-            // Find intersecting identifiers. These are identifiers only on one disk and teh opposite database.
+            // Find intersecting identifiers. These are identifiers only on one disk and the opposite database.
             $notIndexedIdentifier = array_diff(
                 $diskIdentifiers[$diskSide],
                 $indexedIdentifiers[$diskSide],
@@ -876,5 +879,30 @@ class FolderRecordFactory
             return array_map('strtolower', $identifierList);
         }
         return $identifierList;
+    }
+
+    /**
+     * TYPO3 may create more than one sys_file record for an actual file (or different versions of it).
+     * Each sys_file record will be shown as an independent record in the publish files module.
+     * To prevent these duplications, we take every sys_file record which has an identical identifier as any previous
+     * record and attach that record as a related record, so they will be published as one.
+     *
+     * @param RecordInterface[] $files
+     * @return RecordInterface[]
+     */
+    protected function moveSameSysFileRecordsToRelatedRecords(array $files): array
+    {
+        /** @var RecordInterface[] $fileRecords */
+        $fileRecords = [];
+        foreach ($files as $idx => $file) {
+            $localIdentifier = $file->getLocalProperty('identifier');
+            if (isset($fileRecords[$localIdentifier])) {
+                $fileRecords[$localIdentifier]->addRelatedRecord($file);
+                unset($files[$idx]);
+            } else {
+                $fileRecords[$localIdentifier] = $file;
+            }
+        }
+        return $files;
     }
 }

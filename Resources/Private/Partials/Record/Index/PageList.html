@@ -1,7 +1,7 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
 
 <f:if condition="{record}">
-	<div class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.stateRecursive} in2publish-clearfix">
+	<div class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.stateRecursive} {f:if(condition:record.removedFromLocalDatabase, then:'in2publish-stagelisting__item--removed')} in2publish-clearfix">
 		<f:comment>
 			Left
 		</f:comment>
@@ -13,16 +13,14 @@
 			<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{config.view.titleField}" stagingLevel="local" fallbackProperty="title"/>
 			<i class="in2publish-icon-info" {publish:Attribute.DirtyPropertiesIconDataAttributes(record:record)}></i>
-			<f:if condition="{record.changedRecursive}">
-				<f:if condition="{publish:Condition.IsUserAllowedToPublish()}">
-					<f:link.action
-						action="publishRecord"
-						arguments="{identifier:record.identifier}"
-						title="{f:translate(key:'publish_pages', default:'Publish this page')}"
-						additionalAttributes="{publish:Attribute.PublishingDataAttributes()}">
-						<i class="in2publish-icon-publish"></i>
-					</f:link.action>
-				</f:if>
+			<f:if condition="{record.publishable}">
+				<f:link.action
+					action="publishRecord"
+					arguments="{identifier:record.identifier}"
+					title="{f:translate(key:'publish_pages', default:'Publish this page')}"
+					additionalAttributes="{publish:Attribute.PublishingDataAttributes()}">
+					<i class="in2publish-icon-publish"></i>
+				</f:link.action>
 			</f:if>
 		</div>
 

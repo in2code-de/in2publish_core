@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Domain\Repository;
  */
 
 use Exception;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
@@ -46,6 +47,7 @@ use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidPointerFieldValueExce
 use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidTcaException;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Database\Query\QueryHelper;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -141,6 +143,11 @@ class CommonRepository extends BaseRepository
     protected $signalSlotDispatcher;
 
     /**
+     * @var ConfigContainer
+     */
+    protected $configContainer = null;
+
+    /**
      * @var Connection
      */
     protected $localDatabase = null;
@@ -185,6 +192,7 @@ class CommonRepository extends BaseRepository
         $this->resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
         $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
+        $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         $this->identifierFieldName = $identifierFieldName ?: $this->identifierFieldName;
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
@@ -1512,11 +1520,9 @@ class CommonRepository extends BaseRepository
                 if (!empty($columnConfiguration['foreign_table_where'])) {
                     /** @var ReplaceMarkersService $replaceMarkers */
                     $replaceMarkers = GeneralUtility::makeInstance(ReplaceMarkersService::class);
-                    $whereClause = $replaceMarkers->replaceMarkers(
-                        $record,
-                        $columnConfiguration['foreign_table_where'],
-                        $propertyName
-                    );
+                    $foreignTblWhere = $columnConfiguration['foreign_table_where'];
+                    $foreignTblWhere = QueryHelper::quoteDatabaseIdentifiers($this->localDatabase, $foreignTblWhere);
+                    $whereClause = $replaceMarkers->replaceMarkers($record, $foreignTblWhere, $propertyName);
                 }
 
                 $uidArray = [];
@@ -1901,6 +1907,9 @@ class CommonRepository extends BaseRepository
      */
     protected function isRemovedAndDeletedRecord(array $localProps, array $foreignProps): bool
     {
+        if ($this->configContainer->get('factory.treatRemovedAndDeletedAsDifference')) {
+            return false;
+        }
         return (empty($localProps) && isset($foreignProps['deleted']) && 1 === (int)$foreignProps['deleted'])
                || (empty($foreignProps) && isset($localProps['deleted']) && 1 === (int)$localProps['deleted']);
     }

@@ -36,6 +36,7 @@ use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
+use In2code\In2publishCore\Utility\DatabaseUtility;
 use RuntimeException;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
@@ -47,6 +48,9 @@ use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
+use function array_key_exists;
+use function count;
+use function in_array;
 use function strpos;
 
 /**

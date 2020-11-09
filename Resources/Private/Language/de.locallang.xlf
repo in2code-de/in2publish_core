@@ -416,6 +416,27 @@
 				<source><![CDATA[Official documenation for in2publish_core: <a href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
 				<target state="translated"><![CDATA[Offizielle Dokumentation von in2publish_core: <a href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></target>
 			</trans-unit>
+
+			<trans-unit id="context_menu_publish_entry.forbidden">
+				<source>You are not allowed to publish this page.</source>
+				<target state="translated">Sie dürfen diese Seite nicht veröffentlichen.</target>
+			</trans-unit>
+			<trans-unit id="context_menu_publish_entry.missing_page">
+				<source>No page parameter was transferred.</source>
+				<target state="translated">Es wurde keine Seiten-ID zum veröffentlichen übertragen.</target>
+			</trans-unit>
+			<trans-unit id="context_menu_publish_entry.page_published">
+				<source>The page "%s" has been published.</source>
+				<target state="translated">Die Seite "%s" wurde veröffentlicht.</target>
+			</trans-unit>
+			<trans-unit id="context_menu_publish_entry.publishing_error">
+				<source>Error during publishing of page "%s". Please check your logs.</source>
+				<target state="translated">Beim veröffentlichen der Seite "%s" ist ein Fehler aufgetreten. Weitere Informationen finden Sie in den Logs.</target>
+			</trans-unit>
+			<trans-unit id="context_menu_publish_entry.not_publishable">
+				<source>This record is not yet publishable.</source>
+				<target state="translated">Diese Seite ist noch nicht veröffentlichbar.</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

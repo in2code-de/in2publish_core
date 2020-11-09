@@ -52,12 +52,10 @@ class RceInitializationPerformanceTest implements TestCaseInterface
     // TODO: let adapters provide their expected execution time themselves
     protected const THRESHOLD = [
         SshAdapter::class => [
-            TestResult::OK => 0.2,
-            TestResult::WARNING => 0.4,
+            TestResult::OK => 0.3,
         ],
         PhpSecLibAdapter::class => [
-            TestResult::OK => 0.9,
-            TestResult::WARNING => 1.3,
+            TestResult::OK => 1.1,
         ],
     ];
 
@@ -87,11 +85,9 @@ class RceInitializationPerformanceTest implements TestCaseInterface
             $messages[] = 'Run ' . ($idx + 1) . ': ' . $time;
         }
 
-        $severity = TestResult::ERROR;
+        $severity = TestResult::WARNING;
         if ($median < self::THRESHOLD[$adapterClass][TestResult::OK]) {
             $severity = TestResult::OK;
-        } elseif ($median < self::THRESHOLD[$adapterClass][TestResult::WARNING]) {
-            $severity = TestResult::WARNING;
         }
         if ($severity !== TestResult::OK) {
             array_unshift($messages, 'performance.rce_init.slow_help');

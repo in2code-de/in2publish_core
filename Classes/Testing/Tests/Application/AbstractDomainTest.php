@@ -224,7 +224,7 @@ abstract class AbstractDomainTest
         $query = $this->getConnection()->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $query->getRestrictions()->add(new DeletedRestriction());
-        $query->select('COUNT(uid)')
+        $query->count('uid')
               ->from('sys_domain')
               ->where(
                   $query->expr()->eq('pid', $query->createNamedParameter($pageUid))

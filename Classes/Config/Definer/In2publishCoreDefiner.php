@@ -192,6 +192,7 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addInteger('maximumOverallRecursion', 8)
                                  ->addBoolean('resolvePageRelations', false)
                                  ->addBoolean('includeSysFileReference', false)
+                                 ->addBoolean('treatRemovedAndDeletedAsDifference', false)
                                  ->addArray(
                                      'fal',
                                      Builder::start()
@@ -283,6 +284,15 @@ class In2publishCoreDefiner implements DefinerInterface
                                             ->addString('slug', SlugProcessor::class),
                                      null,
                                      [IterativeTcaProcessorValidator::class]
+                                 )
+                      )
+                      ->addArray(
+                          'features',
+                          Builder::start()
+                                 ->addArray(
+                                     'contextMenuPublishEntry',
+                                     Builder::start()
+                                            ->addBoolean('enable', false)
                                  )
                       )
                       ->end();
