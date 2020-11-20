@@ -274,9 +274,17 @@ class RecordFactory
             if (empty($tableConfiguration)) {
                 switch ($tableName) {
                     case 'sys_file_processedfile':
-                        $identifier = $instance->getLocalProperty('original');
-                        $record = $commonRepository->findByIdentifier($identifier, 'sys_file');
-                        $instance->addRelatedRecord($record);
+                        $identifier = null;
+                        if ($instance->localRecordExists()) {
+                            $identifier = $instance->getLocalProperty('original');
+                        }
+                        if (empty($identifier) && $instance->foreignRecordExists()) {
+                            $identifier = $instance->getForeignProperty('original');
+                        }
+                        if (!empty($identifier)) {
+                            $record = $commonRepository->findByIdentifier($identifier, 'sys_file');
+                            $instance->addRelatedRecord($record);
+                        }
                         break;
                     default:
                 }
