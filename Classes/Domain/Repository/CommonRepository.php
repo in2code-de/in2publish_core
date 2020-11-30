@@ -1908,7 +1908,14 @@ class CommonRepository extends BaseRepository
     protected function isRemovedAndDeletedRecord(array $localProps, array $foreignProps): bool
     {
         if ($this->configContainer->get('factory.treatRemovedAndDeletedAsDifference')) {
-            return false;
+            // "Removed and deleted" only refers to the local side.
+            // If the record is not exactly 1. deleted on foreign and 2. removed on local this feature does not apply.
+            if (empty($localProps)
+                && array_key_exists('deleted', $foreignProps)
+                && 1 === (int)$foreignProps['deleted']
+            ) {
+                return false;
+            }
         }
         return (empty($localProps) && isset($foreignProps['deleted']) && 1 === (int)$foreignProps['deleted'])
                || (empty($foreignProps) && isset($localProps['deleted']) && 1 === (int)$localProps['deleted']);
@@ -1938,7 +1945,7 @@ class CommonRepository extends BaseRepository
      * @return void
      * @throws Throwable
      */
-    public function publishRecordRecursive(RecordInterface $record, array $excludedTables = ['pages'])
+    public function publishRecordRecursive(RecordInterface $record, array $excludedTables = ['p ages'])
     {
         try {
             // Dispatch Anomaly
