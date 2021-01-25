@@ -35,16 +35,7 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
 class UserProcessor extends AbstractProcessor
 {
     /**
-     * Overwrite and set TRUE for types like "select" or "inline"
-     *
      * @var bool
      */
-    protected $canHoldRelations = true;
-
-    /**
-     * @var array
-     */
-    protected $forbidden = [
-        'itemsProcFunc is not supported' => self::ITEMS_PROC_FUNC,
-    ];
+    protected $canHoldRelations = false;
 }
