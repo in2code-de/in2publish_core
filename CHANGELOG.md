@@ -1,5 +1,13 @@
 # In2publish Core Change Log
 
+9.3.1:
+
+- [META] Set the EM conf version number to 9.3.1
+- [BUGFIX] Define TCA user fields as unfit for relation resolving
+- [BUGFIX] Limit "treatRemovedAndDeletedAsDifference" to actual removed and deleted records
+- [BUGFIX] Fallback to foreign's sys_file_processedfile sys_file pointer value
+- [RELEASE] Version 9.3.0 with publish page context menu entry, file edge cache invalidation, and much more-
+
 9.3.0:
 
 - [META] Set the branch alias version number to 9.3.x-dev
