@@ -1,0 +1,89 @@
+<html data-namespace-typo3-fluid="true">
+	<nav class="pagination-wrap">
+		<ul class="pagination pagination-block">
+			<f:if condition="{pagination.isFirstPage}">
+				<f:then>
+					<li class="disabled">
+						<span>
+					<core:icon identifier="actions-chevron-bar-left" size="small"/>
+						</span>
+					</li>
+				</f:then>
+				<f:else>
+					<li>
+						<f:link.action arguments="{pagination: {currentPage: 1}}">
+							<core:icon identifier="actions-chevron-bar-left" size="small"/>
+						</f:link.action>
+					</li>
+				</f:else>
+			</f:if>
+			<f:if condition="{pagination.previousPage}">
+				<f:then>
+					<li>
+						<f:link.action arguments="{pagination: {currentPage: pagination.previousPage}}">
+							<core:icon identifier="actions-chevron-double-left" size="small"/>
+						</f:link.action>
+					</li>
+				</f:then>
+				<f:else>
+					<li class="disabled">
+						<span>
+					<core:icon identifier="actions-chevron-double-left" size="small"/>
+						</span>
+					</li>
+				</f:else>
+			</f:if>
+			<li>
+				<span>Redirects {pagination.firstResult} - {pagination.lastResult} (of {pagination.maxResults})</span>
+			</li>
+			<li>
+				<f:comment>
+					A form may be not allowed inside of a span, but the backend is styled this way and this markup was copied from TYPO3.
+				</f:comment>
+				<span>
+					Page <f:form style="display:inline-block;">
+						<f:form.textfield type="number" additionalAttributes="{min: 1, max: pagination.numberOfPages}" class="form-control input-sm paginator-input" name="pagination[currentPage]" value="{pagination.currentPage}" />
+					</f:form>
+					/ {pagination.numberOfPages}
+				</span>
+			</li>
+			<f:if condition="{pagination.nextPage}">
+				<f:then>
+					<li>
+						<f:link.action arguments="{pagination: {currentPage: pagination.nextPage}}">
+							<core:icon identifier="actions-chevron-double-right" size="small"/>
+						</f:link.action>
+					</li>
+				</f:then>
+				<f:else>
+					<li class="disabled">
+						<span>
+							<core:icon identifier="actions-chevron-double-right" size="small"/>
+						</span>
+					</li>
+				</f:else>
+			</f:if>
+			<f:if condition="{pagination.isLastPage}">
+				<f:then>
+					<li class="disabled">
+						<span>
+							<core:icon identifier="actions-chevron-bar-right" size="small"/>
+						</span>
+					</li>
+				</f:then>
+				<f:else>
+					<li>
+						<f:link.action arguments="{pagination: {currentPage: pagination.numberOfPages}}">
+							<core:icon identifier="actions-chevron-bar-right" size="small"/>
+						</f:link.action>
+					</li>
+				</f:else>
+			</f:if>
+			<li>
+				<f:link.action arguments="{pagination: {currentPage: pagination.currentPage}}">
+					<core:icon identifier="actions-refresh" size="small"/>
+				</f:link.action>
+			</li>
+		</ul>
+	</nav>
+</html>

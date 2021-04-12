@@ -1,0 +1,43 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+	<f:be.container>
+		<div class="module" data-module-id="" data-module-name="">
+			<div class="module-docheader t3js-module-docheader">
+				<div
+					class="module-docheader-bar module-docheader-bar-navigation t3js-module-docheader-bar t3js-module-docheader-bar-navigation">
+					<div class="module-docheader-bar-column-left">
+						<f:render section="HeaderNavigationLeft" optional="true">
+							<f:comment>Empty by default</f:comment>
+						</f:render>
+					</div>
+					<div class="module-docheader-bar-column-right">
+						<f:render section="HeaderNavigationRight" optional="true">
+							<f:be.pagePath />
+							<strong>
+								<f:be.pageInfo />
+							</strong>
+						</f:render>
+					</div>
+				</div>
+				<div
+					class="module-docheader-bar module-docheader-bar-buttons t3js-module-docheader-bar t3js-module-docheader-bar-buttons">
+					<div class="module-docheader-bar-column-left">
+						<f:render section="HeaderButtonsLeft" optional="true">
+							<f:comment>Empty by default</f:comment>
+						</f:render>
+					</div>
+					<div class="module-docheader-bar-column-right">
+						<f:render section="HeaderButtonsRight" optional="true">
+							<f:comment>Empty by default</f:comment>
+						</f:render>
+					</div>
+				</div>
+			</div>
+
+			<div class="module-body t3js-module-body" style="padding-top: 89px;">
+				<f:flashMessages />
+
+				<f:render section="Main" optional="true" />
+			</div>
+		</div>
+	</f:be.container>
+</html>

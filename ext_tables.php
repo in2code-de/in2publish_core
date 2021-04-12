@@ -281,16 +281,34 @@
 
 
     /************************************************ Redirect Support ************************************************/
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
-        'addAdditionalRelatedRecords',
-        \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::class,
-        'addRedirectsToPageRecord'
-    );
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveBeforePublishing',
-        \In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement::class,
-        'replaceLocalWithForeignSourceHost'
-    );
+    if ($configContainer->get('features.redirectsSupport.enabled')) {
+        $signalSlotDispatcher->connect(
+            \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
+            'addAdditionalRelatedRecords',
+            \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::class,
+            'addRedirectsToPageRecord'
+        );
+        $signalSlotDispatcher->connect(
+            \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+            'publishRecordRecursiveBeforePublishing',
+            \In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement::class,
+            'replaceLocalWithForeignSourceHost'
+        );
+        if ($configContainer->get('module.m5')) {
+            \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+                'In2code.In2publishCore',
+                'site',
+                'm5',
+                '',
+                [
+                    'Redirects' => 'index',
+                ],
+                [
+                    'access' => 'user,group',
+                    'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Redirect.svg',
+                    'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod5.xlf',
+                ]
+            );
+        }
+    }
 })();
