@@ -31,17 +31,12 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\DataBender;
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
-use In2code\In2publishCore\Service\Routing\SiteService;
 use In2code\In2publishCore\Utility\BackendUtility;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function in_array;
 
-/**
- * Class RedirectSourceHostReplacement
- */
 class RedirectSourceHostReplacement implements SingletonInterface
 {
     const CHANGED_STATES = [
@@ -66,12 +61,15 @@ class RedirectSourceHostReplacement implements SingletonInterface
             return [$tableName, $record, $commonRepository];
         }
 
-        $parentPageRecord = $record->getParentPageRecord();
-        if (null === $parentPageRecord) {
+        $associatedPage = $record->getLocalProperty('page_uid');
+        if (null === $associatedPage) {
             return [$tableName, $record, $commonRepository];
         }
 
-        $url = BackendUtility::buildPreviewUri('pages', $parentPageRecord->getIdentifier(), 'foreign');
+        $url = BackendUtility::buildPreviewUri('pages', $associatedPage, 'foreign');
+        if (null === $url) {
+            return [$tableName, $record, $commonRepository];
+        }
         $uri = new Uri($url);
         $newHost = $uri->getHost();
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
+namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository;
 
 /*
  * Copyright notice
@@ -29,21 +29,8 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Controller\ActionController;
-use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Persistence\Repository;
 
-class PublishRedirectsController extends ActionController
+class SysRedirectRepository extends Repository
 {
-    public function indexAction(array $pagination = []): void
-    {
-        $connection = GeneralUtility::makeInstance(ConnectionPool::class);
-        $query = $connection->getQueryBuilderForTable('sys_redirect');
-        $query->select('*')
-              ->from('sys_redirect', 'r')
-              ->leftJoin('r', 'tx_in2publishcore_pages_redirects_mm', 'mm', 'r.uid = mm.redirect_uid')
-              ->where($query->expr()->isNull('mm.redirect_uid'));
-        $this->view->assign('query', $query);
-        $this->view->assign('pagination', $pagination);
-    }
 }

@@ -301,7 +301,7 @@
                 'm5',
                 '',
                 [
-                    'Redirects' => 'index',
+                    'Redirect' => 'list,edit,publish',
                 ],
                 [
                     'access' => 'user,group',

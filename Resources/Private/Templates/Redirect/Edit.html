@@ -1,0 +1,44 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  data-namespace-typo3-fluid="true"
+>
+	<f:layout name="Default"/>
+
+	<f:section name="HeaderNavigationRight">
+		<f:comment>Disable default pagePath and pageInfo.</f:comment>
+	</f:section>
+
+	<f:section name="HeaderButtonsLeft">
+		<div class="btn-toolbar" role="toolbar" aria-label="">
+			<f:link.action action="list" class="btn btn-default btn-sm" title="Close"><core:icon identifier="actions-close"/> Back</f:link.action>
+			<button name="_savedok" class="btn btn-default btn-sm " value="1" title="Save" form="EditDocumentController"><core:icon identifier="actions-document-save"/> Save</button>
+			<button name="_saveandclose" class="btn btn-default btn-sm " value="1" title="Save" form="EditDocumentController"><core:icon identifier="actions-document-save"/> Save & Close</button>
+		</div>
+	</f:section>
+
+	<f:section name="Main">
+		<h2>Edit {redirect}</h2>
+		<f:form name="editform" action="edit" objectName="redirect" object="{redirect}" method="post" id="EditDocumentController">
+			<fieldset class="form-section">
+				<h4 class="form-section-headline">Redirect</h4>
+				<div class="row">
+					<div class="form-group col-sm-4 col-xs-6">
+						<div class="form-group">
+							<label for="page_uid">Related Page</label>
+							<div class="input-group">
+								<f:form.textfield property="pageUid" id="page_uid" class="form-control"/>
+								<div class="input-group-btn">
+									<a class="t3js-element-browser btn btn-default" data-mode="db"
+									   data-params="tx_in2publishcore_site_in2publishcorem5[redirect][pageUid]|||pages|" href="#">
+										<span title="Browse for records">
+											<core:icon identifier="actions-folder"/>
+										</span>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</fieldset>
+		</f:form>
+	</f:section>
+</html>

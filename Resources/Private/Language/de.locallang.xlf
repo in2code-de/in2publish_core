@@ -441,6 +441,15 @@
 				<source>This record is not yet publishable.</source>
 				<target state="translated">Diese Seite ist noch nicht veröffentlichbar.</target>
 			</trans-unit>
+
+			<trans-unit id="tca.sys_redirect.columns.page_uid.label">
+				<source>Associated page</source>
+				<target state="translated">Verknüpfte Seite</target>
+			</trans-unit>
+			<trans-unit id="tca.sys_redirect.columns.site_id.label">
+				<source>Associated site</source>
+				<target state="translated">Verknüpfte Site</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

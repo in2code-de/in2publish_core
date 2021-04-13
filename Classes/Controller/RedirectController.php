@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Controller;
 
-use In2code\In2publishCore\Features\RedirectsSupport\Controller\PublishRedirectsController;
-
 /*
  * Copyright notice
  *
@@ -31,6 +29,6 @@ use In2code\In2publishCore\Features\RedirectsSupport\Controller\PublishRedirects
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-class RedirectsController extends PublishRedirectsController
+class RedirectController extends \In2code\In2publishCore\Features\RedirectsSupport\Controller\RedirectController
 {
 }
