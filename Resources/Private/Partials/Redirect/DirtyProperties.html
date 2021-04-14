@@ -1,0 +1,22 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
+	  xml:space="preserve"
+	  data-namespace-typo3-fluid="true"
+><f:comment>
+	@formatter:off // Disables PhpStorm reformat code if it's enabled in the settings
+
+	##############################
+	# DO NOT REFORMAT THIS FILE. #
+	##############################
+
+	Line breaks and whitespace is visible where this partial is rendered.
+</f:comment>
+	<f:if condition="{redirect.record.state} == 'changed'"><f:then>
+<f:translate key="redirect.record.property" /> | <f:translate key="redirect.record.property.old" /> -> <f:translate key="redirect.record.property.new" />
+
+<f:for each="{redirect.record.dirtyProperties}" as="name">{name} | <publish:Miscellaneous.GetPropertyFromStagingDefinition record="{redirect.record}" propertyName="{name}" stagingLevel="foreign"/> -> <publish:Miscellaneous.GetPropertyFromStagingDefinition record="{redirect.record}" propertyName="{name}" stagingLevel="local"/>
+</f:for>
+	</f:then><f:else>
+<f:translate key="record.state.{redirect.record.state}" />
+	</f:else></f:if>
+</html>

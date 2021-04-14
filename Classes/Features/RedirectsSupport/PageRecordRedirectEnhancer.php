@@ -32,13 +32,11 @@ namespace In2code\In2publishCore\Features\RedirectsSupport;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Features\RedirectsSupport\RelationResolver\RedirectsRelationResolver;
 use In2code\In2publishCore\Service\Routing\SiteService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class PageRecordRedirectEnhancer
- */
 class PageRecordRedirectEnhancer
 {
     protected $siteService;
@@ -48,34 +46,39 @@ class PageRecordRedirectEnhancer
         $this->siteService = GeneralUtility::makeInstance(SiteService::class);
     }
 
-    public function addRedirectsToPageRecord(RecordInterface $record, RecordFactory $recordFactory)
+    public function addRedirectsToPageRecord(RecordInterface $record, RecordFactory $recordFactory): array
     {
         if ('pages' !== $record->getTableName() || ($pid = $record->getIdentifier()) < 1) {
             return [$record, $recordFactory];
         }
-        $site = $this->siteService->getSiteForPidAndStagingLevel($pid, 'local');
-        if (null === $site) {
-            return [$record, $recordFactory];
-        }
-        $uri = $site->getRouter()->generateUri($pid);
 
-        $redirectsRelationResolver = GeneralUtility::makeInstance(RedirectsRelationResolver::class);
-        $redirects = $redirectsRelationResolver->collectRedirectsByUriRecursive($pid, $uri);
-        $relatedRedirects = [];
-
-        foreach ($redirects as $rowSet) {
-            $relatedRedirect = GeneralUtility::makeInstance(
-                Record::class,
-                'sys_redirect',
-                $rowSet['local'] ?? [],
-                $rowSet['foreign'] ?? [],
-                [],
-                []
-            );
-            $relatedRedirects[] = $relatedRedirect;
-        }
-
+        // Find associated sys_redirects
+        $commonRepository = CommonRepository::getDefaultInstance();
+        $relatedRedirects = $commonRepository->findByProperty('uid', $pid, 'sys_redirect');
         $record->addRelatedRecords($relatedRedirects);
+
+        // Find redirects by current url
+        $site = $this->siteService->getSiteForPidAndStagingLevel($pid, 'local');
+        if (null !== $site) {
+            $uri = $site->getRouter()->generateUri($pid);
+            $redirectsRelationResolver = GeneralUtility::makeInstance(RedirectsRelationResolver::class);
+            $redirects = $redirectsRelationResolver->collectRedirectsByUriRecursive($pid, $uri);
+
+            $relatedRedirects = [];
+            foreach ($redirects as $rowSet) {
+                $relatedRedirect = GeneralUtility::makeInstance(
+                    Record::class,
+                    'sys_redirect',
+                    $rowSet['local'] ?? [],
+                    $rowSet['foreign'] ?? [],
+                    [],
+                    []
+                );
+                $relatedRedirects[] = $relatedRedirect;
+            }
+
+            $record->addRelatedRecords($relatedRedirects);
+        }
 
         return [$record, $recordFactory];
     }

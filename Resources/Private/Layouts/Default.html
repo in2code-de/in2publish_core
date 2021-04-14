@@ -11,9 +11,9 @@
 					</div>
 					<div class="module-docheader-bar-column-right">
 						<f:render section="HeaderNavigationRight" optional="true">
-							<f:be.pagePath />
+							<f:be.pagePath/>
 							<strong>
-								<f:be.pageInfo />
+								<f:be.pageInfo/>
 							</strong>
 						</f:render>
 					</div>
@@ -27,16 +27,22 @@
 					</div>
 					<div class="module-docheader-bar-column-right">
 						<f:render section="HeaderButtonsRight" optional="true">
-							<f:comment>Empty by default</f:comment>
+							<f:be.buttons.shortcut/>
+							<a class="btn btn-default btn-sm"
+							   href="javascript:window.location.href=window.location.href"
+							   title="{f:translate(key:'refresh_page')}"
+							>
+								<core:icon identifier="actions-refresh" size="small"/>
+							</a>
 						</f:render>
 					</div>
 				</div>
 			</div>
 
 			<div class="module-body t3js-module-body" style="padding-top: 89px;">
-				<f:flashMessages />
+				<f:flashMessages/>
 
-				<f:render section="Main" optional="true" />
+				<f:render section="Main" optional="true"/>
 
 				<f:render partial="Footer" arguments="{_all}"/>
 			</div>

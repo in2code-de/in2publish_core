@@ -31,14 +31,20 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\DataBender;
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Utility\BackendUtility;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function in_array;
 
-class RedirectSourceHostReplacement implements SingletonInterface
+class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     const CHANGED_STATES = [
         RecordInterface::RECORD_STATE_CHANGED,
         RecordInterface::RECORD_STATE_ADDED,
@@ -46,36 +52,58 @@ class RedirectSourceHostReplacement implements SingletonInterface
         RecordInterface::RECORD_STATE_MOVED_AND_CHANGED,
     ];
 
-    protected $rtc = [];
-
     public function replaceLocalWithForeignSourceHost(
         string $tableName,
         RecordInterface $record,
         CommonRepository $commonRepository
-    ) {
+    ): array {
         if ('sys_redirect' !== $tableName || !in_array($record->getState(), self::CHANGED_STATES)) {
             return [$tableName, $record, $commonRepository];
         }
+
+        // 1. Check wildcard
         $properties = $record->getLocalProperties();
         if ('*' === $properties['source_host']) {
             return [$tableName, $record, $commonRepository];
         }
 
-        $associatedPage = $record->getLocalProperty('page_uid');
-        if (null === $associatedPage) {
+        // 2. Check site
+        $siteId = $record->getLocalProperty('tx_in2publishcore_foreign_site_id');
+        if (null !== $siteId) {
+            $siteFinder = GeneralUtility::makeInstance(ForeignSiteFinder::class);
+            $site = $siteFinder->getSiteByIdentifier($siteId);
+            if (null === $site) {
+                $this->logger->alert(
+                    'A redirect has an associated site, but that site does not exist',
+                    ['uid' => $record->getIdentifier()]
+                );
+                return [$tableName, $record, $commonRepository];
+            }
+
+            $properties['source_host'] = $site->getBase()->getHost();
+            $record->setLocalProperties($properties);
             return [$tableName, $record, $commonRepository];
         }
 
-        $url = BackendUtility::buildPreviewUri('pages', $associatedPage, 'foreign');
-        if (null === $url) {
+        // 3. Check page
+        $associatedPage = $record->getLocalProperty('tx_in2publishcore_page_uid');
+        if (null !== $associatedPage) {
+            $url = BackendUtility::buildPreviewUri('pages', $associatedPage, 'foreign');
+            if (null === $url) {
+                return [$tableName, $record, $commonRepository];
+            }
+            $uri = new Uri($url);
+            $newHost = $uri->getHost();
+
+            $properties['source_host'] = $newHost;
+            $record->setLocalProperties($properties);
             return [$tableName, $record, $commonRepository];
         }
-        $uri = new Uri($url);
-        $newHost = $uri->getHost();
 
-        $properties['source_host'] = $newHost;
-        $record->setLocalProperties($properties);
-
+        $this->logger->alert(
+            'A redirect without an associated page or site is going to be published',
+            ['uid' => $record->getIdentifier()]
+        );
         return [$tableName, $record, $commonRepository];
     }
 }

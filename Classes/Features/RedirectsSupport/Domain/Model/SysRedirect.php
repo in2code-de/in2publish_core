@@ -50,8 +50,11 @@ class SysRedirect extends AbstractEntity
     /** @var int */
     protected $pageUid;
 
+    /** @var string */
+    protected $siteId;
+
     /** @var array */
-    private $rtc = [];
+    protected $rtc = [];
 
     /**
      * @return string
@@ -117,6 +120,22 @@ class SysRedirect extends AbstractEntity
         $this->pageUid = $pageUid;
     }
 
+    /**
+     * @return string
+     */
+    public function getSiteId(): string
+    {
+        return $this->siteId;
+    }
+
+    /**
+     * @param string $siteId
+     */
+    public function setSiteId(string $siteId): void
+    {
+        $this->siteId = $siteId;
+    }
+
     public function __toString()
     {
         return sprintf('Redirect [%d] (%s) %s -> %s', $this->uid, $this->sourceHost, $this->sourcePath, $this->target);
@@ -154,15 +173,23 @@ class SysRedirect extends AbstractEntity
     {
         $record = $this->getRecord();
         if (!$record->isChanged()) {
+            // Nothing to publish
             return 'unchanged';
         }
         if ('*' === $this->sourceHost) {
+            // A wildcard host does not require any site or page association
             return 'publishable';
         }
-        if (null === $this->pageUid && ) {
+        if (null !== $this->siteId) {
+            // Sites are preferred. If a site is given, use it.
+            return 'publishable';
+        }
+        if (null === $this->pageUid && null === $this->siteId) {
+            // Can not publish without site or page
             return 'siteRequired';
         }
         if (!$this->hasPublishedAssociatedPage()) {
+            // If a page is not published, there is no site and therefore no domain
             return 'requiresPagePublishing';
         }
         return 'publishable';

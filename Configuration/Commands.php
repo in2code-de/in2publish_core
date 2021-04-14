@@ -3,6 +3,7 @@
 use In2code\In2publishCore\Command\PublishTaskRunner\RunTasksInQueueCommand;
 use In2code\In2publishCore\Command\RemoteProcedureCall\ExecuteCommand;
 use In2code\In2publishCore\Command\Status\AllCommand;
+use In2code\In2publishCore\Command\Status\AllSitesCommand;
 use In2code\In2publishCore\Command\Status\ConfigFormatTestCommand;
 use In2code\In2publishCore\Command\Status\CreateMasksCommand;
 use In2code\In2publishCore\Command\Status\DbConfigTestCommand;
@@ -17,6 +18,7 @@ use In2code\In2publishCore\Command\Table\BackupCommand;
 use In2code\In2publishCore\Command\Table\ImportCommand;
 use In2code\In2publishCore\Command\Table\PublishCommand;
 use In2code\In2publishCore\Command\Tools\TestCommand;
+use In2code\In2publishCore\Features\RedirectsSupport\Command\MatchRedirectsToPagesCommand;
 
 return [
     // PublishTaskRunner
@@ -30,6 +32,9 @@ return [
     // Status
     AllCommand::IDENTIFIER => [
         'class' => AllCommand::class,
+    ],
+    AllSitesCommand::IDENTIFIER => [
+        'class' => AllSitesCommand::class,
     ],
     ConfigFormatTestCommand::IDENTIFIER => [
         'class' => ConfigFormatTestCommand::class,
@@ -74,5 +79,9 @@ return [
     // Tools
     TestCommand::IDENTIFIER => [
         'class' => TestCommand::class,
+    ],
+    // Tools
+    MatchRedirectsToPagesCommand::IDENTIFIER => [
+        'class' => MatchRedirectsToPagesCommand::class,
     ],
 ];

@@ -16,7 +16,10 @@ return [
                 'fieldName' => 'target',
             ],
             'pageUid' => [
-                'fieldName' => 'page_uid',
+                'fieldName' => 'tx_in2publishcore_page_uid',
+            ],
+            'siteId' => [
+                'fieldName' => 'tx_in2publishcore_foreign_site_id',
             ],
         ],
     ],

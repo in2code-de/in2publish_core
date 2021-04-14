@@ -335,11 +335,59 @@
 				<source>This record is not yet publishable.</source>
 			</trans-unit>
 
-			<trans-unit id="tca.sys_redirect.columns.page_uid.label">
+			<trans-unit id="tca.sys_redirect.columns.tx_in2publishcore_page_uid.label">
 				<source>Associated page</source>
 			</trans-unit>
-			<trans-unit id="tca.sys_redirect.columns.site_id.label">
-				<source>Associated site</source>
+			<trans-unit id="tca.sys_redirect.columns.tx_in2publishcore_foreign_site_id.label">
+				<source>Associated foreign Site</source>
+			</trans-unit>
+			<trans-unit id="tca.sys_redirect.columns.tx_in2publishcore_foreign_site_id.config.items.null">
+				<source>Use site from associated page</source>
+			</trans-unit>
+			<trans-unit id="tca.sys_redirect.palettes.tx_in2publishcore_association.label">
+				<source>Page/Site association</source>
+			</trans-unit>
+
+			<trans-unit id="save_and_publish">
+				<source>Save and publish</source>
+			</trans-unit>
+			<trans-unit id="redirect.legend.status">
+				<source>Status icons explained</source>
+			</trans-unit>
+			<trans-unit id="redirect.legend.status.page_or_site_required">
+				<source>The redirect requires an associated page or site to be published</source>
+			</trans-unit>
+			<trans-unit id="redirect.legend.status.page_not_published">
+				<source>The associated page is not published</source>
+			</trans-unit>
+			<trans-unit id="redirect.legend.status.unpublished_changes">
+				<source>This redirect has unpublished changes. Hover over the icon to get more information</source>
+			</trans-unit>
+			<trans-unit id="redirect.legend.status.published">
+				<source>This redirect is published</source>
+			</trans-unit>
+			<trans-unit id="redirect.legend.actions">
+				<source>Action icons explained</source>
+			</trans-unit>
+			<trans-unit id="redirect.legend.actions.publish">
+				<source>This redirect can be published. Click to publish.</source>
+			</trans-unit>
+			<trans-unit id="redirect.legend.actions.associate_site_and_publish">
+				<source>This redirect can be published with a manual site association. Click to assign a Site and publish.</source>
+			</trans-unit>
+
+			<trans-unit id="redirect.record.property">
+				<source>Property</source>
+			</trans-unit>
+			<trans-unit id="redirect.record.property.old">
+				<source>Old value</source>
+			</trans-unit>
+			<trans-unit id="redirect.record.property.new">
+				<source>New value</source>
+			</trans-unit>
+
+			<trans-unit id="refresh_page">
+				<source>Refresh page</source>
 			</trans-unit>
 		</body>
 	</file>

@@ -282,12 +282,14 @@
 
     /************************************************ Redirect Support ************************************************/
     if ($configContainer->get('features.redirectsSupport.enabled')) {
+        /** @see \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::addRedirectsToPageRecord() */
         $signalSlotDispatcher->connect(
             \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
             'addAdditionalRelatedRecords',
             \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::class,
             'addRedirectsToPageRecord'
         );
+        /** @see \In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement::replaceLocalWithForeignSourceHost() */
         $signalSlotDispatcher->connect(
             \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
             'publishRecordRecursiveBeforePublishing',
@@ -299,9 +301,9 @@
                 'In2code.In2publishCore',
                 'site',
                 'm5',
-                '',
+                'after:redirects',
                 [
-                    'Redirect' => 'list,edit,publish',
+                    'Redirect' => 'list,publish,selectSite',
                 ],
                 [
                     'access' => 'user,group',

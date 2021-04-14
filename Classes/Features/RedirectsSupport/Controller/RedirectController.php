@@ -31,16 +31,17 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
 
 use In2code\In2publishCore\Controller\AbstractController;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\SysRedirect;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
-use TYPO3\CMS\Backend\Form\FormResultCompiler;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class RedirectController extends AbstractController
 {
     protected const ALLOWED_FIELDS = [
-        'pageUid'
+        'pageUid',
     ];
     private const ALLOWED_DIRECTIONS = ['ASC', 'DESC'];
 
@@ -73,24 +74,14 @@ class RedirectController extends AbstractController
         $this->view->assign('orderBy', $orderBy);
     }
 
-    public function editAction(SysRedirect $redirect): void
-    {
-        if ($this->request->getMethod() === 'POST') {
-            $this->sysRedirectRepository->update($redirect);
-            $this->addFlashMessage(sprintf('Associated redirect %s with page %d', $redirect, $redirect->getPageUid()));
-            if (isset($_POST['_saveandclose'])) {
-                $this->redirect('list');
-            }
-            $this->redirect('edit', null, null, ['redirect' => $redirect]);
-        }
-        GeneralUtility::makeInstance(FormResultCompiler::class)->printNeededJSFunctions();
-        $this->view->assign('redirect', $redirect);
-    }
-
     public function publishAction(array $redirects): void
     {
         if (empty($redirects)) {
-            $this->addFlashMessage('No redirect has been selected for publishing', 'Skipping publishing', AbstractMessage::NOTICE);
+            $this->addFlashMessage(
+                'No redirect has been selected for publishing',
+                'Skipping publishing',
+                AbstractMessage::NOTICE
+            );
             $this->redirect('list');
         }
 
@@ -106,5 +97,30 @@ class RedirectController extends AbstractController
             $this->addFlashMessage(sprintf('Redirects %s published', implode(', ', $redirects)));
         }
         $this->redirect('list');
+    }
+
+    public function selectSiteAction(SysRedirect $redirect): void
+    {
+        if ($this->request->getMethod() === 'POST') {
+            $this->sysRedirectRepository->update($redirect);
+            $this->addFlashMessage(sprintf('Associated redirect %s with site %s', $redirect, $redirect->getSiteId()));
+            if (isset($_POST['_saveandpublish'])) {
+                $this->redirect('publish', null, null, ['redirects' => [$redirect->getUid()]]);
+            }
+            $this->redirect('list');
+        }
+        $siteFinder = GeneralUtility::makeInstance(ForeignSiteFinder::class);
+        $sites = $siteFinder->getAllSites();
+        $siteOptions = [
+            '*' => LocalizationUtility::translate(
+                'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:source_host_global_text'
+            ),
+        ];
+        foreach ($sites as $site) {
+            $identifier = $site->getIdentifier();
+            $siteOptions[$identifier] = $identifier . ' (' . $site->getBase() . ')';
+        }
+        $this->view->assign('redirect', $redirect);
+        $this->view->assign('siteOptions', $siteOptions);
     }
 }

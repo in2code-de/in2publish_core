@@ -32,24 +32,22 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\RelationResolver;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Http\Message\UriInterface;
-
 use TYPO3\CMS\Core\Http\Uri;
+
+use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
+use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_column;
 use function array_keys;
 use function array_merge;
 use function array_unique;
 
-/**
- * Class RedirectsRelationResolver
- */
 class RedirectsRelationResolver
 {
     protected $localDatabase;
 
     protected $foreignDatabase;
-
-    protected $rtc = [];
 
     public function __construct()
     {
@@ -57,20 +55,31 @@ class RedirectsRelationResolver
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
     }
 
-    public function collectRedirectsByUriRecursive(int $pid, UriInterface $uri, array $rows = []): array
-    {
+    public function collectRedirectsByUriRecursive(
+        int $pid,
+        UriInterface $uri,
+        array $rows = [],
+        array $seen = []
+    ): array {
         $uriStr = (string)$uri;
-        if (isset($this->rtc['seen_uris'][$uriStr])) {
+        if (isset($seen[$uriStr])) {
             return $rows;
         }
-        $this->rtc['seen_uris'][$uriStr] = true;
+        $seen[$uriStr] = true;
 
         $query = $this->localDatabase->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $query->select('*')
               ->from('sys_redirect')
-              ->where($query->expr()->eq('source_host', $query->createNamedParameter($uri->getHost())))
-              ->andWhere($query->expr()->eq('target', $query->createNamedParameter($uri->getPath())));
+              ->where(
+                  $query->expr()->andX(
+                      $query->expr()->orX(
+                          $query->expr()->eq('source_host', $query->createNamedParameter($uri->getHost())),
+                          $query->expr()->eq('source_host', "'*'"),
+                      ),
+                      $query->expr()->eq('target', $query->createNamedParameter($uri->getPath()))
+                  )
+              );
         $statement = $query->execute();
         $localRows = $statement->fetchAll();
         $localRows = array_column($localRows, null, 'uid');
@@ -117,9 +126,28 @@ class RedirectsRelationResolver
                 continue;
             }
             $nextUri = $uri->withHost($sourceHost)->withPath($sourcePath);
-            $rows = $this->collectRedirectsByUriRecursive($pid, $nextUri, $rows);
+            $rows = $this->collectRedirectsByUriRecursive($pid, $nextUri, $rows, $seen);
         }
 
         return $rows;
+    }
+
+    public function identifyRedirectPage(array $redirect): array
+    {
+        $site = $this->getSiteByDomain($redirect['source_host']);
+        $router = GeneralUtility::makeInstance();
+    }
+
+    private function getSiteByDomain($sourceHost): ?SiteLanguage
+    {
+        $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+        foreach ($siteFinder->getAllSites() as $site) {
+            foreach ($site->getLanguages() as $language) {
+                if ((string)$language->getBase() === $sourceHost) {
+                    return $language;
+                }
+            }
+        }
+        return null;
     }
 }
