@@ -162,7 +162,7 @@ abstract class AbstractDomainTest
         if (!empty($results[self::DOMAIN_TYPE_NONE])) {
             foreach ($results[self::DOMAIN_TYPE_NONE] as $pageId) {
                 $messages[] = 'ERROR: The ' . $this->prefix . ' root page ' . $pageId
-                              . ' is missing a site configuration (and sys_domain).';
+                              . ' is missing a site configuration.';
             }
         }
         return $messages;
@@ -221,7 +221,11 @@ abstract class AbstractDomainTest
 
     protected function countAllSysDomainRecordsForPage(int $pageUid): int
     {
-        $query = $this->getConnection()->createQueryBuilder();
+        $connection = $this->getConnection();
+        if (!$connection->getSchemaManager()->tablesExist('sy_domain')) {
+            return 0;
+        }
+        $query = $connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $query->getRestrictions()->add(new DeletedRestriction());
         $query->count('uid')

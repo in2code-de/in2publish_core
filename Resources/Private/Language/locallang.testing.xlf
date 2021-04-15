@@ -307,13 +307,13 @@
 			<trans-unit id="application.foreign_sites_config_legacy">
 				<source>All foreign root pages have a domain but some are configured by legacy sys_domain entries.</source>
 			</trans-unit>
-			<trans-unit id="foreign_sites_config_missing">
-				<source>One or more foreign root pages are missing site configurations (and sys_domains).</source>
+			<trans-unit id="application.foreign_sites_config_missing">
+				<source>One or more foreign root pages are missing site configurations.</source>
 			</trans-unit>
-			<trans-unit id="foreign_sites_config_legacy">
+			<trans-unit id="application.foreign_sites_config_legacy">
 				<source>All foreign root pages have domains configured but at least one of them has a onyl legacy sys_domain.</source>
 			</trans-unit>
-			<trans-unit id="foreign_sites_config">
+			<trans-unit id="application.foreign_sites_config">
 				<source>All foreign root pages have a site configuration.</source>
 			</trans-unit>
 
