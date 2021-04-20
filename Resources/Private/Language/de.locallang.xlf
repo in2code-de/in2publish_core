@@ -141,6 +141,10 @@
 				<source>Related Records</source>
 				<target state="translated">Verknüpfte Datensätze</target>
 			</trans-unit>
+			<trans-unit id="record_state">
+				<source>Record State</source>
+				<target state="translated">Datensatz Status</target>
+			</trans-unit>
 
 			<trans-unit id="moduleselector.index">
 				<source>Introduction</source>

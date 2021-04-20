@@ -107,6 +107,9 @@
 			<trans-unit id="related_records">
 				<source>Related Records</source>
 			</trans-unit>
+			<trans-unit id="record_state">
+				<source>Record State</source>
+			</trans-unit>
 
 			<trans-unit id="moduleselector.index">
 				<source>Introduction</source>

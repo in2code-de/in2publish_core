@@ -69,6 +69,30 @@
 				</f:if>
 			</f:if>
 
+			<f:comment>
+				Show parent record (e.g. page) properties only if it is deleted
+			</f:comment>
+			<f:if condition="{record.state} == 'deleted'">
+				<f:if condition="{record.dirtyProperties}">
+					<h3>
+						<f:translate key="dirty_properties_pageproperties" arguments="{0:'{publish:Tca.GetTableLabelFromLocallang(tableName:record.tableName)}'}">Properties</f:translate>
+					</h3>
+					<ul class="in2publish-stagelisting__dropdown__page in2publish-stagelisting__dropdown__item__list">
+						<f:for each="{record.dirtyProperties}" as="fieldName">
+							<li>
+								<f:if condition="{record.tableName} == 'pages'">
+									<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" uid="{record.identifier}" table="{record.tableName}"><i class="in2publish-icon-history"></i></publish:Link.RecordHistory>
+								</f:if>
+								<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.tableName}" />
+								<publish:Tca.FormatPropertyByTcaDefinition fieldName="{dirtyProperty}" tableName="{record.tableName}">
+									<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{fieldName}" stagingLevel="local" />
+								</publish:Tca.FormatPropertyByTcaDefinition>
+							</li>
+						</f:for>
+					</ul>
+				</f:if>
+			</f:if>
+
 
 			<f:comment>
 				Show children records with dirty properties
