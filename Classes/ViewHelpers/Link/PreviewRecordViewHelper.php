@@ -72,7 +72,7 @@ class PreviewRecordViewHelper extends AbstractTagBasedViewHelper
             return '&nbsp;';
         }
 
-        $this->tag->addAttribute('href', $uri);
+        $this->tag->addAttribute('href', (string)$uri);
         $this->tag->setContent($this->renderChildren());
         return $this->tag->render();
     }

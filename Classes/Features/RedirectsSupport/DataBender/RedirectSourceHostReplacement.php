@@ -92,8 +92,7 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
             if (null === $url) {
                 return [$tableName, $record, $commonRepository];
             }
-            $uri = new Uri($url);
-            $newHost = $uri->getHost();
+            $newHost = $url->getHost();
 
             $properties['source_host'] = $newHost;
             $record->setLocalProperties($properties);

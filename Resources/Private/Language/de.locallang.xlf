@@ -463,6 +463,10 @@
 				<source>Save and publish</source>
 				<target state="translated">Speichern und veröffentlichen</target>
 			</trans-unit>
+			<trans-unit id="publish_all_selected">
+				<source>Publish all selected</source>
+				<target state="translated">Gewählte veröffentlichen</target>
+			</trans-unit>
 			<trans-unit id="redirect.legend.status">
 				<source>Status icons explained</source>
 				<target state="translated">Status Legende</target>
@@ -507,6 +511,43 @@
 			<trans-unit id="redirect.record.property.new">
 				<source>New value</source>
 				<target state="translated">Neu</target>
+			</trans-unit>
+			<trans-unit id="redirect.record.id">
+				<source>ID</source>
+				<target state="translated">ID</target>
+			</trans-unit>
+			<trans-unit id="redirect.record.domain">
+				<source>Domain</source>
+				<target state="translated">Domain</target>
+			</trans-unit>
+			<trans-unit id="redirect.record.source">
+				<source>Source</source>
+				<target state="translated">Quelle</target>
+			</trans-unit>
+			<trans-unit id="redirect.record.target">
+				<source>Target</source>
+				<target state="translated">Ziel</target>
+			</trans-unit>
+			<trans-unit id="redirect.record.status">
+				<source>Status</source>
+				<target state="translated">Status</target>
+			</trans-unit>
+			<trans-unit id="redirect.record.actions">
+				<source>Actions</source>
+				<target state="translated">Aktionen</target>
+			</trans-unit>
+
+			<trans-unit id="redirect.status.missing_page_or_site">
+				<source>Missing associated page or site</source>
+				<target state="translated">Fehlende Seite oder Seitenkonfiguration</target>
+			</trans-unit>
+			<trans-unit id="redirect.status.page_not_published">
+				<source>The associated page [%d] "%s" is not published</source>
+				<target state="translated">Die verknüpfte Seite [%d] "%s" ist nicht publiziert</target>
+			</trans-unit>
+			<trans-unit id="redirect.status.published">
+				<source>This redirect is published</source>
+				<target state="translated">Dieser Redirect ist publiziert</target>
 			</trans-unit>
 
 			<trans-unit id="refresh_page">

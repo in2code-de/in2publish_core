@@ -244,7 +244,11 @@ abstract class BaseRepository
         }
 
         foreach ($properties as $propertyName => $propertyValue) {
-            $query->andWhere($query->expr()->like($propertyName, $query->createNamedParameter($propertyValue)));
+            if (null === $propertyValue) {
+                $query->andWhere($query->expr()->isNull($propertyName));
+            } else {
+                $query->andWhere($query->expr()->like($propertyName, $query->createNamedParameter($propertyValue)));
+            }
         }
 
         if (!empty($groupBy)) {

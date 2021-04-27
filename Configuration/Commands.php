@@ -18,7 +18,6 @@ use In2code\In2publishCore\Command\Table\BackupCommand;
 use In2code\In2publishCore\Command\Table\ImportCommand;
 use In2code\In2publishCore\Command\Table\PublishCommand;
 use In2code\In2publishCore\Command\Tools\TestCommand;
-use In2code\In2publishCore\Features\RedirectsSupport\Command\MatchRedirectsToPagesCommand;
 
 return [
     // PublishTaskRunner
@@ -79,9 +78,5 @@ return [
     // Tools
     TestCommand::IDENTIFIER => [
         'class' => TestCommand::class,
-    ],
-    // Tools
-    MatchRedirectsToPagesCommand::IDENTIFIER => [
-        'class' => MatchRedirectsToPagesCommand::class,
     ],
 ];

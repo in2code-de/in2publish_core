@@ -34,6 +34,7 @@ use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use In2code\In2publishCore\Service\Routing\SiteService;
 use PDO;
+use Psr\Http\Message\UriInterface;
 use Throwable;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
@@ -270,10 +271,10 @@ class BackendUtility
      * @param int $identifier
      * @param string $stagingLevel
      *
-     * @return string|null
+     * @return null|UriInterface
      * @throws In2publishCoreException
      */
-    public static function buildPreviewUri(string $table, int $identifier, string $stagingLevel)
+    public static function buildPreviewUri(string $table, int $identifier, string $stagingLevel): ?UriInterface
     {
         $rawRecordService = GeneralUtility::makeInstance(RawRecordService::class);
         $row = $rawRecordService->getRawRecord($table, $identifier, $stagingLevel);
@@ -439,7 +440,7 @@ class BackendUtility
         int $language,
         int $pageUid
     ): Closure {
-        return static function () use ($buildPageUrl, $site, $language, $pageUid): ?string {
+        return static function () use ($buildPageUrl, $site, $language, $pageUid): ?UriInterface {
             // Please forgive me for this ugliest of all hacks. I tried everything.
 
             // temporarily point the pages table to the foreign database connection, to make PageRepository->getPage fetch the foreign page
@@ -496,9 +497,9 @@ class BackendUtility
      */
     protected static function getLocalUriClosure(Site $site, int $pageUid, $additionalQueryParams): Closure
     {
-        return static function () use ($site, $pageUid, $additionalQueryParams) : ?string {
+        return static function () use ($site, $pageUid, $additionalQueryParams) : ?UriInterface {
             try {
-                return (string)$site->getRouter()->generateUri(
+                return $site->getRouter()->generateUri(
                     $pageUid,
                     $additionalQueryParams,
                     '',

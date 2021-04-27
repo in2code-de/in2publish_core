@@ -46,32 +46,22 @@ class RedirectController extends AbstractController
     private const ALLOWED_DIRECTIONS = ['ASC', 'DESC'];
 
     /** @var SysRedirectRepository */
-    protected $sysRedirectRepository;
+    protected $sysRedirectRepo;
 
-    public function injectSysRedirectRepository(SysRedirectRepository $sysRedirectRepository): void
+    public function injectSysRedirectRepository(SysRedirectRepository $sysRedirectRepo): void
     {
-        $this->sysRedirectRepository = $sysRedirectRepository;
+        $this->sysRedirectRepo = $sysRedirectRepo;
     }
 
-    public function listAction(array $orderBy = null): void
+    public function listAction(): void
     {
-        $query = $this->sysRedirectRepository->createQuery();
-        if (null !== $orderBy) {
-            foreach ($orderBy as $field => $direction) {
-                if (!in_array($field, self::ALLOWED_FIELDS) || !in_array($direction, self::ALLOWED_DIRECTIONS)) {
-                    $this->addFlashMessage(
-                        'Ingoring order by ' . $field . ' because it is not allowed',
-                        '',
-                        AbstractMessage::ERROR
-                    );
-                    unset($orderBy[$field]);
-                }
-                $query->setOrderings($orderBy);
-            }
-        }
+        $query = $this->sysRedirectRepo->createQuery();
+        $querySettings = $query->getQuerySettings();
+        $querySettings->setIgnoreEnableFields(true);
+        $querySettings->setRespectSysLanguage(false);
+        $querySettings->setRespectStoragePage(false);
         $redirects = $query->execute();
         $this->view->assign('redirects', $redirects);
-        $this->view->assign('orderBy', $orderBy);
     }
 
     public function publishAction(array $redirects): void
@@ -102,7 +92,7 @@ class RedirectController extends AbstractController
     public function selectSiteAction(SysRedirect $redirect): void
     {
         if ($this->request->getMethod() === 'POST') {
-            $this->sysRedirectRepository->update($redirect);
+            $this->sysRedirectRepo->update($redirect);
             $this->addFlashMessage(sprintf('Associated redirect %s with site %s', $redirect, $redirect->getSiteId()));
             if (isset($_POST['_saveandpublish'])) {
                 $this->redirect('publish', null, null, ['redirects' => [$redirect->getUid()]]);
