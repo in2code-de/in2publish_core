@@ -143,6 +143,13 @@ class BackendUtility
         // get id from record ?data[tt_content][13]=foo
         if (null !== ($data = GeneralUtility::_GP('data')) && is_array($data) && in_array(key($data), $tableNames)) {
             $table = key($data);
+            if (
+                is_array($data[$table])
+                && 0 === strpos(key($data[$table]), 'NEW_')
+                && array_key_exists('pid', current($data[$table]))
+            ) {
+                return (int)current($data[$table])['pid'];
+            }
             $query = $localConnection->createQueryBuilder();
             $query->getRestrictions()->removeAll();
             $result = $query->select('pid')
