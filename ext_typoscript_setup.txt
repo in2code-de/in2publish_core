@@ -1,14 +1,24 @@
 # Preview
 in2publish_preview = PAGE
 in2publish_preview {
-    typeNum = 9815
-    includeCSS.preview = EXT:in2publish_core/Resources/Public/Css/Preview.css
+	typeNum = 9815
+	includeCSS.preview = EXT:in2publish_core/Resources/Public/Css/Preview.css
 
-    config {
-        disablePrefixComment = 1
-        xhtml_cleaning = 0
-        admPanel = 0
-    }
+	config {
+		disablePrefixComment = 1
+		xhtml_cleaning = 0
+		admPanel = 0
+	}
 
-    10 =< tt_content.list.20.in2publishcore_pi1
+	10 =< tt_content.list.20.in2publishcore_pi1
+}
+
+config.tx_extbase.persistence {
+	classes {
+		In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\SysRedirect {
+			mapping {
+				tableName = sys_redirect
+			}
+		}
+	}
 }
