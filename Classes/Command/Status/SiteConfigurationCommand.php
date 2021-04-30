@@ -83,6 +83,6 @@ class SiteConfigurationCommand extends Command
             return static::EXIT_NO_SITE;
         }
         $output->writeln('Site: ' . base64_encode(serialize($site)));
-        return Command::SUCCESS;
+        return 0;
     }
 }

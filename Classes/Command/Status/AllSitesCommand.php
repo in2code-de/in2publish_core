@@ -54,6 +54,6 @@ class AllSitesCommand extends Command
         $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
         $sites = $siteFinder->getAllSites(false);
         $output->writeln('Sites: ' . base64_encode(serialize($sites)));
-        return Command::SUCCESS;
+        return 0;
     }
 }
