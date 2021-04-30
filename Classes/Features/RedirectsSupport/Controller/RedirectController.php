@@ -60,6 +60,7 @@ class RedirectController extends AbstractController
         $querySettings->setIgnoreEnableFields(true);
         $querySettings->setRespectSysLanguage(false);
         $querySettings->setRespectStoragePage(false);
+        $querySettings->setIncludeDeleted(true);
         $redirects = $query->execute();
         $this->view->assign('redirects', $redirects);
     }
