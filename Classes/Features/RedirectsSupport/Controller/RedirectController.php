@@ -34,6 +34,7 @@ use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\SysRedirect;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
+use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -55,12 +56,29 @@ class RedirectController extends AbstractController
 
     public function listAction(): void
     {
+        $foreignConnection = DatabaseUtility::buildForeignDatabaseConnection();
+        $uidList = [];
+        if (null !== $foreignConnection) {
+            $query = $foreignConnection->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->select('uid')->from('sys_redirect')->where($query->expr()->eq('deleted', 1));
+            $uidList = array_column($query->execute()->fetchAll(), 'uid');
+        }
+
         $query = $this->sysRedirectRepo->createQuery();
         $querySettings = $query->getQuerySettings();
         $querySettings->setIgnoreEnableFields(true);
         $querySettings->setRespectSysLanguage(false);
         $querySettings->setRespectStoragePage(false);
         $querySettings->setIncludeDeleted(true);
+        $query->matching(
+            $query->logicalOr(
+                [
+                    $query->equals('deleted', 0),
+                    $query->logicalNot($query->in('uid', $uidList)),
+                ]
+            )
+        );
         $redirects = $query->execute();
         $this->view->assign('redirects', $redirects);
     }
