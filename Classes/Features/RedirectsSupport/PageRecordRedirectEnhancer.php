@@ -181,7 +181,7 @@ class PageRecordRedirectEnhancer
                   $query->expr()->andX(
                       $query->expr()->orX(
                           $query->expr()->eq('source_host', $query->createNamedParameter($uri->getHost())),
-                          $query->expr()->eq('source_host', "'*'"),
+                          $query->expr()->eq('source_host', "'*'")
                       ),
                       $query->expr()->eq('target', $query->createNamedParameter($uri->getPath())),
                       $query->expr()->notIn('uid', implode(array_keys($rows)))
