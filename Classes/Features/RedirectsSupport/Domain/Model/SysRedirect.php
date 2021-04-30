@@ -53,6 +53,9 @@ class SysRedirect extends AbstractEntity
     /** @var string */
     protected $siteId;
 
+    /** @var bool */
+    protected $deleted;
+
     /** @var array */
     protected $rtc = [];
 
@@ -134,6 +137,22 @@ class SysRedirect extends AbstractEntity
     public function setSiteId(string $siteId): void
     {
         $this->siteId = $siteId;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleted(): bool
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * @param bool $deleted
+     */
+    public function setDeleted(bool $deleted): void
+    {
+        $this->deleted = $deleted;
     }
 
     public function __toString()

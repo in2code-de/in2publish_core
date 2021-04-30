@@ -54,9 +54,11 @@
 									</f:switch>
 								</td>
 								<td>
-									<be:link.editRecord class="btn btn-default" table="sys_redirect" uid="{redirect.uid}" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:edit')}">
-										<core:icon identifier="actions-open"/>
-									</be:link.editRecord>
+									<f:if condition="!{redirect.deleted}">
+										<be:link.editRecord class="btn btn-default" table="sys_redirect" uid="{redirect.uid}" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:edit')}">
+											<core:icon identifier="actions-open"/>
+										</be:link.editRecord>
+									</f:if>
 									<f:switch expression="{redirect.publishingState}">
 										<f:case value="publishable">
 											<div class="btn-group">

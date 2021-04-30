@@ -53,3 +53,8 @@ $GLOBALS['TCA']['sys_redirect']['palettes']['tx_in2publishcore_association'] = [
     '',
     'after:keep_query_parameters'
 );
+$GLOBALS['TCA']['sys_redirect']['columns']['deleted'] = [
+    'config' => [
+        'type' => 'check'
+    ]
+];
