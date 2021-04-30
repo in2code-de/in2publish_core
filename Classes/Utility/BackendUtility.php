@@ -145,6 +145,7 @@ class BackendUtility
             $table = key($data);
             if (
                 is_array($data[$table])
+                && is_string(key($data[$table]))
                 && 0 === strpos(key($data[$table]), 'NEW_')
                 && array_key_exists('pid', current($data[$table]))
             ) {
