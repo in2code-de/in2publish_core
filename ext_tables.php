@@ -242,7 +242,22 @@
         'writeFlushFileEdgeCacheTask',
         false
     );
-
+    /** @see \In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater::publishRecordRecursiveAfterPublishing() */
+    $signalSlotDispatcher->connect(
+        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+        'publishRecordRecursiveAfterPublishing',
+        \In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater::class,
+        'publishRecordRecursiveAfterPublishing',
+        false
+    );
+    /** @see \In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater::publishRecordRecursiveEnd() */
+    $signalSlotDispatcher->connect(
+        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+        'publishRecordRecursiveEnd',
+        \In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater::class,
+        'publishRecordRecursiveEnd',
+        false
+    );
 
     /******************************************* Context Menu Publish Entry *******************************************/
     if ($configContainer->get('features.contextMenuPublishEntry.enable')) {
