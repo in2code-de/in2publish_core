@@ -71,14 +71,16 @@ class RedirectController extends AbstractController
         $querySettings->setRespectSysLanguage(false);
         $querySettings->setRespectStoragePage(false);
         $querySettings->setIncludeDeleted(true);
-        $query->matching(
-            $query->logicalOr(
-                [
-                    $query->equals('deleted', 0),
-                    $query->logicalNot($query->in('uid', $uidList)),
-                ]
-            )
-        );
+        if (!empty($uidList)) {
+            $query->matching(
+                $query->logicalOr(
+                    [
+                        $query->equals('deleted', 0),
+                        $query->logicalNot($query->in('uid', $uidList)),
+                    ]
+                )
+            );
+        }
         $redirects = $query->execute();
         $this->view->assign('redirects', $redirects);
     }
