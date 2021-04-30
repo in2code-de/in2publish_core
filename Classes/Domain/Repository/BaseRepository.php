@@ -38,6 +38,8 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use TYPO3\CMS\Core\Utility\MathUtility;
+
 use function array_column;
 use function array_combine;
 use function explode;
@@ -154,10 +156,20 @@ abstract class BaseRepository
         }
 
         $query = $connection->createQueryBuilder();
+
+        if (is_array($propertyValue)) {
+            foreach ($propertyValue as $idx => $value) {
+                $propertyValue[$idx] = $query->getConnection()->quote($value);
+            }
+            $constraint = $query->expr()->in($propertyName, $propertyValue);
+        } else {
+            $constraint = $query->expr()->like($propertyName, $query->createNamedParameter($propertyValue));
+        }
+
         $query->getRestrictions()->removeAll();
         $query->select('*')
               ->from($tableName)
-              ->where($query->expr()->like($propertyName, $query->createNamedParameter($propertyValue)));
+              ->where($constraint);
         if (!empty($additionalWhere)) {
             $query->andWhere($additionalWhere);
         }
@@ -184,10 +196,9 @@ abstract class BaseRepository
                 $propertyArray[implode(',', $identifierArray)] = $row;
             }
             return $propertyArray;
-        } else {
-            foreach ($rows as $row) {
-                $propertyArray[$row[$indexField]] = $row;
-            }
+        }
+        foreach ($rows as $row) {
+            $propertyArray[$row[$indexField]] = $row;
         }
 
         return $propertyArray;
@@ -233,7 +244,11 @@ abstract class BaseRepository
         }
 
         foreach ($properties as $propertyName => $propertyValue) {
-            $query->andWhere($query->expr()->like($propertyName, $query->createNamedParameter($propertyValue)));
+            if (null === $propertyValue) {
+                $query->andWhere($query->expr()->isNull($propertyName));
+            } else {
+                $query->andWhere($query->expr()->like($propertyName, $query->createNamedParameter($propertyValue)));
+            }
         }
 
         if (!empty($groupBy)) {

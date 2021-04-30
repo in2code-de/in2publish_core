@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Command\Status;
  */
 
 use In2code\In2publishCore\Command\Status\Exception\InvalidPageIdArgumentTypeException;
-use In2code\In2publishCore\Utility\ExtensionUtility;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -49,19 +48,19 @@ class SiteConfigurationCommand extends Command
 {
     public const ARG_PAGE_ID = 'pageId';
     public const ARG_PAGE_ID_DESCRIPTION = 'The page id to retrieve the site config for';
-    public const DESCRIPTION = 'Prints the version number of the currently installed in2publish_core extension';
+    public const DESCRIPTION = 'Outputs the requested Site serialized and encoded.';
     public const EXIT_NO_SITE = 250;
     public const EXIT_PAGE_HIDDEN_OR_DISCONNECTED = 251;
     public const IDENTIFIER = 'in2publish_core:status:siteconfiguration';
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setDescription(self::DESCRIPTION)
              ->addArgument(self::ARG_PAGE_ID, InputArgument::REQUIRED, self::ARG_PAGE_ID_DESCRIPTION)
              ->setHidden(true);
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $pageId = $input->getArgument(self::ARG_PAGE_ID);
         if ($pageId !== (string)(int)$pageId) {
@@ -69,7 +68,7 @@ class SiteConfigurationCommand extends Command
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
         $pageId = (int)$input->getArgument(self::ARG_PAGE_ID);
@@ -84,7 +83,6 @@ class SiteConfigurationCommand extends Command
             return static::EXIT_NO_SITE;
         }
         $output->writeln('Site: ' . base64_encode(serialize($site)));
-        $output->writeln('Version: ' . ExtensionUtility::getExtensionVersion('in2publish_core'));
         return 0;
     }
 }

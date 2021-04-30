@@ -99,6 +99,7 @@ class SiteService implements SingletonInterface
 
     protected function fetchSiteBySide(int $pid, string $side): ?Site
     {
+        // TODO: check rootline to cache a site for all pages in the rootline
         if (!array_key_exists($pid, $this->cache['site'][$side] ?? [])) {
             $site = null;
             /** @var SiteFinder|ForeignSiteFinder $siteFinder */

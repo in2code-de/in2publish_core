@@ -242,7 +242,22 @@
         'writeFlushFileEdgeCacheTask',
         false
     );
-
+    /** @see \In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater::publishRecordRecursiveAfterPublishing() */
+    $signalSlotDispatcher->connect(
+        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+        'publishRecordRecursiveAfterPublishing',
+        \In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater::class,
+        'publishRecordRecursiveAfterPublishing',
+        false
+    );
+    /** @see \In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater::publishRecordRecursiveEnd() */
+    $signalSlotDispatcher->connect(
+        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+        'publishRecordRecursiveEnd',
+        \In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater::class,
+        'publishRecordRecursiveEnd',
+        false
+    );
 
     /******************************************* Context Menu Publish Entry *******************************************/
     if ($configContainer->get('features.contextMenuPublishEntry.enable')) {
@@ -278,4 +293,39 @@
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Performance\RceInitializationPerformanceTest::class;
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Performance\ForeignDbInitializationPerformanceTest::class;
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Performance\DiskSpeedPerformanceTest::class;
+
+
+    /************************************************ Redirect Support ************************************************/
+    if ($configContainer->get('features.redirectsSupport.enabled')) {
+        /** @see \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::addRedirectsToPageRecord() */
+        $signalSlotDispatcher->connect(
+            \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
+            'addAdditionalRelatedRecords',
+            \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::class,
+            'addRedirectsToPageRecord'
+        );
+        /** @see \In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement::replaceLocalWithForeignSourceHost() */
+        $signalSlotDispatcher->connect(
+            \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+            'publishRecordRecursiveBeforePublishing',
+            \In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement::class,
+            'replaceLocalWithForeignSourceHost'
+        );
+        if ($configContainer->get('module.m5')) {
+            \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+                'In2code.In2publishCore',
+                'site',
+                'm5',
+                'after:redirects',
+                [
+                    'Redirect' => 'list,publish,selectSite',
+                ],
+                [
+                    'access' => 'user,group',
+                    'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Redirect.svg',
+                    'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod5.xlf',
+                ]
+            );
+        }
+    }
 })();

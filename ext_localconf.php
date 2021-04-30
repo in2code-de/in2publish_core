@@ -115,4 +115,7 @@
             \In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest::class,
         ]
     );
+
+    /************************************************ Redirect Support ************************************************/
+    $configContainer->registerDefiner(\In2code\In2publishCore\Features\RedirectsSupport\Config\Definer\RedirectsSupportDefiner::class);
 })();

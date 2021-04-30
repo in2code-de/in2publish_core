@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Controller;
+namespace In2code\In2publishCore\Features\RedirectsSupport\DataProvider;
 
 /*
  * Copyright notice
  *
- * (c) 2016 in2code.de and the following authors:
- * Alex Kellner <alexander.kellner@in2code.de>,
+ * (c) 2021 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -30,26 +29,16 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\In2publishCoreException;
-use In2code\In2publishCore\Utility\BackendUtility;
+use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class FrontendController
- */
-class FrontendController extends AbstractController
+class ForeignSiteIdentifierItemProcFunc
 {
-    /**
-     * Preview action for vertical or horizontal view
-     *
-     * @param int $identifier
-     *
-     * @return void
-     *
-     * @throws In2publishCoreException
-     */
-    public function previewAction($identifier = 1)
+    public function addData(array &$result): void
     {
-        $this->view->assign('local_preview', (string)BackendUtility::buildPreviewUri('pages', $identifier, 'local'));
-        $this->view->assign('foreign_preview', (string)BackendUtility::buildPreviewUri('pages', $identifier, 'foreign'));
+        $sites = GeneralUtility::makeInstance(ForeignSiteFinder::class)->getAllSites();
+        foreach ($sites as $site) {
+            $result['items'][] = [$site->getIdentifier() . ' (' . $site->getBase() . ')', $site->getIdentifier()];
+        }
     }
 }

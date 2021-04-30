@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Controller;
+namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\Task;
 
 /*
  * Copyright notice
  *
- * (c) 2016 in2code.de and the following authors:
- * Alex Kellner <alexander.kellner@in2code.de>,
+ * (c) 2021 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -30,26 +29,20 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\In2publishCoreException;
-use In2code\In2publishCore\Utility\BackendUtility;
+use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Redirects\Service\RedirectCacheService;
 
-/**
- * Class FrontendController
- */
-class FrontendController extends AbstractController
+class RebuildRedirectCacheTask extends AbstractTask
 {
-    /**
-     * Preview action for vertical or horizontal view
-     *
-     * @param int $identifier
-     *
-     * @return void
-     *
-     * @throws In2publishCoreException
-     */
-    public function previewAction($identifier = 1)
+    public function modifyConfiguration()
     {
-        $this->view->assign('local_preview', (string)BackendUtility::buildPreviewUri('pages', $identifier, 'local'));
-        $this->view->assign('foreign_preview', (string)BackendUtility::buildPreviewUri('pages', $identifier, 'foreign'));
+    }
+
+    protected function executeTask(): bool
+    {
+        GeneralUtility::makeInstance(RedirectCacheService::class)->rebuild();
+        $this->addMessage('Rebuilt redirects cache');
+        return true;
     }
 }
