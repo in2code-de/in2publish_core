@@ -35,6 +35,7 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandReq
 use In2code\In2publishCore\In2publishCoreException;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
+use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -84,7 +85,9 @@ class ForeignSiteFinder
 
             $response = $this->rceDispatcher->dispatch($request);
 
-            if ($response->getExitStatus() === SiteConfigurationCommand::EXIT_NO_SITE) {
+            if ($response->getExitStatus() === SiteConfigurationCommand::EXIT_PAGE_HIDDEN_OR_DISCONNECTED) {
+                throw new PageNotFoundException('PageNotFound on foreign during site identification', 1619783372);
+            } elseif ($response->getExitStatus() === SiteConfigurationCommand::EXIT_NO_SITE) {
                 $site = false;
             } elseif ($response->isSuccessful()) {
                 $responseText = $response->getOutputString();

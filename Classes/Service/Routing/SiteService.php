@@ -33,6 +33,7 @@ use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 use Psr\Log\LoggerInterface;
+use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -100,12 +101,13 @@ class SiteService implements SingletonInterface
     {
         if (!array_key_exists($pid, $this->cache['site'][$side] ?? [])) {
             $site = null;
+            /** @var SiteFinder|ForeignSiteFinder $siteFinder */
             $siteFinder = GeneralUtility::makeInstance(self::SITE_FINDER[$side]);
             try {
                 $site = $siteFinder->getSiteByPageId($pid);
+            } catch (PageNotFoundException $e) {
+                $site = null;
             } catch (SiteNotFoundException $e) {
-            }
-            if (null === $site) {
                 $this->logMissingSiteOnce($pid, $side);
             }
 

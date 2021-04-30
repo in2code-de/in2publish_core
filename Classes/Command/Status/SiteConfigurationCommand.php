@@ -35,9 +35,12 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+use TYPO3\CMS\Core\Utility\RootlineUtility;
 
 use function base64_encode;
 use function serialize;
@@ -48,6 +51,7 @@ class SiteConfigurationCommand extends Command
     public const ARG_PAGE_ID_DESCRIPTION = 'The page id to retrieve the site config for';
     public const DESCRIPTION = 'Prints the version number of the currently installed in2publish_core extension';
     public const EXIT_NO_SITE = 250;
+    public const EXIT_PAGE_HIDDEN_OR_DISCONNECTED = 251;
     public const IDENTIFIER = 'in2publish_core:status:siteconfiguration';
 
     protected function configure()
@@ -68,10 +72,15 @@ class SiteConfigurationCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
+        $pageId = (int)$input->getArgument(self::ARG_PAGE_ID);
         try {
-            $pageId = (int)$input->getArgument(self::ARG_PAGE_ID);
             $site = $siteFinder->getSiteByPageId($pageId);
         } catch (SiteNotFoundException $e) {
+            try {
+                GeneralUtility::makeInstance(RootlineUtility::class, $pageId, null)->get();
+            } catch (PageNotFoundException $e) {
+                return static::EXIT_PAGE_HIDDEN_OR_DISCONNECTED;
+            }
             return static::EXIT_NO_SITE;
         }
         $output->writeln('Site: ' . base64_encode(serialize($site)));

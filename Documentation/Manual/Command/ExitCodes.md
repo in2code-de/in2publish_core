@@ -9,6 +9,7 @@
 * `232`: Executing the RPC/Envelope failed. More information should be available in the logs.
 * `240`: At least one test failed, so in2publish_core is not ready to be used.
 * `250`: No site configuration could be found for the given page id.
+* `251`: The page is probably disconnected from the page tree. It could not be found in the RootLineUtility.
 
 ## API stability
 
