@@ -37,6 +37,7 @@ use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedire
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class RedirectController extends AbstractController
@@ -108,9 +109,22 @@ class RedirectController extends AbstractController
         $this->redirect('list');
     }
 
-    public function selectSiteAction(SysRedirect $redirect): void
+    public function selectSiteAction(int $redirect, array $properties = null): void
     {
+        $query = $this->sysRedirectRepo->createQuery();
+        $querySettings = $query->getQuerySettings();
+        $querySettings->setIgnoreEnableFields(true);
+        $querySettings->setRespectSysLanguage(false);
+        $querySettings->setRespectStoragePage(false);
+        $querySettings->setIncludeDeleted(true);
+            $query->matching(
+                $query->equals('uid', $redirect)
+            );
+        /** @var SysRedirect $redirect */
+        $redirect = $query->execute()->getFirst();
+
         if ($this->request->getMethod() === 'POST') {
+            $redirect->setSiteId($properties['siteId']);
             $this->sysRedirectRepo->update($redirect);
             $this->addFlashMessage(sprintf('Associated redirect %s with site %s', $redirect, $redirect->getSiteId()));
             if (isset($_POST['_saveandpublish'])) {

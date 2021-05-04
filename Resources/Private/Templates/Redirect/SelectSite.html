@@ -16,7 +16,8 @@
 
 	<f:section name="Main">
 		<h2>Assign Site to {redirect}</h2>
-		<f:form name="editform" action="selectSite" objectName="redirect" object="{redirect}" method="post" id="EditDocumentController">
+		<f:form name="editform" action="selectSite" objectName="properties" object="{redirect}" method="post" id="EditDocumentController">
+			<f:form.hidden name="redirect" value="{redirect.uid}"/>
 			<fieldset class="form-section">
 				<h4 class="form-section-headline"><f:translate key="LLL:EXT:redirects/Resources/Private/Language/locallang_db.xlf:sys_redirect" /></h4>
 				<div class="row">
