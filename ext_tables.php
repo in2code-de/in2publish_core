@@ -296,7 +296,7 @@
 
 
     /************************************************ Redirect Support ************************************************/
-    if ($configContainer->get('features.redirectsSupport.enabled')) {
+    if ($configContainer->get('features.redirectsSupport.enabled') && \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('redirects')) {
         /** @see \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::addRedirectsToPageRecord() */
         $signalSlotDispatcher->connect(
             \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
