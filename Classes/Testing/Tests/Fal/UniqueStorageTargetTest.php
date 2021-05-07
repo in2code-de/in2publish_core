@@ -74,7 +74,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
         $storages = $this->testSubjectProvider->getStoragesForUniqueTargetTest();
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
 
-        $resourceFactory = ResourceFactory::getInstance();
+        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         $messages = [];
         $affectedStorages = [];
         $failedUploads = [];

@@ -50,6 +50,8 @@ use In2code\In2publishCore\Domain\Service\Processor\SelectProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\SlugProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\TextProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\UserProcessor;
+use TYPO3\CMS\Core\Information\Typo3Version;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function version_compare;
 
@@ -136,7 +138,7 @@ class In2publishCoreDefiner implements DefinerInterface
      */
     public function __construct()
     {
-        if (version_compare(TYPO3_branch, '10.0', '<')) {
+        if (version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getBranch(), '10.0', '<')) {
             $this->defaultIgnoredTables[] = 'sys_domain';
         }
     }

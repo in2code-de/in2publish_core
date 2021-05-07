@@ -33,6 +33,7 @@ use In2code\In2publishCore\Command\PublishTaskRunner\RunTasksInQueueCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -106,8 +107,9 @@ abstract class AbstractController extends ActionController
     /**
      * Dummy Method to use when an error occurred. This Method must never throw an exception.
      */
-    public function blankAction()
+    public function blankAction(): ResponseInterface
     {
+        return $this->htmlResponse();
     }
 
     /**

@@ -45,13 +45,14 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Context\LanguageAspectFactory;
+use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Http\Uri;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Routing\RouterInterface;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
-use TYPO3\CMS\Frontend\Page\PageRepository;
 
 use function array_key_exists;
 use function array_keys;
@@ -350,7 +351,7 @@ class BackendUtility
         $site = $siteService->getSiteForPidAndStagingLevel($pid, $stagingLevel);
 
         if (null === $site) {
-            if (version_compare(TYPO3_branch, '10', '<')) {
+            if (version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getBranch(), '10', '<')) {
                 return self::processLegacySysDomainRecord($pid, $stagingLevel);
             }
             return null;
@@ -423,7 +424,7 @@ class BackendUtility
      */
     protected static function getRuntimeCache(): VariableFrontend
     {
-        return GeneralUtility::makeInstance(CacheManager::class)->getCache('cache_runtime');
+        return GeneralUtility::makeInstance(CacheManager::class)->getCache('runtime');
     }
 
     /**
@@ -497,7 +498,7 @@ class BackendUtility
      */
     protected static function getLocalUriClosure(Site $site, int $pageUid, $additionalQueryParams): Closure
     {
-        return static function () use ($site, $pageUid, $additionalQueryParams) : ?UriInterface {
+        return static function () use ($site, $pageUid, $additionalQueryParams): ?UriInterface {
             try {
                 return $site->getRouter()->generateUri(
                     $pageUid,

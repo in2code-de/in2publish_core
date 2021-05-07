@@ -108,8 +108,7 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
      */
     protected function getAjaxUri(Record $record): string
     {
-        return $this
-            ->controllerContext
+        return $this->renderingContext->getControllerContext()
             ->getUriBuilder()
             ->uriFor(
                 'detail',

@@ -29,10 +29,12 @@ namespace In2code\In2publishCore\Log\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogRecord;
 use TYPO3\CMS\Core\Log\Processor\AbstractProcessor;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function min;
 use function version_compare;
@@ -62,7 +64,7 @@ class PublishingFailureCollector extends AbstractProcessor implements SingletonI
     public function processLogRecord(LogRecord $logRecord)
     {
         $level = $logRecord->getLevel();
-        if (version_compare(TYPO3_branch, '10.0', '>=')) {
+        if (version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getBranch(), '10.0', '>=')) {
             $level = LogLevel::normalizeLevel($level);
         }
         $this->highestSeverity = min($this->highestSeverity, $level);

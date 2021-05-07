@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Controller;
 
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\BackendUtility;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class FrontendController
@@ -47,9 +48,10 @@ class FrontendController extends AbstractController
      *
      * @throws In2publishCoreException
      */
-    public function previewAction($identifier = 1)
+    public function previewAction($identifier = 1): ResponseInterface
     {
         $this->view->assign('local_preview', (string)BackendUtility::buildPreviewUri('pages', $identifier, 'local'));
         $this->view->assign('foreign_preview', (string)BackendUtility::buildPreviewUri('pages', $identifier, 'foreign'));
+        return $this->htmlResponse();
     }
 }

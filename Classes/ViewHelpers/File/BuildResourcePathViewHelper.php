@@ -95,7 +95,7 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
             $storage = $record->getPropertyBySideIdentifier($stagingLevel, 'storage');
             $identifier = $record->getPropertyBySideIdentifier($stagingLevel, 'identifier');
 
-            $resourceFactory = ResourceFactory::getInstance();
+            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
             /** @var File $file Keep this annotation for the correct method return type generation */
             $file = $resourceFactory->getFileObjectByStorageAndIdentifier($storage, $identifier);
             $resourceUrl = $file->getPublicUrl();

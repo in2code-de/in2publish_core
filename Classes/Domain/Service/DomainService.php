@@ -35,6 +35,7 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Routing\SiteService;
 use In2code\In2publishCore\Utility\BackendUtility as BackendUtilityAlias;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
@@ -206,7 +207,7 @@ class DomainService implements SingletonInterface
             return '';
         }
         $uri = $this->getDomainFromSiteConfigByPageId($identifier, $stagingLevel, $addProtocol);
-        if (empty($uri) && version_compare(TYPO3_branch, '10', '<')) {
+        if (empty($uri) && version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getBranch(), '10', '<')) {
             $uri = BackendUtilityAlias::fetchInheritedSysDomainNameForPage($identifier, $stagingLevel);
             if (null !== $uri && $addProtocol) {
                 $uri = (GeneralUtility::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://') . $uri;

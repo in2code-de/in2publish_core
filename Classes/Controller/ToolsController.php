@@ -41,7 +41,7 @@ use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Tools\ToolsRegistry;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use ReflectionProperty;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
@@ -51,6 +51,7 @@ use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
+use TYPO3\CMS\Extbase\Http\ForwardResponse;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
@@ -64,7 +65,6 @@ use function defined;
 use function file_get_contents;
 use function flush;
 use function generateUpToDateMimeArray;
-use function get_class;
 use function gmdate;
 use function header;
 use function implode;
@@ -121,7 +121,7 @@ class ToolsController extends ActionController
     /**
      *
      */
-    public function indexAction()
+    public function indexAction(): ResponseInterface
     {
         $testStates = GeneralUtility::makeInstance(EnvironmentService::class)->getTestStatus();
 
@@ -149,12 +149,13 @@ class ToolsController extends ActionController
         $this->view->assign('supports', $supports);
 
         $this->view->assign('tools', GeneralUtility::makeInstance(ToolsRegistry::class)->getTools());
+        return $this->htmlResponse();
     }
 
     /**
      * @throws In2publishCoreException
      */
-    public function testAction()
+    public function testAction(): ResponseInterface
     {
         $testingService = new TestingService();
         $testingResults = $testingService->runAllTests();
@@ -171,6 +172,7 @@ class ToolsController extends ActionController
         GeneralUtility::makeInstance(EnvironmentService::class)->setTestResult($success);
 
         $this->view->assign('testingResults', $testingResults);
+        return $this->htmlResponse();
     }
 
     /**
@@ -178,7 +180,7 @@ class ToolsController extends ActionController
      *
      * @return void
      */
-    public function configurationAction(int $emulatePage = null)
+    public function configurationAction(int $emulatePage = null): ResponseInterface
     {
         if (null !== $emulatePage) {
             $_POST['id'] = $emulatePage;
@@ -186,16 +188,18 @@ class ToolsController extends ActionController
         $this->view->assign('containerDump', $this->configContainer->dump());
         $this->view->assign('globalConfig', $this->configContainer->getContextFreeConfig());
         $this->view->assign('emulatePage', $emulatePage);
+        return $this->htmlResponse();
     }
 
     /**
      * @return void
      */
-    public function tcaAction()
+    public function tcaAction(): ResponseInterface
     {
         $this->view->assign('incompatibleTca', TcaProcessingService::getIncompatibleTca());
         $this->view->assign('compatibleTca', TcaProcessingService::getCompatibleTca());
         $this->view->assign('controls', TcaProcessingService::getControls());
+        return $this->htmlResponse();
     }
 
     /**
@@ -241,24 +245,26 @@ class ToolsController extends ActionController
         }
     }
 
-    public function sysInfoIndexAction()
+    public function sysInfoIndexAction(): ResponseInterface
     {
+        return $this->htmlResponse();
     }
 
     /**
      *
      */
-    public function sysInfoShowAction()
+    public function sysInfoShowAction(): ResponseInterface
     {
         $info = $this->getFullInfo();
         $this->view->assign('info', $info);
         $this->view->assign('infoJson', json_encode($info));
+        return $this->htmlResponse();
     }
 
     /**
      * @param string $json
      */
-    public function sysInfoDecodeAction(string $json = '')
+    public function sysInfoDecodeAction(string $json = ''): ResponseInterface
     {
         if (!empty($json)) {
             $info = json_decode($json, true);
@@ -274,6 +280,7 @@ class ToolsController extends ActionController
             }
         }
         $this->view->assign('infoJson', $json);
+        return $this->htmlResponse();
     }
 
     /**
@@ -299,12 +306,12 @@ class ToolsController extends ActionController
         die;
     }
 
-    public function sysInfoUploadAction()
+    public function sysInfoUploadAction(): ResponseInterface
     {
         /** @var array $file */
         $file = $this->request->getArgument('jsonFile');
         $content = file_get_contents($file['tmp_name']);
-        $this->forward('sysInfoDecode', null, null, ['json' => $content]);
+        return (new ForwardResponse('sysInfoDecode'))->withArguments(['json' => $content]);
     }
 
     /**
@@ -455,7 +462,7 @@ class ToolsController extends ActionController
             'TYPO3 Version' => VersionNumberUtility::getCurrentTypo3Version(),
             'PHP Version' => PHP_VERSION,
             'Database Version' => $databases,
-            'Application Context' => GeneralUtility::getApplicationContext()->__toString(),
+            'Application Context' => Environment::getContext()->__toString(),
             'Composer mode' => $composerMode,
             'Operating System' => PHP_OS . ' ' . php_uname('r'),
             'extensions' => $extensions,

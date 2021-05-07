@@ -35,6 +35,7 @@ use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\SysRedirect;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -49,7 +50,7 @@ class RedirectController extends AbstractController
         $this->sysRedirectRepo = $sysRedirectRepo;
     }
 
-    public function listAction(): void
+    public function listAction(): ResponseInterface
     {
         $foreignConnection = DatabaseUtility::buildForeignDatabaseConnection();
         $uidList = [];
@@ -78,6 +79,7 @@ class RedirectController extends AbstractController
         }
         $redirects = $query->execute();
         $this->view->assign('redirects', $redirects);
+        return $this->htmlResponse();
     }
 
     public function publishAction(array $redirects): void

@@ -30,8 +30,8 @@ namespace In2code\In2publishCore\Service\Context;
  */
 
 use LogicException;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function getenv;
 use function in_array;
@@ -79,7 +79,7 @@ class ContextService implements SingletonInterface
             return static::FOREIGN;
         } elseif (in_array($environmentVariable, [static::LOCAL, static::FOREIGN], true)) {
             return $environmentVariable;
-        } elseif (GeneralUtility::getApplicationContext()->isProduction()) {
+        } elseif (Environment::getContext()->isProduction()) {
             return static::FOREIGN;
         } else {
             throw new LogicException('The defined in2publish context is not supported', 1469717011);

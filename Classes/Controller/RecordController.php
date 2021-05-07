@@ -37,6 +37,7 @@ use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Log\Processor\PublishingFailureCollector;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use In2code\In2publishCore\Utility\LogUtility;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -84,7 +85,7 @@ class RecordController extends AbstractController
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function indexAction()
+    public function indexAction(): ResponseInterface
     {
         $this->logger->debug('Called indexAction');
         TcaProcessingService::getInstance();
@@ -103,6 +104,7 @@ class RecordController extends AbstractController
             $this->addFlashMessage($message, $title, $severity);
         }
         $this->view->assign('record', $record);
+        return $this->htmlResponse();
     }
 
     /**
@@ -114,7 +116,7 @@ class RecordController extends AbstractController
      *
      * @return void
      */
-    public function detailAction($identifier, $tableName)
+    public function detailAction($identifier, $tableName): ResponseInterface
     {
         $this->logger->debug('Called detailAction');
         $this->commonRepository->disablePageRecursion();
@@ -127,6 +129,7 @@ class RecordController extends AbstractController
         }
 
         $this->view->assign('record', $record);
+        return $this->htmlResponse();
     }
 
     /**
@@ -173,9 +176,10 @@ class RecordController extends AbstractController
      *
      * @throws StopActionException
      */
-    public function toggleFilterStatusAndRedirectToIndexAction($filter)
+    public function toggleFilterStatusAndRedirectToIndexAction($filter): ResponseInterface
     {
         $this->toggleFilterStatusAndRedirect('in2publish_filter_records_', $filter, 'index');
+        return $this->htmlResponse();
     }
 
     /**

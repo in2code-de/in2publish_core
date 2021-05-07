@@ -480,7 +480,7 @@ class EnvelopeDispatcher
      */
     protected function getStorage(array $request): ResourceStorage
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = GeneralUtility::makeInstance(ResourceFactory::class)->getStorageObject($request['storage']);
         $storage->setEvaluatePermissions(false);
         return $storage;
     }
