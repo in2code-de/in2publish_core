@@ -25,15 +25,13 @@ class PublishCommand extends Command
 {
     public const ARG_TABLE_NAME = 'tableName';
     public const ARG_TABLE_NAME_DESCRIPTION = 'The table to publish';
-    public const DESCRIPTION = 'Copies a complete table from stage to production and overwrites all old entries!';
     public const EXIT_INVALID_TABLE = 220;
     public const EXIT_REMOTE_BACKUP_FAILED = 221;
     public const IDENTIFIER = 'in2publish_core:table:publish';
 
     public function configure()
     {
-        $this->setDescription(self::DESCRIPTION)
-             ->addArgument(self::ARG_TABLE_NAME, InputArgument::REQUIRED, self::ARG_TABLE_NAME_DESCRIPTION);
+        $this->addArgument(self::ARG_TABLE_NAME, InputArgument::REQUIRED, self::ARG_TABLE_NAME_DESCRIPTION);
     }
 
     public function isEnabled()

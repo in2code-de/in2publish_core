@@ -16,13 +16,11 @@ class BackupCommand extends Command
 {
     public const ARG_TABLE_NAME = 'tableName';
     public const ARG_TABLE_NAME_DESCRIPTION = 'The table to back up';
-    public const DESCRIPTION = 'Stores a backup of the complete local table into the configured directory';
     public const IDENTIFIER = 'in2publish_core:table:backup';
 
     protected function configure()
     {
-        $this->setDescription(self::DESCRIPTION)
-             ->addArgument(self::ARG_TABLE_NAME, InputArgument::REQUIRED, self::ARG_TABLE_NAME_DESCRIPTION);
+        $this->addArgument(self::ARG_TABLE_NAME, InputArgument::REQUIRED, self::ARG_TABLE_NAME_DESCRIPTION);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

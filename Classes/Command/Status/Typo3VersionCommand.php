@@ -37,14 +37,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Typo3VersionCommand extends Command
 {
-    public const DESCRIPTION = 'Prints TYPO3 version';
     public const IDENTIFIER = 'in2publish_core:status:typo3version';
-
-    protected function configure()
-    {
-        $this->setDescription(self::DESCRIPTION)
-             ->setHidden(true);
-    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
