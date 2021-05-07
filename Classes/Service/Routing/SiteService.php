@@ -35,7 +35,6 @@ use In2code\In2publishCore\Service\Database\RawRecordService;
 use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
-use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Site\Entity\Site;
@@ -43,7 +42,6 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
-use function version_compare;
 
 class SiteService implements SingletonInterface
 {
@@ -122,8 +120,6 @@ class SiteService implements SingletonInterface
             return;
         }
         $this->cache['trigger']['logMissingSiteOnce'] = true;
-        if (version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getBranch(), '10.0', '>=')) {
-            $this->logger->error('Can not identify site configuration for page.', ['page' => $pid, 'side' => $side]);
-        }
+        $this->logger->error('Can not identify site configuration for page.', ['page' => $pid, 'side' => $side]);
     }
 }

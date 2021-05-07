@@ -50,10 +50,6 @@ use In2code\In2publishCore\Domain\Service\Processor\SelectProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\SlugProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\TextProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\UserProcessor;
-use TYPO3\CMS\Core\Information\Typo3Version;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-
-use function version_compare;
 
 /**
  * Class In2publishCoreDefiner
@@ -132,16 +128,6 @@ class In2publishCoreDefiner implements DefinerInterface
         'tx_in2code_in2publish_task',
         'tx_in2code_in2publish_envelope',
     ];
-
-    /**
-     * In2publishCoreDefiner constructor.
-     */
-    public function __construct()
-    {
-        if (version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getBranch(), '10.0', '<')) {
-            $this->defaultIgnoredTables[] = 'sys_domain';
-        }
-    }
 
     /**
      * @return NodeCollection
