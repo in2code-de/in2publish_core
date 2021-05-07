@@ -64,7 +64,7 @@
             'm1',
             '',
             [
-                'Record' => 'index,detail,publishRecord,toggleFilterStatusAndRedirectToIndex',
+                \In2code\In2publishCore\Controller\RecordController::class => 'index,detail,publishRecord,toggleFilterStatusAndRedirectToIndex',
             ],
             [
                 'access' => 'user,group',
@@ -80,7 +80,7 @@
             'm3',
             '',
             [
-                'File' => 'index,publishFolder,publishFile,toggleFilterStatusAndRedirectToIndex',
+                \In2code\In2publishCore\Controller\FileController::class => 'index,publishFolder,publishFile,toggleFilterStatusAndRedirectToIndex',
             ],
             [
                 'access' => 'user,group',
@@ -98,57 +98,57 @@
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.index',
             '',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'index'
         );
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test',
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test.description',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'test'
         );
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration',
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration.description',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'configuration'
         );
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('logs')) {
             $toolsRegistry->addTool(
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.logs',
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.logs.description',
-                'Log',
+                \In2code\In2publishCore\Features\LogsIntegration\Controller\LogController::class,
                 'filter,delete,deleteAlike'
             );
         }
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca',
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca.description',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'tca'
         );
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca',
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca.description',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'clearTcaCaches'
         );
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry',
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry.description',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'flushRegistry'
         );
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes',
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes.description',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'flushEnvelopes'
         );
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.system_info',
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.system_info.description',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'sysInfoIndex,sysInfoShow,sysInfoDecode,sysInfoDownload,sysInfoUpload'
         );
     }
@@ -349,7 +349,7 @@
             'm5',
             'after:redirects',
             [
-                'Redirect' => 'list,publish,selectSite',
+                \In2code\In2publishCore\Features\RedirectsSupport\Controller\RedirectController::class => 'list,publish,selectSite',
             ],
             [
                 'access' => 'user,group',

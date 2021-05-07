@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Tools;
 
 use TYPO3\CMS\Core\Database\TableConfigurationPostProcessingHookInterface;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\ClassNamingUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
@@ -65,15 +66,19 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
         string $name,
         string $description,
         string $controller,
-        string $action,
-        string $extensionName = 'in2publish_core'
+        string $action
     ) {
+        // ActionViewHelper does not support subPackageKey, so there is no sense in processing it here.
+        $nameParts = ClassNamingUtility::explodeObjectControllerName($controller);
+        $controllerExtensionName = $nameParts['extensionName'];
+        $controllerName = $nameParts['controllerName'];
         $this->entries[$name] = [
             'name' => $name,
             'description' => $description,
             'controller' => $controller,
+            'controllerName' => $controllerName,
+            'controllerExtensionName' => $controllerExtensionName,
             'action' => $action,
-            'extensionName' => GeneralUtility::underscoredToUpperCamelCase($extensionName),
         ];
     }
 
