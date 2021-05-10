@@ -79,6 +79,12 @@ class PageRecordRedirectEnhancer
         );
         $record->addRelatedRecords($relatedRedirects);
 
+        // The preview URL is not available if the record is deleted (because the SiteFinder uses
+        // the RootlineUtility which does not support deleted pages)
+        if ($record->isLocalRecordDeleted()) {
+            return [$record, $recordFactory];
+        }
+
         $uri = BackendUtility::buildPreviewUri('pages', $pid, 'local');
         // Find redirects by current url
         if (null !== $uri) {
