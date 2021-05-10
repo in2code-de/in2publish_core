@@ -38,6 +38,7 @@ use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
@@ -59,7 +60,7 @@ use const E_USER_DEPRECATED;
  * records and any of the related records related records and so on to the extend
  * of the setting maximumRecursionDepth
  */
-class RecordFactory
+class RecordFactory implements SingletonInterface
 {
     public const DEPRECATION_METHOD_NO_TABLE_ARG = 'Calling %s without tableName is deprecated. tableName will be a non-optional argument in in2publish_core version 10.';
 
