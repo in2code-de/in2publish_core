@@ -509,8 +509,8 @@ class Record implements RecordInterface
     public function isTranslationOriginal(RecordInterface $record): bool
     {
         $tcaService = GeneralUtility::makeInstance(TcaService::class);
-        $tablePointerField = $tcaService->getTransOrigPointerField($this->getTableName());
-        return $record->getIdentifier() === $this->getMergedProperty($tablePointerField);
+        $pointerField = $tcaService->getTransOrigPointerField($this->getTableName());
+        return !empty($pointerField) && $record->getIdentifier() === $this->getMergedProperty($pointerField);
     }
 
     /**
