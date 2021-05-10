@@ -37,7 +37,6 @@ use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedire
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class RedirectController extends AbstractController
@@ -117,9 +116,9 @@ class RedirectController extends AbstractController
         $querySettings->setRespectSysLanguage(false);
         $querySettings->setRespectStoragePage(false);
         $querySettings->setIncludeDeleted(true);
-            $query->matching(
-                $query->equals('uid', $redirect)
-            );
+        $query->matching(
+            $query->equals('uid', $redirect)
+        );
         /** @var SysRedirect $redirect */
         $redirect = $query->execute()->getFirst();
 
