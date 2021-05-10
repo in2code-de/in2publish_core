@@ -503,6 +503,17 @@ class Record implements RecordInterface
     }
 
     /**
+     * @param RecordInterface $record
+     * @return bool
+     */
+    public function isTranslationOriginal(RecordInterface $record): bool
+    {
+        $tcaService = GeneralUtility::makeInstance(TcaService::class);
+        $pointerField = $tcaService->getTransOrigPointerField($this->getTableName());
+        return !empty($pointerField) && $record->getIdentifier() === $this->getMergedProperty($pointerField);
+    }
+
+    /**
      * @param string $propertyName
      *
      * @return bool
@@ -653,6 +664,7 @@ class Record implements RecordInterface
                 // beneath its new parent anyway.
                 if (!($this->isPagesTable() && $record->isPagesTable())
                     || $record->getSuperordinatePageIdentifier() === $this->getIdentifier()
+                    || $this->isTranslationOriginal($record)
                 ) {
                     if (!$this->isParentDisabled) {
                         $record->setParentRecord($this);
