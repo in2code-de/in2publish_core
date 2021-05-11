@@ -794,6 +794,10 @@ class CommonRepository extends BaseRepository
         }
         $recordIdentifier = $record->getIdentifier();
         foreach ($this->tcaService->getAllTableNames($excludedTableNames) as $tableName) {
+            // Never search for redirects by their pid!
+            if ('sys_redirect' === $tableName) {
+                continue;
+            }
             if ($this->shouldSkipSearchingForRelatedRecordByTable($record, $tableName)) {
                 continue;
             }
