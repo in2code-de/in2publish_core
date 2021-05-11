@@ -309,7 +309,7 @@
 				<source>Secure, authenticated and encrypted command execution</source>
 			</trans-unit>
 			<trans-unit id="adapter.transmission.ssh">
-				<source>Secure, reliable and encrypted asset transission</source>
+				<source>Secure, reliable and encrypted asset transmission</source>
 			</trans-unit>
 
 			<trans-unit id="help.slack_channel">
