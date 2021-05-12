@@ -50,8 +50,3 @@ to be publishable.
 The context menu is created, when the current user is allowed to publish and 3rd party integrations allow the publishing
 of this page. The context menu entry does not take into account if the record is actually changed. Publishing a page
 which has no changes will result in the message "The "
-
-## Redirects Module missing icons in TYPO3 v9
-
-Some icons used in the redirects module are missing in TYPO3 v9.
-We will provide these icons as soon as possible.
