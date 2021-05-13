@@ -397,3 +397,8 @@ features:
   redirectsSupport:
     # Enable this feature. You need to clear *all* caches after changing this, because it changes the TCA.
     enable: TRUE
+
+  # Publishes sorting of all related records (same table and pid) if sorting of a record/pages has changes.
+  publishSorting:
+    # Enabled by default.
+    enable: TRUE

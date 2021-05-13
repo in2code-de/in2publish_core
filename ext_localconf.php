@@ -57,6 +57,9 @@
     $configContainer->registerDefiner(
         \In2code\In2publishCore\Features\WarningOnForeign\Config\Definer\WarningOnForeignDefiner::class
     );
+    $configContainer->registerDefiner(
+        \In2code\In2publishCore\Features\PublishSorting\Config\Definer\PublishSortingDefiner::class
+    );
     if ($contextService->isForeign()
         || 'ssh' === $extConf['adapter']['remote']
         || 'ssh' === $extConf['adapter']['transmission']
