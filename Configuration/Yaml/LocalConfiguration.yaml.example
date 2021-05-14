@@ -392,3 +392,8 @@ features:
   contextMenuPublishEntry:
     # Disabled by default. See Documentation/KnownIssues.md first before activation.
     enable: FALSE
+
+  # Support for redirects. Enabling this adds new fields to redirects to associate redirects with pages and a module to publish redirects.
+  redirectsSupport:
+    # Enable this feature. You need to clear *all* caches after changing this, because it changes the TCA.
+    enable: TRUE

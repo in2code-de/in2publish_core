@@ -39,17 +39,12 @@ class RedirectsSupportDefiner implements DefinerInterface
     {
         return Builder::start()
                       ->addArray(
-                          'module',
-                          Builder::start()
-                                 ->addBoolean('m5', true)
-                      )
-                      ->addArray(
                           'features',
                           Builder::start()
                                  ->addArray(
                                      'redirectsSupport',
                                      Builder::start()
-                                            ->addBoolean('enabled', true)
+                                            ->addBoolean('enable', true)
                                  )
                       )
                       ->end();

@@ -41,11 +41,6 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class RedirectController extends AbstractController
 {
-    protected const ALLOWED_FIELDS = [
-        'pageUid',
-    ];
-    private const ALLOWED_DIRECTIONS = ['ASC', 'DESC'];
-
     /** @var SysRedirectRepository */
     protected $sysRedirectRepo;
 

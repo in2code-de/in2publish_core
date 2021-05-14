@@ -302,7 +302,7 @@
 
 
     /************************************************ Redirect Support ************************************************/
-    if ($configContainer->get('features.redirectsSupport.enabled') && \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('redirects')) {
+    if ($configContainer->get('features.redirectsSupport.enable') && \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('redirects')) {
         /** @see \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::addRedirectsToPageRecord() */
         $signalSlotDispatcher->connect(
             \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
@@ -317,21 +317,19 @@
             \In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement::class,
             'replaceLocalWithForeignSourceHost'
         );
-        if ($configContainer->get('module.m5')) {
-            \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-                'In2code.In2publishCore',
-                'site',
-                'm5',
-                'after:redirects',
-                [
-                    'Redirect' => 'list,publish,selectSite',
-                ],
-                [
-                    'access' => 'user,group',
-                    'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Redirect.svg',
-                    'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod5.xlf',
-                ]
-            );
-        }
+        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+            'In2code.In2publishCore',
+            'site',
+            'm5',
+            'after:redirects',
+            [
+                'Redirect' => 'list,publish,selectSite',
+            ],
+            [
+                'access' => 'user,group',
+                'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Redirect.svg',
+                'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod5.xlf',
+            ]
+        );
     }
 })();
