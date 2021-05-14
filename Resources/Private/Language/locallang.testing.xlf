@@ -200,6 +200,15 @@
 				<source>Following tables are configured but do not exist:</source>
 			</trans-unit>
 
+			<!-- \In2code\In2publishCore\Testing\Tests\Application\SiteConfigurationTest -->
+
+			<trans-unit id="application.site_configuration.valid">
+				<source>The site configuration seems to be valid and compatible on local and foreign.</source>
+			</trans-unit>
+			<trans-unit id="application.site_configuration.invalid">
+				<source>The site configuration has significant differences between local and foreign.</source>
+			</trans-unit>
+
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\LocalSysDomainTest -->
 
 			<trans-unit id="application.local_sites_config_missing">
