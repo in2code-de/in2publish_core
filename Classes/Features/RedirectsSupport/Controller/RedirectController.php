@@ -97,10 +97,13 @@ class RedirectController extends AbstractController
         }
 
         $commonRepository = CommonRepository::getDefaultInstance();
-        $records = $commonRepository->findByProperty('uid', $redirects, 'sys_redirect');
-        foreach ($records as $record) {
-            $commonRepository->publishRecordRecursive($record);
+        foreach ($redirects as $redirect) {
+            $record = $commonRepository->findByIdentifier($redirect, 'sys_redirect');
+            if (null !== $record) {
+                $commonRepository->publishRecordRecursive($record);
+            }
         }
+
         $this->runTasks();
         if (count($redirects) === 1) {
             $this->addFlashMessage(sprintf('Redirect %s published', reset($redirects)));
