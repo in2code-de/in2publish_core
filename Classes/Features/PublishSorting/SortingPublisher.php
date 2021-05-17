@@ -76,7 +76,7 @@ class SortingPublisher implements SingletonInterface
         RecordInterface $record,
         CommonRepository $commonRepository
     ) {
-        $tcaService= GeneralUtility::makeInstance(TcaService::class);
+        $tcaService = GeneralUtility::makeInstance(TcaService::class);
         if (!$tcaService->getNameOfSortingField($tableName)) {
             return false;
         }
@@ -93,6 +93,7 @@ class SortingPublisher implements SingletonInterface
                     }
                     // add to sorting array if $pid is missing
                     $this->sortingsToBePublished[$tableName][$pid] = $pid;
+
                     return;
                 }
                 // add to sorting array if $tableName is missing
@@ -111,6 +112,7 @@ class SortingPublisher implements SingletonInterface
                 ->from($tableName)
                 ->where($constraint);
             $query->execute();
+
             return true;
         } catch (InvalidFieldNameException $ex) {
             return false;
