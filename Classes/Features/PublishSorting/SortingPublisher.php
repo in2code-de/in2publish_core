@@ -29,9 +29,11 @@ namespace In2code\In2publishCore\Features\PublishSorting;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Doctrine\DBAL\Driver\Statement;
 use Doctrine\DBAL\Exception\InvalidFieldNameException;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -74,10 +76,15 @@ class SortingPublisher implements SingletonInterface
         RecordInterface $record,
         CommonRepository $commonRepository
     ) {
-        if ($this->tableContainsFieldsSortingAndPid($tableName) === true) {
+        $tcaService= GeneralUtility::makeInstance(TcaService::class);
+        if (!$tcaService->getNameOfSortingField($tableName)) {
+            return false;
+        }
+        if ($this->tableContainsPid($tableName)) {
             $pid = $record->getLocalProperties()['pid'];
             // check if field sorting has changed
-            if ($record->getLocalProperties()['sorting'] !== $record->getForeignProperties()['sorting']) {
+            $sortingField = $tcaService->getNameOfSortingField($tableName);
+            if ($record->getLocalProperties()[$sortingField] !== $record->getForeignProperties()[$sortingField]) {
                 if (array_key_exists($tableName, $this->sortingsToBePublished)) {
                     $tableArray = $this->sortingsToBePublished[$tableName];
                     // skip if sorting array contains $pid/$tableName
@@ -94,17 +101,15 @@ class SortingPublisher implements SingletonInterface
         }
     }
 
-    protected function tableContainsFieldsSortingAndPid(string $tableName): bool
+    protected function tableContainsPid(string $tableName): bool
     {
         $query = $this->localDatabase->createQueryBuilder();
 
         try {
-            $constraint = $query->expr()->gt('sorting', $query->createNamedParameter(0));
-            $constraint2 = $query->expr()->gt('pid', $query->createNamedParameter(0));
+            $constraint = $query->expr()->gt('pid', $query->createNamedParameter(0));
             $query->select('*')
                 ->from($tableName)
-                ->where($constraint)
-                ->andWhere($constraint2);
+                ->where($constraint);
             $query->execute();
             return true;
         } catch (InvalidFieldNameException $ex) {

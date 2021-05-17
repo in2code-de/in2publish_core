@@ -191,6 +191,19 @@ class TcaService implements SingletonInterface
      *
      * @return string
      */
+    public function getNameOfSortingField(string $tableName): string
+    {
+        if (!empty($this->tca[$tableName]['ctrl']['sortby'])) {
+            return $this->tca[$tableName]['ctrl']['sortby'];
+        }
+        return '';
+    }
+
+    /**
+     * @param string $tableName
+     *
+     * @return string
+     */
     public function getDeletedField(string $tableName): string
     {
         $deleteField = '';
