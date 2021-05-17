@@ -8,8 +8,6 @@ namespace In2code\In2publishCore\Features\PublishSorting;
  * Copyright notice
  *
  * (c) 2021 in2code.de and the following authors:
- * Alex Kellner <alexander.kellner@in2code.de>,
- * Oliver Eglseder <oliver.eglseder@in2code.de>
  * Christine Zoglmeier <christine.zoglmeier@in2code.de>
  *
  * All rights reserved
