@@ -3,6 +3,7 @@
 use In2code\In2publishCore\Command\PublishTaskRunner\RunTasksInQueueCommand;
 use In2code\In2publishCore\Command\RemoteProcedureCall\ExecuteCommand;
 use In2code\In2publishCore\Command\Status\AllCommand;
+use In2code\In2publishCore\Command\Status\AllSitesCommand;
 use In2code\In2publishCore\Command\Status\ConfigFormatTestCommand;
 use In2code\In2publishCore\Command\Status\CreateMasksCommand;
 use In2code\In2publishCore\Command\Status\DbConfigTestCommand;
@@ -30,6 +31,9 @@ return [
     // Status
     AllCommand::IDENTIFIER => [
         'class' => AllCommand::class,
+    ],
+    AllSitesCommand::IDENTIFIER => [
+        'class' => AllSitesCommand::class,
     ],
     ConfigFormatTestCommand::IDENTIFIER => [
         'class' => ConfigFormatTestCommand::class,

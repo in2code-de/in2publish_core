@@ -126,7 +126,7 @@ class ReplaceMarkersService
     {
         if (false !== strpos($string, '###CURRENT_PID###')) {
             if (null !== ($currentPid = $record->getPageIdentifier())) {
-                $string = str_replace('###CURRENT_PID###', $currentPid, $string);
+                $string = str_replace('###CURRENT_PID###', (string)$currentPid, $string);
             }
         }
         if (false !== strpos($string, '###THIS_UID###')) {
@@ -136,7 +136,7 @@ class ReplaceMarkersService
         }
         if (false !== strpos($string, '###STORAGE_PID###')) {
             if (null !== ($storagePid = $this->getStoragePidFromPage($record->getPageIdentifier()))) {
-                $string = str_replace('###STORAGE_PID###', $storagePid, $string);
+                $string = str_replace('###STORAGE_PID###', (string)$storagePid, $string);
             }
         }
         if (false !== strpos($string, '###PAGE_TSCONFIG')) {

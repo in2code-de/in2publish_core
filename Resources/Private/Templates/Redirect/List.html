@@ -1,0 +1,121 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+	  data-namespace-typo3-fluid="true"
+>
+	<f:layout name="Default"/>
+
+	<f:section name="HeaderNavigationRight">
+		<f:comment>Disable default pagePath and pageInfo.</f:comment>
+	</f:section>
+
+	<f:section name="Main">
+		<f:be.widget.paginate objects="{redirects}" as="paginatedRedirects" configuration="{ itemsPerPage: 20, insertAbove: 1, insertBelow: 1, recordsLabel: 'Redirects'}">
+			<f:form action="publish">
+				<table class="table">
+					<thead>
+						<tr>
+							<th><f:translate key="redirect.record.id" /></th>
+							<th><f:translate key="redirect.record.domain" /></th>
+							<th><f:translate key="redirect.record.source" /></th>
+							<th><f:translate key="redirect.record.target" /></th>
+							<th><f:translate key="redirect.record.status" /></th>
+							<th><f:translate key="redirect.record.actions" /></th>
+						</tr>
+					</thead>
+					<tbody>
+						<f:for each="{paginatedRedirects}" as="redirect">
+							<tr>
+								<td>{redirect.uid}</td>
+								<td>{redirect.sourceHost}</td>
+								<td>{redirect.sourcePath}</td>
+								<td>{redirect.target}</td>
+								<td>
+									<f:switch expression="{redirect.publishingState}">
+										<f:case value="publishable">
+											<span title="{f:render(partial: 'Redirect/DirtyProperties', arguments: _all)}">
+												<core:icon identifier="actions-code-fork" size="small"/>
+											</span>
+										</f:case>
+										<f:case value="siteRequired">
+											<span title="{f:translate(key:'redirect.status.missing_page_or_site')}">
+												<core:icon identifier="apps-pagetree-page" overlay="overlay-missing" size="small"/>
+											</span>
+										</f:case>
+										<f:case value="requiresPagePublishing">
+											<span title="{f:translate(key:'redirect.status.page_not_published', arguments:'{0: redirect.pageUid, 1: redirect.pageTitle}')}">
+												<core:icon identifier="apps-pagetree-page" overlay="overlay-warning" size="small"/>
+											</span>
+										</f:case>
+										<f:case value="unchanged">
+											<span title="{f:translate(key:'redirect.status.published')}">
+												<core:icon identifier="actions-check" size="small"/>
+											</span>
+										</f:case>
+									</f:switch>
+								</td>
+								<td>
+									<f:if condition="!{redirect.deleted}">
+										<be:link.editRecord class="btn btn-default" table="sys_redirect" uid="{redirect.uid}" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:edit')}">
+											<core:icon identifier="actions-open"/>
+										</be:link.editRecord>
+									</f:if>
+									<f:switch expression="{redirect.publishingState}">
+										<f:case value="publishable">
+											<div class="btn-group">
+												<label class="btn btn-default btn-checkbox">
+													<f:form.checkbox title="Select for bulk publishing" value="{redirect.uid}" style="margin: 0" name="redirects[]"/>
+													<f:variable name="viewPublishAll" value="1"/>
+													<span class="t3-icon fa"></span>
+												</label>
+												<f:link.action action="publish" class="btn btn-default" arguments="{redirects: {0: redirect}}" title="Publish">
+													<core:icon identifier="actions-caret-right" size="small"/>
+												</f:link.action>
+											</div>
+										</f:case>
+										<f:case value="siteRequired">
+											<f:link.action action="selectSite" class="btn btn-default" arguments="{redirect: redirect}" title="Publish with site association">
+												<core:icon identifier="actions-caret-right" overlay="overlay-external-link" size="small"/>
+											</f:link.action>
+										</f:case>
+									</f:switch>
+								</td>
+							</tr>
+						</f:for>
+					</tbody>
+					<f:if condition="{viewPublishAll}">
+						<tfoot>
+							<tr>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td></td>
+								<td><f:form.submit class="btn btn-default" value="{f:translate(key:'publish_all_selected')}"/></td>
+							</tr>
+						</tfoot>
+					</f:if>
+				</table>
+			</f:form>
+		</f:be.widget.paginate>
+		<div class="row">
+			<div class="col-md-6">
+				<f:translate key="redirect.legend.status"/>
+				<br>
+				<core:icon identifier="apps-pagetree-page" overlay="overlay-missing" size="small"/>: <f:translate key="redirect.legend.status.page_or_site_required"/>
+				<br>
+				<core:icon identifier="apps-pagetree-page" overlay="overlay-warning" size="small"/>: <f:translate key="redirect.legend.status.page_not_published"/>
+				<br>
+				<core:icon identifier="actions-code-fork" size="small"/>: <f:translate key="redirect.legend.status.unpublished_changes"/>
+				<br>
+				<core:icon identifier="actions-check" size="small"/>: <f:translate key="redirect.legend.status.published"/>
+			</div>
+			<div class="col-md-6">
+				<f:translate key="redirect.legend.actions"/>
+				<br>
+				<core:icon identifier="actions-caret-right" size="small"/>: <f:translate key="redirect.legend.actions.publish"/>
+				<br>
+				<core:icon identifier="actions-caret-right" overlay="overlay-external-link" size="small"/>: <f:translate key="redirect.legend.actions.associate_site_and_publish"/>
+			</div>
+		</div>
+	</f:section>
+</html>

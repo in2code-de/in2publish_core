@@ -75,7 +75,6 @@ class PreviewAnyRecordViewHelper extends AbstractViewHelper
         if (null === $uri) {
             return '';
         }
-        $uri = new Uri($uri);
         $uri = UriUtility::normalizeUri($uri);
         $uri = $uri->withScheme('')->withHost('');
         return (string)$uri;

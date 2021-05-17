@@ -69,10 +69,10 @@ class PreviewRecordViewHelper extends AbstractTagBasedViewHelper
             $this->arguments[self::ARG_STAGING_LEVEL]
         );
         if (null === $uri) {
-            return '';
+            return '&nbsp;';
         }
 
-        $this->tag->addAttribute('href', $uri);
+        $this->tag->addAttribute('href', (string)$uri);
         $this->tag->setContent($this->renderChildren());
         return $this->tag->render();
     }

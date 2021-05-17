@@ -64,6 +64,11 @@ class SshConnectionDefiner implements DefinerInterface
                                  ->addString('foreignKeyFingerprintHashingMethod', 'SSH2_FINGERPRINT_MD5')
                                  ->addBoolean('ignoreChmodFail', false)
                       )
+                      ->addArray(
+                          'debug',
+                          Builder::start()
+                                 ->addBoolean('showForeignKeyFingerprint', false)
+                      )
                       ->end();
     }
 

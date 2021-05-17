@@ -29,7 +29,6 @@ CREATE TABLE tx_in2code_in2publish_task
     PRIMARY KEY (uid)
 ) ENGINE = InnoDB;
 
-
 CREATE TABLE tx_in2code_in2publish_envelope
 (
     uid      int(11) unsigned        NOT NULL auto_increment,
@@ -39,4 +38,20 @@ CREATE TABLE tx_in2code_in2publish_envelope
     response longtext,
 
     PRIMARY KEY (uid)
+) ENGINE = InnoDB;
+
+CREATE TABLE sys_redirect
+(
+    tx_in2publishcore_page_uid int(11) unsigned DEFAULT NULL,
+    tx_in2publishcore_foreign_site_id  varchar(255)     DEFAULT NULL
+) ENGINE = InnoDB;
+
+CREATE TABLE tx_in2publishcore_pages_slug_data
+(
+    page_uid      int(11) unsigned        NOT NULL,
+    page_slug     varchar(255) DEFAULT '' NOT NULL,
+    page_language int(11) unsigned        NOT NULL,
+    url           varchar(255) DEFAULT '' NOT NULL,
+    site_id       varchar(255) DEFAULT '' NOT NULL,
+    KEY page (page_uid, page_slug)
 ) ENGINE = InnoDB;

@@ -141,6 +141,10 @@
 				<source>Related Records</source>
 				<target state="translated">Verknüpfte Datensätze</target>
 			</trans-unit>
+			<trans-unit id="record_state">
+				<source>Record State</source>
+				<target state="translated">Datensatz Status</target>
+			</trans-unit>
 
 			<trans-unit id="moduleselector.index">
 				<source>Introduction</source>
@@ -404,7 +408,7 @@
 				<target state="translated">Sichere, authentifizierte und verschlüsselte Befehlsausführung</target>
 			</trans-unit>
 			<trans-unit id="adapter.transmission.ssh">
-				<source>Secure, reliable and encrypted asset transission</source>
+				<source>Secure, reliable and encrypted asset transmission</source>
 				<target state="translated">Sichere, zuverlässige und Verschlüsselte Dateiübertragung</target>
 			</trans-unit>
 
@@ -436,6 +440,119 @@
 			<trans-unit id="context_menu_publish_entry.not_publishable">
 				<source>This record is not yet publishable.</source>
 				<target state="translated">Diese Seite ist noch nicht veröffentlichbar.</target>
+			</trans-unit>
+
+			<trans-unit id="tca.sys_redirect.columns.tx_in2publishcore_page_uid.label">
+				<source>Associated page</source>
+				<target state="translated">Verknüpfte Seite</target>
+			</trans-unit>
+			<trans-unit id="tca.sys_redirect.columns.tx_in2publishcore_foreign_site_id.label">
+				<source>Associated foreign Site</source>
+				<target state="translated">Verknüpfte Site des entfernten Systems</target>
+			</trans-unit>
+			<trans-unit id="tca.sys_redirect.columns.tx_in2publishcore_foreign_site_id.config.items.null">
+				<source>Use site from associated page</source>
+				<target state="translated">Site der verknüpften Seite benutzen</target>
+			</trans-unit>
+			<trans-unit id="tca.sys_redirect.palettes.tx_in2publishcore_association.label">
+				<source>Page/Site association</source>
+				<target state="translated">Seite/Site Verknüpfung</target>
+			</trans-unit>
+
+			<trans-unit id="save_and_publish">
+				<source>Save and publish</source>
+				<target state="translated">Speichern und veröffentlichen</target>
+			</trans-unit>
+			<trans-unit id="publish_all_selected">
+				<source>Publish all selected</source>
+				<target state="translated">Gewählte veröffentlichen</target>
+			</trans-unit>
+			<trans-unit id="redirect.legend.status">
+				<source>Status icons explained</source>
+				<target state="translated">Status Legende</target>
+			</trans-unit>
+			<trans-unit id="redirect.legend.status.page_or_site_required">
+				<source>The redirect requires an associated page or site to be published</source>
+				<target state="translated">Dieser Redirect benötigt eine verknüpfte Seite oder Site um veröffentlicht werden zu können</target>
+			</trans-unit>
+			<trans-unit id="redirect.legend.status.page_not_published">
+				<source>The associated page is not published</source>
+				<target state="translated">Die verknüpfte Seite ist nicht publiziert.</target>
+			</trans-unit>
+			<trans-unit id="redirect.legend.status.unpublished_changes">
+				<source>This redirect has unpublished changes. Hover over the icon to get more information</source>
+				<target state="translated">Der Redirect hat unveröffentlichte Änderungen. Den Mauszeiger auf das Icon bewegen um mehr zu erfahren</target>
+			</trans-unit>
+			<trans-unit id="redirect.legend.status.published">
+				<source>This redirect is published</source>
+				<target state="translated">Dieser Redirect ist publiziert</target>
+			</trans-unit>
+			<trans-unit id="redirect.legend.actions">
+				<source>Action icons explained</source>
+				<target state="translated">Aktionen Legende</target>
+			</trans-unit>
+			<trans-unit id="redirect.legend.actions.publish">
+				<source>This redirect can be published. Click to publish.</source>
+				<target state="translated">Dieser Redorect kann publiziert werden. Klicken um zu publizieren.</target>
+			</trans-unit>
+			<trans-unit id="redirect.legend.actions.associate_site_and_publish">
+				<source>This redirect can be published with a manual site association. Click to assign a Site and publish.</source>
+				<target state="translated">Dieser Redirect kann mit einer manuellen Site-Verknüpfung veröffentlicht werden. Klicken um eine Site zu verknüpfen und zu publizieren.</target>
+			</trans-unit>
+
+			<trans-unit id="redirect.record.property">
+				<source>Property</source>
+				<target state="translated">Eigenschaft</target>
+			</trans-unit>
+			<trans-unit id="redirect.record.property.old">
+				<source>Old value</source>
+				<target state="translated">Alt</target>
+			</trans-unit>
+			<trans-unit id="redirect.record.property.new">
+				<source>New value</source>
+				<target state="translated">Neu</target>
+			</trans-unit>
+			<trans-unit id="redirect.record.id">
+				<source>ID</source>
+				<target state="translated">ID</target>
+			</trans-unit>
+			<trans-unit id="redirect.record.domain">
+				<source>Domain</source>
+				<target state="translated">Domain</target>
+			</trans-unit>
+			<trans-unit id="redirect.record.source">
+				<source>Source</source>
+				<target state="translated">Quelle</target>
+			</trans-unit>
+			<trans-unit id="redirect.record.target">
+				<source>Target</source>
+				<target state="translated">Ziel</target>
+			</trans-unit>
+			<trans-unit id="redirect.record.status">
+				<source>Status</source>
+				<target state="translated">Status</target>
+			</trans-unit>
+			<trans-unit id="redirect.record.actions">
+				<source>Actions</source>
+				<target state="translated">Aktionen</target>
+			</trans-unit>
+
+			<trans-unit id="redirect.status.missing_page_or_site">
+				<source>Missing associated page or site</source>
+				<target state="translated">Fehlende Seite oder Seitenkonfiguration</target>
+			</trans-unit>
+			<trans-unit id="redirect.status.page_not_published">
+				<source>The associated page [%d] "%s" is not published</source>
+				<target state="translated">Die verknüpfte Seite [%d] "%s" ist nicht publiziert</target>
+			</trans-unit>
+			<trans-unit id="redirect.status.published">
+				<source>This redirect is published</source>
+				<target state="translated">Dieser Redirect ist publiziert</target>
+			</trans-unit>
+
+			<trans-unit id="refresh_page">
+				<source>Refresh page</source>
+				<target state="translated">Seite neu laden</target>
 			</trans-unit>
 		</body>
 	</file>

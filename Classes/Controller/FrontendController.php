@@ -49,7 +49,7 @@ class FrontendController extends AbstractController
      */
     public function previewAction($identifier = 1)
     {
-        $this->view->assign('local_preview', BackendUtility::buildPreviewUri('pages', $identifier, 'local'));
-        $this->view->assign('foreign_preview', BackendUtility::buildPreviewUri('pages', $identifier, 'foreign'));
+        $this->view->assign('local_preview', (string)BackendUtility::buildPreviewUri('pages', $identifier, 'local'));
+        $this->view->assign('foreign_preview', (string)BackendUtility::buildPreviewUri('pages', $identifier, 'foreign'));
     }
 }

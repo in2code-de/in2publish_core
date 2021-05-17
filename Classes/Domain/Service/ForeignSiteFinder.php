@@ -29,78 +29,128 @@ namespace In2code\In2publishCore\Domain\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Closure;
+use In2code\In2publishCore\Command\Status\AllSitesCommand;
 use In2code\In2publishCore\Command\Status\SiteConfigurationCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
 use In2code\In2publishCore\In2publishCoreException;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
+use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
+use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function base64_decode;
 use function explode;
 use function unserialize;
 
-/**
- * Class ForeignSiteFinder
- */
-class ForeignSiteFinder
+class ForeignSiteFinder implements LoggerAwareInterface
 {
-    /**
-     * @var RemoteCommandDispatcher
-     */
-    protected $rceDispatcher = null;
+    use LoggerAwareTrait;
 
-    /**
-     * @var VariableFrontend
-     */
-    protected $cache = null;
+    private const UNSERIALIZE_ALLOWED_CLASS = [Site::class, Uri::class, SiteLanguage::class];
 
-    /**
-     * ForeignSiteFinder constructor.
-     */
+    /** @var RemoteCommandDispatcher */
+    protected $rceDispatcher;
+
+    /** @var VariableFrontend */
+    protected $cache;
+
     public function __construct()
     {
         $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
         $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
     }
 
-    /**
-     * @param int $pageId
-     *
-     * @return Site
-     * @throws In2publishCoreException
-     * @throws SiteNotFoundException
-     */
     public function getSiteByPageId(int $pageId): Site
     {
-        $cacheKey = 'site_config_' . $pageId;
-        if (!$this->cache->has($cacheKey)) {
+        $closure = function () use ($pageId): Site {
             $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
             $request->setCommand(SiteConfigurationCommand::IDENTIFIER);
             $request->setOption((string)$pageId);
 
             $response = $this->rceDispatcher->dispatch($request);
 
-            if ($response->getExitStatus() === SiteConfigurationCommand::EXIT_NO_SITE) {
-                $site = false;
-            } elseif ($response->isSuccessful()) {
-                $responseText = $response->getOutputString();
-                $responseParts = explode(':', $responseText);
-                $serializedSite = base64_decode($responseParts[1]);
-                $site = unserialize($serializedSite);
-            } else {
-                throw new In2publishCoreException('An error occurred while fetching a remote site config');
+            if ($response->getExitStatus() === SiteConfigurationCommand::EXIT_PAGE_HIDDEN_OR_DISCONNECTED) {
+                throw new PageNotFoundException('PageNotFound on foreign during site identification', 1619783372);
+            } elseif ($response->getExitStatus() === SiteConfigurationCommand::EXIT_NO_SITE) {
+                throw new SiteNotFoundException();
             }
-            $this->cache->set($cacheKey, $site);
-        }
-        $site = isset($site) ? $site : $this->cache->get($cacheKey);
+            if ($response->isSuccessful()) {
+                return $this->processCommandResult($response);
+            }
+            $this->logger->alert(
+                'An error occurred while fetching a remote site config',
+                [
+                    'code' => $response->getExitStatus(),
+                    'errors' => $response->getErrors(),
+                    'output' => $response->getOutput()
+                ]
+            );
+            throw new In2publishCoreException('An error occurred while fetching a remote site config', 1620723511);
+        };
+        return $this->executeCached('site_page_' . $pageId, $closure);
+    }
 
-        if (false === $site) {
+    /** @return Site[] */
+    public function getAllSites(): array
+    {
+        $closure = function (): array {
+            $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
+            $request->setCommand(AllSitesCommand::IDENTIFIER);
+            $response = $this->rceDispatcher->dispatch($request);
+
+            if ($response->isSuccessful()) {
+                return $this->processCommandResult($response);
+            }
+            $this->logger->alert(
+                'An error occurred while fetching all foreign sites',
+                [
+                    'code' => $response->getExitStatus(),
+                    'errors' => $response->getErrors(),
+                    'output' => $response->getOutput()
+                ]
+            );
+            throw new In2publishCoreException('An error occurred while fetching all foreign sites');
+        };
+        return $this->executeCached('sites', $closure);
+    }
+
+    public function getSiteByIdentifier(string $identifier): ?Site
+    {
+        $sites = $this->getAllSites();
+        if (array_key_exists($identifier, $sites) && $sites[$identifier] instanceof Site) {
+            return $sites[$identifier];
+        }
+        return null;
+    }
+
+    protected function processCommandResult(RemoteCommandResponse $response)
+    {
+        $responseText = $response->getOutputString();
+        $responseParts = explode(':', $responseText);
+        $serializedSite = base64_decode($responseParts[1]);
+        $result = unserialize($serializedSite, ['allowed_classes' => self::UNSERIALIZE_ALLOWED_CLASS]);
+        if (false === $result) {
             throw new SiteNotFoundException();
         }
-        return $site;
+        return $result;
+    }
+
+    protected function executeCached(string $cacheKey, Closure $closure)
+    {
+        if (!$this->cache->has($cacheKey)) {
+            $result = $closure();
+            $this->cache->set($cacheKey, $result);
+            return $result;
+        }
+        return $this->cache->get($cacheKey);
     }
 }

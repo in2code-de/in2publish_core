@@ -36,6 +36,7 @@ use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
+use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\FileUtility;
 use Throwable;
@@ -794,6 +795,10 @@ class CommonRepository extends BaseRepository
         }
         $recordIdentifier = $record->getIdentifier();
         foreach ($this->tcaService->getAllTableNames($excludedTableNames) as $tableName) {
+            // Never search for redirects by their pid!
+            if ('sys_redirect' === $tableName) {
+                continue;
+            }
             if ($this->shouldSkipSearchingForRelatedRecordByTable($record, $tableName)) {
                 continue;
             }
@@ -2071,6 +2076,25 @@ class CommonRepository extends BaseRepository
         foreach ($record->getTranslatedRecords() as $translatedRecord) {
             $this->publishRecordRecursiveInternal($translatedRecord, $excludedTables);
         }
+
+        $tcaService = GeneralUtility::makeInstance(TcaService::class);
+        if (
+            $record->hasAdditionalProperty('isRoot')
+            && $record->getAdditionalProperty('isRoot') === true
+            && !empty($languageField = $tcaService->getLanguageField($record->getTableName()))
+            && (
+                $record->getLocalProperty($languageField) > 0
+                || $record->getForeignProperty($languageField) > 0
+            )
+            && !empty($pointerField = $tcaService->getTransOrigPointerField($record->getTableName()))
+            && $record->getMergedProperty($pointerField) > 0
+        ) {
+            $translationOriginals = $record->getRelatedRecordByTableAndProperty($record->getTableName(), 'uid', $record->getMergedProperty($pointerField));
+            foreach ($translationOriginals as $translationOriginal) {
+                $this->publishRecordRecursiveInternal($translationOriginal, $excludedTables);
+            }
+        }
+
         foreach ($record->getRelatedRecords() as $tableName => $relatedRecords) {
             if (!in_array($tableName, $excludedTables) && is_array($relatedRecords)) {
                 /** @var RecordInterface $relatedRecord */

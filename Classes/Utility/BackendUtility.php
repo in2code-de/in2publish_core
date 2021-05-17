@@ -34,6 +34,7 @@ use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use In2code\In2publishCore\Service\Routing\SiteService;
 use PDO;
+use Psr\Http\Message\UriInterface;
 use Throwable;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
@@ -143,6 +144,14 @@ class BackendUtility
         // get id from record ?data[tt_content][13]=foo
         if (null !== ($data = GeneralUtility::_GP('data')) && is_array($data) && in_array(key($data), $tableNames)) {
             $table = key($data);
+            if (
+                is_array($data[$table])
+                && is_string(key($data[$table]))
+                && 0 === strpos(key($data[$table]), 'NEW_')
+                && array_key_exists('pid', current($data[$table]))
+            ) {
+                return (int)current($data[$table])['pid'];
+            }
             $query = $localConnection->createQueryBuilder();
             $query->getRestrictions()->removeAll();
             $result = $query->select('pid')
@@ -262,10 +271,10 @@ class BackendUtility
      * @param int $identifier
      * @param string $stagingLevel
      *
-     * @return string|null
+     * @return null|UriInterface
      * @throws In2publishCoreException
      */
-    public static function buildPreviewUri(string $table, int $identifier, string $stagingLevel)
+    public static function buildPreviewUri(string $table, int $identifier, string $stagingLevel): ?UriInterface
     {
         $rawRecordService = GeneralUtility::makeInstance(RawRecordService::class);
         $row = $rawRecordService->getRawRecord($table, $identifier, $stagingLevel);
@@ -431,7 +440,7 @@ class BackendUtility
         int $language,
         int $pageUid
     ): Closure {
-        return static function () use ($buildPageUrl, $site, $language, $pageUid): ?string {
+        return static function () use ($buildPageUrl, $site, $language, $pageUid): ?UriInterface {
             // Please forgive me for this ugliest of all hacks. I tried everything.
 
             // temporarily point the pages table to the foreign database connection, to make PageRepository->getPage fetch the foreign page
@@ -488,9 +497,9 @@ class BackendUtility
      */
     protected static function getLocalUriClosure(Site $site, int $pageUid, $additionalQueryParams): Closure
     {
-        return static function () use ($site, $pageUid, $additionalQueryParams) : ?string {
+        return static function () use ($site, $pageUid, $additionalQueryParams) : ?UriInterface {
             try {
-                return (string)$site->getRouter()->generateUri(
+                return $site->getRouter()->generateUri(
                     $pageUid,
                     $additionalQueryParams,
                     '',
