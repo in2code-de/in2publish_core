@@ -44,7 +44,7 @@ class PublishSortingDefiner implements DefinerInterface
                     ->addArray(
                         'publishSorting',
                         Builder::start()
-                            ->addBoolean('enabled', true)
+                            ->addBoolean('enable', true)
                     )
             )
             ->end();
