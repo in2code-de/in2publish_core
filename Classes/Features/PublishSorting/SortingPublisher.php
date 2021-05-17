@@ -115,7 +115,7 @@ class SortingPublisher implements SingletonInterface
     public function publishSortingRecursively(
         RecordInterface $record,
         CommonRepository $commonRepository
-    ) {
+    ): void {
         foreach ($this->sortingsToBePublished as $tableName => $pidList) {
             $uidArray = [];
             $uidList = $this->getRecordUidsForTableAndPids($tableName, $pidList);
@@ -126,7 +126,7 @@ class SortingPublisher implements SingletonInterface
         }
     }
 
-    protected function getRecordUidsForTableAndPids(string $tableName, array $pidList)
+    protected function getRecordUidsForTableAndPids(string $tableName, array $pidList): Statement
     {
         $pidList = array_keys($pidList);
         $query = $this->localDatabase->createQueryBuilder();
