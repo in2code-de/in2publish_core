@@ -86,7 +86,6 @@ class SortingPublisher implements SingletonInterface
     ) {
         if ($this->tableContainsFieldsSortingAndPid($tableName) === true) {
             $pid = $record->getLocalProperties()['pid'];
-            $pid = 2;
             // check if field sorting has changed
             if ($record->getLocalProperties()['sorting'] !== $record->getForeignProperties()['sorting']) {
                 if (array_key_exists($tableName, $this->sortingsToBePublished)) {
