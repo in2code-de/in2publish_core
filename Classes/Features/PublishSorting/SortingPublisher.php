@@ -34,8 +34,6 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -52,12 +50,12 @@ class SortingPublisher implements SingletonInterface
     /**
      * @var Connection
      */
-    protected $localDatabase = null;
+    protected $localDatabase;
 
     /**
      * @var Connection
      */
-    protected $foreignDatabase = null;
+    protected $foreignDatabase;
 
     /**
      * Constructor
