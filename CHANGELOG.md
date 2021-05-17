@@ -1,5 +1,59 @@
 # In2publish Core Change Log
 
+9.4.0:
+
+- [META] Set the branch alias version number to 9.4.x-dev
+- [META] Set the EM conf version number to 9.4.0
+- [BUGFIX] Fix exception when publishing deleted redirects
+- [TASK] remove unused import and use right indent
+- [TASK] enable publish deletion of redirects
+- [BUGFIX] Remove redundant module.m5 option, add docs for redirects support
+- [BUGFIX] Publish redirects which were filtered becasue they are deleted and unpublished
+- [BUGFIX] Add test to identify site config language differences
+- [BUGFIX] Provide missing icons for TYPO3 v9
+- [BUGFIX] Always publish language originals
+- [TASK] publish default and translated page
+- [BUGFIX] Add missing exception code
+- [TYPO] transission -> transmission
+- [BUGFIX] Never relate redirects by their PID
+- [BUGFIX] Share the RecordFactories runtimeCache between instances
+- [BUGFIX] Skip URL generation for deleted pages
+- [BUGFIX] Publish translation original when publishing via specific record publishing
+- [BUGFIX] Check if the pointer field is set before accessing it
+- [TASK] publish default and translated page
+- [BUGFIX] Do not enable redirects support when EXT:redirects is not loaded
+- [BUGFIX] Typecast properties to be used in str_replace
+- [FEATURE] Support TYPO3 redirects
+- [DOCS] Add known issue for missing icons in publish redirect module in v9
+- [CODESTYLE] Reformat TypoScript and add editorconfig rules
+- [BUGFIX] Add extbase table mapping for TYPO3 version 9
+- [BUGFIX] Remove trailing method call comma for PHP 7.2 compat
+- [BUGFIX] Replace Command::SUCCESS constant with 0 for TYPO3 v9
+- [BUGFIX] Skip constraint for deleted redirects if none are deleted on foreign
+- [FEATURE] Rebuild redirects cache after publishing a redirect
+- [BUGFIX] Hide the edit button for deleted records
+- [FEATURE] Exclude fully deleted redirects from the module
+- [BUGFIX] Include deleted redirects
+- [FEATURE] Remove discarded concepts, add support in simplePublish
+- Wip: [FEATURE] Finish backend module for redirect publishing
+- Wip: [FEATURE] List all redirects with state and publish button
+- Wip: [FEATURE] Add Backend Module to publish redirects
+- [BUGFIX] Ignore pages without sites
+- [BUGFIX] Resolve redirects recursively
+- [FEATURE] Resolve relations to TYPO3 v10 redirects and publish them with changed source_host
+- [BUGFIX] Do not log failed site searches for disconnected pages.
+- [BUGFIX] Output non-breaking space if no preview URL could be rendered.
+- [FEATURE] Show dirty properties for deleted records
+- [BUGFIX] Show foreign properties on dirty properties foreign side
+- [TASK] show properties if deleted on right side
+- [TASK] show deletion state and history button
+- [BUGFIX] Skip DataHandler cmdmap with integer keys in getPageIdentifier
+- [BUGFIX] Detect pid from newly created records
+- [REFACTOR] Move ssh connection debug option to ssh connection definer
+- [BUGFIX] Do not select from sys_domain if table does not exist
+- [GIT] Don't export the Build folder into releases
+- [RELEASE] Version 9.3.1 with fixes for TCA pre proc., empty pointer values and deleted records
+
 9.3.1:
 
 - [META] Set the EM conf version number to 9.3.1
