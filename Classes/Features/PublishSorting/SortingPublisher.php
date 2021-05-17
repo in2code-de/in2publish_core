@@ -45,11 +45,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class SortingPublisher implements SingletonInterface
 {
     /**
-     * @var Logger
-     */
-    protected $logger = null;
-
-    /**
      * @var array
      */
     protected $sortingsToBePublished;
@@ -71,7 +66,6 @@ class SortingPublisher implements SingletonInterface
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->sortingsToBePublished = [];
