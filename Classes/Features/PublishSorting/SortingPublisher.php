@@ -29,8 +29,6 @@ namespace In2code\In2publishCore\Features\PublishSorting;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\Driver\Statement;
-use Doctrine\DBAL\Exception\InvalidFieldNameException;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Service\Configuration\TcaService;
@@ -39,16 +37,8 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class SortingPublisher
- */
 class SortingPublisher implements SingletonInterface
 {
-    /**
-     * @var array
-     */
-    protected $sortingsToBePublished;
-
     /**
      * @var Connection
      */
@@ -60,62 +50,47 @@ class SortingPublisher implements SingletonInterface
     protected $foreignDatabase;
 
     /**
-     * Constructor
-     *
+     * @var TcaService
+     */
+    protected $tcaService;
+
+    /**
+     * @var array
+     */
+    protected $sortingsToBePublished = [];
+
+    /**
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
-        $this->sortingsToBePublished = [];
+        $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
     }
 
     public function collectSortingsToBePublished(
         string $tableName,
         RecordInterface $record,
         CommonRepository $commonRepository
-    ) {
-        $tcaService = GeneralUtility::makeInstance(TcaService::class);
-        if (!$tcaService->getNameOfSortingField($tableName)) {
-            return false;
+    ): void {
+        if (!$record->hasLocalProperty('pid')) {
+            return;
         }
-        if ($this->tableContainsPid($tableName)) {
-            $pid = $record->getLocalProperties()['pid'];
-            // check if field sorting has changed
-            $sortingField = $tcaService->getNameOfSortingField($tableName);
-            if ($record->getLocalProperties()[$sortingField] !== $record->getForeignProperties()[$sortingField]) {
-                if (array_key_exists($tableName, $this->sortingsToBePublished)) {
-                    $tableArray = $this->sortingsToBePublished[$tableName];
-                    // skip if sorting array contains $pid/$tableName
-                    if (array_key_exists($pid, $tableArray)) {
-                        return;
-                    }
-                    // add to sorting array if $pid is missing
-                    $this->sortingsToBePublished[$tableName][$pid] = $pid;
-
-                    return;
-                }
-                // add to sorting array if $tableName is missing
-                $this->sortingsToBePublished[$tableName][$pid] = $pid;
-            }
+        $pid = $record->getLocalProperty('pid');
+        if (isset($this->sortingsToBePublished[$tableName][$pid])) {
+            return;
         }
-    }
 
-    protected function tableContainsPid(string $tableName): bool
-    {
-        $query = $this->localDatabase->createQueryBuilder();
+        $sortingField = $this->tcaService->getNameOfSortingField($tableName);
 
-        try {
-            $constraint = $query->expr()->gt('pid', $query->createNamedParameter(0));
-            $query->select('*')
-                ->from($tableName)
-                ->where($constraint);
-            $query->execute();
+        if (empty($sortingField)) {
+            return;
+        }
 
-            return true;
-        } catch (InvalidFieldNameException $ex) {
-            return false;
+        // check if field sorting has changed
+        if ($record->getLocalProperty($sortingField) !== $record->getForeignProperty($sortingField)) {
+            $this->sortingsToBePublished[$tableName][$pid] = $pid;
         }
     }
 
@@ -124,48 +99,28 @@ class SortingPublisher implements SingletonInterface
         CommonRepository $commonRepository
     ): void {
         foreach ($this->sortingsToBePublished as $tableName => $pidList) {
-            $uidArray = [];
-            $uidList = $this->getRecordUidsForTableAndPids($tableName, $pidList);
-            while ($uid = $uidList->fetch()) {
-                $uidArray[] = $uid['uid'];
+            $query = $this->localDatabase->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->select('uid', 'sorting')
+                  ->from($tableName)
+                  ->where($query->expr()->in('pid', $pidList));
+            $statement = $query->execute();
+            $localRows = $statement->fetchAll();
+
+            $updates = [];
+            foreach ($localRows as $localRow) {
+                $updates[$localRow['sorting']][] = $localRow['uid'];
             }
-            $this->publishSortingForUidList($tableName, $uidArray);
-        }
-    }
 
-    protected function getRecordUidsForTableAndPids(string $tableName, array $pidList): Statement
-    {
-        $pidList = array_keys($pidList);
-        $query = $this->localDatabase->createQueryBuilder();
-        $constraint = $query->expr()->in('pid', $pidList);
+            foreach ($updates as $sorting => $uidList) {
+                $sortingField = $this->tcaService->getNameOfSortingField($tableName);
 
-        return $query->select('uid', 'sorting')
-            ->from($tableName)
-            ->where($constraint)
-            ->execute();
-    }
-
-    protected function publishSortingForUidList(string $tableName, array $uidList): void
-    {
-        $localQuery = $this->localDatabase->createQueryBuilder();
-        $foreignQuery = $this->foreignDatabase->createQueryBuilder();
-
-        foreach ($uidList as $uid) {
-            $uidConstraint = $localQuery->expr()->eq('uid', $uid);
-            $statement = $localQuery
-                ->select('uid', 'sorting')
-                ->from($tableName)
-                ->where($uidConstraint)
-                ->setMaxResults(1)
-                ->execute();
-
-            while ($row = $statement->fetch()) {
-                $sorting = $row['sorting'];
-                $foreignQuery
-                    ->update($tableName)
-                    ->where($uidConstraint)
-                    ->set('sorting', $sorting)
-                    ->execute();
+                $updateQuery = $this->foreignDatabase->createQueryBuilder();
+                $updateQuery->getRestrictions()->removeAll();
+                $updateQuery->update($tableName)
+                            ->set($sortingField, $sorting)
+                            ->where($updateQuery->expr()->in('uid', $uidList))
+                            ->execute();
             }
         }
     }
