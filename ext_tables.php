@@ -276,20 +276,23 @@
 
 
     /****************************************** Publish sorting **************************************************/
+    if ($configContainer->get('features.publishSorting.enable')) {
+        /** @see \In2code\In2publishCore\Features\PublishSorting\SortingPublisher::collectSortingsToBePublished() */
+        $signalSlotDispatcher->connect(
+            \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+            'publishRecordRecursiveBeforePublishing',
+            \In2code\In2publishCore\Features\PublishSorting\SortingPublisher::class,
+            'collectSortingsToBePublished'
+        );
 
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveBeforePublishing',
-        \In2code\In2publishCore\Features\PublishSorting\SortingPublisher::class,
-        'collectSortingsToBePublished'
-    );
-
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveEnd',
-        \In2code\In2publishCore\Features\PublishSorting\SortingPublisher::class,
-        'publishSortingRecursively'
-    );
+        /** @see \In2code\In2publishCore\Features\PublishSorting\SortingPublisher::publishSortingRecursively() */
+        $signalSlotDispatcher->connect(
+            \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+            'publishRecordRecursiveEnd',
+            \In2code\In2publishCore\Features\PublishSorting\SortingPublisher::class,
+            'publishSortingRecursively'
+        );
+    }
 
     /*********************************************** Tests Registration ***********************************************/
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Adapter\AdapterSelectionTest::class;
