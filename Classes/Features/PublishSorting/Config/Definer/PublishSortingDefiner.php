@@ -38,16 +38,16 @@ class PublishSortingDefiner implements DefinerInterface
     public function getLocalDefinition(): NodeCollection
     {
         return Builder::start()
-            ->addArray(
-                'features',
-                Builder::start()
-                    ->addArray(
-                        'publishSorting',
-                        Builder::start()
-                            ->addBoolean('enable', true)
-                    )
-            )
-            ->end();
+                      ->addArray(
+                          'features',
+                          Builder::start()
+                                 ->addArray(
+                                     'publishSorting',
+                                     Builder::start()
+                                            ->addBoolean('enable', true)
+                                 )
+                      )
+                      ->end();
     }
 
     public function getForeignDefinition(): NodeCollection
