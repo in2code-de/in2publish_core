@@ -665,6 +665,7 @@ class RecordFactory implements SingletonInterface
                         $tableName
                     );
                     foreach ($translatedRecords as $translatedRecord) {
+                        $translatedRecord->setParentRecord($record);
                         $record->addTranslatedRecord($translatedRecord);
                     }
                 }
