@@ -229,6 +229,10 @@ class CommonRepository extends BaseRepository
         if ($this->shouldSkipFindByIdentifier($identifier, $tableName)) {
             return GeneralUtility::makeInstance(NullRecord::class, $tableName);
         }
+        $record = $this->recordFactory->getCachedRecord($tableName, $identifier);
+        if (null !== $record) {
+            return $record;
+        }
         $local = $this->findPropertiesByProperty(
             $this->localDatabase,
             $idFieldName,
