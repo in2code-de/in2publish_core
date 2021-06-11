@@ -162,6 +162,8 @@ abstract class BaseRepository
                 $propertyValue[$idx] = $query->getConnection()->quote($value);
             }
             $constraint = $query->expr()->in($propertyName, $propertyValue);
+        } elseif (is_int($propertyValue) || MathUtility::canBeInterpretedAsInteger($propertyValue)) {
+            $constraint = $query->expr()->eq($propertyName, $query->createNamedParameter($propertyValue));
         } else {
             $constraint = $query->expr()->like($propertyName, $query->createNamedParameter($propertyValue));
         }
@@ -246,6 +248,8 @@ abstract class BaseRepository
         foreach ($properties as $propertyName => $propertyValue) {
             if (null === $propertyValue) {
                 $query->andWhere($query->expr()->isNull($propertyName));
+            } elseif (is_int($propertyValue) || MathUtility::canBeInterpretedAsInteger($propertyValue)) {
+                $query->andWhere($query->expr()->eq($propertyName, $query->createNamedParameter($propertyValue)));
             } else {
                 $query->andWhere($query->expr()->like($propertyName, $query->createNamedParameter($propertyValue)));
             }
