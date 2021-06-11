@@ -40,8 +40,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
 use function array_column;
-use function array_combine;
 use function explode;
+use function implode;
 use function json_encode;
 use function preg_match;
 use function sprintf;
@@ -187,22 +187,7 @@ abstract class BaseRepository
         }
         $rows = $query->execute()->fetchAll();
 
-        if (strpos($indexField, ',')) {
-            $combinedIdentifier = explode(',', $indexField);
-            foreach ($rows as $row) {
-                $identifierArray = [];
-                foreach ($combinedIdentifier as $identifierFieldName) {
-                    $identifierArray[] = $row[$identifierFieldName];
-                }
-                $propertyArray[implode(',', $identifierArray)] = $row;
-            }
-            return $propertyArray;
-        }
-        foreach ($rows as $row) {
-            $propertyArray[$row[$indexField]] = $row;
-        }
-
-        return $propertyArray;
+        return $this->indexRowsByField($indexField, $rows);
     }
 
     /**
@@ -265,7 +250,8 @@ abstract class BaseRepository
             $query->setMaxResults((int)$limit);
         }
         $rows = $query->execute()->fetchAll();
-        return array_combine(array_column($rows, $indexField), $rows);
+
+        return $this->indexRowsByField($indexField, $rows);
     }
 
     /**
@@ -439,6 +425,33 @@ abstract class BaseRepository
                 'tableName' => $tableName,
             ]
         );
+    }
+
+    /**
+     * Sets a new index for all entries in $rows. Does not check for duplicate keys.
+     * If there are duplicates, the last one is final.
+     *
+     * @param string $indexField Single field name or comma separated, if more than one field.
+     * @param array $rows The rows to reindex
+     * @return array The rows with the new index.
+     */
+    protected function indexRowsByField(string $indexField, array $rows): array
+    {
+        if (strpos($indexField, ',')) {
+            $newRows = [];
+            $combinedIdentifier = explode(',', $indexField);
+
+            foreach ($rows as $row) {
+                $identifierArray = [];
+                foreach ($combinedIdentifier as $identifierFieldName) {
+                    $identifierArray[] = $row[$identifierFieldName];
+                }
+                $newRows[implode(',', $identifierArray)] = $row;
+            }
+            return $newRows;
+        }
+
+        return array_column($rows, null, $indexField);
     }
 
     /*************************
