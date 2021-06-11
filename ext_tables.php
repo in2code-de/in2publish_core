@@ -351,4 +351,33 @@
             ]
         );
     }
+    /************************************************ Skip Empty Table ************************************************/
+    /** @see \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter::shouldSkipSearchingForRelatedRecordsByProperty() */
+    $signalSlotDispatcher->connect(
+        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+        'shouldSkipSearchingForRelatedRecordsByProperty',
+        \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter::class,
+        'shouldSkipSearchingForRelatedRecordsByProperty'
+    );
+    /** @see \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter::shouldSkipFindByIdentifier() */
+    $signalSlotDispatcher->connect(
+        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+        'shouldSkipFindByIdentifier',
+        \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter::class,
+        'shouldSkipFindByIdentifier'
+    );
+    /** @see \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter::shouldSkipFindByProperty() */
+    $signalSlotDispatcher->connect(
+        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+        'shouldSkipFindByProperty',
+        \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter::class,
+        'shouldSkipFindByProperty'
+    );
+    /** @see \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter::shouldSkipSearchingForRelatedRecordByTable() */
+    $signalSlotDispatcher->connect(
+        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+        'shouldSkipSearchingForRelatedRecordByTable',
+        \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter::class,
+        'shouldSkipSearchingForRelatedRecordByTable'
+    );
 })();
