@@ -396,4 +396,11 @@
             );
         }
     );
+    /** @see \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableByPidVoter::shouldSkipSearchingForRelatedRecordByTable() */
+    $signalSlotDispatcher->connect(
+        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+        'shouldSkipSearchingForRelatedRecordByTable',
+        \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableByPidVoter::class,
+        'shouldSkipSearchingForRelatedRecordByTable'
+    );
 })();
