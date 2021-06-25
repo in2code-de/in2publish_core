@@ -203,6 +203,7 @@ class CommonRepository extends BaseRepository
         if (null !== $tableName) {
             $this->setTableName($tableName);
         }
+        $this->signalSlotDispatcher->dispatch(__CLASS__, 'instanceCreated', [$this]);
     }
 
     /**
