@@ -38,28 +38,35 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-use function array_column;
-use function array_combine;
-use function array_diff;
 use function array_key_exists;
-use function array_keys;
 use function in_array;
+use function ksort;
 
 class SkipTableVoter implements SingletonInterface
 {
     /** @var LoggerInterface */
     protected $logger;
 
-    /** @var null|array */
-    protected $tablesToSkip = null;
+    /** @var Connection */
+    protected $local;
 
+    /** @var Connection */
+    protected $foreign;
+
+    /** @var array<string, bool> */
+    protected $tables = [];
+
+    /** @var array<string, array<string, int>> */
     protected $statistics = [
-        'skipped' => [],
+        'query' => [],
+        'skip' => [],
     ];
 
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
+        $this->local = DatabaseUtility::buildLocalDatabaseConnection();
+        $this->foreign = DatabaseUtility::buildForeignDatabaseConnection();
     }
 
     public function shouldSkipSearchingForRelatedRecordsByProperty(
@@ -67,52 +74,47 @@ class SkipTableVoter implements SingletonInterface
         CommonRepository $repository,
         array $arguments
     ): array {
-        $this->initialize();
         $config = $arguments['columnConfiguration'];
-        if (
-            empty($config['type'])
-            || !in_array($config['type'], ['select', 'group', 'inline'])
-        ) {
+        if (empty($config['type']) || !in_array($config['type'], ['select', 'group', 'inline'])) {
             return [$votes, $repository, $arguments];
         }
 
-        if (
-            (array_key_exists('MM', $config) && isset($this->tablesToSkip[$config['MM']]))
-            || (array_key_exists('foreign_table', $config) && isset($this->tablesToSkip[$config['foreign_table']]))
-            || $this->isGroupDbWhereAllAllowedTablesAreEmpty($config)
-        ) {
-            $this->statistics['skipped'][__FUNCTION__]++;
+        if (array_key_exists('MM', $config) && $this->isEmptyTable($config['MM'])) {
+            $this->statistics['skip'][$config['MM']]++;
+            $votes['yes']++;
+        } elseif (array_key_exists('foreign_table', $config) && $this->isEmptyTable($config['foreign_table'])) {
+            $this->statistics['skip'][$config['foreign_table']]++;
+            $votes['yes']++;
+        } elseif ($this->isGroupDbWhereAllAllowedTablesAreEmpty($config)) {
+            $this->statistics['skip'][$config['allowed']]++;
+            $votes['yes']++;
+        }
+
+        return [$votes, $repository, $arguments];
+    }
+
+    public function shouldSkipFindByIdentifier(
+        array $votes,
+        CommonRepository $repository,
+        array $arguments
+    ): array {
+        if ($this->isEmptyTable($arguments['tableName'])) {
+            $this->statistics['skip'][$arguments['tableName']]++;
             $votes['yes']++;
         }
         return [$votes, $repository, $arguments];
     }
 
-    protected function isGroupDbWhereAllAllowedTablesAreEmpty(array $columnConfiguration): bool
-    {
-        if (
-            'group' === $columnConfiguration['type']
-            && 'db' === ($columnConfiguration['internal_type'] ?? 'none')
-            && array_key_exists('allowed', $columnConfiguration)
-        ) {
-            $tables = GeneralUtility::trimExplode(',', $columnConfiguration['allowed']);
-            if (!in_array('*', $tables)) {
-                $diff = array_diff($tables, $this->tablesToSkip);
-                if (empty($diff)) {
-                    return true;
-                }
-            }
+    public function shouldSkipFindByProperty(
+        array $votes,
+        CommonRepository $repository,
+        array $arguments
+    ): array {
+        if ($this->isEmptyTable($arguments['tableName'])) {
+            $this->statistics['skip'][$arguments['tableName']]++;
+            $votes['yes']++;
         }
-        return false;
-    }
-
-    public function shouldSkipFindByIdentifier(array $votes, CommonRepository $repository, array $arguments): array
-    {
-        return $this->shouldSkipByTablename($votes, $repository, $arguments, __FUNCTION__);
-    }
-
-    public function shouldSkipFindByProperty(array $votes, CommonRepository $repository, array $arguments): array
-    {
-        return $this->shouldSkipByTablename($votes, $repository, $arguments, __FUNCTION__);
+        return [$votes, $repository, $arguments];
     }
 
     public function shouldSkipSearchingForRelatedRecordByTable(
@@ -120,50 +122,45 @@ class SkipTableVoter implements SingletonInterface
         CommonRepository $repository,
         array $arguments
     ): array {
-        return $this->shouldSkipByTablename($votes, $repository, $arguments, __FUNCTION__);
-    }
-
-    protected function shouldSkipByTablename(
-        array $votes,
-        CommonRepository $repository,
-        array $arguments,
-        string $function
-    ): array {
-        $this->initialize();
-        $table = $arguments['tableName'];
-        if (isset($this->tablesToSkip[$table])) {
-            $this->statistics['skipped'][$function]++;
+        if ($this->isEmptyTable($arguments['tableName'])) {
+            $this->statistics['skip'][$arguments['tableName']]++;
             $votes['yes']++;
         }
         return [$votes, $repository, $arguments];
     }
 
-    /**
-     * Identify all tables which are empty.
-     * "SELECT 1 FROM table" returns "1" if at least one row exists.
-     * This is the most efficient way to check if a table is empty.
-     */
-    protected function initialize(): void
+    protected function isGroupDbWhereAllAllowedTablesAreEmpty(array $config): bool
     {
-        if (null !== $this->tablesToSkip) {
-            return;
-        }
-        $allTables = $this->identifyAllTablesInTCA();
-
-        $localConnection = DatabaseUtility::buildLocalDatabaseConnection();
-        $foreignConnection = DatabaseUtility::buildForeignDatabaseConnection();
-        if (null === $localConnection || null === $foreignConnection) {
-            return;
-        }
-        foreach ($allTables as $table) {
-            if ($this->isTableEmpty($localConnection, $table) && $this->isTableEmpty($foreignConnection, $table)) {
-                $this->tablesToSkip[$table] = $table;
+        if (
+            'group' === $config['type']
+            && 'db' === ($config['internal_type'] ?? 'none')
+            && array_key_exists('allowed', $config)
+        ) {
+            $tables = GeneralUtility::trimExplode(',', $config['allowed']);
+            foreach ($tables as $table) {
+                if ('*' === $table) {
+                    return false;
+                }
+                if (!$this->isEmptyTable($table)) {
+                    return false;
+                }
             }
+            return true;
         }
+        return false;
     }
 
-    protected function isTableEmpty(Connection $connection, string $table): bool
+    protected function isEmptyTable(string $table): bool
     {
+        if (!array_key_exists($table, $this->tables)) {
+            $this->tables[$table] = $this->isEmpty($this->local, $table) && $this->isEmpty($this->foreign, $table);
+        }
+        return $this->tables[$table];
+    }
+
+    protected function isEmpty(Connection $connection, string $table): bool
+    {
+        $this->statistics['query'][$table]++;
         try {
             $query = 'SELECT 1 FROM ' . $connection->quoteIdentifier($table) . ';';
             $exists = $connection->executeQuery($query)->fetchColumn();
@@ -177,27 +174,10 @@ class SkipTableVoter implements SingletonInterface
         return false;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
-    protected function identifyAllTablesInTCA()
-    {
-        $allTables = array_keys($GLOBALS['TCA']);
-        $allTables = array_combine($allTables, $allTables);
-        $condensedTca = array_combine($allTables, array_column($GLOBALS['TCA'], 'columns'));
-        foreach ($condensedTca as $columns) {
-            foreach (array_column($columns, 'config') as $config) {
-                $type = $config['type'] ?? 'none';
-                if ($type === 'select' && !empty($config['MM'])) {
-                    $allTables[$config['MM']] = $config['MM'];
-                }
-            }
-        }
-        return $allTables;
-    }
-
     public function __destruct()
     {
+        ksort($this->statistics['skip']);
+        ksort($this->statistics['query']);
         $this->logger->debug('SkipTableVoter statistics', $this->statistics);
     }
 }
