@@ -409,6 +409,25 @@
                     'shouldSkipSearchingForRelatedRecordByTable'
                 );
             }
+
+            /********************************************* Skip RootLevel *********************************************/
+            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipRootLevelVoter::shouldSkipSearchingForRelatedRecordByTable() */
+            $voter = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+                \In2code\In2publishCore\Features\SkipTableVoting\SkipRootLevelVoter::class
+            );
+            $signalSlotDispatcher->connect(
+                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+                'shouldSkipSearchingForRelatedRecordByTable',
+                $voter,
+                'shouldSkipSearchingForRelatedRecordByTable'
+            );
+            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipRootLevelVoter::shouldSkipSearchingForRelatedRecordsByProperty() */
+            $signalSlotDispatcher->connect(
+                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+                'shouldSkipSearchingForRelatedRecordsByProperty',
+                $voter,
+                'shouldSkipSearchingForRelatedRecordsByProperty'
+            );
         }
     );
 })();
