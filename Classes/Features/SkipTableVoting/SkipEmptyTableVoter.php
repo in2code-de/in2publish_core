@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Features\SkipEmptyTable;
+namespace In2code\In2publishCore\Features\SkipTableVoting;
 
 /*
  * Copyright notice
@@ -42,7 +42,7 @@ use function array_key_exists;
 use function in_array;
 use function ksort;
 
-class SkipTableVoter implements SingletonInterface
+class SkipEmptyTableVoter implements SingletonInterface
 {
     /** @var LoggerInterface */
     protected $logger;
