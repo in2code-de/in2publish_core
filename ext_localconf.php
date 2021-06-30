@@ -94,8 +94,8 @@
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
         'In2code.in2publishCore',
         'Pi1',
-        ['Frontend' => 'preview'],
-        ['Frontend' => 'preview']
+        [\In2code\In2publishCore\Controller\FrontendController::class => 'preview'],
+        [\In2code\In2publishCore\Controller\FrontendController::class => 'preview']
     );
 
     /***************************************** Register Communication Adapter *****************************************/
