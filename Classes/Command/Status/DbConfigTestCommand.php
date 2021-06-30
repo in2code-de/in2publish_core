@@ -49,7 +49,7 @@ class DbConfigTestCommand extends Command
              ->setHidden(true);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $queryBuilder = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
         $predicates = $queryBuilder->expr()->eq(

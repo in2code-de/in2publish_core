@@ -25,7 +25,7 @@ class BackupCommand extends Command
              ->addArgument(self::ARG_TABLE_NAME, InputArgument::REQUIRED, self::ARG_TABLE_NAME_DESCRIPTION);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $tableName = $input->getArgument(self::ARG_TABLE_NAME);
         $logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);

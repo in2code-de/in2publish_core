@@ -60,7 +60,7 @@ TXT;
         return GeneralUtility::makeInstance(ContextService::class)->isForeign();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
         $result = [];

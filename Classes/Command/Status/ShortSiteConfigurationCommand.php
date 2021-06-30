@@ -49,7 +49,7 @@ class ShortSiteConfigurationCommand extends Command
              ->setHidden(true);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
         $shortInfo = [];

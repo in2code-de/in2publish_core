@@ -62,7 +62,7 @@ class ExecuteCommand extends Command
         return GeneralUtility::makeInstance(ContextService::class)->isForeign();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
 
