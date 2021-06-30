@@ -14,8 +14,8 @@ $EM_CONF[$_EXTKEY] = [
     'author_company' => 'in2code.de',
     'constraints' => [
         'depends' => [
-            'typo3' => '9.5.0-10.99.99',
-            'php' => '7.2.0-7.3.99',
+            'php' => '7.2.0-7.4.99',
+            'typo3' => '10.4.0-10.99.99',
         ],
         'conflicts' => [],
         'suggests' => [],
