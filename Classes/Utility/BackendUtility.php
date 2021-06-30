@@ -45,8 +45,6 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Context\LanguageAspectFactory;
-use TYPO3\CMS\Core\Http\Uri;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Routing\RouterInterface;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -71,21 +69,12 @@ use function rtrim;
 use function stristr;
 use function strpos;
 use function strtolower;
-use function trigger_error;
-use function version_compare;
-
-use const E_USER_DEPRECATED;
 
 /**
  * Class BackendUtility
  */
 class BackendUtility
 {
-    protected const DEPRECATED_SYS_DOMAIN = 'sys_domain will be removed in TYPO3 v10. Please consider upgrading to site configurations now.';
-    protected const TABLE_SYS_DOMAIN = 'sys_domain';
-
-    protected static $rtc = [];
-
     /**
      * Get current page uid (normally from ?id=123)
      *
@@ -350,9 +339,6 @@ class BackendUtility
         $site = $siteService->getSiteForPidAndStagingLevel($pid, $stagingLevel);
 
         if (null === $site) {
-            if (version_compare(TYPO3_branch, '10', '<')) {
-                return self::processLegacySysDomainRecord($pid, $stagingLevel);
-            }
             return null;
         }
 
@@ -363,30 +349,6 @@ class BackendUtility
         }
 
         return $buildPageUrl();
-    }
-
-    protected static function processLegacySysDomainRecord(int $pageUid, string $stagingLevel): ?string
-    {
-        if (false === static::$rtc['sys_domain_deprecation_triggered'] ?? false) {
-            trigger_error(self::DEPRECATED_SYS_DOMAIN, E_USER_DEPRECATED);
-            static::$rtc['sys_domain_deprecation_triggered'] = true;
-        }
-        $logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $logger->notice(
-            'Can not identify site configuration for page.',
-            ['page' => $pageUid, 'stagingLevel' => $stagingLevel]
-        );
-
-        $domainName = self::fetchInheritedSysDomainNameForPage($pageUid, $stagingLevel);
-
-        if (null === $domainName) {
-            return null;
-        }
-        $uri = new Uri($domainName);
-        $uri = UriUtility::normalizeUri($uri);
-        $uri = $uri->withPath(rtrim($uri->getPath(), '/') . '/index.php')
-                   ->withQuery($uri->getQuery() . '&id=' . $pageUid);
-        return (string)$uri;
     }
 
     /**
@@ -538,27 +500,5 @@ class BackendUtility
                     ]
                 )
             );
-    }
-
-    public static function fetchInheritedSysDomainNameForPage(int $identifier, string $stagingLevel): ?string
-    {
-        $rootLine = CoreBackendUtility::BEgetRootLine($identifier);
-        foreach ($rootLine as $page) {
-            $connection = DatabaseUtility::buildDatabaseConnectionForSide($stagingLevel);
-            $query = $connection->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $query->select('domainName')
-                  ->from(self::TABLE_SYS_DOMAIN)
-                  ->where($query->expr()->eq('pid', (int)$page['uid']))
-                  ->andWhere($query->expr()->eq('hidden', 0))
-                  ->orderBy('sorting', 'ASC')
-                  ->setMaxResults(1);
-            $statement = $query->execute();
-            $domainRecord = $statement->fetch(PDO::FETCH_ASSOC);
-            if (isset($domainRecord['domainName'])) {
-                return trim($domainRecord['domainName'], '/');
-            }
-        }
-        return null;
     }
 }

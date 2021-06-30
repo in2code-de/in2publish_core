@@ -64,19 +64,6 @@
         false
     );
 
-    if (!version_compare(TYPO3_branch, '10.0', '>=')) {
-        $iconRegistry->registerIcon(
-            'actions-code-fork',
-            \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
-            ['source' => 'EXT:in2publish_core/Resources/Public/Icons/actions-code-fork.svg']
-        );
-        $iconRegistry->registerIcon(
-            'actions-caret-right',
-            \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
-            ['source' => 'EXT:in2publish_core/Resources/Public/Icons/actions-caret-right.svg']
-        );
-    }
-
     if ($contextService->isForeign()) {
         if ($configContainer->get('features.warningOnForeign.colorizeHeader.enable')) {
             $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][1582191172] = \In2code\In2publishCore\Features\WarningOnForeign\Service\HeaderWarningColorRenderer::class . '->render';
