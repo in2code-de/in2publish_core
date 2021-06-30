@@ -54,7 +54,7 @@
     /******************************************** Register Backend Modules ********************************************/
     if ($configContainer->get('module.m1')) {
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-            'In2code.In2publishCore',
+            'in2publish_core',
             'web',
             'm1',
             '',
@@ -70,7 +70,7 @@
     }
     if ($configContainer->get('module.m3')) {
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-            'In2code.In2publishCore',
+            'in2publish_core',
             'file',
             'm3',
             '',
@@ -339,7 +339,7 @@
             'addRedirectFields'
         );
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-            'In2code.In2publishCore',
+            'in2publish_core',
             'site',
             'm5',
             'after:redirects',

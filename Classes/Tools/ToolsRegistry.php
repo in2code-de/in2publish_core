@@ -135,7 +135,7 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
         }
 
         ExtensionUtility::registerModule(
-            'In2code.In2publishCore',
+            'in2publish_core',
             'tools',
             'm4',
             '',
