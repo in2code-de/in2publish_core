@@ -37,6 +37,7 @@ use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ExtensionUtility;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function strpos;
@@ -118,11 +119,12 @@ class ForeignInstanceTest implements TestCaseInterface
             );
         }
 
-        if ($foreign['TYPO3'] !== TYPO3_version) {
+        $localT3Version = GeneralUtility::makeInstance(Typo3Version::class)->getVersion();
+        if ($foreign['TYPO3'] !== $localT3Version) {
             return new TestResult(
                 'application.different_t3_versions',
                 TestResult::ERROR,
-                ['application.local_t3_versions', TYPO3_version, 'application.foreign_t3_versions', $foreign['TYPO3']]
+                ['application.local_t3_versions', $localT3Version, 'application.foreign_t3_versions', $foreign['TYPO3']]
             );
         }
 

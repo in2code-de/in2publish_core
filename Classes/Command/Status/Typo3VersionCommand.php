@@ -32,8 +32,8 @@ namespace In2code\In2publishCore\Command\Status;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use const TYPO3_version;
+use TYPO3\CMS\Core\Information\Typo3Version;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Typo3VersionCommand extends Command
 {
@@ -41,7 +41,7 @@ class Typo3VersionCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('TYPO3: ' . TYPO3_version);
+        $output->writeln('TYPO3: ' . GeneralUtility::makeInstance(Typo3Version::class)->getVersion());
         return 0;
     }
 }

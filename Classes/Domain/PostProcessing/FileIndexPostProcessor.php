@@ -87,7 +87,7 @@ class FileIndexPostProcessor implements SingletonInterface
      */
     public function postProcess(RecordFactory $recordFactory, RecordInterface $instance)
     {
-        $resourceFactory = ResourceFactory::getInstance();
+        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         /** @var RecordInterface[][] $sortedRecords */
         $sortedRecords = [];
         $storages = [];

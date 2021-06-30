@@ -187,9 +187,9 @@ class FilePublisherService
      */
     protected function getLocalReadableFilePathForIdentifier($storage, $fileIdentifier): string
     {
-        return ResourceFactory::getInstance()
-                              ->getStorageObject($storage)
-                              ->getFile($fileIdentifier)
-                              ->getForLocalProcessing(false);
+        return GeneralUtility::makeInstance(ResourceFactory::class)
+                             ->getStorageObject($storage)
+                             ->getFile($fileIdentifier)
+                             ->getForLocalProcessing(false);
     }
 }

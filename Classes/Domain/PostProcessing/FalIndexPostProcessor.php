@@ -68,7 +68,7 @@ class FalIndexPostProcessor implements SingletonInterface
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->resourceFactory = ResourceFactory::getInstance();
+        $this->resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
     }
 
     /**

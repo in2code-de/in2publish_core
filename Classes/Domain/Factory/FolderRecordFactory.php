@@ -119,7 +119,7 @@ class FolderRecordFactory
     protected function initializeDependenciesAndGetFolder($identifier): Folder
     {
         // Grab the resource factory to get the FAL driver of the selected folder "FAL style"
-        $resourceFactory = ResourceFactory::getInstance();
+        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
 
         // Determine the current folder. If the identifier is NULL there was no folder selected.
         if (null === $identifier) {

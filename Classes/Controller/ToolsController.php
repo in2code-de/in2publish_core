@@ -496,7 +496,7 @@ class ToolsController extends ActionController
             'TYPO3 Version' => VersionNumberUtility::getCurrentTypo3Version(),
             'PHP Version' => PHP_VERSION,
             'Database Version' => $databases,
-            'Application Context' => GeneralUtility::getApplicationContext()->__toString(),
+            'Application Context' => Environment::getContext()->__toString(),
             'Composer mode' => $composerMode,
             'Operating System' => PHP_OS . ' ' . php_uname('r'),
             'extensions' => $extensions,
