@@ -358,7 +358,7 @@
             'm5',
             'after:redirects',
             [
-                'Redirect' => 'list,publish,selectSite',
+                \In2code\In2publishCore\Features\RedirectsSupport\Controller\RedirectController::class => 'list,publish,selectSite',
             ],
             [
                 'access' => 'user,group',
