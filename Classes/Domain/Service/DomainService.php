@@ -34,7 +34,6 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Routing\SiteService;
-use In2code\In2publishCore\Utility\BackendUtility as BackendUtilityAlias;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
@@ -44,7 +43,6 @@ use function ltrim;
 use function rtrim;
 use function sprintf;
 use function trigger_error;
-use function version_compare;
 
 use const E_USER_DEPRECATED;
 
@@ -205,13 +203,6 @@ class DomainService implements SingletonInterface
         if (0 === $identifier) {
             return '';
         }
-        $uri = $this->getDomainFromSiteConfigByPageId($identifier, $stagingLevel, $addProtocol);
-        if (empty($uri) && version_compare(TYPO3_branch, '10', '<')) {
-            $uri = BackendUtilityAlias::fetchInheritedSysDomainNameForPage($identifier, $stagingLevel);
-            if (null !== $uri && $addProtocol) {
-                $uri = (GeneralUtility::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://') . $uri;
-            }
-        }
-        return $uri;
+        return $this->getDomainFromSiteConfigByPageId($identifier, $stagingLevel, $addProtocol);
     }
 }

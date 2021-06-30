@@ -35,7 +35,6 @@ use TYPO3\CMS\Core\Log\Processor\AbstractProcessor;
 use TYPO3\CMS\Core\SingletonInterface;
 
 use function min;
-use function version_compare;
 
 /**
  * Class PublishingErrorProcessor
@@ -62,9 +61,7 @@ class PublishingFailureCollector extends AbstractProcessor implements SingletonI
     public function processLogRecord(LogRecord $logRecord)
     {
         $level = $logRecord->getLevel();
-        if (version_compare(TYPO3_branch, '10.0', '>=')) {
-            $level = LogLevel::normalizeLevel($level);
-        }
+        $level = LogLevel::normalizeLevel($level);
         $this->highestSeverity = min($this->highestSeverity, $level);
         if ($level <= self::MINIMUM_LOG_LEVEL) {
             $this->failures[$logRecord->getMessage()][] = $logRecord;
