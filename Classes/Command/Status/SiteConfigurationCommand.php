@@ -47,16 +47,13 @@ class SiteConfigurationCommand extends Command
 {
     public const ARG_PAGE_ID = 'pageId';
     public const ARG_PAGE_ID_DESCRIPTION = 'The page id to retrieve the site config for';
-    public const DESCRIPTION = 'Outputs the requested Site serialized and encoded.';
     public const EXIT_NO_SITE = 250;
     public const EXIT_PAGE_HIDDEN_OR_DISCONNECTED = 251;
     public const IDENTIFIER = 'in2publish_core:status:siteconfiguration';
 
     protected function configure(): void
     {
-        $this->setDescription(self::DESCRIPTION)
-             ->addArgument(self::ARG_PAGE_ID, InputArgument::REQUIRED, self::ARG_PAGE_ID_DESCRIPTION)
-             ->setHidden(true);
+        $this->addArgument(self::ARG_PAGE_ID, InputArgument::REQUIRED, self::ARG_PAGE_ID_DESCRIPTION);
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output): void

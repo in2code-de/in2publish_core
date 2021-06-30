@@ -36,14 +36,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class VersionCommand extends Command
 {
-    public const DESCRIPTION = 'Prints the version number of the currently installed in2publish_core extension';
     public const IDENTIFIER = 'in2publish_core:status:version';
-
-    protected function configure()
-    {
-        $this->setDescription(self::DESCRIPTION)
-             ->setHidden(true);
-    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

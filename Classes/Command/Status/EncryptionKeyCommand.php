@@ -37,14 +37,7 @@ use function base64_encode;
 
 class EncryptionKeyCommand extends Command
 {
-    public const DESCRIPTION = 'Prints the encryption key as base64 encoded string';
     public const IDENTIFIER = 'in2publish_core:status:encryptionkey';
-
-    protected function configure()
-    {
-        $this->setDescription(self::DESCRIPTION)
-             ->setHidden(true);
-    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

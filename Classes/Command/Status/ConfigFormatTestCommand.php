@@ -44,12 +44,6 @@ class ConfigFormatTestCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:configformattest';
 
-    protected function configure()
-    {
-        $this->setDescription('Tests the configuration on foreign for its format')
-             ->setHidden(true);
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $container = GeneralUtility::makeInstance(ValidationContainer::class);

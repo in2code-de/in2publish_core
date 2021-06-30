@@ -42,18 +42,7 @@ use function json_encode;
 
 class RunTasksInQueueCommand extends Command
 {
-    public const DESCRIPTION = <<<'TXT'
-Reads all Tasks to execute from the Database and executes them one after another.
-  The success of a Task is echoed to the console or scheduler backend module, including any error message of failed tasks.
-  NOTE: This command is used for internal operations in in2publish_core
-TXT;
     public const IDENTIFIER = 'in2publish_core:publishtasksrunner:runtasksinqueue';
-
-    protected function configure()
-    {
-        $this->setHidden(true)
-             ->setDescription(static::DESCRIPTION);
-    }
 
     public function isEnabled()
     {
