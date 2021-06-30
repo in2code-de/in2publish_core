@@ -1,6 +1,6 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
 <f:for each="{publish:tools.getEnabledTools()}" as="entry">
-	<f:link.action action="{publish:string.firstInList(entries:entry.action)}" controller="{entry.controller}" extensionName="{entry.extensionName}" class="btn btn-xs{publish:Be.GetClassNameOnAction(actionName:'{entry.action}')}">
+	<f:link.action action="{publish:string.firstInList(entries:entry.action)}" controller="{entry.alias}" extensionName="{entry.extensionName}" class="btn btn-xs{publish:Be.GetClassNameOnAction(actionName:'{entry.action}')}">
 		<f:translate key="{entry.name}">{entry.name}</f:translate>
 	</f:link.action>
 </f:for>

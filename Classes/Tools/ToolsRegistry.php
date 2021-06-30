@@ -32,13 +32,22 @@ namespace In2code\In2publishCore\Tools;
 use TYPO3\CMS\Core\Database\TableConfigurationPostProcessingHookInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
+
+use function class_exists;
+
+use const E_USER_DEPRECATED;
 
 /**
  * Class ToolsRegistry
  */
 class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcessingHookInterface
 {
+    private const DEPREACTED_NON_FQCN_TOOL = 'Tools registration without a FQCN is deprecated and will be removed in'
+    . ' in2publish_core version 11. Registered controller name: %s';
+
     /**
      * @var array[]
      */
@@ -82,6 +91,16 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
      */
     public function getTools(): array
     {
+        $configuration = GeneralUtility::makeInstance(ObjectManager::class)
+                                       ->get(ConfigurationManagerInterface::class)
+                                       ->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+        $controllerConfig = $configuration['controllerConfiguration'];
+        foreach ($this->entries as $name => $config) {
+            $controller = $config['controller'];
+            if (isset($controllerConfig[$controller]['alias'])) {
+                $this->entries[$name]['alias'] = $controllerConfig[$controller]['alias'];
+            }
+        }
         return $this->entries;
     }
 
@@ -102,6 +121,11 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
         foreach ($this->entries as $entry) {
             $controllerName = $entry['controller'];
             $actionName = $entry['action'];
+
+            if (!class_exists($controllerName)) {
+                trigger_error(sprintf(self::DEPREACTED_NON_FQCN_TOOL, $controllerName), E_USER_DEPRECATED);
+                $controllerName = 'In2code\\In2publishCore\\Controller\\' . $controllerName . 'Controller';
+            }
 
             if (!isset($controllerActions[$controllerName])) {
                 $controllerActions[$controllerName] = $actionName;
