@@ -60,7 +60,7 @@ class SiteConfigurationCommand extends Command
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $pageId = $input->getArgument(self::ARG_PAGE_ID);
-        if ($pageId !== (string)(int)$pageId) {
+        if (null !== $pageId && $pageId !== (string)(int)$pageId) {
             throw InvalidPageIdArgumentTypeException::fromGivenPageId($pageId);
         }
     }
