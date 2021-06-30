@@ -92,7 +92,7 @@
 
     /******************************************** Configure Compare Plugin ********************************************/
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-        'In2code.in2publishCore',
+        'in2publish_core',
         'Pi1',
         [\In2code\In2publishCore\Controller\FrontendController::class => 'preview'],
         [\In2code\In2publishCore\Controller\FrontendController::class => 'preview']
