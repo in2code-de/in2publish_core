@@ -45,11 +45,11 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Context\LanguageAspectFactory;
+use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Routing\RouterInterface;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
-use TYPO3\CMS\Frontend\Page\PageRepository;
 
 use function array_key_exists;
 use function array_keys;
@@ -459,7 +459,7 @@ class BackendUtility
      */
     protected static function getLocalUriClosure(Site $site, int $pageUid, $additionalQueryParams): Closure
     {
-        return static function () use ($site, $pageUid, $additionalQueryParams) : ?UriInterface {
+        return static function () use ($site, $pageUid, $additionalQueryParams): ?UriInterface {
             try {
                 return $site->getRouter()->generateUri(
                     $pageUid,
