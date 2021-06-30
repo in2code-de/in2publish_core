@@ -44,7 +44,6 @@ class ExecuteCommand extends Command
 {
     public const ARG_UID = 'uid';
     public const ARG_UID_DESCRIPTION = 'Uid of the envelope to execute';
-    public const DESCRIPTION = 'Receives an envelope and executes the contained command';
     public const EXIT_ENVELOPE_MISSING = 230;
     public const EXIT_UID_MISSING = 231;
     public const EXIT_EXECUTION_FAILED = 232;
@@ -52,9 +51,7 @@ class ExecuteCommand extends Command
 
     protected function configure()
     {
-        $this->setDescription(self::DESCRIPTION)
-             ->setHidden(true)
-             ->addArgument(self::ARG_UID, InputArgument::REQUIRED, self::ARG_UID_DESCRIPTION);
+        $this->addArgument(self::ARG_UID, InputArgument::REQUIRED, self::ARG_UID_DESCRIPTION);
     }
 
     public function isEnabled()

@@ -40,14 +40,7 @@ use function serialize;
 
 class AllSitesCommand extends Command
 {
-    public const DESCRIPTION = 'Prints all Sites serialized and encoded. Internal CLI API.';
     public const IDENTIFIER = 'in2publish_core:status:allsites';
-
-    protected function configure(): void
-    {
-        $this->setDescription(self::DESCRIPTION)
-             ->setHidden(true);
-    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

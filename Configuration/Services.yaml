@@ -1,0 +1,137 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  In2code\In2publishCore\:
+    resource: '../Classes/*'
+    exclude: '../Classes/Domain/Model/*'
+
+  In2code\In2publishCore\Command\PublishTaskRunner\RunTasksInQueueCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:publishtasksrunner:runtasksinqueue'
+        description: >
+          Reads all Tasks to execute from the Database and executes them one after another.
+          The success of a Task is echoed to the console or scheduler backend module, including any error message of failed tasks.
+          NOTE: This command is used for internal operations in in2publish_core
+        hidden: true
+
+  In2code\In2publishCore\Command\RemoteProcedureCall\ExecuteCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:rpc:execute'
+        description: 'Receives an envelope and executes the contained command'
+        hidden: true
+
+  In2code\In2publishCore\Command\Status\AllCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:status:all'
+        description: 'Prints the configured fileCreateMask and folderCreateMask'
+        hidden: true
+
+  In2code\In2publishCore\Command\Status\AllSitesCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:status:allsites'
+        description: 'Prints all Sites serialized and encoded. Internal CLI API.'
+        hidden: true
+
+  In2code\In2publishCore\Command\Status\ConfigFormatTestCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:status:configformattest'
+        description: 'Tests the configuration on foreign for its format'
+        hidden: true
+
+  In2code\In2publishCore\Command\Status\CreateMasksCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:status:createmasks'
+        description: 'Prints the configured fileCreateMask and folderCreateMask'
+        hidden: true
+
+  In2code\In2publishCore\Command\Status\DbConfigTestCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:status:dbconfigtest'
+        description: 'Reads from the local task table and writes all found hashes for the db config test'
+        hidden: true
+
+  In2code\In2publishCore\Command\Status\DbInitQueryEncodedCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:status:dbinitqueryencoded'
+        description: 'Prints the initCommands as json and base64 encoded string'
+        hidden: true
+
+  In2code\In2publishCore\Command\Status\GlobalConfigurationCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:status:globalconfiguration'
+        description: 'Prints global configuration values'
+        hidden: true
+
+  In2code\In2publishCore\Command\Status\EncryptionKeyCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:status:encryptionkey'
+        description: 'Prints the encryption key as base64 encoded string'
+        hidden: true
+
+  In2code\In2publishCore\Command\Status\ShortSiteConfigurationCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:status:shortsiteconfiguration'
+        description: 'Prints a base64 encoded json array containing all configured sites'
+        hidden: true
+
+  In2code\In2publishCore\Command\Status\SiteConfigurationCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:status:siteconfiguration'
+        description: 'Outputs the requested Site serialized and encoded.'
+        hidden: true
+
+  In2code\In2publishCore\Command\Status\Typo3VersionCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:status:typo3version'
+        description: 'Prints TYPO3 version'
+        hidden: true
+
+  In2code\In2publishCore\Command\Status\VersionCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:status:version'
+        description: 'Prints the version number of the currently installed in2publish_core extension'
+        hidden: true
+
+  In2code\In2publishCore\Command\Table\BackupCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:table:backup'
+        description: 'Stores a backup of the complete local table into the configured directory'
+
+  In2code\In2publishCore\Command\Table\ImportCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:table:import'
+        description: 'Stores a backup of the complete local table into the configured directory'
+
+  In2code\In2publishCore\Command\Table\PublishCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:table:publish'
+        description: 'Copies a complete table from stage to production and overwrites all old entries!'
+
+  In2code\In2publishCore\Command\Tools\TestCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:tools:test'
+        description: >
+          Executes the in2publish_core backend tests.
+          Enable verbose mode if you want to see a success message.
+          For scripted testing check the exit code of this command.
