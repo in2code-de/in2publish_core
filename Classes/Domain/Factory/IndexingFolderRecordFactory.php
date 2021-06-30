@@ -117,7 +117,7 @@ class IndexingFolderRecordFactory
     public function makeInstance($dir = null): RecordInterface
     {
         // determine current folder
-        $resourceFactory = ResourceFactory::getInstance();
+        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         try {
             if (null === $dir) {
                 $localFolder = $resourceFactory->getDefaultStorage()->getRootLevelFolder();

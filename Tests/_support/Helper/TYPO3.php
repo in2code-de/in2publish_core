@@ -453,7 +453,7 @@ PHP;
             if (!GeneralUtility::validPathStr($absoluteFileName)) {
                 throw new RuntimeException('tearDown() cleanup: Filename contains illegal characters', 1410633087);
             }
-            if (strpos($absoluteFileName, PATH_site . 'typo3temp/var/') !== 0) {
+            if (strpos($absoluteFileName, Environment::getPublicPath() . '/typo3temp/var/') !== 0) {
                 throw new RuntimeException(
                     'tearDown() cleanup:  Files to delete must be within typo3temp/var/',
                     1410633412

@@ -72,7 +72,6 @@ class BackendUserProcessorTest extends Unit
         $expectedBeUserUid = 31;
 
         // preparation
-        $GLOBALS['TYPO3_DB'] = null;
         $GLOBALS['BE_USER'] = new BackendUserAuthentication();
         $GLOBALS['BE_USER']->user = ['uid' => $expectedBeUserUid];
 
@@ -93,7 +92,6 @@ class BackendUserProcessorTest extends Unit
     public function testBackendUserProcessorAddsUnkownValueStringToLogEntryIfBackendUserIsKnownButHasNoId()
     {
         // preparation
-        $GLOBALS['TYPO3_DB'] = null;
         $GLOBALS['BE_USER'] = new BackendUserAuthentication();
 
         $backendUserProcessor = new BackendUserProcessor();

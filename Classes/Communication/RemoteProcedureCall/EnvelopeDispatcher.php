@@ -480,7 +480,7 @@ class EnvelopeDispatcher
      */
     protected function getStorage(array $request): ResourceStorage
     {
-        $storage = ResourceFactory::getInstance()->getStorageObject($request['storage']);
+        $storage = GeneralUtility::makeInstance(ResourceFactory::class)->getStorageObject($request['storage']);
         $storage->setEvaluatePermissions(false);
         return $storage;
     }
@@ -559,9 +559,7 @@ class EnvelopeDispatcher
      */
     public function getSetDbInit(): string
     {
-        if (!empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['setDBinit'])) {
-            return $GLOBALS['TYPO3_CONF_VARS']['SYS']['setDBinit'];
-        } elseif (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'])) {
+        if (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'])) {
             return $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'];
         }
         return '';
