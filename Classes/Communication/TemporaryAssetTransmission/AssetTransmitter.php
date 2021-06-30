@@ -96,7 +96,6 @@ class AssetTransmitter implements SingletonInterface
         }
 
         if (null === $this->adapter) {
-            $this->logger->debug('Lazy initializing SshAdapter');
             try {
                 $adapterClass = $this->adapterRegistry->getAdapter(AdapterInterface::class);
                 $this->adapter = GeneralUtility::makeInstance($adapterClass);

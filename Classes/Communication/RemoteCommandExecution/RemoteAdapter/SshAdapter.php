@@ -67,7 +67,6 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
     public function execute(RemoteCommandRequest $request): RemoteCommandResponse
     {
         if (null === $this->session) {
-            $this->logger->debug('Lazy initializing SshAdapter ssh session');
             try {
                 $this->session = $this->establishSshSession();
             } catch (In2publishCoreException $e) {
