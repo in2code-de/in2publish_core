@@ -86,7 +86,6 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
     public function copyFileToRemote(string $source, string $target): bool
     {
         if (null === $this->sshSession) {
-            $this->logger->debug('Lazy initializing SshAdapter ssh session');
             $this->sshSession = $this->establishSshSession();
             $this->sftSession = ssh2_sftp($this->sshSession);
 
