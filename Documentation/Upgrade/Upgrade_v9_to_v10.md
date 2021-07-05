@@ -1,10 +1,10 @@
 Replace signal slots by PSR-14 events
 
-https://docs.typo3.org/c/typo3/cms-core/master/en-us/Changelog/10.0/Feature-88770-PSR-14BasedEventDispatcher.html
-https://usetypo3.com/psr-14-events.html
+* https://docs.typo3.org/c/typo3/cms-core/master/en-us/Changelog/10.0/Feature-88770-PSR-14BasedEventDispatcher.html
+* https://usetypo3.com/psr-14-events.html
 
 
-The following signal slots were replaced by PSR-14 events
+The following signal slots were replaced by PSR-14 events:
 
 | Signal Class `\In2code\In2publishCore\`     | Signal Name                                            | Event                                                             |
 |---------------------------------------------| -------------------------------------------------------|-------------------------------------------------------------------|
@@ -20,7 +20,7 @@ The following signal slots were replaced by PSR-14 events
 | Domain\Repository\CommonRepository          | publishRecordRecursiveBeforePublishing                 | PublishingOfOneRecordBegan                                        |
 | Domain\Repository\CommonRepository          | publishRecordRecursiveAfterPublishing                  | PublishingOfOneRecordEnded                                        |
 | Domain\Repository\CommonRepository          | shouldSkipRecord                                       | [VoteIfRecordShouldBeSkipped](../Events/VoteIfRecordShouldBeSkipped.md)                                           |
-| Domain\Repository\CommonRepository          | shouldIgnoreRecord                                     | VoteIfRecordShouldBeIgnored                                       |
+| Domain\Repository\CommonRepository          | shouldIgnoreRecord                                     | [VoteIfRecordShouldBeIgnored](../Events/VoteIfRecordShouldBeIgnored.md)                                       |
 | Domain\Repository\CommonRepository          | shouldSkipEnrichingPageRecord                          | VoteIfPageRecordEnrichingShouldBeSkipped                          |
 | Domain\Repository\CommonRepository          | shouldSkipFindByIdentifier                             | VoteIfFindingByIdentifierShouldBeSkipped                          |
 | Domain\Repository\CommonRepository          | shouldSkipFindByProperty                               | VoteIfFindingByPropertyShouldBeSkipped                            |

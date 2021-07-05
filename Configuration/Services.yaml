@@ -154,3 +154,7 @@ services:
         identifier: 'legacy-slot'
         method: 'onVoteIfRecordShouldBeSkipped'
         event: In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onVoteIfRecordShouldBeIgnored'
+        event: In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored
