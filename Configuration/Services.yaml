@@ -8,6 +8,8 @@ services:
     resource: '../Classes/*'
     exclude: '../Classes/Domain/Model/*'
 
+  # Commands
+
   In2code\In2publishCore\Command\PublishTaskRunner\RunTasksInQueueCommand:
     tags:
       - name: 'console.command'
@@ -135,3 +137,12 @@ services:
           Executes the in2publish_core backend tests.
           Enable verbose mode if you want to see a success message.
           For scripted testing check the exit code of this command.
+
+  # EventListener
+
+  In2code\In2publishCore\EventListener\SignalSlotReplacement:
+    tags:
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onFolderInstanceWasCreated'
+        event: In2code\In2publishCore\Event\FolderInstanceWasCreated

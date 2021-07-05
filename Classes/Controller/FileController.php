@@ -36,6 +36,7 @@ use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
+use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use RuntimeException;
 use Throwable;
@@ -213,19 +214,8 @@ class FileController extends AbstractController
         $this->logger->warning('The folder file limit has been exceeded', $arguments);
     }
 
-    /**
-     * @param RecordInterface $record
-     */
-    protected function emitFolderInstanceCreated(RecordInterface $record)
+    protected function emitFolderInstanceCreated(RecordInterface $record): void
     {
-        try {
-            $this->signalSlotDispatcher->dispatch(
-                FileController::class,
-                'folderInstanceCreated',
-                [$record]
-            );
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
-        }
+        $this->eventDispatcher->dispatch(new FolderInstanceWasCreated($record));
     }
 }
