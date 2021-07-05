@@ -21,10 +21,10 @@ The following signal slots were replaced by PSR-14 events:
 | Domain\Repository\CommonRepository          | publishRecordRecursiveAfterPublishing                  | PublishingOfOneRecordEnded                                        |
 | Domain\Repository\CommonRepository          | shouldSkipRecord                                       | [VoteIfRecordShouldBeSkipped](../Events/VoteIfRecordShouldBeSkipped.md)                                           |
 | Domain\Repository\CommonRepository          | shouldIgnoreRecord                                     | [VoteIfRecordShouldBeIgnored](../Events/VoteIfRecordShouldBeIgnored.md)                                       |
-| Domain\Repository\CommonRepository          | shouldSkipEnrichingPageRecord                          | VoteIfPageRecordEnrichingShouldBeSkipped                          |
+| Domain\Repository\CommonRepository          | shouldSkipEnrichingPageRecord                          | [VoteIfPageRecordEnrichingShouldBeSkipped](../Events/VoteIfPageRecordEnrichingShouldBeSkipped.md)                          |
 | Domain\Repository\CommonRepository          | shouldSkipFindByIdentifier                             | VoteIfFindingByIdentifierShouldBeSkipped                          |
 | Domain\Repository\CommonRepository          | shouldSkipFindByProperty                               | VoteIfFindingByPropertyShouldBeSkipped                            |
-| Domain\Repository\CommonRepository          | shouldSkipSearchingForRelatedRecordByTable             | VoteIfSearchingForRelatedRecordByTableShouldBeSkipped             |
+| Domain\Repository\CommonRepository          | shouldSkipSearchingForRelatedRecordByTable             | VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped             |
 | Domain\Repository\CommonRepository          | shouldSkipSearchingForRelatedRecords                   | VoteIfSearchingForRelatedRecordsShouldBeSkipped                   |
 | Domain\Repository\CommonRepository          | shouldSkipSearchingForRelatedRecordsByFlexForm         | VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped         |
 | Domain\Repository\CommonRepository          | shouldSkipSearchingForRelatedRecordsByFlexFormProperty | VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped |

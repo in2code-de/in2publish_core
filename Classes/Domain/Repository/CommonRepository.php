@@ -36,6 +36,7 @@ use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
+use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
 use In2code\In2publishCore\Service\Configuration\TcaService;
@@ -2399,16 +2400,11 @@ class CommonRepository extends BaseRepository
         return $this->should('shouldSkipSearchingForRelatedRecordsByFlexFormProperty', $arguments);
     }
 
-    /**
-     * @param RecordInterface $record
-     *
-     * @return bool
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
-     */
     protected function shouldSkipEnrichingPageRecord(RecordInterface $record): bool
     {
-        return $this->should('shouldSkipEnrichingPageRecord', ['record' => $record]);
+        $event = new VoteIfPageRecordEnrichingShouldBeSkipped($this, $record);
+        $this->eventDispatcher->dispatch($event);
+        return $event->getVotingResult();
     }
 
     /**
@@ -2434,14 +2430,6 @@ class CommonRepository extends BaseRepository
         return $event->getVotingResult();
     }
 
-    /**
-     * @param array $localProperties
-     * @param array $foreignProperties
-     * @param string|null $tableName
-     *
-     * @return bool
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     */
     protected function shouldIgnoreRecord(
         array $localProperties,
         array $foreignProperties,
