@@ -150,3 +150,7 @@ services:
         identifier: 'legacy-slot'
         method: 'onRecordWasCreatedForDetailAction'
         event: In2code\In2publishCore\Event\RecordWasCreatedForDetailAction
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onVoteIfRecordShouldBeSkipped'
+        event: In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped

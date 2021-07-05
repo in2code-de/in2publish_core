@@ -6,8 +6,10 @@ namespace In2code\In2publishCore\EventListener;
 
 use In2code\In2publishCore\Controller\FileController;
 use In2code\In2publishCore\Controller\RecordController;
+use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
+use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
@@ -30,8 +32,8 @@ class SignalSlotReplacement
                 'folderInstanceCreated',
                 [$event->getRecord()]
             );
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
+        } catch (InvalidSlotException | InvalidSlotReturnException $e) {
+            // Ignore exceptions
         }
     }
 
@@ -43,8 +45,22 @@ class SignalSlotReplacement
                 'beforeDetailViewRender',
                 [$event->getRecordController(), $event->getRecord()]
             );
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
+        } catch (InvalidSlotException | InvalidSlotReturnException $e) {
+            // Ignore exceptions
         }
+    }
+
+    public function onVoteIfRecordShouldBeSkipped(VoteIfRecordShouldBeSkipped $event): void
+    {
+        $commonRepository = $event->getCommonRepository();
+        $record = $event->getRecord();
+        $tableName = $record->getTableName();
+        $signalArguments = $this->dispatcher->dispatch(
+            CommonRepository::class,
+            'shouldSkipRecord',
+            [['yes' => 0, 'no' => 0], $commonRepository, ['record' => $record, 'tableName' => $tableName]]
+        );
+        $event->voteYes($signalArguments[0]['yes']);
+        $event->voteNo($signalArguments[0]['no']);
     }
 }

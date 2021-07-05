@@ -36,6 +36,7 @@ use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
+use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\FileUtility;
@@ -49,6 +50,7 @@ use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidTcaException;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryHelper;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -171,6 +173,11 @@ class CommonRepository extends BaseRepository
     protected $visitedRecords = [];
 
     /**
+     * @var EventDispatcher
+     */
+    protected $eventDispatcher;
+
+    /**
      * @param Connection $localDatabase
      * @param Connection $foreignDatabase
      * @param string|null $tableName
@@ -203,6 +210,7 @@ class CommonRepository extends BaseRepository
         if (null !== $tableName) {
             $this->setTableName($tableName);
         }
+        $this->eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
         $this->signalSlotDispatcher->dispatch(__CLASS__, 'instanceCreated', [$this]);
     }
 
@@ -2037,7 +2045,7 @@ class CommonRepository extends BaseRepository
         }
         $this->visitedRecords[$tableName][] = $record->getIdentifier();
 
-        if (!$this->shouldSkipRecord($record, $tableName)) {
+        if (!$this->shouldSkipRecord($record)) {
             // Dispatch Anomaly
             $this->signalSlotDispatcher->dispatch(
                 __CLASS__,
@@ -2418,17 +2426,11 @@ class CommonRepository extends BaseRepository
         );
     }
 
-    /**
-     * @param RecordInterface $record
-     * @param string $tableName
-     *
-     * @return bool
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
-     */
-    protected function shouldSkipRecord(RecordInterface $record, $tableName): bool
+    protected function shouldSkipRecord(RecordInterface $record): bool
     {
-        return $this->should('shouldSkipRecord', ['record' => $record, 'tableName' => $tableName]);
+        $event = new VoteIfRecordShouldBeSkipped($this, $record);
+        $this->eventDispatcher->dispatch($event);
+        return $event->getVotingResult();
     }
 
     /**
