@@ -9,6 +9,7 @@ use In2code\In2publishCore\Controller\RecordController;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
+use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
@@ -80,6 +81,23 @@ class SignalSlotReplacement
                     'localProperties' => $event->getLocalProperties(),
                     'foreignProperties' => $event->getForeignProperties(),
                     'tableName' => $event->getTableName(),
+                ],
+            ]
+        );
+        $event->voteYes($signalArguments[0]['yes']);
+        $event->voteNo($signalArguments[0]['no']);
+    }
+
+    public function onVoteIfPageRecordEnrichingShouldBeSkipped(VoteIfPageRecordEnrichingShouldBeSkipped $event): void
+    {
+        $signalArguments = $this->dispatcher->dispatch(
+            CommonRepository::class,
+            'shouldSkipEnrichingPageRecord',
+            [
+                ['yes' => 0, 'no' => 0],
+                $event->getCommonRepository(),
+                [
+                    'record' => $event->getRecord(),
                 ],
             ]
         );
