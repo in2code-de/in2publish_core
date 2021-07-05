@@ -37,6 +37,7 @@ use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
+use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
@@ -2298,18 +2299,11 @@ class CommonRepository extends BaseRepository
         return $event->getVotingResult();
     }
 
-    /**
-     * @param string $propertyName
-     * @param mixed $propertyValue
-     *
-     * @return bool
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
-     */
     protected function shouldSkipFindByProperty($propertyName, $propertyValue, $tableName): bool
     {
-        $arguments = ['propertyName' => $propertyName, 'propertyValue' => $propertyValue, 'tableName' => $tableName];
-        return $this->should('shouldSkipFindByProperty', $arguments);
+        $event = new VoteIfFindingByPropertyShouldBeSkipped($this, $propertyName, $propertyValue, $tableName);
+        $this->eventDispatcher->dispatch($event);
+        return $event->getVotingResult();
     }
 
     /**

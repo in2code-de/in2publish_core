@@ -166,3 +166,7 @@ services:
         identifier: 'legacy-slot'
         method: 'onVoteIfFindingByIdentifierShouldBeSkipped'
         event: In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onVoteIfFindingByPropertyShouldBeSkipped'
+        event: In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped
