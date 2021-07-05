@@ -9,6 +9,7 @@ use In2code\In2publishCore\Controller\RecordController;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
+use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
@@ -52,13 +53,35 @@ class SignalSlotReplacement
 
     public function onVoteIfRecordShouldBeSkipped(VoteIfRecordShouldBeSkipped $event): void
     {
-        $commonRepository = $event->getCommonRepository();
         $record = $event->getRecord();
         $tableName = $record->getTableName();
         $signalArguments = $this->dispatcher->dispatch(
             CommonRepository::class,
             'shouldSkipRecord',
-            [['yes' => 0, 'no' => 0], $commonRepository, ['record' => $record, 'tableName' => $tableName]]
+            [
+                ['yes' => 0, 'no' => 0],
+                $event->getCommonRepository(),
+                ['record' => $record, 'tableName' => $tableName],
+            ]
+        );
+        $event->voteYes($signalArguments[0]['yes']);
+        $event->voteNo($signalArguments[0]['no']);
+    }
+
+    public function onVoteIfRecordShouldBeIgnored(VoteIfRecordShouldBeIgnored $event): void
+    {
+        $signalArguments = $this->dispatcher->dispatch(
+            CommonRepository::class,
+            'shouldIgnoreRecord',
+            [
+                ['yes' => 0, 'no' => 0],
+                $event->getCommonRepository(),
+                [
+                    'localProperties' => $event->getLocalProperties(),
+                    'foreignProperties' => $event->getForeignProperties(),
+                    'tableName' => $event->getTableName(),
+                ],
+            ]
         );
         $event->voteYes($signalArguments[0]['yes']);
         $event->voteNo($signalArguments[0]['no']);

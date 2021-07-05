@@ -36,6 +36,7 @@ use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
+use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -2450,14 +2451,9 @@ class CommonRepository extends BaseRepository
             trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
             $tableName = $this->tableName;
         }
-        return $this->should(
-            'shouldIgnoreRecord',
-            [
-                'localProperties' => $localProperties,
-                'foreignProperties' => $foreignProperties,
-                'tableName' => $tableName,
-            ]
-        );
+        $event = new VoteIfRecordShouldBeIgnored($this, $localProperties, $foreignProperties, $tableName);
+        $this->eventDispatcher->dispatch($event);
+        return $event->getVotingResult();
     }
 
     /**
