@@ -36,6 +36,7 @@ use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
+use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use RuntimeException;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
@@ -43,8 +44,6 @@ use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsExcepti
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function count;
@@ -210,19 +209,8 @@ class FileController extends AbstractController
         $this->logger->warning('The folder file limit has been exceeded', $arguments);
     }
 
-    /**
-     * @param RecordInterface $record
-     */
-    protected function emitFolderInstanceCreated(RecordInterface $record)
+    protected function emitFolderInstanceCreated(RecordInterface $record): void
     {
-        try {
-            $this->signalSlotDispatcher->dispatch(
-                FileController::class,
-                'folderInstanceCreated',
-                [$record]
-            );
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
-        }
+        $this->eventDispatcher->dispatch(new FolderInstanceWasCreated($record));
     }
 }
