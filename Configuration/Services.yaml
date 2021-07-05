@@ -162,3 +162,7 @@ services:
         identifier: 'legacy-slot'
         method: 'onVoteIfPageRecordEnrichingShouldBeSkipped'
         event: In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onVoteIfFindingByIdentifierShouldBeSkipped'
+        event: In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped

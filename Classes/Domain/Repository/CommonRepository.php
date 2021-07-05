@@ -36,6 +36,7 @@ use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
+use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
@@ -2286,20 +2287,15 @@ class CommonRepository extends BaseRepository
         $this->recordFactory->disablePageRecursion();
     }
 
-    /**
-     * @param string $identifier
-     * @param string|null $tableName
-     *
-     * @return bool
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     */
     protected function shouldSkipFindByIdentifier($identifier, string $tableName = null): bool
     {
         if (null === $tableName) {
             trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
             $tableName = $this->tableName;
         }
-        return $this->should('shouldSkipFindByIdentifier', ['identifier' => $identifier, 'tableName' => $tableName]);
+        $event = new VoteIfFindingByIdentifierShouldBeSkipped($this, $identifier, $tableName);
+        $this->eventDispatcher->dispatch($event);
+        return $event->getVotingResult();
     }
 
     /**
