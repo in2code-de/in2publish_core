@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Controller;
 
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
 use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Factory\FakeRecordFactory;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Log\Processor\PublishingFailureCollector;
@@ -120,11 +121,7 @@ class RecordController extends AbstractController
         $this->commonRepository->disablePageRecursion();
         $record = $this->commonRepository->findByIdentifier($identifier, $tableName);
 
-        try {
-            $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeDetailViewRender', [$this, $record]);
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
-        }
+        $this->eventDispatcher->dispatch(new RecordWasCreatedForDetailAction($this, $record));
 
         $this->view->assign('record', $record);
     }

@@ -146,3 +146,7 @@ services:
         identifier: 'legacy-slot'
         method: 'onFolderInstanceWasCreated'
         event: In2code\In2publishCore\Event\FolderInstanceWasCreated
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onRecordWasCreatedForDetailAction'
+        event: In2code\In2publishCore\Event\RecordWasCreatedForDetailAction
