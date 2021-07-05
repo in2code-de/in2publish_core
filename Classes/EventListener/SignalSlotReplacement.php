@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\EventListener;
 
 use In2code\In2publishCore\Controller\FileController;
+use In2code\In2publishCore\Controller\RecordController;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
+use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
@@ -23,7 +25,24 @@ class SignalSlotReplacement
     public function onFolderInstanceWasCreated(FolderInstanceWasCreated $event): void
     {
         try {
-            $this->dispatcher->dispatch(FileController::class, 'folderInstanceCreated', [$event->getRecord()]);
+            $this->dispatcher->dispatch(
+                FileController::class,
+                'folderInstanceCreated',
+                [$event->getRecord()]
+            );
+        } catch (InvalidSlotException $e) {
+        } catch (InvalidSlotReturnException $e) {
+        }
+    }
+
+    public function onRecordWasCreatedForDetailAction(RecordWasCreatedForDetailAction $event): void
+    {
+        try {
+            $this->dispatcher->dispatch(
+                RecordController::class,
+                'beforeDetailViewRender',
+                [$event->getRecordController(), $event->getRecord()]
+            );
         } catch (InvalidSlotException $e) {
         } catch (InvalidSlotReturnException $e) {
         }
