@@ -23,7 +23,7 @@ The following signal slots were replaced by PSR-14 events:
 | Domain\Repository\CommonRepository          | shouldIgnoreRecord                                     | [VoteIfRecordShouldBeIgnored](../Events/VoteIfRecordShouldBeIgnored.md)                           |
 | Domain\Repository\CommonRepository          | shouldSkipEnrichingPageRecord                          | [VoteIfPageRecordEnrichingShouldBeSkipped](../Events/VoteIfPageRecordEnrichingShouldBeSkipped.md) |
 | Domain\Repository\CommonRepository          | shouldSkipFindByIdentifier                             | [VoteIfFindingByIdentifierShouldBeSkipped](../Events/VoteIfFindingByIdentifierShouldBeSkipped.md) |
-| Domain\Repository\CommonRepository          | shouldSkipFindByProperty                               | VoteIfFindingByPropertyShouldBeSkipped                                                            |
+| Domain\Repository\CommonRepository          | shouldSkipFindByProperty                               | [VoteIfFindingByPropertyShouldBeSkipped](../Events/VoteIfFindingByPropertyShouldBeSkipped.md)     |
 | Domain\Repository\CommonRepository          | shouldSkipSearchingForRelatedRecordByTable             | VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped                                            |
 | Domain\Repository\CommonRepository          | shouldSkipSearchingForRelatedRecords                   | VoteIfSearchingForRelatedRecordsShouldBeSkipped                                                   |
 | Domain\Repository\CommonRepository          | shouldSkipSearchingForRelatedRecordsByFlexForm         | VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped                                         |
