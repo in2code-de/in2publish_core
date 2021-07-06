@@ -9,6 +9,7 @@ use In2code\In2publishCore\Controller\RecordController;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
@@ -276,7 +277,7 @@ class SignalSlotReplacement
                 'instanceCreated',
                 [
                     $event->getRecordFactory(),
-                    $event->getRecord()
+                    $event->getRecord(),
                 ]
             );
         } catch (InvalidSlotException | InvalidSlotReturnException $e) {
@@ -292,11 +293,23 @@ class SignalSlotReplacement
                 'rootRecordFinished',
                 [
                     $event->getRecordFactory(),
-                    $event->getRecord()
+                    $event->getRecord(),
                 ]
             );
         } catch (InvalidSlotException | InvalidSlotReturnException $e) {
             // Ignore exceptions
         }
+    }
+
+    public function onAllRelatedRecordsWereAddedToOneRecord(AllRelatedRecordsWereAddedToOneRecord $event): void
+    {
+        $this->dispatcher->dispatch(
+            RecordFactory::class,
+            'addAdditionalRelatedRecords',
+            [
+                $event->getRecord(),
+                $event->getRecordFactory(),
+            ]
+        );
     }
 }

@@ -202,3 +202,7 @@ services:
         identifier: 'legacy-slot'
         method: 'onRootRecordCreationWasFinished'
         event: In2code\In2publishCore\Event\RootRecordCreationWasFinished
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onAllRelatedRecordsWereAddedToOneRecord'
+        event: In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord

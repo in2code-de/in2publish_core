@@ -17,7 +17,7 @@ The following table lists all signals of in2publish_core with their event replac
 | Domain\Model\RecordInterface                | isPublishable                                          | [VoteIfRecordIsPublishable](../Events/VoteIfRecordIsPublishable.md)
 | Domain\Factory\RecordFactory                | instanceCreated (RecordFactory)                        | [RecordInstanceWasInstantiated](../Events/RecordInstanceWasInstantiated.md)
 | Domain\Factory\RecordFactory                | rootRecordFinished                                     | [RootRecordCreationWasFinished](../Events/RootRecordCreationWasFinished.md)
-| Domain\Factory\RecordFactory                | addAdditionalRelatedRecords                            | AllRelatedRecordsWereAddedToOneRecord
+| Domain\Factory\RecordFactory                | addAdditionalRelatedRecords                            | [AllRelatedRecordsWereAddedToOneRecord](../Events/AllRelatedRecordsWereAddedToOneRecord.md)
 | Domain\Repository\CommonRepository          | instanceCreated (CommonRepository)                     | CommonRepositoryWasInstantiated
 | Domain\Repository\CommonRepository          | afterRecordEnrichment (deprecated!)                    | RecordWasEnriched
 | Domain\Repository\CommonRepository          | relationResolverRTE                                    | RelatedRecordsByRteWereFetched
