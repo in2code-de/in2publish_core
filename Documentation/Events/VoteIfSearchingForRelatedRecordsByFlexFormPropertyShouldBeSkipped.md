@@ -43,7 +43,7 @@ your `myext_pi1` plugin.
 ```php
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped;
 
-class RecordShouldBeIgnoredVoter
+class SearchingForRelatedRecordsByFlexFormPropertyShouldBeSkippedVoter
 {
     public function __invoke(VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped $event): void
     {

@@ -6,12 +6,14 @@ namespace In2code\In2publishCore\EventListener;
 
 use In2code\In2publishCore\Controller\FileController;
 use In2code\In2publishCore\Controller\RecordController;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
+use In2code\In2publishCore\Event\VoteIfRecordIsPublishable;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped;
@@ -242,6 +244,21 @@ class SignalSlotReplacement
                     'propertyName' => $event->getPropertyName(),
                     'columnConfiguration' => $event->getColumnConfiguration(),
                 ],
+            ]
+        );
+        $event->voteYes($signalArguments[0]['yes']);
+        $event->voteNo($signalArguments[0]['no']);
+    }
+
+    public function onVoteIfRecordIsPublishable(VoteIfRecordIsPublishable $event): void
+    {
+        $signalArguments = $this->dispatcher->dispatch(
+            RecordInterface::class,
+            'isPublishable',
+            [
+                ['yes' => 0, 'no' => 0],
+                $event->getTable(),
+                $event->getIdentifier(),
             ]
         );
         $event->voteYes($signalArguments[0]['yes']);

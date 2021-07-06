@@ -36,7 +36,7 @@ This example shows how to skip relation resolving by FlexForm for a EXT:News plu
 ```php
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped;
 
-class RecordShouldBeIgnoredVoter
+class SearchingForRelatedRecordsByFlexFormShouldBeSkippedVoter
 {
     public function __invoke(VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped $event): void
     {

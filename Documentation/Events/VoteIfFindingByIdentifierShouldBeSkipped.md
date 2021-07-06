@@ -25,7 +25,7 @@ selected and no record will be instantiated for those rows. No related record wi
 ```php
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
 
-class RecordShouldBeIgnoredVoter
+class FindingByIdentifierShouldBeSkippedVoter
 {
     public function __invoke(VoteIfFindingByIdentifierShouldBeSkipped $event): void
     {

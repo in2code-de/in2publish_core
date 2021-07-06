@@ -190,3 +190,7 @@ services:
         identifier: 'legacy-slot'
         method: 'onVoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped'
         event: In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onVoteIfRecordIsPublishable'
+        event: In2code\In2publishCore\Event\VoteIfRecordIsPublishable

@@ -1,13 +1,20 @@
-Replace signal slots by PSR-14 events
+# Upgrading instructions vor in2publish_core from v9 to v10
+
+## Replace signal slots by PSR-14 events
+
+TYPO3 deprecated the Signal Slot Dispatcher in TYPO3 v10 and introduced PSR-14 Events as a replacement. To keep track
+with this change, all Content Publisher Signals are replaced with Events, too. This change is backwards compatible in
+the version 10 of in2publish_core. The backwards compatibility layer will be removed in in2publish_core v11, because
+that version will only be compatible with TYPO3 v11, where the Signal Slot Dispatcher will be removed.
 
 * https://docs.typo3.org/c/typo3/cms-core/master/en-us/Changelog/10.0/Feature-88770-PSR-14BasedEventDispatcher.html
 * https://usetypo3.com/psr-14-events.html
 
-The following signal slots were replaced by PSR-14 events:
+The following table lists all signals of in2publish_core with their event replacement:
 
 | Signal Class `\In2code\In2publishCore\`     | Signal Name                                            | Event
 |---------------------------------------------| -------------------------------------------------------|---
-| Domain\Model\RecordInterface                | isPublishable                                          | VoteIfRecordIsPublishable
+| Domain\Model\RecordInterface                | isPublishable                                          | [VoteIfRecordIsPublishable](../Events/VoteIfRecordIsPublishable.md)
 | Domain\Factory\RecordFactory                | instanceCreated (RecordFactory)                        | RecordInstanceWasInstantiated
 | Domain\Factory\RecordFactory                | rootRecordFinished                                     | RootRecordCreationWasFinished
 | Domain\Factory\RecordFactory                | addAdditionalRelatedRecords                            | AllRelatedRecordsWereAddedToOneRecord

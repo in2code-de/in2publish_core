@@ -32,12 +32,12 @@ namespace In2code\In2publishCore\Domain\Model;
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use In2code\In2publishCore\Event\VoteIfRecordIsPublishable;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use LogicException;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
-
 use function array_diff;
 use function array_filter;
 use function array_key_exists;
@@ -1270,13 +1270,10 @@ class Record implements RecordInterface
         if (!$permissionService->isUserAllowedToPublish()) {
             return false;
         }
-        $signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
-        $votes = $signalSlotDispatcher->dispatch(
-            RecordInterface::class,
-            'isPublishable',
-            [['yes' => 0, 'no' => 0], $this->tableName, $this->getIdentifier()]
-        );
-        return $votes[0]['yes'] >= $votes[0]['no'];
+        $eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
+        $event = new VoteIfRecordIsPublishable($this->tableName, $this->getIdentifier());
+        $eventDispatcher->dispatch($event);
+        return $event->getVotingResult();
     }
 
     public function isRemovedFromLocalDatabase(): bool

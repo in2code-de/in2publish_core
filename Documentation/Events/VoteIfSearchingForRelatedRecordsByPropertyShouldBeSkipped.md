@@ -39,7 +39,7 @@ This example shows you how to always skip a field from a table, even if the fiel
 ```php
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped;
 
-class RecordShouldBeIgnoredVoter
+class SearchingForRelatedRecordsByPropertyShouldBeSkippedVoter
 {
     public function __invoke(VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped $event): void
     {

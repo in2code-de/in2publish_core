@@ -34,7 +34,7 @@ example:
 ```php
 use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
 
-class RecordShouldBeIgnoredVoter
+class FindingByPropertyShouldBeSkippedVoter
 {
     public function __invoke(VoteIfFindingByPropertyShouldBeSkipped $event): void
     {
