@@ -36,6 +36,7 @@ use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
+use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Log\Logger;
@@ -43,8 +44,6 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
 use function array_diff;
 use function array_filter;
@@ -318,11 +317,7 @@ class RecordFactory implements SingletonInterface
         }
         if (true === $isRootRecord && true === $this->isRootRecord) {
             $this->isRootRecord = false;
-            try {
-                $this->signalSlotDispatcher->dispatch(__CLASS__, 'rootRecordFinished', [$this, $instance]);
-            } catch (InvalidSlotException $e) {
-            } catch (InvalidSlotReturnException $e) {
-            }
+            $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($this, $instance));
         }
         return $instance;
     }
@@ -625,15 +620,8 @@ class RecordFactory implements SingletonInterface
     public function endSimulation()
     {
         $this->isRootRecord = false;
-        try {
-            $this->signalSlotDispatcher->dispatch(
-                __CLASS__,
-                'rootRecordFinished',
-                [$this, GeneralUtility::makeInstance(NullRecord::class)]
-            );
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
-        }
+        $record = GeneralUtility::makeInstance(NullRecord::class);
+        $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($this, $record));
     }
 
     /**

@@ -198,3 +198,7 @@ services:
         identifier: 'legacy-slot'
         method: 'onRecordInstanceWasInstantiated'
         event: In2code\In2publishCore\Event\RecordInstanceWasInstantiated
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onRootRecordCreationWasFinished'
+        event: In2code\In2publishCore\Event\RootRecordCreationWasFinished
