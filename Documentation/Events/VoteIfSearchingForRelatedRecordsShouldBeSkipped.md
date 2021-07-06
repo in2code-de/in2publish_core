@@ -27,7 +27,7 @@ voting event instead.
 ```php
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
 
-class RecordShouldBeIgnoredVoter
+class SearchingForRelatedRecordsShouldBeSkippedVoter
 {
     public function __invoke(VoteIfSearchingForRelatedRecordsShouldBeSkipped $event): void
     {

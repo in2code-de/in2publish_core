@@ -27,7 +27,7 @@ Vote "Yes" to skip all PID-based record relation resolver.
 ```php
 use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
 
-class RecordShouldBeIgnoredVoter
+class PageRecordEnrichingShouldBeSkippedVoter
 {
     public function __invoke(VoteIfPageRecordEnrichingShouldBeSkipped $event): void
     {
