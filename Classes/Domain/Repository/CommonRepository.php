@@ -43,6 +43,7 @@ use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped;
+use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
 use In2code\In2publishCore\Service\Configuration\TcaService;
@@ -2323,26 +2324,19 @@ class CommonRepository extends BaseRepository
         return $event->getVotingResult();
     }
 
-    /**
-     * @param RecordInterface $record
-     * @param string $propertyName
-     * @param array $columnConfiguration
-     *
-     * @return bool
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
-     */
     protected function shouldSkipSearchingForRelatedRecordsByProperty(
         RecordInterface $record,
-        $propertyName,
+        string $propertyName,
         array $columnConfiguration
     ): bool {
-        $arguments = [
-            'record' => $record,
-            'propertyName' => $propertyName,
-            'columnConfiguration' => $columnConfiguration,
-        ];
-        return $this->should('shouldSkipSearchingForRelatedRecordsByProperty', $arguments);
+        $event = new VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped(
+            $this,
+            $record,
+            $propertyName,
+            $columnConfiguration
+        );
+        $this->eventDispatcher->dispatch($event);
+        return $event->getVotingResult();
     }
 
     protected function shouldSkipSearchingForRelatedRecordsByFlexForm(
@@ -2416,31 +2410,6 @@ class CommonRepository extends BaseRepository
         $event = new VoteIfRecordShouldBeIgnored($this, $localProperties, $foreignProperties, $tableName);
         $this->eventDispatcher->dispatch($event);
         return $event->getVotingResult();
-    }
-
-    /**
-     * Slot method signature:
-     *  public function slotMethod($votes, CommonRepository $commonRepository, array $additionalArguments)
-     *
-     * Slot method body:
-     *  Either "$votes['yes']++;" or "$votes['no']++;" based on your decision
-     *
-     * Slot method return:
-     *  return array($votes, $commonRepository, $additionalArguments);
-     *
-     * @param string $signal Name of the registered signal to dispatch
-     * @param array $arguments additional arguments to be passed to the slot
-     *
-     * @return bool If no vote was received false will be returned
-     */
-    protected function should($signal, array $arguments): bool
-    {
-        $signalArguments = $this->signalSlotDispatcher->dispatch(
-            __CLASS__,
-            $signal,
-            [['yes' => 0, 'no' => 0], $this, $arguments]
-        );
-        return $signalArguments[0]['yes'] > $signalArguments[0]['no'];
     }
 
     /**

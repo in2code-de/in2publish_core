@@ -186,3 +186,7 @@ services:
         identifier: 'legacy-slot'
         method: 'onVoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped'
         event: In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onVoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped'
+        event: In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped
