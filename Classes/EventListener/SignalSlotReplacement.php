@@ -6,9 +6,11 @@ namespace In2code\In2publishCore\EventListener;
 
 use In2code\In2publishCore\Controller\FileController;
 use In2code\In2publishCore\Controller\RecordController;
+use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
+use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
@@ -263,5 +265,21 @@ class SignalSlotReplacement
         );
         $event->voteYes($signalArguments[0]['yes']);
         $event->voteNo($signalArguments[0]['no']);
+    }
+
+    public function onRecordInstanceWasInstantiated(RecordInstanceWasInstantiated $event): void
+    {
+        try {
+            $this->dispatcher->dispatch(
+                RecordFactory::class,
+                'instanceCreated',
+                [
+                    $event->getRecordFactory(),
+                    $event->getRecord()
+                ]
+            );
+        } catch (InvalidSlotException | InvalidSlotReturnException $e) {
+            // Ignore exceptions
+        }
     }
 }
