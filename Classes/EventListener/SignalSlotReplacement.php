@@ -15,6 +15,7 @@ use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
+use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
@@ -157,6 +158,24 @@ class SignalSlotReplacement
                 [
                     'record' => $event->getRecord(),
                     'tableName' => $event->getTableName(),
+                ],
+            ]
+        );
+        $event->voteYes($signalArguments[0]['yes']);
+        $event->voteNo($signalArguments[0]['no']);
+    }
+
+    public function onVoteIfSearchingForRelatedRecordsShouldBeSkipped(
+        VoteIfSearchingForRelatedRecordsShouldBeSkipped $event
+    ): void {
+        $signalArguments = $this->dispatcher->dispatch(
+            CommonRepository::class,
+            'shouldSkipSearchingForRelatedRecords',
+            [
+                ['yes' => 0, 'no' => 0],
+                $event->getCommonRepository(),
+                [
+                    'record' => $event->getRecord(),
                 ],
             ]
         );

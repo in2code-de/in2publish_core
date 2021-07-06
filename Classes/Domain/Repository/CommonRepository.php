@@ -42,6 +42,7 @@ use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
+use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\FileUtility;
@@ -2307,16 +2308,11 @@ class CommonRepository extends BaseRepository
         return $event->getVotingResult();
     }
 
-    /**
-     * @param RecordInterface $record
-     *
-     * @return bool
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
-     */
     protected function shouldSkipSearchingForRelatedRecords(RecordInterface $record): bool
     {
-        return $this->should('shouldSkipSearchingForRelatedRecords', ['record' => $record]);
+        $event = new VoteIfSearchingForRelatedRecordsShouldBeSkipped($this, $record);
+        $this->eventDispatcher->dispatch($event);
+        return $event->getVotingResult();
     }
 
     /**
