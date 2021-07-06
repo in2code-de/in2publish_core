@@ -41,6 +41,7 @@ use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
+use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
@@ -1115,6 +1116,7 @@ class CommonRepository extends BaseRepository
                     $newRecords = $this->getRecordsByFlexFormRelation(
                         $record,
                         $column,
+                        $key,
                         $excludedTableNames,
                         $config,
                         $currentFlexFormDatum
@@ -1128,9 +1130,10 @@ class CommonRepository extends BaseRepository
 
     /**
      * @param RecordInterface $record
-     * @param $column
+     * @param string $column
+     * @param string $key
      * @param array $exclTables
-     * @param $config
+     * @param array $config
      * @param mixed $flexFormData
      *
      * @return array
@@ -1138,12 +1141,19 @@ class CommonRepository extends BaseRepository
      */
     protected function getRecordsByFlexFormRelation(
         RecordInterface $record,
-        $column,
+        string $column,
+        string $key,
         array $exclTables,
-        $config,
+        array $config,
         $flexFormData
     ): array {
-        if ($this->shouldSkipSearchingForRelatedRecordsByFlexFormProperty($record, $config, $flexFormData)) {
+        if ($this->shouldSkipSearchingForRelatedRecordsByFlexFormProperty(
+            $record,
+            $column,
+            $key,
+            $config,
+            $flexFormData
+        )) {
             return [];
         }
 
@@ -2308,7 +2318,7 @@ class CommonRepository extends BaseRepository
 
     protected function shouldSkipSearchingForRelatedRecordsByFlexForm(
         RecordInterface $record,
-        $column,
+        string $column,
         $columnConfiguration,
         $flexFormDefinition,
         $flexFormData
@@ -2325,26 +2335,23 @@ class CommonRepository extends BaseRepository
         return $event->getVotingResult();
     }
 
-    /**
-     * @param RecordInterface $record
-     * @param array $config
-     * @param array $flexFormData
-     *
-     * @return bool
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
-     */
     protected function shouldSkipSearchingForRelatedRecordsByFlexFormProperty(
         RecordInterface $record,
-        $config,
+        string $column,
+        string $key,
+        array $config,
         $flexFormData
     ): bool {
-        $arguments = [
-            'record' => $record,
-            'config' => $config,
-            'flexFormData' => $flexFormData,
-        ];
-        return $this->should('shouldSkipSearchingForRelatedRecordsByFlexFormProperty', $arguments);
+        $event = new VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped(
+            $this,
+            $record,
+            $column,
+            $key,
+            $config,
+            $flexFormData
+        );
+        $this->eventDispatcher->dispatch($event);
+        return $event->getVotingResult();
     }
 
     protected function shouldSkipEnrichingPageRecord(RecordInterface $record): bool
