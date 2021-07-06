@@ -26,7 +26,8 @@ event `VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped` which would be
 
 ## Possibilities
 
-You can skip certain relations defined in FlexForms by voting "Yes" in your EventListener.
+You can skip the whole FlexForm relation resolving by voting "Yes" in your EventListener. If you want to skip a single
+property from the FlexForm, you should use `VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped` instead.
 
 ### Example
 
