@@ -6,19 +6,19 @@ namespace In2code\In2publishCore\Event;
 
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 
-class VoteIfFindingByPropertyShouldBeSkipped extends AbstractVotingEvent
+final class VoteIfFindingByPropertyShouldBeSkipped extends AbstractVotingEvent
 {
     /** @var CommonRepository */
-    protected $commonRepository;
+    private $commonRepository;
 
     /** @var string */
-    protected $propertyName;
+    private $propertyName;
 
     /** @var mixed */
-    protected $propertyValue;
+    private $propertyValue;
 
     /** @var string */
-    protected $tableName;
+    private $tableName;
 
     public function __construct(
         CommonRepository $commonRepository,

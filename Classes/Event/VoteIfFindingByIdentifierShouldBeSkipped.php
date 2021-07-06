@@ -6,16 +6,16 @@ namespace In2code\In2publishCore\Event;
 
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 
-class VoteIfFindingByIdentifierShouldBeSkipped extends AbstractVotingEvent
+final class VoteIfFindingByIdentifierShouldBeSkipped extends AbstractVotingEvent
 {
     /** @var CommonRepository */
-    protected $commonRepository;
+    private $commonRepository;
 
     /** @var int */
-    protected $identifier;
+    private $identifier;
 
     /** @var string */
-    protected $tableName;
+    private $tableName;
 
     public function __construct(CommonRepository $commonRepository, int $identifier, string $tableName)
     {

@@ -7,16 +7,16 @@ namespace In2code\In2publishCore\Event;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 
-class VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped extends AbstractVotingEvent
+final class VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped extends AbstractVotingEvent
 {
     /** @var CommonRepository */
-    protected $commonRepository;
+    private $commonRepository;
 
     /** @var RecordInterface */
-    protected $record;
+    private $record;
 
     /** @var string */
-    protected $tableName;
+    private $tableName;
 
     public function __construct(CommonRepository $commonRepository, RecordInterface $record, string $tableName)
     {

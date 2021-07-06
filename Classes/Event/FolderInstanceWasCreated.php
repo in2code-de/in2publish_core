@@ -6,10 +6,10 @@ namespace In2code\In2publishCore\Event;
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 
-class FolderInstanceWasCreated
+final class FolderInstanceWasCreated
 {
     /** @var RecordInterface */
-    protected $record;
+    private $record;
 
     public function __construct(RecordInterface $record)
     {
