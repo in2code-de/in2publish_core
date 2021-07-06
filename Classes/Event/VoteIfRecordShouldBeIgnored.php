@@ -6,19 +6,19 @@ namespace In2code\In2publishCore\Event;
 
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 
-class VoteIfRecordShouldBeIgnored extends AbstractVotingEvent
+final class VoteIfRecordShouldBeIgnored extends AbstractVotingEvent
 {
     /** @var CommonRepository */
-    protected $commonRepository;
+    private $commonRepository;
 
     /** @var array */
-    protected $localProperties;
+    private $localProperties;
 
     /** @var array */
-    protected $foreignProperties;
+    private $foreignProperties;
 
     /** @var string */
-    protected $tableName;
+    private $tableName;
 
     public function __construct(
         CommonRepository $commonRepository,

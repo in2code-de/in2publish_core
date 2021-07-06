@@ -7,13 +7,13 @@ namespace In2code\In2publishCore\Event;
 use In2code\In2publishCore\Controller\RecordController;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 
-class RecordWasCreatedForDetailAction
+final class RecordWasCreatedForDetailAction
 {
     /** @var RecordController */
-    protected $recordController;
+    private $recordController;
 
     /** @var RecordInterface */
-    protected $record;
+    private $record;
 
     public function __construct(RecordController $recordController, RecordInterface $record)
     {

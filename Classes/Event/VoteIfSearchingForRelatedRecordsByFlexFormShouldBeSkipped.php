@@ -7,25 +7,25 @@ namespace In2code\In2publishCore\Event;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 
-class VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped extends AbstractVotingEvent
+final class VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped extends AbstractVotingEvent
 {
     /** @var CommonRepository */
-    protected $commonRepository;
+    private $commonRepository;
 
     /** @var RecordInterface */
-    protected $record;
+    private $record;
 
     /** @var string */
-    protected $column;
+    private $column;
 
     /** @var array */
-    protected $columnConfiguration;
+    private $columnConfiguration;
 
     /** @var array */
-    protected $flexFormDefinition;
+    private $flexFormDefinition;
 
     /** @var array */
-    protected $flexFormData;
+    private $flexFormData;
 
     public function __construct(
         CommonRepository $commonRepository,

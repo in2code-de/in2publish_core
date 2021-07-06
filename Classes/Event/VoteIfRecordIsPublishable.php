@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Event;
 
-class VoteIfRecordIsPublishable extends AbstractVotingEvent
+final class VoteIfRecordIsPublishable extends AbstractVotingEvent
 {
     /** @var string */
-    protected $table;
+    private $table;
 
     /** @var int */
-    protected $identifier;
+    private $identifier;
 
     public function __construct(string $table, int $identifier)
     {
