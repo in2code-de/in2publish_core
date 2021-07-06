@@ -41,6 +41,7 @@ use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
+use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
 use In2code\In2publishCore\Service\Configuration\TcaService;
@@ -2337,17 +2338,6 @@ class CommonRepository extends BaseRepository
         return $this->should('shouldSkipSearchingForRelatedRecordsByProperty', $arguments);
     }
 
-    /**
-     * @param RecordInterface $record
-     * @param string $column
-     * @param array $columnConfiguration
-     * @param array $flexFormDefinition
-     * @param array $flexFormData
-     *
-     * @return bool
-     * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
-     *
-     */
     protected function shouldSkipSearchingForRelatedRecordsByFlexForm(
         RecordInterface $record,
         $column,
@@ -2355,14 +2345,16 @@ class CommonRepository extends BaseRepository
         $flexFormDefinition,
         $flexFormData
     ): bool {
-        $arguments = [
-            'record' => $record,
-            'column' => $column,
-            'columnConfiguration' => $columnConfiguration,
-            'flexFormDefinition' => $flexFormDefinition,
-            'flexFormData' => $flexFormData,
-        ];
-        return $this->should('shouldSkipSearchingForRelatedRecordsByFlexForm', $arguments);
+        $event = new VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped(
+            $this,
+            $record,
+            $column,
+            $columnConfiguration,
+            $flexFormDefinition,
+            $flexFormData
+        );
+        $this->eventDispatcher->dispatch($event);
+        return $event->getVotingResult();
     }
 
     /**
