@@ -27,7 +27,7 @@ The following signal slots were replaced by PSR-14 events:
 | Domain\Repository\CommonRepository          | shouldSkipSearchingForRelatedRecords                   | [VoteIfSearchingForRelatedRecordsShouldBeSkipped](../Events/VoteIfSearchingForRelatedRecordsShouldBeSkipped.md)
 | Domain\Repository\CommonRepository          | shouldSkipSearchingForRelatedRecordsByFlexForm         | [VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped](../Events/VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped.md)
 | Domain\Repository\CommonRepository          | shouldSkipSearchingForRelatedRecordsByFlexFormProperty | [VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped](../Events/VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped.md)
-| Domain\Repository\CommonRepository          | shouldSkipSearchingForRelatedRecordsByProperty         | VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped
+| Domain\Repository\CommonRepository          | shouldSkipSearchingForRelatedRecordsByProperty         | [VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped](../Events/VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped.md)
 | Controller\FileController                   | folderInstanceCreated                                  | [FolderInstanceWasCreated](../Events/FolderInstanceWasCreated.md)
 | Controller\RecordController                 | beforeDetailViewRender                                 | [RecordWasCreatedForDetailAction](../Events/RecordWasCreatedForDetailAction.md)
 | Controller\RecordController                 | beforePublishing                                       | RecordWasSelectedForPublishing

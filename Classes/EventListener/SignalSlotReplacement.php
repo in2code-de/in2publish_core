@@ -16,6 +16,7 @@ use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped;
+use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
@@ -220,6 +221,26 @@ class SignalSlotReplacement
                     'record' => $event->getRecord(),
                     'config' => $event->getConfig(),
                     'flexFormData' => $event->getFlexFormData(),
+                ],
+            ]
+        );
+        $event->voteYes($signalArguments[0]['yes']);
+        $event->voteNo($signalArguments[0]['no']);
+    }
+
+    public function onVoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped(
+        VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped $event
+    ): void {
+        $signalArguments = $this->dispatcher->dispatch(
+            CommonRepository::class,
+            'shouldSkipSearchingForRelatedRecordsByProperty',
+            [
+                ['yes' => 0, 'no' => 0],
+                $event->getCommonRepository(),
+                [
+                    'record' => $event->getRecord(),
+                    'propertyName' => $event->getPropertyName(),
+                    'columnConfiguration' => $event->getColumnConfiguration(),
                 ],
             ]
         );
