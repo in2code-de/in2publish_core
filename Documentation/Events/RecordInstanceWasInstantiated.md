@@ -4,8 +4,8 @@ Replaces the `\In2code\In2publishCore\Domain\Factory\RecordFactory / instanceCre
 
 ## When
 
-1. Each time a new instance of `\In2code\In2publishCore\Domain\Model\Record` which represents an existing database row
-   has been created, and the RecordFactory set the record state.
+Each time a new instance of `\In2code\In2publishCore\Domain\Model\Record` which represents an existing database row has
+been created, and the RecordFactory set the record state.
 
 ## What
 

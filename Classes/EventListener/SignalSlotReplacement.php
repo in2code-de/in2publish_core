@@ -12,6 +12,7 @@ use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
+use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
@@ -273,6 +274,22 @@ class SignalSlotReplacement
             $this->dispatcher->dispatch(
                 RecordFactory::class,
                 'instanceCreated',
+                [
+                    $event->getRecordFactory(),
+                    $event->getRecord()
+                ]
+            );
+        } catch (InvalidSlotException | InvalidSlotReturnException $e) {
+            // Ignore exceptions
+        }
+    }
+
+    public function onRootRecordCreationWasFinished(RootRecordCreationWasFinished $event): void
+    {
+        try {
+            $this->dispatcher->dispatch(
+                RecordFactory::class,
+                'rootRecordFinished',
                 [
                     $event->getRecordFactory(),
                     $event->getRecord()
