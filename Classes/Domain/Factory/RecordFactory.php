@@ -35,7 +35,9 @@ use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
 use In2code\In2publishCore\Service\Configuration\TcaService;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -150,6 +152,11 @@ class RecordFactory implements SingletonInterface
     protected $isRootRecord = false;
 
     /**
+     * @var EventDispatcher
+     */
+    protected $eventDispatcher;
+
+    /**
      * Creates the logger and sets any required configuration
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
@@ -168,6 +175,7 @@ class RecordFactory implements SingletonInterface
         );
 
         $this->excludedTableNames = GeneralUtility::makeInstance(ConfigContainer::class)->get('excludeRelatedTables');
+        $this->eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
     }
 
     /**
@@ -260,11 +268,7 @@ class RecordFactory implements SingletonInterface
                 $instance->setState(RecordInterface::RECORD_STATE_MOVED);
             }
 
-            try {
-                $this->signalSlotDispatcher->dispatch(__CLASS__, 'instanceCreated', [$this, $instance]);
-            } catch (InvalidSlotException $e) {
-            } catch (InvalidSlotReturnException $e) {
-            }
+            $this->eventDispatcher->dispatch(new RecordInstanceWasInstantiated($this, $instance));
 
             /* special case of tables without TCA (currently only sys_file_processedfile).
              * Normally we would just ignore them, but:

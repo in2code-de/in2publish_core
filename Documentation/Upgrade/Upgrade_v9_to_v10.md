@@ -15,7 +15,7 @@ The following table lists all signals of in2publish_core with their event replac
 | Signal Class `\In2code\In2publishCore\`     | Signal Name                                            | Event
 |---------------------------------------------| -------------------------------------------------------|---
 | Domain\Model\RecordInterface                | isPublishable                                          | [VoteIfRecordIsPublishable](../Events/VoteIfRecordIsPublishable.md)
-| Domain\Factory\RecordFactory                | instanceCreated (RecordFactory)                        | RecordInstanceWasInstantiated
+| Domain\Factory\RecordFactory                | instanceCreated (RecordFactory)                        | [RecordInstanceWasInstantiated](../Events/RecordInstanceWasInstantiated.md)
 | Domain\Factory\RecordFactory                | rootRecordFinished                                     | RootRecordCreationWasFinished
 | Domain\Factory\RecordFactory                | addAdditionalRelatedRecords                            | AllRelatedRecordsWereAddedToOneRecord
 | Domain\Repository\CommonRepository          | instanceCreated (CommonRepository)                     | CommonRepositoryWasInstantiated
