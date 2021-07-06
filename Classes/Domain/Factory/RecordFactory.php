@@ -35,6 +35,7 @@ use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
 use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
 use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
 use In2code\In2publishCore\Service\Configuration\TcaService;
@@ -43,7 +44,6 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 use function array_diff;
 use function array_filter;
@@ -141,11 +141,6 @@ class RecordFactory implements SingletonInterface
     protected $tcaService = null;
 
     /**
-     * @var Dispatcher
-     */
-    protected $signalSlotDispatcher;
-
-    /**
      * @var bool
      */
     protected $isRootRecord = false;
@@ -164,7 +159,6 @@ class RecordFactory implements SingletonInterface
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
-        $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
 
         $this->config = GeneralUtility::makeInstance(ConfigContainer::class)->get('factory');
 
@@ -343,11 +337,7 @@ class RecordFactory implements SingletonInterface
 
             $record = $commonRepository->enrichRecordWithRelatedRecords($record, $excludedTableNames);
 
-            $this->signalSlotDispatcher->dispatch(
-                RecordFactory::class,
-                'addAdditionalRelatedRecords',
-                [$record, $this]
-            );
+            $this->eventDispatcher->dispatch(new AllRelatedRecordsWereAddedToOneRecord($this, $record));
 
             $this->relatedRecordsDepth--;
         }
