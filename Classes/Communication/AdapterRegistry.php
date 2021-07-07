@@ -41,7 +41,6 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 use function array_column;
 use function array_combine;
@@ -82,11 +81,6 @@ class AdapterRegistry implements SingletonInterface
     protected $logger = null;
 
     /**
-     * @var Dispatcher
-     */
-    protected $signalSlotDispatcher = null;
-
-    /**
      * @var array
      */
     protected $config = [
@@ -105,7 +99,6 @@ class AdapterRegistry implements SingletonInterface
     public function __construct()
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
         if (!isset($GLOBALS['in2publish_core']['tests'])) {
             $GLOBALS['in2publish_core']['tests'] = [];
         }
