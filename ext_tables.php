@@ -298,27 +298,6 @@
 
     /************************************************ Redirect Support ************************************************/
     if ($configContainer->get('features.redirectsSupport.enable') && \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('redirects')) {
-        /** @see \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::addRedirectsToPageRecord() */
-        $signalSlotDispatcher->connect(
-            \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
-            'addAdditionalRelatedRecords',
-            \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::class,
-            'addRedirectsToPageRecord'
-        );
-        /** @see \In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement::replaceLocalWithForeignSourceHost() */
-        $signalSlotDispatcher->connect(
-            \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-            'publishRecordRecursiveBeforePublishing',
-            \In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement::class,
-            'replaceLocalWithForeignSourceHost'
-        );
-        /** @see \In2code\In2publishCore\Features\RedirectsSupport\Service\RedirectsDatabaseFieldsService::addRedirectFields() */
-        $signalSlotDispatcher->connect(
-            'TYPO3\\CMS\\Install\\Service\\SqlExpectedSchemaService',
-           'tablesDefinitionIsBeingBuilt',
-            \In2code\In2publishCore\Features\RedirectsSupport\Service\RedirectsDatabaseFieldsService::class,
-            'addRedirectFields'
-        );
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
             'in2publish_core',
             'site',
