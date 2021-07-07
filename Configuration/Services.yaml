@@ -214,3 +214,7 @@ services:
         identifier: 'legacy-slot'
         method: 'onRelatedRecordsByRteWereFetched'
         event: In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onRecursiveRecordPublishingBegan'
+        event: In2code\In2publishCore\Event\RecursiveRecordPublishingBegan
