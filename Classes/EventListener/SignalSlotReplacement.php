@@ -330,7 +330,7 @@ class SignalSlotReplacement
     {
         $this->dispatcher->dispatch(
             CommonRepository::class,
-            'RelatedRecordsByRteWereFetched',
+            'relationResolverRTE',
             [
                 $event->getCommonRepository(),
                 $event->getBodyText(),
