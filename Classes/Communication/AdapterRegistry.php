@@ -34,10 +34,10 @@ use In2code\In2publishCore\Communication\TemporaryAssetTransmission\Transmission
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Adapter\TransmissionAdapterTest;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Localization\LanguageService;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -48,11 +48,10 @@ use function array_keys;
 use function in_array;
 use function is_subclass_of;
 
-/**
- * Class AdapterRegistry
- */
-class AdapterRegistry implements SingletonInterface
+class AdapterRegistry implements SingletonInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var string[][][]
      */
@@ -61,9 +60,6 @@ class AdapterRegistry implements SingletonInterface
         'transmission' => [],
     ];
 
-    /**
-     * @var array
-     */
     protected $adapterMap = [
         'remote' => [
             'interface' => RceAdapter::class,
@@ -75,14 +71,6 @@ class AdapterRegistry implements SingletonInterface
         ],
     ];
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger = null;
-
-    /**
-     * @var array
-     */
     protected $config = [
         'adapter' => [
             'remote' => 'ssh',
@@ -91,14 +79,11 @@ class AdapterRegistry implements SingletonInterface
     ];
 
     /**
-     * AdapterRegistry constructor.
-     *
      * @SuppressWarnings(PHPMD.Superglobals)
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         if (!isset($GLOBALS['in2publish_core']['tests'])) {
             $GLOBALS['in2publish_core']['tests'] = [];
         }
@@ -106,16 +91,7 @@ class AdapterRegistry implements SingletonInterface
         ArrayUtility::mergeRecursiveWithOverrule($this->config, $setConf, false);
     }
 
-    /**
-     * @param string $type
-     * @param string $key
-     * @param string $adapter
-     * @param string $label
-     * @param array $tests
-     *
-     * @return bool
-     */
-    public function registerAdapter($type, $key, $adapter, $label, array $tests = []): bool
+    public function registerAdapter(string $type, string $key, string $adapter, string $label, array $tests = []): bool
     {
         if (!isset($this->adapterMap[$type])) {
             $this->logger->alert(
@@ -148,9 +124,7 @@ class AdapterRegistry implements SingletonInterface
         return true;
     }
 
-    /**
-     * @return string[][]
-     */
+    /** @return string[][] */
     public function getAdapterInfo(): array
     {
         $adapterInfo = [];
@@ -163,14 +137,8 @@ class AdapterRegistry implements SingletonInterface
         return $adapterInfo;
     }
 
-    /**
-     * @param string $interface
-     *
-     * @return null|string
-     *
-     * @throws In2publishCoreException
-     */
-    public function getAdapter($interface)
+    /** @throws In2publishCoreException */
+    public function getAdapter(string $interface): ?string
     {
         $interfaceTypeMap = array_combine(array_column($this->adapterMap, 'interface'), array_keys($this->adapterMap));
         if (!isset($interfaceTypeMap[$interface])) {
@@ -186,13 +154,8 @@ class AdapterRegistry implements SingletonInterface
         throw new In2publishCoreException('Could not determine adapter or type for ' . $interface, 1507906038);
     }
 
-    /**
-     * @param array $tests
-     * @param string $interface
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
-    protected function addTests(array $tests, $interface)
+    /** @SuppressWarnings(PHPMD.Superglobals) */
+    protected function addTests(array $tests, string $interface): void
     {
         $GLOBALS['in2publish_core']['virtual_tests'][$interface] = $tests;
         foreach ($tests as $test) {
@@ -202,19 +165,12 @@ class AdapterRegistry implements SingletonInterface
         }
     }
 
-    /**
-     * @return array
-     */
     public function getConfig(): array
     {
         return $this->config['adapter'];
     }
 
-    /**
-     * @return LanguageService
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
+    /** @SuppressWarnings(PHPMD.Superglobals) */
     protected function getLanguageService(): LanguageService
     {
         return $GLOBALS['LANG'];
