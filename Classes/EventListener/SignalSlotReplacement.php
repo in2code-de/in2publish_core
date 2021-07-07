@@ -10,6 +10,7 @@ use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
+use In2code\In2publishCore\Event\CommonRepositoryWasInstantiated;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
@@ -309,6 +310,17 @@ class SignalSlotReplacement
             [
                 $event->getRecord(),
                 $event->getRecordFactory(),
+            ]
+        );
+    }
+
+    public function onCommonRepositoryWasInstantiated(CommonRepositoryWasInstantiated $event): void
+    {
+        $this->dispatcher->dispatch(
+            CommonRepository::class,
+            'instanceCreated',
+            [
+                $event->getCommonRepository()
             ]
         );
     }
