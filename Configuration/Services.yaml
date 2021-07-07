@@ -185,6 +185,17 @@ services:
         method: 'onAlterTableDefinitionStatementsEvent'
         event: TYPO3\CMS\Core\Database\Event\AlterTableDefinitionStatementsEvent
 
+  In2code\In2publishCore\Features\CacheInvalidation\EventListener\CacheInvalidationEventListener:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-CacheInvalidationEventListener-PublishingOfOneRecordBegan'
+        method: 'onPublishingOfOneRecordBegan'
+        event: In2code\In2publishCore\Event\PublishingOfOneRecordBegan
+      - name: event.listener
+        identifier: 'in2publishcore-CacheInvalidationEventListener-RecursiveRecordPublishingEnded'
+        method: 'onRecursiveRecordPublishingEnded'
+        event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded
+
   In2code\In2publishCore\EventListener\SignalSlotReplacement:
     tags:
       - name: event.listener
