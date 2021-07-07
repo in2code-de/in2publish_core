@@ -2009,7 +2009,7 @@ class CommonRepository extends BaseRepository
 
         if (!$this->shouldSkipRecord($record)) {
             // Dispatch Anomaly
-            $this->eventDispatcher->dispatch(new PublishingOfOneRecordBegan($tableName,$record, $this));
+            $this->eventDispatcher->dispatch(new PublishingOfOneRecordBegan($record, $this));
 
             /*
              * For Records shown as moved:
@@ -2050,7 +2050,7 @@ class CommonRepository extends BaseRepository
             }
 
             // Dispatch Anomaly
-            $this->eventDispatcher->dispatch(new PublishingOfOneRecordEnded($tableName,$record, $this));
+            $this->eventDispatcher->dispatch(new PublishingOfOneRecordEnded($record, $this));
 
             // set the records state to published/unchanged to prevent
             // a second INSERT or UPDATE (superfluous queries)
