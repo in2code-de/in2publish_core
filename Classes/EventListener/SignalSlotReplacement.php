@@ -400,8 +400,8 @@ class SignalSlotReplacement
             'publishRecordRecursiveBeforePublishing',
             [
                 $event->getTableName(),
-                $event->getCommonRepository(),
-                $event->getRecord()
+                $event->getRecord(),
+                $event->getCommonRepository()
             ]
         );
     }
@@ -413,8 +413,8 @@ class SignalSlotReplacement
             'publishRecordRecursiveAfterPublishing',
             [
                 $event->getTableName(),
-                $event->getCommonRepository(),
-                $event->getRecord()
+                $event->getRecord(),
+                $event->getCommonRepository()
             ]
         );
     }
