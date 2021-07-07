@@ -36,6 +36,7 @@ use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
+use In2code\In2publishCore\Event\CommonRepositoryWasInstantiated;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
@@ -220,7 +221,7 @@ class CommonRepository extends BaseRepository
             $this->setTableName($tableName);
         }
         $this->eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
-        $this->signalSlotDispatcher->dispatch(__CLASS__, 'instanceCreated', [$this]);
+        $this->eventDispatcher->dispatch(new CommonRepositoryWasInstantiated($this));
     }
 
     /**
