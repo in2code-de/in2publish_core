@@ -395,12 +395,13 @@ class SignalSlotReplacement
 
     public function onPublishingOfOneRecordBegan(PublishingOfOneRecordBegan $event): void
     {
+        $record = $event->getRecord();
         $this->dispatcher->dispatch(
             CommonRepository::class,
             'publishRecordRecursiveBeforePublishing',
             [
-                $event->getTableName(),
-                $event->getRecord(),
+                $record->getTableName(),
+                $record,
                 $event->getCommonRepository()
             ]
         );
@@ -408,12 +409,13 @@ class SignalSlotReplacement
 
     public function onPublishingOfOneRecordEnded(PublishingOfOneRecordEnded $event): void
     {
+        $record = $event->getRecord();
         $this->dispatcher->dispatch(
             CommonRepository::class,
             'publishRecordRecursiveAfterPublishing',
             [
-                $event->getTableName(),
-                $event->getRecord(),
+                $record->getTableName(),
+                $record,
                 $event->getCommonRepository()
             ]
         );

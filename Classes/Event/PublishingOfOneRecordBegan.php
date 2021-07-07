@@ -9,25 +9,16 @@ use In2code\In2publishCore\Domain\Repository\CommonRepository;
 
 final class PublishingOfOneRecordBegan
 {
-    /** @var string */
-    private $tableName;
-
     /** @var RecordInterface */
     private $record;
 
     /** @var CommonRepository */
     private $commonRepository;
 
-    public function __construct(string $tableName, RecordInterface $record, CommonRepository $commonRepository)
+    public function __construct(RecordInterface $record, CommonRepository $commonRepository)
     {
-        $this->tableName = $tableName;
         $this->record = $record;
         $this->commonRepository = $commonRepository;
-    }
-
-    public function getTableName(): string
-    {
-        return $this->tableName;
     }
 
     public function getRecord(): RecordInterface
