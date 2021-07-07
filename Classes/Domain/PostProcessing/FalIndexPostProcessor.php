@@ -143,7 +143,7 @@ class FalIndexPostProcessor implements SingletonInterface
      *
      * @return ResourceStorage
      */
-    protected function getStorage(RecordInterface $record): ResourceStorage
+    protected function getStorage(RecordInterface $record): ?ResourceStorage
     {
         static $storages = [];
         if (!isset($storages[0])) {
