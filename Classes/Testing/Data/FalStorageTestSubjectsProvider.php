@@ -36,7 +36,6 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 use function array_column;
 use function array_combine;
@@ -52,9 +51,9 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     public const PURPOSE_UNIQUE_TARGET = 'uniqueTarget';
 
     /**
-     * @var Dispatcher
+     * @var EventDispatcher
      */
-    protected $signalSlotDispatcher;
+    protected $eventDispatcher;
 
     /**
      * @var array
@@ -76,7 +75,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
      */
     public function __construct()
     {
-        $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
+        $this->eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
     }
 
     /**
@@ -123,19 +122,13 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
             $this->localStorages = $this->fetchStorages(DatabaseUtility::buildLocalDatabaseConnection());
             $this->foreignStorages = $this->fetchStorages(DatabaseUtility::buildForeignDatabaseConnection());
         }
-        $arguments = [
-            'localStorages' => $this->localStorages,
-            'foreignStorages' => $this->foreignStorages,
-            'purpose' => $purpose,
-        ];
 
-        $eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
-        $event = new StoragesForTestingWereFetched($arguments);
-        $eventDispatcher->dispatch($event);
+        $event = new StoragesForTestingWereFetched($this->localStorages, $this->foreignStorages, $purpose);
+        $this->eventDispatcher->dispatch($event);
 
         return [
-            'local' => $arguments['localStorages'],
-            'foreign' => $arguments['foreignStorages'],
+            'local' => $event->getLocalStorages(),
+            'foreign' => $event->getForeignStorages(),
         ];
     }
 

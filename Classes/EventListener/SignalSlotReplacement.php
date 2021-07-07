@@ -463,14 +463,19 @@ class SignalSlotReplacement
 
     public function onStoragesForTestingWereFetched(StoragesForTestingWereFetched $event): void
     {
+        $arguments = [
+            'localStorages' => $event->getLocalStorages(),
+            'foreignStorages' => $event->getForeignStorages(),
+            'purpose' => $event->getPurpose(),
+        ];
         try {
-            $this->dispatcher->dispatch(
+            $arguments = $this->dispatcher->dispatch(
                 FalStorageTestSubjectsProvider::class,
                 'filterStorages',
-                [
-                    $event->getArguments(),
-                ]
+                $arguments
             );
+            $event->setLocalStorages($arguments['localStorages']);
+            $event->setForeignStorages($arguments['foreignStorages']);
         } catch (InvalidSlotException | InvalidSlotReturnException $e) {
             // ignore exception
         }

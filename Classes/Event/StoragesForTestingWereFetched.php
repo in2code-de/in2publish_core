@@ -7,15 +7,43 @@ namespace In2code\In2publishCore\Event;
 class StoragesForTestingWereFetched
 {
     /** @var array */
-    private $arguments;
+    private $localStorages;
 
-    public function __construct(array $arguments)
+    /** @var array */
+    private $foreignStorages;
+
+    /** @var string */
+    private $purpose;
+
+    public function __construct(array $localStorages, array $foreignStorages, string $purpose)
     {
-        $this->arguments = $arguments;
+        $this->localStorages = $localStorages;
+        $this->foreignStorages = $foreignStorages;
+        $this->purpose = $purpose;
     }
 
-    public function getArguments(): array
+    public function getLocalStorages(): array
     {
-        return $this->arguments;
+        return $this->localStorages;
+    }
+
+    public function setLocalStorages(array $localStorages): void
+    {
+        $this->localStorages = $localStorages;
+    }
+
+    public function getForeignStorages(): array
+    {
+        return $this->foreignStorages;
+    }
+
+    public function setForeignStorages(array $foreignStorages): void
+    {
+        $this->foreignStorages = $foreignStorages;
+    }
+
+    public function getPurpose(): string
+    {
+        return $this->purpose;
     }
 }
