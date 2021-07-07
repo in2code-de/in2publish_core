@@ -37,6 +37,7 @@ use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Event\CommonRepositoryWasInstantiated;
+use In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
@@ -132,7 +133,6 @@ use const E_USER_DEPRECATED;
 class CommonRepository extends BaseRepository
 {
     public const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)~';
-    public const SIGNAL_RELATION_RESOLVER_RTE = 'relationResolverRTE';
     public const DEPRECATION_METHOD_FPBPATN = 'CommonRepository::findPropertiesByPropertyAndTablename is deprecated and will be removed in in2publish_core version 10. Use BaseRepository::findPropertiesByProperty instead';
 
     /**
@@ -784,31 +784,9 @@ class CommonRepository extends BaseRepository
                 }
             }
         }
-        try {
-            $this->signalSlotDispatcher->dispatch(
-                CommonRepository::class,
-                self::SIGNAL_RELATION_RESOLVER_RTE,
-                [$this, $bodyText, $excludedTableNames, &$relatedRecords]
-            );
-        } catch (InvalidSlotException $e) {
-            $this->logger->error(
-                'Exception during signal dispatching',
-                [
-                    'exception' => $e,
-                    'signalClass' => CommonRepository::class,
-                    'signalName' => self::SIGNAL_RELATION_RESOLVER_RTE,
-                ]
-            );
-        } catch (InvalidSlotReturnException $e) {
-            $this->logger->error(
-                'Exception during signal dispatching',
-                [
-                    'exception' => $e,
-                    'signalClass' => CommonRepository::class,
-                    'signalName' => self::SIGNAL_RELATION_RESOLVER_RTE,
-                ]
-            );
-        }
+        $this->eventDispatcher->dispatch(
+            new RelatedRecordsByRteWereFetched($this, $bodyText, $excludedTableNames, $relatedRecords)
+        );
         // Filter probable null values (e.g. the page linked in the TYPO3 URN is the page currently in enrichment mode)
         return array_filter($relatedRecords);
     }
