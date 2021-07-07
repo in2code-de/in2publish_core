@@ -37,6 +37,8 @@ use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Event\CommonRepositoryWasInstantiated;
+use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
+use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched;
@@ -2007,11 +2009,7 @@ class CommonRepository extends BaseRepository
 
         if (!$this->shouldSkipRecord($record)) {
             // Dispatch Anomaly
-            $this->signalSlotDispatcher->dispatch(
-                __CLASS__,
-                'publishRecordRecursiveBeforePublishing',
-                [$tableName, $record, $this]
-            );
+            $this->eventDispatcher->dispatch(new PublishingOfOneRecordBegan($tableName,$record, $this));
 
             /*
              * For Records shown as moved:
@@ -2052,11 +2050,7 @@ class CommonRepository extends BaseRepository
             }
 
             // Dispatch Anomaly
-            $this->signalSlotDispatcher->dispatch(
-                __CLASS__,
-                'publishRecordRecursiveAfterPublishing',
-                [$tableName, $record, $this]
-            );
+            $this->eventDispatcher->dispatch(new PublishingOfOneRecordEnded($tableName,$record, $this));
 
             // set the records state to published/unchanged to prevent
             // a second INSERT or UPDATE (superfluous queries)
