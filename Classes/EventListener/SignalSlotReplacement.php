@@ -387,8 +387,8 @@ class SignalSlotReplacement
             CommonRepository::class,
             'publishRecordRecursiveEnd',
             [
-                $event->getCommonRepository(),
-                $event->getRecord()
+                $event->getRecord(),
+                $event->getCommonRepository()
             ]
         );
     }
