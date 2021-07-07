@@ -143,7 +143,9 @@ class ToolsController extends ActionController
             LocalizationUtility::translate('help.slack_channel', 'in2publish_core'),
         ];
 
-        $this->eventDispatcher->dispatch(new CreatedDefaultHelpLabels($supports));
+        $event = new CreatedDefaultHelpLabels($supports);
+        $this->eventDispatcher->dispatch($event);
+        [$supports] = $event->getSupports();
 
         $this->view->assign('supports', $supports);
 

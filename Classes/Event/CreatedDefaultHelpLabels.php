@@ -18,4 +18,14 @@ final class CreatedDefaultHelpLabels
     {
         return $this->supports;
     }
+
+    public function setSupports(array $supports): self
+    {
+        $this->supports = $supports;
+
+        return $this;
+    }
+    public function addSupport(string $support) {
+        $this->supports[] = $support;
+    }
 }
