@@ -17,6 +17,7 @@ use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
 use In2code\In2publishCore\Event\RecordWasEnriched;
+use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched;
@@ -423,5 +424,21 @@ class SignalSlotReplacement
                 $event->getRecord()
             ]
         );
+    }
+
+    public function onRecordWasSelectedForPublishing(RecordWasSelectedForPublishing $event): void
+    {
+        try {
+            $this->dispatcher->dispatch(
+                RecordController::class,
+                'beforePublishing',
+                [
+                    $event->getRecordController(),
+                    $event->getRecord(),
+                ]
+            );
+        } catch (InvalidSlotException | InvalidSlotReturnException $e) {
+            // ignore exception
+        }
     }
 }
