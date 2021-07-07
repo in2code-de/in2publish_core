@@ -37,6 +37,7 @@ use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Event\CommonRepositoryWasInstantiated;
+use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
@@ -1993,11 +1994,7 @@ class CommonRepository extends BaseRepository
     {
         try {
             // Dispatch Anomaly
-            $this->signalSlotDispatcher->dispatch(
-                __CLASS__,
-                'publishRecordRecursiveBegin',
-                [$record, $this]
-            );
+            $this->eventDispatcher->dispatch(new RecursiveRecordPublishingBegan($record, $this));
 
             $this->publishRecordRecursiveInternal($record, $excludedTables);
 
