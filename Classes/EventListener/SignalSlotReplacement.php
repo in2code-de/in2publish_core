@@ -24,6 +24,7 @@ use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched;
 use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
+use In2code\In2publishCore\Event\StoragesForTestingWereFetched;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
@@ -35,6 +36,7 @@ use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShoul
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
+use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
@@ -453,5 +455,20 @@ class SignalSlotReplacement
                 $event->getSupports()
             ]
         );
+    }
+
+    public function onStoragesForTestingWereFetched(StoragesForTestingWereFetched $event): void
+    {
+        try {
+            $this->dispatcher->dispatch(
+                FalStorageTestSubjectsProvider::class,
+                'filterStorages',
+                [
+                    $event->getArguments(),
+                ]
+            );
+        } catch (InvalidSlotException | InvalidSlotReturnException $e) {
+            // ignore exception
+        }
     }
 }
