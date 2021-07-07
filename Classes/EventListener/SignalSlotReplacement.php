@@ -15,6 +15,7 @@ use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
+use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched;
 use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
@@ -346,6 +347,18 @@ class SignalSlotReplacement
         $this->dispatcher->dispatch(
             CommonRepository::class,
             'publishRecordRecursiveBegin',
+            [
+                $event->getCommonRepository(),
+                $event->getRecord()
+            ]
+        );
+    }
+
+    public function onRecursiveRecordPublishingEnded(RecursiveRecordPublishingEnded $event): void
+    {
+        $this->dispatcher->dispatch(
+            CommonRepository::class,
+            'publishRecordRecursiveEnd',
             [
                 $event->getCommonRepository(),
                 $event->getRecord()

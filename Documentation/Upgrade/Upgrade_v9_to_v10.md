@@ -22,7 +22,7 @@ The following table lists all signals of in2publish_core with their event replac
 | Domain\Repository\CommonRepository          | afterRecordEnrichment (deprecated!)                    | RecordWasEnriched
 | Domain\Repository\CommonRepository          | relationResolverRTE                                    | [RelatedRecordsByRteWereFetched](../Events/RelatedRecordsByRteWereFetched.md)
 | Domain\Repository\CommonRepository          | publishRecordRecursiveBegin                            | [RecursiveRecordPublishingBegan](../Events/RecursiveRecordPublishingBegan.md)
-| Domain\Repository\CommonRepository          | publishRecordRecursiveEnd                              | RecursiveRecordPublishingEnded
+| Domain\Repository\CommonRepository          | publishRecordRecursiveEnd                              | [RecursiveRecordPublishingEnded](../Events/RecursiveRecordPublishingEnded.md)
 | Domain\Repository\CommonRepository          | publishRecordRecursiveBeforePublishing                 | PublishingOfOneRecordBegan
 | Domain\Repository\CommonRepository          | publishRecordRecursiveAfterPublishing                  | PublishingOfOneRecordEnded
 | Domain\Repository\CommonRepository          | shouldSkipRecord                                       | [VoteIfRecordShouldBeSkipped](../Events/VoteIfRecordShouldBeSkipped.md)
