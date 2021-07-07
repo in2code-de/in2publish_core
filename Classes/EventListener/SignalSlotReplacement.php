@@ -6,11 +6,13 @@ namespace In2code\In2publishCore\EventListener;
 
 use In2code\In2publishCore\Controller\FileController;
 use In2code\In2publishCore\Controller\RecordController;
+use In2code\In2publishCore\Controller\ToolsController;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
 use In2code\In2publishCore\Event\CommonRepositoryWasInstantiated;
+use In2code\In2publishCore\Event\CreatedDefaultHelpLabels;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
@@ -440,5 +442,16 @@ class SignalSlotReplacement
         } catch (InvalidSlotException | InvalidSlotReturnException $e) {
             // ignore exception
         }
+    }
+
+    public function onCreatedDefaultHelpLabels(CreatedDefaultHelpLabels $event): void
+    {
+        $this->dispatcher->dispatch(
+            ToolsController::class,
+            'collectSupportPlaces',
+            [
+                $event->getSupports()
+            ]
+        );
     }
 }
