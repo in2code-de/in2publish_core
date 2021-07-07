@@ -23,8 +23,8 @@ The following table lists all signals of in2publish_core with their event replac
 | Domain\Repository\CommonRepository          | relationResolverRTE                                    | [RelatedRecordsByRteWereFetched](../Events/RelatedRecordsByRteWereFetched.md)
 | Domain\Repository\CommonRepository          | publishRecordRecursiveBegin                            | [RecursiveRecordPublishingBegan](../Events/RecursiveRecordPublishingBegan.md)
 | Domain\Repository\CommonRepository          | publishRecordRecursiveEnd                              | [RecursiveRecordPublishingEnded](../Events/RecursiveRecordPublishingEnded.md)
-| Domain\Repository\CommonRepository          | publishRecordRecursiveBeforePublishing                 | PublishingOfOneRecordBegan
-| Domain\Repository\CommonRepository          | publishRecordRecursiveAfterPublishing                  | PublishingOfOneRecordEnded
+| Domain\Repository\CommonRepository          | publishRecordRecursiveBeforePublishing                 | [PublishingOfOneRecordBegan](../Events/PublishingOfOneRecordBegan.md)
+| Domain\Repository\CommonRepository          | publishRecordRecursiveAfterPublishing                  | [PublishingOfOneRecordEnded](../Events/PublishingOfOneRecordEnded.md)
 | Domain\Repository\CommonRepository          | shouldSkipRecord                                       | [VoteIfRecordShouldBeSkipped](../Events/VoteIfRecordShouldBeSkipped.md)
 | Domain\Repository\CommonRepository          | shouldIgnoreRecord                                     | [VoteIfRecordShouldBeIgnored](../Events/VoteIfRecordShouldBeIgnored.md)
 | Domain\Repository\CommonRepository          | shouldSkipEnrichingPageRecord                          | [VoteIfPageRecordEnrichingShouldBeSkipped](../Events/VoteIfPageRecordEnrichingShouldBeSkipped.md)

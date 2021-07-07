@@ -222,3 +222,11 @@ services:
         identifier: 'legacy-slot'
         method: 'onRecursiveRecordPublishingEnded'
         event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onPublishingOfOneRecordBegan'
+        event: In2code\In2publishCore\Event\PublishingOfOneRecordBegan
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onPublishingOfOneRecordEnded'
+        event: In2code\In2publishCore\Event\PublishingOfOneRecordEnded
