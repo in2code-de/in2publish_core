@@ -14,6 +14,7 @@ use In2code\In2publishCore\Event\CommonRepositoryWasInstantiated;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
+use In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched;
 use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
@@ -321,6 +322,20 @@ class SignalSlotReplacement
             'instanceCreated',
             [
                 $event->getCommonRepository()
+            ]
+        );
+    }
+
+    public function onRelatedRecordsByRteWereFetched(RelatedRecordsByRteWereFetched $event): void
+    {
+        $this->dispatcher->dispatch(
+            CommonRepository::class,
+            'RelatedRecordsByRteWereFetched',
+            [
+                $event->getCommonRepository(),
+                $event->getBodyText(),
+                $event->getExcludedTableNames(),
+                $event->getRelatedRecords()
             ]
         );
     }
