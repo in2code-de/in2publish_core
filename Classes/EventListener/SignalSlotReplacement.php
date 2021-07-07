@@ -16,6 +16,7 @@ use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
+use In2code\In2publishCore\Event\RecordWasEnriched;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched;
@@ -389,6 +390,17 @@ class SignalSlotReplacement
             [
                 $event->getTableName(),
                 $event->getCommonRepository(),
+                $event->getRecord()
+            ]
+        );
+    }
+
+    public function onRecordWasEnriched(RecordWasEnriched $event): void
+    {
+        $this->dispatcher->dispatch(
+            CommonRepository::class,
+            'afterRecordEnrichment',
+            [
                 $event->getRecord()
             ]
         );

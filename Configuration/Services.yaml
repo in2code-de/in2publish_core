@@ -230,3 +230,7 @@ services:
         identifier: 'legacy-slot'
         method: 'onPublishingOfOneRecordEnded'
         event: In2code\In2publishCore\Event\PublishingOfOneRecordEnded
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onRecordWasEnriched'
+        event: In2code\In2publishCore\Event\RecordWasEnriched

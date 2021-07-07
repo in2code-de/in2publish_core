@@ -19,7 +19,7 @@ The following table lists all signals of in2publish_core with their event replac
 | Domain\Factory\RecordFactory                | rootRecordFinished                                     | [RootRecordCreationWasFinished](../Events/RootRecordCreationWasFinished.md)
 | Domain\Factory\RecordFactory                | addAdditionalRelatedRecords                            | [AllRelatedRecordsWereAddedToOneRecord](../Events/AllRelatedRecordsWereAddedToOneRecord.md)
 | Domain\Repository\CommonRepository          | instanceCreated (CommonRepository)                     | [CommonRepositoryWasInstantiated](../Events/CommonRepositoryWasInstantiated.md)
-| Domain\Repository\CommonRepository          | afterRecordEnrichment (deprecated!)                    | RecordWasEnriched
+| Domain\Repository\CommonRepository          | afterRecordEnrichment (deprecated!)                    | [RecordWasEnriched](../Events/RecordWasEnriched.md)
 | Domain\Repository\CommonRepository          | relationResolverRTE                                    | [RelatedRecordsByRteWereFetched](../Events/RelatedRecordsByRteWereFetched.md)
 | Domain\Repository\CommonRepository          | publishRecordRecursiveBegin                            | [RecursiveRecordPublishingBegan](../Events/RecursiveRecordPublishingBegan.md)
 | Domain\Repository\CommonRepository          | publishRecordRecursiveEnd                              | [RecursiveRecordPublishingEnded](../Events/RecursiveRecordPublishingEnded.md)
