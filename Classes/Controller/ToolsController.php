@@ -145,7 +145,7 @@ class ToolsController extends ActionController
 
         $event = new CreatedDefaultHelpLabels($supports);
         $this->eventDispatcher->dispatch($event);
-        [$supports] = $event->getSupports();
+        $supports = $event->getSupports();
 
         $this->view->assign('supports', $supports);
 
