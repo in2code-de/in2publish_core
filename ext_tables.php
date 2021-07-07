@@ -154,13 +154,6 @@
     /********************************************** Anomaly Registration **********************************************/
     $signalSlotDispatcher->connect(
         \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveBeforePublishing',
-        \In2code\In2publishCore\Features\CacheInvalidation\Domain\Anomaly\CacheInvalidator::class,
-        'registerClearCacheTasks',
-        false
-    );
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
         'publishRecordRecursiveAfterPublishing',
         \In2code\In2publishCore\Domain\Anomaly\PhysicalFilePublisher::class,
         'publishPhysicalFileOfSysFile',
@@ -185,13 +178,6 @@
         'publishRecordRecursiveEnd',
         \In2code\In2publishCore\Features\RefIndexUpdate\Domain\Anomaly\RefIndexUpdater::class,
         'writeRefIndexUpdateTask',
-        false
-    );
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveEnd',
-        \In2code\In2publishCore\Features\CacheInvalidation\Domain\Anomaly\CacheInvalidator::class,
-        'writeClearCacheTask',
         false
     );
     if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
