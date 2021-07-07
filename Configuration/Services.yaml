@@ -3,12 +3,23 @@ services:
     autowire: true
     autoconfigure: true
     public: false
+    bind:
+      $localDatabase: '@In2code.In2publishCore.Database.Local'
+      $foreignDatabase: '@In2code.In2publishCore.Database.Foreign'
 
   In2code\In2publishCore\:
     resource: '../Classes/*'
     exclude: '../Classes/Domain/Model/*'
 
   # Services
+
+  In2code.In2publishCore.Database.Local:
+    class: 'TYPO3\CMS\Core\Database\Connection'
+    factory: ['In2code\In2publishCore\Utility\DatabaseUtility', 'buildLocalDatabaseConnection']
+
+  In2code.In2publishCore.Database.Foreign:
+    class: 'TYPO3\CMS\Core\Database\Connection'
+    factory: ['In2code\In2publishCore\Utility\DatabaseUtility', 'buildForeignDatabaseConnection']
 
   In2code\In2publishCore\Domain\PostProcessing\Processor\PostProcessor:
     factory: ['@In2code\In2publishCore\Domain\PostProcessing\PostProcessorFactory', 'createPostProcessor']
@@ -155,6 +166,24 @@ services:
         identifier: 'in2publishcore-postprocessingeventlistener-rootrecordcreationwasfinished'
         method: 'onRootRecordCreationWasFinished'
         event: In2code\In2publishCore\Event\RootRecordCreationWasFinished
+
+  In2code\In2publishCore\Features\RedirectsSupport\EventListener\RedirectsSupportEventListener:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-redirectssupporteventlistener-allrelatedrecordswereaddedtoonerecord'
+        method: 'onAllRelatedRecordsWereAddedToOneRecord'
+        event: In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord
+      - name: event.listener
+        identifier: 'in2publishcore-redirectssupporteventlistener-publishingofonerecordbegan'
+        method: 'onPublishingOfOneRecordBegan'
+        event: In2code\In2publishCore\Event\PublishingOfOneRecordBegan
+
+  In2code\In2publishCore\Features\RedirectsSupport\EventListener\EarlyRedirectsSupportEventListener:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-redirectssupporteventlistener-altertabledefinitionstatementsevent'
+        method: 'onAlterTableDefinitionStatementsEvent'
+        event: TYPO3\CMS\Core\Database\Event\AlterTableDefinitionStatementsEvent
 
   In2code\In2publishCore\EventListener\SignalSlotReplacement:
     tags:

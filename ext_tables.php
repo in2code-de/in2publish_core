@@ -9,38 +9,18 @@
         // Early return when installing per ZIP: autoload is not yet generated
         return;
     }
-    if (!(TYPO3_REQUESTTYPE & (TYPO3_REQUESTTYPE_BE | TYPO3_REQUESTTYPE_CLI | TYPO3_REQUESTTYPE_INSTALL))) {
+    if (!(TYPO3_REQUESTTYPE & (TYPO3_REQUESTTYPE_BE | TYPO3_REQUESTTYPE_CLI))) {
         // Do nothing when not in any of the desirable modes.
         return;
     }
 
-    /************************************************** Instances #1 **************************************************/
+    /**************************************************** Instances ***************************************************/
     $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class
     );
     $configContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \In2code\In2publishCore\Config\ConfigContainer::class
     );
-
-    /********************************************** Redirects Support #1 **********************************************/
-    $redirectsIsLoaded = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('redirects');
-    if ($redirectsIsLoaded) {
-        // Do not check if the redirects support is actually enabled, because we can not test this on foreign.
-        /** @see \In2code\In2publishCore\Features\RedirectsSupport\Service\RedirectsDatabaseFieldsService::addRedirectFields() */
-        $signalSlotDispatcher->connect(
-            'TYPO3\\CMS\\Install\\Service\\SqlExpectedSchemaService',
-            'tablesDefinitionIsBeingBuilt',
-            \In2code\In2publishCore\Features\RedirectsSupport\Service\RedirectsDatabaseFieldsService::class,
-            'addRedirectFields'
-        );
-    }
-
-    if (TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_INSTALL) {
-        // Skip anything else when we're in the install tool
-        return;
-    }
-
-    /************************************************** Instances #2 **************************************************/
     $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \In2code\In2publishCore\Service\Context\ContextService::class
     );
@@ -317,22 +297,11 @@
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Performance\DiskSpeedPerformanceTest::class;
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Application\SiteConfigurationTest::class;
 
-    /********************************************** Redirects Support #2 **********************************************/
-    if ($redirectsIsLoaded && $configContainer->get('features.redirectsSupport.enable')) {
-        /** @see \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::addRedirectsToPageRecord() */
-        $signalSlotDispatcher->connect(
-            \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
-            'addAdditionalRelatedRecords',
-            \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::class,
-            'addRedirectsToPageRecord'
-        );
-        /** @see \In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement::replaceLocalWithForeignSourceHost() */
-        $signalSlotDispatcher->connect(
-            \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-            'publishRecordRecursiveBeforePublishing',
-            \In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement::class,
-            'replaceLocalWithForeignSourceHost'
-        );
+    /************************************************ Redirect Support ************************************************/
+    if (
+        $configContainer->get('features.redirectsSupport.enable')
+        && \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('redirects')
+    ) {
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
             'in2publish_core',
             'site',

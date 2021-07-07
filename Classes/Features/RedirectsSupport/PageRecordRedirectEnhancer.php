@@ -29,13 +29,11 @@ namespace In2code\In2publishCore\Features\RedirectsSupport;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Service\Routing\SiteService;
 use In2code\In2publishCore\Utility\BackendUtility;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use PDO;
 use Psr\Http\Message\UriInterface as Uri;
 use TYPO3\CMS\Core\Database\Connection;
@@ -44,6 +42,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PageRecordRedirectEnhancer
 {
+    /** @var SiteService */
     protected $siteService;
 
     /** @var Connection */
@@ -54,17 +53,17 @@ class PageRecordRedirectEnhancer
 
     protected $looseRedirects = [];
 
-    public function __construct()
+    public function __construct(SiteService $siteService, Connection $localDatabase, Connection $foreignDatabase)
     {
-        $this->siteService = GeneralUtility::makeInstance(SiteService::class);
-        $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-        $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
+        $this->siteService = $siteService;
+        $this->localDatabase = $localDatabase;
+        $this->foreignDatabase = $foreignDatabase;
     }
 
-    public function addRedirectsToPageRecord(RecordInterface $record, RecordFactory $recordFactory): array
+    public function addRedirectsToPageRecord(RecordInterface $record): void
     {
         if ('pages' !== $record->getTableName() || ($pid = $record->getIdentifier()) < 1) {
-            return [$record, $recordFactory];
+            return;
         }
 
         // Find associated sys_redirects
@@ -82,7 +81,7 @@ class PageRecordRedirectEnhancer
         // The preview URL is not available if the record is deleted (because the SiteFinder uses
         // the RootlineUtility which does not support deleted pages)
         if ($record->isLocalRecordDeleted()) {
-            return [$record, $recordFactory];
+            return;
         }
 
         $uri = BackendUtility::buildPreviewUri('pages', $pid, 'local');
@@ -118,8 +117,6 @@ class PageRecordRedirectEnhancer
         }
 
         $this->processLooseRedirects($pid);
-
-        return [$record, $recordFactory];
     }
 
     public function collectRedirectsByUriRecursive(int $pid, Uri $uri, array $rows = [], array $seen = []): array
