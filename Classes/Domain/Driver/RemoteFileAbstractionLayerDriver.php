@@ -697,14 +697,14 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * where a file is just moved to another folder in the same storage.
      *
      * @param string $fileIdentifier
-     * @param string $targetFolderId
+     * @param string $targetFolderIdentifier
      * @param string $newFileName
      *
      * @return string
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function moveFileWithinStorage($fileIdentifier, $targetFolderId, $newFileName)
+    public function moveFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $newFileName)
     {
         return $this->executeEnvelope(
             new Envelope(
@@ -712,7 +712,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
                 [
                     'storage' => $this->storageUid,
                     'fileIdentifier' => $fileIdentifier,
-                    'targetFolderIdentifier' => $targetFolderId,
+                    'targetFolderIdentifier' => $targetFolderIdentifier,
                     'newFileName' => $newFileName,
                 ]
             )
