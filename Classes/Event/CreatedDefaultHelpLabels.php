@@ -6,7 +6,7 @@ namespace In2code\In2publishCore\Event;
 
 final class CreatedDefaultHelpLabels
 {
-    /** @var array */
+    /** @var string[] */
     private $supports;
 
     public function __construct(array $supports)
@@ -19,13 +19,13 @@ final class CreatedDefaultHelpLabels
         return $this->supports;
     }
 
-    public function setSupports(array $supports): self
+    public function setSupports(array $supports): void
     {
         $this->supports = $supports;
-
-        return $this;
     }
-    public function addSupport(string $support) {
+
+    public function addSupport(string $support)
+    {
         $this->supports[] = $support;
     }
 }
