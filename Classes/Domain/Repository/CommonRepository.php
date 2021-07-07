@@ -38,6 +38,7 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Event\CommonRepositoryWasInstantiated;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
+use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
@@ -1999,11 +2000,8 @@ class CommonRepository extends BaseRepository
             $this->publishRecordRecursiveInternal($record, $excludedTables);
 
             // Dispatch Anomaly
-            $this->signalSlotDispatcher->dispatch(
-                __CLASS__,
-                'publishRecordRecursiveEnd',
-                [$record, $this]
-            );
+            $this->eventDispatcher->dispatch(new RecursiveRecordPublishingEnded($record, $this));
+
         } catch (Throwable $exception) {
             $this->logger->critical(
                 'Publishing single record failed',
