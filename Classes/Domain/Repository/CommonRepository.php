@@ -39,6 +39,7 @@ use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Event\CommonRepositoryWasInstantiated;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
+use In2code\In2publishCore\Event\RecordWasEnriched;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched;
@@ -691,16 +692,9 @@ class CommonRepository extends BaseRepository
             }
         }
 
-        try {
-            [$record] = $this->signalSlotDispatcher->dispatch(
-                CommonRepository::class,
-                'afterRecordEnrichment',
-                [$record]
-            );
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
-        }
-        return $record;
+        $event = new RecordWasEnriched($record);
+        $this->eventDispatcher->dispatch($event);
+        return $event->getRecord();
     }
 
     /**
