@@ -421,13 +421,17 @@ class SignalSlotReplacement
 
     public function onRecordWasEnriched(RecordWasEnriched $event): void
     {
-        $this->dispatcher->dispatch(
-            CommonRepository::class,
-            'afterRecordEnrichment',
-            [
-                $event->getRecord()
-            ]
-        );
+        $record = $event->getRecord();
+        try {
+            [$record] = $this->dispatcher->dispatch(
+                CommonRepository::class,
+                'afterRecordEnrichment',
+                [$record]
+            );
+            $event->setRecord($record);
+        } catch (InvalidSlotException | InvalidSlotReturnException $e) {
+            // ignore exception
+        }
     }
 
     public function onRecordWasSelectedForPublishing(RecordWasSelectedForPublishing $event): void

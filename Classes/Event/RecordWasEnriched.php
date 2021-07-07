@@ -20,4 +20,9 @@ final class RecordWasEnriched
     {
         return $this->record;
     }
+
+    public function setRecord(RecordInterface $record): void
+    {
+        $this->record = $record;
+    }
 }
