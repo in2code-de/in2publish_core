@@ -32,10 +32,10 @@ namespace In2code\In2publishCore\Service\Routing;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Database\RawRecordService;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
@@ -43,22 +43,16 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
 
-class SiteService implements SingletonInterface
+class SiteService implements SingletonInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     protected const SITE_FINDER = [
         'local' => SiteFinder::class,
         'foreign' => ForeignSiteFinder::class,
     ];
 
-    /** @var LoggerInterface */
-    protected $logger;
-
     protected $cache = [];
-
-    public function __construct()
-    {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-    }
 
     public function getSiteForPidAndStagingLevel(int $pid, string $side): ?Site
     {
