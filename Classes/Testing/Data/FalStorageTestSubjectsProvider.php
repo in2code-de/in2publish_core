@@ -29,14 +29,14 @@ namespace In2code\In2publishCore\Testing\Data;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Event\StoragesForTestingWereFetched;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use PDO;
 use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
 use function array_column;
 use function array_combine;
@@ -128,15 +128,11 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
             'foreignStorages' => $this->foreignStorages,
             'purpose' => $purpose,
         ];
-        try {
-            $arguments = $this->signalSlotDispatcher->dispatch(
-                __CLASS__,
-                'filterStorages',
-                $arguments
-            );
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
-        }
+
+        $eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
+        $event = new StoragesForTestingWereFetched($arguments);
+        $eventDispatcher->dispatch($event);
+
         return [
             'local' => $arguments['localStorages'],
             'foreign' => $arguments['foreignStorages'],

@@ -39,4 +39,4 @@ The following table lists all signals of in2publish_core with their event replac
 | Controller\RecordController                 | beforeDetailViewRender                                 | [RecordWasCreatedForDetailAction](../Events/RecordWasCreatedForDetailAction.md)
 | Controller\RecordController                 | beforePublishing                                       | [RecordWasSelectedForPublishing](../Events/RecordWasSelectedForPublishing.md)
 | Controller\ToolsController                  | collectSupportPlaces                                   | [CreatedDefaultHelpLabels](../Events/CreatedDefaultHelpLabels.md)
-| Testing\Data\FalStorageTestSubjectsProvider | filterStorages                                         | StoragesForTestingWereFetched
+| Testing\Data\FalStorageTestSubjectsProvider | filterStorages                                         | [StoragesForTestingWereFetched](../Events/StoragesForTestingWereFetched.md)
