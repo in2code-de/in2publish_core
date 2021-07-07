@@ -254,3 +254,7 @@ services:
         identifier: 'legacy-slot'
         method: 'onRecordWasSelectedForPublishing'
         event: In2code\In2publishCore\Event\RecordWasSelectedForPublishing
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onCreatedDefaultHelpLabels'
+        event: In2code\In2publishCore\Event\CreatedDefaultHelpLabels

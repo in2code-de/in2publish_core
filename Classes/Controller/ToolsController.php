@@ -36,6 +36,7 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use In2code\In2publishCore\Event\CreatedDefaultHelpLabels;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Testing\Service\TestingService;
@@ -141,11 +142,9 @@ class ToolsController extends ActionController
             LocalizationUtility::translate('help.github_issues', 'in2publish_core'),
             LocalizationUtility::translate('help.slack_channel', 'in2publish_core'),
         ];
-        [$supports] = $this->signalSlotDispatcher->dispatch(
-            ToolsController::class,
-            'collectSupportPlaces',
-            [$supports]
-        );
+
+        $this->eventDispatcher->dispatch(new CreatedDefaultHelpLabels($supports));
+
         $this->view->assign('supports', $supports);
 
         $this->view->assign('tools', GeneralUtility::makeInstance(ToolsRegistry::class)->getTools());
