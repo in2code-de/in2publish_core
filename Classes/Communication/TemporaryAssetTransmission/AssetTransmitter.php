@@ -33,49 +33,36 @@ use In2code\In2publishCore\Communication\AdapterRegistry;
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\Exception\FileMissingException;
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface;
 use In2code\In2publishCore\Config\ConfigContainer;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Throwable;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function file_exists;
+use function rtrim;
 use function uniqid;
 
 /**
  * Class AssetTransmitter
  */
-class AssetTransmitter implements SingletonInterface
+class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger = null;
+    use LoggerAwareTrait;
 
-    /**
-     * @var AdapterInterface
-     */
-    protected $adapter = null;
+    /** @var AdapterInterface */
+    protected $adapter;
 
-    /**
-     * @var AdapterRegistry
-     */
-    protected $adapterRegistry = null;
+    /** @var AdapterRegistry */
+    protected $adapterRegistry;
 
-    /**
-     * @var string
-     */
-    protected $foreignRootPath = '';
+    /** @var string */
+    protected $foreignRootPath;
 
-    /**
-     * AssetTransmitter constructor.
-     */
-    public function __construct()
+    public function __construct(ConfigContainer $configContainer, AdapterRegistry $adapterRegistry)
     {
-        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->adapterRegistry = GeneralUtility::makeInstance(AdapterRegistry::class);
         $this->foreignRootPath = rtrim($configContainer->get('foreign.rootPath'), '/');
+        $this->adapterRegistry = $adapterRegistry;
     }
 
     /**
@@ -86,7 +73,7 @@ class AssetTransmitter implements SingletonInterface
      *
      * @throws FileMissingException
      */
-    public function transmitTemporaryFile($source): string
+    public function transmitTemporaryFile(string $source): string
     {
         $this->logger->info('Transmission of file requested', ['source' => $source]);
 
