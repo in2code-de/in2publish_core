@@ -155,13 +155,6 @@
     $signalSlotDispatcher->connect(
         \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
         'publishRecordRecursiveAfterPublishing',
-        \In2code\In2publishCore\Domain\Anomaly\PhysicalFilePublisher::class,
-        'publishPhysicalFileOfSysFile',
-        false
-    );
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveAfterPublishing',
         \In2code\In2publishCore\Features\SysLogPublisher\Domain\Anomaly\SysLogPublisher::class,
         'publishSysLog',
         false
