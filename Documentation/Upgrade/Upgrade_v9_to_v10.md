@@ -37,6 +37,6 @@ The following table lists all signals of in2publish_core with their event replac
 | Domain\Repository\CommonRepository          | shouldSkipSearchingForRelatedRecordsByProperty         | [VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped](../Events/VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped.md)
 | Controller\FileController                   | folderInstanceCreated                                  | [FolderInstanceWasCreated](../Events/FolderInstanceWasCreated.md)
 | Controller\RecordController                 | beforeDetailViewRender                                 | [RecordWasCreatedForDetailAction](../Events/RecordWasCreatedForDetailAction.md)
-| Controller\RecordController                 | beforePublishing                                       | RecordWasSelectedForPublishing
+| Controller\RecordController                 | beforePublishing                                       | [RecordWasSelectedForPublishing](../Events/RecordWasSelectedForPublishing.md)
 | Controller\ToolsController                  | collectSupportPlaces                                   | RreatedDefaultHelpLabels
 | Testing\Data\FalStorageTestSubjectsProvider | filterStorages                                         | StoragesForTestingWereFetched

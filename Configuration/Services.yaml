@@ -234,3 +234,7 @@ services:
         identifier: 'legacy-slot'
         method: 'onRecordWasEnriched'
         event: In2code\In2publishCore\Event\RecordWasEnriched
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onRecordWasSelectedForPublishing'
+        event: In2code\In2publishCore\Event\RecordWasSelectedForPublishing
