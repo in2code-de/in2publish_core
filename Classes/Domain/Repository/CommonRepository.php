@@ -137,6 +137,11 @@ use const E_USER_DEPRECATED;
 class CommonRepository extends BaseRepository
 {
     public const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)~';
+    /**
+     * @deprecated Listen to the new event RelatedRecordsByRteWereFetched instead.
+     *  The signal and this constant will be removed in in2publish_core version 11.
+     */
+    public const SIGNAL_RELATION_RESOLVER_RTE = 'relationResolverRTE';
     public const DEPRECATION_METHOD_FPBPATN = 'CommonRepository::findPropertiesByPropertyAndTablename is deprecated and will be removed in in2publish_core version 10. Use BaseRepository::findPropertiesByProperty instead';
 
     /**
@@ -788,9 +793,10 @@ class CommonRepository extends BaseRepository
                 }
             }
         }
-        $this->eventDispatcher->dispatch(
-            new RelatedRecordsByRteWereFetched($this, $bodyText, $excludedTableNames, $relatedRecords)
-        );
+        $event = new RelatedRecordsByRteWereFetched($this, $bodyText, $excludedTableNames, $relatedRecords);
+        $this->eventDispatcher->dispatch($event);
+        $relatedRecords = $event->getRelatedRecords();
+
         // Filter probable null values (e.g. the page linked in the TYPO3 URN is the page currently in enrichment mode)
         return array_filter($relatedRecords);
     }

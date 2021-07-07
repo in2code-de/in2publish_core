@@ -32,6 +32,7 @@ use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShoul
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
@@ -41,9 +42,13 @@ class SignalSlotReplacement
     /** @var Dispatcher */
     protected $dispatcher;
 
-    public function __construct(Dispatcher $dispatcher)
+    /** @var LogManager */
+    protected $logManager;
+
+    public function __construct(Dispatcher $dispatcher, LogManager $logManager)
     {
         $this->dispatcher = $dispatcher;
+        $this->logManager = $logManager;
     }
 
     public function onFolderInstanceWasCreated(FolderInstanceWasCreated $event): void
@@ -333,16 +338,30 @@ class SignalSlotReplacement
 
     public function onRelatedRecordsByRteWereFetched(RelatedRecordsByRteWereFetched $event): void
     {
-        $this->dispatcher->dispatch(
-            CommonRepository::class,
-            'relationResolverRTE',
-            [
-                $event->getCommonRepository(),
-                $event->getBodyText(),
-                $event->getExcludedTableNames(),
-                $event->getRelatedRecords()
-            ]
-        );
+        $relatedRecords = $event->getRelatedRecords();
+        try {
+            $this->dispatcher->dispatch(
+                CommonRepository::class,
+                CommonRepository::SIGNAL_RELATION_RESOLVER_RTE,
+                [
+                    $event->getCommonRepository(),
+                    $event->getBodyText(),
+                    $event->getExcludedTableNames(),
+                    &$relatedRecords
+                ]
+            );
+            $event->setRelatedRecords($relatedRecords);
+        } catch (InvalidSlotException | InvalidSlotReturnException $e) {
+            $logger = $this->logManager->getLogger(CommonRepository::class);
+            $logger->error(
+                'Exception during signal dispatching',
+                [
+                    'exception' => $e,
+                    'signalClass' => CommonRepository::class,
+                    'signalName' => CommonRepository::SIGNAL_RELATION_RESOLVER_RTE,
+                ]
+            );
+        }
     }
 
     public function onRecursiveRecordPublishingBegan(RecursiveRecordPublishingBegan $event): void
