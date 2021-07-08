@@ -7,7 +7,10 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\EventListener;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
+use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
+use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement;
+use In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater;
 use In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
@@ -22,10 +25,14 @@ class RedirectsSupportEventListener
     /** @var RedirectSourceHostReplacement */
     protected $redirectSourceHostReplacement;
 
+    /** @var RedirectCacheUpdater */
+    protected $redirectCacheUpdater;
+
     public function __construct(
         ConfigContainer $configContainer,
         PageRecordRedirectEnhancer $pageRecordRedirectEnhancer,
-        RedirectSourceHostReplacement $redirectSourceHostReplacement
+        RedirectSourceHostReplacement $redirectSourceHostReplacement,
+        RedirectCacheUpdater $redirectCacheUpdater
     ) {
         $this->enabled = (
             $configContainer->get('features.redirectsSupport.enable')
@@ -33,6 +40,7 @@ class RedirectsSupportEventListener
         );
         $this->pageRecordRedirectEnhancer = $pageRecordRedirectEnhancer;
         $this->redirectSourceHostReplacement = $redirectSourceHostReplacement;
+        $this->redirectCacheUpdater = $redirectCacheUpdater;
     }
 
     public function onAllRelatedRecordsWereAddedToOneRecord(AllRelatedRecordsWereAddedToOneRecord $event): void
@@ -49,5 +57,21 @@ class RedirectsSupportEventListener
             return;
         }
         $this->redirectSourceHostReplacement->replaceLocalWithForeignSourceHost($event->getRecord());
+    }
+
+    public function onPublishingOfOneRecordEnded(PublishingOfOneRecordEnded $event): void
+    {
+        if (!$this->enabled) {
+            return;
+        }
+        $this->redirectCacheUpdater->publishRecordRecursiveAfterPublishing($event->getRecord());
+    }
+
+    public function onRecursiveRecordPublishingEnded(RecursiveRecordPublishingEnded $event): void
+    {
+        if (!$this->enabled) {
+            return;
+        }
+        $this->redirectCacheUpdater->publishRecordRecursiveEnd();
     }
 }
