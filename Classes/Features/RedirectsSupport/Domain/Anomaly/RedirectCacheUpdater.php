@@ -29,27 +29,35 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\Task\RebuildRedirectCacheTask;
-use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class RedirectCacheUpdater implements SingletonInterface
+class RedirectCacheUpdater
 {
+    /** @var TaskRepository */
+    protected $taskRepository;
+
     protected $redirectWasPublished = false;
 
-    public function publishRecordRecursiveAfterPublishing(string $tableName): void
+    public function __construct(TaskRepository $taskRepository)
     {
-        if ('sys_redirect' !== $tableName) {
+        $this->taskRepository = $taskRepository;
+    }
+
+    public function publishRecordRecursiveAfterPublishing(RecordInterface $record): void
+    {
+        if ('sys_redirect' !== $record->getTableName()) {
             return;
         }
         $this->redirectWasPublished = true;
     }
 
-    public function publishRecordRecursiveEnd()
+    public function publishRecordRecursiveEnd(): void
     {
         if ($this->redirectWasPublished) {
-            GeneralUtility::makeInstance(TaskRepository::class)->add(new RebuildRedirectCacheTask([]));
+            $this->taskRepository->add(new RebuildRedirectCacheTask([]));
         }
+        $this->redirectWasPublished = false;
     }
 }
