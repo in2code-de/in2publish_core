@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Features\SkipTableVoting\Service;
+namespace In2code\In2publishCore\Features\SkipEmptyTable\Service;
 
 /*
  * Copyright notice

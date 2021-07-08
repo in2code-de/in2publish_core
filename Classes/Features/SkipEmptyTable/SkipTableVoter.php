@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Features\SkipTableVoting;
+namespace In2code\In2publishCore\Features\SkipEmptyTable;
 
 /*
  * Copyright notice
@@ -29,9 +29,11 @@ namespace In2code\In2publishCore\Features\SkipTableVoting;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository as CR;
-use In2code\In2publishCore\Features\SkipTableVoting\Service\TableInfoService as TIS;
+use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
+use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
+use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped;
+use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
+use In2code\In2publishCore\Features\SkipEmptyTable\Service\TableInfoService as TIS;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
@@ -51,47 +53,39 @@ class SkipTableVoter
      *  1. Skip tables which are empty
      *  2. Skip tables which do not contain the searched PID
      */
-    public function shouldSkipSearchingForRelatedRecordByTable(array $votes, CR $repo, array $arguments): array
-    {
-        $table = $arguments['tableName'];
+    public function shouldSkipSearchingForRelatedRecordByTable(
+        VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped $event
+    ): void {
+        $table = $event->getTableName();
 
         if ($this->tis->isEmptyTable($table)) {
-            $votes['yes']++;
-            return [$votes, $repo, $arguments];
+            $event->voteYes();
+        } else {
+            $pid = $event->getRecord()->getIdentifier();
+            if (!$this->tis->isPidInTable($table, $pid)) {
+                $event->voteYes();
+            }
         }
-
-        /** @var RecordInterface $record */
-        $record = $arguments['record'];
-        /** @var int $pid */
-        $pid = $record->getIdentifier();
-
-        if (!$this->tis->isPidInTable($table, $pid)) {
-            $votes['yes']++;
-            return [$votes, $repo, $arguments];
-        }
-
-        return [$votes, $repo, $arguments];
     }
 
     /**
      * Skip searching for related records by TCA, if the table to search in is empty
      */
-    public function shouldSkipSearchingForRelatedRecordsByProperty(array $votes, CR $repo, array $arguments): array
-    {
-        $config = $arguments['columnConfiguration'];
+    public function shouldSkipSearchingForRelatedRecordsByProperty(
+        VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped $event
+    ): void {
+        $config = $event->getColumnConfiguration();
         if (empty($config['type']) || !in_array($config['type'], ['select', 'group', 'inline'])) {
-            return [$votes, $repo, $arguments];
+            return;
         }
 
         if (array_key_exists('MM', $config) && $this->tis->isEmptyTable($config['MM'])) {
-            $votes['yes']++;
+            $event->voteYes();
         } elseif (array_key_exists('foreign_table', $config) && $this->tis->isEmptyTable($config['foreign_table'])) {
-            $votes['yes']++;
+            $event->voteYes();
         } elseif ($this->isGroupDbWhereAllAllowedTablesAreEmpty($config)) {
-            $votes['yes']++;
+            $event->voteYes();
         }
-
-        return [$votes, $repo, $arguments];
     }
 
     protected function isGroupDbWhereAllAllowedTablesAreEmpty(array $config): bool
@@ -118,22 +112,20 @@ class SkipTableVoter
     /**
      * Skip searching for related records by identifier, if the table to search in is empty
      */
-    public function shouldSkipFindByIdentifier(array $votes, CR $repo, array $arguments): array
+    public function shouldSkipFindByIdentifier(VoteIfFindingByIdentifierShouldBeSkipped $event): void
     {
-        if ($this->tis->isEmptyTable($arguments['tableName'])) {
-            $votes['yes']++;
+        if ($this->tis->isEmptyTable($event->getTableName())) {
+            $event->voteYes();
         }
-        return [$votes, $repo, $arguments];
     }
 
     /**
      * Skip searching for related records by TCA, if the table to search in is empty
      */
-    public function shouldSkipFindByProperty(array $votes, CR $repo, array $arguments): array
+    public function shouldSkipFindByProperty(VoteIfFindingByPropertyShouldBeSkipped $event): void
     {
-        if ($this->tis->isEmptyTable($arguments['tableName'])) {
-            $votes['yes']++;
+        if ($this->tis->isEmptyTable($event->getTableName())) {
+            $event->voteYes();
         }
-        return [$votes, $repo, $arguments];
     }
 }

@@ -207,43 +207,4 @@
             ]
         );
     }
-
-    /************************************************ Skip Table Voter ************************************************/
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'instanceCreated',
-        function () use ($signalSlotDispatcher, $configContainer) {
-            $voter = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                \In2code\In2publishCore\Features\SkipTableVoting\SkipTableVoter::class
-            );
-            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipTableVoter::shouldSkipSearchingForRelatedRecordByTable() */
-            $signalSlotDispatcher->connect(
-                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                'shouldSkipSearchingForRelatedRecordByTable',
-                $voter,
-                'shouldSkipSearchingForRelatedRecordByTable'
-            );
-            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipTableVoter::shouldSkipSearchingForRelatedRecordsByProperty() */
-            $signalSlotDispatcher->connect(
-                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                'shouldSkipSearchingForRelatedRecordsByProperty',
-                $voter,
-                'shouldSkipSearchingForRelatedRecordsByProperty'
-            );
-            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipTableVoter::shouldSkipFindByIdentifier() */
-            $signalSlotDispatcher->connect(
-                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                'shouldSkipFindByIdentifier',
-                $voter,
-                'shouldSkipFindByIdentifier'
-            );
-            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipTableVoter::shouldSkipFindByProperty() */
-            $signalSlotDispatcher->connect(
-                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                'shouldSkipFindByProperty',
-                $voter,
-                'shouldSkipFindByProperty'
-            );
-        }
-    );
 })();
