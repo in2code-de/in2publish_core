@@ -152,22 +152,6 @@
     }
 
     /********************************************** Anomaly Registration **********************************************/
-    if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
-        $signalSlotDispatcher->connect(
-            \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-            'publishRecordRecursiveBeforePublishing',
-            \In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly\NewsCacheInvalidator::class,
-            'registerClearCacheTasks',
-            false
-        );
-        $signalSlotDispatcher->connect(
-            \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-            'publishRecordRecursiveEnd',
-            \In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly\NewsCacheInvalidator::class,
-            'writeClearCacheTask',
-            false
-        );
-    }
     /** @see \In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly\PublishedFileIdentifierCollector::registerPublishedFile */
     $signalSlotDispatcher->connect(
         \In2code\In2publishCore\Domain\Repository\CommonRepository::class,

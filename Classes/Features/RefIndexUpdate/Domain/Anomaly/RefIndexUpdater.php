@@ -67,8 +67,7 @@ class RefIndexUpdater
         if (empty($this->configuration)) {
             return;
         }
-        $config = $this->configuration;
+        $this->taskRepository->add(GeneralUtility::makeInstance(RefIndexUpdateTask::class, $this->configuration));
         $this->configuration = [];
-        $this->taskRepository->add(GeneralUtility::makeInstance(RefIndexUpdateTask::class, $config));
     }
 }
