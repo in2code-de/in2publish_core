@@ -33,8 +33,10 @@ namespace In2code\In2publishCore\Features\PhysicalFilePublisher\Domain\Anomaly;
 use Exception;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\Publishing\FilePublisherService;
+use In2code\In2publishCore\Event\PhysicalFileWasPublished;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -50,12 +52,16 @@ class PhysicalFilePublisher implements SingletonInterface, LoggerAwareInterface
     /** @var FilePublisherService */
     protected $filePublisherService;
 
+    /** @var EventDispatcher */
+    protected $eventDispatcher;
+
     /** @var array<string, array<int|string, bool>> */
     protected $publishedRecords = [];
 
-    public function __construct(FilePublisherService $filePublisherService)
+    public function __construct(FilePublisherService $filePublisherService, EventDispatcher $eventDispatcher)
     {
         $this->filePublisherService = $filePublisherService;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -84,6 +90,7 @@ class PhysicalFilePublisher implements SingletonInterface, LoggerAwareInterface
         if (!is_numeric($storage)) {
             $storage = $record->getForeignProperty('storage');
         }
+        $storage = (int)$storage;
         $identifier = $record->getMergedProperty('identifier');
 
         if (strpos($identifier, ',')) {
@@ -143,6 +150,8 @@ class PhysicalFilePublisher implements SingletonInterface, LoggerAwareInterface
                 // and any impossible state, which will be ignored
                 $result = true;
         }
+
+        $this->eventDispatcher->dispatch(new PhysicalFileWasPublished($record));
 
         $this->publishedRecords[$record->getTableName()][$combinedIdentifier] = $result;
     }

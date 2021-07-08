@@ -232,6 +232,17 @@ services:
         method: 'onRecursiveRecordPublishingEnded'
         event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded
 
+  In2code\In2publishCore\Features\FileEdgeCacheInvalidator\EventListener\FileEdgeCacheInvalidatorEventListener:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-FileEdgeCacheInvalidatorEventListener-PhysicalFileWasPublished'
+        method: 'onPhysicalFileWasPublished'
+        event: In2code\In2publishCore\Event\PhysicalFileWasPublished
+      - name: event.listener
+        identifier: 'in2publishcore-FileEdgeCacheInvalidatorEventListener-RecursiveRecordPublishingEnded'
+        method: 'onRecursiveRecordPublishingEnded'
+        event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded
+
   In2code\In2publishCore\EventListener\SignalSlotReplacement:
     tags:
       - name: event.listener
