@@ -454,13 +454,14 @@ class SignalSlotReplacement
 
     public function onCreatedDefaultHelpLabels(CreatedDefaultHelpLabels $event): void
     {
-        $this->dispatcher->dispatch(
+        [$supports] = $this->dispatcher->dispatch(
             ToolsController::class,
             'collectSupportPlaces',
             [
                 $event->getSupports()
             ]
         );
+        $event->setSupports($supports);
     }
 
     public function onStoragesForTestingWereFetched(StoragesForTestingWereFetched $event): void
