@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Features\PublishSorting;
+namespace In2code\In2publishCore\Features\PublishSorting\Domain\Anomaly;
 
 /*
  * Copyright notice
@@ -30,54 +30,37 @@ namespace In2code\In2publishCore\Features\PublishSorting;
  */
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Service\Configuration\TcaService;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class SortingPublisher implements SingletonInterface
+class SortingPublisher
 {
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     protected $localDatabase;
 
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     protected $foreignDatabase;
 
-    /**
-     * @var TcaService
-     */
+    /** @var TcaService */
     protected $tcaService;
 
-    /**
-     * @var array
-     */
+    /** @var array<string, array<int, int>> */
     protected $sortingsToBePublished = [];
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
+    public function __construct(Connection $localDatabase, Connection $foreignDatabase, TcaService $tcaService)
     {
-        $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-        $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
-        $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
+        $this->localDatabase = $localDatabase;
+        $this->foreignDatabase = $foreignDatabase;
+        $this->tcaService = $tcaService;
     }
 
-    public function collectSortingsToBePublished(
-        string $tableName,
-        RecordInterface $record,
-        CommonRepository $commonRepository
-    ): void {
+    public function collectSortingsToBePublished(RecordInterface $record): void
+    {
         if (!$record->hasLocalProperty('pid')) {
             return;
         }
         $pid = $record->getLocalProperty('pid');
+        $tableName = $record->getTableName();
         if (isset($this->sortingsToBePublished[$tableName][$pid])) {
             return;
         }
@@ -94,10 +77,8 @@ class SortingPublisher implements SingletonInterface
         }
     }
 
-    public function publishSortingRecursively(
-        RecordInterface $record,
-        CommonRepository $commonRepository
-    ): void {
+    public function publishSortingRecursively(): void
+    {
         foreach ($this->sortingsToBePublished as $tableName => $pidList) {
             $query = $this->localDatabase->createQueryBuilder();
             $query->getRestrictions()->removeAll();
@@ -123,5 +104,6 @@ class SortingPublisher implements SingletonInterface
                             ->execute();
             }
         }
+        $this->sortingsToBePublished = [];
     }
 }
