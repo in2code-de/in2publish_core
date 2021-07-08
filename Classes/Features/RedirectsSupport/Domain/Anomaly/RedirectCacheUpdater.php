@@ -49,8 +49,7 @@ class RedirectCacheUpdater implements SingletonInterface
     public function publishRecordRecursiveEnd()
     {
         if ($this->redirectWasPublished) {
-            $task = GeneralUtility::makeInstance(RebuildRedirectCacheTask::class, []);
-            GeneralUtility::makeInstance(TaskRepository::class)->add($task);
+            GeneralUtility::makeInstance(TaskRepository::class)->add(new RebuildRedirectCacheTask([]));
         }
     }
 }
