@@ -203,6 +203,13 @@ services:
         method: 'onPublishingOfOneRecordEnded'
         event: In2code\In2publishCore\Event\PublishingOfOneRecordEnded
 
+  In2code\In2publishCore\Features\SysLogPublisher\EventListener\SysLogPublisherEventListener:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-SysLogPublisherEventListener-PublishingOfOneRecordEnded'
+        method: 'onPublishingOfOneRecordEnded'
+        event: In2code\In2publishCore\Event\PublishingOfOneRecordEnded
+
   In2code\In2publishCore\EventListener\SignalSlotReplacement:
     tags:
       - name: event.listener
