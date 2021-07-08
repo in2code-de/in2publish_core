@@ -85,12 +85,9 @@ class CacheInvalidator implements SingletonInterface
 
     public function writeClearCacheTask(): void
     {
-        $pids = $this->clearCachePids;
-        $this->clearCachePids = [];
-
-        if (!empty($pids)) {
-            $flushPageCacheTask = new FlushFrontendPageCacheTask(['pid' => implode(',', $pids)]);
-            $this->taskRepository->add($flushPageCacheTask);
+        if (!empty($this->clearCachePids)) {
+            $this->taskRepository->add(new FlushFrontendPageCacheTask(['pid' => implode(',', $this->clearCachePids)]));
+            $this->clearCachePids = [];
         }
 
         $commands = array_filter($this->clearCacheCommands);
