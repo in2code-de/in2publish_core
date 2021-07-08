@@ -21,9 +21,6 @@
     $pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \TYPO3\CMS\Core\Page\PageRenderer::class
     );
-    $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class
-    );
     $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \TYPO3\CMS\Core\Imaging\IconRegistry::class
     );
@@ -203,42 +200,4 @@
             ]
         );
     }
-    /************************************************ Skip Empty Table ************************************************/
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'instanceCreated',
-        function () use ($signalSlotDispatcher) {
-            $voter = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter::class
-            );
-            /** @see \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter::shouldSkipSearchingForRelatedRecordsByProperty() */
-            $signalSlotDispatcher->connect(
-                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                'shouldSkipSearchingForRelatedRecordsByProperty',
-                $voter,
-                'shouldSkipSearchingForRelatedRecordsByProperty'
-            );
-            /** @see \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter::shouldSkipFindByIdentifier() */
-            $signalSlotDispatcher->connect(
-                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                'shouldSkipFindByIdentifier',
-                $voter,
-                'shouldSkipFindByIdentifier'
-            );
-            /** @see \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter::shouldSkipFindByProperty() */
-            $signalSlotDispatcher->connect(
-                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                'shouldSkipFindByProperty',
-                $voter,
-                'shouldSkipFindByProperty'
-            );
-            /** @see \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter::shouldSkipSearchingForRelatedRecordByTable() */
-            $signalSlotDispatcher->connect(
-                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                'shouldSkipSearchingForRelatedRecordByTable',
-                $voter,
-                'shouldSkipSearchingForRelatedRecordByTable'
-            );
-        }
-    );
 })();

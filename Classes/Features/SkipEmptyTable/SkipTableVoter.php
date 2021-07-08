@@ -30,28 +30,28 @@ namespace In2code\In2publishCore\Features\SkipEmptyTable;
  */
 
 use Doctrine\DBAL\Exception;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
-use In2code\In2publishCore\Utility\DatabaseUtility;
-use Psr\Log\LoggerInterface;
+use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
+use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
+use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped;
+use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
 use function in_array;
 use function ksort;
 
-class SkipTableVoter implements SingletonInterface
+class SkipTableVoter implements LoggerAwareInterface
 {
-    /** @var LoggerInterface */
-    protected $logger;
+    use LoggerAwareTrait;
 
     /** @var Connection */
-    protected $local;
+    protected $localDatabase;
 
     /** @var Connection */
-    protected $foreign;
+    protected $foreignDatabase;
 
     /** @var array<string, bool> */
     protected $tables = [];
@@ -62,71 +62,57 @@ class SkipTableVoter implements SingletonInterface
         'skip' => [],
     ];
 
-    public function __construct()
+    public function __construct(Connection $localDatabase, Connection $foreignDatabase)
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->local = DatabaseUtility::buildLocalDatabaseConnection();
-        $this->foreign = DatabaseUtility::buildForeignDatabaseConnection();
+        $this->localDatabase = $localDatabase;
+        $this->foreignDatabase = $foreignDatabase;
     }
 
     public function shouldSkipSearchingForRelatedRecordsByProperty(
-        array $votes,
-        CommonRepository $repository,
-        array $arguments
-    ): array {
-        $config = $arguments['columnConfiguration'];
+        VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped $event
+    ): void {
+        $config = $event->getColumnConfiguration();
         if (empty($config['type']) || !in_array($config['type'], ['select', 'group', 'inline'])) {
-            return [$votes, $repository, $arguments];
+            return;
         }
 
         if (array_key_exists('MM', $config) && $this->isEmptyTable($config['MM'])) {
             $this->statistics['skip'][$config['MM']]++;
-            $votes['yes']++;
+            $event->voteYes();
         } elseif (array_key_exists('foreign_table', $config) && $this->isEmptyTable($config['foreign_table'])) {
             $this->statistics['skip'][$config['foreign_table']]++;
-            $votes['yes']++;
+            $event->voteYes();
         } elseif ($this->isGroupDbWhereAllAllowedTablesAreEmpty($config)) {
             $this->statistics['skip'][$config['allowed']]++;
-            $votes['yes']++;
+            $event->voteYes();
         }
-
-        return [$votes, $repository, $arguments];
     }
 
-    public function shouldSkipFindByIdentifier(
-        array $votes,
-        CommonRepository $repository,
-        array $arguments
-    ): array {
-        if ($this->isEmptyTable($arguments['tableName'])) {
-            $this->statistics['skip'][$arguments['tableName']]++;
-            $votes['yes']++;
+    public function shouldSkipFindByIdentifier(VoteIfFindingByIdentifierShouldBeSkipped $event): void
+    {
+        $table = $event->getTableName();
+        if ($this->isEmptyTable($table)) {
+            $this->statistics['skip'][$table]++;
+            $event->voteYes();
         }
-        return [$votes, $repository, $arguments];
     }
 
-    public function shouldSkipFindByProperty(
-        array $votes,
-        CommonRepository $repository,
-        array $arguments
-    ): array {
-        if ($this->isEmptyTable($arguments['tableName'])) {
-            $this->statistics['skip'][$arguments['tableName']]++;
-            $votes['yes']++;
+    public function shouldSkipFindByProperty(VoteIfFindingByPropertyShouldBeSkipped $event): void
+    {
+        $table = $event->getTableName();
+        if ($this->isEmptyTable($table)) {
+            $this->statistics['skip'][$table]++;
+            $event->voteYes();
         }
-        return [$votes, $repository, $arguments];
     }
 
-    public function shouldSkipSearchingForRelatedRecordByTable(
-        array $votes,
-        CommonRepository $repository,
-        array $arguments
-    ): array {
-        if ($this->isEmptyTable($arguments['tableName'])) {
-            $this->statistics['skip'][$arguments['tableName']]++;
-            $votes['yes']++;
+    public function shouldSkipFindByTable(VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped $event): void
+    {
+        $table = $event->getTableName();
+        if ($this->isEmptyTable($table)) {
+            $this->statistics['skip'][$table]++;
+            $event->voteYes();
         }
-        return [$votes, $repository, $arguments];
     }
 
     protected function isGroupDbWhereAllAllowedTablesAreEmpty(array $config): bool
@@ -153,7 +139,10 @@ class SkipTableVoter implements SingletonInterface
     protected function isEmptyTable(string $table): bool
     {
         if (!array_key_exists($table, $this->tables)) {
-            $this->tables[$table] = $this->isEmpty($this->local, $table) && $this->isEmpty($this->foreign, $table);
+            $this->tables[$table] = (
+                $this->isEmpty($this->localDatabase, $table)
+                && $this->isEmpty($this->foreignDatabase, $table)
+            );
         }
         return $this->tables[$table];
     }
