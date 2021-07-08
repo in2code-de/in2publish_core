@@ -152,20 +152,6 @@
     }
 
     /********************************************** Anomaly Registration **********************************************/
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveAfterPublishing',
-        \In2code\In2publishCore\Features\RefIndexUpdate\Domain\Anomaly\RefIndexUpdater::class,
-        'registerRefIndexUpdate',
-        false
-    );
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveEnd',
-        \In2code\In2publishCore\Features\RefIndexUpdate\Domain\Anomaly\RefIndexUpdater::class,
-        'writeRefIndexUpdateTask',
-        false
-    );
     if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
         $signalSlotDispatcher->connect(
             \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
