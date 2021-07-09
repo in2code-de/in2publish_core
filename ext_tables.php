@@ -336,6 +336,13 @@
             \In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement::class,
             'replaceLocalWithForeignSourceHost'
         );
+        /** @see \In2code\In2publishCore\Features\RedirectsSupport\Service\RedirectsDatabaseFieldsService::addRedirectFields() */
+        $signalSlotDispatcher->connect(
+            'TYPO3\\CMS\\Install\\Service\\SqlExpectedSchemaService',
+           'tablesDefinitionIsBeingBuilt',
+            \In2code\In2publishCore\Features\RedirectsSupport\Service\RedirectsDatabaseFieldsService::class,
+            'addRedirectFields'
+        );
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
             'In2code.In2publishCore',
             'site',

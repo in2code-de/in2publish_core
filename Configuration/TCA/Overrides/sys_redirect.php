@@ -2,7 +2,11 @@
 
 declare(strict_types=1);
 
-(function () {
+(static function () {
+    if (!\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('redirects')) {
+        return;
+    }
+
     $configContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \In2code\In2publishCore\Config\ConfigContainer::class
     );
@@ -29,6 +33,7 @@ declare(strict_types=1);
                 'default' => null,
             ],
         ];
+
         $GLOBALS['TCA']['sys_redirect']['columns']['tx_in2publishcore_page_uid'] = [
             'label' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:tca.sys_redirect.columns.tx_in2publishcore_page_uid.label',
             'displayCond' => 'FIELD:tx_in2publishcore_foreign_site_id:REQ:false',
@@ -59,6 +64,7 @@ declare(strict_types=1);
             '',
             'after:keep_query_parameters'
         );
+
         $GLOBALS['TCA']['sys_redirect']['columns']['deleted'] = [
             'config' => [
                 'type' => 'check',
