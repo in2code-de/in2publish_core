@@ -274,7 +274,6 @@
         );
     }
 
-
     /****************************************** Publish sorting **************************************************/
     if ($configContainer->get('features.publishSorting.enable')) {
         /** @see \In2code\In2publishCore\Features\PublishSorting\SortingPublisher::collectSortingsToBePublished() */
@@ -319,7 +318,6 @@
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Performance\DiskSpeedPerformanceTest::class;
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Application\SiteConfigurationTest::class;
 
-
     /************************************************ Redirect Support ************************************************/
     if ($configContainer->get('features.redirectsSupport.enable') && \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('redirects')) {
         /** @see \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::addRedirectsToPageRecord() */
@@ -358,75 +356,42 @@
             ]
         );
     }
+
     /************************************************ Skip Table Voter ************************************************/
     $signalSlotDispatcher->connect(
         \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
         'instanceCreated',
         function () use ($signalSlotDispatcher, $configContainer) {
-            /******************************************** Skip Empty Table ********************************************/
             $voter = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                \In2code\In2publishCore\Features\SkipTableVoting\SkipEmptyTableVoter::class
+                \In2code\In2publishCore\Features\SkipTableVoting\SkipTableVoter::class
             );
-            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipEmptyTableVoter::shouldSkipSearchingForRelatedRecordsByProperty() */
+            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipTableVoter::shouldSkipSearchingForRelatedRecordByTable() */
+            $signalSlotDispatcher->connect(
+                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
+                'shouldSkipSearchingForRelatedRecordByTable',
+                $voter,
+                'shouldSkipSearchingForRelatedRecordByTable'
+            );
+            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipTableVoter::shouldSkipSearchingForRelatedRecordsByProperty() */
             $signalSlotDispatcher->connect(
                 \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
                 'shouldSkipSearchingForRelatedRecordsByProperty',
                 $voter,
                 'shouldSkipSearchingForRelatedRecordsByProperty'
             );
-            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipEmptyTableVoter::shouldSkipFindByIdentifier() */
+            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipTableVoter::shouldSkipFindByIdentifier() */
             $signalSlotDispatcher->connect(
                 \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
                 'shouldSkipFindByIdentifier',
                 $voter,
                 'shouldSkipFindByIdentifier'
             );
-            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipEmptyTableVoter::shouldSkipFindByProperty() */
+            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipTableVoter::shouldSkipFindByProperty() */
             $signalSlotDispatcher->connect(
                 \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
                 'shouldSkipFindByProperty',
                 $voter,
                 'shouldSkipFindByProperty'
-            );
-            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipEmptyTableVoter::shouldSkipSearchingForRelatedRecordByTable() */
-            $signalSlotDispatcher->connect(
-                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                'shouldSkipSearchingForRelatedRecordByTable',
-                $voter,
-                'shouldSkipSearchingForRelatedRecordByTable'
-            );
-
-            /**************************************** Skip Table based on PIDs ****************************************/
-            if ($configContainer->get('factory.maximumPageRecursion') > 1) {
-                /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipTableByPidVoter::shouldSkipSearchingForRelatedRecordByTable() */
-                $voter = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                    \In2code\In2publishCore\Features\SkipTableVoting\SkipTableByPidVoter::class
-                );
-                $signalSlotDispatcher->connect(
-                    \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                    'shouldSkipSearchingForRelatedRecordByTable',
-                    $voter,
-                    'shouldSkipSearchingForRelatedRecordByTable'
-                );
-            }
-
-            /********************************************* Skip RootLevel *********************************************/
-            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipRootLevelVoter::shouldSkipSearchingForRelatedRecordByTable() */
-            $voter = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                \In2code\In2publishCore\Features\SkipTableVoting\SkipRootLevelVoter::class
-            );
-            $signalSlotDispatcher->connect(
-                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                'shouldSkipSearchingForRelatedRecordByTable',
-                $voter,
-                'shouldSkipSearchingForRelatedRecordByTable'
-            );
-            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipRootLevelVoter::shouldSkipSearchingForRelatedRecordsByProperty() */
-            $signalSlotDispatcher->connect(
-                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                'shouldSkipSearchingForRelatedRecordsByProperty',
-                $voter,
-                'shouldSkipSearchingForRelatedRecordsByProperty'
             );
         }
     );
