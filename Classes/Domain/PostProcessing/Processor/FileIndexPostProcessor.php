@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Domain\PostProcessing;
+namespace In2code\In2publishCore\Domain\PostProcessing\Processor;
 
 /*
  * Copyright notice
@@ -30,69 +30,33 @@ namespace In2code\In2publishCore\Domain\PostProcessing;
  */
 
 use In2code\In2publishCore\Domain\Factory\FileIndexFactory;
-use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\StorageDriverExtractor;
 use InvalidArgumentException;
-use Psr\Log\LoggerInterface;
-use TYPO3\CMS\Core\Log\LogManager;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use ReflectionException;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
-use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_chunk;
 
-/**
- * Class FileIndexPostProcessor
- */
-class FileIndexPostProcessor implements SingletonInterface
+class FileIndexPostProcessor implements PostProcessor, LoggerAwareInterface
 {
-    /**
-     * @var RecordInterface[]
-     */
-    protected $registeredInstances = [];
+    use LoggerAwareTrait;
 
     /**
-     * @var LoggerInterface
+     * @param RecordInterface[] $records
+     * @throws ReflectionException
      */
-    protected $logger = null;
-
-    /**
-     * FileIndexPostProcessor constructor.
-     */
-    public function __construct()
-    {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-    }
-
-    /**
-     * @param RecordFactory $recordFactory
-     * @param RecordInterface $instance
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function registerInstance(RecordFactory $recordFactory, RecordInterface $instance)
-    {
-        if (
-            'sys_file' === $instance->getTableName()
-            && ($instance->localRecordExists() || $instance->foreignRecordExists())
-        ) {
-            $this->registeredInstances[] = $instance;
-        }
-    }
-
-    /**
-     * @param RecordFactory $recordFactory
-     * @param RecordInterface $instance
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function postProcess(RecordFactory $recordFactory, RecordInterface $instance)
+    public function postProcess(array $records): void
     {
         $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         /** @var RecordInterface[][] $sortedRecords */
         $sortedRecords = [];
         $storages = [];
         $skipStorages = [];
-        foreach ($this->registeredInstances as $record) {
+        foreach ($records as $record) {
             if (null === $uid = $record->getLocalProperty('storage')) {
                 $uid = $record->getForeignProperty('storage');
             }
@@ -128,8 +92,6 @@ class FileIndexPostProcessor implements SingletonInterface
             $this->logger->info('Statistics of skipped files per unavailable storage', $logData);
         }
 
-        $this->registeredInstances = [];
-
         $this->prefetchForeignInformationFiles($storages, $sortedRecords);
 
         foreach ($sortedRecords as $storageIndex => $recordArray) {
@@ -156,7 +118,7 @@ class FileIndexPostProcessor implements SingletonInterface
     }
 
     /**
-     * @param array $storages
+     * @param array[] $storages
      * @param RecordInterface[][] $sortedRecords
      */
     protected function prefetchForeignInformationFiles(array $storages, array $sortedRecords)

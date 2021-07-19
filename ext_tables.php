@@ -214,25 +214,6 @@
         'writeClearCacheTask',
         false
     );
-    if ($configContainer->get('factory.fal.reserveSysFileUids')) {
-        $indexPostProcessor = \In2code\In2publishCore\Domain\PostProcessing\FileIndexPostProcessor::class;
-    } else {
-        $indexPostProcessor = \In2code\In2publishCore\Domain\PostProcessing\FalIndexPostProcessor::class;
-    }
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
-        'instanceCreated',
-        $indexPostProcessor,
-        'registerInstance',
-        false
-    );
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
-        'rootRecordFinished',
-        $indexPostProcessor,
-        'postProcess',
-        false
-    );
     if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
         $signalSlotDispatcher->connect(
             \In2code\In2publishCore\Domain\Repository\CommonRepository::class,

@@ -6,8 +6,8 @@ namespace In2code\In2publishCore\Tests\In2code\In2publishCore\Domain\Repository;
 
 use Codeception\Test\Unit;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
-use In2code\In2publishCore\Domain\PostProcessing\FalIndexPostProcessor;
-use In2code\In2publishCore\Domain\PostProcessing\FileIndexPostProcessor;
+use In2code\In2publishCore\Domain\PostProcessing\Processor\FalIndexPostProcessor;
+use In2code\In2publishCore\Domain\PostProcessing\Processor\FileIndexPostProcessor;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Tests\UnitTester;
 use ReflectionProperty;

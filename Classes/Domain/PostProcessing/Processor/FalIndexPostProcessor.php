@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Domain\PostProcessing;
+namespace In2code\In2publishCore\Domain\PostProcessing\Processor;
 
 /*
  * Copyright notice
@@ -31,78 +31,39 @@ namespace In2code\In2publishCore\Domain\PostProcessing;
 
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
 use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
-use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\FileUtility;
 use InvalidArgumentException;
-use Psr\Log\LoggerInterface;
-use TYPO3\CMS\Core\Log\LogManager;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
-use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class FalIndexPostProcessor
- */
-class FalIndexPostProcessor implements SingletonInterface
+class FalIndexPostProcessor implements PostProcessor, LoggerAwareInterface
 {
-    /**
-     * @var RecordInterface[]
-     */
-    protected $registeredInstances = [];
+    use LoggerAwareTrait;
 
-    /**
-     * @var ResourceFactory
-     */
-    protected $resourceFactory = null;
+    /** @var ResourceFactory */
+    protected $resourceFactory;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger = null;
+    /** @var RemoteStorage */
+    protected $remoteStorage;
 
-    /**
-     * FalIndexPostProcessor constructor.
-     */
+    /** @var IndexingFolderRecordFactory */
+    protected $ifrFactory;
+
     public function __construct()
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
         $this->resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+        $this->remoteStorage = GeneralUtility::makeInstance(RemoteStorage::class);
+        $this->ifrFactory = GeneralUtility::makeInstance(IndexingFolderRecordFactory::class);
     }
 
-    /**
-     * @param RecordFactory $recordFactory
-     * @param RecordInterface $instance
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function registerInstance(RecordFactory $recordFactory, RecordInterface $instance)
+    /** @param RecordInterface[] $records */
+    public function postProcess(array $records): void
     {
-        if (
-            'sys_file' === $instance->getTableName()
-            && ($instance->localRecordExists() || $instance->foreignRecordExists())
-        ) {
-            $this->registeredInstances[$instance->getIdentifier()] = $instance;
-        }
-    }
-
-    /**
-     * @param RecordFactory $recordFactory
-     * @param RecordInterface $instance
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function postProcess(RecordFactory $recordFactory, RecordInterface $instance)
-    {
-        if (empty($this->registeredInstances)) {
-            return;
-        }
-
-        $remoteStorage = GeneralUtility::makeInstance(RemoteStorage::class);
-        $ifrFactory = GeneralUtility::makeInstance(IndexingFolderRecordFactory::class);
-
-        foreach ($this->registeredInstances as $file) {
+        foreach ($records as $file) {
             $storage = $this->getStorage($file);
 
             if (null !== $storage) {
@@ -127,12 +88,12 @@ class FalIndexPostProcessor implements SingletonInterface
                     $localFileInfo = [];
                 }
 
-                $foreignFileInfo = $remoteStorage->getFile($storage->getUid(), $foreignIdentifier);
+                $foreignFileInfo = $this->remoteStorage->getFile($storage->getUid(), $foreignIdentifier);
 
-                $ifrFactory->overruleLocalStorage($storage);
-                $ifrFactory->overruleRemoteStorage($remoteStorage);
+                $this->ifrFactory->overruleLocalStorage($storage);
+                $this->ifrFactory->overruleRemoteStorage($this->remoteStorage);
                 // do not use the return value since we only desire the record update of the file
-                $ifrFactory->filterRecords(
+                $this->ifrFactory->filterRecords(
                     [$localIdentifier => $localFileInfo],
                     [$foreignIdentifier => $foreignFileInfo],
                     [$file]
@@ -143,8 +104,7 @@ class FalIndexPostProcessor implements SingletonInterface
 
     /**
      * @param RecordInterface $record
-     *
-     * @return ResourceStorage
+     * @return null|ResourceStorage
      */
     protected function getStorage(RecordInterface $record): ?ResourceStorage
     {
