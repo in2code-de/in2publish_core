@@ -46,6 +46,6 @@ SQL;
         if (ExtensionManagementUtility::isLoaded('redirects')) {
             $sqlData[] = self::STATEMENT;
         }
-        return $sqlData;
+        return [$sqlData];
     }
 }
