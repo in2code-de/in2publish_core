@@ -34,6 +34,7 @@ use Doctrine\DBAL\DBALException;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;
+use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
@@ -41,13 +42,14 @@ use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Tools\ToolsRegistry;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use ReflectionProperty;
 use Throwable;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Registry;
+use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
@@ -63,8 +65,6 @@ use function class_exists;
 use function defined;
 use function file_get_contents;
 use function flush;
-use function generateUpToDateMimeArray;
-use function get_class;
 use function gmdate;
 use function header;
 use function implode;
@@ -451,6 +451,47 @@ class ToolsController extends ActionController
 
         $dynamicProvider = GeneralUtility::makeInstance(DynamicValueProviderRegistry::class)->getRegisteredClasses();
 
+        $siteConfigs = [];
+
+        $localSites = GeneralUtility::makeInstance(SiteFinder::class)->getAllSites(false);
+        $foreignSites = GeneralUtility::makeInstance(ForeignSiteFinder::class)->getAllSites();
+        /**
+         * @var string $side
+         * @var Site $site
+         */
+        foreach (['local' => $localSites, 'foreign' => $foreignSites] as $side => $sites) {
+            foreach ($sites as $site) {
+                $langs = [];
+                $rootPageId = $site->getRootPageId();
+                foreach ($site->getAllLanguages() as $language) {
+                    $languageId = $language->getLanguageId();
+                    try {
+                        $uri = $site->getRouter()->generateUri($rootPageId, ['_language' => $languageId])->__toString();
+                    } catch (Throwable $throwable) {
+                        $uri = (string)$throwable;
+                    }
+                    $langs[] = [
+                        'base' => $language->getBase()->__toString(),
+                        'actualURI' => $uri,
+                        'langId' => $languageId,
+                        'typo3Lang' => $language->getTypo3Language(),
+                        'isocode' => $language->getTwoLetterIsoCode(),
+                    ];
+                }
+                try {
+                    $uri = $site->getRouter()->generateUri($rootPageId)->__toString();
+                } catch (Throwable $throwable) {
+                    $uri = (string)$throwable;
+                }
+                $siteConfigs[$side][$site->getIdentifier()] = [
+                    'rootPageId' => $rootPageId,
+                    'base' => $site->getBase()->__toString(),
+                    'actualURI' => $uri,
+                    'langs' => $langs,
+                ];
+            }
+        }
+
         return [
             'TYPO3 Version' => VersionNumberUtility::getCurrentTypo3Version(),
             'PHP Version' => PHP_VERSION,
@@ -471,6 +512,7 @@ class ToolsController extends ActionController
             'personal config' => $pers,
             'TCA' => $GLOBALS['TCA'],
             'schema' => $schema,
+            'sites' => $siteConfigs,
         ];
     }
 }
