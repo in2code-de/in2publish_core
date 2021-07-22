@@ -1,28 +1,53 @@
 <?php
-(function () {
+
+(static function () {
     /***************************************************** Guards *****************************************************/
     if (!defined('TYPO3_REQUESTTYPE')) {
         die('Access denied.');
-    } elseif (!(TYPO3_REQUESTTYPE & (TYPO3_REQUESTTYPE_BE | TYPO3_REQUESTTYPE_CLI))) {
-        return;
     }
     if (!class_exists(\In2code\In2publishCore\Service\Context\ContextService::class)) {
         // Early return when installing per ZIP: autoload is not yet generated
         return;
     }
+    if (!(TYPO3_REQUESTTYPE & (TYPO3_REQUESTTYPE_BE | TYPO3_REQUESTTYPE_CLI | TYPO3_REQUESTTYPE_INSTALL))) {
+        // Do nothing when not in any of the desirable modes.
+        return;
+    }
 
-    /*********************************************** Settings/Instances ***********************************************/
-    $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \In2code\In2publishCore\Service\Context\ContextService::class
+    /************************************************** Instances #1 **************************************************/
+    $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+        \TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class
     );
     $configContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \In2code\In2publishCore\Config\ConfigContainer::class
     );
+
+    /********************************************** Redirects Support #1 **********************************************/
+    $redirectsSupportEnabled = (
+        $configContainer->get('features.redirectsSupport.enable')
+        && \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('redirects')
+    );
+    if ($redirectsSupportEnabled) {
+        /** @see \In2code\In2publishCore\Features\RedirectsSupport\Service\RedirectsDatabaseFieldsService::addRedirectFields() */
+        $signalSlotDispatcher->connect(
+            'TYPO3\\CMS\\Install\\Service\\SqlExpectedSchemaService',
+            'tablesDefinitionIsBeingBuilt',
+            \In2code\In2publishCore\Features\RedirectsSupport\Service\RedirectsDatabaseFieldsService::class,
+            'addRedirectFields'
+        );
+    }
+
+    if (TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_INSTALL) {
+        // Skip anything else when we're in the install tool
+        return;
+    }
+
+    /************************************************** Instances #2 **************************************************/
+    $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+        \In2code\In2publishCore\Service\Context\ContextService::class
+    );
     $pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \TYPO3\CMS\Core\Page\PageRenderer::class
-    );
-    $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class
     );
     $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \TYPO3\CMS\Core\Imaging\IconRegistry::class
@@ -42,8 +67,16 @@
     );
 
     if (!version_compare(TYPO3_branch, '10.0', '>=')) {
-        $iconRegistry->registerIcon('actions-code-fork', \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class, ['source' => 'EXT:in2publish_core/Resources/Public/Icons/actions-code-fork.svg']);
-        $iconRegistry->registerIcon('actions-caret-right', \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class, ['source' => 'EXT:in2publish_core/Resources/Public/Icons/actions-caret-right.svg']);
+        $iconRegistry->registerIcon(
+            'actions-code-fork',
+            \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
+            ['source' => 'EXT:in2publish_core/Resources/Public/Icons/actions-code-fork.svg']
+        );
+        $iconRegistry->registerIcon(
+            'actions-caret-right',
+            \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
+            ['source' => 'EXT:in2publish_core/Resources/Public/Icons/actions-caret-right.svg']
+        );
     }
 
     if ($contextService->isForeign()) {
@@ -318,8 +351,8 @@
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Performance\DiskSpeedPerformanceTest::class;
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Application\SiteConfigurationTest::class;
 
-    /************************************************ Redirect Support ************************************************/
-    if ($configContainer->get('features.redirectsSupport.enable') && \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('redirects')) {
+    /********************************************** Redirects Support #2 **********************************************/
+    if ($redirectsSupportEnabled) {
         /** @see \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::addRedirectsToPageRecord() */
         $signalSlotDispatcher->connect(
             \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
@@ -333,13 +366,6 @@
             'publishRecordRecursiveBeforePublishing',
             \In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement::class,
             'replaceLocalWithForeignSourceHost'
-        );
-        /** @see \In2code\In2publishCore\Features\RedirectsSupport\Service\RedirectsDatabaseFieldsService::addRedirectFields() */
-        $signalSlotDispatcher->connect(
-            'TYPO3\\CMS\\Install\\Service\\SqlExpectedSchemaService',
-           'tablesDefinitionIsBeingBuilt',
-            \In2code\In2publishCore\Features\RedirectsSupport\Service\RedirectsDatabaseFieldsService::class,
-            'addRedirectFields'
         );
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
             'In2code.In2publishCore',

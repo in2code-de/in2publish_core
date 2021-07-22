@@ -1,5 +1,6 @@
 <?php
-(function () {
+
+(static function () {
     /***************************************************** Guards *****************************************************/
     if (!defined('TYPO3_REQUESTTYPE')) {
         die('Access denied.');
@@ -79,7 +80,9 @@
     if (!$extConf['disableUserConfig']) {
         $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\UserTsProvider::class);
     }
-    $configContainer->registerPostProcessor(\In2code\In2publishCore\Config\PostProcessor\DynamicValuesPostProcessor::class);
+    $configContainer->registerPostProcessor(
+        \In2code\In2publishCore\Config\PostProcessor\DynamicValuesPostProcessor::class
+    );
 
     $dynamicValueProviderRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry::class
@@ -121,5 +124,7 @@
     );
 
     /************************************************ Redirect Support ************************************************/
-    $configContainer->registerDefiner(\In2code\In2publishCore\Features\RedirectsSupport\Config\Definer\RedirectsSupportDefiner::class);
+    $configContainer->registerDefiner(
+        \In2code\In2publishCore\Features\RedirectsSupport\Config\Definer\RedirectsSupportDefiner::class
+    );
 })();
