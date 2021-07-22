@@ -50,7 +50,7 @@ class ConfigFormatTestCommand extends Command
              ->setHidden(true);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $container = GeneralUtility::makeInstance(ValidationContainer::class);
         $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);

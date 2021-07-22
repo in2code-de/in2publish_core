@@ -9,6 +9,7 @@ With the help of "custom tasks" you can tell the foreign system to perform actio
 All you need to begin with is a `Task`, which registers itself for execution.
 
 **MyTask.php**
+
 ```PHP
 <?php
 declare(strict_types=1);
@@ -49,6 +50,7 @@ If you use a signal that is fired for each published record you might end up wit
 These tasks will be executed on foreign and can temporarily adversely affect performance and make the publishing process very slow.**
 
 Signals that are suited for task registration because they are fired once are:
+
 * `\In2code\In2publishCore\Controller\RecordController::publishRecord`
 * `\In2code\In2publishCore\Domain\Repository\CommonRepository::publishRecordRecursiveBegin`
 * `\In2code\In2publishCore\Domain\Repository\CommonRepository::publishRecordRecursiveEnd`

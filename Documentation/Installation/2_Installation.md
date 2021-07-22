@@ -4,8 +4,10 @@ The installation requires the following steps on both the »Local« and
 »Foreign« system:
 
 1. Install the extension in TYPO3
+
   - Use the Extension Manager, Composer or a copy of the Git repository
   - Please take a look at the "in2code GitHub tutorial" if you need more details
+
 2. Activate the Extension
 3. Set the path to the configuration files of the extension
   - The configuration files are created next in the chapter "configuration"

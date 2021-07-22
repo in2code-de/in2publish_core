@@ -40,12 +40,6 @@ CREATE TABLE tx_in2code_in2publish_envelope
     PRIMARY KEY (uid)
 ) ENGINE = InnoDB;
 
-CREATE TABLE sys_redirect
-(
-    tx_in2publishcore_page_uid int(11) unsigned DEFAULT NULL,
-    tx_in2publishcore_foreign_site_id  varchar(255)     DEFAULT NULL
-) ENGINE = InnoDB;
-
 CREATE TABLE tx_in2publishcore_pages_slug_data
 (
     page_uid      int(11) unsigned        NOT NULL,

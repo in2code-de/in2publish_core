@@ -41,7 +41,7 @@ class PublishCommand extends Command
         return GeneralUtility::makeInstance(ContextService::class)->isLocal();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
         $logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);

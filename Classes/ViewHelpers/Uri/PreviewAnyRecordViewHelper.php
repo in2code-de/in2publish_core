@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\ViewHelpers\Uri;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\UriUtility;
 use In2code\In2publishCore\ViewHelpers\Link\PreviewRecordViewHelper;
-use TYPO3\CMS\Core\Http\Uri;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 use function sprintf;

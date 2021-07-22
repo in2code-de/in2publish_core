@@ -46,7 +46,7 @@ class AllCommand extends Command
              ->setHidden(true);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $commandRegistry = GeneralUtility::makeInstance(CommandRegistry::class);
         $commandRegistry->getCommandByIdentifier(VersionCommand::IDENTIFIER)->execute($input, $output);

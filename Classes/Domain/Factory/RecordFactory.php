@@ -544,14 +544,6 @@ class RecordFactory implements SingletonInterface
         if (!empty($this->instantiationQueue[$instanceTableName])
             && in_array($mergedIdentifier, $this->instantiationQueue[$instanceTableName])
         ) {
-            $this->logger->info(
-                'Recursion detected! This is mostly a sys_file_reference'
-                . ' pointing to it\'s sys_file, which gets currently enriched',
-                [
-                    'instanceTableName' => $instanceTableName,
-                    'mergedIdentifier' => $mergedIdentifier,
-                ]
-            );
             return true;
         }
         if (empty($this->instantiationQueue[$instanceTableName])) {
@@ -665,6 +657,7 @@ class RecordFactory implements SingletonInterface
                         $tableName
                     );
                     foreach ($translatedRecords as $translatedRecord) {
+                        $translatedRecord->setParentRecord($record);
                         $record->addTranslatedRecord($translatedRecord);
                     }
                 }

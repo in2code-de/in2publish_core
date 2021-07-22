@@ -37,7 +37,7 @@ TXT;
         return GeneralUtility::makeInstance(ContextService::class)->isLocal();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
         $testingService = GeneralUtility::makeInstance(TestingService::class);

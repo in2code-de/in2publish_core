@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Features\RedirectsSupport\Config\Definer;
+namespace In2code\In2publishCore\Features\PublishSorting\Config\Definer;
 
 /*
  * Copyright notice
  *
  * (c) 2021 in2code.de and the following authors:
- * Oliver Eglseder <oliver.eglseder@in2code.de>
+ * Christine Zoglmeier <christine.zoglmeier@in2code.de>
  *
  * All rights reserved
  *
@@ -33,7 +33,7 @@ use In2code\In2publishCore\Config\Builder;
 use In2code\In2publishCore\Config\Definer\DefinerInterface;
 use In2code\In2publishCore\Config\Node\NodeCollection;
 
-class RedirectsSupportDefiner implements DefinerInterface
+class PublishSortingDefiner implements DefinerInterface
 {
     public function getLocalDefinition(): NodeCollection
     {
@@ -42,7 +42,7 @@ class RedirectsSupportDefiner implements DefinerInterface
                           'features',
                           Builder::start()
                                  ->addArray(
-                                     'redirectsSupport',
+                                     'publishSorting',
                                      Builder::start()
                                             ->addBoolean('enable', true)
                                  )

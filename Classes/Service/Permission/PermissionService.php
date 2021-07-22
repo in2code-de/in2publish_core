@@ -74,7 +74,6 @@ class PermissionService
                 'checkUserAllowedToPublish',
                 [$votes]
             );
-            $this->logger->debug('Voting results for checkUserAllowedToPublish', $votes);
         } catch (InvalidSlotException $e) {
             $this->logger->error('An error with a slot occurred', ['exception' => $e]);
         } catch (InvalidSlotReturnException $e) {

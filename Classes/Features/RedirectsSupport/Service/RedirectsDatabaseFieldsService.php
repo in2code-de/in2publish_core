@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Status;
+namespace In2code\In2publishCore\Features\RedirectsSupport\Service;
 
 /*
  * Copyright notice
  *
- * (c) 2019 in2code.de and the following authors:
+ * (c) 2021 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,25 +29,23 @@ namespace In2code\In2publishCore\Command\Status;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Utility\ExtensionUtility;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
-class VersionCommand extends Command
+class RedirectsDatabaseFieldsService
 {
-    public const DESCRIPTION = 'Prints the version number of the currently installed in2publish_core extension';
-    public const IDENTIFIER = 'in2publish_core:status:version';
+    protected const STATEMENT = <<<SQL
+CREATE TABLE sys_redirect
+(
+    tx_in2publishcore_page_uid        int(11) unsigned DEFAULT NULL,
+    tx_in2publishcore_foreign_site_id varchar(255)     DEFAULT NULL
+) ENGINE = InnoDB;
+SQL;
 
-    protected function configure()
+    public function addRedirectFields(array $sqlData): array
     {
-        $this->setDescription(self::DESCRIPTION)
-             ->setHidden(true);
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $output->writeln('Version: ' . ExtensionUtility::getExtensionVersion('in2publish_core'));
-        return 0;
+        if (ExtensionManagementUtility::isLoaded('redirects')) {
+            $sqlData[] = self::STATEMENT;
+        }
+        return [$sqlData];
     }
 }

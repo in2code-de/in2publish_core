@@ -46,7 +46,7 @@ class Typo3VersionCommand extends Command
              ->setHidden(true);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('TYPO3: ' . TYPO3_version);
         return 0;

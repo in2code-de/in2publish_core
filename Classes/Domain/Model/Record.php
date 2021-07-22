@@ -36,7 +36,6 @@ use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use LogicException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 use function array_diff;

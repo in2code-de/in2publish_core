@@ -1,5 +1,54 @@
 # In2publish Core Change Log
 
+9.5.0:
+
+- [META] Set the branch alias version number to 9.5.x-dev
+- [META] Set the EM conf version number to 9.5.0
+- [CLEANUP] Remove superfluous empty lines and add ones where appropriate
+- [CLEANUP] Remove unused imports and superfluous lines in import sections
+- [BUGFIX] Always create the additional redirects fields if the extension is installed
+- [BUGFIX] Allow null as return value in FalIndexPostProcessor::getStorage
+- [BUGFIX] Register the RedirectsSupport SQL slot in all TYPO3 modes
+- [BUGFIX] Use the deprecated Connection::fetchAll for TYPO3 v9 compatibility
+- [FEATURE] Include the sites config in the sysinfo export
+- [FEATURE] Respect rootLevel, allowedTables and skip empty tables or missing PIDs
+- [BUGFIX] Respect TCA rootLevel and PAGES_TYPES allowedTables when searching for related records by PID
+- [FEATURE] Move the rootLevel decision to the TcaService, merge all SkipTableVoters
+- [FEATURE] Create SkipRootLevelVoter to skip searching for records in tables not allowed on that page
+- [FEATURE] Lazy register SkipTableByPidVoter, lazy init tables
+- [FEATURE] Add Signal to skip searching for records by pid if no such PID exists
+- [BUGFIX] Skip post processing of sys_file records which do not exist
+- [BUGFIX] Return the DatabaseFields slot arguments as array
+- [BUGFIX] Add SQL and TCA for sys_redirects only when EXT:redirects is loaded
+- [CODESTYLE] Add empty line before multi-line condition
+- [BUGFIX] Add missing return type hints commands
+- [FEATURE] Lazily inspect if tables are empty, log query stats
+- [FEATURE] Lazy register the SkipTableVoter and use an object instead of class name
+- [BUGFIX] Remove spamming debug logger
+- [REFACTOR] Use a single method to set the rows index
+- [FEATURE] Add a SkipTableVoter to skip querying empty tables
+- [BUGFIX] Try to get a cached record when searching by an identifier
+- [CLEANUP] Remove useless logging of relation recursion
+- [CODESTYLE] Remove blank line between import groups in BaseRepo
+- [BUGFIX] Use eq() instead of like() for int values (fixes #84 closes #85)
+- [BUGFIX] Set the parent record of translated records
+- [FEATURE] Add feature "publishSorting" to publish the sortings of all affected records
+- [REFACTOR] Simplify the sorting collecting and publishing
+- [CODESTYLE] Indent the config definer on the "chop level"
+- [BUGFIX] Respect the publishSorting enable setting
+- [CODESTYLE] Reformat code
+- [REFACTOR] Get name of sorting field from tca
+- [REFACTOR] Add return type hints
+- [CLEANUP] Remove unused use statements and initialization of variables
+- [CLEANUP] Remove unused variable
+- [BUGFIX] Fix field name for enable field in PublishSortingDefiner
+- [COMMENT] Adjust comments
+- [BUGFIX] Remove static pid used for testing
+- [TASK] Enable publishing of changes on sorting
+- [BUGFIX] Removed duplicate file name (closes #83)
+- [RELEASE] Version 9.4.0 with redirects support
+
+
 9.4.0:
 
 - [META] Set the branch alias version number to 9.4.x-dev
@@ -454,7 +503,6 @@
 - [BUGFIX] Use lowercase command identifier
 - [BUGFIX] Remove type hint and add null type to the return annotation of CommonRepository::findByIdentifierInOtherTable
 - [RELEASE] Version 8.0.3 with TCA user error prevention, CLI dispatching fix and T3URN parsing enhancement
-
 
 8.0.3:
 
@@ -1217,6 +1265,7 @@
 - [TASK] Declare non-public API commands as internal
 
 5.0.0:
+
 - [RELEASE] Release in2publish_core alpha 1
 - [TASK] Remove surplus features
 

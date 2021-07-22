@@ -1,5 +1,6 @@
 <?php
-(function () {
+
+(static function () {
     /***************************************************** Guards *****************************************************/
     if (!defined('TYPO3_REQUESTTYPE')) {
         die('Access denied.');
@@ -57,7 +58,11 @@
     $configContainer->registerDefiner(
         \In2code\In2publishCore\Features\WarningOnForeign\Config\Definer\WarningOnForeignDefiner::class
     );
-    if ($contextService->isForeign()
+    $configContainer->registerDefiner(
+        \In2code\In2publishCore\Features\PublishSorting\Config\Definer\PublishSortingDefiner::class
+    );
+    if (
+        $contextService->isForeign()
         || 'ssh' === $extConf['adapter']['remote']
         || 'ssh' === $extConf['adapter']['transmission']
     ) {
@@ -75,7 +80,9 @@
     if (!$extConf['disableUserConfig']) {
         $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\UserTsProvider::class);
     }
-    $configContainer->registerPostProcessor(\In2code\In2publishCore\Config\PostProcessor\DynamicValuesPostProcessor::class);
+    $configContainer->registerPostProcessor(
+        \In2code\In2publishCore\Config\PostProcessor\DynamicValuesPostProcessor::class
+    );
 
     $dynamicValueProviderRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry::class
@@ -117,5 +124,7 @@
     );
 
     /************************************************ Redirect Support ************************************************/
-    $configContainer->registerDefiner(\In2code\In2publishCore\Features\RedirectsSupport\Config\Definer\RedirectsSupportDefiner::class);
+    $configContainer->registerDefiner(
+        \In2code\In2publishCore\Features\RedirectsSupport\Config\Definer\RedirectsSupportDefiner::class
+    );
 })();

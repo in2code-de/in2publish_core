@@ -79,7 +79,10 @@ class FalIndexPostProcessor implements SingletonInterface
      */
     public function registerInstance(RecordFactory $recordFactory, RecordInterface $instance)
     {
-        if ('sys_file' === $instance->getTableName()) {
+        if (
+            'sys_file' === $instance->getTableName()
+            && ($instance->localRecordExists() || $instance->foreignRecordExists())
+        ) {
             $this->registeredInstances[$instance->getIdentifier()] = $instance;
         }
     }
@@ -143,7 +146,7 @@ class FalIndexPostProcessor implements SingletonInterface
      *
      * @return ResourceStorage
      */
-    protected function getStorage(RecordInterface $record): ResourceStorage
+    protected function getStorage(RecordInterface $record): ?ResourceStorage
     {
         static $storages = [];
         if (!isset($storages[0])) {

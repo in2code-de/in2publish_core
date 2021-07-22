@@ -46,7 +46,7 @@ class EncryptionKeyCommand extends Command
              ->setHidden(true);
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('EKey: ' . base64_encode($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']));
         return 0;

@@ -27,7 +27,7 @@ The 3 main parts for web applications like TYPO3 are the web server software, th
 They have to match certain criteria to provide an environment suitable for in2publish.
 
 * Web server apache >= 2.2 or nginx<sup>1</sup>
-* PHP (See composer.json [composer.json](https://github.com/in2code-de/in2publish_core/blob/master/composer.json) for the currently required PHP version)
+* PHP (See [composer.json](https://github.com/in2code-de/in2publish_core/blob/master/composer.json) for the currently required PHP version)
 * PHP Extension [ssh2](https://pecl.php.net/package/ssh2) >= 0.11 (recommended >= 0.12)
 * MySQL >= 5.6 or MariaDB<sup>2</sup> >= 10.1
 * A current [TYPO3 LTS](https://typo3.org/typo3-cms/roadmap/) version (not ELTS!).

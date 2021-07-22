@@ -72,7 +72,10 @@ class FileIndexPostProcessor implements SingletonInterface
      */
     public function registerInstance(RecordFactory $recordFactory, RecordInterface $instance)
     {
-        if ('sys_file' === $instance->getTableName()) {
+        if (
+            'sys_file' === $instance->getTableName()
+            && ($instance->localRecordExists() || $instance->foreignRecordExists())
+        ) {
             $this->registeredInstances[] = $instance;
         }
     }
