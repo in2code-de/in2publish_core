@@ -18,7 +18,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function json_encode;
-use function sprintf;
 
 class PublishPageAjaxController
 {
