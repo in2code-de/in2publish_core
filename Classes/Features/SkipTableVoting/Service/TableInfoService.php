@@ -108,7 +108,7 @@ class TableInfoService implements SingletonInterface
     protected function queryTableFromDatabase(Connection $connection, string $table): array
     {
         $quotedQuery = $connection->quoteIdentifier($table);
-        $rows = $connection->executeQuery('SELECT DISTINCT `pid` FROM ' . $quotedQuery)->fetchAllAssociative();
+        $rows = $connection->executeQuery('SELECT DISTINCT `pid` FROM ' . $quotedQuery)->fetchAll();
         return array_column($rows, 'pid');
     }
 }
