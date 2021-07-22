@@ -11,6 +11,7 @@ A refactoring to ease the usage of the repository methods, especially of the der
 ## Impact
 
 Deprecated Methods:
+
 1. Access to the field is deprecated. (`\In2code\In2publishCore\Domain\Repository\BaseRepository::getTableName`)
 1. Changing the field value is deprecated. (`\In2code\In2publishCore\Domain\Repository\BaseRepository::setTableName`)
 1. Replacing the field value is deprecated. (`\In2code\In2publishCore\Domain\Repository\BaseRepository::replaceTableName`)

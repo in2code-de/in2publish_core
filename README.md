@@ -42,11 +42,11 @@ throughout the internet. The same TYPO3 extension is installed on both servers. 
 in configuration. This has the great advantage that an existing deployment can be used for both systems at once.
 
 See for more details:
+
 * https://www.in2code.de/produkte/content-publisher/ (german)
 * https://www.in2code.de/fileadmin/content/downloads/in2code_content_publisher_en.pdf (english)
 
 ### Screenshots
-
 
 <img src="https://www.in2code.de/fileadmin/content/images/produkte/contentpublisher/content_publisher_screenshot04_prev.png" width="600" />
 

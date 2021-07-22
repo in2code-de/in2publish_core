@@ -155,7 +155,6 @@ ssh www-data@www.example.com
 
 If this does not work please contact your server administrator, or someone that knows how to get this stuff working.
 
-
 ## Install libssh2 and ssh2 (PHP module) on DF Managed Server
 
 Disclaimer:

@@ -11,6 +11,7 @@ to use the filePreviewDomain directly.
 ## Impact
 
 Deprecated Methods:
+
 1. `\In2code\In2publishCore\Domain\Service\DomainService::getFirstDomain`
 
 ## Affected Installations

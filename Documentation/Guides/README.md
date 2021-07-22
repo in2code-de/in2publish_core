@@ -10,5 +10,3 @@ These guides are written mostly for beginners, but in the end of each guide will
 ## Available Guides:
 
 * Using [Custom Tasks](CustomTasks.md) to execute code on Foreign after publishing
-  
-

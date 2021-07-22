@@ -1,6 +1,7 @@
 # Configuration
 
 The configuration is split into three parts:
+
 * **Extension Configuration** Which defines configuration values so basic they can't be set any later.
 * **[LocalConfiguration.yaml](../../Configuration/Yaml/LocalConfiguration.yaml.example)** configuration on Local (Stage) to connect to the production server and configure the modules and behaviour.
 * **[ForeignConfiguration.yaml](../../Configuration/Yaml/ForeignConfiguration.yaml.example)** for the configuration on Foreign (production).

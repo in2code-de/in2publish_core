@@ -14,6 +14,7 @@ in your configuration. These references are replaced on the fly before the confi
 The syntax for providers is similar to the symfony config component.
 
 Example: `%env(TYPO3_CONTEXT)%`\
+
 * The percentage signs (`%`) at the beginning and end of the string indicate, that this value is dynamic.
 * The part `env` before the opening round bracket (`)`) is the provider key.
 * The contents between the round brackets will be passed to the actual provider and is therefore provider specific.

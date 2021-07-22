@@ -54,5 +54,4 @@ class RedirectsSupportDefiner implements DefinerInterface
     {
         return Builder::start()->end();
     }
-
 }

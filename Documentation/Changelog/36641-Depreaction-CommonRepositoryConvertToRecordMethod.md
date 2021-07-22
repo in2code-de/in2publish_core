@@ -26,6 +26,7 @@ $this->convertToRecord($this, $localProperties, $foreignProperties, $tableName, 
 // With the call to `RecordFactory::makeInstance`:
 $this->recordFactory->makeInstance($this, $localProperties, $foreignProperties, [], $tableName, $idFieldName);
 ```
+
 Do not instantiate the `CommonRepository` with an `identifierFieldName`.
 
 If you extended the `BaseRepository` or `CommonRepository` you should consider using public methods provided by these classes.

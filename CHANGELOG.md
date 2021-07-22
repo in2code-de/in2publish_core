@@ -455,7 +455,6 @@
 - [BUGFIX] Remove type hint and add null type to the return annotation of CommonRepository::findByIdentifierInOtherTable
 - [RELEASE] Version 8.0.3 with TCA user error prevention, CLI dispatching fix and T3URN parsing enhancement
 
-
 8.0.3:
 
 - [META] Set the EM conf version number to 8.0.3
@@ -1217,6 +1216,7 @@
 - [TASK] Declare non-public API commands as internal
 
 5.0.0:
+
 - [RELEASE] Release in2publish_core alpha 1
 - [TASK] Remove surplus features
 
