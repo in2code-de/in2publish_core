@@ -190,6 +190,7 @@ class CommonRepository extends BaseRepository
         if (null !== $tableName) {
             $this->setTableName($tableName);
         }
+        $this->signalSlotDispatcher->dispatch(__CLASS__, 'instanceCreated', [$this]);
     }
 
     /**
@@ -261,7 +262,7 @@ class CommonRepository extends BaseRepository
             trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
             $tableName = $this->tableName;
         }
-        if ($this->shouldSkipFindByProperty($propertyName, $propertyValue)) {
+        if ($this->shouldSkipFindByProperty($propertyName, $propertyValue, $tableName)) {
             return [];
         }
         if ($propertyName === 'uid'
@@ -781,7 +782,12 @@ class CommonRepository extends BaseRepository
             return $record;
         }
         $recordIdentifier = $record->getIdentifier();
-        foreach ($this->tcaService->getAllTableNames($excludedTableNames) as $tableName) {
+        $tablesAllowedOnPage = $this->tcaService->getTablesAllowedOnPage(
+            $recordIdentifier,
+            $record->getLocalProperty('doktype') ?? $record->getForeignProperty('doktpye')
+        );
+        $tablesToSearchIn = array_diff($tablesAllowedOnPage, $excludedTableNames);
+        foreach ($tablesToSearchIn as $tableName) {
             if ($this->shouldSkipSearchingForRelatedRecordByTable($record, $tableName)) {
                 continue;
             }
@@ -2200,9 +2206,9 @@ class CommonRepository extends BaseRepository
      * @see \In2code\In2publishCore\Domain\Repository\CommonRepository::should
      *
      */
-    protected function shouldSkipFindByProperty($propertyName, $propertyValue): bool
+    protected function shouldSkipFindByProperty($propertyName, $propertyValue, $tableName): bool
     {
-        $arguments = ['propertyName' => $propertyName, 'propertyValue' => $propertyValue];
+        $arguments = ['propertyName' => $propertyName, 'propertyValue' => $propertyValue, 'tableName' => $tableName];
         return $this->should('shouldSkipFindByProperty', $arguments);
     }
 
