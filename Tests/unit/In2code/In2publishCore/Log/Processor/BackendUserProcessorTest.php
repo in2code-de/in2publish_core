@@ -53,6 +53,8 @@ class BackendUserProcessorTest extends Unit
         $GLOBALS['TYPO3_CONF_VARS']['BE']['warning_email_addr'] = '';
         $GLOBALS['TYPO3_CONF_VARS']['BE']['lockIP'] = '';
         $GLOBALS['TYPO3_CONF_VARS']['BE']['sessionTimeout'] = '';
+        $GLOBALS['TYPO3_CONF_VARS']['BE']['lockIP'] = 0;
+        $GLOBALS['TYPO3_CONF_VARS']['BE']['lockIPv6'] = 0;
     }
 
     protected function _after()

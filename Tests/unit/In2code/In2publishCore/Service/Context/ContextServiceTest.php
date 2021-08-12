@@ -85,15 +85,15 @@ class ContextServiceTest extends Unit
     /**
      * @covers ::__construct
      * @covers ::determineContext
-     *
-     * @expectedException LogicException
-     * @expectedExceptionCode 1469717011
-     * @expectedExceptionMessage The defined in2publish context is not supported
      */
     public function testUnsupportedContextWillThrowAnExceptionIfApplicationContextIsNotProduction()
     {
         $this->tester->setIn2publishContext('Wrong');
         $this->tester->setApplicationContext('Development');
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionCode(1469717011);
+        $this->expectExceptionMessage('The defined in2publish context is not supported');
 
         new ContextService();
     }

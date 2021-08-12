@@ -297,7 +297,6 @@ class TYPO3 extends Module
 
         $testbase = new Testbase();
         $testbase->defineTypo3ModeBe();
-        $testbase->definePackagesPath();
         $testbase->setTypo3TestingContext();
 
         $isFirstTest = false;

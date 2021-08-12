@@ -98,6 +98,32 @@ CREATE TABLE `be_users` (
     `category_perms`         text COLLATE BINARY,
     `tx_news_categorymounts` varchar(255) NOT NULL DEFAULT ''
 );
+CREATE TABLE `cache_hash`
+(
+    `id`         integer      NOT NULL PRIMARY KEY AUTOINCREMENT,
+    `identifier` varchar(250) NOT NULL DEFAULT '',
+    `expires`    integer     NOT NULL DEFAULT '0',
+    `content`    longblob
+);
+CREATE TABLE `cache_hash_tags`
+(
+    `id`         integer      NOT NULL PRIMARY KEY AUTOINCREMENT,
+    `identifier` varchar(250) NOT NULL DEFAULT '',
+    `tag`        varchar(250) NOT NULL DEFAULT ''
+);
+CREATE TABLE `cache_in2publish_core`
+(
+    `id`         integer      NOT NULL PRIMARY KEY AUTOINCREMENT,
+    `identifier` varchar(250) NOT NULL DEFAULT '',
+    `expires`    integer     NOT NULL DEFAULT '0',
+    `content`    longblob
+);
+CREATE TABLE `cache_in2publish_core_tags`
+(
+    `id`         integer      NOT NULL PRIMARY KEY AUTOINCREMENT,
+    `identifier` varchar(250) NOT NULL DEFAULT '',
+    `tag`        varchar(250) NOT NULL DEFAULT ''
+);
 CREATE TABLE `cache_treelist` (
     `md5hash`  varchar(32) NOT NULL DEFAULT '',
     `pid`      integer     NOT NULL DEFAULT '0',

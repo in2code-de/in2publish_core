@@ -1630,14 +1630,16 @@ class RecordTest extends Unit
      * @covers ::setPropertiesBySideIdentifier
      * @depends testSetForeignPropertiesSetsForeignProperties
      * @depends testGetForeignPropertiesReturnsAllForeignProperties
-     * @expectedException LogicException
-     * @expectedExceptionCode 1475857626
-     * @expectedExceptionMessage Can not set properties for undefined side "foo"
      */
     public function testSetPropertiesBySideThrowsExceptionForUndefinedSide()
     {
+
         $stub = $this->getRecordStub([]);
         $stub->__construct('pages', [], [], [], []);
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionCode(1475857626);
+        $this->expectExceptionMessage('Can not set properties for undefined side "foo"');
 
         $stub->setPropertiesBySideIdentifier('foo', []);
     }
@@ -1713,14 +1715,15 @@ class RecordTest extends Unit
 
     /**
      * @covers ::getPropertyBySideIdentifier
-     * @expectedException LogicException
-     * @expectedExceptionCode 1475858834
-     * @expectedExceptionMessage Can not get property "bar" from undefined side "foo"
      */
     public function testGetPropertyBySideIdentifierThrowsExceptionForUndefinedSide()
     {
         $record = $this->getRecordStub([]);
         $record->__construct('pages', [], [], [], []);
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionCode(1475858834);
+        $this->expectExceptionMessage('Can not get property "bar" from undefined side "foo"');
 
         $this->assertSame('bar', $record->getPropertyBySideIdentifier('foo', 'bar'));
     }
