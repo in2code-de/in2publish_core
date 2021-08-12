@@ -246,6 +246,7 @@ class CommonRepository extends BaseRepository
      */
     public function findByIdentifier($identifier, string $tableName = null, $idFieldName = 'uid')
     {
+        $identifier = (int)$identifier;
         // TODO: Remove any `identifierFieldName` related stuff from this method with in2publish_core version 10.
         //  It is only required to maintain the function of the deprecated getter of this property.
         $previousIdFieldName = $this->identifierFieldName;
@@ -810,9 +811,13 @@ class CommonRepository extends BaseRepository
             return $record;
         }
         $recordIdentifier = $record->getIdentifier();
+        $doktype = $record->getLocalProperty('doktype') ?? $record->getForeignProperty('doktpye');
+        if (null !== $doktype) {
+            $doktype = (int)$doktype;
+        }
         $tablesAllowedOnPage = $this->tcaService->getTablesAllowedOnPage(
             $recordIdentifier,
-            $record->getLocalProperty('doktype') ?? $record->getForeignProperty('doktpye')
+            $doktype
         );
         $tablesToSearchIn = array_diff($tablesAllowedOnPage, $excludedTableNames);
         foreach ($tablesToSearchIn as $tableName) {
@@ -2266,7 +2271,7 @@ class CommonRepository extends BaseRepository
         $this->recordFactory->disablePageRecursion();
     }
 
-    protected function shouldSkipFindByIdentifier($identifier, string $tableName = null): bool
+    protected function shouldSkipFindByIdentifier(int $identifier, string $tableName = null): bool
     {
         if (null === $tableName) {
             trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);

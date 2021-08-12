@@ -6,11 +6,14 @@ namespace In2code\In2publishCore\Tests\In2code\In2publishCore\Domain\Repository;
 
 use Codeception\Test\Unit;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
+use In2code\In2publishCore\Domain\PostProcessing\PostProcessingEventListener;
 use In2code\In2publishCore\Domain\PostProcessing\Processor\FalIndexPostProcessor;
 use In2code\In2publishCore\Domain\PostProcessing\Processor\FileIndexPostProcessor;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
 use In2code\In2publishCore\Tests\UnitTester;
 use ReflectionProperty;
+use TYPO3\CMS\Core\EventDispatcher\ListenerProvider;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
@@ -33,18 +36,16 @@ class CommonRepositoryTest extends Unit
         $this->tester->setUpFunctional();
         $this->tester->setupIn2publishConfig([]);
         $this->tester->buildForeignDatabaseConnection();
-        $dispatcher = GeneralUtility::makeInstance(Dispatcher::class);
-        $reflectionProperty = new ReflectionProperty(Dispatcher::class, 'slots');
+        $listenerProvider = GeneralUtility::makeInstance(ListenerProvider::class);
+        $reflectionProperty = new ReflectionProperty(ListenerProvider::class, 'listeners');
         $reflectionProperty->setAccessible(true);
-        $slots = $reflectionProperty->getValue($dispatcher);
-        foreach ($slots[RecordFactory::class]['instanceCreated'] as $index => $config) {
-            if ($config['class'] === FalIndexPostProcessor::class) {
-                unset($slots[RecordFactory::class]['instanceCreated'][$index]);
-            } elseif ($config['class'] === FileIndexPostProcessor::class) {
-                unset($slots[RecordFactory::class]['instanceCreated'][$index]);
+        $listener = $reflectionProperty->getValue($listenerProvider);
+        foreach ($listener[RootRecordCreationWasFinished::class] as $index => $config) {
+            if ($config['service'] === PostProcessingEventListener::class) {
+                unset($listener[RootRecordCreationWasFinished::class][$index]);
             }
         }
-        $reflectionProperty->setValue($dispatcher, $slots);
+        $reflectionProperty->setValue($listenerProvider, $listener);
     }
 
     protected function _after()
@@ -88,8 +89,6 @@ class CommonRepositoryTest extends Unit
      */
     public function testContentToImageRelationViaTCA()
     {
-        $this->markTestSkipped('Unable to provide SSH configuration in test environment');
-
         $this->tester->haveInDatabase('tt_content', ['uid' => 13]);
         $this->tester->haveInDatabase(
             'sys_file_reference',
