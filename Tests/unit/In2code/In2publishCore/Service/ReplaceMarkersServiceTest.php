@@ -63,7 +63,7 @@ class ReplaceMarkersServiceTest extends Unit
 
     /**
      * @covers ::replaceMarkers
-     * @covers ::replaceGeneralMarkers
+     * @covers ::replacePageTsConfigMarkers
      */
     public function testReplaceMarkerServiceSupportsPageTsConfigId()
     {
@@ -94,7 +94,7 @@ class ReplaceMarkersServiceTest extends Unit
 
     /**
      * @covers ::replaceMarkers
-     * @covers ::replaceGeneralMarkers
+     * @covers ::replacePageTsConfigMarkers
      */
     public function testReplaceMarkerServiceSupportsPageTsConfigIdList()
     {

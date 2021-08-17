@@ -33,6 +33,7 @@ namespace In2code\In2publishCore\Domain\Service;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -80,7 +81,37 @@ class ReplaceMarkersService
     {
         if (strpos($string, '#') !== false) {
             $string = $this->replaceRecFieldMarker($record, $string);
-            $string = $this->replaceGeneralMarkers($record, $string, $propertyName);
+            $string = $this->replacePageMarker($string, $record);
+            $string = $this->replacePageTsConfigMarkers($record, $string, $propertyName);
+            $string = $this->replaceStaticMarker($string);
+            $this->checkForMarkersAndErrors($string);
+        }
+        return $string;
+    }
+
+    /**
+     * replaces ###MARKER### where possible. It's missing
+     * a lot of Markers support due to lack of documentation
+     * If a Marker could not be replaced a Log is written.
+     * This should, however, not be needed.
+     *
+     * @param RecordInterface $record
+     * @param string $string
+     * @param string $propertyName
+     *
+     * @return string
+     */
+    public function replaceFlexFormMarkers(
+        RecordInterface $record,
+        string $string,
+        string $propertyName,
+        string $key
+    ): string {
+        if (strpos($string, '#') !== false) {
+            $string = $this->replaceRecFieldMarker($record, $string);
+            $string = $this->replacePageMarker($string, $record);
+            $string = $this->replaceFlexFormFieldMarkers($record, $string, $propertyName, $key);
+            $string = $this->replaceStaticMarker($string);
             $this->checkForMarkersAndErrors($string);
         }
         return $string;
@@ -114,15 +145,11 @@ class ReplaceMarkersService
     }
 
     /**
-     * Replace default marker names
-     *
-     * @param RecordInterface $record
      * @param string $string
-     * @param string $propertyName
-     *
-     * @return mixed
+     * @param RecordInterface $record
+     * @return string
      */
-    protected function replaceGeneralMarkers(RecordInterface $record, string $string, string $propertyName)
+    protected function replacePageMarker(string $string, RecordInterface $record): string
     {
         if (false !== strpos($string, '###CURRENT_PID###')) {
             if (null !== ($currentPid = $record->getPageIdentifier())) {
@@ -139,6 +166,20 @@ class ReplaceMarkersService
                 $string = str_replace('###STORAGE_PID###', (string)$storagePid, $string);
             }
         }
+        return $string;
+    }
+
+    /**
+     * Replace default marker names
+     *
+     * @param RecordInterface $record
+     * @param string $string
+     * @param string $propertyName
+     *
+     * @return mixed
+     */
+    protected function replacePageTsConfigMarkers(RecordInterface $record, string $string, string $propertyName)
+    {
         if (false !== strpos($string, '###PAGE_TSCONFIG')) {
             $marker = [
                 'PAGE_TSCONFIG_ID' => function ($input) {
@@ -166,7 +207,12 @@ class ReplaceMarkersService
                 }
             }
         }
-        $string = str_replace(
+        return $string;
+    }
+
+    protected function replaceStaticMarker(string $string): string
+    {
+        return str_replace(
             [
                 '###THIS_CID###',
                 '###SITEROOT###',
@@ -177,7 +223,81 @@ class ReplaceMarkersService
             ],
             $string
         );
+    }
+
+    private function replaceFlexFormFieldMarkers(
+        RecordInterface $record,
+        string $string,
+        string $propertyName,
+        string $key
+    ): string {
+        if (false !== strpos($string, '###PAGE_TSCONFIG')) {
+            $tableName = $record->getTableName();
+
+            $marker = [
+                'PAGE_TSCONFIG_ID' => function ($input) {
+                    return (int)$input;
+                },
+                'PAGE_TSCONFIG_IDLIST' => function ($input) {
+                    return implode(
+                        ',',
+                        GeneralUtility::intExplode(',', $input)
+                    );
+                },
+                'PAGE_TSCONFIG_STR' => function ($input) {
+                    return DatabaseUtility::quoteString($input);
+                },
+            ];
+
+            $pageTs = BackendUtility::getPagesTSconfig($record->getPageIdentifier());
+            $flexFormTools = GeneralUtility::makeInstance(FlexFormTools::class);
+            $dataStructIdentifier = $flexFormTools->getDataStructureIdentifier(
+                ['config' => $record->getColumnsTca()[$propertyName]],
+                $tableName,
+                $propertyName,
+                $record->getLocalProperties()
+            );
+            $simpleStructId = $this->getSimplifiedDataStructureIdentifier($dataStructIdentifier);
+            if (empty($pageTs['TCEFORM.'][$tableName . '.'][$propertyName . '.'][$simpleStructId . '.'])) {
+                return $string;
+            }
+            $flexPageTs = $pageTs['TCEFORM.'][$tableName . '.'][$propertyName . '.'][$simpleStructId . '.'];
+
+            foreach ($flexPageTs as $sheets) {
+                foreach ($sheets as $field => $values) {
+                    if ($field === $key . '.') {
+                        foreach ($marker as $markerName => $filterFunc) {
+                            if (false !== strpos($string, '###' . $markerName . '###')) {
+                                $value = $values[$markerName] ?? 0;
+                                $cleanValue = $filterFunc($value);
+                                $string = str_replace('###' . $markerName . '###', $cleanValue, $string);
+                            }
+                        }
+                        break 2;
+                    }
+                }
+            }
+
+        }
         return $string;
+    }
+
+    /**
+     * @see \TYPO3\CMS\Backend\Form\FormDataProvider\TcaFlexProcess::getSimplifiedDataStructureIdentifier
+     */
+    protected function getSimplifiedDataStructureIdentifier(string $dataStructureIdentifier): string
+    {
+        $identifierArray = json_decode($dataStructureIdentifier, true);
+        $simpleDataStructureIdentifier = 'default';
+        if (isset($identifierArray['type']) && $identifierArray['type'] === 'tca' && isset($identifierArray['dataStructureKey'])) {
+            $explodedKey = explode(',', $identifierArray['dataStructureKey']);
+            if (!empty($explodedKey[1]) && $explodedKey[1] !== 'list' && $explodedKey[1] !== '*') {
+                $simpleDataStructureIdentifier = $explodedKey[1];
+            } elseif (!empty($explodedKey[0]) && $explodedKey[0] !== 'list' && $explodedKey[0] !== '*') {
+                $simpleDataStructureIdentifier = $explodedKey[0];
+            }
+        }
+        return $simpleDataStructureIdentifier;
     }
 
     /**
