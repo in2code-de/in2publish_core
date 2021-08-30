@@ -316,7 +316,7 @@ class CommonRepository extends BaseRepository
             $this->recordFactory->simulateRootRecord();
         }
         foreach ($properties as $propertyName => $propertyValue) {
-            if ($this->shouldSkipFindByProperty($propertyName, $propertyValue)) {
+            if ($this->shouldSkipFindByProperty($propertyName, $propertyValue, $tableName)) {
                 return [];
             }
         }
