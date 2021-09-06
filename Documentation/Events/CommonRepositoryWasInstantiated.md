@@ -12,32 +12,6 @@ Each time an instances of the CommonRepository is instantiated.
 
 ## Possibilities
 
-You can listen on this event to dynamically register slots with objects on signals from the CommonRepository.
-This increases performance on signals which are dispatched very often.
-
-### Example
-
-This example shows how to dynamically register a slot with an object when the CommonRepository was instantiated.
-
-```php
-// from ext_tables.php
-$signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-    \TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class
-);
-$signalSlotDispatcher->connect(
-    \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-    'instanceCreated',
-    function () use ($signalSlotDispatcher) {
-        $voter = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-            \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter::class
-        );
-        /** @see \In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter::shouldSkipFindByIdentifier() */
-        $signalSlotDispatcher->connect(
-            \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-            'shouldSkipFindByIdentifier',
-            $voter,
-            'shouldSkipFindByIdentifier'
-        );
-    }
-);
-```
+Since the `CommonRepository` is one of the central classes in in2publish_core, you can be sure that the Content
+Publisher is doing something when this event was triggered. You can use this event as central "Content Publishing is
+going on" system event.
