@@ -38,6 +38,7 @@ use In2code\In2publishCore\Service\Permission\PermissionService;
 use LogicException;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_diff;
 use function array_filter;
 use function array_key_exists;
