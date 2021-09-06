@@ -387,3 +387,7 @@ services:
         identifier: 'legacy-slot'
         method: 'onStoragesForTestingWereFetched'
         event: In2code\In2publishCore\Event\StoragesForTestingWereFetched
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onFolderWasPublished'
+        event: In2code\In2publishCore\Event\FolderWasPublished

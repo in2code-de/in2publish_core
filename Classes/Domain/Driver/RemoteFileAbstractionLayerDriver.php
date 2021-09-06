@@ -671,7 +671,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return bool
      */
-    public function deleteFolder($folderIdentifier, $deleteRecursively = false)
+    public function deleteFolder($folderIdentifier, $deleteRecursively = false): bool
     {
         $callback = function () use ($folderIdentifier, $deleteRecursively) {
             return $this->executeEnvelope(

@@ -30,28 +30,32 @@ namespace In2code\In2publishCore\Domain\Service\Publishing;
  */
 
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
+use In2code\In2publishCore\Event\FolderWasPublished;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
 use function basename;
 use function dirname;
 
-/**
- * Class FolderPublisherService
- */
 class FolderPublisherService
 {
-    /**
-     * @param string $combinedIdentifier
-     *
-     * @return bool
-     */
-    public function publish($combinedIdentifier): bool
+    /** @var EventDispatcher */
+    protected $eventDispatcher;
+
+    /** @var ResourceFactory */
+    protected $resourceFactory;
+
+    public function __construct()
+    {
+        $this->eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
+        $this->resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+    }
+
+    public function publish(string $combinedIdentifier): bool
     {
         [$storage, $folderIdentifier] = GeneralUtility::trimExplode(':', $combinedIdentifier);
+        $storage = (int)$storage;
 
         $remoteFalDriver = GeneralUtility::makeInstance(RemoteFileAbstractionLayerDriver::class);
         $remoteFalDriver->setStorageUid($storage);
@@ -59,7 +63,7 @@ class FolderPublisherService
 
         // Determine if the folder should get published or deleted.
         // If it exists locally then create it on foreign else remove it.
-        if (GeneralUtility::makeInstance(ResourceFactory::class)->getStorageObject($storage)->hasFolder($folderIdentifier)) {
+        if ($this->resourceFactory->getStorageObject($storage)->hasFolder($folderIdentifier)) {
             $createdFolder = $remoteFalDriver->createFolder(
                 basename($folderIdentifier),
                 dirname($folderIdentifier),
@@ -71,15 +75,7 @@ class FolderPublisherService
         } else {
             $success = $remoteFalDriver->deleteFolder($folderIdentifier, true);
         }
-        try {
-            GeneralUtility::makeInstance(Dispatcher::class)->dispatch(
-                FolderPublisherService::class,
-                'afterPublishingFolder',
-                [$storage, $folderIdentifier, ($success !== false)]
-            );
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
-        }
+        $this->eventDispatcher->dispatch(new FolderWasPublished($storage, $folderIdentifier, $success));
         return $success;
     }
 }

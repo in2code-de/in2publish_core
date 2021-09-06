@@ -10,10 +10,12 @@ use In2code\In2publishCore\Controller\ToolsController;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
 use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
 use In2code\In2publishCore\Event\CommonRepositoryWasInstantiated;
 use In2code\In2publishCore\Event\CreatedDefaultHelpLabels;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
+use In2code\In2publishCore\Event\FolderWasPublished;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
@@ -336,7 +338,7 @@ class SignalSlotReplacement
             CommonRepository::class,
             'instanceCreated',
             [
-                $event->getCommonRepository()
+                $event->getCommonRepository(),
             ]
         );
     }
@@ -352,7 +354,7 @@ class SignalSlotReplacement
                     $event->getCommonRepository(),
                     $event->getBodyText(),
                     $event->getExcludedTableNames(),
-                    &$relatedRecords
+                    &$relatedRecords,
                 ]
             );
             $event->setRelatedRecords($relatedRecords);
@@ -376,7 +378,7 @@ class SignalSlotReplacement
             'publishRecordRecursiveBegin',
             [
                 $event->getRecord(),
-                $event->getCommonRepository()
+                $event->getCommonRepository(),
             ]
         );
     }
@@ -388,7 +390,7 @@ class SignalSlotReplacement
             'publishRecordRecursiveEnd',
             [
                 $event->getRecord(),
-                $event->getCommonRepository()
+                $event->getCommonRepository(),
             ]
         );
     }
@@ -402,7 +404,7 @@ class SignalSlotReplacement
             [
                 $record->getTableName(),
                 $record,
-                $event->getCommonRepository()
+                $event->getCommonRepository(),
             ]
         );
     }
@@ -416,7 +418,7 @@ class SignalSlotReplacement
             [
                 $record->getTableName(),
                 $record,
-                $event->getCommonRepository()
+                $event->getCommonRepository(),
             ]
         );
     }
@@ -458,7 +460,7 @@ class SignalSlotReplacement
             ToolsController::class,
             'collectSupportPlaces',
             [
-                $event->getSupports()
+                $event->getSupports(),
             ]
         );
         $event->setSupports($supports);
@@ -481,6 +483,19 @@ class SignalSlotReplacement
             $event->setForeignStorages($arguments['foreignStorages']);
         } catch (InvalidSlotException | InvalidSlotReturnException $e) {
             // ignore exception
+        }
+    }
+
+    public function onFolderWasPublished(FolderWasPublished $event): void
+    {
+        try {
+            $this->dispatcher->dispatch(
+                FolderPublisherService::class,
+                'afterPublishingFolder',
+                [$event->getStorage(), $event->getFolderIdentifier(), ($event->isSuccess() !== false)]
+            );
+        } catch (InvalidSlotException $e) {
+        } catch (InvalidSlotReturnException $e) {
         }
     }
 }
