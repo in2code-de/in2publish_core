@@ -71,7 +71,6 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
 use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
@@ -161,11 +160,6 @@ class CommonRepository extends BaseRepository
     protected $taskRepository;
 
     /**
-     * @var Dispatcher
-     */
-    protected $signalSlotDispatcher;
-
-    /**
      * @var ConfigContainer
      */
     protected $configContainer = null;
@@ -219,7 +213,6 @@ class CommonRepository extends BaseRepository
         $this->recordFactory = GeneralUtility::makeInstance(RecordFactory::class);
         $this->resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
-        $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
         $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         $this->identifierFieldName = $identifierFieldName ?: $this->identifierFieldName;
         $this->localDatabase = $localDatabase;
