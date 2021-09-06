@@ -5,17 +5,13 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\In2code\In2publishCore\Domain\Repository;
 
 use Codeception\Test\Unit;
-use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\PostProcessing\PostProcessingEventListener;
-use In2code\In2publishCore\Domain\PostProcessing\Processor\FalIndexPostProcessor;
-use In2code\In2publishCore\Domain\PostProcessing\Processor\FileIndexPostProcessor;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
 use In2code\In2publishCore\Tests\UnitTester;
 use ReflectionProperty;
 use TYPO3\CMS\Core\EventDispatcher\ListenerProvider;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 use function uniqid;
 
