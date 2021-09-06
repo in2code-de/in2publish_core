@@ -15,9 +15,6 @@
     }
 
     /**************************************************** Instances ***************************************************/
-    $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class
-    );
     $configContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \In2code\In2publishCore\Config\ConfigContainer::class
     );
