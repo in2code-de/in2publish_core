@@ -2114,7 +2114,11 @@ class CommonRepository extends BaseRepository
             && !empty($pointerField = $tcaService->getTransOrigPointerField($record->getTableName()))
             && $record->getMergedProperty($pointerField) > 0
         ) {
-            $translationOriginals = $record->getRelatedRecordByTableAndProperty($record->getTableName(), 'uid', $record->getMergedProperty($pointerField));
+            $translationOriginals = $record->getRelatedRecordByTableAndProperty(
+                $record->getTableName(),
+                'uid',
+                $record->getMergedProperty($pointerField)
+            );
             foreach ($translationOriginals as $translationOriginal) {
                 $this->publishRecordRecursiveInternal($translationOriginal, $excludedTables);
             }

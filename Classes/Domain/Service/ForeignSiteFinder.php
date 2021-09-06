@@ -91,7 +91,7 @@ class ForeignSiteFinder implements LoggerAwareInterface
                 [
                     'code' => $response->getExitStatus(),
                     'errors' => $response->getErrors(),
-                    'output' => $response->getOutput()
+                    'output' => $response->getOutput(),
                 ]
             );
             throw new In2publishCoreException('An error occurred while fetching a remote site config', 1620723511);
@@ -115,7 +115,7 @@ class ForeignSiteFinder implements LoggerAwareInterface
                 [
                     'code' => $response->getExitStatus(),
                     'errors' => $response->getErrors(),
-                    'output' => $response->getOutput()
+                    'output' => $response->getOutput(),
                 ]
             );
             throw new In2publishCoreException('An error occurred while fetching all foreign sites');

@@ -277,7 +277,6 @@ class ReplaceMarkersService
                     }
                 }
             }
-
         }
         return $string;
     }

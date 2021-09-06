@@ -78,7 +78,7 @@ class PageSlugService
                     'page_slug' => $slug,
                     'page_language' => $languageId,
                     'url' => $url,
-                    'site_id' => $site->getIdentifier()
+                    'site_id' => $site->getIdentifier(),
                 ]
             );
         }

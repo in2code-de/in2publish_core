@@ -96,7 +96,7 @@ class GroupProcessor extends AbstractProcessor
             return $this->canPreProcessInternalTypeDb($config);
         } elseif ($internalType === static::INTERNAL_TYPE_FILE) {
             return $this->canPreProcessInternalTypeFile($config);
-        } elseif($internalType === static::INTERNAL_TYPE_FILE_REFERENCE) {
+        } elseif ($internalType === static::INTERNAL_TYPE_FILE_REFERENCE) {
             return $this->canPreProcessInternalTypeFileReference($config);
         }
 
@@ -113,7 +113,9 @@ class GroupProcessor extends AbstractProcessor
     {
         if (empty($config[static::UPLOAD_FOLDER])) {
             $this->lastReasons[static::INTERNAL_TYPE] =
-                'The internal type "' . static::INTERNAL_TYPE_FILE . '" is missing an "uploadfolder" and can not be resolved';
+                'The internal type "'
+                . static::INTERNAL_TYPE_FILE
+                . '" is missing an "uploadfolder" and can not be resolved';
             return false;
         }
         return true;
@@ -128,7 +130,9 @@ class GroupProcessor extends AbstractProcessor
     {
         if (false === empty($config[static::UPLOAD_FOLDER])) {
             $this->lastReasons[static::INTERNAL_TYPE] =
-                'The internal type "' . static::INTERNAL_TYPE_FILE_REFERENCE . '" has an unwanted "uploadfolder" and can not be resolved';
+                'The internal type "'
+                . static::INTERNAL_TYPE_FILE_REFERENCE
+                . '" has an unwanted "uploadfolder" and can not be resolved';
             return false;
         }
         return true;
@@ -145,7 +149,8 @@ class GroupProcessor extends AbstractProcessor
         $referencesTable = isset($config[static::FOREIGN_TABLE]);
         if ($referencesAllowed) {
             return $this->canPreProcessInternalTypeDbAllowed($config[static::ALLOWED]);
-        } elseif ($referencesTable) {
+        }
+        if ($referencesTable) {
             return $this->canPreProcessInternalTypeDbTable($config[static::FOREIGN_TABLE]);
         }
         $this->lastReasons[static::INTERNAL_TYPE] = 'There is neither "allowed" nor "foreign_tables" defined';
