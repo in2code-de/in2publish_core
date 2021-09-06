@@ -395,3 +395,7 @@ services:
         identifier: 'legacy-slot'
         method: 'onVoteIfUserIsAllowedToPublish'
         event: In2code\In2publishCore\Event\VoteIfUserIsAllowedToPublish
+      - name: event.listener
+        identifier: 'legacy-slot'
+        method: 'onRequiredTablesWereIdentified'
+        event: In2code\In2publishCore\Event\RequiredTablesWereIdentified

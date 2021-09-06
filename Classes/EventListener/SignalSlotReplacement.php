@@ -26,6 +26,7 @@ use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched;
+use In2code\In2publishCore\Event\RequiredTablesWereIdentified;
 use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
 use In2code\In2publishCore\Event\StoragesForTestingWereFetched;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
@@ -497,8 +498,8 @@ class SignalSlotReplacement
                 'afterPublishingFolder',
                 [$event->getStorage(), $event->getFolderIdentifier(), ($event->isSuccess() !== false)]
             );
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
+        } catch (InvalidSlotException | InvalidSlotReturnException $e) {
+            // ignore exception
         }
     }
 
@@ -523,5 +524,15 @@ class SignalSlotReplacement
         }
         $event->voteYes($signalArguments[0]['yes']);
         $event->voteNo($signalArguments[0]['no']);
+    }
+
+    public function onRequiredTablesWereIdentified(RequiredTablesWereIdentified $event)
+    {
+        try {
+            [$tables] = $this->dispatcher->dispatch(__CLASS__, 'overruleTables', [$event->getTables()]);
+            $event->setTables($tables);
+        } catch (InvalidSlotException | InvalidSlotReturnException $e) {
+            // ignore exception
+        }
     }
 }
