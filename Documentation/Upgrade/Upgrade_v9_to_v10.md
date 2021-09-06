@@ -41,3 +41,4 @@ The following table lists all signals of in2publish_core with their event replac
 | Controller\ToolsController                       | collectSupportPlaces                                   | [CreatedDefaultHelpLabels](../Events/CreatedDefaultHelpLabels.md)
 | Testing\Data\FalStorageTestSubjectsProvider      | filterStorages                                         | [StoragesForTestingWereFetched](../Events/StoragesForTestingWereFetched.md)
 | Domain\Service\Publishing\FolderPublisherService | afterPublishingFolder                                  | [FolderWasPublished](../Events/FolderWasPublished.md)
+| Controller\AbstractController                    | checkUserAllowedToPublish                              | [VoteIfUserIsAllowedToPublish](../Events/VoteIfUserIsAllowedToPublish.md)

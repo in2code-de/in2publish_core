@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\EventListener;
 
+use In2code\In2publishCore\Controller\AbstractController;
 use In2code\In2publishCore\Controller\FileController;
 use In2code\In2publishCore\Controller\RecordController;
 use In2code\In2publishCore\Controller\ToolsController;
@@ -38,6 +39,8 @@ use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShoul
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
+use In2code\In2publishCore\Event\VoteIfUserIsAllowedToPublish;
+use In2code\In2publishCore\Service\Permission\PermissionService;
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
@@ -497,5 +500,28 @@ class SignalSlotReplacement
         } catch (InvalidSlotException $e) {
         } catch (InvalidSlotReturnException $e) {
         }
+    }
+
+    public function onVoteIfUserIsAllowedToPublish(VoteIfUserIsAllowedToPublish $event): void
+    {
+        try {
+            $signalArguments = $this->dispatcher->dispatch(
+                AbstractController::class,
+                'checkUserAllowedToPublish',
+                [
+                    ['yes' => 0, 'no' => 0],
+                ]
+            );
+        } catch (InvalidSlotException $e) {
+            $logger = $this->logManager->getLogger(PermissionService::class);
+            $logger->error('An error with a slot occurred', ['exception' => $e]);
+            return;
+        } catch (InvalidSlotReturnException $e) {
+            $logger = $this->logManager->getLogger(PermissionService::class);
+            $logger->error('A slot did not return a valid voting result', ['exception' => $e]);
+            return;
+        }
+        $event->voteYes($signalArguments[0]['yes']);
+        $event->voteNo($signalArguments[0]['no']);
     }
 }
