@@ -1,3 +1,3 @@
 # Usage
 
-* [The Simple Way](TheSimpleWay/)
+* [The Simple Way](TheSimpleWay/README.md)
