@@ -226,7 +226,7 @@ class IndexingFolderRecordFactory
                 if ($side === 'foreign') {
                     if ($storage->hasFolder($fileInfo['storageUid'], $folder)) {
                         $filesInFolder = $storage->getFilesInFolder($fileInfo['storageUid'], $folder);
-                        foreach ($relatedFolders[$folder]['files'] as $identifier) {
+                        foreach ($fileInfo['files'] as $identifier) {
                             if (isset($filesInFolder[$identifier])) {
                                 $files[$identifier] = $filesInFolder[$identifier];
                             }
@@ -235,7 +235,7 @@ class IndexingFolderRecordFactory
                 } elseif ($storage->hasFolder($folder)) {
                     $filesInFolder = $storage->getFolder($folder)->getFiles();
                     $filesInFolder = FileUtility::extractFilesInformation($filesInFolder);
-                    foreach ($relatedFolders[$folder]['files'] as $identifier) {
+                    foreach ($fileInfo['files'] as $identifier) {
                         if (isset($filesInFolder[$identifier])) {
                             $files[$identifier] = $filesInFolder[$identifier];
                         }
