@@ -93,7 +93,8 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
      */
     protected function changeValueForTypeInput(&$value)
     {
-        if (GeneralUtility::inList($this->tableConfiguration['config']['eval'], 'datetime')
+        if (
+            GeneralUtility::inList($this->tableConfiguration['config']['eval'], 'datetime')
             || GeneralUtility::inList($this->tableConfiguration['config']['eval'], 'date')
         ) {
             if ($value !== '0') {

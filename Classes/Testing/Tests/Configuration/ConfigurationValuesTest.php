@@ -64,7 +64,8 @@ class ConfigurationValuesTest implements TestCaseInterface
         $errors = [];
 
         // test the settings
-        if (true === (bool)$this->configuration['debug']['disableParentRecords']
+        if (
+            true === (bool)$this->configuration['debug']['disableParentRecords']
             && true === (bool)$this->configuration['view']['records']['breadcrumb']
         ) {
             $errors[] = 'configuration.breadcrumb_and_disable_parents_active';

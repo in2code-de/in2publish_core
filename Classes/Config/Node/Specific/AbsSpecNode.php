@@ -80,7 +80,8 @@ abstract class AbsSpecNode extends AbstractNode
      */
     public function unsetDefaults(array &$value)
     {
-        if (null !== $this->default
+        if (
+            null !== $this->default
             && array_key_exists($this->name, $value)
             && $this->default === $value[$this->name]
         ) {

@@ -621,10 +621,9 @@ class Record implements RecordInterface
         $relatedRecords = [];
         if (isset($this->relatedRecords[$table]) && is_array($this->relatedRecords[$table])) {
             foreach ($this->relatedRecords[$table] as $record) {
-                if (($record->hasLocalProperty($property)
-                     && $record->getLocalProperty($property) === $value)
-                    || ($record->hasForeignProperty($property)
-                        && $record->getForeignProperty($property) === $value)
+                if (
+                    ($record->hasLocalProperty($property) && $record->getLocalProperty($property) === $value)
+                    || ($record->hasForeignProperty($property) && $record->getForeignProperty($property) === $value)
                 ) {
                     $relatedRecords[$record->getIdentifier()] = $record;
                 }
@@ -648,7 +647,8 @@ class Record implements RecordInterface
                 // If both records are from 'pages' the added record must be directly attached to this record by `pid`.
                 // Ignore the foreign `pid`. It differs only when the record was moved but the record will be shown
                 // beneath its new parent anyway.
-                if (!($this->isPagesTable() && $record->isPagesTable())
+                if (
+                    !($this->isPagesTable() && $record->isPagesTable())
                     || $record->getSuperordinatePageIdentifier() === $this->getIdentifier()
                     || $this->isTranslationOriginal($record)
                 ) {
@@ -871,8 +871,10 @@ class Record implements RecordInterface
             if ($this->isLocalRecordDeleted() && !$this->isForeignRecordDeleted()) {
                 $this->setState(RecordInterface::RECORD_STATE_DELETED);
             } elseif (count($this->dirtyProperties) > 0) {
-                if ($this->state === RecordInterface::RECORD_STATE_MOVED
-                    && isset($this->additionalProperties['recordDatabaseState'])) {
+                if (
+                    $this->state === RecordInterface::RECORD_STATE_MOVED
+                    && isset($this->additionalProperties['recordDatabaseState'])
+                ) {
                     $this->setState(RecordInterface::RECORD_STATE_MOVED_AND_CHANGED);
                 } else {
                     $this->setState(RecordInterface::RECORD_STATE_CHANGED);
@@ -1015,8 +1017,9 @@ class Record implements RecordInterface
         }
         if (empty($properties) || (array_key_exists(0, $properties) && $properties[0] === false)) {
             return false;
-        } elseif ((isset($properties['uid']) && $properties['uid'] > 0)
-                  || (!empty($properties['uid_local']) && !empty($properties['uid_foreign']))
+        } elseif (
+            (isset($properties['uid']) && $properties['uid'] > 0)
+            || (!empty($properties['uid_local']) && !empty($properties['uid_foreign']))
         ) {
             return true;
         }

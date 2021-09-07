@@ -76,7 +76,8 @@ class CaseSensitivityTest implements TestCaseInterface
         foreach ($keys as $key) {
             $local = $this->getConfiguration($storages, $key, 'local');
             $foreign = $this->getConfiguration($storages, $key, 'foreign');
-            if (isset($local['caseSensitive'], $foreign['caseSensitive'])
+            if (
+                isset($local['caseSensitive'], $foreign['caseSensitive'])
                 && $local['caseSensitive'] !== $foreign['caseSensitive']
             ) {
                 $affected[] = sprintf(

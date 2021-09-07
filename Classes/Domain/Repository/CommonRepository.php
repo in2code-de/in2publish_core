@@ -266,7 +266,8 @@ class CommonRepository extends BaseRepository
         if ($this->shouldSkipFindByProperty($propertyName, $propertyValue, $tableName)) {
             return [];
         }
-        if ($propertyName === 'uid'
+        if (
+            $propertyName === 'uid'
             && $record = $this->recordFactory->getCachedRecord($tableName, $propertyValue)
         ) {
             return [$record];
@@ -320,7 +321,8 @@ class CommonRepository extends BaseRepository
                 return [];
             }
         }
-        if (isset($properties['uid'])
+        if (
+            isset($properties['uid'])
             && $record = $this->recordFactory->getCachedRecord($tableName, $properties['uid'])
         ) {
             return [$record];
@@ -448,7 +450,8 @@ class CommonRepository extends BaseRepository
                     );
                     if (!empty($propertyArray[$key])) {
                         $foreignProperties[$key] = $propertyArray[$key];
-                        if ('sys_file_metadata' === $tableName
+                        if (
+                            'sys_file_metadata' === $tableName
                             && isset($localProperties[$key]['file'])
                             && isset($foreignProperties[$key]['file'])
                             && (int)$localProperties[$key]['file'] !== (int)$foreignProperties[$key]['file']
@@ -873,7 +876,8 @@ class CommonRepository extends BaseRepository
     protected function filterFlexFormDefinition(array $flexFormDefinition): array
     {
         foreach ($flexFormDefinition as $key => $config) {
-            if (empty($config['type'])
+            if (
+                empty($config['type'])
                 // Treat input and text always as field with relation because we can't access defaultExtras
                 // settings here and better assume it's a RTE field
                 || !in_array($config['type'], ['select', 'group', 'inline', 'input', 'text'])
@@ -1217,7 +1221,8 @@ class CommonRepository extends BaseRepository
                 if (!empty($columnConfiguration['MM_oppositeUsage'])) {
                     return $records;
                 }
-                if (!empty($columnConfiguration['MM_match_fields'])
+                if (
+                    !empty($columnConfiguration['MM_match_fields'])
                     || !empty($columnConfiguration['MM_insert_fields'])
                     || !empty($columnConfiguration['MM_table_where'])
                     || !empty($columnConfiguration['MM_hasUidField'])
@@ -1641,7 +1646,8 @@ class CommonRepository extends BaseRepository
             $where[] = $columnConfiguration['foreign_table_field'] . ' LIKE "' . $recordTableName . '"';
         }
 
-        if (!empty($columnConfiguration['foreign_match_fields'])
+        if (
+            !empty($columnConfiguration['foreign_match_fields'])
             && is_array($columnConfiguration['foreign_match_fields'])
         ) {
             foreach ($columnConfiguration['foreign_match_fields'] as $fieldName => $fieldValue) {
@@ -1712,7 +1718,8 @@ class CommonRepository extends BaseRepository
         int $recordIdentifier,
         array $excludedTableNames
     ): array {
-        if (!empty($columnConfiguration['foreign_field'])
+        if (
+            !empty($columnConfiguration['foreign_field'])
             || !empty($columnConfiguration['foreign_selector'])
             || !empty($columnConfiguration['filter'])
             || !empty($columnConfiguration['foreign_types'])
@@ -1816,7 +1823,8 @@ class CommonRepository extends BaseRepository
      */
     protected function isIgnoredRecord(array $localProperties, array $foreignProperties, string $tableName): bool
     {
-        if ($this->isDeletedAndUnchangedRecord($localProperties, $foreignProperties)
+        if (
+            $this->isDeletedAndUnchangedRecord($localProperties, $foreignProperties)
             || $this->isRemovedAndDeletedRecord($localProperties, $foreignProperties)
             || $this->shouldIgnoreRecord($localProperties, $foreignProperties, $tableName)
         ) {
@@ -1838,7 +1846,8 @@ class CommonRepository extends BaseRepository
         if ($this->configContainer->get('factory.treatRemovedAndDeletedAsDifference')) {
             // "Removed and deleted" only refers to the local side.
             // If the record is not exactly 1. deleted on foreign and 2. removed on local this feature does not apply.
-            if (empty($localProps)
+            if (
+                empty($localProps)
                 && array_key_exists('deleted', $foreignProps)
                 && 1 === (int)$foreignProps['deleted']
             ) {

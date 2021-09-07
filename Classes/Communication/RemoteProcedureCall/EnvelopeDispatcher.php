@@ -125,7 +125,8 @@ class EnvelopeDispatcher
         if ($driver->folderExists($folderIdentifier)) {
             $files = [];
 
-            if (is_callable([$driver, 'countFilesInFolder'])
+            if (
+                is_callable([$driver, 'countFilesInFolder'])
                 && $driver->countFilesInFolder($folderIdentifier) < $this->prefetchLimit
             ) {
                 $fileIdentifiers = $this->convertIdentifiers($driver, $driver->getFilesInFolder($folderIdentifier));
@@ -191,7 +192,8 @@ class EnvelopeDispatcher
         $fileIdentifier = $request['fileIdentifier'];
         $directory = PathUtility::dirname($fileIdentifier);
         if ($driver->folderExists($directory)) {
-            if (is_callable([$driver, 'countFilesInFolder'])
+            if (
+                is_callable([$driver, 'countFilesInFolder'])
                 && $driver->countFilesInFolder($directory) < $this->prefetchLimit
             ) {
                 $files = $this->convertIdentifiers(

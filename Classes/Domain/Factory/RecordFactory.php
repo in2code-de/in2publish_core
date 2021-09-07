@@ -216,7 +216,8 @@ class RecordFactory implements SingletonInterface
 
         // internal cache: if the record has been instantiated already
         // it will set in here. This ensures a singleton
-        if (($tableName === 'pages' || $mergedIdentifier > 0)
+        if (
+            ($tableName === 'pages' || $mergedIdentifier > 0)
             && !empty($this->runtimeCache[$tableName][$mergedIdentifier])
         ) {
             $instance = $this->runtimeCache[$tableName][$mergedIdentifier];
@@ -243,7 +244,8 @@ class RecordFactory implements SingletonInterface
                 $instance->addAdditionalProperty('isRoot', true);
             }
 
-            if ($instance->getIdentifier() !== 0
+            if (
+                $instance->getIdentifier() !== 0
                 && !$instance->localRecordExists()
                 && !$instance->foreignRecordExists()
             ) {
@@ -517,7 +519,8 @@ class RecordFactory implements SingletonInterface
     protected function isLooping(string $instanceTableName, $mergedIdentifier): bool
     {
         // loop detection of records waiting for instantiation completion
-        if (!empty($this->instantiationQueue[$instanceTableName])
+        if (
+            !empty($this->instantiationQueue[$instanceTableName])
             && in_array($mergedIdentifier, $this->instantiationQueue[$instanceTableName])
         ) {
             return true;

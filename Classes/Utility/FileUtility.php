@@ -73,7 +73,8 @@ class FileUtility
 
         $backups = glob($backupFolder . '*_' . $tableName . '.*');
 
-        if (is_array($backups)
+        if (
+            is_array($backups)
             && is_int($keepBackups)
         ) {
             while (count($backups) >= $keepBackups) {

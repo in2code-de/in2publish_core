@@ -349,7 +349,8 @@ class FakeRecordFactory
 
         foreach ($arrayLocal as $subLocal) {
             $subLocal = $this->removeIgnoreFieldsFromArray($subLocal, $table);
-            if (!$this->isRecordDeletedOnLocalAndNonExistingOnForeign($subLocal['uid'], $table)
+            if (
+                !$this->isRecordDeletedOnLocalAndNonExistingOnForeign($subLocal['uid'], $table)
                 && !$this->isRecordDeletedOnBothInstances($subLocal['uid'], $table)
             ) {
                 $newLocal[] = $subLocal;

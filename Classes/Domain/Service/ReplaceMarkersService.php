@@ -288,7 +288,11 @@ class ReplaceMarkersService
     {
         $identifierArray = json_decode($dataStructureIdentifier, true);
         $simpleDataStructureIdentifier = 'default';
-        if (isset($identifierArray['type']) && $identifierArray['type'] === 'tca' && isset($identifierArray['dataStructureKey'])) {
+        if (
+            isset($identifierArray['type'])
+            && $identifierArray['type'] === 'tca'
+            && isset($identifierArray['dataStructureKey'])
+        ) {
             $explodedKey = explode(',', $identifierArray['dataStructureKey']);
             if (!empty($explodedKey[1]) && $explodedKey[1] !== 'list' && $explodedKey[1] !== '*') {
                 $simpleDataStructureIdentifier = $explodedKey[1];

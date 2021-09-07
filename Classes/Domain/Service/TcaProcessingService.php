@@ -177,7 +177,8 @@ class TcaProcessingService
      */
     protected function preProcessTca()
     {
-        if ($this->cache->has(static::CACHE_KEY_TCA_COMPATIBLE)
+        if (
+            $this->cache->has(static::CACHE_KEY_TCA_COMPATIBLE)
             && $this->cache->has(static::CACHE_KEY_TCA_INCOMPATIBLE)
             && $this->cache->has(static::CACHE_KEY_CONTROLS)
         ) {

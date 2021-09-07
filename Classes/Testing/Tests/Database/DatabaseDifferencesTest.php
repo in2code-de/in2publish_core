@@ -124,7 +124,8 @@ class DatabaseDifferencesTest implements TestCaseInterface
                         $propExistsForeign = isset($foreignTableInfo[$tableName]['table'][$propertyName]);
 
                         if ($propExistsLocal && $propExistsForeign) {
-                            if ($localTableInfo[$tableName]['table'][$propertyName]
+                            if (
+                                $localTableInfo[$tableName]['table'][$propertyName]
                                 !== $foreignTableInfo[$tableName]['table'][$propertyName]
                             ) {
                                 $tableDifferences[] = $tableName . '.' . $propertyName . ': Local: '

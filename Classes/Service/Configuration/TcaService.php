@@ -83,7 +83,8 @@ class TcaService implements SingletonInterface
     {
         $rootLevelTables = [];
         foreach ($this->tca as $tableName => $tableConfiguration) {
-            if (!empty($tableConfiguration['ctrl']['rootLevel'])
+            if (
+                !empty($tableConfiguration['ctrl']['rootLevel'])
                 && !in_array($tableName, $exceptTableNames, true)
                 && in_array($tableConfiguration['ctrl']['rootLevel'], [1, -1, true], true)
             ) {
@@ -278,7 +279,8 @@ class TcaService implements SingletonInterface
         $tables = $this->getDatabaseSchemaTables();
 
         foreach ($tables as $table) {
-            if ($table->hasColumn('uid')
+            if (
+                $table->hasColumn('uid')
                 && $table->hasColumn('pid')
                 && !in_array($table->getName(), $exceptTableNames, true)
             ) {
