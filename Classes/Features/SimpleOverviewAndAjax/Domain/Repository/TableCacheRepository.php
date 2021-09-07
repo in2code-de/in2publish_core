@@ -122,7 +122,7 @@ class TableCacheRepository implements SingletonInterface
             $query->getRestrictions()->removeAll();
             $rows = $query->select('*')
                           ->from($tableName)
-                          ->where($query->expr()->eq('pid', (int)$pageIdentifier))
+                          ->where($query->expr()->eq('pid', $pageIdentifier))
                           ->orderBy('uid', 'ASC')
                           ->execute()
                           ->fetchAllAssociative();

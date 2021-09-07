@@ -126,8 +126,6 @@ class Letterbox
      */
     public function receiveEnvelope(int $uid, bool $burnEnvelope = true)
     {
-        $uid = (int)$uid;
-
         if ($this->contextService->isForeign()) {
             $database = DatabaseUtility::buildLocalDatabaseConnection();
         } else {
@@ -141,14 +139,14 @@ class Letterbox
         $query->getRestrictions()->removeAll();
         $query->select('command', 'request', 'response', 'uid')
               ->from(static::TABLE)
-              ->where($query->expr()->eq('uid', (int)$uid))
+              ->where($query->expr()->eq('uid', $uid))
               ->setMaxResults(1);
         try {
             $result = $query->execute();
             $envelopeData = $result->fetchAssociative();
         } catch (Throwable $exception) {
             $this->logger->error(
-                'Failed to receive envelope [' . $uid . '] "' . (string)$exception . '"',
+                'Failed to receive envelope [' . $uid . '] "' . $exception . '"',
                 ['exception' => $exception]
             );
             return false;
