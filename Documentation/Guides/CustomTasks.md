@@ -57,11 +57,22 @@ Most of the time, you want to add a task when a specific record was published. Y
 When a record was published, the `register` method will be called. We can not filter for specific record, e.g. for a table and property.
 
 ```PHP
+use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
+use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
+
 class MyTask extends AbstractTask
 {
-   /// [...]
+    public function modifyConfiguration()
+    {
+    }
 
-    public function register(\In2code\In2publishCore\Event\PublishingOfOneRecordEnded $event)
+    protected function executeTask(): bool
+    {
+        // Code to execute on foreign
+        return true;
+    }
+
+    public function register(PublishingOfOneRecordEnded $event)
     {
         $record = $event->getRecord();
         if (

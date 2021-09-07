@@ -52,8 +52,12 @@ class MyProvider implements DynamicValueProviderInterface
 Register your custom provider in your `ext_localconf.php`:
 
 ```php
-$registry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry::class);
-$registry->registerDynamicValue('myKey', \MyVendor\MyPackage\Config\PostProcessor\DynamicValueProvider\MyProvider::class);
+use In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;
+use MyVendor\MyPackage\Config\PostProcessor\DynamicValueProvider\MyProvider;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+$registry = GeneralUtility::makeInstance(DynamicValueProviderRegistry::class);
+$registry->registerDynamicValue('myKey', MyProvider::class);
 ```
 
 Use your provider in the configuration:

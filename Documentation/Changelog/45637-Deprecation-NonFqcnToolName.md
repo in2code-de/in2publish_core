@@ -10,7 +10,10 @@ Hence, you can as of now use the magic `::class` constant to specify the tool's 
 ## Impact
 
 ```php
-$toolsRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Tools\ToolsRegistry::class);
+use In2code\In2publishCore\Tools\ToolsRegistry;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+$toolsRegistry = GeneralUtility::makeInstance(ToolsRegistry::class);
 $toolsRegistry->addTool(
     'LLL:EXT:in2publish/Resources/Private/Language/locallang.xlf:moduleselector.edit_config',
     'LLL:EXT:in2publish/Resources/Private/Language/locallang.xlf:moduleselector.edit_config.description',
@@ -30,11 +33,15 @@ All extensions which register a tool.
 Use the magic class constant to pass the FQCN to the tools registration.
 
 ```php
-$toolsRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Tools\ToolsRegistry::class);
+use In2code\In2publishCore\Controller\ToolsController;
+use In2code\In2publishCore\Tools\ToolsRegistry;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+$toolsRegistry = GeneralUtility::makeInstance(ToolsRegistry::class);
 $toolsRegistry->addTool(
     'LLL:EXT:in2publish/Resources/Private/Language/locallang.xlf:moduleselector.edit_config',
     'LLL:EXT:in2publish/Resources/Private/Language/locallang.xlf:moduleselector.edit_config.description',
-    \In2code\In2publishCore\Controller\ToolsController::class,
+    ToolsController::class,
     'edit,update'
 );
 ```

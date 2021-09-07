@@ -11,7 +11,9 @@ A post processor must implement `PostProcessorInterface`.
 
 namespace MyVendor\MyPackage\Config\PostProcessor;
 
-class MyPostProcessor implements \In2code\In2publishCore\Config\PostProcessor\PostProcessorInterface
+use In2code\In2publishCore\Config\PostProcessor\PostProcessorInterface;
+
+class MyPostProcessor implements PostProcessorInterface
 {
     public function process(array $config): array
     {
@@ -24,8 +26,12 @@ class MyPostProcessor implements \In2code\In2publishCore\Config\PostProcessor\Po
 Register your post processor in your `ext_localconf.php`:
 
 ```php
-$configContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\In2code\In2publishCore\Config\ConfigContainer::class);
-$configContainer->registerPostProcessor(\MyVendor\MyPackage\Config\PostProcessor\MyPostProcessor::class);
+use In2code\In2publishCore\Config\ConfigContainer;
+use MyVendor\MyPackage\Config\PostProcessor\MyPostProcessor;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+$configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+$configContainer->registerPostProcessor(MyPostProcessor::class);
 ```
 
 **Attention:** The post processor will be called multiple times per request.

@@ -43,7 +43,7 @@ class SomeFieldNamePublishingBlocker
             'somefieldvalue'
         );
         if (count($records) > 18) {
-            throw new \Exception('You must not publish more than 18 records which have "somefieldvalue"');
+            throw new Exception('You must not publish more than 18 records which have "somefieldvalue"');
         }
     }
 }
