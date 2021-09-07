@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Testing\Tests\Database;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function array_diff;

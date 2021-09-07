@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\Testing\Data;
 
 use In2code\In2publishCore\Event\StoragesForTestingWereFetched;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\SingletonInterface;

@@ -35,7 +35,7 @@ use In2code\In2publishCore\Config\Node\NodeCollection;
 
 class RedirectsSupportDefiner implements DefinerInterface
 {
-    public function getLocalDefinition(): \In2code\In2publishCore\Config\Node\NodeCollection
+    public function getLocalDefinition(): NodeCollection
     {
         return Builder::start()
                       ->addArray(
@@ -50,7 +50,7 @@ class RedirectsSupportDefiner implements DefinerInterface
                       ->end();
     }
 
-    public function getForeignDefinition(): \In2code\In2publishCore\Config\Node\NodeCollection
+    public function getForeignDefinition(): NodeCollection
     {
         return Builder::start()->end();
     }

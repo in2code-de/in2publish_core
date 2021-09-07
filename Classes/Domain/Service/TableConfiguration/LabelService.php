@@ -35,8 +35,6 @@ use In2code\In2publishCore\Service\Configuration\TcaService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
-use function array_merge;
-use function array_unique;
 use function sprintf;
 use function trim;
 
