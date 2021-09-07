@@ -196,10 +196,8 @@ class CommonRepository extends BaseRepository
      * @param Connection $localDatabase
      * @param Connection $foreignDatabase
      */
-    public function __construct(
-        Connection $localDatabase,
-        Connection $foreignDatabase
-    ) {
+    public function __construct(Connection $localDatabase, Connection $foreignDatabase)
+    {
         parent::__construct();
         $this->recordFactory = GeneralUtility::makeInstance(RecordFactory::class);
         $this->resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
@@ -2328,21 +2326,12 @@ class CommonRepository extends BaseRepository
         return $event->getVotingResult();
     }
 
-    /**
-     * @param string|null $tableName
-     *
-     * @return CommonRepository
-     */
-    public static function getDefaultInstance($tableName = null): CommonRepository
+    public static function getDefaultInstance(): CommonRepository
     {
-        if (null !== $tableName) {
-            trigger_error(sprintf(self::DEPRECATION_PARAMETER, 'tableName', __METHOD__), E_USER_DEPRECATED);
-        }
         return GeneralUtility::makeInstance(
             CommonRepository::class,
             DatabaseUtility::buildLocalDatabaseConnection(),
-            DatabaseUtility::buildForeignDatabaseConnection(),
-            $tableName
+            DatabaseUtility::buildForeignDatabaseConnection()
         );
     }
 }
