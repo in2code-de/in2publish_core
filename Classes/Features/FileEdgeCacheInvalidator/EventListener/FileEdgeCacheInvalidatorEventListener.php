@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Features\FileEdgeCacheInvalidator\EventListener;
 
 use In2code\In2publishCore\Event\PhysicalFileWasPublished;
-use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly\PublishedFileIdentifierCollector;
 
 class FileEdgeCacheInvalidatorEventListener
@@ -23,7 +22,7 @@ class FileEdgeCacheInvalidatorEventListener
         $this->publishedFileIdentifierCollector->registerPublishedFile($event->getRecord());
     }
 
-    public function onRecursiveRecordPublishingEnded(RecursiveRecordPublishingEnded $event): void
+    public function onRecursiveRecordPublishingEnded(): void
     {
         $this->publishedFileIdentifierCollector->writeFlushFileEdgeCacheTask();
     }

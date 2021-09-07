@@ -826,8 +826,6 @@ class Record implements RecordInterface
      */
     public function getMergedProperty($propertyName)
     {
-        $localValue = null;
-        $foreignValue = null;
         if ($this->hasLocalProperty($propertyName)) {
             $localValue = $this->getLocalProperty($propertyName);
         } else {

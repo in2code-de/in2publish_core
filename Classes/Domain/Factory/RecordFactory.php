@@ -199,7 +199,6 @@ class RecordFactory implements SingletonInterface
         // one of the property arrays might be empty,
         // to get the identifier we have to take a look into both arrays
         $mergedIdentifier = $this->getMergedIdentifierValue(
-            $commonRepository,
             $localProperties,
             $foreignProperties,
             $tableName,
@@ -466,7 +465,6 @@ class RecordFactory implements SingletonInterface
      * gets the field name of the identifier field and
      * checks both arrays for an exiting identity value
      *
-     * @param CommonRepository $commonRepository
      * @param array $localProperties
      * @param array $foreignProperties
      * @param string|null $tableName
@@ -475,7 +473,6 @@ class RecordFactory implements SingletonInterface
      * @return int|string
      */
     protected function getMergedIdentifierValue(
-        $commonRepository,
         array $localProperties,
         array $foreignProperties,
         string $tableName,

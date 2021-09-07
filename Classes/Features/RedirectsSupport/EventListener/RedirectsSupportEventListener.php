@@ -8,7 +8,6 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
-use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater;
 use In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer;
@@ -67,7 +66,7 @@ class RedirectsSupportEventListener
         $this->redirectCacheUpdater->publishRecordRecursiveAfterPublishing($event->getRecord());
     }
 
-    public function onRecursiveRecordPublishingEnded(RecursiveRecordPublishingEnded $event): void
+    public function onRecursiveRecordPublishingEnded(): void
     {
         if (!$this->enabled) {
             return;

@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
 
 use Doctrine\DBAL\Driver\Statement;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 
