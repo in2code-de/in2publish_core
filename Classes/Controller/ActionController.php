@@ -99,20 +99,24 @@ abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
      * Do NOT call this Method before $this->initializeAction() is going to be executed
      * because it relies on $this->request and $this->response to be set
      *
-     * @param string $body
-     * @param string $title
+     * @param string $messageBody
+     * @param string $messageTitle
      * @param int $severity
      * @param bool $storeInSession
      *
      * @return void
      */
-    public function addFlashMessage($body, $title = '', $severity = AbstractMessage::OK, $storeInSession = true)
-    {
+    public function addFlashMessage(
+        $messageBody,
+        $messageTitle = '',
+        $severity = AbstractMessage::OK,
+        $storeInSession = true
+    ) {
         if ($this->controllerContext === null) {
             $this->logger->debug('Prematurely building ControllerContext');
             $this->controllerContext = $this->buildControllerContext();
         }
-        parent::addFlashMessage($body, $title, $severity, $storeInSession);
+        parent::addFlashMessage($messageBody, $messageTitle, $severity, $storeInSession);
     }
 
     /**

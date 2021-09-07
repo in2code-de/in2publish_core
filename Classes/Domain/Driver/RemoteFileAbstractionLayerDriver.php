@@ -292,23 +292,23 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * not exist anymore.
      *
      * @param string $localFilePath (within \TYPO3\CMS\Core\Core\Environment::getPublicPath())
-     * @param string $targetFolderId
+     * @param string $targetFolderIdentifier
      * @param string $newFileName optional, if not given original name is used
      * @param bool $removeOriginal if set the original file will be removed
      *                                after successful operation
      *
      * @return string the identifier of the new file
      */
-    public function addFile($localFilePath, $targetFolderId, $newFileName = '', $removeOriginal = true): string
+    public function addFile($localFilePath, $targetFolderIdentifier, $newFileName = '', $removeOriginal = true): string
     {
-        $callback = function () use ($localFilePath, $targetFolderId, $newFileName, $removeOriginal) {
+        $callback = function () use ($localFilePath, $targetFolderIdentifier, $newFileName, $removeOriginal) {
             return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_ADD_FILE,
                     [
                         'storage' => $this->storageUid,
                         'localFilePath' => $localFilePath,
-                        'targetFolderIdentifier' => $targetFolderId,
+                        'targetFolderIdentifier' => $targetFolderIdentifier,
                         'newFileName' => $newFileName,
                         'removeOriginal' => $removeOriginal,
                     ]
@@ -316,7 +316,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
             );
         };
 
-        return $this->cache('addFile' . $localFilePath . '|' . $targetFolderId . '|' . $newFileName, $callback);
+        return $this->cache('addFile' . $localFilePath . '|' . $targetFolderIdentifier . '|' . $newFileName, $callback);
     }
 
     /**
@@ -512,9 +512,9 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @param string $folderIdentifier
      * @param int $start
-     * @param int $max
+     * @param int $numberOfItems
      * @param bool $recursive
-     * @param array $fnFc callbacks for filtering the items
+     * @param array $filenameFilterCallbacks callbacks for filtering the items
      * @param string $sort Property name used to sort the items.
      *                     Among them may be: '' (empty, no sorting), name,
      *                     fileext, size, tstamp and rw.
@@ -527,13 +527,20 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
     public function getFilesInFolder(
         $folderIdentifier,
         $start = 0,
-        $max = 0,
+        $numberOfItems = 0,
         $recursive = false,
-        array $fnFc = [],
+        array $filenameFilterCallbacks = [],
         $sort = '',
         $sortRev = false
     ): array {
-        if (0 !== $start || 0 !== $max || false !== $recursive || !empty($fnFc) || '' !== $sort || false !== $sortRev) {
+        if (
+            0 !== $start
+            || 0 !== $numberOfItems
+            || false !== $recursive
+            || !empty($filenameFilterCallbacks)
+            || '' !== $sort
+            || false !== $sortRev
+        ) {
             throw new InvalidArgumentException('This Driver does not support optional arguments', 1476202118);
         }
 
@@ -565,9 +572,9 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @param string $folderIdentifier
      * @param int $start
-     * @param int $max
+     * @param int $numberOfItems
      * @param bool $recursive
-     * @param array $fnFc callbacks for filtering the items
+     * @param array $folderNameFilterCallbacks callbacks for filtering the items
      * @param string $sort Property name used to sort the items.
      *                     Among them may be: '' (empty, no sorting), name,
      *                     fileext, size, tstamp and rw.
@@ -580,13 +587,20 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
     public function getFoldersInFolder(
         $folderIdentifier,
         $start = 0,
-        $max = 0,
+        $numberOfItems = 0,
         $recursive = false,
-        array $fnFc = [],
+        array $folderNameFilterCallbacks = [],
         $sort = '',
         $sortRev = false
     ): array {
-        if (0 !== $start || 0 !== $max || false !== $recursive || !empty($fnFc) || '' !== $sort || false !== $sortRev) {
+        if (
+            0 !== $start
+            || 0 !== $numberOfItems
+            || false !== $recursive
+            || !empty($folderNameFilterCallbacks)
+            || '' !== $sort
+            || false !== $sortRev
+        ) {
             throw new InvalidArgumentException('This Driver does not support optional arguments', 1476201945);
         }
 
@@ -635,28 +649,28 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * If no parent folder is given, a root level folder will be created
      *
      * @param string $newFolderName
-     * @param string $parentFolderId
+     * @param string $parentFolderIdentifier
      * @param bool $recursive
      *
      * @return string the Identifier of the new folder
      */
-    public function createFolder($newFolderName, $parentFolderId = '', $recursive = false): string
+    public function createFolder($newFolderName, $parentFolderIdentifier = '', $recursive = false): string
     {
-        $callback = function () use ($newFolderName, $parentFolderId, $recursive) {
+        $callback = function () use ($newFolderName, $parentFolderIdentifier, $recursive) {
             return $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_CREATE_FOLDER,
                     [
                         'storage' => $this->storageUid,
                         '$newFolderName' => $newFolderName,
-                        '$parentFolderIdentifier' => $parentFolderId,
+                        '$parentFolderIdentifier' => $parentFolderIdentifier,
                         '$recursive' => $recursive,
                     ]
                 )
             );
         };
 
-        return $this->cache('createFolder|' . $newFolderName . $parentFolderId, $callback);
+        return $this->cache('createFolder|' . $newFolderName . $parentFolderIdentifier, $callback);
     }
 
     /**

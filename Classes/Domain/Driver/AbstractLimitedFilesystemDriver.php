@@ -67,13 +67,13 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @param string $folderIdentifier
      * @param bool $recursive
-     * @param array $filterCallbacks callbacks for filtering the items
+     * @param array $filenameFilterCallbacks callbacks for filtering the items
      *
      * @return int Number of files in folder
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function countFilesInFolder($folderIdentifier, $recursive = false, array $filterCallbacks = []): int
+    public function countFilesInFolder($folderIdentifier, $recursive = false, array $filenameFilterCallbacks = []): int
     {
         throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201312);
     }
@@ -83,14 +83,17 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @param string $folderIdentifier
      * @param bool $recursive
-     * @param array $fnFc callbacks for filtering the items
+     * @param array $folderNameFilterCallbacks callbacks for filtering the items
      *
      * @return int Number of folders in folder
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function countFoldersInFolder($folderIdentifier, $recursive = false, array $fnFc = []): int
-    {
+    public function countFoldersInFolder(
+        $folderIdentifier,
+        $recursive = false,
+        array $folderNameFilterCallbacks = []
+    ): int {
         throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201325);
     }
 
@@ -245,15 +248,15 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
     /**
      * Folder equivalent to moveFileWithinStorage().
      *
-     * @param string $sourceIdentifier
-     * @param string $targetIdentifier
+     * @param string $sourceFolderIdentifier
+     * @param string $targetFolderIdentifier
      * @param string $newFolderName
      *
      * @return array All files which are affected, map of old => new file identifiers
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function moveFolderWithinStorage($sourceIdentifier, $targetIdentifier, $newFolderName): array
+    public function moveFolderWithinStorage($sourceFolderIdentifier, $targetFolderIdentifier, $newFolderName): array
     {
         throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201494);
     }
@@ -261,15 +264,15 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
     /**
      * Folder equivalent to copyFileWithinStorage().
      *
-     * @param string $sourceIdentifier
-     * @param string $targetIdentifier
+     * @param string $sourceFolderIdentifier
+     * @param string $targetFolderIdentifier
      * @param string $newFolderName
      *
      * @return bool
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function copyFolderWithinStorage($sourceIdentifier, $targetIdentifier, $newFolderName): bool
+    public function copyFolderWithinStorage($sourceFolderIdentifier, $targetFolderIdentifier, $newFolderName): bool
     {
         throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201496);
     }
@@ -278,13 +281,13 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      * Creates a new (empty) file and returns the identifier.
      *
      * @param string $fileName
-     * @param string $parentIdentifier
+     * @param string $parentFolderIdentifier
      *
      * @return string
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function createFile($fileName, $parentIdentifier): string
+    public function createFile($fileName, $parentFolderIdentifier): string
     {
         throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201512);
     }
@@ -295,14 +298,14 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      * where a file is just copied to another folder in the same storage.
      *
      * @param string $fileIdentifier
-     * @param string $targetIdentifier
+     * @param string $targetFolderIdentifier
      * @param string $fileName
      *
      * @return string the Identifier of the new file
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function copyFileWithinStorage($fileIdentifier, $targetIdentifier, $fileName): string
+    public function copyFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $fileName): string
     {
         throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201516);
     }

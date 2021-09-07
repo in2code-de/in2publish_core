@@ -76,17 +76,17 @@ class LogController extends \CoStack\Logs\Controller\LogController
     }
 
     /**
-     * @param array $extbaseConfig
+     * @param array $extbaseFrameworkConfiguration
      * @param string $setting
      *
      * @return array
      */
-    protected function getViewProperty($extbaseConfig, $setting): array
+    protected function getViewProperty($extbaseFrameworkConfiguration, $setting): array
     {
         if (isset($this->txLogsViewConfig[$setting])) {
             ksort($this->txLogsViewConfig[$setting]);
             return array_reverse($this->txLogsViewConfig[$setting]);
         }
-        return parent::getViewProperty($extbaseConfig, $setting);
+        return parent::getViewProperty($extbaseFrameworkConfiguration, $setting);
     }
 }
