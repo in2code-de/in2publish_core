@@ -31,12 +31,11 @@ namespace In2code\In2publishCore\Domain\Driver;
 
 use BadMethodCallException;
 use TYPO3\CMS\Core\Resource\Driver\AbstractHierarchicalFilesystemDriver;
-use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
-abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFilesystemDriver implements DriverInterface
+abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFilesystemDriver
 {
     /**
      * Not required
