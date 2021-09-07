@@ -1580,10 +1580,18 @@ class CommonRepository extends BaseRepository
         foreach ($records as $relationRecord) {
             $originalTableName = $columnConfiguration['foreign_table'];
             if (!in_array($originalTableName, $excludedTableNames)) {
-                $identifier = $relationRecord->getMergedProperty($foreignField);
-                $originalRecord = $this->findByIdentifier($identifier, $originalTableName);
-                if ($originalRecord !== null) {
-                    $relationRecord->addRelatedRecord($originalRecord);
+                if ($relationRecord->hasLocalProperty($foreignField)) {
+                    $identifier = $relationRecord->getLocalProperty($foreignField);
+                } elseif ($relationRecord->hasForeignProperty($foreignField)) {
+                    $identifier = $relationRecord->getForeignProperty($foreignField);
+                } else {
+                    continue;
+                }
+                if (null !== $identifier) {
+                    $originalRecord = $this->findByIdentifier((int)$identifier, $originalTableName);
+                    if ($originalRecord !== null) {
+                        $relationRecord->addRelatedRecord($originalRecord);
+                    }
                 }
             }
         }
