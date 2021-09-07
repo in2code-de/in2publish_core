@@ -30,6 +30,7 @@ Your provider must implement the interface `DynamicValueProviderInterface`.
 
 ```php
 <?php
+/** @noinspection PhpInconsistentReturnPointsInspection */
 
 namespace MyVendor\MyPackage\Config\PostProcessor\DynamicValueProvider;
 
