@@ -106,7 +106,7 @@ abstract class AbstractDomainTest
      *
      * @return array
      */
-    protected function getMessagesForSitesWithSlashBase(array $results)
+    protected function getMessagesForSitesWithSlashBase(array $results): array
     {
         $messages = [];
         if (!empty($results[self::DOMAIN_TYPE_SLASH_BASE])) {

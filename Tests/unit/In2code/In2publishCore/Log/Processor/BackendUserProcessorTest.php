@@ -91,7 +91,7 @@ class BackendUserProcessorTest extends Unit
      * @covers ::processLogRecord
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    public function testBackendUserProcessorAddsUnkownValueStringToLogEntryIfBackendUserIsKnownButHasNoId()
+    public function testBackendUserProcessorAddsUnknownValueStringToLogEntryIfBackendUserIsKnownButHasNoId()
     {
         // preparation
         $GLOBALS['BE_USER'] = new BackendUserAuthentication();

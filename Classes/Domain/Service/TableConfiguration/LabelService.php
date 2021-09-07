@@ -71,7 +71,7 @@ class LabelService
      *
      * @return string
      */
-    public function getLabelField(RecordInterface $record, $stagingLevel = 'local'): string
+    public function getLabelField(RecordInterface $record, string $stagingLevel = 'local'): string
     {
         $table = $record->getTableName();
 

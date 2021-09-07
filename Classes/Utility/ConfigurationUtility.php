@@ -118,10 +118,7 @@ class ConfigurationUtility
         return $result;
     }
 
-    /**
-     * @return mixed
-     */
-    protected static function sortResultArrayByAdditionalKeyOrder(array $result, array $original, array $additional)
+    protected static function sortResultArrayByAdditionalKeyOrder(array $result, array $original, array $additional): array
     {
         $additionalKeys = array_keys($additional);
         $originalKeys = array_keys($original);
@@ -131,11 +128,8 @@ class ConfigurationUtility
 
         uksort(
             $result,
-            function ($left, $right) use ($keyOrder) {
-                if (!isset($keyOrder[$left])
-                    || !isset($keyOrder[$right])
-                    || $keyOrder[$left] === $keyOrder[$right]
-                ) {
+            static function ($left, $right) use ($keyOrder) {
+                if (!isset($keyOrder[$left], $keyOrder[$right]) || $keyOrder[$left] === $keyOrder[$right]) {
                     // Be deterministic. If 0 is returned the array will be reversed
                     return 1;
                 }

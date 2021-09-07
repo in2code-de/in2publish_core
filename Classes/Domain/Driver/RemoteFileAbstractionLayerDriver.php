@@ -200,12 +200,9 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function isCaseSensitiveFileSystem()
+    public function isCaseSensitiveFileSystem(): bool
     {
-        return $this->configuration['caseSensitive'];
+        return (bool)$this->configuration['caseSensitive'];
     }
 
     /**
@@ -215,7 +212,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return bool
      */
-    public function fileExists($fileIdentifier)
+    public function fileExists($fileIdentifier): bool
     {
         $callback = function () use ($fileIdentifier) {
             $response = $this->executeEnvelope(
@@ -260,7 +257,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @return bool
      * @throws Exception
      */
-    public function folderExists($folderIdentifier)
+    public function folderExists($folderIdentifier): bool
     {
         $callback = function () use ($folderIdentifier) {
             $response = $this->executeEnvelope(
@@ -302,7 +299,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return string the identifier of the new file
      */
-    public function addFile($localFilePath, $targetFolderId, $newFileName = '', $removeOriginal = true)
+    public function addFile($localFilePath, $targetFolderId, $newFileName = '', $removeOriginal = true): string
     {
         $callback = function () use ($localFilePath, $targetFolderId, $newFileName, $removeOriginal) {
             return $this->executeEnvelope(
@@ -330,7 +327,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return string The identifier of the file after renaming
      */
-    public function renameFile($fileIdentifier, $newName)
+    public function renameFile($fileIdentifier, $newName): string
     {
         $callback = function () use ($fileIdentifier, $newName) {
             return $this->executeEnvelope(
@@ -356,7 +353,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return bool TRUE if the operation succeeded
      */
-    public function replaceFile($fileIdentifier, $localFilePath)
+    public function replaceFile($fileIdentifier, $localFilePath): bool
     {
         $callback = function () use ($fileIdentifier, $localFilePath) {
             return $this->executeEnvelope(
@@ -383,7 +380,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return bool TRUE if deleting the file succeeded
      */
-    public function deleteFile($fileIdentifier)
+    public function deleteFile($fileIdentifier): bool
     {
         $callback = function () use ($fileIdentifier) {
             return $this->executeEnvelope(
@@ -405,7 +402,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return string
      */
-    public function hash($fileIdentifier, $hashAlgorithm)
+    public function hash($fileIdentifier, $hashAlgorithm): string
     {
         $callback = function () use ($fileIdentifier, $hashAlgorithm) {
             return $this->executeEnvelope(
@@ -435,7 +432,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @return string
      * @throws Exception
      */
-    public function getPermissions($identifier)
+    public function getPermissions($identifier): array
     {
         $callback = function () use ($identifier) {
             return $this->executeEnvelope(
@@ -458,7 +455,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return array
      */
-    public function getFileInfoByIdentifier($fileIdentifier, array $propertiesToExtract = [])
+    public function getFileInfoByIdentifier($fileIdentifier, array $propertiesToExtract = []): array
     {
         $callback = function () use ($fileIdentifier, $propertiesToExtract) {
             if (!$this->fileExists($fileIdentifier)) {
@@ -489,7 +486,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @throws FolderDoesNotExistException
      */
-    public function getFolderInfoByIdentifier($folderIdentifier)
+    public function getFolderInfoByIdentifier($folderIdentifier): array
     {
         $callback = function () use ($folderIdentifier) {
             $folderIdentifier = $this->canonicalizeAndCheckFolderIdentifier($folderIdentifier);
@@ -535,7 +532,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         array $fnFc = [],
         $sort = '',
         $sortRev = false
-    ) {
+    ): array {
         if (0 !== $start || 0 !== $max || false !== $recursive || !empty($fnFc) || '' !== $sort || false !== $sortRev) {
             throw new InvalidArgumentException('This Driver does not support optional arguments', 1476202118);
         }
@@ -588,7 +585,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         array $fnFc = [],
         $sort = '',
         $sortRev = false
-    ) {
+    ): array {
         if (0 !== $start || 0 !== $max || false !== $recursive || !empty($fnFc) || '' !== $sort || false !== $sortRev) {
             throw new InvalidArgumentException('This Driver does not support optional arguments', 1476201945);
         }
@@ -619,7 +616,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return string
      */
-    public function getPublicUrl($identifier)
+    public function getPublicUrl($identifier): string
     {
         $callback = function () use ($identifier) {
             return $this->executeEnvelope(
@@ -643,7 +640,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return string the Identifier of the new folder
      */
-    public function createFolder($newFolderName, $parentFolderId = '', $recursive = false)
+    public function createFolder($newFolderName, $parentFolderId = '', $recursive = false): string
     {
         $callback = function () use ($newFolderName, $parentFolderId, $recursive) {
             return $this->executeEnvelope(
@@ -703,7 +700,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function moveFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $newFileName)
+    public function moveFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $newFileName): string
     {
         return $this->executeEnvelope(
             new Envelope(
@@ -775,7 +772,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return mixed
      */
-    protected function cache($identifier, $callback)
+    protected function cache(string $identifier, callable $callback)
     {
         if (!isset(static::$cache[$this->storageUid][$identifier])) {
             static::$cache[$this->storageUid][$identifier] = $callback();
@@ -789,7 +786,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return string
      */
-    protected function getFolderExistsCacheIdentifier($folderIdentifier): string
+    protected function getFolderExistsCacheIdentifier(string $folderIdentifier): string
     {
         return 'folderExists|' . $folderIdentifier;
     }
@@ -799,7 +796,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return string
      */
-    protected function getGetFoldersInFolderCacheIdentifier($folderIdentifier): string
+    protected function getGetFoldersInFolderCacheIdentifier(string $folderIdentifier): string
     {
         return 'getFoldersInFolder|' . $folderIdentifier;
     }
@@ -809,7 +806,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return string
      */
-    protected function getGetFilesInFolderCacheIdentifier($folderIdentifier): string
+    protected function getGetFilesInFolderCacheIdentifier(string $folderIdentifier): string
     {
         return 'getFilesInFolder|' . $folderIdentifier;
     }
@@ -819,7 +816,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return string
      */
-    protected function getFileExistsCacheIdentifier($fileIdentifier): string
+    protected function getFileExistsCacheIdentifier(string $fileIdentifier): string
     {
         return 'fileExists|' . $fileIdentifier;
     }
@@ -829,7 +826,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return string
      */
-    protected function getGetPermissionsCacheIdentifier($identifier): string
+    protected function getGetPermissionsCacheIdentifier(string $identifier): string
     {
         return 'getPermissions|' . $identifier;
     }
@@ -839,7 +836,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return string
      */
-    protected function getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier): string
+    protected function getGetFileInfoByIdentifierCacheIdentifier(string $fileIdentifier): string
     {
         return 'getFileInfoByIdentifier|' . $fileIdentifier;
     }
@@ -849,7 +846,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return string
      */
-    protected function getGetFolderInfoByIdentifierCacheIdentifier($folderIdentifier): string
+    protected function getGetFolderInfoByIdentifierCacheIdentifier(string $folderIdentifier): string
     {
         return 'getFolderInfoByIdentifier|' . $folderIdentifier;
     }
@@ -860,7 +857,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return string
      */
-    protected function getHashCacheIdentifier($fileIdentifier, $hashAlgorithm): string
+    protected function getHashCacheIdentifier(string $fileIdentifier, string $hashAlgorithm): string
     {
         return 'hash|' . $fileIdentifier . '|' . $hashAlgorithm;
     }
@@ -870,7 +867,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return string
      */
-    protected function getGetPublicUrlCacheIdentifier($identifier): string
+    protected function getGetPublicUrlCacheIdentifier(string $identifier): string
     {
         return 'getPublicUrl|' . $identifier;
     }

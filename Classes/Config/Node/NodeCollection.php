@@ -163,9 +163,9 @@ class NodeCollection extends ArrayObject implements Node
     }
 
     /**
-     * @param array[]|bool[]|int[]|string[] $value
+     * @param mixed $value
      *
-     * @return array[]|bool[]|int[]|string[]
+     * @return array<Node>
      */
     public function cast($value): array
     {

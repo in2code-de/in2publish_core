@@ -113,7 +113,7 @@ class RecordController extends AbstractController
      *
      * @return void
      */
-    public function detailAction($identifier, $tableName)
+    public function detailAction(int $identifier, string $tableName)
     {
         $this->logger->debug('Called detailAction');
         $this->commonRepository->disablePageRecursion();
@@ -140,11 +140,11 @@ class RecordController extends AbstractController
      * Publish the selected page record with all related content records
      *
      * @param int $identifier
-     * @param string $returnUrl
+     * @param string|null $returnUrl
      *
      * @throws StopActionException
      */
-    public function publishRecordAction($identifier, $returnUrl = null)
+    public function publishRecordAction(int $identifier, string $returnUrl = null)
     {
         $this->logger->info('publishing record in ' . $this->request->getPluginName(), ['identifier' => $identifier]);
         $this->publishRecord($identifier, ['pages']);
@@ -165,7 +165,7 @@ class RecordController extends AbstractController
      *
      * @throws StopActionException
      */
-    public function toggleFilterStatusAndRedirectToIndexAction($filter)
+    public function toggleFilterStatusAndRedirectToIndexAction(string $filter)
     {
         $this->toggleFilterStatusAndRedirect('in2publish_filter_records_', $filter, 'index');
     }
@@ -174,7 +174,7 @@ class RecordController extends AbstractController
      * @param int $identifier
      * @param array $exceptTableNames
      */
-    protected function publishRecord($identifier, array $exceptTableNames = [])
+    protected function publishRecord(int $identifier, array $exceptTableNames = [])
     {
         $record = $this->commonRepository->findByIdentifier($identifier, 'pages');
 

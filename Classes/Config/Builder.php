@@ -67,7 +67,7 @@ class Builder
     /**
      * @return Builder
      */
-    public static function start()
+    public static function start(): Builder
     {
         return GeneralUtility::makeInstance(static::class);
     }
@@ -169,8 +169,13 @@ class Builder
      *
      * @return $this
      */
-    public function addNode($type, $name, $default = null, $validators = [], Builder $builder = null): self
-    {
+    public function addNode(
+        string $type,
+        string $name,
+        $default = null,
+        array $validators = [],
+        Builder $builder = null
+    ): self {
         if ($builder instanceof Builder) {
             $nodes = $builder->end();
         } else {

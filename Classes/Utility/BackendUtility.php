@@ -260,7 +260,6 @@ class BackendUtility
      * @param string $stagingLevel
      *
      * @return null|UriInterface
-     * @throws In2publishCoreException
      */
     public static function buildPreviewUri(string $table, int $identifier, string $stagingLevel): ?UriInterface
     {

@@ -289,26 +289,14 @@ class TcaService implements SingletonInterface
         return $result;
     }
 
-    /**
-     * @return array|null
-     */
-    public function getConfigurationArrayForTable(string $table)
+    public function getConfigurationArrayForTable(string $table): ?array
     {
-        if (isset($this->tca[$table])) {
-            return $this->tca[$table];
-        }
-        return null;
+        return $this->tca[$table] ?? null;
     }
 
-    /**
-     * @return array|null
-     */
-    public function getColumnConfigurationForTableColumn(string $table, string $column)
+    public function getColumnConfigurationForTableColumn(string $table, string $column): ?array
     {
-        if (isset($this->tca[$table]['columns'][$column])) {
-            return $this->tca[$table]['columns'][$column];
-        }
-        return null;
+        return $this->tca[$table]['columns'][$column] ?? null;
     }
 
     /**

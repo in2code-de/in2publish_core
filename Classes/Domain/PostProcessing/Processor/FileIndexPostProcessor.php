@@ -37,6 +37,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use ReflectionException;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
+use TYPO3\CMS\Core\Resource\ResourceStorage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_chunk;
@@ -54,6 +55,7 @@ class FileIndexPostProcessor implements PostProcessor, LoggerAwareInterface
         $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         /** @var RecordInterface[][] $sortedRecords */
         $sortedRecords = [];
+        /** @var array<ResourceStorage> $storages */
         $storages = [];
         $skipStorages = [];
         foreach ($records as $record) {
@@ -118,7 +120,7 @@ class FileIndexPostProcessor implements PostProcessor, LoggerAwareInterface
     }
 
     /**
-     * @param array[] $storages
+     * @param array<ResourceStorage> $storages
      * @param RecordInterface[][] $sortedRecords
      */
     protected function prefetchForeignInformationFiles(array $storages, array $sortedRecords)

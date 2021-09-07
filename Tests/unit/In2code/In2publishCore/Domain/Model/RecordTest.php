@@ -61,7 +61,7 @@ class RecordTest extends Unit
      *
      * @return Record
      */
-    protected function getRecordStub($getIgnoreFields, $isParentRecordDisabled = false)
+    protected function getRecordStub($getIgnoreFields, bool $isParentRecordDisabled = false): Record
     {
         $stub = $this->getMockBuilder(Record::class)
                      ->setMethods(['getIgnoreFields', 'isParentDisabled'])
@@ -1241,7 +1241,7 @@ class RecordTest extends Unit
     /**
      * @return array
      */
-    public function propertiesDataProvider()
+    public function propertiesDataProvider(): array
     {
         // @formatter:off
         // @codingStandardsIgnoreStart

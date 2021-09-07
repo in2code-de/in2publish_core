@@ -51,9 +51,9 @@ class GenString extends AbsGenNode
     }
 
     /**
-     * @param array[]|bool[]|int[]|string[] $value
+     * @param mixed $value
      *
-     * @return array[]|bool[]|int[]|string[]
+     * @return array<string>
      */
     public function cast($value): array
     {

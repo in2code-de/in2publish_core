@@ -41,7 +41,7 @@ class DefaultProvider implements ProviderInterface
     /**
      * @return bool
      */
-    public function isAvailable()
+    public function isAvailable(): bool
     {
         return true;
     }
@@ -49,7 +49,7 @@ class DefaultProvider implements ProviderInterface
     /**
      * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         if (GeneralUtility::makeInstance(ContextService::class)->isLocal()) {
@@ -61,7 +61,7 @@ class DefaultProvider implements ProviderInterface
     /**
      * @return int
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 10;
     }

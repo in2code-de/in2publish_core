@@ -55,7 +55,7 @@ interface ProcessorInterface
      *
      * @return bool
      */
-    public function canHoldRelations();
+    public function canHoldRelations(): bool;
 
     /**
      * Returns TRUE if the specific configuration can hold relations
@@ -64,7 +64,7 @@ interface ProcessorInterface
      *
      * @return bool
      */
-    public function canPreProcess(array $config);
+    public function canPreProcess(array $config): bool;
 
     /**
      * PreProcess the configuration. Returns an array with only necessary information in an standardized format
@@ -73,12 +73,12 @@ interface ProcessorInterface
      *
      * @return array
      */
-    public function preProcess(array $config);
+    public function preProcess(array $config): array;
 
     /**
      * Returns an array of $field => $reasons that explains why canPreProcess returned false.
      *
      * @return array
      */
-    public function getLastReasons();
+    public function getLastReasons(): array;
 }

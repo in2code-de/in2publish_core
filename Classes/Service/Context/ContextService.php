@@ -68,22 +68,23 @@ class ContextService implements SingletonInterface
     }
 
     /**
-     * @return string|bool
+     * @return string
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function determineContext()
+    protected function determineContext(): string
     {
         $environmentVariable = getenv(static::ENV_VAR_NAME) ?: getenv(static::REDIRECT_ENV_VAR_NAME) ?: false;
         if (false === $environmentVariable) {
             return static::FOREIGN;
-        } elseif (in_array($environmentVariable, [static::LOCAL, static::FOREIGN], true)) {
-            return $environmentVariable;
-        } elseif (Environment::getContext()->isProduction()) {
-            return static::FOREIGN;
-        } else {
-            throw new LogicException('The defined in2publish context is not supported', 1469717011);
         }
+        if (in_array($environmentVariable, [static::LOCAL, static::FOREIGN], true)) {
+            return $environmentVariable;
+        }
+        if (Environment::getContext()->isProduction()) {
+            return static::FOREIGN;
+        }
+        throw new LogicException('The defined in2publish context is not supported', 1469717011);
     }
 
     /**

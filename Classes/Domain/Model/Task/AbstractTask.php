@@ -180,7 +180,7 @@ abstract class AbstractTask
     }
 
     /**
-     * @param DateTime $executionBegin
+     * @param DateTime|null $executionBegin
      *
      * @return AbstractTask
      */
@@ -210,7 +210,7 @@ abstract class AbstractTask
     }
 
     /**
-     * @param DateTime $executionEnd
+     * @param DateTime|null $executionEnd
      *
      * @return AbstractTask
      */

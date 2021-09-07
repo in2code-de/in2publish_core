@@ -40,10 +40,7 @@ use In2code\In2publishCore\Config\Validator\IPv4PortValidator;
  */
 class SshConnectionDefiner implements DefinerInterface
 {
-    /**
-     * @return NodeCollection
-     */
-    public function getLocalDefinition()
+    public function getLocalDefinition(): NodeCollection
     {
         return Builder::start()
                       ->addArray(
@@ -72,10 +69,7 @@ class SshConnectionDefiner implements DefinerInterface
                       ->end();
     }
 
-    /**
-     * @return NodeCollection
-     */
-    public function getForeignDefinition()
+    public function getForeignDefinition(): NodeCollection
     {
         return Builder::start()->end();
     }

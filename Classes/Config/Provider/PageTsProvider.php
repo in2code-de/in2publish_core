@@ -60,7 +60,7 @@ class PageTsProvider implements ProviderInterface, ContextualProvider, TableConf
     /**
      * @return bool
      */
-    public function isAvailable()
+    public function isAvailable(): bool
     {
         return !$this->locked && $this->getDatabase() instanceof Connection;
     }
@@ -70,7 +70,7 @@ class PageTsProvider implements ProviderInterface, ContextualProvider, TableConf
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         $uid = In2publishBackendUtility::getPageIdentifier();
         // get the pageTS | Manually pass rootline to disable caching.
@@ -83,18 +83,12 @@ class PageTsProvider implements ProviderInterface, ContextualProvider, TableConf
         return $configuration;
     }
 
-    /**
-     * @return int
-     */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 30;
     }
 
-    /**
-     * @return null|Connection
-     */
-    protected function getDatabase()
+    protected function getDatabase(): ?Connection
     {
         return DatabaseUtility::buildLocalDatabaseConnection();
     }

@@ -185,7 +185,7 @@ class RecordFactory implements SingletonInterface
         array $additionalProperties = [],
         string $tableName = null,
         string $idFieldName = 'uid'
-    ) {
+    ): ?RecordInterface {
         if (null === $tableName) {
             throw new MissingArgumentException('tableName');
         }
@@ -394,14 +394,14 @@ class RecordFactory implements SingletonInterface
      * 5. The Instance should be created with different PIDs
      *
      * @param string $tableName
-     * @param string $identifier
+     * @param string|int $identifier
      * @param array $localProperties
      * @param array $foreignProperties
      *
      * @return bool
      */
     protected function detectAndAlterMovedInstance(
-        $tableName,
+        string $tableName,
         $identifier,
         array $localProperties,
         array $foreignProperties
@@ -510,11 +510,11 @@ class RecordFactory implements SingletonInterface
 
     /**
      * @param string $instanceTableName
-     * @param int $mergedIdentifier
+     * @param string|int $mergedIdentifier
      *
      * @return bool
      */
-    protected function isLooping($instanceTableName, $mergedIdentifier): bool
+    protected function isLooping(string $instanceTableName, $mergedIdentifier): bool
     {
         // loop detection of records waiting for instantiation completion
         if (!empty($this->instantiationQueue[$instanceTableName])
@@ -531,11 +531,11 @@ class RecordFactory implements SingletonInterface
 
     /**
      * @param string $instanceTableName
-     * @param int $mergedIdentifier
+     * @param int|string $mergedIdentifier
      *
      * @return void
      */
-    protected function finishedInstantiation($instanceTableName, $mergedIdentifier)
+    protected function finishedInstantiation(string $instanceTableName, $mergedIdentifier)
     {
         foreach ($this->instantiationQueue[$instanceTableName] as $index => $identifier) {
             if ($mergedIdentifier === $identifier) {
@@ -554,7 +554,7 @@ class RecordFactory implements SingletonInterface
      *
      * @return RecordInterface|null
      */
-    public function getCachedRecord($tableName, $identifier)
+    public function getCachedRecord(string $tableName, $identifier): ?RecordInterface
     {
         if (!empty($this->runtimeCache[$tableName][$identifier])) {
             return $this->runtimeCache[$tableName][$identifier];
@@ -566,9 +566,9 @@ class RecordFactory implements SingletonInterface
      * Remove a table/identifier from the runtimeCache to force a re-fetch on a record
      *
      * @param string $tableName
-     * @param string $identifier
+     * @param int|string $identifier
      */
-    public function forgetCachedRecord($tableName, $identifier)
+    public function forgetCachedRecord(string $tableName, $identifier)
     {
         unset($this->runtimeCache[$tableName][$identifier]);
     }

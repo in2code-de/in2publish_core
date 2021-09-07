@@ -60,7 +60,7 @@ class ForeignSiteConfigUnavailableException extends In2publishCoreException
      *
      * @return ForeignSiteConfigUnavailableException
      */
-    public static function fromFailedRceResponse(RemoteCommandResponse $response)
+    public static function fromFailedRceResponse(RemoteCommandResponse $response): ForeignSiteConfigUnavailableException
     {
         $self = new static(static::MESSAGE, self::CODE);
         $self->outputString = $response->getOutputString();

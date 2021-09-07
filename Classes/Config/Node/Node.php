@@ -91,9 +91,9 @@ interface Node
     public function mergeArrays(array $original, array $additional): array;
 
     /**
-     * @param string[]|int[]|bool[]|array[] $value
+     * @param mixed $value
      *
-     * @return string[]|int[]|bool[]|array[]
+     * @return mixed
      */
     public function cast($value);
 

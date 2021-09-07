@@ -50,7 +50,7 @@ class SpecBoolean extends AbsSpecNode
     }
 
     /**
-     * @param array|bool|int|string $value
+     * @param mixed $value
      *
      * @return bool
      */

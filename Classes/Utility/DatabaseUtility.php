@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\Utility;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Exception;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
@@ -73,7 +74,7 @@ class DatabaseUtility
      * @return Connection|null
      * @throws Throwable
      */
-    public static function buildForeignDatabaseConnection()
+    public static function buildForeignDatabaseConnection(): ?Connection
     {
         static::initializeLogger();
         if (static::$foreignConnection === null) {
@@ -135,7 +136,7 @@ class DatabaseUtility
     /**
      * @return null|Connection
      */
-    public static function buildLocalDatabaseConnection()
+    public static function buildLocalDatabaseConnection(): ?Connection
     {
         try {
             return GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionByName('Default');
@@ -145,19 +146,20 @@ class DatabaseUtility
     }
 
     /**
-     * @param $side
+     * @param string $side
      *
      * @return null|Connection
+     * @throws Throwable
      */
-    public static function buildDatabaseConnectionForSide(string $side)
+    public static function buildDatabaseConnectionForSide(string $side): ?Connection
     {
         if ($side === 'local') {
             return static::buildLocalDatabaseConnection();
-        } elseif ($side === 'foreign') {
-            return static::buildForeignDatabaseConnection();
-        } else {
-            throw new LogicException('Unsupported side "' . $side . '"', 1476118055);
         }
+        if ($side === 'foreign') {
+            return static::buildForeignDatabaseConnection();
+        }
+        throw new LogicException('Unsupported side "' . $side . '"', 1476118055);
     }
 
     public static function backupTable(Connection $connection, string $tableName)

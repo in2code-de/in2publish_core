@@ -39,10 +39,10 @@ interface DefinerInterface
     /**
      * @return NodeCollection
      */
-    public function getLocalDefinition();
+    public function getLocalDefinition(): NodeCollection;
 
     /**
      * @return NodeCollection
      */
-    public function getForeignDefinition();
+    public function getForeignDefinition(): NodeCollection;
 }

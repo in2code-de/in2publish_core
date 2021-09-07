@@ -53,12 +53,7 @@ class PublishingFailureCollector extends AbstractProcessor implements SingletonI
      */
     protected $highestSeverity = 7;
 
-    /**
-     * @param LogRecord $logRecord
-     *
-     * @return LogRecord|void
-     */
-    public function processLogRecord(LogRecord $logRecord)
+    public function processLogRecord(LogRecord $logRecord): LogRecord
     {
         $level = $logRecord->getLevel();
         $level = LogLevel::normalizeLevel($level);

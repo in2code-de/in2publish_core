@@ -46,7 +46,7 @@ class VersionedFileProvider extends FileProvider
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         $path = $this->getResolvedFilePath();
 
@@ -68,10 +68,7 @@ class VersionedFileProvider extends FileProvider
         return [];
     }
 
-    /**
-     * @return int
-     */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 25;
     }

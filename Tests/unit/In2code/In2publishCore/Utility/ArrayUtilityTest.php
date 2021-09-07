@@ -56,7 +56,7 @@ class ArrayUtilityTest extends Unit
     /**
      * @return array
      */
-    public function removeFromArrayByKeyReturnsVoidDataProvider()
+    public function removeFromArrayByKeyReturnsVoidDataProvider(): array
     {
         return [
             'superfluous_key' => [['abc' => '1', 'def' => 1236, 'ghi' => 'acb'], ['def', 'xy'], 2],

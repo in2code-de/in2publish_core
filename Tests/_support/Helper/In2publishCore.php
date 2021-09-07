@@ -24,17 +24,17 @@ class In2publishCore extends Module
         $testConfigProvider = new class implements ProviderInterface {
             public $config = [];
 
-            public function isAvailable()
+            public function isAvailable(): bool
             {
                 return true;
             }
 
-            public function getConfig()
+            public function getConfig(): array
             {
                 return $this->config;
             }
 
-            public function getPriority()
+            public function getPriority(): int
             {
                 return 1000;
             }

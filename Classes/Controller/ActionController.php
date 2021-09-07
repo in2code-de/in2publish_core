@@ -130,10 +130,8 @@ abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
 
     /**
      * Deactivate error messages in flash messages by explicitly returning false
-     *
-     * @return string|bool
      */
-    protected function getErrorFlashMessage()
+    protected function getErrorFlashMessage(): bool
     {
         return false;
     }

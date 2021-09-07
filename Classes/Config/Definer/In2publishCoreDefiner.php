@@ -132,7 +132,7 @@ class In2publishCoreDefiner implements DefinerInterface
     /**
      * @return NodeCollection
      */
-    public function getLocalDefinition()
+    public function getLocalDefinition(): NodeCollection
     {
         return Builder::start()
                       ->addArray(
@@ -288,7 +288,7 @@ class In2publishCoreDefiner implements DefinerInterface
     /**
      * @return NodeCollection
      */
-    public function getForeignDefinition()
+    public function getForeignDefinition(): NodeCollection
     {
         return Builder::start()
                       ->addArray(

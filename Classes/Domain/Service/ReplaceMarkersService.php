@@ -98,7 +98,7 @@ class ReplaceMarkersService
      * @param RecordInterface $record
      * @param string $string
      * @param string $propertyName
-     *
+     * @param string $key
      * @return string
      */
     public function replaceFlexFormMarkers(
@@ -322,7 +322,7 @@ class ReplaceMarkersService
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function getStoragePidFromPage($pageId): int
+    protected function getStoragePidFromPage(int $pageId): int
     {
         $rootLine = BackendUtility::BEgetRootLine($pageId);
         foreach ($rootLine as $page) {

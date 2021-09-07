@@ -217,7 +217,7 @@ class CommonRepository extends BaseRepository
      *
      * @return RecordInterface|null
      */
-    public function findByIdentifier(int $identifier, string $tableName, string $idFieldName = 'uid')
+    public function findByIdentifier(int $identifier, string $tableName, string $idFieldName = 'uid'): ?RecordInterface
     {
         if ($this->shouldSkipFindByIdentifier($identifier, $tableName)) {
             return GeneralUtility::makeInstance(NullRecord::class, $tableName);
@@ -407,6 +407,7 @@ class CommonRepository extends BaseRepository
      * @param string $tableName
      *
      * @return RecordInterface[]
+     * @throws MissingArgumentException
      */
     protected function convertPropertyArraysToRecords(
         array $localProperties,
@@ -748,7 +749,7 @@ class CommonRepository extends BaseRepository
      * @throws InvalidTcaException
      * @throws InvalidIdentifierException
      */
-    protected function getFlexFormDefinition(RecordInterface $record, string $column, array $columnConfiguration)
+    protected function getFlexFormDefinition(RecordInterface $record, string $column, array $columnConfiguration): array
     {
         $flexFormTools = GeneralUtility::makeInstance(FlexFormTools::class);
         $dataStructIdentifier = $flexFormTools->getDataStructureIdentifier(
@@ -1257,7 +1258,6 @@ class CommonRepository extends BaseRepository
                     $mmTableName
                 );
                 $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $mmTableName);
-                /** @var RecordInterface $relatedRecord */
                 foreach ($records as $relatedRecord) {
                     if ($relatedRecord->hasLocalProperty('tablenames')) {
                         $originalTableName = $relatedRecord->hasLocalProperty('tablenames');
@@ -1579,7 +1579,6 @@ class CommonRepository extends BaseRepository
 
         $foreignField = $this->getForeignField($columnConfiguration);
 
-        /** @var RecordInterface $relationRecord */
         foreach ($records as $relationRecord) {
             $originalTableName = $columnConfiguration['foreign_table'];
             if (!in_array($originalTableName, $excludedTableNames)) {
@@ -1773,7 +1772,6 @@ class CommonRepository extends BaseRepository
         int $recordIdentifier,
         array $excludedTableNames
     ): array {
-        /** @var RecordInterface $mmRecord */
         foreach ($relationRecords as $mmRecord) {
             $localUid = $mmRecord->getLocalProperty('uid_foreign');
             $foreignUid = $mmRecord->getForeignProperty('uid_foreign');
@@ -1896,11 +1894,8 @@ class CommonRepository extends BaseRepository
     /**
      * @param RecordInterface $record
      * @param array $excludedTables
-     *
-     * @throws InvalidSlotException
-     * @throws InvalidSlotReturnException
      */
-    protected function publishRecordRecursiveInternal(RecordInterface $record, array $excludedTables)
+    protected function publishRecordRecursiveInternal(RecordInterface $record, array $excludedTables): void
     {
         $tableName = $record->getTableName();
 

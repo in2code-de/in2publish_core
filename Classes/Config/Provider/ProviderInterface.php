@@ -39,15 +39,15 @@ interface ProviderInterface extends SingletonInterface
     /**
      * @return bool Returns false if this provider is not ready (e.g.because the page hasn't been determined)
      */
-    public function isAvailable();
+    public function isAvailable(): bool;
 
     /**
      * @return array The returned config must be context sensitive (local <-> foreign)
      */
-    public function getConfig();
+    public function getConfig(): array;
 
     /**
      * @return int The priority determines the loading order. Higher prioritized configs will overwrite the former.
      */
-    public function getPriority();
+    public function getPriority(): int;
 }

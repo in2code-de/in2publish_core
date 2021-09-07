@@ -76,7 +76,7 @@ class FileProvider implements ProviderInterface
     /**
      * @return bool
      */
-    public function isAvailable()
+    public function isAvailable(): bool
     {
         return true;
     }
@@ -84,7 +84,7 @@ class FileProvider implements ProviderInterface
     /**
      * @return array
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         if (!class_exists(Spyc::class)) {
             return [];
@@ -102,7 +102,7 @@ class FileProvider implements ProviderInterface
     /**
      * @return int
      */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 20;
     }

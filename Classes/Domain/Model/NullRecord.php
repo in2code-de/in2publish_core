@@ -46,11 +46,11 @@ class NullRecord extends Record
      * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      */
     public function __construct(
-        $tableName = 'pages',
-        array $localProperties = [0 => false],
-        array $foreignProperties = [0 => false],
-        array $tca = [],
-        array $additionalProperties = ['depth' => 1]
+        string $tableName = 'pages',
+        array $localProperties,
+        array $foreignProperties,
+        array $tca,
+        array $additionalProperties
     ) {
         $this->tableName = $tableName;
         $this->additionalProperties = $additionalProperties;

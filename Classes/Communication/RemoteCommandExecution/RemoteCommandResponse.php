@@ -64,7 +64,7 @@ class RemoteCommandResponse
      * @param array|string $errors
      * @param int $exitStatus
      */
-    public function __construct($output = [], $errors = [], $exitStatus = 0)
+    public function __construct($output = [], $errors = [], int $exitStatus = 0)
     {
         $this->setOutput($output);
         $this->setErrors($errors);
@@ -138,9 +138,9 @@ class RemoteCommandResponse
     /**
      * @param int $exitStatus
      */
-    public function setExitStatus($exitStatus)
+    public function setExitStatus(int $exitStatus)
     {
-        $this->exitStatus = (int)$exitStatus;
+        $this->exitStatus = $exitStatus;
     }
 
     /**

@@ -75,8 +75,6 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
     /**
      * Get data attributes for i-icon
      *
-     * @param Record $record
-     *
      * @return string
      */
     public function render(): string

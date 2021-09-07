@@ -33,25 +33,16 @@ use In2code\In2publishCore\Config\Builder;
 use In2code\In2publishCore\Config\Definer\DefinerInterface;
 use In2code\In2publishCore\Config\Node\NodeCollection;
 
-/**
- * Class SimpleOverviewAndAjaxDefiner
- */
 class SimpleOverviewAndAjaxDefiner implements DefinerInterface
 {
-    /**
-     * @return NodeCollection
-     */
-    public function getLocalDefinition()
+    public function getLocalDefinition(): NodeCollection
     {
         return Builder::start()
                       ->addArray('factory', Builder::start()->addBoolean('simpleOverviewAndAjax', false))
                       ->end();
     }
 
-    /**
-     * @return NodeCollection
-     */
-    public function getForeignDefinition()
+    public function getForeignDefinition(): NodeCollection
     {
         return Builder::start()->end();
     }

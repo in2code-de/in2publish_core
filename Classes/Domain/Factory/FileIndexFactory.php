@@ -96,7 +96,7 @@ class FileIndexFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function makeInstanceForSide($side, $identifier): RecordInterface
+    public function makeInstanceForSide(string $side, string $identifier): RecordInterface
     {
         $foreignProperties = [];
         $localProperties = [];
@@ -127,8 +127,12 @@ class FileIndexFactory
      * @param string $side
      * @param bool $clearOpposite Set to true if you want to remove all properties from the "opposite" side
      */
-    public function updateFileIndexInfoBySide(RecordInterface $record, $identifier, $side, $clearOpposite = false)
-    {
+    public function updateFileIndexInfoBySide(
+        RecordInterface $record,
+        string $identifier,
+        string $side,
+        bool $clearOpposite = false
+    ) {
         $oppositeSide = ($side === 'local' ? 'foreign' : 'local');
         $uid = $record->getPropertyBySideIdentifier($oppositeSide, 'uid');
 
@@ -146,7 +150,7 @@ class FileIndexFactory
      * @param string $localIdentifier
      * @param string $foreignIdentifier
      */
-    public function updateFileIndexInfo(RecordInterface $record, $localIdentifier, $foreignIdentifier)
+    public function updateFileIndexInfo(RecordInterface $record, string $localIdentifier, string $foreignIdentifier)
     {
         $uid = $record->getIdentifier();
         $record->addAdditionalProperty('recordDatabaseState', $record->getState());
@@ -164,14 +168,14 @@ class FileIndexFactory
      * This method is mostly a copy of an indexer method
      *
      * @param string $identifier
-     * @param $side
+     * @param string $side
      * @param int $uid Predefined UID
      *
      * @return array
      * @see \TYPO3\CMS\Core\Resource\Index\Indexer::gatherFileInformationArray
      *
      */
-    public function getFileIndexArray($identifier, $side, int $uid = 0): array
+    public function getFileIndexArray(string $identifier, string $side, int $uid = 0): array
     {
         $fileInfo = $this->getDriverSpecificFileInfo($identifier, $side);
 
@@ -286,7 +290,7 @@ class FileIndexFactory
      *
      * @return array
      */
-    protected function getDriverSpecificFileInfo($identifier, $side): array
+    protected function getDriverSpecificFileInfo(string $identifier, string $side): array
     {
         if ($side === 'local') {
             $driver = $this->localDriver;

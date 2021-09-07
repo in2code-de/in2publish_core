@@ -47,7 +47,7 @@ class FrontendController extends AbstractController
      *
      * @throws In2publishCoreException
      */
-    public function previewAction($identifier = 1)
+    public function previewAction(int $identifier = 1)
     {
         $this->view->assign(
             'local_preview',

@@ -91,7 +91,7 @@ class RemoteCommandRequest
      * @param array $arguments
      * @param array $options
      */
-    public function __construct($command = '', array $arguments = [], array $options = [])
+    public function __construct(string $command = '', array $arguments = [], array $options = [])
     {
         $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         $this->pathToPhp = $configContainer->get('foreign.pathToPhp');
@@ -121,9 +121,9 @@ class RemoteCommandRequest
     /**
      * @param bool $usePhp
      */
-    public function usePhp($usePhp)
+    public function usePhp(bool $usePhp)
     {
-        $this->usePhp = (bool)$usePhp;
+        $this->usePhp = $usePhp;
     }
 
     /**
@@ -161,7 +161,7 @@ class RemoteCommandRequest
     /**
      * @param string $dispatcher
      */
-    public function setDispatcher($dispatcher)
+    public function setDispatcher(string $dispatcher)
     {
         $this->dispatcher = $dispatcher;
     }
@@ -169,7 +169,7 @@ class RemoteCommandRequest
     /**
      * @param array $environmentVariables
      */
-    public function setEnvironmentVariables($environmentVariables)
+    public function setEnvironmentVariables(array $environmentVariables)
     {
         $this->environmentVariables = $environmentVariables;
     }
@@ -185,7 +185,7 @@ class RemoteCommandRequest
     /**
      * @param string $command
      */
-    public function setCommand($command)
+    public function setCommand(string $command)
     {
         $this->command = $command;
     }
@@ -209,16 +209,16 @@ class RemoteCommandRequest
     /**
      * @param array $arguments
      */
-    public function setArguments($arguments)
+    public function setArguments(array $arguments)
     {
         $this->arguments = $arguments;
     }
 
     /**
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      */
-    public function setArgument($name, $value)
+    public function setArgument(string $name, $value)
     {
         $this->arguments[$name] = $value;
     }
@@ -242,7 +242,7 @@ class RemoteCommandRequest
     /**
      * @param array $options
      */
-    public function setOptions($options)
+    public function setOptions(array $options)
     {
         $this->options = [];
         foreach ($options as $option) {
@@ -251,7 +251,7 @@ class RemoteCommandRequest
     }
 
     /**
-     * @param string $value
+     * @param scalar $value
      */
     public function setOption($value)
     {

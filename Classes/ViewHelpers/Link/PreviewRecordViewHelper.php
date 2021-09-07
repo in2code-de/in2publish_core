@@ -61,7 +61,7 @@ class PreviewRecordViewHelper extends AbstractTagBasedViewHelper
         $this->registerArgument(self::ARG_TABLE, 'string', 'the records\' table name');
     }
 
-    public function render()
+    public function render(): string
     {
         $uri = BackendUtility::buildPreviewUri(
             $this->arguments[self::ARG_TABLE],

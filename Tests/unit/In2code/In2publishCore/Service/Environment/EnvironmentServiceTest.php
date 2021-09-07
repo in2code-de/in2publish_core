@@ -97,7 +97,7 @@ class EnvironmentServiceTest extends Unit
     /**
      *
      */
-    public function getResultRegistryReturnAndExpectedValueDataProvider()
+    public function getResultRegistryReturnAndExpectedValueDataProvider(): array
     {
         $configurationHash = sha1(serialize(['boo' => ['far' => ['faz' => 'fuz']]]));
         $packagesHash = sha1(json_encode(['foo' => ['bar' => ['baz' => 'buz']]]));

@@ -77,7 +77,7 @@ class FileController extends AbstractController
      *
      * @throws StopActionException
      */
-    public function publishFolderAction($identifier)
+    public function publishFolderAction(string $identifier)
     {
         $success = GeneralUtility::makeInstance(FolderPublisherService::class)->publish($identifier);
         $this->runTasks();
@@ -105,7 +105,7 @@ class FileController extends AbstractController
      *
      * @throws StopActionException
      */
-    public function publishFileAction($uid, $identifier, $storage)
+    public function publishFileAction(int $uid, string $identifier, int $storage)
     {
         // Special case: The file was moved hence the identifier is a merged one
         if (strpos($identifier, ',')) {
@@ -156,7 +156,7 @@ class FileController extends AbstractController
      *
      * @throws StopActionException
      */
-    public function toggleFilterStatusAndRedirectToIndexAction($filter)
+    public function toggleFilterStatusAndRedirectToIndexAction(string $filter)
     {
         $this->toggleFilterStatusAndRedirect('in2publish_filter_files_', $filter, 'index');
     }
@@ -167,7 +167,7 @@ class FileController extends AbstractController
      * @return RecordInterface|null The record or null if it can not be handled
      * @throws InsufficientFolderAccessPermissionsException
      */
-    protected function tryToGetFolderInstance($identifier)
+    protected function tryToGetFolderInstance(string $identifier): ?RecordInterface
     {
         if (false === $this->configContainer->get('factory.fal.reserveSysFileUids')) {
             try {

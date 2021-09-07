@@ -76,7 +76,7 @@ class RemoteStorage implements ResourceStorageInterface
      *
      * @return bool
      */
-    public function hasFolder($storage, $identifier): bool
+    public function hasFolder(int $storage, string $identifier): bool
     {
         if (!isset(static::$cache[$storage][$identifier][static::HAS_FOLDER_KEY])) {
             $result = $this->executeEnvelope(
@@ -98,7 +98,7 @@ class RemoteStorage implements ResourceStorageInterface
      *
      * @return array
      */
-    public function getFoldersInFolder($storage, $identifier): array
+    public function getFoldersInFolder(int $storage, string $identifier): array
     {
         if (!isset(static::$cache[$storage][$identifier][static::SUB_FOLDERS_KEY])) {
             $result = $this->executeEnvelope(
@@ -117,7 +117,7 @@ class RemoteStorage implements ResourceStorageInterface
      *
      * @return array
      */
-    public function getFilesInFolder($storage, $identifier): array
+    public function getFilesInFolder(int $storage, string $identifier): array
     {
         if (!isset(static::$cache[$storage][$identifier][static::FILES_KEY])) {
             $result = $this->executeEnvelope(
@@ -136,7 +136,7 @@ class RemoteStorage implements ResourceStorageInterface
      *
      * @return array
      */
-    public function getFile($storage, $identifier): array
+    public function getFile(int $storage, string $identifier): array
     {
         if (!isset(static::$cache[$storage][$identifier][static::FILES_KEY][$identifier])) {
             $result = $this->executeEnvelope(
@@ -159,7 +159,7 @@ class RemoteStorage implements ResourceStorageInterface
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function executeEnvelope($command, array $arguments = [])
+    protected function executeEnvelope(string $command, array $arguments = [])
     {
         $envelope = new Envelope($command, $arguments);
         $uid = $this->letterbox->sendEnvelope($envelope);

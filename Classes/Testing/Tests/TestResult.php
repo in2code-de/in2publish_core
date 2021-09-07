@@ -74,8 +74,8 @@ class TestResult
      * @internal param array|null $arguments
      */
     public function __construct(
-        $label,
-        $severity = self::OK,
+        string $label,
+        string $severity = self::OK,
         array $messages = [],
         array $labelArguments = null
     ) {
@@ -154,7 +154,7 @@ class TestResult
     /**
      * @param string $messages
      */
-    public function setMessages($messages)
+    public function setMessages(string $messages)
     {
         $this->messages = $messages;
     }

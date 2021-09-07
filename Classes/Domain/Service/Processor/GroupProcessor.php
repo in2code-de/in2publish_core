@@ -126,7 +126,7 @@ class GroupProcessor extends AbstractProcessor
      *
      * @return bool
      */
-    protected function canPreProcessInternalTypeFileReference(array $config)
+    protected function canPreProcessInternalTypeFileReference(array $config): bool
     {
         if (false === empty($config[static::UPLOAD_FOLDER])) {
             $this->lastReasons[static::INTERNAL_TYPE] =

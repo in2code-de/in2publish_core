@@ -300,12 +300,7 @@ class EnvelopeDispatcher
         return call_user_func_array([$driver, 'deleteFolder'], $request);
     }
 
-    /**
-     * @param array $request
-     *
-     * @return mixed
-     */
-    protected function deleteFile(array $request)
+    protected function deleteFile(array $request): bool
     {
         $storage = $this->getStorage($request);
         unset($request['storage']);
@@ -355,12 +350,7 @@ class EnvelopeDispatcher
         return call_user_func_array([$driver, 'renameFile'], $request);
     }
 
-    /**
-     * @param array $request
-     *
-     * @return mixed
-     */
-    protected function getPublicUrl(array $request)
+    protected function getPublicUrl(array $request): ?string
     {
         $storage = $this->getStorage($request);
         $driver = $this->getStorageDriver($storage);

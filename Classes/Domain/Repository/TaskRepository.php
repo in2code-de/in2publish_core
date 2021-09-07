@@ -144,11 +144,11 @@ class TaskRepository
      * NULL: finds all Tasks which were not executed
      * DateTime: finds all Tasks which were executed on the given Time
      *
-     * @param DateTime $executionBegin
+     * @param DateTime|null $executionBegin
      *
      * @return array|NULL
      */
-    public function findByExecutionBegin(DateTime $executionBegin = null)
+    public function findByExecutionBegin(DateTime $executionBegin = null): ?array
     {
         $query = $this->connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();

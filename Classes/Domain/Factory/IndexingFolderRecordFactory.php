@@ -114,7 +114,7 @@ class IndexingFolderRecordFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function makeInstance($dir = null): RecordInterface
+    public function makeInstance(string $dir = null): RecordInterface
     {
         // determine current folder
         $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
@@ -195,7 +195,7 @@ class IndexingFolderRecordFactory
      *
      * @return array
      */
-    protected function updateFilesByMovedRecords(array $records, array $files, $side): array
+    protected function updateFilesByMovedRecords(array $records, array $files, string $side): array
     {
         $relatedFolders = [];
 
@@ -224,8 +224,8 @@ class IndexingFolderRecordFactory
             }
             foreach ($relatedFolders as $folder => $fileInfo) {
                 if ($side === 'foreign') {
-                    if ($storage->hasFolder($fileInfo['storageUid'], $folder)) {
-                        $filesInFolder = $storage->getFilesInFolder($fileInfo['storageUid'], $folder);
+                    if ($storage->hasFolder((int)$fileInfo['storageUid'], $folder)) {
+                        $filesInFolder = $storage->getFilesInFolder((int)$fileInfo['storageUid'], $folder);
                         foreach ($fileInfo['files'] as $identifier) {
                             if (isset($filesInFolder[$identifier])) {
                                 $files[$identifier] = $filesInFolder[$identifier];
@@ -339,7 +339,7 @@ class IndexingFolderRecordFactory
      *
      * @throws TooManyFilesException
      */
-    protected function checkFileCount(array $files, $folderIdentifier, $side)
+    protected function checkFileCount(array $files, string $folderIdentifier, string $side)
     {
         $count = count($files);
         if ($count > $this->threshold) {

@@ -52,7 +52,7 @@ class IntegerInRangeValidator implements ValidatorInterface
      * @param int $min
      * @param int $max
      */
-    public function __construct($min = PHP_INT_MIN, $max = PHP_INT_MAX)
+    public function __construct(int $min = PHP_INT_MIN, int $max = PHP_INT_MAX)
     {
         $this->min = $min;
         $this->max = $max;

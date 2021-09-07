@@ -309,7 +309,7 @@ class TcaProcessingService
      *
      * @return bool
      */
-    public static function tableExists($table): bool
+    public static function tableExists(string $table): bool
     {
         return array_key_exists($table, static::getCompleteTca());
     }
@@ -329,7 +329,7 @@ class TcaProcessingService
      * @return array
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public static function getCompleteTcaForTable($tableName): array
+    public static function getCompleteTcaForTable(string $tableName): array
     {
         return $GLOBALS[static::TCA][$tableName];
     }
@@ -339,7 +339,7 @@ class TcaProcessingService
      *
      * @return array
      */
-    public static function getColumnsFor($table): array
+    public static function getColumnsFor(string $table): array
     {
         return (array)static::getInstance()->compatibleTca[$table];
     }
@@ -349,7 +349,7 @@ class TcaProcessingService
      *
      * @return array
      */
-    public static function getControlsFor($table): array
+    public static function getControlsFor(string $table): array
     {
         return static::getInstance()->controls[$table];
     }
@@ -359,7 +359,7 @@ class TcaProcessingService
      *
      * @return bool
      */
-    public static function hasDeleteField($table): bool
+    public static function hasDeleteField(string $table): bool
     {
         return (static::getInstance()->controls[$table][static::DELETE] !== '');
     }
@@ -369,7 +369,7 @@ class TcaProcessingService
      *
      * @return string
      */
-    public static function getDeleteField($table): string
+    public static function getDeleteField(string $table): string
     {
         return static::getInstance()->controls[$table][static::DELETE];
     }

@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Config\Node\Specific;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Config\Node\Node;
 use In2code\In2publishCore\Config\ValidationContainer;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 
@@ -70,9 +71,9 @@ class SpecArray extends AbsSpecNode
     }
 
     /**
-     * @param array|bool|int|string $value
+     * @param mixed $value
      *
-     * @return array
+     * @return array<Node>
      */
     public function cast($value): array
     {

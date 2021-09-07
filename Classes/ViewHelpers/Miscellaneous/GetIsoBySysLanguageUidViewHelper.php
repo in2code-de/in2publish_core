@@ -64,7 +64,7 @@ class GetIsoBySysLanguageUidViewHelper extends AbstractViewHelper
         array $arguments,
         Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
-    ) {
+    ): string {
         $language = $arguments[self::LANGUAGE];
         if (!isset(self::$rtc[$language])) {
             $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);

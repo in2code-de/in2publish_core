@@ -126,7 +126,7 @@ class Letterbox
      *
      * @return bool|Envelope
      */
-    public function receiveEnvelope($uid, $burnEnvelope = true)
+    public function receiveEnvelope(int $uid, bool $burnEnvelope = true)
     {
         $uid = (int)$uid;
 
@@ -162,10 +162,7 @@ class Letterbox
         return $envelope;
     }
 
-    /**
-     * @return false|int
-     */
-    public function hasUnAnsweredEnvelopes()
+    public function hasUnAnsweredEnvelopes(): bool
     {
         if ($this->contextService->isLocal()) {
             $database = DatabaseUtility::buildForeignDatabaseConnection();

@@ -116,7 +116,7 @@ class FolderRecordFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function initializeDependenciesAndGetFolder($identifier): Folder
+    protected function initializeDependenciesAndGetFolder(string $identifier): Folder
     {
         // Grab the resource factory to get the FAL driver of the selected folder "FAL style"
         $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
@@ -162,11 +162,11 @@ class FolderRecordFactory
      *
      * I only work with drivers so i don't "accidentally" index files...
      *
-     * @param string|null $identifier
+     * @param string $identifier
      *
      * @return RecordInterface
      */
-    public function makeInstance($identifier): RecordInterface
+    public function makeInstance(string $identifier): RecordInterface
     {
         /*
          * IMPORTANT NOTICES (a.k.a "never forget about this"-Notices):
@@ -442,7 +442,7 @@ class FolderRecordFactory
      *
      * @return array
      */
-    protected function buildDiskIdentifiersList($identifier): array
+    protected function buildDiskIdentifiersList(string $identifier): array
     {
         $diskIdentifiers = [
             'local' => $this->getFilesIdentifiersInFolder($identifier, $this->localDriver),
@@ -463,7 +463,7 @@ class FolderRecordFactory
      *
      * @return array
      */
-    protected function getFilesIdentifiersInFolder($identifier, DriverInterface $driver): array
+    protected function getFilesIdentifiersInFolder(string $identifier, DriverInterface $driver): array
     {
         if ($driver->folderExists($identifier)) {
             $identifierList = array_values($driver->getFilesInFolder($identifier));
@@ -479,7 +479,7 @@ class FolderRecordFactory
      *
      * @return array
      */
-    protected function getSubFolderRecordInstances($identifier): array
+    protected function getSubFolderRecordInstances(string $identifier): array
     {
         $subFolderIdentifiers = array_merge(
             $this->getSubFolderIdentifiers($this->localDriver, $identifier),
@@ -500,7 +500,7 @@ class FolderRecordFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function makePhysicalFolderInstance($identifier, $depth): RecordInterface
+    protected function makePhysicalFolderInstance(string $identifier, int $depth): RecordInterface
     {
         return GeneralUtility::makeInstance(
             Record::class,
@@ -518,7 +518,7 @@ class FolderRecordFactory
      *
      * @return array
      */
-    protected function getSubFolderIdentifiers(DriverInterface $driver, $identifier): array
+    protected function getSubFolderIdentifiers(DriverInterface $driver, string $identifier): array
     {
         if ($driver->folderExists($identifier)) {
             $identifierList = $driver->getFoldersInFolder($identifier);
@@ -535,7 +535,7 @@ class FolderRecordFactory
      *
      * @return array
      */
-    protected function getFolderInfoByIdentifier(DriverInterface $driver, $identifier): array
+    protected function getFolderInfoByIdentifier(DriverInterface $driver, string $identifier): array
     {
         if ($driver->folderExists($identifier)) {
             $info = $driver->getFolderInfoByIdentifier($identifier);
@@ -592,7 +592,7 @@ class FolderRecordFactory
         array $onlyDiskIdentifiers,
         $hashedIdentifier,
         array $files,
-        $side
+        string $side
     ): array {
         // the chance is vanishing low to find a file by its identifier in the database
         // because they should have been found by the folder hash already, but i'm a

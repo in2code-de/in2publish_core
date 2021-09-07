@@ -50,7 +50,7 @@ interface RecordInterface
      * @param array $additionalProperties
      */
     public function __construct(
-        $tableName,
+        string $tableName,
         array $localProperties,
         array $foreignProperties,
         array $tca,
@@ -72,19 +72,19 @@ interface RecordInterface
      *
      * @return RecordInterface
      */
-    public function setState($state);
+    public function setState(string $state): RecordInterface;
 
     /**
      * @return array
      */
-    public function getLocalProperties();
+    public function getLocalProperties(): array;
 
     /**
      * @param string $propertyName
      *
      * @return bool
      */
-    public function hasLocalProperty($propertyName);
+    public function hasLocalProperty(string $propertyName): bool;
 
     /**
      * Returns a specific local property by name or NULL if it is not set
@@ -93,7 +93,7 @@ interface RecordInterface
      *
      * @return mixed
      */
-    public function getLocalProperty($propertyName);
+    public function getLocalProperty(string $propertyName);
 
     /**
      * @param array $localProperties
@@ -105,14 +105,14 @@ interface RecordInterface
     /**
      * @return array
      */
-    public function getForeignProperties();
+    public function getForeignProperties(): array;
 
     /**
      * @param string $propertyName
      *
      * @return bool
      */
-    public function hasForeignProperty($propertyName);
+    public function hasForeignProperty(string $propertyName): bool;
 
     /**
      * Returns a specific foreign property by name or NULL if it is not set
@@ -121,7 +121,7 @@ interface RecordInterface
      *
      * @return mixed
      */
-    public function getForeignProperty($propertyName);
+    public function getForeignProperty(string $propertyName);
 
     /**
      * @param array $foreignProperties
@@ -168,7 +168,7 @@ interface RecordInterface
      *
      * @return RecordInterface
      */
-    public function setPropertiesBySideIdentifier($side, array $properties): RecordInterface;
+    public function setPropertiesBySideIdentifier(string $side, array $properties): RecordInterface;
 
     /**
      * @param string $side
@@ -176,14 +176,14 @@ interface RecordInterface
      *
      * @return mixed
      */
-    public function getPropertyBySideIdentifier($side, $propertyName);
+    public function getPropertyBySideIdentifier(string $side, string $propertyName);
 
     /**
      * @param string $propertyName
      *
      * @return mixed
      */
-    public function getAdditionalProperty($propertyName);
+    public function getAdditionalProperty(string $propertyName);
 
     /**
      * @param string $propertyName
@@ -191,7 +191,7 @@ interface RecordInterface
      *
      * @return RecordInterface
      */
-    public function addAdditionalProperty($propertyName, $propertyValue);
+    public function addAdditionalProperty(string $propertyName, $propertyValue): RecordInterface;
 
     /**
      * @return string
@@ -234,7 +234,7 @@ interface RecordInterface
      *
      * @return RecordInterface|null
      */
-    public function getParentPageRecord();
+    public function getParentPageRecord(): ?RecordInterface;
 
     /**
      * Returns the parent record object or null if this is a root record
@@ -242,7 +242,7 @@ interface RecordInterface
      *
      * @return RecordInterface|null
      */
-    public function getParentRecord();
+    public function getParentRecord(): ?RecordInterface;
 
     /**
      * @return bool
@@ -255,7 +255,7 @@ interface RecordInterface
      *
      * @return RecordInterface[]
      */
-    public function addChangedRelatedRecordsRecursive($relatedRecordsFlat = [], array &$done = []): array;
+    public function addChangedRelatedRecordsRecursive(array $relatedRecordsFlat = [], array &$done = []): array;
 
     /**
      * Returns the given records from the list of related records if the relation is direct.
@@ -288,7 +288,7 @@ interface RecordInterface
      *
      * @return RecordInterface[]
      */
-    public function getRelatedRecordByTableAndProperty($table, $property, $value): array;
+    public function getRelatedRecordByTableAndProperty(string $table, string $property, $value): array;
 
     /**
      * @param RecordInterface $record
@@ -337,14 +337,14 @@ interface RecordInterface
      *
      * @return bool
      */
-    public function hasAdditionalProperty($propertyName): bool;
+    public function hasAdditionalProperty(string $propertyName): bool;
 
     /**
      * @param string $side
      *
      * @return array
      */
-    public function getPropertiesBySideIdentifier($side);
+    public function getPropertiesBySideIdentifier(string $side): array;
 
     /**
      * Prohibits changing this records parent record (prohibits changing parents of moved records)

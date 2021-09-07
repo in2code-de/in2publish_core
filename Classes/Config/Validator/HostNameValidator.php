@@ -50,7 +50,7 @@ class HostNameValidator implements ValidatorInterface
      *
      * @param int $port Set an other port if the default one is actually used
      */
-    public function __construct($port = 61252)
+    public function __construct(int $port = 61252)
     {
         $this->port = $port;
     }

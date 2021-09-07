@@ -114,7 +114,7 @@ class TableCacheRepository implements SingletonInterface
      *
      * @return array
      */
-    public function findByPid($tableName, $pageIdentifier, $databaseName = 'local'): array
+    public function findByPid(string $tableName, int $pageIdentifier, string $databaseName = 'local'): array
     {
         $connection = $this->getConnection($databaseName);
         if ($connection instanceof Connection) {
@@ -143,10 +143,10 @@ class TableCacheRepository implements SingletonInterface
      *
      * @return void
      */
-    protected function cacheRecords($tableName, array $rows, $databaseName = 'local'): void
+    protected function cacheRecords(string $tableName, array $rows, string $databaseName = 'local'): void
     {
         foreach ($rows as $row) {
-            $this->cacheSingleRecord($tableName, $row['uid'], $row, $databaseName);
+            $this->cacheSingleRecord($tableName, (int)$row['uid'], $row, $databaseName);
         }
     }
 
@@ -160,8 +160,12 @@ class TableCacheRepository implements SingletonInterface
      *
      * @return void
      */
-    protected function cacheSingleRecord($tableName, $uid, array $properties, $databaseName = 'local'): void
-    {
+    protected function cacheSingleRecord(
+        string $tableName,
+        int $uid,
+        array $properties,
+        string $databaseName = 'local'
+    ): void {
         $cache = &$this->localCache;
         if ($databaseName === 'foreign') {
             $cache = &$this->foreignCache;
@@ -174,7 +178,7 @@ class TableCacheRepository implements SingletonInterface
      *
      * @return array
      */
-    protected function getCache($databaseName = 'local'): array
+    protected function getCache(string $databaseName = 'local'): array
     {
         $cache = $this->localCache;
         if ($databaseName === 'foreign') {
