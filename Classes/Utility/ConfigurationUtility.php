@@ -118,8 +118,11 @@ class ConfigurationUtility
         return $result;
     }
 
-    protected static function sortResultArrayByAdditionalKeyOrder(array $result, array $original, array $additional): array
-    {
+    protected static function sortResultArrayByAdditionalKeyOrder(
+        array $result,
+        array $original,
+        array $additional
+    ): array {
         $additionalKeys = array_keys($additional);
         $originalKeys = array_keys($original);
         $originalKeys = array_diff($originalKeys, $additionalKeys);

@@ -303,8 +303,12 @@ abstract class BaseRepository
      * @param string $idFieldName
      * @return int
      */
-    protected function countRecord(Connection $connection, $identifier, string $tableName, string $idFieldName = 'uid'): int
-    {
+    protected function countRecord(
+        Connection $connection,
+        $identifier,
+        string $tableName,
+        string $idFieldName = 'uid'
+    ): int {
         return $connection->count('*', $tableName, [$idFieldName => $identifier]);
     }
 

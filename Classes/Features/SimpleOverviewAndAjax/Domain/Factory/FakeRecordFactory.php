@@ -216,8 +216,11 @@ class FakeRecordFactory
      *
      * @return bool
      */
-    protected function isRecordDeleted(int $pageIdentifier, string $databaseName, string $tableName = self::PAGE_TABLE_NAME): bool
-    {
+    protected function isRecordDeleted(
+        int $pageIdentifier,
+        string $databaseName,
+        string $tableName = self::PAGE_TABLE_NAME
+    ): bool {
         $tcaTable = $this->tcaService->getConfigurationArrayForTable($tableName);
         if (!empty($tcaTable['ctrl']['delete'])) {
             $properties = $this->tableCacheRepository->findByUid($tableName, $pageIdentifier, $databaseName);
