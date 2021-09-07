@@ -14,14 +14,15 @@ Content Publishing in TYPO3 - the easy way:
 <img src="https://www.in2code.de/fileadmin/content/images/produkte/contentpublisher/content_publisher_screenshot01_prev.png" width="450" />
 
 ## Support
-This TYPO3 Extension is free to use. We as in2code and our Developers highly appreciate your feedback and work hard to improve our Extensions. 
-To do so, in2code provides two extra days per month for coding and developing (codingnight and feaky friday) During these days our more than 20 Developers spend their time with impovments and updates for this and other Extensions.
+This TYPO3 Extension is free to use. We as in2code and our developers highly appreciate your feedback and work hard to improve our extensions. 
+To do so, in2code provides two extra days per month for coding and developing (Coding Night and Freaky Friday). During these days our more than 20 developers spend their time with improvements and updates for this and other extensions.
 
-You can Support our Work here: [Extensionsupport](https://www.in2code.de/extensionsupport)
+You can support our work [here](https://www.in2code.de/extensionsupport).
 
 Thank you very much in advance.
 
 Your in2code Team
+
 
 ### Description
 
