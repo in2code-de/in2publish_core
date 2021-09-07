@@ -93,29 +93,4 @@ class LabelService
         }
         return $label;
     }
-
-    /**
-     * Get label fields from a table definition
-     *
-     * @param string $tableName
-     *
-     * @return array
-     */
-    protected function getLabelFieldsFromTableConfiguration($tableName): array
-    {
-        $labelField = $this->tcaService->getLabelFieldFromTable($tableName);
-        $labelAltField = $this->tcaService->getLabelAltFieldFromTable($tableName);
-
-        $labelFields = [];
-        if (!empty($labelField)) {
-            $labelFields[] = $labelField;
-        }
-        if (!empty($labelAltField)) {
-            $labelFields = array_merge(
-                $labelFields,
-                GeneralUtility::trimExplode(',', $labelAltField, true)
-            );
-        }
-        return array_unique($labelFields);
-    }
 }
