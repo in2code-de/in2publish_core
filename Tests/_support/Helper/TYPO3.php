@@ -311,7 +311,6 @@ class TYPO3 extends Module
             // in a test case, so environment is set up only once per test case.
             GeneralUtility::purgeInstances();
             $testbase->setUpBasicTypo3Bootstrap($instancePath);
-            Bootstrap::initializeBackendRouter();
             $testbase->loadExtensionTables();
         } else {
             $testbase->removeOldInstanceIfExists($instancePath);
