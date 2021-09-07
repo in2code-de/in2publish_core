@@ -40,7 +40,6 @@ use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use InvalidArgumentException;
 use LogicException;
-use PDO;
 use RuntimeException;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Service\FlexFormService;
@@ -151,7 +150,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
                                                 ->where($query->expr()->eq('uid', $this->storageUid))
                                                 ->setMaxResults(1)
                                                 ->execute()
-                                                ->fetch(PDO::FETCH_ASSOC);
+                                                ->fetchAssociative();
             $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
             $driverConfiguration = $flexFormService->convertFlexFormContentToArray(
                 $this->remoteDriverSettings['configuration']

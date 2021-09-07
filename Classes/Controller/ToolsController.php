@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\DBALException;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;
@@ -301,7 +300,6 @@ class ToolsController extends ActionController
     /**
      * @return array
      * @throws In2publishCoreException
-     * @throws DBALException
      */
     protected function getFullInfo(): array
     {

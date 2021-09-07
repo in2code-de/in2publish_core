@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repositor
  */
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
 
@@ -95,7 +94,7 @@ class TableCacheRepository implements SingletonInterface
                          ->where($query->expr()->eq('uid', $uniqueIdentifier))
                          ->setMaxResults(1)
                          ->execute()
-                         ->fetch(PDO::FETCH_ASSOC);
+                         ->fetchAssociative();
             if (empty($row)) {
                 return [];
             }

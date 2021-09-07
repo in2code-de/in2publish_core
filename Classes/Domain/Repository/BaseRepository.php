@@ -43,7 +43,6 @@ use TYPO3\CMS\Core\Utility\MathUtility;
 use function array_column;
 use function explode;
 use function implode;
-use function json_encode;
 use function preg_match;
 use function stripos;
 use function strpos;
@@ -250,22 +249,11 @@ abstract class BaseRepository
         // deal with MM records, they have (in2publish internal) combined identifiers
         if (strpos((string)$identifier, ',') !== false) {
             $identifierArray = Record::splitCombinedIdentifier($identifier);
-
-            $connection->update(
-                $tableName,
-                $properties,
-                $identifierArray
-            );
         } else {
-            $connection->update(
-                $tableName,
-                $properties,
-                ['uid' => $identifier]
-            );
+            $identifierArray = ['uid' => $identifier];
         }
-        if (0 < $connection->errorCode()) {
-            $this->logFailedQuery(__METHOD__, $connection, $tableName);
-        }
+        $connection->update($tableName, $properties, $identifierArray);
+
         return true;
     }
 
@@ -277,16 +265,10 @@ abstract class BaseRepository
      * @param Connection $connection
      * @param array $properties
      * @param string $tableName
-     *
-     * @return bool
      */
-    protected function addRecord(Connection $connection, array $properties, string $tableName): bool
+    protected function addRecord(Connection $connection, array $properties, string $tableName): void
     {
-        $success = (bool)$connection->insert($tableName, $properties);
-        if (!$success) {
-            $this->logFailedQuery(__METHOD__, $connection, $tableName);
-        }
-        return $success;
+        $connection->insert($tableName, $properties);
     }
 
     /**
@@ -298,24 +280,19 @@ abstract class BaseRepository
      * propertiesArray('deleted' => TRUE) and use updateRecord()
      *
      * @param Connection $connection
-     * @param int $identifier
+     * @param int|string $identifier
      * @param string $tableName
      *
-     * @return bool
      * @internal param string $deleteFieldName
      */
-    protected function deleteRecord(Connection $connection, $identifier, string $tableName)
+    protected function deleteRecord(Connection $connection, $identifier, string $tableName): void
     {
         if (strpos((string)$identifier, ',') !== false) {
             $identifierArray = Record::splitCombinedIdentifier($identifier);
         } else {
             $identifierArray = ['uid' => (int)$identifier];
         }
-        $success = (bool)$connection->delete($tableName, $identifierArray);
-        if (!$success) {
-            $this->logFailedQuery(__METHOD__, $connection, $tableName);
-        }
-        return $success;
+        $connection->delete($tableName, $identifierArray);
     }
 
     /**
@@ -325,20 +302,11 @@ abstract class BaseRepository
      * @param string|int $identifier
      * @param string|null $tableName
      *
-     * @return bool|int
+     * @return int
      */
-    protected function countRecord(Connection $connection, $identifier, string $tableName, $idFieldName = 'uid')
+    protected function countRecord(Connection $connection, $identifier, string $tableName, $idFieldName = 'uid'): int
     {
-        $result = $connection->count(
-            '*',
-            $tableName,
-            [$idFieldName => $identifier]
-        );
-        if (false === $result) {
-            $this->logFailedQuery(__METHOD__, $connection, $tableName);
-            return false;
-        }
-        return $result;
+        return $connection->count('*', $tableName, [$idFieldName => $identifier]);
     }
 
     /**
@@ -351,27 +319,6 @@ abstract class BaseRepository
     protected function quoteString($string): string
     {
         return DatabaseUtility::quoteString($string);
-    }
-
-    /**
-     * Logs a failed database query with all retrievable information
-     *
-     * @param $method
-     * @param Connection $connection
-     * @param string $tableName
-     *
-     * @return void
-     */
-    protected function logFailedQuery($method, Connection $connection, string $tableName)
-    {
-        $this->logger->critical(
-            $method . ': Query failed.',
-            [
-                'errno' => $connection->errorCode(),
-                'error' => json_encode($connection->errorInfo()),
-                'tableName' => $tableName,
-            ]
-        );
     }
 
     /**

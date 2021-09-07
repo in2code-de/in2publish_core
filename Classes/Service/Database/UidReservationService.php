@@ -29,10 +29,9 @@ namespace In2code\In2publishCore\Service\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Statement;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use RuntimeException;
+use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function max;
@@ -114,11 +113,9 @@ class UidReservationService
         /** @var Connection $databaseConnection */
         foreach ([$this->localDatabaseConnection, $this->foreignDatabaseConnection] as $databaseConnection) {
             try {
-                $databaseConnection
-                    ->prepare($statement)
-                    ->execute();
-            } catch (DBALException $e) {
-                throw new RuntimeException('Failed to increase auto_increment on sys_file', 1475248851);
+                $databaseConnection->executeQuery($statement);
+            } catch (Throwable $exception) {
+                throw new RuntimeException('Failed to increase auto_increment on sys_file', 1475248851, $exception);
             }
         }
     }
@@ -161,12 +158,9 @@ class UidReservationService
         );
 
         try {
-            /** @var Statement $tableQuery */
-            $tableQuery = $databaseConnection->prepare($statement);
-            $tableQuery->execute();
-            $tableStatus = $tableQuery->fetch();
-        } catch (DBALException $e) {
-            throw new RuntimeException('Could not select table status from database', 1475242494);
+            $tableStatus = $databaseConnection->executeQuery($statement)->fetchAssociative();
+        } catch (Throwable $exception) {
+            throw new RuntimeException('Could not select table status from database', 1475242494, $exception);
         }
         if (!isset($tableStatus['Auto_increment'])) {
             throw new RuntimeException('Could not fetch Auto_increment value from query result', 1475242706);

@@ -33,10 +33,11 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\StorageDriverExtractor;
 use LogicException;
-use RuntimeException;
+use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -51,7 +52,6 @@ use function array_intersect;
 use function array_map;
 use function array_merge;
 use function array_values;
-use function json_encode;
 use function sprintf;
 
 /**
@@ -671,33 +671,36 @@ class FolderRecordFactory
                 'identifier' => $identifier,
             ];
 
+            $localUid = (int)$uidArray['local'];
+            $foreignUid = (int)$uidArray['foreign'];
+
             // Run the integrity test when enableSysFileReferenceUpdate (ESFRU) is not enabled
             if (true !== $this->configuration['enableSysFileReferenceUpdate']) {
                 // If the sys_file was referenced abort here, because it's unsafe to overwrite the uid
-                if (0 !== $this->countForeignReferences($uidArray['foreign'])) {
+                if (0 !== $this->countForeignReferences($foreignUid)) {
                     continue;
                 }
             }
 
             // If a sys_file record with the "new" uid has been found abort immediately
-            if (0 !== $this->countForeignIndices($uidArray['local'])) {
+            if (0 !== $this->countForeignIndices($localUid)) {
                 // TODO: UID FLIP CANDIDATES
                 continue;
             }
-
-            // Rewrite the foreign UID of the foreign index.
-            if (true === $this->updateForeignIndex($uidArray['foreign'], $uidArray['local'])) {
+            try {
+                // Rewrite the foreign UID of the foreign index.
+                $this->updateForeignIndex($foreignUid, $localUid);
                 $this->logger->notice('Rewrote a sys_file uid by the mergeSysFileByIdentifier feature', $logData);
 
                 // Rewrite all occurrences of the old uid by the new in all references on foreign if SFRU is enabled
                 if (true === $this->configuration['enableSysFileReferenceUpdate']) {
-                    if (true === $this->updateForeignReference($uidArray['foreign'], $uidArray['local'])) {
+                    try {
+                        $this->updateForeignReference($foreignUid, $localUid);
                         $this->logger->notice('Rewrote sys_file_reference by the SFRU feature', $logData);
-                    } else {
-                        $this->logger->error(
-                            'Failed to rewrite sys_file_reference by the SFRU feature',
-                            $this->enrichWithForeignDatabaseErrorInformation($logData)
-                        );
+                    } catch (Throwable $exception) {
+                        $logData['exception'] = $exception;
+                        $this->logger->error('Failed to rewrite sys_file_reference by the SFRU feature', $logData);
+                        unset($logData['exception']);
                     }
                 }
 
@@ -709,11 +712,13 @@ class FolderRecordFactory
 
                 // remove the (old) foreign file from the list
                 unset($files[$uidArray['foreign']]);
-            } else {
+            } catch (Throwable $exception) {
+                $logData['exception'] = $exception;
                 $this->logger->error(
                     'Failed to rewrite a sys_file uid by the mergeSysFileByIdentifier feature',
-                    $this->enrichWithForeignDatabaseErrorInformation($logData)
+                    $logData
                 );
+                unset($logData['exception']);
             }
         }
 
@@ -770,99 +775,57 @@ class FolderRecordFactory
         }
     }
 
-    /**
-     * @param array $logData
-     *
-     * @return array
-     */
-    protected function enrichWithForeignDatabaseErrorInformation(array $logData): array
+    protected function updateForeignIndex(int $oldUid, int $newUid): void
     {
-        return array_merge(
-            $logData,
-            [
-                'error' => json_encode($this->foreignDatabase->errorInfo()),
-                'errno' => $this->foreignDatabase->errorCode(),
-            ]
-        );
+        $this->foreignDatabase->update('sys_file', ['uid' => $newUid], ['uid' => $oldUid]);
     }
 
-    /**
-     * @param int $oldUid
-     * @param int $newUid
-     *
-     * @return bool
-     */
-    protected function updateForeignIndex($oldUid, $newUid): bool
+    protected function updateForeignReference(int $oldUid, int $newUid): void
     {
-        return (bool)$this->foreignDatabase->update(
-            'sys_file',
-            ['uid' => (int)$newUid],
-            ['uid' => (int)$oldUid]
-        );
-    }
-
-    /**
-     * @param int $oldUid
-     * @param int $newUid
-     *
-     * @return bool
-     */
-    protected function updateForeignReference($oldUid, $newUid): bool
-    {
-        return (bool)$this->foreignDatabase->update(
+        $this->foreignDatabase->update(
             'sys_file_reference',
-            ['uid' => (int)$newUid],
-            ['uid_local' => (int)$oldUid, 'table_local' => 'sys_file']
+            ['uid' => $newUid],
+            ['uid_local' => $oldUid, 'table_local' => 'sys_file']
         );
     }
 
-    /**
-     * @param int $oldUid
-     *
-     * @return int
-     */
-    protected function countForeignReferences($oldUid): int
+    protected function countForeignReferences(int $oldUid): int
     {
         $query = $this->foreignDatabase->createQueryBuilder();
         $query->getRestrictions()->removeAll();
-        $count = $query->count('*')
-                       ->from('sys_file_reference')
-                       ->where($query->expr()->eq('table_local', $query->createNamedParameter('sys_file')))
-                       ->andWhere($query->expr()->eq('uid_local', $query->createNamedParameter($oldUid)))
-                       ->execute()
-                       ->fetchOne();
-
-        if (false === $count) {
+        $query->count('*')
+              ->from('sys_file_reference')
+              ->where($query->expr()->eq('table_local', $query->createNamedParameter('sys_file')))
+              ->andWhere($query->expr()->eq('uid_local', $query->createNamedParameter($oldUid)));
+        try {
+            $result = $query->execute();
+            $count = $result->fetchOne();
+        } catch (Throwable $exception) {
             $this->logger->critical(
                 'Could not count foreign references by uid',
-                $this->enrichWithForeignDatabaseErrorInformation(['uid', $oldUid])
+                ['uid' => $oldUid, 'exception' => $exception]
             );
-            throw new RuntimeException('Could not count foreign references by uid', 1476097402);
+            throw new In2publishCoreException('Could not count foreign references by uid', 1476097402, $exception);
         }
         return (int)$count;
     }
 
-    /**
-     * @param int $newUid
-     *
-     * @return int
-     */
-    protected function countForeignIndices($newUid): int
+    protected function countForeignIndices(int $newUid): int
     {
         $query = $this->foreignDatabase->createQueryBuilder();
         $query->getRestrictions()->removeAll();
-
-        $count = $query->count('uid')
-                       ->from('sys_file')
-                       ->where($query->expr()->eq('uid', $query->createNamedParameter($newUid)))
-                       ->execute()
-                       ->fetchOne();
-        if (false === $count) {
+        $query->count('uid')
+              ->from('sys_file')
+              ->where($query->expr()->eq('uid', $query->createNamedParameter($newUid)));
+        try {
+            $result = $query->execute();
+            $count = $result->fetchOne();
+        } catch (Throwable $exception) {
             $this->logger->critical(
                 'Could not count foreign indices by uid',
-                $this->enrichWithForeignDatabaseErrorInformation(['uid', $newUid])
+                ['uid' => $newUid, 'exception' => $exception]
             );
-            throw new RuntimeException('Could not count foreign indices by uid', 1476097373);
+            throw new In2publishCoreException('Could not count foreign indices by uid', 1476097373, $exception);
         }
         return (int)$count;
     }

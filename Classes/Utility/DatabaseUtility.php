@@ -28,7 +28,6 @@ namespace In2code\In2publishCore\Utility;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\DBALException;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
@@ -118,7 +117,7 @@ class DatabaseUtility
                     }
                     static::$foreignConnection = $foreignConnection;
                     $foreignConnection->connect();
-                } catch (DBALException $e) {
+                } catch (Throwable $e) {
                     static::$logger->critical('Can not connect to foreign database', ['exception' => $e]);
                     static::$foreignConnection = null;
                 }
@@ -140,7 +139,7 @@ class DatabaseUtility
     {
         try {
             return GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionByName('Default');
-        } catch (DBALException $e) {
+        } catch (Throwable $e) {
             return null;
         }
     }
@@ -178,7 +177,7 @@ class DatabaseUtility
     }
 
     /**
-     * @throws DBALException
+     * @throws Throwable
      */
     protected static function createBackup(Connection $connection, string $tableName, string $backupFolder)
     {
@@ -196,7 +195,7 @@ class DatabaseUtility
                     'addDropTable' => $addDropTable,
                     'zipBackup' => $zipBackup,
                 ],
-                'hostInfo' => $connection->getHost(),
+                'hostInfo' => $connection->getParams()['host'],
             ]
         );
         $data =
@@ -210,7 +209,7 @@ class DatabaseUtility
             $data .= 'DROP TABLE IF EXISTS ' . $tableName . ';' . PHP_EOL;
         }
 
-        $res = $connection->query('SHOW CREATE TABLE ' . $tableName);
+        $res = $connection->executeQuery('SHOW CREATE TABLE ' . $tableName);
         $result = $res->fetchAllAssociative();
 
         $data .= $result[0]['Create Table'] . ';' . PHP_EOL;
@@ -219,7 +218,7 @@ class DatabaseUtility
         $query->getRestrictions()->removeAll();
         $resultSet = $query->select('*')->from($tableName)->execute();
 
-        while (($row = $resultSet->fetch())) {
+        while (($row = $resultSet->fetchAssociative())) {
             $data .=
                 'INSERT INTO ' . $tableName . ' VALUES (' .
                 implode(',', array_map([$connection, 'quote'], $row)) .
@@ -318,7 +317,7 @@ class DatabaseUtility
             $query->getRestrictions()->removeAll();
             $queryResult = $query->select('*')->from($tableName)->execute();
             $rows = $queryResult->rowCount();
-            while ($row = $queryResult->fetch()) {
+            while ($row = $queryResult->fetchAssociative()) {
                 if (1 !== static::insertRow($toDatabase, $tableName, $row)) {
                     throw new In2publishCoreException('Failed to import row into "' . $tableName . '"', 1562570305);
                 }

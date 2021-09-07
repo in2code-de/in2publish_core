@@ -33,6 +33,7 @@ use Codeception\Test\Unit;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Tests\UnitTester;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -298,7 +299,7 @@ class TcaServiceTest extends Unit
         /** @var MockObject|TcaService $tcaService */
         $tcaService = $this->getMockBuilder(TcaService::class)->setMethods(['getDatabaseSchemaTables'])->getMock();
 
-        $intType = Type::getType(Type::INTEGER);
+        $intType = Type::getType(Types::INTEGER);
         $databaseSchema = [
             new Table('foo', [new Column('uid', $intType), new Column('pid', $intType)]),
             new Table('bar', [new Column('uid', $intType), new Column('pid', $intType)]),
@@ -322,7 +323,7 @@ class TcaServiceTest extends Unit
         /** @var MockObject|TcaService $tcaService */
         $tcaService = $this->getMockBuilder(TcaService::class)->setMethods(['getDatabaseSchemaTables'])->getMock();
 
-        $intType = Type::getType(Type::INTEGER);
+        $intType = Type::getType(Types::INTEGER);
         $databaseSchema = [
             new Table('foo', [new Column('uid', $intType), new Column('pid', $intType)]),
             new Table('bar', [new Column('uid', $intType), new Column('pid', $intType)]),

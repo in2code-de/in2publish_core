@@ -33,7 +33,6 @@ use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use In2code\In2publishCore\Service\Routing\SiteService;
-use PDO;
 use Psr\Http\Message\UriInterface;
 use Throwable;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
@@ -148,7 +147,7 @@ class BackendUtility
                             ->where($query->expr()->eq('uid', (int)key($data[$table])))
                             ->setMaxResults(1)
                             ->execute()
-                            ->fetch(PDO::FETCH_ASSOC);
+                            ->fetchAssociative();
             if (false !== $result && isset($result['pid'])) {
                 return (int)$result['pid'];
             }
@@ -168,7 +167,7 @@ class BackendUtility
                                     ->where($query->expr()->eq('uid', (int)$rollbackData[1]))
                                     ->setMaxResults(1)
                                     ->execute()
-                                    ->fetch(PDO::FETCH_ASSOC);
+                                    ->fetchAssociative();
                     if (false !== $result && isset($result['pid'])) {
                         return (int)$result['pid'];
                     }
@@ -186,7 +185,7 @@ class BackendUtility
                          ->where($query->expr()->eq('uid', (int)$identifier))
                          ->setMaxResults(1)
                          ->execute()
-                         ->fetch(PDO::FETCH_ASSOC);
+                         ->fetchAssociative();
             if (isset($row['pid'])) {
                 return (int)$row['pid'];
             }

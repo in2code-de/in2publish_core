@@ -12,7 +12,8 @@
 	"require": {
 		"php": "^7.2",
 		"ext-json": "*",
-		"typo3/cms-core": "^10.4"
+		"typo3/cms-core": "^10.4",
+		"doctrine/dbal": "^2.11.0"
 	},
 	"require-dev": {
 		"codeception/codeception": "^3.1",

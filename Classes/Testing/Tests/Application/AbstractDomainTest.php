@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\Driver\Statement;
+use Doctrine\DBAL\Driver\ResultStatement;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
@@ -60,9 +60,6 @@ abstract class AbstractDomainTest
     public function run(): TestResult
     {
         $statement = $this->findAllRootPages();
-        if (0 !== $statement->errorCode()) {
-            return new TestResult(sprintf('application.no_%s_sites_found', $this->prefix), TestResult::WARNING);
-        }
         $pageIds = array_column($statement->fetchAllAssociative(), 'uid');
         if (empty($pageIds)) {
             return new TestResult(sprintf('application.no_%s_sites_found', $this->prefix), TestResult::WARNING);
@@ -139,7 +136,7 @@ abstract class AbstractDomainTest
         return $messages;
     }
 
-    protected function findAllRootPages(): Statement
+    protected function findAllRootPages(): ResultStatement
     {
         $query = $this->getConnection()->createQueryBuilder();
         $query->getRestrictions()->removeAll();
