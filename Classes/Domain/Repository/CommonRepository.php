@@ -35,6 +35,7 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Event\CommonRepositoryWasInstantiated;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
@@ -218,19 +219,15 @@ class CommonRepository extends BaseRepository
      * Returns exactly one Record.
      *
      * @param int $identifier
-     * @param string|null $tableName
+     * @param string $tableName
      * @param string $idFieldName
      *
      * @return RecordInterface|null
      */
-    public function findByIdentifier(int $identifier, string $tableName = null, string $idFieldName = 'uid')
+    public function findByIdentifier(int $identifier, string $tableName, string $idFieldName = 'uid')
     {
         $identifier = (int)$identifier;
 
-        if (null === $tableName) {
-            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
-            $tableName = $this->tableName;
-        }
         if ($this->shouldSkipFindByIdentifier($identifier, $tableName)) {
             return GeneralUtility::makeInstance(NullRecord::class, $tableName);
         }
@@ -272,16 +269,12 @@ class CommonRepository extends BaseRepository
      *
      * @param string $propertyName
      * @param mixed $propertyValue
-     * @param string|null $tableName
+     * @param string $tableName
      *
      * @return RecordInterface[]
      */
-    public function findByProperty(string $propertyName, $propertyValue, string $tableName = null): array
+    public function findByProperty(string $propertyName, $propertyValue, string $tableName): array
     {
-        if (null === $tableName) {
-            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
-            $tableName = $this->tableName;
-        }
         if ($this->shouldSkipFindByProperty($propertyName, $propertyValue, $tableName)) {
             return [];
         }
@@ -329,8 +322,7 @@ class CommonRepository extends BaseRepository
     public function findByProperties(array $properties, bool $simulateRoot = false, string $tableName = null): array
     {
         if (null === $tableName) {
-            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
-            $tableName = $this->tableName;
+            throw new MissingArgumentException('tableName');
         }
         if ($simulateRoot) {
             $this->recordFactory->simulateRootRecord();
@@ -469,19 +461,15 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
-     * @param string|null $tableName
+     * @param string $tableName
      *
      * @return RecordInterface[]
      */
     protected function convertPropertyArraysToRecords(
         array $localProperties,
         array $foreignProperties,
-        string $tableName = null
+        string $tableName
     ): array {
-        if (null === $tableName) {
-            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
-            $tableName = $this->tableName;
-        }
         $keysToIterate = array_unique(array_merge(array_keys($localProperties), array_keys($foreignProperties)));
 
         $foundRecords = [];
@@ -1899,16 +1887,12 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
-     * @param string|null $tableName
+     * @param string $tableName
      *
      * @return bool
      */
-    protected function isIgnoredRecord(array $localProperties, array $foreignProperties, string $tableName = null): bool
+    protected function isIgnoredRecord(array $localProperties, array $foreignProperties, string $tableName): bool
     {
-        if (null === $tableName) {
-            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
-            $tableName = $this->tableName;
-        }
         if ($this->isDeletedAndUnchangedRecord($localProperties, $foreignProperties)
             || $this->isRemovedAndDeletedRecord($localProperties, $foreignProperties)
             || $this->shouldIgnoreRecord($localProperties, $foreignProperties, $tableName)
@@ -2115,7 +2099,7 @@ class CommonRepository extends BaseRepository
      *
      * @param array $localProperties
      * @param array $foreignProperties
-     * @param string|null $tableName
+     * @param string $tableName
      * @param string $idFieldName
      *
      * @return RecordInterface|null
@@ -2125,14 +2109,10 @@ class CommonRepository extends BaseRepository
     protected function convertToRecord(
         array $localProperties,
         array $foreignProperties,
-        string $tableName = null,
+        string $tableName,
         string $idFieldName = 'uid'
     ) {
         trigger_error(sprintf(static::DEPRECATION_METHOD, __METHOD__), E_USER_DEPRECATED);
-        if (null === $tableName) {
-            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
-            $tableName = $this->tableName;
-        }
         return $this->recordFactory->makeInstance(
             $this,
             $localProperties,
@@ -2243,12 +2223,8 @@ class CommonRepository extends BaseRepository
         $this->recordFactory->disablePageRecursion();
     }
 
-    protected function shouldSkipFindByIdentifier(int $identifier, string $tableName = null): bool
+    protected function shouldSkipFindByIdentifier(int $identifier, string $tableName): bool
     {
-        if (null === $tableName) {
-            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
-            $tableName = $this->tableName;
-        }
         $event = new VoteIfFindingByIdentifierShouldBeSkipped($this, $identifier, $tableName);
         $this->eventDispatcher->dispatch($event);
         return $event->getVotingResult();
@@ -2345,12 +2321,8 @@ class CommonRepository extends BaseRepository
     protected function shouldIgnoreRecord(
         array $localProperties,
         array $foreignProperties,
-        string $tableName = null
+        string $tableName
     ): bool {
-        if (null === $tableName) {
-            trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
-            $tableName = $this->tableName;
-        }
         $event = new VoteIfRecordShouldBeIgnored($this, $localProperties, $foreignProperties, $tableName);
         $this->eventDispatcher->dispatch($event);
         return $event->getVotingResult();
