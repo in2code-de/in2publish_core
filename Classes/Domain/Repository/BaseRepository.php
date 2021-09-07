@@ -310,18 +310,6 @@ abstract class BaseRepository
     }
 
     /**
-     * Quote string: escapes bad characters
-     *
-     * @param string $string
-     *
-     * @return string
-     */
-    protected function quoteString($string): string
-    {
-        return DatabaseUtility::quoteString($string);
-    }
-
-    /**
      * Sets a new index for all entries in $rows. Does not check for duplicate keys.
      * If there are duplicates, the last one is final.
      *
