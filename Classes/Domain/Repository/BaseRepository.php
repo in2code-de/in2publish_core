@@ -77,14 +77,6 @@ abstract class BaseRepository
     protected $tableName = '';
 
     /**
-     * @var string
-     *
-     * @deprecated This property is deprecated and will be removed in in2publish_core version 10.
-     *  Use the available method arguments instead.
-     */
-    protected $identifierFieldName = 'uid';
-
-    /**
      * @var Logger
      */
     protected $logger = null;
@@ -255,8 +247,6 @@ abstract class BaseRepository
     }
 
     /**
-     * TODO: check if $this->identifierFieldName could be used instead
-     *
      * Executes an UPDATE query on the given database connection. This method will
      * overwrite any value given in $properties where uid = $identifier
      *
@@ -324,8 +314,6 @@ abstract class BaseRepository
     }
 
     /**
-     * TODO: check if $this->identifierFieldName could be used instead
-     *
      * Removes a database row from the given database connection. Executes a DELETE
      * query where uid = $identifier
      * !!! THIS METHOD WILL REMOVE THE MATCHING ROW FOREVER AND IRRETRIEVABLY !!!
@@ -479,27 +467,5 @@ abstract class BaseRepository
         trigger_error(sprintf(static::DEPRECATION_METHOD, __METHOD__), E_USER_DEPRECATED);
         $this->tableName = $tableName;
         return $this;
-    }
-
-    /**
-     * @param string $tableName
-     *
-     * @return string
-     */
-    public function replaceTableName($tableName): string
-    {
-        trigger_error(sprintf(static::DEPRECATION_METHOD, __METHOD__), E_USER_DEPRECATED);
-        $replacedTableName = $this->tableName;
-        $this->tableName = $tableName;
-        return $replacedTableName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIdentifierFieldName(): string
-    {
-        trigger_error(sprintf(static::DEPRECATION_METHOD, __METHOD__), E_USER_DEPRECATED);
-        return $this->identifierFieldName;
     }
 }

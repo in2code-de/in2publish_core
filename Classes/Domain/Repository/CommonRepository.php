@@ -194,34 +194,20 @@ class CommonRepository extends BaseRepository
     /**
      * @param Connection $localDatabase
      * @param Connection $foreignDatabase
-     * @param string|null $tableName
-     * @param string $identifierFieldName
      */
     public function __construct(
         Connection $localDatabase,
-        Connection $foreignDatabase,
-        string $tableName = null,
-        string $identifierFieldName = null
+        Connection $foreignDatabase
     ) {
-        if (null !== $tableName) {
-            trigger_error(sprintf(self::DEPRECATION_PARAMETER, 'tableName', __METHOD__), E_USER_DEPRECATED);
-        }
-        if (null !== $identifierFieldName) {
-            trigger_error(sprintf(self::DEPRECATION_PARAMETER, 'identifierFieldName', __METHOD__), E_USER_DEPRECATED);
-        }
         parent::__construct();
         $this->recordFactory = GeneralUtility::makeInstance(RecordFactory::class);
         $this->resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
         $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-        $this->identifierFieldName = $identifierFieldName ?: $this->identifierFieldName;
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
         if ($foreignDatabase === null || !$foreignDatabase->isConnected()) {
             $this->foreignDatabase = $localDatabase;
-        }
-        if (null !== $tableName) {
-            $this->setTableName($tableName);
         }
         $this->eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
         $this->eventDispatcher->dispatch(new CommonRepositoryWasInstantiated($this));
@@ -240,10 +226,6 @@ class CommonRepository extends BaseRepository
     public function findByIdentifier(int $identifier, string $tableName = null, string $idFieldName = 'uid')
     {
         $identifier = (int)$identifier;
-        // TODO: Remove any `identifierFieldName` related stuff from this method with in2publish_core version 10.
-        //  It is only required to maintain the function of the deprecated getter of this property.
-        $previousIdFieldName = $this->identifierFieldName;
-        $this->identifierFieldName = $idFieldName;
 
         if (null === $tableName) {
             trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
@@ -281,7 +263,6 @@ class CommonRepository extends BaseRepository
         );
         $foreign = empty($foreign) ? [] : reset($foreign);
         $records = $this->recordFactory->makeInstance($this, $local, $foreign, [], $tableName, $idFieldName);
-        $this->identifierFieldName = $previousIdFieldName;
         return $records;
     }
 
@@ -599,10 +580,6 @@ class CommonRepository extends BaseRepository
             if ($this->shouldSkipSearchingForRelatedRecordsByProperty($record, $propertyName, $columnConfiguration)) {
                 continue;
             }
-            // TODO: Remove any `identifierFieldName` related stuff from this method with in2publish_core version 10.
-            //  It is only required to maintain the function of the deprecated getter of this property.
-            $previousIdFieldName = $this->identifierFieldName;
-            $this->identifierFieldName = 'uid';
             switch ($columnConfiguration['type']) {
                 case 'select':
                     $whereClause = '';
@@ -661,7 +638,6 @@ class CommonRepository extends BaseRepository
                 default:
                     $relatedRecords = [];
             }
-            $this->identifierFieldName = $previousIdFieldName;
 
             foreach ($relatedRecords as $index => $relatedRecord) {
                 if (!($relatedRecord instanceof RecordInterface)) {
