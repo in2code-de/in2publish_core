@@ -343,7 +343,7 @@ abstract class BaseRepository
             $this->logFailedQuery(__METHOD__, $connection, $tableName);
             return false;
         }
-        return (int)$result;
+        return $result;
     }
 
     /**

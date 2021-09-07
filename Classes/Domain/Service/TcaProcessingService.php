@@ -103,7 +103,7 @@ class TcaProcessingService
     /**
      * Stores the part of the TCA that can be used for relation resolving
      *
-     * @var array[]
+     * @var array<array|null>
      */
     protected $compatibleTca = [];
 

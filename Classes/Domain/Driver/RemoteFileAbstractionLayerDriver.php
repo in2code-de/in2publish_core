@@ -112,7 +112,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      */
     public function setStorageUid($storageUid)
     {
-        $this->storageUid = $storageUid;
+        $this->storageUid = (int)$storageUid;
     }
 
     /**
@@ -124,7 +124,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      */
     public function initialize()
     {
-        if (0 === (int)$this->storageUid) {
+        if (0 === $this->storageUid) {
             $this->remoteDriverSettings = [
                 'uid' => 0,
                 'pid' => 0,
@@ -148,7 +148,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
             $query->getRestrictions()->removeAll();
             $this->remoteDriverSettings = $query->select('*')
                                                 ->from('sys_file_storage')
-                                                ->where($query->expr()->eq('uid', (int)$this->storageUid))
+                                                ->where($query->expr()->eq('uid', $this->storageUid))
                                                 ->setMaxResults(1)
                                                 ->execute()
                                                 ->fetch(PDO::FETCH_ASSOC);

@@ -219,8 +219,6 @@ class CommonRepository extends BaseRepository
      */
     public function findByIdentifier(int $identifier, string $tableName, string $idFieldName = 'uid')
     {
-        $identifier = (int)$identifier;
-
         if ($this->shouldSkipFindByIdentifier($identifier, $tableName)) {
             return GeneralUtility::makeInstance(NullRecord::class, $tableName);
         }

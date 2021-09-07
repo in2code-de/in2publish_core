@@ -86,7 +86,7 @@ class Letterbox
             $database = DatabaseUtility::buildLocalDatabaseConnection();
         }
 
-        $uid = (int)$envelope->getUid();
+        $uid = $envelope->getUid();
 
         if (0 === $uid || 0 === $database->count('uid', static::TABLE, ['uid' => $uid])) {
             if (1 === $database->insert(static::TABLE, $envelope->toArray())) {

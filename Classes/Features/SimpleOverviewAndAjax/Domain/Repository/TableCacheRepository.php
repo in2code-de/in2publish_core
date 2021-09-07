@@ -92,7 +92,7 @@ class TableCacheRepository implements SingletonInterface
             $query->getRestrictions()->removeAll();
             $row = $query->select('*')
                          ->from($tableName)
-                         ->where($query->expr()->eq('uid', (int)$uniqueIdentifier))
+                         ->where($query->expr()->eq('uid', $uniqueIdentifier))
                          ->setMaxResults(1)
                          ->execute()
                          ->fetch(PDO::FETCH_ASSOC);

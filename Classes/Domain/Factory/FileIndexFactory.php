@@ -171,7 +171,7 @@ class FileIndexFactory
      * @see \TYPO3\CMS\Core\Resource\Index\Indexer::gatherFileInformationArray
      *
      */
-    public function getFileIndexArray($identifier, $side, $uid = 0): array
+    public function getFileIndexArray($identifier, $side, int $uid = 0): array
     {
         $fileInfo = $this->getDriverSpecificFileInfo($identifier, $side);
 
@@ -203,7 +203,7 @@ class FileIndexFactory
         } else {
             $fileInfo['uid'] = $uid;
         }
-        $uid = (int)$fileInfo['uid'];
+        $uid = $fileInfo['uid'];
 
         $fileInfo = array_intersect_key(
             $fileInfo,
