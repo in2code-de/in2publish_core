@@ -96,14 +96,10 @@ use function parse_str;
 use function parse_url;
 use function preg_match_all;
 use function reset;
-use function sprintf;
 use function strlen;
 use function strpos;
 use function substr;
-use function trigger_error;
 use function trim;
-
-use const E_USER_DEPRECATED;
 
 /**
  * CommonRepository - actions in foreign and local database
@@ -143,7 +139,6 @@ class CommonRepository extends BaseRepository
      *  The signal and this constant will be removed in in2publish_core version 11.
      */
     public const SIGNAL_RELATION_RESOLVER_RTE = 'relationResolverRTE';
-    public const DEPRECATION_METHOD_FPBPATN = 'CommonRepository::findPropertiesByPropertyAndTablename is deprecated and will be removed in in2publish_core version 10. Use BaseRepository::findPropertiesByProperty instead';
 
     /**
      * @var RecordFactory
@@ -360,53 +355,6 @@ class CommonRepository extends BaseRepository
             $this->recordFactory->endSimulation();
         }
         return $records;
-    }
-
-    /**
-     * Fetches an array of property arrays (plural !!!) from
-     * the given database connection where the column
-     * "$propertyName" equals $propertyValue
-     * Add table name
-     *
-     * @param Connection $connection
-     * @param string $tableName
-     * @param string $propertyName
-     * @param mixed $propertyValue
-     * @param string $additionalWhere
-     * @param string $groupBy
-     * @param string $orderBy
-     * @param string $limit
-     * @param string $indexField
-     *
-     * @return array
-     *
-     * @deprecated CommonRepository::findPropertiesByPropertyAndTablename is deprecated and will be removed in
-     *  in2publish_core version 10. Use BaseRepository::findPropertiesByProperty instead
-     */
-    protected function findPropertiesByPropertyAndTablename(
-        Connection $connection,
-        string $tableName,
-        string $propertyName,
-        $propertyValue,
-        string $additionalWhere = '',
-        string $groupBy = '',
-        string $orderBy = '',
-        string $limit = '',
-        string $indexField = 'uid'
-    ): array {
-        trigger_error(self::DEPRECATION_METHOD_FPBPATN, E_USER_DEPRECATED);
-        $properties = $this->findPropertiesByProperty(
-            $connection,
-            $propertyName,
-            $propertyValue,
-            $additionalWhere,
-            $groupBy,
-            $orderBy,
-            $limit,
-            $indexField,
-            $tableName
-        );
-        return $properties;
     }
 
     /**
@@ -1861,26 +1809,6 @@ class CommonRepository extends BaseRepository
     }
 
     /**
-     * TemplateMethod like function the find Records
-     * in the given Table.
-     *
-     * @param int $identifier
-     * @param string $tableName
-     *
-     * @return RecordInterface|null
-     *
-     * @deprecated Method will be removed in in2publish_core version 10. Use `findByIdentifier` instead.
-     */
-    protected function findByIdentifierInOtherTable($identifier, $tableName)
-    {
-        trigger_error(
-            sprintf(self::DEPRECATION_METHOD, __METHOD__) . ' Use `findByIdentifier` instead.',
-            E_USER_DEPRECATED
-        );
-        return $this->findByIdentifier($identifier, $tableName);
-    }
-
-    /**
      * Check if this record should be ignored
      *
      * @param array $localProperties
@@ -2089,36 +2017,6 @@ class CommonRepository extends BaseRepository
                 }
             }
         }
-    }
-
-    /**
-     * converts properties from local and foreign
-     * to a record using the factory
-     *
-     * @param array $localProperties
-     * @param array $foreignProperties
-     * @param string $tableName
-     * @param string $idFieldName
-     *
-     * @return RecordInterface|null
-     *
-     * @deprecated This method will be removed in in2publish_core version 10. Use `$this->recordFactory->makeInstance`.
-     */
-    protected function convertToRecord(
-        array $localProperties,
-        array $foreignProperties,
-        string $tableName,
-        string $idFieldName = 'uid'
-    ) {
-        trigger_error(sprintf(static::DEPRECATION_METHOD, __METHOD__), E_USER_DEPRECATED);
-        return $this->recordFactory->makeInstance(
-            $this,
-            $localProperties,
-            $foreignProperties,
-            [],
-            $tableName,
-            $idFieldName
-        );
     }
 
     /**
