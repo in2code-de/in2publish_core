@@ -49,7 +49,7 @@ indent_size = 4
 [*.xml.dist]
 indent_style = tab
 indent_size = 4
-continuation_indent_size = 8
+ij_continuation_indent_size = 8
 
 [*.sql]
 indent_style = tab
