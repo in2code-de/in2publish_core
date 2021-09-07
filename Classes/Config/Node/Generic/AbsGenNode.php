@@ -56,7 +56,7 @@ abstract class AbsGenNode extends AbstractNode
      *
      * @return AbsGenNode|object
      */
-    public static function fromType($type, $name, NodeCollection $nodes, $default)
+    public static function fromType(string $type, string $name, NodeCollection $nodes, $default)
     {
         return GeneralUtility::makeInstance(static::$types[$type], $name, [], $nodes, $default);
     }

@@ -79,13 +79,13 @@ class BackendUtility
      * Get current page uid (normally from ?id=123)
      *
      * @param mixed $identifier
-     * @param string $table
+     * @param string|null $table
      *
      * @return int|string Returns the page ID or the folder ID when navigating in the file list
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public static function getPageIdentifier($identifier = null, $table = null)
+    public static function getPageIdentifier($identifier = null, string $table = null)
     {
         // get id from given identifier
         if ('pages' === $table && is_numeric($identifier)) {

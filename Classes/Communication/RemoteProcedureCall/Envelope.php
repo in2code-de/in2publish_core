@@ -68,7 +68,7 @@ class Envelope
      * @param mixed $response
      * @param int|null $uid
      */
-    public function __construct($command, array $request = [], $response = null, $uid = null)
+    public function __construct(string $command, array $request = [], $response = null, int $uid = null)
     {
         $this->setCommand($command);
         $this->setRequest($request);
@@ -91,12 +91,12 @@ class Envelope
     /**
      * @param int $uid
      */
-    public function setUid($uid)
+    public function setUid(int $uid)
     {
         if (0 !== $this->uid) {
             throw new LogicException('Can not overrule an envelope\'s uid', 1474386795);
         }
-        $this->uid = (int)$uid;
+        $this->uid = $uid;
     }
 
     /**
@@ -110,12 +110,12 @@ class Envelope
     /**
      * @param string $command
      */
-    public function setCommand($command)
+    public function setCommand(string $command)
     {
         if ('' !== $this->command) {
             throw new LogicException('Can not overrule an envelope\'s command', 1474386882);
         }
-        $this->command = (string)$command;
+        $this->command = $command;
     }
 
     /**

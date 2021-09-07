@@ -86,7 +86,7 @@ class ArrayUtility
 
     /**
      * @param array $array
-     * @param string $path
+     * @param string|array $path
      *
      * @return mixed
      */

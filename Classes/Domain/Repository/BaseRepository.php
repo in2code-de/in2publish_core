@@ -122,13 +122,13 @@ abstract class BaseRepository
      */
     protected function findPropertiesByProperty(
         Connection $connection,
-        $propertyName,
+        string $propertyName,
         $propertyValue,
-        $additionalWhere = '',
-        $groupBy = '',
-        $orderBy = '',
-        $limit = '',
-        $indexField = 'uid',
+        string $additionalWhere = '',
+        string $groupBy = '',
+        string $orderBy = '',
+        string $limit = '',
+        string $indexField = 'uid',
         string $tableName = null
     ): array {
         $propertyArray = [];
@@ -205,11 +205,11 @@ abstract class BaseRepository
     public function findPropertiesByProperties(
         Connection $connection,
         array $properties,
-        $additionalWhere = '',
-        $groupBy = '',
-        $orderBy = '',
-        $limit = '',
-        $indexField = 'uid',
+        string $additionalWhere = '',
+        string $groupBy = '',
+        string $orderBy = '',
+        string $limit = '',
+        string $indexField = 'uid',
         string $tableName = null
     ): array {
         if (null === $tableName) {

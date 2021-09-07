@@ -78,7 +78,7 @@ abstract class AbstractNode implements Node
      * @param NodeCollection $nodes
      * @param string|int|bool|array $default
      */
-    public function __construct($name, array $validators, NodeCollection $nodes, $default)
+    public function __construct(string $name, array $validators, NodeCollection $nodes, $default)
     {
         $this->name = $name;
         $this->validators = $validators;

@@ -90,7 +90,7 @@ class FakeRecordFactory
      *
      * @return Record
      */
-    public function buildFromStartPage($identifier): Record
+    public function buildFromStartPage(int $identifier): Record
     {
         $record = $this->getSingleFakeRecordFromPageIdentifier($identifier);
         $this->addRelatedRecords($record);
@@ -126,7 +126,7 @@ class FakeRecordFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function getSingleFakeRecordFromPageIdentifier($identifier): Record
+    protected function getSingleFakeRecordFromPageIdentifier(int $identifier): Record
     {
         $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier);
         $propertiesForeign = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier, 'foreign');

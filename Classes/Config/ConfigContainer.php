@@ -84,7 +84,7 @@ class ConfigContainer implements SingletonInterface
      *
      * @return mixed
      */
-    public function get($path = '')
+    public function get(string $path = '')
     {
         $config = $this->getConfig();
         if (!empty($path)) {
@@ -201,7 +201,7 @@ class ConfigContainer implements SingletonInterface
      *
      * @return Node|NodeCollection
      */
-    public function getLocalDefinition($path = '')
+    public function getLocalDefinition(string $path = '')
     {
         if (null === $this->definition['local']) {
             $definition = GeneralUtility::makeInstance(NodeCollection::class);
@@ -223,7 +223,7 @@ class ConfigContainer implements SingletonInterface
      *
      * @return Node|NodeCollection
      */
-    public function getForeignDefinition($path = '')
+    public function getForeignDefinition(string $path = '')
     {
         if (null === $this->definition['foreign']) {
             $definition = GeneralUtility::makeInstance(NodeCollection::class);
@@ -247,7 +247,7 @@ class ConfigContainer implements SingletonInterface
      *
      * @param string $provider
      */
-    public function registerProvider($provider)
+    public function registerProvider(string $provider)
     {
         $this->providers[$provider] = null;
     }
@@ -258,7 +258,7 @@ class ConfigContainer implements SingletonInterface
      *
      * @param string $definer
      */
-    public function registerDefiner($definer)
+    public function registerDefiner(string $definer)
     {
         $this->definers[$definer] = null;
     }

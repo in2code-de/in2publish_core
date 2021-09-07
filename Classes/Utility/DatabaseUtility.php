@@ -150,7 +150,7 @@ class DatabaseUtility
      *
      * @return null|Connection
      */
-    public static function buildDatabaseConnectionForSide($side)
+    public static function buildDatabaseConnectionForSide(string $side)
     {
         if ($side === 'local') {
             return static::buildLocalDatabaseConnection();

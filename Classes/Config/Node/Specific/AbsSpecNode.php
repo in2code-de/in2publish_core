@@ -62,7 +62,7 @@ abstract class AbsSpecNode extends AbstractNode
      *
      * @return AbsSpecNode|object
      */
-    public static function fromType($type, $name, $default, array $validators, NodeCollection $nodes)
+    public static function fromType(string $type, string $name, $default, array $validators, NodeCollection $nodes)
     {
         return GeneralUtility::makeInstance(static::$types[$type] ?: $type, $name, $validators, $nodes, $default);
     }

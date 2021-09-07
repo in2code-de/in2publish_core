@@ -133,7 +133,7 @@ abstract class AbstractTask
      *
      * @return mixed
      */
-    final public function getConfiguration($path = '')
+    final public function getConfiguration(string $path = '')
     {
         if ($path) {
             return ArrayUtility::getValueByPath($this->configuration, $path);
@@ -229,11 +229,11 @@ abstract class AbstractTask
     }
 
     /**
-     * @param string $messages
+     * @param array<string> $messages
      *
      * @return AbstractTask
      */
-    final public function setMessages($messages): AbstractTask
+    final public function setMessages(array $messages): AbstractTask
     {
         $this->messages = $messages;
         return $this;
@@ -244,7 +244,7 @@ abstract class AbstractTask
      *
      * @return void
      */
-    final public function addMessage($string)
+    final public function addMessage(string $string)
     {
         $this->messages[] = $string;
     }

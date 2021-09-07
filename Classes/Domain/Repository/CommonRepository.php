@@ -237,7 +237,7 @@ class CommonRepository extends BaseRepository
      *
      * @return RecordInterface|null
      */
-    public function findByIdentifier($identifier, string $tableName = null, $idFieldName = 'uid')
+    public function findByIdentifier(int $identifier, string $tableName = null, string $idFieldName = 'uid')
     {
         $identifier = (int)$identifier;
         // TODO: Remove any `identifierFieldName` related stuff from this method with in2publish_core version 10.
@@ -295,7 +295,7 @@ class CommonRepository extends BaseRepository
      *
      * @return RecordInterface[]
      */
-    public function findByProperty($propertyName, $propertyValue, string $tableName = null): array
+    public function findByProperty(string $propertyName, $propertyValue, string $tableName = null): array
     {
         if (null === $tableName) {
             trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
@@ -345,7 +345,7 @@ class CommonRepository extends BaseRepository
      *
      * @return RecordInterface[]
      */
-    public function findByProperties(array $properties, $simulateRoot = false, string $tableName = null): array
+    public function findByProperties(array $properties, bool $simulateRoot = false, string $tableName = null): array
     {
         if (null === $tableName) {
             trigger_error(sprintf(static::DEPRECATION_TABLE_NAME_FIELD, __METHOD__), E_USER_DEPRECATED);
@@ -414,14 +414,14 @@ class CommonRepository extends BaseRepository
      */
     protected function findPropertiesByPropertyAndTablename(
         Connection $connection,
-        $tableName,
-        $propertyName,
+        string $tableName,
+        string $propertyName,
         $propertyValue,
-        $additionalWhere = '',
-        $groupBy = '',
-        $orderBy = '',
-        $limit = '',
-        $indexField = 'uid'
+        string $additionalWhere = '',
+        string $groupBy = '',
+        string $orderBy = '',
+        string $limit = '',
+        string $indexField = 'uid'
     ): array {
         trigger_error(self::DEPRECATION_METHOD_FPBPATN, E_USER_DEPRECATED);
         $properties = $this->findPropertiesByProperty(
@@ -450,8 +450,8 @@ class CommonRepository extends BaseRepository
      */
     public function findLastPropertiesByPropertyAndTableName(
         Connection $connection,
-        $tableName,
-        $propertyName,
+        string $tableName,
+        string $propertyName,
         $propertyValue
     ): array {
         $properties = $this->findPropertiesByProperty(
@@ -841,7 +841,7 @@ class CommonRepository extends BaseRepository
      * @throws InvalidTcaException
      * @throws InvalidIdentifierException
      */
-    protected function getFlexFormDefinition(RecordInterface $record, $column, array $columnConfiguration)
+    protected function getFlexFormDefinition(RecordInterface $record, string $column, array $columnConfiguration)
     {
         $flexFormTools = GeneralUtility::makeInstance(FlexFormTools::class);
         $dataStructIdentifier = $flexFormTools->getDataStructureIdentifier(
@@ -934,7 +934,7 @@ class CommonRepository extends BaseRepository
      *
      * @return array
      */
-    protected function flattenFieldFlexForm(array $flattenedDefinition, array $fieldDefinition, $fieldKey): array
+    protected function flattenFieldFlexForm(array $flattenedDefinition, array $fieldDefinition, string $fieldKey): array
     {
         // default FlexForm for a single field
         if (array_key_exists('TCEforms', $fieldDefinition)) {
@@ -1044,7 +1044,7 @@ class CommonRepository extends BaseRepository
      *
      * @return array
      */
-    protected function getLocalFlexFormDataFromRecord(RecordInterface $record, $column): array
+    protected function getLocalFlexFormDataFromRecord(RecordInterface $record, string $column): array
     {
         $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
 
@@ -1071,7 +1071,7 @@ class CommonRepository extends BaseRepository
      */
     protected function fetchRelatedRecordsByFlexForm(
         RecordInterface $record,
-        $column,
+        string $column,
         array $excludedTableNames,
         array $columnConfiguration
     ): array {
@@ -1228,7 +1228,7 @@ class CommonRepository extends BaseRepository
         array $columnConfiguration,
         RecordInterface $record,
         array $excludedTableNames,
-        $propertyName,
+        string $propertyName,
         array $overrideIdentifiers = []
     ): array {
         /** @var RecordInterface[] $records */
@@ -1429,7 +1429,7 @@ class CommonRepository extends BaseRepository
      * @param RecordInterface $record
      * @param string $propertyName
      * @param array $excludedTableNames
-     * @param string $flexFormData
+     * @param mixed $flexFormData
      *
      * @return array
      * @throws Exception
@@ -1437,7 +1437,7 @@ class CommonRepository extends BaseRepository
     protected function fetchRelatedRecordsByGroup(
         array $columnConfiguration,
         RecordInterface $record,
-        $propertyName,
+        string $propertyName,
         array $excludedTableNames,
         $flexFormData = ''
     ): array {
@@ -1503,14 +1503,14 @@ class CommonRepository extends BaseRepository
      * @param array $columnConfiguration
      * @param RecordInterface $record
      * @param string $propertyName
-     * @param string $flexFormData
+     * @param mixed $flexFormData
      *
      * @return array
      */
     protected function getFileAndPathNames(
         array $columnConfiguration,
         RecordInterface $record,
-        $propertyName,
+        string $propertyName,
         $flexFormData
     ): array {
         $prefix = '';
@@ -1703,7 +1703,7 @@ class CommonRepository extends BaseRepository
      */
     protected function fetchRelatedRecordsByInline(
         array $columnConfiguration,
-        $recordTableName,
+        string $recordTableName,
         RecordInterface $record,
         array $excludedTableNames,
         string $propertyName,
@@ -1792,16 +1792,16 @@ class CommonRepository extends BaseRepository
 
     /**
      * @param array $columnConfiguration
-     * @param $recordTableName
-     * @param $recordIdentifier
+     * @param string $recordTableName
+     * @param int $recordIdentifier
      * @param array $excludedTableNames
      *
      * @return array
      */
     protected function fetchRelatedRecordsByInlineMm(
         array $columnConfiguration,
-        $recordTableName,
-        $recordIdentifier,
+        string $recordTableName,
+        int $recordIdentifier,
         array $excludedTableNames
     ): array {
         if (!empty($columnConfiguration['foreign_field'])
@@ -1858,7 +1858,7 @@ class CommonRepository extends BaseRepository
      * @param RecordInterface[] $relationRecords
      * @param array $columnConfiguration
      * @param string $recordTableName
-     * @param string $recordIdentifier
+     * @param int $recordIdentifier
      * @param array $excludedTableNames
      *
      * @return array
@@ -1866,8 +1866,8 @@ class CommonRepository extends BaseRepository
     protected function fetchOriginalRecordsForInlineRecord(
         array $relationRecords,
         array $columnConfiguration,
-        $recordTableName,
-        $recordIdentifier,
+        string $recordTableName,
+        int $recordIdentifier,
         array $excludedTableNames
     ): array {
         /** @var RecordInterface $mmRecord */

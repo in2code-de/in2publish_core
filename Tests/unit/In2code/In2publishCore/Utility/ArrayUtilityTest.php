@@ -79,7 +79,7 @@ class ArrayUtilityTest extends Unit
     public function testRemoveFromArrayByKeyRemovesAllEntriesWithTheGivenKeys(
         array $array,
         array $keysToRemove,
-        $countArray
+        int $countArray
     ) {
         $array = ArrayUtility::removeFromArrayByKey($array, $keysToRemove);
         foreach ($keysToRemove as $key) {
