@@ -89,12 +89,11 @@ class NodeCollection extends ArrayObject implements Node
         if ($this->offsetExists($index)) {
             /** @var Node $node */
             $node = $this->offsetGet($index);
-            return $node->getNodePath(implode(',', $parts));
         } else {
             $node = AbsSpecNode::fromType(Node::T_ARRAY, $index, null, [], new NodeCollection());
             $this->addNode($node);
-            return $node->getNodePath(implode(',', $parts));
         }
+        return $node->getNodePath(implode(',', $parts));
     }
 
     /**

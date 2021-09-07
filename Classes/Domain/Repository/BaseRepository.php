@@ -308,19 +308,14 @@ abstract class BaseRepository
     {
         if (strpos((string)$identifier, ',') !== false) {
             $identifierArray = Record::splitCombinedIdentifier($identifier);
-
-            $success = (bool)$connection->delete($tableName, $identifierArray);
-            if (!$success) {
-                $this->logFailedQuery(__METHOD__, $connection, $tableName);
-            }
-            return $success;
         } else {
-            $success = (bool)$connection->delete($tableName, ['uid' => (int)$identifier]);
-            if (!$success) {
-                $this->logFailedQuery(__METHOD__, $connection, $tableName);
-            }
-            return $success;
+            $identifierArray = ['uid' => (int)$identifier];
         }
+        $success = (bool)$connection->delete($tableName, $identifierArray);
+        if (!$success) {
+            $this->logFailedQuery(__METHOD__, $connection, $tableName);
+        }
+        return $success;
     }
 
     /**

@@ -59,11 +59,10 @@ class PublishPageAjaxController
                         $content['success'] = true;
                         $content['error'] = false;
                         $content['label'] = 'context_menu_publish_entry.page_published';
-                        $content['lArgs'][] = BackendUtility::getRecordTitle('pages', $record->getLocalProperties());
                     } else {
                         $content['label'] = 'context_menu_publish_entry.publishing_error';
-                        $content['lArgs'][] = BackendUtility::getRecordTitle('pages', $record->getLocalProperties());
                     }
+                    $content['lArgs'][] = BackendUtility::getRecordTitle('pages', $record->getLocalProperties());
                 } else {
                     $content['error'] = false;
                     $content['label'] = 'context_menu_publish_entry.not_publishable';
