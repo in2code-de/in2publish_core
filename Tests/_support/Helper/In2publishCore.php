@@ -14,6 +14,7 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use ReflectionClass;
 use ReflectionProperty;
 use TYPO3\CMS\Core\Core\ApplicationContext;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -102,6 +103,9 @@ class In2publishCore extends Module
             $applicationContext = new ApplicationContext($value);
         }
         $this->setStaticProperty(GeneralUtility::class, 'applicationContext', $applicationContext);
+        $environmentReflection = new ReflectionProperty(Environment::class, 'context');
+        $environmentReflection->setAccessible(true);
+        $environmentReflection->setValue(Environment::class, new ApplicationContext($value));
     }
 
     public function setStaticProperty(string $class, string $name, $value)
