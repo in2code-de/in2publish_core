@@ -46,7 +46,7 @@ use const E_USER_DEPRECATED;
 class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcessingHookInterface
 {
     private const DEPREACTED_NON_FQCN_TOOL = 'Tools registration without a FQCN is deprecated and will be removed in'
-    . ' in2publish_core version 11. Registered controller name: %s';
+                                             . ' in2publish_core version 11. Registered controller name: %s';
 
     /**
      * @var array[]

@@ -83,7 +83,7 @@ class TableInfoService implements SingletonInterface
         } else {
             $uniquePids = [];
             $isEmpty = $this->isEmpty($this->localConnection, $table)
-                && $this->isEmpty($this->foreignConnection, $table);
+                       && $this->isEmpty($this->foreignConnection, $table);
         }
         return [
             'isEmpty' => $isEmpty,
