@@ -127,7 +127,7 @@
 			</trans-unit>
 			<trans-unit id="database.tables_only_on_foreign">
 				<source>Following tables only exist on foreign:</source>
-				<target state="translated">Folgende Tabellen existieren nur in der entfernten Datebank:</target>
+				<target state="translated">Folgende Tabellen existieren nur in der entfernten Datenbank:</target>
 			</trans-unit>
 
 			<trans-unit id="database.field_differences">
@@ -215,7 +215,7 @@
 			</trans-unit>
 			<trans-unit id="ssh_connection.wrong_context">
 				<source>The configured foreign TYPO3 context "%s" is invalid</source>
-				<target state="translated">Der für das entfernte System konfigurierte TYPO3 Kontext "%s" ist ungütlig</target>
+				<target state="translated">Der für das entfernte System konfigurierte TYPO3 Kontext "%s" ist ungültig</target>
 			</trans-unit>
 			<trans-unit id="ssh_connection.dispatcher_unknown_error">
 				<source>Calling the remote CLI dispatcher resulted in an unknown error</source>
@@ -299,7 +299,7 @@
 			</trans-unit>
 			<trans-unit id="application.foreign_database_config.configuration_invalid">
 				<source>The database connection configured in the LocalConfiguration.yaml (or Config Wizard) differs from the actually used database connection on foreign. Please check the local configuration and that the foreign configuration is set independently of conditions or that these conditions are also true in the CLI context (e.g. the .htaccess file will not be evaluated in the CLI context).</source>
-				<target state="translated">Die lokal konfigurierten und auf dem entfernten System tatsächlich verwendeten Datenbankzugangsdaten unterscheiden sich. Bitte stellen Sie sicher, dass die in der LocalConfiguration.yaml (oder dem Konfigurationseditor) definierten Zugangsdaten korrekt sind und die auf dem entfernten System gesetztn Zugangsdaten unabhängig von einer Bedingung gesetzt wird oder diese Bedingung auf im Konsolenkontext zutrifft (z.B .htaccess wird nicht auf der Konsole ausgewertet).</target>
+				<target state="translated">Die lokal konfigurierten und auf dem entfernten System tatsächlich verwendeten Datenbankzugangsdaten unterscheiden sich. Bitte stellen Sie sicher, dass die in der LocalConfiguration.yaml (oder dem Konfigurationseditor) definierten Zugangsdaten korrekt sind und die auf dem entfernten System gesetzten Zugangsdaten unabhängig von einer Bedingung gesetzt wird oder diese Bedingung auf im Konsolenkontext zutrifft (z.B .htaccess wird nicht auf der Konsole ausgewertet).</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest -->

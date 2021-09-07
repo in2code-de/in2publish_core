@@ -57,7 +57,7 @@
 				<source>The selected folder could not be removed.</source>
 			</trans-unit>
 			<trans-unit id="folder_retrieving_failed">
-				<source>in2publish failed to retrieve information about the folder %s or any of it's subfolders. Please verify that is in2publish is working properly by running the tests.</source>
+				<source>in2publish failed to retrieve information about the folder %s or any of it's sub folders. Please verify that is in2publish is working properly by running the tests.</source>
 			</trans-unit>
 			<trans-unit id="label_publish_all_pages">
 				<source>Publish page "%s" and its subpages.</source>
