@@ -349,7 +349,7 @@ class TcaService implements SingletonInterface
      */
     protected function getTca(): array
     {
-        return isset($GLOBALS['TCA']) ? $GLOBALS['TCA'] : [];
+        return $GLOBALS['TCA'] ?? [];
     }
 
     /**

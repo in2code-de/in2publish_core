@@ -170,8 +170,8 @@ class IndexingFolderRecordFactory
             $subFolder = GeneralUtility::makeInstance(
                 Record::class,
                 'physical_folder',
-                isset($localSubFolders[$identifier]) ? $localSubFolders[$identifier] : [],
-                isset($remoteSubFolders[$identifier]) ? $remoteSubFolders[$identifier] : [],
+                $localSubFolders[$identifier] ?? [],
+                $remoteSubFolders[$identifier] ?? [],
                 [],
                 ['depth' => 2]
             );

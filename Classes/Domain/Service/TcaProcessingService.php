@@ -231,9 +231,7 @@ class TcaProcessingService
             }
 
             $config = $columnConfiguration[static::CONFIG];
-            $config[static::DEFAULT_EXTRAS] = isset($columnConfiguration[static::DEFAULT_EXTRAS])
-                ? $columnConfiguration[static::DEFAULT_EXTRAS]
-                : null;
+            $config[static::DEFAULT_EXTRAS] = $columnConfiguration[static::DEFAULT_EXTRAS] ?? null;
             $type = $config[static::TYPE];
 
             // If there's no processor for the type it is not a standard type of TYPO3
