@@ -41,6 +41,7 @@ use function in_array;
 
 class SkipTableVoter
 {
+    /** @var TIS */
     protected $tis;
 
     public function __construct()
