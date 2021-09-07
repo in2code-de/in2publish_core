@@ -64,7 +64,7 @@ abstract class AbstractDomainTest
         if (0 !== $statement->errorCode()) {
             return new TestResult(sprintf('application.no_%s_sites_found', $this->prefix), TestResult::WARNING);
         }
-        $pageIds = array_column($statement->fetchAll(PDO::FETCH_ASSOC), 'uid');
+        $pageIds = array_column($statement->fetchAllAssociative(), 'uid');
         if (empty($pageIds)) {
             return new TestResult(sprintf('application.no_%s_sites_found', $this->prefix), TestResult::WARNING);
         }

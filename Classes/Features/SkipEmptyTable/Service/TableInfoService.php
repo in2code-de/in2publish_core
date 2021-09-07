@@ -96,7 +96,7 @@ class TableInfoService implements SingletonInterface
     {
         try {
             $query = 'SELECT 1 FROM ' . $connection->quoteIdentifier($table) . ';';
-            $atLeastOneRowExists = $connection->executeQuery($query)->fetchColumn();
+            $atLeastOneRowExists = $connection->executeQuery($query)->fetchOne();
             return !$atLeastOneRowExists;
         } catch (Throwable $exception) {
             // Ignore any errors.
@@ -108,7 +108,7 @@ class TableInfoService implements SingletonInterface
     protected function queryTableFromDatabase(Connection $connection, string $table): array
     {
         $quotedQuery = $connection->quoteIdentifier($table);
-        $rows = $connection->executeQuery('SELECT DISTINCT `pid` FROM ' . $quotedQuery)->fetchAll();
+        $rows = $connection->executeQuery('SELECT DISTINCT `pid` FROM ' . $quotedQuery)->fetchAllAssociative();
         return array_column($rows, 'pid');
     }
 }

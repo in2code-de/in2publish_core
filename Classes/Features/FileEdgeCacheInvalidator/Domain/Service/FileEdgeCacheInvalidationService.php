@@ -109,7 +109,7 @@ class FileEdgeCacheInvalidationService
             $query->where($query->expr()->in('uid', $recordUidList));
             $query->groupBy('pid');
             $statement = $query->execute();
-            while ($page = $statement->fetchColumn()) {
+            while ($page = $statement->fetchOne()) {
                 $recordCollection->addRecord('pages', $page);
             }
         }

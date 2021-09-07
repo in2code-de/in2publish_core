@@ -211,7 +211,7 @@ class DatabaseUtility
         }
 
         $res = $connection->query('SHOW CREATE TABLE ' . $tableName);
-        $result = $res->fetchAll();
+        $result = $res->fetchAllAssociative();
 
         $data .= $result[0]['Create Table'] . ';' . PHP_EOL;
 

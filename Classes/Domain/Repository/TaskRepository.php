@@ -168,7 +168,7 @@ class TaskRepository
                                       ->from(static::TASK_TABLE_NAME)
                                       ->where($predicates)
                                       ->execute()
-                                      ->fetchAll();
+                                      ->fetchAllAssociative();
         foreach ($tasksPropertiesArray as $taskProperties) {
             $taskObjects[] = $this->taskFactory->convertToObject($taskProperties);
         }

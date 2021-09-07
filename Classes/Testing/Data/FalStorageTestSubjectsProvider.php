@@ -145,7 +145,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
                       ->from('sys_file_storage')
                       ->where($query->expr()->eq('deleted', 0))
                       ->execute()
-                      ->fetchAll(PDO::FETCH_ASSOC);
+                      ->fetchAllAssociative(PDO::FETCH_ASSOC);
         return array_combine(array_column($rows, 'uid'), $rows);
     }
 }

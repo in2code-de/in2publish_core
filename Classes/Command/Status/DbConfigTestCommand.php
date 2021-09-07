@@ -50,7 +50,7 @@ class DbConfigTestCommand extends Command
             $queryBuilder->createNamedParameter(ForeignDatabaseConfigTest::DB_CONFIG_TEST_TYPE)
         );
         $queryBuilder->select('*')->from('tx_in2code_in2publish_task')->where($predicates);
-        $result = $queryBuilder->execute()->fetchAll();
+        $result = $queryBuilder->execute()->fetchAllAssociative();
         $output->writeln('DB Config: ' . base64_encode(json_encode(array_column($result, 'configuration'))));
         return 0;
     }

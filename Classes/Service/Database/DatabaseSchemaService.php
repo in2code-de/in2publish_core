@@ -63,7 +63,7 @@ class DatabaseSchemaService implements SingletonInterface
     {
         $database = DatabaseUtility::buildLocalDatabaseConnection();
 
-        return $database ? $database->getSchemaManager()->tablesExist([$tableName]) : false;
+        return $database && $database->getSchemaManager()->tablesExist([$tableName]);
     }
 
     /**

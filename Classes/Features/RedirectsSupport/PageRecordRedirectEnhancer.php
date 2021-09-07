@@ -191,7 +191,7 @@ class PageRecordRedirectEnhancer
                   )
               );
         $statement = $query->execute();
-        $rows = $statement->fetchAll();
+        $rows = $statement->fetchAllAssociative();
         return array_column($rows, null, 'uid');
     }
 

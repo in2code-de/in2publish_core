@@ -126,7 +126,7 @@ class TableCacheRepository implements SingletonInterface
                           ->where($query->expr()->eq('pid', (int)$pageIdentifier))
                           ->orderBy('uid', 'ASC')
                           ->execute()
-                          ->fetchAll(PDO::FETCH_ASSOC);
+                          ->fetchAllAssociative(PDO::FETCH_ASSOC);
             $rows = array_combine(array_column($rows, 'uid'), $rows);
             $this->cacheRecords($tableName, $rows, $databaseName);
         } else {

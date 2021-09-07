@@ -406,7 +406,7 @@ class ToolsController extends ActionController
                                 ->setMaxResults(500)
                                 ->orderBy('uid', 'DESC')
                                 ->execute()
-                                ->fetchAll();
+                                ->fetchAllAssociative();
 
         $logsFormatted = [];
         foreach ($logs as $log) {

@@ -86,7 +86,7 @@ class SortingPublisher
                   ->from($tableName)
                   ->where($query->expr()->in('pid', $pidList));
             $statement = $query->execute();
-            $localRows = $statement->fetchAll();
+            $localRows = $statement->fetchAllAssociative();
 
             $updates = [];
             foreach ($localRows as $localRow) {

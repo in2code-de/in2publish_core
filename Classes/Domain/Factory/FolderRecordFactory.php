@@ -830,7 +830,7 @@ class FolderRecordFactory
                        ->where($query->expr()->eq('table_local', $query->createNamedParameter('sys_file')))
                        ->andWhere($query->expr()->eq('uid_local', $query->createNamedParameter($oldUid)))
                        ->execute()
-                       ->fetchColumn(0);
+                       ->fetchOne();
 
         if (false === $count) {
             $this->logger->critical(
@@ -856,7 +856,7 @@ class FolderRecordFactory
                        ->from('sys_file')
                        ->where($query->expr()->eq('uid', $query->createNamedParameter($newUid)))
                        ->execute()
-                       ->fetchColumn(0);
+                       ->fetchOne();
         if (false === $count) {
             $this->logger->critical(
                 'Could not count foreign indices by uid',
