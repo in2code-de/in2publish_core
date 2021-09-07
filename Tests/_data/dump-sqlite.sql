@@ -485,16 +485,6 @@ CREATE TABLE `sys_collection_entries` (
     `tablenames`  varchar(64) NOT NULL DEFAULT '',
     `sorting`     integer     NOT NULL DEFAULT '0'
 );
-CREATE TABLE `sys_domain` (
-    `uid`        integer      NOT NULL PRIMARY KEY AUTOINCREMENT,
-    `pid`        integer      NOT NULL DEFAULT '0',
-    `tstamp`     integer      NOT NULL DEFAULT '0',
-    `crdate`     integer      NOT NULL DEFAULT '0',
-    `cruser_id`  integer      NOT NULL DEFAULT '0',
-    `hidden`     integer      NOT NULL DEFAULT '0',
-    `sorting`    integer      NOT NULL DEFAULT '0',
-    `domainName` varchar(255) NOT NULL DEFAULT ''
-);
 CREATE TABLE `sys_file` (
     `uid`               integer      NOT NULL PRIMARY KEY AUTOINCREMENT,
     `pid`               integer      NOT NULL DEFAULT '0',
@@ -1518,8 +1508,6 @@ CREATE INDEX "idx_sys_collection_entries_uid_foreign" ON "sys_collection_entries
 CREATE INDEX "idx_sys_collection_t3ver_oid" ON "sys_collection"(`t3ver_oid`, `t3ver_wsid`);
 CREATE INDEX "idx_tx_powermail_domain_model_mail_t3ver_oid" ON "tx_powermail_domain_model_mail"(`t3ver_oid`, `t3ver_wsid`);
 CREATE INDEX "idx_tx_powermail_domain_model_mail_language" ON "tx_powermail_domain_model_mail"(`l10n_parent`, `sys_language_uid`);
-CREATE INDEX "idx_sys_domain_getDomainStartPage" ON "sys_domain"(`pid`, `hidden`, `domainName`);
-CREATE INDEX "idx_sys_domain_parent" ON "sys_domain"(`pid`, `hidden`);
 CREATE INDEX "idx_backend_layout_t3ver_oid" ON "backend_layout"(`t3ver_oid`, `t3ver_wsid`);
 CREATE INDEX "idx_tx_news_domain_model_news_related_mm_uid_foreign" ON "tx_news_domain_model_news_related_mm"(`uid_foreign`);
 CREATE INDEX "idx_sys_file_collection_t3ver_oid" ON "sys_file_collection"(`t3ver_oid`, `t3ver_wsid`);

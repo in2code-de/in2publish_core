@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  */
 
 use Doctrine\DBAL\Driver\Statement;
-use Exception;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use PDO;
 use TYPO3\CMS\Core\Database\Connection;
@@ -46,7 +45,6 @@ use function substr;
 abstract class AbstractDomainTest
 {
     public const DOMAIN_TYPE_NONE = 'none';
-    public const DOMAIN_TYPE_LEGACY = 'legacy';
     public const DOMAIN_TYPE_SITE = 'site';
     public const DOMAIN_TYPE_SLASH_BASE = 'base';
 
@@ -75,7 +73,6 @@ abstract class AbstractDomainTest
 
         $messages = $this->getMessagesForSitesWithoutDomain($results);
         $messages = array_merge($messages, $this->getMessagesForSitesWithSlashBase($results));
-        $messages = array_merge($messages, $this->getMessagesForSitesWithSysDomain($results));
         $messages = array_merge($messages, $this->getMessagesForSitesWithConfig($results));
 
         if (!empty($results[self::DOMAIN_TYPE_NONE])) {
@@ -94,14 +91,6 @@ abstract class AbstractDomainTest
             );
         }
 
-        if (!empty($results[self::DOMAIN_TYPE_LEGACY])) {
-            return new TestResult(
-                sprintf('application.%s_sites_config_legacy', $this->prefix),
-                TestResult::WARNING,
-                $messages
-            );
-        }
-
         return new TestResult(sprintf('application.%s_sites_config', $this->prefix), TestResult::OK, $messages);
     }
 
@@ -111,23 +100,6 @@ abstract class AbstractDomainTest
         if (!empty($results[self::DOMAIN_TYPE_SITE])) {
             foreach ($results[self::DOMAIN_TYPE_SITE] as $pageId) {
                 $messages[] = 'OK: The ' . $this->prefix . ' root page ' . $pageId . ' has a site configuration.';
-            }
-        }
-        return $messages;
-    }
-
-    /**
-     * @param $results
-     *
-     * @return array
-     */
-    public function getMessagesForSitesWithSysDomain($results): array
-    {
-        $messages = [];
-        if (!empty($results[self::DOMAIN_TYPE_LEGACY])) {
-            foreach ($results[self::DOMAIN_TYPE_LEGACY] as $pageId) {
-                $messages[] = 'WARNING: The ' . $this->prefix . ' root page ' . $pageId
-                              . ' has no site configuration but a legacy domain.';
             }
         }
         return $messages;
@@ -213,30 +185,6 @@ abstract class AbstractDomainTest
 
             return self::DOMAIN_TYPE_SLASH_BASE;
         }
-        if ($this->countAllSysDomainRecordsForPage($pageId) > 0) {
-            return self::DOMAIN_TYPE_LEGACY;
-        }
         return self::DOMAIN_TYPE_NONE;
-    }
-
-    protected function countAllSysDomainRecordsForPage(int $pageUid): int
-    {
-        $connection = $this->getConnection();
-        if (!$connection->getSchemaManager()->tablesExist('sy_domain')) {
-            return 0;
-        }
-        $query = $connection->createQueryBuilder();
-        $query->getRestrictions()->removeAll();
-        $query->getRestrictions()->add(new DeletedRestriction());
-        $query->count('uid')
-              ->from('sys_domain')
-              ->where(
-                  $query->expr()->eq('pid', $query->createNamedParameter($pageUid))
-              );
-        $statement = $query->execute();
-        if (0 !== $statement->errorCode()) {
-            throw new Exception();
-        }
-        return (int)$statement->fetchColumn(0);
     }
 }

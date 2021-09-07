@@ -28,7 +28,6 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Service\DomainService;
 use In2code\In2publishCore\Service\Routing\SiteService;
 use In2code\In2publishCore\Utility\UriUtility;
 use In2code\In2publishCore\ViewHelpers\Link\PreviewRecordViewHelper;
@@ -49,22 +48,6 @@ class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
 {
     protected const DEPRECATED_VIEWHELPER = 'The ViewHelper "%s" is deprecated and will be removed in in2publish_core version 11. Use %s instead.';
 
-    /**
-     * @var DomainService
-     */
-    protected $domainService;
-
-    /**
-     * GetFirstDomainFromRootlineViewHelper constructor.
-     */
-    public function __construct()
-    {
-        $this->domainService = GeneralUtility::makeInstance(DomainService::class);
-    }
-
-    /**
-     *
-     */
     public function initializeArguments()
     {
         parent::initializeArguments();
