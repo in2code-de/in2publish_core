@@ -205,8 +205,7 @@ abstract class SshBaseAdapter
         $config = GeneralUtility::makeInstance(ConfigContainer::class)->get('sshConnection');
         $config = $this->validateRequiredSettings($config);
         $config = $this->validateKeys($config);
-        $config = $this->validateSshParameter($config);
-        return $config;
+        return $this->validateSshParameter($config);
     }
 
     /**

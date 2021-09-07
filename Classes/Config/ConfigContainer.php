@@ -155,9 +155,7 @@ class ConfigContainer implements SingletonInterface
             }
         }
 
-        $config = $this->processConfig($priority);
-
-        return $config;
+        return $this->processConfig($priority);
     }
 
     /**

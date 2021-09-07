@@ -252,8 +252,7 @@ class CommonRepository extends BaseRepository
             $tableName
         );
         $foreign = empty($foreign) ? [] : reset($foreign);
-        $records = $this->recordFactory->makeInstance($this, $local, $foreign, [], $tableName, $idFieldName);
-        return $records;
+        return $this->recordFactory->makeInstance($this, $local, $foreign, [], $tableName, $idFieldName);
     }
 
     /**
@@ -763,8 +762,7 @@ class CommonRepository extends BaseRepository
         $flexFormDefinition = $flexFormTools->parseDataStructureByIdentifier($dataStructIdentifier);
         $flexFormDefinition = $flexFormDefinition['sheets'];
         $flexFormDefinition = $this->flattenFlexFormDefinition((array)$flexFormDefinition);
-        $flexFormDefinition = $this->filterFlexFormDefinition($flexFormDefinition);
-        return $flexFormDefinition;
+        return $this->filterFlexFormDefinition($flexFormDefinition);
     }
 
     /**
@@ -1628,13 +1626,12 @@ class CommonRepository extends BaseRepository
         $where = [];
 
         if (!empty($columnConfiguration['MM'])) {
-            $records = $this->fetchRelatedRecordsByInlineMm(
+            return $this->fetchRelatedRecordsByInlineMm(
                 $columnConfiguration,
                 $recordTableName,
                 $recordIdentifier,
                 $excludedTableNames
             );
-            return $records;
         }
 
         if (!empty($columnConfiguration['foreign_table_field'])) {
@@ -1695,9 +1692,7 @@ class CommonRepository extends BaseRepository
             'uid',
             $tableName
         );
-        $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName);
-
-        return $records;
+        return $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName);
     }
 
     /**

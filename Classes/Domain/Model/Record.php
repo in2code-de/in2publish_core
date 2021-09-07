@@ -1093,8 +1093,7 @@ class Record implements RecordInterface
     public function getBreadcrumb(): string
     {
         $path = '/ ' . $this->tableName . ' [' . $this->getIdentifier() . ']';
-        $path = $this->getRecordPath($this->parentRecord) . $path;
-        return $path;
+        return $this->getRecordPath($this->parentRecord) . $path;
     }
 
     /**

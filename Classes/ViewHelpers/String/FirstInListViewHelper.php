@@ -55,7 +55,6 @@ class FirstInListViewHelper extends AbstractViewHelper
     {
         $arguments = $this->arguments['entries'];
         $list = explode(',', $arguments, 2);
-        $item = $list[0];
-        return $item;
+        return $list[0];
     }
 }
