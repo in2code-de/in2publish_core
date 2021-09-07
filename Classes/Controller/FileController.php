@@ -43,7 +43,6 @@ use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
-use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function count;
@@ -96,10 +95,7 @@ class FileController extends AbstractController
             );
         }
 
-        try {
-            $this->redirect('index');
-        } catch (UnsupportedRequestTypeException $e) {
-        }
+        $this->redirect('index');
     }
 
     /**
@@ -148,10 +144,7 @@ class FileController extends AbstractController
             $this->runTasks();
         }
 
-        try {
-            $this->redirect('index');
-        } catch (UnsupportedRequestTypeException $e) {
-        }
+        $this->redirect('index');
     }
 
     /**

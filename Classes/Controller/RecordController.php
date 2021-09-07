@@ -43,7 +43,6 @@ use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
-use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_keys;
@@ -153,10 +152,7 @@ class RecordController extends AbstractController
             while (strpos($returnUrl, '/') === false || strpos($returnUrl, 'typo3') === false) {
                 $returnUrl = rawurldecode($returnUrl);
             }
-            try {
-                $this->redirectToUri($returnUrl);
-            } catch (UnsupportedRequestTypeException $e) {
-            }
+            $this->redirectToUri($returnUrl);
         }
         $this->addFlashMessagesAndRedirectToIndex();
     }
@@ -219,9 +215,6 @@ class RecordController extends AbstractController
         }
         $this->addFlashMessage($message, $title, $severity);
 
-        try {
-            $this->redirect('index', 'Record');
-        } catch (UnsupportedRequestTypeException $e) {
-        }
+        $this->redirect('index', 'Record');
     }
 }

@@ -55,7 +55,6 @@ use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
-use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Extensionmanager\Utility\ListUtility;
@@ -205,10 +204,7 @@ class ToolsController extends ActionController
     public function clearTcaCachesAction()
     {
         TcaProcessingService::getInstance()->flushCaches();
-        try {
-            $this->redirect('index');
-        } catch (UnsupportedRequestTypeException $e) {
-        }
+        $this->redirect('index');
     }
 
     /**
@@ -218,10 +214,7 @@ class ToolsController extends ActionController
     {
         GeneralUtility::makeInstance(Registry::class)->removeAllByNamespace('tx_in2publishcore');
         $this->addFlashMessage(LocalizationUtility::translate('module.m4.registry_flushed', 'in2publish_core'));
-        try {
-            $this->redirect('index');
-        } catch (UnsupportedRequestTypeException $e) {
-        }
+        $this->redirect('index');
     }
 
     /**
@@ -236,10 +229,7 @@ class ToolsController extends ActionController
                 'in2publish_core'
             )
         );
-        try {
-            $this->redirect('index');
-        } catch (UnsupportedRequestTypeException $e) {
-        }
+        $this->redirect('index');
     }
 
     public function sysInfoIndexAction()

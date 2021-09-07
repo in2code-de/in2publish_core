@@ -39,7 +39,6 @@ use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\Arguments;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
-use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -141,10 +140,7 @@ abstract class AbstractController extends ActionController
             $currentStatus = false;
         }
         $this->backendUser->setAndSaveSessionData($filterName . $status, !$currentStatus);
-        try {
-            $this->redirect($action);
-        } catch (UnsupportedRequestTypeException $e) {
-        }
+        $this->redirect($action);
     }
 
     /**
