@@ -35,6 +35,7 @@ use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
 use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
 use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
@@ -49,11 +50,7 @@ use function array_diff;
 use function array_filter;
 use function array_merge;
 use function in_array;
-use function sprintf;
 use function strlen;
-use function trigger_error;
-
-use const E_USER_DEPRECATED;
 
 /**
  * RecordFactory: This class is responsible for create instances of Record.
@@ -63,8 +60,6 @@ use const E_USER_DEPRECATED;
  */
 class RecordFactory implements SingletonInterface
 {
-    public const DEPRECATION_METHOD_NO_TABLE_ARG = 'Calling %s without tableName is deprecated. tableName will be a non-optional argument in in2publish_core version 10.';
-
     /**
      * Runtime cache to cache already created Records
      * Structure:
@@ -191,6 +186,10 @@ class RecordFactory implements SingletonInterface
         string $tableName = null,
         string $idFieldName = 'uid'
     ) {
+        if (null === $tableName) {
+            throw new MissingArgumentException('tableName');
+        }
+
         if (false === $this->isRootRecord) {
             $this->isRootRecord = true;
             $isRootRecord = true;
@@ -206,11 +205,6 @@ class RecordFactory implements SingletonInterface
             $tableName,
             $idFieldName
         );
-
-        if (null === $tableName) {
-            trigger_error(sprintf(static::DEPRECATION_METHOD_NO_TABLE_ARG, __METHOD__), E_USER_DEPRECATED);
-            $tableName = $commonRepository->getTableName();
-        }
 
         // detects if an instance has been moved upwards or downwards
         // a hierarchy, corrects the relations and sets the records state to "moved"
@@ -484,13 +478,9 @@ class RecordFactory implements SingletonInterface
         $commonRepository,
         array $localProperties,
         array $foreignProperties,
-        string $tableName = null,
+        string $tableName,
         string $idFieldName = 'uid'
     ) {
-        if (null === $tableName) {
-            trigger_error(sprintf(static::DEPRECATION_METHOD_NO_TABLE_ARG, __METHOD__), E_USER_DEPRECATED);
-            $tableName = $commonRepository->getTableName();
-        }
         if ($tableName === 'sys_file') {
             $idFieldName = 'uid';
         }
