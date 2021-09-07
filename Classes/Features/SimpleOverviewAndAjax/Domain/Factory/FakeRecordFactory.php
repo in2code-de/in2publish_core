@@ -128,7 +128,7 @@ class FakeRecordFactory
      */
     protected function getSingleFakeRecordFromPageIdentifier($identifier): Record
     {
-        $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier, 'local');
+        $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier);
         $propertiesForeign = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier, 'foreign');
         $record = GeneralUtility::makeInstance(
             Record::class,
@@ -180,11 +180,7 @@ class FakeRecordFactory
      */
     protected function pageIsNew(Record $record): bool
     {
-        $propertiesLocal = $this->tableCacheRepository->findByUid(
-            static::PAGE_TABLE_NAME,
-            $record->getIdentifier(),
-            'local'
-        );
+        $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $record->getIdentifier());
         $propertiesForeign = $this->tableCacheRepository->findByUid(
             static::PAGE_TABLE_NAME,
             $record->getIdentifier(),
@@ -239,7 +235,7 @@ class FakeRecordFactory
      */
     protected function pageHasMoved($pageIdentifier): bool
     {
-        $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $pageIdentifier, 'local');
+        $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $pageIdentifier);
         $propertiesForeign = $this->tableCacheRepository->findByUid(
             static::PAGE_TABLE_NAME,
             $pageIdentifier,
@@ -288,7 +284,7 @@ class FakeRecordFactory
      */
     protected function pageHasChanged($pageIdentifier): bool
     {
-        $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $pageIdentifier, 'local');
+        $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $pageIdentifier);
         $propertiesForeign = $this->tableCacheRepository->findByUid(
             static::PAGE_TABLE_NAME,
             $pageIdentifier,
@@ -313,7 +309,7 @@ class FakeRecordFactory
             array_merge($this->config['excludeRelatedTables'], ['pages'])
         );
         foreach ($tables as $table) {
-            $propertiesLocal = $this->tableCacheRepository->findByPid($table, $record->getIdentifier(), 'local');
+            $propertiesLocal = $this->tableCacheRepository->findByPid($table, $record->getIdentifier());
             $propertiesForeign = $this->tableCacheRepository->findByPid($table, $record->getIdentifier(), 'foreign');
             if ($this->areDifferentArrays($propertiesLocal, $propertiesForeign, $table)) {
                 return true;

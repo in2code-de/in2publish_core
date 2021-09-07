@@ -54,7 +54,7 @@ class RunTasksInQueueCommand extends Command
         $taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
         $result = [];
         // Tasks which should get executed do not have an execution begin
-        $tasksToExecute = $taskRepository->findByExecutionBegin(null);
+        $tasksToExecute = $taskRepository->findByExecutionBegin();
         /** @var AbstractTask $task */
         foreach ($tasksToExecute as $task) {
             try {

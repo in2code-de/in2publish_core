@@ -565,8 +565,7 @@ class CommonRepository extends BaseRepository
                     (array)$localProperties[$key],
                     (array)$foreignProperties[$key],
                     [],
-                    $tableName,
-                    'uid'
+                    $tableName
                 );
             }
         }

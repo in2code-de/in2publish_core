@@ -144,7 +144,7 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addOptionalString('dispatcher', '')
                                  ->addArray(
                                      'envVars',
-                                     Builder::start()->addGenericScalar(Node::T_STRING, Node::T_STRING),
+                                     Builder::start()->addGenericScalar(Node::T_STRING),
                                      []
                                  )
                                  ->addArray(
@@ -159,7 +159,7 @@ class In2publishCoreDefiner implements DefinerInterface
                       )
                       ->addArray(
                           'excludeRelatedTables',
-                          Builder::start()->addGenericScalar(Node::T_INTEGER, Node::T_STRING),
+                          Builder::start()->addGenericScalar(Node::T_INTEGER),
                           $this->defaultIgnoredTables
                       )
                       ->addArray(
@@ -168,7 +168,7 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addGenericArray(
                                      Node::T_STRING,
                                      Builder::start()
-                                            ->addGenericScalar(Node::T_INTEGER, Node::T_STRING)
+                                            ->addGenericScalar(Node::T_INTEGER)
                                  ),
                           $this->defaultIgnoredFields
                       )
