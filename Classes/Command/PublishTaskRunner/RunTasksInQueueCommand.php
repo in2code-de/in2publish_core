@@ -44,7 +44,7 @@ class RunTasksInQueueCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:publishtasksrunner:runtasksinqueue';
 
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return GeneralUtility::makeInstance(ContextService::class)->isForeign();
     }

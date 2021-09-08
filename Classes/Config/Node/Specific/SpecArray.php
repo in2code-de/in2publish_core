@@ -39,11 +39,7 @@ use function is_array;
 
 class SpecArray extends AbsSpecNode
 {
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    public function validateType(ValidationContainer $container, $value)
+    public function validateType(ValidationContainer $container, $value): void
     {
         if (!is_array($value)) {
             $container->addError('The value is not an array');

@@ -70,11 +70,7 @@ abstract class AbsGenNode extends AbstractNode
         }
     }
 
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    protected function validateType(ValidationContainer $container, $value)
+    protected function validateType(ValidationContainer $container, $value): void
     {
         foreach ($this->nodes as $node) {
             $container->validate($node, [$node->getName() => $value]);

@@ -29,12 +29,12 @@ class PublishCommand extends Command
     public const EXIT_REMOTE_BACKUP_FAILED = 221;
     public const IDENTIFIER = 'in2publish_core:table:publish';
 
-    public function configure()
+    public function configure(): void
     {
         $this->addArgument(self::ARG_TABLE_NAME, InputArgument::REQUIRED, self::ARG_TABLE_NAME_DESCRIPTION);
     }
 
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return GeneralUtility::makeInstance(ContextService::class)->isLocal();
     }

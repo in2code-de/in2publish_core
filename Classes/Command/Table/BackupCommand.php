@@ -18,7 +18,7 @@ class BackupCommand extends Command
     public const ARG_TABLE_NAME_DESCRIPTION = 'The table to back up';
     public const IDENTIFIER = 'in2publish_core:table:backup';
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->addArgument(self::ARG_TABLE_NAME, InputArgument::REQUIRED, self::ARG_TABLE_NAME_DESCRIPTION);
     }

@@ -48,7 +48,7 @@ class In2publishCore extends Module
         GeneralUtility::setSingletonInstance(ConfigContainer::class, $configContainer);
     }
 
-    public function buildForeignDatabaseConnection()
+    public function buildForeignDatabaseConnection(): void
     {
         $file = realpath(__DIR__ . '/../../_data/foreign.db');
         $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['in2publish_foreign'] = [
@@ -69,13 +69,13 @@ class In2publishCore extends Module
         $reflectionProperty->setValue(DatabaseUtility::class, $foreignConnection);
     }
 
-    public function clearIn2publishContext()
+    public function clearIn2publishContext(): void
     {
         $this->setIn2publishContext(null);
         $this->setRedirectedIn2publishContext(null);
     }
 
-    public function setIn2publishContext($value)
+    public function setIn2publishContext($value): void
     {
         if (null === $value) {
             putenv(ContextService::ENV_VAR_NAME);
@@ -84,7 +84,7 @@ class In2publishCore extends Module
         }
     }
 
-    public static function setRedirectedIn2publishContext($value)
+    public static function setRedirectedIn2publishContext($value): void
     {
         if (null === $value) {
             putenv(ContextService::REDIRECT_ENV_VAR_NAME);

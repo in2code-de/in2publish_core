@@ -22,7 +22,7 @@ class TestCommand extends Command
     public const EXIT_TESTS_FAILED = 240;
     public const IDENTIFIER = 'in2publish_core:tools:test';
 
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return GeneralUtility::makeInstance(ContextService::class)->isLocal();
     }

@@ -108,7 +108,7 @@ class TYPO3 extends Module
     /**
      * Generic setUp()
      */
-    public function setUp()
+    public function setUp(): void
     {
         if ($this->backupEnvironment === true) {
             $this->backupEnvironment();
@@ -282,7 +282,7 @@ class TYPO3 extends Module
     /**
      * @throws Throwable
      */
-    public function setUpFunctional()
+    public function setUpFunctional(): void
     {
         putenv('IN2PUBLISH_CONTEXT=Local');
         if (!defined('ORIGINAL_ROOT')) {
@@ -413,7 +413,7 @@ PHP;
      * @return void
      * @throws RuntimeException
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         unset($GLOBALS['TCA']);
         // Restore Environment::class is asked for
@@ -531,7 +531,7 @@ PHP;
         );
     }
 
-    public function setBackendAdmin()
+    public function setBackendAdmin(): void
     {
         $backendUserAuthentication = new BackendUserAuthentication();
         $backendUserAuthentication->user = [

@@ -129,11 +129,7 @@ abstract class AbstractNode implements Node
         }
     }
 
-    /**
-     * @param ValidationContainer $container
-     * @param $value
-     */
-    protected function validateByValidators(ValidationContainer $container, $value)
+    protected function validateByValidators(ValidationContainer $container, $value): void
     {
         foreach ($this->validators as $classOrIndex => $optionsOrClass) {
             if (is_array($optionsOrClass) && is_string($classOrIndex) && class_exists($classOrIndex)) {
@@ -150,12 +146,7 @@ abstract class AbstractNode implements Node
         }
     }
 
-    /**
-     * @param Node $node
-     *
-     * @throws In2publishCoreException
-     */
-    public function merge(Node $node)
+    public function merge(Node $node): void
     {
         if (!empty($node->default)) {
             if (empty($this->default)) {
@@ -177,35 +168,19 @@ abstract class AbstractNode implements Node
         }
     }
 
-    /**
-     * @param array $original
-     * @param array $additional
-     *
-     * @return array
-     */
     public function mergeArrays(array $original, array $additional): array
     {
         return array_merge($original, $additional);
     }
 
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    abstract protected function validateType(ValidationContainer $container, $value);
+    abstract protected function validateType(ValidationContainer $container, $value): void;
 
-    /**
-     * @return bool
-     */
     public function validatorsShouldBeSkipped(): bool
     {
         return $this->skipValidators;
     }
 
-    /**
-     *
-     */
-    public function skipValidators()
+    public function skipValidators(): void
     {
         $this->skipValidators = true;
     }

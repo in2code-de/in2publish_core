@@ -45,12 +45,12 @@ class RecordTest extends Unit
      */
     protected $tester;
 
-    protected function _before()
+    protected function _before(): void
     {
         $this->tester->setUp();
     }
 
-    protected function _after()
+    protected function _after(): void
     {
         $this->tester->tearDown();
     }
@@ -79,7 +79,7 @@ class RecordTest extends Unit
      * @covers ::setDirtyProperties
      * @covers ::getDirtyProperties
      */
-    public function testDirtyPropertiesAreCalculatedWhenConstructed()
+    public function testDirtyPropertiesAreCalculatedWhenConstructed(): void
     {
         $stub = $this->getRecordStub([]);
 
@@ -99,7 +99,7 @@ class RecordTest extends Unit
      * @covers ::setDirtyProperties
      * @covers ::getDirtyProperties
      */
-    public function testIgnoredFieldsDoNotAppearInDirtyPropertiesList()
+    public function testIgnoredFieldsDoNotAppearInDirtyPropertiesList(): void
     {
         $stub = $this->getRecordStub(['foo']);
 
@@ -117,7 +117,7 @@ class RecordTest extends Unit
     /**
      * @covers ::setDirtyProperties
      */
-    public function testNoFieldsAreIgnoredWhenIgnoreFieldsIsInvalid()
+    public function testNoFieldsAreIgnoredWhenIgnoreFieldsIsInvalid(): void
     {
         $stub = $this->getRecordStub('buff');
 

@@ -35,11 +35,7 @@ use function is_bool;
 
 class SpecBoolean extends AbsSpecNode
 {
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    public function validateType(ValidationContainer $container, $value)
+    public function validateType(ValidationContainer $container, $value): void
     {
         if (!is_bool($value)) {
             $container->addError('The value is not a boolean');

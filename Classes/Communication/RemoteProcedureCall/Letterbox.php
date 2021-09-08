@@ -172,10 +172,7 @@ class Letterbox
         return false;
     }
 
-    /**
-     *
-     */
-    public function removeAnsweredEnvelopes()
+    public function removeAnsweredEnvelopes(): void
     {
         if ($this->contextService->isLocal()) {
             $database = DatabaseUtility::buildForeignDatabaseConnection();

@@ -25,12 +25,12 @@ class ImportCommand extends Command
     public const EXIT_INVALID_TABLE = 220;
     public const IDENTIFIER = 'in2publish_core:table:import';
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->addArgument(self::ARG_TABLE_NAME, InputArgument::REQUIRED, self::ARG_TABLE_NAME_DESCRIPTION);
     }
 
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return GeneralUtility::makeInstance(ContextService::class)->isLocal();
     }

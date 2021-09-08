@@ -35,11 +35,7 @@ use function is_string;
 
 class SpecString extends AbsSpecNode
 {
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    public function validateType(ValidationContainer $container, $value)
+    public function validateType(ValidationContainer $container, $value): void
     {
         if ('' === $value || null === $value) {
             $container->addError('Configuration value must not be empty');

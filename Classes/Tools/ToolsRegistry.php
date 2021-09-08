@@ -109,10 +109,7 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
         unset($this->entries[$name]);
     }
 
-    /**
-     *
-     */
-    public function processData()
+    public function processData(): void
     {
         $controllerActions = [];
         foreach ($this->entries as $entry) {
@@ -148,7 +145,7 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
     /**
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function registerHookForPostProcessing()
+    protected function registerHookForPostProcessing(): void
     {
         $scOptions = &$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS'];
         if (!isset($scOptions['GLOBAL']['extTablesInclusion-PostProcessing'][1517414708])) {
