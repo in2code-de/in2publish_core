@@ -170,11 +170,7 @@ class RecordController extends AbstractController
         $this->toggleFilterStatusAndRedirect('in2publish_filter_records_', $filter, 'index');
     }
 
-    /**
-     * @param int $identifier
-     * @param array $exceptTableNames
-     */
-    protected function publishRecord(int $identifier, array $exceptTableNames = [])
+    protected function publishRecord(int $identifier, array $exceptTableNames = []): void
     {
         $record = $this->commonRepository->findByIdentifier($identifier, 'pages');
 
