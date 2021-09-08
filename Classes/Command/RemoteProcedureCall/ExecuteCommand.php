@@ -67,7 +67,7 @@ class ExecuteCommand extends Command
         $letterbox = GeneralUtility::makeInstance(Letterbox::class);
         $envelopeDispatcher = GeneralUtility::makeInstance(EnvelopeDispatcher::class);
 
-        $uid = $input->getArgument(static::ARG_UID);
+        $uid = (int)$input->getArgument(static::ARG_UID);
 
         if (0 === $uid) {
             $logger->warning('RPC called but UID was not given');
