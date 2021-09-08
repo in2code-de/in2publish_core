@@ -41,9 +41,6 @@ use RuntimeException;
 use TYPO3\CMS\Core\Resource\ResourceStorageInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class RemoteStorage
- */
 class RemoteStorage implements ResourceStorageInterface
 {
     public const SUB_FOLDERS_KEY = 'subFolders';

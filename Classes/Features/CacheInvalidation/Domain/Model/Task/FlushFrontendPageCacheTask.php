@@ -34,9 +34,6 @@ use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class FlushFrontendPageCacheTask
- */
 class FlushFrontendPageCacheTask extends AbstractTask
 {
     /**

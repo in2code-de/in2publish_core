@@ -40,9 +40,6 @@ use function array_merge;
 use function array_unique;
 use function is_subclass_of;
 
-/**
- * Class TestCaseService
- */
 class TestCaseService
 {
     /**

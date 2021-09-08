@@ -38,9 +38,6 @@ use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use function sprintf;
 use function trim;
 
-/**
- * Class LabelService
- */
 class LabelService
 {
     /**

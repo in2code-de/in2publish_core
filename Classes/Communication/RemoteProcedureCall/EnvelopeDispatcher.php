@@ -51,9 +51,6 @@ use function is_callable;
 use function method_exists;
 use function strtolower;
 
-/**
- * Class EnvelopeDispatcher
- */
 class EnvelopeDispatcher
 {
     /*

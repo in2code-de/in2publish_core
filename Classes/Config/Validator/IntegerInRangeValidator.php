@@ -31,9 +31,6 @@ namespace In2code\In2publishCore\Config\Validator;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
-/**
- * Class IntegerInRangeValidator
- */
 class IntegerInRangeValidator implements ValidatorInterface
 {
     /**

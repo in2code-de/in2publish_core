@@ -37,9 +37,6 @@ use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class DirtyPropertiesIconDataAttributesViewHelper
- */
 class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
 {
     /**

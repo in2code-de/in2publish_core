@@ -36,9 +36,6 @@ use TYPO3\CMS\Core\SingletonInterface;
 
 use function min;
 
-/**
- * Class PublishingErrorProcessor
- */
 class PublishingFailureCollector extends AbstractProcessor implements SingletonInterface
 {
     public const MINIMUM_LOG_LEVEL = 4;

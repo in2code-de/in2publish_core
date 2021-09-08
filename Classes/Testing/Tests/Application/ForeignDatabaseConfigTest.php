@@ -44,9 +44,6 @@ use function is_array;
 use function json_decode;
 use function strpos;
 
-/**
- * Class ForeignDatabaseConfigTest
- */
 class ForeignDatabaseConfigTest implements TestCaseInterface
 {
     public const DB_CONFIG_TEST_TYPE = 'DB Config Test';

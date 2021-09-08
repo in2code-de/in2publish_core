@@ -37,9 +37,6 @@ use function filter_var;
 use function implode;
 use function is_string;
 
-/**
- * Class RemoteCommandResponse
- */
 class RemoteCommandResponse
 {
     /**

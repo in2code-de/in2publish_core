@@ -33,9 +33,6 @@ namespace In2code\In2publishCore\Controller;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\BackendUtility;
 
-/**
- * Class FrontendController
- */
 class FrontendController extends AbstractController
 {
     /**

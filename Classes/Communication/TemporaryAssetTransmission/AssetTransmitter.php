@@ -43,9 +43,6 @@ use function file_exists;
 use function rtrim;
 use function uniqid;
 
-/**
- * Class AssetTransmitter
- */
 class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;

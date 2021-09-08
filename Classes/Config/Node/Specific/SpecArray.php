@@ -37,9 +37,6 @@ use function array_search;
 use function in_array;
 use function is_array;
 
-/**
- * Class SpecArray
- */
 class SpecArray extends AbsSpecNode
 {
     /**

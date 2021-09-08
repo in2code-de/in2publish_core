@@ -31,9 +31,6 @@ namespace In2code\In2publishCore\ViewHelpers\Attribute;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class PublishingDataAttributesViewHelper
- */
 class PublishingDataAttributesViewHelper extends AbstractViewHelper
 {
     /**

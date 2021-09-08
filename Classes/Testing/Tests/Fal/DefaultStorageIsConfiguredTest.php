@@ -35,9 +35,6 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class DefaultStorageIsConfiguredTest
- */
 class DefaultStorageIsConfiguredTest implements TestCaseInterface
 {
     /**

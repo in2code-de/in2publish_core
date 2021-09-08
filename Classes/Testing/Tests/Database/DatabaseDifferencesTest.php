@@ -45,9 +45,6 @@ use function strpos;
 
 use const PHP_INT_MAX;
 
-/**
- * Class DatabaseDifferencesTest
- */
 class DatabaseDifferencesTest implements TestCaseInterface
 {
     /**

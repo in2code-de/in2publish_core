@@ -33,9 +33,6 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Service\Context\ContextService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class DefaultProvider
- */
 class DefaultProvider implements ProviderInterface
 {
     /**

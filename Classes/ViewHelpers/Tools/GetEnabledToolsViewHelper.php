@@ -33,9 +33,6 @@ use In2code\In2publishCore\Tools\ToolsRegistry;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetEnabledToolsViewHelper
- */
 class GetEnabledToolsViewHelper extends AbstractViewHelper
 {
     /**

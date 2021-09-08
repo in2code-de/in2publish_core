@@ -39,9 +39,6 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class Letterbox
- */
 class Letterbox
 {
     public const TABLE = 'tx_in2code_in2publish_envelope';

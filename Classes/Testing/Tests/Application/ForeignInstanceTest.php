@@ -42,9 +42,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function strpos;
 
-/**
- * Class ForeignInstanceTest
- */
 class ForeignInstanceTest implements TestCaseInterface
 {
     /**

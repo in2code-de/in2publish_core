@@ -35,9 +35,6 @@ use function fclose;
 use function fsockopen;
 use function is_resource;
 
-/**
- * Class HostNameValidator
- */
 class HostNameValidator implements ValidatorInterface
 {
     /**

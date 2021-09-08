@@ -41,9 +41,6 @@ use function array_key_exists;
 use function class_exists;
 use function is_array;
 
-/**
- * Class AdapterSelectionTest
- */
 class AdapterSelectionTest implements TestCaseInterface
 {
     /**

@@ -50,9 +50,6 @@ use function str_replace;
 use function strpos;
 use function strtoupper;
 
-/**
- * Class SshBaseAdapter
- */
 abstract class SshBaseAdapter
 {
     /**

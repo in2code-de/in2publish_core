@@ -33,9 +33,6 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function strpos;
 
-/**
- * Class TestLabelLocalizer
- */
 class TestLabelLocalizer
 {
     /**

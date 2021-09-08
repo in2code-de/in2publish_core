@@ -39,9 +39,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function microtime;
 
-/**
- * Class RemoteCommandDispatcher
- */
 class RemoteCommandDispatcher implements SingletonInterface
 {
     /**

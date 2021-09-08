@@ -32,9 +32,6 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
 use function array_key_exists;
 use function array_merge;
 
-/**
- * Class AbstractProcessor
- */
 abstract class AbstractProcessor implements ProcessorInterface
 {
     /**

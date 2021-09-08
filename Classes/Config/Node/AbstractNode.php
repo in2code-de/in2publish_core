@@ -40,9 +40,6 @@ use function class_exists;
 use function is_array;
 use function is_string;
 
-/**
- * Class AbstractNode
- */
 abstract class AbstractNode implements Node
 {
     /**

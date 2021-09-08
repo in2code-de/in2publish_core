@@ -38,9 +38,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function get_class;
 
-/**
- * Class StorageDriverExtractor
- */
 class StorageDriverExtractor
 {
     /**

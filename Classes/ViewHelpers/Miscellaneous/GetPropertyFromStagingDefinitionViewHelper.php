@@ -36,9 +36,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 use function ucfirst;
 
-/**
- * Class GetPropertyFromStagingDefinitionViewHelper
- */
 class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
 {
     /**

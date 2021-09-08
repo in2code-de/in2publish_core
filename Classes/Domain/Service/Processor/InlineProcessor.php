@@ -29,9 +29,6 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-/**
- * Class InlineProcessor
- */
 class InlineProcessor extends AbstractProcessor
 {
     public const FOREIGN_FIELD = 'foreign_field';

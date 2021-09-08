@@ -39,9 +39,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_merge;
 use function in_array;
 
-/**
- * Class LocalDatabaseTest
- */
 class LocalDatabaseTest implements TestCaseInterface
 {
     /**

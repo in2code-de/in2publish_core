@@ -34,9 +34,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
 
 use function explode;
 
-/**
- * Class FirstInListViewHelper
- */
 class FirstInListViewHelper extends AbstractViewHelper
 {
     /**

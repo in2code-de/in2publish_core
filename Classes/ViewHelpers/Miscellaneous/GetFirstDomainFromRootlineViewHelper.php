@@ -41,9 +41,6 @@ use function trigger_error;
 
 use const E_USER_DEPRECATED;
 
-/**
- * Class GetFirstDomainFromRootlineViewHelper
- */
 class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
 {
     protected const DEPRECATED_VIEWHELPER = 'The ViewHelper "%s" is deprecated and will be removed in in2publish_core version 11. Use %s instead.';

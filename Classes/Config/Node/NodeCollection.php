@@ -42,9 +42,6 @@ use function implode;
 use function is_array;
 use function spl_object_hash;
 
-/**
- * Class NodeCollection
- */
 class NodeCollection extends ArrayObject implements Node
 {
     /**

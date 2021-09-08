@@ -33,9 +33,6 @@ use In2code\In2publishCore\Domain\Service\TableConfiguration\LabelService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetLabelFieldFromRecordViewHelper
- */
 class GetLabelFieldFromRecordViewHelper extends AbstractViewHelper
 {
     /**

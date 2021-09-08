@@ -42,9 +42,6 @@ use function is_string;
 use function strlen;
 use function strtolower;
 
-/**
- * Class ArrayUtility
- */
 class ArrayUtility
 {
     public static function removeFromArrayByKey(array $array, array $keysToRemove = []): array

@@ -31,9 +31,6 @@ use function array_key_exists;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-/**
- * Class FlexProcessor
- */
 class FlexProcessor extends AbstractProcessor
 {
     /**

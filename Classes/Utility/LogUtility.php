@@ -30,9 +30,6 @@ namespace In2code\In2publishCore\Utility;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 
-/**
- * Class LogUtility
- */
 class LogUtility
 {
     /**

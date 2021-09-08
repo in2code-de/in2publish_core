@@ -40,9 +40,6 @@ use function array_diff;
 use function array_keys;
 use function sprintf;
 
-/**
- * Class MissingStoragesTest
- */
 class MissingStoragesTest implements TestCaseInterface
 {
     /**

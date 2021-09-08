@@ -47,9 +47,6 @@ use function array_unique;
 use function ltrim;
 use function uniqid;
 
-/**
- * Class UniqueStorageTargetTest
- */
 class UniqueStorageTargetTest implements TestCaseInterface
 {
     /**

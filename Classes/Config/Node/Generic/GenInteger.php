@@ -34,9 +34,6 @@ use In2code\In2publishCore\Config\ValidationContainer;
 use function is_int;
 use function reset;
 
-/**
- * Class GenInteger
- */
 class GenInteger extends AbsGenNode
 {
     /**

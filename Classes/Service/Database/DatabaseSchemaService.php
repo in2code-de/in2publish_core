@@ -36,9 +36,6 @@ use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class DatabaseSchemaService
- */
 class DatabaseSchemaService implements SingletonInterface
 {
     /**

@@ -35,9 +35,6 @@ use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class FlushNewsCacheTask
- */
 class FlushNewsCacheTask extends AbstractTask
 {
     /**

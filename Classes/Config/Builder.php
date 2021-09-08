@@ -36,9 +36,6 @@ use In2code\In2publishCore\Config\Node\Specific\AbsSpecNode;
 use In2code\In2publishCore\Config\Validator\ValidatorInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class Builder
- */
 class Builder
 {
     /**

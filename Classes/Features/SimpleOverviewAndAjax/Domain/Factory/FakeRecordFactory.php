@@ -44,9 +44,6 @@ use function strnatcmp;
 use function strpos;
 use function uasort;
 
-/**
- * Class FakeRecordFactory to fake a record tree with just the information from local and just the pages
- */
 class FakeRecordFactory
 {
     public const PAGE_TABLE_NAME = 'pages';

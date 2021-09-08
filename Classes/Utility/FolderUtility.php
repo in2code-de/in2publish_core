@@ -32,9 +32,6 @@ use TYPO3\CMS\Core\Resource\FolderInterface;
 
 use function sprintf;
 
-/**
- * Class FolderUtility
- */
 class FolderUtility
 {
     /**

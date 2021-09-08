@@ -47,9 +47,6 @@ use function trigger_error;
 
 use const E_USER_DEPRECATED;
 
-/**
- * Class FileProvider
- */
 class FileProvider implements ProviderInterface
 {
     protected const DEPRECATION_CONFIG_PATH_TYPO3CONF = 'Storing the content publisher config file in typo3conf is deprecated and considered insecure. Please consider storing your config in the TYPO3\'s config folder.';

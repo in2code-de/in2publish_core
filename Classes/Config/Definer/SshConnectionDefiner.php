@@ -35,9 +35,6 @@ use In2code\In2publishCore\Config\Validator\FileExistsValidator as FEV;
 use In2code\In2publishCore\Config\Validator\HostNameValidator;
 use In2code\In2publishCore\Config\Validator\IPv4PortValidator;
 
-/**
- * Class SshConnectionDefiner
- */
 class SshConnectionDefiner implements DefinerInterface
 {
     public function getLocalDefinition(): NodeCollection

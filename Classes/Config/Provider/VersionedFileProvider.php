@@ -36,9 +36,6 @@ use function explode;
 use function file_exists;
 use function implode;
 
-/**
- * Class VersionedFileProvider
- */
 class VersionedFileProvider extends FileProvider
 {
     /**

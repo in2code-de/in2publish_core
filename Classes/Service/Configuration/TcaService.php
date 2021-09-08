@@ -42,9 +42,6 @@ use function in_array;
 use function strpos;
 use function ucfirst;
 
-/**
- * Class TcaService
- */
 class TcaService implements SingletonInterface
 {
     protected const TYPE_ROOT = 'root';

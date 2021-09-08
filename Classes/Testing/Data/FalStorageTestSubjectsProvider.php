@@ -39,9 +39,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_column;
 use function array_combine;
 
-/**
- * Class FalStorageTestSubjectsProvider
- */
 class FalStorageTestSubjectsProvider implements SingletonInterface
 {
     public const PURPOSE_CASE_SENSITIVITY = 'caseSensitivity';

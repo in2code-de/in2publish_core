@@ -35,9 +35,6 @@ use In2code\In2publishCore\Config\Node\NodeCollection;
 use In2code\In2publishCore\Config\ValidationContainer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class AbsGenNode
- */
 abstract class AbsGenNode extends AbstractNode
 {
     /**

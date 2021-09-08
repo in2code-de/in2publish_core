@@ -37,9 +37,6 @@ use TYPO3\CMS\Core\SingletonInterface;
 use function array_column;
 use function array_combine;
 
-/**
- * Class TableCacheRepository can save table values to runtime. So another db query may not needed
- */
 class TableCacheRepository implements SingletonInterface
 {
     /**

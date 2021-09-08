@@ -33,9 +33,6 @@ use In2code\In2publishCore\Utility\ConfigurationUtility;
 
 use function array_key_exists;
 
-/**
- * Class SpecStrictArray
- */
 class SpecStrictArray extends SpecArray
 {
     /**

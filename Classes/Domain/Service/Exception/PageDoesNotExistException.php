@@ -31,9 +31,6 @@ namespace In2code\In2publishCore\Domain\Service\Exception;
 
 use In2code\In2publishCore\In2publishCoreException;
 
-/**
- * Class PageDoesNotExistException
- */
 class PageDoesNotExistException extends In2publishCoreException
 {
     protected const MESSAGE = 'A page with ID %d does not exist on %s';

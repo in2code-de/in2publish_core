@@ -45,9 +45,6 @@ use function array_combine;
 use function base64_decode;
 use function json_decode;
 
-/**
- * Class ForeignSysDomainTest
- */
 class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
     /**

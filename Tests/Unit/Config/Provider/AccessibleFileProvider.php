@@ -31,9 +31,6 @@ namespace In2code\In2publishCore\Tests\Unit\Config\Provider;
 
 use In2code\In2publishCore\Config\Provider\FileProvider;
 
-/**
- * Class AccessibleFileProvider
- */
 class AccessibleFileProvider extends FileProvider
 {
     /**

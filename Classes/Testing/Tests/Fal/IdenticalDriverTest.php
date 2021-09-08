@@ -40,9 +40,6 @@ use function array_merge;
 use function array_unique;
 use function sprintf;
 
-/**
- * Class IdenticalDriverTest
- */
 class IdenticalDriverTest implements TestCaseInterface
 {
     /**

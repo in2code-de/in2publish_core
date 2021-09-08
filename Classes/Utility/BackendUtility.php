@@ -68,9 +68,6 @@ use function stristr;
 use function strpos;
 use function strtolower;
 
-/**
- * Class BackendUtility
- */
 class BackendUtility
 {
     /**

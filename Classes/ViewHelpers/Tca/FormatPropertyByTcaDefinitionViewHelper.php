@@ -35,9 +35,6 @@ use function nl2br;
 use function strftime;
 use function trim;
 
-/**
- * Class FormatPropertyByTcaDefinitionViewHelper
- */
 class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
 {
     /**

@@ -42,9 +42,6 @@ use function array_merge;
 use function get_class;
 use function json_encode;
 
-/**
- * Class TaskRepository
- */
 class TaskRepository
 {
     public const TASK_TABLE_NAME = 'tx_in2code_in2publish_task';

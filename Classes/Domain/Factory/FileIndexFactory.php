@@ -46,9 +46,6 @@ use function explode;
 use function strtolower;
 use function time;
 
-/**
- * Class FileIndexFactory
- */
 class FileIndexFactory
 {
     /**

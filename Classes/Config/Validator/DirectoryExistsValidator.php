@@ -34,9 +34,6 @@ use In2code\In2publishCore\Config\ValidationContainer;
 use function file_exists;
 use function is_dir;
 
-/**
- * Class DirectoryExistsValidator
- */
 class DirectoryExistsValidator implements ValidatorInterface
 {
     /**

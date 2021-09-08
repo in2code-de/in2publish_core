@@ -36,9 +36,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_reverse;
 use function ksort;
 
-/**
- * Class LogController
- */
 class LogController extends \CoStack\Logs\Controller\LogController
 {
     /**

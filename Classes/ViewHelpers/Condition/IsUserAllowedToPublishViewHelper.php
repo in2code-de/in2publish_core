@@ -32,9 +32,6 @@ use In2code\In2publishCore\Service\Permission\PermissionService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class IsUserAllowedToPublishViewHelper
- */
 class IsUserAllowedToPublishViewHelper extends AbstractViewHelper
 {
     /**

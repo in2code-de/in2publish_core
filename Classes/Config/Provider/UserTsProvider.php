@@ -33,9 +33,6 @@ use In2code\In2publishCore\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class UserTsProvider
- */
 class UserTsProvider implements ProviderInterface, ContextualProvider
 {
     public function isAvailable(): bool

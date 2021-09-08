@@ -36,9 +36,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
 
-/**
- * Class AbsSpecNode
- */
 abstract class AbsSpecNode extends AbstractNode
 {
     /**

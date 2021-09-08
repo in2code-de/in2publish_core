@@ -33,9 +33,6 @@ use In2code\In2publishCore\Testing\Utility\TestLabelLocalizer;
 
 use function implode;
 
-/**
- * Class TestResult
- */
 class TestResult
 {
     public const OK = 'ok';

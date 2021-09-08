@@ -33,9 +33,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 use function ucfirst;
 
-/**
- * Class GetFieldLabelFromLocallangViewHelper
- */
 class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
 {
     /**

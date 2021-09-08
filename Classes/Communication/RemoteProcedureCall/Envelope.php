@@ -35,9 +35,6 @@ use function array_filter;
 use function serialize;
 use function unserialize;
 
-/**
- * Class Envelope
- */
 class Envelope
 {
     /**

@@ -46,9 +46,6 @@ use function array_fill;
 use function array_keys;
 use function asort;
 
-/**
- * Class ConfigContainer
- */
 class ConfigContainer implements SingletonInterface
 {
     /**

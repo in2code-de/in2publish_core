@@ -34,9 +34,6 @@ use In2code\In2publishCore\Config\ValidationContainer;
 use function is_string;
 use function reset;
 
-/**
- * Class GenString
- */
 class GenString extends AbsGenNode
 {
     /**

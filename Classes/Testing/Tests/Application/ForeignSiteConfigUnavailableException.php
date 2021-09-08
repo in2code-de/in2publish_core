@@ -32,9 +32,6 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
 use In2code\In2publishCore\In2publishCoreException;
 
-/**
- * Class ForeignSiteConfigUnavailableException
- */
 class ForeignSiteConfigUnavailableException extends In2publishCoreException
 {
     public const MESSAGE = 'An error occurred during fetching the remote site configuration';

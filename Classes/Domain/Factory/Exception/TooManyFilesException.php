@@ -33,9 +33,6 @@ use In2code\In2publishCore\In2publishCoreException;
 
 use function sprintf;
 
-/**
- * Class TooManyFilesException
- */
 abstract class TooManyFilesException extends In2publishCoreException
 {
     public const CODE = 1555492787;

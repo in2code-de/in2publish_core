@@ -34,9 +34,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function strpos;
 
-/**
- * Class GroupProcessor
- */
 class GroupProcessor extends AbstractProcessor
 {
     public const INTERNAL_TYPE = 'internal_type';

@@ -38,9 +38,6 @@ use function max;
 use function spl_object_hash;
 use function sprintf;
 
-/**
- * Class UidReservationService
- */
 class UidReservationService
 {
     /**

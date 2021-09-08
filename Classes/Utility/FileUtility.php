@@ -44,9 +44,6 @@ use function is_int;
 use function sprintf;
 use function trim;
 
-/**
- * Class FileUtility
- */
 class FileUtility
 {
     /**

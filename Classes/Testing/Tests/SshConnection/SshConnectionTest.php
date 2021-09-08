@@ -40,9 +40,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_diff;
 use function preg_match;
 
-/**
- * Class SshConnectionTest
- */
 class SshConnectionTest implements TestCaseInterface
 {
     /**

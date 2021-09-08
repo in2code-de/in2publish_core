@@ -54,9 +54,6 @@ use function str_replace;
 use function stripslashes;
 use function time;
 
-/**
- * Class DatabaseUtility
- */
 class DatabaseUtility
 {
     /**

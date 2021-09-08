@@ -36,9 +36,6 @@ use TYPO3\CMS\Core\SingletonInterface;
 use function getenv;
 use function in_array;
 
-/**
- * Class ContextService
- */
 class ContextService implements SingletonInterface
 {
     public const LOCAL = 'Local';

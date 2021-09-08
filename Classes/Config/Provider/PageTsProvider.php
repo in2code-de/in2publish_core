@@ -37,9 +37,6 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\TableConfigurationPostProcessingHookInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class PageTsProvider
- */
 class PageTsProvider implements ProviderInterface, ContextualProvider, TableConfigurationPostProcessingHookInterface
 {
     /**

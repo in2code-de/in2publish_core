@@ -36,9 +36,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_merge;
 use function get_class;
 
-/**
- * Class TestingService
- */
 class TestingService
 {
     /**

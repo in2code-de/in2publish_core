@@ -34,9 +34,6 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 
 use function ini_get;
 
-/**
- * Class SftpRequirementsTest
- */
 class SftpRequirementsTest implements TestCaseInterface
 {
     /**

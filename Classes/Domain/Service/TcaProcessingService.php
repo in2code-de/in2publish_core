@@ -54,9 +54,6 @@ use function array_keys;
 use function class_exists;
 use function is_array;
 
-/**
- * Class TcaProcessingService
- */
 class TcaProcessingService
 {
     public const COLUMNS = 'columns';

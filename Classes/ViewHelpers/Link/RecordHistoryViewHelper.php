@@ -34,9 +34,6 @@ use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
-/**
- * Class RecordHistoryViewHelper
- */
 class RecordHistoryViewHelper extends AbstractTagBasedViewHelper
 {
     /**

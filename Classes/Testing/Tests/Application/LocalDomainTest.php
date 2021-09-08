@@ -36,9 +36,6 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class LocalSysDomainTest
- */
 class LocalDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
     /**

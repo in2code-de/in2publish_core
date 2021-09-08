@@ -33,9 +33,6 @@ use In2code\In2publishCore\Config\ValidationContainer;
 
 use function is_string;
 
-/**
- * Class SpecString
- */
 class SpecString extends AbsSpecNode
 {
     /**

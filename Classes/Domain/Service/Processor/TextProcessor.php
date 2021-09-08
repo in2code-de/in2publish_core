@@ -35,9 +35,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function in_array;
 use function strpos;
 
-/**
- * Class TextProcessor
- */
 class TextProcessor extends AbstractProcessor
 {
     public const RTE_DEFAULT_EXTRAS = 'richtext';

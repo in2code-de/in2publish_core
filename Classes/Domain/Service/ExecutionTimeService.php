@@ -36,9 +36,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function microtime;
 
-/**
- * Class ExecutionTimeService
- */
 class ExecutionTimeService implements SingletonInterface
 {
     /**

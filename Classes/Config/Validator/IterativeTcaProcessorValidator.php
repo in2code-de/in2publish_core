@@ -35,9 +35,6 @@ use In2code\In2publishCore\Domain\Service\Processor\ProcessorInterface;
 use function class_exists;
 use function is_subclass_of;
 
-/**
- * Class RecursiveTcaProcessorValidator
- */
 class IterativeTcaProcessorValidator implements ValidatorInterface
 {
     /**

@@ -33,9 +33,6 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Log\LogRecord;
 use TYPO3\CMS\Core\Log\Processor\AbstractProcessor;
 
-/**
- * Class BackendUserProcessor
- */
 class BackendUserProcessor extends AbstractProcessor
 {
     /**

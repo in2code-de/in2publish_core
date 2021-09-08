@@ -40,9 +40,6 @@ use function json_encode;
 use function serialize;
 use function sha1;
 
-/**
- * Class EnvironmentService
- */
 class EnvironmentService implements SingletonInterface
 {
     public const STATE_TESTS_FAILING = 'tests_failing';

@@ -37,9 +37,6 @@ use function is_array;
 use function is_int;
 use function uksort;
 
-/**
- * Class ConfigurationUtility
- */
 class ConfigurationUtility
 {
     /**

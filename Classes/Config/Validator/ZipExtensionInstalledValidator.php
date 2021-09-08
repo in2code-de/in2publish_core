@@ -34,9 +34,6 @@ use ZipArchive;
 
 use function class_exists;
 
-/**
- * Class ZipExtensionInstalledValidator
- */
 class ZipExtensionInstalledValidator implements ValidatorInterface
 {
     /**

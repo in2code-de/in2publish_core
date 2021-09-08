@@ -34,9 +34,6 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 
 use function function_exists;
 
-/**
- * Class SshFunctionAvailabilityTest
- */
 class SshFunctionAvailabilityTest implements TestCaseInterface
 {
     /**

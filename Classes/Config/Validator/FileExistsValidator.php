@@ -34,9 +34,6 @@ use In2code\In2publishCore\Config\ValidationContainer;
 use function file_exists;
 use function is_file;
 
-/**
- * Class FileExistsValidator
- */
 class FileExistsValidator implements ValidatorInterface
 {
     /**

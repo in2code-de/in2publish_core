@@ -33,9 +33,6 @@ use In2code\In2publishCore\Config\ValidationContainer;
 
 use function is_bool;
 
-/**
- * Class SpecBoolean
- */
 class SpecBoolean extends AbsSpecNode
 {
     /**

@@ -40,9 +40,6 @@ use function class_exists;
 
 use const E_USER_DEPRECATED;
 
-/**
- * Class ToolsRegistry
- */
 class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcessingHookInterface
 {
     private const DEPREACTED_NON_FQCN_TOOL = 'Tools registration without a FQCN is deprecated and will be removed in'

@@ -35,9 +35,6 @@ use function array_pop;
 use function array_push;
 use function implode;
 
-/**
- * Class ValidationContainer
- */
 class ValidationContainer
 {
     /**

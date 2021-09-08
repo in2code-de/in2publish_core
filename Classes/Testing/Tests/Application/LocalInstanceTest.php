@@ -39,9 +39,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_flip;
 use function array_merge;
 
-/**
- * Class LocalInstanceTest
- */
 class LocalInstanceTest implements TestCaseInterface
 {
     /**

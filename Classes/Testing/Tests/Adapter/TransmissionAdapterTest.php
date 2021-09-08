@@ -35,9 +35,6 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 
 use function array_merge;
 
-/**
- * Class TransmissionAdapterTest
- */
 class TransmissionAdapterTest implements TestCaseInterface
 {
     /**

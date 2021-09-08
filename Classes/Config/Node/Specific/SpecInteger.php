@@ -33,9 +33,6 @@ use In2code\In2publishCore\Config\ValidationContainer;
 
 use function is_int;
 
-/**
- * Class SpecInteger
- */
 class SpecInteger extends AbsSpecNode
 {
     /**

@@ -41,9 +41,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use function ltrim;
 use function rtrim;
 
-/**
- * Class BuildResourcePathViewHelper
- */
 class BuildResourcePathViewHelper extends AbstractViewHelper
 {
     /**
