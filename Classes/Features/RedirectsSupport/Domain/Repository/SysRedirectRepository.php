@@ -89,4 +89,26 @@ class SysRedirectRepository extends Repository
         $result = $query->execute();
         return $result->fetchAllAssociative();
     }
+
+    public function findForPublishing(array $uidList)
+    {
+        $query = $this->createQuery();
+        $querySettings = $query->getQuerySettings();
+        $querySettings->setIgnoreEnableFields(true);
+        $querySettings->setRespectSysLanguage(false);
+        $querySettings->setRespectStoragePage(false);
+        $querySettings->setIncludeDeleted(true);
+        if (!empty($uidList)) {
+            $query->matching(
+                $query->logicalOr(
+                    [
+                        $query->equals('deleted', 0),
+                        $query->logicalNot($query->in('uid', $uidList)),
+                    ]
+                )
+            );
+        }
+
+        return $query->execute();
+    }
 }

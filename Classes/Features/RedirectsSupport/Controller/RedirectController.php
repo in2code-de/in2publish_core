@@ -90,23 +90,7 @@ class RedirectController extends AbstractController
             $uidList = array_column($query->execute()->fetchAllAssociative(), 'uid');
         }
 
-        $query = $this->sysRedirectRepo->createQuery();
-        $querySettings = $query->getQuerySettings();
-        $querySettings->setIgnoreEnableFields(true);
-        $querySettings->setRespectSysLanguage(false);
-        $querySettings->setRespectStoragePage(false);
-        $querySettings->setIncludeDeleted(true);
-        if (!empty($uidList)) {
-            $query->matching(
-                $query->logicalOr(
-                    [
-                        $query->equals('deleted', 0),
-                        $query->logicalNot($query->in('uid', $uidList)),
-                    ]
-                )
-            );
-        }
-        $redirects = $query->execute();
+        $redirects = $this->sysRedirectRepo->findForPublishing($uidList);
         $this->view->assign('redirects', $redirects);
     }
 
