@@ -101,7 +101,7 @@ class FileIndexFactory
 
         if ('both' === $side || 'local' === $side) {
             $localProperties = $this->getFileIndexArray($identifier, 'local');
-            $uid = $localProperties['uid'];
+            $uid = (int)$localProperties['uid'];
         }
 
         if ('both' === $side || 'foreign' === $side) {

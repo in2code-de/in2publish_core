@@ -501,11 +501,11 @@ class Record implements RecordInterface
     }
 
     /**
-     * @param string $propertyName
+     * @param scalar $propertyName
      *
      * @return bool
      */
-    protected function isDirtyProperty(string $propertyName): bool
+    protected function isDirtyProperty($propertyName): bool
     {
         return !array_key_exists($propertyName, $this->localProperties)
                || !array_key_exists($propertyName, $this->foreignProperties)

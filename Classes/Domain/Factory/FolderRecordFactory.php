@@ -110,13 +110,13 @@ class FolderRecordFactory
     }
 
     /**
-     * @param string $identifier
+     * @param string|null $identifier
      *
      * @return Folder
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function initializeDependenciesAndGetFolder(string $identifier): Folder
+    protected function initializeDependenciesAndGetFolder(?string $identifier): Folder
     {
         // Grab the resource factory to get the FAL driver of the selected folder "FAL style"
         $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
@@ -166,7 +166,7 @@ class FolderRecordFactory
      *
      * @return RecordInterface
      */
-    public function makeInstance(string $identifier): RecordInterface
+    public function makeInstance(?string $identifier): RecordInterface
     {
         /*
          * IMPORTANT NOTICES (a.k.a "never forget about this"-Notices):

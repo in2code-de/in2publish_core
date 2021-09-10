@@ -114,7 +114,7 @@ class IndexingFolderRecordFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function makeInstance(string $dir = null): RecordInterface
+    public function makeInstance(?string $dir): RecordInterface
     {
         // determine current folder
         $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);

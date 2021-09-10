@@ -167,7 +167,7 @@ class FileController extends AbstractController
      * @return RecordInterface|null The record or null if it can not be handled
      * @throws InsufficientFolderAccessPermissionsException
      */
-    protected function tryToGetFolderInstance(string $identifier): ?RecordInterface
+    protected function tryToGetFolderInstance(?string $identifier): ?RecordInterface
     {
         if (false === $this->configContainer->get('factory.fal.reserveSysFileUids')) {
             try {
