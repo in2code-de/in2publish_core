@@ -79,7 +79,11 @@ class RedirectController extends AbstractController
         $this->sysRedirectRepo = $sysRedirectRepo;
     }
 
-    public function listAction(): void
+    /**
+     * @param array $filter
+     * @throws \Throwable
+     */
+    public function listAction(array $filter = []): void
     {
         $foreignConnection = DatabaseUtility::buildForeignDatabaseConnection();
         $uidList = [];
@@ -90,8 +94,12 @@ class RedirectController extends AbstractController
             $uidList = array_column($query->execute()->fetchAllAssociative(), 'uid');
         }
 
-        $redirects = $this->sysRedirectRepo->findForPublishing($uidList);
-        $this->view->assign('redirects', $redirects);
+        $this->view->assignMultiple([
+                                        'redirects' => $this->sysRedirectRepo->findForPublishing($uidList, $filter),
+                                        'hosts' => $this->sysRedirectRepo->findHostsOfRedirects(),
+                                        'statusCodes' => $this->sysRedirectRepo->findStatusCodesOfRedirects(),
+                                        'filter' => $filter
+                                    ]);
     }
 
     public function publishAction(array $redirects): void

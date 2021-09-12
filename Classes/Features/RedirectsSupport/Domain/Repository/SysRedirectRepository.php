@@ -30,6 +30,10 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository;
  */
 
 use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
 class SysRedirectRepository extends Repository
@@ -90,7 +94,49 @@ class SysRedirectRepository extends Repository
         return $result->fetchAllAssociative();
     }
 
-    public function findForPublishing(array $uidList)
+    public function findForPublishing(array $uidList, array $filter = [])
+    {
+        $query = $this->getQueryForRedirectsToBePublished($uidList);
+        $and[] = $query->greaterThan('uid', 0);
+        if (isset($filter['source_host']) && $filter['source_host'] != '') {
+            $and[] = $query->equals('source_host', $filter['source_host']);
+        }
+        if (isset($filter['source_path']) && $filter['source_path'] != '') {
+            $and[] = $query->like('source_path', '%' . $filter['source_path'] . '%');
+        }
+        if (isset($filter['target']) && $filter['target'] != '') {
+            $and[] = $query->like('target', '%' . $filter['target'] . '%');
+        }
+        if (isset($filter['status_code']) && $filter['status_code'] != '') {
+            $and[] = $query->equals('target_statuscode', $filter['status_code']);
+        }
+        $query->matching($query->logicalAnd($and));
+        return $query->execute();
+    }
+
+    public function findHostsOfRedirects(): array
+    {
+        return $this->getQueryBuilder()
+                    ->select('source_host as name')
+                    ->from('sys_redirect')
+                    ->orderBy('source_host')
+                    ->groupBy('source_host')
+                    ->execute()
+                    ->fetchAllAssociative();
+    }
+
+    public function findStatusCodesOfRedirects(): array
+    {
+        return $this->getQueryBuilder()
+                    ->select('target_statuscode as code')
+                    ->from('sys_redirect')
+                    ->orderBy('target_statuscode')
+                    ->groupBy('target_statuscode')
+                    ->execute()
+                    ->fetchAllAssociative();
+    }
+
+    protected function getQueryForRedirectsToBePublished(array $uidList): QueryInterface
     {
         $query = $this->createQuery();
         $querySettings = $query->getQuerySettings();
@@ -108,7 +154,14 @@ class SysRedirectRepository extends Repository
                 )
             );
         }
+        return $query;
+    }
 
-        return $query->execute();
+    protected function getQueryBuilder(): QueryBuilder
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_redirect');
+        $queryBuilder->getRestrictions()
+                     ->removeAll();
+        return $queryBuilder;
     }
 }
