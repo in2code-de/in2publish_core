@@ -62,4 +62,12 @@ final class RelatedRecordsByRteWereFetched
     {
         $this->relatedRecords[] = $record;
     }
+
+    /** @param array<RecordInterface> */
+    public function addRelatedRecords(array $records): void
+    {
+        foreach ($records as $record) {
+            $this->addRelatedRecord($record);
+        }
+    }
 }
