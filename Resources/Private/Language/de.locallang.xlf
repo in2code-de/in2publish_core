@@ -553,6 +553,27 @@
 				<source>This redirect is published</source>
 				<target state="translated">Dieser Redirect ist publiziert</target>
 			</trans-unit>
+			<trans-unit id="redirect.status.published">
+				<source>This redirect is published</source>
+				<target state="translated">Dieser Redirect ist publiziert</target>
+			</trans-unit>
+
+			<trans-unit id="redirect.status.short.publishable">
+				<source>Ready for publishing</source>
+				<target state="translated">Bereit zur Veröffentlichung</target>
+			</trans-unit>
+			<trans-unit id="redirect.status.short.siteRequired">
+				<source>Missing page or site</source>
+				<target state="translated">Fehlende Seite oder Seitenkonfiguration</target>
+			</trans-unit>
+			<trans-unit id="redirect.status.short.requiresPagePublishing">
+				<source>Requires page publishing</source>
+				<target state="translated">Fehlende Veröffentlichung der Seite</target>
+			</trans-unit>
+			<trans-unit id="redirect.status.short.published">
+				<source>Published</source>
+				<target state="translated">Veröffentlicht</target>
+			</trans-unit>
 
 			<trans-unit id="refresh_page">
 				<source>Refresh page</source>

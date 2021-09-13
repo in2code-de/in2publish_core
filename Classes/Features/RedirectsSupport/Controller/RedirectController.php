@@ -93,11 +93,11 @@ class RedirectController extends AbstractController
             $query->select('uid')->from('sys_redirect')->where($query->expr()->eq('deleted', 1));
             $uidList = array_column($query->execute()->fetchAllAssociative(), 'uid');
         }
-
         $this->view->assignMultiple([
                                         'redirects' => $this->sysRedirectRepo->findForPublishing($uidList, $filter),
                                         'hosts' => $this->sysRedirectRepo->findHostsOfRedirects(),
                                         'statusCodes' => $this->sysRedirectRepo->findStatusCodesOfRedirects(),
+                                        'publishingStates' => $this->getPublishingStates(),
                                         'filter' => $filter
                                     ]);
     }
@@ -169,5 +169,27 @@ class RedirectController extends AbstractController
         }
         $this->view->assign('redirect', $redirect);
         $this->view->assign('siteOptions', $siteOptions);
+    }
+
+    protected function getPublishingStates(): array
+    {
+        return [
+            0 => [
+                'state' => 'unchanged',
+                'label' => LocalizationUtility::translate('redirect.status.short.published', 'in2publish_core')
+            ],
+            1 => [
+                'state' => 'publishable',
+                'label' => LocalizationUtility::translate('redirect.status.short.publishable', 'in2publish_core')
+            ],
+            2 => [
+                'state' => 'siteRequired',
+                'label' =>  LocalizationUtility::translate('redirect.status.short.siteRequired', 'in2publish_core')
+            ],
+            3 => [
+                'state' => 'requiresPagePublishing',
+                'label' =>  LocalizationUtility::translate('redirect.status.short.requiresPagePublishing', 'in2publish_core')
+            ]
+        ];
     }
 }

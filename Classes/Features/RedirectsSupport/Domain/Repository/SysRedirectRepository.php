@@ -97,6 +97,7 @@ class SysRedirectRepository extends Repository
     public function findForPublishing(array $uidList, array $filter = [])
     {
         $query = $this->getQueryForRedirectsToBePublished($uidList);
+        // in order to avoid empty $and constraint
         $and[] = $query->greaterThan('uid', 0);
         if (isset($filter['source_host']) && $filter['source_host'] != '') {
             $and[] = $query->equals('source_host', $filter['source_host']);
@@ -111,7 +112,21 @@ class SysRedirectRepository extends Repository
             $and[] = $query->equals('target_statuscode', $filter['status_code']);
         }
         $query->matching($query->logicalAnd($and));
-        return $query->execute();
+
+        $redirects =  $query->execute();
+        // Remove redirects with wrong state
+        // TODO: this is ignored by the paginationViewHelper
+        if (isset($filter['publishing_state']) && $filter['publishing_state'] != '') {
+            $selectedPublishingState = $filter['publishing_state'];
+            $i = 0;
+            foreach($redirects as $redirect) {
+                if ($redirect->getPublishingState() != $selectedPublishingState) {
+                    unset($redirects[$i]);
+                }
+                $i++;
+            }
+        }
+        return $redirects;
     }
 
     public function findHostsOfRedirects(): array
