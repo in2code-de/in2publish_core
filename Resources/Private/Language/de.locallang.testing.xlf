@@ -282,6 +282,10 @@
 				<source>At least one local root page has a site configuration without a full base domain.</source>
 				<target state="translated">Mindestens eine Startseite auf dem lokalen System hat eine Startseite ohne einer vollen Basis-Domain.</target>
 			</trans-unit>
+			<trans-unit id="application.local_site_config_exception">
+				<source>An unexpected exception occurred when searching for sites on Local.</source>
+				<target state="translated">Ein unerwarteter Fehler ist während der Sites-Suche auf Local aufgetreten.</target>
+			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest -->
 
@@ -398,6 +402,10 @@
 			<trans-unit id="application.foreign_sites_config">
 				<source>All foreign root pages have a site configuration.</source>
 				<target state="translated">Alle fremden Stammseiten des entfernten Systems verfügen über eine Site-Konfiguration.</target>
+			</trans-unit>
+			<trans-unit id="application.local_site_config_exception">
+				<source>An unexpected exception occurred when searching for sites on Foreign.</source>
+				<target state="translated">Ein unerwarteter Fehler ist während der Sites-Suche auf Foreign aufgetreten.</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest

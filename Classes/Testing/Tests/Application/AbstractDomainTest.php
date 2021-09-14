@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
 
 use Doctrine\DBAL\Driver\ResultStatement;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 
@@ -65,7 +66,15 @@ abstract class AbstractDomainTest
             return new TestResult(sprintf('application.no_%s_sites_found', $this->prefix), TestResult::WARNING);
         }
 
-        $results = $this->determineDomainTypes($pageIds);
+        try {
+            $results = $this->determineDomainTypes($pageIds);
+        } catch (Throwable $exception) {
+            return new TestResult(
+                sprintf('application.%s_site_config_exception', $this->prefix),
+                TestResult::ERROR,
+                [$exception->getMessage()]
+            );
+        }
 
         $messages = $this->getMessagesForSitesWithoutDomain($results);
         $messages = array_merge($messages, $this->getMessagesForSitesWithSlashBase($results));

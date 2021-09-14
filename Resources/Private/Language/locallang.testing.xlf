@@ -226,6 +226,9 @@
 			<trans-unit id="application.local_site_config_slash">
 				<source>At least one local root page has a site configuration without a full base domain.</source>
 			</trans-unit>
+			<trans-unit id="application.local_site_config_exception">
+				<source>An unexpected exception occurred when searching for sites on Local.</source>
+			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest -->
 
@@ -315,6 +318,9 @@
 			</trans-unit>
 			<trans-unit id="application.foreign_sites_config">
 				<source>All foreign root pages have a site configuration.</source>
+			</trans-unit>
+			<trans-unit id="application.local_site_config_exception">
+				<source>An unexpected exception occurred when searching for sites on Foreign.</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest
