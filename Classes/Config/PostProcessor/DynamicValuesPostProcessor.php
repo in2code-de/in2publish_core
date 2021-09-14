@@ -48,7 +48,7 @@ class DynamicValuesPostProcessor implements PostProcessorInterface, LoggerAwareI
 {
     use LoggerAwareTrait;
 
-    protected const DYNAMIC_REFERENCE_PATTERN = '/^%([\w\d]+)\(([^\)]*)\)%$/';
+    protected const DYNAMIC_REFERENCE_PATTERN = '/^%(?P<key>[\w]+)\((?P<string>[^\)]*)\)%$/';
 
     protected $dynamicValueProviderRegistry;
 
@@ -66,12 +66,9 @@ class DynamicValuesPostProcessor implements PostProcessorInterface, LoggerAwareI
                 $config[$key] = $this->process($value);
             } elseif (is_string($value) && strlen($value) > 3) {
                 $matches = [];
-                if (
-                    1 === preg_match(self::DYNAMIC_REFERENCE_PATTERN, $value, $matches)
-                    && isset($matches[1], $matches[2])
-                ) {
-                    $providerKey = $matches[1];
-                    $providerString = $matches[2];
+                if (1 === preg_match(self::DYNAMIC_REFERENCE_PATTERN, $value, $matches)) {
+                    $providerKey = $matches['key'];
+                    $providerString = $matches['string'];
                     if (!$this->dynamicValueProviderRegistry->hasDynamicValueProviderForKey($providerKey)) {
                         $this->logMissingDynamicValueProvider($providerKey);
                     } else {
