@@ -184,11 +184,7 @@ class CommonRepository extends BaseRepository
      */
     protected $eventDispatcher;
 
-    /**
-     * @param Connection $localDatabase
-     * @param Connection $foreignDatabase
-     */
-    public function __construct(Connection $localDatabase, Connection $foreignDatabase)
+    public function __construct(?Connection $localDatabase, ?Connection $foreignDatabase)
     {
         parent::__construct();
         $this->recordFactory = GeneralUtility::makeInstance(RecordFactory::class);
