@@ -102,17 +102,17 @@ class ConfigContainer implements SingletonInterface
         $priority = [];
         foreach ($this->providers as $class => $config) {
             $provider = GeneralUtility::makeInstance($class);
-            if (null === $config) {
-                if ($provider instanceof ProviderInterface) {
+            if ($provider instanceof ProviderInterface) {
+                if (null === $config) {
                     if ($provider->isAvailable()) {
                         $this->providers[$class] = $provider->getConfig();
                         $priority[$class] = $provider->getPriority();
                     } else {
                         $complete = false;
                     }
+                } else {
+                    $priority[$class] = $provider->getPriority();
                 }
-            } else {
-                $priority[$class] = $provider->getPriority();
             }
         }
 
@@ -138,13 +138,11 @@ class ConfigContainer implements SingletonInterface
         $priority = [];
         foreach ($this->providers as $class => $config) {
             $provider = GeneralUtility::makeInstance($class);
-            if (!($provider instanceof ContextualProvider)) {
+            if ($provider instanceof ProviderInterface && !($provider instanceof ContextualProvider)) {
                 if (null === $config) {
-                    if ($provider instanceof ProviderInterface) {
-                        if ($provider->isAvailable()) {
-                            $this->providers[$class] = $provider->getConfig();
-                            $priority[$class] = $provider->getPriority();
-                        }
+                    if ($provider->isAvailable()) {
+                        $this->providers[$class] = $provider->getConfig();
+                        $priority[$class] = $provider->getPriority();
                     }
                 } else {
                     $priority[$class] = $provider->getPriority();
@@ -290,7 +288,9 @@ class ConfigContainer implements SingletonInterface
         $priority = [];
         foreach ($cloned->providers as $class => $config) {
             $provider = GeneralUtility::makeInstance($class);
-            $priority[$class] = $provider->getPriority();
+            if ($provider instanceof ProviderInterface) {
+                $priority[$class] = $provider->getPriority();
+            }
         }
 
         asort($priority);
