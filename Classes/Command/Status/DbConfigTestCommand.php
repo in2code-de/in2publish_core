@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Command\Status;
  */
 
 use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

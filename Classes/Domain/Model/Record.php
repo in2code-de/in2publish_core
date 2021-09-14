@@ -54,7 +54,6 @@ use function is_array;
 use function is_null;
 use function is_string;
 use function spl_object_hash;
-use function strlen;
 use function strpos;
 use function uasort;
 

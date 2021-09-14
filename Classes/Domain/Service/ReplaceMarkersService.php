@@ -42,7 +42,6 @@ use function implode;
 use function preg_replace_callback;
 use function str_replace;
 use function strpos;
-use function strstr;
 
 /**
  * Replace markers in TCA definition

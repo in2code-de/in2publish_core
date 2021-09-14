@@ -14,8 +14,6 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
-use function debug;
-
 use const PHP_EOL;
 
 class TestCommand extends Command

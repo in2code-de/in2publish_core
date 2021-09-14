@@ -64,9 +64,7 @@ use function md5;
 use function parse_str;
 use function parse_url;
 use function rtrim;
-use function stristr;
 use function strpos;
-use function strtolower;
 
 class BackendUtility
 {

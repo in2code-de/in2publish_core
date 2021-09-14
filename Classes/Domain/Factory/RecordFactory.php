@@ -50,7 +50,6 @@ use function array_diff;
 use function array_filter;
 use function array_merge;
 use function in_array;
-use function strlen;
 
 /**
  * RecordFactory: This class is responsible for create instances of Record.
