@@ -32,22 +32,45 @@ namespace In2code\In2publishCore\Command\RemoteProcedureCall;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\EnvelopeDispatcher;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\Service\Context\ContextService;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class ExecuteCommand extends Command
+class ExecuteCommand extends Command implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     public const ARG_UID = 'uid';
     public const ARG_UID_DESCRIPTION = 'Uid of the envelope to execute';
     public const EXIT_ENVELOPE_MISSING = 230;
     public const EXIT_UID_MISSING = 231;
     public const EXIT_EXECUTION_FAILED = 232;
     public const IDENTIFIER = 'in2publish_core:rpc:execute';
+
+    /** @var ContextService */
+    protected $contextService;
+
+    /** @var Letterbox */
+    protected $letterbox;
+
+    /** @var EnvelopeDispatcher */
+    protected $envelopeDispatcher;
+
+    public function __construct(
+        ContextService $contextService,
+        Letterbox $letterbox,
+        EnvelopeDispatcher $envelopeDispatcher,
+        string $name = null
+    ) {
+        parent::__construct($name);
+        $this->contextService = $contextService;
+        $this->letterbox = $letterbox;
+        $this->envelopeDispatcher = $envelopeDispatcher;
+    }
 
     protected function configure()
     {
@@ -56,43 +79,39 @@ class ExecuteCommand extends Command
 
     public function isEnabled()
     {
-        return GeneralUtility::makeInstance(ContextService::class)->isForeign();
+        return $this->contextService->isForeign();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
 
-        $logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $letterbox = GeneralUtility::makeInstance(Letterbox::class);
-        $envelopeDispatcher = GeneralUtility::makeInstance(EnvelopeDispatcher::class);
-
         $uid = (int)$input->getArgument(static::ARG_UID);
 
         if (0 === $uid) {
-            $logger->warning('RPC called but UID was not given');
+            $this->logger->warning('RPC called but UID was not given');
             $errOutput->writeln('Please define an UID for the envelope');
             return static::EXIT_UID_MISSING;
         }
 
-        $envelope = $letterbox->receiveEnvelope($uid, false);
+        $envelope = $this->letterbox->receiveEnvelope($uid, false);
 
         if (false === $envelope) {
-            $logger->error('The requested envelope could not be received', ['uid' => $uid]);
+            $this->logger->error('The requested envelope could not be received', ['uid' => $uid]);
             $errOutput->writeln('The requested envelope is not available');
             return static::EXIT_ENVELOPE_MISSING;
         }
 
-        $success = $envelopeDispatcher->dispatch($envelope);
+        $success = $this->envelopeDispatcher->dispatch($envelope);
 
-        $letterbox->sendEnvelope($envelope);
+        $this->letterbox->sendEnvelope($envelope);
 
         if (false === $success) {
-            $logger->error('Dispatching the requested envelope failed', ['uid' => $uid]);
+            $this->logger->error('Dispatching the requested envelope failed', ['uid' => $uid]);
             $errOutput->writeln('RPC failed');
             return static::EXIT_EXECUTION_FAILED;
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

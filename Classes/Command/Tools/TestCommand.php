@@ -13,7 +13,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+use function debug;
 
 use const PHP_EOL;
 
@@ -22,17 +23,37 @@ class TestCommand extends Command
     public const EXIT_TESTS_FAILED = 240;
     public const IDENTIFIER = 'in2publish_core:tools:test';
 
+    /** @var ContextService */
+    private $contextService;
+
+    /** @var TestingService */
+    private $testingService;
+
+    /** @var EnvironmentService */
+    private $environmentService;
+
+    public function __construct(
+        ContextService $contextService,
+        TestingService $testingService,
+        EnvironmentService $environmentService,
+        string $name = null
+    ) {
+        parent::__construct($name);
+        $this->contextService = $contextService;
+        $this->testingService = $testingService;
+        $this->environmentService = $environmentService;
+    }
+
     public function isEnabled(): bool
     {
-        return GeneralUtility::makeInstance(ContextService::class)->isLocal();
+        return $this->contextService->isLocal();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
-        $testingService = GeneralUtility::makeInstance(TestingService::class);
         try {
-            $testingResults = $testingService->runAllTests();
+            $testingResults = $this->testingService->runAllTests();
             $success = true;
 
             foreach ($testingResults as $testingResult) {
@@ -46,8 +67,7 @@ class TestCommand extends Command
             $success = false;
         }
 
-        $environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
-        $environmentService->setTestResult($success);
+        $this->environmentService->setTestResult($success);
 
         if (true !== $success) {
             foreach ($testingResults as $testingResult) {
@@ -60,6 +80,6 @@ class TestCommand extends Command
         }
 
         $output->writeln('All tests passed', OutputInterface::VERBOSITY_VERBOSE);
-        return 0;
+        return Command::SUCCESS;
     }
 }

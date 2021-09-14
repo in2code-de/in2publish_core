@@ -36,7 +36,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function json_encode;
 
@@ -44,17 +43,29 @@ class RunTasksInQueueCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:publishtasksrunner:runtasksinqueue';
 
+    /** @var ContextService */
+    protected $contextService;
+
+    /** @var TaskRepository */
+    protected $taskRepository;
+
+    public function __construct(ContextService $contextService, TaskRepository $taskRepository, string $name = null)
+    {
+        parent::__construct($name);
+        $this->contextService = $contextService;
+        $this->taskRepository = $taskRepository;
+    }
+
     public function isEnabled(): bool
     {
-        return GeneralUtility::makeInstance(ContextService::class)->isForeign();
+        return $this->contextService->isForeign();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
         $result = [];
         // Tasks which should get executed do not have an execution begin
-        $tasksToExecute = $taskRepository->findByExecutionBegin();
+        $tasksToExecute = $this->taskRepository->findByExecutionBegin();
         /** @var AbstractTask $task */
         foreach ($tasksToExecute as $task) {
             try {
@@ -64,12 +75,12 @@ class RunTasksInQueueCommand extends Command
             } catch (Throwable $e) {
                 $result[] = $e->getMessage();
             }
-            $taskRepository->update($task);
+            $this->taskRepository->update($task);
         }
         if (empty($result)) {
             $result[] = 'There was nothing to execute';
         }
         $output->write(json_encode($result));
-        return 0;
+        return Command::SUCCESS;
     }
 }

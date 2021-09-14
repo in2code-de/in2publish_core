@@ -33,15 +33,23 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TYPO3\CMS\Core\Information\Typo3Version;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Typo3VersionCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:typo3version';
 
+    /** @var Typo3Version */
+    private $typo3Version;
+
+    public function __construct(Typo3Version $typo3Version, string $name = null)
+    {
+        parent::__construct($name);
+        $this->typo3Version = $typo3Version;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('TYPO3: ' . GeneralUtility::makeInstance(Typo3Version::class)->getVersion());
-        return 0;
+        $output->writeln('TYPO3: ' . $this->typo3Version->getVersion());
+        return Command::SUCCESS;
     }
 }

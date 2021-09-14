@@ -33,7 +33,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TYPO3\CMS\Core\Site\SiteFinder;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function base64_encode;
 use function serialize;
@@ -42,11 +41,19 @@ class AllSitesCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:allsites';
 
+    /** @var SiteFinder */
+    protected $siteFinder;
+
+    public function __construct(SiteFinder $siteFinder, string $name = null)
+    {
+        parent::__construct($name);
+        $this->siteFinder = $siteFinder;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
-        $sites = $siteFinder->getAllSites(false);
+        $sites = $this->siteFinder->getAllSites(false);
         $output->writeln('Sites: ' . base64_encode(serialize($sites)));
-        return 0;
+        return Command::SUCCESS;
     }
 }

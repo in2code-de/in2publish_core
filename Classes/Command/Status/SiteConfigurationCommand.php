@@ -51,6 +51,15 @@ class SiteConfigurationCommand extends Command
     public const EXIT_PAGE_HIDDEN_OR_DISCONNECTED = 251;
     public const IDENTIFIER = 'in2publish_core:status:siteconfiguration';
 
+    /** @var SiteFinder */
+    protected $siteFinder;
+
+    public function __construct(SiteFinder $siteFinder, string $name = null)
+    {
+        parent::__construct($name);
+        $this->siteFinder = $siteFinder;
+    }
+
     protected function configure(): void
     {
         $this->addArgument(self::ARG_PAGE_ID, InputArgument::REQUIRED, self::ARG_PAGE_ID_DESCRIPTION);
@@ -66,10 +75,9 @@ class SiteConfigurationCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
         $pageId = (int)$input->getArgument(self::ARG_PAGE_ID);
         try {
-            $site = $siteFinder->getSiteByPageId($pageId);
+            $site = $this->siteFinder->getSiteByPageId($pageId);
         } catch (SiteNotFoundException $e) {
             try {
                 GeneralUtility::makeInstance(RootlineUtility::class, $pageId, null)->get();
@@ -79,6 +87,6 @@ class SiteConfigurationCommand extends Command
             return static::EXIT_NO_SITE;
         }
         $output->writeln('Site: ' . base64_encode(serialize($site)));
-        return 0;
+        return Command::SUCCESS;
     }
 }

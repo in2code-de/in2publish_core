@@ -34,6 +34,7 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use TYPO3\CMS\Core\Database\Connection;
 
 use function base64_encode;
 use function json_encode;
@@ -42,9 +43,18 @@ class DbConfigTestCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:dbconfigtest';
 
+    /** @var Connection */
+    protected $localDatabase;
+
+    public function __construct(Connection $localDatabase, string $name = null)
+    {
+        parent::__construct($name);
+        $this->localDatabase = $localDatabase;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $queryBuilder = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+        $queryBuilder = $this->localDatabase->createQueryBuilder();
         $predicates = $queryBuilder->expr()->eq(
             'task_type',
             $queryBuilder->createNamedParameter(ForeignDatabaseConfigTest::DB_CONFIG_TEST_TYPE)
@@ -52,6 +62,6 @@ class DbConfigTestCommand extends Command
         $queryBuilder->select('*')->from('tx_in2code_in2publish_task')->where($predicates);
         $result = $queryBuilder->execute()->fetchAllAssociative();
         $output->writeln('DB Config: ' . base64_encode(json_encode(array_column($result, 'configuration'))));
-        return 0;
+        return Command::SUCCESS;
     }
 }
