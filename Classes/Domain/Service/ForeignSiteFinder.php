@@ -35,6 +35,7 @@ use In2code\In2publishCore\Command\Status\SiteConfigurationCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
+use In2code\In2publishCore\Domain\Service\Exception\AllSitesCommandException;
 use In2code\In2publishCore\In2publishCoreException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -110,15 +111,14 @@ class ForeignSiteFinder implements LoggerAwareInterface
             if ($response->isSuccessful()) {
                 return $this->processCommandResult($response);
             }
+            $exitStatus = $response->getExitStatus();
+            $errors = $response->getErrors();
+            $output = $response->getOutput();
             $this->logger->alert(
                 'An error occurred while fetching all foreign sites',
-                [
-                    'code' => $response->getExitStatus(),
-                    'errors' => $response->getErrors(),
-                    'output' => $response->getOutput(),
-                ]
+                ['code' => $exitStatus, 'errors' => $errors, 'output' => $output]
             );
-            throw new In2publishCoreException('An error occurred while fetching all foreign sites');
+            throw new AllSitesCommandException($exitStatus, $errors, $output);
         };
         return $this->executeCached('sites', $closure);
     }
