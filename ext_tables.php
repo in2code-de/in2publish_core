@@ -1,4 +1,5 @@
 <?php
+
 /** @noinspection PhpFullyQualifiedNameUsageInspection */
 
 (static function () {
