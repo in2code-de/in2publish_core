@@ -110,12 +110,16 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
         string $propertyName,
         string $stagingLevel = 'local'
     ): string {
-        if ($record->getTableName() === 'pages' && $record->getIdentifier() === 0 && $propertyName === 'title') {
+        if (
+            'title' === $propertyName
+            && 'pages' === $record->getTableName()
+            && 0 === $record->getIdentifier()
+        ) {
             if ($stagingLevel === 'local') {
                 return $this->getSiteName();
-            } else {
-                return LocalizationUtility::translate('label_production', 'in2publish_core');
             }
+
+            return LocalizationUtility::translate('label_production', 'in2publish_core');
         }
         return $this->emptyFieldValue;
     }

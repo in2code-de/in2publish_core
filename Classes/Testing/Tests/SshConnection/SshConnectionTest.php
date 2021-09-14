@@ -149,13 +149,13 @@ class SshConnectionTest implements TestCaseInterface
                     $response->getErrors(),
                     [$match[1]]
                 );
-            } else {
-                return new TestResult(
-                    'ssh_connection.dispatcher_unknown_error',
-                    TestResult::ERROR,
-                    $response->getErrors()
-                );
             }
+
+            return new TestResult(
+                'ssh_connection.dispatcher_unknown_error',
+                TestResult::ERROR,
+                $response->getErrors()
+            );
         }
 
         return new TestResult('ssh_connection.connection_successful');

@@ -99,7 +99,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
             }
 
             do {
-                $uniqueFile = uniqid('tx_in2publish_testfile');
+                $uniqueFile = uniqid('tx_in2publish_testfile', false);
             } while ($localDriver->fileExists($uniqueFile) || $foreignDriver->fileExists($uniqueFile));
 
             $sourceFile = GeneralUtility::tempnam($uniqueFile);
@@ -145,7 +145,9 @@ class UniqueStorageTargetTest implements TestCaseInterface
                 TestResult::ERROR,
                 $messages
             );
-        } elseif (!empty($skippedStorages)) {
+        }
+
+        if (!empty($skippedStorages)) {
             return new TestResult(
                 'fal.storage_targets_test_skipped',
                 TestResult::WARNING,

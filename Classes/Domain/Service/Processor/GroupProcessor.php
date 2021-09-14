@@ -91,9 +91,13 @@ class GroupProcessor extends AbstractProcessor
 
         if ($internalType === static::INTERNAL_TYPE_DB) {
             return $this->canPreProcessInternalTypeDb($config);
-        } elseif ($internalType === static::INTERNAL_TYPE_FILE) {
+        }
+
+        if ($internalType === static::INTERNAL_TYPE_FILE) {
             return $this->canPreProcessInternalTypeFile($config);
-        } elseif ($internalType === static::INTERNAL_TYPE_FILE_REFERENCE) {
+        }
+
+        if ($internalType === static::INTERNAL_TYPE_FILE_REFERENCE) {
             return $this->canPreProcessInternalTypeFileReference($config);
         }
 

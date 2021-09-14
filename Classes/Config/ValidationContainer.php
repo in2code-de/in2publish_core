@@ -53,7 +53,7 @@ class ValidationContainer
      */
     public function validate(Node $node, $value)
     {
-        array_push($this->path, $node->getName());
+        $this->path[] = $node->getName();
         $node->validate($this, $value);
         array_pop($this->path);
     }

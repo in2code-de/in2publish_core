@@ -282,8 +282,7 @@ class DatabaseUtility
     protected static function sanitizeTable(Connection $connection, string $tableName)
     {
         $tableName = stripslashes($tableName);
-        $tableName = str_replace("'", '', $tableName);
-        $tableName = str_replace('"', '', $tableName);
+        $tableName = str_replace(["'", '"'], '', $tableName);
 
         $allTables = $connection->getSchemaManager()->listTableNames();
         if (in_array($tableName, $allTables, true)) {

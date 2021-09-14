@@ -354,6 +354,7 @@ class ToolsController extends ActionController
                 } catch (Throwable $e) {
                 }
             }
+            unset($cfgArray);
 
             foreach ($containerDump['providers'] as &$providerCfg) {
                 try {
@@ -365,6 +366,7 @@ class ToolsController extends ActionController
                 } catch (Throwable $e) {
                 }
             }
+            unset($providerCfg);
         }
 
         $extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class);

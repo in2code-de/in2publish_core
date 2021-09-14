@@ -274,8 +274,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
             }
 
             $tableOptions = $table->getOptions();
-            unset($tableOptions['autoincrement']);
-            unset($tableOptions['comment']);
+            unset($tableOptions['autoincrement'], $tableOptions['comment']);
             $tableStructure[$tableName] = [
                 'table' => $tableOptions,
                 'fields' => $fieldStructure,

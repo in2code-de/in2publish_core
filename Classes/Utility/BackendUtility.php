@@ -114,7 +114,7 @@ class BackendUtility
         // get id from ?redirect=script.php?param1=a&id=123&param2=2
         if (null !== ($redirect = GeneralUtility::_GP('redirect'))) {
             $urlParts = parse_url($redirect);
-            if (!empty($urlParts['query']) && stristr($urlParts['query'], 'id=')) {
+            if (!empty($urlParts['query']) && stripos($urlParts['query'], 'id=') !== false) {
                 parse_str($urlParts['query'], $parameters);
                 if (!empty($parameters['id'])) {
                     return (int)$parameters['id'];
@@ -155,18 +155,18 @@ class BackendUtility
             if (count($rollbackData) > 1 && in_array($rollbackData[0], $tableNames)) {
                 if ($rollbackData[0] === 'pages') {
                     return (int)$rollbackData[1];
-                } else {
-                    $query = $localConnection->createQueryBuilder();
-                    $query->getRestrictions()->removeAll();
-                    $result = $query->select('pid')
-                                    ->from($rollbackData[0])
-                                    ->where($query->expr()->eq('uid', (int)$rollbackData[1]))
-                                    ->setMaxResults(1)
-                                    ->execute()
-                                    ->fetchAssociative();
-                    if (false !== $result && isset($result['pid'])) {
-                        return (int)$result['pid'];
-                    }
+                }
+
+                $query = $localConnection->createQueryBuilder();
+                $query->getRestrictions()->removeAll();
+                $result = $query->select('pid')
+                            ->from($rollbackData[0])
+                            ->where($query->expr()->eq('uid', (int)$rollbackData[1]))
+                            ->setMaxResults(1)
+                            ->execute()
+                            ->fetchAssociative();
+                if (false !== $result && isset($result['pid'])) {
+                    return (int)$result['pid'];
                 }
             }
         }
@@ -234,7 +234,7 @@ class BackendUtility
             'id' => GeneralUtility::_GP('id'),
         ];
         foreach (GeneralUtility::_GET() as $name => $value) {
-            if (is_array($value) && false !== strpos(strtolower($name), strtolower($route))) {
+            if (is_array($value) && false !== stripos($name, $route)) {
                 $returnParameters[$name] = $value;
             }
         }

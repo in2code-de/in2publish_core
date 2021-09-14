@@ -72,7 +72,9 @@ class ForeignInstanceTest implements TestCaseInterface
                     TestResult::ERROR,
                     ['application.foreign_cli_lowlevel_user_missing_message', $response->getOutputString()]
                 );
-            } elseif (false !== strpos($response->getOutputString(), 'Could not open input file')) {
+            }
+
+            if (false !== strpos($response->getOutputString(), 'Could not open input file')) {
                 return new TestResult(
                     'application.foreign_cli_dispatcher_wrong_path',
                     TestResult::ERROR,
@@ -82,17 +84,17 @@ class ForeignInstanceTest implements TestCaseInterface
                         $response->getErrorsString(),
                     ]
                 );
-            } else {
-                return new TestResult(
-                    'application.foreign_cli_dispatcher_not_callable',
-                    TestResult::ERROR,
-                    [
-                        'application.foreign_cli_dispatcher_error_message',
-                        $response->getOutputString(),
-                        $response->getErrorsString(),
-                    ]
-                );
             }
+
+            return new TestResult(
+                'application.foreign_cli_dispatcher_not_callable',
+                TestResult::ERROR,
+                [
+                    'application.foreign_cli_dispatcher_error_message',
+                    $response->getOutputString(),
+                    $response->getErrorsString(),
+                ]
+            );
         }
 
         $foreign = $this->tokenizeResponse($response->getOutput());

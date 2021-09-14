@@ -253,10 +253,7 @@ class Record implements RecordInterface
      */
     public function isChanged(): bool
     {
-        if ($this->getState() !== static::RECORD_STATE_UNCHANGED) {
-            return true;
-        }
-        return false;
+        return $this->getState() !== static::RECORD_STATE_UNCHANGED;
     }
 
     /**
@@ -778,20 +775,24 @@ class Record implements RecordInterface
      */
     public function getIdentifier()
     {
-        $uid = 0;
         if ('physical_folder' === $this->tableName) {
             return $this->getMergedProperty('uid');
-        } elseif ($this->hasLocalProperty('uid')) {
-            $uid = $this->getLocalProperty('uid');
-        } elseif ($this->hasForeignProperty('uid')) {
-            $uid = $this->getForeignProperty('uid');
-        } else {
-            $combinedIdentifier = static::createCombinedIdentifier($this->localProperties, $this->foreignProperties);
-            if (strlen($combinedIdentifier) > 0) {
-                return $combinedIdentifier;
-            }
         }
-        return (int)$uid;
+
+        if ($this->hasLocalProperty('uid')) {
+            return (int)$this->getLocalProperty('uid');
+        }
+
+        if ($this->hasForeignProperty('uid')) {
+            return (int)$this->getForeignProperty('uid');
+        }
+
+        $combinedIdentifier = static::createCombinedIdentifier($this->localProperties, $this->foreignProperties);
+        if ($combinedIdentifier !== '') {
+            return $combinedIdentifier;
+        }
+
+        return 0;
     }
 
     /**
@@ -834,7 +835,7 @@ class Record implements RecordInterface
                     $value = $foreignValue;
                 } elseif ($localString !== '0' && $foreignString === '0') {
                     $value = $localValue;
-                } elseif (strlen($localString) > 0 && strlen($foreignString) > 0) {
+                } elseif ($localString !== '' && $foreignString !== '') {
                     $value = implode(',', [$localString, $foreignString]);
                 } elseif (!$localString && $foreignString) {
                     $value = $foreignValue;
@@ -1009,15 +1010,17 @@ class Record implements RecordInterface
     protected function isRecordRepresentByProperties(array $properties): bool
     {
         if ($this->tableName === 'folders') {
-            if (!empty($properties['name'])) {
-                return true;
-            } else {
-                return false;
-            }
+            return !empty($properties['name']);
         }
-        if (empty($properties) || (array_key_exists(0, $properties) && $properties[0] === false)) {
+
+        if (
+            empty($properties)
+            || (array_key_exists(0, $properties) && false === $properties[0])
+        ) {
             return false;
-        } elseif (
+        }
+
+        if (
             (isset($properties['uid']) && $properties['uid'] > 0)
             || (!empty($properties['uid_local']) && !empty($properties['uid_foreign']))
         ) {
@@ -1036,7 +1039,9 @@ class Record implements RecordInterface
     {
         if (!empty($localProperties['uid_local']) && !empty($localProperties['uid_foreign'])) {
             return $localProperties['uid_local'] . ',' . $localProperties['uid_foreign'];
-        } elseif (!empty($foreignProperties['uid_local']) && !empty($foreignProperties['uid_foreign'])) {
+        }
+
+        if (!empty($foreignProperties['uid_local']) && !empty($foreignProperties['uid_foreign'])) {
             return $foreignProperties['uid_local'] . ',' . $foreignProperties['uid_foreign'];
         }
         return '';
@@ -1051,13 +1056,13 @@ class Record implements RecordInterface
     {
         if (false === strpos($combinedIdentifier, ',')) {
             return [];
-        } else {
-            $identifierArray = explode(',', $combinedIdentifier);
-            return [
-                'uid_local' => $identifierArray[0],
-                'uid_foreign' => $identifierArray[1],
-            ];
         }
+
+        $identifierArray = explode(',', $combinedIdentifier);
+        return [
+            'uid_local' => $identifierArray[0],
+            'uid_foreign' => $identifierArray[1],
+        ];
     }
 
     /**
@@ -1181,15 +1186,13 @@ class Record implements RecordInterface
     public function getPageIdentifier(): int
     {
         if ($this->isPagesTable()) {
-            $l10nParent = $this->getL10nParentIdentifier();
-            if (null !== $l10nParent) {
-                return $l10nParent;
-            }
-            return $this->getIdentifier();
+            return $this->getL10nParentIdentifier() ?? $this->getIdentifier();
         }
         if ($this->hasLocalProperty('pid')) {
             return (int)$this->getLocalProperty('pid');
-        } elseif ($this->hasForeignProperty('pid')) {
+        }
+
+        if ($this->hasForeignProperty('pid')) {
             return (int)$this->getForeignProperty('pid');
         }
         return 0;
@@ -1203,9 +1206,12 @@ class Record implements RecordInterface
         if ($this->isPagesTable() && $this->isTranslation()) {
             return $this->getL10nParentIdentifier() ?? 0;
         }
+
         if ($this->hasLocalProperty('pid')) {
             return (int)$this->getLocalProperty('pid');
-        } elseif ($this->hasForeignProperty('pid')) {
+        }
+
+        if ($this->hasForeignProperty('pid')) {
             return (int)$this->getForeignProperty('pid');
         }
         return 0;

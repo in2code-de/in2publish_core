@@ -265,21 +265,18 @@ class RecordFactory implements SingletonInterface
              */
             $tableConfiguration = $this->tcaService->getConfigurationArrayForTable($tableName);
             if (empty($tableConfiguration)) {
-                switch ($tableName) {
-                    case 'sys_file_processedfile':
-                        $identifier = null;
-                        if ($instance->localRecordExists()) {
-                            $identifier = $instance->getLocalProperty('original');
-                        }
-                        if (empty($identifier) && $instance->foreignRecordExists()) {
-                            $identifier = $instance->getForeignProperty('original');
-                        }
-                        if (!empty($identifier)) {
-                            $record = $commonRepository->findByIdentifier($identifier, 'sys_file');
-                            $instance->addRelatedRecord($record);
-                        }
-                        break;
-                    default:
+                if ('sys_file_processedfile' === $tableName) {
+                    $identifier = null;
+                    if ($instance->localRecordExists()) {
+                        $identifier = $instance->getLocalProperty('original');
+                    }
+                    if (empty($identifier) && $instance->foreignRecordExists()) {
+                        $identifier = $instance->getForeignProperty('original');
+                    }
+                    if (!empty($identifier)) {
+                        $record = $commonRepository->findByIdentifier($identifier, 'sys_file');
+                        $instance->addRelatedRecord($record);
+                    }
                 }
             } elseif ($this->currentDepth < $this->config['maximumOverallRecursion']) {
                 $this->currentDepth++;
@@ -485,27 +482,30 @@ class RecordFactory implements SingletonInterface
         }
         if (!empty($localProperties[$idFieldName])) {
             return $localProperties[$idFieldName];
-        } elseif (!empty($foreignProperties[$idFieldName])) {
+        }
+
+        if (!empty($foreignProperties[$idFieldName])) {
             return $foreignProperties[$idFieldName];
-        } else {
-            $combinedIdentifier = Record::createCombinedIdentifier($localProperties, $foreignProperties);
-            if (strlen($combinedIdentifier) === 0) {
-                $filteredLocalProps = array_filter($localProperties);
-                $filteredForeignProps = array_filter($foreignProperties);
-                if (!empty($filteredLocalProps) && !empty($filteredForeignProps)) {
-                    $this->logger->error(
-                        'Could not merge identifier values',
-                        [
-                            'identifierFieldName' => $idFieldName,
-                            'tableName' => $tableName,
-                            'localProperties' => $localProperties,
-                            'foreignProperties' => $foreignProperties,
-                        ]
-                    );
-                }
-            } else {
-                return $combinedIdentifier;
-            }
+        }
+
+        $combinedIdentifier = Record::createCombinedIdentifier($localProperties, $foreignProperties);
+
+        if ($combinedIdentifier !== '') {
+            return $combinedIdentifier;
+        }
+
+        $filteredLocalProps = array_filter($localProperties);
+        $filteredForeignProps = array_filter($foreignProperties);
+        if (!empty($filteredLocalProps) && !empty($filteredForeignProps)) {
+            $this->logger->error(
+                'Could not merge identifier values',
+                [
+                    'identifierFieldName' => $idFieldName,
+                    'tableName' => $tableName,
+                    'localProperties' => $localProperties,
+                    'foreignProperties' => $foreignProperties,
+                ]
+            );
         }
         return 0;
     }

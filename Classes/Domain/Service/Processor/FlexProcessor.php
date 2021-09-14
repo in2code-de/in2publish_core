@@ -76,10 +76,12 @@ class FlexProcessor extends AbstractProcessor
      */
     public function canPreProcess(array $config): bool
     {
-        if (parent::canPreProcess($config) && !array_key_exists(static::DS_POINTER_FIELD, $config)) {
-            if (empty($config[static::DS][static::DEFAULT_VALUE])) {
-                $this->lastReasons[static::DS_POINTER_FIELD] = self::MISSING_POINTER_FIELD;
-            }
+        if (
+            !array_key_exists(static::DS_POINTER_FIELD, $config)
+            && parent::canPreProcess($config)
+            && empty($config[static::DS][static::DEFAULT_VALUE])
+        ) {
+            $this->lastReasons[static::DS_POINTER_FIELD] = self::MISSING_POINTER_FIELD;
         }
 
         return empty($this->lastReasons);

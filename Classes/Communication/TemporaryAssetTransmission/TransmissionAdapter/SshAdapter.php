@@ -151,9 +151,9 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
         if (PHP_MAJOR_VERSION < 7 && function_exists('ssh2_sftp_chmod')) {
             if (ssh2_sftp_chmod($this->sftSession, $target, $this->createMasks['decimalFolderMask'])) {
                 return true;
-            } else {
-                $this->logger->error('Failed to set response via ssh2_sftp_chmod');
             }
+
+            $this->logger->error('Failed to set response via ssh2_sftp_chmod');
         } else {
             $request = GeneralUtility::makeInstance(
                 RemoteCommandRequest::class,
@@ -169,18 +169,18 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
 
             if ($response->isSuccessful()) {
                 return true;
-            } else {
-                $this->logger->error(
-                    'Failed to set response via RCE API',
-                    [
-                        'output' => $response->getOutput(),
-                        'errors' => $response->getErrors(),
-                        'exit_status' => $response->getExitStatus(),
-                        'file_mask_octal' => decoct($this->createMasks['decimalFileMask']),
-                        'target' => $target,
-                    ]
-                );
             }
+
+            $this->logger->error(
+                'Failed to set response via RCE API',
+                [
+                    'output' => $response->getOutput(),
+                    'errors' => $response->getErrors(),
+                    'exit_status' => $response->getExitStatus(),
+                    'file_mask_octal' => decoct($this->createMasks['decimalFileMask']),
+                    'target' => $target,
+                ]
+            );
         }
 
         return false;

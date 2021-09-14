@@ -127,7 +127,7 @@ class ReplaceMarkersService
      */
     protected function replaceRecFieldMarker(RecordInterface $record, string $string): string
     {
-        if (strstr($string, '###REC_FIELD_')) {
+        if (strpos($string, '###REC_FIELD_') !== false) {
             $string = preg_replace_callback(
                 self::REC_FIELD_REGEX,
                 function ($matches) use ($record) {
@@ -287,20 +287,22 @@ class ReplaceMarkersService
     protected function getSimplifiedDataStructureIdentifier(string $dataStructureIdentifier): string
     {
         $identifierArray = json_decode($dataStructureIdentifier, true);
-        $simpleDataStructureIdentifier = 'default';
+
         if (
-            isset($identifierArray['type'])
-            && $identifierArray['type'] === 'tca'
-            && isset($identifierArray['dataStructureKey'])
+            isset($identifierArray['type'], $identifierArray['dataStructureKey'])
+            && 'tca' === $identifierArray['type']
         ) {
             $explodedKey = explode(',', $identifierArray['dataStructureKey']);
             if (!empty($explodedKey[1]) && $explodedKey[1] !== 'list' && $explodedKey[1] !== '*') {
-                $simpleDataStructureIdentifier = $explodedKey[1];
-            } elseif (!empty($explodedKey[0]) && $explodedKey[0] !== 'list' && $explodedKey[0] !== '*') {
-                $simpleDataStructureIdentifier = $explodedKey[0];
+                return $explodedKey[1];
+            }
+
+            if (!empty($explodedKey[0]) && $explodedKey[0] !== 'list' && $explodedKey[0] !== '*') {
+                return $explodedKey[0];
             }
         }
-        return $simpleDataStructureIdentifier;
+
+        return 'default';
     }
 
     /**

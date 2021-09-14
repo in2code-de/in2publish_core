@@ -103,9 +103,9 @@ class ArrayUtility
                 return is_array($array[$key]) ? static::getValueByPath($array[$key], $path) : null;
             }
             return $array[$key];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -117,15 +117,22 @@ class ArrayUtility
      */
     protected static function autoCastString(array &$array, $value, $key)
     {
-        if (strtolower($value) === 'true') {
-            $value = true;
-        } elseif (strtolower($value) === 'false') {
-            $value = false;
-        } elseif (MathUtility::canBeInterpretedAsInteger($value)) {
-            $value = (int)$value;
-        } elseif (strlen($value) === 0 || strtolower($value) === 'null') {
+        if (strtolower((string)$value) === 'true') {
+            return true;
+        }
+
+        if (strtolower((string)$value) === 'false') {
+            return false;
+        }
+
+        if (MathUtility::canBeInterpretedAsInteger($value)) {
+            return (int)$value;
+        }
+
+        if ((string)$value === '' || strtolower((string)$value) === 'null') {
             unset($array[$key]);
         }
+
         return $value;
     }
 }

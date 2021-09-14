@@ -78,7 +78,6 @@ use function array_filter;
 use function array_key_exists;
 use function array_keys;
 use function array_merge;
-use function array_push;
 use function array_shift;
 use function array_unique;
 use function count;
@@ -451,9 +450,8 @@ class CommonRepository extends BaseRepository
                     if (!empty($propertyArray[$key])) {
                         $foreignProperties[$key] = $propertyArray[$key];
                         if (
-                            'sys_file_metadata' === $tableName
-                            && isset($localProperties[$key]['file'])
-                            && isset($foreignProperties[$key]['file'])
+                            isset($localProperties[$key]['file'], $foreignProperties[$key]['file'])
+                            && 'sys_file_metadata' === $tableName
                             && (int)$localProperties[$key]['file'] !== (int)$foreignProperties[$key]['file']
                         ) {
                             // If the fixing of this relation results in a different related
@@ -927,19 +925,19 @@ class CommonRepository extends BaseRepository
                 foreach ($workingData as $subtreeIndex => $subtreeWorkingData) {
                     unset($workingData[$subtreeIndex]);
                     $tmp = $pathStack;
-                    array_push($pathStack, $subtreeIndex);
+                    $pathStack[] = $subtreeIndex;
                     $value = $this->getValueByIndexStack($indexStack, $subtreeWorkingData, $pathStack);
                     $workingData[implode('.', $pathStack)] = $value;
                     $pathStack = $tmp;
                 }
                 return $workingData;
+            }
+
+            $pathStack[] = $index;
+            if (array_key_exists($index, $workingData)) {
+                $workingData = $workingData[$index];
             } else {
-                array_push($pathStack, $index);
-                if (array_key_exists($index, $workingData)) {
-                    $workingData = $workingData[$index];
-                } else {
-                    return null;
-                }
+                return null;
             }
         }
         return $workingData;
@@ -1001,13 +999,14 @@ class CommonRepository extends BaseRepository
             return $records;
         }
 
-        if ($this->shouldSkipSearchingForRelatedRecordsByFlexForm(
+        $shouldSkip = $this->shouldSkipSearchingForRelatedRecordsByFlexForm(
             $record,
             $column,
             $columnConfiguration,
             $flexFormDefinition,
             $flexFormData
-        )) {
+        );
+        if ($shouldSkip) {
             return $records;
         }
 
@@ -1053,13 +1052,15 @@ class CommonRepository extends BaseRepository
         $flexFormData,
         string $key
     ): array {
-        if ($this->shouldSkipSearchingForRelatedRecordsByFlexFormProperty(
+        if (
+        $this->shouldSkipSearchingForRelatedRecordsByFlexFormProperty(
             $record,
             $column,
             $key,
             $config,
             $flexFormData
-        )) {
+        )
+        ) {
             return [];
         }
 
@@ -1553,7 +1554,7 @@ class CommonRepository extends BaseRepository
             $additionalWhereArray = array_merge($additionalWhereArray, $foreignMatchFields);
         }
         $additionalWhere = implode(' AND ', $additionalWhereArray);
-        if (strlen($additionalWhere) > 0) {
+        if ($additionalWhere !== '') {
             $additionalWhere = ' AND ' . $additionalWhere;
         }
         $localProperties = $this->findPropertiesByProperty(
@@ -1823,13 +1824,18 @@ class CommonRepository extends BaseRepository
      */
     protected function isIgnoredRecord(array $localProperties, array $foreignProperties, string $tableName): bool
     {
-        if (
-            $this->isDeletedAndUnchangedRecord($localProperties, $foreignProperties)
-            || $this->isRemovedAndDeletedRecord($localProperties, $foreignProperties)
-            || $this->shouldIgnoreRecord($localProperties, $foreignProperties, $tableName)
-        ) {
+        if ($this->isDeletedAndUnchangedRecord($localProperties, $foreignProperties)) {
             return true;
         }
+
+        if ($this->isRemovedAndDeletedRecord($localProperties, $foreignProperties)) {
+            return true;
+        }
+
+        if ($this->shouldIgnoreRecord($localProperties, $foreignProperties, $tableName)) {
+            return true;
+        }
+
         return false;
     }
 
@@ -2013,7 +2019,7 @@ class CommonRepository extends BaseRepository
         }
 
         foreach ($record->getRelatedRecords() as $tableName => $relatedRecords) {
-            if (!in_array($tableName, $excludedTables) && is_array($relatedRecords)) {
+            if (is_array($relatedRecords) && !in_array($tableName, $excludedTables, true)) {
                 /** @var RecordInterface $relatedRecord */
                 foreach ($relatedRecords as $relatedRecord) {
                     $this->publishRecordRecursiveInternal($relatedRecord, $excludedTables);
