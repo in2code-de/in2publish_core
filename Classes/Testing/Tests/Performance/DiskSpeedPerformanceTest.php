@@ -81,6 +81,11 @@ class DiskSpeedPerformanceTest implements TestCaseInterface
         // Read speed
         $canaryTarget = fopen($canaryFile, 'r');
         $start = microtime(true);
+        /**
+         * @noinspection LoopWhichDoesNotLoopInspection
+         * @noinspection PhpStatementHasEmptyBodyInspection
+         * @noinspection MissingOrEmptyGroupStatementInspection
+         */
         while (fgets($canaryTarget, 1024)) {
             // Do nothing with the read content
         }

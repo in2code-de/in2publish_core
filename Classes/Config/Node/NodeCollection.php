@@ -159,6 +159,10 @@ class NodeCollection extends ArrayObject implements Node
     {
         $tmp = [];
         foreach ($this as $key => $node) {
+            /**
+             * @noinspection MissingOrEmptyGroupStatementInspection
+             * @noinspection PhpStatementHasEmptyBodyInspection
+             */
             if (!is_array($value) && $node instanceof AbsGenNode) {
                 // empty non-array values are considered empty in generic structures.
                 // Return the array to fix the data type.
