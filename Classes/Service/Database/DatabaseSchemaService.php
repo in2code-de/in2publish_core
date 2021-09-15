@@ -30,47 +30,14 @@ namespace In2code\In2publishCore\Service\Database;
  */
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Cache\CacheManager;
-use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
-use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class DatabaseSchemaService implements SingletonInterface
 {
-    /**
-     * @var FrontendInterface
-     */
-    protected $cache;
-
-    /**
-     * @throws NoSuchCacheException
-     */
-    public function __construct()
-    {
-        $this->cache = $this->getCache();
-    }
-
-    /**
-     * @param string $tableName
-     *
-     * @return bool
-     */
     public function tableExists(string $tableName): bool
     {
         $database = DatabaseUtility::buildLocalDatabaseConnection();
 
         return $database && $database->getSchemaManager()->tablesExist([$tableName]);
-    }
-
-    /**
-     * @throws NoSuchCacheException
-     *
-     * @codeCoverageIgnore
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    protected function getCache(): FrontendInterface
-    {
-        return GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
     }
 }
