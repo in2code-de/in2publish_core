@@ -71,7 +71,7 @@ class DiskSpeedPerformanceTest implements TestCaseInterface
             }
         );
 
-        $canaryTarget = fopen($canaryFile, 'w');
+        $canaryTarget = fopen($canaryFile, 'wb');
         for ($i = 0; $i < 10; $i++) {
             $bytes = random_bytes(1024 * 1024);
             fwrite($canaryTarget, $bytes);
@@ -79,7 +79,7 @@ class DiskSpeedPerformanceTest implements TestCaseInterface
         fclose($canaryTarget);
 
         // Read speed
-        $canaryTarget = fopen($canaryFile, 'r');
+        $canaryTarget = fopen($canaryFile, 'rb');
         $start = microtime(true);
         /**
          * @noinspection LoopWhichDoesNotLoopInspection
@@ -93,8 +93,8 @@ class DiskSpeedPerformanceTest implements TestCaseInterface
         fclose($canaryTarget);
 
         // Write speed
-        $canarySource = fopen($canaryFile, 'r');
-        $canaryTarget = fopen($targetFile, 'w');
+        $canarySource = fopen($canaryFile, 'rb');
+        $canaryTarget = fopen($targetFile, 'wb');
         $start = microtime(true);
         while ($bytes = fgets($canarySource, 1024)) {
             fwrite($canaryTarget, $bytes);
