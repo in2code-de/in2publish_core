@@ -46,13 +46,20 @@ class FileIndexPostProcessor implements PostProcessor, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
+    /** @var ResourceFactory */
+    protected $resourceFactory;
+
+    public function __construct(ResourceFactory $resourceFactory)
+    {
+        $this->resourceFactory = $resourceFactory;
+    }
+
     /**
      * @param RecordInterface[] $records
      * @throws ReflectionException
      */
     public function postProcess(array $records): void
     {
-        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         /** @var RecordInterface[][] $sortedRecords */
         $sortedRecords = [];
         /** @var array<ResourceStorage> $storages */
@@ -67,7 +74,7 @@ class FileIndexPostProcessor implements PostProcessor, LoggerAwareInterface
                 continue;
             } elseif (!isset($storages[$uid])) {
                 try {
-                    $storages[$uid] = $resourceFactory->getStorageObject($uid);
+                    $storages[$uid] = $this->resourceFactory->getStorageObject($uid);
                 } catch (InvalidArgumentException $exception) {
                     $skipStorages[$uid] = [];
                     $skipStorages[$uid][] = $record->getTableName() . '[' . $record->getIdentifier() . ']';

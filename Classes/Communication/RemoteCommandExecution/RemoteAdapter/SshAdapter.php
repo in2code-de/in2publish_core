@@ -49,29 +49,20 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
 {
     public const ADAPTER_KEY = 'ssh';
 
-    /**
-     * @var resource
-     */
+    /** @var resource */
     protected $session;
 
-    /**
-     * @param RemoteCommandRequest $request
-     *
-     * @return RemoteCommandResponse
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
+    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function execute(RemoteCommandRequest $request): RemoteCommandResponse
     {
         if (null === $this->session) {
             try {
                 $this->session = $this->establishSshSession();
-            } catch (In2publishCoreException $e) {
-                return GeneralUtility::makeInstance(
-                    RemoteCommandResponse::class,
+            } catch (In2publishCoreException $exception) {
+                return new RemoteCommandResponse(
                     'An error occurred',
-                    $e->getMessage(),
-                    $e->getCode()
+                    $exception->getMessage(),
+                    $exception->getCode()
                 );
             }
         }
@@ -97,19 +88,16 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
         $exitStatusLine = array_pop($output);
 
         if (1 === preg_match('~CODE_(?P<code>\d+)_CODE~', $exitStatusLine, $matches)) {
-            $exitStatus = $matches['code'];
+            $exitStatus = (int)$matches['code'];
         } else {
             $this->logger->warning('Could not find exit status in command output. Using 1 as fallback');
             $exitStatus = 1;
         }
 
-        return GeneralUtility::makeInstance(RemoteCommandResponse::class, $output, $errors, $exitStatus);
+        return new RemoteCommandResponse($output, $errors, $exitStatus);
     }
 
-    /**
-     * Properly log off from the session
-     */
-    protected function disconnect()
+    protected function disconnect(): void
     {
         if (is_resource($this->session)) {
             ssh2_exec($this->session, 'exit');

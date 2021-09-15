@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Domain\Service\TableConfiguration;
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Service\Configuration\TcaService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
 use function sprintf;
@@ -40,22 +39,15 @@ use function trim;
 
 class LabelService
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $emptyFieldValue = '---';
 
-    /**
-     * @var TcaService
-     */
-    protected $tcaService = null;
+    /** @var TcaService */
+    protected $tcaService;
 
-    /**
-     * LabelService constructor.
-     */
-    public function __construct()
+    public function __construct(TcaService $tcaService)
     {
-        $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
+        $this->tcaService = $tcaService;
     }
 
     /**

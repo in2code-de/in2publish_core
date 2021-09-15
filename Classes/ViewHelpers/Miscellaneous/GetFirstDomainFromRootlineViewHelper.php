@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 use In2code\In2publishCore\Service\Routing\SiteService;
 use In2code\In2publishCore\Utility\UriUtility;
 use In2code\In2publishCore\ViewHelpers\Link\PreviewRecordViewHelper;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 use function ltrim;
@@ -44,6 +43,14 @@ use const E_USER_DEPRECATED;
 class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
 {
     protected const DEPRECATED_VIEWHELPER = 'The ViewHelper "%s" is deprecated and will be removed in in2publish_core version 11. Use %s instead.';
+
+    /** @var SiteService */
+    private $siteService;
+
+    public function __construct(SiteService $siteService)
+    {
+        $this->siteService = $siteService;
+    }
 
     public function initializeArguments()
     {
@@ -68,8 +75,7 @@ class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
         $stagingLevel = $this->arguments['stagingLevel'];
         $addProtocol = $this->arguments['addProtocol'];
 
-        $siteService = GeneralUtility::makeInstance(SiteService::class);
-        $site = $siteService->getSiteForPidAndStagingLevel($identifier, $stagingLevel);
+        $site = $this->siteService->getSiteForPidAndStagingLevel($identifier, $stagingLevel);
         if (null === $site) {
             return '';
         }

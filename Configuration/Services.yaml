@@ -6,6 +6,7 @@ services:
     bind:
       $localDatabase: '@In2code.In2publishCore.Database.Local'
       $foreignDatabase: '@In2code.In2publishCore.Database.Foreign'
+      $cache: '@cache.in2publish_core'
 
   In2code\In2publishCore\:
     resource: '../Classes/*'
@@ -23,6 +24,29 @@ services:
 
   In2code\In2publishCore\Domain\PostProcessing\Processor\PostProcessor:
     factory: ['@In2code\In2publishCore\Domain\PostProcessing\PostProcessorFactory', 'createPostProcessor']
+
+  In2code\In2publishCore\Domain\Factory\FolderRecordFactory:
+    public: true
+
+  In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory:
+    public: true
+
+  In2code\In2publishCore\Domain\Repository\CommonRepository:
+    public: true
+
+  In2code\In2publishCore\Service\Environment\ForeignEnvironmentService:
+    public: true
+
+  In2code\In2publishCore\Domain\PostProcessing\Processor\FalIndexPostProcessor:
+    public: true
+
+  In2code\In2publishCore\Features\WarningOnForeign\Service\HeaderWarningColorRenderer:
+    public: true
+
+  cache.in2publish_core:
+    class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
+    factory: ['@TYPO3\CMS\Core\Cache\CacheManager', 'getCache']
+    arguments: ['in2publish_core']
 
   # Commands
 

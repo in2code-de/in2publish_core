@@ -36,7 +36,6 @@ use In2code\In2publishCore\Domain\Service\Publishing\Exception\UnexpectedMissing
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
 use function basename;
@@ -50,9 +49,20 @@ class FilePublisherService implements LoggerAwareInterface
     /** @var RemoteFileAbstractionLayerDriver */
     protected $remoteFalDriver;
 
-    public function __construct(RemoteFileAbstractionLayerDriver $remoteFalDriver)
-    {
+    /** @var ResourceFactory */
+    protected $resourceFactory;
+
+    /** @var AssetTransmitter */
+    protected $assetTransmitter;
+
+    public function __construct(
+        RemoteFileAbstractionLayerDriver $remoteFalDriver,
+        ResourceFactory $resourceFactory,
+        AssetTransmitter $assetTransmitter
+    ) {
         $this->remoteFalDriver = $remoteFalDriver;
+        $this->resourceFactory = $resourceFactory;
+        $this->assetTransmitter = $assetTransmitter;
     }
 
     public function removeForeignFile(int $storage, string $fileIdentifier): bool
@@ -131,16 +141,13 @@ class FilePublisherService implements LoggerAwareInterface
             throw UnexpectedMissingFileException::fromFileIdentifierAndStorage($fileIdentifier, $storage);
         }
 
-        $assetTransmitter = GeneralUtility::makeInstance(AssetTransmitter::class);
-
-        return $assetTransmitter->transmitTemporaryFile($source);
+        return $this->assetTransmitter->transmitTemporaryFile($source);
     }
 
     protected function getLocalReadableFilePathForIdentifier(int $storage, string $fileIdentifier): string
     {
-        return GeneralUtility::makeInstance(ResourceFactory::class)
-                             ->getStorageObject($storage)
-                             ->getFile($fileIdentifier)
-                             ->getForLocalProcessing(false);
+        $resourceStorage = $this->resourceFactory->getStorageObject($storage);
+        $file = $resourceStorage->getFile($fileIdentifier);
+        return $file->getForLocalProcessing(false);
     }
 }

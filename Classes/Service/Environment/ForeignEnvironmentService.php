@@ -34,11 +34,9 @@ use In2code\In2publishCore\Command\Status\DbInitQueryEncodedCommand;
 use In2code\In2publishCore\Command\Status\EncryptionKeyCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
-use TYPO3\CMS\Core\Cache\CacheManager;
-use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function base64_decode;
@@ -49,25 +47,20 @@ use function strpos;
  * Used to receive static information about the foreign environment like
  * configuration values or server variables
  */
-class ForeignEnvironmentService
+class ForeignEnvironmentService implements LoggerAwareInterface
 {
-    /**
-     * @var FrontendInterface
-     */
+    use LoggerAwareTrait;
+
+    /** @var FrontendInterface */
     protected $cache;
 
-    /**
-     * @var Logger
-     */
-    protected $logger;
+    /** @var RemoteCommandDispatcher */
+    protected $remoteCommandDispatcher;
 
-    /**
-     * @throws NoSuchCacheException
-     */
-    public function __construct()
+    public function __construct(FrontendInterface $cache, RemoteCommandDispatcher $remoteCommandDispatcher)
     {
-        $this->cache = $this->getCache();
-        $this->logger = $this->getLogger();
+        $this->cache = $cache;
+        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
     /**
@@ -79,11 +72,8 @@ class ForeignEnvironmentService
             return $this->cache->get('foreign_db_init');
         }
 
-        $request = GeneralUtility::makeInstance(
-            RemoteCommandRequest::class,
-            DbInitQueryEncodedCommand::IDENTIFIER
-        );
-        $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
+        $request = new RemoteCommandRequest(DbInitQueryEncodedCommand::IDENTIFIER);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
         $decodedDbInit = '';
         if ($response->isSuccessful()) {
@@ -117,11 +107,8 @@ class ForeignEnvironmentService
     public function getCreateMasks(): array
     {
         if (!$this->cache->has('create_masks')) {
-            $request = GeneralUtility::makeInstance(
-                RemoteCommandRequest::class,
-                CreateMasksCommand::IDENTIFIER
-            );
-            $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
+            $request = new RemoteCommandRequest(CreateMasksCommand::IDENTIFIER);
+            $response = $this->remoteCommandDispatcher->dispatch($request);
 
             $createMasks = null;
 
@@ -162,9 +149,8 @@ class ForeignEnvironmentService
         if (!$this->cache->has('encryption_key')) {
             $encryptionKey = null;
 
-            $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, EncryptionKeyCommand::IDENTIFIER);
-            $dispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
-            $response = $dispatcher->dispatch($request);
+            $request = new RemoteCommandRequest(EncryptionKeyCommand::IDENTIFIER);
+            $response = $this->remoteCommandDispatcher->dispatch($request);
 
             if ($response->isSuccessful()) {
                 $values = $this->tokenizeResponse($response->getOutput());
@@ -176,26 +162,6 @@ class ForeignEnvironmentService
         }
 
         return $this->cache->get('encryption_key');
-    }
-
-    /**
-     * @return FrontendInterface
-     *
-     * @throws NoSuchCacheException
-     *
-     * @codeCoverageIgnore
-     */
-    protected function getCache(): FrontendInterface
-    {
-        return GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    protected function getLogger(): Logger
-    {
-        return GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
     }
 
     /**

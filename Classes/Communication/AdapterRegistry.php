@@ -40,7 +40,6 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_column;
 use function array_combine;
@@ -82,12 +81,12 @@ class AdapterRegistry implements SingletonInterface, LoggerAwareInterface
      * @SuppressWarnings(PHPMD.Superglobals)
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function __construct()
+    public function __construct(ExtensionConfiguration $extensionConfiguration)
     {
         if (!isset($GLOBALS['in2publish_core']['tests'])) {
             $GLOBALS['in2publish_core']['tests'] = [];
         }
-        $setConf = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('in2publish_core');
+        $setConf = $extensionConfiguration->get('in2publish_core');
         ArrayUtility::mergeRecursiveWithOverrule($this->config, $setConf, false);
     }
 

@@ -183,7 +183,8 @@ class SysRedirect extends AbstractEntity
     public function getRecord(): RecordInterface
     {
         if (!isset($this->rtc['record'])) {
-            $this->rtc['record'] = CommonRepository::getDefaultInstance()->findByIdentifier($this->uid, 'sys_redirect');
+            $this->rtc['record'] = GeneralUtility::makeInstance(CommonRepository::class)
+                                                 ->findByIdentifier($this->uid, 'sys_redirect');
         }
         return $this->rtc['record'];
     }

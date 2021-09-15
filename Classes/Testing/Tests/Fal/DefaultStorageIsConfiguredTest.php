@@ -33,16 +33,23 @@ use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class DefaultStorageIsConfiguredTest implements TestCaseInterface
 {
+    /** @var ResourceFactory */
+    protected $resourceFactory;
+
+    public function __construct(ResourceFactory $resourceFactory)
+    {
+        $this->resourceFactory = $resourceFactory;
+    }
+
     /**
      * @return TestResult
      */
     public function run(): TestResult
     {
-        if (null === GeneralUtility::makeInstance(ResourceFactory::class)->getDefaultStorage()) {
+        if (null === $this->resourceFactory->getDefaultStorage()) {
             return new TestResult('fal.default_storage.missing', TestResult::ERROR);
         }
         return new TestResult('fal.default_storage.configured');

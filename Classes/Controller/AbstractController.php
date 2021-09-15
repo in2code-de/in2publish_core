@@ -32,11 +32,13 @@ namespace In2code\In2publishCore\Controller;
 use In2code\In2publishCore\Command\PublishTaskRunner\RunTasksInQueueCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
+use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Throwable;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\Arguments;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
@@ -59,15 +61,23 @@ abstract class AbstractController extends ActionController
      */
     protected $backendUser = null;
 
+    /** @var RemoteCommandDispatcher */
+    protected $remoteCommandDispatcher;
+
     /**
      * AbstractConfiguredController constructor.
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function __construct()
-    {
-        parent::__construct();
+    public function __construct(
+        ConfigContainer $configContainer,
+        ExecutionTimeService $executionTimeService,
+        EnvironmentService $environmentService,
+        RemoteCommandDispatcher $remoteCommandDispatcher
+    ) {
+        parent::__construct($configContainer, $executionTimeService, $environmentService);
         $this->backendUser = $GLOBALS['BE_USER'];
+        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
     /**
@@ -148,9 +158,8 @@ abstract class AbstractController extends ActionController
      */
     protected function runTasks()
     {
-        $dispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, RunTasksInQueueCommand::IDENTIFIER);
-        $response = $dispatcher->dispatch($request);
+        $request = new RemoteCommandRequest(RunTasksInQueueCommand::IDENTIFIER);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
         if ($response->isSuccessful()) {
             $this->logger->info('Task execution results', ['output' => $response->getOutput()]);

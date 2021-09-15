@@ -29,10 +29,7 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Closure;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
@@ -41,9 +38,17 @@ class GetIsoBySysLanguageUidViewHelper extends AbstractViewHelper
     use CompileWithRenderStatic;
 
     protected const LANGUAGE = 'language';
-    const TBL_SYS_LANGUAGE = 'sys_language';
+    protected const TBL_SYS_LANGUAGE = 'sys_language';
 
-    protected static $rtc = [];
+    /** @var ConnectionPool */
+    protected $connectionPool;
+
+    protected $rtc = [];
+
+    public function __construct(ConnectionPool $connectionPool)
+    {
+        $this->connectionPool = $connectionPool;
+    }
 
     public function initializeArguments()
     {
@@ -51,30 +56,19 @@ class GetIsoBySysLanguageUidViewHelper extends AbstractViewHelper
         $this->registerArgument(self::LANGUAGE, 'int', 'UID of a sys_language record', true);
     }
 
-    /**
-     * @param array $arguments
-     * @param Closure $renderChildrenClosure
-     * @param RenderingContextInterface $renderingContext
-     * @return string
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @SuppressWarnings(PHPMD.LongVariable)
-     */
-    public static function renderStatic(
-        array $arguments,
-        Closure $renderChildrenClosure,
-        RenderingContextInterface $renderingContext
-    ): string {
-        $language = $arguments[self::LANGUAGE];
-        if (!isset(self::$rtc[$language])) {
-            $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
-            $query = $connectionPool->getQueryBuilderForTable(self::TBL_SYS_LANGUAGE);
+    public function render(): string
+    {
+        $language = $this->arguments[self::LANGUAGE];
+
+        if (!isset($this->rtc[$language])) {
+            $query = $this->connectionPool->getQueryBuilderForTable(self::TBL_SYS_LANGUAGE);
             $query->select('flag')
                   ->from(self::TBL_SYS_LANGUAGE)
                   ->where($query->expr()->eq('uid', $query->createNamedParameter($language)));
             $statement = $query->execute();
-            self::$rtc[$language] = (string)$statement->fetchOne();
+            $this->rtc[$language] = (string)$statement->fetchOne();
         }
-        return self::$rtc[$language];
+
+        return $this->rtc[$language];
     }
 }

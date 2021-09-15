@@ -33,7 +33,6 @@ use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_keys;
 use function array_merge;
@@ -42,17 +41,12 @@ use function sprintf;
 
 class IdenticalDriverTest implements TestCaseInterface
 {
-    /**
-     * @var FalStorageTestSubjectsProvider
-     */
+    /** @var FalStorageTestSubjectsProvider */
     protected $testSubjectProvider;
 
-    /**
-     * IdenticalDriverTest constructor.
-     */
-    public function __construct()
+    public function __construct(FalStorageTestSubjectsProvider $testSubjectProvider)
     {
-        $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);
+        $this->testSubjectProvider = $testSubjectProvider;
     }
 
     /**

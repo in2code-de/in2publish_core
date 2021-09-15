@@ -80,12 +80,25 @@ class IndexingFolderRecordFactory
      */
     protected $threshold = 150;
 
+    /** @var ResourceFactory */
+    protected $resourceFactory;
+
+    /** @var CommonRepository */
+    protected $commonRepository;
+
     /**
      * IndexingFolderRecordFactory constructor.
      */
-    public function __construct()
-    {
-        $this->threshold = GeneralUtility::makeInstance(ConfigContainer::class)->get('factory.fal.folderFileLimit');
+    public function __construct(
+        ConfigContainer $configContainer,
+        RemoteStorage $remoteStorage,
+        ResourceFactory $resourceFactory,
+        CommonRepository $commonRepository
+    ) {
+        $this->threshold = $configContainer->get('factory.fal.folderFileLimit');
+        $this->remoteStorage = $remoteStorage;
+        $this->resourceFactory = $resourceFactory;
+        $this->commonRepository = $commonRepository;
     }
 
     /**
@@ -117,20 +130,19 @@ class IndexingFolderRecordFactory
     public function makeInstance(?string $dir): RecordInterface
     {
         // determine current folder
-        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         try {
             if (null === $dir) {
-                $localFolder = $resourceFactory->getDefaultStorage()->getRootLevelFolder();
+                $localFolder = $this->resourceFactory->getDefaultStorage()->getRootLevelFolder();
             } else {
-                $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($dir);
+                $localFolder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($dir);
             }
         } catch (FolderDoesNotExistException $exception) {
-            $localFolder = $resourceFactory->getStorageObject(substr($dir, 0, strpos($dir, ':')))->getRootLevelFolder();
+            $resourceStorage = $this->resourceFactory->getStorageObject(substr($dir, 0, strpos($dir, ':')));
+            $localFolder = $resourceStorage->getRootLevelFolder();
         }
 
         // get FAL storages for each side
         $this->localStorage = $localFolder->getStorage();
-        $this->remoteStorage = GeneralUtility::makeInstance(RemoteStorage::class);
 
         // some often used variables
         $storageUid = $this->localStorage->getUid();
@@ -179,7 +191,7 @@ class IndexingFolderRecordFactory
         }
 
         $properties = ['folder_hash' => $localFolder->getHashedIdentifier(), 'storage' => $storageUid];
-        $records = CommonRepository::getDefaultInstance()->findByProperties($properties, true, 'sys_file');
+        $records = $this->commonRepository->findByProperties($properties, true, 'sys_file');
         $records = $this->filterRecords($localFiles, $remoteFiles, $records);
         $rootFolder->addRelatedRecords($records);
 

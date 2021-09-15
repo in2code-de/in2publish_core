@@ -36,13 +36,20 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_merge;
 use function in_array;
 
 class ForeignDatabaseTest implements TestCaseInterface
 {
+    /** @var RequiredTablesDataProvider */
+    protected $requiredTablesDataProvider;
+
+    public function __construct(RequiredTablesDataProvider $requiredTablesDataProvider)
+    {
+        $this->requiredTablesDataProvider = $requiredTablesDataProvider;
+    }
+
     /**
      * @return TestResult
      */
@@ -58,7 +65,7 @@ class ForeignDatabaseTest implements TestCaseInterface
             return new TestResult('database.foreign_offline', TestResult::ERROR);
         }
 
-        $expectedTables = GeneralUtility::makeInstance(RequiredTablesDataProvider::class)->getRequiredTables();
+        $expectedTables = $this->requiredTablesDataProvider->getRequiredTables();
         $actualTables = $foreignDatabase->getSchemaManager()->listTableNames();
 
         $missingTables = [];

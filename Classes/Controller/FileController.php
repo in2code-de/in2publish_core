@@ -30,13 +30,17 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyFilesException;
 use In2code\In2publishCore\Domain\Factory\FolderRecordFactory;
 use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
+use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use RuntimeException;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
@@ -55,10 +59,32 @@ use function strpos;
  */
 class FileController extends AbstractController
 {
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $forcePidInteger = false;
+
+    /** @var FolderPublisherService */
+    protected $folderPublisherService;
+
+    /** @var CommonRepository */
+    protected $commonRepository;
+
+    public function __construct(
+        ConfigContainer $configContainer,
+        ExecutionTimeService $executionTimeService,
+        EnvironmentService $environmentService,
+        RemoteCommandDispatcher $remoteCommandDispatcher,
+        FolderPublisherService $folderPublisherService,
+        CommonRepository $commonRepository
+    ) {
+        parent::__construct(
+            $configContainer,
+            $executionTimeService,
+            $environmentService,
+            $remoteCommandDispatcher
+        );
+        $this->folderPublisherService = $folderPublisherService;
+        $this->commonRepository = $commonRepository;
+    }
 
     /**
      * @SuppressWarnings(PHPMD.StaticAccess)
@@ -79,7 +105,7 @@ class FileController extends AbstractController
      */
     public function publishFolderAction(string $identifier)
     {
-        $success = GeneralUtility::makeInstance(FolderPublisherService::class)->publish($identifier);
+        $success = $this->folderPublisherService->publish($identifier);
         $this->runTasks();
 
         if ($success) {
@@ -130,7 +156,7 @@ class FileController extends AbstractController
             }
 
             try {
-                CommonRepository::getDefaultInstance()->publishRecordRecursive($relatedRecord);
+                $this->commonRepository->publishRecordRecursive($relatedRecord);
                 $this->addFlashMessage(
                     LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
                     LocalizationUtility::translate('file_publishing.success', 'in2publish_core')

@@ -33,22 +33,31 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Config\ValidationContainer;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ConfigurationFormatTest implements TestCaseInterface
 {
+    /** @var ValidationContainer */
+    private $validationContainer;
+
+    /** @var ConfigContainer */
+    private $configContainer;
+
+    public function __construct(ValidationContainer $validationContainer, ConfigContainer $configContainer)
+    {
+        $this->validationContainer = $validationContainer;
+        $this->configContainer = $configContainer;
+    }
+
     /**
      * @return TestResult
      */
     public function run(): TestResult
     {
-        $container = GeneralUtility::makeInstance(ValidationContainer::class);
-        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-        $definition = $configContainer->getLocalDefinition();
-        $actual = GeneralUtility::makeInstance(ConfigContainer::class)->get();
-        $definition->validate($container, $actual);
+        $definition = $this->configContainer->getLocalDefinition();
+        $actual = $this->configContainer->get();
+        $definition->validate($this->validationContainer, $actual);
 
-        $errors = $container->getErrors();
+        $errors = $this->validationContainer->getErrors();
         if (!empty($errors)) {
             return new TestResult('configuration.format_error', TestResult::ERROR, $errors);
         }

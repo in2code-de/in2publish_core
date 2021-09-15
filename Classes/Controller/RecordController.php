@@ -30,13 +30,17 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
 use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
 use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Factory\FakeRecordFactory;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Log\Processor\PublishingFailureCollector;
+use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use In2code\In2publishCore\Utility\LogUtility;
 use Throwable;
@@ -63,14 +67,40 @@ class RecordController extends AbstractController
      */
     protected $commonRepository = null;
 
-    /**
-     *
-     */
+    /** @var PublishingFailureCollector */
+    protected $publishingFailureCollector;
+
+    /** @var FakeRecordFactory */
+    protected $fakeRecordFactory;
+
+    /** @var PermissionService */
+    protected $permissionService;
+
+    public function __construct(
+        ConfigContainer $configContainer,
+        ExecutionTimeService $executionTimeService,
+        EnvironmentService $environmentService,
+        RemoteCommandDispatcher $remoteCommandDispatcher,
+        PublishingFailureCollector $publishingFailureCollector,
+        FakeRecordFactory $fakeRecordFactory,
+        PermissionService $permissionService
+    ) {
+        parent::__construct(
+            $configContainer,
+            $executionTimeService,
+            $environmentService,
+            $remoteCommandDispatcher
+        );
+        $this->publishingFailureCollector = $publishingFailureCollector;
+        $this->fakeRecordFactory = $fakeRecordFactory;
+        $this->permissionService = $permissionService;
+    }
+
     public function initializeAction()
     {
         parent::initializeAction();
         if (static::BLANK_ACTION !== $this->actionMethodName) {
-            $this->commonRepository = CommonRepository::getDefaultInstance();
+            $this->commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
         }
     }
 
@@ -86,19 +116,19 @@ class RecordController extends AbstractController
     public function indexAction()
     {
         $this->logger->debug('Called indexAction');
-        TcaProcessingService::getInstance();
+        GeneralUtility::makeInstance(TcaProcessingService::class);
         if (!$this->configContainer->get('factory.simpleOverviewAndAjax')) {
             $record = $this->commonRepository->findByIdentifier($this->pid, 'pages');
         } else {
-            $record = GeneralUtility::makeInstance(FakeRecordFactory::class)->buildFromStartPage($this->pid);
+            $record = $this->fakeRecordFactory->buildFromStartPage($this->pid);
         }
-        $publishingFailureCollector = GeneralUtility::makeInstance(PublishingFailureCollector::class);
-        $failures = $publishingFailureCollector->getFailures();
+        $failures = $this->publishingFailureCollector->getFailures();
 
         if (!empty($failures)) {
             $message = '"' . implode('"; "', array_keys($failures)) . '"';
             $title = LocalizationUtility::translate('relation_resolving_errors', 'in2publish_core');
-            $severity = LogUtility::translateLogLevelToSeverity($publishingFailureCollector->getMostCriticalLogLevel());
+            $mostCriticalLogLevel = $this->publishingFailureCollector->getMostCriticalLogLevel();
+            $severity = LogUtility::translateLogLevelToSeverity($mostCriticalLogLevel);
             $this->addFlashMessage($message, $title, $severity);
         }
         $this->view->assign('record', $record);
@@ -131,7 +161,7 @@ class RecordController extends AbstractController
      */
     public function initializePublishRecordAction()
     {
-        if (!GeneralUtility::makeInstance(PermissionService::class)->isUserAllowedToPublish()) {
+        if (!$this->permissionService->isUserAllowedToPublish()) {
             throw new In2publishCoreException('You are not allowed to publish', 1435306780);
         }
     }
@@ -197,8 +227,7 @@ class RecordController extends AbstractController
      */
     protected function addFlashMessagesAndRedirectToIndex()
     {
-        $publishingFailureCollector = GeneralUtility::makeInstance(PublishingFailureCollector::class);
-        $failures = $publishingFailureCollector->getFailures();
+        $failures = $this->publishingFailureCollector->getFailures();
 
         if (empty($failures)) {
             $message = '';
@@ -207,7 +236,8 @@ class RecordController extends AbstractController
         } else {
             $message = '"' . implode('"; "', array_keys($failures)) . '"';
             $title = LocalizationUtility::translate('record_publishing_failure', 'in2publish_core');
-            $severity = LogUtility::translateLogLevelToSeverity($publishingFailureCollector->getMostCriticalLogLevel());
+            $mostCriticalLogLevel = $this->publishingFailureCollector->getMostCriticalLogLevel();
+            $severity = LogUtility::translateLogLevelToSeverity($mostCriticalLogLevel);
         }
         $this->addFlashMessage($message, $title, $severity);
 

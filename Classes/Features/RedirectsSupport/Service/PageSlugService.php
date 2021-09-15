@@ -33,24 +33,26 @@ use In2code\In2publishCore\Service\Routing\SiteService;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Site\Entity\Site;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PageSlugService
 {
     /** @var SiteService */
     protected $siteService;
 
-    public function __construct()
+    /** @var ConnectionPool */
+    protected $connectionPool;
+
+    public function __construct(SiteService $siteService, ConnectionPool $connectionPool)
     {
-        $this->siteService = GeneralUtility::makeInstance(SiteService::class);
+        $this->siteService = $siteService;
+        $this->connectionPool = $connectionPool;
     }
 
     public function updateData(): void
     {
-        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
-        $dataTableConnection = $connectionPool->getConnectionForTable('tx_in2publishcore_pages_slug_data');
-        $query = $connectionPool->getQueryBuilderForTable('pages');
-        $query->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+        $dataTableConnection = $this->connectionPool->getConnectionForTable('tx_in2publishcore_pages_slug_data');
+        $query = $this->connectionPool->getQueryBuilderForTable('pages');
+        $query->getRestrictions()->removeAll()->add(new DeletedRestriction());
         $query->select('p.uid', 'p.slug', 'p.sys_language_uid')
               ->from('pages', 'p')
               ->leftJoin(

@@ -76,6 +76,14 @@ class ConfigContainer implements SingletonInterface
         'foreign' => null,
     ];
 
+    /** @var ContextService */
+    protected $contextService;
+
+    public function __construct(ContextService $contextService)
+    {
+        $this->contextService = $contextService;
+    }
+
     /**
      * @param string $path
      *
@@ -180,7 +188,7 @@ class ConfigContainer implements SingletonInterface
             }
         }
 
-        if (GeneralUtility::makeInstance(ContextService::class)->isLocal()) {
+        if ($this->contextService->isLocal()) {
             $config = $this->getLocalDefinition()->cast($config);
         } else {
             $config = $this->getForeignDefinition()->cast($config);

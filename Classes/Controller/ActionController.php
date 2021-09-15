@@ -35,10 +35,10 @@ use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\ExtensionUtility;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as ExtbaseActionController;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 
 use function is_int;
@@ -46,17 +46,15 @@ use function is_int;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
+abstract class ActionController extends ExtbaseActionController implements LoggerAwareInterface
 {
-    /**
-     * @var Logger
-     */
-    protected $logger;
+    use LoggerAwareTrait;
 
-    /**
-     * @var ConfigContainer
-     */
+    /** @var ConfigContainer */
     protected $configContainer;
+
+    /** @var EnvironmentService */
+    protected $environmentService;
 
     /**
      * Page ID
@@ -78,17 +76,20 @@ abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function __construct()
-    {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+    public function __construct(
+        ConfigContainer $configContainer,
+        ExecutionTimeService $executionTimeService,
+        EnvironmentService $environmentService
+    ) {
+        $this->configContainer = $configContainer;
         $pid = BackendUtility::getPageIdentifier();
         if (true === $this->forcePidInteger && !is_int($pid)) {
             $this->logger->warning('Page identifier is not an int. Falling back to 0.', ['pid' => $this->pid]);
             $pid = 0;
         }
         $this->pid = $pid;
-        GeneralUtility::makeInstance(ExecutionTimeService::class)->start();
+        $executionTimeService->start();
+        $this->environmentService = $environmentService;
     }
 
     /**
@@ -126,7 +127,7 @@ abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
         parent::initializeView($view);
         $this->view->assign('extensionVersion', ExtensionUtility::getExtensionVersion('in2publish_core'));
         $this->view->assign('config', $this->configContainer->get());
-        $this->view->assign('testStatus', GeneralUtility::makeInstance(EnvironmentService::class)->getTestStatus());
+        $this->view->assign('testStatus', $this->environmentService->getTestStatus());
     }
 
     /**

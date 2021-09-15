@@ -59,19 +59,13 @@ use function sprintf;
  */
 class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 {
-    /**
-     * @var RemoteCommandDispatcher
-     */
-    protected $rceDispatcher = null;
+    /** @var RemoteCommandDispatcher */
+    protected $rceDispatcher;
 
-    /**
-     * @var Letterbox
-     */
-    protected $letterBox = null;
+    /** @var Letterbox */
+    protected $letterBox;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $remoteDriverSettings = [];
 
     /**
@@ -749,12 +743,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
             );
         }
 
-        $request = GeneralUtility::makeInstance(
-            RemoteCommandRequest::class,
-            ExecuteCommand::IDENTIFIER,
-            [],
-            [$uid]
-        );
+        $request = new RemoteCommandRequest(ExecuteCommand::IDENTIFIER, [], [$uid]);
         $response = $this->rceDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {

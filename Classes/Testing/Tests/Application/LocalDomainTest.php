@@ -34,31 +34,30 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Site\SiteFinder;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class LocalDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
-    /**
-     * @var Connection
-     */
-    protected $localConnection = null;
+    /** @var Connection */
+    protected $localConnection;
+
+    /** @var SiteFinder */
+    protected $siteFinder;
 
     protected $prefix = 'local';
 
     /**
-     * LocalSysDomainTest constructor.
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function __construct()
+    public function __construct(SiteFinder $siteFinder)
     {
         $this->localConnection = DatabaseUtility::buildLocalDatabaseConnection();
+        $this->siteFinder = $siteFinder;
     }
 
     protected function getPageToSiteBaseMapping(): array
     {
-        $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
         $shortInfo = [];
-        foreach ($siteFinder->getAllSites() as $site) {
+        foreach ($this->siteFinder->getAllSites() as $site) {
             $shortInfo[$site->getRootPageId()] = $site->getBase()->__toString();
         }
         return $shortInfo;

@@ -31,16 +31,15 @@ namespace In2code\In2publishCore\Service\Permission;
 
 use In2code\In2publishCore\Event\VoteIfUserIsAllowedToPublish;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PermissionService
 {
     /** @var EventDispatcher */
     protected $eventDispatcher;
 
-    public function __construct()
+    public function __construct(EventDispatcher $eventDispatcher)
     {
-        $this->eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**

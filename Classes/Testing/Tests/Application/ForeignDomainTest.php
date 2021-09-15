@@ -47,24 +47,17 @@ use function json_decode;
 
 class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
-    /**
-     * @var RemoteCommandDispatcher
-     */
+    /** @var RemoteCommandDispatcher */
     protected $rceDispatcher;
 
-    /**
-     * @var Connection
-     */
-    protected $foreignConnection = null;
+    /** @var Connection */
+    protected $foreignConnection;
 
     protected $prefix = 'foreign';
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
+    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher)
     {
-        $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
+        $this->rceDispatcher = $remoteCommandDispatcher;
         try {
             $this->foreignConnection = DatabaseUtility::buildForeignDatabaseConnection();
         } catch (Throwable $throwable) {
@@ -74,7 +67,7 @@ class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
 
     protected function getPageToSiteBaseMapping(): array
     {
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
+        $request = new RemoteCommandRequest();
         $request->setCommand(ShortSiteConfigurationCommand::IDENTIFIER);
 
         $response = $this->rceDispatcher->dispatch($request);

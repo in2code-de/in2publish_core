@@ -29,20 +29,20 @@ namespace In2code\In2publishCore\ViewHelpers\Condition;
  */
 
 use In2code\In2publishCore\Service\Permission\PermissionService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class IsUserAllowedToPublishViewHelper extends AbstractViewHelper
 {
-    /**
-     * Check if user is allowed to publish
-     *
-     * @return bool
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
+    /** @var PermissionService */
+    protected $permissionService;
+
+    public function __construct(PermissionService $permissionService)
+    {
+        $this->permissionService = $permissionService;
+    }
+
     public function render(): bool
     {
-        return GeneralUtility::makeInstance(PermissionService::class)->isUserAllowedToPublish();
+        return $this->permissionService->isUserAllowedToPublish();
     }
 }

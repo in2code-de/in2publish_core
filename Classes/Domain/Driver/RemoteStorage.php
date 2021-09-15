@@ -39,7 +39,6 @@ use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\In2publishCoreException;
 use RuntimeException;
 use TYPO3\CMS\Core\Resource\ResourceStorageInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class RemoteStorage implements ResourceStorageInterface
 {
@@ -47,24 +46,19 @@ class RemoteStorage implements ResourceStorageInterface
     public const FILES_KEY = 'files';
     public const HAS_FOLDER_KEY = 'hasFolder';
 
-    /**
-     * @var Letterbox
-     */
-    protected $letterbox = null;
+    /** @var Letterbox */
+    protected $letterbox;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected static $cache = [];
 
-    /**
-     * RemoteStorage constructor.
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
+    /** @var RemoteCommandDispatcher */
+    protected $remoteCommandDispatcher;
+
+    public function __construct(Letterbox $letterbox, RemoteCommandDispatcher $remoteCommandDispatcher)
     {
-        $this->letterbox = GeneralUtility::makeInstance(Letterbox::class);
+        $this->letterbox = $letterbox;
+        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
     /**
@@ -167,13 +161,8 @@ class RemoteStorage implements ResourceStorageInterface
             );
         }
 
-        $request = GeneralUtility::makeInstance(
-            RemoteCommandRequest::class,
-            ExecuteCommand::IDENTIFIER,
-            [],
-            [$uid]
-        );
-        $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
+        $request = new RemoteCommandRequest(ExecuteCommand::IDENTIFIER, [], [$uid]);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {
             throw new RuntimeException(

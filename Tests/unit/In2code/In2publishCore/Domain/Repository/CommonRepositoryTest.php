@@ -59,7 +59,7 @@ class CommonRepositoryTest extends Unit
         $this->tester->haveInDatabase('pages', ['uid' => 1]);
         $this->tester->haveInDatabase('tt_content', ['uid' => 4, 'pid' => 1]);
 
-        $commonRepository = CommonRepository::getDefaultInstance();
+        $commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
         $record = $commonRepository->findByIdentifier(1, 'pages');
 
         $this->assertSame('pages', $record->getTableName());
@@ -92,7 +92,7 @@ class CommonRepositoryTest extends Unit
         );
         $this->tester->haveInDatabase('sys_file', ['uid' => 44, 'name' => 'FooBar.file']);
 
-        $commonRepository = CommonRepository::getDefaultInstance();
+        $commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
         $record = $commonRepository->findByIdentifier(13, 'tt_content');
 
         $this->assertSame('tt_content', $record->getTableName());
@@ -145,7 +145,7 @@ class CommonRepositoryTest extends Unit
             ]
         );
 
-        $commonRepository = CommonRepository::getDefaultInstance();
+        $commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
         $record = $commonRepository->findByIdentifier(5, 'pages');
 
         $this->assertSame('pages', $record->getTableName());

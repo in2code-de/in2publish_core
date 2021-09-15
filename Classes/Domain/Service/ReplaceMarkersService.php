@@ -32,10 +32,10 @@ namespace In2code\In2publishCore\Domain\Service;
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function implode;
@@ -46,22 +46,22 @@ use function strpos;
 /**
  * Replace markers in TCA definition
  */
-class ReplaceMarkersService
+class ReplaceMarkersService implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     // Also replace optional quotes around the REC_FIELD_ because we will quote the actual value
     const REC_FIELD_REGEX = '~\'?###REC_FIELD_(.*?)###\'?~';
 
-    /**
-     * @var Logger
-     */
-    protected $logger = null;
+    /** @var FlexFormTools */
+    protected $flexFormTools;
 
     /**
      * ReplaceMarkersService constructor.
      */
-    public function __construct()
+    public function __construct(FlexFormTools $flexFormTools)
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
+        $this->flexFormTools = $flexFormTools;
     }
 
     /**
@@ -249,8 +249,7 @@ class ReplaceMarkersService
             ];
 
             $pageTs = BackendUtility::getPagesTSconfig($record->getPageIdentifier());
-            $flexFormTools = GeneralUtility::makeInstance(FlexFormTools::class);
-            $dataStructIdentifier = $flexFormTools->getDataStructureIdentifier(
+            $dataStructIdentifier = $this->flexFormTools->getDataStructureIdentifier(
                 ['config' => $record->getColumnsTca()[$propertyName]],
                 $tableName,
                 $propertyName,

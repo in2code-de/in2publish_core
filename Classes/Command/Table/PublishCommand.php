@@ -18,7 +18,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_filter;
 use function sprintf;
@@ -89,11 +88,7 @@ class PublishCommand extends Command implements LoggerAwareInterface
             return static::EXIT_INVALID_TABLE;
         }
 
-        $request = GeneralUtility::makeInstance(
-            RemoteCommandRequest::class,
-            BackupCommand::IDENTIFIER,
-            ['--table-name' => $tableName]
-        );
+        $request = new RemoteCommandRequest(BackupCommand::IDENTIFIER, ['--table-name' => $tableName]);
         $response = $this->remoteCommandDispatcher->dispatch($request);
 
         if ($response->isSuccessful()) {

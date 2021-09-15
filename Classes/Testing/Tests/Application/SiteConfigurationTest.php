@@ -34,19 +34,34 @@ use In2code\In2publishCore\Testing\Tests\Adapter\RemoteAdapterTest;
 use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Site\SiteFinder;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class SiteConfigurationTest implements TestCaseInterface
 {
+    /** @var FrontendInterface */
+    protected $cache;
+
+    /** @var SiteFinder */
+    protected $siteFinder;
+
+    /** @var ForeignSiteFinder */
+    protected $foreignSiteFinder;
+
+    public function __construct(FrontendInterface $cache, SiteFinder $siteFinder, ForeignSiteFinder $foreignSiteFinder)
+    {
+        $this->cache = $cache;
+        $this->siteFinder = $siteFinder;
+        $this->foreignSiteFinder = $foreignSiteFinder;
+    }
+
     public function run(): TestResult
     {
         // Clear the caches of the foreign site finder
-        GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core')->remove('sites');
+        $this->cache->remove('sites');
 
-        $localSites = GeneralUtility::makeInstance(SiteFinder::class)->getAllSites(false);
-        $foreignSites = GeneralUtility::makeInstance(ForeignSiteFinder::class)->getAllSites();
+        $localSites = $this->siteFinder->getAllSites(false);
+        $foreignSites = $this->foreignSiteFinder->getAllSites();
 
         $siteErrors = [];
 

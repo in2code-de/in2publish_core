@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\ViewHelpers\Attribute;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
@@ -39,15 +38,19 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
 {
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $escapeOutput = false;
 
-    /**
-     * @var ControllerContext
-     */
+    /** @var ControllerContext */
     protected $controllerContext;
+
+    /** @var ConfigContainer */
+    private $configContainer;
+
+    public function __construct(ConfigContainer $configContainer)
+    {
+        $this->configContainer = $configContainer;
+    }
 
     /**
      * @param RenderingContextInterface $renderingContext
@@ -77,7 +80,7 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
     public function render(): string
     {
         $attributesString = 'data-action="opendirtypropertieslistcontainer"';
-        if (GeneralUtility::makeInstance(ConfigContainer::class)->get('factory.simpleOverviewAndAjax')) {
+        if ($this->configContainer->get('factory.simpleOverviewAndAjax')) {
             $attributesString .= $this->getDataAttributesForSimpleOverviewAndAjax($this->arguments['record']);
         }
         return $attributesString;

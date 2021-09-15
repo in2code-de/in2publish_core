@@ -51,23 +51,22 @@ class FileProvider implements ProviderInterface
 {
     protected const DEPRECATION_CONFIG_PATH_TYPO3CONF = 'Storing the content publisher config file in typo3conf is deprecated and considered insecure. Please consider storing your config in the TYPO3\'s config folder.';
 
-    /**
-     * @var ContextService
-     */
-    protected $contextService = null;
+    /** @var ContextService */
+    protected $contextService;
 
-    /**
-     * FileProvider constructor.
-     */
-    public function __construct()
+    /** @var ExtensionConfiguration */
+    protected $extensionConfiguration;
+
+    public function __construct(ContextService $contextService, ExtensionConfiguration $extensionConfiguration)
     {
-        $this->contextService = GeneralUtility::makeInstance(ContextService::class);
+        $this->contextService = $contextService;
         if (!class_exists(Spyc::class)) {
             $spyc = ExtensionManagementUtility::extPath('in2publish_core', 'Resources/Private/Libraries/Spyc/Spyc.php');
             if (file_exists($spyc)) {
                 require_once($spyc);
             }
         }
+        $this->extensionConfiguration = $extensionConfiguration;
     }
 
     /**
@@ -78,9 +77,6 @@ class FileProvider implements ProviderInterface
         return true;
     }
 
-    /**
-     * @return array
-     */
     public function getConfig(): array
     {
         if (!class_exists(Spyc::class)) {
@@ -96,9 +92,6 @@ class FileProvider implements ProviderInterface
         return [];
     }
 
-    /**
-     * @return int
-     */
     public function getPriority(): int
     {
         return 20;
@@ -136,7 +129,6 @@ class FileProvider implements ProviderInterface
      */
     protected function getConfiguredFilePath(): string
     {
-        $extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class);
-        return $extensionConfiguration->get('in2publish_core', 'pathToConfiguration');
+        return $this->extensionConfiguration->get('in2publish_core', 'pathToConfiguration');
     }
 }

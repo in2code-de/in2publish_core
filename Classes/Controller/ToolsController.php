@@ -33,6 +33,7 @@ namespace In2code\In2publishCore\Controller;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;
+use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Event\CreatedDefaultHelpLabels;
@@ -51,7 +52,6 @@ use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
@@ -101,6 +101,59 @@ class ToolsController extends ActionController
      */
     protected $tests = [];
 
+    /** @var TestingService */
+    protected $testingService;
+
+    /** @var Letterbox */
+    protected $letterbox;
+
+    /** @var Registry */
+    protected $registry;
+
+    /** @var ExtensionConfiguration */
+    protected $extensionConfiguration;
+
+    /** @var ConnectionPool */
+    protected $connectionPool;
+
+    /** @var DynamicValueProviderRegistry */
+    protected $dynamicValueProviderRegistry;
+
+    /** @var SiteFinder */
+    protected $siteFinder;
+
+    /** @var ForeignSiteFinder */
+    protected $foreignSiteFinder;
+
+    /** @var ToolsRegistry */
+    protected $toolsRegistry;
+
+    public function __construct(
+        ConfigContainer $configContainer,
+        ExecutionTimeService $executionTimeService,
+        EnvironmentService $environmentService,
+        TestingService $testingService,
+        Letterbox $letterbox,
+        Registry $registry,
+        ExtensionConfiguration $extensionConfiguration,
+        ConnectionPool $connectionPool,
+        DynamicValueProviderRegistry $dynamicValueProviderRegistry,
+        SiteFinder $siteFinder,
+        ForeignSiteFinder $foreignSiteFinder,
+        ToolsRegistry $toolsRegistry
+    ) {
+        parent::__construct($configContainer, $executionTimeService, $environmentService);
+        $this->testingService = $testingService;
+        $this->letterbox = $letterbox;
+        $this->registry = $registry;
+        $this->extensionConfiguration = $extensionConfiguration;
+        $this->connectionPool = $connectionPool;
+        $this->dynamicValueProviderRegistry = $dynamicValueProviderRegistry;
+        $this->siteFinder = $siteFinder;
+        $this->foreignSiteFinder = $foreignSiteFinder;
+        $this->toolsRegistry = $toolsRegistry;
+    }
+
     /**
      * @param ViewInterface $view
      *
@@ -109,20 +162,16 @@ class ToolsController extends ActionController
     protected function initializeView(ViewInterface $view)
     {
         parent::initializeView($view);
-        $letterbox = GeneralUtility::makeInstance(Letterbox::class);
         try {
-            $this->view->assign('canFlushEnvelopes', $letterbox->hasUnAnsweredEnvelopes());
+            $this->view->assign('canFlushEnvelopes', $this->letterbox->hasUnAnsweredEnvelopes());
         } catch (Throwable $throwable) {
             $this->logger->error(self::LOG_INIT_DB_ERROR, ['exception' => $throwable]);
         }
     }
 
-    /**
-     *
-     */
     public function indexAction()
     {
-        $testStates = GeneralUtility::makeInstance(EnvironmentService::class)->getTestStatus();
+        $testStates = $this->environmentService->getTestStatus();
 
         $messages = [];
         foreach ($testStates as $testState) {
@@ -147,7 +196,7 @@ class ToolsController extends ActionController
 
         $this->view->assign('supports', $supports);
 
-        $this->view->assign('tools', GeneralUtility::makeInstance(ToolsRegistry::class)->getTools());
+        $this->view->assign('tools', $this->toolsRegistry->getTools());
     }
 
     /**
@@ -155,8 +204,7 @@ class ToolsController extends ActionController
      */
     public function testAction()
     {
-        $testingService = new TestingService();
-        $testingResults = $testingService->runAllTests();
+        $testingResults = $this->testingService->runAllTests();
 
         $success = true;
 
@@ -167,7 +215,7 @@ class ToolsController extends ActionController
             }
         }
 
-        GeneralUtility::makeInstance(EnvironmentService::class)->setTestResult($success);
+        $this->environmentService->setTestResult($success);
 
         $this->view->assign('testingResults', $testingResults);
     }
@@ -211,7 +259,7 @@ class ToolsController extends ActionController
      */
     public function flushRegistryAction()
     {
-        GeneralUtility::makeInstance(Registry::class)->removeAllByNamespace('tx_in2publishcore');
+        $this->registry->removeAllByNamespace('tx_in2publishcore');
         $this->addFlashMessage(LocalizationUtility::translate('module.m4.registry_flushed', 'in2publish_core'));
         $this->redirect('index');
     }
@@ -221,7 +269,7 @@ class ToolsController extends ActionController
      */
     public function flushEnvelopesAction()
     {
-        GeneralUtility::makeInstance(Letterbox::class)->removeAnsweredEnvelopes();
+        $this->letterbox->removeAnsweredEnvelopes();
         $this->addFlashMessage(
             LocalizationUtility::translate(
                 'module.m4.superfluous_envelopes_flushed',
@@ -316,8 +364,7 @@ class ToolsController extends ActionController
         }
 
         $return = [];
-        $testingService = new TestingService();
-        $testingResults = $testingService->runAllTests();
+        $testingResults = $this->testingService->runAllTests();
         foreach ($testingResults as $testClass => $testingResult) {
             $severityString = '[' . $testingResult->getSeverityLabel() . '] ';
             $message = '[' . $testingResult->getTranslatedLabel() . '] ' . $testingResult->getTranslatedMessages();
@@ -332,11 +379,10 @@ class ToolsController extends ActionController
             }
         }
 
-        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-        $full = $configContainer->getContextFreeConfig();
-        $pers = $configContainer->get();
+        $full = $this->configContainer->getContextFreeConfig();
+        $pers = $this->configContainer->get();
 
-        $containerDump = $configContainer->dump();
+        $containerDump = $this->configContainer->dump();
         unset($containerDump['fullConfig']);
 
         $protectedValues = [
@@ -369,27 +415,25 @@ class ToolsController extends ActionController
             unset($providerCfg);
         }
 
-        $extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class);
         $extConf = [];
         foreach (array_keys($GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']) as $extKey) {
             try {
-                $extConf[$extKey] = $extensionConfiguration->get($extKey);
+                $extConf[$extKey] = $this->extensionConfiguration->get($extKey);
             } catch (Throwable $e) {
                 $extConf[$extKey] = 'Exception: ' . $e->getMessage();
             }
         }
 
         $databases = [];
-        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
-        foreach ($connectionPool->getConnectionNames() as $connectionName) {
-            $databases[$connectionName] = $connectionPool->getConnectionByName($connectionName)->getServerVersion();
+        foreach ($this->connectionPool->getConnectionNames() as $name) {
+            $databases[$name] = $this->connectionPool->getConnectionByName($name)->getServerVersion();
         }
 
         $composerMode = class_exists(Environment::class)
             ? Environment::isComposerMode()
             : defined('TYPO3_COMPOSER_MODE') && true === TYPO3_COMPOSER_MODE;
 
-        $logQueryBuilder = $connectionPool->getQueryBuilderForTable('tx_in2publishcore_log');
+        $logQueryBuilder = $this->connectionPool->getQueryBuilderForTable('tx_in2publishcore_log');
         $logs = $logQueryBuilder->select('*')
                                 ->from('tx_in2publishcore_log')
                                 ->where($logQueryBuilder->expr()->lte('level', 4))
@@ -440,12 +484,12 @@ class ToolsController extends ActionController
             }
         }
 
-        $dynamicProvider = GeneralUtility::makeInstance(DynamicValueProviderRegistry::class)->getRegisteredClasses();
+        $dynamicProvider = $this->dynamicValueProviderRegistry->getRegisteredClasses();
 
         $siteConfigs = [];
 
-        $localSites = GeneralUtility::makeInstance(SiteFinder::class)->getAllSites(false);
-        $foreignSites = GeneralUtility::makeInstance(ForeignSiteFinder::class)->getAllSites();
+        $localSites = $this->siteFinder->getAllSites(false);
+        $foreignSites = $this->foreignSiteFinder->getAllSites();
         /**
          * @var string $side
          * @var Site $site

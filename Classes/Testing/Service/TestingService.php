@@ -31,24 +31,21 @@ namespace In2code\In2publishCore\Testing\Service;
 
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_merge;
 use function get_class;
 
 class TestingService
 {
-    /**
-     * @var TestCaseService
-     */
-    protected $testCaseService = null;
+    /** @var TestCaseService */
+    protected $testCaseService;
 
     /**
      * TestingService constructor.
      */
-    public function __construct()
+    public function __construct(TestCaseService $testCaseService)
     {
-        $this->testCaseService = GeneralUtility::makeInstance(TestCaseService::class);
+        $this->testCaseService = $testCaseService;
     }
 
     /**

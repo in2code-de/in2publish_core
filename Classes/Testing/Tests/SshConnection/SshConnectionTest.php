@@ -42,23 +42,16 @@ use function preg_match;
 
 class SshConnectionTest implements TestCaseInterface
 {
-    /**
-     * @var RemoteCommandDispatcher
-     */
+    /** @var RemoteCommandDispatcher */
     protected $rceDispatcher;
 
-    /**
-     * @var ConfigContainer
-     */
-    protected $configContainer = null;
+    /** @var ConfigContainer */
+    protected $configContainer;
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
+    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, ConfigContainer $configContainer)
     {
-        $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
-        $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+        $this->rceDispatcher = $remoteCommandDispatcher;
+        $this->configContainer = $configContainer;
     }
 
     /**
@@ -68,7 +61,7 @@ class SshConnectionTest implements TestCaseInterface
      */
     public function run(): TestResult
     {
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
+        $request = new RemoteCommandRequest();
         $request->setDispatcher('');
         $request->usePhp(false);
         $request->setCommand('echo ""');
@@ -95,7 +88,7 @@ class SshConnectionTest implements TestCaseInterface
         }
 
         // Test the php binary
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
+        $request = new RemoteCommandRequest();
         $request->setDispatcher('');
         $request->setCommand('-v');
         $response = $this->rceDispatcher->dispatch($request);
@@ -109,7 +102,7 @@ class SshConnectionTest implements TestCaseInterface
         }
 
         // Probe for required TYPO3 indicators
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'ls');
+        $request = new RemoteCommandRequest('ls');
         $request->usePhp(false);
         $request->setDispatcher('');
         $response = $this->rceDispatcher->dispatch($request);
@@ -139,7 +132,7 @@ class SshConnectionTest implements TestCaseInterface
         }
 
         // Actually call the foreign cli dispatcher
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'help');
+        $request = new RemoteCommandRequest('help');
         $response = $this->rceDispatcher->dispatch($request);
         if (!$response->isSuccessful()) {
             if (1 === preg_match('~The given context "(.*)" was not valid~ ', $response->getOutputString(), $match)) {

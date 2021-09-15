@@ -39,7 +39,6 @@ use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
 
@@ -47,12 +46,31 @@ class SiteService implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected const SITE_FINDER = [
-        'local' => SiteFinder::class,
-        'foreign' => ForeignSiteFinder::class,
-    ];
-
     protected $cache = [];
+
+    /** @var RawRecordService */
+    protected $rawRecordService;
+
+    /** @var TcaService */
+    protected $tcaService;
+
+    /** @var SiteFinder */
+    protected $siteFinder;
+
+    /** @var ForeignSiteFinder */
+    protected $foreignSiteFinder;
+
+    public function __construct(
+        RawRecordService $rawRecordService,
+        TcaService $tcaService,
+        SiteFinder $siteFinder,
+        ForeignSiteFinder $foreignSiteFinder
+    ) {
+        $this->rawRecordService = $rawRecordService;
+        $this->tcaService = $tcaService;
+        $this->siteFinder = $siteFinder;
+        $this->foreignSiteFinder = $foreignSiteFinder;
+    }
 
     public function getSiteForPidAndStagingLevel(int $pid, string $side): ?Site
     {
@@ -65,18 +83,16 @@ class SiteService implements SingletonInterface, LoggerAwareInterface
 
     protected function determineDefaultLanguagePid(int $pageIdentifier, string $stagingLevel): ?int
     {
-        $rawRecordService = GeneralUtility::makeInstance(RawRecordService::class);
-        $row = $rawRecordService->getRawRecord('pages', $pageIdentifier, $stagingLevel);
+        $row = $this->rawRecordService->getRawRecord('pages', $pageIdentifier, $stagingLevel);
         if (null === $row) {
             return null;
         }
 
-        $tcaService = GeneralUtility::makeInstance(TcaService::class);
-        $l10nPointer = $tcaService->getTransOrigPointerField('pages');
+        $l10nPointer = $this->tcaService->getTransOrigPointerField('pages');
         if (empty($l10nPointer)) {
             return $pageIdentifier;
         }
-        $languageField = $tcaService->getLanguageField('pages');
+        $languageField = $this->tcaService->getLanguageField('pages');
         if (empty($languageField)) {
             return $pageIdentifier;
         }
@@ -94,7 +110,11 @@ class SiteService implements SingletonInterface, LoggerAwareInterface
         if (!array_key_exists($pid, $this->cache['site'][$side] ?? [])) {
             $site = null;
             /** @var SiteFinder|ForeignSiteFinder $siteFinder */
-            $siteFinder = GeneralUtility::makeInstance(self::SITE_FINDER[$side]);
+            if ('local' === $side) {
+                $siteFinder = $this->siteFinder;
+            } elseif ('foreign' === $side) {
+                $siteFinder = $this->foreignSiteFinder;
+            }
             try {
                 $site = $siteFinder->getSiteByPageId($pid);
             } catch (PageNotFoundException $e) {

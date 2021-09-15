@@ -38,7 +38,6 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\ResourceStorage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FalIndexPostProcessor implements PostProcessor, LoggerAwareInterface
 {
@@ -53,11 +52,14 @@ class FalIndexPostProcessor implements PostProcessor, LoggerAwareInterface
     /** @var IndexingFolderRecordFactory */
     protected $ifrFactory;
 
-    public function __construct()
-    {
-        $this->resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
-        $this->remoteStorage = GeneralUtility::makeInstance(RemoteStorage::class);
-        $this->ifrFactory = GeneralUtility::makeInstance(IndexingFolderRecordFactory::class);
+    public function __construct(
+        ResourceFactory $resourceFactory,
+        RemoteStorage $remoteStorage,
+        IndexingFolderRecordFactory $indexingFolderRecordFactory
+    ) {
+        $this->resourceFactory = $resourceFactory;
+        $this->remoteStorage = $remoteStorage;
+        $this->ifrFactory = $indexingFolderRecordFactory;
     }
 
     /** @param RecordInterface[] $records */

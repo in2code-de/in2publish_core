@@ -36,7 +36,6 @@ use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_merge;
 use function get_class;
@@ -69,10 +68,10 @@ class TaskRepository
     /**
      * TaskRepository constructor.
      */
-    public function __construct()
+    public function __construct(ContextService $contextService, TaskFactory $taskFactory)
     {
-        $this->contextService = GeneralUtility::makeInstance(ContextService::class);
-        $this->taskFactory = GeneralUtility::makeInstance(TaskFactory::class);
+        $this->contextService = $contextService;
+        $this->taskFactory = $taskFactory;
         if ($this->contextService->isForeign()) {
             $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
         } elseif ($this->contextService->isLocal()) {

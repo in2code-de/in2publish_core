@@ -41,6 +41,15 @@ class RecordHistoryViewHelper extends AbstractTagBasedViewHelper
      */
     protected $tagName = 'a';
 
+    /** @var UriBuilder */
+    protected $uriBuilder;
+
+    public function __construct(UriBuilder $uriBuilder)
+    {
+        parent::__construct();
+        $this->uriBuilder = $uriBuilder;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -71,8 +80,7 @@ class RecordHistoryViewHelper extends AbstractTagBasedViewHelper
             'element' => $this->arguments['table'] . ':' . $this->arguments['uid'],
             'returnUrl' => $this->arguments['returnUrl'],
         ];
-        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        $uri = (string)$uriBuilder->buildUriFromRoute('record_history', $params);
+        $uri = (string)$this->uriBuilder->buildUriFromRoute('record_history', $params);
         $this->tag->addAttribute('href', $uri);
         $this->tag->setContent($this->renderChildren());
         $this->tag->forceClosingTag(true);

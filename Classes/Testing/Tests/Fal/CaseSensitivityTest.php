@@ -33,7 +33,6 @@ use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Service\FlexFormService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_keys;
 use function array_merge;
@@ -42,23 +41,18 @@ use function sprintf;
 
 class CaseSensitivityTest implements TestCaseInterface
 {
-    /**
-     * @var FlexFormService
-     */
+    /** @var FlexFormService */
     protected $flexFormService;
 
-    /**
-     * @var FalStorageTestSubjectsProvider
-     */
+    /** @var FalStorageTestSubjectsProvider */
     protected $testSubjectProvider;
 
-    /**
-     * CaseSensitivityTest constructor.
-     */
-    public function __construct()
-    {
-        $this->flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
-        $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);
+    public function __construct(
+        FlexFormService $flexFormService,
+        FalStorageTestSubjectsProvider $falStorageTestSubjectsProvider
+    ) {
+        $this->flexFormService = $flexFormService;
+        $this->testSubjectProvider = $falStorageTestSubjectsProvider;
     }
 
     /**

@@ -34,13 +34,20 @@ use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_flip;
 use function array_merge;
 
 class LocalInstanceTest implements TestCaseInterface
 {
+    /** @var ConfigContainer */
+    protected $configContainer;
+
+    public function __construct(ConfigContainer $configContainer)
+    {
+        $this->configContainer = $configContainer;
+    }
+
     /**
      * @return TestResult
      * @SuppressWarnings("PHPMD.Superglobals")
@@ -53,7 +60,7 @@ class LocalInstanceTest implements TestCaseInterface
             return new TestResult('application.local_utf8_fs', TestResult::ERROR, ['application.utf8_fs_errors']);
         }
 
-        $excludedTables = GeneralUtility::makeInstance(ConfigContainer::class)->get('excludeRelatedTables');
+        $excludedTables = $this->configContainer->get('excludeRelatedTables');
         $localTables = array_flip($localDatabase->getSchemaManager()->listTableNames());
 
         $missingTables = [];

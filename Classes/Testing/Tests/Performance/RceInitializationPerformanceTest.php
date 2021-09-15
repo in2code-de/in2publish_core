@@ -38,7 +38,7 @@ use In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishSeclib\Communication\RemoteCommandExecution\RemoteAdapter\PhpSecLibAdapter;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use ReflectionProperty;
 
 use function array_sum;
 use function array_unshift;
@@ -59,22 +59,37 @@ class RceInitializationPerformanceTest implements TestCaseInterface
         ],
     ];
 
+    /** @var AdapterRegistry */
+    private $adapterRegistry;
+
+    /** @var RemoteCommandDispatcher */
+    private $remoteCommandDispatcher;
+
+    public function __construct(AdapterRegistry $adapterRegistry, RemoteCommandDispatcher $remoteCommandDispatcher)
+    {
+        $this->adapterRegistry = $adapterRegistry;
+        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
+    }
+
     public function run(): TestResult
     {
-        $adapterClass = GeneralUtility::makeInstance(AdapterRegistry::class)->getAdapter(AdapterInterface::class);
+        $adapterClass = $this->adapterRegistry->getAdapter(AdapterInterface::class);
 
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, 'echo "test"');
+        $request = new RemoteCommandRequest('echo "test"');
         $request->usePhp(false);
         $request->setDispatcher('');
 
         $times = [];
 
+        $adapterProperty = new ReflectionProperty($this->remoteCommandDispatcher, 'adapter');
+        $adapterProperty->setAccessible(true);
+
         for ($i = 0; $i < 3; $i++) {
             $start = microtime(true);
 
-            // Create a completely fresh RemoteCommandDispatcher instance with an uninitialized adapter
-            $dispatcher = new RemoteCommandDispatcher();
-            $dispatcher->dispatch($request);
+            /** @noinspection PhpRedundantOptionalArgumentInspection */
+            $adapterProperty->setValue($this->remoteCommandDispatcher, null);
+            $this->remoteCommandDispatcher->dispatch($request);
 
             $times[] = microtime(true) - $start;
         }

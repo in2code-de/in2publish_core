@@ -44,9 +44,9 @@ class SkipTableVoter
     /** @var TIS */
     protected $tis;
 
-    public function __construct()
+    public function __construct(TIS $tableInfoService)
     {
-        $this->tis = GeneralUtility::makeInstance(TIS::class);
+        $this->tis = $tableInfoService;
     }
 
     /**

@@ -30,9 +30,9 @@ namespace In2code\In2publishCore\Config\PostProcessor;
  */
 
 use In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;
+use In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\Exception\InvalidDynamicValueProviderKeyException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function is_array;
 use function is_string;
@@ -50,15 +50,17 @@ class DynamicValuesPostProcessor implements PostProcessorInterface, LoggerAwareI
 
     protected const DYNAMIC_REFERENCE_PATTERN = '/^%(?P<key>[\w]+)\((?P<string>[^\)]*)\)%$/';
 
+    /** @var DynamicValueProviderRegistry */
     protected $dynamicValueProviderRegistry;
 
     protected $rtc = [];
 
-    public function __construct()
+    public function __construct(DynamicValueProviderRegistry $dynamicValueProviderRegistry)
     {
-        $this->dynamicValueProviderRegistry = GeneralUtility::makeInstance(DynamicValueProviderRegistry::class);
+        $this->dynamicValueProviderRegistry = $dynamicValueProviderRegistry;
     }
 
+    /** @throws InvalidDynamicValueProviderKeyException */
     public function process(array $config): array
     {
         foreach ($config as $key => $value) {

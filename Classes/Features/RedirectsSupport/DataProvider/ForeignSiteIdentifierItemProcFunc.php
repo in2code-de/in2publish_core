@@ -30,13 +30,20 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\DataProvider;
  */
 
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ForeignSiteIdentifierItemProcFunc
 {
+    /** @var ForeignSiteFinder */
+    protected $foreignSiteFinder;
+
+    public function __construct(ForeignSiteFinder $foreignSiteFinder)
+    {
+        $this->foreignSiteFinder = $foreignSiteFinder;
+    }
+
     public function addData(array &$result): void
     {
-        $sites = GeneralUtility::makeInstance(ForeignSiteFinder::class)->getAllSites();
+        $sites = $this->foreignSiteFinder->getAllSites();
         foreach ($sites as $site) {
             $result['items'][] = [$site->getIdentifier() . ' (' . $site->getBase() . ')', $site->getIdentifier()];
         }

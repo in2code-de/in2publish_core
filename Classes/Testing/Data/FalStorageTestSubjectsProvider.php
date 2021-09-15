@@ -34,7 +34,6 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_column;
 use function array_combine;
@@ -46,32 +45,21 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     public const PURPOSE_MISSING = 'missing';
     public const PURPOSE_UNIQUE_TARGET = 'uniqueTarget';
 
-    /**
-     * @var EventDispatcher
-     */
+    /** @var EventDispatcher */
     protected $eventDispatcher;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $localStorages = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $foreignStorages = [];
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $initialized = false;
 
-    /**
-     * FalStorageTestSubjectsProvider constructor.
-     */
-    public function __construct()
+    public function __construct(EventDispatcher $eventDispatcher)
     {
-        $this->eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**

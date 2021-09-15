@@ -40,9 +40,9 @@ use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
 use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
 use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
 use In2code\In2publishCore\Service\Configuration\TcaService;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -57,8 +57,10 @@ use function in_array;
  * records and any of the related records related records and so on to the extend
  * of the setting maximumRecursionDepth
  */
-class RecordFactory implements SingletonInterface
+class RecordFactory implements SingletonInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * Runtime cache to cache already created Records
      * Structure:
@@ -78,11 +80,6 @@ class RecordFactory implements SingletonInterface
      * @var array
      */
     protected $instantiationQueue = [];
-
-    /**
-     * @var Logger
-     */
-    protected $logger = null;
 
     /**
      * @var array
@@ -124,45 +121,34 @@ class RecordFactory implements SingletonInterface
      */
     protected $relatedRecordsDepth = 1;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $pageRecursionEnabled = true;
 
-    /**
-     * @var TcaService
-     */
-    protected $tcaService = null;
+    /** @var TcaService */
+    protected $tcaService;
 
-    /**
-     * @var bool
-     */
+    /**  @var bool */
     protected $isRootRecord = false;
 
-    /**
-     * @var EventDispatcher
-     */
+    /** @var EventDispatcher */
     protected $eventDispatcher;
 
-    /**
-     * Creates the logger and sets any required configuration
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
-    {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
+    public function __construct(
+        ConfigContainer $configContainer,
+        TcaService $tcaService,
+        EventDispatcher $eventDispatcher
+    ) {
+        $this->tcaService = $tcaService;
+        $this->eventDispatcher = $eventDispatcher;
 
-        $this->config = GeneralUtility::makeInstance(ConfigContainer::class)->get('factory');
+        $this->config = $configContainer->get('factory');
 
         $this->config['maximumOverallRecursion'] = max(
             $this->config['maximumOverallRecursion'],
             $this->config['maximumPageRecursion'] + $this->config['maximumContentRecursion']
         );
 
-        $this->excludedTableNames = GeneralUtility::makeInstance(ConfigContainer::class)->get('excludeRelatedTables');
-        $this->eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
+        $this->excludedTableNames = $configContainer->get('excludeRelatedTables');
     }
 
     /**
@@ -611,16 +597,14 @@ class RecordFactory implements SingletonInterface
     {
         $tableName = $record->getTableName();
 
-        $tcaService = GeneralUtility::makeInstance(TcaService::class);
-
-        $languageField = $tcaService->getLanguageField($tableName);
+        $languageField = $this->tcaService->getLanguageField($tableName);
         if (!empty($languageField)) {
             $language = $record->getLocalProperty($languageField);
             if (null === $language) {
                 $language = $record->getForeignProperty($languageField);
             }
             if (null !== $language && 0 === (int)$language) {
-                $fieldName = $tcaService->getTransOrigPointerField($tableName);
+                $fieldName = $this->tcaService->getTransOrigPointerField($tableName);
                 if ($fieldName) {
                     $translatedRecords = $commonRepository->findByProperties(
                         [$fieldName => $record->getIdentifier()],

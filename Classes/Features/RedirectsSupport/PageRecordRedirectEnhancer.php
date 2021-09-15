@@ -51,13 +51,21 @@ class PageRecordRedirectEnhancer
     /** @var Connection */
     protected $foreignDatabase;
 
+    /** @var CommonRepository */
+    protected $commonRepository;
+
     protected $looseRedirects = [];
 
-    public function __construct(SiteService $siteService, Connection $localDatabase, Connection $foreignDatabase)
-    {
+    public function __construct(
+        SiteService $siteService,
+        Connection $localDatabase,
+        Connection $foreignDatabase,
+        CommonRepository $commonRepository
+    ) {
         $this->siteService = $siteService;
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
+        $this->commonRepository = $commonRepository;
     }
 
     public function addRedirectsToPageRecord(RecordInterface $record): void
@@ -67,8 +75,7 @@ class PageRecordRedirectEnhancer
         }
 
         // Find associated sys_redirects
-        $commonRepo = CommonRepository::getDefaultInstance();
-        $relatedRedirects = $commonRepo->findByProperties(
+        $relatedRedirects = $this->commonRepository->findByProperties(
             [
                 'tx_in2publishcore_page_uid' => $pid,
                 'tx_in2publishcore_foreign_site_id' => null,

@@ -88,6 +88,7 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
      */
     public function getTools(): array
     {
+        // Do not inject the ConfigurationManager, because it will not contain the configured tools.
         $configuration = GeneralUtility::makeInstance(ObjectManager::class)
                                        ->get(ConfigurationManagerInterface::class)
                                        ->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);

@@ -35,7 +35,6 @@ use In2code\In2publishCore\Utility\UriUtility;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 use function ltrim;
@@ -48,12 +47,31 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
      */
     protected $domains;
 
+    /** @var ConfigContainer */
+    protected $configContainer;
+
+    /** @var ResourceFactory */
+    protected $resourceFactory;
+
+    /** @var RemoteFileAbstractionLayerDriver */
+    protected $remoteFileAbstractionLayerDriver;
+
+    public function __construct(
+        ConfigContainer $configContainer,
+        ResourceFactory $resourceFactory,
+        RemoteFileAbstractionLayerDriver $remoteFileAbstractionLayerDriver
+    ) {
+        $this->configContainer = $configContainer;
+        $this->resourceFactory = $resourceFactory;
+        $this->remoteFileAbstractionLayerDriver = $remoteFileAbstractionLayerDriver;
+    }
+
     /**
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function initialize()
     {
-        $config = GeneralUtility::makeInstance(ConfigContainer::class)->get('filePreviewDomainName');
+        $config = $this->configContainer->get('filePreviewDomainName');
         foreach (['local', 'foreign'] as $stagingLevel) {
             $this->domains[$stagingLevel] = UriUtility::normalizeUri(new Uri($config[$stagingLevel]));
         }
@@ -92,9 +110,8 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
             $storage = $record->getPropertyBySideIdentifier($stagingLevel, 'storage');
             $identifier = $record->getPropertyBySideIdentifier($stagingLevel, 'identifier');
 
-            $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
             /** @var File $file Keep this annotation for the correct method return type generation */
-            $file = $resourceFactory->getFileObjectByStorageAndIdentifier($storage, $identifier);
+            $file = $this->resourceFactory->getFileObjectByStorageAndIdentifier($storage, $identifier);
             $resourceUrl = $file->getPublicUrl();
         }
 
@@ -102,10 +119,9 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
             $storage = $record->getPropertyBySideIdentifier($stagingLevel, 'storage');
             $identifier = $record->getPropertyBySideIdentifier($stagingLevel, 'identifier');
 
-            $remoteFalDriver = GeneralUtility::makeInstance(RemoteFileAbstractionLayerDriver::class);
-            $remoteFalDriver->setStorageUid($storage);
-            $remoteFalDriver->initialize();
-            $resourceUrl = $remoteFalDriver->getPublicUrl($identifier);
+            $this->remoteFileAbstractionLayerDriver->setStorageUid($storage);
+            $this->remoteFileAbstractionLayerDriver->initialize();
+            $resourceUrl = $this->remoteFileAbstractionLayerDriver->getPublicUrl($identifier);
         }
 
         if (null === $resourceUrl) {

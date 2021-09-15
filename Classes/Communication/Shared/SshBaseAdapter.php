@@ -33,10 +33,9 @@ use Exception;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Throwable;
-use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function escapeshellarg;
 use function escapeshellcmd;
@@ -50,12 +49,9 @@ use function str_replace;
 use function strpos;
 use function strtoupper;
 
-abstract class SshBaseAdapter
+abstract class SshBaseAdapter implements LoggerAwareInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger = null;
+    use LoggerAwareTrait;
 
     /**
      * @var array
@@ -81,14 +77,21 @@ abstract class SshBaseAdapter
         'SSH2_FINGERPRINT_SHA1',
     ];
 
-    /**
-     * SshBaseAdapter constructor.
-     *
-     * @throws Throwable
-     */
-    public function __construct()
+    /** @var ConfigContainer */
+    protected $configContainer;
+
+    protected $initialized = false;
+
+    public function __construct(ConfigContainer $configContainer)
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
+        $this->configContainer = $configContainer;
+    }
+
+    public function init(): void
+    {
+        if ($this->initialized) {
+            return;
+        }
         $this->logger->debug('Initializing SshAdapter configuration');
 
         try {
@@ -101,8 +104,9 @@ abstract class SshBaseAdapter
             throw $exception;
         }
 
-        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-        $this->config['debug'] = $configContainer->get('debug.showForeignKeyFingerprint');
+        $this->config['debug'] = $this->configContainer->get('debug.showForeignKeyFingerprint');
+
+        $this->initialized = true;
     }
 
     /**
@@ -112,6 +116,7 @@ abstract class SshBaseAdapter
      */
     protected function establishSshSession()
     {
+        $this->init();
         $session = @ssh2_connect($this->config['host'], $this->config['port']);
         if (!is_resource($session)) {
             throw new In2publishCoreException(
@@ -167,6 +172,7 @@ abstract class SshBaseAdapter
      */
     protected function prepareCommand(RemoteCommandRequest $request): string
     {
+        $this->init();
         $command = '';
 
         foreach ($request->getEnvironmentVariables() as $name => $value) {
@@ -199,7 +205,7 @@ abstract class SshBaseAdapter
      */
     protected function getValidatedConfig()
     {
-        $config = GeneralUtility::makeInstance(ConfigContainer::class)->get('sshConnection');
+        $config = $this->configContainer->get('sshConnection');
         $config = $this->validateRequiredSettings($config);
         $config = $this->validateKeys($config);
         return $this->validateSshParameter($config);

@@ -49,17 +49,16 @@ use function uniqid;
 
 class UniqueStorageTargetTest implements TestCaseInterface
 {
-    /**
-     * @var FalStorageTestSubjectsProvider
-     */
+    /** @var FalStorageTestSubjectsProvider */
     protected $testSubjectProvider;
 
-    /**
-     * UniqueStorageTargetTest constructor.
-     */
-    public function __construct()
+    /** @var ResourceFactory */
+    protected $resourceFactory;
+
+    public function __construct(FalStorageTestSubjectsProvider $testSubjectProvider, ResourceFactory $resourceFactory)
     {
-        $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);
+        $this->testSubjectProvider = $testSubjectProvider;
+        $this->resourceFactory = $resourceFactory;
     }
 
     /**
@@ -71,7 +70,6 @@ class UniqueStorageTargetTest implements TestCaseInterface
         $storages = $this->testSubjectProvider->getStoragesForUniqueTargetTest();
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
 
-        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
         $messages = [];
         $affectedStorages = [];
         $failedUploads = [];
@@ -80,7 +78,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
         $foreignOffline = [];
 
         foreach ($keys as $key) {
-            $storageObject = $resourceFactory->getStorageObject($key, $storages['local'][$key]);
+            $storageObject = $this->resourceFactory->getStorageObject($key, $storages['local'][$key]);
             if (!$storageObject->isOnline()) {
                 $skippedStorages[] = $storageObject->getName();
                 continue;

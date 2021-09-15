@@ -33,39 +33,28 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\SingletonInterface;
 
-class Letterbox
+class Letterbox implements LoggerAwareInterface, SingletonInterface
 {
+    use LoggerAwareTrait;
+
     public const TABLE = 'tx_in2code_in2publish_envelope';
 
-    /**
-     * @var ContextService
-     */
-    protected $contextService = null;
+    /** @var ContextService */
+    protected $contextService;
 
-    /**
-     * @var bool
-     */
-    protected $keepEnvelopes = true;
+    /** @var bool */
+    protected $keepEnvelopes;
 
-    /**
-     * @var Logger
-     */
-    protected $logger = null;
-
-    /**
-     * Letterbox constructor.
-     */
-    public function __construct()
+    public function __construct(ContextService $contextService, ConfigContainer $configContainer)
     {
-        $this->contextService = GeneralUtility::makeInstance(ContextService::class);
-        $this->keepEnvelopes = GeneralUtility::makeInstance(ConfigContainer::class)->get('debug.keepEnvelopes');
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
+        $this->contextService = $contextService;
+        $this->keepEnvelopes = $configContainer->get('debug.keepEnvelopes');
     }
 
     /**

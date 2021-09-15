@@ -137,35 +137,32 @@ class CommonRepository extends BaseRepository
      */
     public const SIGNAL_RELATION_RESOLVER_RTE = 'relationResolverRTE';
 
-    /**
-     * @var RecordFactory
-     */
+    /** @var Connection */
+    protected $localDatabase;
+
+    /** @var Connection */
+    protected $foreignDatabase;
+
+    /** @var RecordFactory */
     protected $recordFactory;
 
-    /**
-     * @var ResourceFactory
-     */
+    /** @var ResourceFactory */
     protected $resourceFactory;
 
-    /**
-     * @var TaskRepository
-     */
+    /** @var TaskRepository */
     protected $taskRepository;
 
-    /**
-     * @var ConfigContainer
-     */
-    protected $configContainer = null;
+    /** @var ConfigContainer */
+    protected $configContainer;
 
-    /**
-     * @var Connection
-     */
-    protected $localDatabase = null;
+    /** @var EventDispatcher */
+    protected $eventDispatcher;
 
-    /**
-     * @var Connection
-     */
-    protected $foreignDatabase = null;
+    /** @var ReplaceMarkersService */
+    protected $replaceMarkersService;
+
+    /** @var FlexFormTools */
+    protected $flexFormTools;
 
     /**
      * Cache for skipped records
@@ -174,30 +171,40 @@ class CommonRepository extends BaseRepository
      */
     protected $skipRecords = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $visitedRecords = [];
 
-    /**
-     * @var EventDispatcher
-     */
-    protected $eventDispatcher;
+    /** @var FlexFormService */
+    private $flexFormService;
 
-    public function __construct(?Connection $localDatabase, ?Connection $foreignDatabase)
-    {
-        parent::__construct();
-        $this->recordFactory = GeneralUtility::makeInstance(RecordFactory::class);
-        $this->resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
-        $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
-        $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+    public function __construct(
+        TcaService $tcaService,
+        ?Connection $localDatabase,
+        ?Connection $foreignDatabase,
+        RecordFactory $recordFactory,
+        ResourceFactory $resourceFactory,
+        TaskRepository $taskRepository,
+        ConfigContainer $configContainer,
+        EventDispatcher $eventDispatcher,
+        ReplaceMarkersService $replaceMarkersService,
+        FlexFormTools $flexFormTools,
+        FlexFormService $flexFormService
+    ) {
+        parent::__construct($tcaService);
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
         if ($foreignDatabase === null || !$foreignDatabase->isConnected()) {
             $this->foreignDatabase = $localDatabase;
         }
-        $this->eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
+        $this->recordFactory = $recordFactory;
+        $this->resourceFactory = $resourceFactory;
+        $this->taskRepository = $taskRepository;
+        $this->configContainer = $configContainer;
+        $this->eventDispatcher = $eventDispatcher;
         $this->eventDispatcher->dispatch(new CommonRepositoryWasInstantiated($this));
+        $this->replaceMarkersService = $replaceMarkersService;
+        $this->flexFormTools = $flexFormTools;
+        $this->flexFormService = $flexFormService;
     }
 
     /**
@@ -511,12 +518,14 @@ class CommonRepository extends BaseRepository
                 case 'select':
                     $whereClause = '';
                     if (!empty($columnConfiguration['foreign_table_where'])) {
-                        /** @var ReplaceMarkersService $replaceMarkers */
                         $whereClause = $columnConfiguration['foreign_table_where'];
                         if (false !== strpos($whereClause, '#')) {
-                            $replaceMarkers = GeneralUtility::makeInstance(ReplaceMarkersService::class);
                             $whereClause = QueryHelper::quoteDatabaseIdentifiers($this->localDatabase, $whereClause);
-                            $whereClause = $replaceMarkers->replaceMarkers($record, $whereClause, $propertyName);
+                            $whereClause = $this->replaceMarkersService->replaceMarkers(
+                                $record,
+                                $whereClause,
+                                $propertyName
+                            );
                         }
                     }
                     $relatedRecords = $this->fetchRelatedRecordsBySelect(
@@ -746,14 +755,13 @@ class CommonRepository extends BaseRepository
      */
     protected function getFlexFormDefinition(RecordInterface $record, string $column, array $columnConfiguration): array
     {
-        $flexFormTools = GeneralUtility::makeInstance(FlexFormTools::class);
-        $dataStructIdentifier = $flexFormTools->getDataStructureIdentifier(
+        $dataStructIdentifier = $this->flexFormTools->getDataStructureIdentifier(
             ['config' => $columnConfiguration],
             $record->getTableName(),
             $column,
             $record->getLocalProperties()
         );
-        $flexFormDefinition = $flexFormTools->parseDataStructureByIdentifier($dataStructIdentifier);
+        $flexFormDefinition = $this->flexFormTools->parseDataStructureByIdentifier($dataStructIdentifier);
         $flexFormDefinition = $flexFormDefinition['sheets'];
         $flexFormDefinition = $this->flattenFlexFormDefinition((array)$flexFormDefinition);
         return $this->filterFlexFormDefinition($flexFormDefinition);
@@ -949,11 +957,10 @@ class CommonRepository extends BaseRepository
      */
     protected function getLocalFlexFormDataFromRecord(RecordInterface $record, string $column): array
     {
-        $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
-
         $localFlexFormData = [];
         if ($record->hasLocalProperty($column)) {
-            $localFlexFormData = $flexFormService->convertFlexFormContentToArray($record->getLocalProperty($column));
+            $localProperty = $record->getLocalProperty($column);
+            $localFlexFormData = $this->flexFormService->convertFlexFormContentToArray($localProperty);
         }
         return $localFlexFormData;
     }
@@ -1067,14 +1074,17 @@ class CommonRepository extends BaseRepository
             case 'select':
                 $whereClause = '';
                 if (!empty($config['foreign_table_where'])) {
-                    /** @var ReplaceMarkersService $replaceMarkers */
                     $whereClause = $config['foreign_table_where'];
                     if (false !== strpos($whereClause, '{#')) {
                         $whereClause = QueryHelper::quoteDatabaseIdentifiers($this->localDatabase, $whereClause);
                     }
                     if (false !== strpos($whereClause, '###')) {
-                        $replaceMarkers = GeneralUtility::makeInstance(ReplaceMarkersService::class);
-                        $whereClause = $replaceMarkers->replaceFlexFormMarkers($record, $whereClause, $column, $key);
+                        $whereClause = $this->replaceMarkersService->replaceFlexFormMarkers(
+                            $record,
+                            $whereClause,
+                            $column,
+                            $key
+                        );
                     }
                 }
 
@@ -1430,9 +1440,8 @@ class CommonRepository extends BaseRepository
         }
         foreach ($fileNames as $key => $filename) {
             // Force indexing of the record
-            $fileNames[$key] = GeneralUtility::makeInstance(ResourceFactory::class)
-                                             ->getFileObjectFromCombinedIdentifier($prefix . $filename)
-                                             ->getIdentifier();
+            $fileNames[$key] = $this->resourceFactory->getFileObjectFromCombinedIdentifier($prefix . $filename)
+                                                     ->getIdentifier();
         }
         return $fileNames;
     }
@@ -1992,16 +2001,15 @@ class CommonRepository extends BaseRepository
             $this->publishRecordRecursiveInternal($translatedRecord, $excludedTables);
         }
 
-        $tcaService = GeneralUtility::makeInstance(TcaService::class);
         if (
             $record->hasAdditionalProperty('isRoot')
             && $record->getAdditionalProperty('isRoot') === true
-            && !empty($languageField = $tcaService->getLanguageField($record->getTableName()))
+            && !empty($languageField = $this->tcaService->getLanguageField($record->getTableName()))
             && (
                 $record->getLocalProperty($languageField) > 0
                 || $record->getForeignProperty($languageField) > 0
             )
-            && !empty($pointerField = $tcaService->getTransOrigPointerField($record->getTableName()))
+            && !empty($pointerField = $this->tcaService->getTransOrigPointerField($record->getTableName()))
             && $record->getMergedProperty($pointerField) > 0
         ) {
             $translationOriginals = $record->getRelatedRecordByTableAndProperty(

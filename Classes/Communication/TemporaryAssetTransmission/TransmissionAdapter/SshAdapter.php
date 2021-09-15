@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission\Transm
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Communication\Shared\SshBaseAdapter;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use Throwable;
@@ -55,31 +56,34 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
 {
     public const ADAPTER_KEY = 'ssh';
 
-    /**
-     * @var null|resource
-     */
+    /** @var ForeignEnvironmentService */
+    private $foreignEnvironmentService;
+
+    /** @var RemoteCommandDispatcher */
+    private $remoteCommandDispatcher;
+
+    /** @var null|resource */
     protected $sshSession;
 
-    /**
-     * @var null|resource
-     */
+    /** @var null|resource */
     protected $sftSession;
 
-    /**
-     * @var array
-     */
     protected $createMasks = [
         'decimalFileMask' => 0000,
         'decimalFolderMask' => 0000,
     ];
 
-    /**
-     * @param string $source
-     * @param string $target
-     *
-     * @return bool
-     * @throws In2publishCoreException
-     */
+    public function __construct(
+        ConfigContainer $configContainer,
+        ForeignEnvironmentService $foreignEnvironmentService,
+        RemoteCommandDispatcher $remoteCommandDispatcher
+    ) {
+        parent::__construct($configContainer);
+        $this->foreignEnvironmentService = $foreignEnvironmentService;
+        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
+    }
+
+    /** @throws In2publishCoreException */
     public function copyFileToRemote(string $source, string $target): bool
     {
         if (null === $this->sshSession) {
@@ -87,7 +91,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
             $this->sftSession = ssh2_sftp($this->sshSession);
 
             $this->logger->debug('Setting create masks');
-            $createMasks = GeneralUtility::makeInstance(ForeignEnvironmentService::class)->getCreateMasks();
+            $createMasks = $this->foreignEnvironmentService->getCreateMasks();
             $this->createMasks['decimalFileMask'] = octdec($createMasks['file']);
             $this->createMasks['decimalFolderMask'] = octdec($createMasks['folder']);
         }
@@ -140,11 +144,6 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
         return false;
     }
 
-    /**
-     * @param string $target
-     *
-     * @return bool
-     */
     protected function setRemoteFilePermissions(string $target): bool
     {
         // ssh2_sftp_chmod since PECL ssh2 >= 0.12 but has bugs in PHP 7
@@ -165,7 +164,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
             $request->setDispatcher('');
             $request->setEnvironmentVariables([]);
 
-            $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
+            $response = $this->remoteCommandDispatcher->dispatch($request);
 
             if ($response->isSuccessful()) {
                 return true;
@@ -186,50 +185,19 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
         return false;
     }
 
-    /**
-     * @param string $folder
-     *
-     * @return bool
-     */
     protected function ensureTargetFolderExists(string $folder): bool
     {
-        if (!$this->remoteFolderExists($folder)) {
-            return $this->createRemoteFolder($folder);
+        if (!is_dir('ssh2.sftp://' . ((int)$this->sftSession) . $folder)) {
+            return ssh2_sftp_mkdir($this->sftSession, $folder, $this->createMasks['decimalFolderMask'], true);
         }
         return true;
     }
 
-    /**
-     * @param string $folder
-     *
-     * @return bool
-     */
-    protected function remoteFolderExists(string $folder): bool
-    {
-        return is_dir('ssh2.sftp://' . ((int)$this->sftSession) . $folder);
-    }
-
-    /**
-     * @param string $folder
-     *
-     * @return bool
-     */
-    protected function createRemoteFolder(string $folder): bool
-    {
-        return ssh2_sftp_mkdir($this->sftSession, $folder, $this->createMasks['decimalFolderMask'], true);
-    }
-
-    /**
-     *
-     */
-    protected function disconnect()
+    protected function disconnect(): void
     {
         if (is_resource($this->sshSession)) {
             ssh2_exec($this->sshSession, 'exit');
         }
-        unset(
-            $this->sshSession,
-            $this->sftSession
-        );
+        unset($this->sshSession, $this->sftSession);
     }
 }

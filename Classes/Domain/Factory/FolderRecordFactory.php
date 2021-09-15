@@ -37,10 +37,10 @@ use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\StorageDriverExtractor;
 use LogicException;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Resource\Folder;
@@ -59,54 +59,41 @@ use function sprintf;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class FolderRecordFactory
+class FolderRecordFactory implements LoggerAwareInterface
 {
-    /**
-     * @var Logger
-     */
-    protected $logger = null;
+    use LoggerAwareTrait;
 
-    /**
-     * @var CommonRepository
-     */
+    /** @var CommonRepository */
     protected $commonRepository;
 
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     protected $foreignDatabase;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $configuration = [];
 
-    /**
-     * @var DriverInterface
-     */
+    /** @var DriverInterface */
     protected $localDriver;
 
-    /**
-     * @var DriverInterface
-     */
+    /** @var DriverInterface */
     protected $foreignDriver;
 
-    /**
-     * @var FileIndexFactory
-     */
-    protected $fileIndexFactory = null;
+    /** @var FileIndexFactory */
+    protected $fileIndexFactory;
 
-    /**
-     * FolderRecordFactory constructor.
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
-    {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->commonRepository = CommonRepository::getDefaultInstance();
-        $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
-        $this->configuration = GeneralUtility::makeInstance(ConfigContainer::class)->get('factory.fal');
+    /** @var ResourceFactory */
+    protected $resourceFactory;
+
+    public function __construct(
+        ResourceFactory $resourceFactory,
+        CommonRepository $commonRepository,
+        Connection $foreignDatabase,
+        ConfigContainer $configContainer
+    ) {
+        $this->resourceFactory = $resourceFactory;
+        $this->commonRepository = $commonRepository;
+        $this->foreignDatabase = $foreignDatabase;
+        $this->configuration = $configContainer->get('factory.fal');
     }
 
     /**
@@ -118,24 +105,21 @@ class FolderRecordFactory
      */
     protected function initializeDependenciesAndGetFolder(?string $identifier): Folder
     {
-        // Grab the resource factory to get the FAL driver of the selected folder "FAL style"
-        $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
-
         // Determine the current folder. If the identifier is NULL there was no folder selected.
         if (null === $identifier) {
             // Special case: The module was opened, but no storage/folder has been selected.
             // Get the default storage and the default folder to show.
-            $localStorage = $resourceFactory->getDefaultStorage();
+            $localStorage = $this->resourceFactory->getDefaultStorage();
             // Notice: ->getDefaultFolder does not return the default folder to show, but to upload files to.
             // The root level folder is the "real" default and also respects mount points of the current user.
             $localFolder = $localStorage->getRootLevelFolder();
         } else {
             // This is the normal case. The identifier identifies the folder including its storage.
             try {
-                $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
+                $localFolder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
             } catch (FolderDoesNotExistException $exception) {
                 [$storage] = GeneralUtility::trimExplode(':', $identifier);
-                $localStorage = $resourceFactory->getStorageObject($storage);
+                $localStorage = $this->resourceFactory->getStorageObject($storage);
                 $localFolder = $localStorage->getRootLevelFolder();
             }
             $localStorage = $localFolder->getStorage();

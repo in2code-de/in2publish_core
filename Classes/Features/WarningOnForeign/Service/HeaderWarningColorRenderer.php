@@ -31,10 +31,17 @@ namespace In2code\In2publishCore\Features\WarningOnForeign\Service;
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use TYPO3\CMS\Core\Page\PageRenderer;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class HeaderWarningColorRenderer
 {
+    /** @var ConfigContainer */
+    protected $configContainer;
+
+    public function __construct(ConfigContainer $configContainer)
+    {
+        $this->configContainer = $configContainer;
+    }
+
     /**
      * @param array $params
      * @param PageRenderer $pageRenderer
@@ -44,8 +51,7 @@ class HeaderWarningColorRenderer
      */
     public function render(array $params, PageRenderer $pageRenderer): void
     {
-        $config = GeneralUtility::makeInstance(ConfigContainer::class);
-        $color = $config->get('features.warningOnForeign.colorizeHeader.color');
+        $color = $this->configContainer->get('features.warningOnForeign.colorizeHeader.color');
         $css = $this->createCss($color);
         $pageRenderer->addCssInlineBlock('tx_in2publishcore_warningonforeign', $css, true);
     }

@@ -14,16 +14,34 @@ use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Http\Response;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function json_encode;
 
 class PublishPageAjaxController
 {
+    /** @var CommonRepository */
+    protected $commonRepository;
+
+    /** @var PermissionService */
+    protected $permissionService;
+
+    /** @var RemoteCommandDispatcher */
+    protected $remoteCommandDispatcher;
+
+    public function __construct(
+        CommonRepository $commonRepository,
+        PermissionService $permissionService,
+        RemoteCommandDispatcher $remoteCommandDispatcher
+    ) {
+        $this->commonRepository = $commonRepository;
+        $this->permissionService = $permissionService;
+        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
+    }
+
     public function publishPage(ServerRequestInterface $request): ResponseInterface
     {
-        $response = GeneralUtility::makeInstance(Response::class);
+        $response = new Response();
 
         $page = $request->getQueryParams()['page'] ?? null;
 
@@ -34,7 +52,7 @@ class PublishPageAjaxController
             'error' => true,
         ];
 
-        if (!GeneralUtility::makeInstance(PermissionService::class)->isUserAllowedToPublish()) {
+        if (!$this->permissionService->isUserAllowedToPublish()) {
             $content['label'] = 'context_menu_publish_entry.forbidden';
             $content['error'] = false;
         }
@@ -43,18 +61,12 @@ class PublishPageAjaxController
             $content['label'] = 'context_menu_publish_entry.missing_page';
         } else {
             try {
-                $commonRepository = CommonRepository::getDefaultInstance();
-
-                $record = $commonRepository->findByIdentifier($page, 'pages');
+                $record = $this->commonRepository->findByIdentifier($page, 'pages');
 
                 if ($record->isPublishable()) {
-                    $commonRepository->publishRecordRecursive($record);
-                    $dispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
-                    $request = GeneralUtility::makeInstance(
-                        RemoteCommandRequest::class,
-                        RunTasksInQueueCommand::IDENTIFIER
-                    );
-                    $rceResponse = $dispatcher->dispatch($request);
+                    $this->commonRepository->publishRecordRecursive($record);
+                    $rceRequest = new RemoteCommandRequest(RunTasksInQueueCommand::IDENTIFIER);
+                    $rceResponse = $this->remoteCommandDispatcher->dispatch($rceRequest);
                     if ($rceResponse->isSuccessful()) {
                         $content['success'] = true;
                         $content['error'] = false;

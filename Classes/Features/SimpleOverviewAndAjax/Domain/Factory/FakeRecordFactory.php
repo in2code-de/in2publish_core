@@ -48,36 +48,26 @@ class FakeRecordFactory
 {
     public const PAGE_TABLE_NAME = 'pages';
 
-    /**
-     * @var TableCacheRepository
-     */
-    protected $tableCacheRepository = null;
+    /** @var TableCacheRepository */
+    protected $tableCacheRepository;
 
-    /**
-     * @var TcaService
-     */
-    protected $tcaService = null;
+    /** @var TcaService */
+    protected $tcaService;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $metaDataBlackList = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $config = [];
 
-    /**
-     * FakeRepository constructor.
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
-    {
-        $this->tableCacheRepository = GeneralUtility::makeInstance(TableCacheRepository::class);
-        $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
-        $this->config = GeneralUtility::makeInstance(ConfigContainer::class)->get();
+    public function __construct(
+        TableCacheRepository $tableCacheRepository,
+        TcaService $tcaService,
+        ConfigContainer $configContainer
+    ) {
+        $this->tableCacheRepository = $tableCacheRepository;
+        $this->tcaService = $tcaService;
+        $this->config = $configContainer->get();
     }
 
     /**

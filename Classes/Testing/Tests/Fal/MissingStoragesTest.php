@@ -34,7 +34,6 @@ use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_diff;
 use function array_keys;
@@ -42,17 +41,12 @@ use function sprintf;
 
 class MissingStoragesTest implements TestCaseInterface
 {
-    /**
-     * @var FalStorageTestSubjectsProvider
-     */
+    /** @var FalStorageTestSubjectsProvider */
     protected $testSubjectProvider;
 
-    /**
-     * MissingStoragesTest constructor.
-     */
-    public function __construct()
+    public function __construct(FalStorageTestSubjectsProvider $testSubjectProvider)
     {
-        $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);
+        $this->testSubjectProvider = $testSubjectProvider;
     }
 
     /**

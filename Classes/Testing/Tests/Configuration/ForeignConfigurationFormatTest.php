@@ -19,14 +19,18 @@ use function strpos;
 
 class ForeignConfigurationFormatTest implements TestCaseInterface
 {
+    /** @var RemoteCommandDispatcher */
+    protected $remoteCommandDispatcher;
+
+    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher)
+    {
+        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
+    }
+
     public function run(): TestResult
     {
-        $rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
-        $request = GeneralUtility::makeInstance(
-            RemoteCommandRequest::class,
-            ConfigFormatTestCommand::IDENTIFIER
-        );
-        $response = $rceDispatcher->dispatch($request);
+        $request = new RemoteCommandRequest(ConfigFormatTestCommand::IDENTIFIER);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
         $errors = $response->getErrors();
         $output = $response->getOutput();
         $token = $this->tokenizeResponse($output);

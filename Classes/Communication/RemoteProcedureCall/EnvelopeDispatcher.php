@@ -92,6 +92,14 @@ class EnvelopeDispatcher
      */
     protected $prefetchLimit = 51;
 
+    /** @var ResourceFactory */
+    private $resourceFactory;
+
+    public function __construct(ResourceFactory $resourceFactory)
+    {
+        $this->resourceFactory = $resourceFactory;
+    }
+
     /**
      * @param Envelope $envelope
      *
@@ -469,7 +477,7 @@ class EnvelopeDispatcher
      */
     protected function getStorage(array $request): ResourceStorage
     {
-        $storage = GeneralUtility::makeInstance(ResourceFactory::class)->getStorageObject($request['storage']);
+        $storage = $this->resourceFactory->getStorageObject($request['storage']);
         $storage->setEvaluatePermissions(false);
         return $storage;
     }

@@ -43,19 +43,22 @@ use In2code\In2publishCore\Domain\Service\Processor\RadioProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\SelectProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\TextProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\UserProcessor;
-use TYPO3\CMS\Core\Cache\CacheManager;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+use TYPO3\CMS\Core\SingletonInterface;
 
 use function array_key_exists;
 use function array_keys;
 use function class_exists;
 use function is_array;
 
-class TcaProcessingService
+class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
 {
+    use LoggerAwareTrait;
+
     public const COLUMNS = 'columns';
     public const CONFIG = 'config';
     public const CONTROL = 'ctrl';
@@ -69,10 +72,8 @@ class TcaProcessingService
     public const DEFAULT_EXTRAS = 'defaultExtras';
     public const SOFT_REF = 'softref';
 
-    /**
-     * @var TcaProcessingService
-     */
-    protected static $instance = null;
+    /** @var TcaProcessingService */
+    protected static $instance;
 
     /**
      * @var array
@@ -119,11 +120,6 @@ class TcaProcessingService
     protected $controls = [];
 
     /**
-     * @var Logger
-     */
-    protected $logger = null;
-
-    /**
      * @var VariableFrontend
      */
     protected $cache = null;
@@ -131,12 +127,11 @@ class TcaProcessingService
     /**
      * TcaProcessingService constructor.
      */
-    protected function __construct()
+    public function __construct(FrontendInterface $cache, ConfigContainer $configContainer)
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
+        $this->cache = $cache;
 
-        $configuredProcessor = GeneralUtility::makeInstance(ConfigContainer::class)->get('tca.processor');
+        $configuredProcessor = $configContainer->get('tca.processor');
         if (is_array($configuredProcessor)) {
             foreach ($configuredProcessor as $type => $class) {
                 if (!class_exists($class)) {
@@ -155,18 +150,6 @@ class TcaProcessingService
                 $this->processors[$type] = new $class();
             }
         }
-    }
-
-    /**
-     * @return TcaProcessingService
-     */
-    public static function getInstance(): TcaProcessingService
-    {
-        if (static::$instance === null) {
-            static::$instance = new static();
-            static::$instance->preProcessTca();
-        }
-        return static::$instance;
     }
 
     /**

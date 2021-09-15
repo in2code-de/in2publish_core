@@ -48,24 +48,16 @@ use function time;
 
 class FileIndexFactory
 {
-    /**
-     * @var DriverInterface
-     */
-    protected $localDriver = null;
+    /** @var DriverInterface */
+    protected $localDriver;
 
-    /**
-     * @var DriverInterface
-     */
-    protected $foreignDriver = null;
+    /** @var DriverInterface */
+    protected $foreignDriver;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $sysFileTca = [];
 
-    /**
-     * @var ContextService
-     */
+    /** @var ContextService */
     protected $contextService;
 
     /**

@@ -31,40 +31,27 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution;
 
 use In2code\In2publishCore\Communication\AdapterRegistry;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Throwable;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function microtime;
 
-class RemoteCommandDispatcher implements SingletonInterface
+class RemoteCommandDispatcher implements SingletonInterface, LoggerAwareInterface
 {
-    /**
-     * @var Logger
-     */
-    protected $logger = null;
+    use LoggerAwareTrait;
 
-    /**
-     * @var AdapterInterface
-     */
-    protected $adapter = null;
+    /** @var AdapterInterface */
+    protected $adapter;
 
-    /**
-     * @var AdapterRegistry
-     */
-    protected $adapterRegistry = null;
+    /** @var AdapterRegistry */
+    protected $adapterRegistry;
 
-    /**
-     * RemoteCommandDispatcher constructor.
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
+    public function __construct(AdapterRegistry $adapterRegistry)
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->adapterRegistry = GeneralUtility::makeInstance(AdapterRegistry::class);
+        $this->adapterRegistry = $adapterRegistry;
     }
 
     /**
@@ -82,7 +69,7 @@ class RemoteCommandDispatcher implements SingletonInterface
                 $this->adapter = GeneralUtility::makeInstance($adapterClass);
             } catch (Throwable $exception) {
                 $this->logger->debug('SshAdapter initialization failed. See previous log for reason.');
-                return GeneralUtility::makeInstance(RemoteCommandResponse::class, [], [$exception->getMessage()], 1);
+                return new RemoteCommandResponse([], [$exception->getMessage()], 1);
             }
         }
 

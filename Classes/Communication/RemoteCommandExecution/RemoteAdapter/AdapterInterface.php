@@ -33,21 +33,16 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandReq
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
 
 /**
- * Interface AdapterInterface
+ * This adapter is responsible to execute the typo3 binary on the Foreign
+ * system and to return the commands result as a RemoteCommandResponse object.
+ *
+ * Any shell stdOut content is passed as "$output",
+ * stdErr as "$errors" and exit code (e.g. from `echo $?`) as $exitStatus
+ * to the constructor of the RemoteCommandResponse.
  */
 interface AdapterInterface
 {
     public const ADAPTER_TYPE = 'remote';
 
-    /**
-     * Classes of this type must not require any constructor arguments
-     */
-    public function __construct();
-
-    /**
-     * @param RemoteCommandRequest $request
-     *
-     * @return RemoteCommandResponse
-     */
     public function execute(RemoteCommandRequest $request): RemoteCommandResponse;
 }

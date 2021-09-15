@@ -33,7 +33,6 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Service\Processor\ProcessorInterface;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Test some configuration values if they are in between defined ranges or make sense in the current context and much
@@ -43,17 +42,12 @@ class ConfigurationValuesTest implements TestCaseInterface
 {
     public const PROCESSOR_INTERFACE = ProcessorInterface::class;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $configuration = [];
 
-    /**
-     * ConfigurationValuesTest constructor.
-     */
-    public function __construct()
+    public function __construct(ConfigContainer $configContainer)
     {
-        $this->configuration = GeneralUtility::makeInstance(ConfigContainer::class)->get();
+        $this->configuration = $configContainer->get();
     }
 
     /**

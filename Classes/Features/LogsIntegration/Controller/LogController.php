@@ -55,6 +55,11 @@ class LogController extends \CoStack\Logs\Controller\LogController
         ],
     ];
 
+    public function __construct(ExecutionTimeService $executionTimeService)
+    {
+        $executionTimeService->start();
+    }
+
     /**
      * @SuppressWarnings(PHPMD.Superglobals)
      * @SuppressWarnings(PHPMD.StaticAccess)
@@ -62,7 +67,6 @@ class LogController extends \CoStack\Logs\Controller\LogController
     protected function initializeAction()
     {
         parent::initializeAction();
-        GeneralUtility::makeInstance(ExecutionTimeService::class)->start();
         $this->logConfiguration = $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'];
 
         $config = $this->configurationManager->getConfiguration('FullTypoScript');

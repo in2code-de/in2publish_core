@@ -39,14 +39,13 @@ use In2code\In2publishCore\Domain\Service\Exception\AllSitesCommandException;
 use In2code\In2publishCore\In2publishCoreException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function base64_decode;
 use function explode;
@@ -64,16 +63,16 @@ class ForeignSiteFinder implements LoggerAwareInterface
     /** @var VariableFrontend */
     protected $cache;
 
-    public function __construct()
+    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, FrontendInterface $cache)
     {
-        $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
-        $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
+        $this->rceDispatcher = $remoteCommandDispatcher;
+        $this->cache = $cache;
     }
 
     public function getSiteByPageId(int $pageId): Site
     {
         $closure = function () use ($pageId): Site {
-            $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
+            $request = new RemoteCommandRequest();
             $request->setCommand(SiteConfigurationCommand::IDENTIFIER);
             $request->setOption((string)$pageId);
 
@@ -104,7 +103,7 @@ class ForeignSiteFinder implements LoggerAwareInterface
     public function getAllSites(): array
     {
         $closure = function (): array {
-            $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
+            $request = new RemoteCommandRequest();
             $request->setCommand(AllSitesCommand::IDENTIFIER);
             $response = $this->rceDispatcher->dispatch($request);
 

@@ -32,17 +32,23 @@ custom flag set.
 ```php
 use In2code\In2publishCore\Event\VoteIfRecordIsPublishable;
 use In2code\In2publishCore\Service\Database\RawRecordService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class RecordIsPublishableVoter
 {
+    /** @var RawRecordService */
+    protected $rawRecordService;
+
+    public function __construct(RawRecordService $rawRecordService)
+    {
+        $this->rawRecordService = $rawRecordService;
+    }
+
     public function __invoke(VoteIfRecordIsPublishable $event): void
     {
         // Do not forget to check if the current record is from the table you want.
         if ('tt_content' === $event->getTable()) {
             // Use the RawRecordService to reduce queries if possible and have a sleek API
-            $rawRecordService = GeneralUtility::makeInstance(RawRecordService::class);
-            $rawRecord = $rawRecordService->getRawRecord('tt_content', $event->getIdentifier(), 'local');
+            $rawRecord = $this->rawRecordService->getRawRecord('tt_content', $event->getIdentifier(), 'local');
             if (true === (bool)($rawRecord['tx_myext_dontpublish'] ?? false)) {
                 $event->voteYes();
             }

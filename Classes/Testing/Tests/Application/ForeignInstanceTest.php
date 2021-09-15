@@ -44,17 +44,16 @@ use function strpos;
 
 class ForeignInstanceTest implements TestCaseInterface
 {
-    /**
-     * @var RemoteCommandDispatcher
-     */
+    /** @var RemoteCommandDispatcher */
     protected $rceDispatcher;
 
-    /**
-     * ForeignInstanceTest constructor.
-     */
-    public function __construct()
+    /** @var Typo3Version */
+    protected $typo3Version;
+
+    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, Typo3Version $typo3Version)
     {
-        $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
+        $this->rceDispatcher = $remoteCommandDispatcher;
+        $this->typo3Version = $typo3Version;
     }
 
     /**
@@ -62,7 +61,7 @@ class ForeignInstanceTest implements TestCaseInterface
      */
     public function run(): TestResult
     {
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, AllCommand::IDENTIFIER);
+        $request = new RemoteCommandRequest(AllCommand::IDENTIFIER);
         $response = $this->rceDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {
@@ -118,7 +117,7 @@ class ForeignInstanceTest implements TestCaseInterface
             );
         }
 
-        $localT3Version = GeneralUtility::makeInstance(Typo3Version::class)->getVersion();
+        $localT3Version = $this->typo3Version->getVersion();
         if ($foreign['TYPO3'] !== $localT3Version) {
             return new TestResult(
                 'application.different_t3_versions',

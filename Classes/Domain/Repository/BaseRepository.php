@@ -33,10 +33,9 @@ namespace In2code\In2publishCore\Domain\Repository;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Service\Configuration\TcaService;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
 
 use function array_column;
@@ -54,29 +53,20 @@ use function trim;
  * on a specific database connection. this repository does not
  * own a database connection.
  */
-abstract class BaseRepository
+abstract class BaseRepository implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     public const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
     public const DEPRECATION_METHOD = 'The method %s is deprecated and will be removed in in2publish_core version 10.';
     public const DEPRECATION_PARAMETER = 'The parameter %s of method %s is deprecated and will be removed in in2publish_core version 10.';
 
-    /**
-     * @var Logger
-     */
-    protected $logger = null;
+    /** @var TcaService */
+    protected $tcaService;
 
-    /**
-     * @var TcaService
-     */
-    protected $tcaService = null;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
+    public function __construct(TcaService $tcaService)
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
+        $this->tcaService = $tcaService;
     }
 
     /**
