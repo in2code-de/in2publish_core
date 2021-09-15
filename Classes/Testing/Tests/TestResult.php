@@ -82,17 +82,11 @@ class TestResult
         $this->labelArguments = $labelArguments;
     }
 
-    /**
-     * @return string
-     */
     public function getSeverity(): string
     {
         return $this->severity;
     }
 
-    /**
-     * @return string
-     */
     public function getSeverityLabel(): string
     {
         switch ($this->severity) {
@@ -108,57 +102,36 @@ class TestResult
         }
     }
 
-    /**
-     * @param string $severity
-     */
     public function setSeverity(string $severity)
     {
         $this->severity = $severity;
     }
 
-    /**
-     * @return string
-     */
     public function getLabel(): string
     {
         return $this->label;
     }
 
-    /**
-     * @param string $label
-     */
     public function setLabel(string $label)
     {
         $this->label = $label;
     }
 
-    /**
-     * @return string
-     */
     public function getTranslatedLabel(): string
     {
         return TestLabelLocalizer::translate($this->label, $this->labelArguments);
     }
 
-    /**
-     * @return string
-     */
     public function getMessages(): string
     {
         return $this->messages;
     }
 
-    /**
-     * @param string $messages
-     */
     public function setMessages(string $messages)
     {
         $this->messages = $messages;
     }
 
-    /**
-     * @return string
-     */
     public function getTranslatedMessages(): string
     {
         $translatedMessages = [];

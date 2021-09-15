@@ -35,11 +35,6 @@ use TYPO3\CMS\Core\Log\Processor\AbstractProcessor;
 
 class BackendUserProcessor extends AbstractProcessor
 {
-    /**
-     * @param LogRecord $logRecord
-     *
-     * @return LogRecord
-     */
     public function processLogRecord(LogRecord $logRecord): LogRecord
     {
         $backendUser = $this->getBackendUser();

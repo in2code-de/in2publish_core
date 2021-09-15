@@ -50,9 +50,6 @@ class ForeignDatabaseTest implements TestCaseInterface
         $this->requiredTablesDataProvider = $requiredTablesDataProvider;
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
@@ -86,9 +83,6 @@ class ForeignDatabaseTest implements TestCaseInterface
         return new TestResult('database.foreign_accessible_and_tables_present');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

@@ -77,9 +77,6 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
         }
     }
 
-    /**
-     *
-     */
     public function initializeArguments()
     {
         parent::initializeArguments();

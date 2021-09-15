@@ -55,10 +55,6 @@ class IntegerInRangeValidator implements ValidatorInterface
         $this->max = $max;
     }
 
-    /**
-     * @param ValidationContainer $container
-     * @param $value
-     */
     public function validate(ValidationContainer $container, $value)
     {
         if ($this->min > $value || $value > $this->max) {

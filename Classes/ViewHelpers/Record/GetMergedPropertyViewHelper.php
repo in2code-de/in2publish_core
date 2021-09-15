@@ -49,9 +49,6 @@ class GetMergedPropertyViewHelper extends AbstractViewHelper
         return $record->getMergedProperty($propertyName);
     }
 
-    /**
-     *
-     */
     public function initializeArguments()
     {
         parent::initializeArguments();

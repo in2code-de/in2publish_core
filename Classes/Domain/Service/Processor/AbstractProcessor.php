@@ -94,11 +94,6 @@ abstract class AbstractProcessor implements ProcessorInterface
         return $return;
     }
 
-    /**
-     * @param array $config
-     *
-     * @return bool
-     */
     public function canPreProcess(array $config): bool
     {
         $this->lastReasons = [];
@@ -138,17 +133,11 @@ abstract class AbstractProcessor implements ProcessorInterface
         return $this->canHoldRelations;
     }
 
-    /**
-     * @return array
-     */
     public function getLastReasons(): array
     {
         return $this->lastReasons;
     }
 
-    /**
-     * @return array
-     */
     protected function getImportantFields(): array
     {
         return array_merge($this->required, $this->allowed);

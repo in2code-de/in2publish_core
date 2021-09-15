@@ -56,9 +56,6 @@ class ForeignInstanceTest implements TestCaseInterface
         $this->typo3Version = $typo3Version;
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $request = new RemoteCommandRequest(AllCommand::IDENTIFIER);
@@ -145,11 +142,6 @@ class ForeignInstanceTest implements TestCaseInterface
         return new TestResult('application.foreign_system_validated');
     }
 
-    /**
-     * @param array $output
-     *
-     * @return array
-     */
     protected function tokenizeResponse(array $output): array
     {
         $values = [];
@@ -162,9 +154,6 @@ class ForeignInstanceTest implements TestCaseInterface
         return $values;
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

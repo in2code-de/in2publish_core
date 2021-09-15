@@ -63,9 +63,6 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
         $this->siteService = $siteService;
     }
 
-    /**
-     *
-     */
     public function initializeArguments()
     {
         parent::initializeArguments();

@@ -63,9 +63,6 @@ class ForeignEnvironmentService implements LoggerAwareInterface
         $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
-    /**
-     * @return string
-     */
     public function getDatabaseInitializationCommands(): string
     {
         if ($this->cache->has('foreign_db_init')) {
@@ -164,11 +161,6 @@ class ForeignEnvironmentService implements LoggerAwareInterface
         return $this->cache->get('encryption_key');
     }
 
-    /**
-     * @param array $output
-     *
-     * @return array
-     */
     protected function tokenizeResponse(array $output): array
     {
         $values = [];

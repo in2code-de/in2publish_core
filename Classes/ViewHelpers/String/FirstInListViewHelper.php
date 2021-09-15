@@ -45,9 +45,6 @@ class FirstInListViewHelper extends AbstractViewHelper
         $this->registerArgument('entries', 'string', 'CSV of which the first will be returned', true);
     }
 
-    /**
-     * @return string
-     */
     public function render(): string
     {
         $arguments = $this->arguments['entries'];

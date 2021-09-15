@@ -83,9 +83,6 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
         ];
     }
 
-    /**
-     * @return array
-     */
     public function getTools(): array
     {
         // Do not inject the ConfigurationManager, because it will not contain the configured tools.
@@ -102,9 +99,6 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
         return $this->entries;
     }
 
-    /**
-     * @param string $name
-     */
     public function removeTool(string $name)
     {
         unset($this->entries[$name]);

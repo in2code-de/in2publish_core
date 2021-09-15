@@ -59,97 +59,61 @@ class SysRedirect extends AbstractEntity
     /** @var array */
     protected $rtc = [];
 
-    /**
-     * @return string
-     */
     public function getSourceHost(): string
     {
         return $this->sourceHost;
     }
 
-    /**
-     * @param string $sourceHost
-     */
     public function setSourceHost(string $sourceHost): void
     {
         $this->sourceHost = $sourceHost;
     }
 
-    /**
-     * @return string
-     */
     public function getSourcePath(): string
     {
         return $this->sourcePath;
     }
 
-    /**
-     * @param string $sourcePath
-     */
     public function setSourcePath(string $sourcePath): void
     {
         $this->sourcePath = $sourcePath;
     }
 
-    /**
-     * @return string
-     */
     public function getTarget(): string
     {
         return $this->target;
     }
 
-    /**
-     * @param string $target
-     */
     public function setTarget(string $target): void
     {
         $this->target = $target;
     }
 
-    /**
-     * @return int
-     */
     public function getPageUid(): ?int
     {
         return $this->pageUid;
     }
 
-    /**
-     * @param null|int $pageUid
-     */
     public function setPageUid(?int $pageUid): void
     {
         $this->pageUid = $pageUid;
     }
 
-    /**
-     * @return string
-     */
     public function getSiteId(): string
     {
         return $this->siteId;
     }
 
-    /**
-     * @param string $siteId
-     */
     public function setSiteId(string $siteId): void
     {
         $this->siteId = $siteId;
     }
 
-    /**
-     * @return bool
-     */
     public function isDeleted(): bool
     {
         return $this->deleted;
     }
 
-    /**
-     * @param bool $deleted
-     */
     public function setDeleted(bool $deleted): void
     {
         $this->deleted = $deleted;

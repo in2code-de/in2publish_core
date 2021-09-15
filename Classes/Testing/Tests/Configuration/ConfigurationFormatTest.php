@@ -48,9 +48,6 @@ class ConfigurationFormatTest implements TestCaseInterface
         $this->configContainer = $configContainer;
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $definition = $this->configContainer->getLocalDefinition();
@@ -65,9 +62,6 @@ class ConfigurationFormatTest implements TestCaseInterface
         return new TestResult('configuration.format_okay');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [];

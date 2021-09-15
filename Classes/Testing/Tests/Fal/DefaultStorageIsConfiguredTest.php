@@ -44,9 +44,6 @@ class DefaultStorageIsConfiguredTest implements TestCaseInterface
         $this->resourceFactory = $resourceFactory;
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         if (null === $this->resourceFactory->getDefaultStorage()) {
@@ -55,9 +52,6 @@ class DefaultStorageIsConfiguredTest implements TestCaseInterface
         return new TestResult('fal.default_storage.configured');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

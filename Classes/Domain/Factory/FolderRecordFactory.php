@@ -441,12 +441,6 @@ class FolderRecordFactory implements LoggerAwareInterface
         return $diskIdentifiers;
     }
 
-    /**
-     * @param string $identifier
-     * @param DriverInterface $driver
-     *
-     * @return array
-     */
     protected function getFilesIdentifiersInFolder(string $identifier, DriverInterface $driver): array
     {
         if ($driver->folderExists($identifier)) {
@@ -496,12 +490,6 @@ class FolderRecordFactory implements LoggerAwareInterface
         );
     }
 
-    /**
-     * @param DriverInterface $driver
-     * @param string $identifier
-     *
-     * @return array
-     */
     protected function getSubFolderIdentifiers(DriverInterface $driver, string $identifier): array
     {
         if ($driver->folderExists($identifier)) {
@@ -814,12 +802,6 @@ class FolderRecordFactory implements LoggerAwareInterface
         return (int)$count;
     }
 
-    /**
-     * @param DriverInterface $driver
-     * @param array $identifierList
-     *
-     * @return array
-     */
     protected function convertIdentifiers(DriverInterface $driver, array $identifierList): array
     {
         if (!$driver->isCaseSensitiveFileSystem()) {

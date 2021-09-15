@@ -68,9 +68,6 @@ class LocalDomainTest extends AbstractDomainTest implements TestCaseInterface
         return $this->localConnection;
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

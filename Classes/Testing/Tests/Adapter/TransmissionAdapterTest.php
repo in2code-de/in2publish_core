@@ -37,9 +37,6 @@ use function array_merge;
 
 class TransmissionAdapterTest implements TestCaseInterface
 {
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         return new TestResult('adapter.all_transmission_adapter_tests__passed');

@@ -49,9 +49,6 @@ class IdenticalDriverTest implements TestCaseInterface
         $this->testSubjectProvider = $testSubjectProvider;
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $storages = $this->testSubjectProvider->getStoragesForDriverTest();
@@ -89,9 +86,6 @@ class IdenticalDriverTest implements TestCaseInterface
         return new TestResult('fal.driver_matching');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

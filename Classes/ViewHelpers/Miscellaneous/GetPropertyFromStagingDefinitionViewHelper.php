@@ -43,9 +43,6 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
      */
     protected $emptyFieldValue = '---';
 
-    /**
-     *
-     */
     public function initializeArguments()
     {
         parent::initializeArguments();

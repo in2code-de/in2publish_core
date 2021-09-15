@@ -52,11 +52,6 @@ class ForeignSiteConfigUnavailableException extends In2publishCoreException
      */
     protected $exitStatus = 0;
 
-    /**
-     * @param RemoteCommandResponse $response
-     *
-     * @return ForeignSiteConfigUnavailableException
-     */
     public static function fromFailedRceResponse(RemoteCommandResponse $response): ForeignSiteConfigUnavailableException
     {
         $self = new static(static::MESSAGE, self::CODE);
@@ -66,25 +61,16 @@ class ForeignSiteConfigUnavailableException extends In2publishCoreException
         return $self;
     }
 
-    /**
-     * @return string
-     */
     public function getErrorString(): string
     {
         return $this->errorString;
     }
 
-    /**
-     * @return string
-     */
     public function getOutputString(): string
     {
         return $this->outputString;
     }
 
-    /**
-     * @return int
-     */
     public function getExitStatus(): int
     {
         return $this->exitStatus;

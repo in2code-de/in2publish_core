@@ -380,14 +380,6 @@ class BackendUtility
         return GeneralUtility::makeInstance(CacheManager::class)->getCache('cache_runtime');
     }
 
-    /**
-     * @param Closure $buildPageUrl
-     * @param Site $site
-     * @param int $language
-     * @param int $pageUid
-     *
-     * @return Closure
-     */
     protected static function getForeignUriClosure(
         Closure $buildPageUrl,
         Site $site,
@@ -442,13 +434,6 @@ class BackendUtility
         };
     }
 
-    /**
-     * @param Site $site
-     * @param int $pageUid
-     * @param $additionalQueryParams
-     *
-     * @return Closure
-     */
     protected static function getLocalUriClosure(Site $site, int $pageUid, $additionalQueryParams): Closure
     {
         return static function () use ($site, $pageUid, $additionalQueryParams): ?UriInterface {

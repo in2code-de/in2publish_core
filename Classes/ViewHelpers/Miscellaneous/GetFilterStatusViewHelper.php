@@ -38,9 +38,6 @@ class GetFilterStatusViewHelper extends AbstractViewHelper
      */
     protected $backendUser;
 
-    /**
-     *
-     */
     public function initializeArguments()
     {
         parent::initializeArguments();

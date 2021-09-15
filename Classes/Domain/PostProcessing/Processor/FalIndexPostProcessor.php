@@ -104,10 +104,6 @@ class FalIndexPostProcessor implements PostProcessor, LoggerAwareInterface
         }
     }
 
-    /**
-     * @param RecordInterface $record
-     * @return null|ResourceStorage
-     */
     protected function getStorage(RecordInterface $record): ?ResourceStorage
     {
         static $storages = [];

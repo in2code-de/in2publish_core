@@ -156,9 +156,6 @@ class UniqueStorageTargetTest implements TestCaseInterface
         return new TestResult('fal.storage_targets_okay');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

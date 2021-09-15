@@ -32,9 +32,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class GetClassNameOnActionViewHelper extends AbstractViewHelper
 {
-    /**
-     *
-     */
     public function initializeArguments()
     {
         parent::initializeArguments();
@@ -56,9 +53,6 @@ class GetClassNameOnActionViewHelper extends AbstractViewHelper
         return $this->arguments['fallbackClassName'];
     }
 
-    /**
-     * @return string
-     */
     protected function getCurrentActionName(): string
     {
         return $this->renderingContext->getControllerAction();

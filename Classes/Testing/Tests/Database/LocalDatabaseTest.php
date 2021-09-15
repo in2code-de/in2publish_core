@@ -48,9 +48,6 @@ class LocalDatabaseTest implements TestCaseInterface
         $this->requiredTablesDataProvider = $requiredTablesDataProvider;
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
@@ -84,9 +81,6 @@ class LocalDatabaseTest implements TestCaseInterface
         return new TestResult('database.local_accessible_and_tables_present');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [];

@@ -86,11 +86,6 @@ class UidReservationService
         return $possibleUid;
     }
 
-    /**
-     * @param Connection $databaseConnection
-     *
-     * @return string
-     */
     protected function determineDatabaseOfConnection(Connection $databaseConnection): string
     {
         $cacheKey = spl_object_hash($databaseConnection);
@@ -101,9 +96,6 @@ class UidReservationService
         return $this->cache[$cacheKey];
     }
 
-    /**
-     * @param int $autoIncrement
-     */
     protected function setAutoIncrement(int $autoIncrement)
     {
         $statement = 'ALTER TABLE sys_file AUTO_INCREMENT = ' . $autoIncrement;
@@ -117,11 +109,6 @@ class UidReservationService
         }
     }
 
-    /**
-     * @param int $uid
-     *
-     * @return bool
-     */
     protected function isUidFree(int $uid): bool
     {
         /** @var Connection $databaseConnection */
@@ -142,11 +129,6 @@ class UidReservationService
         return true;
     }
 
-    /**
-     * @param Connection $databaseConnection
-     *
-     * @return int
-     */
     protected function fetchSysFileAutoIncrementFromDatabase(Connection $databaseConnection): int
     {
         $statement = sprintf(

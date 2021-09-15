@@ -68,17 +68,11 @@ class RemoteCommandResponse
         $this->setExitStatus($exitStatus);
     }
 
-    /**
-     * @return array
-     */
     public function getOutput(): array
     {
         return $this->output;
     }
 
-    /**
-     * @return string
-     */
     public function getOutputString(): string
     {
         return implode(PHP_EOL, $this->output);
@@ -92,9 +86,6 @@ class RemoteCommandResponse
         $this->output = $this->convertAndSanitizeResponse($output);
     }
 
-    /**
-     * @return array
-     */
     public function getErrors(): array
     {
         return $this->errors;
@@ -108,33 +99,21 @@ class RemoteCommandResponse
         $this->errors = $this->convertAndSanitizeResponse($errors);
     }
 
-    /**
-     * @return string
-     */
     public function getErrorsString(): string
     {
         return implode(PHP_EOL, $this->errors);
     }
 
-    /**
-     * @return bool
-     */
     public function isSuccessful(): bool
     {
         return 0 === $this->exitStatus;
     }
 
-    /**
-     * @return int
-     */
     public function getExitStatus(): int
     {
         return $this->exitStatus;
     }
 
-    /**
-     * @param int $exitStatus
-     */
     public function setExitStatus(int $exitStatus)
     {
         $this->exitStatus = $exitStatus;

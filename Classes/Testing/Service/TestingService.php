@@ -103,12 +103,6 @@ class TestingService
         return array_merge($failedTests, $warningTests, $skippedTests, $successfulTests);
     }
 
-    /**
-     * @param array $dependencies
-     * @param array $failedTests
-     *
-     * @return bool
-     */
     protected function hasDependencyFailed(array $dependencies, array $failedTests): bool
     {
         foreach ($dependencies as $dependency) {

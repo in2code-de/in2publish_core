@@ -47,9 +47,6 @@ use const PHP_INT_MAX;
 
 class DatabaseDifferencesTest implements TestCaseInterface
 {
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
@@ -177,12 +174,6 @@ class DatabaseDifferencesTest implements TestCaseInterface
         return new TestResult('database.no_differences');
     }
 
-    /**
-     * @param array $left
-     * @param array $right
-     *
-     * @return array
-     */
     public function identifyDifferences(array $left, array $right): array
     {
         $differences = [];
@@ -204,12 +195,6 @@ class DatabaseDifferencesTest implements TestCaseInterface
         return $differences;
     }
 
-    /**
-     * @param Connection $local
-     * @param Connection $foreign
-     *
-     * @return bool
-     */
     protected function areDifferentDatabases(Connection $local, Connection $foreign): bool
     {
         $random = mt_rand(1, PHP_INT_MAX);
@@ -239,11 +224,6 @@ class DatabaseDifferencesTest implements TestCaseInterface
         return $identical;
     }
 
-    /**
-     * @param Connection $database
-     *
-     * @return array
-     */
     protected function readTableStructure(Connection $database): array
     {
         $tableStructure = [];
@@ -284,9 +264,6 @@ class DatabaseDifferencesTest implements TestCaseInterface
         return $tableStructure;
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

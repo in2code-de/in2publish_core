@@ -32,11 +32,6 @@ use TYPO3\CMS\Core\Messaging\AbstractMessage;
 
 class LogUtility
 {
-    /**
-     * @param int $logLevel
-     *
-     * @return int
-     */
     public static function translateLogLevelToSeverity(int $logLevel): int
     {
         switch ($logLevel) {

@@ -118,97 +118,61 @@ class RemoteCommandRequest
         $this->options = $options;
     }
 
-    /**
-     * @param bool $usePhp
-     */
     public function usePhp(bool $usePhp)
     {
         $this->usePhp = $usePhp;
     }
 
-    /**
-     * @return string
-     */
     public function getPathToPhp(): string
     {
         return $this->usePhp ? $this->pathToPhp : '';
     }
 
-    /**
-     * @return string
-     */
     public function getWorkingDirectory(): string
     {
         return $this->workingDirectory;
     }
 
-    /**
-     * @return array
-     */
     public function getEnvironmentVariables(): array
     {
         return $this->environmentVariables;
     }
 
-    /**
-     * @return string
-     */
     public function getDispatcher(): string
     {
         return $this->dispatcher;
     }
 
-    /**
-     * @param string $dispatcher
-     */
     public function setDispatcher(string $dispatcher)
     {
         $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * @param array $environmentVariables
-     */
     public function setEnvironmentVariables(array $environmentVariables)
     {
         $this->environmentVariables = $environmentVariables;
     }
 
-    /**
-     * @return string
-     */
     public function getCommand(): string
     {
         return $this->command;
     }
 
-    /**
-     * @param string $command
-     */
     public function setCommand(string $command)
     {
         $this->command = $command;
     }
 
-    /**
-     * @return bool
-     */
     public function hasArguments(): bool
     {
         return !empty($this->arguments);
     }
 
-    /**
-     * @return array
-     */
     public function getArguments(): array
     {
         return $this->arguments;
     }
 
-    /**
-     * @param array $arguments
-     */
     public function setArguments(array $arguments)
     {
         $this->arguments = $arguments;
@@ -223,25 +187,16 @@ class RemoteCommandRequest
         $this->arguments[$name] = $value;
     }
 
-    /**
-     * @return bool
-     */
     public function hasOptions(): bool
     {
         return !empty($this->options);
     }
 
-    /**
-     * @return array
-     */
     public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * @param array $options
-     */
     public function setOptions(array $options)
     {
         $this->options = [];

@@ -33,9 +33,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class HasChangedRecordsViewHelper extends AbstractViewHelper
 {
-    /**
-     *
-     */
     public function initializeArguments()
     {
         parent::initializeArguments();

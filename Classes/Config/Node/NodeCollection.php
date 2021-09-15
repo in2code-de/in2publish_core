@@ -56,9 +56,6 @@ class NodeCollection extends ArrayObject implements Node
         }
     }
 
-    /**
-     * @param Node $node
-     */
     public function addNode(Node $node)
     {
         $name = $node->getName();
@@ -93,9 +90,6 @@ class NodeCollection extends ArrayObject implements Node
         return $node->getNodePath(implode(',', $parts));
     }
 
-    /**
-     * @param NodeCollection $nodes
-     */
     public function addNodes(NodeCollection $nodes)
     {
         foreach ($nodes as $node) {
@@ -103,9 +97,6 @@ class NodeCollection extends ArrayObject implements Node
         }
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return spl_object_hash($this);

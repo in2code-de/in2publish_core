@@ -49,9 +49,6 @@ class MissingStoragesTest implements TestCaseInterface
         $this->testSubjectProvider = $testSubjectProvider;
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $storages = $this->testSubjectProvider->getStoragesForMissingStoragesTest();
@@ -65,9 +62,6 @@ class MissingStoragesTest implements TestCaseInterface
         return new TestResult('fal.no_missing_storages');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [
@@ -76,13 +70,6 @@ class MissingStoragesTest implements TestCaseInterface
         ];
     }
 
-    /**
-     * @param array $storages
-     * @param array $messages
-     * @param string $side
-     *
-     * @return array
-     */
     protected function getMissing(array $storages, array $messages, string $side): array
     {
         $opposite = $side === 'local' ? 'foreign' : 'local';

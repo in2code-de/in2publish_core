@@ -61,17 +61,11 @@ class Builder
         $this->nodes = new NodeCollection();
     }
 
-    /**
-     * @return Builder
-     */
     public static function start(): Builder
     {
         return GeneralUtility::makeInstance(static::class);
     }
 
-    /**
-     * @return NodeCollection
-     */
     public function end(): NodeCollection
     {
         return $this->nodes;
@@ -105,52 +99,24 @@ class Builder
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param string $default
-     * @param array $validators
-     *
-     * @return $this
-     */
     public function addString(string $key, string $default, array $validators = []): self
     {
         $this->addNode(Node::T_STRING, $key, $default, $validators);
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param string $default
-     * @param array $validators
-     *
-     * @return $this
-     */
     public function addOptionalString(string $key, string $default, array $validators = []): self
     {
         $this->addNode(Node::T_OPTIONAL_STRING, $key, $default, $validators);
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param int $default
-     * @param array $validators
-     *
-     * @return $this
-     */
     public function addInteger(string $key, int $default, array $validators = []): self
     {
         $this->addNode(Node::T_INTEGER, $key, $default, $validators);
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param bool $default
-     * @param array $validators
-     *
-     * @return $this
-     */
     public function addBoolean(string $key, bool $default, array $validators = []): self
     {
         $this->addNode(Node::T_BOOLEAN, $key, $default, $validators);
@@ -183,12 +149,6 @@ class Builder
         return $this;
     }
 
-    /**
-     * @param string $keyType
-     * @param string $type
-     *
-     * @return $this
-     */
     public function addGenericScalar(string $keyType, string $type = Node::T_STRING): self
     {
         $valueNode = Builder::start()->addNode($type, '*:' . $type)->end();
@@ -197,12 +157,6 @@ class Builder
         return $this;
     }
 
-    /**
-     * @param string $keyType
-     * @param Builder $nodes
-     *
-     * @return $this
-     */
     public function addGenericArray(string $keyType, Builder $nodes): self
     {
         $valueNodes = Builder::start()->addArray('*:' . $keyType, $nodes)->end();

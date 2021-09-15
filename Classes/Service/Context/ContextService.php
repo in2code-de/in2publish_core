@@ -56,9 +56,6 @@ class ContextService implements SingletonInterface
         $this->context = $this->determineContext();
     }
 
-    /**
-     * @return string
-     */
     public function getContext(): string
     {
         return $this->context;
@@ -84,25 +81,16 @@ class ContextService implements SingletonInterface
         throw new LogicException('The defined in2publish context is not supported', 1469717011);
     }
 
-    /**
-     * @return bool
-     */
     public function isForeign(): bool
     {
         return static::FOREIGN === $this->context;
     }
 
-    /**
-     * @return bool
-     */
     public function isLocal(): bool
     {
         return static::LOCAL === $this->context;
     }
 
-    /**
-     * @return bool
-     */
     public function isContextDefined(): bool
     {
         return (false !== getenv(static::ENV_VAR_NAME)) || (false !== getenv(static::REDIRECT_ENV_VAR_NAME));

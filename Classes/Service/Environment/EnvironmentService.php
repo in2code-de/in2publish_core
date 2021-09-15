@@ -64,9 +64,6 @@ class EnvironmentService implements SingletonInterface
         $this->configContainer = $configContainer;
     }
 
-    /**
-     * @param bool $success
-     */
     public function setTestResult(bool $success)
     {
         $this->registry->set(
@@ -80,9 +77,6 @@ class EnvironmentService implements SingletonInterface
         );
     }
 
-    /**
-     * @return array
-     */
     public function getTestStatus(): array
     {
         $statusArray = [];

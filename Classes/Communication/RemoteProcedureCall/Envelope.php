@@ -58,8 +58,6 @@ class Envelope
     protected $response = '';
 
     /**
-     * Envelope constructor.
-     *
      * @param string $command
      * @param array $request
      * @param mixed $response
@@ -77,17 +75,11 @@ class Envelope
         }
     }
 
-    /**
-     * @return int
-     */
     public function getUid(): int
     {
         return $this->uid;
     }
 
-    /**
-     * @param int $uid
-     */
     public function setUid(int $uid)
     {
         if (0 !== $this->uid) {
@@ -96,17 +88,11 @@ class Envelope
         $this->uid = $uid;
     }
 
-    /**
-     * @return string
-     */
     public function getCommand(): string
     {
         return $this->command;
     }
 
-    /**
-     * @param string $command
-     */
     public function setCommand(string $command)
     {
         if ('' !== $this->command) {
@@ -153,9 +139,6 @@ class Envelope
         $this->response = serialize($response);
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return array_filter(
@@ -168,11 +151,6 @@ class Envelope
         );
     }
 
-    /**
-     * @param array $values
-     *
-     * @return Envelope
-     */
     public static function fromArray(array $values): Envelope
     {
         $object = new Envelope('', []);

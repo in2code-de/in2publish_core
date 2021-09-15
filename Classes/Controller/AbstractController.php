@@ -111,9 +111,6 @@ abstract class AbstractController extends ActionController
         }
     }
 
-    /**
-     * @param ViewInterface $view
-     */
     protected function initializeView(ViewInterface $view)
     {
         parent::initializeView($view);

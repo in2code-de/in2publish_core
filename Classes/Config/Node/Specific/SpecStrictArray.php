@@ -55,12 +55,6 @@ class SpecStrictArray extends SpecArray
         }
     }
 
-    /**
-     * @param array $original
-     * @param array $additional
-     *
-     * @return array
-     */
     public function mergeArrays(array $original, array $additional): array
     {
         $original = ['definition' => $original];

@@ -52,9 +52,6 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
         $this->configContainer = $configContainer;
     }
 
-    /**
-     * @param RenderingContextInterface $renderingContext
-     */
     public function setRenderingContext(RenderingContextInterface $renderingContext)
     {
         parent::setRenderingContext($renderingContext);
@@ -63,9 +60,6 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
         }
     }
 
-    /**
-     *
-     */
     public function initializeArguments()
     {
         parent::initializeArguments();
@@ -86,11 +80,6 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
         return $attributesString;
     }
 
-    /**
-     * @param Record $record
-     *
-     * @return string
-     */
     protected function getDataAttributesForSimpleOverviewAndAjax(Record $record): string
     {
         $attributesString = ' data-action-ajax-uri="' . $this->getAjaxUri($record) . '"';
@@ -99,11 +88,6 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
         return $attributesString;
     }
 
-    /**
-     * @param Record $record
-     *
-     * @return string
-     */
     protected function getAjaxUri(Record $record): string
     {
         return $this
@@ -116,11 +100,6 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
             );
     }
 
-    /**
-     * @param Record $record
-     *
-     * @return string
-     */
     protected function getAjaxContainerClassName(Record $record): string
     {
         return 'simpleOverviewAndAjaxContainerForRecord' . $record->getTableName() . $record->getIdentifier();

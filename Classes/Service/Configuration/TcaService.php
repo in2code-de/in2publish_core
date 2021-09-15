@@ -124,11 +124,6 @@ class TcaService implements SingletonInterface
         return '';
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return bool
-     */
     public function getLabelAltForceFromTable(string $tableName): bool
     {
         if (isset($this->tca[$tableName]['ctrl']['label_alt_force'])) {
@@ -137,11 +132,6 @@ class TcaService implements SingletonInterface
         return false;
     }
 
-    /**
-     * @param array $row
-     * @param string $table
-     * @return string
-     */
     public function getRecordLabel(array $row, string $table): string
     {
         $labelField = $this->getLabelFieldFromTable($table);
@@ -176,11 +166,6 @@ class TcaService implements SingletonInterface
         return '';
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return string
-     */
     public function getSortingField(string $tableName): string
     {
         $sortingField = '';
@@ -192,11 +177,6 @@ class TcaService implements SingletonInterface
         return $sortingField;
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return string
-     */
     public function getNameOfSortingField(string $tableName): string
     {
         if (!empty($this->tca[$tableName]['ctrl']['sortby'])) {
@@ -205,11 +185,6 @@ class TcaService implements SingletonInterface
         return '';
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return string
-     */
     public function getDeletedField(string $tableName): string
     {
         $deleteField = '';
@@ -234,11 +209,6 @@ class TcaService implements SingletonInterface
         return '';
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return string
-     */
     public function getLanguageField(string $tableName): string
     {
         if (!empty($this->tca[$tableName]['ctrl']['languageField'])) {
@@ -247,11 +217,6 @@ class TcaService implements SingletonInterface
         return '';
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return string
-     */
     public function getTransOrigPointerField(string $tableName): string
     {
         if (!empty($this->tca[$tableName]['ctrl']['transOrigPointerField'])) {
@@ -330,11 +295,6 @@ class TcaService implements SingletonInterface
         return $label;
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return bool
-     */
     public function isHiddenRootTable(string $tableName): bool
     {
         return isset($this->tca[$tableName]['ctrl']['hideTable'], $this->tca[$tableName]['ctrl']['rootLevel'])

@@ -57,9 +57,6 @@ class ValidationContainer
         array_pop($this->path);
     }
 
-    /**
-     * @param string $error
-     */
     public function addError(string $error)
     {
         $this->errors[] = '[' . implode('.', $this->path) . ']: ' . $error;

@@ -91,9 +91,6 @@ class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
         return $this->foreignConnection;
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

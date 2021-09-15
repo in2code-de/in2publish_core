@@ -55,9 +55,6 @@ class CaseSensitivityTest implements TestCaseInterface
         $this->testSubjectProvider = $falStorageTestSubjectsProvider;
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $storages = $this->testSubjectProvider->getStoragesForCaseSensitivityTest();
@@ -92,9 +89,6 @@ class CaseSensitivityTest implements TestCaseInterface
         return new TestResult('fal.case_sensitivity_matching');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [
@@ -102,13 +96,6 @@ class CaseSensitivityTest implements TestCaseInterface
         ];
     }
 
-    /**
-     * @param array $storages
-     * @param int $key
-     * @param string $side
-     *
-     * @return array
-     */
     protected function getConfiguration(array $storages, int $key, string $side): array
     {
         return $this->flexFormService->convertFlexFormContentToArray($storages[$side][$key]['configuration']);

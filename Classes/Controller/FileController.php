@@ -209,9 +209,6 @@ class FileController extends AbstractController
         return $record;
     }
 
-    /**
-     * @param TooManyFilesException $exception
-     */
     protected function renderTooManyFilesFlashMessage(TooManyFilesException $exception)
     {
         $arguments = [

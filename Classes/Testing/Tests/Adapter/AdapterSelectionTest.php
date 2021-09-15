@@ -50,9 +50,6 @@ class AdapterSelectionTest implements TestCaseInterface
         $this->adapterRegistry = $adapterRegistry;
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $config = $this->adapterRegistry->getConfig();
@@ -85,9 +82,6 @@ class AdapterSelectionTest implements TestCaseInterface
         );
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [];

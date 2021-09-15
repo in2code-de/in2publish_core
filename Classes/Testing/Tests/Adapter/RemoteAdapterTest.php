@@ -37,9 +37,6 @@ use function array_merge;
 
 class RemoteAdapterTest implements TestCaseInterface
 {
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         return new TestResult('adapter.all_remote_adapter_tests__passed');

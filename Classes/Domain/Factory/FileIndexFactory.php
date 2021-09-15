@@ -134,11 +134,6 @@ class FileIndexFactory
         $record->setDirtyProperties()->calculateState();
     }
 
-    /**
-     * @param RecordInterface $record
-     * @param string $localIdentifier
-     * @param string $foreignIdentifier
-     */
     public function updateFileIndexInfo(RecordInterface $record, string $localIdentifier, string $foreignIdentifier)
     {
         $uid = $record->getIdentifier();
@@ -273,12 +268,6 @@ class FileIndexFactory
         return $type;
     }
 
-    /**
-     * @param string $identifier
-     * @param string $side
-     *
-     * @return array
-     */
     protected function getDriverSpecificFileInfo(string $identifier, string $side): array
     {
         if ($side === 'local') {

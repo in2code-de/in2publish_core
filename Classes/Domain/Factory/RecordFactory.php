@@ -293,12 +293,6 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
         return $instance;
     }
 
-    /**
-     * @param RecordInterface $record
-     * @param CommonRepository $commonRepository
-     *
-     * @return RecordInterface
-     */
     protected function findRelatedRecordsForContentRecord(
         RecordInterface $record,
         CommonRepository $commonRepository
@@ -321,12 +315,6 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
         return $record;
     }
 
-    /**
-     * @param Record $record
-     * @param CommonRepository $commonRepository
-     *
-     * @return RecordInterface
-     */
     protected function findRelatedRecordsForPageRecord(
         Record $record,
         CommonRepository $commonRepository
@@ -589,10 +577,6 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
         $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($this, $record));
     }
 
-    /**
-     * @param RecordInterface $record
-     * @param CommonRepository $commonRepository
-     */
     protected function findTranslations(RecordInterface $record, CommonRepository $commonRepository): void
     {
         $tableName = $record->getTableName();

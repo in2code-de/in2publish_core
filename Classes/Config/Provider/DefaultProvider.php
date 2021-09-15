@@ -46,17 +46,11 @@ class DefaultProvider implements ProviderInterface
         $this->contextService = $contextService;
     }
 
-    /**
-     * @return bool
-     */
     public function isAvailable(): bool
     {
         return true;
     }
 
-    /**
-     * @return array
-     */
     public function getConfig(): array
     {
         if ($this->contextService->isLocal()) {
@@ -65,9 +59,6 @@ class DefaultProvider implements ProviderInterface
         return $this->configContainer->getForeignDefinition()->getDefaults();
     }
 
-    /**
-     * @return int
-     */
     public function getPriority(): int
     {
         return 10;

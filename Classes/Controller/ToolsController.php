@@ -284,9 +284,6 @@ class ToolsController extends ActionController
     {
     }
 
-    /**
-     *
-     */
     public function sysInfoShowAction()
     {
         $info = $this->getFullInfo();
@@ -294,9 +291,6 @@ class ToolsController extends ActionController
         $this->view->assign('infoJson', json_encode($info));
     }
 
-    /**
-     * @param string $json
-     */
     public function sysInfoDecodeAction(string $json = '')
     {
         if (!empty($json)) {
@@ -315,9 +309,6 @@ class ToolsController extends ActionController
         $this->view->assign('infoJson', $json);
     }
 
-    /**
-     *
-     */
     public function sysInfoDownloadAction()
     {
         $info = $this->getFullInfo();

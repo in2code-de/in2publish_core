@@ -36,9 +36,6 @@ use function function_exists;
 
 class SshFunctionAvailabilityTest implements TestCaseInterface
 {
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $sshFunctions = [
@@ -71,9 +68,6 @@ class SshFunctionAvailabilityTest implements TestCaseInterface
         return new TestResult('ssh_connection.full_availability');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [];

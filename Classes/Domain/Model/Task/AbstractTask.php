@@ -69,10 +69,6 @@ abstract class AbstractTask
      */
     private $messages = [];
 
-    /**
-     * @param array $configuration
-     * @param int $uid
-     */
     final public function __construct(array $configuration, int $uid = 0)
     {
         $this->configuration = $configuration;
@@ -120,9 +116,6 @@ abstract class AbstractTask
         $this->executionEnd = new DateTime();
     }
 
-    /**
-     * @return int
-     */
     final public function getUid(): int
     {
         return $this->uid;
@@ -141,36 +134,22 @@ abstract class AbstractTask
         return $this->configuration;
     }
 
-    /**
-     * @return DateTime
-     */
     final public function getCreationDate(): DateTime
     {
         return $this->creationDate;
     }
 
-    /**
-     * @param DateTime $creationDate
-     *
-     * @return AbstractTask
-     */
     final public function setCreationDate(DateTime $creationDate): AbstractTask
     {
         $this->creationDate = $creationDate;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     final public function getExecutionBegin(): DateTime
     {
         return $this->executionBegin;
     }
 
-    /**
-     * @return string
-     */
     final public function getExecutionBeginForPersistence(): string
     {
         if ($this->executionBegin instanceof DateTime) {
@@ -190,17 +169,11 @@ abstract class AbstractTask
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     final public function getExecutionEnd(): DateTime
     {
         return $this->executionEnd;
     }
 
-    /**
-     * @return string
-     */
     final public function getExecutionEndForPersistence(): string
     {
         if ($this->executionEnd instanceof DateTime) {
@@ -220,9 +193,6 @@ abstract class AbstractTask
         return $this;
     }
 
-    /**
-     * @return array
-     */
     final public function getMessages(): array
     {
         return $this->messages;

@@ -100,11 +100,6 @@ class EnvelopeDispatcher
         $this->resourceFactory = $resourceFactory;
     }
 
-    /**
-     * @param Envelope $envelope
-     *
-     * @return bool
-     */
     public function dispatch(Envelope $envelope): bool
     {
         $command = $envelope->getCommand();
@@ -116,11 +111,6 @@ class EnvelopeDispatcher
         return false;
     }
 
-    /**
-     * @param array $request
-     *
-     * @return array
-     */
     protected function folderExists(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -160,22 +150,12 @@ class EnvelopeDispatcher
         ];
     }
 
-    /**
-     * @param array $request
-     *
-     * @return array
-     */
     protected function getPermissions(array $request): array
     {
         $storage = $this->getStorage($request);
         return $this->getStorageDriver($storage)->getPermissions($request['identifier']);
     }
 
-    /**
-     * @param array $request
-     *
-     * @return array
-     */
     protected function getFoldersInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -184,11 +164,6 @@ class EnvelopeDispatcher
         return $this->convertIdentifiers($driver, call_user_func_array([$driver, 'getFoldersInFolder'], $request));
     }
 
-    /**
-     * @param array $request
-     *
-     * @return array
-     */
     protected function fileExists(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -233,11 +208,6 @@ class EnvelopeDispatcher
         return [];
     }
 
-    /**
-     * @param array $request
-     *
-     * @return array
-     */
     protected function getFilesInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -255,11 +225,6 @@ class EnvelopeDispatcher
         return $files;
     }
 
-    /**
-     * @param array $request
-     *
-     * @return array
-     */
     protected function getFileInfoByIdentifier(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -268,11 +233,6 @@ class EnvelopeDispatcher
         return call_user_func_array([$driver, 'getFileInfoByIdentifier'], $request);
     }
 
-    /**
-     * @param array $request
-     *
-     * @return array
-     */
     protected function hash(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -366,11 +326,6 @@ class EnvelopeDispatcher
         return $storage->getPublicUrl($file);
     }
 
-    /**
-     * @param array $request
-     *
-     * @return array
-     */
     protected function batchPrefetchFiles(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -392,11 +347,6 @@ class EnvelopeDispatcher
         return $files;
     }
 
-    /**
-     * @param array $request
-     *
-     * @return string
-     */
     protected function moveFileWithinStorage(array $request): string
     {
         $storage = $this->getStorage($request);
@@ -415,11 +365,6 @@ class EnvelopeDispatcher
         );
     }
 
-    /**
-     * @param ResourceStorage $storage
-     *
-     * @return DriverInterface
-     */
     protected function getStorageDriver(ResourceStorage $storage): DriverInterface
     {
         $driverReflection = new ReflectionProperty(get_class($storage), 'driver');
@@ -449,12 +394,6 @@ class EnvelopeDispatcher
         return GeneralUtility::makeInstance(File::class, $fileIndexArray, $storage);
     }
 
-    /**
-     * @param DriverInterface $driver
-     * @param array $identifierList
-     *
-     * @return array
-     */
     protected function convertIdentifiers(DriverInterface $driver, array $identifierList): array
     {
         if (!$driver->isCaseSensitiveFileSystem()) {
@@ -482,11 +421,6 @@ class EnvelopeDispatcher
         return $storage;
     }
 
-    /**
-     * @param array $request
-     *
-     * @return array
-     */
     public function getStorageHasFolder(array $request): array
     {
         $hasFolder = $this->getStorage($request)->hasFolder($request['identifier']);

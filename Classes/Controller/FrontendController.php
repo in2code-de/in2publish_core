@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\BackendUtility;
 
 class FrontendController extends AbstractController
@@ -41,8 +40,6 @@ class FrontendController extends AbstractController
      * @param int $identifier
      *
      * @return void
-     *
-     * @throws In2publishCoreException
      */
     public function previewAction(int $identifier = 1)
     {

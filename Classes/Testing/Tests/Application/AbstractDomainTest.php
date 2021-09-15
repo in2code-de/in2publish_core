@@ -110,11 +110,6 @@ abstract class AbstractDomainTest
         return $messages;
     }
 
-    /**
-     * @param array $results
-     *
-     * @return array
-     */
     protected function getMessagesForSitesWithSlashBase(array $results): array
     {
         $messages = [];
@@ -128,11 +123,6 @@ abstract class AbstractDomainTest
         return $messages;
     }
 
-    /**
-     * @param $results
-     *
-     * @return array
-     */
     public function getMessagesForSitesWithoutDomain($results): array
     {
         $messages = [];

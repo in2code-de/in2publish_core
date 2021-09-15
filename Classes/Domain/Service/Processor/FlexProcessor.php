@@ -69,11 +69,6 @@ class FlexProcessor extends AbstractProcessor
         self::DS_POINTER_FIELD,
     ];
 
-    /**
-     * @param array $config
-     *
-     * @return bool
-     */
     public function canPreProcess(array $config): bool
     {
         if (

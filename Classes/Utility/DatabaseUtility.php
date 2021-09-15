@@ -129,9 +129,6 @@ class DatabaseUtility
         return static::buildLocalDatabaseConnection()->quote($string);
     }
 
-    /**
-     * @return null|Connection
-     */
     public static function buildLocalDatabaseConnection(): ?Connection
     {
         try {

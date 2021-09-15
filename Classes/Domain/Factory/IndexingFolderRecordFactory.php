@@ -101,17 +101,11 @@ class IndexingFolderRecordFactory
         $this->commonRepository = $commonRepository;
     }
 
-    /**
-     * @param ResourceStorage $localStorage
-     */
     public function overruleLocalStorage(ResourceStorage $localStorage)
     {
         $this->localStorage = $localStorage;
     }
 
-    /**
-     * @param RemoteStorage $remoteStorage
-     */
     public function overruleRemoteStorage(RemoteStorage $remoteStorage)
     {
         $this->remoteStorage = $remoteStorage;

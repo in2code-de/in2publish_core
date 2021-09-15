@@ -198,46 +198,27 @@ class Record implements RecordInterface
         $this->isParentDisabled = $this->isParentDisabled();
     }
 
-    /**
-     * @return string
-     */
     public function getTableName(): string
     {
         return $this->tableName;
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return RecordInterface
-     */
     public function setTableName(string $tableName): RecordInterface
     {
         $this->tableName = $tableName;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isPagesTable(): bool
     {
         return $this->getTableName() === 'pages';
     }
 
-    /**
-     * @return string
-     */
     public function getState(): string
     {
         return $this->state;
     }
 
-    /**
-     * @param string $state
-     *
-     * @return RecordInterface
-     */
     public function setState(string $state): RecordInterface
     {
         $this->state = $state;
@@ -309,9 +290,6 @@ class Record implements RecordInterface
         return $this->getStateRecursive($alreadyVisited) !== static::RECORD_STATE_UNCHANGED;
     }
 
-    /**
-     * @return array
-     */
     public function getLocalProperties(): array
     {
         return $this->localProperties;
@@ -332,21 +310,11 @@ class Record implements RecordInterface
         return null;
     }
 
-    /**
-     * @param string $propertyName
-     *
-     * @return bool
-     */
     public function hasLocalProperty(string $propertyName): bool
     {
         return isset($this->localProperties[$propertyName]);
     }
 
-    /**
-     * @param array $localProperties
-     *
-     * @return RecordInterface
-     */
     public function setLocalProperties(array $localProperties): RecordInterface
     {
         $this->localProperties = $localProperties;
@@ -412,11 +380,6 @@ class Record implements RecordInterface
         }
     }
 
-    /**
-     * @param array $foreignProperties
-     *
-     * @return RecordInterface
-     */
     public function setForeignProperties(array $foreignProperties): RecordInterface
     {
         $this->foreignProperties = $foreignProperties;
@@ -424,12 +387,6 @@ class Record implements RecordInterface
         return $this;
     }
 
-    /**
-     * @param string $side
-     * @param array $properties
-     *
-     * @return RecordInterface
-     */
     public function setPropertiesBySideIdentifier(string $side, array $properties): RecordInterface
     {
         switch ($side) {
@@ -445,9 +402,6 @@ class Record implements RecordInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getDirtyProperties(): array
     {
         return $this->dirtyProperties;
@@ -485,10 +439,6 @@ class Record implements RecordInterface
         return $this;
     }
 
-    /**
-     * @param RecordInterface $record
-     * @return bool
-     */
     public function isTranslationOriginal(RecordInterface $record): bool
     {
         $tcaService = GeneralUtility::makeInstance(TcaService::class);
@@ -508,19 +458,11 @@ class Record implements RecordInterface
                || $this->localProperties[$propertyName] !== $this->foreignProperties[$propertyName];
     }
 
-    /**
-     * @return array
-     */
     public function getAdditionalProperties(): array
     {
         return $this->additionalProperties;
     }
 
-    /**
-     * @param array $additionalProperties
-     *
-     * @return RecordInterface
-     */
     public function setAdditionalProperties(array $additionalProperties): RecordInterface
     {
         $this->additionalProperties = $additionalProperties;
@@ -541,22 +483,11 @@ class Record implements RecordInterface
         return null;
     }
 
-    /**
-     * @param string $propertyName
-     *
-     * @return bool
-     */
     public function hasAdditionalProperty(string $propertyName): bool
     {
         return isset($this->additionalProperties[$propertyName]);
     }
 
-    /**
-     * @param string $propertyName
-     * @param $propertyValue
-     *
-     * @return RecordInterface
-     */
     public function addAdditionalProperty(string $propertyName, $propertyValue): RecordInterface
     {
         $this->additionalProperties[$propertyName] = $propertyValue;
@@ -580,10 +511,6 @@ class Record implements RecordInterface
         return $this->translatedRecords;
     }
 
-    /**
-     * @param RecordInterface $record
-     * @return void
-     */
     public function addTranslatedRecord(RecordInterface $record): void
     {
         $this->translatedRecords[$record->getIdentifier()] = $record;
@@ -685,11 +612,6 @@ class Record implements RecordInterface
         return $this;
     }
 
-    /**
-     * @param RecordInterface $record
-     *
-     * @return RecordInterface
-     */
     public function removeRelatedRecord(RecordInterface $record): RecordInterface
     {
         $tableName = $record->getTableName();
@@ -732,11 +654,6 @@ class Record implements RecordInterface
         return $this->parentRecord;
     }
 
-    /**
-     * @param RecordInterface $parentRecord
-     *
-     * @return RecordInterface
-     */
     public function setParentRecord(RecordInterface $parentRecord): RecordInterface
     {
         if ($this->parentRecordIsLocked === false) {
@@ -761,9 +678,6 @@ class Record implements RecordInterface
         $this->parentRecordIsLocked = false;
     }
 
-    /**
-     * @return bool
-     */
     public function isParentRecordLocked(): bool
     {
         return $this->parentRecordIsLocked;
@@ -891,9 +805,6 @@ class Record implements RecordInterface
         }
     }
 
-    /**
-     * @return bool
-     */
     public function isForeignRecordDeleted(): bool
     {
         if (!isset($this->runtimeCache['isForeignRecordDeleted'])) {
@@ -904,9 +815,6 @@ class Record implements RecordInterface
         return $this->runtimeCache['isForeignRecordDeleted'];
     }
 
-    /**
-     * @return bool
-     */
     public function isLocalRecordDeleted(): bool
     {
         if (!isset($this->runtimeCache['isLocalRecordDeleted'])) {
@@ -917,11 +825,6 @@ class Record implements RecordInterface
         return $this->runtimeCache['isLocalRecordDeleted'];
     }
 
-    /**
-     * @param array $properties
-     *
-     * @return bool
-     */
     protected function isRecordMarkedAsDeletedByProperties(array $properties): bool
     {
         if (isset($this->tca['ctrl']['delete'])) {
@@ -933,9 +836,6 @@ class Record implements RecordInterface
         return false;
     }
 
-    /**
-     * @return bool
-     */
     public function isLocalRecordDisabled(): bool
     {
         if (!isset($this->runtimeCache['isLocalRecordDisabled'])) {
@@ -946,9 +846,6 @@ class Record implements RecordInterface
         return $this->runtimeCache['isLocalRecordDisabled'];
     }
 
-    /**
-     * @return bool
-     */
     public function isForeignRecordDisabled(): bool
     {
         if (!isset($this->runtimeCache['isForeignRecordDisabled'])) {
@@ -959,11 +856,6 @@ class Record implements RecordInterface
         return $this->runtimeCache['isForeignRecordDisabled'];
     }
 
-    /**
-     * @param array $properties
-     *
-     * @return bool
-     */
     protected function isRecordMarkedAsDisabledByProperties(array $properties): bool
     {
         if (!empty($this->tca['ctrl']['enablecolumns']['disabled'])) {
@@ -1028,12 +920,6 @@ class Record implements RecordInterface
         return false;
     }
 
-    /**
-     * @param array $localProperties
-     * @param array $foreignProperties
-     *
-     * @return string
-     */
     public static function createCombinedIdentifier(array $localProperties, array $foreignProperties): string
     {
         if (!empty($localProperties['uid_local']) && !empty($localProperties['uid_foreign'])) {
@@ -1046,11 +932,6 @@ class Record implements RecordInterface
         return '';
     }
 
-    /**
-     * @param $combinedIdentifier
-     *
-     * @return array
-     */
     public static function splitCombinedIdentifier($combinedIdentifier): array
     {
         if (false === strpos($combinedIdentifier, ',')) {
@@ -1077,9 +958,6 @@ class Record implements RecordInterface
         }
     }
 
-    /**
-     * @return string
-     */
     public function getBreadcrumb(): string
     {
         $path = '/ ' . $this->tableName . ' [' . $this->getIdentifier() . ']';
@@ -1179,9 +1057,6 @@ class Record implements RecordInterface
         return $this->configContainer->get('debug.disableParentRecords');
     }
 
-    /**
-     * @return int
-     */
     public function getPageIdentifier(): int
     {
         if ($this->isPagesTable()) {
@@ -1197,9 +1072,6 @@ class Record implements RecordInterface
         return 0;
     }
 
-    /**
-     * @return int
-     */
     public function getSuperordinatePageIdentifier(): int
     {
         if ($this->isPagesTable() && $this->isTranslation()) {

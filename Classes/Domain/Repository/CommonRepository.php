@@ -870,11 +870,6 @@ class CommonRepository extends BaseRepository
         return $flattenedDefinition;
     }
 
-    /**
-     * @param array $flexFormDefinition
-     *
-     * @return array
-     */
     protected function filterFlexFormDefinition(array $flexFormDefinition): array
     {
         foreach ($flexFormDefinition as $key => $config) {
@@ -890,12 +885,6 @@ class CommonRepository extends BaseRepository
         return $flexFormDefinition;
     }
 
-    /**
-     * @param array $originalData
-     * @param array $flexFormDefinition
-     *
-     * @return array
-     */
     protected function getFlexFormDataByDefinition(array $originalData, array $flexFormDefinition): array
     {
         $flexFormData = [];
@@ -1525,13 +1514,6 @@ class CommonRepository extends BaseRepository
         return $records;
     }
 
-    /**
-     * @param array $columnConfiguration
-     * @param RecordInterface $record
-     * @param array $excludedTableNames
-     *
-     * @return array
-     */
     protected function fetchRelatedRecordsBySelectMm(
         array $columnConfiguration,
         RecordInterface $record,
@@ -1710,14 +1692,6 @@ class CommonRepository extends BaseRepository
         return $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName);
     }
 
-    /**
-     * @param array $columnConfiguration
-     * @param string $recordTableName
-     * @param int $recordIdentifier
-     * @param array $excludedTableNames
-     *
-     * @return array
-     */
     protected function fetchRelatedRecordsByInlineMm(
         array $columnConfiguration,
         string $recordTableName,
@@ -1917,10 +1891,6 @@ class CommonRepository extends BaseRepository
         }
     }
 
-    /**
-     * @param RecordInterface $record
-     * @param array $excludedTables
-     */
     protected function publishRecordRecursiveInternal(RecordInterface $record, array $excludedTables): void
     {
         $tableName = $record->getTableName();

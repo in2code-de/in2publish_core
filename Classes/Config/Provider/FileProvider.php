@@ -69,9 +69,6 @@ class FileProvider implements ProviderInterface
         $this->extensionConfiguration = $extensionConfiguration;
     }
 
-    /**
-     * @return bool
-     */
     public function isAvailable(): bool
     {
         return true;
@@ -97,9 +94,6 @@ class FileProvider implements ProviderInterface
         return 20;
     }
 
-    /**
-     * @return string
-     */
     protected function getResolvedFilePath(): string
     {
         try {

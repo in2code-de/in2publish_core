@@ -98,9 +98,6 @@ class ConfigContainer implements SingletonInterface
         return $config;
     }
 
-    /**
-     * @return array
-     */
     protected function getConfig(): array
     {
         if (null !== $this->config) {

@@ -129,9 +129,6 @@ class In2publishCoreDefiner implements DefinerInterface
         'tx_in2code_in2publish_envelope',
     ];
 
-    /**
-     * @return NodeCollection
-     */
     public function getLocalDefinition(): NodeCollection
     {
         return Builder::start()
@@ -285,9 +282,6 @@ class In2publishCoreDefiner implements DefinerInterface
                       ->end();
     }
 
-    /**
-     * @return NodeCollection
-     */
     public function getForeignDefinition(): NodeCollection
     {
         return Builder::start()

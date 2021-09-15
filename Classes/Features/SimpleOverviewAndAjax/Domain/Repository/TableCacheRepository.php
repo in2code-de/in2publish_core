@@ -170,11 +170,6 @@ class TableCacheRepository implements SingletonInterface
         $cache[$tableName][$uid] = $properties;
     }
 
-    /**
-     * @param string $databaseName
-     *
-     * @return array
-     */
     protected function getCache(string $databaseName = 'local'): array
     {
         $cache = $this->localCache;

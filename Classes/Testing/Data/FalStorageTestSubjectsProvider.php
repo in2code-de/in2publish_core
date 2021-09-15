@@ -62,43 +62,26 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @return array
-     */
     public function getStoragesForCaseSensitivityTest(): array
     {
         return $this->getStorages(static::PURPOSE_CASE_SENSITIVITY);
     }
 
-    /**
-     * @return array
-     */
     public function getStoragesForDriverTest(): array
     {
         return $this->getStorages(static::PURPOSE_DRIVER);
     }
 
-    /**
-     * @return array
-     */
     public function getStoragesForMissingStoragesTest(): array
     {
         return $this->getStorages(static::PURPOSE_MISSING);
     }
 
-    /**
-     * @return array
-     */
     public function getStoragesForUniqueTargetTest(): array
     {
         return $this->getStorages(static::PURPOSE_UNIQUE_TARGET);
     }
 
-    /**
-     * @param $purpose
-     *
-     * @return array
-     */
     protected function getStorages($purpose): array
     {
         if (false === $this->initialized) {
@@ -116,11 +99,6 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
         ];
     }
 
-    /**
-     * @param Connection $connection
-     *
-     * @return array
-     */
     protected function fetchStorages(Connection $connection): array
     {
         $query = $connection->createQueryBuilder();

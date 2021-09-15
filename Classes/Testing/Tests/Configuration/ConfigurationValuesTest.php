@@ -50,9 +50,6 @@ class ConfigurationValuesTest implements TestCaseInterface
         $this->configuration = $configContainer->get();
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $errors = [];
@@ -72,9 +69,6 @@ class ConfigurationValuesTest implements TestCaseInterface
         return new TestResult('configuration.options_valid');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

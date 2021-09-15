@@ -165,11 +165,6 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
         return $session;
     }
 
-    /**
-     * @param RemoteCommandRequest $request
-     *
-     * @return string
-     */
     protected function prepareCommand(RemoteCommandRequest $request): string
     {
         $this->init();
@@ -298,9 +293,6 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
      */
     abstract protected function disconnect();
 
-    /**
-     *
-     */
     public function __destruct()
     {
         $this->disconnect();

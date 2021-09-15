@@ -83,27 +83,16 @@ abstract class AbstractNode implements Node
         $this->default = $default;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return Node
-     */
     public function getNodePath(string $path): Node
     {
         return $this->nodes->getNodePath($path);
     }
 
-    /**
-     * @param Node $node
-     */
     public function addNode(Node $node)
     {
         $this->nodes->addNode($node);

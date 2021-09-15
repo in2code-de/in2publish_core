@@ -143,11 +143,6 @@ class ReplaceMarkersService implements LoggerAwareInterface
         return $string;
     }
 
-    /**
-     * @param string $string
-     * @param RecordInterface $record
-     * @return string
-     */
     protected function replacePageMarker(string $string, RecordInterface $record): string
     {
         if (false !== strpos($string, '###CURRENT_PID###')) {
@@ -337,11 +332,6 @@ class ReplaceMarkersService implements LoggerAwareInterface
         return 0;
     }
 
-    /**
-     * @param int $pageIdentifier
-     *
-     * @return array
-     */
     protected function getPagesTsConfig(int $pageIdentifier): array
     {
         return BackendUtility::getPagesTSconfig($pageIdentifier);

@@ -61,12 +61,6 @@ class RemoteStorage implements ResourceStorageInterface
         $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
-    /**
-     * @param int $storage
-     * @param string $identifier
-     *
-     * @return bool
-     */
     public function hasFolder(int $storage, string $identifier): bool
     {
         if (!isset(static::$cache[$storage][$identifier][static::HAS_FOLDER_KEY])) {
@@ -83,12 +77,6 @@ class RemoteStorage implements ResourceStorageInterface
         return static::$cache[$storage][$identifier][static::HAS_FOLDER_KEY];
     }
 
-    /**
-     * @param int $storage
-     * @param string $identifier
-     *
-     * @return array
-     */
     public function getFoldersInFolder(int $storage, string $identifier): array
     {
         if (!isset(static::$cache[$storage][$identifier][static::SUB_FOLDERS_KEY])) {
@@ -102,12 +90,6 @@ class RemoteStorage implements ResourceStorageInterface
         return static::$cache[$storage][$identifier][static::SUB_FOLDERS_KEY];
     }
 
-    /**
-     * @param int $storage
-     * @param string $identifier
-     *
-     * @return array
-     */
     public function getFilesInFolder(int $storage, string $identifier): array
     {
         if (!isset(static::$cache[$storage][$identifier][static::FILES_KEY])) {
@@ -121,12 +103,6 @@ class RemoteStorage implements ResourceStorageInterface
         return static::$cache[$storage][$identifier][static::FILES_KEY];
     }
 
-    /**
-     * @param int $storage
-     * @param string $identifier
-     *
-     * @return array
-     */
     public function getFile(int $storage, string $identifier): array
     {
         if (!isset(static::$cache[$storage][$identifier][static::FILES_KEY][$identifier])) {

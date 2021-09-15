@@ -154,9 +154,6 @@ class SshConnectionTest implements TestCaseInterface
         return new TestResult('ssh_connection.connection_successful');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

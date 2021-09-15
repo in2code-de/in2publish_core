@@ -42,9 +42,6 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
      */
     protected $tableConfiguration = [];
 
-    /**
-     *
-     */
     public function initializeArguments()
     {
         parent::initializeArguments();
@@ -85,9 +82,6 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
         return $value;
     }
 
-    /**
-     * @param $value
-     */
     protected function changeValueForTypeInput(&$value)
     {
         if (
@@ -103,17 +97,11 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
         }
     }
 
-    /**
-     * @param $value
-     */
     protected function changeValueForTypeText(&$value)
     {
         $value = nl2br($value);
     }
 
-    /**
-     * @param $value
-     */
     protected function setValueToNoValue(&$value)
     {
         if (empty($value)) {

@@ -36,13 +36,7 @@ use In2code\In2publishCore\Config\Node\NodeCollection;
  */
 interface DefinerInterface
 {
-    /**
-     * @return NodeCollection
-     */
     public function getLocalDefinition(): NodeCollection;
 
-    /**
-     * @return NodeCollection
-     */
     public function getForeignDefinition(): NodeCollection;
 }

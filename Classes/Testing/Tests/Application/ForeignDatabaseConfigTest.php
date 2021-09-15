@@ -60,9 +60,6 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
         $this->random = $random;
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $connection = DatabaseUtility::buildForeignDatabaseConnection();
@@ -97,11 +94,6 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
         return $testResult;
     }
 
-    /**
-     * @param array $output
-     *
-     * @return array
-     */
     protected function tokenizeResponse(array $output): array
     {
         $values = [];
@@ -114,9 +106,6 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
         return $values;
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

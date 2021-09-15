@@ -159,17 +159,11 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         }
     }
 
-    /**
-     * @return bool
-     */
     public function isOnline(): bool
     {
         return true === (bool)$this->remoteDriverSettings['is_online'];
     }
 
-    /**
-     * @param array $identifiers
-     */
     public function batchPrefetchFiles(array $identifiers)
     {
         $response = $this->executeEnvelope(
@@ -226,9 +220,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         return $this->cache($this->getFileExistsCacheIdentifier($fileIdentifier), $callback);
     }
 
-    /**
-     * @param array $files
-     */
     protected function writeFileCaches(array $files)
     {
         foreach ($files as $file => $values) {
@@ -784,92 +775,46 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         return static::$cache[$this->storageUid][$identifier];
     }
 
-    /**
-     * @param string $folderIdentifier
-     *
-     * @return string
-     */
     protected function getFolderExistsCacheIdentifier(string $folderIdentifier): string
     {
         return 'folderExists|' . $folderIdentifier;
     }
 
-    /**
-     * @param string $folderIdentifier
-     *
-     * @return string
-     */
     protected function getGetFoldersInFolderCacheIdentifier(string $folderIdentifier): string
     {
         return 'getFoldersInFolder|' . $folderIdentifier;
     }
 
-    /**
-     * @param string $folderIdentifier
-     *
-     * @return string
-     */
     protected function getGetFilesInFolderCacheIdentifier(string $folderIdentifier): string
     {
         return 'getFilesInFolder|' . $folderIdentifier;
     }
 
-    /**
-     * @param string $fileIdentifier
-     *
-     * @return string
-     */
     protected function getFileExistsCacheIdentifier(string $fileIdentifier): string
     {
         return 'fileExists|' . $fileIdentifier;
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return string
-     */
     protected function getGetPermissionsCacheIdentifier(string $identifier): string
     {
         return 'getPermissions|' . $identifier;
     }
 
-    /**
-     * @param string $fileIdentifier
-     *
-     * @return string
-     */
     protected function getGetFileInfoByIdentifierCacheIdentifier(string $fileIdentifier): string
     {
         return 'getFileInfoByIdentifier|' . $fileIdentifier;
     }
 
-    /**
-     * @param string $folderIdentifier
-     *
-     * @return string
-     */
     protected function getGetFolderInfoByIdentifierCacheIdentifier(string $folderIdentifier): string
     {
         return 'getFolderInfoByIdentifier|' . $folderIdentifier;
     }
 
-    /**
-     * @param string $fileIdentifier
-     * @param string $hashAlgorithm
-     *
-     * @return string
-     */
     protected function getHashCacheIdentifier(string $fileIdentifier, string $hashAlgorithm): string
     {
         return 'hash|' . $fileIdentifier . '|' . $hashAlgorithm;
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @return string
-     */
     protected function getGetPublicUrlCacheIdentifier(string $identifier): string
     {
         return 'getPublicUrl|' . $identifier;

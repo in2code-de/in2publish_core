@@ -82,9 +82,6 @@ class LocalInstanceTest implements TestCaseInterface
         return new TestResult('application.local_instance_validated');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

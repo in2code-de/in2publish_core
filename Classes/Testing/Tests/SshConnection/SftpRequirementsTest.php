@@ -36,9 +36,6 @@ use function ini_get;
 
 class SftpRequirementsTest implements TestCaseInterface
 {
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         if (false === (bool)ini_get('allow_url_fopen')) {
@@ -54,9 +51,6 @@ class SftpRequirementsTest implements TestCaseInterface
         );
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

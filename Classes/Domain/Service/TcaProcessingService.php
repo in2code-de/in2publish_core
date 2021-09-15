@@ -200,10 +200,6 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
         }
     }
 
-    /**
-     * @param array $columnsConfiguration
-     * @param string $table
-     */
     protected function preProcessTcaColumns(array $columnsConfiguration, string $table)
     {
         foreach ($columnsConfiguration as $column => $columnConfiguration) {
@@ -253,43 +249,26 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
         }
     }
 
-    /**
-     * @return array
-     */
     public static function getIncompatibleTca(): array
     {
         return GeneralUtility::makeInstance(static::class)->incompatibleTca;
     }
 
-    /**
-     * @return array
-     */
     public static function getCompatibleTca(): array
     {
         return GeneralUtility::makeInstance(static::class)->compatibleTca;
     }
 
-    /**
-     * @return array
-     */
     public static function getControls(): array
     {
         return GeneralUtility::makeInstance(static::class)->controls;
     }
 
-    /**
-     * @return array
-     */
     public static function getAllTables(): array
     {
         return array_keys(static::getCompleteTca());
     }
 
-    /**
-     * @param string $table
-     *
-     * @return bool
-     */
     public static function tableExists(string $table): bool
     {
         return array_key_exists($table, static::getCompleteTca());
@@ -315,41 +294,21 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
         return $GLOBALS[static::TCA][$tableName];
     }
 
-    /**
-     * @param string $table
-     *
-     * @return array
-     */
     public static function getColumnsFor(string $table): array
     {
         return (array)GeneralUtility::makeInstance(static::class)->compatibleTca[$table];
     }
 
-    /**
-     * @param string $table
-     *
-     * @return array
-     */
     public static function getControlsFor(string $table): array
     {
         return GeneralUtility::makeInstance(static::class)->controls[$table];
     }
 
-    /**
-     * @param string $table
-     *
-     * @return bool
-     */
     public static function hasDeleteField(string $table): bool
     {
         return (GeneralUtility::makeInstance(static::class)->controls[$table][static::DELETE] !== '');
     }
 
-    /**
-     * @param string $table
-     *
-     * @return string
-     */
     public static function getDeleteField(string $table): string
     {
         return GeneralUtility::makeInstance(static::class)->controls[$table][static::DELETE];

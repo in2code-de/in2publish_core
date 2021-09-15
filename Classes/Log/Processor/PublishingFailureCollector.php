@@ -61,17 +61,11 @@ class PublishingFailureCollector extends AbstractProcessor implements SingletonI
         return $logRecord;
     }
 
-    /**
-     * @return array
-     */
     public function getFailures(): array
     {
         return $this->failures;
     }
 
-    /**
-     * @return int
-     */
     public function getMostCriticalLogLevel(): int
     {
         return $this->highestSeverity;

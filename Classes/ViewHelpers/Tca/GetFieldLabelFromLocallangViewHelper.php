@@ -45,9 +45,6 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
      */
     protected $languageService;
 
-    /**
-     *
-     */
     public function initializeArguments()
     {
         parent::initializeArguments();

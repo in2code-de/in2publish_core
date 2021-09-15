@@ -76,11 +76,6 @@ class GroupProcessor extends AbstractProcessor
         self::UPLOAD_FOLDER,
     ];
 
-    /**
-     * @param array $config
-     *
-     * @return bool
-     */
     public function canPreProcess(array $config): bool
     {
         if (!parent::canPreProcess($config)) {
@@ -105,11 +100,6 @@ class GroupProcessor extends AbstractProcessor
         return false;
     }
 
-    /**
-     * @param array $config
-     *
-     * @return bool
-     */
     protected function canPreProcessInternalTypeFile(array $config): bool
     {
         if (empty($config[static::UPLOAD_FOLDER])) {
@@ -122,11 +112,6 @@ class GroupProcessor extends AbstractProcessor
         return true;
     }
 
-    /**
-     * @param array $config
-     *
-     * @return bool
-     */
     protected function canPreProcessInternalTypeFileReference(array $config): bool
     {
         if (false === empty($config[static::UPLOAD_FOLDER])) {
@@ -139,11 +124,6 @@ class GroupProcessor extends AbstractProcessor
         return true;
     }
 
-    /**
-     * @param array $config
-     *
-     * @return bool
-     */
     protected function canPreProcessInternalTypeDb(array $config): bool
     {
         $referencesAllowed = isset($config[static::ALLOWED]);
@@ -158,11 +138,6 @@ class GroupProcessor extends AbstractProcessor
         return false;
     }
 
-    /**
-     * @param string $table
-     *
-     * @return bool
-     */
     public function canPreProcessInternalTypeDbTable(string $table): bool
     {
         if (!TcaProcessingService::tableExists($table)) {
@@ -173,11 +148,6 @@ class GroupProcessor extends AbstractProcessor
         return true;
     }
 
-    /**
-     * @param string $allowed
-     *
-     * @return bool
-     */
     protected function canPreProcessInternalTypeDbAllowed(string $allowed): bool
     {
         if ($allowed === '') {

@@ -54,9 +54,6 @@ class PageTsProvider implements ProviderInterface, ContextualProvider, TableConf
         $this->locked = false;
     }
 
-    /**
-     * @return bool
-     */
     public function isAvailable(): bool
     {
         return !$this->locked && $this->getDatabase() instanceof Connection;

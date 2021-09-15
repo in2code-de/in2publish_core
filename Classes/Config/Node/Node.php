@@ -51,9 +51,6 @@ interface Node
      */
     public function validate(ValidationContainer $container, $value);
 
-    /**
-     * @return string
-     */
     public function getName(): string;
 
     /**
@@ -63,11 +60,6 @@ interface Node
      */
     public function addNode(Node $node);
 
-    /**
-     * @param string $path
-     *
-     * @return Node
-     */
     public function getNodePath(string $path): Node;
 
     /**
@@ -82,12 +74,6 @@ interface Node
      */
     public function merge(Node $node);
 
-    /**
-     * @param array $original
-     * @param array $additional
-     *
-     * @return array
-     */
     public function mergeArrays(array $original, array $additional): array;
 
     /**

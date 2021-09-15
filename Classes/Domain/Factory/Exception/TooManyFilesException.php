@@ -53,13 +53,6 @@ abstract class TooManyFilesException extends In2publishCoreException
      */
     protected $threshold = 0;
 
-    /**
-     * @param string $folder
-     * @param int $count
-     * @param int $threshold
-     *
-     * @return TooManyFilesException
-     */
     public static function fromFolder(string $folder, int $count, int $threshold): TooManyFilesException
     {
         $self = new static(sprintf(static::MESSAGE, $folder, $count, $threshold), static::CODE);
@@ -69,25 +62,16 @@ abstract class TooManyFilesException extends In2publishCoreException
         return $self;
     }
 
-    /**
-     * @return string
-     */
     public function getFolder(): string
     {
         return $this->folder;
     }
 
-    /**
-     * @return int
-     */
     public function getCount(): int
     {
         return $this->count;
     }
 
-    /**
-     * @return int
-     */
     public function getThreshold(): int
     {
         return $this->threshold;

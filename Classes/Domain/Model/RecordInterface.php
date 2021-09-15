@@ -42,13 +42,6 @@ interface RecordInterface
     public const RECORD_STATE_MOVED = 'moved';
     public const RECORD_STATE_MOVED_AND_CHANGED = 'moved-and-changed';
 
-    /**
-     * @param string $tableName
-     * @param array $localProperties
-     * @param array $foreignProperties
-     * @param array $tca
-     * @param array $additionalProperties
-     */
     public function __construct(
         string $tableName,
         array $localProperties,
@@ -57,33 +50,14 @@ interface RecordInterface
         array $additionalProperties
     );
 
-    /**
-     * @return bool
-     */
     public function isPagesTable(): bool;
 
-    /**
-     * @return string
-     */
     public function getState(): string;
 
-    /**
-     * @param string $state
-     *
-     * @return RecordInterface
-     */
     public function setState(string $state): RecordInterface;
 
-    /**
-     * @return array
-     */
     public function getLocalProperties(): array;
 
-    /**
-     * @param string $propertyName
-     *
-     * @return bool
-     */
     public function hasLocalProperty(string $propertyName): bool;
 
     /**
@@ -95,23 +69,10 @@ interface RecordInterface
      */
     public function getLocalProperty(string $propertyName);
 
-    /**
-     * @param array $localProperties
-     *
-     * @return RecordInterface
-     */
     public function setLocalProperties(array $localProperties): RecordInterface;
 
-    /**
-     * @return array
-     */
     public function getForeignProperties(): array;
 
-    /**
-     * @param string $propertyName
-     *
-     * @return bool
-     */
     public function hasForeignProperty(string $propertyName): bool;
 
     /**
@@ -123,16 +84,8 @@ interface RecordInterface
      */
     public function getForeignProperty(string $propertyName);
 
-    /**
-     * @param array $foreignProperties
-     *
-     * @return RecordInterface
-     */
     public function setForeignProperties(array $foreignProperties): RecordInterface;
 
-    /**
-     * @return RecordInterface
-     */
     public function setDirtyProperties(): RecordInterface;
 
     /**
@@ -140,19 +93,10 @@ interface RecordInterface
      */
     public function getDirtyProperties();
 
-    /**
-     * @return void
-     */
     public function calculateState(): void;
 
-    /**
-     * @return bool
-     */
     public function isForeignRecordDeleted(): bool;
 
-    /**
-     * @return bool
-     */
     public function isLocalRecordDeleted(): bool;
 
     /**
@@ -162,12 +106,6 @@ interface RecordInterface
      */
     public function getIdentifier();
 
-    /**
-     * @param string $side
-     * @param array $properties
-     *
-     * @return RecordInterface
-     */
     public function setPropertiesBySideIdentifier(string $side, array $properties): RecordInterface;
 
     /**
@@ -193,9 +131,6 @@ interface RecordInterface
      */
     public function addAdditionalProperty(string $propertyName, $propertyValue): RecordInterface;
 
-    /**
-     * @return string
-     */
     public function getTableName(): string;
 
     /**
@@ -223,10 +158,6 @@ interface RecordInterface
      */
     public function getTranslatedRecords(): array;
 
-    /**
-     * @param RecordInterface $record
-     * @return void
-     */
     public function addTranslatedRecord(RecordInterface $record): void;
 
     /**
@@ -244,9 +175,6 @@ interface RecordInterface
      */
     public function getParentRecord(): ?RecordInterface;
 
-    /**
-     * @return bool
-     */
     public function isChanged(): bool;
 
     /**
@@ -306,9 +234,6 @@ interface RecordInterface
      */
     public function addRelatedRecords(array $relatedRecords): RecordInterface;
 
-    /**
-     * @return bool
-     */
     public function isParentRecordLocked(): bool;
 
     /**
@@ -327,23 +252,10 @@ interface RecordInterface
      */
     public function setParentRecord(RecordInterface $parentRecord): RecordInterface;
 
-    /**
-     * @return array
-     */
     public function getColumnsTca(): array;
 
-    /**
-     * @param string $propertyName
-     *
-     * @return bool
-     */
     public function hasAdditionalProperty(string $propertyName): bool;
 
-    /**
-     * @param string $side
-     *
-     * @return array
-     */
     public function getPropertiesBySideIdentifier(string $side): array;
 
     /**
