@@ -121,7 +121,7 @@ class FileIndexFactory
         string $identifier,
         string $side,
         bool $clearOpposite = false
-    ) {
+    ): void {
         $oppositeSide = ($side === 'local' ? 'foreign' : 'local');
         $uid = $record->getPropertyBySideIdentifier($oppositeSide, 'uid');
 
@@ -134,8 +134,11 @@ class FileIndexFactory
         $record->setDirtyProperties()->calculateState();
     }
 
-    public function updateFileIndexInfo(RecordInterface $record, string $localIdentifier, string $foreignIdentifier)
-    {
+    public function updateFileIndexInfo(
+        RecordInterface $record,
+        string $localIdentifier,
+        string $foreignIdentifier
+    ): void {
         $uid = $record->getIdentifier();
         $record->addAdditionalProperty('recordDatabaseState', $record->getState());
         $localFileInfo = $this->getFileIndexArray($localIdentifier, 'local', $uid);

@@ -52,7 +52,7 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
         $this->configContainer = $configContainer;
     }
 
-    public function setRenderingContext(RenderingContextInterface $renderingContext)
+    public function setRenderingContext(RenderingContextInterface $renderingContext): void
     {
         parent::setRenderingContext($renderingContext);
         if ($renderingContext instanceof RenderingContext) {
@@ -60,7 +60,7 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
         }
     }
 
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('record', RecordInterface::class, 'record of which to get the dirty properties', true);

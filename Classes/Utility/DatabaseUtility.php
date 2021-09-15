@@ -155,7 +155,7 @@ class DatabaseUtility
         throw new LogicException('Unsupported side "' . $side . '"', 1476118055);
     }
 
-    public static function backupTable(Connection $connection, string $tableName)
+    public static function backupTable(Connection $connection, string $tableName): void
     {
         $tableName = static::sanitizeTable($connection, $tableName);
         static::initializeLogger();
@@ -174,7 +174,7 @@ class DatabaseUtility
     /**
      * @throws Throwable
      */
-    protected static function createBackup(Connection $connection, string $tableName, string $backupFolder)
+    protected static function createBackup(Connection $connection, string $tableName, string $backupFolder): void
     {
         $fileName = time() . '_' . $tableName . '.sql';
 
@@ -266,7 +266,7 @@ class DatabaseUtility
         }
     }
 
-    protected static function initializeLogger()
+    protected static function initializeLogger(): void
     {
         if (static::$logger === null) {
             static::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);

@@ -563,7 +563,7 @@ class Record implements RecordInterface
      *
      * @return void
      */
-    public function addRelatedRecord(RecordInterface $record)
+    public function addRelatedRecord(RecordInterface $record): void
     {
         if ($record->localRecordExists() || $record->foreignRecordExists()) {
             if (!$record->isParentRecordLocked()) {
@@ -592,7 +592,7 @@ class Record implements RecordInterface
      *
      * @return void
      */
-    public function addRelatedRecordRaw(RecordInterface $record, string $tableName = 'pages')
+    public function addRelatedRecordRaw(RecordInterface $record, string $tableName = 'pages'): void
     {
         $this->relatedRecords[$tableName][] = $record;
     }
@@ -662,18 +662,12 @@ class Record implements RecordInterface
         return $this;
     }
 
-    /**
-     * @return void
-     */
-    public function lockParentRecord()
+    public function lockParentRecord(): void
     {
         $this->parentRecordIsLocked = true;
     }
 
-    /**
-     * @return void
-     */
-    public function unlockParentRecord()
+    public function unlockParentRecord(): void
     {
         $this->parentRecordIsLocked = false;
     }
@@ -945,13 +939,7 @@ class Record implements RecordInterface
         ];
     }
 
-    /**
-     * @param string $tableName
-     * @param callable $compareFunction
-     *
-     * @return void
-     */
-    public function sortRelatedRecords(string $tableName, callable $compareFunction)
+    public function sortRelatedRecords(string $tableName, callable $compareFunction): void
     {
         if (!empty($this->relatedRecords[$tableName]) && is_array($this->relatedRecords[$tableName])) {
             uasort($this->relatedRecords[$tableName], $compareFunction);

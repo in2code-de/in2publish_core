@@ -43,7 +43,7 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
      */
     protected $emptyFieldValue = '---';
 
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('record', RecordInterface::class, 'The record with the desired property value', true);

@@ -81,7 +81,7 @@ class RemoteCommandResponse
     /**
      * @param array|string $output
      */
-    public function setOutput($output)
+    public function setOutput($output): void
     {
         $this->output = $this->convertAndSanitizeResponse($output);
     }
@@ -94,7 +94,7 @@ class RemoteCommandResponse
     /**
      * @param array|string $errors
      */
-    public function setErrors($errors)
+    public function setErrors($errors): void
     {
         $this->errors = $this->convertAndSanitizeResponse($errors);
     }
@@ -114,7 +114,7 @@ class RemoteCommandResponse
         return $this->exitStatus;
     }
 
-    public function setExitStatus(int $exitStatus)
+    public function setExitStatus(int $exitStatus): void
     {
         $this->exitStatus = $exitStatus;
     }

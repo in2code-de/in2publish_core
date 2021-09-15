@@ -102,7 +102,7 @@ class TestResult
         }
     }
 
-    public function setSeverity(string $severity)
+    public function setSeverity(string $severity): void
     {
         $this->severity = $severity;
     }
@@ -112,7 +112,7 @@ class TestResult
         return $this->label;
     }
 
-    public function setLabel(string $label)
+    public function setLabel(string $label): void
     {
         $this->label = $label;
     }
@@ -127,7 +127,7 @@ class TestResult
         return $this->messages;
     }
 
-    public function setMessages(string $messages)
+    public function setMessages(string $messages): void
     {
         $this->messages = $messages;
     }

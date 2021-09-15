@@ -44,13 +44,13 @@ class ContextServiceTest extends Unit
      */
     protected $tester;
 
-    protected function _before()
+    protected function _before(): void
     {
         $this->tester->setUp();
         $this->tester->clearIn2publishContext();
     }
 
-    protected function _after()
+    protected function _after(): void
     {
         $this->tester->tearDown();
         $this->tester->clearIn2publishContext();
@@ -61,7 +61,7 @@ class ContextServiceTest extends Unit
      * @covers ::determineContext
      * @covers ::getContext
      */
-    public function testDefaultContextIsForeign()
+    public function testDefaultContextIsForeign(): void
     {
         $this->tester->setIn2publishContext(null);
 

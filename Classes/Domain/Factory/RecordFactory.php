@@ -511,7 +511,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
      *
      * @return void
      */
-    protected function finishedInstantiation(string $instanceTableName, $mergedIdentifier)
+    protected function finishedInstantiation(string $instanceTableName, $mergedIdentifier): void
     {
         foreach ($this->instantiationQueue[$instanceTableName] as $index => $identifier) {
             if ($mergedIdentifier === $identifier) {
@@ -544,7 +544,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
      * @param string $tableName
      * @param int|string $identifier
      */
-    public function forgetCachedRecord(string $tableName, $identifier)
+    public function forgetCachedRecord(string $tableName, $identifier): void
     {
         unset($this->runtimeCache[$tableName][$identifier]);
     }
@@ -554,7 +554,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
      *
      * @return void
      */
-    public function disablePageRecursion()
+    public function disablePageRecursion(): void
     {
         $this->pageRecursionEnabled = false;
     }
@@ -562,7 +562,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
     /**
      * @internal
      */
-    public function simulateRootRecord()
+    public function simulateRootRecord(): void
     {
         $this->isRootRecord = true;
     }
@@ -570,7 +570,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
     /**
      * @internal
      */
-    public function endSimulation()
+    public function endSimulation(): void
     {
         $this->isRootRecord = false;
         $record = GeneralUtility::makeInstance(NullRecord::class);

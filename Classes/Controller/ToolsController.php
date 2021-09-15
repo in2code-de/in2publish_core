@@ -155,12 +155,7 @@ class ToolsController extends ActionController
         $this->toolsRegistry = $toolsRegistry;
     }
 
-    /**
-     * @param ViewInterface $view
-     *
-     * @return void
-     */
-    protected function initializeView(ViewInterface $view)
+    protected function initializeView(ViewInterface $view): void
     {
         parent::initializeView($view);
         try {
@@ -170,7 +165,7 @@ class ToolsController extends ActionController
         }
     }
 
-    public function indexAction()
+    public function indexAction(): void
     {
         $testStates = $this->environmentService->getTestStatus();
 
@@ -203,7 +198,7 @@ class ToolsController extends ActionController
     /**
      * @throws In2publishCoreException
      */
-    public function testAction()
+    public function testAction(): void
     {
         $testingResults = $this->testingService->runAllTests();
 
@@ -221,12 +216,7 @@ class ToolsController extends ActionController
         $this->view->assign('testingResults', $testingResults);
     }
 
-    /**
-     * Show configuration
-     *
-     * @return void
-     */
-    public function configurationAction(int $emulatePage = null)
+    public function configurationAction(int $emulatePage = null): void
     {
         if (null !== $emulatePage) {
             $_POST['id'] = $emulatePage;
@@ -236,10 +226,7 @@ class ToolsController extends ActionController
         $this->view->assign('emulatePage', $emulatePage);
     }
 
-    /**
-     * @return void
-     */
-    public function tcaAction()
+    public function tcaAction(): void
     {
         $this->view->assign('incompatibleTca', TcaProcessingService::getIncompatibleTca());
         $this->view->assign('compatibleTca', TcaProcessingService::getCompatibleTca());
@@ -249,7 +236,7 @@ class ToolsController extends ActionController
     /**
      * @throws StopActionException
      */
-    public function clearTcaCachesAction()
+    public function clearTcaCachesAction(): void
     {
         GeneralUtility::makeInstance(TcaProcessingService::class)->flushCaches();
         $this->redirect('index');
@@ -258,7 +245,7 @@ class ToolsController extends ActionController
     /**
      * @throws StopActionException
      */
-    public function flushRegistryAction()
+    public function flushRegistryAction(): void
     {
         $this->registry->removeAllByNamespace('tx_in2publishcore');
         $this->addFlashMessage(LocalizationUtility::translate('module.m4.registry_flushed', 'in2publish_core'));
@@ -268,7 +255,7 @@ class ToolsController extends ActionController
     /**
      * @throws StopActionException
      */
-    public function flushEnvelopesAction()
+    public function flushEnvelopesAction(): void
     {
         $this->letterbox->removeAnsweredEnvelopes();
         $this->addFlashMessage(
@@ -280,18 +267,18 @@ class ToolsController extends ActionController
         $this->redirect('index');
     }
 
-    public function sysInfoIndexAction()
+    public function sysInfoIndexAction(): void
     {
     }
 
-    public function sysInfoShowAction()
+    public function sysInfoShowAction(): void
     {
         $info = $this->getFullInfo();
         $this->view->assign('info', $info);
         $this->view->assign('infoJson', json_encode($info));
     }
 
-    public function sysInfoDecodeAction(string $json = '')
+    public function sysInfoDecodeAction(string $json = ''): void
     {
         if (!empty($json)) {
             $info = json_decode($json, true);
@@ -309,7 +296,7 @@ class ToolsController extends ActionController
         $this->view->assign('infoJson', $json);
     }
 
-    public function sysInfoDownloadAction()
+    public function sysInfoDownloadAction(): void
     {
         $info = $this->getFullInfo();
         $json = json_encode($info);
@@ -329,7 +316,7 @@ class ToolsController extends ActionController
         die;
     }
 
-    public function sysInfoUploadAction()
+    public function sysInfoUploadAction(): void
     {
         /** @var array $file */
         $file = $this->request->getArgument('jsonFile');

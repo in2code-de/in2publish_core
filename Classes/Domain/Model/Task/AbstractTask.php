@@ -95,18 +95,12 @@ abstract class AbstractTask
      */
     abstract protected function executeTask(): bool;
 
-    /**
-     * @return void
-     */
-    final protected function beforeExecute()
+    final protected function beforeExecute(): void
     {
         $this->executionBegin = new DateTime();
     }
 
-    /**
-     * @return void
-     */
-    final protected function afterExecute()
+    final protected function afterExecute(): void
     {
         $this->executionEnd = new DateTime();
     }
@@ -204,12 +198,7 @@ abstract class AbstractTask
         return $this;
     }
 
-    /**
-     * @param string $string
-     *
-     * @return void
-     */
-    final public function addMessage(string $string)
+    final public function addMessage(string $string): void
     {
         $this->messages[] = $string;
     }

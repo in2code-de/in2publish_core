@@ -56,7 +56,7 @@ class NodeCollection extends ArrayObject implements Node
         }
     }
 
-    public function addNode(Node $node)
+    public function addNode(Node $node): void
     {
         $name = $node->getName();
         if ($this->offsetExists($name)) {
@@ -90,7 +90,7 @@ class NodeCollection extends ArrayObject implements Node
         return $node->getNodePath(implode(',', $parts));
     }
 
-    public function addNodes(NodeCollection $nodes)
+    public function addNodes(NodeCollection $nodes): void
     {
         foreach ($nodes as $node) {
             $this->addNode($node);
@@ -106,7 +106,7 @@ class NodeCollection extends ArrayObject implements Node
      * @param ValidationContainer $container
      * @param mixed $value
      */
-    public function validate(ValidationContainer $container, $value)
+    public function validate(ValidationContainer $container, $value): void
     {
         /** @var Node $node */
         foreach ($this as $node) {
@@ -133,7 +133,7 @@ class NodeCollection extends ArrayObject implements Node
      *
      * @param Node $node
      */
-    public function merge(Node $node)
+    public function merge(Node $node): void
     {
     }
 
@@ -174,7 +174,7 @@ class NodeCollection extends ArrayObject implements Node
     /**
      * @param array[]|bool[]|int[]|string[] $value
      */
-    public function unsetDefaults(array &$value)
+    public function unsetDefaults(array &$value): void
     {
         /** @var Node $node */
         foreach ($this as $key => $node) {

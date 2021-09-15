@@ -81,7 +81,7 @@ abstract class AbsSpecNode extends AbstractNode
     /**
      * @param array[]|bool[]|int[]|string[] $value
      */
-    public function unsetDefaults(array &$value)
+    public function unsetDefaults(array &$value): void
     {
         if (
             null !== $this->default

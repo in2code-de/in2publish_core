@@ -40,7 +40,7 @@ class GenString extends AbsGenNode
      * @param ValidationContainer $container
      * @param mixed $value
      */
-    protected function validateKey(ValidationContainer $container, $value)
+    protected function validateKey(ValidationContainer $container, $value): void
     {
         if (!is_string($value)) {
             $container->addError('Key is not a string');

@@ -357,7 +357,7 @@ class BackendUtility
      * The result can be used to create a query string with GeneralUtility::implodeArrayForUrl().
      *
      */
-    protected static function parseAdditionalGetParameters(array &$parameters, array $typoScript)
+    protected static function parseAdditionalGetParameters(array &$parameters, array $typoScript): void
     {
         foreach ($typoScript as $key => $value) {
             if (is_array($value)) {

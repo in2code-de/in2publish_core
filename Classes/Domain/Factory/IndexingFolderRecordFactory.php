@@ -101,12 +101,12 @@ class IndexingFolderRecordFactory
         $this->commonRepository = $commonRepository;
     }
 
-    public function overruleLocalStorage(ResourceStorage $localStorage)
+    public function overruleLocalStorage(ResourceStorage $localStorage): void
     {
         $this->localStorage = $localStorage;
     }
 
-    public function overruleRemoteStorage(RemoteStorage $remoteStorage)
+    public function overruleRemoteStorage(RemoteStorage $remoteStorage): void
     {
         $this->remoteStorage = $remoteStorage;
     }
@@ -345,7 +345,7 @@ class IndexingFolderRecordFactory
      *
      * @throws TooManyFilesException
      */
-    protected function checkFileCount(array $files, string $folderIdentifier, string $side)
+    protected function checkFileCount(array $files, string $folderIdentifier, string $side): void
     {
         $count = count($files);
         if ($count > $this->threshold) {

@@ -40,7 +40,7 @@ class GenInteger extends AbsGenNode
      * @param ValidationContainer $container
      * @param mixed $value
      */
-    protected function validateKey(ValidationContainer $container, $value)
+    protected function validateKey(ValidationContainer $container, $value): void
     {
         if (!is_int($value)) {
             $container->addError('Key is not an integer');

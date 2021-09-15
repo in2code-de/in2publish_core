@@ -52,7 +52,7 @@ class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
         $this->siteService = $siteService;
     }
 
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('identifier', 'int', 'The page uid to search in its rootLine', true);

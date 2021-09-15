@@ -89,7 +89,7 @@ class DynamicValuesPostProcessor implements PostProcessorInterface, LoggerAwareI
      *
      * @param string $providerKey
      */
-    protected function logMissingDynamicValueProvider(string $providerKey)
+    protected function logMissingDynamicValueProvider(string $providerKey): void
     {
         if (!$this->rtc['missing'][$providerKey]) {
             $this->rtc['missing'][$providerKey] = true;

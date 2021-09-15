@@ -53,7 +53,7 @@ class RecordHistoryViewHelper extends AbstractTagBasedViewHelper
     /**
      * {@inheritDoc}
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerUniversalTagAttributes();

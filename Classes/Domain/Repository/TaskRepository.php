@@ -88,7 +88,7 @@ class TaskRepository
      *
      * @return void
      */
-    public function add(AbstractTask $task)
+    public function add(AbstractTask $task): void
     {
         $this->connection->insert(
             static::TASK_TABLE_NAME,
@@ -103,7 +103,7 @@ class TaskRepository
      *
      * @return void
      */
-    public function update(AbstractTask $task)
+    public function update(AbstractTask $task): void
     {
         $this->connection->update(
             static::TASK_TABLE_NAME,

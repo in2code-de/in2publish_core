@@ -45,12 +45,12 @@ class EnvironmentServiceTest extends Unit
      */
     protected $tester;
 
-    protected function _before()
+    protected function _before(): void
     {
         $this->tester->setUp();
     }
 
-    protected function _after()
+    protected function _after(): void
     {
         $this->tester->tearDown();
     }
@@ -60,7 +60,7 @@ class EnvironmentServiceTest extends Unit
      * @covers ::getPackagesHash
      * @covers ::setTestResult
      */
-    public function testSetTestResultStoresTestResultCurrentConfigAndPackagesHashIntoRegistry()
+    public function testSetTestResultStoresTestResultCurrentConfigAndPackagesHashIntoRegistry(): void
     {
         /** @var EnvironmentService|MockObject $environmentService */
         $environmentService = $this->getMockBuilder(EnvironmentService::class)->setMethods(
@@ -191,7 +191,7 @@ class EnvironmentServiceTest extends Unit
      * @param $expected
      * @param $registryReturn
      */
-    public function testGetTestResultReturnsExpectedValue($expected, $registryReturn)
+    public function testGetTestResultReturnsExpectedValue($expected, $registryReturn): void
     {
         /** @var EnvironmentService|MockObject $environmentService */
         $environmentService = $this->getMockBuilder(EnvironmentService::class)->setMethods(

@@ -50,14 +50,14 @@ class ValidationContainer
      * @param Node $node
      * @param mixed $value
      */
-    public function validate(Node $node, $value)
+    public function validate(Node $node, $value): void
     {
         $this->path[] = $node->getName();
         $node->validate($this, $value);
         array_pop($this->path);
     }
 
-    public function addError(string $error)
+    public function addError(string $error): void
     {
         $this->errors[] = '[' . implode('.', $this->path) . ']: ' . $error;
     }

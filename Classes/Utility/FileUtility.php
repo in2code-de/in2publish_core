@@ -51,10 +51,7 @@ class FileUtility
      */
     protected static $logger;
 
-    /**
-     * @return void
-     */
-    protected static function initializeLogger()
+    protected static function initializeLogger(): void
     {
         if (static::$logger === null) {
             static::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
@@ -64,7 +61,7 @@ class FileUtility
     /**
      * Removes old Backups which are no longer needed
      */
-    public static function cleanUpBackups(int $keepBackups, string $tableName, string $backupFolder)
+    public static function cleanUpBackups(int $keepBackups, string $tableName, string $backupFolder): void
     {
         static::initializeLogger();
 

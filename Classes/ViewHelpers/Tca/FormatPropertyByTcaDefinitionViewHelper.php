@@ -42,7 +42,7 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
      */
     protected $tableConfiguration = [];
 
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('fieldName', 'string', 'The field name to get the localized label from', true);
@@ -82,7 +82,7 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
         return $value;
     }
 
-    protected function changeValueForTypeInput(&$value)
+    protected function changeValueForTypeInput(&$value): void
     {
         if (
             GeneralUtility::inList($this->tableConfiguration['config']['eval'], 'datetime')
@@ -97,12 +97,12 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
         }
     }
 
-    protected function changeValueForTypeText(&$value)
+    protected function changeValueForTypeText(&$value): void
     {
         $value = nl2br($value);
     }
 
-    protected function setValueToNoValue(&$value)
+    protected function setValueToNoValue(&$value): void
     {
         if (empty($value)) {
             $value = '-';

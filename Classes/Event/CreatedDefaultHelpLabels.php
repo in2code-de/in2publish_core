@@ -24,7 +24,7 @@ final class CreatedDefaultHelpLabels
         $this->supports = $supports;
     }
 
-    public function addSupport(string $support)
+    public function addSupport(string $support): void
     {
         $this->supports[] = $support;
     }

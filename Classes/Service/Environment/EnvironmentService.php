@@ -64,7 +64,7 @@ class EnvironmentService implements SingletonInterface
         $this->configContainer = $configContainer;
     }
 
-    public function setTestResult(bool $success)
+    public function setTestResult(bool $success): void
     {
         $this->registry->set(
             'tx_in2publishcore',

@@ -263,7 +263,7 @@ interface RecordInterface
      *
      * @return void
      */
-    public function lockParentRecord();
+    public function lockParentRecord(): void;
 
     /**
      * Returns the pid the record is stored in or the uid if the record is a page

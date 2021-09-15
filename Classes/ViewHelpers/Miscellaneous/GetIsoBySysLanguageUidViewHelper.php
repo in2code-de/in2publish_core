@@ -50,7 +50,7 @@ class GetIsoBySysLanguageUidViewHelper extends AbstractViewHelper
         $this->connectionPool = $connectionPool;
     }
 
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument(self::LANGUAGE, 'int', 'UID of a sys_language record', true);

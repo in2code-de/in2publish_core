@@ -69,7 +69,7 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
     /**
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function initialize()
+    public function initialize(): void
     {
         $config = $this->configContainer->get('filePreviewDomainName');
         foreach (['local', 'foreign'] as $stagingLevel) {
@@ -77,7 +77,7 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
         }
     }
 
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('record', Record::class, 'record of the file, which needs the ressource path', true);

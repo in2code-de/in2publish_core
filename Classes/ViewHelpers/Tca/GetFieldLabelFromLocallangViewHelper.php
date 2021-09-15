@@ -45,7 +45,7 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
      */
     protected $languageService;
 
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('fieldName', 'string', 'The field name to get the localized label from', true);
@@ -79,7 +79,7 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
      *
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->tca = $GLOBALS['TCA'];
         $this->languageService = $GLOBALS['LANG'];

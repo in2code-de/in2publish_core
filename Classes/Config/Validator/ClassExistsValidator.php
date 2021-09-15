@@ -39,7 +39,7 @@ class ClassExistsValidator implements ValidatorInterface
      * @param ValidationContainer $container
      * @param mixed $value
      */
-    public function validate(ValidationContainer $container, $value)
+    public function validate(ValidationContainer $container, $value): void
     {
         if (!class_exists($value)) {
             $container->addError("The given class $value could not be found");

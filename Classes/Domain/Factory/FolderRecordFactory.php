@@ -523,7 +523,7 @@ class FolderRecordFactory implements LoggerAwareInterface
      * @param array $indexedIdentifiers
      * @param RecordInterface[] $files
      */
-    protected function fixIntersectingIdentifiers(array $diskIdentifiers, array $indexedIdentifiers, array $files)
+    protected function fixIntersectingIdentifiers(array $diskIdentifiers, array $indexedIdentifiers, array $files): void
     {
         foreach (['local' => 'foreign', 'foreign' => 'local'] as $diskSide => $indexSide) {
             // Find intersecting identifiers. These are identifiers only on one disk and the opposite database.
@@ -726,8 +726,11 @@ class FolderRecordFactory implements LoggerAwareInterface
      * @param array $diskIdentifiers
      * @param RecordInterface[] $files
      */
-    protected function updateFilesWithMissingIndices(array $indexedIdentifiers, array $diskIdentifiers, array $files)
-    {
+    protected function updateFilesWithMissingIndices(
+        array $indexedIdentifiers,
+        array $diskIdentifiers,
+        array $files
+    ): void {
         // Get a list of all identifiers that exist on both disks but only in one database
         $indicesToRecheck = array_intersect($indexedIdentifiers['local'], $diskIdentifiers['both'])
                             + array_intersect($indexedIdentifiers['foreign'], $diskIdentifiers['both']);

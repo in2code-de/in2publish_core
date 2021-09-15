@@ -56,7 +56,7 @@ class HostNameValidator implements ValidatorInterface
      * @param ValidationContainer $container
      * @param mixed $value
      */
-    public function validate(ValidationContainer $container, $value)
+    public function validate(ValidationContainer $container, $value): void
     {
         $resource = @fsockopen($value, $this->port, $errorCode, $errorMessage, 1);
         if (false === $resource && (0 === $errorCode || 111 !== $errorCode)) {

@@ -130,7 +130,7 @@ class FileIndexPostProcessor implements PostProcessor, LoggerAwareInterface
      * @param array<ResourceStorage> $storages
      * @param RecordInterface[][] $sortedRecords
      */
-    protected function prefetchForeignInformationFiles(array $storages, array $sortedRecords)
+    protected function prefetchForeignInformationFiles(array $storages, array $sortedRecords): void
     {
         $foreignIdentifiers = [];
         foreach ($sortedRecords as $storageIndex => $recordArray) {

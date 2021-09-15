@@ -109,7 +109,7 @@ abstract class ActionController extends ExtbaseActionController implements Logge
         $messageTitle = '',
         $severity = AbstractMessage::OK,
         $storeInSession = true
-    ) {
+    ): void {
         if ($this->controllerContext === null) {
             $this->logger->debug('Prematurely building ControllerContext');
             $this->controllerContext = $this->buildControllerContext();
@@ -117,12 +117,7 @@ abstract class ActionController extends ExtbaseActionController implements Logge
         parent::addFlashMessage($messageBody, $messageTitle, $severity, $storeInSession);
     }
 
-    /**
-     * @param ViewInterface $view
-     *
-     * @return void
-     */
-    protected function initializeView(ViewInterface $view)
+    protected function initializeView(ViewInterface $view): void
     {
         parent::initializeView($view);
         $this->view->assign('extensionVersion', ExtensionUtility::getExtensionVersion('in2publish_core'));

@@ -63,7 +63,7 @@ abstract class AbsGenNode extends AbstractNode
      * @param ValidationContainer $container
      * @param mixed $value
      */
-    public function validate(ValidationContainer $container, $value)
+    public function validate(ValidationContainer $container, $value): void
     {
         foreach ($value as $key => $item) {
             $this->validateKey($container, $key);
@@ -93,7 +93,7 @@ abstract class AbsGenNode extends AbstractNode
      *
      * @param array[]|bool[]|int[]|string[] $value
      */
-    public function unsetDefaults(array &$value)
+    public function unsetDefaults(array &$value): void
     {
     }
 
@@ -103,5 +103,5 @@ abstract class AbsGenNode extends AbstractNode
      *
      * @return void
      */
-    abstract protected function validateKey(ValidationContainer $container, $value);
+    abstract protected function validateKey(ValidationContainer $container, $value): void;
 }

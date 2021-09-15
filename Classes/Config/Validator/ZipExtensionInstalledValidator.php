@@ -40,7 +40,7 @@ class ZipExtensionInstalledValidator implements ValidatorInterface
      * @param ValidationContainer $container
      * @param string $value
      */
-    public function validate(ValidationContainer $container, $value)
+    public function validate(ValidationContainer $container, $value): void
     {
         if ($value && !class_exists(ZipArchive::class)) {
             $container->addError('Zip Backup is enabled but the PHP Extension zip does not seem to be installed');

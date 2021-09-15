@@ -138,7 +138,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function dumpFileContents($identifier)
+    public function dumpFileContents($identifier): void
     {
         throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201434);
     }
@@ -345,7 +345,7 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function processConfiguration()
+    public function processConfiguration(): void
     {
         throw new BadMethodCallException('The method ' . __METHOD__ . ' is not supported by this driver', 1476201555);
     }

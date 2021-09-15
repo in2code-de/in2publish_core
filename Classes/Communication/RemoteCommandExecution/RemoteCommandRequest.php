@@ -118,7 +118,7 @@ class RemoteCommandRequest
         $this->options = $options;
     }
 
-    public function usePhp(bool $usePhp)
+    public function usePhp(bool $usePhp): void
     {
         $this->usePhp = $usePhp;
     }
@@ -143,12 +143,12 @@ class RemoteCommandRequest
         return $this->dispatcher;
     }
 
-    public function setDispatcher(string $dispatcher)
+    public function setDispatcher(string $dispatcher): void
     {
         $this->dispatcher = $dispatcher;
     }
 
-    public function setEnvironmentVariables(array $environmentVariables)
+    public function setEnvironmentVariables(array $environmentVariables): void
     {
         $this->environmentVariables = $environmentVariables;
     }
@@ -158,7 +158,7 @@ class RemoteCommandRequest
         return $this->command;
     }
 
-    public function setCommand(string $command)
+    public function setCommand(string $command): void
     {
         $this->command = $command;
     }
@@ -173,7 +173,7 @@ class RemoteCommandRequest
         return $this->arguments;
     }
 
-    public function setArguments(array $arguments)
+    public function setArguments(array $arguments): void
     {
         $this->arguments = $arguments;
     }
@@ -182,7 +182,7 @@ class RemoteCommandRequest
      * @param string $name
      * @param mixed $value
      */
-    public function setArgument(string $name, $value)
+    public function setArgument(string $name, $value): void
     {
         $this->arguments[$name] = $value;
     }
@@ -197,7 +197,7 @@ class RemoteCommandRequest
         return $this->options;
     }
 
-    public function setOptions(array $options)
+    public function setOptions(array $options): void
     {
         $this->options = [];
         foreach ($options as $option) {
@@ -208,7 +208,7 @@ class RemoteCommandRequest
     /**
      * @param scalar $value
      */
-    public function setOption($value)
+    public function setOption($value): void
     {
         $this->options[$value] = $value;
     }

@@ -49,12 +49,12 @@ class TcaServiceTest extends Unit
      */
     protected $tester;
 
-    protected function _before()
+    protected function _before(): void
     {
         $this->tester->setUp();
     }
 
-    protected function _after()
+    protected function _after(): void
     {
         $this->tester->tearDown();
     }
@@ -64,7 +64,7 @@ class TcaServiceTest extends Unit
      * @covers ::getAllTableNames
      * @covers ::getTca
      */
-    public function testGetAllTableNamesReturnsAllTableNames()
+    public function testGetAllTableNamesReturnsAllTableNames(): void
     {
         $this->setTca(
             [
@@ -84,7 +84,7 @@ class TcaServiceTest extends Unit
      * @covers ::getAllTableNames
      * @covers ::getTca
      */
-    public function testGetAllTableNamesReturnsAllTableNamesExceptExcludedTableNames()
+    public function testGetAllTableNamesReturnsAllTableNamesExceptExcludedTableNames(): void
     {
         $this->setTca(
             [
@@ -106,7 +106,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getAllTableNamesAllowedOnRootLevel
      */
-    public function testGetAllTableNamesAllowedOnRootLevelReturnsAllConfiguredTables()
+    public function testGetAllTableNamesAllowedOnRootLevelReturnsAllConfiguredTables(): void
     {
         $this->setTca(
             [
@@ -143,7 +143,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getAllTableNamesAllowedOnRootLevel
      */
-    public function testPagesTableIsAlwaysAddedToRootLevelTables()
+    public function testPagesTableIsAlwaysAddedToRootLevelTables(): void
     {
         $this->setTca(['fe_users' => ['ctrl' => ['rootLevel' => true]]]);
 
@@ -158,7 +158,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getAllTableNamesAllowedOnRootLevel
      */
-    public function testGetAllTableNamesAllowedOnRootLevelReturnesAllRootLevelTablesExceptExcludedTables()
+    public function testGetAllTableNamesAllowedOnRootLevelReturnesAllRootLevelTablesExceptExcludedTables(): void
     {
         $this->setTca(['fe_users' => ['ctrl' => ['rootLevel' => true]]]);
 
@@ -173,7 +173,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getLabelFieldFromTable
      */
-    public function testGetLabelFieldFromTableReturnsEmptyStringIfFieldIsNotSet()
+    public function testGetLabelFieldFromTableReturnsEmptyStringIfFieldIsNotSet(): void
     {
         $this->setTca([]);
 
@@ -184,7 +184,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getLabelFieldFromTable
      */
-    public function testGetLabelFieldFromTableReturnsConfiguredFieldName()
+    public function testGetLabelFieldFromTableReturnsConfiguredFieldName(): void
     {
         $this->setTca(['bar' => ['ctrl' => ['label' => 'baz']]]);
 
@@ -195,7 +195,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getLabelAltFieldFromTable
      */
-    public function testGetLabelAltFieldFromTableReturnsEmptyStringIfFieldIsNotSet()
+    public function testGetLabelAltFieldFromTableReturnsEmptyStringIfFieldIsNotSet(): void
     {
         $this->setTca([]);
 
@@ -206,7 +206,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getLabelAltFieldFromTable
      */
-    public function testGetLabelAltFieldFromTableReturnsConfiguredFieldName()
+    public function testGetLabelAltFieldFromTableReturnsConfiguredFieldName(): void
     {
         $this->setTca(['bar' => ['ctrl' => ['label_alt' => 'baz']]]);
 
@@ -217,7 +217,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getTitleFieldFromTable
      */
-    public function testGetTitleFieldReturnsEmptyStringIfNotConfigured()
+    public function testGetTitleFieldReturnsEmptyStringIfNotConfigured(): void
     {
         $this->setTca([]);
 
@@ -228,7 +228,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getTitleFieldFromTable
      */
-    public function testGetTitleFieldReturnsConfiguredFieldName()
+    public function testGetTitleFieldReturnsConfiguredFieldName(): void
     {
         $this->setTca(['boo' => ['ctrl' => ['title' => 'baez']]]);
 
@@ -239,7 +239,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getSortingField
      */
-    public function testGetSortingFieldReturnsSortByFieldName()
+    public function testGetSortingFieldReturnsSortByFieldName(): void
     {
         $this->setTca(['bar' => ['ctrl' => ['sortby' => 'boo']]]);
 
@@ -250,7 +250,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getSortingField
      */
-    public function testGetSortingFieldUsesCrdateFieldAsFallback()
+    public function testGetSortingFieldUsesCrdateFieldAsFallback(): void
     {
         $this->setTca(['faz' => ['ctrl' => ['sortby' => '', 'crdate' => 'bam']]]);
 
@@ -261,7 +261,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getSortingField
      */
-    public function testGetSortingFieldReturnsEmptyStringIfFieldIsNotSet()
+    public function testGetSortingFieldReturnsEmptyStringIfFieldIsNotSet(): void
     {
         $this->setTca([]);
 
@@ -272,7 +272,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getDeletedField
      */
-    public function testGetDeletedFieldReturnsEmptyStringIfFieldIsNotSet()
+    public function testGetDeletedFieldReturnsEmptyStringIfFieldIsNotSet(): void
     {
         $this->setTca([]);
 
@@ -283,7 +283,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getDeletedField
      */
-    public function testGetDeletedFieldReturnsConfiguredField()
+    public function testGetDeletedFieldReturnsConfiguredField(): void
     {
         $this->setTca(['fey' => ['ctrl' => ['delete' => 'bou']]]);
 
@@ -294,7 +294,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getAllTableNamesWithPidAndUidField
      */
-    public function testGetAllTableNamesWithPidAndUidFieldReturnsExpectedTables()
+    public function testGetAllTableNamesWithPidAndUidFieldReturnsExpectedTables(): void
     {
         /** @var MockObject|TcaService $tcaService */
         $tcaService = $this->getMockBuilder(TcaService::class)->setMethods(['getDatabaseSchemaTables'])->getMock();
@@ -318,7 +318,7 @@ class TcaServiceTest extends Unit
      * @covers ::getAllTableNamesWithPidAndUidField
      * @depends testGetAllTableNamesWithPidAndUidFieldReturnsExpectedTables
      */
-    public function testGetAllTableNamesWithPidAndUidFieldReturnsExpectedTablesExceptExcludedTables()
+    public function testGetAllTableNamesWithPidAndUidFieldReturnsExpectedTablesExceptExcludedTables(): void
     {
         /** @var MockObject|TcaService $tcaService */
         $tcaService = $this->getMockBuilder(TcaService::class)->setMethods(['getDatabaseSchemaTables'])->getMock();
@@ -346,7 +346,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getTableLabel
      */
-    public function testGetTableLabelReturnsUpperCaseFirstTableNameIfTitleFieldIsNotSet()
+    public function testGetTableLabelReturnsUpperCaseFirstTableNameIfTitleFieldIsNotSet(): void
     {
         $this->setTca([]);
 
@@ -357,7 +357,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getTableLabel
      */
-    public function testGetTableLabelReturnsTranslatedLabel()
+    public function testGetTableLabelReturnsTranslatedLabel(): void
     {
         $this->setTca(['foo' => ['ctrl' => ['title' => 'bar']]]);
 
@@ -371,7 +371,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getConfigurationArrayForTable
      */
-    public function testGetConfigurationArrayForTableReturnsNullIfTableIsNotConfigured()
+    public function testGetConfigurationArrayForTableReturnsNullIfTableIsNotConfigured(): void
     {
         $this->setTca([]);
 
@@ -382,7 +382,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getConfigurationArrayForTable
      */
-    public function testGetConfigurationArrayForTableReturnsConfiguredTable()
+    public function testGetConfigurationArrayForTableReturnsConfiguredTable(): void
     {
         $expected = [
             'ctrl' => [
@@ -399,7 +399,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getColumnConfigurationForTableColumn
      */
-    public function testGetColumnConfigurationForTableColumnReturnsNullForMissingTable()
+    public function testGetColumnConfigurationForTableColumnReturnsNullForMissingTable(): void
     {
         $tcaService = new TcaService();
         $this->assertNull($tcaService->getColumnConfigurationForTableColumn('foo', 'bar'));
@@ -408,7 +408,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::getColumnConfigurationForTableColumn
      */
-    public function testGetColumnConfigurationForTableColumnReturnsColumnConfiguration()
+    public function testGetColumnConfigurationForTableColumnReturnsColumnConfiguration(): void
     {
         $expected = [
             'columns' => [
@@ -425,7 +425,7 @@ class TcaServiceTest extends Unit
      * @covers ::getColumnConfigurationForTableColumn
      * @depends testGetColumnConfigurationForTableColumnReturnsColumnConfiguration
      */
-    public function testGetColumnConfigurationForTableColumnReturnsNullForMissingColumn()
+    public function testGetColumnConfigurationForTableColumnReturnsNullForMissingColumn(): void
     {
         $expected = [
             'columns' => [
@@ -441,7 +441,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::isHiddenRootTable
      */
-    public function testIsHiddenRootTableReturnsTrueForInvisibleTablesPossibleOnRoot()
+    public function testIsHiddenRootTableReturnsTrueForInvisibleTablesPossibleOnRoot(): void
     {
         $this->setTca(['table' => ['ctrl' => ['hideTable' => true, 'rootLevel' => 1]]]);
         $tcaService = new TcaService();
@@ -455,7 +455,7 @@ class TcaServiceTest extends Unit
     /**
      * @covers ::isHiddenRootTable
      */
-    public function testIsHiddenRootTableReturnsFalseForVisibleOrPagesOnlyTables()
+    public function testIsHiddenRootTableReturnsFalseForVisibleOrPagesOnlyTables(): void
     {
         $this->setTca(['table' => ['ctrl' => ['hideTable' => false, 'rootLevel' => 1]]]);
         $tcaService = new TcaService();
@@ -471,7 +471,7 @@ class TcaServiceTest extends Unit
      * @param array $tca
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    protected function setTca(array $tca = [])
+    protected function setTca(array $tca = []): void
     {
         $GLOBALS['TCA'] = $tca;
     }
@@ -480,7 +480,7 @@ class TcaServiceTest extends Unit
      * @param mixed $languageService
      * @SuppressWarnings("PHPMD.Superglobals")
      */
-    protected function setLanguageService($languageService)
+    protected function setLanguageService($languageService): void
     {
         $GLOBALS['LANG'] = $languageService;
     }

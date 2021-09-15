@@ -41,7 +41,7 @@ class FrontendController extends AbstractController
      *
      * @return void
      */
-    public function previewAction(int $identifier = 1)
+    public function previewAction(int $identifier = 1): void
     {
         $this->view->assign(
             'local_preview',

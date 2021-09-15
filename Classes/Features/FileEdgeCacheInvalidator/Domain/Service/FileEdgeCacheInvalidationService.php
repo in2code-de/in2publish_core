@@ -23,7 +23,7 @@ class FileEdgeCacheInvalidationService
         $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
     }
 
-    public function flushCachesForFiles(array $uidList)
+    public function flushCachesForFiles(array $uidList): void
     {
         $recordCollection = $this->resolveEdgePagesToClearCachesFor($uidList);
 

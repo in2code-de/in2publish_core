@@ -76,7 +76,7 @@ class SpecArray extends AbsSpecNode
     /**
      * @param array[]|bool[]|int[]|string[] $value
      */
-    public function unsetDefaults(array &$value)
+    public function unsetDefaults(array &$value): void
     {
         $this->nodes->unsetDefaults($value[$this->name]);
         if (null !== $this->default) {

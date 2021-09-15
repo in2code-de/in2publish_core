@@ -103,7 +103,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return void
      */
-    public function setStorageUid($storageUid)
+    public function setStorageUid($storageUid): void
     {
         $this->storageUid = (int)$storageUid;
     }
@@ -115,7 +115,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function initialize()
+    public function initialize(): void
     {
         if (0 === $this->storageUid) {
             $this->remoteDriverSettings = [
@@ -164,7 +164,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         return true === (bool)$this->remoteDriverSettings['is_online'];
     }
 
-    public function batchPrefetchFiles(array $identifiers)
+    public function batchPrefetchFiles(array $identifiers): void
     {
         $response = $this->executeEnvelope(
             new Envelope(
@@ -220,7 +220,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         return $this->cache($this->getFileExistsCacheIdentifier($fileIdentifier), $callback);
     }
 
-    protected function writeFileCaches(array $files)
+    protected function writeFileCaches(array $files): void
     {
         foreach ($files as $file => $values) {
             static::$cache[$this->storageUid][$this->getFileExistsCacheIdentifier($file)] =
@@ -823,7 +823,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
     /**
      * Resets the internal cache
      */
-    public function clearCache()
+    public function clearCache(): void
     {
         static::$cache[$this->storageUid] = [];
     }

@@ -96,7 +96,7 @@ class UidReservationService
         return $this->cache[$cacheKey];
     }
 
-    protected function setAutoIncrement(int $autoIncrement)
+    protected function setAutoIncrement(int $autoIncrement): void
     {
         $statement = 'ALTER TABLE sys_file AUTO_INCREMENT = ' . $autoIncrement;
         /** @var Connection $databaseConnection */

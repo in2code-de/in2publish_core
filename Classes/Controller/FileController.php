@@ -89,7 +89,7 @@ class FileController extends AbstractController
     /**
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $record = $this->tryToGetFolderInstance($this->pid === 0 ? null : $this->pid);
 
@@ -103,7 +103,7 @@ class FileController extends AbstractController
      *
      * @throws StopActionException
      */
-    public function publishFolderAction(string $identifier)
+    public function publishFolderAction(string $identifier): void
     {
         $success = $this->folderPublisherService->publish($identifier);
         $this->runTasks();
@@ -131,7 +131,7 @@ class FileController extends AbstractController
      *
      * @throws StopActionException
      */
-    public function publishFileAction(int $uid, string $identifier, int $storage)
+    public function publishFileAction(int $uid, string $identifier, int $storage): void
     {
         // Special case: The file was moved hence the identifier is a merged one
         if (strpos($identifier, ',')) {
@@ -182,7 +182,7 @@ class FileController extends AbstractController
      *
      * @throws StopActionException
      */
-    public function toggleFilterStatusAndRedirectToIndexAction(string $filter)
+    public function toggleFilterStatusAndRedirectToIndexAction(string $filter): void
     {
         $this->toggleFilterStatusAndRedirect('in2publish_filter_files_', $filter, 'index');
     }
@@ -209,7 +209,7 @@ class FileController extends AbstractController
         return $record;
     }
 
-    protected function renderTooManyFilesFlashMessage(TooManyFilesException $exception)
+    protected function renderTooManyFilesFlashMessage(TooManyFilesException $exception): void
     {
         $arguments = [
             'folder' => $exception->getFolder(),

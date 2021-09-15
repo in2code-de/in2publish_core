@@ -72,12 +72,12 @@ class ExecuteCommand extends Command implements LoggerAwareInterface
         $this->envelopeDispatcher = $envelopeDispatcher;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->addArgument(self::ARG_UID, InputArgument::REQUIRED, self::ARG_UID_DESCRIPTION);
     }
 
-    public function isEnabled()
+    public function isEnabled(): bool
     {
         return $this->contextService->isForeign();
     }

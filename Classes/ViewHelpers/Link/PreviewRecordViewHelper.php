@@ -40,7 +40,7 @@ class PreviewRecordViewHelper extends AbstractTagBasedViewHelper
 
     protected $tagName = 'a';
 
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerTagAttribute('name', 'string', 'Specifies the name of an anchor');

@@ -42,5 +42,5 @@ interface ValidatorInterface
      *
      * @return void
      */
-    public function validate(ValidationContainer $container, $value);
+    public function validate(ValidationContainer $container, $value): void;
 }

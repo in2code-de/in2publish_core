@@ -154,10 +154,7 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
         }
     }
 
-    /**
-     * @return void
-     */
-    protected function preProcessTca()
+    protected function preProcessTca(): void
     {
         if (
             $this->cache->has(static::CACHE_KEY_TCA_COMPATIBLE)
@@ -175,10 +172,7 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
         }
     }
 
-    /**
-     * @return void
-     */
-    protected function preProcessTcaReal()
+    protected function preProcessTcaReal(): void
     {
         foreach (static::getCompleteTca() as $table => $tableConfiguration) {
             if (!empty($tableConfiguration[static::CONTROL][static::DELETE])) {
@@ -200,7 +194,7 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
         }
     }
 
-    protected function preProcessTcaColumns(array $columnsConfiguration, string $table)
+    protected function preProcessTcaColumns(array $columnsConfiguration, string $table): void
     {
         foreach ($columnsConfiguration as $column => $columnConfiguration) {
             // if the column has no config section like sys_file_metadata[columns][height]
@@ -314,10 +308,7 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
         return GeneralUtility::makeInstance(static::class)->controls[$table][static::DELETE];
     }
 
-    /**
-     * @return void
-     */
-    public function flushCaches()
+    public function flushCaches(): void
     {
         $this->cache->flush();
     }

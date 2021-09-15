@@ -41,7 +41,7 @@ class GetTableLabelFromLocallangViewHelper extends AbstractViewHelper
         $this->tcaService = $tcaService;
     }
 
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('tableName', 'string', 'table of which the label should be rendered', true);

@@ -44,12 +44,12 @@ class TableCacheRepositoryTest extends Unit
      */
     protected $tester;
 
-    protected function _before()
+    protected function _before(): void
     {
         $this->tester->setUp();
     }
 
-    protected function _after()
+    protected function _after(): void
     {
         $this->tester->tearDown();
     }
@@ -71,7 +71,7 @@ class TableCacheRepositoryTest extends Unit
     /**
      * @covers ::findByUid
      */
-    public function testFindByUidReturnsEmptyArrayIfDatabaseIsNotConnected()
+    public function testFindByUidReturnsEmptyArrayIfDatabaseIsNotConnected(): void
     {
         $tableCacheRepository = $this->getTableCacheRepositoryInstance();
         $this->assertSame([], $tableCacheRepository->findByUid('pages', 31));
@@ -80,7 +80,7 @@ class TableCacheRepositoryTest extends Unit
     /**
      * @covers ::findByPid
      */
-    public function testFindByPidReturnsEmptyArrayIfDatabaseIsNotConnected()
+    public function testFindByPidReturnsEmptyArrayIfDatabaseIsNotConnected(): void
     {
         $tableCacheRepository = $this->getTableCacheRepositoryInstance();
         $this->assertSame([], $tableCacheRepository->findByPid('pages', 31));

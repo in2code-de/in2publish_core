@@ -80,7 +80,7 @@ class Envelope
         return $this->uid;
     }
 
-    public function setUid(int $uid)
+    public function setUid(int $uid): void
     {
         if (0 !== $this->uid) {
             throw new LogicException('Can not overrule an envelope\'s uid', 1474386795);
@@ -93,7 +93,7 @@ class Envelope
         return $this->command;
     }
 
-    public function setCommand(string $command)
+    public function setCommand(string $command): void
     {
         if ('' !== $this->command) {
             throw new LogicException('Can not overrule an envelope\'s command', 1474386882);
@@ -112,7 +112,7 @@ class Envelope
     /**
      * @param mixed $request
      */
-    public function setRequest(array $request)
+    public function setRequest(array $request): void
     {
         if ('' !== $this->request) {
             throw new LogicException('Can not overrule an envelope\'s request', 1474386975);
@@ -131,7 +131,7 @@ class Envelope
     /**
      * @param mixed $response
      */
-    public function setResponse($response)
+    public function setResponse($response): void
     {
         if ('' !== $this->response) {
             throw new LogicException('Can not overrule an envelope\'s response', 1474386986);

@@ -39,7 +39,7 @@ class FirstInListViewHelper extends AbstractViewHelper
     /**
      * @throws Exception
      */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('entries', 'string', 'CSV of which the first will be returned', true);

@@ -40,7 +40,7 @@ class FileExistsValidator implements ValidatorInterface
      * @param ValidationContainer $container
      * @param mixed $value
      */
-    public function validate(ValidationContainer $container, $value)
+    public function validate(ValidationContainer $container, $value): void
     {
         if (!file_exists($value)) {
             $container->addError('File does not exist');

@@ -1867,7 +1867,7 @@ class CommonRepository extends BaseRepository
      * @return void
      * @throws Throwable
      */
-    public function publishRecordRecursive(RecordInterface $record, array $excludedTables = ['p ages'])
+    public function publishRecordRecursive(RecordInterface $record, array $excludedTables = ['p ages']): void
     {
         try {
             // Dispatch Anomaly
@@ -1965,7 +1965,7 @@ class CommonRepository extends BaseRepository
      *
      * @return void
      */
-    protected function publishRelatedRecordsRecursive(RecordInterface $record, array $excludedTables)
+    protected function publishRelatedRecordsRecursive(RecordInterface $record, array $excludedTables): void
     {
         foreach ($record->getTranslatedRecords() as $translatedRecord) {
             $this->publishRecordRecursiveInternal($translatedRecord, $excludedTables);
@@ -2010,7 +2010,7 @@ class CommonRepository extends BaseRepository
      *
      * @return void
      */
-    protected function updateForeignRecord(RecordInterface $record)
+    protected function updateForeignRecord(RecordInterface $record): void
     {
         $identifier = $record->getIdentifier();
         $properties = $record->getLocalProperties();
@@ -2026,7 +2026,7 @@ class CommonRepository extends BaseRepository
      *
      * @return void
      */
-    protected function addForeignRecord(RecordInterface $record)
+    protected function addForeignRecord(RecordInterface $record): void
     {
         $tableName = $record->getTableName();
         $properties = $record->getLocalProperties();
@@ -2044,7 +2044,7 @@ class CommonRepository extends BaseRepository
      *
      * @return void
      */
-    protected function deleteForeignRecord(RecordInterface $record)
+    protected function deleteForeignRecord(RecordInterface $record): void
     {
         $identifier = $record->getIdentifier();
         $tableName = $record->getTableName();
@@ -2097,7 +2097,7 @@ class CommonRepository extends BaseRepository
      *
      * @return void
      */
-    public function disablePageRecursion()
+    public function disablePageRecursion(): void
     {
         $this->recordFactory->disablePageRecursion();
     }

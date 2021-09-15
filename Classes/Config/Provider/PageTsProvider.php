@@ -49,7 +49,7 @@ class PageTsProvider implements ProviderInterface, ContextualProvider, TableConf
      * The PageTS provider is locked until that point to prevent premature loading and therefore caching of the PageTS.
      * (e.g. flux registers content elements for the NewContentElementWizard dynamically after ext_tables.php loading)
      */
-    public function processData()
+    public function processData(): void
     {
         $this->locked = false;
     }

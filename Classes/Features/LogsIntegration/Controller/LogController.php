@@ -64,7 +64,7 @@ class LogController extends \CoStack\Logs\Controller\LogController
      * @SuppressWarnings(PHPMD.Superglobals)
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function initializeAction()
+    protected function initializeAction(): void
     {
         parent::initializeAction();
         $this->logConfiguration = $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'];

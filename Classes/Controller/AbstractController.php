@@ -85,7 +85,7 @@ abstract class AbstractController extends ActionController
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function initializeAction()
+    protected function initializeAction(): void
     {
         parent::initializeAction();
         if (static::class !== ToolsController::class) {
@@ -111,7 +111,7 @@ abstract class AbstractController extends ActionController
         }
     }
 
-    protected function initializeView(ViewInterface $view)
+    protected function initializeView(ViewInterface $view): void
     {
         parent::initializeView($view);
         $localDbAvailable = null !== DatabaseUtility::buildLocalDatabaseConnection();
@@ -129,7 +129,7 @@ abstract class AbstractController extends ActionController
     /**
      * Dummy Method to use when an error occurred. This Method must never throw an exception.
      */
-    public function blankAction()
+    public function blankAction(): void
     {
     }
 
@@ -140,7 +140,7 @@ abstract class AbstractController extends ActionController
      *
      * @throws StopActionException
      */
-    protected function toggleFilterStatusAndRedirect(string $filterName, string $status, string $action)
+    protected function toggleFilterStatusAndRedirect(string $filterName, string $status, string $action): void
     {
         $currentStatus = $this->backendUser->getSessionData($filterName . $status);
         if (!is_bool($currentStatus)) {
@@ -153,7 +153,7 @@ abstract class AbstractController extends ActionController
     /**
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function runTasks()
+    protected function runTasks(): void
     {
         $request = new RemoteCommandRequest(RunTasksInQueueCommand::IDENTIFIER);
         $response = $this->remoteCommandDispatcher->dispatch($request);

@@ -73,7 +73,7 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
         string $controller,
         string $action,
         string $extensionName = 'in2publish_core'
-    ) {
+    ): void {
         $this->entries[$name] = [
             'name' => $name,
             'description' => $description,
@@ -99,7 +99,7 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
         return $this->entries;
     }
 
-    public function removeTool(string $name)
+    public function removeTool(string $name): void
     {
         unset($this->entries[$name]);
     }

@@ -291,7 +291,7 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
      *
      * @return void
      */
-    abstract protected function disconnect();
+    abstract protected function disconnect(): void;
 
     public function __destruct()
     {

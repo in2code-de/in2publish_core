@@ -305,7 +305,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
      *
      * @return void
      */
-    protected function checkForMarkersAndErrors($string)
+    protected function checkForMarkersAndErrors($string): void
     {
         if (strpos($string, '###') !== false) {
             $this->logger->error('Could not replace marker', ['string' => $string]);

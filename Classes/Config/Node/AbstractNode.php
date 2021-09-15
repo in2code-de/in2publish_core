@@ -93,7 +93,7 @@ abstract class AbstractNode implements Node
         return $this->nodes->getNodePath($path);
     }
 
-    public function addNode(Node $node)
+    public function addNode(Node $node): void
     {
         $this->nodes->addNode($node);
     }
@@ -102,7 +102,7 @@ abstract class AbstractNode implements Node
      * @param ValidationContainer $container
      * @param mixed $value
      */
-    public function validate(ValidationContainer $container, $value)
+    public function validate(ValidationContainer $container, $value): void
     {
         if (!is_array($value)) {
             $container->addError('Configuration format is wrong');

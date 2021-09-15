@@ -42,7 +42,7 @@ class GetLabelFieldFromRecordViewHelper extends AbstractViewHelper
         $this->labelService = $labelService;
     }
 
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('record', RecordInterface::class, 'The record whith the property', true);

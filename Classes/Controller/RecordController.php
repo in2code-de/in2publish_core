@@ -96,7 +96,7 @@ class RecordController extends AbstractController
         $this->permissionService = $permissionService;
     }
 
-    public function initializeAction()
+    public function initializeAction(): void
     {
         parent::initializeAction();
         if (static::BLANK_ACTION !== $this->actionMethodName) {
@@ -113,7 +113,7 @@ class RecordController extends AbstractController
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->logger->debug('Called indexAction');
         GeneralUtility::makeInstance(TcaProcessingService::class);
@@ -143,7 +143,7 @@ class RecordController extends AbstractController
      *
      * @return void
      */
-    public function detailAction(int $identifier, string $tableName)
+    public function detailAction(int $identifier, string $tableName): void
     {
         $this->logger->debug('Called detailAction');
         $this->commonRepository->disablePageRecursion();
@@ -159,7 +159,7 @@ class RecordController extends AbstractController
      *
      * @throws In2publishCoreException
      */
-    public function initializePublishRecordAction()
+    public function initializePublishRecordAction(): void
     {
         if (!$this->permissionService->isUserAllowedToPublish()) {
             throw new In2publishCoreException('You are not allowed to publish', 1435306780);
@@ -174,7 +174,7 @@ class RecordController extends AbstractController
      *
      * @throws StopActionException
      */
-    public function publishRecordAction(int $identifier, string $returnUrl = null)
+    public function publishRecordAction(int $identifier, string $returnUrl = null): void
     {
         $this->logger->info('publishing record in ' . $this->request->getPluginName(), ['identifier' => $identifier]);
         $this->publishRecord($identifier, ['pages']);
@@ -195,7 +195,7 @@ class RecordController extends AbstractController
      *
      * @throws StopActionException
      */
-    public function toggleFilterStatusAndRedirectToIndexAction(string $filter)
+    public function toggleFilterStatusAndRedirectToIndexAction(string $filter): void
     {
         $this->toggleFilterStatusAndRedirect('in2publish_filter_records_', $filter, 'index');
     }
@@ -225,7 +225,7 @@ class RecordController extends AbstractController
      *
      * @SuppressWarnings(PHPMD.LongVariable)
      */
-    protected function addFlashMessagesAndRedirectToIndex()
+    protected function addFlashMessagesAndRedirectToIndex(): void
     {
         $failures = $this->publishingFailureCollector->getFailures();
 

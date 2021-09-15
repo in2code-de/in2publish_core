@@ -136,7 +136,7 @@ class FakeRecordFactory
      *
      * @return void
      */
-    protected function guessState(Record $record)
+    protected function guessState(Record $record): void
     {
         if (0 === $record->getIdentifier()) {
             return;

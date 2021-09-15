@@ -526,7 +526,7 @@ class SignalSlotReplacement
         $event->voteNo($signalArguments[0]['no']);
     }
 
-    public function onRequiredTablesWereIdentified(RequiredTablesWereIdentified $event)
+    public function onRequiredTablesWereIdentified(RequiredTablesWereIdentified $event): void
     {
         try {
             [$tables] = $this->dispatcher->dispatch(__CLASS__, 'overruleTables', [$event->getTables()]);

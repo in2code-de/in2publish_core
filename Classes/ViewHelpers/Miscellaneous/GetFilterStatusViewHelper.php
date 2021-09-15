@@ -38,7 +38,7 @@ class GetFilterStatusViewHelper extends AbstractViewHelper
      */
     protected $backendUser;
 
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('filter', 'string', 'The filter name', true);
@@ -57,10 +57,7 @@ class GetFilterStatusViewHelper extends AbstractViewHelper
         return $this->backendUser->getSessionData('in2publish_filter_' . $key . '_' . $filter) === true;
     }
 
-    /**
-     * @return void
-     */
-    public function initialize()
+    public function initialize(): void
     {
         $this->backendUser = $this->getBackendUser();
     }

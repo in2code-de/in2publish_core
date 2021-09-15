@@ -245,7 +245,7 @@ class ConfigContainer implements SingletonInterface
      *
      * @param string $provider
      */
-    public function registerProvider(string $provider)
+    public function registerProvider(string $provider): void
     {
         $this->providers[$provider] = null;
     }
@@ -256,7 +256,7 @@ class ConfigContainer implements SingletonInterface
      *
      * @param string $definer
      */
-    public function registerDefiner(string $definer)
+    public function registerDefiner(string $definer): void
     {
         $this->definers[$definer] = null;
     }
