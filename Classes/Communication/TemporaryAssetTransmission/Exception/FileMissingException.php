@@ -35,8 +35,8 @@ use function sprintf;
 
 class FileMissingException extends In2publishCoreException
 {
-    const CODE = 1583161274;
-    const MESSAGE = 'The file "%s" does not exist';
+    public const CODE = 1583161274;
+    protected const MESSAGE = 'The file "%s" does not exist';
 
     public static function fromFileName(string $fileName): FileMissingException
     {

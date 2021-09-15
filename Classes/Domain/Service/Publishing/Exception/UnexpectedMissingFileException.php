@@ -35,8 +35,8 @@ use function sprintf;
 
 class UnexpectedMissingFileException extends In2publishCoreException
 {
-    const CODE = 1583161654;
-    const MESSAGE = 'The file "%s" from storage "%d" requested for local processing does not exist';
+    public const CODE = 1583161654;
+    protected const MESSAGE = 'The file "%s" from storage "%d" requested for local processing does not exist';
 
     public static function fromFileIdentifierAndStorage(
         string $identifier,

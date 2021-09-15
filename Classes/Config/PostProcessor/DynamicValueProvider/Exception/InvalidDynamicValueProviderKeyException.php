@@ -33,8 +33,8 @@ use In2code\In2publishCore\In2publishCoreException;
 
 class InvalidDynamicValueProviderKeyException extends In2publishCoreException
 {
-    const MESSAGE = 'A dynamic value provider for key "%s" was not registered';
-    const CODE = 1595409903;
+    protected const MESSAGE = 'A dynamic value provider for key "%s" was not registered';
+    public const CODE = 1595409903;
 
     public static function forProviderKey(string $providerKey): InvalidDynamicValueProviderKeyException
     {

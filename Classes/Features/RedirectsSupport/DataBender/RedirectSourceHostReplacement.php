@@ -42,7 +42,7 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
 {
     use LoggerAwareTrait;
 
-    const CHANGED_STATES = [
+    protected const CHANGED_STATES = [
         RecordInterface::RECORD_STATE_CHANGED,
         RecordInterface::RECORD_STATE_ADDED,
         RecordInterface::RECORD_STATE_MOVED,
