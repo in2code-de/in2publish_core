@@ -43,6 +43,9 @@ services:
   In2code\In2publishCore\Features\WarningOnForeign\Service\HeaderWarningColorRenderer:
     public: true
 
+  In2code\In2publishCore\Service\Permission\PermissionService:
+    public: true
+
   cache.in2publish_core:
     class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
     factory: ['@TYPO3\CMS\Core\Cache\CacheManager', 'getCache']
