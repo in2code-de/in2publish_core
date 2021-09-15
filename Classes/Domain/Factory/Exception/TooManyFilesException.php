@@ -36,7 +36,7 @@ use function sprintf;
 abstract class TooManyFilesException extends In2publishCoreException
 {
     public const CODE = 1555492787;
-    public const MESSAGE = 'The folder "%s" has too many files (%d)';
+    public const MESSAGE = 'The folder "%s" has too many files (%d). The threshold is %d.';
 
     /**
      * @var string
