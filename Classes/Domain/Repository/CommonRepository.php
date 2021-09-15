@@ -635,17 +635,18 @@ class CommonRepository extends BaseRepository
             if (!empty($matches[1])) {
                 $matches = $matches[1];
             }
-            if (count($matches) > 0) {
-                if (!in_array('sys_file_processedfile', $excludedTableNames)) {
-                    foreach ($matches as $match) {
-                        if (!empty($match)) {
-                            // replace fileadmin if present. It has been replaced by the storage field (FAL)
-                            if (strpos($match, 'fileadmin') === 0) {
-                                $match = substr($match, 9);
-                            }
-                            $relatedProcFiles = $this->findByProperty('identifier', $match, 'sys_file_processedfile');
-                            $relatedRecords = array_merge($relatedRecords, $relatedProcFiles);
+            if (
+                count($matches) > 0
+                && !in_array('sys_file_processedfile', $excludedTableNames)
+            ) {
+                foreach ($matches as $match) {
+                    if (!empty($match)) {
+                        // replace fileadmin if present. It has been replaced by the storage field (FAL)
+                        if (strpos($match, 'fileadmin') === 0) {
+                            $match = substr($match, 9);
                         }
+                        $relatedProcFiles = $this->findByProperty('identifier', $match, 'sys_file_processedfile');
+                        $relatedRecords = array_merge($relatedRecords, $relatedProcFiles);
                     }
                 }
             }
@@ -656,11 +657,12 @@ class CommonRepository extends BaseRepository
                 $matches = $matches[1];
             }
             $matches = array_filter($matches);
-            if (count($matches) > 0) {
-                if (!in_array('sys_file', $excludedTableNames)) {
-                    foreach ($matches as $match) {
-                        $relatedRecords[] = $this->findByIdentifier($match, 'sys_file');
-                    }
+            if (
+                count($matches) > 0
+                && !in_array('sys_file', $excludedTableNames)
+            ) {
+                foreach ($matches as $match) {
+                    $relatedRecords[] = $this->findByIdentifier($match, 'sys_file');
                 }
             }
         }
@@ -673,17 +675,13 @@ class CommonRepository extends BaseRepository
                     parse_str(htmlspecialchars_decode($urnParsed['query']), $data);
                     switch ($urnParsed['host']) {
                         case 'file':
-                            if (isset($data['uid'])) {
-                                if (!in_array('sys_file', $excludedTableNames)) {
-                                    $relatedRecords[] = $this->findByIdentifier($data['uid'], 'sys_file');
-                                }
+                            if (isset($data['uid']) && !in_array('sys_file', $excludedTableNames)) {
+                                $relatedRecords[] = $this->findByIdentifier($data['uid'], 'sys_file');
                             }
                             break;
                         case 'page':
-                            if (isset($data['uid'])) {
-                                if (!in_array('pages', $excludedTableNames)) {
-                                    $relatedRecords[] = $this->findByIdentifier($data['uid'], 'pages');
-                                }
+                            if (isset($data['uid']) && !in_array('pages', $excludedTableNames)) {
+                                $relatedRecords[] = $this->findByIdentifier($data['uid'], 'pages');
                             }
                             break;
                         default:
@@ -1831,6 +1829,7 @@ class CommonRepository extends BaseRepository
         if ($this->configContainer->get('factory.treatRemovedAndDeletedAsDifference')) {
             // "Removed and deleted" only refers to the local side.
             // If the record is not exactly 1. deleted on foreign and 2. removed on local this feature does not apply.
+            /** @noinspection NestedPositiveIfStatementsInspection */
             if (
                 empty($localProps)
                 && array_key_exists('deleted', $foreignProps)
@@ -1895,10 +1894,11 @@ class CommonRepository extends BaseRepository
     {
         $tableName = $record->getTableName();
 
-        if (!empty($this->visitedRecords[$tableName])) {
-            if (in_array($record->getIdentifier(), $this->visitedRecords[$tableName])) {
-                return;
-            }
+        if (
+            !empty($this->visitedRecords[$tableName])
+            && in_array($record->getIdentifier(), $this->visitedRecords[$tableName])
+        ) {
+            return;
         }
         $this->visitedRecords[$tableName][] = $record->getIdentifier();
 

@@ -43,10 +43,11 @@ class SpecStrictArray extends SpecArray
         $this->nodes->unsetDefaults($value[$this->name]);
         if (null !== $this->default) {
             foreach ($this->default as $defKey => $defValue) {
-                if (array_key_exists($defKey, $value[$this->name])) {
-                    if ($value[$this->name][$defKey] === $defValue) {
-                        unset($value[$this->name][$defKey]);
-                    }
+                if (
+                    array_key_exists($defKey, $value[$this->name])
+                    && $value[$this->name][$defKey] === $defValue
+                ) {
+                    unset($value[$this->name][$defKey]);
                 }
             }
         }

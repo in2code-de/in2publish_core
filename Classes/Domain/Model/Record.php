@@ -250,10 +250,11 @@ class Record implements RecordInterface
      */
     public function getStateRecursive(array &$alreadyVisited = []): string
     {
-        if (!empty($alreadyVisited[$this->tableName])) {
-            if (in_array($this->getIdentifier(), $alreadyVisited[$this->tableName])) {
-                return static::RECORD_STATE_UNCHANGED;
-            }
+        if (
+            !empty($alreadyVisited[$this->tableName])
+            && in_array($this->getIdentifier(), $alreadyVisited[$this->tableName])
+        ) {
+            return static::RECORD_STATE_UNCHANGED;
         }
         $alreadyVisited[$this->tableName][] = $this->getIdentifier();
         if (!$this->isChanged()) {
@@ -767,13 +768,15 @@ class Record implements RecordInterface
      */
     public function calculateState(): void
     {
-        if ($this->tableName === 'sys_file' && !isset($this->additionalProperties['recordDatabaseState'])) {
-            if ($this->hasLocalProperty('identifier') && $this->hasForeignProperty('identifier')) {
-                if ($this->localProperties['identifier'] !== $this->foreignProperties['identifier']) {
-                    $this->setState(static::RECORD_STATE_MOVED);
-                    return;
-                }
-            }
+        if (
+            'sys_file' === $this->tableName
+            && !isset($this->additionalProperties['recordDatabaseState'])
+            && $this->hasLocalProperty('identifier')
+            && $this->hasForeignProperty('identifier')
+            && $this->getLocalProperty('identifier') !== $this->getForeignProperty('identifier')
+        ) {
+            $this->setState(static::RECORD_STATE_MOVED);
+            return;
         }
         if ($this->localRecordExists() && $this->foreignRecordExists()) {
             if ($this->isLocalRecordDeleted() && !$this->isForeignRecordDeleted()) {
@@ -1011,10 +1014,8 @@ class Record implements RecordInterface
         foreach ($this->getRelatedRecords() as $relatedRecords) {
             foreach ($relatedRecords as $relatedRecord) {
                 $splObjectHash = spl_object_hash($relatedRecord);
-                if ($relatedRecord->isChanged()) {
-                    if (!isset($relatedRecordsFlat[$splObjectHash])) {
-                        $relatedRecordsFlat[$splObjectHash] = $relatedRecord;
-                    }
+                if (!isset($relatedRecordsFlat[$splObjectHash]) && $relatedRecord->isChanged()) {
+                    $relatedRecordsFlat[$splObjectHash] = $relatedRecord;
                 }
                 if (!isset($done[$splObjectHash])) {
                     $done[$splObjectHash] = true;

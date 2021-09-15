@@ -145,20 +145,16 @@ class ReplaceMarkersService implements LoggerAwareInterface
 
     protected function replacePageMarker(string $string, RecordInterface $record): string
     {
+        $pageIdentifier = $record->getPageIdentifier();
+
         if (false !== strpos($string, '###CURRENT_PID###')) {
-            if (null !== ($currentPid = $record->getPageIdentifier())) {
-                $string = str_replace('###CURRENT_PID###', (string)$currentPid, $string);
-            }
+            $string = str_replace('###CURRENT_PID###', (string)$pageIdentifier, $string);
         }
         if (false !== strpos($string, '###THIS_UID###')) {
-            if (null !== ($identifier = $record->getIdentifier())) {
-                $string = str_replace('###THIS_UID###', $identifier, $string);
-            }
+            $string = str_replace('###THIS_UID###', $record->getIdentifier(), $string);
         }
         if (false !== strpos($string, '###STORAGE_PID###')) {
-            if (null !== ($storagePid = $this->getStoragePidFromPage($record->getPageIdentifier()))) {
-                $string = str_replace('###STORAGE_PID###', (string)$storagePid, $string);
-            }
+            $string = str_replace('###STORAGE_PID###', (string)$this->getStoragePidFromPage($pageIdentifier), $string);
         }
         return $string;
     }

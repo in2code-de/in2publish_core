@@ -655,6 +655,7 @@ class FolderRecordFactory implements LoggerAwareInterface
             // Run the integrity test when enableSysFileReferenceUpdate (ESFRU) is not enabled
             if (true !== $this->configuration['enableSysFileReferenceUpdate']) {
                 // If the sys_file was referenced abort here, because it's unsafe to overwrite the uid
+                /** @noinspection NestedPositiveIfStatementsInspection */
                 if (0 !== $this->countForeignReferences($foreignUid)) {
                     continue;
                 }

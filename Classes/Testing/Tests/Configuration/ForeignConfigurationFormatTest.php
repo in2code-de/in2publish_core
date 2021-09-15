@@ -35,14 +35,12 @@ class ForeignConfigurationFormatTest implements TestCaseInterface
         $output = $response->getOutput();
         $token = $this->tokenizeResponse($output);
 
-        if ($response->isSuccessful()) {
-            if (isset($token['Config Format Test'])) {
-                $testResults = json_decode(base64_decode($token['Config Format Test']), true);
-                if (empty($testResults)) {
-                    return new TestResult('configuration.foreign_format_okay');
-                }
-                return new TestResult('configuration.foreign_format_error', TestResult::ERROR, $testResults);
+        if (isset($token['Config Format Test']) && $response->isSuccessful()) {
+            $testResults = json_decode(base64_decode($token['Config Format Test']), true);
+            if (empty($testResults)) {
+                return new TestResult('configuration.foreign_format_okay');
             }
+            return new TestResult('configuration.foreign_format_error', TestResult::ERROR, $testResults);
         }
 
         $messages = array_merge($errors, $output);
