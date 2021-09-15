@@ -146,7 +146,7 @@ class FolderRecordFactory implements LoggerAwareInterface
      *
      * I only work with drivers so i don't "accidentally" index files...
      *
-     * @param string $identifier
+     * @param string|null $identifier
      *
      * @return RecordInterface
      */

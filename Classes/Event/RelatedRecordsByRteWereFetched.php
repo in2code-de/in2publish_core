@@ -63,7 +63,7 @@ final class RelatedRecordsByRteWereFetched
         $this->relatedRecords[] = $record;
     }
 
-    /** @param array<RecordInterface> */
+    /** @param array<RecordInterface> $records */
     public function addRelatedRecords(array $records): void
     {
         foreach ($records as $record) {

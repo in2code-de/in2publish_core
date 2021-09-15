@@ -188,7 +188,7 @@ class FileController extends AbstractController
     }
 
     /**
-     * @param string $identifier CombinedIdentifier as FAL would use it
+     * @param string|null $identifier CombinedIdentifier as FAL would use it
      *
      * @return RecordInterface|null The record or null if it can not be handled
      * @throws InsufficientFolderAccessPermissionsException
