@@ -51,10 +51,11 @@ abstract class AbsGenNode extends AbstractNode
      * @param NodeCollection $nodes
      * @param string|int|bool|array $default
      *
-     * @return AbsGenNode|object
+     * @return GenString|GenInteger
      */
-    public static function fromType(string $type, string $name, NodeCollection $nodes, $default)
+    public static function fromType(string $type, string $name, NodeCollection $nodes, $default): AbsGenNode
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return GeneralUtility::makeInstance(static::$types[$type], $name, [], $nodes, $default);
     }
 

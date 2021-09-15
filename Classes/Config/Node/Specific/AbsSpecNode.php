@@ -57,10 +57,16 @@ abstract class AbsSpecNode extends AbstractNode
      * @param array $validators
      * @param NodeCollection|null $nodes
      *
-     * @return AbsSpecNode|object
+     * @return SpecString|SpecOptionalString|SpecInteger|SpecArray|SpecStrictArray|SpecBoolean
      */
-    public static function fromType(string $type, string $name, $default, array $validators, NodeCollection $nodes)
-    {
+    public static function fromType(
+        string $type,
+        string $name,
+        $default,
+        array $validators,
+        NodeCollection $nodes
+    ): AbsSpecNode {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return GeneralUtility::makeInstance(static::$types[$type] ?: $type, $name, $validators, $nodes, $default);
     }
 
