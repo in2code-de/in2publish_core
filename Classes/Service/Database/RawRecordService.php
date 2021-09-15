@@ -29,15 +29,28 @@ namespace In2code\In2publishCore\Service\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Utility\DatabaseUtility;
+use In2code\In2publishCore\In2publishCoreException;
 use PDO;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
 
 use function is_array;
+use function sprintf;
 
 class RawRecordService implements SingletonInterface
 {
+    /** @var array<string, Connection> */
+    protected $databases;
+
     protected $cache = [];
+
+    public function __construct(Connection $localDatabase, Connection $foreignDatabase)
+    {
+        $this->databases = [
+            'local' => $localDatabase,
+            'foreign' => $foreignDatabase,
+        ];
+    }
 
     public function getRawRecord(string $table, int $uid, string $side): ?array
     {
@@ -49,7 +62,14 @@ class RawRecordService implements SingletonInterface
 
     protected function fetchRecord(string $table, int $uid, string $side): ?array
     {
-        $query = DatabaseUtility::buildDatabaseConnectionForSide($side)->createQueryBuilder();
+        $database = $this->databases[$side] ?? null;
+        if (null === $database) {
+            throw new In2publishCoreException(
+                sprintf('Invalid side "%s" or database is not available', $side),
+                1631722413
+            );
+        }
+        $query = $database->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $query->select('*')
               ->from($table)
