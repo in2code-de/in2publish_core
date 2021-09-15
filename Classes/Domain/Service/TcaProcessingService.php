@@ -50,6 +50,8 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 
 use TYPO3\CMS\Core\SingletonInterface;
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 use function array_key_exists;
 use function array_keys;
 use function class_exists;
@@ -256,7 +258,7 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
      */
     public static function getIncompatibleTca(): array
     {
-        return static::getInstance()->incompatibleTca;
+        return GeneralUtility::makeInstance(static::class)->incompatibleTca;
     }
 
     /**
@@ -264,7 +266,7 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
      */
     public static function getCompatibleTca(): array
     {
-        return static::getInstance()->compatibleTca;
+        return GeneralUtility::makeInstance(static::class)->compatibleTca;
     }
 
     /**
@@ -272,7 +274,7 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
      */
     public static function getControls(): array
     {
-        return static::getInstance()->controls;
+        return GeneralUtility::makeInstance(static::class)->controls;
     }
 
     /**
@@ -320,7 +322,7 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
      */
     public static function getColumnsFor(string $table): array
     {
-        return (array)static::getInstance()->compatibleTca[$table];
+        return (array)GeneralUtility::makeInstance(static::class)->compatibleTca[$table];
     }
 
     /**
@@ -330,7 +332,7 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
      */
     public static function getControlsFor(string $table): array
     {
-        return static::getInstance()->controls[$table];
+        return GeneralUtility::makeInstance(static::class)->controls[$table];
     }
 
     /**
@@ -340,7 +342,7 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
      */
     public static function hasDeleteField(string $table): bool
     {
-        return (static::getInstance()->controls[$table][static::DELETE] !== '');
+        return (GeneralUtility::makeInstance(static::class)->controls[$table][static::DELETE] !== '');
     }
 
     /**
@@ -350,7 +352,7 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
      */
     public static function getDeleteField(string $table): string
     {
-        return static::getInstance()->controls[$table][static::DELETE];
+        return GeneralUtility::makeInstance(static::class)->controls[$table][static::DELETE];
     }
 
     /**

@@ -52,6 +52,7 @@ use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
@@ -250,7 +251,7 @@ class ToolsController extends ActionController
      */
     public function clearTcaCachesAction()
     {
-        TcaProcessingService::getInstance()->flushCaches();
+        GeneralUtility::makeInstance(TcaProcessingService::class)->flushCaches();
         $this->redirect('index');
     }
 
