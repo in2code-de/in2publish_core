@@ -89,11 +89,6 @@ abstract class AbstractTask
     }
 
     /**
-     * @return void
-     */
-    abstract public function modifyConfiguration();
-
-    /**
      * Implement this in your Task
      *
      * @return bool

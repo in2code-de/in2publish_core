@@ -37,15 +37,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class RefIndexUpdateTask extends AbstractTask
 {
     /**
-     * Don't modify configuration
-     *
-     * @return void
-     */
-    public function modifyConfiguration()
-    {
-    }
-
-    /**
      * Update sys_refindex for given records
      *
      *      expected:

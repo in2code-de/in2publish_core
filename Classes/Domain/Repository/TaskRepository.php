@@ -121,7 +121,6 @@ class TaskRepository
      */
     protected function taskToPropertiesArray(AbstractTask $task): array
     {
-        $task->modifyConfiguration();
         $properties = [
             'task_type' => get_class($task),
             'configuration' => json_encode($task->getConfiguration()),

@@ -38,15 +38,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class FlushNewsCacheTask extends AbstractTask
 {
     /**
-     * Don't modify configuration
-     *
-     * @return void
-     */
-    public function modifyConfiguration()
-    {
-    }
-
-    /**
      * Deletes all pages and news caches the same way they will be deleted on local
      *
      * @return bool

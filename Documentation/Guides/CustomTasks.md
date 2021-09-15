@@ -23,10 +23,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class MyTask extends AbstractTask
 {
-    public function modifyConfiguration()
-    {
-    }
-
     protected function executeTask(): bool
     {
         // Code to execute on foreign
@@ -62,10 +58,6 @@ use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 
 class MyTask extends AbstractTask
 {
-    public function modifyConfiguration()
-    {
-    }
-
     protected function executeTask(): bool
     {
         // Code to execute on foreign
@@ -115,7 +107,6 @@ During runtime your code has to:
 1. (optional) **Collect the data** required for task execution.
 1. **Instantiate the task** with the collected information.
 1. **Register (persist) the task** in the TaskRepository.
-1. (deprecated) **Modify the configuration** in the task before it is written to the database.
 
 ### Example
 
