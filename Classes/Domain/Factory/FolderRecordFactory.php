@@ -117,7 +117,7 @@ class FolderRecordFactory implements LoggerAwareInterface
             // This is the normal case. The identifier identifies the folder including its storage.
             try {
                 $localFolder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
-            } catch (FolderDoesNotExistException $exception) {
+            } /** @noinspection PhpRedundantCatchClauseInspection */ catch (FolderDoesNotExistException $exception) {
                 [$storage] = GeneralUtility::trimExplode(':', $identifier);
                 $localStorage = $this->resourceFactory->getStorageObject($storage);
                 $localFolder = $localStorage->getRootLevelFolder();

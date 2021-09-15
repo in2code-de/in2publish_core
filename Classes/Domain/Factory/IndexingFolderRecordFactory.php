@@ -130,7 +130,7 @@ class IndexingFolderRecordFactory
             } else {
                 $localFolder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($dir);
             }
-        } catch (FolderDoesNotExistException $exception) {
+        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (FolderDoesNotExistException $exception) {
             $resourceStorage = $this->resourceFactory->getStorageObject(substr($dir, 0, strpos($dir, ':')));
             $localFolder = $resourceStorage->getRootLevelFolder();
         }

@@ -48,6 +48,8 @@ class NodeCollection extends ArrayObject implements Node
      * NodeCollection constructor.
      *
      * @param Node[] $nodes
+     * @noinspection MagicMethodsValidityInspection
+     * @noinspection PhpMissingParentConstructorInspection
      */
     public function __construct(array $nodes = [])
     {
