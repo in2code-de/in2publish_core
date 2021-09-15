@@ -115,6 +115,7 @@ class DiskSpeedPerformanceTest implements TestCaseInterface
         if ($severity !== TestResult::OK) {
             array_unshift($messages, 'performance.fs_io.slow_help');
         }
+        /** @noinspection ForgottenDebugOutputInspection */
         if (function_exists('xdebug_is_enabled') && xdebug_is_enabled()) {
             $severity = TestResult::WARNING;
             array_unshift($messages, 'performance.fs_io.xdebug_enabled');

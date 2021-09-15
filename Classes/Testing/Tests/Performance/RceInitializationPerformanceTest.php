@@ -107,6 +107,7 @@ class RceInitializationPerformanceTest implements TestCaseInterface
         if ($severity !== TestResult::OK) {
             array_unshift($messages, 'performance.rce_init.slow_help');
         }
+        /** @noinspection ForgottenDebugOutputInspection */
         if (function_exists('xdebug_is_enabled') && xdebug_is_enabled()) {
             $severity = TestResult::WARNING;
             array_unshift($messages, 'performance.rce_init.xdebug_enabled');
