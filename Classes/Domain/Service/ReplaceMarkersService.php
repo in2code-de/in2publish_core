@@ -129,7 +129,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
         if (strpos($string, '###REC_FIELD_') !== false) {
             $string = preg_replace_callback(
                 self::REC_FIELD_REGEX,
-                function ($matches) use ($record) {
+                static function ($matches) use ($record) {
                     $propertyName = $matches[1];
                     $propertyValue = $record->getLocalProperty($propertyName);
                     if ($propertyValue === null) {

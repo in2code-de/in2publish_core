@@ -366,7 +366,7 @@ class FakeRecordFactory
     {
         uasort(
             $rows,
-            function ($row1, $row2) {
+            static function ($row1, $row2) {
                 return strnatcmp((string)$row1['sorting'], (string)$row2['sorting']);
             }
         );

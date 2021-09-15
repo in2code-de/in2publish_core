@@ -398,7 +398,7 @@ class EnvelopeDispatcher
     {
         if (!$driver->isCaseSensitiveFileSystem()) {
             $identifierList = array_map(
-                function ($identifier) {
+                static function ($identifier) {
                     return strtolower($identifier);
                 },
                 $identifierList
