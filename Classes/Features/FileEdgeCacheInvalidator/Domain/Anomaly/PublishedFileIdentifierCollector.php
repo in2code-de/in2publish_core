@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly;
 
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Event\PhysicalFileWasPublished;
 use In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Model\Task\FlushFileEdgeCacheTask;
 
 use function array_keys;
@@ -23,9 +23,9 @@ class PublishedFileIdentifierCollector
         $this->taskRepository = $taskRepository;
     }
 
-    public function registerPublishedFile(RecordInterface $record): void
+    public function registerPublishedFile(PhysicalFileWasPublished $event): void
     {
-        $this->collectedRecords[$record->getIdentifier()] = true;
+        $this->collectedRecords[$event->getRecord()->getIdentifier()] = true;
     }
 
     public function writeFlushFileEdgeCacheTask(): void

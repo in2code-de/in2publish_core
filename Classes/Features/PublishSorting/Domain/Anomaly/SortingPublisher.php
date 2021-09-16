@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Features\PublishSorting\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use TYPO3\CMS\Core\Database\Connection;
 
@@ -54,8 +54,9 @@ class SortingPublisher
         $this->tcaService = $tcaService;
     }
 
-    public function collectSortingsToBePublished(RecordInterface $record): void
+    public function collectSortingsToBePublished(PublishingOfOneRecordBegan $event): void
     {
+        $record = $event->getRecord();
         if (!$record->hasLocalProperty('pid')) {
             return;
         }

@@ -30,8 +30,7 @@ namespace In2code\In2publishCore\Features\SysLogPublisher\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use TYPO3\CMS\Core\Database\Connection;
 
 class SysLogPublisher
@@ -50,8 +49,10 @@ class SysLogPublisher
         $this->foreignDatabase = $foreignDatabase;
     }
 
-    public function publishSysLog(RecordInterface $record, CommonRepository $commonRepository): void
+    public function publishSysLog(PublishingOfOneRecordEnded $event): void
     {
+        $record = $event->getRecord();
+        $commonRepository = $event->getCommonRepository();
         if ('pages' !== $record->getTableName()) {
             return;
         }

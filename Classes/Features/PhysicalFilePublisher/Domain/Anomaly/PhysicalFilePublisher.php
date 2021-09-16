@@ -34,6 +34,7 @@ use Exception;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\Publishing\FilePublisherService;
 use In2code\In2publishCore\Event\PhysicalFileWasPublished;
+use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
@@ -71,14 +72,15 @@ class PhysicalFilePublisher implements SingletonInterface, LoggerAwareInterface
      *  * Update the remote file
      *  * Rename the remote file
      *
-     * @param RecordInterface $record
+     * @param PublishingOfOneRecordEnded $event
      *
      * @throws Exception
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function publishPhysicalFileOfSysFile(RecordInterface $record): void
+    public function publishPhysicalFileOfSysFile(PublishingOfOneRecordEnded $event): void
     {
+        $record = $event->getRecord();
         $table = $record->getTableName();
         if ('sys_file' !== $table) {
             return;

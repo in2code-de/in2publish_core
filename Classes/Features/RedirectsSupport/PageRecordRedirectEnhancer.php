@@ -30,8 +30,8 @@ namespace In2code\In2publishCore\Features\RedirectsSupport;
  */
 
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
 use In2code\In2publishCore\Service\Routing\SiteService;
 use In2code\In2publishCore\Utility\BackendUtility;
 use PDO;
@@ -68,8 +68,9 @@ class PageRecordRedirectEnhancer
         $this->commonRepository = $commonRepository;
     }
 
-    public function addRedirectsToPageRecord(RecordInterface $record): void
+    public function addRedirectsToPageRecord(AllRelatedRecordsWereAddedToOneRecord $event): void
     {
+        $record = $event->getRecord();
         if ('pages' !== $record->getTableName() || ($pid = $record->getIdentifier()) < 1) {
             return;
         }

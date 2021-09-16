@@ -30,8 +30,8 @@ namespace In2code\In2publishCore\Features\CacheInvalidation\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Features\CacheInvalidation\Domain\Model\Task\FlushFrontendPageCacheTask;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -58,8 +58,9 @@ class CacheInvalidator implements SingletonInterface
         $this->taskRepository = $taskRepository;
     }
 
-    public function registerClearCacheTasks(RecordInterface $record): void
+    public function registerClearCacheTasks(PublishingOfOneRecordBegan $event): void
     {
+        $record = $event->getRecord();
         if ($record->isPagesTable()) {
             $pid = (int)$record->getIdentifier();
         } elseif ($record->hasLocalProperty('pid')) {

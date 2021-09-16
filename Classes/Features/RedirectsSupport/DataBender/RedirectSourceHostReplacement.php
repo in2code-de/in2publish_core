@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\DataBender;
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
+use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Utility\BackendUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -57,8 +58,9 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
         $this->siteFinder = $siteFinder;
     }
 
-    public function replaceLocalWithForeignSourceHost(RecordInterface $record): void
+    public function replaceLocalWithForeignSourceHost(PublishingOfOneRecordBegan $event): void
     {
+        $record = $event->getRecord();
         if ('sys_redirect' !== $record->getTableName() || !in_array($record->getState(), self::CHANGED_STATES)) {
             return;
         }
