@@ -88,28 +88,10 @@ class PublishCommand extends Command implements LoggerAwareInterface
             return static::EXIT_INVALID_TABLE;
         }
 
-        $request = new RemoteCommandRequest(BackupCommand::IDENTIFIER, ['--table-name' => $tableName]);
+        $request = new RemoteCommandRequest(BackupCommand::IDENTIFIER, [], [$tableName]);
         $response = $this->remoteCommandDispatcher->dispatch($request);
 
-        if ($response->isSuccessful()) {
-            $this->logger->info('Backup seems to be successful.');
-
-            try {
-                $rowCount = DatabaseUtility::copyTableContents(
-                    $this->foreignDatabase,
-                    $this->localDatabase,
-                    $tableName
-                );
-                $this->logger->notice('Successfully truncated table, importing rows', ['rowCount' => $rowCount]);
-                $this->logger->notice('Finished importing of table', ['table' => $tableName]);
-            } catch (In2publishCoreException $exception) {
-                $this->logger->critical(
-                    'Could not truncate foreign table. Skipping publish',
-                    ['table' => $tableName, 'exception' => $exception]
-                );
-                $errOutput->writeln(sprintf('Could not truncate foreign table "%s". Skipping import', $tableName));
-            }
-        } else {
+        if (!$response->isSuccessful()) {
             $outputString = $response->getOutputString();
             $errorsString = $response->getErrorsString();
             $exitStatus = $response->getExitStatus();
@@ -119,6 +101,23 @@ class PublishCommand extends Command implements LoggerAwareInterface
             );
             $errOutput->writeln(array_filter(['Could not create backup on remote:', $outputString, $errorsString]));
             return static::EXIT_REMOTE_BACKUP_FAILED;
+        }
+        $this->logger->info('Backup seems to be successful.');
+
+        try {
+            $rowCount = DatabaseUtility::copyTableContents(
+                $this->localDatabase,
+                $this->foreignDatabase,
+                $tableName
+            );
+            $this->logger->notice('Successfully truncated table, importing rows', ['rowCount' => $rowCount]);
+            $this->logger->notice('Finished importing of table', ['table' => $tableName]);
+        } catch (In2publishCoreException $exception) {
+            $this->logger->critical(
+                'Could not truncate foreign table. Skipping publish',
+                ['table' => $tableName, 'exception' => $exception]
+            );
+            $errOutput->writeln(sprintf('Could not truncate foreign table "%s". Skipping import', $tableName));
         }
 
         return Command::SUCCESS;
