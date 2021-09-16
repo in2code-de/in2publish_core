@@ -7,6 +7,7 @@ services:
       $localDatabase: '@In2code.In2publishCore.Database.Local'
       $foreignDatabase: '@In2code.In2publishCore.Database.Foreign'
       $cache: '@cache.in2publish_core'
+      array $extConf: '@=service("TYPO3\\CMS\\Core\\Configuration\\ExtensionConfiguration").get("in2publish_core")'
 
   In2code\In2publishCore\:
     resource: '../Classes/*'

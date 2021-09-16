@@ -31,9 +31,6 @@ namespace In2code\In2publishCore\Config\Provider;
 
 use In2code\In2publishCore\Service\Context\ContextService;
 use Spyc;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException as ExtensionNotConfiguredException;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException as ExtConfPathDoesNotExist;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -54,10 +51,10 @@ class FileProvider implements ProviderInterface
     /** @var ContextService */
     protected $contextService;
 
-    /** @var ExtensionConfiguration */
-    protected $extensionConfiguration;
+    /** @var array */
+    protected $extConf;
 
-    public function __construct(ContextService $contextService, ExtensionConfiguration $extensionConfiguration)
+    public function __construct(ContextService $contextService, array $extConf)
     {
         $this->contextService = $contextService;
         if (!class_exists(Spyc::class)) {
@@ -66,7 +63,7 @@ class FileProvider implements ProviderInterface
                 require_once($spyc);
             }
         }
-        $this->extensionConfiguration = $extensionConfiguration;
+        $this->extConf = $extConf;
     }
 
     public function isAvailable(): bool
@@ -96,11 +93,7 @@ class FileProvider implements ProviderInterface
 
     protected function getResolvedFilePath(): string
     {
-        try {
-            $path = $this->getConfiguredFilePath();
-        } catch (ExtensionNotConfiguredException | ExtConfPathDoesNotExist $e) {
-            $path = 'CONF:in2publish_core';
-        }
+        $path = $this->extConf['pathToConfiguration'] ?? 'CONF:in2publish_core';
 
         if (false !== strpos($path, 'typo3conf/')) {
             trigger_error(self::DEPRECATION_CONFIG_PATH_TYPO3CONF, E_USER_DEPRECATED);
@@ -114,15 +107,5 @@ class FileProvider implements ProviderInterface
             $path = Environment::getPublicPath() . '/' . $path;
         }
         return rtrim($path, '/') . '/';
-    }
-
-    /**
-     * @return string
-     * @throws ExtensionNotConfiguredException
-     * @throws ExtConfPathDoesNotExist
-     */
-    protected function getConfiguredFilePath(): string
-    {
-        return $this->extensionConfiguration->get('in2publish_core', 'pathToConfiguration');
     }
 }
