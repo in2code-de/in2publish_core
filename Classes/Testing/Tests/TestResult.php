@@ -33,6 +33,8 @@ use In2code\In2publishCore\Testing\Utility\TestLabelLocalizer;
 
 use function implode;
 
+use const PHP_EOL;
+
 class TestResult
 {
     public const OK = 'ok';
