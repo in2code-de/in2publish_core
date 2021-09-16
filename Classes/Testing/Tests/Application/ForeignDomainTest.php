@@ -78,7 +78,7 @@ class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
             $jsonEncoded = base64_decode($base64encoded);
             $shortSiteConfig = json_decode($jsonEncoded, true);
         } else {
-            throw ForeignSiteConfigUnavailableException::fromFailedRceResponse($response);
+            throw new ForeignSiteConfigUnavailableException($response);
         }
         return array_combine(
             array_column($shortSiteConfig, 'rootPageId'),

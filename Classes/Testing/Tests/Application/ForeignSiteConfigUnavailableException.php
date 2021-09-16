@@ -31,48 +31,24 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
 use In2code\In2publishCore\In2publishCoreException;
+use Throwable;
 
 class ForeignSiteConfigUnavailableException extends In2publishCoreException
 {
     public const MESSAGE = 'An error occurred during fetching the remote site configuration';
     public const CODE = 1549900962;
 
-    /**
-     * @var string
-     */
-    protected $errorString = '';
+    /** @var RemoteCommandResponse */
+    protected $response;
 
-    /**
-     * @var string
-     */
-    protected $outputString = '';
-
-    /**
-     * @var int
-     */
-    protected $exitStatus = 0;
-
-    public static function fromFailedRceResponse(RemoteCommandResponse $response): ForeignSiteConfigUnavailableException
+    public function __construct(RemoteCommandResponse $response, Throwable $previous = null)
     {
-        $self = new static(static::MESSAGE, self::CODE);
-        $self->outputString = $response->getOutputString();
-        $self->errorString = $response->getErrorsString();
-        $self->exitStatus = $response->getExitStatus();
-        return $self;
+        $this->response = $response;
+        parent::__construct(static::MESSAGE, self::CODE, $previous);
     }
 
-    public function getErrorString(): string
+    public function getResponse(): RemoteCommandResponse
     {
-        return $this->errorString;
-    }
-
-    public function getOutputString(): string
-    {
-        return $this->outputString;
-    }
-
-    public function getExitStatus(): int
-    {
-        return $this->exitStatus;
+        return $this->response;
     }
 }
