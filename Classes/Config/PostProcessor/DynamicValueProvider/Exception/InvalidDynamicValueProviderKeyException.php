@@ -30,14 +30,26 @@ namespace In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\Excep
  */
 
 use In2code\In2publishCore\In2publishCoreException;
+use Throwable;
+
+use function sprintf;
 
 class InvalidDynamicValueProviderKeyException extends In2publishCoreException
 {
     protected const MESSAGE = 'A dynamic value provider for key "%s" was not registered';
     public const CODE = 1595409903;
 
-    public static function forProviderKey(string $providerKey): InvalidDynamicValueProviderKeyException
+    /** @var string */
+    protected $providerKey;
+
+    public function __construct(string $providerKey, Throwable $previous = null)
     {
-        return new self(sprintf(self::MESSAGE, $providerKey), self::CODE);
+        parent::__construct(sprintf(self::MESSAGE, $providerKey), self::CODE, $previous);
+        $this->providerKey = $providerKey;
+    }
+
+    public function getProviderKey(): string
+    {
+        return $this->providerKey;
     }
 }

@@ -67,7 +67,7 @@ class DynamicValueProviderRegistry implements SingletonInterface
     public function getDynamicValueProviderByKey(string $key): DynamicValueProviderInterface
     {
         if (!$this->hasDynamicValueProviderForKey($key)) {
-            throw InvalidDynamicValueProviderKeyException::forProviderKey($key);
+            throw new InvalidDynamicValueProviderKeyException($key);
         }
         if (!isset($this->objects[$key])) {
             $this->objects[$key] = GeneralUtility::makeInstance($this->classes[$key]);
