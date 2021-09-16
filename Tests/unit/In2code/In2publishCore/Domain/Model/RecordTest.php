@@ -1633,7 +1633,6 @@ class RecordTest extends Unit
      */
     public function testSetPropertiesBySideThrowsExceptionForUndefinedSide()
     {
-
         $stub = $this->getRecordStub([]);
         $stub->__construct('pages', [], [], [], []);
 

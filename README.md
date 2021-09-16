@@ -23,7 +23,6 @@ Thank you very much in advance.
 
 Your in2code Team
 
-
 ### Description
 
 The Content Publisher takes working with content to a whole new level. As an editor you can see all changes

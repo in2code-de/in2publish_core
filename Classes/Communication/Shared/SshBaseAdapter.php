@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Communication\Shared;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Exception;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
