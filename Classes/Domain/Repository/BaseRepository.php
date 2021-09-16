@@ -58,8 +58,6 @@ abstract class BaseRepository implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     public const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
-    public const DEPRECATION_METHOD = 'The method %s is deprecated and will be removed in in2publish_core version 10.';
-    public const DEPRECATION_PARAMETER = 'The parameter %s of method %s is deprecated and will be removed in in2publish_core version 10.';
 
     /** @var TcaService */
     protected $tcaService;

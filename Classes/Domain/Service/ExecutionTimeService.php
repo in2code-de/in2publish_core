@@ -43,9 +43,6 @@ class ExecutionTimeService implements SingletonInterface, LoggerAwareInterface
     /** @var float|null */
     protected $startTime;
 
-    /** @var float|null */
-    protected $executionTime;
-
     public function start(): void
     {
         if (null === $this->startTime) {

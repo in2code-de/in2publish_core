@@ -94,34 +94,9 @@ class TestResult
         }
     }
 
-    public function setSeverity(string $severity): void
-    {
-        $this->severity = $severity;
-    }
-
-    public function getLabel(): string
-    {
-        return $this->label;
-    }
-
-    public function setLabel(string $label): void
-    {
-        $this->label = $label;
-    }
-
     public function getTranslatedLabel(): string
     {
         return TestLabelLocalizer::translate($this->label, $this->labelArguments);
-    }
-
-    public function getMessages(): string
-    {
-        return $this->messages;
-    }
-
-    public function setMessages(string $messages): void
-    {
-        $this->messages = $messages;
     }
 
     public function getTranslatedMessages(): string

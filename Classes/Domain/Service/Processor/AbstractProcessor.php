@@ -117,13 +117,6 @@ abstract class AbstractProcessor implements ProcessorInterface
      **********************************************/
 
     /**
-     * AbstractProcessor constructor.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Return TRUE if the TCA type can hold relations. FALSE if for "stupid" or boolean types like "check" or "radio"
      *
      * @return bool
