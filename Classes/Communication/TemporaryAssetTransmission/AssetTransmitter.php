@@ -88,7 +88,7 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
             }
         }
 
-        $target = $this->foreignRootPath . '/typo3temp/' . uniqid('tx_in2publishcore_temp_');
+        $target = $this->foreignRootPath . '/typo3temp/' . uniqid('tx_in2publishcore_temp_', false);
 
         $success = $this->adapter->copyFileToRemote($source, $target);
 

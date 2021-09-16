@@ -132,7 +132,7 @@ class CommonRepositoryTest extends Unit
      */
     public function testRelationsToCategoriesAreAlwaysResolved()
     {
-        $canary = uniqid();
+        $canary = uniqid('', false);
         $this->tester->haveInDatabase('pages', ['uid' => 5, 'categories' => 1]);
         $this->tester->haveInDatabase('sys_category', ['uid' => 2, 'items' => 1, 'title' => $canary]);
         $this->tester->haveInDatabase(
