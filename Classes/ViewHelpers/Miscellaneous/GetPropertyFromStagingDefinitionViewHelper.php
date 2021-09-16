@@ -38,10 +38,7 @@ use function ucfirst;
 
 class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
 {
-    /**
-     * @var string
-     */
-    protected $emptyFieldValue = '---';
+    protected const EMPTY_FIELD_VALUE = '---';
 
     public function initializeArguments(): void
     {
@@ -105,7 +102,7 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
 
             return LocalizationUtility::translate('label_production', 'in2publish_core');
         }
-        return $this->emptyFieldValue;
+        return static::EMPTY_FIELD_VALUE;
     }
 
     /**
