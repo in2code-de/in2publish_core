@@ -60,6 +60,9 @@ class FileIndexFactory
     /** @var ContextService */
     protected $contextService;
 
+    /** @var UidReservationService */
+    protected $uidReservationService;
+
     /**
      * @param DriverInterface $localDriver
      * @param DriverInterface $foreignDriver
@@ -73,6 +76,7 @@ class FileIndexFactory
         $this->sysFileTca = GeneralUtility::makeInstance(TcaService::class)
                                           ->getConfigurationArrayForTable('sys_file');
         $this->contextService = GeneralUtility::makeInstance(ContextService::class);
+        $this->uidReservationService = GeneralUtility::makeInstance(UidReservationService::class);
     }
 
     /**
@@ -187,7 +191,7 @@ class FileIndexFactory
         $fileInfo['pid'] = 0;
 
         if ($uid <= 0 && $this->contextService->isLocal()) {
-            $fileInfo['uid'] = $this->getUidReservationService()->getReservedUid();
+            $fileInfo['uid'] = $this->uidReservationService->getReservedUid();
         } else {
             $fileInfo['uid'] = $uid;
         }
@@ -282,15 +286,5 @@ class FileIndexFactory
             return $fileInfo;
         }
         return [];
-    }
-
-    /**
-     * @return UidReservationService
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    protected function getUidReservationService(): UidReservationService
-    {
-        return GeneralUtility::makeInstance(UidReservationService::class);
     }
 }
