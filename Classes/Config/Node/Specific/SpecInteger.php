@@ -35,6 +35,7 @@ use function is_int;
 
 class SpecInteger extends AbsSpecNode
 {
+    /** @param mixed $value */
     public function validateType(ValidationContainer $container, $value): void
     {
         if ('' === $value || null === $value) {
@@ -44,11 +45,7 @@ class SpecInteger extends AbsSpecNode
         }
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return int
-     */
+    /** @param mixed $value */
     public function cast($value): int
     {
         return (int)$value;

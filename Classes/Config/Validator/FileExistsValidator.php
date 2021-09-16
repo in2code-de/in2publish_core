@@ -36,10 +36,7 @@ use function is_file;
 
 class FileExistsValidator implements ValidatorInterface
 {
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
+    /** @param mixed $value */
     public function validate(ValidationContainer $container, $value): void
     {
         if (!file_exists($value)) {

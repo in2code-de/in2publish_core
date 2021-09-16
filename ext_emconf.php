@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection PhpUndefinedVariableInspection */
+
 $EM_CONF[$_EXTKEY] = [
     'title' => 'in2publish Core',
     'description' => 'Content publishing extension to connect stage and production server',

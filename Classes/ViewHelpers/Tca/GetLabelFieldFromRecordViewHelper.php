@@ -49,11 +49,6 @@ class GetLabelFieldFromRecordViewHelper extends AbstractViewHelper
         $this->registerArgument('stagingLevel', 'string', '"local" (default) or "foreign"', false, 'local');
     }
 
-    /**
-     * Get label field from record
-     *
-     * @return string
-     */
     public function render(): string
     {
         return $this->labelService->getLabelField($this->arguments['record'], $this->arguments['stagingLevel']);

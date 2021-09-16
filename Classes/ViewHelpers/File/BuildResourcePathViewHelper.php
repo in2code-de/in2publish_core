@@ -42,11 +42,6 @@ use function rtrim;
 
 class BuildResourcePathViewHelper extends AbstractViewHelper
 {
-    /**
-     * @var Uri[]
-     */
-    protected $domains;
-
     /** @var ConfigContainer */
     protected $configContainer;
 
@@ -55,6 +50,9 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
 
     /** @var RemoteFileAbstractionLayerDriver */
     protected $remoteFileAbstractionLayerDriver;
+
+    /** @var Uri[] */
+    protected $domains;
 
     public function __construct(
         ConfigContainer $configContainer,
@@ -85,8 +83,6 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @return string
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function render(): string

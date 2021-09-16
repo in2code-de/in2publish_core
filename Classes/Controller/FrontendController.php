@@ -34,13 +34,7 @@ use In2code\In2publishCore\Utility\BackendUtility;
 
 class FrontendController extends AbstractController
 {
-    /**
-     * Preview action for vertical or horizontal view
-     *
-     * @param int $identifier
-     *
-     * @return void
-     */
+    /** Preview action for vertical or horizontal view */
     public function previewAction(int $identifier = 1): void
     {
         $this->view->assign(

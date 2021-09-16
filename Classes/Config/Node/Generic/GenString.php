@@ -36,10 +36,7 @@ use function reset;
 
 class GenString extends AbsGenNode
 {
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
+    /** @param mixed $value */
     protected function validateKey(ValidationContainer $container, $value): void
     {
         if (!is_string($value)) {

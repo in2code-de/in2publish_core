@@ -31,9 +31,6 @@ namespace In2code\In2publishCore\Config\Definer;
 
 use In2code\In2publishCore\Config\Node\NodeCollection;
 
-/**
- * Interface DefinerInterface
- */
 interface DefinerInterface
 {
     public function getLocalDefinition(): NodeCollection;

@@ -55,10 +55,10 @@ class FakeRecordFactory
     protected $tcaService;
 
     /** @var array */
-    protected $metaDataBlackList = [];
+    protected $config;
 
     /** @var array */
-    protected $config = [];
+    protected $metaDataBlackList = [];
 
     public function __construct(
         TableCacheRepository $tableCacheRepository,
@@ -72,10 +72,6 @@ class FakeRecordFactory
 
     /**
      * Build a record tree with a minimum information (try to keep queries reduced)
-     *
-     * @param int $identifier
-     *
-     * @return Record
      */
     public function buildFromStartPage(int $identifier): Record
     {
@@ -86,11 +82,6 @@ class FakeRecordFactory
 
     /**
      * Add related records and respect level depth
-     *
-     * @param Record $record
-     * @param int $currentDepth
-     *
-     * @return void
      */
     protected function addRelatedRecords(Record $record, int $currentDepth = 0): void
     {
@@ -98,7 +89,7 @@ class FakeRecordFactory
         if ($currentDepth < $this->config['factory']['maximumPageRecursion']) {
             foreach ($this->getChildrenPages($record->getIdentifier()) as $pageIdentifier) {
                 if ($this->shouldSkipChildrenPage($pageIdentifier)) {
-                    $subRecord = $this->getSingleFakeRecordFromPageIdentifier((int)$pageIdentifier);
+                    $subRecord = $this->getSingleFakeRecordFromPageIdentifier($pageIdentifier);
                     $this->addRelatedRecords($subRecord, $currentDepth);
                     $record->addRelatedRecordRaw($subRecord);
                 }
@@ -106,13 +97,7 @@ class FakeRecordFactory
         }
     }
 
-    /**
-     * @param int $identifier page identifier
-     *
-     * @return Record
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
+    /** @SuppressWarnings(PHPMD.StaticAccess) */
     protected function getSingleFakeRecordFromPageIdentifier(int $identifier): Record
     {
         $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier);
@@ -131,10 +116,6 @@ class FakeRecordFactory
 
     /**
      * Try to get state for given record
-     *
-     * @param Record $record
-     *
-     * @return void
      */
     protected function guessState(Record $record): void
     {
@@ -158,13 +139,6 @@ class FakeRecordFactory
         }
     }
 
-    /**
-     * Check if page is new
-     *
-     * @param Record $record
-     *
-     * @return bool
-     */
     protected function pageIsNew(Record $record): bool
     {
         $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $record->getIdentifier());
@@ -181,7 +155,7 @@ class FakeRecordFactory
      *
      * @param int $identifier
      *
-     * @return array
+     * @return array<int>
      */
     protected function getChildrenPages(int $identifier): array
     {
@@ -189,19 +163,13 @@ class FakeRecordFactory
         $rows = $this->sortRowsBySorting($rows);
         $pageIdentifiers = [];
         foreach ($rows as $row) {
-            $pageIdentifiers[] = $row['uid'];
+            $pageIdentifiers[] = (int)$row['uid'];
         }
         return $pageIdentifiers;
     }
 
     /**
      * Check if record is deleted and respect delete field from TCA
-     *
-     * @param int $pageIdentifier
-     * @param string $databaseName
-     * @param string $tableName
-     *
-     * @return bool
      */
     protected function isRecordDeleted(
         int $pageIdentifier,
@@ -218,10 +186,6 @@ class FakeRecordFactory
 
     /**
      * Compare sorting of a page on both sides. Check if it's different
-     *
-     * @param int $pageIdentifier
-     *
-     * @return bool
      */
     protected function pageHasMoved(int $pageIdentifier): bool
     {
@@ -237,10 +201,6 @@ class FakeRecordFactory
 
     /**
      * Check if this page should be related or not
-     *
-     * @param int $pageIdentifier
-     *
-     * @return bool
      */
     protected function shouldSkipChildrenPage(int $pageIdentifier): bool
     {
@@ -250,10 +210,6 @@ class FakeRecordFactory
 
     /**
      * Check if page is deleted on local only
-     *
-     * @param int $pageIdentifier
-     *
-     * @return bool
      */
     protected function pageIsDeletedOnLocalOnly(int $pageIdentifier): bool
     {
@@ -267,10 +223,6 @@ class FakeRecordFactory
 
     /**
      * Compare rows of a page on both sides. Check if it's different
-     *
-     * @param int $pageIdentifier
-     *
-     * @return bool
      */
     protected function pageHasChanged(int $pageIdentifier): bool
     {
@@ -288,10 +240,6 @@ class FakeRecordFactory
 
     /**
      * Compare rows of any records on a page. Check if they are different
-     *
-     * @param Record $record
-     *
-     * @return bool
      */
     protected function pageContentRecordsHasChanged(Record $record): bool
     {
@@ -310,12 +258,6 @@ class FakeRecordFactory
 
     /**
      * Check if multidimensional array with records is different between instances
-     *
-     * @param array $arrayLocal
-     * @param array $arrayForeign
-     * @param string $table
-     *
-     * @return bool
      */
     protected function areDifferentArrays(array $arrayLocal, array $arrayForeign, string $table): bool
     {
@@ -357,10 +299,6 @@ class FakeRecordFactory
 
     /**
      * Sort rows array by sorting field
-     *
-     * @param array $rows
-     *
-     * @return array
      */
     protected function sortRowsBySorting(array $rows): array
     {
@@ -375,11 +313,6 @@ class FakeRecordFactory
 
     /**
      * Respect configuration ignoreFieldsForDifferenceView.[table] and remove these fields
-     *
-     * @param array $properties
-     * @param string $table
-     *
-     * @return array
      */
     protected function removeIgnoreFieldsFromArray(array $properties, string $table): array
     {
@@ -392,11 +325,6 @@ class FakeRecordFactory
 
     /**
      * Check if record was not generated and at once deleted on local (so it's not existing on foreign)
-     *
-     * @param int $identifier
-     * @param string $tableName
-     *
-     * @return bool
      */
     protected function isRecordDeletedOnLocalAndNonExistingOnForeign(
         int $identifier,
@@ -413,11 +341,6 @@ class FakeRecordFactory
 
     /**
      * Check if record is deleted on both instances
-     *
-     * @param int $identifier
-     * @param string $tableName
-     *
-     * @return bool
      */
     protected function isRecordDeletedOnBothInstances(int $identifier, string $tableName): bool
     {

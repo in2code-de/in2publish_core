@@ -37,14 +37,10 @@ use function is_resource;
 
 class HostNameValidator implements ValidatorInterface
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $port;
 
     /**
-     * HostNameValidator constructor.
-     *
      * @param int $port Set an other port if the default one is actually used
      */
     public function __construct(int $port = 61252)
@@ -52,10 +48,7 @@ class HostNameValidator implements ValidatorInterface
         $this->port = $port;
     }
 
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
+    /** @param mixed $value */
     public function validate(ValidationContainer $container, $value): void
     {
         $resource = @fsockopen($value, $this->port, $errorCode, $errorMessage, 1);

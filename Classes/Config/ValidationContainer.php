@@ -36,20 +36,13 @@ use function implode;
 
 class ValidationContainer
 {
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $path = [];
 
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $errors = [];
 
-    /**
-     * @param Node $node
-     * @param mixed $value
-     */
+    /** @param mixed $value */
     public function validate(Node $node, $value): void
     {
         $this->path[] = $node->getName();
@@ -62,9 +55,7 @@ class ValidationContainer
         $this->errors[] = '[' . implode('.', $this->path) . ']: ' . $error;
     }
 
-    /**
-     * @return string[]
-     */
+    /** @return string[] */
     public function getErrors(): array
     {
         return $this->errors;

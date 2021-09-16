@@ -33,11 +33,14 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class GetMergedPropertyViewHelper extends AbstractViewHelper
 {
-    /**
-     * Call getMergedProperty on a record
-     *
-     * @return mixed
-     */
+    public function initializeArguments(): void
+    {
+        parent::initializeArguments();
+        $this->registerArgument('record', Record::class, 'record of which should get merged', true);
+        $this->registerArgument('propertyName', 'string', 'Property which should get merged', true);
+    }
+
+    /** @return mixed */
     public function render()
     {
         /** @var Record $record */
@@ -47,12 +50,5 @@ class GetMergedPropertyViewHelper extends AbstractViewHelper
         $propertyName = $this->arguments['propertyName'];
 
         return $record->getMergedProperty($propertyName);
-    }
-
-    public function initializeArguments(): void
-    {
-        parent::initializeArguments();
-        $this->registerArgument('record', Record::class, 'record of which should get merged', true);
-        $this->registerArgument('propertyName', 'string', 'Property which should get merged', true);
     }
 }

@@ -42,34 +42,22 @@ use function is_string;
 
 abstract class AbstractNode implements Node
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $name;
 
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $validators;
 
-    /**
-     * @var NodeCollection
-     */
+    /** @var NodeCollection */
     protected $nodes;
 
-    /**
-     * @var string|int|bool|array
-     */
+    /** @var string|int|bool|array */
     protected $default;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $skipValidators = false;
 
     /**
-     * AbstractNode constructor.
-     *
      * @param string $name
      * @param string[] $validators
      * @param NodeCollection $nodes
@@ -98,10 +86,7 @@ abstract class AbstractNode implements Node
         $this->nodes->addNode($node);
     }
 
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
+    /** @param mixed $value */
     public function validate(ValidationContainer $container, $value): void
     {
         if (!is_array($value)) {
@@ -118,6 +103,7 @@ abstract class AbstractNode implements Node
         }
     }
 
+    /** @param mixed $value */
     protected function validateByValidators(ValidationContainer $container, $value): void
     {
         foreach ($this->validators as $classOrIndex => $optionsOrClass) {
@@ -162,6 +148,7 @@ abstract class AbstractNode implements Node
         return array_merge($original, $additional);
     }
 
+    /** @param mixed $value */
     abstract protected function validateType(ValidationContainer $container, $value): void;
 
     public function validatorsShouldBeSkipped(): bool

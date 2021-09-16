@@ -46,6 +46,7 @@ class NullRecord extends Record
      * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      * @noinspection MagicMethodsValidityInspection
      * @noinspection PhpMissingParentConstructorInspection
+     * @noinspection PhpOptionalBeforeRequiredParametersInspection
      */
     public function __construct(
         string $tableName = 'pages',

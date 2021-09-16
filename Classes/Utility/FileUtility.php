@@ -46,9 +46,7 @@ use function trim;
 
 class FileUtility
 {
-    /**
-     * @var Logger
-     */
+    /** @var Logger */
     protected static $logger;
 
     protected static function initializeLogger(): void

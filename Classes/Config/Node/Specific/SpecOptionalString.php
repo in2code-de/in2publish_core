@@ -35,6 +35,7 @@ use function is_string;
 
 class SpecOptionalString extends AbsSpecNode
 {
+    /** @param mixed $value */
     public function validateType(ValidationContainer $container, $value): void
     {
         if (!is_string($value) && null !== $value) {
@@ -46,11 +47,7 @@ class SpecOptionalString extends AbsSpecNode
         }
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return string
-     */
+    /** @param mixed $value */
     public function cast($value): string
     {
         return (string)$value;

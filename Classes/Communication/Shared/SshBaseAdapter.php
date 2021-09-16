@@ -196,9 +196,9 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
     /**
      * Validates that all configuration values are set and contain correct values
      *
-     * @throws Exception
+     * @throws In2publishCoreException
      */
-    protected function getValidatedConfig()
+    protected function getValidatedConfig(): array
     {
         $config = $this->configContainer->get('sshConnection');
         $config = $this->validateRequiredSettings($config);
@@ -206,13 +206,8 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
         return $this->validateSshParameter($config);
     }
 
-    /**
-     * @param $config
-     *
-     * @return mixed
-     * @throws In2publishCoreException
-     */
-    protected function validateRequiredSettings($config)
+    /** @throws In2publishCoreException */
+    protected function validateRequiredSettings(array $config): array
     {
         if (empty($config)) {
             throw new In2publishCoreException('SSH Connection: Missing configuration', 1428492639);
@@ -229,13 +224,8 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
         return $config;
     }
 
-    /**
-     * @param $config
-     *
-     * @return mixed
-     * @throws In2publishCoreException
-     */
-    protected function validateKeys($config)
+    /** @throws In2publishCoreException */
+    protected function validateKeys(array $config): array
     {
         foreach (['privateKeyFileAndPathName', 'publicKeyFileAndPathName'] as $requiredFileKey) {
             if (empty($config[$requiredFileKey])) {
@@ -258,13 +248,8 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
         return $config;
     }
 
-    /**
-     * @param $config
-     *
-     * @return mixed
-     * @throws In2publishCoreException
-     */
-    protected function validateSshParameter($config)
+    /** @throws In2publishCoreException */
+    protected function validateSshParameter(array $config): array
     {
         if (empty($config['foreignKeyFingerprint'])) {
             throw new In2publishCoreException('SSH Connection: Option foreignKeyFingerprint is empty', 1425400689);
@@ -286,11 +271,7 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
         return $config;
     }
 
-    /**
-     * Destroy all sessions and connections
-     *
-     * @return void
-     */
+    /** Destroy all sessions and connections */
     abstract protected function disconnect(): void;
 
     public function __destruct()

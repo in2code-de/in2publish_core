@@ -58,9 +58,8 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
     }
 
     /**
-     * @param Envelope $envelope
-     *
      * @return bool|int false for errors, int for successful sent envelopes and true for updated envelopes (yes, ugly)
+     * @throws Throwable
      */
     public function sendEnvelope(Envelope $envelope)
     {
@@ -109,6 +108,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
      * @param bool $burnEnvelope a.k.a. burn after reading, overridden by global debug setting
      *
      * @return bool|Envelope
+     * @throws Throwable
      */
     public function receiveEnvelope(int $uid, bool $burnEnvelope = true)
     {

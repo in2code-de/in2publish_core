@@ -46,10 +46,7 @@ use In2code\In2publishCore\Domain\Service\Processor\UserProcessor;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
-use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
-
 use TYPO3\CMS\Core\SingletonInterface;
-
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
@@ -69,17 +66,17 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
     public const DELETE = 'delete';
     public const CACHE_KEY_TCA_COMPATIBLE = 'tca_compatible';
     public const CACHE_KEY_TCA_INCOMPATIBLE = 'tca_incompatible';
-    public const CACHE_KEY_TCA_PROCESSORS = 'tca_processors';
     public const CACHE_KEY_CONTROLS = 'controls';
     public const DEFAULT_EXTRAS = 'defaultExtras';
+
+    /** @var FrontendInterface */
+    protected $cache;
+
     public const SOFT_REF = 'softref';
 
     /** @var TcaProcessingService */
     protected static $instance;
 
-    /**
-     * @var array
-     */
     protected $defaultProcessor = [
         'check' => CheckProcessor::class,
         'flex' => FlexProcessor::class,
@@ -121,14 +118,6 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
      */
     protected $controls = [];
 
-    /**
-     * @var VariableFrontend
-     */
-    protected $cache = null;
-
-    /**
-     * TcaProcessingService constructor.
-     */
     public function __construct(FrontendInterface $cache, ConfigContainer $configContainer)
     {
         $this->cache = $cache;

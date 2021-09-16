@@ -35,6 +35,7 @@ use function is_bool;
 
 class SpecBoolean extends AbsSpecNode
 {
+    /** @param mixed $value */
     public function validateType(ValidationContainer $container, $value): void
     {
         if (!is_bool($value)) {
@@ -42,11 +43,7 @@ class SpecBoolean extends AbsSpecNode
         }
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return bool
-     */
+    /** @param mixed $value */
     public function cast($value): bool
     {
         return (bool)$value;

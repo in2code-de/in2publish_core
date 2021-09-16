@@ -39,11 +39,6 @@ class HasChangedRecordsViewHelper extends AbstractViewHelper
         $this->registerArgument('records', 'array', 'The records to test for changes', true);
     }
 
-    /**
-     * Check if there are changed records
-     *
-     * @return bool
-     */
     public function render(): bool
     {
         foreach ($this->arguments['records'] as $record) {

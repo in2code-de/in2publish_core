@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection PhpComposerExtensionStubsInspection */
+
 declare(strict_types=1);
 
 namespace In2code\In2publishCore\Testing\Tests\Performance;
@@ -34,10 +36,12 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\Ad
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishSeclib\Communication\RemoteCommandExecution\RemoteAdapter\PhpSecLibAdapter;
+use ReflectionException;
 use ReflectionProperty;
 
 use function array_sum;
@@ -71,6 +75,10 @@ class RceInitializationPerformanceTest implements TestCaseInterface
         $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws In2publishCoreException
+     */
     public function run(): TestResult
     {
         $adapterClass = $this->adapterRegistry->getAdapter(AdapterInterface::class);

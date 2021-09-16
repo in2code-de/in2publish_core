@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Domain\Driver;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Doctrine\DBAL\Driver\Exception as DriverException;
 use Exception;
 use In2code\In2publishCore\Command\RemoteProcedureCall\ExecuteCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
@@ -41,6 +42,7 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use InvalidArgumentException;
 use LogicException;
 use RuntimeException;
+use Throwable;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
@@ -114,6 +116,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @return void
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
+     * @throws DriverException
      */
     public function initialize(): void
     {
@@ -197,8 +200,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * Checks if a file exists.
      *
      * @param string $fileIdentifier
-     *
-     * @return bool
      */
     public function fileExists($fileIdentifier): bool
     {
@@ -238,8 +239,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * Checks if a folder exists.
      *
      * @param string $folderIdentifier
-     *
-     * @return bool
      * @throws Exception
      */
     public function folderExists($folderIdentifier): bool
@@ -384,8 +383,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @param string $fileIdentifier
      * @param string $hashAlgorithm The hash algorithm to use
-     *
-     * @return string
      */
     public function hash($fileIdentifier, $hashAlgorithm): string
     {
@@ -415,7 +412,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @return array
      *
      * @return string
-     * @throws Exception
+     * @throws Throwable
      */
     public function getPermissions($identifier): array
     {
@@ -437,8 +434,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $fileIdentifier
      * @param array $propertiesToExtract Array of properties which are be extracted
      *                                   If empty all will be extracted
-     *
-     * @return array
      */
     public function getFileInfoByIdentifier($fileIdentifier, array $propertiesToExtract = []): array
     {
@@ -466,8 +461,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * Returns information about a file.
      *
      * @param string $folderIdentifier
-     *
-     * @return array
      *
      * @throws FolderDoesNotExistException
      */
@@ -663,8 +656,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @param string $folderIdentifier
      * @param bool $deleteRecursively
-     *
-     * @return bool
      */
     public function deleteFolder($folderIdentifier, $deleteRecursively = false): bool
     {
@@ -695,8 +686,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $targetFolderIdentifier
      * @param string $newFileName
      *
-     * @return string
-     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function moveFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $newFileName): string
@@ -715,11 +704,9 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
     }
 
     /**
-     * @param Envelope $envelope
-     *
      * @return mixed
      *
-     * @throws Exception
+     * @throws Throwable
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */

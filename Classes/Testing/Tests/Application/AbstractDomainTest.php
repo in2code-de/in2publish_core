@@ -49,7 +49,6 @@ abstract class AbstractDomainTest
     public const DOMAIN_TYPE_SLASH_BASE = 'base';
 
     /**
-     * @var string
      * @api Set this in the inheriting test class
      */
     protected $prefix = '';

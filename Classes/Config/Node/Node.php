@@ -31,9 +31,6 @@ namespace In2code\In2publishCore\Config\Node;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
-/**
- * Interface Node
- */
 interface Node
 {
     public const T_ARRAY = 'array';
@@ -43,12 +40,7 @@ interface Node
     public const T_INTEGER = 'integer';
     public const T_BOOLEAN = 'boolean';
 
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     *
-     * @return void
-     */
+    /** @param mixed $value */
     public function validate(ValidationContainer $container, $value): void;
 
     public function getName(): string;
@@ -57,24 +49,16 @@ interface Node
 
     public function getNodePath(string $path): Node;
 
-    /**
-     * @return string[]|int[]|bool[]|array[]
-     */
+    /** @return string[]|int[]|bool[]|array[] */
     public function getDefaults(): array;
 
     public function merge(Node $node): void;
 
     public function mergeArrays(array $original, array $additional): array;
 
-    /**
-     * @param mixed $value
-     *
-     * @return mixed
-     */
+    /** @param mixed $value */
     public function cast($value);
 
-    /**
-     * @param string[]|int[]|bool[]|array[] $value
-     */
+    /** @param string[]|int[]|bool[]|array[] $value */
     public function unsetDefaults(array &$value): void;
 }

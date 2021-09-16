@@ -36,10 +36,7 @@ use function class_exists;
 
 class ZipExtensionInstalledValidator implements ValidatorInterface
 {
-    /**
-     * @param ValidationContainer $container
-     * @param string $value
-     */
+    /** @param mixed $value */
     public function validate(ValidationContainer $container, $value): void
     {
         if ($value && !class_exists(ZipArchive::class)) {

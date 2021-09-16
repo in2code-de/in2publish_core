@@ -48,25 +48,19 @@ use function implode;
 use function is_bool;
 
 /**
- * Class AbstractController
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 abstract class AbstractController extends ActionController
 {
     public const BLANK_ACTION = 'blankAction';
 
-    /**
-     * @var BackendUserAuthentication
-     */
-    protected $backendUser = null;
+    /** @var BackendUserAuthentication */
+    protected $backendUser;
 
     /** @var RemoteCommandDispatcher */
     protected $remoteCommandDispatcher;
 
     /**
-     * AbstractConfiguredController constructor.
-     *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     public function __construct(
@@ -133,13 +127,7 @@ abstract class AbstractController extends ActionController
     {
     }
 
-    /**
-     * @param string $filterName
-     * @param string $status
-     * @param string $action
-     *
-     * @throws StopActionException
-     */
+    /** @throws StopActionException */
     protected function toggleFilterStatusAndRedirect(string $filterName, string $status, string $action): void
     {
         $currentStatus = $this->backendUser->getSessionData($filterName . $status);

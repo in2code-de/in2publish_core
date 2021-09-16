@@ -61,6 +61,12 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
+    /** @var TcaService */
+    protected $tcaService;
+
+    /** @var EventDispatcher */
+    protected $eventDispatcher;
+
     /**
      * Runtime cache to cache already created Records
      * Structure:
@@ -92,11 +98,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
         'includeSysFileReference' => false,
     ];
 
-    /**
-     * current recursion depth of makeInstance
-     *
-     * @var int
-     */
+    /** @var int current recursion depth of makeInstance */
     protected $currentDepth = 0;
 
     /**
@@ -107,31 +109,18 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
      */
     protected $excludedTableNames = [];
 
-    /**
-     * current depth of related page records
-     *
-     * @var int
-     */
+    /** @var int current depth of related page records */
     protected $pagesDepth = 1;
 
-    /**
-     * current depth of related content records (anything but page)
-     *
-     * @var int
-     */
+    /** @var int current depth of related content records (anything but page) */
     protected $relatedRecordsDepth = 1;
 
     /** @var bool */
     protected $pageRecursionEnabled = true;
 
-    /** @var TcaService */
-    protected $tcaService;
-
     /**  @var bool */
     protected $isRootRecord = false;
 
-    /** @var EventDispatcher */
-    protected $eventDispatcher;
 
     public function __construct(
         ConfigContainer $configContainer,
@@ -549,11 +538,6 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
         unset($this->runtimeCache[$tableName][$identifier]);
     }
 
-    /**
-     * Disable Page Recursion
-     *
-     * @return void
-     */
     public function disablePageRecursion(): void
     {
         $this->pageRecursionEnabled = false;

@@ -50,24 +50,26 @@ class RedirectController extends AbstractController
     /** @var ForeignSiteFinder */
     protected $foreignSiteFinder;
 
+    /** @var SysRedirectRepository */
+    protected $sysRedirectRepo;
+
     public function __construct(
         ConfigContainer $configContainer,
         ExecutionTimeService $executionTimeService,
         EnvironmentService $environmentService,
         RemoteCommandDispatcher $remoteCommandDispatcher,
         CommonRepository $commonRepository,
-        ForeignSiteFinder $foreignSiteFinder
+        ForeignSiteFinder $foreignSiteFinder,
+        SysRedirectRepository $sysRedirectRepo
     ) {
-        parent::__construct($configContainer, $executionTimeService, $environmentService, $remoteCommandDispatcher);
+        parent::__construct(
+            $configContainer,
+            $executionTimeService,
+            $environmentService,
+            $remoteCommandDispatcher
+        );
         $this->commonRepository = $commonRepository;
         $this->foreignSiteFinder = $foreignSiteFinder;
-    }
-
-    /** @var SysRedirectRepository */
-    protected $sysRedirectRepo;
-
-    public function injectSysRedirectRepository(SysRedirectRepository $sysRedirectRepo): void
-    {
         $this->sysRedirectRepo = $sysRedirectRepo;
     }
 

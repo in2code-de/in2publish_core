@@ -62,10 +62,8 @@ use function strpos;
  */
 class RecordController extends AbstractController
 {
-    /**
-     * @var CommonRepository
-     */
-    protected $commonRepository = null;
+    /** @var CommonRepository */
+    protected $commonRepository;
 
     /** @var PublishingFailureCollector */
     protected $publishingFailureCollector;
@@ -222,8 +220,6 @@ class RecordController extends AbstractController
      * Add success message and redirect to indexAction
      *
      * @throws StopActionException
-     *
-     * @SuppressWarnings(PHPMD.LongVariable)
      */
     protected function addFlashMessagesAndRedirectToIndex(): void
     {

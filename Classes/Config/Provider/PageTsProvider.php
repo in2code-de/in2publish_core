@@ -39,9 +39,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PageTsProvider implements ProviderInterface, ContextualProvider, TableConfigurationPostProcessingHookInterface
 {
-    /**
-     * @var bool
-     */
     protected $locked = true;
 
     /**
@@ -60,8 +57,6 @@ class PageTsProvider implements ProviderInterface, ContextualProvider, TableConf
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function getConfig(): array

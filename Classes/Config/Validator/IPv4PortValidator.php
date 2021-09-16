@@ -33,10 +33,7 @@ use In2code\In2publishCore\Config\ValidationContainer;
 
 class IPv4PortValidator implements ValidatorInterface
 {
-    /**
-     * @param ValidationContainer $container
-     * @param string $value
-     */
+    /** @param mixed $value */
     public function validate(ValidationContainer $container, $value): void
     {
         if (1 > $value || $value > 65535) {

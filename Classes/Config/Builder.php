@@ -33,29 +33,13 @@ use In2code\In2publishCore\Config\Node\Generic\AbsGenNode;
 use In2code\In2publishCore\Config\Node\Node;
 use In2code\In2publishCore\Config\Node\NodeCollection;
 use In2code\In2publishCore\Config\Node\Specific\AbsSpecNode;
-use In2code\In2publishCore\Config\Validator\ValidatorInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Builder
 {
-    /**
-     * @var NodeCollection
-     */
-    protected $nodes = [];
+    /** @var NodeCollection */
+    protected $nodes;
 
-    /**
-     * @var string[]
-     */
-    protected $path = [];
-
-    /**
-     * @var int
-     */
-    protected $depth = 0;
-
-    /**
-     * Builder constructor.
-     */
     public function __construct()
     {
         $this->nodes = new NodeCollection();
@@ -71,28 +55,12 @@ class Builder
         return $this->nodes;
     }
 
-    /**
-     * @param string $name
-     * @param Builder $nodes
-     * @param array|null $default
-     * @param array $validators
-     *
-     * @return $this
-     */
     public function addArray(string $name, Builder $nodes, array $default = null, array $validators = []): self
     {
         $this->addNode(Node::T_ARRAY, $name, $default, $validators, $nodes);
         return $this;
     }
 
-    /**
-     * @param string $name
-     * @param Builder $nodes
-     * @param array|null $default
-     * @param array $validators
-     *
-     * @return $this
-     */
     public function addStrictArray(string $name, Builder $nodes, array $default = null, array $validators = []): self
     {
         $this->addNode(Node::T_STRICT_ARRAY, $name, $default, $validators, $nodes);
@@ -123,15 +91,7 @@ class Builder
         return $this;
     }
 
-    /**
-     * @param string $type
-     * @param string $name
-     * @param string|int|bool|array|null $default
-     * @param ValidatorInterface[] $validators
-     * @param Builder|null $builder
-     *
-     * @return $this
-     */
+    /** @param string|int|bool|array|null $default */
     public function addNode(
         string $type,
         string $name,

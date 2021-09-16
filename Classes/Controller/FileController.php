@@ -59,14 +59,14 @@ use function strpos;
  */
 class FileController extends AbstractController
 {
-    /** @var bool */
-    protected $forcePidInteger = false;
-
     /** @var FolderPublisherService */
     protected $folderPublisherService;
 
     /** @var CommonRepository */
     protected $commonRepository;
+
+    /** @var bool */
+    protected $forcePidInteger = false;
 
     public function __construct(
         ConfigContainer $configContainer,
@@ -86,9 +86,6 @@ class FileController extends AbstractController
         $this->commonRepository = $commonRepository;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
     public function indexAction(): void
     {
         $record = $this->tryToGetFolderInstance($this->pid === 0 ? null : $this->pid);
@@ -98,11 +95,7 @@ class FileController extends AbstractController
         }
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @throws StopActionException
-     */
+    /** @throws StopActionException */
     public function publishFolderAction(string $identifier): void
     {
         $success = $this->folderPublisherService->publish($identifier);
@@ -125,10 +118,7 @@ class FileController extends AbstractController
     }
 
     /**
-     * @param int $uid
-     * @param string $identifier
-     * @param int $storage
-     *
+     * @throws InsufficientFolderAccessPermissionsException
      * @throws StopActionException
      */
     public function publishFileAction(int $uid, string $identifier, int $storage): void
@@ -177,8 +167,6 @@ class FileController extends AbstractController
      * toggle filter status and save the filter status in the current backendUser's session.
      *
      * @param string $filter "changed", "added", "deleted"
-     *
-     * @return void
      *
      * @throws StopActionException
      */

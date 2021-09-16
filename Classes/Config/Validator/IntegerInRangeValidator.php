@@ -33,28 +33,19 @@ use In2code\In2publishCore\Config\ValidationContainer;
 
 class IntegerInRangeValidator implements ValidatorInterface
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $min;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $max;
 
-    /**
-     * IntegerInRangeValidator constructor.
-     *
-     * @param int $min
-     * @param int $max
-     */
     public function __construct(int $min = PHP_INT_MIN, int $max = PHP_INT_MAX)
     {
         $this->min = $min;
         $this->max = $max;
     }
 
+    /** @param mixed $value */
     public function validate(ValidationContainer $container, $value): void
     {
         if ($this->min > $value || $value > $this->max) {

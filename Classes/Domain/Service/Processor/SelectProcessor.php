@@ -31,18 +31,12 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
 
 class SelectProcessor extends AbstractProcessor
 {
-    /**
-     * @var bool
-     */
     protected $canHoldRelations = true;
 
     public const ALLOW_NON_ID_VALUES = 'allowNonIdValues';
     public const FILE_FOLDER = 'fileFolder';
     public const SPECIAL = 'special';
 
-    /**
-     * @var array
-     */
     protected $forbidden = [
         'itemsProcFunc is not supported' => self::ITEMS_PROC_FUNC,
         'fileFolder is not supported' => self::FILE_FOLDER,
@@ -52,16 +46,10 @@ class SelectProcessor extends AbstractProcessor
         'special is not supported' => self::SPECIAL,
     ];
 
-    /**
-     * @var array
-     */
     protected $required = [
         'Can not select without another table' => self::FOREIGN_TABLE,
     ];
 
-    /**
-     * @var array
-     */
     protected $allowed = [
         self::FOREIGN_TABLE_WHERE,
         self::MM,

@@ -56,9 +56,6 @@ class ReplaceMarkersService implements LoggerAwareInterface
     /** @var FlexFormTools */
     protected $flexFormTools;
 
-    /**
-     * ReplaceMarkersService constructor.
-     */
     public function __construct(FlexFormTools $flexFormTools)
     {
         $this->flexFormTools = $flexFormTools;
@@ -159,16 +156,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
         return $string;
     }
 
-    /**
-     * Replace default marker names
-     *
-     * @param RecordInterface $record
-     * @param string $string
-     * @param string $propertyName
-     *
-     * @return mixed
-     */
-    protected function replacePageTsConfigMarkers(RecordInterface $record, string $string, string $propertyName)
+    protected function replacePageTsConfigMarkers(RecordInterface $record, string $string, string $propertyName): string
     {
         if (false !== strpos($string, '###PAGE_TSCONFIG')) {
             $marker = [

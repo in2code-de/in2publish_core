@@ -35,9 +35,7 @@ use function array_key_exists;
 
 class SpecStrictArray extends SpecArray
 {
-    /**
-     * @param array[]|bool[]|int[]|string[] $value
-     */
+    /** @param array[]|bool[]|int[]|string[] $value */
     public function unsetDefaults(array &$value): void
     {
         $this->nodes->unsetDefaults($value[$this->name]);

@@ -241,11 +241,7 @@ class EnvelopeDispatcher
         return call_user_func_array([$driver, 'hash'], $request);
     }
 
-    /**
-     * @param array $request
-     *
-     * @return mixed
-     */
+    /** @return mixed */
     protected function createFolder(array $request)
     {
         $storage = $this->getStorage($request);
@@ -254,11 +250,7 @@ class EnvelopeDispatcher
         return call_user_func_array([$driver, 'createFolder'], $request);
     }
 
-    /**
-     * @param array $request
-     *
-     * @return mixed
-     */
+    /** @return mixed */
     protected function deleteFolder(array $request)
     {
         $storage = $this->getStorage($request);
@@ -278,11 +270,7 @@ class EnvelopeDispatcher
         return true;
     }
 
-    /**
-     * @param array $request
-     *
-     * @return mixed
-     */
+    /** @return mixed */
     protected function addFile(array $request)
     {
         $storage = $this->getStorage($request);
@@ -291,11 +279,7 @@ class EnvelopeDispatcher
         return call_user_func_array([$driver, 'addFile'], $request);
     }
 
-    /**
-     * @param array $request
-     *
-     * @return mixed
-     */
+    /** @return mixed */
     protected function replaceFile(array $request)
     {
         $storage = $this->getStorage($request);
@@ -304,11 +288,7 @@ class EnvelopeDispatcher
         return call_user_func_array([$driver, 'replaceFile'], $request);
     }
 
-    /**
-     * @param array $request
-     *
-     * @return mixed
-     */
+    /** @return mixed */
     protected function renameFile(array $request)
     {
         $storage = $this->getStorage($request);
@@ -407,13 +387,6 @@ class EnvelopeDispatcher
         return $identifierList;
     }
 
-    /**
-     * @param array $request
-     *
-     * @return ResourceStorage
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
     protected function getStorage(array $request): ResourceStorage
     {
         $storage = $this->resourceFactory->getStorageObject($request['storage']);
@@ -439,13 +412,7 @@ class EnvelopeDispatcher
         ];
     }
 
-    /**
-     * @param array $request
-     *
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
+    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function getStorageGetFoldersInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -453,13 +420,7 @@ class EnvelopeDispatcher
         return FolderUtility::extractFoldersInformation($folders);
     }
 
-    /**
-     * @param array $request
-     *
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
+    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function getStorageGetFilesInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -467,13 +428,7 @@ class EnvelopeDispatcher
         return FileUtility::extractFilesInformation($files);
     }
 
-    /**
-     * @param array $request
-     *
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
+    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function getStorageGetFile(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -484,10 +439,7 @@ class EnvelopeDispatcher
         return [];
     }
 
-    /**
-     * @return string
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
+    /** @SuppressWarnings(PHPMD.Superglobals) */
     public function getSetDbInit(): string
     {
         if (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'])) {

@@ -48,47 +48,33 @@ use function asort;
 
 class ConfigContainer implements SingletonInterface
 {
-    /**
-     * @var array
-     */
+    /** @var ContextService */
+    protected $contextService;
+
+    /** @var array */
     protected $providers = [];
 
-    /**
-     * @var DefinerInterface[]
-     */
+    /** @var DefinerInterface[] */
     protected $definers = [];
 
-    /**
-     * @var PostProcessorInterface[]
-     */
+    /** @var PostProcessorInterface[] */
     protected $postProcessors = [];
 
-    /**
-     * @var array|null
-     */
-    protected $config = null;
+    /** @var array|null */
+    protected $config;
 
-    /**
-     * @var NodeCollection[]|null[]
-     */
+    /** @var NodeCollection[]|null[] */
     protected $definition = [
         'local' => null,
         'foreign' => null,
     ];
-
-    /** @var ContextService */
-    protected $contextService;
 
     public function __construct(ContextService $contextService)
     {
         $this->contextService = $contextService;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return mixed
-     */
+    /** @return mixed */
     public function get(string $path = '')
     {
         $config = $this->getConfig();
@@ -135,8 +121,6 @@ class ConfigContainer implements SingletonInterface
     /**
      * Returns the configuration without any contextual parts.
      * Is always "fresh" but never guaranteed to be complete.
-     *
-     * @return array
      */
     public function getContextFreeConfig(): array
     {
@@ -194,12 +178,7 @@ class ConfigContainer implements SingletonInterface
         return $config;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return Node|NodeCollection
-     */
-    public function getLocalDefinition(string $path = '')
+    public function getLocalDefinition(string $path = ''): Node
     {
         if (null === $this->definition['local']) {
             $definition = GeneralUtility::makeInstance(NodeCollection::class);
@@ -216,12 +195,7 @@ class ConfigContainer implements SingletonInterface
         return $this->definition['local']->getNodePath($path);
     }
 
-    /**
-     * @param string $path
-     *
-     * @return Node|NodeCollection
-     */
-    public function getForeignDefinition(string $path = '')
+    public function getForeignDefinition(string $path = ''): Node
     {
         if (null === $this->definition['foreign']) {
             $definition = GeneralUtility::makeInstance(NodeCollection::class);
@@ -242,8 +216,6 @@ class ConfigContainer implements SingletonInterface
      * All providers must be registered in ext_localconf.php!
      * Providers registered in ext_tables.php will not overrule configurations of already loaded extensions.
      * Providers must implement the ProviderInterface or they won't be called.
-     *
-     * @param string $provider
      */
     public function registerProvider(string $provider): void
     {
@@ -253,8 +225,6 @@ class ConfigContainer implements SingletonInterface
     /**
      * All definers must be registered in ext_localconf.php!
      * Definers must implement the DefinerInterface or they won't be called.
-     *
-     * @param string $definer
      */
     public function registerDefiner(string $definer): void
     {
@@ -264,8 +234,6 @@ class ConfigContainer implements SingletonInterface
     /**
      * All post processors must be registered in ext_localconf.php!
      * PostProcessors must implement the PostProcessorInterface or they won't be called.
-     *
-     * @param string $postProcessor
      */
     public function registerPostProcessor(string $postProcessor): void
     {
@@ -274,8 +242,6 @@ class ConfigContainer implements SingletonInterface
 
     /**
      * Returns the information about all registered classes which are responsible for the resulting configuration.
-     *
-     * @return array
      */
     public function dump(): array
     {

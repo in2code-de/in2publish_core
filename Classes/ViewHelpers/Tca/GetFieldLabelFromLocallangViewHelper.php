@@ -35,15 +35,18 @@ use function ucfirst;
 
 class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
 {
-    /**
-     * @var array
-     */
-    protected $tca = [];
+    /** @var array */
+    protected $tca;
 
-    /**
-     * @var LanguageService
-     */
+    /** @var LanguageService */
     protected $languageService;
+
+    /** @SuppressWarnings("PHPMD.Superglobals") */
+    public function __construct()
+    {
+        $this->tca = $GLOBALS['TCA'];
+        $this->languageService = $GLOBALS['LANG'];
+    }
 
     public function initializeArguments(): void
     {
@@ -52,11 +55,6 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
         $this->registerArgument('tableName', 'string', 'The table name in which the field can be found', true);
     }
 
-    /**
-     * Get field name from locallang and TCA definition
-     *
-     * @return string
-     */
     public function render(): string
     {
         $fieldName = $this->arguments['fieldName'];
@@ -72,16 +70,5 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
         }
 
         return $label;
-    }
-
-    /**
-     * @return void
-     *
-     * @SuppressWarnings("PHPMD.Superglobals")
-     */
-    public function initialize(): void
-    {
-        $this->tca = $GLOBALS['TCA'];
-        $this->languageService = $GLOBALS['LANG'];
     }
 }

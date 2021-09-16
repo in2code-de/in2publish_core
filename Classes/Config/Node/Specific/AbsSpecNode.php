@@ -38,9 +38,6 @@ use function array_key_exists;
 
 abstract class AbsSpecNode extends AbstractNode
 {
-    /**
-     * @var array
-     */
     protected static $types = [
         Node::T_STRING => SpecString::class,
         Node::T_OPTIONAL_STRING => SpecOptionalString::class,
@@ -70,17 +67,13 @@ abstract class AbsSpecNode extends AbstractNode
         return GeneralUtility::makeInstance(static::$types[$type] ?: $type, $name, $validators, $nodes, $default);
     }
 
-    /**
-     * @return string[]|int[]|bool[]|array[]
-     */
+    /** @return string[]|int[]|bool[]|array[] */
     public function getDefaults(): array
     {
         return [$this->name => $this->default];
     }
 
-    /**
-     * @param array[]|bool[]|int[]|string[] $value
-     */
+    /** @param array[]|bool[]|int[]|string[] $value */
     public function unsetDefaults(array &$value): void
     {
         if (

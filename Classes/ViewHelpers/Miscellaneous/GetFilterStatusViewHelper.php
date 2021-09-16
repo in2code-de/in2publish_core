@@ -33,10 +33,14 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class GetFilterStatusViewHelper extends AbstractViewHelper
 {
-    /**
-     * @var BackendUserAuthentication
-     */
+    /** @var BackendUserAuthentication */
     protected $backendUser;
+
+    /** @SuppressWarnings(PHPMD.Superglobals) */
+    public function __construct()
+    {
+        $this->backendUser = $GLOBALS['BE_USER'];
+    }
 
     public function initializeArguments(): void
     {
@@ -45,29 +49,10 @@ class GetFilterStatusViewHelper extends AbstractViewHelper
         $this->registerArgument('key', 'string', 'The filter type', false, 'records');
     }
 
-    /**
-     * Get filter status
-     *
-     * @return bool
-     */
     public function render(): bool
     {
         $key = $this->arguments['key'];
         $filter = $this->arguments['filter'];
         return $this->backendUser->getSessionData('in2publish_filter_' . $key . '_' . $filter) === true;
-    }
-
-    public function initialize(): void
-    {
-        $this->backendUser = $this->getBackendUser();
-    }
-
-    /**
-     * @return BackendUserAuthentication
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
-    protected function getBackendUser(): BackendUserAuthentication
-    {
-        return $GLOBALS['BE_USER'];
     }
 }

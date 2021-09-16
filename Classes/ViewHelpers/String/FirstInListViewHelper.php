@@ -30,15 +30,11 @@ namespace In2code\In2publishCore\ViewHelpers\String;
  */
 
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
 
 use function explode;
 
 class FirstInListViewHelper extends AbstractViewHelper
 {
-    /**
-     * @throws Exception
-     */
     public function initializeArguments(): void
     {
         parent::initializeArguments();

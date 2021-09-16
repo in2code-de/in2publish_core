@@ -38,20 +38,14 @@ abstract class TooManyFilesException extends In2publishCoreException
     public const CODE = 1555492787;
     public const MESSAGE = 'The folder "%s" has too many files (%d). The threshold is %d.';
 
-    /**
-     * @var string
-     */
-    protected $folder = '';
+    /** @var string */
+    protected $folder;
 
-    /**
-     * @var int
-     */
-    protected $count = 0;
+    /** @var int */
+    protected $count;
 
-    /**
-     * @var int
-     */
-    protected $threshold = 0;
+    /** @var int */
+    protected $threshold;
 
     public static function fromFolder(string $folder, int $count, int $threshold): TooManyFilesException
     {

@@ -40,9 +40,6 @@ class TestingService
     /** @var TestCaseService */
     protected $testCaseService;
 
-    /**
-     * TestingService constructor.
-     */
     public function __construct(TestCaseService $testCaseService)
     {
         $this->testCaseService = $testCaseService;

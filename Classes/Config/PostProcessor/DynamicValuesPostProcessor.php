@@ -84,11 +84,7 @@ class DynamicValuesPostProcessor implements PostProcessorInterface, LoggerAwareI
         return $config;
     }
 
-    /**
-     * Logs missing provider keys. Only once per request to avoid log flooding.
-     *
-     * @param string $providerKey
-     */
+    /** Logs missing provider keys. Only once per request to avoid log flooding.*/
     protected function logMissingDynamicValueProvider(string $providerKey): void
     {
         if (!$this->rtc['missing'][$providerKey]) {

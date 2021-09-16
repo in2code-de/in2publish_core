@@ -54,6 +54,7 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
+use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -97,11 +98,6 @@ class ToolsController extends ActionController
 {
     public const LOG_INIT_DB_ERROR = 'Error while initialization. The Database is not correctly configured';
 
-    /**
-     * @var array
-     */
-    protected $tests = [];
-
     /** @var TestingService */
     protected $testingService;
 
@@ -128,6 +124,8 @@ class ToolsController extends ActionController
 
     /** @var ToolsRegistry */
     protected $toolsRegistry;
+
+    protected $tests = [];
 
     public function __construct(
         ConfigContainer $configContainer,
@@ -195,9 +193,7 @@ class ToolsController extends ActionController
         $this->view->assign('tools', $this->toolsRegistry->getTools());
     }
 
-    /**
-     * @throws In2publishCoreException
-     */
+    /** @throws In2publishCoreException */
     public function testAction(): void
     {
         $testingResults = $this->testingService->runAllTests();
@@ -233,18 +229,14 @@ class ToolsController extends ActionController
         $this->view->assign('controls', TcaProcessingService::getControls());
     }
 
-    /**
-     * @throws StopActionException
-     */
+    /** @throws StopActionException */
     public function clearTcaCachesAction(): void
     {
         GeneralUtility::makeInstance(TcaProcessingService::class)->flushCaches();
         $this->redirect('index');
     }
 
-    /**
-     * @throws StopActionException
-     */
+    /** @throws StopActionException */
     public function flushRegistryAction(): void
     {
         $this->registry->removeAllByNamespace('tx_in2publishcore');
@@ -252,9 +244,7 @@ class ToolsController extends ActionController
         $this->redirect('index');
     }
 
-    /**
-     * @throws StopActionException
-     */
+    /** @throws StopActionException */
     public function flushEnvelopesAction(): void
     {
         $this->letterbox->removeAnsweredEnvelopes();
@@ -271,6 +261,7 @@ class ToolsController extends ActionController
     {
     }
 
+    /** @throws Throwable */
     public function sysInfoShowAction(): void
     {
         $info = $this->getFullInfo();
@@ -296,6 +287,7 @@ class ToolsController extends ActionController
         $this->view->assign('infoJson', $json);
     }
 
+    /** @throws Throwable */
     public function sysInfoDownloadAction(): void
     {
         $info = $this->getFullInfo();
@@ -316,18 +308,20 @@ class ToolsController extends ActionController
         die;
     }
 
+    /** @throws StopActionException */
     public function sysInfoUploadAction(): void
     {
-        /** @var array $file */
-        $file = $this->request->getArgument('jsonFile');
+        try {
+            /** @var array $file */
+            $file = $this->request->getArgument('jsonFile');
+        } catch (NoSuchArgumentException $e) {
+            return;
+        }
         $content = file_get_contents($file['tmp_name']);
         $this->forward('sysInfoDecode', null, null, ['json' => $content]);
     }
 
-    /**
-     * @return array
-     * @throws In2publishCoreException
-     */
+    /** @throws Throwable */
     protected function getFullInfo(): array
     {
         $listUtility = $this->objectManager->get(ListUtility::class);

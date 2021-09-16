@@ -45,29 +45,18 @@ class TaskRepository
 {
     public const TASK_TABLE_NAME = 'tx_in2code_in2publish_task';
 
-    /**
-     * @var Connection
-     */
-    protected $connection = null;
+    /** @var ContextService */
+    protected $contextService;
 
-    /**
-     * @var TaskFactory
-     */
-    protected $taskFactory = null;
+    /** @var TaskFactory */
+    protected $taskFactory;
 
-    /**
-     * @var ContextService
-     */
-    protected $contextService = null;
+    /** @var Connection */
+    protected $connection;
 
-    /**
-     * @var string
-     */
-    protected $creationDate = 'string';
+    /** @var string */
+    protected $creationDate;
 
-    /**
-     * TaskRepository constructor.
-     */
     public function __construct(ContextService $contextService, TaskFactory $taskFactory)
     {
         $this->contextService = $contextService;
@@ -81,13 +70,6 @@ class TaskRepository
         $this->creationDate = $now->format('Y-m-d H:i:s');
     }
 
-    /**
-     * Add a new Task to the queue
-     *
-     * @param AbstractTask $task
-     *
-     * @return void
-     */
     public function add(AbstractTask $task): void
     {
         $this->connection->insert(
@@ -96,13 +78,6 @@ class TaskRepository
         );
     }
 
-    /**
-     * Update a Task to set execution time
-     *
-     * @param AbstractTask $task
-     *
-     * @return void
-     */
     public function update(AbstractTask $task): void
     {
         $this->connection->update(

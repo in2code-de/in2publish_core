@@ -47,24 +47,15 @@ class TcaService implements SingletonInterface
     protected const TYPE_ROOT = 'root';
     protected const TYPE_PAGE = 'page';
 
-    /**
-     * @var array[]
-     */
-    protected $tca = [];
+    /** @var array[] */
+    protected $tca;
 
-    /**
-     * @var array
-     */
-    protected $tableNames = [];
+    /** @var array */
+    protected $tableNames;
 
-    /**
-     * @var array RunTime Cache
-     */
+    /** @var array RunTime Cache */
     protected $rtc = [];
 
-    /**
-     * TcaService constructor.
-     */
     public function __construct()
     {
         $this->tca = $this->getTca();
@@ -99,8 +90,6 @@ class TcaService implements SingletonInterface
     /**
      * Get label field name from table
      *
-     * @param string $tableName
-     *
      * @return string Field name of the configured label field or empty string if not set
      */
     public function getLabelFieldFromTable(string $tableName): string
@@ -112,8 +101,6 @@ class TcaService implements SingletonInterface
     }
 
     /**
-     * @param string $tableName
-     *
      * @return string Field name of the configured label_alt field or empty string if not set
      */
     public function getLabelAltFieldFromTable(string $tableName): string
@@ -154,8 +141,6 @@ class TcaService implements SingletonInterface
     }
 
     /**
-     * @param string $tableName
-     *
      * @return string Field name of the configured title field or empty string if not set
      */
     public function getTitleFieldFromTable(string $tableName): string
@@ -196,10 +181,6 @@ class TcaService implements SingletonInterface
 
     /**
      * Records whose deleted field evaluate to true will not be shown in the frontend.
-     *
-     * @param string $tableName
-     *
-     * @return string
      */
     public function getDisableField(string $tableName): string
     {

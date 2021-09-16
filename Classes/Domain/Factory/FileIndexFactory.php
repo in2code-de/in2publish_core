@@ -61,8 +61,6 @@ class FileIndexFactory
     protected $contextService;
 
     /**
-     * FileIndexFactory constructor.
-     *
      * @param DriverInterface $localDriver
      * @param DriverInterface $foreignDriver
      *
@@ -160,7 +158,6 @@ class FileIndexFactory
      *
      * @return array
      * @see \TYPO3\CMS\Core\Resource\Index\Indexer::gatherFileInformationArray
-     *
      */
     public function getFileIndexArray(string $identifier, string $side, int $uid = 0): array
     {
@@ -237,13 +234,10 @@ class FileIndexFactory
     }
 
     /**
-     * Adapted copy of
-     *
      * @param array $fileInfo
      *
      * @return int
      * @see \TYPO3\CMS\Core\Resource\Index\Indexer::getFileType
-     *
      */
     protected function determineFileType(array $fileInfo): int
     {

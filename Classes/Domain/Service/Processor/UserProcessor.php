@@ -31,8 +31,4 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
 
 class UserProcessor extends AbstractProcessor
 {
-    /**
-     * @var bool
-     */
-    protected $canHoldRelations = false;
 }

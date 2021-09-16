@@ -55,13 +55,14 @@ use function array_values;
 use function sprintf;
 
 /**
- * Class FolderRecordFactory
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class FolderRecordFactory implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
+
+    /** @var ResourceFactory */
+    protected $resourceFactory;
 
     /** @var CommonRepository */
     protected $commonRepository;
@@ -81,9 +82,6 @@ class FolderRecordFactory implements LoggerAwareInterface
     /** @var FileIndexFactory */
     protected $fileIndexFactory;
 
-    /** @var ResourceFactory */
-    protected $resourceFactory;
-
     public function __construct(
         ResourceFactory $resourceFactory,
         CommonRepository $commonRepository,
@@ -97,10 +95,6 @@ class FolderRecordFactory implements LoggerAwareInterface
     }
 
     /**
-     * @param string|null $identifier
-     *
-     * @return Folder
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function initializeDependenciesAndGetFolder(?string $identifier): Folder
@@ -145,10 +139,6 @@ class FolderRecordFactory implements LoggerAwareInterface
      * Also takes care of files that have not been indexed yet by FAL.
      *
      * I only work with drivers so i don't "accidentally" index files...
-     *
-     * @param string|null $identifier
-     *
-     * @return RecordInterface
      */
     public function makeInstance(?string $identifier): RecordInterface
     {
@@ -382,11 +372,6 @@ class FolderRecordFactory implements LoggerAwareInterface
     /**
      * Remove all identifiers found in the databases from the disk identifiers list to get the "disk only identifiers".
      * This list is important for any OxFS case. (local = OLFS; foreign = OFFS, both = OFS)
-     *
-     * @param array $diskIdentifiers
-     * @param array $indices
-     *
-     * @return array
      */
     protected function determineIdentifiersOnlyOnDisk(array $diskIdentifiers, array $indices): array
     {
@@ -403,7 +388,6 @@ class FolderRecordFactory implements LoggerAwareInterface
      *
      * @param array $onlyDiskIdentifiers
      * @param RecordInterface[] $files
-     *
      * @return RecordInterface[]
      */
     protected function convertAndAddOnlyDiskIdentifiersToFileRecords(array $onlyDiskIdentifiers, array $files): array
@@ -427,10 +411,6 @@ class FolderRecordFactory implements LoggerAwareInterface
      * Move all entries occurring on both sides to the "both" index afterwards.
      *
      * The resulting array has the three keys: local, foreign and both. Therefore i know where the files were found.
-     *
-     * @param string $identifier
-     *
-     * @return array
      */
     protected function buildDiskIdentifiersList(string $identifier): array
     {
@@ -458,10 +438,6 @@ class FolderRecordFactory implements LoggerAwareInterface
 
     /**
      * Factory method to create Record instances from a list of folder identifier
-     *
-     * @param string $identifier
-     *
-     * @return array
      */
     protected function getSubFolderRecordInstances(string $identifier): array
     {
@@ -476,14 +452,7 @@ class FolderRecordFactory implements LoggerAwareInterface
         return $subFolders;
     }
 
-    /**
-     * @param string $identifier
-     * @param int $depth
-     *
-     * @return RecordInterface
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
+    /** @SuppressWarnings(PHPMD.StaticAccess) */
     protected function makePhysicalFolderInstance(string $identifier, int $depth): RecordInterface
     {
         return GeneralUtility::makeInstance(
@@ -507,11 +476,6 @@ class FolderRecordFactory implements LoggerAwareInterface
 
     /**
      * Fetches all information regarding the folder and sets the combined identifier as uid
-     *
-     * @param DriverInterface $driver
-     * @param string $identifier
-     *
-     * @return array
      */
     protected function getFolderInfoByIdentifier(DriverInterface $driver, string $identifier): array
     {
@@ -524,11 +488,7 @@ class FolderRecordFactory implements LoggerAwareInterface
         return $info;
     }
 
-    /**
-     * @param array $diskIdentifiers
-     * @param array $indexedIdentifiers
-     * @param RecordInterface[] $files
-     */
+    /** @param RecordInterface[] $files */
     protected function fixIntersectingIdentifiers(array $diskIdentifiers, array $indexedIdentifiers, array $files): void
     {
         foreach (['local' => 'foreign', 'foreign' => 'local'] as $diskSide => $indexSide) {
@@ -559,16 +519,17 @@ class FolderRecordFactory implements LoggerAwareInterface
      * on disk but were not found because the folder hash is broken
      *
      * @param array $onlyDiskIdentifiers
-     * @param $hashedIdentifier
+     * @param string $hashedIdentifier
      * @param RecordInterface[] $files
      * @param string $side
      *
      * @return array
+     * @throws Throwable
      * @internal param DatabaseConnection $targetDatabase
      */
     protected function reclaimSysFileEntriesBySide(
         array $onlyDiskIdentifiers,
-        $hashedIdentifier,
+        string $hashedIdentifier,
         array $files,
         string $side
     ): array {

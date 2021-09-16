@@ -37,10 +37,7 @@ use function is_subclass_of;
 
 class IterativeTcaProcessorValidator implements ValidatorInterface
 {
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
+    /** @param mixed $value */
     public function validate(ValidationContainer $container, $value): void
     {
         foreach ($value as $type => $class) {

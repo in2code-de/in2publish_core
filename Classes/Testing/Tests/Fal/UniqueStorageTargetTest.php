@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Doctrine\DBAL\Driver\Exception as DriverException;
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
@@ -64,6 +65,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
     /**
      * @return TestResult
      * @throws ReflectionException
+     * @throws DriverException
      */
     public function run(): TestResult
     {

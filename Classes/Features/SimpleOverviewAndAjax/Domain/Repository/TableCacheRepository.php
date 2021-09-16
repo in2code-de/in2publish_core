@@ -69,12 +69,6 @@ class TableCacheRepository implements SingletonInterface
 
     /**
      * Get properties from cache by given tableName and uid
-     *
-     * @param string $tableName
-     * @param int $uniqueIdentifier
-     * @param string $databaseName
-     *
-     * @return array
      */
     public function findByUid(string $tableName, int $uniqueIdentifier, string $databaseName = 'local'): array
     {
@@ -104,12 +98,6 @@ class TableCacheRepository implements SingletonInterface
 
     /**
      * Get properties from cache by given tableName and pid
-     *
-     * @param string $tableName
-     * @param int $pageIdentifier
-     * @param string $databaseName
-     *
-     * @return array
      */
     public function findByPid(string $tableName, int $pageIdentifier, string $databaseName = 'local'): array
     {
@@ -133,12 +121,6 @@ class TableCacheRepository implements SingletonInterface
 
     /**
      * Store tables in cache
-     *
-     * @param string $tableName
-     * @param array $rows
-     * @param string $databaseName
-     *
-     * @return void
      */
     protected function cacheRecords(string $tableName, array $rows, string $databaseName = 'local'): void
     {
@@ -149,13 +131,6 @@ class TableCacheRepository implements SingletonInterface
 
     /**
      * Store table properties in cache
-     *
-     * @param string $tableName
-     * @param int $uid
-     * @param array $properties
-     * @param string $databaseName
-     *
-     * @return void
      */
     protected function cacheSingleRecord(
         string $tableName,

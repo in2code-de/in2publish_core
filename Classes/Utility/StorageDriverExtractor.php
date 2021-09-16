@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Utility;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Doctrine\DBAL\Driver\Exception as DriverException;
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use ReflectionException;
 use ReflectionProperty;
@@ -52,6 +53,7 @@ class StorageDriverExtractor
 
     /**
      * @return DriverInterface|RemoteFileAbstractionLayerDriver
+     * @throws DriverException
      */
     public static function getForeignDriver(ResourceStorage $localStorage): DriverInterface
     {

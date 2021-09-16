@@ -42,11 +42,7 @@ class TransmissionAdapterTest implements TestCaseInterface
         return new TestResult('adapter.all_transmission_adapter_tests__passed');
     }
 
-    /**
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
+    /** @SuppressWarnings(PHPMD.Superglobals) */
     public function getDependencies(): array
     {
         $dependencies = [

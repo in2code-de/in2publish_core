@@ -34,39 +34,26 @@ use DateTime;
 use In2code\In2publishCore\Utility\ArrayUtility;
 
 /**
- * Any Task must inherit from this class. This AbstractTask works like a Template
- * for Task execution strategy
+ * Any Task must inherit from this class. This AbstractTask works like a Template for Task execution strategy
  */
 abstract class AbstractTask
 {
-    /**
-     * @var int
-     */
-    protected $uid = 0;
+    /** @var int */
+    protected $uid;
 
-    /**
-     * @var array
-     */
-    protected $configuration = [];
+    /** @var array */
+    protected $configuration;
 
-    /**
-     * @var DateTime
-     */
+    /** @var DateTime|null */
     protected $creationDate;
 
-    /**
-     * @var DateTime
-     */
+    /** @var DateTime|null */
     protected $executionBegin;
 
-    /**
-     * @var DateTime
-     */
+    /** @var DateTime|null */
     protected $executionEnd;
 
-    /**
-     * @var array
-     */
+    /** @var array<string> */
     private $messages = [];
 
     final public function __construct(array $configuration, int $uid = 0)
@@ -75,11 +62,6 @@ abstract class AbstractTask
         $this->uid = $uid;
     }
 
-    /**
-     * Template "execution" Method
-     *
-     * @return bool
-     */
     final public function execute(): bool
     {
         $this->beforeExecute();
@@ -89,9 +71,7 @@ abstract class AbstractTask
     }
 
     /**
-     * Implement this in your Task
-     *
-     * @return bool
+     * @api Implement this in your Task
      */
     abstract protected function executeTask(): bool;
 
@@ -110,11 +90,7 @@ abstract class AbstractTask
         return $this->uid;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return mixed
-     */
+    /** @return mixed */
     final public function getConfiguration(string $path = '')
     {
         if ($path) {
@@ -123,7 +99,7 @@ abstract class AbstractTask
         return $this->configuration;
     }
 
-    final public function getCreationDate(): DateTime
+    final public function getCreationDate(): ?DateTime
     {
         return $this->creationDate;
     }
@@ -134,7 +110,7 @@ abstract class AbstractTask
         return $this;
     }
 
-    final public function getExecutionBegin(): DateTime
+    final public function getExecutionBegin(): ?DateTime
     {
         return $this->executionBegin;
     }
@@ -147,18 +123,13 @@ abstract class AbstractTask
         return 'NULL';
     }
 
-    /**
-     * @param DateTime|null $executionBegin
-     *
-     * @return AbstractTask
-     */
     final public function setExecutionBegin(DateTime $executionBegin = null): AbstractTask
     {
         $this->executionBegin = $executionBegin;
         return $this;
     }
 
-    final public function getExecutionEnd(): DateTime
+    final public function getExecutionEnd(): ?DateTime
     {
         return $this->executionEnd;
     }

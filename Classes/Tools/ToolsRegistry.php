@@ -45,14 +45,8 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
     private const DEPREACTED_NON_FQCN_TOOL = 'Tools registration without a FQCN is deprecated and will be removed in'
                                              . ' in2publish_core version 11. Registered controller name: %s';
 
-    /**
-     * @var array[]
-     */
     protected $entries = [];
 
-    /**
-     * ToolsRegistry constructor.
-     */
     public function __construct()
     {
         $this->registerHookForPostProcessing();

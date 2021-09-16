@@ -39,6 +39,7 @@ use function is_array;
 
 class SpecArray extends AbsSpecNode
 {
+    /** @param mixed $value */
     public function validateType(ValidationContainer $container, $value): void
     {
         if (!is_array($value)) {
@@ -46,9 +47,7 @@ class SpecArray extends AbsSpecNode
         }
     }
 
-    /**
-     * @return string[]|int[]|bool[]|array[]
-     */
+    /** @return string[]|int[]|bool[]|array[] */
     public function getDefaults(): array
     {
         $defaults = [];
@@ -73,9 +72,7 @@ class SpecArray extends AbsSpecNode
         return $this->nodes->cast($value);
     }
 
-    /**
-     * @param array[]|bool[]|int[]|string[] $value
-     */
+    /** @param array[]|bool[]|int[]|string[] $value */
     public function unsetDefaults(array &$value): void
     {
         $this->nodes->unsetDefaults($value[$this->name]);

@@ -43,29 +43,17 @@ class GroupProcessor extends AbstractProcessor
     public const ALLOWED = 'allowed';
     public const UPLOAD_FOLDER = 'uploadfolder';
 
-    /**
-     * @var bool
-     */
     protected $canHoldRelations = true;
 
-    /**
-     * @var array
-     */
     protected $forbidden = [
         'relations are only resolved from the owning side, MM_oppositeUsage marks the opposite side' => self::MM_OPPOSITE_USAGE,
         'MM_opposite_field is set for the foreign side of relations, which must not be resolved' => self::MM_OPPOSITE_FIELD,
     ];
 
-    /**
-     * @var array
-     */
     protected $required = [
         'the internal type determines the relation target' => self::INTERNAL_TYPE,
     ];
 
-    /**
-     * @var array
-     */
     protected $allowed = [
         self::ALLOWED,
         self::FOREIGN_TABLE,

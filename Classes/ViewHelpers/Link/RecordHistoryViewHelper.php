@@ -36,13 +36,10 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 class RecordHistoryViewHelper extends AbstractTagBasedViewHelper
 {
-    /**
-     * @var string
-     */
-    protected $tagName = 'a';
-
     /** @var UriBuilder */
     protected $uriBuilder;
+
+    protected $tagName = 'a';
 
     public function __construct(UriBuilder $uriBuilder)
     {
@@ -50,9 +47,6 @@ class RecordHistoryViewHelper extends AbstractTagBasedViewHelper
         $this->uriBuilder = $uriBuilder;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function initializeArguments(): void
     {
         parent::initializeArguments();
@@ -63,8 +57,6 @@ class RecordHistoryViewHelper extends AbstractTagBasedViewHelper
     }
 
     /**
-     * @return string
-     *
      * @throws RouteNotFoundException
      */
     public function render(): string

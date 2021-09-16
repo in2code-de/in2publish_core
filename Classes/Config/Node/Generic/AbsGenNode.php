@@ -59,10 +59,7 @@ abstract class AbsGenNode extends AbstractNode
         return GeneralUtility::makeInstance(static::$types[$type], $name, [], $nodes, $default);
     }
 
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
+    /** @param mixed $value */
     public function validate(ValidationContainer $container, $value): void
     {
         foreach ($value as $key => $item) {
@@ -71,6 +68,7 @@ abstract class AbsGenNode extends AbstractNode
         }
     }
 
+    /** @param mixed $value */
     protected function validateType(ValidationContainer $container, $value): void
     {
         foreach ($this->nodes as $node) {

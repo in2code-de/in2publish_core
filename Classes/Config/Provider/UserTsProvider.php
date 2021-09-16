@@ -40,11 +40,7 @@ class UserTsProvider implements ProviderInterface, ContextualProvider
         return $this->getBackendUser() instanceof BackendUserAuthentication;
     }
 
-    /**
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
+    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function getConfig(): array
     {
         $config = [];
@@ -61,11 +57,7 @@ class UserTsProvider implements ProviderInterface, ContextualProvider
         return 40;
     }
 
-    /**
-     * @return BackendUserAuthentication|null
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
+    /** @SuppressWarnings(PHPMD.Superglobals) */
     protected function getBackendUser(): ?BackendUserAuthentication
     {
         return $GLOBALS['BE_USER'] ?? null;

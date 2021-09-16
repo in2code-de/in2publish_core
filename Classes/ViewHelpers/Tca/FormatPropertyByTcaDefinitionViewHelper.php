@@ -37,9 +37,6 @@ use function trim;
 
 class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
 {
-    /**
-     * @var array
-     */
     protected $tableConfiguration = [];
 
     public function initializeArguments(): void
@@ -51,8 +48,6 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
 
     /**
      * Get formatted output by TCA definition
-     *
-     * @return string
      * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function render(): string

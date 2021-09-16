@@ -164,18 +164,11 @@ class CommonRepository extends BaseRepository
     /** @var FlexFormTools */
     protected $flexFormTools;
 
-    /**
-     * Cache for skipped records
-     *
-     * @var array
-     */
-    protected $skipRecords = [];
+    /** @var FlexFormService */
+    private $flexFormService;
 
     /** @var array */
     protected $visitedRecords = [];
-
-    /** @var FlexFormService */
-    private $flexFormService;
 
     public function __construct(
         TcaService $tcaService,

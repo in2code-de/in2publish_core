@@ -49,14 +49,9 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
         $this->registerArgument('record', RecordInterface::class, 'The record with the desired property value', true);
         $this->registerArgument('propertyName', 'string', 'The name of the desired property', true);
         $this->registerArgument('stagingLevel', 'string', 'Fetch the local or the foreign property', false, 'local');
-        $this->registerArgument('fallbackProperty', 'string', 'Fetch this if the primary prop is empty', false, '');
+        $this->registerArgument('fallbackProperty', 'string', 'Fetch this if the primary prop is empty', false);
     }
 
-    /**
-     * Get property of array
-     *
-     * @return string
-     */
     public function render(): string
     {
         $record = $this->arguments['record'];
@@ -67,25 +62,17 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
         return $this->getProperty($record, $propertyName, $stagingLevel, $fallbackProperty);
     }
 
-    /**
-     * @param Record $record
-     * @param string $propertyName
-     * @param string $stagingLevel
-     * @param string|null $fallbackProperty
-     *
-     * @return string
-     */
     protected function getProperty(
         Record $record,
         string $propertyName,
         string $stagingLevel,
-        string $fallbackProperty
+        ?string $fallbackProperty
     ): string {
         $properties = ObjectAccess::getProperty($record, ucfirst($stagingLevel) . 'Properties');
         if (isset($properties[$propertyName])) {
             $value = $properties[$propertyName];
             if (empty($value) && !empty($fallbackProperty)) {
-                $value = $this->getProperty($record, $fallbackProperty, $stagingLevel, '');
+                $value = $this->getProperty($record, $fallbackProperty, $stagingLevel, null);
             }
         } else {
             $value = $this->fallbackRootPageTitle($record, $propertyName, $stagingLevel);
@@ -122,7 +109,6 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
     }
 
     /**
-     * @return string
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     protected function getSiteName(): string

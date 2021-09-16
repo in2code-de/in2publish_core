@@ -35,8 +35,6 @@ class PublishingDataAttributesViewHelper extends AbstractViewHelper
 {
     /**
      * Get data attributes for publishing link
-     *
-     * @return array
      */
     public function render(): array
     {

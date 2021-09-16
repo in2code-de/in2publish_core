@@ -63,22 +63,11 @@ use function substr;
  */
 class IndexingFolderRecordFactory
 {
-    /**
-     * @var ResourceStorage
-     */
-    protected $localStorage;
+    /** @var int Maximum number of files which are supported to exist in a single folder */
+    protected $threshold;
 
-    /**
-     * @var RemoteStorage
-     */
+    /** @var RemoteStorage */
     protected $remoteStorage;
-
-    /**
-     * Maximum number of files which are supported to exist in a single folder
-     *
-     * @var int
-     */
-    protected $threshold = 150;
 
     /** @var ResourceFactory */
     protected $resourceFactory;
@@ -86,9 +75,9 @@ class IndexingFolderRecordFactory
     /** @var CommonRepository */
     protected $commonRepository;
 
-    /**
-     * IndexingFolderRecordFactory constructor.
-     */
+    /** @var ResourceStorage */
+    protected $localStorage;
+
     public function __construct(
         ConfigContainer $configContainer,
         RemoteStorage $remoteStorage,
@@ -338,13 +327,7 @@ class IndexingFolderRecordFactory
         return $records;
     }
 
-    /**
-     * @param array $files
-     * @param string $folderIdentifier
-     * @param string $side
-     *
-     * @throws TooManyFilesException
-     */
+    /** @throws TooManyFilesException */
     protected function checkFileCount(array $files, string $folderIdentifier, string $side): void
     {
         $count = count($files);

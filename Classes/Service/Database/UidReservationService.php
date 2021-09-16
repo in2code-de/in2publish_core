@@ -40,24 +40,15 @@ use function sprintf;
 
 class UidReservationService
 {
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     protected $localDatabaseConnection;
 
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     protected $foreignDatabaseConnection;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $cache = [];
 
-    /**
-     * UidReservationService constructor.
-     */
     public function __construct()
     {
         $this->localDatabaseConnection = DatabaseUtility::buildLocalDatabaseConnection();

@@ -31,16 +31,8 @@ namespace In2code\In2publishCore\Config\Validator;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
-/**
- * Interface ValidatorInterface
- */
 interface ValidatorInterface
 {
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     *
-     * @return void
-     */
+    /** @param mixed $value */
     public function validate(ValidationContainer $container, $value): void;
 }

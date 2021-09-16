@@ -40,14 +40,8 @@ class PublishingFailureCollector extends AbstractProcessor implements SingletonI
 {
     public const MINIMUM_LOG_LEVEL = 4;
 
-    /**
-     * @var array
-     */
     protected $failures = [];
 
-    /**
-     * @var int
-     */
     protected $highestSeverity = 7;
 
     public function processLogRecord(LogRecord $logRecord): LogRecord

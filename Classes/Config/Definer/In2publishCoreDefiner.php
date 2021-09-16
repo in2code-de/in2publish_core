@@ -52,15 +52,10 @@ use In2code\In2publishCore\Domain\Service\Processor\TextProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\UserProcessor;
 
 /**
- * Class In2publishCoreDefiner
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class In2publishCoreDefiner implements DefinerInterface
 {
-    /**
-     * @var array
-     */
     protected $defaultIgnoredFields = [
         'pages' => [
             'pid',
@@ -113,9 +108,6 @@ class In2publishCoreDefiner implements DefinerInterface
         ],
     ];
 
-    /**
-     * @var array
-     */
     protected $defaultIgnoredTables = [
         'be_groups',
         'be_users',

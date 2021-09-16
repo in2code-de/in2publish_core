@@ -50,8 +50,6 @@ class FlushFrontendPageCacheTask extends AbstractTask
      *        'pid' => 'pages'
      *        'pid' => 'cacheTag:pagetag1'
      *
-     * @return bool
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function executeTask(): bool
@@ -66,8 +64,6 @@ class FlushFrontendPageCacheTask extends AbstractTask
     }
 
     /**
-     * @return DataHandler
-     *
      * @SuppressWarnings(PHPMD.Superglobals)
      * @SuppressWarnings(PHPMD.StaticAccess)
      */

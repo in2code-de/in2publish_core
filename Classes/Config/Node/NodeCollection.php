@@ -45,8 +45,6 @@ use function spl_object_hash;
 class NodeCollection extends ArrayObject implements Node
 {
     /**
-     * NodeCollection constructor.
-     *
      * @param Node[] $nodes
      * @noinspection MagicMethodsValidityInspection
      * @noinspection PhpMissingParentConstructorInspection
@@ -104,10 +102,7 @@ class NodeCollection extends ArrayObject implements Node
         return spl_object_hash($this);
     }
 
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
+    /** @param mixed $value */
     public function validate(ValidationContainer $container, $value): void
     {
         /** @var Node $node */
@@ -116,9 +111,7 @@ class NodeCollection extends ArrayObject implements Node
         }
     }
 
-    /**
-     * @return string[]|int[]|bool[]|array[]
-     */
+    /** @return string[]|int[]|bool[]|array[] */
     public function getDefaults(): array
     {
         $defaults = [];
@@ -154,7 +147,6 @@ class NodeCollection extends ArrayObject implements Node
 
     /**
      * @param mixed $value
-     *
      * @return array<Node>
      */
     public function cast($value): array
@@ -177,9 +169,7 @@ class NodeCollection extends ArrayObject implements Node
         return $tmp;
     }
 
-    /**
-     * @param array[]|bool[]|int[]|string[] $value
-     */
+    /** @param array[]|bool[]|int[]|string[] $value */
     public function unsetDefaults(array &$value): void
     {
         /** @var Node $node */

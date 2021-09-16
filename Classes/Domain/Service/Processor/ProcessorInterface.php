@@ -29,9 +29,6 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-/**
- * Interface ProcessorInterface
- */
 interface ProcessorInterface
 {
     public const FOREIGN_TABLE = 'foreign_table';
@@ -44,11 +41,6 @@ interface ProcessorInterface
     public const MM_OPPOSITE_FIELD = 'MM_opposite_field';
     public const ROOT_LEVEL = 'rootLevel';
     public const ITEMS_PROC_FUNC = 'itemsProcFunc';
-
-    /**
-     * The constructor must be public and must not require any arguments
-     */
-    public function __construct();
 
     /**
      * Returns TRUE if the type the processor is made for is suitable for relations

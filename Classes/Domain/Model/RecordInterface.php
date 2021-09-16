@@ -62,9 +62,6 @@ interface RecordInterface
 
     /**
      * Returns a specific local property by name or NULL if it is not set
-     *
-     * @param string $propertyName
-     *
      * @return mixed
      */
     public function getLocalProperty(string $propertyName);
@@ -77,9 +74,6 @@ interface RecordInterface
 
     /**
      * Returns a specific foreign property by name or NULL if it is not set
-     *
-     * @param string $propertyName
-     *
      * @return mixed
      */
     public function getForeignProperty(string $propertyName);
@@ -88,10 +82,7 @@ interface RecordInterface
 
     public function setDirtyProperties(): RecordInterface;
 
-    /**
-     * @return mixed
-     */
-    public function getDirtyProperties();
+    public function getDirtyProperties(): array;
 
     public function calculateState(): void;
 
@@ -101,32 +92,21 @@ interface RecordInterface
 
     /**
      * Returns an identifier unique in the records table.
-     *
      * @return int|string
      */
     public function getIdentifier();
 
     public function setPropertiesBySideIdentifier(string $side, array $properties): RecordInterface;
 
-    /**
-     * @param string $side
-     * @param string $propertyName
-     *
-     * @return mixed
-     */
+    /** @return mixed */
     public function getPropertyBySideIdentifier(string $side, string $propertyName);
 
-    /**
-     * @param string $propertyName
-     *
-     * @return mixed
-     */
+    /** @return mixed */
     public function getAdditionalProperty(string $propertyName);
 
     /**
      * @param string $propertyName
      * @param mixed $propertyValue
-     *
      * @return RecordInterface
      */
     public function addAdditionalProperty(string $propertyName, $propertyValue): RecordInterface;
@@ -148,14 +128,10 @@ interface RecordInterface
      */
     public function getMergedProperty($propertyName);
 
-    /**
-     * @return RecordInterface[][]
-     */
+    /** @return RecordInterface[][] */
     public function getRelatedRecords(): array;
 
-    /**
-     * @return RecordInterface[]
-     */
+    /** @return RecordInterface[] */
     public function getTranslatedRecords(): array;
 
     public function addTranslatedRecord(RecordInterface $record): void;
@@ -191,9 +167,9 @@ interface RecordInterface
      *
      * @param RecordInterface $record
      *
-     * @return RecordInterface Returns always itself
+     * @return self
      */
-    public function removeRelatedRecord(RecordInterface $record): RecordInterface;
+    public function removeRelatedRecord(RecordInterface $record): self;
 
     /**
      * Check if there is a local record

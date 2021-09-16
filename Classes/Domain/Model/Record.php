@@ -624,7 +624,6 @@ class Record implements RecordInterface
     }
 
     /**
-     * @return bool
      * @codeCoverageIgnore
      */
     public function hasDeleteField(): bool
@@ -633,7 +632,6 @@ class Record implements RecordInterface
     }
 
     /**
-     * @return string
      * @codeCoverageIgnore
      */
     public function getDeleteField(): string
@@ -642,7 +640,6 @@ class Record implements RecordInterface
     }
 
     /**
-     * @return mixed
      * @codeCoverageIgnore
      */
     public function getColumnsTca(): array
@@ -763,8 +760,6 @@ class Record implements RecordInterface
 
     /**
      * Sets this Records state depending on the local and foreign properties
-     *
-     * @return void
      */
     public function calculateState(): void
     {
@@ -864,8 +859,6 @@ class Record implements RecordInterface
 
     /**
      * Check if there is a foreign record
-     *
-     * @return bool
      */
     public function foreignRecordExists(): bool
     {
@@ -877,8 +870,6 @@ class Record implements RecordInterface
 
     /**
      * Check if there is a local record
-     *
-     * @return bool
      */
     public function localRecordExists(): bool
     {
@@ -890,10 +881,6 @@ class Record implements RecordInterface
 
     /**
      * Checks if the given property array represents an existing Record
-     *
-     * @param array $properties
-     *
-     * @return bool
      */
     protected function isRecordRepresentByProperties(array $properties): bool
     {
@@ -955,11 +942,6 @@ class Record implements RecordInterface
         return $this->getRecordPath($this->parentRecord) . $path;
     }
 
-    /**
-     * @param RecordInterface|null $record
-     *
-     * @return string
-     */
     protected function getRecordPath(RecordInterface $record = null): string
     {
         $path = '';
@@ -971,9 +953,7 @@ class Record implements RecordInterface
         return $path;
     }
 
-    /**
-     * @return RecordInterface[]
-     */
+    /** @return RecordInterface[] */
     public function getChangedRelatedRecordsFlat(): array
     {
         $relatedRecordsFlat = [];

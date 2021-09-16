@@ -42,9 +42,7 @@ class PermissionService
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * Returns true if the current user is allowed to publish
-     */
+    /** @return bool true if the current user is allowed to publish */
     public function isUserAllowedToPublish(): bool
     {
         $event = new VoteIfUserIsAllowedToPublish();

@@ -35,14 +35,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class DynamicValueProviderRegistry implements SingletonInterface
 {
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $classes = [];
 
-    /**
-     * @var DynamicValueProviderInterface[]
-     */
+    /** @var DynamicValueProviderInterface[] */
     protected $objects = [];
 
     /**

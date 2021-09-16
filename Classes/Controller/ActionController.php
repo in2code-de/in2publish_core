@@ -56,17 +56,9 @@ abstract class ActionController extends ExtbaseActionController implements Logge
     /** @var EnvironmentService */
     protected $environmentService;
 
-    /**
-     * Page ID
-     * UID of the selected Page in the page tree
-     *
-     * @var int
-     */
-    protected $pid = 0;
+    /** UID of the selected Page in the page tree */
+    protected $pid;
 
-    /**
-     * @var bool
-     */
     protected $forcePidInteger = true;
 
     /**
@@ -82,14 +74,14 @@ abstract class ActionController extends ExtbaseActionController implements Logge
         EnvironmentService $environmentService
     ) {
         $this->configContainer = $configContainer;
+        $executionTimeService->start();
+        $this->environmentService = $environmentService;
         $pid = BackendUtility::getPageIdentifier();
         if (true === $this->forcePidInteger && !is_int($pid)) {
             $this->logger->warning('Page identifier is not an int. Falling back to 0.', ['pid' => $this->pid]);
             $pid = 0;
         }
         $this->pid = $pid;
-        $executionTimeService->start();
-        $this->environmentService = $environmentService;
     }
 
     /**
@@ -125,9 +117,7 @@ abstract class ActionController extends ExtbaseActionController implements Logge
         $this->view->assign('testStatus', $this->environmentService->getTestStatus());
     }
 
-    /**
-     * Deactivate error messages in flash messages by explicitly returning false
-     */
+    /** Deactivate error messages in flash messages by explicitly returning false */
     protected function getErrorFlashMessage(): bool
     {
         return false;

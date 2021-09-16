@@ -43,9 +43,6 @@ class HeaderWarningColorRenderer
     }
 
     /**
-     * @param array $params
-     * @param PageRenderer $pageRenderer
-     *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @noinspection PhpUnusedParameterInspection
      */

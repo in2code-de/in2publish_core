@@ -40,24 +40,16 @@ class TestResult
     public const ERROR = 'error';
     public const SKIPPED = 'notice';
 
-    /**
-     * @var string
-     */
-    protected $severity = self::OK;
+    /** @var string */
+    protected $severity;
 
-    /**
-     * @var string
-     */
-    protected $label = '';
+    /** @var string */
+    protected $label;
 
-    /**
-     * @var string
-     */
-    protected $messages = '';
+    /** @var array<string> */
+    protected $messages;
 
-    /**
-     * @var array|null
-     */
+    /** @var array|null */
     protected $labelArguments;
 
     /**
@@ -65,7 +57,7 @@ class TestResult
      *
      * @param string $label Key of the label for headline. Only used when $severity !== OK
      * @param string $severity
-     * @param array $messages Keys of labels for explanations what went wrong.
+     * @param array<string> $messages Keys of labels for explanations what went wrong.
      * @param array|null $labelArguments
      *
      * @internal param array|null $arguments

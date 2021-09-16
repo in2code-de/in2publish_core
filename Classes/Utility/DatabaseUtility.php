@@ -56,14 +56,10 @@ use function time;
 
 class DatabaseUtility
 {
-    /**
-     * @var Logger
-     */
+    /** @var Logger */
     protected static $logger;
 
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     protected static $foreignConnection;
 
     /**

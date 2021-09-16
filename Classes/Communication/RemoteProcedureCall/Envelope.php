@@ -37,24 +37,12 @@ use function unserialize;
 
 class Envelope
 {
-    /**
-     * @var int
-     */
     protected $uid = 0;
 
-    /**
-     * @var string
-     */
     protected $command = '';
 
-    /**
-     * @var string
-     */
     protected $request = '';
 
-    /**
-     * @var string
-     */
     protected $response = '';
 
     /**

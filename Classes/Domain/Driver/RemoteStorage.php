@@ -38,6 +38,7 @@ use In2code\In2publishCore\Communication\RemoteProcedureCall\EnvelopeDispatcher;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\In2publishCoreException;
 use RuntimeException;
+use Throwable;
 use TYPO3\CMS\Core\Resource\ResourceStorageInterface;
 
 class RemoteStorage implements ResourceStorageInterface
@@ -49,11 +50,11 @@ class RemoteStorage implements ResourceStorageInterface
     /** @var Letterbox */
     protected $letterbox;
 
-    /** @var array */
-    protected static $cache = [];
-
     /** @var RemoteCommandDispatcher */
     protected $remoteCommandDispatcher;
+
+    /** @var array */
+    protected static $cache = [];
 
     public function __construct(Letterbox $letterbox, RemoteCommandDispatcher $remoteCommandDispatcher)
     {
@@ -122,7 +123,7 @@ class RemoteStorage implements ResourceStorageInterface
      *
      * @return mixed
      *
-     * @throws Exception
+     * @throws Throwable
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */

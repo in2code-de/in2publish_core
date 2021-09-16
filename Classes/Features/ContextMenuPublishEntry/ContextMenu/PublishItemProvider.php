@@ -53,11 +53,7 @@ class PublishItemProvider extends AbstractProvider
         return $items;
     }
 
-    /**
-     * @param string $itemName
-     * @return array
-     * @throws RouteNotFoundException
-     */
+    /** @throws RouteNotFoundException */
     protected function getAdditionalAttributes(string $itemName): array
     {
         $attributes = [];

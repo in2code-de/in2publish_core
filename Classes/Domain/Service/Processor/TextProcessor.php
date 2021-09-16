@@ -41,9 +41,6 @@ class TextProcessor extends AbstractProcessor
     public const WIZARDS = 'wizards';
     public const RTE = 'RTE';
 
-    /**
-     * @var bool
-     */
     protected $canHoldRelations = true;
 
     public function canPreProcess(array $config): bool

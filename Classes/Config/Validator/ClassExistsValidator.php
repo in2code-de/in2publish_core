@@ -35,10 +35,7 @@ use function class_exists;
 
 class ClassExistsValidator implements ValidatorInterface
 {
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
+    /** @param mixed $value */
     public function validate(ValidationContainer $container, $value): void
     {
         if (!class_exists($value)) {

@@ -54,9 +54,6 @@ class EnvironmentService implements SingletonInterface
     /** @var ConfigContainer */
     protected $configContainer;
 
-    /**
-     * EnvironmentService constructor.
-     */
     public function __construct(Registry $registry, PackageManager $packageManager, ConfigContainer $configContainer)
     {
         $this->registry = $registry;
@@ -97,17 +94,13 @@ class EnvironmentService implements SingletonInterface
         return $statusArray;
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
+    /** @codeCoverageIgnore */
     protected function getPackagesHash(): string
     {
         return sha1(json_encode($this->packageManager->getActivePackages()));
     }
 
-    /**
-     * @codeCoverageIgnore
-     */
+    /** @codeCoverageIgnore */
     protected function getConfigurationHash(): string
     {
         return sha1(serialize($this->configContainer->get()));
