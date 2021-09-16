@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission\Except
  */
 
 use In2code\In2publishCore\In2publishCoreException;
+use Throwable;
 
 use function sprintf;
 
@@ -38,8 +39,17 @@ class FileMissingException extends In2publishCoreException
     public const CODE = 1583161274;
     protected const MESSAGE = 'The file "%s" does not exist';
 
-    public static function fromFileName(string $fileName): FileMissingException
+    /** @var string */
+    protected $fileName;
+
+    public function __construct(string $fileName, Throwable $previous = null)
     {
-        return new self(sprintf(self::MESSAGE, $fileName), self::CODE);
+        parent::__construct(sprintf(self::MESSAGE, $fileName), self::CODE, $previous);
+        $this->fileName = $fileName;
+    }
+
+    public function getFileName(): string
+    {
+        return $this->fileName;
     }
 }

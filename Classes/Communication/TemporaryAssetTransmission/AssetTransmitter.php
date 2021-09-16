@@ -76,7 +76,7 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
 
         if (!file_exists($source)) {
             $this->logger->error('File does not exist', ['source' => $source]);
-            throw FileMissingException::fromFileName($source);
+            throw new FileMissingException($source);
         }
 
         if (null === $this->adapter) {
