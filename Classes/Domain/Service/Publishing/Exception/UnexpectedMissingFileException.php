@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Domain\Service\Publishing\Exception;
  */
 
 use In2code\In2publishCore\In2publishCoreException;
+use Throwable;
 
 use function sprintf;
 
@@ -38,10 +39,26 @@ class UnexpectedMissingFileException extends In2publishCoreException
     public const CODE = 1583161654;
     protected const MESSAGE = 'The file "%s" from storage "%d" requested for local processing does not exist';
 
-    public static function fromFileIdentifierAndStorage(
-        string $identifier,
-        int $storage
-    ): UnexpectedMissingFileException {
-        return new self(sprintf(self::MESSAGE, $identifier, $storage), self::CODE);
+    /** @var string */
+    private $identifier;
+
+    /** @var int */
+    private $storage;
+
+    public function __construct(string $identifier, int $storage, Throwable $previous = null)
+    {
+        $this->identifier = $identifier;
+        $this->storage = $storage;
+        parent::__construct(sprintf(self::MESSAGE, $identifier, $storage), self::CODE, $previous);
+    }
+
+    public function getIdentifier(): string
+    {
+        return $this->identifier;
+    }
+
+    public function getStorage(): int
+    {
+        return $this->storage;
     }
 }

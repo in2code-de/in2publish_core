@@ -138,7 +138,7 @@ class FilePublisherService implements LoggerAwareInterface
                 'A file that should be published does not exist',
                 [$storage => $storage, 'fileIdentifier' => $fileIdentifier]
             );
-            throw UnexpectedMissingFileException::fromFileIdentifierAndStorage($fileIdentifier, $storage);
+            throw new UnexpectedMissingFileException($fileIdentifier, $storage);
         }
 
         return $this->assetTransmitter->transmitTemporaryFile($source);
