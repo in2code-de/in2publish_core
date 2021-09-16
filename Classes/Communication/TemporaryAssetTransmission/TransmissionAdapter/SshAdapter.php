@@ -153,34 +153,35 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
             }
 
             $this->logger->error('Failed to set response via ssh2_sftp_chmod');
-        } else {
-            $request = GeneralUtility::makeInstance(
-                RemoteCommandRequest::class,
-                'chmod',
-                [],
-                [decoct($this->createMasks['decimalFileMask']), $target]
-            );
-            $request->usePhp(false);
-            $request->setDispatcher('');
-            $request->setEnvironmentVariables([]);
-
-            $response = $this->remoteCommandDispatcher->dispatch($request);
-
-            if ($response->isSuccessful()) {
-                return true;
-            }
-
-            $this->logger->error(
-                'Failed to set response via RCE API',
-                [
-                    'output' => $response->getOutput(),
-                    'errors' => $response->getErrors(),
-                    'exit_status' => $response->getExitStatus(),
-                    'file_mask_octal' => decoct($this->createMasks['decimalFileMask']),
-                    'target' => $target,
-                ]
-            );
+            return false;
         }
+
+        $request = GeneralUtility::makeInstance(
+            RemoteCommandRequest::class,
+            'chmod',
+            [],
+            [decoct($this->createMasks['decimalFileMask']), $target]
+        );
+        $request->usePhp(false);
+        $request->setDispatcher('');
+        $request->setEnvironmentVariables([]);
+
+        $response = $this->remoteCommandDispatcher->dispatch($request);
+
+        if ($response->isSuccessful()) {
+            return true;
+        }
+
+        $this->logger->error(
+            'Failed to set response via RCE API',
+            [
+                'output' => $response->getOutput(),
+                'errors' => $response->getErrors(),
+                'exit_status' => $response->getExitStatus(),
+                'file_mask_octal' => decoct($this->createMasks['decimalFileMask']),
+                'target' => $target,
+            ]
+        );
 
         return false;
     }

@@ -106,7 +106,9 @@ class ForeignInstanceTest implements TestCaseInterface
                     $response->getErrorsString(),
                 ]
             );
-        } elseif ($foreign['Version'] !== $localVersion) {
+        }
+
+        if ($foreign['Version'] !== $localVersion) {
             return new TestResult(
                 'application.foreign_version_differs',
                 TestResult::ERROR,
