@@ -98,7 +98,8 @@ class BackendUtility
         // get id from ?cmd[pages][123][delete]=1
         if (
             null !== ($cmd = GeneralUtility::_GP('cmd'))
-            && isset($cmd['pages']) && is_array($cmd['pages'])
+            && isset($cmd['pages'])
+            && is_array($cmd['pages'])
         ) {
             /** @noinspection LoopWhichDoesNotLoopInspection */
             foreach (array_keys($cmd['pages']) as $pid) {
@@ -160,11 +161,11 @@ class BackendUtility
                 $query = $localConnection->createQueryBuilder();
                 $query->getRestrictions()->removeAll();
                 $result = $query->select('pid')
-                            ->from($rollbackData[0])
-                            ->where($query->expr()->eq('uid', (int)$rollbackData[1]))
-                            ->setMaxResults(1)
-                            ->execute()
-                            ->fetchAssociative();
+                                ->from($rollbackData[0])
+                                ->where($query->expr()->eq('uid', (int)$rollbackData[1]))
+                                ->setMaxResults(1)
+                                ->execute()
+                                ->fetchAssociative();
                 if (false !== $result && isset($result['pid'])) {
                     return (int)$result['pid'];
                 }

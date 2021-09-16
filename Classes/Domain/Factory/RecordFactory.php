@@ -121,7 +121,6 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
     /**  @var bool */
     protected $isRootRecord = false;
 
-
     public function __construct(
         ConfigContainer $configContainer,
         TcaService $tcaService,
