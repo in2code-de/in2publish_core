@@ -165,7 +165,10 @@ abstract class AbstractTask
      */
     final public function setMessages(array $messages): AbstractTask
     {
-        $this->messages = $messages;
+        $this->messages = [];
+        foreach ($messages as $message) {
+            $this->addMessage($message);
+        }
         return $this;
     }
 
