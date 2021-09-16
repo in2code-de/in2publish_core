@@ -69,7 +69,7 @@ class SiteConfigurationCommand extends Command
     {
         $pageId = $input->getArgument(self::ARG_PAGE_ID);
         if (null !== $pageId && $pageId !== (string)(int)$pageId) {
-            throw InvalidPageIdArgumentTypeException::fromGivenPageId($pageId);
+            throw new InvalidPageIdArgumentTypeException($pageId);
         }
     }
 
