@@ -141,6 +141,8 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
                 $this->processors[$type] = new $class();
             }
         }
+
+        $this->preProcessTca();
     }
 
     protected function preProcessTca(): void
