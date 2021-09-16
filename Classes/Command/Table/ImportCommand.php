@@ -67,6 +67,7 @@ class ImportCommand extends Command implements LoggerAwareInterface
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
+
         $tableName = $input->getArgument(self::ARG_TABLE_NAME);
 
         if (!$this->databaseSchemaService->tableExists($tableName)) {
@@ -75,7 +76,7 @@ class ImportCommand extends Command implements LoggerAwareInterface
                 'The table that should be backed up before import does not exist',
                 ['table' => $tableName]
             );
-            return self::EXIT_INVALID_TABLE;
+            return static::EXIT_INVALID_TABLE;
         }
 
         $this->logger->notice('Called Import Table Command for table', ['table' => $tableName]);
@@ -83,7 +84,11 @@ class ImportCommand extends Command implements LoggerAwareInterface
         DatabaseUtility::backupTable($this->localDatabase, $tableName);
 
         try {
-            $rowCount = DatabaseUtility::copyTableContents($this->foreignDatabase, $this->localDatabase, $tableName);
+            $rowCount = DatabaseUtility::copyTableContents(
+                $this->foreignDatabase,
+                $this->localDatabase,
+                $tableName
+            );
             $this->logger->notice('Successfully truncated table, importing rows', ['rowCount' => $rowCount]);
             $this->logger->notice('Finished importing of table', ['table' => $tableName]);
         } catch (In2publishCoreException $exception) {

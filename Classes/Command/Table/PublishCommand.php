@@ -63,7 +63,7 @@ class PublishCommand extends Command implements LoggerAwareInterface
         $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
-    public function configure(): void
+    protected function configure(): void
     {
         $this->addArgument(self::ARG_TABLE_NAME, InputArgument::REQUIRED, self::ARG_TABLE_NAME_DESCRIPTION);
     }
