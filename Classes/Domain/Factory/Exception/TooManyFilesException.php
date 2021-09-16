@@ -31,6 +31,8 @@ namespace In2code\In2publishCore\Domain\Factory\Exception;
 
 use In2code\In2publishCore\In2publishCoreException;
 
+use Throwable;
+
 use function sprintf;
 
 abstract class TooManyFilesException extends In2publishCoreException
@@ -47,13 +49,12 @@ abstract class TooManyFilesException extends In2publishCoreException
     /** @var int */
     protected $threshold;
 
-    public static function fromFolder(string $folder, int $count, int $threshold): TooManyFilesException
+    public function __construct(string $folder, int $count, int $threshold, Throwable $previous = null)
     {
-        $self = new static(sprintf(static::MESSAGE, $folder, $count, $threshold), static::CODE);
-        $self->folder = $folder;
-        $self->count = $count;
-        $self->threshold = $threshold;
-        return $self;
+        parent::__construct(sprintf(static::MESSAGE, $folder, $count, $threshold), static::CODE, $previous);
+        $this->folder = $folder;
+        $this->count = $count;
+        $this->threshold = $threshold;
     }
 
     public function getFolder(): string

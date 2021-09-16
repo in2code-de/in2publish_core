@@ -333,9 +333,9 @@ class IndexingFolderRecordFactory
         $count = count($files);
         if ($count > $this->threshold) {
             if ($side === 'foreign') {
-                throw TooManyForeignFilesException::fromFolder($folderIdentifier, $count, $this->threshold);
+                throw new TooManyForeignFilesException($folderIdentifier, $count, $this->threshold);
             } else {
-                throw TooManyLocalFilesException::fromFolder($folderIdentifier, $count, $this->threshold);
+                throw new TooManyLocalFilesException($folderIdentifier, $count, $this->threshold);
             }
         }
     }
