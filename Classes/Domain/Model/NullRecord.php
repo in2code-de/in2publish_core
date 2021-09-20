@@ -46,14 +46,13 @@ class NullRecord extends Record
      * @SuppressWarnings("PHPMD.UnusedFormalParameter")
      * @noinspection MagicMethodsValidityInspection
      * @noinspection PhpMissingParentConstructorInspection
-     * @noinspection PhpOptionalBeforeRequiredParametersInspection
      */
     public function __construct(
         string $tableName = 'pages',
-        array $localProperties,
-        array $foreignProperties,
-        array $tca,
-        array $additionalProperties
+        array $localProperties = [0 => false],
+        array $foreignProperties = [0 => false],
+        array $tca = [],
+        array $additionalProperties = ['depth' => 1]
     ) {
         $this->tableName = $tableName;
         $this->additionalProperties = $additionalProperties;
