@@ -41,6 +41,9 @@ services:
   In2code\In2publishCore\Domain\PostProcessing\Processor\FalIndexPostProcessor:
     public: true
 
+  In2code\In2publishCore\Domain\PostProcessing\Processor\FileIndexPostProcessor:
+    public: true    
+
   In2code\In2publishCore\Features\WarningOnForeign\Service\HeaderWarningColorRenderer:
     public: true
 
