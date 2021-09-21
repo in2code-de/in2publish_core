@@ -109,6 +109,13 @@ class SysRedirectRepository extends Repository
         return $query->execute();
     }
 
+    public function findUnrestrictedByIdentifier(int $redirect): ?SysRedirect
+    {
+        $query = $this->createUnrestrictedQuery();
+        $query->matching($query->equals('uid', $redirect));
+        return $query->execute()->getFirst();
+    }
+
     public function findHostsOfRedirects(): array
     {
         return $this->getQueryBuilder()
@@ -133,12 +140,7 @@ class SysRedirectRepository extends Repository
 
     protected function getQueryForRedirectsToBePublished(array $uidList): QueryInterface
     {
-        $query = $this->createQuery();
-        $querySettings = $query->getQuerySettings();
-        $querySettings->setIgnoreEnableFields(true);
-        $querySettings->setRespectSysLanguage(false);
-        $querySettings->setRespectStoragePage(false);
-        $querySettings->setIncludeDeleted(true);
+        $query = $this->createUnrestrictedQuery();
         if (!empty($uidList)) {
             $query->matching(
                 $query->logicalOr(
@@ -155,8 +157,18 @@ class SysRedirectRepository extends Repository
     protected function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_redirect');
-        $queryBuilder->getRestrictions()
-                     ->removeAll();
+        $queryBuilder->getRestrictions()->removeAll();
         return $queryBuilder;
+    }
+
+    protected function createUnrestrictedQuery(): QueryInterface
+    {
+        $query = $this->createQuery();
+        $querySettings = $query->getQuerySettings();
+        $querySettings->setIgnoreEnableFields(true);
+        $querySettings->setRespectSysLanguage(false);
+        $querySettings->setRespectStoragePage(false);
+        $querySettings->setIncludeDeleted(true);
+        return $query;
     }
 }

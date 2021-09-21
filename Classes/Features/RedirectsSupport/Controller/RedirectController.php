@@ -36,7 +36,6 @@ use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
-use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\SysRedirect;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -81,7 +80,8 @@ class RedirectController extends AbstractController
         $this->sysRedirectRepo = $sysRedirectRepo;
     }
 
-    public function initializeListAction()
+    /** @throws Throwable */
+    public function initializeListAction(): void
     {
         if ($this->request->hasArgument('filter')) {
             $filter = $this->request->getArgument('filter');
@@ -114,12 +114,12 @@ class RedirectController extends AbstractController
                 'redirects' => $this->sysRedirectRepo->findForPublishing($uidList, $filter),
                 'hosts' => $this->sysRedirectRepo->findHostsOfRedirects(),
                 'statusCodes' => $this->sysRedirectRepo->findStatusCodesOfRedirects(),
-                'publishingStates' => $this->getPublishingStates(),
                 'filter' => $filter,
             ]
         );
     }
 
+    /** @throws Throwable */
     public function publishAction(array $redirects): void
     {
         if (empty($redirects)) {
@@ -152,26 +152,26 @@ class RedirectController extends AbstractController
         $this->redirect('list');
     }
 
+    /**
+     * @param int $redirect
+     * @param array|null $properties
+     * @throws Throwable
+     */
     public function selectSiteAction(int $redirect, array $properties = null): void
     {
-        $query = $this->sysRedirectRepo->createQuery();
-        $querySettings = $query->getQuerySettings();
-        $querySettings->setIgnoreEnableFields(true);
-        $querySettings->setRespectSysLanguage(false);
-        $querySettings->setRespectStoragePage(false);
-        $querySettings->setIncludeDeleted(true);
-        $query->matching(
-            $query->equals('uid', $redirect)
-        );
-        /** @var SysRedirect $redirect */
-        $redirect = $query->execute()->getFirst();
+        $redirectObj = $this->sysRedirectRepo->findUnrestrictedByIdentifier($redirect);
+        if (null === $redirectObj) {
+            $this->redirect('list');
+        }
 
         if ($this->request->getMethod() === 'POST') {
-            $redirect->setSiteId($properties['siteId']);
-            $this->sysRedirectRepo->update($redirect);
-            $this->addFlashMessage(sprintf('Associated redirect %s with site %s', $redirect, $redirect->getSiteId()));
+            $redirectObj->setSiteId($properties['siteId']);
+            $this->sysRedirectRepo->update($redirectObj);
+            $this->addFlashMessage(
+                sprintf('Associated redirect %s with site %s', $redirectObj, $redirectObj->getSiteId())
+            );
             if (isset($_POST['_saveandpublish'])) {
-                $this->redirect('publish', null, null, ['redirects' => [$redirect->getUid()]]);
+                $this->redirect('publish', null, null, ['redirects' => [$redirectObj->getUid()]]);
             }
             $this->redirect('list');
         }
@@ -185,32 +185,7 @@ class RedirectController extends AbstractController
             $identifier = $site->getIdentifier();
             $siteOptions[$identifier] = $identifier . ' (' . $site->getBase() . ')';
         }
-        $this->view->assign('redirect', $redirect);
+        $this->view->assign('redirect', $redirectObj);
         $this->view->assign('siteOptions', $siteOptions);
-    }
-
-    protected function getPublishingStates(): array
-    {
-        return [
-            0 => [
-                'state' => 'unchanged',
-                'label' => LocalizationUtility::translate('redirect.status.short.published', 'in2publish_core'),
-            ],
-            1 => [
-                'state' => 'publishable',
-                'label' => LocalizationUtility::translate('redirect.status.short.publishable', 'in2publish_core'),
-            ],
-            2 => [
-                'state' => 'siteRequired',
-                'label' => LocalizationUtility::translate('redirect.status.short.siteRequired', 'in2publish_core'),
-            ],
-            3 => [
-                'state' => 'requiresPagePublishing',
-                'label' => LocalizationUtility::translate(
-                    'redirect.status.short.requiresPagePublishing',
-                    'in2publish_core'
-                ),
-            ],
-        ];
     }
 }
