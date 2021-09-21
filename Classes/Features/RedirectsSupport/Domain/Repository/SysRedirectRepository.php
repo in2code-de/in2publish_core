@@ -29,11 +29,14 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
+use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\SysRedirect;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
 class SysRedirectRepository extends Repository
@@ -94,39 +97,16 @@ class SysRedirectRepository extends Repository
         return $result->fetchAllAssociative();
     }
 
-    public function findForPublishing(array $uidList, array $filter = [])
+    /** @return QueryResultInterface<SysRedirect> */
+    public function findForPublishing(array $uidList, ?Filter $filter): QueryResultInterface
     {
         $query = $this->getQueryForRedirectsToBePublished($uidList);
-        // in order to avoid empty $and constraint
-        $and[] = $query->greaterThan('uid', 0);
-        if (isset($filter['source_host']) && $filter['source_host'] != '') {
-            $and[] = $query->equals('source_host', $filter['source_host']);
-        }
-        if (isset($filter['source_path']) && $filter['source_path'] != '') {
-            $and[] = $query->like('source_path', '%' . $filter['source_path'] . '%');
-        }
-        if (isset($filter['target']) && $filter['target'] != '') {
-            $and[] = $query->like('target', '%' . $filter['target'] . '%');
-        }
-        if (isset($filter['status_code']) && $filter['status_code'] != '') {
-            $and[] = $query->equals('target_statuscode', $filter['status_code']);
-        }
-        $query->matching($query->logicalAnd($and));
 
-        $redirects =  $query->execute();
-        // Remove redirects with wrong state
-        // TODO: this is ignored by the paginationViewHelper
-        if (isset($filter['publishing_state']) && $filter['publishing_state'] != '') {
-            $selectedPublishingState = $filter['publishing_state'];
-            $i = 0;
-            foreach($redirects as $redirect) {
-                if ($redirect->getPublishingState() != $selectedPublishingState) {
-                    unset($redirects[$i]);
-                }
-                $i++;
-            }
+        if (null !== $filter) {
+            $filter->modifyQuery($query);
         }
-        return $redirects;
+
+        return $query->execute();
     }
 
     public function findHostsOfRedirects(): array

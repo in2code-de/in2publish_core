@@ -1,0 +1,60 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
+	  xml:space="preserve"
+	  data-namespace-typo3-fluid="true">
+	<f:form action="list" method="post" objectName="filter" object="{filter}" class="form-inline form-inline-spaced">
+		<div class="form-group">
+			<label for="filter-source-host">
+				<f:translate
+					key="LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:source_host" />
+			</label>
+			<f:form.select id="filter-source-host"
+						   property="domain"
+						   options="{hosts}"
+						   class="form-control input-sm"
+						   optionValueField="name"
+						   optionLabelField="name"
+						   prependOptionLabel="{f:translate(key: 'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.source_host.showAll')}"
+						   prependOptionValue=""
+			/>
+		</div>
+		<div class="form-group">
+			<label for="filter-source-path">
+				<f:translate
+					key="LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:source_path" />
+			</label>
+			<f:form.textfield id="filter-source-path"
+							  class="form-control input-sm"
+							  property="source"
+			/>
+		</div>
+		<div class="form-group">
+			<label for="filter-target">
+				<f:translate
+					key="LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.destination" />
+			</label>
+			<f:form.textfield id="filter-target"
+							  class="form-control input-sm"
+							  property="target"
+			/>
+		</div>
+		<div class="form-group">
+			<label for="filter-status-code">
+				<f:translate
+					key="LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.targetStatusCode" />
+			</label>
+			<f:form.select property="code"
+						   id="filter-status-code"
+						   options="{statusCodes}"
+						   class="form-control input-sm"
+						   optionValueField="code"
+						   optionLabelField="code"
+						   prependOptionLabel="{f:translate(key: 'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.source_host.showAll')}"
+						   prependOptionValue=""
+			/>
+		</div>
+		<div class="form-group">
+			<input type="submit" value="{f:translate(key: 'filter.form.submit')}" class="btn btn-default btn-sm" />
+		</div>
+	</f:form>
+</html>

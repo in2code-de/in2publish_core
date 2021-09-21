@@ -553,10 +553,6 @@
 				<source>This redirect is published</source>
 				<target state="translated">Dieser Redirect ist publiziert</target>
 			</trans-unit>
-			<trans-unit id="redirect.status.published">
-				<source>This redirect is published</source>
-				<target state="translated">Dieser Redirect ist publiziert</target>
-			</trans-unit>
 
 			<trans-unit id="redirect.status.short.publishable">
 				<source>Ready for publishing</source>
@@ -573,6 +569,11 @@
 			<trans-unit id="redirect.status.short.published">
 				<source>Published</source>
 				<target state="translated">Veröffentlicht</target>
+			</trans-unit>
+
+			<trans-unit id="filter.form.submit">
+				<source>Filter</source>
+				<target state="translated">Filtern</target>
 			</trans-unit>
 
 			<trans-unit id="refresh_page">

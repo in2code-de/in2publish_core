@@ -9,7 +9,7 @@
 	</f:section>
 
 	<f:section name="Main">
-		<f:render section="filter" arguments="{_all}" />
+		<f:render partial="Redirect/Filter" arguments="{_all}" />
 		<f:be.widget.paginate objects="{redirects}" as="paginatedRedirects" configuration="{ itemsPerPage: 20, insertAbove: 1, insertBelow: 1, recordsLabel: 'Redirects'}">
 			<f:form action="publish">
 				<table class="table">
@@ -120,83 +120,3 @@
 		</div>
 	</f:section>
 </html>
-
-<f:section name="filter">
-	<f:form action="list"
-			id="filter-redirects"
-			method="post"
-			enctype="multipart/form-data"
-			name="filter-redirects"
-			arguments="{filter:filter}"
-			class="form-inline form-inline-spaced">
-		<div class="form-group">
-			<label for="filter-source-host">
-				<f:translate key="LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:source_host"/>
-			</label>
-			<f:form.select name="filter[source_host]"
-						   value="{filter.source_host}"
-						   id="filter-source-host"
-						   options="{hosts}"
-						   class="form-control input-sm"
-						   optionValueField="name"
-						   optionLabelField="name"
-						   prependOptionLabel="{f:translate(key: 'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.source_host.showAll')}"
-						   prependOptionValue=""
-			/>
-		</div>
-		<div class="form-group">
-			<label for="filter-source-path">
-				<f:translate key="LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:source_path"/>
-			</label>
-			<f:form.textfield id="filter-source-path"
-							  class="form-control input-sm"
-							  name="filter[source_path]"
-							  value="{filter.source_path}"
-			/>
-		</div>
-		<div class="form-group">
-			<label for="filter-target">
-				<f:translate key="LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.destination"/>
-			</label>
-			<f:form.textfield id="filter-target"
-							  class="form-control input-sm"
-							  name="filter[target]"
-							  value="{filter.target}"
-			/>
-		</div>
-		<div class="form-group">
-			<label for="filter-status-code">
-				<f:translate key="LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.targetStatusCode"/>
-			</label>
-			<f:form.select name="filter[status_code]"
-						   value="{filter.status_code}"
-						   id="filter-status-code"
-						   options="{statusCodes}"
-						   class="form-control input-sm"
-						   optionValueField="code"
-						   optionLabelField="code"
-						   prependOptionLabel="{f:translate(key: 'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.source_host.showAll')}"
-						   prependOptionValue=""
-			/>
-		</div>
-<!--		TODO: filter is ignored in paginatedRedirects-->
-<!--		<div class="form-group">-->
-<!--			<label for="filter-publishing-state">-->
-<!--				<f:translate key="redirect.record.status"/>-->
-<!--			</label>-->
-<!--			<f:form.select name="filter[publishing_state]"-->
-<!--						   value="{filter.publishing_state}"-->
-<!--						   id="filter-publishing-state"-->
-<!--						   options="{publishingStates}"-->
-<!--						   class="form-control input-sm"-->
-<!--						   optionValueField="state"-->
-<!--						   optionLabelField="label"-->
-<!--						   prependOptionLabel="{f:translate(key: 'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.source_host.showAll')}"-->
-<!--						   prependOptionValue=""-->
-<!--			/>-->
-<!--		</div>-->
-		<div class="form-group">
-			<input type="submit" value="Filtern" class="btn btn-default btn-sm" />
-		</div>
-	</f:form>
-</f:section>
