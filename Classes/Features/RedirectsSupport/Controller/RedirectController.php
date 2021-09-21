@@ -81,6 +81,20 @@ class RedirectController extends AbstractController
         $this->sysRedirectRepo = $sysRedirectRepo;
     }
 
+    public function initializeListAction()
+    {
+        if ($this->request->hasArgument('filter')) {
+            $filter = $this->request->getArgument('filter');
+            $this->backendUser->setAndSaveSessionData('tx_in2publishcore_redirects_filter', $filter);
+        } else {
+            $filter = $this->backendUser->getSessionData('tx_in2publishcore_redirects_filter');
+            if (null !== $filter) {
+                $this->request->setArgument('filter', $filter);
+            }
+            $this->arguments->getArgument('filter')->getPropertyMappingConfiguration()->allowAllProperties();
+        }
+    }
+
     /**
      * @param Filter|null $filter
      * @throws Throwable
