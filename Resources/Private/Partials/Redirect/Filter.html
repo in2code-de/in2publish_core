@@ -54,6 +54,21 @@
 			/>
 		</div>
 		<div class="form-group">
+			<label for="filter-has-page">
+				<f:translate key="filter.field.has_association" />
+			</label>
+			<f:form.select property="association"
+						   id="filter-status-code"
+						   options="{
+						      present: '{f:translate(key:\'filter.field.has_association.present\')}',
+						      missing: '{f:translate(key:\'filter.field.has_association.missing\')}'
+						   }"
+						   class="form-control input-sm"
+						   prependOptionLabel="{f:translate(key: 'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:filter.source_host.showAll')}"
+						   prependOptionValue=""
+			/>
+		</div>
+		<div class="form-group">
 			<input type="submit" value="{f:translate(key: 'filter.form.submit')}" class="btn btn-default btn-sm" />
 		</div>
 	</f:form>

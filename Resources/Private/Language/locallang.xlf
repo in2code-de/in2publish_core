@@ -435,7 +435,15 @@
 
 			<trans-unit id="filter.form.submit">
 				<source>Filter</source>
-				<target state="translated">Filtern</target>
+			</trans-unit>
+			<trans-unit id="filter.field.has_association">
+				<source>Association</source>
+			</trans-unit>
+			<trans-unit id="filter.field.has_association.present">
+				<source>Association present</source>
+			</trans-unit>
+			<trans-unit id="filter.field.has_association.missing">
+				<source>Association missing</source>
 			</trans-unit>
 
 			<trans-unit id="refresh_page">

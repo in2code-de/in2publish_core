@@ -20,6 +20,9 @@ class Filter
     /** @var null|int */
     protected $code;
 
+    /** @var null|string */
+    protected $association;
+
     public function getDomain(): ?string
     {
         return $this->domain;
@@ -60,6 +63,16 @@ class Filter
         $this->code = $code;
     }
 
+    public function getAssociation(): ?string
+    {
+        return $this->association;
+    }
+
+    public function setAssociation(?string $association): void
+    {
+        $this->association = $association ?: null;
+    }
+
     public function modifyQuery(QueryInterface $query): void
     {
         $and = [];
@@ -75,6 +88,28 @@ class Filter
         }
         if (null !== $this->code) {
             $and[] = $query->equals('target_statuscode', $this->code);
+        }
+        if (null !== $this->association) {
+            if ('present' === $this->association) {
+                $and[] = $query->logicalOr(
+                    [
+                        $query->logicalNot($query->equals('tx_in2publishcore_foreign_site_id', null)),
+                        $query->logicalNot($query->equals('tx_in2publishcore_page_uid', null)),
+                        $query->equals('source_host', '*'),
+                    ]
+                );
+            }
+            if ('missing' === $this->association) {
+                $and[] = $query->logicalAnd(
+                    [
+                        $query->equals('tx_in2publishcore_foreign_site_id', null),
+                        $query->equals('tx_in2publishcore_page_uid', null),
+                        $query->logicalNot(
+                            $query->equals('source_host', '*')
+                        ),
+                    ]
+                );
+            }
         }
 
         $count = count($and);

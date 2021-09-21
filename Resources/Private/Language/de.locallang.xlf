@@ -575,6 +575,18 @@
 				<source>Filter</source>
 				<target state="translated">Filtern</target>
 			</trans-unit>
+			<trans-unit id="filter.field.has_association">
+				<source>Association</source>
+				<target state="translated">Verknüpfung</target>
+			</trans-unit>
+			<trans-unit id="filter.field.has_association.present">
+				<source>Association present</source>
+				<target state="translated">Verknüpft</target>
+			</trans-unit>
+			<trans-unit id="filter.field.has_association.missing">
+				<source>Association missing</source>
+				<target state="translated">Verknüpfung fehlend</target>
+			</trans-unit>
 
 			<trans-unit id="refresh_page">
 				<source>Refresh page</source>
