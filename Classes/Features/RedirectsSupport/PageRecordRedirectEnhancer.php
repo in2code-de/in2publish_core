@@ -151,8 +151,8 @@ class PageRecordRedirectEnhancer
             $localRow = $localRows[$uid] ?? null;
             $foreignRow = $foreignRows[$uid] ?? null;
 
-            $this->collectLosseRedirects($localRow, 'local');
-            $this->collectLosseRedirects($foreignRow, 'foreign');
+            $this->collectLooseRedirects($localRow, 'local');
+            $this->collectLooseRedirects($foreignRow, 'foreign');
 
             $rows[$uid] = [
                 'local' => $localRow,
@@ -203,7 +203,7 @@ class PageRecordRedirectEnhancer
         return array_column($rows, null, 'uid');
     }
 
-    protected function collectLosseRedirects(?array $localRow, string $side): void
+    protected function collectLooseRedirects(?array $localRow, string $side): void
     {
         if (
             null !== $localRow
