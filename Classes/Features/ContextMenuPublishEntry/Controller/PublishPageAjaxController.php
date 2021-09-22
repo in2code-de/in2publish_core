@@ -61,9 +61,10 @@ class PublishPageAjaxController
             $content['label'] = 'context_menu_publish_entry.missing_page';
         } else {
             try {
-                $record = $this->commonRepository->findByIdentifier($page, 'pages');
+                $this->commonRepository->disablePageRecursion();
+                $record = $this->commonRepository->findByIdentifier((int)$page, 'pages');
 
-                if ($record->isPublishable()) {
+                if (null !== $record && $record->isPublishable()) {
                     $this->commonRepository->publishRecordRecursive($record);
                     $rceRequest = new RemoteCommandRequest(RunTasksInQueueCommand::IDENTIFIER);
                     $rceResponse = $this->remoteCommandDispatcher->dispatch($rceRequest);
