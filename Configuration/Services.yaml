@@ -42,12 +42,15 @@ services:
     public: true
 
   In2code\In2publishCore\Domain\PostProcessing\Processor\FileIndexPostProcessor:
-    public: true    
+    public: true
 
   In2code\In2publishCore\Features\WarningOnForeign\Service\HeaderWarningColorRenderer:
     public: true
 
   In2code\In2publishCore\Service\Permission\PermissionService:
+    public: true
+
+  In2code\In2publishCore\Features\ContextMenuPublishEntry\Controller\PublishPageAjaxController:
     public: true
 
   cache.in2publish_core:
