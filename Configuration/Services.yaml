@@ -53,6 +53,9 @@ services:
   In2code\In2publishCore\Features\ContextMenuPublishEntry\Controller\PublishPageAjaxController:
     public: true
 
+  In2code\In2publishCore\Features\RedirectsSupport\DataProvider\ForeignSiteIdentifierItemProcFunc:
+    public: true
+
   cache.in2publish_core:
     class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
     factory: ['@TYPO3\CMS\Core\Cache\CacheManager', 'getCache']
