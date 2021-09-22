@@ -29,39 +29,22 @@ namespace In2code\In2publishCore\Log\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Service\Error\FailureCollector;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogRecord;
 use TYPO3\CMS\Core\Log\Processor\AbstractProcessor;
-use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-use function min;
-
-class PublishingFailureCollector extends AbstractProcessor implements SingletonInterface
+class PublishingFailureCollector extends AbstractProcessor
 {
-    public const MINIMUM_LOG_LEVEL = 4;
-
-    protected $failures = [];
-
-    protected $highestSeverity = 7;
+    protected const MINIMUM_LOG_LEVEL = 4;
 
     public function processLogRecord(LogRecord $logRecord): LogRecord
     {
-        $level = $logRecord->getLevel();
-        $level = LogLevel::normalizeLevel($level);
-        $this->highestSeverity = min($this->highestSeverity, $level);
-        if ($level <= self::MINIMUM_LOG_LEVEL) {
-            $this->failures[$logRecord->getMessage()][] = $logRecord;
+        $normalizeLevel = LogLevel::normalizeLevel($logRecord->getLevel());
+        if ($normalizeLevel <= self::MINIMUM_LOG_LEVEL) {
+            GeneralUtility::makeInstance(FailureCollector::class)->addLogRecord($logRecord);
         }
         return $logRecord;
-    }
-
-    public function getFailures(): array
-    {
-        return $this->failures;
-    }
-
-    public function getMostCriticalLogLevel(): int
-    {
-        return $this->highestSeverity;
     }
 }

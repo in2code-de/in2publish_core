@@ -39,8 +39,8 @@ use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
 use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
 use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Factory\FakeRecordFactory;
 use In2code\In2publishCore\In2publishCoreException;
-use In2code\In2publishCore\Log\Processor\PublishingFailureCollector;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
+use In2code\In2publishCore\Service\Error\FailureCollector;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use In2code\In2publishCore\Utility\LogUtility;
 use Throwable;
@@ -65,8 +65,8 @@ class RecordController extends AbstractController
     /** @var CommonRepository */
     protected $commonRepository;
 
-    /** @var PublishingFailureCollector */
-    protected $publishingFailureCollector;
+    /** @var FailureCollector */
+    protected $failureCollector;
 
     /** @var FakeRecordFactory */
     protected $fakeRecordFactory;
@@ -79,7 +79,7 @@ class RecordController extends AbstractController
         ExecutionTimeService $executionTimeService,
         EnvironmentService $environmentService,
         RemoteCommandDispatcher $remoteCommandDispatcher,
-        PublishingFailureCollector $publishingFailureCollector,
+        FailureCollector $failureCollector,
         FakeRecordFactory $fakeRecordFactory,
         PermissionService $permissionService
     ) {
@@ -89,7 +89,7 @@ class RecordController extends AbstractController
             $environmentService,
             $remoteCommandDispatcher
         );
-        $this->publishingFailureCollector = $publishingFailureCollector;
+        $this->failureCollector = $failureCollector;
         $this->fakeRecordFactory = $fakeRecordFactory;
         $this->permissionService = $permissionService;
     }
@@ -120,12 +120,12 @@ class RecordController extends AbstractController
         } else {
             $record = $this->fakeRecordFactory->buildFromStartPage($this->pid);
         }
-        $failures = $this->publishingFailureCollector->getFailures();
+        $failures = $this->failureCollector->getFailures();
 
         if (!empty($failures)) {
             $message = '"' . implode('"; "', array_keys($failures)) . '"';
             $title = LocalizationUtility::translate('relation_resolving_errors', 'in2publish_core');
-            $mostCriticalLogLevel = $this->publishingFailureCollector->getMostCriticalLogLevel();
+            $mostCriticalLogLevel = $this->failureCollector->getMostCriticalLogLevel();
             $severity = LogUtility::translateLogLevelToSeverity($mostCriticalLogLevel);
             $this->addFlashMessage($message, $title, $severity);
         }
@@ -223,7 +223,7 @@ class RecordController extends AbstractController
      */
     protected function addFlashMessagesAndRedirectToIndex(): void
     {
-        $failures = $this->publishingFailureCollector->getFailures();
+        $failures = $this->failureCollector->getFailures();
 
         if (empty($failures)) {
             $message = '';
@@ -232,7 +232,7 @@ class RecordController extends AbstractController
         } else {
             $message = '"' . implode('"; "', array_keys($failures)) . '"';
             $title = LocalizationUtility::translate('record_publishing_failure', 'in2publish_core');
-            $mostCriticalLogLevel = $this->publishingFailureCollector->getMostCriticalLogLevel();
+            $mostCriticalLogLevel = $this->failureCollector->getMostCriticalLogLevel();
             $severity = LogUtility::translateLogLevelToSeverity($mostCriticalLogLevel);
         }
         $this->addFlashMessage($message, $title, $severity);

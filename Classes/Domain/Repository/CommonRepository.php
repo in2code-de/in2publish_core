@@ -1870,15 +1870,7 @@ class CommonRepository extends BaseRepository
             // Dispatch Anomaly
             $this->eventDispatcher->dispatch(new RecursiveRecordPublishingEnded($record, $this));
         } catch (Throwable $exception) {
-            $this->logger->critical(
-                'Publishing single record failed',
-                [
-                    'message' => $exception->getMessage(),
-                    'code' => $exception->getCode(),
-                    'file' => $exception->getFile(),
-                    'line' => $exception->getLine(),
-                ]
-            );
+            $this->logger->critical('Publishing single record failed', ['exception' => $exception]);
             throw $exception;
         }
     }
