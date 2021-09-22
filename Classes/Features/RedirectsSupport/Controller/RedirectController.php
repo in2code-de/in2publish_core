@@ -115,6 +115,11 @@ class RedirectController extends AbstractController
             $this->redirect('list');
         }
 
+        foreach ($redirects as &$redirect) {
+            $redirect = (int)$redirect;
+        }
+        unset($redirect);
+
         foreach ($redirects as $redirect) {
             $record = $this->commonRepository->findByIdentifier($redirect, 'sys_redirect');
             if (null !== $record) {
