@@ -98,16 +98,6 @@ return static function (ContainerConfigurator $configurator, ContainerBuilder $b
                          'event' => PublishingOfOneRecordBegan::class,
                      ]
                  );
-        $services->set('tx_in2publish_redirectssupport_event_listener_replacer')
-                 ->class(RedirectCacheUpdater::class)
-                 ->tag(
-                     'event.listener',
-                     [
-                         'identifier' => 'in2publishcore-RedirectCacheUpdater-PublishingOfOneRecordEnded',
-                         'method' => 'publishRecordRecursiveAfterPublishing',
-                         'event' => PublishingOfOneRecordEnded::class,
-                     ]
-                 );
         $services->set('tx_in2publish_redirectssupport_event_listener_updater')
                  ->class(RedirectCacheUpdater::class)
                  ->tag(
