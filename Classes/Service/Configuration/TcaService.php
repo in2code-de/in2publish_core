@@ -47,9 +47,6 @@ class TcaService implements SingletonInterface
     protected const TYPE_ROOT = 'root';
     protected const TYPE_PAGE = 'page';
 
-    /** @var array[] */
-    protected $tca;
-
     /** @var array */
     protected $tableNames;
 
@@ -58,19 +55,20 @@ class TcaService implements SingletonInterface
 
     public function __construct()
     {
-        $this->tca = $this->getTca();
-        $this->tableNames = array_keys($this->tca);
+        $this->tableNames = array_keys($GLOBALS['TCA'] ?? []);
     }
 
     /**
      * @param string[] $exceptTableNames
      *
      * @return string[]
+     *
+     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function getAllTableNamesAllowedOnRootLevel(array $exceptTableNames = []): array
     {
         $rootLevelTables = [];
-        foreach ($this->tca as $tableName => $tableConfiguration) {
+        foreach ($GLOBALS['TCA'] ?? [] as $tableName => $tableConfiguration) {
             if (
                 !empty($tableConfiguration['ctrl']['rootLevel'])
                 && !in_array($tableName, $exceptTableNames, true)
@@ -91,30 +89,33 @@ class TcaService implements SingletonInterface
      * Get label field name from table
      *
      * @return string Field name of the configured label field or empty string if not set
+     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function getLabelFieldFromTable(string $tableName): string
     {
-        if (!empty($this->tca[$tableName]['ctrl']['label'])) {
-            return $this->tca[$tableName]['ctrl']['label'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['label'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['label'];
         }
         return '';
     }
 
     /**
      * @return string Field name of the configured label_alt field or empty string if not set
+     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function getLabelAltFieldFromTable(string $tableName): string
     {
-        if (!empty($this->tca[$tableName]['ctrl']['label_alt'])) {
-            return $this->tca[$tableName]['ctrl']['label_alt'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['label_alt'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['label_alt'];
         }
         return '';
     }
 
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getLabelAltForceFromTable(string $tableName): bool
     {
-        if (isset($this->tca[$tableName]['ctrl']['label_alt_force'])) {
-            return (bool)$this->tca[$tableName]['ctrl']['label_alt_force'];
+        if (isset($GLOBALS['TCA'][$tableName]['ctrl']['label_alt_force'])) {
+            return (bool)$GLOBALS['TCA'][$tableName]['ctrl']['label_alt_force'];
         }
         return false;
     }
@@ -142,66 +143,73 @@ class TcaService implements SingletonInterface
 
     /**
      * @return string Field name of the configured title field or empty string if not set
+     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function getTitleFieldFromTable(string $tableName): string
     {
-        if (!empty($this->tca[$tableName]['ctrl']['title'])) {
-            return $this->tca[$tableName]['ctrl']['title'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['title'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['title'];
         }
         return '';
     }
 
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getSortingField(string $tableName): string
     {
         $sortingField = '';
-        if (!empty($this->tca[$tableName]['ctrl']['sortby'])) {
-            $sortingField = $this->tca[$tableName]['ctrl']['sortby'];
-        } elseif (!empty($this->tca[$tableName]['ctrl']['crdate'])) {
-            $sortingField = $this->tca[$tableName]['ctrl']['crdate'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['sortby'])) {
+            $sortingField = $GLOBALS['TCA'][$tableName]['ctrl']['sortby'];
+        } elseif (!empty($GLOBALS['TCA'][$tableName]['ctrl']['crdate'])) {
+            $sortingField = $GLOBALS['TCA'][$tableName]['ctrl']['crdate'];
         }
         return $sortingField;
     }
 
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getNameOfSortingField(string $tableName): string
     {
-        if (!empty($this->tca[$tableName]['ctrl']['sortby'])) {
-            return $this->tca[$tableName]['ctrl']['sortby'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['sortby'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['sortby'];
         }
         return '';
     }
 
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getDeletedField(string $tableName): string
     {
         $deleteField = '';
-        if (!empty($this->tca[$tableName]['ctrl']['delete'])) {
-            $deleteField = $this->tca[$tableName]['ctrl']['delete'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['delete'])) {
+            $deleteField = $GLOBALS['TCA'][$tableName]['ctrl']['delete'];
         }
         return $deleteField;
     }
 
     /**
      * Records whose deleted field evaluate to true will not be shown in the frontend.
+     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function getDisableField(string $tableName): string
     {
-        if (!empty($this->tca[$tableName]['ctrl']['enablecolumns']['disabled'])) {
-            return $this->tca[$tableName]['ctrl']['enablecolumns']['disabled'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns']['disabled'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns']['disabled'];
         }
         return '';
     }
 
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getLanguageField(string $tableName): string
     {
-        if (!empty($this->tca[$tableName]['ctrl']['languageField'])) {
-            return $this->tca[$tableName]['ctrl']['languageField'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['languageField'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['languageField'];
         }
         return '';
     }
 
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getTransOrigPointerField(string $tableName): string
     {
-        if (!empty($this->tca[$tableName]['ctrl']['transOrigPointerField'])) {
-            return $this->tca[$tableName]['ctrl']['transOrigPointerField'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['transOrigPointerField'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['transOrigPointerField'];
         }
         return '';
     }
@@ -234,14 +242,16 @@ class TcaService implements SingletonInterface
         return $result;
     }
 
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getConfigurationArrayForTable(string $table): ?array
     {
-        return $this->tca[$table] ?? null;
+        return $GLOBALS['TCA'][$table] ?? null;
     }
 
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getColumnConfigurationForTableColumn(string $table, string $column): ?array
     {
-        return $this->tca[$table]['columns'][$column] ?? null;
+        return $GLOBALS['TCA'][$table]['columns'][$column] ?? null;
     }
 
     /**
@@ -276,19 +286,12 @@ class TcaService implements SingletonInterface
         return $label;
     }
 
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function isHiddenRootTable(string $tableName): bool
     {
-        return isset($this->tca[$tableName]['ctrl']['hideTable'], $this->tca[$tableName]['ctrl']['rootLevel'])
-               && true === (bool)$this->tca[$tableName]['ctrl']['hideTable']
-               && in_array($this->tca[$tableName]['ctrl']['rootLevel'], [1, -1], true);
-    }
-
-    /**
-     * @SuppressWarnings("PHPMD.Superglobals")
-     */
-    protected function getTca(): array
-    {
-        return $GLOBALS['TCA'] ?? [];
+        return isset($GLOBALS['TCA'][$tableName]['ctrl']['hideTable'], $GLOBALS['TCA'][$tableName]['ctrl']['rootLevel'])
+               && true === (bool)$GLOBALS['TCA'][$tableName]['ctrl']['hideTable']
+               && in_array($GLOBALS['TCA'][$tableName]['ctrl']['rootLevel'], [1, -1], true);
     }
 
     /**

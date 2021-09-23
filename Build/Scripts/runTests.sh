@@ -119,7 +119,7 @@ cd ../testing-docker || exit 1
 
 # Option defaults
 ROOT_DIR=`readlink -f ${PWD}/../../`
-TEST_SUITE="codeception"
+TEST_SUITE="unit"
 DBMS="mariadb"
 PHP_VERSION="7.2"
 PHP_XDEBUG_ON=0
@@ -189,7 +189,7 @@ DOCKER_PHP_IMAGE=`echo "php${PHP_VERSION}" | sed -e 's/\.//'`
 # Set $1 to first mass argument, this is the optional test file or test directory to execute
 shift $((OPTIND - 1))
 if [ -n "${1}" ]; then
-    TEST_FILE="public/typo3conf/ext/in2publish_core/${1}"
+    TEST_FILE="Web/typo3conf/ext/in2publish_core/${1}"
 fi
 
 if [ ${SCRIPT_VERBOSE} -eq 1 ]; then
@@ -238,6 +238,11 @@ case ${TEST_SUITE} in
                 SUITE_EXIT_CODE=$?
                 ;;
             sqlite)
+                # sqlite has a tmpfs as .Build/Web/typo3temp/var/tests/functional-sqlite-dbs/
+                # Since docker is executed as root (yay!), the path to this dir is owned by
+                # root if docker creates it. Thank you, docker. We create the path beforehand
+                # to avoid permission issues.
+                mkdir -p ${ROOT_DIR}/.Build/Web/typo3temp/var/tests/functional-sqlite-dbs/
                 docker-compose run functional_sqlite
                 SUITE_EXIT_CODE=$?
                 ;;
@@ -258,12 +263,6 @@ case ${TEST_SUITE} in
     unit)
         setUpDockerComposeDotEnv
         docker-compose run unit
-        SUITE_EXIT_CODE=$?
-        docker-compose down
-        ;;
-    codeception)
-        setUpDockerComposeDotEnv
-        docker-compose run codeception
         SUITE_EXIT_CODE=$?
         docker-compose down
         ;;

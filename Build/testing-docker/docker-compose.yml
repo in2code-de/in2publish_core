@@ -52,13 +52,14 @@ services:
         if [ ${SCRIPT_VERBOSE} -eq 1 ]; then
           set -x
         fi
-        if [ ${PHP_VERSION} == "8.0" ]; then
-          composer req --dev typo3/cms-core:"dev-master" \
+        if [[ ${PHP_VERSION} == "8.0" || ${PHP_VERSION} == "7.4" ]]; then
+          composer req typo3/cms-core:"dev-master" \
             typo3/cms-backend:"dev-master" \
             typo3/cms-frontend:"dev-master" \
             typo3/cms-extbase:"dev-master" \
             typo3/cms-fluid:"dev-master" \
-            typo3/cms-recordlist:"dev-master"
+            typo3/cms-recordlist:"dev-master" \
+            typo3/cms-install:"dev-master"
         fi
         composer config --unset platform.php;
         composer update --no-progress --no-interaction;
@@ -80,12 +81,13 @@ services:
           set -x
         fi
         if [ ${PHP_VERSION} == "8.0" ]; then
-          composer req --dev typo3/cms-core:"dev-master" \
+          composer req typo3/cms-core:"dev-master" \
             typo3/cms-backend:"dev-master" \
             typo3/cms-frontend:"dev-master" \
             typo3/cms-extbase:"dev-master" \
             typo3/cms-fluid:"dev-master" \
-            typo3/cms-recordlist:"dev-master"
+            typo3/cms-recordlist:"dev-master" \
+            typo3/cms-install:"dev-master"
         fi
         composer config platform.php ${PHP_VERSION}.0;
         composer update --prefer-lowest --no-progress --no-interaction;
@@ -120,10 +122,14 @@ services:
       - /etc/passwd:/etc/passwd:ro
       - /etc/group:/etc/group:ro
     environment:
-      typo3DatabaseName: func_test
-      typo3DatabaseUsername: root
-      typo3DatabasePassword: funcp
-      typo3DatabaseHost: mariadb10
+      localDatabaseName: func_test_local
+      localDatabaseUsername: root
+      localDatabasePassword: funcp
+      localDatabaseHost: mariadb10
+      foreignDatabaseName: func_test_foreign
+      foreignDatabaseUsername: root
+      foreignDatabasePassword: funcp
+      foreignDatabaseHost: mariadb10
     working_dir: ${ROOT_DIR}/.Build
     command: >
       /bin/sh -c "
@@ -138,13 +144,13 @@ services:
         php -v | grep '^PHP';
         if [ ${PHP_XDEBUG_ON} -eq 0 ]; then
           XDEBUG_MODE=\"off\" \
-          bin/phpunit -c Web/typo3conf/ext/enetcache/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
+          bin/phpunit -c Web/typo3conf/ext/in2publish_core/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
         else
           DOCKER_HOST=`route -n | awk '/^0.0.0.0/ { print $$2 }'`
           XDEBUG_MODE=\"debug,develop\" \
           XDEBUG_TRIGGER=\"foo\" \
           XDEBUG_CONFIG=\"client_port=${PHP_XDEBUG_PORT} client_host=$${DOCKER_HOST}\" \
-          bin/phpunit -c Web/typo3conf/ext/enetcache/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
+          bin/phpunit -c Web/typo3conf/ext/in2publish_core/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
         fi
       "
 
@@ -181,13 +187,13 @@ services:
         php -v | grep '^PHP';
         if [ ${PHP_XDEBUG_ON} -eq 0 ]; then
           XDEBUG_MODE=\"off\" \
-          bin/phpunit -c Web/typo3conf/ext/enetcache/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} --exclude-group not-mssql ${TEST_FILE};
+          bin/phpunit -c Web/typo3conf/ext/in2publish_core/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} --exclude-group not-mssql ${TEST_FILE};
         else
           DOCKER_HOST=`route -n | awk '/^0.0.0.0/ { print $$2 }'`
           XDEBUG_MODE=\"debug,develop\" \
           XDEBUG_TRIGGER=\"foo\" \
           XDEBUG_CONFIG=\"client_port=${PHP_XDEBUG_PORT} client_host=$${DOCKER_HOST}\" \
-          bin/phpunit -c Web/typo3conf/ext/enetcache/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} --exclude-group not-mssql ${TEST_FILE};
+          bin/phpunit -c Web/typo3conf/ext/in2publish_core/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} --exclude-group not-mssql ${TEST_FILE};
         fi
       "
 
@@ -221,13 +227,13 @@ services:
         php -v | grep '^PHP';
         if [ ${PHP_XDEBUG_ON} -eq 0 ]; then
           XDEBUG_MODE=\"off\" \
-          bin/phpunit -c Web/typo3conf/ext/enetcache/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} --exclude-group not-postgres ${TEST_FILE};
+          bin/phpunit -c Web/typo3conf/ext/in2publish_core/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} --exclude-group not-postgres ${TEST_FILE};
         else
           DOCKER_HOST=`route -n | awk '/^0.0.0.0/ { print $$2 }'`
           XDEBUG_MODE=\"debug,develop\" \
           XDEBUG_TRIGGER=\"foo\" \
           XDEBUG_CONFIG=\"client_port=${PHP_XDEBUG_PORT} client_host=$${DOCKER_HOST}\" \
-          bin/phpunit -c Web/typo3conf/ext/enetcache/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} --exclude-group not-postgres ${TEST_FILE};
+          bin/phpunit -c Web/typo3conf/ext/in2publish_core/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} --exclude-group not-postgres ${TEST_FILE};
         fi
       "
 
@@ -239,6 +245,8 @@ services:
       - ${HOST_HOME}:${HOST_HOME}
       - /etc/passwd:/etc/passwd:ro
       - /etc/group:/etc/group:ro
+    tmpfs:
+      - ${ROOT_DIR}/.Build/Web/typo3temp/var/tests/functional-sqlite-dbs/:rw,noexec,nosuid,uid=${HOST_UID}
     environment:
       typo3DatabaseDriver: pdo_sqlite
     working_dir: ${ROOT_DIR}/.Build
@@ -250,13 +258,13 @@ services:
         php -v | grep '^PHP';
         if [ ${PHP_XDEBUG_ON} -eq 0 ]; then
           XDEBUG_MODE=\"off\" \
-          bin/phpunit -c Web/typo3conf/ext/enetcache/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} --exclude-group not-sqlite ${TEST_FILE};
+          bin/phpunit -c Web/typo3conf/ext/in2publish_core/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} --exclude-group not-sqlite ${TEST_FILE};
         else
           DOCKER_HOST=`route -n | awk '/^0.0.0.0/ { print $$2 }'`
           XDEBUG_MODE=\"debug,develop\" \
           XDEBUG_TRIGGER=\"foo\" \
           XDEBUG_CONFIG=\"client_port=${PHP_XDEBUG_PORT} client_host=$${DOCKER_HOST}\" \
-          bin/phpunit -c Web/typo3conf/ext/enetcache/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} --exclude-group not-sqlite ${TEST_FILE};
+          bin/phpunit -c Web/typo3conf/ext/in2publish_core/Build/FunctionalTests.xml ${EXTRA_TEST_OPTIONS} --exclude-group not-sqlite ${TEST_FILE};
         fi
       "
 
@@ -294,39 +302,12 @@ services:
         php -v | grep '^PHP'
         if [ ${PHP_XDEBUG_ON} -eq 0 ]; then
           XDEBUG_MODE=\"off\" \
-          bin/phpunit -c Web/typo3conf/ext/enetcache/Build/UnitTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
+          bin/phpunit -c Web/typo3conf/ext/in2publish_core/Build/UnitTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
         else
           DOCKER_HOST=`route -n | awk '/^0.0.0.0/ { print $$2 }'`
           XDEBUG_MODE=\"debug,develop\" \
           XDEBUG_TRIGGER=\"foo\" \
           XDEBUG_CONFIG=\"client_port=${PHP_XDEBUG_PORT} client_host=$${DOCKER_HOST}\" \
-          bin/phpunit -c Web/typo3conf/ext/enetcache/Build/UnitTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
-        fi
-      "
-
-  codeception:
-    image: typo3/core-testing-${DOCKER_PHP_IMAGE}:latest
-    user: ${HOST_UID}
-    volumes:
-      - ${ROOT_DIR}:${ROOT_DIR}
-      - ${HOST_HOME}:${HOST_HOME}
-      - /etc/passwd:/etc/passwd:ro
-      - /etc/group:/etc/group:ro
-    working_dir: ${ROOT_DIR}
-    command: >
-      /bin/sh -c "
-        if [ ${SCRIPT_VERBOSE} -eq 1 ]; then
-          set -x
-        fi
-        php -v | grep '^PHP'
-        if [ ${PHP_XDEBUG_ON} -eq 0 ]; then
-          XDEBUG_MODE=\"off\" \
-          .Build/bin/codecept run unit;
-        else
-          DOCKER_HOST=`route -n | awk '/^0.0.0.0/ { print $$2 }'`
-          XDEBUG_MODE=\"debug,develop\" \
-          XDEBUG_TRIGGER=\"foo\" \
-          XDEBUG_CONFIG=\"client_port=${PHP_XDEBUG_PORT} client_host=$${DOCKER_HOST}\" \
-          .Build/bin/codecept run unit;
+          bin/phpunit -c Web/typo3conf/ext/in2publish_core/Build/UnitTests.xml ${EXTRA_TEST_OPTIONS} ${TEST_FILE};
         fi
       "

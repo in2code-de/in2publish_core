@@ -52,8 +52,10 @@
 		},
 		"typo3/cms": {
 			"cms-package-dir": "{$vendor-dir}/typo3/cms",
-			"web-dir": ".Build/public",
-			"extension-key": "in2publish_core"
+			"web-dir": ".Build/Web",
+			"app-dir": ".Build",
+			"extension-key": "in2publish_core",
+			"ignore-as-root": false
 		}
 	}
 }
