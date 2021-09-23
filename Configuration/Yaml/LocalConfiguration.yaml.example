@@ -223,6 +223,8 @@ factory:
     #   Changes are persisted immediately before the publish file module is rendered.
     enableSysFileReferenceUpdate: FALSE
 
+    # Requires: reserveSysFileUids: FALSE
+    #
     # Configuration for the limit on files inside a single folder.
     #
     # CAUTION: If set too high in2publish_core will can prevent database field overflows and crash the application!

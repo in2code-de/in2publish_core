@@ -34,6 +34,7 @@ use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use InvalidArgumentException;
 use LogicException;
+use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Log\Logger;
@@ -71,6 +72,7 @@ class DatabaseUtility
 
     /**
      * @return Connection|null
+     * @throws Throwable
      */
     public static function buildForeignDatabaseConnection()
     {
@@ -83,7 +85,15 @@ class DatabaseUtility
             } else {
                 $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
                 $foreignEnvService = GeneralUtility::makeInstance(ForeignEnvironmentService::class);
-                $initCommands = $foreignEnvService->getDatabaseInitializationCommands();
+                try {
+                    $initCommands = $foreignEnvService->getDatabaseInitializationCommands();
+                } catch (Throwable $exception) {
+                    static::$logger->error(
+                        'Exception in ForeignEnvironmentService. ' . $exception->getMessage(),
+                        ['exception' => $exception]
+                    );
+                    throw $exception;
+                }
 
                 if (!in_array('in2publish_foreign', $connectionPool->getConnectionNames(), true)) {
                     $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['in2publish_foreign'] = [

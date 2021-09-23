@@ -65,7 +65,9 @@ class FolderPublisherService
                 dirname($folderIdentifier),
                 true
             );
-            $success = $folderIdentifier === $createdFolder;
+            // Ignore slashes because of drivers which do not return the
+            // leading or trailing slashes (like fal_s3/aus_driver_amazon_s3)
+            $success = trim($folderIdentifier, '/') === trim($createdFolder, '/');
         } else {
             $success = $remoteFalDriver->deleteFolder($folderIdentifier, true);
         }

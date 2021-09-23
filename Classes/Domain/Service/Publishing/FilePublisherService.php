@@ -112,7 +112,9 @@ class FilePublisherService
             basename($fileIdentifier),
             true
         );
-        return $fileIdentifier === $newFileIdentifier;
+        // Ignore slashes because of drivers which do not return the
+        // leading or trailing slashes (like fal_s3/aus_driver_amazon_s3)
+        return trim($fileIdentifier, '/') === trim($newFileIdentifier, '/');
     }
 
     /**

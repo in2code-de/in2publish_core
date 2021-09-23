@@ -1,5 +1,14 @@
 # In2publish Core Change Log
 
+9.5.1:
+
+[META] Set the EM conf version number to 9.5.1
+[BUGFIX] Ignore missing slashes which some drivers omit (mistakenly)
+[DOCS] Add missing condition for folderFileLimit setting
+[BUGFIX] Support TSconfig markers in FlexForm additional_where_clause
+[BUGFIX] Catch exceptions from the ForeignEnvironmentService before they appear in actions
+[RELEASE] Version 9.5.0 with performance improvements, sorting publishing, and more features and fixes
+
 9.5.0:
 
 - [META] Set the branch alias version number to 9.5.x-dev

@@ -33,6 +33,7 @@ use In2code\In2publishCore\Command\PublishTaskRunner\RunTasksInQueueCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use Throwable;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -78,15 +79,26 @@ abstract class AbstractController extends ActionController
     protected function initializeAction()
     {
         parent::initializeAction();
-
-        if (static::class !== ToolsController::class && null === DatabaseUtility::buildForeignDatabaseConnection()) {
+        if (static::class !== ToolsController::class) {
+            try {
+                if (null !== DatabaseUtility::buildForeignDatabaseConnection()) {
+                    return;
+                }
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('error_not_connected', 'in2publish_core'),
+                    '',
+                    AbstractMessage::ERROR
+                );
+            } catch (Throwable $exception) {
+                $this->addFlashMessage(
+                    (string)$exception,
+                    LocalizationUtility::translate('error_connecting', 'in2publish_core')
+                    . ': ' . $exception->getMessage(),
+                    AbstractMessage::ERROR
+                );
+            }
             $this->actionMethodName = static::BLANK_ACTION;
             $this->arguments = $this->objectManager->get(Arguments::class);
-            $this->addFlashMessage(
-                LocalizationUtility::translate('error_not_connected', 'in2publish_core'),
-                '',
-                AbstractMessage::ERROR
-            );
         }
     }
 
@@ -97,7 +109,12 @@ abstract class AbstractController extends ActionController
     {
         parent::initializeView($view);
         $localDbAvailable = null !== DatabaseUtility::buildLocalDatabaseConnection();
-        $foreignDbAvailable = null !== DatabaseUtility::buildForeignDatabaseConnection();
+        try {
+            $foreignDbAvailable = null !== DatabaseUtility::buildForeignDatabaseConnection();
+        } catch (Throwable $exception) {
+            // Exception is already caught and processed in the initializeAction
+            $foreignDbAvailable = false;
+        }
         $this->view->assign('localDatabaseConnectionAvailable', $localDbAvailable);
         $this->view->assign('foreignDatabaseConnectionAvailable', $foreignDbAvailable);
         $this->view->assign('publishingAvailable', $localDbAvailable && $foreignDbAvailable);

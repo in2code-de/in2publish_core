@@ -584,11 +584,22 @@ class CommonRepository extends BaseRepository
             $this->identifierFieldName = 'uid';
             switch ($columnConfiguration['type']) {
                 case 'select':
+                    $whereClause = '';
+                    if (!empty($columnConfiguration['foreign_table_where'])) {
+                        /** @var ReplaceMarkersService $replaceMarkers */
+                        $whereClause = $columnConfiguration['foreign_table_where'];
+                        if (false !== strpos($whereClause, '#')) {
+                            $replaceMarkers = GeneralUtility::makeInstance(ReplaceMarkersService::class);
+                            $whereClause = QueryHelper::quoteDatabaseIdentifiers($this->localDatabase, $whereClause);
+                            $whereClause = $replaceMarkers->replaceMarkers($record, $whereClause, $propertyName);
+                        }
+                    }
                     $relatedRecords = $this->fetchRelatedRecordsBySelect(
                         $columnConfiguration,
                         $record,
                         $propertyName,
-                        $excludedTableNames
+                        $excludedTableNames,
+                        $whereClause
                     );
                     break;
                 case 'inline':
@@ -1107,7 +1118,8 @@ class CommonRepository extends BaseRepository
                         $column,
                         $excludedTableNames,
                         $config,
-                        $currentFlexFormDatum
+                        $currentFlexFormDatum,
+                        $key
                     );
                     $records = array_merge($records, $newRecords);
                 }
@@ -1122,6 +1134,7 @@ class CommonRepository extends BaseRepository
      * @param array $exclTables
      * @param $config
      * @param mixed $flexFormData
+     * @param string $key
      *
      * @return array
      * @throws Exception
@@ -1131,7 +1144,8 @@ class CommonRepository extends BaseRepository
         $column,
         array $exclTables,
         $config,
-        $flexFormData
+        $flexFormData,
+        string $key
     ): array {
         if ($this->shouldSkipSearchingForRelatedRecordsByFlexFormProperty($record, $config, $flexFormData)) {
             return [];
@@ -1142,7 +1156,27 @@ class CommonRepository extends BaseRepository
         $recordId = $record->getIdentifier();
         switch ($config['type']) {
             case 'select':
-                $records = $this->fetchRelatedRecordsBySelect($config, $record, $flexFormData, $exclTables, true);
+                $whereClause = '';
+                if (!empty($config['foreign_table_where'])) {
+                    /** @var ReplaceMarkersService $replaceMarkers */
+                    $whereClause = $config['foreign_table_where'];
+                    if (false !== strpos($whereClause, '{#')) {
+                        $whereClause = QueryHelper::quoteDatabaseIdentifiers($this->localDatabase, $whereClause);
+                    }
+                    if (false !== strpos($whereClause, '###')) {
+                        $replaceMarkers = GeneralUtility::makeInstance(ReplaceMarkersService::class);
+                        $whereClause = $replaceMarkers->replaceFlexFormMarkers($record, $whereClause, $column, $key);
+                    }
+                }
+
+                $records = $this->fetchRelatedRecordsBySelect(
+                    $config,
+                    $record,
+                    $column,
+                    $exclTables,
+                    $whereClause,
+                    $flexFormData
+                );
                 break;
             case 'inline':
                 $records = $this->fetchRelatedRecordsByInline(
@@ -1501,16 +1535,18 @@ class CommonRepository extends BaseRepository
      * @param RecordInterface $record
      * @param string $propertyName
      * @param array $excludedTableNames
-     * @param bool $overrideIdByRecord
+     * @param string $whereClause
+     * @param mixed $recordIdentifierOverride
      *
      * @return array
      */
     protected function fetchRelatedRecordsBySelect(
         array $columnConfiguration,
         RecordInterface $record,
-        $propertyName,
+        string $propertyName,
         array $excludedTableNames,
-        $overrideIdByRecord = false
+        string $whereClause,
+        $recordIdentifierOverride = null
     ): array {
         $tableName = $columnConfiguration['foreign_table'];
         $isL10nPointer = $propertyName === $this->tcaService->getTransOrigPointerField($record->getTableName());
@@ -1520,8 +1556,8 @@ class CommonRepository extends BaseRepository
         }
         $records = [];
 
-        if ($overrideIdByRecord) {
-            $recordIdentifier = $propertyName;
+        if (null !== $recordIdentifierOverride) {
+            $recordIdentifier = $recordIdentifierOverride;
         } else {
             $recordIdentifier = $record->getMergedProperty($propertyName);
         }
@@ -1531,15 +1567,6 @@ class CommonRepository extends BaseRepository
             if (!empty($columnConfiguration['MM'])) {
                 $records = $this->fetchRelatedRecordsBySelectMm($columnConfiguration, $record, $excludedTableNames);
             } else {
-                $whereClause = '';
-                if (!empty($columnConfiguration['foreign_table_where'])) {
-                    /** @var ReplaceMarkersService $replaceMarkers */
-                    $replaceMarkers = GeneralUtility::makeInstance(ReplaceMarkersService::class);
-                    $foreignTblWhere = $columnConfiguration['foreign_table_where'];
-                    $foreignTblWhere = QueryHelper::quoteDatabaseIdentifiers($this->localDatabase, $foreignTblWhere);
-                    $whereClause = $replaceMarkers->replaceMarkers($record, $foreignTblWhere, $propertyName);
-                }
-
                 $uidArray = [];
 
                 if (MathUtility::canBeInterpretedAsInteger($recordIdentifier)) {
