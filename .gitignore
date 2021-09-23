@@ -18,4 +18,5 @@ Resources/Private/Clickdummy/zextensions.css
 # Generated
 .Build
 Build/testing-docker/.env
+Build/.phpunit.result.cache
 composer.lock

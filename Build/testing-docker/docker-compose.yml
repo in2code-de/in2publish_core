@@ -52,15 +52,6 @@ services:
         if [ ${SCRIPT_VERBOSE} -eq 1 ]; then
           set -x
         fi
-        if [[ ${PHP_VERSION} == "8.0" || ${PHP_VERSION} == "7.4" ]]; then
-          composer req typo3/cms-core:"dev-master" \
-            typo3/cms-backend:"dev-master" \
-            typo3/cms-frontend:"dev-master" \
-            typo3/cms-extbase:"dev-master" \
-            typo3/cms-fluid:"dev-master" \
-            typo3/cms-recordlist:"dev-master" \
-            typo3/cms-install:"dev-master"
-        fi
         composer config --unset platform.php;
         composer update --no-progress --no-interaction;
         composer dumpautoload;
@@ -79,15 +70,6 @@ services:
       /bin/sh -c "
         if [ ${SCRIPT_VERBOSE} -eq 1 ]; then
           set -x
-        fi
-        if [ ${PHP_VERSION} == "8.0" ]; then
-          composer req typo3/cms-core:"dev-master" \
-            typo3/cms-backend:"dev-master" \
-            typo3/cms-frontend:"dev-master" \
-            typo3/cms-extbase:"dev-master" \
-            typo3/cms-fluid:"dev-master" \
-            typo3/cms-recordlist:"dev-master" \
-            typo3/cms-install:"dev-master"
         fi
         composer config platform.php ${PHP_VERSION}.0;
         composer update --prefer-lowest --no-progress --no-interaction;
