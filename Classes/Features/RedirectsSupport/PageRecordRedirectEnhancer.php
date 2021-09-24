@@ -95,8 +95,7 @@ class PageRecordRedirectEnhancer
 
     public function run(RecordInterface $record): void
     {
-        $redirects = $this->getExistingRedirects($record);
-        $redirects = $this->findRedirectsByUri($record, $redirects);
+        $redirects = $this->findRedirectsByUri($record);
         $redirects = $this->findMissingRowsByUid($redirects);
         $this->createAndAddRecordsToRecord($record, $redirects);
         $this->processLooseRedirects($record);
@@ -187,14 +186,32 @@ class PageRecordRedirectEnhancer
         return $redirects;
     }
 
-    protected function findRedirectsByUri(RecordInterface $record, array $redirects): array
+    protected function findRedirectsByUri(RecordInterface $record): array
     {
+        $basicUris = [];
+
+        $redirects = $this->getExistingRedirects($record);
+        foreach ($redirects as $redirect) {
+            if (!empty($redirect['local'])) {
+                $row = $redirect['local'];
+                $basicUris[] = (new Uri())->withHost($row['source_host'] ?? '')
+                                          ->withPath($row['source_path'] ?? '');
+            }
+            if (!empty($redirect['foreign'])) {
+                $row = $redirect['foreign'];
+                $basicUris[] = (new Uri())->withHost($row['source_host'] ?? '')
+                                          ->withPath($row['source_path'] ?? '');
+            }
+        }
+
         $pid = $record->getIdentifier();
         if ($record->localRecordExists()) {
             try {
                 $uri = BackendUtility::buildPreviewUri('pages', $pid, 'local');
                 if (null !== $uri) {
-                    $redirects = $this->collectRedirectsByUri([$uri], $redirects, 'local', $this->localDatabase);
+                    $uris = $basicUris;
+                    $uris[] = $uri;
+                    $redirects = $this->collectRedirectsByUri($uris, $redirects, 'local', $this->localDatabase);
                 }
             } catch (Throwable $exception) {
                 // no-op
@@ -205,7 +222,9 @@ class PageRecordRedirectEnhancer
             try {
                 $uri = BackendUtility::buildPreviewUri('pages', $pid, 'foreign');
                 if (null !== $uri) {
-                    $redirects = $this->collectRedirectsByUri([$uri], $redirects, 'foreign', $this->foreignDatabase);
+                    $uris = $basicUris;
+                    $uris[] = $uri;
+                    $redirects = $this->collectRedirectsByUri($uris, $redirects, 'foreign', $this->foreignDatabase);
                 }
             } catch (Throwable $exception) {
                 // no-op
@@ -236,6 +255,7 @@ class PageRecordRedirectEnhancer
         }
     }
 
+    /** @return array<int, RecordInterface> */
     protected function getExistingRedirects(RecordInterface $record): array
     {
         $redirects = [];
