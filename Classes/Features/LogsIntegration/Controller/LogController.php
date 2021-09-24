@@ -36,15 +36,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_reverse;
 use function ksort;
 
-/**
- * Class LogController
- */
 class LogController extends \CoStack\Logs\Controller\LogController
 {
     /**
      * TODO: Check if the configuration can be accessed and merged somewhere else
-     *
-     * @var array
      */
     protected $txLogsViewConfig = [
         'templateRootPaths' => [
@@ -58,14 +53,18 @@ class LogController extends \CoStack\Logs\Controller\LogController
         ],
     ];
 
+    public function __construct(ExecutionTimeService $executionTimeService)
+    {
+        $executionTimeService->start();
+    }
+
     /**
      * @SuppressWarnings(PHPMD.Superglobals)
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function initializeAction()
+    protected function initializeAction(): void
     {
         parent::initializeAction();
-        GeneralUtility::makeInstance(ExecutionTimeService::class)->start();
         $this->logConfiguration = $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'];
 
         $config = $this->configurationManager->getConfiguration('FullTypoScript');
@@ -76,17 +75,17 @@ class LogController extends \CoStack\Logs\Controller\LogController
     }
 
     /**
-     * @param array $extbaseConfig
+     * @param array $extbaseFrameworkConfiguration
      * @param string $setting
      *
      * @return array
      */
-    protected function getViewProperty($extbaseConfig, $setting): array
+    protected function getViewProperty($extbaseFrameworkConfiguration, $setting): array
     {
         if (isset($this->txLogsViewConfig[$setting])) {
             ksort($this->txLogsViewConfig[$setting]);
             return array_reverse($this->txLogsViewConfig[$setting]);
         }
-        return parent::getViewProperty($extbaseConfig, $setting);
+        return parent::getViewProperty($extbaseFrameworkConfiguration, $setting);
     }
 }

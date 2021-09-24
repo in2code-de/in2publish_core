@@ -30,27 +30,35 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly;
  */
 
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\Task\RebuildRedirectCacheTask;
-use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class RedirectCacheUpdater implements SingletonInterface
+class RedirectCacheUpdater
 {
+    /** @var TaskRepository */
+    protected $taskRepository;
+
     protected $redirectWasPublished = false;
 
-    public function publishRecordRecursiveAfterPublishing(string $tableName): void
+    public function __construct(TaskRepository $taskRepository)
     {
-        if ('sys_redirect' !== $tableName) {
+        $this->taskRepository = $taskRepository;
+    }
+
+    public function publishRecordRecursiveAfterPublishing(PublishingOfOneRecordEnded $event): void
+    {
+        $record = $event->getRecord();
+        if ('sys_redirect' !== $record->getTableName()) {
             return;
         }
         $this->redirectWasPublished = true;
     }
 
-    public function publishRecordRecursiveEnd()
+    public function publishRecordRecursiveEnd(): void
     {
         if ($this->redirectWasPublished) {
-            $task = GeneralUtility::makeInstance(RebuildRedirectCacheTask::class, []);
-            GeneralUtility::makeInstance(TaskRepository::class)->add($task);
+            $this->taskRepository->add(new RebuildRedirectCacheTask([]));
         }
+        $this->redirectWasPublished = false;
     }
 }

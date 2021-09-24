@@ -35,31 +35,21 @@ use function fclose;
 use function fsockopen;
 use function is_resource;
 
-/**
- * Class HostNameValidator
- */
 class HostNameValidator implements ValidatorInterface
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $port;
 
     /**
-     * HostNameValidator constructor.
-     *
      * @param int $port Set an other port if the default one is actually used
      */
-    public function __construct($port = 61252)
+    public function __construct(int $port = 61252)
     {
         $this->port = $port;
     }
 
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    public function validate(ValidationContainer $container, $value)
+    /** @param mixed $value */
+    public function validate(ValidationContainer $container, $value): void
     {
         $resource = @fsockopen($value, $this->port, $errorCode, $errorMessage, 1);
         if (false === $resource && (0 === $errorCode || 111 !== $errorCode)) {

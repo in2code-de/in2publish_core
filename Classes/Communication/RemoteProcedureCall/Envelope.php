@@ -35,40 +35,23 @@ use function array_filter;
 use function serialize;
 use function unserialize;
 
-/**
- * Class Envelope
- */
 class Envelope
 {
-    /**
-     * @var int
-     */
     protected $uid = 0;
 
-    /**
-     * @var string
-     */
     protected $command = '';
 
-    /**
-     * @var string
-     */
     protected $request = '';
 
-    /**
-     * @var string
-     */
     protected $response = '';
 
     /**
-     * Envelope constructor.
-     *
      * @param string $command
      * @param array $request
      * @param mixed $response
      * @param int|null $uid
      */
-    public function __construct($command, array $request = [], $response = null, $uid = null)
+    public function __construct(string $command, array $request = [], $response = null, int $uid = null)
     {
         $this->setCommand($command);
         $this->setRequest($request);
@@ -80,42 +63,30 @@ class Envelope
         }
     }
 
-    /**
-     * @return int
-     */
     public function getUid(): int
     {
         return $this->uid;
     }
 
-    /**
-     * @param int $uid
-     */
-    public function setUid($uid)
+    public function setUid(int $uid): void
     {
         if (0 !== $this->uid) {
             throw new LogicException('Can not overrule an envelope\'s uid', 1474386795);
         }
-        $this->uid = (int)$uid;
+        $this->uid = $uid;
     }
 
-    /**
-     * @return string
-     */
     public function getCommand(): string
     {
         return $this->command;
     }
 
-    /**
-     * @param string $command
-     */
-    public function setCommand($command)
+    public function setCommand(string $command): void
     {
         if ('' !== $this->command) {
             throw new LogicException('Can not overrule an envelope\'s command', 1474386882);
         }
-        $this->command = (string)$command;
+        $this->command = $command;
     }
 
     /**
@@ -129,7 +100,7 @@ class Envelope
     /**
      * @param mixed $request
      */
-    public function setRequest(array $request)
+    public function setRequest(array $request): void
     {
         if ('' !== $this->request) {
             throw new LogicException('Can not overrule an envelope\'s request', 1474386975);
@@ -148,7 +119,7 @@ class Envelope
     /**
      * @param mixed $response
      */
-    public function setResponse($response)
+    public function setResponse($response): void
     {
         if ('' !== $this->response) {
             throw new LogicException('Can not overrule an envelope\'s response', 1474386986);
@@ -156,9 +127,6 @@ class Envelope
         $this->response = serialize($response);
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return array_filter(
@@ -171,11 +139,6 @@ class Envelope
         );
     }
 
-    /**
-     * @param array $values
-     *
-     * @return Envelope
-     */
     public static function fromArray(array $values): Envelope
     {
         $object = new Envelope('', []);

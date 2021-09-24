@@ -31,16 +31,12 @@ namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repositor
  */
 
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
 
 use function array_column;
 use function array_combine;
 
-/**
- * Class TableCacheRepository can save table values to runtime. So another db query may not needed
- */
 class TableCacheRepository implements SingletonInterface
 {
     /**
@@ -73,14 +69,8 @@ class TableCacheRepository implements SingletonInterface
 
     /**
      * Get properties from cache by given tableName and uid
-     *
-     * @param string $tableName
-     * @param int $uniqueIdentifier
-     * @param string $databaseName
-     *
-     * @return array
      */
-    public function findByUid($tableName, $uniqueIdentifier, $databaseName = 'local'): array
+    public function findByUid(string $tableName, int $uniqueIdentifier, string $databaseName = 'local'): array
     {
         $cache = $this->getCache($databaseName);
         if (!empty($cache[$tableName][$uniqueIdentifier])) {
@@ -92,10 +82,10 @@ class TableCacheRepository implements SingletonInterface
             $query->getRestrictions()->removeAll();
             $row = $query->select('*')
                          ->from($tableName)
-                         ->where($query->expr()->eq('uid', (int)$uniqueIdentifier))
+                         ->where($query->expr()->eq('uid', $uniqueIdentifier))
                          ->setMaxResults(1)
                          ->execute()
-                         ->fetch(PDO::FETCH_ASSOC);
+                         ->fetchAssociative();
             if (empty($row)) {
                 return [];
             }
@@ -108,14 +98,8 @@ class TableCacheRepository implements SingletonInterface
 
     /**
      * Get properties from cache by given tableName and pid
-     *
-     * @param string $tableName
-     * @param int $pageIdentifier
-     * @param string $databaseName
-     *
-     * @return array
      */
-    public function findByPid($tableName, $pageIdentifier, $databaseName = 'local'): array
+    public function findByPid(string $tableName, int $pageIdentifier, string $databaseName = 'local'): array
     {
         $connection = $this->getConnection($databaseName);
         if ($connection instanceof Connection) {
@@ -123,10 +107,10 @@ class TableCacheRepository implements SingletonInterface
             $query->getRestrictions()->removeAll();
             $rows = $query->select('*')
                           ->from($tableName)
-                          ->where($query->expr()->eq('pid', (int)$pageIdentifier))
+                          ->where($query->expr()->eq('pid', $pageIdentifier))
                           ->orderBy('uid', 'ASC')
                           ->execute()
-                          ->fetchAll(PDO::FETCH_ASSOC);
+                          ->fetchAllAssociative();
             $rows = array_combine(array_column($rows, 'uid'), $rows);
             $this->cacheRecords($tableName, $rows, $databaseName);
         } else {
@@ -137,32 +121,23 @@ class TableCacheRepository implements SingletonInterface
 
     /**
      * Store tables in cache
-     *
-     * @param string $tableName
-     * @param array $rows
-     * @param string $databaseName
-     *
-     * @return void
      */
-    protected function cacheRecords($tableName, array $rows, $databaseName = 'local')
+    protected function cacheRecords(string $tableName, array $rows, string $databaseName = 'local'): void
     {
         foreach ($rows as $row) {
-            $this->cacheSingleRecord($tableName, $row['uid'], $row, $databaseName);
+            $this->cacheSingleRecord($tableName, (int)$row['uid'], $row, $databaseName);
         }
     }
 
     /**
      * Store table properties in cache
-     *
-     * @param string $tableName
-     * @param int $uid
-     * @param array $properties
-     * @param string $databaseName
-     *
-     * @return void
      */
-    protected function cacheSingleRecord($tableName, $uid, array $properties, $databaseName = 'local')
-    {
+    protected function cacheSingleRecord(
+        string $tableName,
+        int $uid,
+        array $properties,
+        string $databaseName = 'local'
+    ): void {
         $cache = &$this->localCache;
         if ($databaseName === 'foreign') {
             $cache = &$this->foreignCache;
@@ -170,12 +145,7 @@ class TableCacheRepository implements SingletonInterface
         $cache[$tableName][$uid] = $properties;
     }
 
-    /**
-     * @param string $databaseName
-     *
-     * @return array
-     */
-    protected function getCache($databaseName = 'local'): array
+    protected function getCache(string $databaseName = 'local'): array
     {
         $cache = $this->localCache;
         if ($databaseName === 'foreign') {
@@ -184,12 +154,7 @@ class TableCacheRepository implements SingletonInterface
         return $cache;
     }
 
-    /**
-     * @param $databaseName
-     *
-     * @return Connection|null
-     */
-    protected function getConnection($databaseName)
+    protected function getConnection(string $databaseName): ?Connection
     {
         return DatabaseUtility::buildDatabaseConnectionForSide($databaseName);
     }

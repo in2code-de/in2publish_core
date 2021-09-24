@@ -57,7 +57,6 @@
 - [BUGFIX] Removed duplicate file name (closes #83)
 - [RELEASE] Version 9.4.0 with redirects support
 
-
 9.4.0:
 
 - [META] Set the branch alias version number to 9.4.x-dev

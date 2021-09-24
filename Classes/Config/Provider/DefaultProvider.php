@@ -31,37 +31,35 @@ namespace In2code\In2publishCore\Config\Provider;
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Service\Context\ContextService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class DefaultProvider
- */
 class DefaultProvider implements ProviderInterface
 {
-    /**
-     * @return bool
-     */
-    public function isAvailable()
+    /** @var ConfigContainer */
+    private $configContainer;
+
+    /** @var ContextService */
+    private $contextService;
+
+    public function __construct(ConfigContainer $configContainer, ContextService $contextService)
+    {
+        $this->configContainer = $configContainer;
+        $this->contextService = $contextService;
+    }
+
+    public function isAvailable(): bool
     {
         return true;
     }
 
-    /**
-     * @return array
-     */
-    public function getConfig()
+    public function getConfig(): array
     {
-        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-        if (GeneralUtility::makeInstance(ContextService::class)->isLocal()) {
-            return $configContainer->getLocalDefinition()->getDefaults();
+        if ($this->contextService->isLocal()) {
+            return $this->configContainer->getLocalDefinition()->getDefaults();
         }
-        return $configContainer->getForeignDefinition()->getDefaults();
+        return $this->configContainer->getForeignDefinition()->getDefaults();
     }
 
-    /**
-     * @return int
-     */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 10;
     }

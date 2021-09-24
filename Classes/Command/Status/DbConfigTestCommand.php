@@ -30,35 +30,38 @@ namespace In2code\In2publishCore\Command\Status;
  */
 
 use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use TYPO3\CMS\Core\Database\Connection;
 
+use function array_column;
 use function base64_encode;
 use function json_encode;
 
 class DbConfigTestCommand extends Command
 {
-    public const DESCRIPTION = 'Reads from the local task table and writes all found hashes for the db config test';
     public const IDENTIFIER = 'in2publish_core:status:dbconfigtest';
 
-    protected function configure()
+    /** @var Connection */
+    protected $localDatabase;
+
+    public function __construct(Connection $localDatabase, string $name = null)
     {
-        $this->setDescription(self::DESCRIPTION)
-             ->setHidden(true);
+        parent::__construct($name);
+        $this->localDatabase = $localDatabase;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $queryBuilder = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+        $queryBuilder = $this->localDatabase->createQueryBuilder();
         $predicates = $queryBuilder->expr()->eq(
             'task_type',
             $queryBuilder->createNamedParameter(ForeignDatabaseConfigTest::DB_CONFIG_TEST_TYPE)
         );
         $queryBuilder->select('*')->from('tx_in2code_in2publish_task')->where($predicates);
-        $result = $queryBuilder->execute()->fetchAll();
+        $result = $queryBuilder->execute()->fetchAllAssociative();
         $output->writeln('DB Config: ' . base64_encode(json_encode(array_column($result, 'configuration'))));
-        return 0;
+        return Command::SUCCESS;
     }
 }

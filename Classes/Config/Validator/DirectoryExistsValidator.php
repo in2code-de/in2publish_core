@@ -34,16 +34,10 @@ use In2code\In2publishCore\Config\ValidationContainer;
 use function file_exists;
 use function is_dir;
 
-/**
- * Class DirectoryExistsValidator
- */
 class DirectoryExistsValidator implements ValidatorInterface
 {
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    public function validate(ValidationContainer $container, $value)
+    /** @param mixed $value */
+    public function validate(ValidationContainer $container, $value): void
     {
         if (!file_exists($value)) {
             $container->addError('Directory does not exist');

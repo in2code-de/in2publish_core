@@ -19,26 +19,28 @@ use function strpos;
 
 class ForeignConfigurationFormatTest implements TestCaseInterface
 {
+    /** @var RemoteCommandDispatcher */
+    protected $remoteCommandDispatcher;
+
+    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher)
+    {
+        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
+    }
+
     public function run(): TestResult
     {
-        $rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
-        $request = GeneralUtility::makeInstance(
-            RemoteCommandRequest::class,
-            ConfigFormatTestCommand::IDENTIFIER
-        );
-        $response = $rceDispatcher->dispatch($request);
+        $request = new RemoteCommandRequest(ConfigFormatTestCommand::IDENTIFIER);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
         $errors = $response->getErrors();
         $output = $response->getOutput();
         $token = $this->tokenizeResponse($output);
 
-        if ($response->isSuccessful()) {
-            if (isset($token['Config Format Test'])) {
-                $testResults = json_decode(base64_decode($token['Config Format Test']), true);
-                if (empty($testResults)) {
-                    return new TestResult('configuration.foreign_format_okay');
-                }
-                return new TestResult('configuration.foreign_format_error', TestResult::ERROR, $testResults);
+        if (isset($token['Config Format Test']) && $response->isSuccessful()) {
+            $testResults = json_decode(base64_decode($token['Config Format Test']), true);
+            if (empty($testResults)) {
+                return new TestResult('configuration.foreign_format_okay');
             }
+            return new TestResult('configuration.foreign_format_error', TestResult::ERROR, $testResults);
         }
 
         $messages = array_merge($errors, $output);

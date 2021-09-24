@@ -29,38 +29,23 @@ namespace In2code\In2publishCore\Testing\Data;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Event\RequiredTablesWereIdentified;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
-/**
- * Class RequiredTablesDataProvider
- */
 class RequiredTablesDataProvider implements SingletonInterface
 {
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
+    /** @var EventDispatcher */
+    protected $eventDispatcher;
 
-    /**
-     * @var array
-     */
+    /** * @var array */
     protected $cache = [];
 
-    /**
-     * RequiredTablesDataProvider constructor.
-     */
-    public function __construct()
+    public function __construct(EventDispatcher $eventDispatcher)
     {
-        $this->dispatcher = GeneralUtility::makeInstance(Dispatcher::class);
+        $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @return array
-     */
     public function getRequiredTables(): array
     {
         if (empty($this->cache)) {
@@ -76,17 +61,13 @@ class RequiredTablesDataProvider implements SingletonInterface
     }
 
     /**
-     * @param array $tables
-     *
-     * @return array
+     * @param array<int, string> $tables
+     * @return array<int, string>
      */
     protected function overruleTables(array $tables): array
     {
-        try {
-            [$tables] = $this->dispatcher->dispatch(__CLASS__, 'overruleTables', [$tables]);
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
-        }
-        return $tables;
+        $event = new RequiredTablesWereIdentified($tables);
+        $this->eventDispatcher->dispatch($event);
+        return $event->getTables();
     }
 }

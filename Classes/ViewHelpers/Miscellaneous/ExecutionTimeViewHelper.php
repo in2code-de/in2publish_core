@@ -29,19 +29,20 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  */
 
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class ExecutionTimeViewHelper
- */
 class ExecutionTimeViewHelper extends AbstractViewHelper
 {
-    /**
-     * @return float
-     */
+    /** @var ExecutionTimeService */
+    protected $executionTimeService;
+
+    public function __construct(ExecutionTimeService $executionTimeService)
+    {
+        $this->executionTimeService = $executionTimeService;
+    }
+
     public function render(): float
     {
-        return GeneralUtility::makeInstance(ExecutionTimeService::class)->getExecutionTime();
+        return $this->executionTimeService->getExecutionTime();
     }
 }

@@ -31,9 +31,6 @@ use Psr\Http\Message\UriInterface;
 
 use function explode;
 
-/**
- * Class UriUtility
- */
 class UriUtility
 {
     public static function normalizeUri(UriInterface $uri): UriInterface

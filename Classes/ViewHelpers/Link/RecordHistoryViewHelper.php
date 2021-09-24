@@ -34,20 +34,20 @@ use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
-/**
- * Class RecordHistoryViewHelper
- */
 class RecordHistoryViewHelper extends AbstractTagBasedViewHelper
 {
-    /**
-     * @var string
-     */
+    /** @var UriBuilder */
+    protected $uriBuilder;
+
     protected $tagName = 'a';
 
-    /**
-     * {@inheritDoc}
-     */
-    public function initializeArguments()
+    public function __construct(UriBuilder $uriBuilder)
+    {
+        parent::__construct();
+        $this->uriBuilder = $uriBuilder;
+    }
+
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerUniversalTagAttributes();
@@ -57,8 +57,6 @@ class RecordHistoryViewHelper extends AbstractTagBasedViewHelper
     }
 
     /**
-     * @return string
-     *
      * @throws RouteNotFoundException
      */
     public function render(): string
@@ -74,8 +72,7 @@ class RecordHistoryViewHelper extends AbstractTagBasedViewHelper
             'element' => $this->arguments['table'] . ':' . $this->arguments['uid'],
             'returnUrl' => $this->arguments['returnUrl'],
         ];
-        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        $uri = (string)$uriBuilder->buildUriFromRoute('record_history', $params);
+        $uri = (string)$this->uriBuilder->buildUriFromRoute('record_history', $params);
         $this->tag->addAttribute('href', $uri);
         $this->tag->setContent($this->renderChildren());
         $this->tag->forceClosingTag(true);

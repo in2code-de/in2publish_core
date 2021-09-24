@@ -33,36 +33,28 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 use function ucfirst;
 
-/**
- * Class GetFieldLabelFromLocallangViewHelper
- */
 class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
 {
-    /**
-     * @var array
-     */
-    protected $tca = [];
+    /** @var array */
+    protected $tca;
 
-    /**
-     * @var LanguageService
-     */
+    /** @var LanguageService */
     protected $languageService;
 
-    /**
-     *
-     */
-    public function initializeArguments()
+    /** @SuppressWarnings("PHPMD.Superglobals") */
+    public function __construct()
+    {
+        $this->tca = $GLOBALS['TCA'];
+        $this->languageService = $GLOBALS['LANG'];
+    }
+
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('fieldName', 'string', 'The field name to get the localized label from', true);
         $this->registerArgument('tableName', 'string', 'The table name in which the field can be found', true);
     }
 
-    /**
-     * Get field name from locallang and TCA definition
-     *
-     * @return string
-     */
     public function render(): string
     {
         $fieldName = $this->arguments['fieldName'];
@@ -78,16 +70,5 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
         }
 
         return $label;
-    }
-
-    /**
-     * @return void
-     *
-     * @SuppressWarnings("PHPMD.Superglobals")
-     */
-    public function initialize()
-    {
-        $this->tca = $GLOBALS['TCA'];
-        $this->languageService = $GLOBALS['LANG'];
     }
 }

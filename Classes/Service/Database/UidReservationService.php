@@ -29,39 +29,26 @@ namespace In2code\In2publishCore\Service\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Statement;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use RuntimeException;
+use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function max;
 use function spl_object_hash;
 use function sprintf;
 
-/**
- * Class UidReservationService
- */
 class UidReservationService
 {
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     protected $localDatabaseConnection;
 
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     protected $foreignDatabaseConnection;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $cache = [];
 
-    /**
-     * UidReservationService constructor.
-     */
     public function __construct()
     {
         $this->localDatabaseConnection = DatabaseUtility::buildLocalDatabaseConnection();
@@ -90,11 +77,6 @@ class UidReservationService
         return $possibleUid;
     }
 
-    /**
-     * @param Connection $databaseConnection
-     *
-     * @return string
-     */
     protected function determineDatabaseOfConnection(Connection $databaseConnection): string
     {
         $cacheKey = spl_object_hash($databaseConnection);
@@ -105,29 +87,19 @@ class UidReservationService
         return $this->cache[$cacheKey];
     }
 
-    /**
-     * @param int $autoIncrement
-     */
-    protected function setAutoIncrement(int $autoIncrement)
+    protected function setAutoIncrement(int $autoIncrement): void
     {
         $statement = 'ALTER TABLE sys_file AUTO_INCREMENT = ' . $autoIncrement;
         /** @var Connection $databaseConnection */
         foreach ([$this->localDatabaseConnection, $this->foreignDatabaseConnection] as $databaseConnection) {
             try {
-                $databaseConnection
-                    ->prepare($statement)
-                    ->execute();
-            } catch (DBALException $e) {
-                throw new RuntimeException('Failed to increase auto_increment on sys_file', 1475248851);
+                $databaseConnection->executeQuery($statement);
+            } catch (Throwable $exception) {
+                throw new RuntimeException('Failed to increase auto_increment on sys_file', 1475248851, $exception);
             }
         }
     }
 
-    /**
-     * @param int $uid
-     *
-     * @return bool
-     */
     protected function isUidFree(int $uid): bool
     {
         /** @var Connection $databaseConnection */
@@ -138,7 +110,7 @@ class UidReservationService
                 ->from('sys_file')
                 ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid)))
                 ->execute()
-                ->fetchColumn(0);
+                ->fetchOne();
 
             if (0 !== $numberOfRows) {
                 return false;
@@ -148,11 +120,6 @@ class UidReservationService
         return true;
     }
 
-    /**
-     * @param Connection $databaseConnection
-     *
-     * @return int
-     */
     protected function fetchSysFileAutoIncrementFromDatabase(Connection $databaseConnection): int
     {
         $statement = sprintf(
@@ -161,12 +128,9 @@ class UidReservationService
         );
 
         try {
-            /** @var Statement $tableQuery */
-            $tableQuery = $databaseConnection->prepare($statement);
-            $tableQuery->execute();
-            $tableStatus = $tableQuery->fetch();
-        } catch (DBALException $e) {
-            throw new RuntimeException('Could not select table status from database', 1475242494);
+            $tableStatus = $databaseConnection->executeQuery($statement)->fetchAssociative();
+        } catch (Throwable $exception) {
+            throw new RuntimeException('Could not select table status from database', 1475242494, $exception);
         }
         if (!isset($tableStatus['Auto_increment'])) {
             throw new RuntimeException('Could not fetch Auto_increment value from query result', 1475242706);

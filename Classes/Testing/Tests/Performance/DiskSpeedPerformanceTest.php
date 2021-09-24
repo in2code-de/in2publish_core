@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection PhpComposerExtensionStubsInspection */
+
 declare(strict_types=1);
 
 namespace In2code\In2publishCore\Testing\Tests\Performance;
@@ -60,18 +62,18 @@ class DiskSpeedPerformanceTest implements TestCaseInterface
     {
         $canaryFile = GeneralUtility::tempnam('tx_contentpublisher_test_');
         register_shutdown_function(
-            function () use ($canaryFile) {
+            static function () use ($canaryFile) {
                 unlink($canaryFile);
             }
         );
         $targetFile = GeneralUtility::tempnam('tx_contentpublisher_test_');
         register_shutdown_function(
-            function () use ($targetFile) {
+            static function () use ($targetFile) {
                 unlink($targetFile);
             }
         );
 
-        $canaryTarget = fopen($canaryFile, 'w');
+        $canaryTarget = fopen($canaryFile, 'wb');
         for ($i = 0; $i < 10; $i++) {
             $bytes = random_bytes(1024 * 1024);
             fwrite($canaryTarget, $bytes);
@@ -79,8 +81,13 @@ class DiskSpeedPerformanceTest implements TestCaseInterface
         fclose($canaryTarget);
 
         // Read speed
-        $canaryTarget = fopen($canaryFile, 'r');
+        $canaryTarget = fopen($canaryFile, 'rb');
         $start = microtime(true);
+        /**
+         * @noinspection LoopWhichDoesNotLoopInspection
+         * @noinspection PhpStatementHasEmptyBodyInspection
+         * @noinspection MissingOrEmptyGroupStatementInspection
+         */
         while (fgets($canaryTarget, 1024)) {
             // Do nothing with the read content
         }
@@ -88,8 +95,8 @@ class DiskSpeedPerformanceTest implements TestCaseInterface
         fclose($canaryTarget);
 
         // Write speed
-        $canarySource = fopen($canaryFile, 'r');
-        $canaryTarget = fopen($targetFile, 'w');
+        $canarySource = fopen($canaryFile, 'rb');
+        $canaryTarget = fopen($targetFile, 'wb');
         $start = microtime(true);
         while ($bytes = fgets($canarySource, 1024)) {
             fwrite($canaryTarget, $bytes);
@@ -110,6 +117,7 @@ class DiskSpeedPerformanceTest implements TestCaseInterface
         if ($severity !== TestResult::OK) {
             array_unshift($messages, 'performance.fs_io.slow_help');
         }
+        /** @noinspection ForgottenDebugOutputInspection */
         if (function_exists('xdebug_is_enabled') && xdebug_is_enabled()) {
             $severity = TestResult::WARNING;
             array_unshift($messages, 'performance.fs_io.xdebug_enabled');

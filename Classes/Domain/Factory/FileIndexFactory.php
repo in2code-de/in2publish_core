@@ -46,34 +46,26 @@ use function explode;
 use function strtolower;
 use function time;
 
-/**
- * Class FileIndexFactory
- */
+use const PATHINFO_EXTENSION;
+
 class FileIndexFactory
 {
-    /**
-     * @var DriverInterface
-     */
-    protected $localDriver = null;
+    /** @var DriverInterface */
+    protected $localDriver;
 
-    /**
-     * @var DriverInterface
-     */
-    protected $foreignDriver = null;
+    /** @var DriverInterface */
+    protected $foreignDriver;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $sysFileTca = [];
 
-    /**
-     * @var ContextService
-     */
+    /** @var ContextService */
     protected $contextService;
 
+    /** @var UidReservationService */
+    protected $uidReservationService;
+
     /**
-     * FileIndexFactory constructor.
-     *
      * @param DriverInterface $localDriver
      * @param DriverInterface $foreignDriver
      *
@@ -86,6 +78,7 @@ class FileIndexFactory
         $this->sysFileTca = GeneralUtility::makeInstance(TcaService::class)
                                           ->getConfigurationArrayForTable('sys_file');
         $this->contextService = GeneralUtility::makeInstance(ContextService::class);
+        $this->uidReservationService = GeneralUtility::makeInstance(UidReservationService::class);
     }
 
     /**
@@ -96,7 +89,7 @@ class FileIndexFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function makeInstanceForSide($side, $identifier): RecordInterface
+    public function makeInstanceForSide(string $side, string $identifier): RecordInterface
     {
         $foreignProperties = [];
         $localProperties = [];
@@ -104,7 +97,7 @@ class FileIndexFactory
 
         if ('both' === $side || 'local' === $side) {
             $localProperties = $this->getFileIndexArray($identifier, 'local');
-            $uid = $localProperties['uid'];
+            $uid = (int)$localProperties['uid'];
         }
 
         if ('both' === $side || 'foreign' === $side) {
@@ -127,8 +120,12 @@ class FileIndexFactory
      * @param string $side
      * @param bool $clearOpposite Set to true if you want to remove all properties from the "opposite" side
      */
-    public function updateFileIndexInfoBySide(RecordInterface $record, $identifier, $side, $clearOpposite = false)
-    {
+    public function updateFileIndexInfoBySide(
+        RecordInterface $record,
+        string $identifier,
+        string $side,
+        bool $clearOpposite = false
+    ): void {
         $oppositeSide = ($side === 'local' ? 'foreign' : 'local');
         $uid = $record->getPropertyBySideIdentifier($oppositeSide, 'uid');
 
@@ -141,13 +138,11 @@ class FileIndexFactory
         $record->setDirtyProperties()->calculateState();
     }
 
-    /**
-     * @param RecordInterface $record
-     * @param string $localIdentifier
-     * @param string $foreignIdentifier
-     */
-    public function updateFileIndexInfo(RecordInterface $record, $localIdentifier, $foreignIdentifier)
-    {
+    public function updateFileIndexInfo(
+        RecordInterface $record,
+        string $localIdentifier,
+        string $foreignIdentifier
+    ): void {
         $uid = $record->getIdentifier();
         $record->addAdditionalProperty('recordDatabaseState', $record->getState());
         $localFileInfo = $this->getFileIndexArray($localIdentifier, 'local', $uid);
@@ -164,14 +159,13 @@ class FileIndexFactory
      * This method is mostly a copy of an indexer method
      *
      * @param string $identifier
-     * @param $side
+     * @param string $side
      * @param int $uid Predefined UID
      *
      * @return array
      * @see \TYPO3\CMS\Core\Resource\Index\Indexer::gatherFileInformationArray
-     *
      */
-    public function getFileIndexArray($identifier, $side, $uid = 0): array
+    public function getFileIndexArray(string $identifier, string $side, int $uid = 0): array
     {
         $fileInfo = $this->getDriverSpecificFileInfo($identifier, $side);
 
@@ -199,11 +193,11 @@ class FileIndexFactory
         $fileInfo['pid'] = 0;
 
         if ($uid <= 0 && $this->contextService->isLocal()) {
-            $fileInfo['uid'] = $this->getUidReservationService()->getReservedUid();
+            $fileInfo['uid'] = $this->uidReservationService->getReservedUid();
         } else {
             $fileInfo['uid'] = $uid;
         }
-        $uid = (int)$fileInfo['uid'];
+        $uid = $fileInfo['uid'];
 
         $fileInfo = array_intersect_key(
             $fileInfo,
@@ -246,13 +240,10 @@ class FileIndexFactory
     }
 
     /**
-     * Adapted copy of
-     *
      * @param array $fileInfo
      *
      * @return int
      * @see \TYPO3\CMS\Core\Resource\Index\Indexer::getFileType
-     *
      */
     protected function determineFileType(array $fileInfo): int
     {
@@ -280,13 +271,7 @@ class FileIndexFactory
         return $type;
     }
 
-    /**
-     * @param string $identifier
-     * @param string $side
-     *
-     * @return array
-     */
-    protected function getDriverSpecificFileInfo($identifier, $side): array
+    protected function getDriverSpecificFileInfo(string $identifier, string $side): array
     {
         if ($side === 'local') {
             $driver = $this->localDriver;
@@ -303,15 +288,5 @@ class FileIndexFactory
             return $fileInfo;
         }
         return [];
-    }
-
-    /**
-     * @return UidReservationService
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    protected function getUidReservationService(): UidReservationService
-    {
-        return GeneralUtility::makeInstance(UidReservationService::class);
     }
 }

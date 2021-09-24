@@ -29,11 +29,9 @@ namespace In2code\In2publishCore\Utility;
  */
 
 use Closure;
-use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use In2code\In2publishCore\Service\Routing\SiteService;
-use PDO;
 use Psr\Http\Message\UriInterface;
 use Throwable;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
@@ -45,18 +43,17 @@ use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Context\LanguageAspectFactory;
-use TYPO3\CMS\Core\Http\Uri;
-use TYPO3\CMS\Core\Log\LogManager;
+use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\Routing\RouterInterface;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
-use TYPO3\CMS\Frontend\Page\PageRepository;
 
 use function array_key_exists;
 use function array_keys;
 use function array_replace;
 use function count;
+use function current;
 use function explode;
 use function implode;
 use function in_array;
@@ -68,35 +65,22 @@ use function md5;
 use function parse_str;
 use function parse_url;
 use function rtrim;
-use function stristr;
+use function stripos;
 use function strpos;
-use function strtolower;
-use function trigger_error;
-use function version_compare;
 
-use const E_USER_DEPRECATED;
-
-/**
- * Class BackendUtility
- */
 class BackendUtility
 {
-    protected const DEPRECATED_SYS_DOMAIN = 'sys_domain will be removed in TYPO3 v10. Please consider upgrading to site configurations now.';
-    protected const TABLE_SYS_DOMAIN = 'sys_domain';
-
-    protected static $rtc = [];
-
     /**
      * Get current page uid (normally from ?id=123)
      *
      * @param mixed $identifier
-     * @param string $table
+     * @param string|null $table
      *
      * @return int|string Returns the page ID or the folder ID when navigating in the file list
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public static function getPageIdentifier($identifier = null, $table = null)
+    public static function getPageIdentifier($identifier = null, string $table = null)
     {
         // get id from given identifier
         if ('pages' === $table && is_numeric($identifier)) {
@@ -114,11 +98,14 @@ class BackendUtility
         }
 
         // get id from ?cmd[pages][123][delete]=1
-        if (null !== ($cmd = GeneralUtility::_GP('cmd'))) {
-            if (isset($cmd['pages']) && is_array($cmd['pages'])) {
-                foreach (array_keys($cmd['pages']) as $pid) {
-                    return (int)$pid;
-                }
+        if (
+            null !== ($cmd = GeneralUtility::_GP('cmd'))
+            && isset($cmd['pages'])
+            && is_array($cmd['pages'])
+        ) {
+            /** @noinspection LoopWhichDoesNotLoopInspection */
+            foreach (array_keys($cmd['pages']) as $pid) {
+                return (int)$pid;
             }
         }
 
@@ -130,7 +117,7 @@ class BackendUtility
         // get id from ?redirect=script.php?param1=a&id=123&param2=2
         if (null !== ($redirect = GeneralUtility::_GP('redirect'))) {
             $urlParts = parse_url($redirect);
-            if (!empty($urlParts['query']) && stristr($urlParts['query'], 'id=')) {
+            if (!empty($urlParts['query']) && stripos($urlParts['query'], 'id=') !== false) {
                 parse_str($urlParts['query'], $parameters);
                 if (!empty($parameters['id'])) {
                     return (int)$parameters['id'];
@@ -159,7 +146,7 @@ class BackendUtility
                             ->where($query->expr()->eq('uid', (int)key($data[$table])))
                             ->setMaxResults(1)
                             ->execute()
-                            ->fetch(PDO::FETCH_ASSOC);
+                            ->fetchAssociative();
             if (false !== $result && isset($result['pid'])) {
                 return (int)$result['pid'];
             }
@@ -171,18 +158,18 @@ class BackendUtility
             if (count($rollbackData) > 1 && in_array($rollbackData[0], $tableNames)) {
                 if ($rollbackData[0] === 'pages') {
                     return (int)$rollbackData[1];
-                } else {
-                    $query = $localConnection->createQueryBuilder();
-                    $query->getRestrictions()->removeAll();
-                    $result = $query->select('pid')
-                                    ->from($rollbackData[0])
-                                    ->where($query->expr()->eq('uid', (int)$rollbackData[1]))
-                                    ->setMaxResults(1)
-                                    ->execute()
-                                    ->fetch(PDO::FETCH_ASSOC);
-                    if (false !== $result && isset($result['pid'])) {
-                        return (int)$result['pid'];
-                    }
+                }
+
+                $query = $localConnection->createQueryBuilder();
+                $query->getRestrictions()->removeAll();
+                $result = $query->select('pid')
+                                ->from($rollbackData[0])
+                                ->where($query->expr()->eq('uid', (int)$rollbackData[1]))
+                                ->setMaxResults(1)
+                                ->execute()
+                                ->fetchAssociative();
+                if (false !== $result && isset($result['pid'])) {
+                    return (int)$result['pid'];
                 }
             }
         }
@@ -197,7 +184,7 @@ class BackendUtility
                          ->where($query->expr()->eq('uid', (int)$identifier))
                          ->setMaxResults(1)
                          ->execute()
-                         ->fetch(PDO::FETCH_ASSOC);
+                         ->fetchAssociative();
             if (isset($row['pid'])) {
                 return (int)$row['pid'];
             }
@@ -250,7 +237,7 @@ class BackendUtility
             'id' => GeneralUtility::_GP('id'),
         ];
         foreach (GeneralUtility::_GET() as $name => $value) {
-            if (is_array($value) && false !== strpos(strtolower($name), strtolower($route))) {
+            if (is_array($value) && false !== stripos($name, $route)) {
                 $returnParameters[$name] = $value;
             }
         }
@@ -272,7 +259,6 @@ class BackendUtility
      * @param string $stagingLevel
      *
      * @return null|UriInterface
-     * @throws In2publishCoreException
      */
     public static function buildPreviewUri(string $table, int $identifier, string $stagingLevel): ?UriInterface
     {
@@ -350,9 +336,6 @@ class BackendUtility
         $site = $siteService->getSiteForPidAndStagingLevel($pid, $stagingLevel);
 
         if (null === $site) {
-            if (version_compare(TYPO3_branch, '10', '<')) {
-                return self::processLegacySysDomainRecord($pid, $stagingLevel);
-            }
             return null;
         }
 
@@ -363,30 +346,6 @@ class BackendUtility
         }
 
         return $buildPageUrl();
-    }
-
-    protected static function processLegacySysDomainRecord(int $pageUid, string $stagingLevel): ?string
-    {
-        if (false === static::$rtc['sys_domain_deprecation_triggered'] ?? false) {
-            trigger_error(self::DEPRECATED_SYS_DOMAIN, E_USER_DEPRECATED);
-            static::$rtc['sys_domain_deprecation_triggered'] = true;
-        }
-        $logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $logger->notice(
-            'Can not identify site configuration for page.',
-            ['page' => $pageUid, 'stagingLevel' => $stagingLevel]
-        );
-
-        $domainName = self::fetchInheritedSysDomainNameForPage($pageUid, $stagingLevel);
-
-        if (null === $domainName) {
-            return null;
-        }
-        $uri = new Uri($domainName);
-        $uri = UriUtility::normalizeUri($uri);
-        $uri = $uri->withPath(rtrim($uri->getPath(), '/') . '/index.php')
-                   ->withQuery($uri->getQuery() . '&id=' . $pageUid);
-        return (string)$uri;
     }
 
     /**
@@ -403,7 +362,7 @@ class BackendUtility
      * The result can be used to create a query string with GeneralUtility::implodeArrayForUrl().
      *
      */
-    protected static function parseAdditionalGetParameters(array &$parameters, array $typoScript)
+    protected static function parseAdditionalGetParameters(array &$parameters, array $typoScript): void
     {
         foreach ($typoScript as $key => $value) {
             if (is_array($value)) {
@@ -426,14 +385,6 @@ class BackendUtility
         return GeneralUtility::makeInstance(CacheManager::class)->getCache('cache_runtime');
     }
 
-    /**
-     * @param Closure $buildPageUrl
-     * @param Site $site
-     * @param int $language
-     * @param int $pageUid
-     *
-     * @return Closure
-     */
     protected static function getForeignUriClosure(
         Closure $buildPageUrl,
         Site $site,
@@ -488,16 +439,9 @@ class BackendUtility
         };
     }
 
-    /**
-     * @param Site $site
-     * @param int $pageUid
-     * @param $additionalQueryParams
-     *
-     * @return Closure
-     */
     protected static function getLocalUriClosure(Site $site, int $pageUid, $additionalQueryParams): Closure
     {
-        return static function () use ($site, $pageUid, $additionalQueryParams) : ?UriInterface {
+        return static function () use ($site, $pageUid, $additionalQueryParams): ?UriInterface {
             try {
                 return $site->getRouter()->generateUri(
                     $pageUid,
@@ -522,7 +466,7 @@ class BackendUtility
     protected static function getPageRepositoryPageCacheIdentifier(Site $site, int $language, int $pageUid): string
     {
         // Construct everything needed to build the cache identifier used for the PageRepository cache
-        $siteLanguage = $site->getLanguageById((int)$language);
+        $siteLanguage = $site->getLanguageById($language);
         $context = clone GeneralUtility::makeInstance(Context::class);
         $context->setAspect('language', LanguageAspectFactory::createFromSiteLanguage($siteLanguage));
         $sysLanguageUid = (int)$context->getPropertyFromAspect('language', 'id', 0);
@@ -538,27 +482,5 @@ class BackendUtility
                     ]
                 )
             );
-    }
-
-    public static function fetchInheritedSysDomainNameForPage(int $identifier, string $stagingLevel): ?string
-    {
-        $rootLine = CoreBackendUtility::BEgetRootLine($identifier);
-        foreach ($rootLine as $page) {
-            $connection = DatabaseUtility::buildDatabaseConnectionForSide($stagingLevel);
-            $query = $connection->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $query->select('domainName')
-                  ->from(self::TABLE_SYS_DOMAIN)
-                  ->where($query->expr()->eq('pid', (int)$page['uid']))
-                  ->andWhere($query->expr()->eq('hidden', 0))
-                  ->orderBy('sorting', 'ASC')
-                  ->setMaxResults(1);
-            $statement = $query->execute();
-            $domainRecord = $statement->fetch(PDO::FETCH_ASSOC);
-            if (isset($domainRecord['domainName'])) {
-                return trim($domainRecord['domainName'], '/');
-            }
-        }
-        return null;
     }
 }

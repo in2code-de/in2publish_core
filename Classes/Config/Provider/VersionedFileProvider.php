@@ -36,17 +36,10 @@ use function explode;
 use function file_exists;
 use function implode;
 
-/**
- * Class VersionedFileProvider
- */
 class VersionedFileProvider extends FileProvider
 {
-    /**
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
-    public function getConfig()
+    /** @SuppressWarnings(PHPMD.Superglobals) */
+    public function getConfig(): array
     {
         $path = $this->getResolvedFilePath();
 
@@ -68,10 +61,7 @@ class VersionedFileProvider extends FileProvider
         return [];
     }
 
-    /**
-     * @return int
-     */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 25;
     }

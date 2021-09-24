@@ -36,14 +36,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
 
-/**
- * Class AbsSpecNode
- */
 abstract class AbsSpecNode extends AbstractNode
 {
-    /**
-     * @var array
-     */
     protected static $types = [
         Node::T_STRING => SpecString::class,
         Node::T_OPTIONAL_STRING => SpecOptionalString::class,
@@ -60,27 +54,30 @@ abstract class AbsSpecNode extends AbstractNode
      * @param array $validators
      * @param NodeCollection|null $nodes
      *
-     * @return AbsSpecNode|object
+     * @return SpecString|SpecOptionalString|SpecInteger|SpecArray|SpecStrictArray|SpecBoolean
      */
-    public static function fromType($type, $name, $default, array $validators, NodeCollection $nodes)
-    {
+    public static function fromType(
+        string $type,
+        string $name,
+        $default,
+        array $validators,
+        NodeCollection $nodes
+    ): AbsSpecNode {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return GeneralUtility::makeInstance(static::$types[$type] ?: $type, $name, $validators, $nodes, $default);
     }
 
-    /**
-     * @return string[]|int[]|bool[]|array[]
-     */
+    /** @return string[]|int[]|bool[]|array[] */
     public function getDefaults(): array
     {
         return [$this->name => $this->default];
     }
 
-    /**
-     * @param array[]|bool[]|int[]|string[] $value
-     */
-    public function unsetDefaults(array &$value)
+    /** @param array[]|bool[]|int[]|string[] $value */
+    public function unsetDefaults(array &$value): void
     {
-        if (null !== $this->default
+        if (
+            null !== $this->default
             && array_key_exists($this->name, $value)
             && $this->default === $value[$this->name]
         ) {

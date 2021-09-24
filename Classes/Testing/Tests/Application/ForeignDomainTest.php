@@ -45,29 +45,19 @@ use function array_combine;
 use function base64_decode;
 use function json_decode;
 
-/**
- * Class ForeignSysDomainTest
- */
 class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
-    /**
-     * @var RemoteCommandDispatcher
-     */
+    /** @var RemoteCommandDispatcher */
     protected $rceDispatcher;
 
-    /**
-     * @var Connection
-     */
-    protected $foreignConnection = null;
+    /** @var Connection */
+    protected $foreignConnection;
 
     protected $prefix = 'foreign';
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
+    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher)
     {
-        $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
+        $this->rceDispatcher = $remoteCommandDispatcher;
         try {
             $this->foreignConnection = DatabaseUtility::buildForeignDatabaseConnection();
         } catch (Throwable $throwable) {
@@ -77,7 +67,7 @@ class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
 
     protected function getPageToSiteBaseMapping(): array
     {
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
+        $request = new RemoteCommandRequest();
         $request->setCommand(ShortSiteConfigurationCommand::IDENTIFIER);
 
         $response = $this->rceDispatcher->dispatch($request);
@@ -88,7 +78,7 @@ class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
             $jsonEncoded = base64_decode($base64encoded);
             $shortSiteConfig = json_decode($jsonEncoded, true);
         } else {
-            throw ForeignSiteConfigUnavailableException::fromFailedRceResponse($response);
+            throw new ForeignSiteConfigUnavailableException($response);
         }
         return array_combine(
             array_column($shortSiteConfig, 'rootPageId'),
@@ -101,9 +91,6 @@ class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
         return $this->foreignConnection;
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

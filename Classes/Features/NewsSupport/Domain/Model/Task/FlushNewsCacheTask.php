@@ -35,20 +35,8 @@ use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class FlushNewsCacheTask
- */
 class FlushNewsCacheTask extends AbstractTask
 {
-    /**
-     * Don't modify configuration
-     *
-     * @return void
-     */
-    public function modifyConfiguration()
-    {
-    }
-
     /**
      * Deletes all pages and news caches the same way they will be deleted on local
      *

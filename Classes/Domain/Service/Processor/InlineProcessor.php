@@ -29,9 +29,6 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-/**
- * Class InlineProcessor
- */
 class InlineProcessor extends AbstractProcessor
 {
     public const FOREIGN_FIELD = 'foreign_field';
@@ -39,28 +36,16 @@ class InlineProcessor extends AbstractProcessor
     public const FOREIGN_TABLE_FIELD = 'foreign_table_field';
     public const SYMMETRIC_FIELD = 'symmetric_field';
 
-    /**
-     * @var bool
-     */
     protected $canHoldRelations = true;
 
-    /**
-     * @var array
-     */
     protected $forbidden = [
         'symmetric_field is set on the foreign side of relations, which must not be resolved' => self::SYMMETRIC_FIELD,
     ];
 
-    /**
-     * @var array
-     */
     protected $required = [
         'Must be set, there is no type "inline" without a foreign table' => self::FOREIGN_TABLE,
     ];
 
-    /**
-     * @var array
-     */
     protected $allowed = [
         self::FOREIGN_FIELD,
         self::FOREIGN_MATCH_FIELDS,

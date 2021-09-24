@@ -35,16 +35,10 @@ use In2code\In2publishCore\Domain\Service\Processor\ProcessorInterface;
 use function class_exists;
 use function is_subclass_of;
 
-/**
- * Class RecursiveTcaProcessorValidator
- */
 class IterativeTcaProcessorValidator implements ValidatorInterface
 {
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    public function validate(ValidationContainer $container, $value)
+    /** @param mixed $value */
+    public function validate(ValidationContainer $container, $value): void
     {
         foreach ($value as $type => $class) {
             if (!class_exists($class)) {

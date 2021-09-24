@@ -31,27 +31,20 @@ namespace In2code\In2publishCore\Testing\Service;
 
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function array_intersect;
+use function array_keys;
 use function array_merge;
 use function get_class;
 
-/**
- * Class TestingService
- */
 class TestingService
 {
-    /**
-     * @var TestCaseService
-     */
-    protected $testCaseService = null;
+    /** @var TestCaseService */
+    protected $testCaseService;
 
-    /**
-     * TestingService constructor.
-     */
-    public function __construct()
+    public function __construct(TestCaseService $testCaseService)
     {
-        $this->testCaseService = GeneralUtility::makeInstance(TestCaseService::class);
+        $this->testCaseService = $testCaseService;
     }
 
     /**
@@ -109,12 +102,6 @@ class TestingService
         return array_merge($failedTests, $warningTests, $skippedTests, $successfulTests);
     }
 
-    /**
-     * @param array $dependencies
-     * @param array $failedTests
-     *
-     * @return bool
-     */
     protected function hasDependencyFailed(array $dependencies, array $failedTests): bool
     {
         foreach ($dependencies as $dependency) {

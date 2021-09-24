@@ -51,18 +51,11 @@ use In2code\In2publishCore\Domain\Service\Processor\SlugProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\TextProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\UserProcessor;
 
-use function version_compare;
-
 /**
- * Class In2publishCoreDefiner
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class In2publishCoreDefiner implements DefinerInterface
 {
-    /**
-     * @var array
-     */
     protected $defaultIgnoredFields = [
         'pages' => [
             'pid',
@@ -115,9 +108,6 @@ class In2publishCoreDefiner implements DefinerInterface
         ],
     ];
 
-    /**
-     * @var array
-     */
     protected $defaultIgnoredTables = [
         'be_groups',
         'be_users',
@@ -131,20 +121,7 @@ class In2publishCoreDefiner implements DefinerInterface
         'tx_in2code_in2publish_envelope',
     ];
 
-    /**
-     * In2publishCoreDefiner constructor.
-     */
-    public function __construct()
-    {
-        if (version_compare(TYPO3_branch, '10.0', '<')) {
-            $this->defaultIgnoredTables[] = 'sys_domain';
-        }
-    }
-
-    /**
-     * @return NodeCollection
-     */
-    public function getLocalDefinition()
+    public function getLocalDefinition(): NodeCollection
     {
         return Builder::start()
                       ->addArray(
@@ -156,7 +133,7 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addOptionalString('dispatcher', '')
                                  ->addArray(
                                      'envVars',
-                                     Builder::start()->addGenericScalar(Node::T_STRING, Node::T_STRING),
+                                     Builder::start()->addGenericScalar(Node::T_STRING),
                                      []
                                  )
                                  ->addArray(
@@ -171,7 +148,7 @@ class In2publishCoreDefiner implements DefinerInterface
                       )
                       ->addArray(
                           'excludeRelatedTables',
-                          Builder::start()->addGenericScalar(Node::T_INTEGER, Node::T_STRING),
+                          Builder::start()->addGenericScalar(Node::T_INTEGER),
                           $this->defaultIgnoredTables
                       )
                       ->addArray(
@@ -180,7 +157,7 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addGenericArray(
                                      Node::T_STRING,
                                      Builder::start()
-                                            ->addGenericScalar(Node::T_INTEGER, Node::T_STRING)
+                                            ->addGenericScalar(Node::T_INTEGER)
                                  ),
                           $this->defaultIgnoredFields
                       )
@@ -297,10 +274,7 @@ class In2publishCoreDefiner implements DefinerInterface
                       ->end();
     }
 
-    /**
-     * @return NodeCollection
-     */
-    public function getForeignDefinition()
+    public function getForeignDefinition(): NodeCollection
     {
         return Builder::start()
                       ->addArray(

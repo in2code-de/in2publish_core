@@ -31,16 +31,16 @@ namespace In2code\In2publishCore\ViewHelpers\Record;
 use In2code\In2publishCore\Domain\Model\Record;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetMergedPropertyViewHelper
- */
 class GetMergedPropertyViewHelper extends AbstractViewHelper
 {
-    /**
-     * Call getMergedProperty on a record
-     *
-     * @return mixed
-     */
+    public function initializeArguments(): void
+    {
+        parent::initializeArguments();
+        $this->registerArgument('record', Record::class, 'record of which should get merged', true);
+        $this->registerArgument('propertyName', 'string', 'Property which should get merged', true);
+    }
+
+    /** @return mixed */
     public function render()
     {
         /** @var Record $record */
@@ -50,15 +50,5 @@ class GetMergedPropertyViewHelper extends AbstractViewHelper
         $propertyName = $this->arguments['propertyName'];
 
         return $record->getMergedProperty($propertyName);
-    }
-
-    /**
-     *
-     */
-    public function initializeArguments()
-    {
-        parent::initializeArguments();
-        $this->registerArgument('record', Record::class, 'record of which should get merged', true);
-        $this->registerArgument('propertyName', 'string', 'Property which should get merged', true);
     }
 }

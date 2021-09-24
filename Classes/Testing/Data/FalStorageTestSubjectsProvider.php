@@ -29,21 +29,15 @@ namespace In2code\In2publishCore\Testing\Data;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Event\StoragesForTestingWereFetched;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use PDO;
 use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
 use function array_column;
 use function array_combine;
 
-/**
- * Class FalStorageTestSubjectsProvider
- */
 class FalStorageTestSubjectsProvider implements SingletonInterface
 {
     public const PURPOSE_CASE_SENSITIVITY = 'caseSensitivity';
@@ -51,71 +45,43 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     public const PURPOSE_MISSING = 'missing';
     public const PURPOSE_UNIQUE_TARGET = 'uniqueTarget';
 
-    /**
-     * @var Dispatcher
-     */
-    protected $signalSlotDispatcher;
+    /** @var EventDispatcher */
+    protected $eventDispatcher;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $localStorages = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $foreignStorages = [];
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $initialized = false;
 
-    /**
-     * FalStorageTestSubjectsProvider constructor.
-     */
-    public function __construct()
+    public function __construct(EventDispatcher $eventDispatcher)
     {
-        $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
+        $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * @return array
-     */
     public function getStoragesForCaseSensitivityTest(): array
     {
         return $this->getStorages(static::PURPOSE_CASE_SENSITIVITY);
     }
 
-    /**
-     * @return array
-     */
     public function getStoragesForDriverTest(): array
     {
         return $this->getStorages(static::PURPOSE_DRIVER);
     }
 
-    /**
-     * @return array
-     */
     public function getStoragesForMissingStoragesTest(): array
     {
         return $this->getStorages(static::PURPOSE_MISSING);
     }
 
-    /**
-     * @return array
-     */
     public function getStoragesForUniqueTargetTest(): array
     {
         return $this->getStorages(static::PURPOSE_UNIQUE_TARGET);
     }
 
-    /**
-     * @param $purpose
-     *
-     * @return array
-     */
     protected function getStorages($purpose): array
     {
         if (false === $this->initialized) {
@@ -123,31 +89,16 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
             $this->localStorages = $this->fetchStorages(DatabaseUtility::buildLocalDatabaseConnection());
             $this->foreignStorages = $this->fetchStorages(DatabaseUtility::buildForeignDatabaseConnection());
         }
-        $arguments = [
-            'localStorages' => $this->localStorages,
-            'foreignStorages' => $this->foreignStorages,
-            'purpose' => $purpose,
-        ];
-        try {
-            $arguments = $this->signalSlotDispatcher->dispatch(
-                __CLASS__,
-                'filterStorages',
-                $arguments
-            );
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
-        }
+
+        $event = new StoragesForTestingWereFetched($this->localStorages, $this->foreignStorages, $purpose);
+        $this->eventDispatcher->dispatch($event);
+
         return [
-            'local' => $arguments['localStorages'],
-            'foreign' => $arguments['foreignStorages'],
+            'local' => $event->getLocalStorages(),
+            'foreign' => $event->getForeignStorages(),
         ];
     }
 
-    /**
-     * @param Connection $connection
-     *
-     * @return array
-     */
     protected function fetchStorages(Connection $connection): array
     {
         $query = $connection->createQueryBuilder();
@@ -156,7 +107,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
                       ->from('sys_file_storage')
                       ->where($query->expr()->eq('deleted', 0))
                       ->execute()
-                      ->fetchAll(PDO::FETCH_ASSOC);
+                      ->fetchAllAssociative();
         return array_combine(array_column($rows, 'uid'), $rows);
     }
 }

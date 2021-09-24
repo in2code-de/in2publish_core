@@ -25,4 +25,4 @@ You can publish a page by clicking on the arrow in the middle of the row with th
 
 ## Compoment specific manuals:
 
-* [Command Controller Exit Codes](CommandControllers/ExitCodes.md)
+* [Command Controller Exit Codes](Command/ExitCodes.md)

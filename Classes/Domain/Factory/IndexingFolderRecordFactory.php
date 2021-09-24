@@ -63,43 +63,39 @@ use function substr;
  */
 class IndexingFolderRecordFactory
 {
-    /**
-     * @var ResourceStorage
-     */
-    protected $localStorage;
+    /** @var int Maximum number of files which are supported to exist in a single folder */
+    protected $threshold;
 
-    /**
-     * @var RemoteStorage
-     */
+    /** @var RemoteStorage */
     protected $remoteStorage;
 
-    /**
-     * Maximum number of files which are supported to exist in a single folder
-     *
-     * @var int
-     */
-    protected $threshold = 150;
+    /** @var ResourceFactory */
+    protected $resourceFactory;
 
-    /**
-     * IndexingFolderRecordFactory constructor.
-     */
-    public function __construct()
-    {
-        $this->threshold = GeneralUtility::makeInstance(ConfigContainer::class)->get('factory.fal.folderFileLimit');
+    /** @var CommonRepository */
+    protected $commonRepository;
+
+    /** @var ResourceStorage */
+    protected $localStorage;
+
+    public function __construct(
+        ConfigContainer $configContainer,
+        RemoteStorage $remoteStorage,
+        ResourceFactory $resourceFactory,
+        CommonRepository $commonRepository
+    ) {
+        $this->threshold = $configContainer->get('factory.fal.folderFileLimit');
+        $this->remoteStorage = $remoteStorage;
+        $this->resourceFactory = $resourceFactory;
+        $this->commonRepository = $commonRepository;
     }
 
-    /**
-     * @param ResourceStorage $localStorage
-     */
-    public function overruleLocalStorage(ResourceStorage $localStorage)
+    public function overruleLocalStorage(ResourceStorage $localStorage): void
     {
         $this->localStorage = $localStorage;
     }
 
-    /**
-     * @param RemoteStorage $remoteStorage
-     */
-    public function overruleRemoteStorage(RemoteStorage $remoteStorage)
+    public function overruleRemoteStorage(RemoteStorage $remoteStorage): void
     {
         $this->remoteStorage = $remoteStorage;
     }
@@ -114,23 +110,22 @@ class IndexingFolderRecordFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function makeInstance($dir = null): RecordInterface
+    public function makeInstance(?string $dir): RecordInterface
     {
         // determine current folder
-        $resourceFactory = ResourceFactory::getInstance();
         try {
             if (null === $dir) {
-                $localFolder = $resourceFactory->getDefaultStorage()->getRootLevelFolder();
+                $localFolder = $this->resourceFactory->getDefaultStorage()->getRootLevelFolder();
             } else {
-                $localFolder = $resourceFactory->getFolderObjectFromCombinedIdentifier($dir);
+                $localFolder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($dir);
             }
-        } catch (FolderDoesNotExistException $exception) {
-            $localFolder = $resourceFactory->getStorageObject(substr($dir, 0, strpos($dir, ':')))->getRootLevelFolder();
+        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (FolderDoesNotExistException $exception) {
+            $resourceStorage = $this->resourceFactory->getStorageObject(substr($dir, 0, strpos($dir, ':')));
+            $localFolder = $resourceStorage->getRootLevelFolder();
         }
 
         // get FAL storages for each side
         $this->localStorage = $localFolder->getStorage();
-        $this->remoteStorage = GeneralUtility::makeInstance(RemoteStorage::class);
 
         // some often used variables
         $storageUid = $this->localStorage->getUid();
@@ -170,8 +165,8 @@ class IndexingFolderRecordFactory
             $subFolder = GeneralUtility::makeInstance(
                 Record::class,
                 'physical_folder',
-                isset($localSubFolders[$identifier]) ? $localSubFolders[$identifier] : [],
-                isset($remoteSubFolders[$identifier]) ? $remoteSubFolders[$identifier] : [],
+                $localSubFolders[$identifier] ?? [],
+                $remoteSubFolders[$identifier] ?? [],
                 [],
                 ['depth' => 2]
             );
@@ -179,7 +174,7 @@ class IndexingFolderRecordFactory
         }
 
         $properties = ['folder_hash' => $localFolder->getHashedIdentifier(), 'storage' => $storageUid];
-        $records = CommonRepository::getDefaultInstance()->findByProperties($properties, true, 'sys_file');
+        $records = $this->commonRepository->findByProperties($properties, true, 'sys_file');
         $records = $this->filterRecords($localFiles, $remoteFiles, $records);
         $rootFolder->addRelatedRecords($records);
 
@@ -195,7 +190,7 @@ class IndexingFolderRecordFactory
      *
      * @return array
      */
-    protected function updateFilesByMovedRecords(array $records, array $files, $side): array
+    protected function updateFilesByMovedRecords(array $records, array $files, string $side): array
     {
         $relatedFolders = [];
 
@@ -224,9 +219,9 @@ class IndexingFolderRecordFactory
             }
             foreach ($relatedFolders as $folder => $fileInfo) {
                 if ($side === 'foreign') {
-                    if ($storage->hasFolder($fileInfo['storageUid'], $folder)) {
-                        $filesInFolder = $storage->getFilesInFolder($fileInfo['storageUid'], $folder);
-                        foreach ($relatedFolders[$folder]['files'] as $identifier) {
+                    if ($storage->hasFolder((int)$fileInfo['storageUid'], $folder)) {
+                        $filesInFolder = $storage->getFilesInFolder((int)$fileInfo['storageUid'], $folder);
+                        foreach ($fileInfo['files'] as $identifier) {
                             if (isset($filesInFolder[$identifier])) {
                                 $files[$identifier] = $filesInFolder[$identifier];
                             }
@@ -235,7 +230,7 @@ class IndexingFolderRecordFactory
                 } elseif ($storage->hasFolder($folder)) {
                     $filesInFolder = $storage->getFolder($folder)->getFiles();
                     $filesInFolder = FileUtility::extractFilesInformation($filesInFolder);
-                    foreach ($relatedFolders[$folder]['files'] as $identifier) {
+                    foreach ($fileInfo['files'] as $identifier) {
                         if (isset($filesInFolder[$identifier])) {
                             $files[$identifier] = $filesInFolder[$identifier];
                         }
@@ -332,21 +327,15 @@ class IndexingFolderRecordFactory
         return $records;
     }
 
-    /**
-     * @param array $files
-     * @param string $folderIdentifier
-     * @param string $side
-     *
-     * @throws TooManyFilesException
-     */
-    protected function checkFileCount(array $files, $folderIdentifier, $side)
+    /** @throws TooManyFilesException */
+    protected function checkFileCount(array $files, string $folderIdentifier, string $side): void
     {
         $count = count($files);
         if ($count > $this->threshold) {
             if ($side === 'foreign') {
-                throw TooManyForeignFilesException::fromFolder($folderIdentifier, $count, $this->threshold);
+                throw new TooManyForeignFilesException($folderIdentifier, $count, $this->threshold);
             } else {
-                throw TooManyLocalFilesException::fromFolder($folderIdentifier, $count, $this->threshold);
+                throw new TooManyLocalFilesException($folderIdentifier, $count, $this->threshold);
             }
         }
     }

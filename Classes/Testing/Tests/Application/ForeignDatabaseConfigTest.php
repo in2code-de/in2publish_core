@@ -44,38 +44,31 @@ use function is_array;
 use function json_decode;
 use function strpos;
 
-/**
- * Class ForeignDatabaseConfigTest
- */
 class ForeignDatabaseConfigTest implements TestCaseInterface
 {
     public const DB_CONFIG_TEST_TYPE = 'DB Config Test';
 
-    /**
-     * @var RemoteCommandDispatcher
-     */
-    protected $rceDispatcher = null;
+    /** @var RemoteCommandDispatcher */
+    protected $rceDispatcher;
 
-    /**
-     * ForeignDatabaseConfigTest constructor.
-     */
-    public function __construct()
+    /** @var Random */
+    protected $random;
+
+    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, Random $random)
     {
-        $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
+        $this->rceDispatcher = $remoteCommandDispatcher;
+        $this->random = $random;
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $connection = DatabaseUtility::buildForeignDatabaseConnection();
         $connection->delete('tx_in2code_in2publish_task', ['task_type' => self::DB_CONFIG_TEST_TYPE]);
-        $random = GeneralUtility::makeInstance(Random::class)->generateRandomHexString(32);
+        $random = $this->random->generateRandomHexString(32);
         $row = ['task_type' => self::DB_CONFIG_TEST_TYPE, 'configuration' => $random];
         $connection->insert('tx_in2code_in2publish_task', $row);
 
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, DbConfigTestCommand::IDENTIFIER);
+        $request = new RemoteCommandRequest(DbConfigTestCommand::IDENTIFIER);
         $response = $this->rceDispatcher->dispatch($request);
 
         if ($response->isSuccessful()) {
@@ -101,11 +94,6 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
         return $testResult;
     }
 
-    /**
-     * @param array $output
-     *
-     * @return array
-     */
     protected function tokenizeResponse(array $output): array
     {
         $values = [];
@@ -118,9 +106,6 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
         return $values;
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

@@ -91,7 +91,7 @@ class RemoteCommandRequest
      * @param array $arguments
      * @param array $options
      */
-    public function __construct($command = '', array $arguments = [], array $options = [])
+    public function __construct(string $command = '', array $arguments = [], array $options = [])
     {
         $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         $this->pathToPhp = $configContainer->get('foreign.pathToPhp');
@@ -118,131 +118,86 @@ class RemoteCommandRequest
         $this->options = $options;
     }
 
-    /**
-     * @param bool $usePhp
-     */
-    public function usePhp($usePhp)
+    public function usePhp(bool $usePhp): void
     {
-        $this->usePhp = (bool)$usePhp;
+        $this->usePhp = $usePhp;
     }
 
-    /**
-     * @return string
-     */
     public function getPathToPhp(): string
     {
         return $this->usePhp ? $this->pathToPhp : '';
     }
 
-    /**
-     * @return string
-     */
     public function getWorkingDirectory(): string
     {
         return $this->workingDirectory;
     }
 
-    /**
-     * @return array
-     */
     public function getEnvironmentVariables(): array
     {
         return $this->environmentVariables;
     }
 
-    /**
-     * @return string
-     */
     public function getDispatcher(): string
     {
         return $this->dispatcher;
     }
 
-    /**
-     * @param string $dispatcher
-     */
-    public function setDispatcher($dispatcher)
+    public function setDispatcher(string $dispatcher): void
     {
         $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * @param array $environmentVariables
-     */
-    public function setEnvironmentVariables($environmentVariables)
+    public function setEnvironmentVariables(array $environmentVariables): void
     {
         $this->environmentVariables = $environmentVariables;
     }
 
-    /**
-     * @return string
-     */
     public function getCommand(): string
     {
         return $this->command;
     }
 
-    /**
-     * @param string $command
-     */
-    public function setCommand($command)
+    public function setCommand(string $command): void
     {
         $this->command = $command;
     }
 
-    /**
-     * @return bool
-     */
     public function hasArguments(): bool
     {
         return !empty($this->arguments);
     }
 
-    /**
-     * @return array
-     */
     public function getArguments(): array
     {
         return $this->arguments;
     }
 
-    /**
-     * @param array $arguments
-     */
-    public function setArguments($arguments)
+    public function setArguments(array $arguments): void
     {
         $this->arguments = $arguments;
     }
 
     /**
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      */
-    public function setArgument($name, $value)
+    public function setArgument(string $name, $value): void
     {
         $this->arguments[$name] = $value;
     }
 
-    /**
-     * @return bool
-     */
     public function hasOptions(): bool
     {
         return !empty($this->options);
     }
 
-    /**
-     * @return array
-     */
     public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * @param array $options
-     */
-    public function setOptions($options)
+    public function setOptions(array $options): void
     {
         $this->options = [];
         foreach ($options as $option) {
@@ -251,9 +206,9 @@ class RemoteCommandRequest
     }
 
     /**
-     * @param string $value
+     * @param scalar $value
      */
-    public function setOption($value)
+    public function setOption($value): void
     {
         $this->options[$value] = $value;
     }

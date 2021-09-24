@@ -35,33 +35,21 @@ use In2code\In2publishCore\Communication\TemporaryAssetTransmission\Transmission
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
 use function class_exists;
 use function is_array;
 
-/**
- * Class AdapterSelectionTest
- */
 class AdapterSelectionTest implements TestCaseInterface
 {
-    /**
-     * @var AdapterRegistry
-     */
+    /** @var AdapterRegistry */
     protected $adapterRegistry;
 
-    /**
-     * AdapterSelectionTest constructor.
-     */
-    public function __construct()
+    public function __construct(AdapterRegistry $adapterRegistry)
     {
-        $this->adapterRegistry = GeneralUtility::makeInstance(AdapterRegistry::class);
+        $this->adapterRegistry = $adapterRegistry;
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $config = $this->adapterRegistry->getConfig();
@@ -94,9 +82,6 @@ class AdapterSelectionTest implements TestCaseInterface
         );
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [];

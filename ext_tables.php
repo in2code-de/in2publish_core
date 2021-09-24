@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection PhpFullyQualifiedNameUsageInspection */
+
 (static function () {
     /***************************************************** Guards *****************************************************/
     if (!defined('TYPO3_REQUESTTYPE')) {
@@ -9,38 +11,15 @@
         // Early return when installing per ZIP: autoload is not yet generated
         return;
     }
-    if (!(TYPO3_REQUESTTYPE & (TYPO3_REQUESTTYPE_BE | TYPO3_REQUESTTYPE_CLI | TYPO3_REQUESTTYPE_INSTALL))) {
+    if (!(TYPO3_REQUESTTYPE & (TYPO3_REQUESTTYPE_BE | TYPO3_REQUESTTYPE_CLI))) {
         // Do nothing when not in any of the desirable modes.
         return;
     }
 
-    /************************************************** Instances #1 **************************************************/
-    $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class
-    );
+    /**************************************************** Instances ***************************************************/
     $configContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \In2code\In2publishCore\Config\ConfigContainer::class
     );
-
-    /********************************************** Redirects Support #1 **********************************************/
-    $redirectsIsLoaded = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('redirects');
-    if ($redirectsIsLoaded) {
-        // Do not check if the redirects support is actually enabled, because we can not test this on foreign.
-        /** @see \In2code\In2publishCore\Features\RedirectsSupport\Service\RedirectsDatabaseFieldsService::addRedirectFields() */
-        $signalSlotDispatcher->connect(
-            'TYPO3\\CMS\\Install\\Service\\SqlExpectedSchemaService',
-            'tablesDefinitionIsBeingBuilt',
-            \In2code\In2publishCore\Features\RedirectsSupport\Service\RedirectsDatabaseFieldsService::class,
-            'addRedirectFields'
-        );
-    }
-
-    if (TYPO3_REQUESTTYPE & TYPO3_REQUESTTYPE_INSTALL) {
-        // Skip anything else when we're in the install tool
-        return;
-    }
-
-    /************************************************** Instances #2 **************************************************/
     $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \In2code\In2publishCore\Service\Context\ContextService::class
     );
@@ -64,19 +43,6 @@
         false
     );
 
-    if (!version_compare(TYPO3_branch, '10.0', '>=')) {
-        $iconRegistry->registerIcon(
-            'actions-code-fork',
-            \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
-            ['source' => 'EXT:in2publish_core/Resources/Public/Icons/actions-code-fork.svg']
-        );
-        $iconRegistry->registerIcon(
-            'actions-caret-right',
-            \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
-            ['source' => 'EXT:in2publish_core/Resources/Public/Icons/actions-caret-right.svg']
-        );
-    }
-
     if ($contextService->isForeign()) {
         if ($configContainer->get('features.warningOnForeign.colorizeHeader.enable')) {
             $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][1582191172] = \In2code\In2publishCore\Features\WarningOnForeign\Service\HeaderWarningColorRenderer::class . '->render';
@@ -90,12 +56,12 @@
     /******************************************** Register Backend Modules ********************************************/
     if ($configContainer->get('module.m1')) {
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-            'In2code.In2publishCore',
+            'in2publish_core',
             'web',
             'm1',
             '',
             [
-                'Record' => 'index,detail,publishRecord,toggleFilterStatusAndRedirectToIndex',
+                \In2code\In2publishCore\Controller\RecordController::class => 'index,detail,publishRecord,toggleFilterStatusAndRedirectToIndex',
             ],
             [
                 'access' => 'user,group',
@@ -106,12 +72,12 @@
     }
     if ($configContainer->get('module.m3')) {
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-            'In2code.In2publishCore',
+            'in2publish_core',
             'file',
             'm3',
             '',
             [
-                'File' => 'index,publishFolder,publishFile,toggleFilterStatusAndRedirectToIndex',
+                \In2code\In2publishCore\Controller\FileController::class => 'index,publishFolder,publishFile,toggleFilterStatusAndRedirectToIndex',
             ],
             [
                 'access' => 'user,group',
@@ -129,171 +95,61 @@
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.index',
             '',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'index'
         );
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test',
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test.description',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'test'
         );
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration',
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration.description',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'configuration'
         );
         if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('logs')) {
             $toolsRegistry->addTool(
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.logs',
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.logs.description',
-                'Log',
+                In2code\In2publishCore\Features\LogsIntegration\Controller\LogController::class,
                 'filter,delete,deleteAlike'
             );
         }
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca',
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca.description',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'tca'
         );
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca',
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca.description',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'clearTcaCaches'
         );
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry',
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry.description',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'flushRegistry'
         );
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes',
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes.description',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'flushEnvelopes'
         );
         $toolsRegistry->addTool(
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.system_info',
             'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.system_info.description',
-            'Tools',
+            \In2code\In2publishCore\Controller\ToolsController::class,
             'sysInfoIndex,sysInfoShow,sysInfoDecode,sysInfoDownload,sysInfoUpload'
         );
     }
 
-    /********************************************** Anomaly Registration **********************************************/
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveBeforePublishing',
-        \In2code\In2publishCore\Features\CacheInvalidation\Domain\Anomaly\CacheInvalidator::class,
-        'registerClearCacheTasks',
-        false
-    );
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveAfterPublishing',
-        \In2code\In2publishCore\Domain\Anomaly\PhysicalFilePublisher::class,
-        'publishPhysicalFileOfSysFile',
-        false
-    );
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveAfterPublishing',
-        \In2code\In2publishCore\Features\SysLogPublisher\Domain\Anomaly\SysLogPublisher::class,
-        'publishSysLog',
-        false
-    );
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveAfterPublishing',
-        \In2code\In2publishCore\Features\RefIndexUpdate\Domain\Anomaly\RefIndexUpdater::class,
-        'registerRefIndexUpdate',
-        false
-    );
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveEnd',
-        \In2code\In2publishCore\Features\RefIndexUpdate\Domain\Anomaly\RefIndexUpdater::class,
-        'writeRefIndexUpdateTask',
-        false
-    );
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveEnd',
-        \In2code\In2publishCore\Features\CacheInvalidation\Domain\Anomaly\CacheInvalidator::class,
-        'writeClearCacheTask',
-        false
-    );
-    if ($configContainer->get('factory.fal.reserveSysFileUids')) {
-        $indexPostProcessor = \In2code\In2publishCore\Domain\PostProcessing\FileIndexPostProcessor::class;
-    } else {
-        $indexPostProcessor = \In2code\In2publishCore\Domain\PostProcessing\FalIndexPostProcessor::class;
-    }
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
-        'instanceCreated',
-        $indexPostProcessor,
-        'registerInstance',
-        false
-    );
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
-        'rootRecordFinished',
-        $indexPostProcessor,
-        'postProcess',
-        false
-    );
-    if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
-        $signalSlotDispatcher->connect(
-            \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-            'publishRecordRecursiveBeforePublishing',
-            \In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly\NewsCacheInvalidator::class,
-            'registerClearCacheTasks',
-            false
-        );
-        $signalSlotDispatcher->connect(
-            \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-            'publishRecordRecursiveEnd',
-            \In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly\NewsCacheInvalidator::class,
-            'writeClearCacheTask',
-            false
-        );
-    }
-    /** @see \In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly\PublishedFileIdentifierCollector::registerPublishedFile */
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveAfterPublishing',
-        \In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly\PublishedFileIdentifierCollector::class,
-        'registerPublishedFile',
-        false
-    );
-    /** @see \In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly\PublishedFileIdentifierCollector::writeFlushFileEdgeCacheTask */
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveEnd',
-        \In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly\PublishedFileIdentifierCollector::class,
-        'writeFlushFileEdgeCacheTask',
-        false
-    );
-    /** @see \In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater::publishRecordRecursiveAfterPublishing() */
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveAfterPublishing',
-        \In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater::class,
-        'publishRecordRecursiveAfterPublishing',
-        false
-    );
-    /** @see \In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater::publishRecordRecursiveEnd() */
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'publishRecordRecursiveEnd',
-        \In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly\RedirectCacheUpdater::class,
-        'publishRecordRecursiveEnd',
-        false
-    );
 
     /******************************************* Context Menu Publish Entry *******************************************/
     if ($configContainer->get('features.contextMenuPublishEntry.enable')) {
@@ -302,25 +158,6 @@
             'tx_in2publishcore_contextmenupublishentry_publish',
             \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
             ['source' => 'EXT:in2publish_core/Resources/Public/Icons/Publish.svg']
-        );
-    }
-
-    /****************************************** Publish sorting **************************************************/
-    if ($configContainer->get('features.publishSorting.enable')) {
-        /** @see \In2code\In2publishCore\Features\PublishSorting\SortingPublisher::collectSortingsToBePublished() */
-        $signalSlotDispatcher->connect(
-            \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-            'publishRecordRecursiveBeforePublishing',
-            \In2code\In2publishCore\Features\PublishSorting\SortingPublisher::class,
-            'collectSortingsToBePublished'
-        );
-
-        /** @see \In2code\In2publishCore\Features\PublishSorting\SortingPublisher::publishSortingRecursively() */
-        $signalSlotDispatcher->connect(
-            \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-            'publishRecordRecursiveEnd',
-            \In2code\In2publishCore\Features\PublishSorting\SortingPublisher::class,
-            'publishSortingRecursively'
         );
     }
 
@@ -349,29 +186,18 @@
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Performance\DiskSpeedPerformanceTest::class;
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Application\SiteConfigurationTest::class;
 
-    /********************************************** Redirects Support #2 **********************************************/
-    if ($redirectsIsLoaded && $configContainer->get('features.redirectsSupport.enable')) {
-        /** @see \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::addRedirectsToPageRecord() */
-        $signalSlotDispatcher->connect(
-            \In2code\In2publishCore\Domain\Factory\RecordFactory::class,
-            'addAdditionalRelatedRecords',
-            \In2code\In2publishCore\Features\RedirectsSupport\PageRecordRedirectEnhancer::class,
-            'addRedirectsToPageRecord'
-        );
-        /** @see \In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement::replaceLocalWithForeignSourceHost() */
-        $signalSlotDispatcher->connect(
-            \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-            'publishRecordRecursiveBeforePublishing',
-            \In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement::class,
-            'replaceLocalWithForeignSourceHost'
-        );
+    /************************************************ Redirect Support ************************************************/
+    if (
+        $configContainer->get('features.redirectsSupport.enable')
+        && \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('redirects')
+    ) {
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-            'In2code.In2publishCore',
+            'in2publish_core',
             'site',
             'm5',
             'after:redirects',
             [
-                'Redirect' => 'list,publish,selectSite',
+                \In2code\In2publishCore\Features\RedirectsSupport\Controller\RedirectController::class => 'list,publish,selectSite',
             ],
             [
                 'access' => 'user,group',
@@ -380,43 +206,4 @@
             ]
         );
     }
-
-    /************************************************ Skip Table Voter ************************************************/
-    $signalSlotDispatcher->connect(
-        \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-        'instanceCreated',
-        function () use ($signalSlotDispatcher, $configContainer) {
-            $voter = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-                \In2code\In2publishCore\Features\SkipTableVoting\SkipTableVoter::class
-            );
-            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipTableVoter::shouldSkipSearchingForRelatedRecordByTable() */
-            $signalSlotDispatcher->connect(
-                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                'shouldSkipSearchingForRelatedRecordByTable',
-                $voter,
-                'shouldSkipSearchingForRelatedRecordByTable'
-            );
-            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipTableVoter::shouldSkipSearchingForRelatedRecordsByProperty() */
-            $signalSlotDispatcher->connect(
-                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                'shouldSkipSearchingForRelatedRecordsByProperty',
-                $voter,
-                'shouldSkipSearchingForRelatedRecordsByProperty'
-            );
-            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipTableVoter::shouldSkipFindByIdentifier() */
-            $signalSlotDispatcher->connect(
-                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                'shouldSkipFindByIdentifier',
-                $voter,
-                'shouldSkipFindByIdentifier'
-            );
-            /** @see \In2code\In2publishCore\Features\SkipTableVoting\SkipTableVoter::shouldSkipFindByProperty() */
-            $signalSlotDispatcher->connect(
-                \In2code\In2publishCore\Domain\Repository\CommonRepository::class,
-                'shouldSkipFindByProperty',
-                $voter,
-                'shouldSkipFindByProperty'
-            );
-        }
-    );
 })();

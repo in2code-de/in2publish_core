@@ -12,7 +12,7 @@ class RecordCollection
     /** @var array<string, int[]> */
     protected $records = [];
 
-    public function addRecord(string $table, int $uid)
+    public function addRecord(string $table, int $uid): void
     {
         if ('pages' === $table) {
             $this->pages[$uid] = $uid;

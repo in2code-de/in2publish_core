@@ -30,53 +30,36 @@ namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
  */
 
 use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use PDO;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\SingletonInterface;
 
-use function is_array;
-use function json_encode;
-
-/**
- * Class Letterbox
- */
-class Letterbox
+class Letterbox implements LoggerAwareInterface, SingletonInterface
 {
+    use LoggerAwareTrait;
+
     public const TABLE = 'tx_in2code_in2publish_envelope';
 
-    /**
-     * @var ContextService
-     */
-    protected $contextService = null;
+    /** @var ContextService */
+    protected $contextService;
 
-    /**
-     * @var bool
-     */
-    protected $keepEnvelopes = true;
+    /** @var bool */
+    protected $keepEnvelopes;
 
-    /**
-     * @var Logger
-     */
-    protected $logger = null;
-
-    /**
-     * Letterbox constructor.
-     */
-    public function __construct()
+    public function __construct(ContextService $contextService, ConfigContainer $configContainer)
     {
-        $this->contextService = GeneralUtility::makeInstance(ContextService::class);
-        $this->keepEnvelopes = GeneralUtility::makeInstance(ConfigContainer::class)->get('debug.keepEnvelopes');
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
+        $this->contextService = $contextService;
+        $this->keepEnvelopes = $configContainer->get('debug.keepEnvelopes');
     }
 
     /**
-     * @param Envelope $envelope
-     *
      * @return bool|int false for errors, int for successful sent envelopes and true for updated envelopes (yes, ugly)
+     * @throws Throwable
      */
     public function sendEnvelope(Envelope $envelope)
     {
@@ -85,36 +68,36 @@ class Letterbox
         } else {
             $database = DatabaseUtility::buildLocalDatabaseConnection();
         }
+        if (null === $database) {
+            throw new In2publishCoreException('Can\'t use the letterbox when the DB is not available', 1631020705);
+        }
 
-        $uid = (int)$envelope->getUid();
+        $uid = $envelope->getUid();
 
         if (0 === $uid || 0 === $database->count('uid', static::TABLE, ['uid' => $uid])) {
-            if (1 === $database->insert(static::TABLE, $envelope->toArray())) {
+            try {
+                $database->insert(static::TABLE, $envelope->toArray());
                 if ($uid <= 0) {
                     $uid = (int)$database->lastInsertId();
                     $envelope->setUid($uid);
                 }
                 return $uid;
-            } else {
+            } catch (Throwable $exception) {
                 $this->logger->error(
                     'Failed to send envelope [' . $uid . ']',
-                    [
-                        'envelope' => $envelope->toArray(),
-                        'error' => json_encode($database->errorInfo()),
-                        'errno' => $database->errorCode(),
-                    ]
+                    ['envelope' => $envelope->toArray(), 'exception' => $exception]
                 );
+                throw new $exception;
             }
-        } elseif (1 === $database->update(static::TABLE, $envelope->toArray(), ['uid' => $uid])) {
+        }
+
+        try {
+            $database->update(static::TABLE, $envelope->toArray(), ['uid' => $uid]);
             return true;
-        } else {
+        } catch (Throwable $exception) {
             $this->logger->error(
                 'Failed to update envelope [' . $uid . ']',
-                [
-                    'envelope' => $envelope->toArray(),
-                    'error' => json_encode($database->errorInfo()),
-                    'errno' => $database->errorCode(),
-                ]
+                ['envelope' => $envelope->toArray(), 'exception' => $exception]
             );
         }
         return false;
@@ -125,47 +108,43 @@ class Letterbox
      * @param bool $burnEnvelope a.k.a. burn after reading, overridden by global debug setting
      *
      * @return bool|Envelope
+     * @throws Throwable
      */
-    public function receiveEnvelope($uid, $burnEnvelope = true)
+    public function receiveEnvelope(int $uid, bool $burnEnvelope = true)
     {
-        $uid = (int)$uid;
-
         if ($this->contextService->isForeign()) {
             $database = DatabaseUtility::buildLocalDatabaseConnection();
         } else {
             $database = DatabaseUtility::buildForeignDatabaseConnection();
         }
+        if (null === $database) {
+            throw new In2publishCoreException('Can\'t use the letterbox when the DB is not available', 1631020888);
+        }
 
         $query = $database->createQueryBuilder();
         $query->getRestrictions()->removeAll();
-        $envelopeData = $query->select('command', 'request', 'response', 'uid')
-                              ->from(static::TABLE)
-                              ->where($query->expr()->eq('uid', (int)$uid))
-                              ->setMaxResults(1)
-                              ->execute()
-                              ->fetch(PDO::FETCH_ASSOC);
-        if (is_array($envelopeData)) {
-            $envelope = Envelope::fromArray($envelopeData);
-            if (!$this->keepEnvelopes && $burnEnvelope) {
-                $database->delete(static::TABLE, ['uid' => $uid]);
-            }
-        } else {
+        $query->select('command', 'request', 'response', 'uid')
+              ->from(static::TABLE)
+              ->where($query->expr()->eq('uid', $uid))
+              ->setMaxResults(1);
+        try {
+            $result = $query->execute();
+            $envelopeData = $result->fetchAssociative();
+        } catch (Throwable $exception) {
             $this->logger->error(
-                'Failed to receive envelope [' . $uid . '] "' . json_encode($database->errorInfo()) . '"',
-                [
-                    'error' => json_encode($database->errorInfo()),
-                    'errno' => $database->errorCode(),
-                ]
+                'Failed to receive envelope [' . $uid . '] "' . $exception . '"',
+                ['exception' => $exception]
             );
-            $envelope = false;
+            return false;
+        }
+        $envelope = Envelope::fromArray($envelopeData);
+        if (!$this->keepEnvelopes && $burnEnvelope) {
+            $database->delete(static::TABLE, ['uid' => $uid]);
         }
         return $envelope;
     }
 
-    /**
-     * @return false|int
-     */
-    public function hasUnAnsweredEnvelopes()
+    public function hasUnAnsweredEnvelopes(): bool
     {
         if ($this->contextService->isLocal()) {
             $database = DatabaseUtility::buildForeignDatabaseConnection();
@@ -177,15 +156,12 @@ class Letterbox
             $query = $database->createQueryBuilder();
             $query->getRestrictions()->removeAll();
             $query->count('uid')->from(static::TABLE)->where($query->expr()->isNotNull('response'));
-            return $query->execute()->fetch() > 0;
+            return $query->execute()->fetchOne() > 0;
         }
         return false;
     }
 
-    /**
-     *
-     */
-    public function removeAnsweredEnvelopes()
+    public function removeAnsweredEnvelopes(): void
     {
         if ($this->contextService->isLocal()) {
             $database = DatabaseUtility::buildForeignDatabaseConnection();

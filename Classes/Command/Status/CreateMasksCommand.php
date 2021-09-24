@@ -35,19 +35,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class CreateMasksCommand extends Command
 {
-    public const DESCRIPTION = 'Prints the configured fileCreateMask and folderCreateMask';
     public const IDENTIFIER = 'in2publish_core:status:createmasks';
-
-    protected function configure()
-    {
-        $this->setDescription(self::DESCRIPTION)
-             ->setHidden(true);
-    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('FileCreateMask: ' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['fileCreateMask']);
         $output->writeln('FolderCreateMask: ' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['folderCreateMask']);
-        return 0;
+        return Command::SUCCESS;
     }
 }

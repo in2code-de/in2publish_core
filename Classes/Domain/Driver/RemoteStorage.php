@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Domain\Driver;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Exception;
 use In2code\In2publishCore\Command\RemoteProcedureCall\ExecuteCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
@@ -38,45 +37,31 @@ use In2code\In2publishCore\Communication\RemoteProcedureCall\EnvelopeDispatcher;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\In2publishCoreException;
 use RuntimeException;
+use Throwable;
 use TYPO3\CMS\Core\Resource\ResourceStorageInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class RemoteStorage
- */
 class RemoteStorage implements ResourceStorageInterface
 {
     public const SUB_FOLDERS_KEY = 'subFolders';
     public const FILES_KEY = 'files';
     public const HAS_FOLDER_KEY = 'hasFolder';
 
-    /**
-     * @var Letterbox
-     */
-    protected $letterbox = null;
+    /** @var Letterbox */
+    protected $letterbox;
 
-    /**
-     * @var array
-     */
+    /** @var RemoteCommandDispatcher */
+    protected $remoteCommandDispatcher;
+
+    /** @var array */
     protected static $cache = [];
 
-    /**
-     * RemoteStorage constructor.
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
+    public function __construct(Letterbox $letterbox, RemoteCommandDispatcher $remoteCommandDispatcher)
     {
-        $this->letterbox = GeneralUtility::makeInstance(Letterbox::class);
+        $this->letterbox = $letterbox;
+        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
-    /**
-     * @param int $storage
-     * @param string $identifier
-     *
-     * @return bool
-     */
-    public function hasFolder($storage, $identifier): bool
+    public function hasFolder(int $storage, string $identifier): bool
     {
         if (!isset(static::$cache[$storage][$identifier][static::HAS_FOLDER_KEY])) {
             $result = $this->executeEnvelope(
@@ -92,13 +77,7 @@ class RemoteStorage implements ResourceStorageInterface
         return static::$cache[$storage][$identifier][static::HAS_FOLDER_KEY];
     }
 
-    /**
-     * @param int $storage
-     * @param string $identifier
-     *
-     * @return array
-     */
-    public function getFoldersInFolder($storage, $identifier): array
+    public function getFoldersInFolder(int $storage, string $identifier): array
     {
         if (!isset(static::$cache[$storage][$identifier][static::SUB_FOLDERS_KEY])) {
             $result = $this->executeEnvelope(
@@ -111,13 +90,7 @@ class RemoteStorage implements ResourceStorageInterface
         return static::$cache[$storage][$identifier][static::SUB_FOLDERS_KEY];
     }
 
-    /**
-     * @param int $storage
-     * @param string $identifier
-     *
-     * @return array
-     */
-    public function getFilesInFolder($storage, $identifier): array
+    public function getFilesInFolder(int $storage, string $identifier): array
     {
         if (!isset(static::$cache[$storage][$identifier][static::FILES_KEY])) {
             $result = $this->executeEnvelope(
@@ -130,13 +103,7 @@ class RemoteStorage implements ResourceStorageInterface
         return static::$cache[$storage][$identifier][static::FILES_KEY];
     }
 
-    /**
-     * @param int $storage
-     * @param string $identifier
-     *
-     * @return array
-     */
-    public function getFile($storage, $identifier): array
+    public function getFile(int $storage, string $identifier): array
     {
         if (!isset(static::$cache[$storage][$identifier][static::FILES_KEY][$identifier])) {
             $result = $this->executeEnvelope(
@@ -155,11 +122,11 @@ class RemoteStorage implements ResourceStorageInterface
      *
      * @return mixed
      *
-     * @throws Exception
+     * @throws Throwable
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function executeEnvelope($command, array $arguments = [])
+    protected function executeEnvelope(string $command, array $arguments = [])
     {
         $envelope = new Envelope($command, $arguments);
         $uid = $this->letterbox->sendEnvelope($envelope);
@@ -170,13 +137,8 @@ class RemoteStorage implements ResourceStorageInterface
             );
         }
 
-        $request = GeneralUtility::makeInstance(
-            RemoteCommandRequest::class,
-            ExecuteCommand::IDENTIFIER,
-            [],
-            [$uid]
-        );
-        $response = GeneralUtility::makeInstance(RemoteCommandDispatcher::class)->dispatch($request);
+        $request = new RemoteCommandRequest(ExecuteCommand::IDENTIFIER, [], [$uid]);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {
             throw new RuntimeException(

@@ -29,62 +29,22 @@ namespace In2code\In2publishCore\Log\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Service\Error\FailureCollector;
 use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogRecord;
 use TYPO3\CMS\Core\Log\Processor\AbstractProcessor;
-use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-use function min;
-use function version_compare;
-
-/**
- * Class PublishingErrorProcessor
- */
-class PublishingFailureCollector extends AbstractProcessor implements SingletonInterface
+class PublishingFailureCollector extends AbstractProcessor
 {
-    public const MINIMUM_LOG_LEVEL = 4;
+    protected const MINIMUM_LOG_LEVEL = 4;
 
-    /**
-     * @var array
-     */
-    protected $failures = [];
-
-    /**
-     * @var int
-     */
-    protected $highestSeverity = 7;
-
-    /**
-     * @param LogRecord $logRecord
-     *
-     * @return LogRecord|void
-     */
-    public function processLogRecord(LogRecord $logRecord)
+    public function processLogRecord(LogRecord $logRecord): LogRecord
     {
-        $level = $logRecord->getLevel();
-        if (version_compare(TYPO3_branch, '10.0', '>=')) {
-            $level = LogLevel::normalizeLevel($level);
-        }
-        $this->highestSeverity = min($this->highestSeverity, $level);
-        if ($level <= self::MINIMUM_LOG_LEVEL) {
-            $this->failures[$logRecord->getMessage()][] = $logRecord;
+        $normalizeLevel = LogLevel::normalizeLevel($logRecord->getLevel());
+        if ($normalizeLevel <= self::MINIMUM_LOG_LEVEL) {
+            GeneralUtility::makeInstance(FailureCollector::class)->addLogRecord($logRecord);
         }
         return $logRecord;
-    }
-
-    /**
-     * @return array
-     */
-    public function getFailures(): array
-    {
-        return $this->failures;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMostCriticalLogLevel(): int
-    {
-        return $this->highestSeverity;
     }
 }

@@ -34,56 +34,34 @@ use DateTime;
 use In2code\In2publishCore\Utility\ArrayUtility;
 
 /**
- * Any Task must inherit from this class. This AbstractTask works like a Template
- * for Task execution strategy
+ * Any Task must inherit from this class. This AbstractTask works like a Template for Task execution strategy
  */
 abstract class AbstractTask
 {
-    /**
-     * @var int
-     */
-    protected $uid = 0;
+    /** @var int */
+    protected $uid;
 
-    /**
-     * @var array
-     */
-    protected $configuration = [];
+    /** @var array */
+    protected $configuration;
 
-    /**
-     * @var DateTime
-     */
+    /** @var DateTime|null */
     protected $creationDate;
 
-    /**
-     * @var DateTime
-     */
+    /** @var DateTime|null */
     protected $executionBegin;
 
-    /**
-     * @var DateTime
-     */
+    /** @var DateTime|null */
     protected $executionEnd;
 
-    /**
-     * @var array
-     */
+    /** @var array<string> */
     private $messages = [];
 
-    /**
-     * @param array $configuration
-     * @param int $uid
-     */
     final public function __construct(array $configuration, int $uid = 0)
     {
         $this->configuration = $configuration;
         $this->uid = $uid;
     }
 
-    /**
-     * Template "execution" Method
-     *
-     * @return bool
-     */
     final public function execute(): bool
     {
         $this->beforeExecute();
@@ -93,47 +71,27 @@ abstract class AbstractTask
     }
 
     /**
-     * @return void
-     */
-    abstract public function modifyConfiguration();
-
-    /**
-     * Implement this in your Task
-     *
-     * @return bool
+     * @api Implement this in your Task
      */
     abstract protected function executeTask(): bool;
 
-    /**
-     * @return void
-     */
-    final protected function beforeExecute()
+    final protected function beforeExecute(): void
     {
         $this->executionBegin = new DateTime();
     }
 
-    /**
-     * @return void
-     */
-    final protected function afterExecute()
+    final protected function afterExecute(): void
     {
         $this->executionEnd = new DateTime();
     }
 
-    /**
-     * @return int
-     */
     final public function getUid(): int
     {
         return $this->uid;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return mixed
-     */
-    final public function getConfiguration($path = '')
+    /** @return mixed */
+    final public function getConfiguration(string $path = '')
     {
         if ($path) {
             return ArrayUtility::getValueByPath($this->configuration, $path);
@@ -141,36 +99,22 @@ abstract class AbstractTask
         return $this->configuration;
     }
 
-    /**
-     * @return DateTime
-     */
-    final public function getCreationDate(): DateTime
+    final public function getCreationDate(): ?DateTime
     {
         return $this->creationDate;
     }
 
-    /**
-     * @param DateTime $creationDate
-     *
-     * @return AbstractTask
-     */
     final public function setCreationDate(DateTime $creationDate): AbstractTask
     {
         $this->creationDate = $creationDate;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
-    final public function getExecutionBegin(): DateTime
+    final public function getExecutionBegin(): ?DateTime
     {
         return $this->executionBegin;
     }
 
-    /**
-     * @return string
-     */
     final public function getExecutionBeginForPersistence(): string
     {
         if ($this->executionBegin instanceof DateTime) {
@@ -179,28 +123,17 @@ abstract class AbstractTask
         return 'NULL';
     }
 
-    /**
-     * @param DateTime $executionBegin
-     *
-     * @return AbstractTask
-     */
     final public function setExecutionBegin(DateTime $executionBegin = null): AbstractTask
     {
         $this->executionBegin = $executionBegin;
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
-    final public function getExecutionEnd(): DateTime
+    final public function getExecutionEnd(): ?DateTime
     {
         return $this->executionEnd;
     }
 
-    /**
-     * @return string
-     */
     final public function getExecutionEndForPersistence(): string
     {
         if ($this->executionEnd instanceof DateTime) {
@@ -210,7 +143,7 @@ abstract class AbstractTask
     }
 
     /**
-     * @param DateTime $executionEnd
+     * @param DateTime|null $executionEnd
      *
      * @return AbstractTask
      */
@@ -220,31 +153,26 @@ abstract class AbstractTask
         return $this;
     }
 
-    /**
-     * @return array
-     */
     final public function getMessages(): array
     {
         return $this->messages;
     }
 
     /**
-     * @param string $messages
+     * @param array<string> $messages
      *
      * @return AbstractTask
      */
-    final public function setMessages($messages): AbstractTask
+    final public function setMessages(array $messages): AbstractTask
     {
-        $this->messages = $messages;
+        $this->messages = [];
+        foreach ($messages as $message) {
+            $this->addMessage($message);
+        }
         return $this;
     }
 
-    /**
-     * @param string $string
-     *
-     * @return void
-     */
-    final public function addMessage($string)
+    final public function addMessage(string $string): void
     {
         $this->messages[] = $string;
     }

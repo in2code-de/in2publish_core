@@ -31,9 +31,6 @@ namespace In2code\In2publishCore\Config\Node;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
-/**
- * Interface Node
- */
 interface Node
 {
     public const T_ARRAY = 'array';
@@ -43,62 +40,25 @@ interface Node
     public const T_INTEGER = 'integer';
     public const T_BOOLEAN = 'boolean';
 
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     *
-     * @return void
-     */
-    public function validate(ValidationContainer $container, $value);
+    /** @param mixed $value */
+    public function validate(ValidationContainer $container, $value): void;
 
-    /**
-     * @return string
-     */
     public function getName(): string;
 
-    /**
-     * @param Node $node
-     *
-     * @return void
-     */
-    public function addNode(Node $node);
+    public function addNode(Node $node): void;
 
-    /**
-     * @param string $path
-     *
-     * @return Node
-     */
     public function getNodePath(string $path): Node;
 
-    /**
-     * @return string[]|int[]|bool[]|array[]
-     */
+    /** @return string[]|int[]|bool[]|array[] */
     public function getDefaults(): array;
 
-    /**
-     * @param Node $node
-     *
-     * @return void
-     */
-    public function merge(Node $node);
+    public function merge(Node $node): void;
 
-    /**
-     * @param array $original
-     * @param array $additional
-     *
-     * @return array
-     */
     public function mergeArrays(array $original, array $additional): array;
 
-    /**
-     * @param string[]|int[]|bool[]|array[] $value
-     *
-     * @return string[]|int[]|bool[]|array[]
-     */
+    /** @param mixed $value */
     public function cast($value);
 
-    /**
-     * @param string[]|int[]|bool[]|array[] $value
-     */
-    public function unsetDefaults(array &$value);
+    /** @param string[]|int[]|bool[]|array[] $value */
+    public function unsetDefaults(array &$value): void;
 }

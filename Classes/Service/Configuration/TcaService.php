@@ -42,48 +42,35 @@ use function in_array;
 use function strpos;
 use function ucfirst;
 
-/**
- * Class TcaService
- */
 class TcaService implements SingletonInterface
 {
     protected const TYPE_ROOT = 'root';
     protected const TYPE_PAGE = 'page';
 
-    /**
-     * @var array[]
-     */
-    protected $tca = [];
+    /** @var array */
+    protected $tableNames;
 
-    /**
-     * @var array
-     */
-    protected $tableNames = [];
-
-    /**
-     * @var array RunTime Cache
-     */
+    /** @var array RunTime Cache */
     protected $rtc = [];
 
-    /**
-     * TcaService constructor.
-     */
     public function __construct()
     {
-        $this->tca = $this->getTca();
-        $this->tableNames = array_keys($this->tca);
+        $this->tableNames = array_keys($GLOBALS['TCA'] ?? []);
     }
 
     /**
      * @param string[] $exceptTableNames
      *
      * @return string[]
+     *
+     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function getAllTableNamesAllowedOnRootLevel(array $exceptTableNames = []): array
     {
         $rootLevelTables = [];
-        foreach ($this->tca as $tableName => $tableConfiguration) {
-            if (!empty($tableConfiguration['ctrl']['rootLevel'])
+        foreach ($GLOBALS['TCA'] ?? [] as $tableName => $tableConfiguration) {
+            if (
+                !empty($tableConfiguration['ctrl']['rootLevel'])
                 && !in_array($tableName, $exceptTableNames, true)
                 && in_array($tableConfiguration['ctrl']['rootLevel'], [1, -1, true], true)
             ) {
@@ -101,49 +88,38 @@ class TcaService implements SingletonInterface
     /**
      * Get label field name from table
      *
-     * @param string $tableName
-     *
      * @return string Field name of the configured label field or empty string if not set
+     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function getLabelFieldFromTable(string $tableName): string
     {
-        if (!empty($this->tca[$tableName]['ctrl']['label'])) {
-            return $this->tca[$tableName]['ctrl']['label'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['label'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['label'];
         }
         return '';
     }
 
     /**
-     * @param string $tableName
-     *
      * @return string Field name of the configured label_alt field or empty string if not set
+     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function getLabelAltFieldFromTable(string $tableName): string
     {
-        if (!empty($this->tca[$tableName]['ctrl']['label_alt'])) {
-            return $this->tca[$tableName]['ctrl']['label_alt'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['label_alt'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['label_alt'];
         }
         return '';
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return bool
-     */
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getLabelAltForceFromTable(string $tableName): bool
     {
-        if (isset($this->tca[$tableName]['ctrl']['label_alt_force'])) {
-            return (bool)$this->tca[$tableName]['ctrl']['label_alt_force'];
+        if (isset($GLOBALS['TCA'][$tableName]['ctrl']['label_alt_force'])) {
+            return (bool)$GLOBALS['TCA'][$tableName]['ctrl']['label_alt_force'];
         }
         return false;
     }
 
-    /**
-     * @param array $row
-     * @param string $table
-     * @return string
-     */
     public function getRecordLabel(array $row, string $table): string
     {
         $labelField = $this->getLabelFieldFromTable($table);
@@ -166,98 +142,74 @@ class TcaService implements SingletonInterface
     }
 
     /**
-     * @param string $tableName
-     *
      * @return string Field name of the configured title field or empty string if not set
+     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function getTitleFieldFromTable(string $tableName): string
     {
-        if (!empty($this->tca[$tableName]['ctrl']['title'])) {
-            return $this->tca[$tableName]['ctrl']['title'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['title'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['title'];
         }
         return '';
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return string
-     */
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getSortingField(string $tableName): string
     {
         $sortingField = '';
-        if (!empty($this->tca[$tableName]['ctrl']['sortby'])) {
-            $sortingField = $this->tca[$tableName]['ctrl']['sortby'];
-        } elseif (!empty($this->tca[$tableName]['ctrl']['crdate'])) {
-            $sortingField = $this->tca[$tableName]['ctrl']['crdate'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['sortby'])) {
+            $sortingField = $GLOBALS['TCA'][$tableName]['ctrl']['sortby'];
+        } elseif (!empty($GLOBALS['TCA'][$tableName]['ctrl']['crdate'])) {
+            $sortingField = $GLOBALS['TCA'][$tableName]['ctrl']['crdate'];
         }
         return $sortingField;
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return string
-     */
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getNameOfSortingField(string $tableName): string
     {
-        if (!empty($this->tca[$tableName]['ctrl']['sortby'])) {
-            return $this->tca[$tableName]['ctrl']['sortby'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['sortby'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['sortby'];
         }
         return '';
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return string
-     */
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getDeletedField(string $tableName): string
     {
         $deleteField = '';
-        if (!empty($this->tca[$tableName]['ctrl']['delete'])) {
-            $deleteField = $this->tca[$tableName]['ctrl']['delete'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['delete'])) {
+            $deleteField = $GLOBALS['TCA'][$tableName]['ctrl']['delete'];
         }
         return $deleteField;
     }
 
     /**
      * Records whose deleted field evaluate to true will not be shown in the frontend.
-     *
-     * @param string $tableName
-     *
-     * @return string
+     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function getDisableField(string $tableName): string
     {
-        if (!empty($this->tca[$tableName]['ctrl']['enablecolumns']['disabled'])) {
-            return $this->tca[$tableName]['ctrl']['enablecolumns']['disabled'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns']['disabled'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns']['disabled'];
         }
         return '';
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return string
-     */
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getLanguageField(string $tableName): string
     {
-        if (!empty($this->tca[$tableName]['ctrl']['languageField'])) {
-            return $this->tca[$tableName]['ctrl']['languageField'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['languageField'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['languageField'];
         }
         return '';
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return string
-     */
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getTransOrigPointerField(string $tableName): string
     {
-        if (!empty($this->tca[$tableName]['ctrl']['transOrigPointerField'])) {
-            return $this->tca[$tableName]['ctrl']['transOrigPointerField'];
+        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['transOrigPointerField'])) {
+            return $GLOBALS['TCA'][$tableName]['ctrl']['transOrigPointerField'];
         }
         return '';
     }
@@ -278,7 +230,8 @@ class TcaService implements SingletonInterface
         $tables = $this->getDatabaseSchemaTables();
 
         foreach ($tables as $table) {
-            if ($table->hasColumn('uid')
+            if (
+                $table->hasColumn('uid')
                 && $table->hasColumn('pid')
                 && !in_array($table->getName(), $exceptTableNames, true)
             ) {
@@ -289,26 +242,16 @@ class TcaService implements SingletonInterface
         return $result;
     }
 
-    /**
-     * @return array|null
-     */
-    public function getConfigurationArrayForTable(string $table)
+    /** @SuppressWarnings("PHPMD.Superglobals") */
+    public function getConfigurationArrayForTable(string $table): ?array
     {
-        if (isset($this->tca[$table])) {
-            return $this->tca[$table];
-        }
-        return null;
+        return $GLOBALS['TCA'][$table] ?? null;
     }
 
-    /**
-     * @return array|null
-     */
-    public function getColumnConfigurationForTableColumn(string $table, string $column)
+    /** @SuppressWarnings("PHPMD.Superglobals") */
+    public function getColumnConfigurationForTableColumn(string $table, string $column): ?array
     {
-        if (isset($this->tca[$table]['columns'][$column])) {
-            return $this->tca[$table]['columns'][$column];
-        }
-        return null;
+        return $GLOBALS['TCA'][$table]['columns'][$column] ?? null;
     }
 
     /**
@@ -343,25 +286,12 @@ class TcaService implements SingletonInterface
         return $label;
     }
 
-    /**
-     * @param string $tableName
-     *
-     * @return bool
-     */
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function isHiddenRootTable(string $tableName): bool
     {
-        return isset($this->tca[$tableName]['ctrl']['hideTable'])
-            && isset($this->tca[$tableName]['ctrl']['rootLevel'])
-            && true === (bool)$this->tca[$tableName]['ctrl']['hideTable']
-            && in_array($this->tca[$tableName]['ctrl']['rootLevel'], [1, -1], true);
-    }
-
-    /**
-     * @SuppressWarnings("PHPMD.Superglobals")
-     */
-    protected function getTca(): array
-    {
-        return isset($GLOBALS['TCA']) ? $GLOBALS['TCA'] : [];
+        return isset($GLOBALS['TCA'][$tableName]['ctrl']['hideTable'], $GLOBALS['TCA'][$tableName]['ctrl']['rootLevel'])
+               && true === (bool)$GLOBALS['TCA'][$tableName]['ctrl']['hideTable']
+               && in_array($GLOBALS['TCA'][$tableName]['ctrl']['rootLevel'], [1, -1], true);
     }
 
     /**

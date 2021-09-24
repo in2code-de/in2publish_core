@@ -34,14 +34,8 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 
 use function ini_get;
 
-/**
- * Class SftpRequirementsTest
- */
 class SftpRequirementsTest implements TestCaseInterface
 {
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         if (false === (bool)ini_get('allow_url_fopen')) {
@@ -57,9 +51,6 @@ class SftpRequirementsTest implements TestCaseInterface
         );
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

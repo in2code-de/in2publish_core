@@ -30,32 +30,21 @@ namespace In2code\In2publishCore\ViewHelpers\String;
  */
 
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-use TYPO3Fluid\Fluid\Core\ViewHelper\Exception;
 
 use function explode;
 
-/**
- * Class FirstInListViewHelper
- */
 class FirstInListViewHelper extends AbstractViewHelper
 {
-    /**
-     * @throws Exception
-     */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('entries', 'string', 'CSV of which the first will be returned', true);
     }
 
-    /**
-     * @return string
-     */
     public function render(): string
     {
         $arguments = $this->arguments['entries'];
         $list = explode(',', $arguments, 2);
-        $item = $list[0];
-        return $item;
+        return $list[0];
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection PhpFullyQualifiedNameUsageInspection */
+
 (static function () {
     /***************************************************** Guards *****************************************************/
     if (!defined('TYPO3_REQUESTTYPE')) {
@@ -31,9 +33,7 @@
 
     /************************************************** Init Logging **************************************************/
     $logLevel = $extConf['logLevel'];
-    if (version_compare(TYPO3_branch, '10.0', '>=')) {
-        $logLevel = \TYPO3\CMS\Core\Log\LogLevel::getInternalName((int)$logLevel);
-    }
+    $logLevel = \TYPO3\CMS\Core\Log\LogLevel::getInternalName((int)$logLevel);
     $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'] = [
         'writerConfiguration' => [
             $logLevel => [
@@ -94,10 +94,10 @@
 
     /******************************************** Configure Compare Plugin ********************************************/
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-        'In2code.in2publishCore',
+        'in2publish_core',
         'Pi1',
-        ['Frontend' => 'preview'],
-        ['Frontend' => 'preview']
+        [\In2code\In2publishCore\Controller\FrontendController::class => 'preview'],
+        [\In2code\In2publishCore\Controller\FrontendController::class => 'preview']
     );
 
     /***************************************** Register Communication Adapter *****************************************/

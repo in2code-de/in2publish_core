@@ -35,11 +35,15 @@ use function array_values;
 use function explode;
 use function filter_var;
 use function implode;
+use function is_array;
 use function is_string;
 
-/**
- * Class RemoteCommandResponse
- */
+use const FILTER_FLAG_NO_ENCODE_QUOTES;
+use const FILTER_FLAG_STRIP_HIGH;
+use const FILTER_FLAG_STRIP_LOW;
+use const FILTER_SANITIZE_STRING;
+use const PHP_EOL;
+
 class RemoteCommandResponse
 {
     /**
@@ -64,24 +68,18 @@ class RemoteCommandResponse
      * @param array|string $errors
      * @param int $exitStatus
      */
-    public function __construct($output = [], $errors = [], $exitStatus = 0)
+    public function __construct($output = [], $errors = [], int $exitStatus = 0)
     {
         $this->setOutput($output);
         $this->setErrors($errors);
         $this->setExitStatus($exitStatus);
     }
 
-    /**
-     * @return array
-     */
     public function getOutput(): array
     {
         return $this->output;
     }
 
-    /**
-     * @return string
-     */
     public function getOutputString(): string
     {
         return implode(PHP_EOL, $this->output);
@@ -90,14 +88,11 @@ class RemoteCommandResponse
     /**
      * @param array|string $output
      */
-    public function setOutput($output)
+    public function setOutput($output): void
     {
         $this->output = $this->convertAndSanitizeResponse($output);
     }
 
-    /**
-     * @return array
-     */
     public function getErrors(): array
     {
         return $this->errors;
@@ -106,41 +101,29 @@ class RemoteCommandResponse
     /**
      * @param array|string $errors
      */
-    public function setErrors($errors)
+    public function setErrors($errors): void
     {
         $this->errors = $this->convertAndSanitizeResponse($errors);
     }
 
-    /**
-     * @return string
-     */
     public function getErrorsString(): string
     {
         return implode(PHP_EOL, $this->errors);
     }
 
-    /**
-     * @return bool
-     */
     public function isSuccessful(): bool
     {
         return 0 === $this->exitStatus;
     }
 
-    /**
-     * @return int
-     */
     public function getExitStatus(): int
     {
         return $this->exitStatus;
     }
 
-    /**
-     * @param int $exitStatus
-     */
-    public function setExitStatus($exitStatus)
+    public function setExitStatus(int $exitStatus): void
     {
-        $this->exitStatus = (int)$exitStatus;
+        $this->exitStatus = $exitStatus;
     }
 
     /**

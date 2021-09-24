@@ -29,88 +29,50 @@ namespace In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Features\NewsSupport\Domain\Model\Task\FlushNewsCacheTask;
-use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class NewsCacheInvalidator
- */
-class NewsCacheInvalidator implements SingletonInterface
+class NewsCacheInvalidator
 {
-    /**
-     * @var TaskRepository
-     */
+    /** @var TaskRepository */
     protected $taskRepository;
 
-    /**
-     * @var array
-     */
+    /** @var array<int, string> */
     protected $newsCacheUidArray = [];
 
-    /**
-     * @var array
-     */
+    /** @var array<int, string> */
     protected $newsCachePidArray = [];
 
-    /**
-     * Constructor
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
+    public function __construct(TaskRepository $taskRepository)
     {
-        $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
+        $this->taskRepository = $taskRepository;
     }
 
-    /**
-     * @param string $tableName
-     * @param RecordInterface $record
-     *
-     * @return void
-     */
-    public function registerClearCacheTasks($tableName, RecordInterface $record)
+    public function registerClearCacheTasks(PublishingOfOneRecordBegan $event): void
     {
-        $this->flushNewsCache($tableName, $record);
+        $record = $event->getRecord();
+        if ('tx_news_domain_model_news' !== $record->getTableName() || !$record->localRecordExists()) {
+            return;
+        }
+
+        $uid = $record->getLocalProperty('uid');
+        $this->newsCacheUidArray[$uid] = 'tx_news_uid_' . $uid;
+
+        $pid = $record->getLocalProperty('pid');
+        $this->newsCachePidArray[$pid] = 'tx_news_pid_' . $pid;
     }
 
-    /**
-     * Flush cache especially for tx_news
-     *
-     * @param string $tableName
-     * @param RecordInterface $record
-     *
-     * @return void
-     */
-    protected function flushNewsCache($tableName, RecordInterface $record)
+    public function writeClearCacheTask(): void
     {
-        if ($tableName === 'tx_news_domain_model_news' && $record->localRecordExists()) {
-            $uid = $record->getLocalProperty('uid');
-            if (!isset($this->newsCacheUidArray[$uid])) {
-                $this->newsCacheUidArray[$uid] = 'tx_news_uid_' . $uid;
-            }
-            $pid = $record->getLocalProperty('pid');
-            if (!isset($this->newsCachePidArray[$pid])) {
-                $this->newsCachePidArray[$pid] = 'tx_news_pid_' . $pid;
-            }
-        }
-    }
-
-    /**
-     *
-     */
-    public function writeClearCacheTask()
-    {
-        if (!empty($this->newsCacheUidArray)) {
-            $flushNewsCacheTask = new FlushNewsCacheTask(['tagsToFlush' => $this->newsCacheUidArray]);
-            $this->taskRepository->add($flushNewsCacheTask);
+        if (empty($this->newsCacheUidArray)) {
+            return;
         }
 
-        if (!empty($this->newsCachePidArray)) {
-            $flushNewsCacheTask = new FlushNewsCacheTask(['tagsToFlush' => $this->newsCachePidArray]);
-            $this->taskRepository->add($flushNewsCacheTask);
-        }
+        $this->taskRepository->add(new FlushNewsCacheTask(['tagsToFlush' => $this->newsCacheUidArray]));
+        $this->newsCacheUidArray = [];
+
+        $this->taskRepository->add(new FlushNewsCacheTask(['tagsToFlush' => $this->newsCachePidArray]));
+        $this->newsCachePidArray = [];
     }
 }

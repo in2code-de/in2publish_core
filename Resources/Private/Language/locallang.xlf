@@ -57,7 +57,7 @@
 				<source>The selected folder could not be removed.</source>
 			</trans-unit>
 			<trans-unit id="folder_retrieving_failed">
-				<source>in2publish failed to retrieve information about the folder %s or any of it's subfolders. Please verify that is in2publish is working properly by running the tests.</source>
+				<source>in2publish failed to retrieve information about the folder %s or any of it's sub folders. Please verify that is in2publish is working properly by running the tests.</source>
 			</trans-unit>
 			<trans-unit id="label_publish_all_pages">
 				<source>Publish page "%s" and its subpages.</source>
@@ -319,7 +319,7 @@
 				<source><![CDATA[Ask the Community: We have a channel named #ext-in2publish in the official TYPO3 Slack: <a href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></source>
 			</trans-unit>
 			<trans-unit id="help.github_issues">
-				<source><![CDATA[Official documenation for in2publish_core: <a href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
+				<source><![CDATA[Official documentation for in2publish_core: <a href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
 			</trans-unit>
 
 			<trans-unit id="context_menu_publish_entry.forbidden">

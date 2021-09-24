@@ -28,18 +28,21 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetT3VersionViewHelper
- */
 class GetT3VersionViewHelper extends AbstractViewHelper
 {
-    /**
-     * @return mixed
-     */
-    public function render()
+    /** @var Typo3Version */
+    private $typo3version;
+
+    public function __construct(Typo3Version $typo3version)
     {
-        return TYPO3_branch;
+        $this->typo3version = $typo3version;
+    }
+
+    public function render(): string
+    {
+        return $this->typo3version->getBranch();
     }
 }

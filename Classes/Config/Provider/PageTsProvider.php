@@ -37,14 +37,8 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\TableConfigurationPostProcessingHookInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class PageTsProvider
- */
 class PageTsProvider implements ProviderInterface, ContextualProvider, TableConfigurationPostProcessingHookInterface
 {
-    /**
-     * @var bool
-     */
     protected $locked = true;
 
     /**
@@ -52,25 +46,20 @@ class PageTsProvider implements ProviderInterface, ContextualProvider, TableConf
      * The PageTS provider is locked until that point to prevent premature loading and therefore caching of the PageTS.
      * (e.g. flux registers content elements for the NewContentElementWizard dynamically after ext_tables.php loading)
      */
-    public function processData()
+    public function processData(): void
     {
         $this->locked = false;
     }
 
-    /**
-     * @return bool
-     */
-    public function isAvailable()
+    public function isAvailable(): bool
     {
         return !$this->locked && $this->getDatabase() instanceof Connection;
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         $uid = In2publishBackendUtility::getPageIdentifier();
         // get the pageTS | Manually pass rootline to disable caching.
@@ -83,18 +72,12 @@ class PageTsProvider implements ProviderInterface, ContextualProvider, TableConf
         return $configuration;
     }
 
-    /**
-     * @return int
-     */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 30;
     }
 
-    /**
-     * @return null|Connection
-     */
-    protected function getDatabase()
+    protected function getDatabase(): ?Connection
     {
         return DatabaseUtility::buildLocalDatabaseConnection();
     }

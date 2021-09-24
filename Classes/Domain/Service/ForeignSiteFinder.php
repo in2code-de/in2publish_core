@@ -35,18 +35,19 @@ use In2code\In2publishCore\Command\Status\SiteConfigurationCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
+use In2code\In2publishCore\Domain\Service\Exception\AllSitesCommandException;
 use In2code\In2publishCore\In2publishCoreException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Cache\CacheManager;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function array_key_exists;
 use function base64_decode;
 use function explode;
 use function unserialize;
@@ -63,16 +64,16 @@ class ForeignSiteFinder implements LoggerAwareInterface
     /** @var VariableFrontend */
     protected $cache;
 
-    public function __construct()
+    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, FrontendInterface $cache)
     {
-        $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
-        $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
+        $this->rceDispatcher = $remoteCommandDispatcher;
+        $this->cache = $cache;
     }
 
     public function getSiteByPageId(int $pageId): Site
     {
         $closure = function () use ($pageId): Site {
-            $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
+            $request = new RemoteCommandRequest();
             $request->setCommand(SiteConfigurationCommand::IDENTIFIER);
             $request->setOption((string)$pageId);
 
@@ -91,7 +92,7 @@ class ForeignSiteFinder implements LoggerAwareInterface
                 [
                     'code' => $response->getExitStatus(),
                     'errors' => $response->getErrors(),
-                    'output' => $response->getOutput()
+                    'output' => $response->getOutput(),
                 ]
             );
             throw new In2publishCoreException('An error occurred while fetching a remote site config', 1620723511);
@@ -103,22 +104,21 @@ class ForeignSiteFinder implements LoggerAwareInterface
     public function getAllSites(): array
     {
         $closure = function (): array {
-            $request = GeneralUtility::makeInstance(RemoteCommandRequest::class);
+            $request = new RemoteCommandRequest();
             $request->setCommand(AllSitesCommand::IDENTIFIER);
             $response = $this->rceDispatcher->dispatch($request);
 
             if ($response->isSuccessful()) {
                 return $this->processCommandResult($response);
             }
+            $exitStatus = $response->getExitStatus();
+            $errors = $response->getErrors();
+            $output = $response->getOutput();
             $this->logger->alert(
                 'An error occurred while fetching all foreign sites',
-                [
-                    'code' => $response->getExitStatus(),
-                    'errors' => $response->getErrors(),
-                    'output' => $response->getOutput()
-                ]
+                ['code' => $exitStatus, 'errors' => $errors, 'output' => $output]
             );
-            throw new In2publishCoreException('An error occurred while fetching all foreign sites');
+            throw new AllSitesCommandException($exitStatus, $errors, $output);
         };
         return $this->executeCached('sites', $closure);
     }

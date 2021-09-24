@@ -33,33 +33,33 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TYPO3\CMS\Core\Site\SiteFinder;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function base64_encode;
 use function json_encode;
 
 class ShortSiteConfigurationCommand extends Command
 {
-    public const DESCRIPTION = 'Prints a base64 encoded json array containing all configured sites';
     public const IDENTIFIER = 'in2publish_core:status:shortsiteconfiguration';
 
-    protected function configure()
+    /** @var SiteFinder */
+    protected $siteFinder;
+
+    public function __construct(SiteFinder $siteFinder, string $name = null)
     {
-        $this->setDescription(self::DESCRIPTION)
-             ->setHidden(true);
+        parent::__construct($name);
+        $this->siteFinder = $siteFinder;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
         $shortInfo = [];
-        foreach ($siteFinder->getAllSites() as $site) {
+        foreach ($this->siteFinder->getAllSites() as $site) {
             $shortInfo[$site->getIdentifier()] = [
                 'base' => $site->getBase()->__toString(),
                 'rootPageId' => $site->getRootPageId(),
             ];
         }
         $output->writeln('ShortSiteConfig: ' . base64_encode(json_encode($shortInfo)));
-        return 0;
+        return Command::SUCCESS;
     }
 }

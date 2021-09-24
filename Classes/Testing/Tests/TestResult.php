@@ -33,9 +33,8 @@ use In2code\In2publishCore\Testing\Utility\TestLabelLocalizer;
 
 use function implode;
 
-/**
- * Class TestResult
- */
+use const PHP_EOL;
+
 class TestResult
 {
     public const OK = 'ok';
@@ -43,24 +42,16 @@ class TestResult
     public const ERROR = 'error';
     public const SKIPPED = 'notice';
 
-    /**
-     * @var string
-     */
-    protected $severity = self::OK;
+    /** @var string */
+    protected $severity;
 
-    /**
-     * @var string
-     */
-    protected $label = '';
+    /** @var string */
+    protected $label;
 
-    /**
-     * @var string
-     */
-    protected $messages = '';
+    /** @var array<string> */
+    protected $messages;
 
-    /**
-     * @var array|null
-     */
+    /** @var array|null */
     protected $labelArguments;
 
     /**
@@ -68,14 +59,14 @@ class TestResult
      *
      * @param string $label Key of the label for headline. Only used when $severity !== OK
      * @param string $severity
-     * @param array $messages Keys of labels for explanations what went wrong.
+     * @param array<string> $messages Keys of labels for explanations what went wrong.
      * @param array|null $labelArguments
      *
      * @internal param array|null $arguments
      */
     public function __construct(
-        $label,
-        $severity = self::OK,
+        string $label,
+        string $severity = self::OK,
         array $messages = [],
         array $labelArguments = null
     ) {
@@ -85,17 +76,11 @@ class TestResult
         $this->labelArguments = $labelArguments;
     }
 
-    /**
-     * @return string
-     */
     public function getSeverity(): string
     {
         return $this->severity;
     }
 
-    /**
-     * @return string
-     */
     public function getSeverityLabel(): string
     {
         switch ($this->severity) {
@@ -111,57 +96,11 @@ class TestResult
         }
     }
 
-    /**
-     * @param string $severity
-     */
-    public function setSeverity(string $severity)
-    {
-        $this->severity = $severity;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLabel(): string
-    {
-        return $this->label;
-    }
-
-    /**
-     * @param string $label
-     */
-    public function setLabel(string $label)
-    {
-        $this->label = $label;
-    }
-
-    /**
-     * @return string
-     */
     public function getTranslatedLabel(): string
     {
         return TestLabelLocalizer::translate($this->label, $this->labelArguments);
     }
 
-    /**
-     * @return string
-     */
-    public function getMessages(): string
-    {
-        return $this->messages;
-    }
-
-    /**
-     * @param string $messages
-     */
-    public function setMessages($messages)
-    {
-        $this->messages = $messages;
-    }
-
-    /**
-     * @return string
-     */
     public function getTranslatedMessages(): string
     {
         $translatedMessages = [];

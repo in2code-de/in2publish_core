@@ -36,18 +36,12 @@ use In2code\In2publishCore\Features\WarningOnForeign\Config\Validator\CssColorVa
 
 class WarningOnForeignDefiner implements DefinerInterface
 {
-    /**
-     * @return NodeCollection
-     */
-    public function getLocalDefinition()
+    public function getLocalDefinition(): NodeCollection
     {
         return Builder::start()->end();
     }
 
-    /**
-     * @return NodeCollection
-     */
-    public function getForeignDefinition()
+    public function getForeignDefinition(): NodeCollection
     {
         return Builder::start()
                       ->addArray(

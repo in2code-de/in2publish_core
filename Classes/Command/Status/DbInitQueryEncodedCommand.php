@@ -38,14 +38,7 @@ use function json_encode;
 
 class DbInitQueryEncodedCommand extends Command
 {
-    public const DESCRIPTION = 'Prints the initCommands as json and base64 encoded string';
     public const IDENTIFIER = 'in2publish_core:status:dbinitqueryencoded';
-
-    protected function configure()
-    {
-        $this->setDescription(self::DESCRIPTION)
-             ->setHidden(true);
-    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -54,6 +47,6 @@ class DbInitQueryEncodedCommand extends Command
             $dbInit = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'];
         }
         $output->writeln('DBinit: ' . base64_encode(json_encode($dbInit)));
-        return 0;
+        return Command::SUCCESS;
     }
 }

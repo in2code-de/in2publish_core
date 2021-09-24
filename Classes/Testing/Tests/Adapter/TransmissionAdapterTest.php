@@ -35,24 +35,14 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 
 use function array_merge;
 
-/**
- * Class TransmissionAdapterTest
- */
 class TransmissionAdapterTest implements TestCaseInterface
 {
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         return new TestResult('adapter.all_transmission_adapter_tests__passed');
     }
 
-    /**
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
+    /** @SuppressWarnings(PHPMD.Superglobals) */
     public function getDependencies(): array
     {
         $dependencies = [

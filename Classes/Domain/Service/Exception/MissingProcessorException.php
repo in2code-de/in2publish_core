@@ -31,9 +31,6 @@ namespace In2code\In2publishCore\Domain\Service\Exception;
 
 use Exception;
 
-/**
- * Class MissingProcessorException
- */
 class MissingProcessorException extends Exception
 {
 }

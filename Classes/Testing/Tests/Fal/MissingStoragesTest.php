@@ -34,33 +34,21 @@ use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\Database\LocalDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_diff;
 use function array_keys;
 use function sprintf;
 
-/**
- * Class MissingStoragesTest
- */
 class MissingStoragesTest implements TestCaseInterface
 {
-    /**
-     * @var FalStorageTestSubjectsProvider
-     */
+    /** @var FalStorageTestSubjectsProvider */
     protected $testSubjectProvider;
 
-    /**
-     * MissingStoragesTest constructor.
-     */
-    public function __construct()
+    public function __construct(FalStorageTestSubjectsProvider $testSubjectProvider)
     {
-        $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);
+        $this->testSubjectProvider = $testSubjectProvider;
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $storages = $this->testSubjectProvider->getStoragesForMissingStoragesTest();
@@ -74,9 +62,6 @@ class MissingStoragesTest implements TestCaseInterface
         return new TestResult('fal.no_missing_storages');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [
@@ -85,13 +70,6 @@ class MissingStoragesTest implements TestCaseInterface
         ];
     }
 
-    /**
-     * @param array $storages
-     * @param array $messages
-     * @param string $side
-     *
-     * @return array
-     */
     protected function getMissing(array $storages, array $messages, string $side): array
     {
         $opposite = $side === 'local' ? 'foreign' : 'local';

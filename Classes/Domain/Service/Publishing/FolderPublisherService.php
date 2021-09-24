@@ -30,37 +30,48 @@ namespace In2code\In2publishCore\Domain\Service\Publishing;
  */
 
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
+use In2code\In2publishCore\Event\FolderWasPublished;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
 use function basename;
 use function dirname;
+use function trim;
 
-/**
- * Class FolderPublisherService
- */
 class FolderPublisherService
 {
-    /**
-     * @param string $combinedIdentifier
-     *
-     * @return bool
-     */
-    public function publish($combinedIdentifier): bool
+    /** @var EventDispatcher */
+    protected $eventDispatcher;
+
+    /** @var ResourceFactory */
+    protected $resourceFactory;
+
+    /** @var RemoteFileAbstractionLayerDriver */
+    private $remoteFileAbstractionLayerDriver;
+
+    public function __construct(
+        EventDispatcher $eventDispatcher,
+        ResourceFactory $resourceFactory,
+        RemoteFileAbstractionLayerDriver $remoteFileAbstractionLayerDriver
+    ) {
+        $this->eventDispatcher = $eventDispatcher;
+        $this->resourceFactory = $resourceFactory;
+        $this->remoteFileAbstractionLayerDriver = $remoteFileAbstractionLayerDriver;
+    }
+
+    public function publish(string $combinedIdentifier): bool
     {
         [$storage, $folderIdentifier] = GeneralUtility::trimExplode(':', $combinedIdentifier);
+        $storage = (int)$storage;
 
-        $remoteFalDriver = GeneralUtility::makeInstance(RemoteFileAbstractionLayerDriver::class);
-        $remoteFalDriver->setStorageUid($storage);
-        $remoteFalDriver->initialize();
+        $this->remoteFileAbstractionLayerDriver->setStorageUid($storage);
+        $this->remoteFileAbstractionLayerDriver->initialize();
 
         // Determine if the folder should get published or deleted.
         // If it exists locally then create it on foreign else remove it.
-        if (ResourceFactory::getInstance()->getStorageObject($storage)->hasFolder($folderIdentifier)) {
-            $createdFolder = $remoteFalDriver->createFolder(
+        if ($this->resourceFactory->getStorageObject($storage)->hasFolder($folderIdentifier)) {
+            $createdFolder = $this->remoteFileAbstractionLayerDriver->createFolder(
                 basename($folderIdentifier),
                 dirname($folderIdentifier),
                 true
@@ -69,17 +80,9 @@ class FolderPublisherService
             // leading or trailing slashes (like fal_s3/aus_driver_amazon_s3)
             $success = trim($folderIdentifier, '/') === trim($createdFolder, '/');
         } else {
-            $success = $remoteFalDriver->deleteFolder($folderIdentifier, true);
+            $success = $this->remoteFileAbstractionLayerDriver->deleteFolder($folderIdentifier, true);
         }
-        try {
-            GeneralUtility::makeInstance(Dispatcher::class)->dispatch(
-                FolderPublisherService::class,
-                'afterPublishingFolder',
-                [$storage, $folderIdentifier, ($success !== false)]
-            );
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
-        }
+        $this->eventDispatcher->dispatch(new FolderWasPublished($storage, $folderIdentifier, $success));
         return $success;
     }
 }

@@ -28,11 +28,9 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Service\DomainService;
 use In2code\In2publishCore\Service\Routing\SiteService;
 use In2code\In2publishCore\Utility\UriUtility;
 use In2code\In2publishCore\ViewHelpers\Link\PreviewRecordViewHelper;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 use function ltrim;
@@ -42,30 +40,19 @@ use function trigger_error;
 
 use const E_USER_DEPRECATED;
 
-/**
- * Class GetFirstDomainFromRootlineViewHelper
- */
 class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
 {
     protected const DEPRECATED_VIEWHELPER = 'The ViewHelper "%s" is deprecated and will be removed in in2publish_core version 11. Use %s instead.';
 
-    /**
-     * @var DomainService
-     */
-    protected $domainService;
+    /** @var SiteService */
+    private $siteService;
 
-    /**
-     * GetFirstDomainFromRootlineViewHelper constructor.
-     */
-    public function __construct()
+    public function __construct(SiteService $siteService)
     {
-        $this->domainService = GeneralUtility::makeInstance(DomainService::class);
+        $this->siteService = $siteService;
     }
 
-    /**
-     *
-     */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('identifier', 'int', 'The page uid to search in its rootLine', true);
@@ -88,8 +75,7 @@ class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
         $stagingLevel = $this->arguments['stagingLevel'];
         $addProtocol = $this->arguments['addProtocol'];
 
-        $siteService = GeneralUtility::makeInstance(SiteService::class);
-        $site = $siteService->getSiteForPidAndStagingLevel($identifier, $stagingLevel);
+        $site = $this->siteService->getSiteForPidAndStagingLevel($identifier, $stagingLevel);
         if (null === $site) {
             return '';
         }

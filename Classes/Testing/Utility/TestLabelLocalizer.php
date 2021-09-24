@@ -33,18 +33,9 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function strpos;
 
-/**
- * Class TestLabelLocalizer
- */
 class TestLabelLocalizer
 {
-    /**
-     * @param $key
-     * @param array|null $arguments
-     *
-     * @return string
-     */
-    public static function translate($key, array $arguments = null): string
+    public static function translate(string $key, array $arguments = null): string
     {
         if (0 === strpos($key, 'LLL')) {
             $label = (string)LocalizationUtility::translate($key, 'in2publish_core', $arguments);

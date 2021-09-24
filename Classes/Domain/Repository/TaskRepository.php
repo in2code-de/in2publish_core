@@ -36,46 +36,31 @@ use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_merge;
 use function get_class;
 use function json_encode;
 
-/**
- * Class TaskRepository
- */
 class TaskRepository
 {
     public const TASK_TABLE_NAME = 'tx_in2code_in2publish_task';
 
-    /**
-     * @var Connection
-     */
-    protected $connection = null;
+    /** @var ContextService */
+    protected $contextService;
 
-    /**
-     * @var TaskFactory
-     */
-    protected $taskFactory = null;
+    /** @var TaskFactory */
+    protected $taskFactory;
 
-    /**
-     * @var ContextService
-     */
-    protected $contextService = null;
+    /** @var Connection */
+    protected $connection;
 
-    /**
-     * @var string
-     */
-    protected $creationDate = 'string';
+    /** @var string */
+    protected $creationDate;
 
-    /**
-     * TaskRepository constructor.
-     */
-    public function __construct()
+    public function __construct(ContextService $contextService, TaskFactory $taskFactory)
     {
-        $this->contextService = GeneralUtility::makeInstance(ContextService::class);
-        $this->taskFactory = GeneralUtility::makeInstance(TaskFactory::class);
+        $this->contextService = $contextService;
+        $this->taskFactory = $taskFactory;
         if ($this->contextService->isForeign()) {
             $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
         } elseif ($this->contextService->isLocal()) {
@@ -85,14 +70,7 @@ class TaskRepository
         $this->creationDate = $now->format('Y-m-d H:i:s');
     }
 
-    /**
-     * Add a new Task to the queue
-     *
-     * @param AbstractTask $task
-     *
-     * @return void
-     */
-    public function add(AbstractTask $task)
+    public function add(AbstractTask $task): void
     {
         $this->connection->insert(
             static::TASK_TABLE_NAME,
@@ -100,14 +78,7 @@ class TaskRepository
         );
     }
 
-    /**
-     * Update a Task to set execution time
-     *
-     * @param AbstractTask $task
-     *
-     * @return void
-     */
-    public function update(AbstractTask $task)
+    public function update(AbstractTask $task): void
     {
         $this->connection->update(
             static::TASK_TABLE_NAME,
@@ -125,7 +96,6 @@ class TaskRepository
      */
     protected function taskToPropertiesArray(AbstractTask $task): array
     {
-        $task->modifyConfiguration();
         $properties = [
             'task_type' => get_class($task),
             'configuration' => json_encode($task->getConfiguration()),
@@ -144,11 +114,11 @@ class TaskRepository
      * NULL: finds all Tasks which were not executed
      * DateTime: finds all Tasks which were executed on the given Time
      *
-     * @param DateTime $executionBegin
+     * @param DateTime|null $executionBegin
      *
      * @return array|NULL
      */
-    public function findByExecutionBegin(DateTime $executionBegin = null)
+    public function findByExecutionBegin(DateTime $executionBegin = null): ?array
     {
         $query = $this->connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
@@ -168,7 +138,7 @@ class TaskRepository
                                       ->from(static::TASK_TABLE_NAME)
                                       ->where($predicates)
                                       ->execute()
-                                      ->fetchAll();
+                                      ->fetchAllAssociative();
         foreach ($tasksPropertiesArray as $taskProperties) {
             $taskObjects[] = $this->taskFactory->convertToObject($taskProperties);
         }

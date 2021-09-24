@@ -31,31 +31,28 @@ namespace In2code\In2publishCore\ViewHelpers\Attribute;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ControllerContext;
 use TYPO3\CMS\Fluid\Core\Rendering\RenderingContext;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class DirtyPropertiesIconDataAttributesViewHelper
- */
 class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
 {
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $escapeOutput = false;
 
-    /**
-     * @var ControllerContext
-     */
+    /** @var ControllerContext */
     protected $controllerContext;
 
-    /**
-     * @param RenderingContextInterface $renderingContext
-     */
-    public function setRenderingContext(RenderingContextInterface $renderingContext)
+    /** @var ConfigContainer */
+    private $configContainer;
+
+    public function __construct(ConfigContainer $configContainer)
+    {
+        $this->configContainer = $configContainer;
+    }
+
+    public function setRenderingContext(RenderingContextInterface $renderingContext): void
     {
         parent::setRenderingContext($renderingContext);
         if ($renderingContext instanceof RenderingContext) {
@@ -63,10 +60,7 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
         }
     }
 
-    /**
-     *
-     */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('record', RecordInterface::class, 'record of which to get the dirty properties', true);
@@ -74,25 +68,16 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
 
     /**
      * Get data attributes for i-icon
-     *
-     * @param Record $record
-     *
-     * @return string
      */
     public function render(): string
     {
         $attributesString = 'data-action="opendirtypropertieslistcontainer"';
-        if (GeneralUtility::makeInstance(ConfigContainer::class)->get('factory.simpleOverviewAndAjax')) {
+        if ($this->configContainer->get('factory.simpleOverviewAndAjax')) {
             $attributesString .= $this->getDataAttributesForSimpleOverviewAndAjax($this->arguments['record']);
         }
         return $attributesString;
     }
 
-    /**
-     * @param Record $record
-     *
-     * @return string
-     */
     protected function getDataAttributesForSimpleOverviewAndAjax(Record $record): string
     {
         $attributesString = ' data-action-ajax-uri="' . $this->getAjaxUri($record) . '"';
@@ -101,11 +86,6 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
         return $attributesString;
     }
 
-    /**
-     * @param Record $record
-     *
-     * @return string
-     */
     protected function getAjaxUri(Record $record): string
     {
         return $this
@@ -118,11 +98,6 @@ class DirtyPropertiesIconDataAttributesViewHelper extends AbstractViewHelper
             );
     }
 
-    /**
-     * @param Record $record
-     *
-     * @return string
-     */
     protected function getAjaxContainerClassName(Record $record): string
     {
         return 'simpleOverviewAndAjaxContainerForRecord' . $record->getTableName() . $record->getIdentifier();

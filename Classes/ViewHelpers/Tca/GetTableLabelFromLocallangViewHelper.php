@@ -29,41 +29,24 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
  */
 
 use In2code\In2publishCore\Service\Configuration\TcaService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetTableLabelFromLocallangViewHelper
- */
 class GetTableLabelFromLocallangViewHelper extends AbstractViewHelper
 {
-    /**
-     * @var TcaService
-     */
+    /** @var TcaService */
     protected $tcaService;
 
-    /**
-     * GetTableLabelFromLocallangViewHelper constructor.
-     */
-    public function __construct()
+    public function __construct(TcaService $tcaService)
     {
-        $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
+        $this->tcaService = $tcaService;
     }
 
-    /**
-     *
-     */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('tableName', 'string', 'table of which the label should be rendered', true);
     }
 
-    /**
-     * Get table name from locallang and TCA definition
-     *
-     * @return string
-     */
     public function render(): string
     {
         return $this->tcaService->getTableLabel($this->arguments['tableName']);

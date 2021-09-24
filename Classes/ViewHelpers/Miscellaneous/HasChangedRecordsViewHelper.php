@@ -31,25 +31,14 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
 use In2code\In2publishCore\Domain\Model\Record;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class HasChangedRecordsViewHelper
- */
 class HasChangedRecordsViewHelper extends AbstractViewHelper
 {
-    /**
-     *
-     */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('records', 'array', 'The records to test for changes', true);
     }
 
-    /**
-     * Check if there are changed records
-     *
-     * @return bool
-     */
     public function render(): bool
     {
         foreach ($this->arguments['records'] as $record) {
