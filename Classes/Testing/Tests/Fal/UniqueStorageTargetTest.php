@@ -45,6 +45,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_keys;
 use function array_merge;
 use function array_unique;
+use function get_class;
 use function ltrim;
 use function uniqid;
 

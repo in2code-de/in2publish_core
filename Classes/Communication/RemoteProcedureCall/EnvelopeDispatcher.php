@@ -47,6 +47,7 @@ use function call_user_func;
 use function call_user_func_array;
 use function dirname;
 use function get_class;
+use function is_array;
 use function is_callable;
 use function method_exists;
 use function strtolower;

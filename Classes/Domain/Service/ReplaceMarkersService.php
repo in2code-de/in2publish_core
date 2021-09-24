@@ -38,7 +38,9 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function explode;
 use function implode;
+use function json_decode;
 use function preg_replace_callback;
 use function str_replace;
 use function strpos;

@@ -32,6 +32,8 @@ namespace In2code\In2publishCore\Testing\Service;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 
+use function array_intersect;
+use function array_keys;
 use function array_merge;
 use function get_class;
 

@@ -43,6 +43,7 @@ use function is_array;
 use function is_int;
 use function sprintf;
 use function trim;
+use function unlink;
 
 class FileUtility
 {

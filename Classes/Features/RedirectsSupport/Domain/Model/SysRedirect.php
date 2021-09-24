@@ -36,6 +36,8 @@ use In2code\In2publishCore\Service\Database\RawRecordService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
+use function sprintf;
+
 class SysRedirect extends AbstractEntity
 {
     /** @var string */

@@ -36,9 +36,12 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Throwable;
 
+use function constant;
 use function escapeshellarg;
 use function escapeshellcmd;
+use function file_exists;
 use function in_array;
+use function is_readable;
 use function is_resource;
 use function sprintf;
 use function ssh2_auth_pubkey_file;

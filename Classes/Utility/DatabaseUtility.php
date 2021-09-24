@@ -43,6 +43,7 @@ use ZipArchive;
 
 use function array_map;
 use function class_exists;
+use function date;
 use function file_put_contents;
 use function filesize;
 use function implode;
@@ -53,6 +54,8 @@ use function sprintf;
 use function str_replace;
 use function stripslashes;
 use function time;
+
+use const PHP_EOL;
 
 class DatabaseUtility
 {

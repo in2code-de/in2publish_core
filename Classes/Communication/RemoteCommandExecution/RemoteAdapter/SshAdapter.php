@@ -45,6 +45,9 @@ use function ssh2_fetch_stream;
 use function stream_get_contents;
 use function stream_set_blocking;
 
+use const SSH2_STREAM_STDERR;
+use const SSH2_STREAM_STDIO;
+
 class SshAdapter extends SshBaseAdapter implements AdapterInterface
 {
     public const ADAPTER_KEY = 'ssh';

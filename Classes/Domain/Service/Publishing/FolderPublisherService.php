@@ -37,6 +37,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function basename;
 use function dirname;
+use function trim;
 
 class FolderPublisherService
 {

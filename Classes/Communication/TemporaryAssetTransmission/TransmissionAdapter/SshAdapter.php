@@ -52,6 +52,8 @@ use function ssh2_sftp_chmod;
 use function ssh2_sftp_mkdir;
 use function stream_copy_to_stream;
 
+use const PHP_MAJOR_VERSION;
+
 class SshAdapter extends SshBaseAdapter implements AdapterInterface
 {
     public const ADAPTER_KEY = 'ssh';

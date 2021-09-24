@@ -35,7 +35,14 @@ use function array_values;
 use function explode;
 use function filter_var;
 use function implode;
+use function is_array;
 use function is_string;
+
+use const FILTER_FLAG_NO_ENCODE_QUOTES;
+use const FILTER_FLAG_STRIP_HIGH;
+use const FILTER_FLAG_STRIP_LOW;
+use const FILTER_SANITIZE_STRING;
+use const PHP_EOL;
 
 class RemoteCommandResponse
 {

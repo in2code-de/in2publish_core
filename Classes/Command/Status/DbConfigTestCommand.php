@@ -35,6 +35,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TYPO3\CMS\Core\Database\Connection;
 
+use function array_column;
 use function base64_encode;
 use function json_encode;
 

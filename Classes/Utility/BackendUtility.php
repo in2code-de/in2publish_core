@@ -53,6 +53,7 @@ use function array_key_exists;
 use function array_keys;
 use function array_replace;
 use function count;
+use function current;
 use function explode;
 use function implode;
 use function in_array;
@@ -64,6 +65,7 @@ use function md5;
 use function parse_str;
 use function parse_url;
 use function rtrim;
+use function stripos;
 use function strpos;
 
 class BackendUtility

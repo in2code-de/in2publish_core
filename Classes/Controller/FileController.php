@@ -50,6 +50,9 @@ use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function count;
+use function dirname;
+use function ltrim;
+use function reset;
 use function strpos;
 
 /**

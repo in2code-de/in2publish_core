@@ -38,6 +38,9 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 use function class_exists;
 
+use function sprintf;
+use function trigger_error;
+
 use const E_USER_DEPRECATED;
 
 class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcessingHookInterface

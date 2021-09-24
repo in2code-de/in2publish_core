@@ -37,6 +37,13 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Site\SiteFinder;
 
+use function array_diff;
+use function array_key_exists;
+use function array_keys;
+use function array_merge;
+use function array_unique;
+use function sprintf;
+
 class SiteConfigurationTest implements TestCaseInterface
 {
     /** @var FrontendInterface */

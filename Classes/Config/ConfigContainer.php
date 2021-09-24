@@ -45,6 +45,7 @@ use function array_combine;
 use function array_fill;
 use function array_keys;
 use function asort;
+use function count;
 
 class ConfigContainer implements SingletonInterface
 {

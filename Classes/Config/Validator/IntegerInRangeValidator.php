@@ -31,6 +31,9 @@ namespace In2code\In2publishCore\Config\Validator;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
+use const PHP_INT_MAX;
+use const PHP_INT_MIN;
+
 class IntegerInRangeValidator implements ValidatorInterface
 {
     /** @var int */

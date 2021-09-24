@@ -47,6 +47,7 @@ use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 
+use function array_key_exists;
 use function base64_decode;
 use function explode;
 use function unserialize;

@@ -40,6 +40,12 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function array_column;
+use function array_keys;
+use function array_merge;
+use function array_unique;
+use function implode;
+
 class PageRecordRedirectEnhancer
 {
     /** @var SiteService */

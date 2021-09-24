@@ -7,6 +7,8 @@ namespace In2code\In2publishCore\Factory\Exception;
 use In2code\In2publishCore\In2publishCoreException;
 use Throwable;
 
+use function sprintf;
+
 class ConnectionUnavailableException extends In2publishCoreException
 {
     protected const MESSAGE = 'The connection for side "%s" is not available.';

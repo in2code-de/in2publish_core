@@ -46,6 +46,8 @@ use function explode;
 use function strtolower;
 use function time;
 
+use const PATHINFO_EXTENSION;
+
 class FileIndexFactory
 {
     /** @var DriverInterface */

@@ -52,7 +52,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_key_exists;
 use function array_keys;
 use function class_exists;
+use function gettype;
 use function is_array;
+use function is_string;
 
 class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
 {

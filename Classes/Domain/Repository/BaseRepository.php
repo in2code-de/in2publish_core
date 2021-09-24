@@ -41,6 +41,8 @@ use TYPO3\CMS\Core\Utility\MathUtility;
 use function array_column;
 use function explode;
 use function implode;
+use function is_array;
+use function is_int;
 use function preg_match;
 use function stripos;
 use function strpos;

@@ -41,6 +41,7 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 use function basename;
 use function dirname;
 use function file_exists;
+use function trim;
 
 class FilePublisherService implements LoggerAwareInterface
 {
