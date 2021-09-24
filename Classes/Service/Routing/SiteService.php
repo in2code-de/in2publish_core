@@ -88,6 +88,11 @@ class SiteService implements SingletonInterface, LoggerAwareInterface
             return null;
         }
 
+        $deletedField = $this->tcaService->getDeletedField('pages');
+        if (!empty($deletedField) && $row[$deletedField]) {
+            return null;
+        }
+
         $l10nPointer = $this->tcaService->getTransOrigPointerField('pages');
         if (empty($l10nPointer)) {
             return $pageIdentifier;
