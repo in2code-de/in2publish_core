@@ -42,17 +42,19 @@ class SysRedirectRepository extends Repository
         $predicates = [];
 
         foreach ($uris as $uri) {
-            $hostCondition = $query->expr()->eq('source_host', $query->createNamedParameter('*'));
-            if ($uri->getHost() !== '*') {
-                $hostCondition = $query->expr()->orX(
-                    $hostCondition,
-                    $query->expr()->eq('source_host', $query->createNamedParameter($uri->getHost()))
+            if ($uri->getHost() === '*') {
+                // If the "parent" redirect does not have a host it does not matter which host the redirect has, which
+                // redirects to the host-less redirect. It just belongs.
+                $predicates[] = $query->expr()->eq('target', $query->createNamedParameter($uri->getPath()));
+            } else {
+                $predicates[] = $query->expr()->andX(
+                    $query->expr()->eq('target', $query->createNamedParameter($uri->getPath())),
+                    $query->expr()->orX(
+                        $query->expr()->eq('source_host', $query->createNamedParameter($uri->getHost())),
+                        $query->expr()->eq('source_host', $query->createNamedParameter('*'))
+                    )
                 );
             }
-            $predicates[] = $query->expr()->andX(
-                $query->expr()->eq('target', $query->createNamedParameter($uri->getPath())),
-                $hostCondition
-            );
         }
 
         if (!empty($exceptUid)) {
