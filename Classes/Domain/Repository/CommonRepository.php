@@ -63,6 +63,7 @@ use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidParentRowException;
 use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidParentRowLoopException;
 use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidParentRowRootException;
 use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidPointerFieldValueException;
+use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidSinglePointerFieldException;
 use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidTcaException;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Database\Connection;
@@ -746,12 +747,20 @@ class CommonRepository extends BaseRepository
      */
     protected function getFlexFormDefinition(RecordInterface $record, string $column, array $columnConfiguration): array
     {
-        $dataStructIdentifier = $this->flexFormTools->getDataStructureIdentifier(
-            ['config' => $columnConfiguration],
-            $record->getTableName(),
-            $column,
-            $record->getLocalProperties()
-        );
+        $tableName = $record->getTableName();
+        $localProperties = $record->getLocalProperties();
+        try {
+            $dataStructIdentifier = $this->flexFormTools->getDataStructureIdentifier(
+                ['config' => $columnConfiguration],
+                $tableName,
+                $column,
+                $localProperties
+            );
+        } catch (InvalidSinglePointerFieldException $exception) {
+            // Known exception.
+            // This occurs when a FAL driver was deactivated but the sys_file_storage record still exists.
+            return [];
+        }
         $flexFormDefinition = $this->flexFormTools->parseDataStructureByIdentifier($dataStructIdentifier);
         $flexFormDefinition = $flexFormDefinition['sheets'];
         $flexFormDefinition = $this->flattenFlexFormDefinition((array)$flexFormDefinition);
