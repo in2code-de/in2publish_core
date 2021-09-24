@@ -10,10 +10,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FlushFileEdgeCacheTask extends AbstractTask
 {
-    public function modifyConfiguration()
-    {
-    }
-
     protected function executeTask(): bool
     {
         $service = GeneralUtility::makeInstance(FileEdgeCacheInvalidationService::class);

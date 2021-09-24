@@ -35,14 +35,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GlobalConfigurationCommand extends Command
 {
-    public const DESCRIPTION = 'Prints global configuration values';
     public const IDENTIFIER = 'in2publish_core:status:globalconfiguration';
-
-    protected function configure()
-    {
-        $this->setDescription(self::DESCRIPTION)
-             ->setHidden(true);
-    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -51,6 +44,6 @@ class GlobalConfigurationCommand extends Command
             : $GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'];
         $output->writeln('Utf8Filesystem: ' . $utf8fileSystem);
         $output->writeln('adminOnly: ' . ($GLOBALS['TYPO3_CONF_VARS']['BE']['adminOnly'] ?? 'empty'));
-        return 0;
+        return Command::SUCCESS;
     }
 }

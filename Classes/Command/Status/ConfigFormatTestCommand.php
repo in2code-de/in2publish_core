@@ -34,7 +34,6 @@ use In2code\In2publishCore\Config\ValidationContainer;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_column;
 use function base64_encode;
@@ -44,21 +43,29 @@ class ConfigFormatTestCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:configformattest';
 
-    protected function configure()
-    {
-        $this->setDescription('Tests the configuration on foreign for its format')
-             ->setHidden(true);
+    /** @var ValidationContainer */
+    protected $validationContainer;
+
+    /** @var ConfigContainer */
+    protected $configContainer;
+
+    public function __construct(
+        ValidationContainer $validationContainer,
+        ConfigContainer $configContainer,
+        string $name = null
+    ) {
+        parent::__construct($name);
+        $this->validationContainer = $validationContainer;
+        $this->configContainer = $configContainer;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $container = GeneralUtility::makeInstance(ValidationContainer::class);
-        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-        $definition = $configContainer->getForeignDefinition();
-        $actual = GeneralUtility::makeInstance(ConfigContainer::class)->get();
-        $definition->validate($container, $actual);
-        $errors = $container->getErrors();
+        $definition = $this->configContainer->getForeignDefinition();
+        $actual = $this->configContainer->get();
+        $definition->validate($this->validationContainer, $actual);
+        $errors = $this->validationContainer->getErrors();
         $output->writeln('Config Format Test: ' . base64_encode(json_encode(array_column($errors, 'configuration'))));
-        return 0;
+        return Command::SUCCESS;
     }
 }

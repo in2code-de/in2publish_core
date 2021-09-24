@@ -29,23 +29,14 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-/**
- * Class SelectProcessor
- */
 class SelectProcessor extends AbstractProcessor
 {
-    /**
-     * @var bool
-     */
     protected $canHoldRelations = true;
 
     public const ALLOW_NON_ID_VALUES = 'allowNonIdValues';
     public const FILE_FOLDER = 'fileFolder';
     public const SPECIAL = 'special';
 
-    /**
-     * @var array
-     */
     protected $forbidden = [
         'itemsProcFunc is not supported' => self::ITEMS_PROC_FUNC,
         'fileFolder is not supported' => self::FILE_FOLDER,
@@ -55,16 +46,10 @@ class SelectProcessor extends AbstractProcessor
         'special is not supported' => self::SPECIAL,
     ];
 
-    /**
-     * @var array
-     */
     protected $required = [
         'Can not select without another table' => self::FOREIGN_TABLE,
     ];
 
-    /**
-     * @var array
-     */
     protected $allowed = [
         self::FOREIGN_TABLE_WHERE,
         self::MM,
@@ -81,7 +66,7 @@ class SelectProcessor extends AbstractProcessor
      */
     public function canPreProcess(array $config): bool
     {
-        if ($this->isSysCategorieField($config)) {
+        if ($this->isSysCategoryField($config)) {
             // Workaround for categories having `MM_opposite_field` set on both sides of the relation
             return true;
         }
@@ -96,7 +81,7 @@ class SelectProcessor extends AbstractProcessor
     public function preProcess(array $config): array
     {
         $processed = parent::preProcess($config);
-        if ($this->isSysCategorieField($config)) {
+        if ($this->isSysCategoryField($config)) {
             /* @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getLocalField */
             $processed['MM_opposite_field'] = $config['MM_opposite_field'];
         }
@@ -111,13 +96,11 @@ class SelectProcessor extends AbstractProcessor
      *
      * @return bool
      */
-    protected function isSysCategorieField(array $config): bool
+    protected function isSysCategoryField(array $config): bool
     {
-        return isset($config['foreign_table'])
+        return isset($config['foreign_table'], $config['MM_opposite_field'], $config['MM'])
                && 'sys_category' === $config['foreign_table']
-               && isset($config['MM_opposite_field'])
                && 'items' === $config['MM_opposite_field']
-               && isset($config['MM'])
                && 'sys_category_record_mm' === $config['MM'];
     }
 }

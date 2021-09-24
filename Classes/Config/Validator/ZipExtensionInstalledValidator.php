@@ -34,16 +34,10 @@ use ZipArchive;
 
 use function class_exists;
 
-/**
- * Class ZipExtensionInstalledValidator
- */
 class ZipExtensionInstalledValidator implements ValidatorInterface
 {
-    /**
-     * @param ValidationContainer $container
-     * @param string $value
-     */
-    public function validate(ValidationContainer $container, $value)
+    /** @param mixed $value */
+    public function validate(ValidationContainer $container, $value): void
     {
         if ($value && !class_exists(ZipArchive::class)) {
             $container->addError('Zip Backup is enabled but the PHP Extension zip does not seem to be installed');

@@ -30,19 +30,20 @@ namespace In2code\In2publishCore\ViewHelpers\Tools;
  */
 
 use In2code\In2publishCore\Tools\ToolsRegistry;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetEnabledToolsViewHelper
- */
 class GetEnabledToolsViewHelper extends AbstractViewHelper
 {
-    /**
-     * @return array
-     */
+    /** @var ToolsRegistry */
+    protected $toolsRegistry;
+
+    public function __construct(ToolsRegistry $toolsRegistry)
+    {
+        $this->toolsRegistry = $toolsRegistry;
+    }
+
     public function render(): array
     {
-        return GeneralUtility::makeInstance(ToolsRegistry::class)->getTools();
+        return $this->toolsRegistry->getTools();
     }
 }

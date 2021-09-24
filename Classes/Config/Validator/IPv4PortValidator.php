@@ -31,16 +31,10 @@ namespace In2code\In2publishCore\Config\Validator;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
-/**
- * Class IPv4PortValidator
- */
 class IPv4PortValidator implements ValidatorInterface
 {
-    /**
-     * @param ValidationContainer $container
-     * @param string $value
-     */
-    public function validate(ValidationContainer $container, $value)
+    /** @param mixed $value */
+    public function validate(ValidationContainer $container, $value): void
     {
         if (1 > $value || $value > 65535) {
             $container->addError("The port $value is not in the range of valid IPv4 TCP/IP port numbers (1-65535)");

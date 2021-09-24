@@ -30,67 +30,42 @@ namespace In2code\In2publishCore\Domain\Factory\Exception;
  */
 
 use In2code\In2publishCore\In2publishCoreException;
+use Throwable;
 
 use function sprintf;
 
-/**
- * Class TooManyFilesException
- */
 abstract class TooManyFilesException extends In2publishCoreException
 {
     public const CODE = 1555492787;
-    public const MESSAGE = 'The folder "%s" has too many files (%d)';
+    public const MESSAGE = 'The folder "%s" has too many files (%d). The threshold is %d.';
 
-    /**
-     * @var string
-     */
-    protected $folder = '';
+    /** @var string */
+    protected $folder;
 
-    /**
-     * @var int
-     */
-    protected $count = 0;
+    /** @var int */
+    protected $count;
 
-    /**
-     * @var int
-     */
-    protected $threshold = 0;
+    /** @var int */
+    protected $threshold;
 
-    /**
-     * @param string $folder
-     * @param int $count
-     * @param int $threshold
-     *
-     * @return TooManyFilesException
-     */
-    public static function fromFolder(string $folder, int $count, int $threshold): TooManyFilesException
+    public function __construct(string $folder, int $count, int $threshold, Throwable $previous = null)
     {
-        $self = new static(sprintf(static::MESSAGE, $folder, $count, $threshold), static::CODE);
-        $self->folder = $folder;
-        $self->count = $count;
-        $self->threshold = $threshold;
-        return $self;
+        parent::__construct(sprintf(static::MESSAGE, $folder, $count, $threshold), static::CODE, $previous);
+        $this->folder = $folder;
+        $this->count = $count;
+        $this->threshold = $threshold;
     }
 
-    /**
-     * @return string
-     */
     public function getFolder(): string
     {
         return $this->folder;
     }
 
-    /**
-     * @return int
-     */
     public function getCount(): int
     {
         return $this->count;
     }
 
-    /**
-     * @return int
-     */
     public function getThreshold(): int
     {
         return $this->threshold;

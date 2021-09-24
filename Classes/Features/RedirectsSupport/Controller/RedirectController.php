@@ -29,23 +29,53 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Controller\AbstractController;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\SysRedirect;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
+use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+
+use function array_column;
+use function count;
+use function implode;
+use function reset;
+use function sprintf;
 
 class RedirectController extends AbstractController
 {
+    /** @var CommonRepository */
+    protected $commonRepository;
+
+    /** @var ForeignSiteFinder */
+    protected $foreignSiteFinder;
+
     /** @var SysRedirectRepository */
     protected $sysRedirectRepo;
 
-    public function injectSysRedirectRepository(SysRedirectRepository $sysRedirectRepo): void
-    {
+    public function __construct(
+        ConfigContainer $configContainer,
+        ExecutionTimeService $executionTimeService,
+        EnvironmentService $environmentService,
+        RemoteCommandDispatcher $remoteCommandDispatcher,
+        CommonRepository $commonRepository,
+        ForeignSiteFinder $foreignSiteFinder,
+        SysRedirectRepository $sysRedirectRepo
+    ) {
+        parent::__construct(
+            $configContainer,
+            $executionTimeService,
+            $environmentService,
+            $remoteCommandDispatcher
+        );
+        $this->commonRepository = $commonRepository;
+        $this->foreignSiteFinder = $foreignSiteFinder;
         $this->sysRedirectRepo = $sysRedirectRepo;
     }
 
@@ -57,7 +87,7 @@ class RedirectController extends AbstractController
             $query = $foreignConnection->createQueryBuilder();
             $query->getRestrictions()->removeAll();
             $query->select('uid')->from('sys_redirect')->where($query->expr()->eq('deleted', 1));
-            $uidList = array_column($query->execute()->fetchAll(), 'uid');
+            $uidList = array_column($query->execute()->fetchAllAssociative(), 'uid');
         }
 
         $query = $this->sysRedirectRepo->createQuery();
@@ -91,11 +121,15 @@ class RedirectController extends AbstractController
             $this->redirect('list');
         }
 
-        $commonRepository = CommonRepository::getDefaultInstance();
+        foreach ($redirects as &$redirect) {
+            $redirect = (int)$redirect;
+        }
+        unset($redirect);
+
         foreach ($redirects as $redirect) {
-            $record = $commonRepository->findByIdentifier($redirect, 'sys_redirect');
+            $record = $this->commonRepository->findByIdentifier($redirect, 'sys_redirect');
             if (null !== $record) {
-                $commonRepository->publishRecordRecursive($record);
+                $this->commonRepository->publishRecordRecursive($record);
             }
         }
 
@@ -131,8 +165,7 @@ class RedirectController extends AbstractController
             }
             $this->redirect('list');
         }
-        $siteFinder = GeneralUtility::makeInstance(ForeignSiteFinder::class);
-        $sites = $siteFinder->getAllSites();
+        $sites = $this->foreignSiteFinder->getAllSites();
         $siteOptions = [
             '*' => LocalizationUtility::translate(
                 'LLL:EXT:redirects/Resources/Private/Language/locallang_module_redirect.xlf:source_host_global_text'

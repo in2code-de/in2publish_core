@@ -30,24 +30,29 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyFilesException;
 use In2code\In2publishCore\Domain\Factory\FolderRecordFactory;
 use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
+use In2code\In2publishCore\Event\FolderInstanceWasCreated;
+use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use RuntimeException;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
-use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function count;
+use function dirname;
+use function ltrim;
+use function reset;
 use function strpos;
 
 /**
@@ -57,15 +62,34 @@ use function strpos;
  */
 class FileController extends AbstractController
 {
-    /**
-     * @var bool
-     */
+    /** @var FolderPublisherService */
+    protected $folderPublisherService;
+
+    /** @var CommonRepository */
+    protected $commonRepository;
+
+    /** @var bool */
     protected $forcePidInteger = false;
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function indexAction()
+    public function __construct(
+        ConfigContainer $configContainer,
+        ExecutionTimeService $executionTimeService,
+        EnvironmentService $environmentService,
+        RemoteCommandDispatcher $remoteCommandDispatcher,
+        FolderPublisherService $folderPublisherService,
+        CommonRepository $commonRepository
+    ) {
+        parent::__construct(
+            $configContainer,
+            $executionTimeService,
+            $environmentService,
+            $remoteCommandDispatcher
+        );
+        $this->folderPublisherService = $folderPublisherService;
+        $this->commonRepository = $commonRepository;
+    }
+
+    public function indexAction(): void
     {
         $record = $this->tryToGetFolderInstance($this->pid === 0 ? null : $this->pid);
 
@@ -74,14 +98,10 @@ class FileController extends AbstractController
         }
     }
 
-    /**
-     * @param string $identifier
-     *
-     * @throws StopActionException
-     */
-    public function publishFolderAction($identifier)
+    /** @throws StopActionException */
+    public function publishFolderAction(string $identifier): void
     {
-        $success = GeneralUtility::makeInstance(FolderPublisherService::class)->publish($identifier);
+        $success = $this->folderPublisherService->publish($identifier);
         $this->runTasks();
 
         if ($success) {
@@ -97,20 +117,14 @@ class FileController extends AbstractController
             );
         }
 
-        try {
-            $this->redirect('index');
-        } catch (UnsupportedRequestTypeException $e) {
-        }
+        $this->redirect('index');
     }
 
     /**
-     * @param int $uid
-     * @param string $identifier
-     * @param int $storage
-     *
+     * @throws InsufficientFolderAccessPermissionsException
      * @throws StopActionException
      */
-    public function publishFileAction($uid, $identifier, $storage)
+    public function publishFileAction(int $uid, string $identifier, int $storage): void
     {
         // Special case: The file was moved hence the identifier is a merged one
         if (strpos($identifier, ',')) {
@@ -135,7 +149,7 @@ class FileController extends AbstractController
             }
 
             try {
-                CommonRepository::getDefaultInstance()->publishRecordRecursive($relatedRecord);
+                $this->commonRepository->publishRecordRecursive($relatedRecord);
                 $this->addFlashMessage(
                     LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
                     LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
@@ -149,10 +163,7 @@ class FileController extends AbstractController
             $this->runTasks();
         }
 
-        try {
-            $this->redirect('index');
-        } catch (UnsupportedRequestTypeException $e) {
-        }
+        $this->redirect('index');
     }
 
     /**
@@ -160,22 +171,20 @@ class FileController extends AbstractController
      *
      * @param string $filter "changed", "added", "deleted"
      *
-     * @return void
-     *
      * @throws StopActionException
      */
-    public function toggleFilterStatusAndRedirectToIndexAction($filter)
+    public function toggleFilterStatusAndRedirectToIndexAction(string $filter): void
     {
         $this->toggleFilterStatusAndRedirect('in2publish_filter_files_', $filter, 'index');
     }
 
     /**
-     * @param string $identifier CombinedIdentifier as FAL would use it
+     * @param string|null $identifier CombinedIdentifier as FAL would use it
      *
      * @return RecordInterface|null The record or null if it can not be handled
      * @throws InsufficientFolderAccessPermissionsException
      */
-    protected function tryToGetFolderInstance($identifier)
+    protected function tryToGetFolderInstance(?string $identifier): ?RecordInterface
     {
         if (false === $this->configContainer->get('factory.fal.reserveSysFileUids')) {
             try {
@@ -191,10 +200,7 @@ class FileController extends AbstractController
         return $record;
     }
 
-    /**
-     * @param TooManyFilesException $exception
-     */
-    protected function renderTooManyFilesFlashMessage(TooManyFilesException $exception)
+    protected function renderTooManyFilesFlashMessage(TooManyFilesException $exception): void
     {
         $arguments = [
             'folder' => $exception->getFolder(),
@@ -210,19 +216,8 @@ class FileController extends AbstractController
         $this->logger->warning('The folder file limit has been exceeded', $arguments);
     }
 
-    /**
-     * @param RecordInterface $record
-     */
-    protected function emitFolderInstanceCreated(RecordInterface $record)
+    protected function emitFolderInstanceCreated(RecordInterface $record): void
     {
-        try {
-            $this->signalSlotDispatcher->dispatch(
-                FileController::class,
-                'folderInstanceCreated',
-                [$record]
-            );
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
-        }
+        $this->eventDispatcher->dispatch(new FolderInstanceWasCreated($record));
     }
 }

@@ -29,57 +29,24 @@ namespace In2code\In2publishCore\Service\Permission;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Controller\AbstractController;
-use Psr\Log\LoggerInterface;
-use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
+use In2code\In2publishCore\Event\VoteIfUserIsAllowedToPublish;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
-/**
- * Class PermissionService
- */
 class PermissionService
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    /** @var EventDispatcher */
+    protected $eventDispatcher;
 
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
-
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
+    public function __construct(EventDispatcher $eventDispatcher)
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->dispatcher = GeneralUtility::makeInstance(Dispatcher::class);
+        $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * Returns true if the current user is allowed to publish
-     */
+    /** @return bool true if the current user is allowed to publish */
     public function isUserAllowedToPublish(): bool
     {
-        $votes = ['yes' => 0, 'no' => 0];
-
-        try {
-            [$votes] = $this->dispatcher->dispatch(
-                AbstractController::class,
-                'checkUserAllowedToPublish',
-                [$votes]
-            );
-        } catch (InvalidSlotException $e) {
-            $this->logger->error('An error with a slot occurred', ['exception' => $e]);
-        } catch (InvalidSlotReturnException $e) {
-            $this->logger->error('A slot did not return a valid voting result', ['exception' => $e]);
-        }
-
-        return $votes['yes'] >= $votes['no'];
+        $event = new VoteIfUserIsAllowedToPublish();
+        $event = $this->eventDispatcher->dispatch($event);
+        return $event->getVotingResult();
     }
 }

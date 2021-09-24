@@ -30,19 +30,14 @@ namespace In2code\In2publishCore\Service\Environment;
  */
 
 use In2code\In2publishCore\Config\ConfigContainer;
-use TYPO3\CMS\Core\Package\PackageInterface;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function json_encode;
 use function serialize;
 use function sha1;
 
-/**
- * Class EnvironmentService
- */
 class EnvironmentService implements SingletonInterface
 {
     public const STATE_TESTS_FAILING = 'tests_failing';
@@ -50,23 +45,23 @@ class EnvironmentService implements SingletonInterface
     public const STATE_PACKAGES_CHANGED = 'environment_changed';
     public const STATE_CONFIGURATION_CHANGED = 'configuration_changed';
 
-    /**
-     * @var Registry
-     */
+    /** @var Registry */
     protected $registry;
 
-    /**
-     * EnvironmentService constructor.
-     */
-    public function __construct()
+    /** @var PackageManager */
+    protected $packageManager;
+
+    /** @var ConfigContainer */
+    protected $configContainer;
+
+    public function __construct(Registry $registry, PackageManager $packageManager, ConfigContainer $configContainer)
     {
-        $this->registry = $this->getRegistry();
+        $this->registry = $registry;
+        $this->packageManager = $packageManager;
+        $this->configContainer = $configContainer;
     }
 
-    /**
-     * @param bool $success
-     */
-    public function setTestResult(bool $success)
+    public function setTestResult(bool $success): void
     {
         $this->registry->set(
             'tx_in2publishcore',
@@ -79,9 +74,6 @@ class EnvironmentService implements SingletonInterface
         );
     }
 
-    /**
-     * @return array
-     */
     public function getTestStatus(): array
     {
         $statusArray = [];
@@ -102,37 +94,15 @@ class EnvironmentService implements SingletonInterface
         return $statusArray;
     }
 
-    /**
-     * @return string
-     */
+    /** @codeCoverageIgnore */
     protected function getPackagesHash(): string
     {
-        return sha1(json_encode($this->getActivePackagesArray()));
+        return sha1(json_encode($this->packageManager->getActivePackages()));
     }
 
-    /**
-     * @return PackageInterface[]
-     *
-     * @codeCoverageIgnore
-     */
-    protected function getActivePackagesArray(): array
-    {
-        return GeneralUtility::makeInstance(PackageManager::class)->getActivePackages();
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
+    /** @codeCoverageIgnore */
     protected function getConfigurationHash(): string
     {
-        return sha1(serialize(GeneralUtility::makeInstance(ConfigContainer::class)->get()));
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    protected function getRegistry(): Registry
-    {
-        return GeneralUtility::makeInstance(Registry::class);
+        return sha1(serialize($this->configContainer->get()));
     }
 }

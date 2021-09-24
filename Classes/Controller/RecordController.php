@@ -30,20 +30,23 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
+use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
 use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Factory\FakeRecordFactory;
 use In2code\In2publishCore\In2publishCoreException;
-use In2code\In2publishCore\Log\Processor\PublishingFailureCollector;
+use In2code\In2publishCore\Service\Environment\EnvironmentService;
+use In2code\In2publishCore\Service\Error\FailureCollector;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use In2code\In2publishCore\Utility\LogUtility;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
-use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_keys;
@@ -59,19 +62,43 @@ use function strpos;
  */
 class RecordController extends AbstractController
 {
-    /**
-     * @var CommonRepository
-     */
-    protected $commonRepository = null;
+    /** @var CommonRepository */
+    protected $commonRepository;
 
-    /**
-     *
-     */
-    public function initializeAction()
+    /** @var FailureCollector */
+    protected $failureCollector;
+
+    /** @var FakeRecordFactory */
+    protected $fakeRecordFactory;
+
+    /** @var PermissionService */
+    protected $permissionService;
+
+    public function __construct(
+        ConfigContainer $configContainer,
+        ExecutionTimeService $executionTimeService,
+        EnvironmentService $environmentService,
+        RemoteCommandDispatcher $remoteCommandDispatcher,
+        FailureCollector $failureCollector,
+        FakeRecordFactory $fakeRecordFactory,
+        PermissionService $permissionService
+    ) {
+        parent::__construct(
+            $configContainer,
+            $executionTimeService,
+            $environmentService,
+            $remoteCommandDispatcher
+        );
+        $this->failureCollector = $failureCollector;
+        $this->fakeRecordFactory = $fakeRecordFactory;
+        $this->permissionService = $permissionService;
+    }
+
+    public function initializeAction(): void
     {
         parent::initializeAction();
         if (static::BLANK_ACTION !== $this->actionMethodName) {
-            $this->commonRepository = CommonRepository::getDefaultInstance();
+            $this->commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
         }
     }
 
@@ -84,22 +111,22 @@ class RecordController extends AbstractController
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function indexAction()
+    public function indexAction(): void
     {
         $this->logger->debug('Called indexAction');
-        TcaProcessingService::getInstance();
+        GeneralUtility::makeInstance(TcaProcessingService::class);
         if (!$this->configContainer->get('factory.simpleOverviewAndAjax')) {
             $record = $this->commonRepository->findByIdentifier($this->pid, 'pages');
         } else {
-            $record = GeneralUtility::makeInstance(FakeRecordFactory::class)->buildFromStartPage($this->pid);
+            $record = $this->fakeRecordFactory->buildFromStartPage($this->pid);
         }
-        $publishingFailureCollector = GeneralUtility::makeInstance(PublishingFailureCollector::class);
-        $failures = $publishingFailureCollector->getFailures();
+        $failures = $this->failureCollector->getFailures();
 
         if (!empty($failures)) {
             $message = '"' . implode('"; "', array_keys($failures)) . '"';
             $title = LocalizationUtility::translate('relation_resolving_errors', 'in2publish_core');
-            $severity = LogUtility::translateLogLevelToSeverity($publishingFailureCollector->getMostCriticalLogLevel());
+            $mostCriticalLogLevel = $this->failureCollector->getMostCriticalLogLevel();
+            $severity = LogUtility::translateLogLevelToSeverity($mostCriticalLogLevel);
             $this->addFlashMessage($message, $title, $severity);
         }
         $this->view->assign('record', $record);
@@ -114,17 +141,13 @@ class RecordController extends AbstractController
      *
      * @return void
      */
-    public function detailAction($identifier, $tableName)
+    public function detailAction(int $identifier, string $tableName): void
     {
         $this->logger->debug('Called detailAction');
         $this->commonRepository->disablePageRecursion();
         $record = $this->commonRepository->findByIdentifier($identifier, $tableName);
 
-        try {
-            $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforeDetailViewRender', [$this, $record]);
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
-        }
+        $this->eventDispatcher->dispatch(new RecordWasCreatedForDetailAction($this, $record));
 
         $this->view->assign('record', $record);
     }
@@ -134,9 +157,9 @@ class RecordController extends AbstractController
      *
      * @throws In2publishCoreException
      */
-    public function initializePublishRecordAction()
+    public function initializePublishRecordAction(): void
     {
-        if (!GeneralUtility::makeInstance(PermissionService::class)->isUserAllowedToPublish()) {
+        if (!$this->permissionService->isUserAllowedToPublish()) {
             throw new In2publishCoreException('You are not allowed to publish', 1435306780);
         }
     }
@@ -145,11 +168,11 @@ class RecordController extends AbstractController
      * Publish the selected page record with all related content records
      *
      * @param int $identifier
-     * @param string $returnUrl
+     * @param string|null $returnUrl
      *
      * @throws StopActionException
      */
-    public function publishRecordAction($identifier, $returnUrl = null)
+    public function publishRecordAction(int $identifier, string $returnUrl = null): void
     {
         $this->logger->info('publishing record in ' . $this->request->getPluginName(), ['identifier' => $identifier]);
         $this->publishRecord($identifier, ['pages']);
@@ -157,10 +180,7 @@ class RecordController extends AbstractController
             while (strpos($returnUrl, '/') === false || strpos($returnUrl, 'typo3') === false) {
                 $returnUrl = rawurldecode($returnUrl);
             }
-            try {
-                $this->redirectToUri($returnUrl);
-            } catch (UnsupportedRequestTypeException $e) {
-            }
+            $this->redirectToUri($returnUrl);
         }
         $this->addFlashMessagesAndRedirectToIndex();
     }
@@ -173,24 +193,16 @@ class RecordController extends AbstractController
      *
      * @throws StopActionException
      */
-    public function toggleFilterStatusAndRedirectToIndexAction($filter)
+    public function toggleFilterStatusAndRedirectToIndexAction(string $filter): void
     {
         $this->toggleFilterStatusAndRedirect('in2publish_filter_records_', $filter, 'index');
     }
 
-    /**
-     * @param int $identifier
-     * @param array $exceptTableNames
-     */
-    protected function publishRecord($identifier, array $exceptTableNames = [])
+    protected function publishRecord(int $identifier, array $exceptTableNames = []): void
     {
         $record = $this->commonRepository->findByIdentifier($identifier, 'pages');
 
-        try {
-            $this->signalSlotDispatcher->dispatch(__CLASS__, 'beforePublishing', [$this, $record]);
-        } catch (InvalidSlotException $exception) {
-        } catch (InvalidSlotReturnException $exception) {
-        }
+        $this->eventDispatcher->dispatch(new RecordWasSelectedForPublishing($record, $this));
 
         try {
             $this->commonRepository->publishRecordRecursive(
@@ -208,13 +220,10 @@ class RecordController extends AbstractController
      * Add success message and redirect to indexAction
      *
      * @throws StopActionException
-     *
-     * @SuppressWarnings(PHPMD.LongVariable)
      */
-    protected function addFlashMessagesAndRedirectToIndex()
+    protected function addFlashMessagesAndRedirectToIndex(): void
     {
-        $publishingFailureCollector = GeneralUtility::makeInstance(PublishingFailureCollector::class);
-        $failures = $publishingFailureCollector->getFailures();
+        $failures = $this->failureCollector->getFailures();
 
         if (empty($failures)) {
             $message = '';
@@ -223,13 +232,11 @@ class RecordController extends AbstractController
         } else {
             $message = '"' . implode('"; "', array_keys($failures)) . '"';
             $title = LocalizationUtility::translate('record_publishing_failure', 'in2publish_core');
-            $severity = LogUtility::translateLogLevelToSeverity($publishingFailureCollector->getMostCriticalLogLevel());
+            $mostCriticalLogLevel = $this->failureCollector->getMostCriticalLogLevel();
+            $severity = LogUtility::translateLogLevelToSeverity($mostCriticalLogLevel);
         }
         $this->addFlashMessage($message, $title, $severity);
 
-        try {
-            $this->redirect('index', 'Record');
-        } catch (UnsupportedRequestTypeException $e) {
-        }
+        $this->redirect('index', 'Record');
     }
 }

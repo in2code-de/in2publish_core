@@ -34,25 +34,24 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 
-/**
- * Class DefaultStorageIsConfiguredTest
- */
 class DefaultStorageIsConfiguredTest implements TestCaseInterface
 {
-    /**
-     * @return TestResult
-     */
+    /** @var ResourceFactory */
+    protected $resourceFactory;
+
+    public function __construct(ResourceFactory $resourceFactory)
+    {
+        $this->resourceFactory = $resourceFactory;
+    }
+
     public function run(): TestResult
     {
-        if (null === ResourceFactory::getInstance()->getDefaultStorage()) {
+        if (null === $this->resourceFactory->getDefaultStorage()) {
             return new TestResult('fal.default_storage.missing', TestResult::ERROR);
         }
         return new TestResult('fal.default_storage.configured');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

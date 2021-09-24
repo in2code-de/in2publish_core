@@ -187,7 +187,7 @@ class CssColorValueValidator implements ValidatorInterface
         'rebeccapurple',
     ];
 
-    const REGEX = '/
+    protected const REGEX = '/
         ^
             (
                 \#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?
@@ -200,7 +200,7 @@ class CssColorValueValidator implements ValidatorInterface
     /x
     ';
 
-    public function validate(ValidationContainer $container, $value)
+    public function validate(ValidationContainer $container, $value): void
     {
         if (!in_array($value, $this->colorNames) && !preg_match(self::REGEX, $value)) {
             $container->addError('The chosen css value is invalid');

@@ -30,9 +30,9 @@ namespace In2code\In2publishCore\Config\PostProcessor;
  */
 
 use In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;
+use In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\Exception\InvalidDynamicValueProviderKeyException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function is_array;
 use function is_string;
@@ -48,17 +48,19 @@ class DynamicValuesPostProcessor implements PostProcessorInterface, LoggerAwareI
 {
     use LoggerAwareTrait;
 
-    protected const DYNAMIC_REFERENCE_PATTERN = '/^%([\w\d]+)\(([^\)]*)\)%$/';
+    protected const DYNAMIC_REFERENCE_PATTERN = '/^%(?P<key>[\w]+)\((?P<string>[^\)]*)\)%$/';
 
+    /** @var DynamicValueProviderRegistry */
     protected $dynamicValueProviderRegistry;
 
     protected $rtc = [];
 
-    public function __construct()
+    public function __construct(DynamicValueProviderRegistry $dynamicValueProviderRegistry)
     {
-        $this->dynamicValueProviderRegistry = GeneralUtility::makeInstance(DynamicValueProviderRegistry::class);
+        $this->dynamicValueProviderRegistry = $dynamicValueProviderRegistry;
     }
 
+    /** @throws InvalidDynamicValueProviderKeyException */
     public function process(array $config): array
     {
         foreach ($config as $key => $value) {
@@ -66,12 +68,9 @@ class DynamicValuesPostProcessor implements PostProcessorInterface, LoggerAwareI
                 $config[$key] = $this->process($value);
             } elseif (is_string($value) && strlen($value) > 3) {
                 $matches = [];
-                if (
-                    1 === preg_match(self::DYNAMIC_REFERENCE_PATTERN, $value, $matches)
-                    && isset($matches[1], $matches[2])
-                ) {
-                    $providerKey = $matches[1];
-                    $providerString = $matches[2];
+                if (1 === preg_match(self::DYNAMIC_REFERENCE_PATTERN, $value, $matches)) {
+                    $providerKey = $matches['key'];
+                    $providerString = $matches['string'];
                     if (!$this->dynamicValueProviderRegistry->hasDynamicValueProviderForKey($providerKey)) {
                         $this->logMissingDynamicValueProvider($providerKey);
                     } else {
@@ -85,12 +84,8 @@ class DynamicValuesPostProcessor implements PostProcessorInterface, LoggerAwareI
         return $config;
     }
 
-    /**
-     * Logs missing provider keys. Only once per request to avoid log flooding.
-     *
-     * @param string $providerKey
-     */
-    protected function logMissingDynamicValueProvider(string $providerKey)
+    /** Logs missing provider keys. Only once per request to avoid log flooding.*/
+    protected function logMissingDynamicValueProvider(string $providerKey): void
     {
         if (!$this->rtc['missing'][$providerKey]) {
             $this->rtc['missing'][$providerKey] = true;

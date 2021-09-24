@@ -30,111 +30,42 @@ namespace In2code\In2publishCore\Features\SysLogPublisher\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Factory\RecordFactory;
-use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
-use In2code\In2publishCore\Domain\Repository\TaskRepository;
-use In2code\In2publishCore\Utility\ArrayUtility;
-use In2code\In2publishCore\Utility\DatabaseUtility;
+use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class SysLogPublisher
- */
 class SysLogPublisher
 {
-    /**
-     * @var TaskRepository
-     */
-    protected $taskRepository;
+    protected const TABLE_SYS_LOG = 'sys_log';
 
-    /**
-     * @var RecordFactory
-     */
-    protected $recordFactory;
+    /** @var Connection */
+    protected $localDatabase;
 
-    /**
-     * @var Logger
-     */
-    protected $logger = null;
+    /** @var Connection */
+    protected $foreignDatabase;
 
-    /**
-     * @var Connection
-     */
-    protected $localDatabase = null;
-
-    /**
-     * @var Connection
-     */
-    protected $foreignDatabase = null;
-
-    /**
-     * @var CommonRepository
-     */
-    protected $commonRepository = null;
-
-    /**
-     * @var string
-     */
-    protected $sysLogTableName = 'sys_log';
-
-    /**
-     * Constructor
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
+    public function __construct(Connection $localDatabase, Connection $foreignDatabase)
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
-        $this->recordFactory = GeneralUtility::makeInstance(RecordFactory::class);
-        $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-        $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
-        $this->commonRepository = CommonRepository::getDefaultInstance();
+        $this->localDatabase = $localDatabase;
+        $this->foreignDatabase = $foreignDatabase;
     }
 
-    /**
-     * Always publish last sys_log entry to current page
-     *
-     * @param string $tableName
-     * @param Record $record
-     *
-     * @return void
-     */
-    public function publishSysLog($tableName, Record $record)
+    public function publishSysLog(PublishingOfOneRecordEnded $event): void
     {
-        if ($tableName === 'pages') {
-            $sysLogRow = $this->getLastLocalSysLogProperties($record, ['uid']);
-            if (!empty($sysLogRow)) {
-                $this->foreignDatabase->insert($this->sysLogTableName, $sysLogRow);
-                $this->logger->info(
-                    'sys_log table automatically published',
-                    ['tableName' => $tableName, 'identifier' => $record->getIdentifier()]
-                );
-            }
+        $record = $event->getRecord();
+        $commonRepository = $event->getCommonRepository();
+        if ('pages' !== $record->getTableName()) {
+            return;
         }
-    }
 
-    /**
-     * Get properties from last sys_log entry to current page on local system
-     *
-     * @param Record $record
-     * @param array $removeProperties
-     *
-     * @return array
-     */
-    protected function getLastLocalSysLogProperties(Record $record, array $removeProperties = []): array
-    {
-        $row = $this->commonRepository->findLastPropertiesByPropertyAndTableName(
+        $sysLog = $commonRepository->findLastPropertiesByPropertyAndTableName(
             $this->localDatabase,
-            $this->sysLogTableName,
+            self::TABLE_SYS_LOG,
             'event_pid',
             $record->getIdentifier()
         );
-        $row = ArrayUtility::removeFromArrayByKey($row, $removeProperties);
-        return $row;
+        if (!empty($sysLog)) {
+            unset($sysLog['uid']);
+            $this->foreignDatabase->insert(self::TABLE_SYS_LOG, $sysLog);
+        }
     }
 }

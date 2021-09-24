@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Testing\Tests\Database;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
-use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function array_diff;
@@ -46,14 +45,8 @@ use function strpos;
 
 use const PHP_INT_MAX;
 
-/**
- * Class DatabaseDifferencesTest
- */
 class DatabaseDifferencesTest implements TestCaseInterface
 {
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
@@ -125,7 +118,8 @@ class DatabaseDifferencesTest implements TestCaseInterface
                         $propExistsForeign = isset($foreignTableInfo[$tableName]['table'][$propertyName]);
 
                         if ($propExistsLocal && $propExistsForeign) {
-                            if ($localTableInfo[$tableName]['table'][$propertyName]
+                            if (
+                                $localTableInfo[$tableName]['table'][$propertyName]
                                 !== $foreignTableInfo[$tableName]['table'][$propertyName]
                             ) {
                                 $tableDifferences[] = $tableName . '.' . $propertyName . ': Local: '
@@ -180,12 +174,6 @@ class DatabaseDifferencesTest implements TestCaseInterface
         return new TestResult('database.no_differences');
     }
 
-    /**
-     * @param array $left
-     * @param array $right
-     *
-     * @return array
-     */
     public function identifyDifferences(array $left, array $right): array
     {
         $differences = [];
@@ -207,12 +195,6 @@ class DatabaseDifferencesTest implements TestCaseInterface
         return $differences;
     }
 
-    /**
-     * @param Connection $local
-     * @param Connection $foreign
-     *
-     * @return bool
-     */
     protected function areDifferentDatabases(Connection $local, Connection $foreign): bool
     {
         $random = mt_rand(1, PHP_INT_MAX);
@@ -230,7 +212,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
                            ->where($query->expr()->eq('task_type', $query->createNamedParameter('Backend Test')))
                            ->execute();
         $identical = false;
-        while ($result = $statement->fetch(PDO::FETCH_ASSOC)) {
+        while ($result = $statement->fetchAssociative()) {
             if ($uid === (int)$result['uid'] && $random === (int)$result['configuration']) {
                 $identical = true;
                 break;
@@ -242,11 +224,6 @@ class DatabaseDifferencesTest implements TestCaseInterface
         return $identical;
     }
 
-    /**
-     * @param Connection $database
-     *
-     * @return array
-     */
     protected function readTableStructure(Connection $database): array
     {
         $tableStructure = [];
@@ -277,8 +254,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
             }
 
             $tableOptions = $table->getOptions();
-            unset($tableOptions['autoincrement']);
-            unset($tableOptions['comment']);
+            unset($tableOptions['autoincrement'], $tableOptions['comment']);
             $tableStructure[$tableName] = [
                 'table' => $tableOptions,
                 'fields' => $fieldStructure,
@@ -288,9 +264,6 @@ class DatabaseDifferencesTest implements TestCaseInterface
         return $tableStructure;
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

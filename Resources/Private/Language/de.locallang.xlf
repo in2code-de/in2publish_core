@@ -63,7 +63,7 @@
 			</trans-unit>
 			<trans-unit id="folder_creation_failed">
 				<source>The selected folder could not be created.</source>
-				<target state="translated">Der ausgewählte Ordner konnte nicht engelegt werden.</target>
+				<target state="translated">Der ausgewählte Ordner konnte nicht angelegt werden.</target>
 			</trans-unit>
 			<trans-unit id="folder_removed">
 				<source>The selected folder has been removed successfully.</source>
@@ -74,7 +74,7 @@
 				<target state="translated">Der ausgewählte Ordner konnte nicht gelöscht werden.</target>
 			</trans-unit>
 			<trans-unit id="folder_retrieving_failed">
-				<source>in2publish failed to retrieve information about the folder %s or any of it's subfolders. Please verify that is in2publish is working properly by running the tests.</source>
+				<source>in2publish failed to retrieve information about the folder %s or any of it's sub folders. Please verify that is in2publish is working properly by running the tests.</source>
 				<target state="translated">in2publish konnte keine Informationen über den Ordner %s oder einen seiner Unterordner auslesen. Bitte überprüfen Sie ob in2publish korrekt eingerichtet ist, indem Sie die Tests durchführen.</target>
 			</trans-unit>
 			<trans-unit id="label_publish_all_pages">
@@ -421,7 +421,7 @@
 				<target state="translated"><![CDATA[Frag die Community: Wir haben einen Slack Channel #ext-in2publish im offiziellen TYPO3 Slack: <a href="https://typo3.slack.com/archives/C2ULY79MZ">https://typo3.slack.com/archives/C2ULY79MZ</a>]]></target>
 			</trans-unit>
 			<trans-unit id="help.github_issues">
-				<source><![CDATA[Official documenation for in2publish_core: <a href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
+				<source><![CDATA[Official documentation for in2publish_core: <a href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></source>
 				<target state="translated"><![CDATA[Offizielle Dokumentation von in2publish_core: <a href="https://github.com/in2code-de/in2publish_core/tree/master/Documentation">https://github.com/in2code-de/in2publish_core/tree/master/Documentation</a>]]></target>
 			</trans-unit>
 

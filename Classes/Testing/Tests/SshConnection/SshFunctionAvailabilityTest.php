@@ -34,14 +34,8 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 
 use function function_exists;
 
-/**
- * Class SshFunctionAvailabilityTest
- */
 class SshFunctionAvailabilityTest implements TestCaseInterface
 {
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $sshFunctions = [
@@ -74,9 +68,6 @@ class SshFunctionAvailabilityTest implements TestCaseInterface
         return new TestResult('ssh_connection.full_availability');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [];

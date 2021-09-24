@@ -37,34 +37,28 @@ use In2code\In2publishCore\Testing\Tests\Database\ForeignDatabaseTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\ExtensionUtility;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function strpos;
 
-/**
- * Class ForeignInstanceTest
- */
 class ForeignInstanceTest implements TestCaseInterface
 {
-    /**
-     * @var RemoteCommandDispatcher
-     */
+    /** @var RemoteCommandDispatcher */
     protected $rceDispatcher;
 
-    /**
-     * ForeignInstanceTest constructor.
-     */
-    public function __construct()
+    /** @var Typo3Version */
+    protected $typo3Version;
+
+    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, Typo3Version $typo3Version)
     {
-        $this->rceDispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
+        $this->rceDispatcher = $remoteCommandDispatcher;
+        $this->typo3Version = $typo3Version;
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, AllCommand::IDENTIFIER);
+        $request = new RemoteCommandRequest(AllCommand::IDENTIFIER);
         $response = $this->rceDispatcher->dispatch($request);
 
         if (!$response->isSuccessful()) {
@@ -74,7 +68,9 @@ class ForeignInstanceTest implements TestCaseInterface
                     TestResult::ERROR,
                     ['application.foreign_cli_lowlevel_user_missing_message', $response->getOutputString()]
                 );
-            } elseif (false !== strpos($response->getOutputString(), 'Could not open input file')) {
+            }
+
+            if (false !== strpos($response->getOutputString(), 'Could not open input file')) {
                 return new TestResult(
                     'application.foreign_cli_dispatcher_wrong_path',
                     TestResult::ERROR,
@@ -84,17 +80,17 @@ class ForeignInstanceTest implements TestCaseInterface
                         $response->getErrorsString(),
                     ]
                 );
-            } else {
-                return new TestResult(
-                    'application.foreign_cli_dispatcher_not_callable',
-                    TestResult::ERROR,
-                    [
-                        'application.foreign_cli_dispatcher_error_message',
-                        $response->getOutputString(),
-                        $response->getErrorsString(),
-                    ]
-                );
             }
+
+            return new TestResult(
+                'application.foreign_cli_dispatcher_not_callable',
+                TestResult::ERROR,
+                [
+                    'application.foreign_cli_dispatcher_error_message',
+                    $response->getOutputString(),
+                    $response->getErrorsString(),
+                ]
+            );
         }
 
         $foreign = $this->tokenizeResponse($response->getOutput());
@@ -110,7 +106,9 @@ class ForeignInstanceTest implements TestCaseInterface
                     $response->getErrorsString(),
                 ]
             );
-        } elseif ($foreign['Version'] !== $localVersion) {
+        }
+
+        if ($foreign['Version'] !== $localVersion) {
             return new TestResult(
                 'application.foreign_version_differs',
                 TestResult::ERROR,
@@ -118,11 +116,12 @@ class ForeignInstanceTest implements TestCaseInterface
             );
         }
 
-        if ($foreign['TYPO3'] !== TYPO3_version) {
+        $localT3Version = $this->typo3Version->getVersion();
+        if ($foreign['TYPO3'] !== $localT3Version) {
             return new TestResult(
                 'application.different_t3_versions',
                 TestResult::ERROR,
-                ['application.local_t3_versions', TYPO3_version, 'application.foreign_t3_versions', $foreign['TYPO3']]
+                ['application.local_t3_versions', $localT3Version, 'application.foreign_t3_versions', $foreign['TYPO3']]
             );
         }
 
@@ -145,11 +144,6 @@ class ForeignInstanceTest implements TestCaseInterface
         return new TestResult('application.foreign_system_validated');
     }
 
-    /**
-     * @param array $output
-     *
-     * @return array
-     */
     protected function tokenizeResponse(array $output): array
     {
         $values = [];
@@ -162,9 +156,6 @@ class ForeignInstanceTest implements TestCaseInterface
         return $values;
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

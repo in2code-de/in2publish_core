@@ -28,7 +28,6 @@ namespace In2code\In2publishCore\Utility;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\DBALException;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
@@ -44,6 +43,7 @@ use ZipArchive;
 
 use function array_map;
 use function class_exists;
+use function date;
 use function file_put_contents;
 use function filesize;
 use function implode;
@@ -55,26 +55,21 @@ use function str_replace;
 use function stripslashes;
 use function time;
 
-/**
- * Class DatabaseUtility
- */
+use const PHP_EOL;
+
 class DatabaseUtility
 {
-    /**
-     * @var Logger
-     */
+    /** @var Logger */
     protected static $logger;
 
-    /**
-     * @var Connection
-     */
+    /** @var Connection */
     protected static $foreignConnection;
 
     /**
      * @return Connection|null
      * @throws Throwable
      */
-    public static function buildForeignDatabaseConnection()
+    public static function buildForeignDatabaseConnection(): ?Connection
     {
         static::initializeLogger();
         if (static::$foreignConnection === null) {
@@ -118,7 +113,7 @@ class DatabaseUtility
                     }
                     static::$foreignConnection = $foreignConnection;
                     $foreignConnection->connect();
-                } catch (DBALException $e) {
+                } catch (Throwable $e) {
                     static::$logger->critical('Can not connect to foreign database', ['exception' => $e]);
                     static::$foreignConnection = null;
                 }
@@ -133,35 +128,33 @@ class DatabaseUtility
         return static::buildLocalDatabaseConnection()->quote($string);
     }
 
-    /**
-     * @return null|Connection
-     */
-    public static function buildLocalDatabaseConnection()
+    public static function buildLocalDatabaseConnection(): ?Connection
     {
         try {
             return GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionByName('Default');
-        } catch (DBALException $e) {
+        } catch (Throwable $e) {
             return null;
         }
     }
 
     /**
-     * @param $side
+     * @param string $side
      *
      * @return null|Connection
+     * @throws Throwable
      */
-    public static function buildDatabaseConnectionForSide($side)
+    public static function buildDatabaseConnectionForSide(string $side): ?Connection
     {
         if ($side === 'local') {
             return static::buildLocalDatabaseConnection();
-        } elseif ($side === 'foreign') {
-            return static::buildForeignDatabaseConnection();
-        } else {
-            throw new LogicException('Unsupported side "' . $side . '"', 1476118055);
         }
+        if ($side === 'foreign') {
+            return static::buildForeignDatabaseConnection();
+        }
+        throw new LogicException('Unsupported side "' . $side . '"', 1476118055);
     }
 
-    public static function backupTable(Connection $connection, string $tableName)
+    public static function backupTable(Connection $connection, string $tableName): void
     {
         $tableName = static::sanitizeTable($connection, $tableName);
         static::initializeLogger();
@@ -178,9 +171,9 @@ class DatabaseUtility
     }
 
     /**
-     * @throws DBALException
+     * @throws Throwable
      */
-    protected static function createBackup(Connection $connection, string $tableName, string $backupFolder)
+    protected static function createBackup(Connection $connection, string $tableName, string $backupFolder): void
     {
         $fileName = time() . '_' . $tableName . '.sql';
 
@@ -196,7 +189,7 @@ class DatabaseUtility
                     'addDropTable' => $addDropTable,
                     'zipBackup' => $zipBackup,
                 ],
-                'hostInfo' => $connection->getHost(),
+                'hostInfo' => $connection->getParams()['host'],
             ]
         );
         $data =
@@ -210,8 +203,8 @@ class DatabaseUtility
             $data .= 'DROP TABLE IF EXISTS ' . $tableName . ';' . PHP_EOL;
         }
 
-        $res = $connection->query('SHOW CREATE TABLE ' . $tableName);
-        $result = $res->fetchAll();
+        $res = $connection->executeQuery('SHOW CREATE TABLE ' . $tableName);
+        $result = $res->fetchAllAssociative();
 
         $data .= $result[0]['Create Table'] . ';' . PHP_EOL;
 
@@ -219,7 +212,7 @@ class DatabaseUtility
         $query->getRestrictions()->removeAll();
         $resultSet = $query->select('*')->from($tableName)->execute();
 
-        while (($row = $resultSet->fetch())) {
+        while (($row = $resultSet->fetchAssociative())) {
             $data .=
                 'INSERT INTO ' . $tableName . ' VALUES (' .
                 implode(',', array_map([$connection, 'quote'], $row)) .
@@ -272,7 +265,7 @@ class DatabaseUtility
         }
     }
 
-    protected static function initializeLogger()
+    protected static function initializeLogger(): void
     {
         if (static::$logger === null) {
             static::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
@@ -285,8 +278,7 @@ class DatabaseUtility
     protected static function sanitizeTable(Connection $connection, string $tableName)
     {
         $tableName = stripslashes($tableName);
-        $tableName = str_replace("'", '', $tableName);
-        $tableName = str_replace('"', '', $tableName);
+        $tableName = str_replace(["'", '"'], '', $tableName);
 
         $allTables = $connection->getSchemaManager()->listTableNames();
         if (in_array($tableName, $allTables, true)) {
@@ -318,7 +310,7 @@ class DatabaseUtility
             $query->getRestrictions()->removeAll();
             $queryResult = $query->select('*')->from($tableName)->execute();
             $rows = $queryResult->rowCount();
-            while ($row = $queryResult->fetch()) {
+            while ($row = $queryResult->fetchAssociative()) {
                 if (1 !== static::insertRow($toDatabase, $tableName, $row)) {
                     throw new In2publishCoreException('Failed to import row into "' . $tableName . '"', 1562570305);
                 }

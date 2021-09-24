@@ -32,46 +32,30 @@ namespace In2code\In2publishCore\Config;
 use In2code\In2publishCore\Config\Node\Node;
 
 use function array_pop;
-use function array_push;
 use function implode;
 
-/**
- * Class ValidationContainer
- */
 class ValidationContainer
 {
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $path = [];
 
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $errors = [];
 
-    /**
-     * @param Node $node
-     * @param mixed $value
-     */
-    public function validate(Node $node, $value)
+    /** @param mixed $value */
+    public function validate(Node $node, $value): void
     {
-        array_push($this->path, $node->getName());
+        $this->path[] = $node->getName();
         $node->validate($this, $value);
         array_pop($this->path);
     }
 
-    /**
-     * @param string $error
-     */
-    public function addError($error)
+    public function addError(string $error): void
     {
         $this->errors[] = '[' . implode('.', $this->path) . ']: ' . $error;
     }
 
-    /**
-     * @return string[]
-     */
+    /** @return string[] */
     public function getErrors(): array
     {
         return $this->errors;

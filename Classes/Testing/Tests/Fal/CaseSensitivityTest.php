@@ -33,40 +33,28 @@ use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use TYPO3\CMS\Core\Service\FlexFormService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_keys;
 use function array_merge;
 use function array_unique;
 use function sprintf;
 
-/**
- * Class CaseSensitivityTest
- */
 class CaseSensitivityTest implements TestCaseInterface
 {
-    /**
-     * @var FlexFormService
-     */
+    /** @var FlexFormService */
     protected $flexFormService;
 
-    /**
-     * @var FalStorageTestSubjectsProvider
-     */
+    /** @var FalStorageTestSubjectsProvider */
     protected $testSubjectProvider;
 
-    /**
-     * CaseSensitivityTest constructor.
-     */
-    public function __construct()
-    {
-        $this->flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
-        $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);
+    public function __construct(
+        FlexFormService $flexFormService,
+        FalStorageTestSubjectsProvider $falStorageTestSubjectsProvider
+    ) {
+        $this->flexFormService = $flexFormService;
+        $this->testSubjectProvider = $falStorageTestSubjectsProvider;
     }
 
-    /**
-     * @return TestResult
-     */
     public function run(): TestResult
     {
         $storages = $this->testSubjectProvider->getStoragesForCaseSensitivityTest();
@@ -76,7 +64,8 @@ class CaseSensitivityTest implements TestCaseInterface
         foreach ($keys as $key) {
             $local = $this->getConfiguration($storages, $key, 'local');
             $foreign = $this->getConfiguration($storages, $key, 'foreign');
-            if (isset($local['caseSensitive'], $foreign['caseSensitive'])
+            if (
+                isset($local['caseSensitive'], $foreign['caseSensitive'])
                 && $local['caseSensitive'] !== $foreign['caseSensitive']
             ) {
                 $affected[] = sprintf(
@@ -100,9 +89,6 @@ class CaseSensitivityTest implements TestCaseInterface
         return new TestResult('fal.case_sensitivity_matching');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [
@@ -110,13 +96,6 @@ class CaseSensitivityTest implements TestCaseInterface
         ];
     }
 
-    /**
-     * @param array $storages
-     * @param int $key
-     * @param string $side
-     *
-     * @return array
-     */
     protected function getConfiguration(array $storages, int $key, string $side): array
     {
         return $this->flexFormService->convertFlexFormContentToArray($storages[$side][$key]['configuration']);

@@ -34,16 +34,10 @@ use In2code\In2publishCore\Config\ValidationContainer;
 use function is_string;
 use function reset;
 
-/**
- * Class GenString
- */
 class GenString extends AbsGenNode
 {
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    protected function validateKey(ValidationContainer $container, $value)
+    /** @param mixed $value */
+    protected function validateKey(ValidationContainer $container, $value): void
     {
         if (!is_string($value)) {
             $container->addError('Key is not a string');
@@ -51,9 +45,9 @@ class GenString extends AbsGenNode
     }
 
     /**
-     * @param array[]|bool[]|int[]|string[] $value
+     * @param mixed $value
      *
-     * @return array[]|bool[]|int[]|string[]
+     * @return array<string>
      */
     public function cast($value): array
     {

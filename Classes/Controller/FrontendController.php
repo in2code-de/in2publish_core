@@ -30,26 +30,20 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\BackendUtility;
 
-/**
- * Class FrontendController
- */
 class FrontendController extends AbstractController
 {
-    /**
-     * Preview action for vertical or horizontal view
-     *
-     * @param int $identifier
-     *
-     * @return void
-     *
-     * @throws In2publishCoreException
-     */
-    public function previewAction($identifier = 1)
+    /** Preview action for vertical or horizontal view */
+    public function previewAction(int $identifier = 1): void
     {
-        $this->view->assign('local_preview', (string)BackendUtility::buildPreviewUri('pages', $identifier, 'local'));
-        $this->view->assign('foreign_preview', (string)BackendUtility::buildPreviewUri('pages', $identifier, 'foreign'));
+        $this->view->assign(
+            'local_preview',
+            (string)BackendUtility::buildPreviewUri('pages', $identifier, 'local')
+        );
+        $this->view->assign(
+            'foreign_preview',
+            (string)BackendUtility::buildPreviewUri('pages', $identifier, 'foreign')
+        );
     }
 }

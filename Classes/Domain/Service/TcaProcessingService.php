@@ -43,22 +43,23 @@ use In2code\In2publishCore\Domain\Service\Processor\RadioProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\SelectProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\TextProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\UserProcessor;
-use TYPO3\CMS\Core\Cache\CacheManager;
-use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
 use function array_keys;
 use function class_exists;
+use function gettype;
 use function is_array;
+use function is_string;
 
-/**
- * Class TcaProcessingService
- */
-class TcaProcessingService
+class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
 {
+    use LoggerAwareTrait;
+
     public const COLUMNS = 'columns';
     public const CONFIG = 'config';
     public const CONTROL = 'ctrl';
@@ -67,19 +68,17 @@ class TcaProcessingService
     public const DELETE = 'delete';
     public const CACHE_KEY_TCA_COMPATIBLE = 'tca_compatible';
     public const CACHE_KEY_TCA_INCOMPATIBLE = 'tca_incompatible';
-    public const CACHE_KEY_TCA_PROCESSORS = 'tca_processors';
     public const CACHE_KEY_CONTROLS = 'controls';
     public const DEFAULT_EXTRAS = 'defaultExtras';
+
+    /** @var FrontendInterface */
+    protected $cache;
+
     public const SOFT_REF = 'softref';
 
-    /**
-     * @var TcaProcessingService
-     */
-    protected static $instance = null;
+    /** @var TcaProcessingService */
+    protected static $instance;
 
-    /**
-     * @var array
-     */
     protected $defaultProcessor = [
         'check' => CheckProcessor::class,
         'flex' => FlexProcessor::class,
@@ -103,7 +102,7 @@ class TcaProcessingService
     /**
      * Stores the part of the TCA that can be used for relation resolving
      *
-     * @var array[]
+     * @var array<array|null>
      */
     protected $compatibleTca = [];
 
@@ -121,25 +120,11 @@ class TcaProcessingService
      */
     protected $controls = [];
 
-    /**
-     * @var Logger
-     */
-    protected $logger = null;
-
-    /**
-     * @var VariableFrontend
-     */
-    protected $cache = null;
-
-    /**
-     * TcaProcessingService constructor.
-     */
-    protected function __construct()
+    public function __construct(FrontendInterface $cache, ConfigContainer $configContainer)
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('in2publish_core');
+        $this->cache = $cache;
 
-        $configuredProcessor = GeneralUtility::makeInstance(ConfigContainer::class)->get('tca.processor');
+        $configuredProcessor = $configContainer->get('tca.processor');
         if (is_array($configuredProcessor)) {
             foreach ($configuredProcessor as $type => $class) {
                 if (!class_exists($class)) {
@@ -158,26 +143,14 @@ class TcaProcessingService
                 $this->processors[$type] = new $class();
             }
         }
+
+        $this->preProcessTca();
     }
 
-    /**
-     * @return TcaProcessingService
-     */
-    public static function getInstance(): TcaProcessingService
+    protected function preProcessTca(): void
     {
-        if (static::$instance === null) {
-            static::$instance = new static();
-            static::$instance->preProcessTca();
-        }
-        return static::$instance;
-    }
-
-    /**
-     * @return void
-     */
-    protected function preProcessTca()
-    {
-        if ($this->cache->has(static::CACHE_KEY_TCA_COMPATIBLE)
+        if (
+            $this->cache->has(static::CACHE_KEY_TCA_COMPATIBLE)
             && $this->cache->has(static::CACHE_KEY_TCA_INCOMPATIBLE)
             && $this->cache->has(static::CACHE_KEY_CONTROLS)
         ) {
@@ -192,10 +165,7 @@ class TcaProcessingService
         }
     }
 
-    /**
-     * @return void
-     */
-    protected function preProcessTcaReal()
+    protected function preProcessTcaReal(): void
     {
         foreach (static::getCompleteTca() as $table => $tableConfiguration) {
             if (!empty($tableConfiguration[static::CONTROL][static::DELETE])) {
@@ -217,11 +187,7 @@ class TcaProcessingService
         }
     }
 
-    /**
-     * @param array $columnsConfiguration
-     * @param string $table
-     */
-    protected function preProcessTcaColumns(array $columnsConfiguration, string $table)
+    protected function preProcessTcaColumns(array $columnsConfiguration, string $table): void
     {
         foreach ($columnsConfiguration as $column => $columnConfiguration) {
             // if the column has no config section like sys_file_metadata[columns][height]
@@ -231,9 +197,7 @@ class TcaProcessingService
             }
 
             $config = $columnConfiguration[static::CONFIG];
-            $config[static::DEFAULT_EXTRAS] = isset($columnConfiguration[static::DEFAULT_EXTRAS])
-                ? $columnConfiguration[static::DEFAULT_EXTRAS]
-                : null;
+            $config[static::DEFAULT_EXTRAS] = $columnConfiguration[static::DEFAULT_EXTRAS] ?? null;
             $type = $config[static::TYPE];
 
             // If there's no processor for the type it is not a standard type of TYPO3
@@ -272,44 +236,27 @@ class TcaProcessingService
         }
     }
 
-    /**
-     * @return array
-     */
     public static function getIncompatibleTca(): array
     {
-        return static::getInstance()->incompatibleTca;
+        return GeneralUtility::makeInstance(static::class)->incompatibleTca;
     }
 
-    /**
-     * @return array
-     */
     public static function getCompatibleTca(): array
     {
-        return static::getInstance()->compatibleTca;
+        return GeneralUtility::makeInstance(static::class)->compatibleTca;
     }
 
-    /**
-     * @return array
-     */
     public static function getControls(): array
     {
-        return static::getInstance()->controls;
+        return GeneralUtility::makeInstance(static::class)->controls;
     }
 
-    /**
-     * @return array
-     */
     public static function getAllTables(): array
     {
         return array_keys(static::getCompleteTca());
     }
 
-    /**
-     * @param string $table
-     *
-     * @return bool
-     */
-    public static function tableExists($table): bool
+    public static function tableExists(string $table): bool
     {
         return array_key_exists($table, static::getCompleteTca());
     }
@@ -329,55 +276,32 @@ class TcaProcessingService
      * @return array
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public static function getCompleteTcaForTable($tableName): array
+    public static function getCompleteTcaForTable(string $tableName): array
     {
         return $GLOBALS[static::TCA][$tableName];
     }
 
-    /**
-     * @param string $table
-     *
-     * @return array
-     */
-    public static function getColumnsFor($table): array
+    public static function getColumnsFor(string $table): array
     {
-        return (array)static::getInstance()->compatibleTca[$table];
+        return (array)GeneralUtility::makeInstance(static::class)->compatibleTca[$table];
     }
 
-    /**
-     * @param string $table
-     *
-     * @return array
-     */
-    public static function getControlsFor($table): array
+    public static function getControlsFor(string $table): array
     {
-        return static::getInstance()->controls[$table];
+        return GeneralUtility::makeInstance(static::class)->controls[$table];
     }
 
-    /**
-     * @param string $table
-     *
-     * @return bool
-     */
-    public static function hasDeleteField($table): bool
+    public static function hasDeleteField(string $table): bool
     {
-        return (static::getInstance()->controls[$table][static::DELETE] !== '');
+        return (GeneralUtility::makeInstance(static::class)->controls[$table][static::DELETE] !== '');
     }
 
-    /**
-     * @param string $table
-     *
-     * @return string
-     */
-    public static function getDeleteField($table): string
+    public static function getDeleteField(string $table): string
     {
-        return static::getInstance()->controls[$table][static::DELETE];
+        return GeneralUtility::makeInstance(static::class)->controls[$table][static::DELETE];
     }
 
-    /**
-     * @return void
-     */
-    public function flushCaches()
+    public function flushCaches(): void
     {
         $this->cache->flush();
     }

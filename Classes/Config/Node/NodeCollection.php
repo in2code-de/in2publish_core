@@ -42,15 +42,12 @@ use function implode;
 use function is_array;
 use function spl_object_hash;
 
-/**
- * Class NodeCollection
- */
 class NodeCollection extends ArrayObject implements Node
 {
     /**
-     * NodeCollection constructor.
-     *
      * @param Node[] $nodes
+     * @noinspection MagicMethodsValidityInspection
+     * @noinspection PhpMissingParentConstructorInspection
      */
     public function __construct(array $nodes = [])
     {
@@ -59,10 +56,7 @@ class NodeCollection extends ArrayObject implements Node
         }
     }
 
-    /**
-     * @param Node $node
-     */
-    public function addNode(Node $node)
+    public function addNode(Node $node): void
     {
         $name = $node->getName();
         if ($this->offsetExists($name)) {
@@ -89,37 +83,27 @@ class NodeCollection extends ArrayObject implements Node
         if ($this->offsetExists($index)) {
             /** @var Node $node */
             $node = $this->offsetGet($index);
-            return $node->getNodePath(implode(',', $parts));
         } else {
             $node = AbsSpecNode::fromType(Node::T_ARRAY, $index, null, [], new NodeCollection());
             $this->addNode($node);
-            return $node->getNodePath(implode(',', $parts));
         }
+        return $node->getNodePath(implode(',', $parts));
     }
 
-    /**
-     * @param NodeCollection $nodes
-     */
-    public function addNodes(NodeCollection $nodes)
+    public function addNodes(NodeCollection $nodes): void
     {
         foreach ($nodes as $node) {
             $this->addNode($node);
         }
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return spl_object_hash($this);
     }
 
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    public function validate(ValidationContainer $container, $value)
+    /** @param mixed $value */
+    public function validate(ValidationContainer $container, $value): void
     {
         /** @var Node $node */
         foreach ($this as $node) {
@@ -127,9 +111,7 @@ class NodeCollection extends ArrayObject implements Node
         }
     }
 
-    /**
-     * @return string[]|int[]|bool[]|array[]
-     */
+    /** @return string[]|int[]|bool[]|array[] */
     public function getDefaults(): array
     {
         $defaults = [];
@@ -146,7 +128,7 @@ class NodeCollection extends ArrayObject implements Node
      *
      * @param Node $node
      */
-    public function merge(Node $node)
+    public function merge(Node $node): void
     {
     }
 
@@ -164,14 +146,17 @@ class NodeCollection extends ArrayObject implements Node
     }
 
     /**
-     * @param array[]|bool[]|int[]|string[] $value
-     *
-     * @return array[]|bool[]|int[]|string[]
+     * @param mixed $value
+     * @return array<Node>
      */
     public function cast($value): array
     {
         $tmp = [];
         foreach ($this as $key => $node) {
+            /**
+             * @noinspection MissingOrEmptyGroupStatementInspection
+             * @noinspection PhpStatementHasEmptyBodyInspection
+             */
             if (!is_array($value) && $node instanceof AbsGenNode) {
                 // empty non-array values are considered empty in generic structures.
                 // Return the array to fix the data type.
@@ -184,10 +169,8 @@ class NodeCollection extends ArrayObject implements Node
         return $tmp;
     }
 
-    /**
-     * @param array[]|bool[]|int[]|string[] $value
-     */
-    public function unsetDefaults(array &$value)
+    /** @param array[]|bool[]|int[]|string[] $value */
+    public function unsetDefaults(array &$value): void
     {
         /** @var Node $node */
         foreach ($this as $key => $node) {

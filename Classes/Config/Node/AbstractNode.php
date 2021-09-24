@@ -40,45 +40,30 @@ use function class_exists;
 use function is_array;
 use function is_string;
 
-/**
- * Class AbstractNode
- */
 abstract class AbstractNode implements Node
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $name;
 
-    /**
-     * @var string[]
-     */
+    /** @var string[] */
     protected $validators;
 
-    /**
-     * @var NodeCollection
-     */
+    /** @var NodeCollection */
     protected $nodes;
 
-    /**
-     * @var string|int|bool|array
-     */
+    /** @var string|int|bool|array */
     protected $default;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $skipValidators = false;
 
     /**
-     * AbstractNode constructor.
-     *
      * @param string $name
      * @param string[] $validators
      * @param NodeCollection $nodes
      * @param string|int|bool|array $default
      */
-    public function __construct($name, array $validators, NodeCollection $nodes, $default)
+    public function __construct(string $name, array $validators, NodeCollection $nodes, $default)
     {
         $this->name = $name;
         $this->validators = $validators;
@@ -86,37 +71,23 @@ abstract class AbstractNode implements Node
         $this->default = $default;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return Node
-     */
     public function getNodePath(string $path): Node
     {
         return $this->nodes->getNodePath($path);
     }
 
-    /**
-     * @param Node $node
-     */
-    public function addNode(Node $node)
+    public function addNode(Node $node): void
     {
         $this->nodes->addNode($node);
     }
 
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    public function validate(ValidationContainer $container, $value)
+    /** @param mixed $value */
+    public function validate(ValidationContainer $container, $value): void
     {
         if (!is_array($value)) {
             $container->addError('Configuration format is wrong');
@@ -132,11 +103,8 @@ abstract class AbstractNode implements Node
         }
     }
 
-    /**
-     * @param ValidationContainer $container
-     * @param $value
-     */
-    protected function validateByValidators(ValidationContainer $container, $value)
+    /** @param mixed $value */
+    protected function validateByValidators(ValidationContainer $container, $value): void
     {
         foreach ($this->validators as $classOrIndex => $optionsOrClass) {
             if (is_array($optionsOrClass) && is_string($classOrIndex) && class_exists($classOrIndex)) {
@@ -153,12 +121,7 @@ abstract class AbstractNode implements Node
         }
     }
 
-    /**
-     * @param Node $node
-     *
-     * @throws In2publishCoreException
-     */
-    public function merge(Node $node)
+    public function merge(Node $node): void
     {
         if (!empty($node->default)) {
             if (empty($this->default)) {
@@ -180,35 +143,20 @@ abstract class AbstractNode implements Node
         }
     }
 
-    /**
-     * @param array $original
-     * @param array $additional
-     *
-     * @return array
-     */
     public function mergeArrays(array $original, array $additional): array
     {
         return array_merge($original, $additional);
     }
 
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    abstract protected function validateType(ValidationContainer $container, $value);
+    /** @param mixed $value */
+    abstract protected function validateType(ValidationContainer $container, $value): void;
 
-    /**
-     * @return bool
-     */
     public function validatorsShouldBeSkipped(): bool
     {
         return $this->skipValidators;
     }
 
-    /**
-     *
-     */
-    public function skipValidators()
+    public function skipValidators(): void
     {
         $this->skipValidators = true;
     }

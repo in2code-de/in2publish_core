@@ -35,20 +35,11 @@ use function nl2br;
 use function strftime;
 use function trim;
 
-/**
- * Class FormatPropertyByTcaDefinitionViewHelper
- */
 class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
 {
-    /**
-     * @var array
-     */
     protected $tableConfiguration = [];
 
-    /**
-     *
-     */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('fieldName', 'string', 'The field name to get the localized label from', true);
@@ -57,8 +48,6 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
 
     /**
      * Get formatted output by TCA definition
-     *
-     * @return string
      * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function render(): string
@@ -88,12 +77,10 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
         return $value;
     }
 
-    /**
-     * @param $value
-     */
-    protected function changeValueForTypeInput(&$value)
+    protected function changeValueForTypeInput(&$value): void
     {
-        if (GeneralUtility::inList($this->tableConfiguration['config']['eval'], 'datetime')
+        if (
+            GeneralUtility::inList($this->tableConfiguration['config']['eval'], 'datetime')
             || GeneralUtility::inList($this->tableConfiguration['config']['eval'], 'date')
         ) {
             if ($value !== '0') {
@@ -105,18 +92,12 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
         }
     }
 
-    /**
-     * @param $value
-     */
-    protected function changeValueForTypeText(&$value)
+    protected function changeValueForTypeText(&$value): void
     {
         $value = nl2br($value);
     }
 
-    /**
-     * @param $value
-     */
-    protected function setValueToNoValue(&$value)
+    protected function setValueToNoValue(&$value): void
     {
         if (empty($value)) {
             $value = '-';

@@ -31,38 +31,25 @@ namespace In2code\In2publishCore\Config\Validator;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
-/**
- * Class IntegerInRangeValidator
- */
+use const PHP_INT_MAX;
+use const PHP_INT_MIN;
+
 class IntegerInRangeValidator implements ValidatorInterface
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $min;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $max;
 
-    /**
-     * IntegerInRangeValidator constructor.
-     *
-     * @param int $min
-     * @param int $max
-     */
-    public function __construct($min = PHP_INT_MIN, $max = PHP_INT_MAX)
+    public function __construct(int $min = PHP_INT_MIN, int $max = PHP_INT_MAX)
     {
         $this->min = $min;
         $this->max = $max;
     }
 
-    /**
-     * @param ValidationContainer $container
-     * @param $value
-     */
-    public function validate(ValidationContainer $container, $value)
+    /** @param mixed $value */
+    public function validate(ValidationContainer $container, $value): void
     {
         if ($this->min > $value || $value > $this->max) {
             $container->addError("The value $value is not in the range of $this->min to $this->max");

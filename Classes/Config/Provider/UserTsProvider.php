@@ -33,25 +33,15 @@ use In2code\In2publishCore\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class UserTsProvider
- */
 class UserTsProvider implements ProviderInterface, ContextualProvider
 {
-    /**
-     * @return bool
-     */
-    public function isAvailable()
+    public function isAvailable(): bool
     {
         return $this->getBackendUser() instanceof BackendUserAuthentication;
     }
 
-    /**
-     * @return array
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function getConfig()
+    /** @SuppressWarnings(PHPMD.StaticAccess) */
+    public function getConfig(): array
     {
         $config = [];
         $userTs = $this->getBackendUser()->getTSConfig();
@@ -62,19 +52,12 @@ class UserTsProvider implements ProviderInterface, ContextualProvider
         return $config;
     }
 
-    /**
-     * @return int
-     */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 40;
     }
 
-    /**
-     * @return BackendUserAuthentication|null
-     *
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
+    /** @SuppressWarnings(PHPMD.Superglobals) */
     protected function getBackendUser(): ?BackendUserAuthentication
     {
         return $GLOBALS['BE_USER'] ?? null;

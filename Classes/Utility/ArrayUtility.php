@@ -39,12 +39,8 @@ use function explode;
 use function gettype;
 use function is_array;
 use function is_string;
-use function strlen;
 use function strtolower;
 
-/**
- * Class ArrayUtility
- */
 class ArrayUtility
 {
     public static function removeFromArrayByKey(array $array, array $keysToRemove = []): array
@@ -86,7 +82,7 @@ class ArrayUtility
 
     /**
      * @param array $array
-     * @param string $path
+     * @param string|array $path
      *
      * @return mixed
      */
@@ -106,9 +102,9 @@ class ArrayUtility
                 return is_array($array[$key]) ? static::getValueByPath($array[$key], $path) : null;
             }
             return $array[$key];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -120,15 +116,22 @@ class ArrayUtility
      */
     protected static function autoCastString(array &$array, $value, $key)
     {
-        if (strtolower($value) === 'true') {
-            $value = true;
-        } elseif (strtolower($value) === 'false') {
-            $value = false;
-        } elseif (MathUtility::canBeInterpretedAsInteger($value)) {
-            $value = (int)$value;
-        } elseif (strlen($value) === 0 || strtolower($value) === 'null') {
+        if (strtolower((string)$value) === 'true') {
+            return true;
+        }
+
+        if (strtolower((string)$value) === 'false') {
+            return false;
+        }
+
+        if (MathUtility::canBeInterpretedAsInteger($value)) {
+            return (int)$value;
+        }
+
+        if ((string)$value === '' || strtolower((string)$value) === 'null') {
             unset($array[$key]);
         }
+
         return $value;
     }
 }

@@ -34,19 +34,20 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_merge;
 use function in_array;
 
-/**
- * Class LocalDatabaseTest
- */
 class LocalDatabaseTest implements TestCaseInterface
 {
-    /**
-     * @return TestResult
-     */
+    /** @var RequiredTablesDataProvider */
+    protected $requiredTablesDataProvider;
+
+    public function __construct(RequiredTablesDataProvider $requiredTablesDataProvider)
+    {
+        $this->requiredTablesDataProvider = $requiredTablesDataProvider;
+    }
+
     public function run(): TestResult
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
@@ -59,7 +60,7 @@ class LocalDatabaseTest implements TestCaseInterface
             return new TestResult('database.local_offline', TestResult::ERROR);
         }
 
-        $expectedTables = GeneralUtility::makeInstance(RequiredTablesDataProvider::class)->getRequiredTables();
+        $expectedTables = $this->requiredTablesDataProvider->getRequiredTables();
         $actualTables = $localDatabase->getSchemaManager()->listTableNames();
 
         $missingTables = [];
@@ -80,9 +81,6 @@ class LocalDatabaseTest implements TestCaseInterface
         return new TestResult('database.local_accessible_and_tables_present');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [];

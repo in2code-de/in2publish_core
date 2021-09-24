@@ -30,15 +30,9 @@ namespace In2code\In2publishCore\ViewHelpers\Be;
 
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetClassNameOnActionViewHelper
- */
 class GetClassNameOnActionViewHelper extends AbstractViewHelper
 {
-    /**
-     *
-     */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('actionName', 'string', 'action name to compare with current action', true);
@@ -48,8 +42,6 @@ class GetClassNameOnActionViewHelper extends AbstractViewHelper
 
     /**
      * Return className if actionName fits to current action
-     *
-     * @return string
      */
     public function render(): string
     {
@@ -59,9 +51,6 @@ class GetClassNameOnActionViewHelper extends AbstractViewHelper
         return $this->arguments['fallbackClassName'];
     }
 
-    /**
-     * @return string
-     */
     protected function getCurrentActionName(): string
     {
         return $this->renderingContext->getControllerAction();

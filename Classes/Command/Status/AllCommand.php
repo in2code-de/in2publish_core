@@ -33,29 +33,29 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TYPO3\CMS\Core\Console\CommandRegistry;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AllCommand extends Command
 {
-    public const DESCRIPTION = 'Prints the configured fileCreateMask and folderCreateMask';
     public const IDENTIFIER = 'in2publish_core:status:all';
 
-    protected function configure()
+    /** @var CommandRegistry */
+    protected $cmdRegistry;
+
+    public function __construct(CommandRegistry $commandRegistry, string $name = null)
     {
-        $this->setDescription(self::DESCRIPTION)
-             ->setHidden(true);
+        parent::__construct($name);
+        $this->cmdRegistry = $commandRegistry;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $commandRegistry = GeneralUtility::makeInstance(CommandRegistry::class);
-        $commandRegistry->getCommandByIdentifier(VersionCommand::IDENTIFIER)->execute($input, $output);
-        $commandRegistry->getCommandByIdentifier(CreateMasksCommand::IDENTIFIER)->execute($input, $output);
-        $commandRegistry->getCommandByIdentifier(GlobalConfigurationCommand::IDENTIFIER)->execute($input, $output);
-        $commandRegistry->getCommandByIdentifier(Typo3VersionCommand::IDENTIFIER)->execute($input, $output);
-        $commandRegistry->getCommandByIdentifier(DbInitQueryEncodedCommand::IDENTIFIER)->execute($input, $output);
-        $commandRegistry->getCommandByIdentifier(ShortSiteConfigurationCommand::IDENTIFIER)->execute($input, $output);
-        $commandRegistry->getCommandByIdentifier(DbConfigTestCommand::IDENTIFIER)->execute($input, $output);
-        return 0;
+        $this->cmdRegistry->getCommandByIdentifier(VersionCommand::IDENTIFIER)->execute($input, $output);
+        $this->cmdRegistry->getCommandByIdentifier(CreateMasksCommand::IDENTIFIER)->execute($input, $output);
+        $this->cmdRegistry->getCommandByIdentifier(GlobalConfigurationCommand::IDENTIFIER)->execute($input, $output);
+        $this->cmdRegistry->getCommandByIdentifier(Typo3VersionCommand::IDENTIFIER)->execute($input, $output);
+        $this->cmdRegistry->getCommandByIdentifier(DbInitQueryEncodedCommand::IDENTIFIER)->execute($input, $output);
+        $this->cmdRegistry->getCommandByIdentifier(ShortSiteConfigurationCommand::IDENTIFIER)->execute($input, $output);
+        $this->cmdRegistry->getCommandByIdentifier(DbConfigTestCommand::IDENTIFIER)->execute($input, $output);
+        return Command::SUCCESS;
     }
 }

@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Doctrine\DBAL\Driver\Exception as DriverException;
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
@@ -44,37 +45,34 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_keys;
 use function array_merge;
 use function array_unique;
+use function get_class;
 use function ltrim;
 use function uniqid;
 
-/**
- * Class UniqueStorageTargetTest
- */
 class UniqueStorageTargetTest implements TestCaseInterface
 {
-    /**
-     * @var FalStorageTestSubjectsProvider
-     */
+    /** @var FalStorageTestSubjectsProvider */
     protected $testSubjectProvider;
 
-    /**
-     * UniqueStorageTargetTest constructor.
-     */
-    public function __construct()
+    /** @var ResourceFactory */
+    protected $resourceFactory;
+
+    public function __construct(FalStorageTestSubjectsProvider $testSubjectProvider, ResourceFactory $resourceFactory)
     {
-        $this->testSubjectProvider = GeneralUtility::makeInstance(FalStorageTestSubjectsProvider::class);
+        $this->testSubjectProvider = $testSubjectProvider;
+        $this->resourceFactory = $resourceFactory;
     }
 
     /**
      * @return TestResult
      * @throws ReflectionException
+     * @throws DriverException
      */
     public function run(): TestResult
     {
         $storages = $this->testSubjectProvider->getStoragesForUniqueTargetTest();
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
 
-        $resourceFactory = ResourceFactory::getInstance();
         $messages = [];
         $affectedStorages = [];
         $failedUploads = [];
@@ -83,7 +81,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
         $foreignOffline = [];
 
         foreach ($keys as $key) {
-            $storageObject = $resourceFactory->getStorageObject($key, $storages['local'][$key]);
+            $storageObject = $this->resourceFactory->getStorageObject($key, $storages['local'][$key]);
             if (!$storageObject->isOnline()) {
                 $skippedStorages[] = $storageObject->getName();
                 continue;
@@ -102,7 +100,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
             }
 
             do {
-                $uniqueFile = uniqid('tx_in2publish_testfile');
+                $uniqueFile = uniqid('tx_in2publish_testfile', false);
             } while ($localDriver->fileExists($uniqueFile) || $foreignDriver->fileExists($uniqueFile));
 
             $sourceFile = GeneralUtility::tempnam($uniqueFile);
@@ -148,7 +146,9 @@ class UniqueStorageTargetTest implements TestCaseInterface
                 TestResult::ERROR,
                 $messages
             );
-        } elseif (!empty($skippedStorages)) {
+        }
+
+        if (!empty($skippedStorages)) {
             return new TestResult(
                 'fal.storage_targets_test_skipped',
                 TestResult::WARNING,
@@ -159,9 +159,6 @@ class UniqueStorageTargetTest implements TestCaseInterface
         return new TestResult('fal.storage_targets_okay');
     }
 
-    /**
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [

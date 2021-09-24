@@ -33,7 +33,6 @@ use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Service\Routing\SiteService;
 use Throwable;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 use function array_key_exists;
@@ -42,15 +41,26 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
 {
     protected const ARG_IDENTIFIER = 'identifier';
 
-    /**
-     * @var string
-     */
+    /** @var RawRecordService */
+    protected $rawRecordService;
+
+    /** @var TcaService */
+    protected $tcaService;
+
+    /** @var SiteService */
+    protected $siteService;
+
     protected $tagName = 'a';
 
-    /**
-     *
-     */
-    public function initializeArguments()
+    public function __construct(RawRecordService $rawRecordService, TcaService $tcaService, SiteService $siteService)
+    {
+        parent::__construct();
+        $this->rawRecordService = $rawRecordService;
+        $this->tcaService = $tcaService;
+        $this->siteService = $siteService;
+    }
+
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerUniversalTagAttributes();
@@ -64,14 +74,12 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
             return '';
         }
 
-        $rawRecordService = GeneralUtility::makeInstance(RawRecordService::class);
-        $tcaService = GeneralUtility::makeInstance(TcaService::class);
-        $languageField = $tcaService->getLanguageField('pages');
-        $transOrigPointerField = $tcaService->getTransOrigPointerField('pages');
+        $languageField = $this->tcaService->getLanguageField('pages');
+        $transOrigPointerField = $this->tcaService->getTransOrigPointerField('pages');
 
         $language = 0;
         $route = $identifier;
-        $page = $rawRecordService->getRawRecord('pages', $identifier, 'local');
+        $page = $this->rawRecordService->getRawRecord('pages', $identifier, 'local');
         if (array_key_exists($languageField, $page) && $page[$languageField] > 0) {
             $language = $page[$languageField];
             if (!empty($page[$transOrigPointerField])) {
@@ -79,8 +87,7 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
             }
         }
 
-        $siteService = GeneralUtility::makeInstance(SiteService::class);
-        $site = $siteService->getSiteForPidAndStagingLevel($identifier, 'local');
+        $site = $this->siteService->getSiteForPidAndStagingLevel($identifier, 'local');
         if (null === $site) {
             return '';
         }

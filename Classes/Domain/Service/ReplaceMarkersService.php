@@ -32,37 +32,35 @@ namespace In2code\In2publishCore\Domain\Service;
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function explode;
 use function implode;
+use function json_decode;
 use function preg_replace_callback;
 use function str_replace;
 use function strpos;
-use function strstr;
 
 /**
  * Replace markers in TCA definition
  */
-class ReplaceMarkersService
+class ReplaceMarkersService implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     // Also replace optional quotes around the REC_FIELD_ because we will quote the actual value
-    const REC_FIELD_REGEX = '~\'?###REC_FIELD_(.*?)###\'?~';
+    protected const REC_FIELD_REGEX = '~\'?###REC_FIELD_(.*?)###\'?~';
 
-    /**
-     * @var Logger
-     */
-    protected $logger = null;
+    /** @var FlexFormTools */
+    protected $flexFormTools;
 
-    /**
-     * ReplaceMarkersService constructor.
-     */
-    public function __construct()
+    public function __construct(FlexFormTools $flexFormTools)
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
+        $this->flexFormTools = $flexFormTools;
     }
 
     /**
@@ -98,7 +96,7 @@ class ReplaceMarkersService
      * @param RecordInterface $record
      * @param string $string
      * @param string $propertyName
-     *
+     * @param string $key
      * @return string
      */
     public function replaceFlexFormMarkers(
@@ -127,10 +125,10 @@ class ReplaceMarkersService
      */
     protected function replaceRecFieldMarker(RecordInterface $record, string $string): string
     {
-        if (strstr($string, '###REC_FIELD_')) {
+        if (strpos($string, '###REC_FIELD_') !== false) {
             $string = preg_replace_callback(
                 self::REC_FIELD_REGEX,
-                function ($matches) use ($record) {
+                static function ($matches) use ($record) {
                     $propertyName = $matches[1];
                     $propertyValue = $record->getLocalProperty($propertyName);
                     if ($propertyValue === null) {
@@ -144,41 +142,23 @@ class ReplaceMarkersService
         return $string;
     }
 
-    /**
-     * @param string $string
-     * @param RecordInterface $record
-     * @return string
-     */
     protected function replacePageMarker(string $string, RecordInterface $record): string
     {
+        $pageIdentifier = $record->getPageIdentifier();
+
         if (false !== strpos($string, '###CURRENT_PID###')) {
-            if (null !== ($currentPid = $record->getPageIdentifier())) {
-                $string = str_replace('###CURRENT_PID###', (string)$currentPid, $string);
-            }
+            $string = str_replace('###CURRENT_PID###', (string)$pageIdentifier, $string);
         }
         if (false !== strpos($string, '###THIS_UID###')) {
-            if (null !== ($identifier = $record->getIdentifier())) {
-                $string = str_replace('###THIS_UID###', $identifier, $string);
-            }
+            $string = str_replace('###THIS_UID###', $record->getIdentifier(), $string);
         }
         if (false !== strpos($string, '###STORAGE_PID###')) {
-            if (null !== ($storagePid = $this->getStoragePidFromPage($record->getPageIdentifier()))) {
-                $string = str_replace('###STORAGE_PID###', (string)$storagePid, $string);
-            }
+            $string = str_replace('###STORAGE_PID###', (string)$this->getStoragePidFromPage($pageIdentifier), $string);
         }
         return $string;
     }
 
-    /**
-     * Replace default marker names
-     *
-     * @param RecordInterface $record
-     * @param string $string
-     * @param string $propertyName
-     *
-     * @return mixed
-     */
-    protected function replacePageTsConfigMarkers(RecordInterface $record, string $string, string $propertyName)
+    protected function replacePageTsConfigMarkers(RecordInterface $record, string $string, string $propertyName): string
     {
         if (false !== strpos($string, '###PAGE_TSCONFIG')) {
             $marker = [
@@ -250,8 +230,7 @@ class ReplaceMarkersService
             ];
 
             $pageTs = BackendUtility::getPagesTSconfig($record->getPageIdentifier());
-            $flexFormTools = GeneralUtility::makeInstance(FlexFormTools::class);
-            $dataStructIdentifier = $flexFormTools->getDataStructureIdentifier(
+            $dataStructIdentifier = $this->flexFormTools->getDataStructureIdentifier(
                 ['config' => $record->getColumnsTca()[$propertyName]],
                 $tableName,
                 $propertyName,
@@ -277,7 +256,6 @@ class ReplaceMarkersService
                     }
                 }
             }
-
         }
         return $string;
     }
@@ -288,16 +266,22 @@ class ReplaceMarkersService
     protected function getSimplifiedDataStructureIdentifier(string $dataStructureIdentifier): string
     {
         $identifierArray = json_decode($dataStructureIdentifier, true);
-        $simpleDataStructureIdentifier = 'default';
-        if (isset($identifierArray['type']) && $identifierArray['type'] === 'tca' && isset($identifierArray['dataStructureKey'])) {
+
+        if (
+            isset($identifierArray['type'], $identifierArray['dataStructureKey'])
+            && 'tca' === $identifierArray['type']
+        ) {
             $explodedKey = explode(',', $identifierArray['dataStructureKey']);
             if (!empty($explodedKey[1]) && $explodedKey[1] !== 'list' && $explodedKey[1] !== '*') {
-                $simpleDataStructureIdentifier = $explodedKey[1];
-            } elseif (!empty($explodedKey[0]) && $explodedKey[0] !== 'list' && $explodedKey[0] !== '*') {
-                $simpleDataStructureIdentifier = $explodedKey[0];
+                return $explodedKey[1];
+            }
+
+            if (!empty($explodedKey[0]) && $explodedKey[0] !== 'list' && $explodedKey[0] !== '*') {
+                return $explodedKey[0];
             }
         }
-        return $simpleDataStructureIdentifier;
+
+        return 'default';
     }
 
     /**
@@ -307,7 +291,7 @@ class ReplaceMarkersService
      *
      * @return void
      */
-    protected function checkForMarkersAndErrors($string)
+    protected function checkForMarkersAndErrors($string): void
     {
         if (strpos($string, '###') !== false) {
             $this->logger->error('Could not replace marker', ['string' => $string]);
@@ -323,7 +307,7 @@ class ReplaceMarkersService
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function getStoragePidFromPage($pageId): int
+    protected function getStoragePidFromPage(int $pageId): int
     {
         $rootLine = BackendUtility::BEgetRootLine($pageId);
         foreach ($rootLine as $page) {
@@ -334,11 +318,6 @@ class ReplaceMarkersService
         return 0;
     }
 
-    /**
-     * @param int $pageIdentifier
-     *
-     * @return array
-     */
     protected function getPagesTsConfig(int $pageIdentifier): array
     {
         return BackendUtility::getPagesTSconfig($pageIdentifier);

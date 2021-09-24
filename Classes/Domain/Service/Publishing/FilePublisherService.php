@@ -33,48 +33,40 @@ use In2code\In2publishCore\Communication\TemporaryAssetTransmission\AssetTransmi
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\Exception\FileMissingException;
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Service\Publishing\Exception\UnexpectedMissingFileException;
-use Psr\Log\LoggerInterface;
-use TYPO3\CMS\Core\Log\LogManager;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 
 use function basename;
 use function dirname;
 use function file_exists;
+use function trim;
 
-/**
- * Class FilePublisherService
- */
-class FilePublisherService
+class FilePublisherService implements LoggerAwareInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger = null;
+    use LoggerAwareTrait;
 
-    /**
-     * @var RemoteFileAbstractionLayerDriver
-     */
-    protected $remoteFalDriver = null;
+    /** @var RemoteFileAbstractionLayerDriver */
+    protected $remoteFalDriver;
 
-    /**
-     * FolderPublisherService constructor.
-     */
-    public function __construct()
-    {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->remoteFalDriver = GeneralUtility::makeInstance(RemoteFileAbstractionLayerDriver::class);
+    /** @var ResourceFactory */
+    protected $resourceFactory;
+
+    /** @var AssetTransmitter */
+    protected $assetTransmitter;
+
+    public function __construct(
+        RemoteFileAbstractionLayerDriver $remoteFalDriver,
+        ResourceFactory $resourceFactory,
+        AssetTransmitter $assetTransmitter
+    ) {
+        $this->remoteFalDriver = $remoteFalDriver;
+        $this->resourceFactory = $resourceFactory;
+        $this->assetTransmitter = $assetTransmitter;
     }
 
-    /**
-     * Removes a file from a foreign storage
-     *
-     * @param int $storage
-     * @param string $fileIdentifier
-     *
-     * @return bool
-     */
-    public function removeForeignFile($storage, $fileIdentifier): bool
+    public function removeForeignFile(int $storage, string $fileIdentifier): bool
     {
         $this->remoteFalDriver->setStorageUid($storage);
         $this->remoteFalDriver->initialize();
@@ -82,15 +74,7 @@ class FilePublisherService
         return $this->remoteFalDriver->deleteFile($fileIdentifier);
     }
 
-    /**
-     * Adds a file to a foreign storage
-     *
-     * @param int $storage
-     * @param string $fileIdentifier
-     *
-     * @return bool
-     */
-    public function addFileToForeign($storage, $fileIdentifier): bool
+    public function addFileToForeign(int $storage, string $fileIdentifier): bool
     {
         $this->remoteFalDriver->setStorageUid($storage);
         $this->remoteFalDriver->initialize();
@@ -117,13 +101,7 @@ class FilePublisherService
         return trim($fileIdentifier, '/') === trim($newFileIdentifier, '/');
     }
 
-    /**
-     * @param string $storage
-     * @param string $fileIdentifier
-     *
-     * @return bool
-     */
-    public function updateFileOnForeign($storage, $fileIdentifier): bool
+    public function updateFileOnForeign(int $storage, string $fileIdentifier): bool
     {
         $this->remoteFalDriver->setStorageUid($storage);
         $this->remoteFalDriver->initialize();
@@ -137,32 +115,22 @@ class FilePublisherService
         return $this->remoteFalDriver->replaceFile($fileIdentifier, $temporaryIdentifier);
     }
 
-    /**
-     * @param int $storage
-     * @param string $fileIdentifier
-     * @param string $targetFolderId
-     * @param string $newFileName
-     *
-     * @return string
-     */
-    public function moveForeignFile($storage, $fileIdentifier, $targetFolderId, $newFileName): string
+    public function moveForeignFile(int $storage, string $oldIdentifier, string $newIdentifier): string
     {
         $this->remoteFalDriver->setStorageUid($storage);
         $this->remoteFalDriver->initialize();
 
-        return $this->remoteFalDriver->moveFileWithinStorage($fileIdentifier, $targetFolderId, $newFileName);
+        $targetFolderId = PathUtility::dirname($newIdentifier);
+        $newFileName = PathUtility::basename($newIdentifier);
+
+        return $this->remoteFalDriver->moveFileWithinStorage($oldIdentifier, $targetFolderId, $newFileName);
     }
 
     /**
-     * @param int $storage
-     * @param string $fileIdentifier
-     *
-     * @return string
-     *
-     * @throws UnexpectedMissingFileException
      * @throws FileMissingException
+     * @throws UnexpectedMissingFileException
      */
-    protected function transferTemporaryFile($storage, $fileIdentifier): string
+    protected function transferTemporaryFile(int $storage, string $fileIdentifier): string
     {
         $source = $this->getLocalReadableFilePathForIdentifier($storage, $fileIdentifier);
 
@@ -171,25 +139,16 @@ class FilePublisherService
                 'A file that should be published does not exist',
                 [$storage => $storage, 'fileIdentifier' => $fileIdentifier]
             );
-            throw UnexpectedMissingFileException::fromFileIdentifierAndStorage($fileIdentifier, $storage);
+            throw new UnexpectedMissingFileException($fileIdentifier, $storage);
         }
 
-        $assetTransmitter = GeneralUtility::makeInstance(AssetTransmitter::class);
-
-        return $assetTransmitter->transmitTemporaryFile($source);
+        return $this->assetTransmitter->transmitTemporaryFile($source);
     }
 
-    /**
-     * @param int $storage
-     * @param string $fileIdentifier
-     *
-     * @return string
-     */
-    protected function getLocalReadableFilePathForIdentifier($storage, $fileIdentifier): string
+    protected function getLocalReadableFilePathForIdentifier(int $storage, string $fileIdentifier): string
     {
-        return ResourceFactory::getInstance()
-                              ->getStorageObject($storage)
-                              ->getFile($fileIdentifier)
-                              ->getForLocalProcessing(false);
+        $resourceStorage = $this->resourceFactory->getStorageObject($storage);
+        $file = $resourceStorage->getFile($fileIdentifier);
+        return $file->getForLocalProcessing(false);
     }
 }

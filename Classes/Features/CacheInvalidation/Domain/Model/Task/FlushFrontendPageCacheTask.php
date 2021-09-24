@@ -34,20 +34,8 @@ use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class FlushFrontendPageCacheTask
- */
 class FlushFrontendPageCacheTask extends AbstractTask
 {
-    /**
-     * Don't modify configuration
-     *
-     * @return void
-     */
-    public function modifyConfiguration()
-    {
-    }
-
     /**
      * Flush Frontend Caches of given pages
      *        expected:
@@ -61,8 +49,6 @@ class FlushFrontendPageCacheTask extends AbstractTask
      *        'pid' => 'all'
      *        'pid' => 'pages'
      *        'pid' => 'cacheTag:pagetag1'
-     *
-     * @return bool
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
@@ -78,8 +64,6 @@ class FlushFrontendPageCacheTask extends AbstractTask
     }
 
     /**
-     * @return DataHandler
-     *
      * @SuppressWarnings(PHPMD.Superglobals)
      * @SuppressWarnings(PHPMD.StaticAccess)
      */

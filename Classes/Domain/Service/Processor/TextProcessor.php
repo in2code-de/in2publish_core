@@ -35,25 +35,14 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function in_array;
 use function strpos;
 
-/**
- * Class TextProcessor
- */
 class TextProcessor extends AbstractProcessor
 {
     public const RTE_DEFAULT_EXTRAS = 'richtext';
     public const WIZARDS = 'wizards';
     public const RTE = 'RTE';
 
-    /**
-     * @var bool
-     */
     protected $canHoldRelations = true;
 
-    /**
-     * @param array $config
-     *
-     * @return bool
-     */
     public function canPreProcess(array $config): bool
     {
         $canPreProcess = parent::canPreProcess($config);
@@ -69,21 +58,11 @@ class TextProcessor extends AbstractProcessor
         return $canPreProcess;
     }
 
-    /**
-     * @param array $config
-     *
-     * @return bool
-     */
     protected function hasRteWizard(array $config): bool
     {
         return !empty($config[static::WIZARDS][static::RTE]);
     }
 
-    /**
-     * @param array $config
-     *
-     * @return bool
-     */
     protected function hasDefaultExtrasRte(array $config): bool
     {
         if (isset($config[TcaProcessingService::DEFAULT_EXTRAS])) {
@@ -92,11 +71,6 @@ class TextProcessor extends AbstractProcessor
         return false;
     }
 
-    /**
-     * @param array $config
-     *
-     * @return bool
-     */
     protected function hasSoftRef(array $config): bool
     {
         if (isset($config[TcaProcessingService::SOFT_REF])) {

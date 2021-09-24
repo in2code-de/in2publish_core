@@ -36,36 +36,36 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function json_encode;
 
 class RunTasksInQueueCommand extends Command
 {
-    public const DESCRIPTION = <<<'TXT'
-Reads all Tasks to execute from the Database and executes them one after another.
-  The success of a Task is echoed to the console or scheduler backend module, including any error message of failed tasks.
-  NOTE: This command is used for internal operations in in2publish_core
-TXT;
     public const IDENTIFIER = 'in2publish_core:publishtasksrunner:runtasksinqueue';
 
-    protected function configure()
+    /** @var ContextService */
+    protected $contextService;
+
+    /** @var TaskRepository */
+    protected $taskRepository;
+
+    public function __construct(ContextService $contextService, TaskRepository $taskRepository, string $name = null)
     {
-        $this->setHidden(true)
-             ->setDescription(static::DESCRIPTION);
+        parent::__construct($name);
+        $this->contextService = $contextService;
+        $this->taskRepository = $taskRepository;
     }
 
-    public function isEnabled()
+    public function isEnabled(): bool
     {
-        return GeneralUtility::makeInstance(ContextService::class)->isForeign();
+        return $this->contextService->isForeign();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
         $result = [];
         // Tasks which should get executed do not have an execution begin
-        $tasksToExecute = $taskRepository->findByExecutionBegin(null);
+        $tasksToExecute = $this->taskRepository->findByExecutionBegin();
         /** @var AbstractTask $task */
         foreach ($tasksToExecute as $task) {
             try {
@@ -75,12 +75,12 @@ TXT;
             } catch (Throwable $e) {
                 $result[] = $e->getMessage();
             }
-            $taskRepository->update($task);
+            $this->taskRepository->update($task);
         }
         if (empty($result)) {
             $result[] = 'There was nothing to execute';
         }
         $output->write(json_encode($result));
-        return 0;
+        return Command::SUCCESS;
     }
 }

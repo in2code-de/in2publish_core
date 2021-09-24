@@ -212,10 +212,7 @@
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\LocalSysDomainTest -->
 
 			<trans-unit id="application.local_sites_config_missing">
-				<source>One or more root pages are missing their site configuration and have no sys_domain entry.</source>
-			</trans-unit>
-			<trans-unit id="application.local_sites_config_legacy">
-				<source>All root pages have a domain but some are configured by legacy sys_domain entries.</source>
+				<source>One or more root pages are missing their site configuration.</source>
 			</trans-unit>
 			<trans-unit id="application.local_sites_config">
 				<source>All sites have been found to be configured via site configuration.</source>
@@ -228,6 +225,9 @@
 			</trans-unit>
 			<trans-unit id="application.local_site_config_slash">
 				<source>At least one local root page has a site configuration without a full base domain.</source>
+			</trans-unit>
+			<trans-unit id="application.local_site_config_exception">
+				<source>An unexpected exception occurred when searching for sites on Local.</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest -->
@@ -313,17 +313,14 @@
 			<trans-unit id="application.foreign_site_config_slash">
 				<source>At least one foreign root page has a site configuration without a full base domain.</source>
 			</trans-unit>
-			<trans-unit id="application.foreign_sites_config_legacy">
-				<source>All foreign root pages have a domain but some are configured by legacy sys_domain entries.</source>
-			</trans-unit>
 			<trans-unit id="application.foreign_sites_config_missing">
 				<source>One or more foreign root pages are missing site configurations.</source>
 			</trans-unit>
-			<trans-unit id="application.foreign_sites_config_legacy">
-				<source>All foreign root pages have domains configured but at least one of them has a onyl legacy sys_domain.</source>
-			</trans-unit>
 			<trans-unit id="application.foreign_sites_config">
 				<source>All foreign root pages have a site configuration.</source>
+			</trans-unit>
+			<trans-unit id="application.local_site_config_exception">
+				<source>An unexpected exception occurred when searching for sites on Foreign.</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Fal\MissingStoragesTest

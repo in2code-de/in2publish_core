@@ -36,6 +36,7 @@ use function getenv;
  */
 class EnvVarProvider implements DynamicValueProviderInterface
 {
+    /** @return array|false|string */
     public function getValueFor(string $string)
     {
         return getenv($string);

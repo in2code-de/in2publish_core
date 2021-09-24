@@ -32,23 +32,24 @@ namespace In2code\In2publishCore\Command\Status;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-
-use const TYPO3_version;
+use TYPO3\CMS\Core\Information\Typo3Version;
 
 class Typo3VersionCommand extends Command
 {
-    public const DESCRIPTION = 'Prints TYPO3 version';
     public const IDENTIFIER = 'in2publish_core:status:typo3version';
 
-    protected function configure()
+    /** @var Typo3Version */
+    private $typo3Version;
+
+    public function __construct(Typo3Version $typo3Version, string $name = null)
     {
-        $this->setDescription(self::DESCRIPTION)
-             ->setHidden(true);
+        parent::__construct($name);
+        $this->typo3Version = $typo3Version;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('TYPO3: ' . TYPO3_version);
-        return 0;
+        $output->writeln('TYPO3: ' . $this->typo3Version->getVersion());
+        return Command::SUCCESS;
     }
 }

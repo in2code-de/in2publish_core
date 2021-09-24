@@ -30,12 +30,13 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\DBALException;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;
+use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use In2code\In2publishCore\Event\CreatedDefaultHelpLabels;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Testing\Service\TestingService;
@@ -53,8 +54,8 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
+use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
-use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Extensionmanager\Utility\ListUtility;
@@ -97,33 +98,74 @@ class ToolsController extends ActionController
 {
     public const LOG_INIT_DB_ERROR = 'Error while initialization. The Database is not correctly configured';
 
-    /**
-     * @var array
-     */
+    /** @var TestingService */
+    protected $testingService;
+
+    /** @var Letterbox */
+    protected $letterbox;
+
+    /** @var Registry */
+    protected $registry;
+
+    /** @var ExtensionConfiguration */
+    protected $extensionConfiguration;
+
+    /** @var ConnectionPool */
+    protected $connectionPool;
+
+    /** @var DynamicValueProviderRegistry */
+    protected $dynamicValueProviderRegistry;
+
+    /** @var SiteFinder */
+    protected $siteFinder;
+
+    /** @var ForeignSiteFinder */
+    protected $foreignSiteFinder;
+
+    /** @var ToolsRegistry */
+    protected $toolsRegistry;
+
     protected $tests = [];
 
-    /**
-     * @param ViewInterface $view
-     *
-     * @return void
-     */
-    protected function initializeView(ViewInterface $view)
+    public function __construct(
+        ConfigContainer $configContainer,
+        ExecutionTimeService $executionTimeService,
+        EnvironmentService $environmentService,
+        TestingService $testingService,
+        Letterbox $letterbox,
+        Registry $registry,
+        ExtensionConfiguration $extensionConfiguration,
+        ConnectionPool $connectionPool,
+        DynamicValueProviderRegistry $dynamicValueProviderRegistry,
+        SiteFinder $siteFinder,
+        ForeignSiteFinder $foreignSiteFinder,
+        ToolsRegistry $toolsRegistry
+    ) {
+        parent::__construct($configContainer, $executionTimeService, $environmentService);
+        $this->testingService = $testingService;
+        $this->letterbox = $letterbox;
+        $this->registry = $registry;
+        $this->extensionConfiguration = $extensionConfiguration;
+        $this->connectionPool = $connectionPool;
+        $this->dynamicValueProviderRegistry = $dynamicValueProviderRegistry;
+        $this->siteFinder = $siteFinder;
+        $this->foreignSiteFinder = $foreignSiteFinder;
+        $this->toolsRegistry = $toolsRegistry;
+    }
+
+    protected function initializeView(ViewInterface $view): void
     {
         parent::initializeView($view);
-        $letterbox = GeneralUtility::makeInstance(Letterbox::class);
         try {
-            $this->view->assign('canFlushEnvelopes', $letterbox->hasUnAnsweredEnvelopes());
+            $this->view->assign('canFlushEnvelopes', $this->letterbox->hasUnAnsweredEnvelopes());
         } catch (Throwable $throwable) {
             $this->logger->error(self::LOG_INIT_DB_ERROR, ['exception' => $throwable]);
         }
     }
 
-    /**
-     *
-     */
-    public function indexAction()
+    public function indexAction(): void
     {
-        $testStates = GeneralUtility::makeInstance(EnvironmentService::class)->getTestStatus();
+        $testStates = $this->environmentService->getTestStatus();
 
         $messages = [];
         foreach ($testStates as $testState) {
@@ -141,23 +183,20 @@ class ToolsController extends ActionController
             LocalizationUtility::translate('help.github_issues', 'in2publish_core'),
             LocalizationUtility::translate('help.slack_channel', 'in2publish_core'),
         ];
-        [$supports] = $this->signalSlotDispatcher->dispatch(
-            ToolsController::class,
-            'collectSupportPlaces',
-            [$supports]
-        );
+
+        $event = new CreatedDefaultHelpLabels($supports);
+        $this->eventDispatcher->dispatch($event);
+        $supports = $event->getSupports();
+
         $this->view->assign('supports', $supports);
 
-        $this->view->assign('tools', GeneralUtility::makeInstance(ToolsRegistry::class)->getTools());
+        $this->view->assign('tools', $this->toolsRegistry->getTools());
     }
 
-    /**
-     * @throws In2publishCoreException
-     */
-    public function testAction()
+    /** @throws In2publishCoreException */
+    public function testAction(): void
     {
-        $testingService = new TestingService();
-        $testingResults = $testingService->runAllTests();
+        $testingResults = $this->testingService->runAllTests();
 
         $success = true;
 
@@ -168,17 +207,12 @@ class ToolsController extends ActionController
             }
         }
 
-        GeneralUtility::makeInstance(EnvironmentService::class)->setTestResult($success);
+        $this->environmentService->setTestResult($success);
 
         $this->view->assign('testingResults', $testingResults);
     }
 
-    /**
-     * Show configuration
-     *
-     * @return void
-     */
-    public function configurationAction(int $emulatePage = null)
+    public function configurationAction(int $emulatePage = null): void
     {
         if (null !== $emulatePage) {
             $_POST['id'] = $emulatePage;
@@ -188,77 +222,54 @@ class ToolsController extends ActionController
         $this->view->assign('emulatePage', $emulatePage);
     }
 
-    /**
-     * @return void
-     */
-    public function tcaAction()
+    public function tcaAction(): void
     {
         $this->view->assign('incompatibleTca', TcaProcessingService::getIncompatibleTca());
         $this->view->assign('compatibleTca', TcaProcessingService::getCompatibleTca());
         $this->view->assign('controls', TcaProcessingService::getControls());
     }
 
-    /**
-     * @throws StopActionException
-     */
-    public function clearTcaCachesAction()
+    /** @throws StopActionException */
+    public function clearTcaCachesAction(): void
     {
-        TcaProcessingService::getInstance()->flushCaches();
-        try {
-            $this->redirect('index');
-        } catch (UnsupportedRequestTypeException $e) {
-        }
+        GeneralUtility::makeInstance(TcaProcessingService::class)->flushCaches();
+        $this->redirect('index');
     }
 
-    /**
-     * @throws StopActionException
-     */
-    public function flushRegistryAction()
+    /** @throws StopActionException */
+    public function flushRegistryAction(): void
     {
-        GeneralUtility::makeInstance(Registry::class)->removeAllByNamespace('tx_in2publishcore');
+        $this->registry->removeAllByNamespace('tx_in2publishcore');
         $this->addFlashMessage(LocalizationUtility::translate('module.m4.registry_flushed', 'in2publish_core'));
-        try {
-            $this->redirect('index');
-        } catch (UnsupportedRequestTypeException $e) {
-        }
+        $this->redirect('index');
     }
 
-    /**
-     * @throws StopActionException
-     */
-    public function flushEnvelopesAction()
+    /** @throws StopActionException */
+    public function flushEnvelopesAction(): void
     {
-        GeneralUtility::makeInstance(Letterbox::class)->removeAnsweredEnvelopes();
+        $this->letterbox->removeAnsweredEnvelopes();
         $this->addFlashMessage(
             LocalizationUtility::translate(
                 'module.m4.superfluous_envelopes_flushed',
                 'in2publish_core'
             )
         );
-        try {
-            $this->redirect('index');
-        } catch (UnsupportedRequestTypeException $e) {
-        }
+        $this->redirect('index');
     }
 
-    public function sysInfoIndexAction()
+    public function sysInfoIndexAction(): void
     {
     }
 
-    /**
-     *
-     */
-    public function sysInfoShowAction()
+    /** @throws Throwable */
+    public function sysInfoShowAction(): void
     {
         $info = $this->getFullInfo();
         $this->view->assign('info', $info);
         $this->view->assign('infoJson', json_encode($info));
     }
 
-    /**
-     * @param string $json
-     */
-    public function sysInfoDecodeAction(string $json = '')
+    public function sysInfoDecodeAction(string $json = ''): void
     {
         if (!empty($json)) {
             $info = json_decode($json, true);
@@ -276,10 +287,8 @@ class ToolsController extends ActionController
         $this->view->assign('infoJson', $json);
     }
 
-    /**
-     *
-     */
-    public function sysInfoDownloadAction()
+    /** @throws Throwable */
+    public function sysInfoDownloadAction(): void
     {
         $info = $this->getFullInfo();
         $json = json_encode($info);
@@ -299,19 +308,20 @@ class ToolsController extends ActionController
         die;
     }
 
-    public function sysInfoUploadAction()
+    /** @throws StopActionException */
+    public function sysInfoUploadAction(): void
     {
-        /** @var array $file */
-        $file = $this->request->getArgument('jsonFile');
+        try {
+            /** @var array $file */
+            $file = $this->request->getArgument('jsonFile');
+        } catch (NoSuchArgumentException $e) {
+            return;
+        }
         $content = file_get_contents($file['tmp_name']);
         $this->forward('sysInfoDecode', null, null, ['json' => $content]);
     }
 
-    /**
-     * @return array
-     * @throws In2publishCoreException
-     * @throws DBALException
-     */
+    /** @throws Throwable */
     protected function getFullInfo(): array
     {
         $listUtility = $this->objectManager->get(ListUtility::class);
@@ -327,8 +337,7 @@ class ToolsController extends ActionController
         }
 
         $return = [];
-        $testingService = new TestingService();
-        $testingResults = $testingService->runAllTests();
+        $testingResults = $this->testingService->runAllTests();
         foreach ($testingResults as $testClass => $testingResult) {
             $severityString = '[' . $testingResult->getSeverityLabel() . '] ';
             $message = '[' . $testingResult->getTranslatedLabel() . '] ' . $testingResult->getTranslatedMessages();
@@ -343,11 +352,10 @@ class ToolsController extends ActionController
             }
         }
 
-        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-        $full = $configContainer->getContextFreeConfig();
-        $pers = $configContainer->get();
+        $full = $this->configContainer->getContextFreeConfig();
+        $pers = $this->configContainer->get();
 
-        $containerDump = $configContainer->dump();
+        $containerDump = $this->configContainer->dump();
         unset($containerDump['fullConfig']);
 
         $protectedValues = [
@@ -365,6 +373,7 @@ class ToolsController extends ActionController
                 } catch (Throwable $e) {
                 }
             }
+            unset($cfgArray);
 
             foreach ($containerDump['providers'] as &$providerCfg) {
                 try {
@@ -376,36 +385,35 @@ class ToolsController extends ActionController
                 } catch (Throwable $e) {
                 }
             }
+            unset($providerCfg);
         }
 
-        $extensionConfiguration = GeneralUtility::makeInstance(ExtensionConfiguration::class);
         $extConf = [];
         foreach (array_keys($GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']) as $extKey) {
             try {
-                $extConf[$extKey] = $extensionConfiguration->get($extKey);
+                $extConf[$extKey] = $this->extensionConfiguration->get($extKey);
             } catch (Throwable $e) {
                 $extConf[$extKey] = 'Exception: ' . $e->getMessage();
             }
         }
 
         $databases = [];
-        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
-        foreach ($connectionPool->getConnectionNames() as $connectionName) {
-            $databases[$connectionName] = $connectionPool->getConnectionByName($connectionName)->getServerVersion();
+        foreach ($this->connectionPool->getConnectionNames() as $name) {
+            $databases[$name] = $this->connectionPool->getConnectionByName($name)->getServerVersion();
         }
 
         $composerMode = class_exists(Environment::class)
             ? Environment::isComposerMode()
             : defined('TYPO3_COMPOSER_MODE') && true === TYPO3_COMPOSER_MODE;
 
-        $logQueryBuilder = $connectionPool->getQueryBuilderForTable('tx_in2publishcore_log');
+        $logQueryBuilder = $this->connectionPool->getQueryBuilderForTable('tx_in2publishcore_log');
         $logs = $logQueryBuilder->select('*')
                                 ->from('tx_in2publishcore_log')
                                 ->where($logQueryBuilder->expr()->lte('level', 4))
                                 ->setMaxResults(500)
                                 ->orderBy('uid', 'DESC')
                                 ->execute()
-                                ->fetchAll();
+                                ->fetchAllAssociative();
 
         $logsFormatted = [];
         foreach ($logs as $log) {
@@ -449,12 +457,12 @@ class ToolsController extends ActionController
             }
         }
 
-        $dynamicProvider = GeneralUtility::makeInstance(DynamicValueProviderRegistry::class)->getRegisteredClasses();
+        $dynamicProvider = $this->dynamicValueProviderRegistry->getRegisteredClasses();
 
         $siteConfigs = [];
 
-        $localSites = GeneralUtility::makeInstance(SiteFinder::class)->getAllSites(false);
-        $foreignSites = GeneralUtility::makeInstance(ForeignSiteFinder::class)->getAllSites();
+        $localSites = $this->siteFinder->getAllSites(false);
+        $foreignSites = $this->foreignSiteFinder->getAllSites();
         /**
          * @var string $side
          * @var Site $site
@@ -496,7 +504,7 @@ class ToolsController extends ActionController
             'TYPO3 Version' => VersionNumberUtility::getCurrentTypo3Version(),
             'PHP Version' => PHP_VERSION,
             'Database Version' => $databases,
-            'Application Context' => GeneralUtility::getApplicationContext()->__toString(),
+            'Application Context' => Environment::getContext()->__toString(),
             'Composer mode' => $composerMode,
             'Operating System' => PHP_OS . ' ' . php_uname('r'),
             'extensions' => $extensions,

@@ -36,33 +36,19 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 use function ucfirst;
 
-/**
- * Class GetPropertyFromStagingDefinitionViewHelper
- */
 class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
 {
-    /**
-     * @var string
-     */
-    protected $emptyFieldValue = '---';
+    protected const EMPTY_FIELD_VALUE = '---';
 
-    /**
-     *
-     */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('record', RecordInterface::class, 'The record with the desired property value', true);
         $this->registerArgument('propertyName', 'string', 'The name of the desired property', true);
         $this->registerArgument('stagingLevel', 'string', 'Fetch the local or the foreign property', false, 'local');
-        $this->registerArgument('fallbackProperty', 'string', 'Fetch this if the primary prop is empty', false, '');
+        $this->registerArgument('fallbackProperty', 'string', 'Fetch this if the primary prop is empty', false);
     }
 
-    /**
-     * Get property of array
-     *
-     * @return string
-     */
     public function render(): string
     {
         $record = $this->arguments['record'];
@@ -73,25 +59,17 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
         return $this->getProperty($record, $propertyName, $stagingLevel, $fallbackProperty);
     }
 
-    /**
-     * @param Record $record
-     * @param string $propertyName
-     * @param string $stagingLevel
-     * @param string|null $fallbackProperty
-     *
-     * @return string
-     */
     protected function getProperty(
         Record $record,
         string $propertyName,
         string $stagingLevel,
-        string $fallbackProperty
+        ?string $fallbackProperty
     ): string {
         $properties = ObjectAccess::getProperty($record, ucfirst($stagingLevel) . 'Properties');
         if (isset($properties[$propertyName])) {
             $value = $properties[$propertyName];
             if (empty($value) && !empty($fallbackProperty)) {
-                $value = $this->getProperty($record, $fallbackProperty, $stagingLevel, '');
+                $value = $this->getProperty($record, $fallbackProperty, $stagingLevel, null);
             }
         } else {
             $value = $this->fallbackRootPageTitle($record, $propertyName, $stagingLevel);
@@ -113,18 +91,21 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
         string $propertyName,
         string $stagingLevel = 'local'
     ): string {
-        if ($record->getTableName() === 'pages' && $record->getIdentifier() === 0 && $propertyName === 'title') {
+        if (
+            'title' === $propertyName
+            && 'pages' === $record->getTableName()
+            && 0 === $record->getIdentifier()
+        ) {
             if ($stagingLevel === 'local') {
                 return $this->getSiteName();
-            } else {
-                return LocalizationUtility::translate('label_production', 'in2publish_core');
             }
+
+            return LocalizationUtility::translate('label_production', 'in2publish_core');
         }
-        return $this->emptyFieldValue;
+        return static::EMPTY_FIELD_VALUE;
     }
 
     /**
-     * @return string
      * @SuppressWarnings(PHPMD.Superglobals)
      */
     protected function getSiteName(): string

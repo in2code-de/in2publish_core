@@ -32,35 +32,44 @@ namespace In2code\In2publishCore\Service\Routing;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Database\RawRecordService;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Site\Entity\Site;
 use TYPO3\CMS\Core\Site\SiteFinder;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
-use function version_compare;
 
-use const TYPO3_branch;
-
-class SiteService implements SingletonInterface
+class SiteService implements SingletonInterface, LoggerAwareInterface
 {
-    protected const SITE_FINDER = [
-        'local' => SiteFinder::class,
-        'foreign' => ForeignSiteFinder::class,
-    ];
-
-    /** @var LoggerInterface */
-    protected $logger;
+    use LoggerAwareTrait;
 
     protected $cache = [];
 
-    public function __construct()
-    {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
+    /** @var RawRecordService */
+    protected $rawRecordService;
+
+    /** @var TcaService */
+    protected $tcaService;
+
+    /** @var SiteFinder */
+    protected $siteFinder;
+
+    /** @var ForeignSiteFinder */
+    protected $foreignSiteFinder;
+
+    public function __construct(
+        RawRecordService $rawRecordService,
+        TcaService $tcaService,
+        SiteFinder $siteFinder,
+        ForeignSiteFinder $foreignSiteFinder
+    ) {
+        $this->rawRecordService = $rawRecordService;
+        $this->tcaService = $tcaService;
+        $this->siteFinder = $siteFinder;
+        $this->foreignSiteFinder = $foreignSiteFinder;
     }
 
     public function getSiteForPidAndStagingLevel(int $pid, string $side): ?Site
@@ -74,18 +83,21 @@ class SiteService implements SingletonInterface
 
     protected function determineDefaultLanguagePid(int $pageIdentifier, string $stagingLevel): ?int
     {
-        $rawRecordService = GeneralUtility::makeInstance(RawRecordService::class);
-        $row = $rawRecordService->getRawRecord('pages', $pageIdentifier, $stagingLevel);
+        $row = $this->rawRecordService->getRawRecord('pages', $pageIdentifier, $stagingLevel);
         if (null === $row) {
             return null;
         }
 
-        $tcaService = GeneralUtility::makeInstance(TcaService::class);
-        $l10nPointer = $tcaService->getTransOrigPointerField('pages');
+        $deletedField = $this->tcaService->getDeletedField('pages');
+        if (!empty($deletedField) && $row[$deletedField]) {
+            return null;
+        }
+
+        $l10nPointer = $this->tcaService->getTransOrigPointerField('pages');
         if (empty($l10nPointer)) {
             return $pageIdentifier;
         }
-        $languageField = $tcaService->getLanguageField('pages');
+        $languageField = $this->tcaService->getLanguageField('pages');
         if (empty($languageField)) {
             return $pageIdentifier;
         }
@@ -103,7 +115,11 @@ class SiteService implements SingletonInterface
         if (!array_key_exists($pid, $this->cache['site'][$side] ?? [])) {
             $site = null;
             /** @var SiteFinder|ForeignSiteFinder $siteFinder */
-            $siteFinder = GeneralUtility::makeInstance(self::SITE_FINDER[$side]);
+            if ('local' === $side) {
+                $siteFinder = $this->siteFinder;
+            } elseif ('foreign' === $side) {
+                $siteFinder = $this->foreignSiteFinder;
+            }
             try {
                 $site = $siteFinder->getSiteByPageId($pid);
             } catch (PageNotFoundException $e) {
@@ -123,8 +139,6 @@ class SiteService implements SingletonInterface
             return;
         }
         $this->cache['trigger']['logMissingSiteOnce'] = true;
-        if (version_compare(TYPO3_branch, '10.0', '>=')) {
-            $this->logger->error('Can not identify site configuration for page.', ['page' => $pid, 'side' => $side]);
-        }
+        $this->logger->error('Can not identify site configuration for page.', ['page' => $pid, 'side' => $side]);
     }
 }

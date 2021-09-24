@@ -43,21 +43,14 @@ use function is_array;
 use function is_int;
 use function sprintf;
 use function trim;
+use function unlink;
 
-/**
- * Class FileUtility
- */
 class FileUtility
 {
-    /**
-     * @var Logger
-     */
+    /** @var Logger */
     protected static $logger;
 
-    /**
-     * @return void
-     */
-    protected static function initializeLogger()
+    protected static function initializeLogger(): void
     {
         if (static::$logger === null) {
             static::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
@@ -67,13 +60,14 @@ class FileUtility
     /**
      * Removes old Backups which are no longer needed
      */
-    public static function cleanUpBackups(int $keepBackups, string $tableName, string $backupFolder)
+    public static function cleanUpBackups(int $keepBackups, string $tableName, string $backupFolder): void
     {
         static::initializeLogger();
 
         $backups = glob($backupFolder . '*_' . $tableName . '.*');
 
-        if (is_array($backups)
+        if (
+            is_array($backups)
             && is_int($keepBackups)
         ) {
             while (count($backups) >= $keepBackups) {
@@ -116,7 +110,8 @@ class FileUtility
 
     public static function extractFileInformation(FileInterface $file): array
     {
-        $size = array_pop($file->getStorage()->getFileInfoByIdentifier($file->getIdentifier(), ['size']));
+        $fileInfo = $file->getStorage()->getFileInfoByIdentifier($file->getIdentifier(), ['size']);
+        $size = array_pop($fileInfo);
 
         $info = [
             'identifier' => $file->getIdentifier(),

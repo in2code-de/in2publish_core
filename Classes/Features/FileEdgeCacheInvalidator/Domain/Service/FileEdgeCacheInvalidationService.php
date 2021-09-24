@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Service;
 
-use Doctrine\DBAL\Driver\Statement;
+use Doctrine\DBAL\Driver\ResultStatement;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
@@ -23,7 +23,7 @@ class FileEdgeCacheInvalidationService
         $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
     }
 
-    public function flushCachesForFiles(array $uidList)
+    public function flushCachesForFiles(array $uidList): void
     {
         $recordCollection = $this->resolveEdgePagesToClearCachesFor($uidList);
 
@@ -51,9 +51,9 @@ class FileEdgeCacheInvalidationService
 
     /**
      * @param int[] $uidList
-     * @return Statement
+     * @return ResultStatement
      */
-    protected function selectSysRefIndexRecords(array $uidList): Statement
+    protected function selectSysRefIndexRecords(array $uidList): ResultStatement
     {
         $query = $this->connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
@@ -68,9 +68,9 @@ class FileEdgeCacheInvalidationService
 
     /**
      * @param int[] $uidList
-     * @return Statement
+     * @return ResultStatement
      */
-    protected function selectSysFileReferenceRecords(array $uidList): Statement
+    protected function selectSysFileReferenceRecords(array $uidList): ResultStatement
     {
         $query = $this->connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
@@ -85,9 +85,9 @@ class FileEdgeCacheInvalidationService
         return $query->execute();
     }
 
-    protected function addResultsToCollection(Statement $statement, RecordCollection $recordCollection): void
+    protected function addResultsToCollection(ResultStatement $statement, RecordCollection $recordCollection): void
     {
-        while ($row = $statement->fetch()) {
+        while ($row = $statement->fetchAssociative()) {
             $table = $row['table'];
             $uid = (int)$row['uid'];
             $recordCollection->addRecord($table, $uid);
@@ -109,7 +109,7 @@ class FileEdgeCacheInvalidationService
             $query->where($query->expr()->in('uid', $recordUidList));
             $query->groupBy('pid');
             $statement = $query->execute();
-            while ($page = $statement->fetchColumn()) {
+            while ($page = $statement->fetchOne()) {
                 $recordCollection->addRecord('pages', $page);
             }
         }

@@ -33,16 +33,10 @@ use In2code\In2publishCore\Config\ValidationContainer;
 
 use function is_string;
 
-/**
- * Class SpecString
- */
 class SpecString extends AbsSpecNode
 {
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    public function validateType(ValidationContainer $container, $value)
+    /** @param mixed $value */
+    public function validateType(ValidationContainer $container, $value): void
     {
         if ('' === $value || null === $value) {
             $container->addError('Configuration value must not be empty');
@@ -51,11 +45,7 @@ class SpecString extends AbsSpecNode
         }
     }
 
-    /**
-     * @param array|bool|int|string $value
-     *
-     * @return string
-     */
+    /** @param mixed $value */
     public function cast($value): string
     {
         return (string)$value;

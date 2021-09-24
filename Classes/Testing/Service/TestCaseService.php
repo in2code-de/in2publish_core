@@ -38,11 +38,9 @@ use function array_diff;
 use function array_keys;
 use function array_merge;
 use function array_unique;
+use function count;
 use function is_subclass_of;
 
-/**
- * Class TestCaseService
- */
 class TestCaseService
 {
     /**
@@ -79,12 +77,6 @@ class TestCaseService
         return $orderedTests;
     }
 
-    /**
-     * @param array $dependencies
-     * @param array $orderedTests
-     *
-     * @return bool
-     */
     protected function isDependencyMissing(array $dependencies, array $orderedTests): bool
     {
         foreach ($dependencies as $dependency) {
@@ -95,9 +87,7 @@ class TestCaseService
         return false;
     }
 
-    /**
-     * @return TestCaseInterface[]
-     */
+    /** @return TestCaseInterface[] */
     protected function getTestObjects(): array
     {
         $tests = [];
@@ -113,10 +103,7 @@ class TestCaseService
         return $tests;
     }
 
-    /**
-     * @return array
-     * @SuppressWarnings("PHPMD.Superglobals")
-     */
+    /** @SuppressWarnings("PHPMD.Superglobals") */
     protected function getTestClasses(): array
     {
         return $GLOBALS['in2publish_core']['tests'];

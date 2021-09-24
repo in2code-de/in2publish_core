@@ -35,10 +35,10 @@ use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\ExtensionUtility;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as ExtbaseActionController;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 
 use function is_int;
@@ -46,29 +46,19 @@ use function is_int;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
+abstract class ActionController extends ExtbaseActionController implements LoggerAwareInterface
 {
-    /**
-     * @var Logger
-     */
-    protected $logger;
+    use LoggerAwareTrait;
 
-    /**
-     * @var ConfigContainer
-     */
+    /** @var ConfigContainer */
     protected $configContainer;
 
-    /**
-     * Page ID
-     * UID of the selected Page in the page tree
-     *
-     * @var int
-     */
-    protected $pid = 0;
+    /** @var EnvironmentService */
+    protected $environmentService;
 
-    /**
-     * @var bool
-     */
+    /** UID of the selected Page in the page tree */
+    protected $pid;
+
     protected $forcePidInteger = true;
 
     /**
@@ -78,20 +68,20 @@ abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function __construct()
-    {
-        if (method_exists(parent::class, '__construct')) {
-            parent::__construct();
-        }
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
+    public function __construct(
+        ConfigContainer $configContainer,
+        ExecutionTimeService $executionTimeService,
+        EnvironmentService $environmentService
+    ) {
+        $this->configContainer = $configContainer;
+        $executionTimeService->start();
+        $this->environmentService = $environmentService;
         $pid = BackendUtility::getPageIdentifier();
         if (true === $this->forcePidInteger && !is_int($pid)) {
             $this->logger->warning('Page identifier is not an int. Falling back to 0.', ['pid' => $this->pid]);
             $pid = 0;
         }
         $this->pid = $pid;
-        GeneralUtility::makeInstance(ExecutionTimeService::class)->start();
     }
 
     /**
@@ -99,41 +89,36 @@ abstract class ActionController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
      * Do NOT call this Method before $this->initializeAction() is going to be executed
      * because it relies on $this->request and $this->response to be set
      *
-     * @param string $body
-     * @param string $title
+     * @param string $messageBody
+     * @param string $messageTitle
      * @param int $severity
      * @param bool $storeInSession
      *
      * @return void
      */
-    public function addFlashMessage($body, $title = '', $severity = AbstractMessage::OK, $storeInSession = true)
-    {
+    public function addFlashMessage(
+        $messageBody,
+        $messageTitle = '',
+        $severity = AbstractMessage::OK,
+        $storeInSession = true
+    ): void {
         if ($this->controllerContext === null) {
             $this->logger->debug('Prematurely building ControllerContext');
             $this->controllerContext = $this->buildControllerContext();
         }
-        parent::addFlashMessage($body, $title, $severity, $storeInSession);
+        parent::addFlashMessage($messageBody, $messageTitle, $severity, $storeInSession);
     }
 
-    /**
-     * @param ViewInterface $view
-     *
-     * @return void
-     */
-    protected function initializeView(ViewInterface $view)
+    protected function initializeView(ViewInterface $view): void
     {
         parent::initializeView($view);
         $this->view->assign('extensionVersion', ExtensionUtility::getExtensionVersion('in2publish_core'));
         $this->view->assign('config', $this->configContainer->get());
-        $this->view->assign('testStatus', GeneralUtility::makeInstance(EnvironmentService::class)->getTestStatus());
+        $this->view->assign('testStatus', $this->environmentService->getTestStatus());
     }
 
-    /**
-     * Deactivate error messages in flash messages by explicitly returning false
-     *
-     * @return string|bool
-     */
-    protected function getErrorFlashMessage()
+    /** Deactivate error messages in flash messages by explicitly returning false */
+    protected function getErrorFlashMessage(): bool
     {
         return false;
     }

@@ -30,42 +30,25 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\TableConfiguration\LabelService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-/**
- * Class GetLabelFieldFromRecordViewHelper
- */
 class GetLabelFieldFromRecordViewHelper extends AbstractViewHelper
 {
-    /**
-     * @var LabelService
-     */
+    /** @var LabelService */
     protected $labelService;
 
-    /**
-     * GetLabelFieldFromRecordViewHelper constructor.
-     */
-    public function __construct()
+    public function __construct(LabelService $labelService)
     {
-        $this->labelService = GeneralUtility::makeInstance(LabelService::class);
+        $this->labelService = $labelService;
     }
 
-    /**
-     *
-     */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
         $this->registerArgument('record', RecordInterface::class, 'The record whith the property', true);
         $this->registerArgument('stagingLevel', 'string', '"local" (default) or "foreign"', false, 'local');
     }
 
-    /**
-     * Get label field from record
-     *
-     * @return string
-     */
     public function render(): string
     {
         return $this->labelService->getLabelField($this->arguments['record'], $this->arguments['stagingLevel']);

@@ -30,46 +30,30 @@ namespace In2code\In2publishCore\Domain\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use TYPO3\CMS\Core\Log\LogManager;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function microtime;
 
-/**
- * Class ExecutionTimeService
- */
-class ExecutionTimeService implements SingletonInterface
+class ExecutionTimeService implements SingletonInterface, LoggerAwareInterface
 {
-    /**
-     * @var float|null
-     */
-    protected $startTime = null;
+    use LoggerAwareTrait;
 
-    /**
-     * @var float|null
-     */
-    protected $executionTime = null;
+    /** @var float|null */
+    protected $startTime;
 
-    /**
-     * Set current microtime
-     */
-    public function start()
+    public function start(): void
     {
         if (null === $this->startTime) {
             $this->startTime = -microtime(true);
         }
     }
 
-    /**
-     * @return float
-     */
     public function getExecutionTime(): float
     {
         if (null === $this->startTime) {
-            GeneralUtility::makeInstance(LogManager::class)
-                          ->getLogger(static::class)
-                          ->notice('Execution time requested before timer was started');
+            $this->logger->notice('Execution time requested before timer was started');
             return 0.0;
         }
         return $this->startTime + microtime(true);

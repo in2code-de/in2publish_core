@@ -25,6 +25,7 @@ setUpDockerComposeDotEnv() {
     echo "TEST_FILE=${TEST_FILE}" >> .env
     echo "PHP_XDEBUG_ON=${PHP_XDEBUG_ON}" >> .env
     echo "PHP_XDEBUG_PORT=${PHP_XDEBUG_PORT}" >> .env
+    echo "PHP_VERSION=${PHP_VERSION}" >> .env
     echo "DOCKER_PHP_IMAGE=${DOCKER_PHP_IMAGE}" >> .env
     echo "EXTRA_TEST_OPTIONS=${EXTRA_TEST_OPTIONS}" >> .env
     echo "SCRIPT_VERBOSE=${SCRIPT_VERBOSE}" >> .env
@@ -34,9 +35,6 @@ setUpDockerComposeDotEnv() {
 # Load help text into $HELP
 read -r -d '' HELP <<EOF
 in2publish_core test runner. Execute unit test suite and some other details.
-Also used by travis-ci for test execution.
-
-Successfully tested with docker version 18.06.1-ce and docker-compose 1.21.2.
 
 Usage: $0 [options] [file]
 
@@ -45,18 +43,31 @@ No arguments: Run all unit tests with PHP 7.2
 Options:
     -s <...>
         Specifies which test suite to run
-            - composerInstall: "composer install", handy if host has no PHP, uses composer cache of users home
+            - composerInstall: "composer install"
+            - composerInstallMax: "composer update", with no platform.php config.
+            - composerInstallMin: "composer update --prefer-lowest", with platform.php set to PHP version x.x.0.
             - composerValidate: "composer validate"
             - lint: PHP linting
             - unit (default): PHP unit tests
+            - functional: functional tests
 
-    -p <7.2|7.3>
+    -d <mariadb|mssql|postgres|sqlite>
+        Only with -s functional
+        Specifies on which DBMS tests are performed
+            - mariadb (default): use mariadb
+            - mssql: use mssql microsoft sql server
+            - postgres: use postgres
+            - sqlite: use sqlite
+
+    -p <7.2|7.3|7.4|8.0>
         Specifies the PHP minor version to be used
             - 7.2 (default): use PHP 7.2
             - 7.3: use PHP 7.3
+            - 7.4: use PHP 7.4
+            - 8.0: use PHP 8.0
 
     -e "<phpunit options>"
-        Only with -s unit
+        Only with -s functional|unit
         Additional options to send to phpunit tests.
         For phpunit, options starting with "--" must be added after options starting with "-".
         Example -e "-v --filter canRetrieveValueWithGP" to enable verbose output AND filter tests
@@ -65,11 +76,11 @@ Options:
     -x
         Only with -s unit
         Send information to host instance for test or system under test break points. This is especially
-        useful if a local PhpStorm instance is listening on default xdebug port 9000. A different port
+        useful if a local PhpStorm instance is listening on default xdebug port 9003. A different port
         can be selected with -y
 
     -y <port>
-        Send xdebug information to a different port than default 9000 if an IDE like PhpStorm
+        Send xdebug information to a different port than default 9003 if an IDE like PhpStorm
         is not listening on default port.
 
     -u
@@ -109,9 +120,10 @@ cd ../testing-docker || exit 1
 # Option defaults
 ROOT_DIR=`readlink -f ${PWD}/../../`
 TEST_SUITE="unit"
+DBMS="mariadb"
 PHP_VERSION="7.2"
 PHP_XDEBUG_ON=0
-PHP_XDEBUG_PORT=9000
+PHP_XDEBUG_PORT=9003
 EXTRA_TEST_OPTIONS=""
 SCRIPT_VERBOSE=0
 
@@ -121,10 +133,13 @@ OPTIND=1
 # Array for invalid options
 INVALID_OPTIONS=();
 # Simple option parsing based on getopts (! not getopt)
-while getopts ":s:p:e:xy:huv" OPT; do
+while getopts ":s:d:p:e:xy:huv" OPT; do
     case ${OPT} in
         s)
             TEST_SUITE=${OPTARG}
+            ;;
+        d)
+            DBMS=${OPTARG}
             ;;
         p)
             PHP_VERSION=${OPTARG}
@@ -174,13 +189,7 @@ DOCKER_PHP_IMAGE=`echo "php${PHP_VERSION}" | sed -e 's/\.//'`
 # Set $1 to first mass argument, this is the optional test file or test directory to execute
 shift $((OPTIND - 1))
 if [ -n "${1}" ]; then
-    TEST_FILE="public/typo3conf/ext/in2publish_core/${1}"
-else
-    case ${TEST_SUITE} in
-        unit)
-            TEST_FILE="public/typo3conf/ext/in2publish_core/Tests/Unit"
-            ;;
-    esac
+    TEST_FILE="Web/typo3conf/ext/in2publish_core/${1}"
 fi
 
 if [ ${SCRIPT_VERBOSE} -eq 1 ]; then
@@ -195,10 +204,54 @@ case ${TEST_SUITE} in
         SUITE_EXIT_CODE=$?
         docker-compose down
         ;;
+    composerInstallMax)
+        setUpDockerComposeDotEnv
+        docker-compose run composer_install_max
+        SUITE_EXIT_CODE=$?
+        docker-compose down
+        ;;
+    composerInstallMin)
+        setUpDockerComposeDotEnv
+        docker-compose run composer_install_min
+        SUITE_EXIT_CODE=$?
+        docker-compose down
+        ;;
     composerValidate)
         setUpDockerComposeDotEnv
         docker-compose run composer_validate
         SUITE_EXIT_CODE=$?
+        docker-compose down
+        ;;
+    functional)
+        setUpDockerComposeDotEnv
+        case ${DBMS} in
+            mariadb)
+                docker-compose run functional_mariadb10
+                SUITE_EXIT_CODE=$?
+                ;;
+            mssql)
+                docker-compose run functional_mssql2019latest
+                SUITE_EXIT_CODE=$?
+                ;;
+            postgres)
+                docker-compose run functional_postgres10
+                SUITE_EXIT_CODE=$?
+                ;;
+            sqlite)
+                # sqlite has a tmpfs as .Build/Web/typo3temp/var/tests/functional-sqlite-dbs/
+                # Since docker is executed as root (yay!), the path to this dir is owned by
+                # root if docker creates it. Thank you, docker. We create the path beforehand
+                # to avoid permission issues.
+                mkdir -p ${ROOT_DIR}/.Build/Web/typo3temp/var/tests/functional-sqlite-dbs/
+                docker-compose run functional_sqlite
+                SUITE_EXIT_CODE=$?
+                ;;
+            *)
+                echo "Invalid -d option argument ${DBMS}" >&2
+                echo >&2
+                echo "${HELP}" >&2
+                exit 1
+        esac
         docker-compose down
         ;;
     lint)
@@ -214,10 +267,10 @@ case ${TEST_SUITE} in
         docker-compose down
         ;;
     update)
-        # pull typo3gmbh/phpXY:latest versions of those ones that exist locally
-        docker images typo3gmbh/php*:latest --format "{{.Repository}}:latest" | xargs -I {} docker pull {}
-        # remove "dangling" typo3gmbh/phpXY images (those tagged as <none>)
-        docker images typo3gmbh/php* --filter "dangling=true" --format "{{.ID}}" | xargs -I {} docker rmi {}
+        # pull typo3/core-testing-*:latest versions of those ones that exist locally
+        docker images typo3/core-testing-*:latest --format "{{.Repository}}:latest" | xargs -I {} docker pull {}
+        # remove "dangling" typo3/core-testing-* images (those tagged as <none>)
+        docker images typo3/core-testing-* --filter "dangling=true" --format "{{.ID}}" | xargs -I {} docker rmi {}
         ;;
     *)
         echo "Invalid -s option argument ${TEST_SUITE}" >&2

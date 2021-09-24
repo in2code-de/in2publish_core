@@ -33,27 +33,17 @@ use In2code\In2publishCore\Config\ValidationContainer;
 
 use function is_bool;
 
-/**
- * Class SpecBoolean
- */
 class SpecBoolean extends AbsSpecNode
 {
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    public function validateType(ValidationContainer $container, $value)
+    /** @param mixed $value */
+    public function validateType(ValidationContainer $container, $value): void
     {
         if (!is_bool($value)) {
             $container->addError('The value is not a boolean');
         }
     }
 
-    /**
-     * @param array|bool|int|string $value
-     *
-     * @return bool
-     */
+    /** @param mixed $value */
     public function cast($value): bool
     {
         return (bool)$value;

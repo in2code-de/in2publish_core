@@ -35,10 +35,6 @@ use TYPO3\CMS\Redirects\Service\RedirectCacheService;
 
 class RebuildRedirectCacheTask extends AbstractTask
 {
-    public function modifyConfiguration()
-    {
-    }
-
     protected function executeTask(): bool
     {
         GeneralUtility::makeInstance(RedirectCacheService::class)->rebuild();

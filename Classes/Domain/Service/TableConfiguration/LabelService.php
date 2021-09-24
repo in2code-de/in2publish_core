@@ -32,35 +32,22 @@ namespace In2code\In2publishCore\Domain\Service\TableConfiguration;
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Service\Configuration\TcaService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
-use function array_merge;
-use function array_unique;
 use function sprintf;
 use function trim;
 
-/**
- * Class LabelService
- */
 class LabelService
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $emptyFieldValue = '---';
 
-    /**
-     * @var TcaService
-     */
-    protected $tcaService = null;
+    /** @var TcaService */
+    protected $tcaService;
 
-    /**
-     * LabelService constructor.
-     */
-    public function __construct()
+    public function __construct(TcaService $tcaService)
     {
-        $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
+        $this->tcaService = $tcaService;
     }
 
     /**
@@ -71,7 +58,7 @@ class LabelService
      *
      * @return string
      */
-    public function getLabelField(RecordInterface $record, $stagingLevel = 'local'): string
+    public function getLabelField(RecordInterface $record, string $stagingLevel = 'local'): string
     {
         $table = $record->getTableName();
 
@@ -92,30 +79,5 @@ class LabelService
             $label = $this->emptyFieldValue;
         }
         return $label;
-    }
-
-    /**
-     * Get label fields from a table definition
-     *
-     * @param string $tableName
-     *
-     * @return array
-     */
-    protected function getLabelFieldsFromTableConfiguration($tableName): array
-    {
-        $labelField = $this->tcaService->getLabelFieldFromTable($tableName);
-        $labelAltField = $this->tcaService->getLabelAltFieldFromTable($tableName);
-
-        $labelFields = [];
-        if (!empty($labelField)) {
-            $labelFields[] = $labelField;
-        }
-        if (!empty($labelAltField)) {
-            $labelFields = array_merge(
-                $labelFields,
-                GeneralUtility::trimExplode(',', $labelAltField, true)
-            );
-        }
-        return array_unique($labelFields);
     }
 }

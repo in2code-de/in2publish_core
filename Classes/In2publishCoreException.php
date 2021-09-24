@@ -31,9 +31,6 @@ namespace In2code\In2publishCore;
 
 use Exception;
 
-/**
- * Class In2publishCoreException
- */
 class In2publishCoreException extends Exception
 {
 }

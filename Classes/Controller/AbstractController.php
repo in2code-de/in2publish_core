@@ -32,14 +32,15 @@ namespace In2code\In2publishCore\Controller;
 use In2code\In2publishCore\Command\PublishTaskRunner\RunTasksInQueueCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
+use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Throwable;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\Arguments;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
-use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -47,28 +48,30 @@ use function implode;
 use function is_bool;
 
 /**
- * Class AbstractController
- *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 abstract class AbstractController extends ActionController
 {
     public const BLANK_ACTION = 'blankAction';
 
-    /**
-     * @var BackendUserAuthentication
-     */
-    protected $backendUser = null;
+    /** @var BackendUserAuthentication */
+    protected $backendUser;
+
+    /** @var RemoteCommandDispatcher */
+    protected $remoteCommandDispatcher;
 
     /**
-     * AbstractConfiguredController constructor.
-     *
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    public function __construct()
-    {
-        parent::__construct();
+    public function __construct(
+        ConfigContainer $configContainer,
+        ExecutionTimeService $executionTimeService,
+        EnvironmentService $environmentService,
+        RemoteCommandDispatcher $remoteCommandDispatcher
+    ) {
+        parent::__construct($configContainer, $executionTimeService, $environmentService);
         $this->backendUser = $GLOBALS['BE_USER'];
+        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
     /**
@@ -76,7 +79,7 @@ abstract class AbstractController extends ActionController
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function initializeAction()
+    protected function initializeAction(): void
     {
         parent::initializeAction();
         if (static::class !== ToolsController::class) {
@@ -102,10 +105,7 @@ abstract class AbstractController extends ActionController
         }
     }
 
-    /**
-     * @param ViewInterface $view
-     */
-    protected function initializeView(ViewInterface $view)
+    protected function initializeView(ViewInterface $view): void
     {
         parent::initializeView($view);
         $localDbAvailable = null !== DatabaseUtility::buildLocalDatabaseConnection();
@@ -123,38 +123,28 @@ abstract class AbstractController extends ActionController
     /**
      * Dummy Method to use when an error occurred. This Method must never throw an exception.
      */
-    public function blankAction()
+    public function blankAction(): void
     {
     }
 
-    /**
-     * @param string $filterName
-     * @param string $status
-     * @param string $action
-     *
-     * @throws StopActionException
-     */
-    protected function toggleFilterStatusAndRedirect($filterName, $status, $action)
+    /** @throws StopActionException */
+    protected function toggleFilterStatusAndRedirect(string $filterName, string $status, string $action): void
     {
         $currentStatus = $this->backendUser->getSessionData($filterName . $status);
         if (!is_bool($currentStatus)) {
             $currentStatus = false;
         }
         $this->backendUser->setAndSaveSessionData($filterName . $status, !$currentStatus);
-        try {
-            $this->redirect($action);
-        } catch (UnsupportedRequestTypeException $e) {
-        }
+        $this->redirect($action);
     }
 
     /**
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function runTasks()
+    protected function runTasks(): void
     {
-        $dispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, RunTasksInQueueCommand::IDENTIFIER);
-        $response = $dispatcher->dispatch($request);
+        $request = new RemoteCommandRequest(RunTasksInQueueCommand::IDENTIFIER);
+        $response = $this->remoteCommandDispatcher->dispatch($request);
 
         if ($response->isSuccessful()) {
             $this->logger->info('Task execution results', ['output' => $response->getOutput()]);

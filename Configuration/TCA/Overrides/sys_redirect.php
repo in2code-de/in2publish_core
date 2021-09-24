@@ -2,13 +2,18 @@
 
 declare(strict_types=1);
 
+use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Features\RedirectsSupport\DataProvider\ForeignSiteIdentifierItemProcFunc;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 (static function () {
-    if (!\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('redirects')) {
+    if (!ExtensionManagementUtility::isLoaded('redirects')) {
         return;
     }
 
-    $configContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \In2code\In2publishCore\Config\ConfigContainer::class
+    $configContainer = GeneralUtility::makeInstance(
+        ConfigContainer::class
     );
 
     if ($configContainer->get('features.redirectsSupport.enable')) {
@@ -29,7 +34,7 @@ declare(strict_types=1);
                         '*',
                     ],
                 ],
-                'itemsProcFunc' => \In2code\In2publishCore\Features\RedirectsSupport\DataProvider\ForeignSiteIdentifierItemProcFunc::class . '->addData',
+                'itemsProcFunc' => ForeignSiteIdentifierItemProcFunc::class . '->addData',
                 'default' => null,
             ],
         ];
@@ -58,7 +63,7 @@ declare(strict_types=1);
             'showitem' => 'tx_in2publishcore_foreign_site_id, tx_in2publishcore_page_uid',
         ];
 
-        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
+        ExtensionManagementUtility::addToAllTCAtypes(
             'sys_redirect',
             '--palette--;;tx_in2publishcore_association',
             '',

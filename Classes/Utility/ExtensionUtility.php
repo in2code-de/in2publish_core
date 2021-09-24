@@ -31,9 +31,6 @@ namespace In2code\In2publishCore\Utility;
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
-/**
- * Class ExtensionUtility
- */
 class ExtensionUtility
 {
     /**

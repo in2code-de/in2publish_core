@@ -29,13 +29,6 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-/**
- * Class UserProcessor
- */
 class UserProcessor extends AbstractProcessor
 {
-    /**
-     * @var bool
-     */
-    protected $canHoldRelations = false;
 }

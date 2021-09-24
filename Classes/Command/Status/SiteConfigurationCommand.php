@@ -47,32 +47,37 @@ class SiteConfigurationCommand extends Command
 {
     public const ARG_PAGE_ID = 'pageId';
     public const ARG_PAGE_ID_DESCRIPTION = 'The page id to retrieve the site config for';
-    public const DESCRIPTION = 'Outputs the requested Site serialized and encoded.';
     public const EXIT_NO_SITE = 250;
     public const EXIT_PAGE_HIDDEN_OR_DISCONNECTED = 251;
     public const IDENTIFIER = 'in2publish_core:status:siteconfiguration';
 
+    /** @var SiteFinder */
+    protected $siteFinder;
+
+    public function __construct(SiteFinder $siteFinder, string $name = null)
+    {
+        parent::__construct($name);
+        $this->siteFinder = $siteFinder;
+    }
+
     protected function configure(): void
     {
-        $this->setDescription(self::DESCRIPTION)
-             ->addArgument(self::ARG_PAGE_ID, InputArgument::REQUIRED, self::ARG_PAGE_ID_DESCRIPTION)
-             ->setHidden(true);
+        $this->addArgument(self::ARG_PAGE_ID, InputArgument::REQUIRED, self::ARG_PAGE_ID_DESCRIPTION);
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $pageId = $input->getArgument(self::ARG_PAGE_ID);
-        if ($pageId !== (string)(int)$pageId) {
-            throw InvalidPageIdArgumentTypeException::fromGivenPageId($pageId);
+        if (null !== $pageId && $pageId !== (string)(int)$pageId) {
+            throw new InvalidPageIdArgumentTypeException($pageId);
         }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $siteFinder = GeneralUtility::makeInstance(SiteFinder::class);
         $pageId = (int)$input->getArgument(self::ARG_PAGE_ID);
         try {
-            $site = $siteFinder->getSiteByPageId($pageId);
+            $site = $this->siteFinder->getSiteByPageId($pageId);
         } catch (SiteNotFoundException $e) {
             try {
                 GeneralUtility::makeInstance(RootlineUtility::class, $pageId, null)->get();
@@ -82,6 +87,6 @@ class SiteConfigurationCommand extends Command
             return static::EXIT_NO_SITE;
         }
         $output->writeln('Site: ' . base64_encode(serialize($site)));
-        return 0;
+        return Command::SUCCESS;
     }
 }

@@ -30,19 +30,16 @@ namespace In2code\In2publishCore\Features\CacheInvalidation\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Features\CacheInvalidation\Domain\Model\Task\FlushFrontendPageCacheTask;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_filter;
+use function array_key_exists;
 use function implode;
 
-/**
- * Class PhysicalFilePublisher
- */
 class CacheInvalidator implements SingletonInterface
 {
     /**
@@ -50,126 +47,56 @@ class CacheInvalidator implements SingletonInterface
      */
     protected $taskRepository;
 
-    /**
-     * @var array
-     */
+    /** @var array<int, int> */
     protected $clearCachePids = [];
 
-    /**
-     * @var array
-     */
+    /** @var array<int, null|string> */
     protected $clearCacheCommands = [];
 
-    /**
-     * Constructor
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
+    public function __construct(TaskRepository $taskRepository)
     {
-        $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
+        $this->taskRepository = $taskRepository;
     }
 
-    /**
-     * @param string $tableName
-     * @param Record $record
-     *
-     * @return void
-     */
-    public function registerClearCacheTasks($tableName, Record $record)
+    public function registerClearCacheTasks(PublishingOfOneRecordBegan $event): void
     {
-        $this->flushPageCache($tableName, $record);
-        $this->flushPageCacheByClearCacheCommand($tableName, $record);
-    }
-
-    /**
-     *
-     */
-    public function writeClearCacheTask()
-    {
-        if (!empty($this->clearCachePids)) {
-            $flushPageCacheTask = new FlushFrontendPageCacheTask(['pid' => implode(',', $this->clearCachePids)]);
-            $this->taskRepository->add($flushPageCacheTask);
-        }
-
-        $this->clearCacheCommands = array_filter($this->clearCacheCommands);
-
-        if (!empty($this->clearCacheCommands)) {
-            $clearCacheCommands = new FlushFrontendPageCacheTask(
-                ['pid' => implode(',', $this->clearCacheCommands)]
-            );
-            $this->taskRepository->add($clearCacheCommands);
-        }
-
-        $this->clearCacheCommands = [];
-        $this->clearCachePids = [];
-    }
-
-    /**
-     * Flush cache by given page identifier
-     *
-     * @param string $tableName
-     * @param Record $record
-     *
-     * @return void
-     */
-    protected function flushPageCache($tableName, Record $record)
-    {
-        $pid = $this->determinePid($tableName, $record);
-
-        if (null !== $pid) {
-            if (!isset($this->clearCachePids[$pid])) {
-                $this->clearCachePids[$pid] = $pid;
-            }
-        }
-    }
-
-    /**
-     * Flush cache by given TCEMAIN.clearCacheCmd entry
-     *
-     * @param string $tableName
-     * @param Record $record
-     *
-     * @return void
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    protected function flushPageCacheByClearCacheCommand($tableName, Record $record)
-    {
-        $pid = $this->determinePid($tableName, $record);
-
-        if (null !== $pid) {
-            if (!isset($this->clearCacheCommands[$pid])) {
-                $pageTsConfig = BackendUtility::getPagesTSconfig($pid);
-                if (!empty($pageTsConfig['TCEMAIN.']['clearCacheCmd'])) {
-                    $clearCacheCommand = (string)$pageTsConfig['TCEMAIN.']['clearCacheCmd'];
-                } else {
-                    // do not use "null" because of isset check
-                    $clearCacheCommand = false;
-                }
-                $this->clearCacheCommands[$pid] = $clearCacheCommand;
-            }
-        }
-    }
-
-    /**
-     * @param $tableName
-     * @param Record $record
-     *
-     * @return int|null
-     */
-    protected function determinePid($tableName, Record $record)
-    {
-        if ($tableName === 'pages') {
+        $record = $event->getRecord();
+        if ($record->isPagesTable()) {
             $pid = (int)$record->getIdentifier();
         } elseif ($record->hasLocalProperty('pid')) {
-            // hint for the condition: check the local PID,
+            // Hint for the condition: only check the local PID,
             // because after publishing foreign and local PID will be the same.
-            // if the merged or foreign PID is checked then possibly wrong caches will get deleted
+            // If the merged or foreign PID is checked then a cache which might be wrong would get flushed.
             $pid = (int)$record->getLocalProperty('pid');
         } else {
-            $pid = null;
+            return;
         }
-        return $pid;
+
+        $this->clearCachePids[$pid] = $pid;
+
+        if (!array_key_exists($pid, $this->clearCacheCommands)) {
+            $clearCacheCommand = null;
+            $pageTsConfig = BackendUtility::getPagesTSconfig($pid);
+            if (!empty($pageTsConfig['TCEMAIN.']['clearCacheCmd'])) {
+                $clearCacheCommand = (string)$pageTsConfig['TCEMAIN.']['clearCacheCmd'];
+            }
+            $this->clearCacheCommands[$pid] = $clearCacheCommand;
+        }
+    }
+
+    public function writeClearCacheTask(): void
+    {
+        if (!empty($this->clearCachePids)) {
+            $this->taskRepository->add(new FlushFrontendPageCacheTask(['pid' => implode(',', $this->clearCachePids)]));
+            $this->clearCachePids = [];
+        }
+
+        $commands = array_filter($this->clearCacheCommands);
+        $this->clearCacheCommands = [];
+
+        if (!empty($commands)) {
+            $clearCacheCommands = new FlushFrontendPageCacheTask(['pid' => implode(',', $commands)]);
+            $this->taskRepository->add($clearCacheCommands);
+        }
     }
 }

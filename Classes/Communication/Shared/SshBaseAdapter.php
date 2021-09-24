@@ -29,18 +29,19 @@ namespace In2code\In2publishCore\Communication\Shared;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Exception;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Throwable;
-use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function constant;
 use function escapeshellarg;
 use function escapeshellcmd;
+use function file_exists;
 use function in_array;
+use function is_readable;
 use function is_resource;
 use function sprintf;
 use function ssh2_auth_pubkey_file;
@@ -50,15 +51,9 @@ use function str_replace;
 use function strpos;
 use function strtoupper;
 
-/**
- * Class SshBaseAdapter
- */
-abstract class SshBaseAdapter
+abstract class SshBaseAdapter implements LoggerAwareInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger = null;
+    use LoggerAwareTrait;
 
     /**
      * @var array
@@ -84,14 +79,21 @@ abstract class SshBaseAdapter
         'SSH2_FINGERPRINT_SHA1',
     ];
 
-    /**
-     * SshBaseAdapter constructor.
-     *
-     * @throws Throwable
-     */
-    public function __construct()
+    /** @var ConfigContainer */
+    protected $configContainer;
+
+    protected $initialized = false;
+
+    public function __construct(ConfigContainer $configContainer)
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
+        $this->configContainer = $configContainer;
+    }
+
+    public function init(): void
+    {
+        if ($this->initialized) {
+            return;
+        }
         $this->logger->debug('Initializing SshAdapter configuration');
 
         try {
@@ -104,8 +106,9 @@ abstract class SshBaseAdapter
             throw $exception;
         }
 
-        $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
-        $this->config['debug'] = $configContainer->get('debug.showForeignKeyFingerprint');
+        $this->config['debug'] = $this->configContainer->get('debug.showForeignKeyFingerprint');
+
+        $this->initialized = true;
     }
 
     /**
@@ -115,6 +118,7 @@ abstract class SshBaseAdapter
      */
     protected function establishSshSession()
     {
+        $this->init();
         $session = @ssh2_connect($this->config['host'], $this->config['port']);
         if (!is_resource($session)) {
             throw new In2publishCoreException(
@@ -163,13 +167,9 @@ abstract class SshBaseAdapter
         return $session;
     }
 
-    /**
-     * @param RemoteCommandRequest $request
-     *
-     * @return string
-     */
     protected function prepareCommand(RemoteCommandRequest $request): string
     {
+        $this->init();
         $command = '';
 
         foreach ($request->getEnvironmentVariables() as $name => $value) {
@@ -198,24 +198,18 @@ abstract class SshBaseAdapter
     /**
      * Validates that all configuration values are set and contain correct values
      *
-     * @throws Exception
-     */
-    protected function getValidatedConfig()
-    {
-        $config = GeneralUtility::makeInstance(ConfigContainer::class)->get('sshConnection');
-        $config = $this->validateRequiredSettings($config);
-        $config = $this->validateKeys($config);
-        $config = $this->validateSshParameter($config);
-        return $config;
-    }
-
-    /**
-     * @param $config
-     *
-     * @return mixed
      * @throws In2publishCoreException
      */
-    protected function validateRequiredSettings($config)
+    protected function getValidatedConfig(): array
+    {
+        $config = $this->configContainer->get('sshConnection');
+        $config = $this->validateRequiredSettings($config);
+        $config = $this->validateKeys($config);
+        return $this->validateSshParameter($config);
+    }
+
+    /** @throws In2publishCoreException */
+    protected function validateRequiredSettings(array $config): array
     {
         if (empty($config)) {
             throw new In2publishCoreException('SSH Connection: Missing configuration', 1428492639);
@@ -232,13 +226,8 @@ abstract class SshBaseAdapter
         return $config;
     }
 
-    /**
-     * @param $config
-     *
-     * @return mixed
-     * @throws In2publishCoreException
-     */
-    protected function validateKeys($config)
+    /** @throws In2publishCoreException */
+    protected function validateKeys(array $config): array
     {
         foreach (['privateKeyFileAndPathName', 'publicKeyFileAndPathName'] as $requiredFileKey) {
             if (empty($config[$requiredFileKey])) {
@@ -261,13 +250,8 @@ abstract class SshBaseAdapter
         return $config;
     }
 
-    /**
-     * @param $config
-     *
-     * @return mixed
-     * @throws In2publishCoreException
-     */
-    protected function validateSshParameter($config)
+    /** @throws In2publishCoreException */
+    protected function validateSshParameter(array $config): array
     {
         if (empty($config['foreignKeyFingerprint'])) {
             throw new In2publishCoreException('SSH Connection: Option foreignKeyFingerprint is empty', 1425400689);
@@ -289,16 +273,9 @@ abstract class SshBaseAdapter
         return $config;
     }
 
-    /**
-     * Destroy all sessions and connections
-     *
-     * @return void
-     */
-    abstract protected function disconnect();
+    /** Destroy all sessions and connections */
+    abstract protected function disconnect(): void;
 
-    /**
-     *
-     */
     public function __destruct()
     {
         $this->disconnect();

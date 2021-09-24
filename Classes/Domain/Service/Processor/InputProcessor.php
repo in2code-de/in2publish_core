@@ -29,23 +29,12 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-/**
- * Class InputProcessor
- */
 class InputProcessor extends AbstractProcessor
 {
     public const WIZARDS = 'wizards';
 
-    /**
-     * Overwrite and set TRUE for types like "select" or "inline"
-     *
-     * @var bool
-     */
     protected $canHoldRelations = true;
 
-    /**
-     * @var array
-     */
     protected $required = [
         'inputs without wizards most likely do not hold relations' => self::WIZARDS,
     ];

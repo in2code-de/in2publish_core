@@ -32,21 +32,24 @@ namespace In2code\In2publishCore\Tools;
 use TYPO3\CMS\Core\Database\TableConfigurationPostProcessingHookInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
-/**
- * Class ToolsRegistry
- */
+use function class_exists;
+
+use function sprintf;
+use function trigger_error;
+
+use const E_USER_DEPRECATED;
+
 class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcessingHookInterface
 {
-    /**
-     * @var array[]
-     */
+    private const DEPREACTED_NON_FQCN_TOOL = 'Tools registration without a FQCN is deprecated and will be removed in'
+                                             . ' in2publish_core version 11. Registered controller name: %s';
+
     protected $entries = [];
 
-    /**
-     * ToolsRegistry constructor.
-     */
     public function __construct()
     {
         $this->registerHookForPostProcessing();
@@ -67,7 +70,7 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
         string $controller,
         string $action,
         string $extensionName = 'in2publish_core'
-    ) {
+    ): void {
         $this->entries[$name] = [
             'name' => $name,
             'description' => $description,
@@ -77,31 +80,38 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
         ];
     }
 
-    /**
-     * @return array
-     */
     public function getTools(): array
     {
+        // Do not inject the ConfigurationManager, because it will not contain the configured tools.
+        $configuration = GeneralUtility::makeInstance(ObjectManager::class)
+                                       ->get(ConfigurationManagerInterface::class)
+                                       ->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
+        $controllerConfig = $configuration['controllerConfiguration'];
+        foreach ($this->entries as $name => $config) {
+            $controller = $config['controller'];
+            if (isset($controllerConfig[$controller]['alias'])) {
+                $this->entries[$name]['alias'] = $controllerConfig[$controller]['alias'];
+            }
+        }
         return $this->entries;
     }
 
-    /**
-     * @param string $name
-     */
-    public function removeTool(string $name)
+    public function removeTool(string $name): void
     {
         unset($this->entries[$name]);
     }
 
-    /**
-     *
-     */
-    public function processData()
+    public function processData(): void
     {
         $controllerActions = [];
         foreach ($this->entries as $entry) {
             $controllerName = $entry['controller'];
             $actionName = $entry['action'];
+
+            if (!class_exists($controllerName)) {
+                trigger_error(sprintf(self::DEPREACTED_NON_FQCN_TOOL, $controllerName), E_USER_DEPRECATED);
+                $controllerName = 'In2code\\In2publishCore\\Controller\\' . $controllerName . 'Controller';
+            }
 
             if (!isset($controllerActions[$controllerName])) {
                 $controllerActions[$controllerName] = $actionName;
@@ -111,7 +121,7 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
         }
 
         ExtensionUtility::registerModule(
-            'In2code.In2publishCore',
+            'in2publish_core',
             'tools',
             'm4',
             '',
@@ -127,7 +137,7 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
     /**
      * @SuppressWarnings(PHPMD.Superglobals)
      */
-    protected function registerHookForPostProcessing()
+    protected function registerHookForPostProcessing(): void
     {
         $scOptions = &$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS'];
         if (!isset($scOptions['GLOBAL']['extTablesInclusion-PostProcessing'][1517414708])) {

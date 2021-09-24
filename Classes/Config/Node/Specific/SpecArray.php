@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Config\Node\Specific;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Config\Node\Node;
 use In2code\In2publishCore\Config\ValidationContainer;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 
@@ -36,25 +37,17 @@ use function array_search;
 use function in_array;
 use function is_array;
 
-/**
- * Class SpecArray
- */
 class SpecArray extends AbsSpecNode
 {
-    /**
-     * @param ValidationContainer $container
-     * @param mixed $value
-     */
-    public function validateType(ValidationContainer $container, $value)
+    /** @param mixed $value */
+    public function validateType(ValidationContainer $container, $value): void
     {
         if (!is_array($value)) {
             $container->addError('The value is not an array');
         }
     }
 
-    /**
-     * @return string[]|int[]|bool[]|array[]
-     */
+    /** @return string[]|int[]|bool[]|array[] */
     public function getDefaults(): array
     {
         $defaults = [];
@@ -70,19 +63,17 @@ class SpecArray extends AbsSpecNode
     }
 
     /**
-     * @param array|bool|int|string $value
+     * @param mixed $value
      *
-     * @return array
+     * @return array<Node>
      */
     public function cast($value): array
     {
         return $this->nodes->cast($value);
     }
 
-    /**
-     * @param array[]|bool[]|int[]|string[] $value
-     */
-    public function unsetDefaults(array &$value)
+    /** @param array[]|bool[]|int[]|string[] $value */
+    public function unsetDefaults(array &$value): void
     {
         $this->nodes->unsetDefaults($value[$this->name]);
         if (null !== $this->default) {

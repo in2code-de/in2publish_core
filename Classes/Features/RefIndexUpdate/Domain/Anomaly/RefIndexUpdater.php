@@ -30,59 +30,44 @@ namespace In2code\In2publishCore\Features\RefIndexUpdate\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Features\RefIndexUpdate\Domain\Model\Task\RefIndexUpdateTask;
-use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function is_int;
 
-/**
- * Class RefIndexUpdater
- */
-class RefIndexUpdater implements SingletonInterface
+class RefIndexUpdater
 {
-    /**
-     * @var TaskRepository
-     */
+    /** @var TaskRepository */
     protected $taskRepository;
 
-    /**
-     * @var array
-     */
+    /** @var array<string, array<int, int>> */
     protected $configuration = [];
 
-    /**
-     * Constructor
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
+    public function __construct(TaskRepository $taskRepository)
     {
-        $this->taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
+        $this->taskRepository = $taskRepository;
     }
 
-    /**
-     * Add task for updating sys_refindex in foreign DB
-     *
-     * @param string $tableName
-     * @param Record $record
-     */
-    public function registerRefIndexUpdate($tableName, Record $record)
+    public function registerRefIndexUpdate(PublishingOfOneRecordEnded $event): void
     {
+        $record = $event->getRecord();
         $uid = $record->getIdentifier();
 
-        if (!empty($tableName) && is_int($uid) && !isset($this->configuration[$tableName][$uid])) {
-            $this->configuration[$tableName][$uid] = $uid;
+        // MM records and physical folders have string identifiers. They can not have a refIndex.
+        if (is_int($uid)) {
+            $table = $record->getTableName();
+            $this->configuration[$table][$uid] = $uid;
         }
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function writeRefIndexUpdateTask()
+    /** @SuppressWarnings(PHPMD.StaticAccess) */
+    public function writeRefIndexUpdateTask(): void
     {
-        $this->taskRepository->add(GeneralUtility::makeInstance(RefIndexUpdateTask::class, $this->configuration));
+        if (empty($this->configuration)) {
+            return;
+        }
+        $this->taskRepository->add(new RefIndexUpdateTask($this->configuration));
+        $this->configuration = [];
     }
 }

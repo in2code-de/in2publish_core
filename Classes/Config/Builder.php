@@ -33,144 +33,72 @@ use In2code\In2publishCore\Config\Node\Generic\AbsGenNode;
 use In2code\In2publishCore\Config\Node\Node;
 use In2code\In2publishCore\Config\Node\NodeCollection;
 use In2code\In2publishCore\Config\Node\Specific\AbsSpecNode;
-use In2code\In2publishCore\Config\Validator\ValidatorInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class Builder
- */
 class Builder
 {
-    /**
-     * @var NodeCollection
-     */
-    protected $nodes = [];
+    /** @var NodeCollection */
+    protected $nodes;
 
-    /**
-     * @var string[]
-     */
-    protected $path = [];
-
-    /**
-     * @var int
-     */
-    protected $depth = 0;
-
-    /**
-     * Builder constructor.
-     */
     public function __construct()
     {
         $this->nodes = new NodeCollection();
     }
 
-    /**
-     * @return Builder
-     */
-    public static function start()
+    public static function start(): Builder
     {
         return GeneralUtility::makeInstance(static::class);
     }
 
-    /**
-     * @return NodeCollection
-     */
     public function end(): NodeCollection
     {
         return $this->nodes;
     }
 
-    /**
-     * @param string $name
-     * @param Builder $nodes
-     * @param null $default
-     * @param array $validators
-     *
-     * @return $this
-     */
-    public function addArray($name, Builder $nodes, $default = null, array $validators = []): self
+    public function addArray(string $name, Builder $nodes, array $default = null, array $validators = []): self
     {
         $this->addNode(Node::T_ARRAY, $name, $default, $validators, $nodes);
         return $this;
     }
 
-    /**
-     * @param string $name
-     * @param Builder $nodes
-     * @param null $default
-     * @param array $validators
-     *
-     * @return $this
-     */
-    public function addStrictArray($name, Builder $nodes, $default = null, array $validators = []): self
+    public function addStrictArray(string $name, Builder $nodes, array $default = null, array $validators = []): self
     {
         $this->addNode(Node::T_STRICT_ARRAY, $name, $default, $validators, $nodes);
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param string $default
-     * @param array $validators
-     *
-     * @return $this
-     */
-    public function addString($key, $default, array $validators = []): self
+    public function addString(string $key, string $default, array $validators = []): self
     {
         $this->addNode(Node::T_STRING, $key, $default, $validators);
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param string $default
-     * @param array $validators
-     *
-     * @return $this
-     */
-    public function addOptionalString($key, $default, array $validators = []): self
+    public function addOptionalString(string $key, string $default, array $validators = []): self
     {
         $this->addNode(Node::T_OPTIONAL_STRING, $key, $default, $validators);
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param int $default
-     * @param array $validators
-     *
-     * @return $this
-     */
-    public function addInteger($key, $default, array $validators = []): self
+    public function addInteger(string $key, int $default, array $validators = []): self
     {
         $this->addNode(Node::T_INTEGER, $key, $default, $validators);
         return $this;
     }
 
-    /**
-     * @param string $key
-     * @param bool $default
-     * @param array $validators
-     *
-     * @return $this
-     */
-    public function addBoolean($key, $default, array $validators = []): self
+    public function addBoolean(string $key, bool $default, array $validators = []): self
     {
         $this->addNode(Node::T_BOOLEAN, $key, $default, $validators);
         return $this;
     }
 
-    /**
-     * @param string $type
-     * @param string $name
-     * @param string|int|bool|array $default
-     * @param ValidatorInterface[] $validators
-     * @param Builder|null $builder
-     *
-     * @return $this
-     */
-    public function addNode($type, $name, $default = null, $validators = [], Builder $builder = null): self
-    {
+    /** @param string|int|bool|array|null $default */
+    public function addNode(
+        string $type,
+        string $name,
+        $default = null,
+        array $validators = [],
+        Builder $builder = null
+    ): self {
         if ($builder instanceof Builder) {
             $nodes = $builder->end();
         } else {
@@ -181,13 +109,7 @@ class Builder
         return $this;
     }
 
-    /**
-     * @param string $keyType
-     * @param string $type
-     *
-     * @return $this
-     */
-    public function addGenericScalar($keyType, $type = Node::T_STRING): self
+    public function addGenericScalar(string $keyType, string $type = Node::T_STRING): self
     {
         $valueNode = Builder::start()->addNode($type, '*:' . $type)->end();
         $keyNode = AbsGenNode::fromType($keyType, '*:' . $keyType, $valueNode, null);
@@ -195,13 +117,7 @@ class Builder
         return $this;
     }
 
-    /**
-     * @param string $keyType
-     * @param Builder $nodes
-     *
-     * @return $this
-     */
-    public function addGenericArray($keyType, Builder $nodes): self
+    public function addGenericArray(string $keyType, Builder $nodes): self
     {
         $valueNodes = Builder::start()->addArray('*:' . $keyType, $nodes)->end();
         $keyNode = AbsGenNode::fromType($keyType, '*:' . $keyType, $valueNodes, null);

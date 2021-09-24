@@ -29,9 +29,6 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-/**
- * Interface ProcessorInterface
- */
 interface ProcessorInterface
 {
     public const FOREIGN_TABLE = 'foreign_table';
@@ -46,16 +43,11 @@ interface ProcessorInterface
     public const ITEMS_PROC_FUNC = 'itemsProcFunc';
 
     /**
-     * The constructor must be public and must not require any arguments
-     */
-    public function __construct();
-
-    /**
      * Returns TRUE if the type the processor is made for is suitable for relations
      *
      * @return bool
      */
-    public function canHoldRelations();
+    public function canHoldRelations(): bool;
 
     /**
      * Returns TRUE if the specific configuration can hold relations
@@ -64,7 +56,7 @@ interface ProcessorInterface
      *
      * @return bool
      */
-    public function canPreProcess(array $config);
+    public function canPreProcess(array $config): bool;
 
     /**
      * PreProcess the configuration. Returns an array with only necessary information in an standardized format
@@ -73,12 +65,12 @@ interface ProcessorInterface
      *
      * @return array
      */
-    public function preProcess(array $config);
+    public function preProcess(array $config): array;
 
     /**
      * Returns an array of $field => $reasons that explains why canPreProcess returned false.
      *
      * @return array
      */
-    public function getLastReasons();
+    public function getLastReasons(): array;
 }

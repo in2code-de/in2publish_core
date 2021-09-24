@@ -35,24 +35,22 @@ use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
+use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
+use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
+use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
 use In2code\In2publishCore\Service\Configuration\TcaService;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotException;
-use TYPO3\CMS\Extbase\SignalSlot\Exception\InvalidSlotReturnException;
 
 use function array_diff;
 use function array_filter;
 use function array_merge;
 use function in_array;
-use function sprintf;
-use function strlen;
-use function trigger_error;
-
-use const E_USER_DEPRECATED;
+use function max;
 
 /**
  * RecordFactory: This class is responsible for create instances of Record.
@@ -60,9 +58,15 @@ use const E_USER_DEPRECATED;
  * records and any of the related records related records and so on to the extend
  * of the setting maximumRecursionDepth
  */
-class RecordFactory implements SingletonInterface
+class RecordFactory implements SingletonInterface, LoggerAwareInterface
 {
-    public const DEPRECATION_METHOD_NO_TABLE_ARG = 'Calling %s without tableName is deprecated. tableName will be a non-optional argument in in2publish_core version 10.';
+    use LoggerAwareTrait;
+
+    /** @var TcaService */
+    protected $tcaService;
+
+    /** @var EventDispatcher */
+    protected $eventDispatcher;
 
     /**
      * Runtime cache to cache already created Records
@@ -85,11 +89,6 @@ class RecordFactory implements SingletonInterface
     protected $instantiationQueue = [];
 
     /**
-     * @var Logger
-     */
-    protected $logger = null;
-
-    /**
      * @var array
      */
     protected $config = [
@@ -100,11 +99,7 @@ class RecordFactory implements SingletonInterface
         'includeSysFileReference' => false,
     ];
 
-    /**
-     * current recursion depth of makeInstance
-     *
-     * @var int
-     */
+    /** @var int current recursion depth of makeInstance */
     protected $currentDepth = 0;
 
     /**
@@ -115,59 +110,34 @@ class RecordFactory implements SingletonInterface
      */
     protected $excludedTableNames = [];
 
-    /**
-     * current depth of related page records
-     *
-     * @var int
-     */
+    /** @var int current depth of related page records */
     protected $pagesDepth = 1;
 
-    /**
-     * current depth of related content records (anything but page)
-     *
-     * @var int
-     */
+    /** @var int current depth of related content records (anything but page) */
     protected $relatedRecordsDepth = 1;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     protected $pageRecursionEnabled = true;
 
-    /**
-     * @var TcaService
-     */
-    protected $tcaService = null;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $signalSlotDispatcher;
-
-    /**
-     * @var bool
-     */
+    /**  @var bool */
     protected $isRootRecord = false;
 
-    /**
-     * Creates the logger and sets any required configuration
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function __construct()
-    {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(static::class);
-        $this->tcaService = GeneralUtility::makeInstance(TcaService::class);
-        $this->signalSlotDispatcher = GeneralUtility::makeInstance(Dispatcher::class);
+    public function __construct(
+        ConfigContainer $configContainer,
+        TcaService $tcaService,
+        EventDispatcher $eventDispatcher
+    ) {
+        $this->tcaService = $tcaService;
+        $this->eventDispatcher = $eventDispatcher;
 
-        $this->config = GeneralUtility::makeInstance(ConfigContainer::class)->get('factory');
+        $this->config = $configContainer->get('factory');
 
         $this->config['maximumOverallRecursion'] = max(
             $this->config['maximumOverallRecursion'],
             $this->config['maximumPageRecursion'] + $this->config['maximumContentRecursion']
         );
 
-        $this->excludedTableNames = GeneralUtility::makeInstance(ConfigContainer::class)->get('excludeRelatedTables');
+        $this->excludedTableNames = $configContainer->get('excludeRelatedTables');
     }
 
     /**
@@ -189,7 +159,11 @@ class RecordFactory implements SingletonInterface
         array $additionalProperties = [],
         string $tableName = null,
         string $idFieldName = 'uid'
-    ) {
+    ): ?RecordInterface {
+        if (null === $tableName) {
+            throw new MissingArgumentException('tableName');
+        }
+
         if (false === $this->isRootRecord) {
             $this->isRootRecord = true;
             $isRootRecord = true;
@@ -199,17 +173,11 @@ class RecordFactory implements SingletonInterface
         // one of the property arrays might be empty,
         // to get the identifier we have to take a look into both arrays
         $mergedIdentifier = $this->getMergedIdentifierValue(
-            $commonRepository,
             $localProperties,
             $foreignProperties,
             $tableName,
             $idFieldName
         );
-
-        if (null === $tableName) {
-            trigger_error(sprintf(static::DEPRECATION_METHOD_NO_TABLE_ARG, __METHOD__), E_USER_DEPRECATED);
-            $tableName = $commonRepository->getTableName();
-        }
 
         // detects if an instance has been moved upwards or downwards
         // a hierarchy, corrects the relations and sets the records state to "moved"
@@ -222,7 +190,8 @@ class RecordFactory implements SingletonInterface
 
         // internal cache: if the record has been instantiated already
         // it will set in here. This ensures a singleton
-        if (($tableName === 'pages' || $mergedIdentifier > 0)
+        if (
+            ($tableName === 'pages' || $mergedIdentifier > 0)
             && !empty($this->runtimeCache[$tableName][$mergedIdentifier])
         ) {
             $instance = $this->runtimeCache[$tableName][$mergedIdentifier];
@@ -249,7 +218,8 @@ class RecordFactory implements SingletonInterface
                 $instance->addAdditionalProperty('isRoot', true);
             }
 
-            if ($instance->getIdentifier() !== 0
+            if (
+                $instance->getIdentifier() !== 0
                 && !$instance->localRecordExists()
                 && !$instance->foreignRecordExists()
             ) {
@@ -260,11 +230,7 @@ class RecordFactory implements SingletonInterface
                 $instance->setState(RecordInterface::RECORD_STATE_MOVED);
             }
 
-            try {
-                $this->signalSlotDispatcher->dispatch(__CLASS__, 'instanceCreated', [$this, $instance]);
-            } catch (InvalidSlotException $e) {
-            } catch (InvalidSlotReturnException $e) {
-            }
+            $this->eventDispatcher->dispatch(new RecordInstanceWasInstantiated($this, $instance));
 
             /* special case of tables without TCA (currently only sys_file_processedfile).
              * Normally we would just ignore them, but:
@@ -273,21 +239,18 @@ class RecordFactory implements SingletonInterface
              */
             $tableConfiguration = $this->tcaService->getConfigurationArrayForTable($tableName);
             if (empty($tableConfiguration)) {
-                switch ($tableName) {
-                    case 'sys_file_processedfile':
-                        $identifier = null;
-                        if ($instance->localRecordExists()) {
-                            $identifier = $instance->getLocalProperty('original');
-                        }
-                        if (empty($identifier) && $instance->foreignRecordExists()) {
-                            $identifier = $instance->getForeignProperty('original');
-                        }
-                        if (!empty($identifier)) {
-                            $record = $commonRepository->findByIdentifier($identifier, 'sys_file');
-                            $instance->addRelatedRecord($record);
-                        }
-                        break;
-                    default:
+                if ('sys_file_processedfile' === $tableName) {
+                    $identifier = null;
+                    if ($instance->localRecordExists()) {
+                        $identifier = $instance->getLocalProperty('original');
+                    }
+                    if (empty($identifier) && $instance->foreignRecordExists()) {
+                        $identifier = $instance->getForeignProperty('original');
+                    }
+                    if (!empty($identifier)) {
+                        $record = $commonRepository->findByIdentifier($identifier, 'sys_file');
+                        $instance->addRelatedRecord($record);
+                    }
                 }
             } elseif ($this->currentDepth < $this->config['maximumOverallRecursion']) {
                 $this->currentDepth++;
@@ -314,21 +277,11 @@ class RecordFactory implements SingletonInterface
         }
         if (true === $isRootRecord && true === $this->isRootRecord) {
             $this->isRootRecord = false;
-            try {
-                $this->signalSlotDispatcher->dispatch(__CLASS__, 'rootRecordFinished', [$this, $instance]);
-            } catch (InvalidSlotException $e) {
-            } catch (InvalidSlotReturnException $e) {
-            }
+            $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($this, $instance));
         }
         return $instance;
     }
 
-    /**
-     * @param RecordInterface $record
-     * @param CommonRepository $commonRepository
-     *
-     * @return RecordInterface
-     */
     protected function findRelatedRecordsForContentRecord(
         RecordInterface $record,
         CommonRepository $commonRepository
@@ -344,23 +297,13 @@ class RecordFactory implements SingletonInterface
 
             $record = $commonRepository->enrichRecordWithRelatedRecords($record, $excludedTableNames);
 
-            $this->signalSlotDispatcher->dispatch(
-                RecordFactory::class,
-                'addAdditionalRelatedRecords',
-                [$record, $this]
-            );
+            $this->eventDispatcher->dispatch(new AllRelatedRecordsWereAddedToOneRecord($this, $record));
 
             $this->relatedRecordsDepth--;
         }
         return $record;
     }
 
-    /**
-     * @param Record $record
-     * @param CommonRepository $commonRepository
-     *
-     * @return RecordInterface
-     */
     protected function findRelatedRecordsForPageRecord(
         Record $record,
         CommonRepository $commonRepository
@@ -412,14 +355,14 @@ class RecordFactory implements SingletonInterface
      * 5. The Instance should be created with different PIDs
      *
      * @param string $tableName
-     * @param string $identifier
+     * @param string|int $identifier
      * @param array $localProperties
      * @param array $foreignProperties
      *
      * @return bool
      */
     protected function detectAndAlterMovedInstance(
-        $tableName,
+        string $tableName,
         $identifier,
         array $localProperties,
         array $foreignProperties
@@ -483,7 +426,6 @@ class RecordFactory implements SingletonInterface
      * gets the field name of the identifier field and
      * checks both arrays for an exiting identity value
      *
-     * @param CommonRepository $commonRepository
      * @param array $localProperties
      * @param array $foreignProperties
      * @param string|null $tableName
@@ -492,56 +434,55 @@ class RecordFactory implements SingletonInterface
      * @return int|string
      */
     protected function getMergedIdentifierValue(
-        $commonRepository,
         array $localProperties,
         array $foreignProperties,
-        string $tableName = null,
+        string $tableName,
         string $idFieldName = 'uid'
     ) {
-        if (null === $tableName) {
-            trigger_error(sprintf(static::DEPRECATION_METHOD_NO_TABLE_ARG, __METHOD__), E_USER_DEPRECATED);
-            $tableName = $commonRepository->getTableName();
-        }
         if ($tableName === 'sys_file') {
             $idFieldName = 'uid';
         }
         if (!empty($localProperties[$idFieldName])) {
             return $localProperties[$idFieldName];
-        } elseif (!empty($foreignProperties[$idFieldName])) {
+        }
+
+        if (!empty($foreignProperties[$idFieldName])) {
             return $foreignProperties[$idFieldName];
-        } else {
-            $combinedIdentifier = Record::createCombinedIdentifier($localProperties, $foreignProperties);
-            if (strlen($combinedIdentifier) === 0) {
-                $filteredLocalProps = array_filter($localProperties);
-                $filteredForeignProps = array_filter($foreignProperties);
-                if (!empty($filteredLocalProps) && !empty($filteredForeignProps)) {
-                    $this->logger->error(
-                        'Could not merge identifier values',
-                        [
-                            'identifierFieldName' => $idFieldName,
-                            'tableName' => $tableName,
-                            'localProperties' => $localProperties,
-                            'foreignProperties' => $foreignProperties,
-                        ]
-                    );
-                }
-            } else {
-                return $combinedIdentifier;
-            }
+        }
+
+        $combinedIdentifier = Record::createCombinedIdentifier($localProperties, $foreignProperties);
+
+        if ($combinedIdentifier !== '') {
+            return $combinedIdentifier;
+        }
+
+        $filteredLocalProps = array_filter($localProperties);
+        $filteredForeignProps = array_filter($foreignProperties);
+        if (!empty($filteredLocalProps) && !empty($filteredForeignProps)) {
+            $this->logger->error(
+                'Could not merge identifier values',
+                [
+                    'identifierFieldName' => $idFieldName,
+                    'tableName' => $tableName,
+                    'localProperties' => $localProperties,
+                    'foreignProperties' => $foreignProperties,
+                ]
+            );
         }
         return 0;
     }
 
     /**
      * @param string $instanceTableName
-     * @param int $mergedIdentifier
+     * @param string|int $mergedIdentifier
      *
      * @return bool
      */
-    protected function isLooping($instanceTableName, $mergedIdentifier): bool
+    protected function isLooping(string $instanceTableName, $mergedIdentifier): bool
     {
         // loop detection of records waiting for instantiation completion
-        if (!empty($this->instantiationQueue[$instanceTableName])
+        if (
+            !empty($this->instantiationQueue[$instanceTableName])
             && in_array($mergedIdentifier, $this->instantiationQueue[$instanceTableName])
         ) {
             return true;
@@ -555,11 +496,11 @@ class RecordFactory implements SingletonInterface
 
     /**
      * @param string $instanceTableName
-     * @param int $mergedIdentifier
+     * @param int|string $mergedIdentifier
      *
      * @return void
      */
-    protected function finishedInstantiation($instanceTableName, $mergedIdentifier)
+    protected function finishedInstantiation(string $instanceTableName, $mergedIdentifier): void
     {
         foreach ($this->instantiationQueue[$instanceTableName] as $index => $identifier) {
             if ($mergedIdentifier === $identifier) {
@@ -578,7 +519,7 @@ class RecordFactory implements SingletonInterface
      *
      * @return RecordInterface|null
      */
-    public function getCachedRecord($tableName, $identifier)
+    public function getCachedRecord(string $tableName, $identifier): ?RecordInterface
     {
         if (!empty($this->runtimeCache[$tableName][$identifier])) {
             return $this->runtimeCache[$tableName][$identifier];
@@ -590,19 +531,14 @@ class RecordFactory implements SingletonInterface
      * Remove a table/identifier from the runtimeCache to force a re-fetch on a record
      *
      * @param string $tableName
-     * @param string $identifier
+     * @param int|string $identifier
      */
-    public function forgetCachedRecord($tableName, $identifier)
+    public function forgetCachedRecord(string $tableName, $identifier): void
     {
         unset($this->runtimeCache[$tableName][$identifier]);
     }
 
-    /**
-     * Disable Page Recursion
-     *
-     * @return void
-     */
-    public function disablePageRecursion()
+    public function disablePageRecursion(): void
     {
         $this->pageRecursionEnabled = false;
     }
@@ -610,7 +546,7 @@ class RecordFactory implements SingletonInterface
     /**
      * @internal
      */
-    public function simulateRootRecord()
+    public function simulateRootRecord(): void
     {
         $this->isRootRecord = true;
     }
@@ -618,38 +554,25 @@ class RecordFactory implements SingletonInterface
     /**
      * @internal
      */
-    public function endSimulation()
+    public function endSimulation(): void
     {
         $this->isRootRecord = false;
-        try {
-            $this->signalSlotDispatcher->dispatch(
-                __CLASS__,
-                'rootRecordFinished',
-                [$this, GeneralUtility::makeInstance(NullRecord::class)]
-            );
-        } catch (InvalidSlotException $e) {
-        } catch (InvalidSlotReturnException $e) {
-        }
+        $record = GeneralUtility::makeInstance(NullRecord::class);
+        $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($this, $record));
     }
 
-    /**
-     * @param RecordInterface $record
-     * @param CommonRepository $commonRepository
-     */
     protected function findTranslations(RecordInterface $record, CommonRepository $commonRepository): void
     {
         $tableName = $record->getTableName();
 
-        $tcaService = GeneralUtility::makeInstance(TcaService::class);
-
-        $languageField = $tcaService->getLanguageField($tableName);
+        $languageField = $this->tcaService->getLanguageField($tableName);
         if (!empty($languageField)) {
             $language = $record->getLocalProperty($languageField);
             if (null === $language) {
                 $language = $record->getForeignProperty($languageField);
             }
             if (null !== $language && 0 === (int)$language) {
-                $fieldName = $tcaService->getTransOrigPointerField($tableName);
+                $fieldName = $this->tcaService->getTransOrigPointerField($tableName);
                 if ($fieldName) {
                     $translatedRecords = $commonRepository->findByProperties(
                         [$fieldName => $record->getIdentifier()],

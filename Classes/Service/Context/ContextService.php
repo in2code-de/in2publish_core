@@ -30,15 +30,12 @@ namespace In2code\In2publishCore\Service\Context;
  */
 
 use LogicException;
+use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function getenv;
 use function in_array;
 
-/**
- * Class ContextService
- */
 class ContextService implements SingletonInterface
 {
     public const LOCAL = 'Local';
@@ -46,65 +43,45 @@ class ContextService implements SingletonInterface
     public const ENV_VAR_NAME = 'IN2PUBLISH_CONTEXT';
     public const REDIRECT_ENV_VAR_NAME = 'REDIRECT_IN2PUBLISH_CONTEXT';
 
-    /**
-     * @var string
-     */
-    protected $context = self::FOREIGN;
+    /** @var string */
+    protected $context;
 
-    /**
-     * ContextService constructor.
-     */
     public function __construct()
     {
         $this->context = $this->determineContext();
     }
 
-    /**
-     * @return string
-     */
     public function getContext(): string
     {
         return $this->context;
     }
 
-    /**
-     * @return string|bool
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    protected function determineContext()
+    /** @SuppressWarnings(PHPMD.StaticAccess) */
+    protected function determineContext(): string
     {
         $environmentVariable = getenv(static::ENV_VAR_NAME) ?: getenv(static::REDIRECT_ENV_VAR_NAME) ?: false;
         if (false === $environmentVariable) {
             return static::FOREIGN;
-        } elseif (in_array($environmentVariable, [static::LOCAL, static::FOREIGN], true)) {
-            return $environmentVariable;
-        } elseif (GeneralUtility::getApplicationContext()->isProduction()) {
-            return static::FOREIGN;
-        } else {
-            throw new LogicException('The defined in2publish context is not supported', 1469717011);
         }
+        if (in_array($environmentVariable, [static::LOCAL, static::FOREIGN], true)) {
+            return $environmentVariable;
+        }
+        if (Environment::getContext()->isProduction()) {
+            return static::FOREIGN;
+        }
+        throw new LogicException('The defined in2publish context is not supported', 1469717011);
     }
 
-    /**
-     * @return bool
-     */
     public function isForeign(): bool
     {
         return static::FOREIGN === $this->context;
     }
 
-    /**
-     * @return bool
-     */
     public function isLocal(): bool
     {
         return static::LOCAL === $this->context;
     }
 
-    /**
-     * @return bool
-     */
     public function isContextDefined(): bool
     {
         return (false !== getenv(static::ENV_VAR_NAME)) || (false !== getenv(static::REDIRECT_ENV_VAR_NAME));

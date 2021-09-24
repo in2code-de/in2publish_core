@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Command\Status\Exception;
  */
 
 use In2code\In2publishCore\In2publishCoreException;
+use Throwable;
 
 use function sprintf;
 
@@ -38,8 +39,17 @@ class InvalidPageIdArgumentTypeException extends In2publishCoreException
     private const MESSAGE = 'The argument pageId must be an integer, got string "%s"';
     public const CODE = 1561653002;
 
-    public static function fromGivenPageId(string $pageId): InvalidPageIdArgumentTypeException
+    /** @var string */
+    protected $pageId;
+
+    public function __construct(string $pageId, Throwable $previous = null)
     {
-        return new self(sprintf(self::MESSAGE, $pageId), self::CODE);
+        parent::__construct(sprintf(self::MESSAGE, $pageId), self::CODE, $previous);
+        $this->pageId = $pageId;
+    }
+
+    public function getPageId(): string
+    {
+        return $this->pageId;
     }
 }
