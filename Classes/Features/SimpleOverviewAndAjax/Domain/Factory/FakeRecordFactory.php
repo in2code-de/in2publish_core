@@ -33,26 +33,40 @@ namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Factory;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository\TableCacheRepository;
 use In2code\In2publishCore\Service\Configuration\TcaService;
-use In2code\In2publishCore\Utility\ArrayUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use In2code\In2publishCore\Service\Database\RawRecordService;
+use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Database\Connection;
 
-use function array_diff;
+use function array_column;
+use function array_keys;
 use function array_merge;
-use function strnatcmp;
-use function strpos;
-use function uasort;
+use function array_replace_recursive;
+use function array_unique;
+use function count;
+use function implode;
+use function sort;
 
 class FakeRecordFactory
 {
     public const PAGE_TABLE_NAME = 'pages';
+
+    /** @var Connection */
+    protected $localDatabase;
+
+    /** @var Connection */
+    protected $foreignDatabase;
 
     /** @var TableCacheRepository */
     protected $tableCacheRepository;
 
     /** @var TcaService */
     protected $tcaService;
+
+    /** @var RawRecordService */
+    protected $rawRecordService;
 
     /** @var array */
     protected $config;
@@ -61,290 +75,403 @@ class FakeRecordFactory
     protected $metaDataBlackList = [];
 
     public function __construct(
+        Connection $localDatabase,
+        Connection $foreignDatabase,
         TableCacheRepository $tableCacheRepository,
         TcaService $tcaService,
+        RawRecordService $rawRecordService,
         ConfigContainer $configContainer
     ) {
+        $this->localDatabase = $localDatabase;
+        $this->foreignDatabase = $foreignDatabase;
         $this->tableCacheRepository = $tableCacheRepository;
         $this->tcaService = $tcaService;
+        $this->rawRecordService = $rawRecordService;
         $this->config = $configContainer->get();
     }
 
     /**
      * Build a record tree with a minimum information (try to keep queries reduced)
      */
-    public function buildFromStartPage(int $identifier): Record
+    public function buildFromStartPage(int $identifier): RecordInterface
     {
-        $record = $this->getSingleFakeRecordFromPageIdentifier($identifier);
-        $this->addRelatedRecords($record);
-        return $record;
+        return $this->buildVersion2($identifier);
     }
 
-    /**
-     * Add related records and respect level depth
-     */
-    protected function addRelatedRecords(Record $record, int $currentDepth = 0): void
+    protected function buildVersion2(int $identifier): RecordInterface
     {
-        $currentDepth++;
-        if ($currentDepth < $this->config['factory']['maximumPageRecursion']) {
-            foreach ($this->getChildrenPages($record->getIdentifier()) as $pageIdentifier) {
-                if ($this->shouldSkipChildrenPage($pageIdentifier)) {
-                    $subRecord = $this->getSingleFakeRecordFromPageIdentifier($pageIdentifier);
-                    $this->addRelatedRecords($subRecord, $currentDepth);
-                    $record->addRelatedRecordRaw($subRecord);
-                }
-            }
-        }
-    }
+        $depth = 0;
 
-    /** @SuppressWarnings(PHPMD.StaticAccess) */
-    protected function getSingleFakeRecordFromPageIdentifier(int $identifier): Record
-    {
-        $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier);
-        $propertiesForeign = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $identifier, 'foreign');
-        $record = GeneralUtility::makeInstance(
-            Record::class,
+        $localProperties = $this->rawRecordService->getRawRecord('pages', $identifier, 'local') ?? [];
+        $foreignProperties = $this->rawRecordService->getRawRecord('pages', $identifier, 'foreign') ?? [];
+        $pagesTca = $this->tcaService->getConfigurationArrayForTable('pages');
+        $record = new Record(
             'pages',
-            $propertiesLocal,
-            $propertiesForeign,
-            (array)$this->tcaService->getConfigurationArrayForTable('pages'),
-            []
+            $localProperties,
+            $foreignProperties,
+            $pagesTca,
+            ['depth' => $depth]
         );
-        $this->guessState($record);
+        unset($localProperties, $foreignProperties);
+        $records[$record->getIdentifier()] = $record;
+
+        $deleteField = $pagesTca['ctrl']['delete'] ?? null;
+        $rows = [];
+
+        $relatedRecords = [
+            $record->getIdentifier() => [
+                'local' => $record->getLocalProperties(),
+                'foreign' => $record->getForeignProperties(),
+            ],
+        ];
+        do {
+            if ($depth++ >= $this->config['factory']['maximumPageRecursion']) {
+                break;
+            }
+
+            $query = $this->localDatabase->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->select('*')
+                  ->from('pages')
+                  ->where($query->expr()->in('pid', array_keys($relatedRecords)));
+            $result = $query->execute();
+            $localRows = array_column($result->fetchAllAssociative(), null, 'uid');
+
+            $query = $this->foreignDatabase->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->select('*')
+                  ->from('pages')
+                  ->where($query->expr()->in('pid', array_keys($relatedRecords)));
+            $result = $query->execute();
+            $foreignRows = array_column($result->fetchAllAssociative(), null, 'uid');
+
+            $relatedRecords = [];
+            $commonUids = array_unique(array_merge(array_keys($localRows), array_keys($foreignRows)));
+            foreach ($commonUids as $uid) {
+                $relatedRecords[$uid] = [
+                    'local' => $localRows[$uid] ?? [],
+                    'foreign' => $foreignRows[$uid] ?? [],
+                ];
+                $rows[$uid] = [
+                    'local' => $localRows[$uid] ?? [],
+                    'foreign' => $foreignRows[$uid] ?? [],
+                ];
+            }
+        } while (!empty($relatedRecords));
+
+        $missingRecords = [];
+        foreach ($rows as $uid => $rowSet) {
+            if ([] === $rowSet['local']) {
+                $missingRecords['local'][$uid] = $uid;
+            } elseif ([] === $rowSet['foreign']) {
+                $missingRecords['foreign'][$uid] = $uid;
+            }
+        }
+        if (!empty($missingRecords['local'])) {
+            $query = $this->localDatabase->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->select('*')
+                  ->from('pages')
+                  ->where($query->expr()->in('uid', $missingRecords['local']));
+            $result = $query->execute();
+            foreach ($result->fetchAllAssociative() as $row) {
+                $rows[$row['uid']]['local'] = $row;
+            }
+        }
+        if (!empty($missingRecords['foreign'])) {
+            $query = $this->foreignDatabase->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->select('*')
+                  ->from('pages')
+                  ->where($query->expr()->in('uid', $missingRecords['foreign']));
+            $result = $query->execute();
+            foreach ($result->fetchAllAssociative() as $row) {
+                $rows[$row['uid']]['foreign'] = $row;
+            }
+        }
+
+        foreach ($rows as $uid => $rowSet) {
+            $localProperties = $rowSet['local'];
+            $foreignProperties = $rowSet['foreign'];
+            if (
+                ([] === $localProperties || (null !== $deleteField && $localProperties[$deleteField]))
+                && ([] === $foreignProperties || (null !== $deleteField && $foreignProperties[$deleteField]))
+            ) {
+                continue;
+            }
+
+            $relatedRecord = new Record(
+                'pages',
+                $localProperties,
+                $foreignProperties,
+                $pagesTca,
+                ['depth' => $depth]
+            );
+            $records[$uid] = $relatedRecord;
+            $pid = $relatedRecord->getMergedProperty('pid');
+            $records[$pid]->addRelatedRecord($relatedRecord);
+        }
+
+        $pids = array_keys($records);
+        sort($pids);
+
+        $tables = $this->tcaService->getAllTableNames(
+            array_merge(
+                $this->config['excludeRelatedTables'],
+                ['pages', 'sys_file', 'sys_file_metadata']
+            )
+        );
+
+        foreach ($tables as $table) {
+            $query = $this->localDatabase->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->select('*')
+                  ->from($table)
+                  ->where($query->expr()->in('pid', $pids))
+                  ->orderBy('uid');
+            $result = $query->execute();
+            $localRows = array_column($result->fetchAllAssociative(), null, 'uid');
+
+            $query = $this->foreignDatabase->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->select('*')
+                  ->from($table)
+                  ->where($query->expr()->in('pid', $pids))
+                  ->orderBy('uid');
+            $result = $query->execute();
+            $foreignRows = array_column($result->fetchAllAssociative(), null, 'uid');
+
+            $commonUids = array_unique(array_merge(array_keys($localRows), array_keys($foreignRows)));
+            $relatedRecords = [];
+            foreach ($commonUids as $uid) {
+                $relatedRecords[$uid] = [
+                    'local' => $localRows[$uid] ?? [],
+                    'foreign' => $foreignRows[$uid] ?? [],
+                ];
+            }
+
+            $missingRecords = [];
+            foreach ($relatedRecords as $uid => $rowSet) {
+                if ([] === $rowSet['local']) {
+                    $missingRecords['local'][$uid] = $uid;
+                } elseif ([] === $rowSet['foreign']) {
+                    $missingRecords['foreign'][$uid] = $uid;
+                }
+            }
+            if (!empty($missingRecords['local'])) {
+                $query = $this->localDatabase->createQueryBuilder();
+                $query->getRestrictions()->removeAll();
+                $query->select('*')
+                      ->from('pages')
+                      ->where($query->expr()->in('uid', $missingRecords['local']));
+                $result = $query->execute();
+                foreach ($result->fetchAllAssociative() as $row) {
+                    $relatedRecords[$row['uid']]['local'] = $row;
+                }
+            }
+            if (!empty($missingRecords['foreign'])) {
+                $query = $this->foreignDatabase->createQueryBuilder();
+                $query->getRestrictions()->removeAll();
+                $query->select('*')
+                      ->from('pages')
+                      ->where($query->expr()->in('uid', $missingRecords['foreign']));
+                $result = $query->execute();
+                foreach ($result->fetchAllAssociative() as $row) {
+                    $relatedRecords[$row['uid']]['foreign'] = $row;
+                }
+            }
+
+            foreach ($relatedRecords as $rowSet) {
+                $relatedRecord = new Record(
+                    $table,
+                    $rowSet['local'] ?? [],
+                    $rowSet['foreign'] ?? [],
+                    $GLOBALS['TCA'][$table],
+                    ['depth' => $depth]
+                );
+                $pid = $relatedRecord->getPageIdentifier();
+                $records[$pid]->addRelatedRecord($relatedRecord);
+            }
+        }
+        $this->fetchMmRecords($record);
         return $record;
     }
 
-    /**
-     * Try to get state for given record
-     */
-    protected function guessState(Record $record): void
+
+
+    protected function collectDemands(RecordInterface $basicRecord): array
     {
-        if (0 === $record->getIdentifier()) {
-            return;
-        }
-
-        $localProperties = $record->getLocalProperties();
-        $foreignProperties = $record->getForeignProperties();
-
-        if ([] === $localProperties && [] !== $foreignProperties) {
-            $record->setState(RecordInterface::RECORD_STATE_DELETED);
-        } elseif ($this->pageIsNew($record)) {
-            $record->setState(RecordInterface::RECORD_STATE_ADDED);
-        } elseif ($this->pageIsDeletedOnLocalOnly($record->getIdentifier())) {
-            $record->setState(RecordInterface::RECORD_STATE_DELETED);
-        } elseif ($this->pageHasMoved($record->getIdentifier())) {
-            $record->setState(RecordInterface::RECORD_STATE_MOVED);
-        } elseif ($this->pageHasChanged($record->getIdentifier()) || $this->pageContentRecordsHasChanged($record)) {
-            $record->setState(RecordInterface::RECORD_STATE_CHANGED);
-        }
-    }
-
-    protected function pageIsNew(Record $record): bool
-    {
-        $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $record->getIdentifier());
-        $propertiesForeign = $this->tableCacheRepository->findByUid(
-            static::PAGE_TABLE_NAME,
-            $record->getIdentifier(),
-            'foreign'
-        );
-        return !empty($propertiesLocal) && empty($propertiesForeign);
-    }
-
-    /**
-     * Get all page identifiers from sub pages
-     *
-     * @param int $identifier
-     *
-     * @return array<int>
-     */
-    protected function getChildrenPages(int $identifier): array
-    {
-        $rows = $this->tableCacheRepository->findByPid(static::PAGE_TABLE_NAME, $identifier);
-        $rows = $this->sortRowsBySorting($rows);
-        $pageIdentifiers = [];
-        foreach ($rows as $row) {
-            $pageIdentifiers[] = (int)$row['uid'];
-        }
-        return $pageIdentifiers;
-    }
-
-    /**
-     * Check if record is deleted and respect delete field from TCA
-     */
-    protected function isRecordDeleted(
-        int $pageIdentifier,
-        string $databaseName,
-        string $tableName = self::PAGE_TABLE_NAME
-    ): bool {
-        $tcaTable = $this->tcaService->getConfigurationArrayForTable($tableName);
-        if (!empty($tcaTable['ctrl']['delete'])) {
-            $properties = $this->tableCacheRepository->findByUid($tableName, $pageIdentifier, $databaseName);
-            return $properties[$tcaTable['ctrl']['delete']] === 1;
-        }
-        return false;
-    }
-
-    /**
-     * Compare sorting of a page on both sides. Check if it's different
-     */
-    protected function pageHasMoved(int $pageIdentifier): bool
-    {
-        $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $pageIdentifier);
-        $propertiesForeign = $this->tableCacheRepository->findByUid(
-            static::PAGE_TABLE_NAME,
-            $pageIdentifier,
-            'foreign'
-        );
-        return $propertiesLocal['sorting'] !== $propertiesForeign['sorting']
-               || $propertiesLocal['pid'] !== $propertiesForeign['pid'];
-    }
-
-    /**
-     * Check if this page should be related or not
-     */
-    protected function shouldSkipChildrenPage(int $pageIdentifier): bool
-    {
-        return !$this->isRecordDeletedOnBothInstances($pageIdentifier, static::PAGE_TABLE_NAME)
-               && !$this->isRecordDeletedOnLocalAndNonExistingOnForeign($pageIdentifier);
-    }
-
-    /**
-     * Check if page is deleted on local only
-     */
-    protected function pageIsDeletedOnLocalOnly(int $pageIdentifier): bool
-    {
-        $deletedLocal = $this->isRecordDeleted($pageIdentifier, 'local');
-        if ($deletedLocal) {
-            $deletedForeign = $this->isRecordDeleted($pageIdentifier, 'foreign');
-            return $deletedForeign === false;
-        }
-        return false;
-    }
-
-    /**
-     * Compare rows of a page on both sides. Check if it's different
-     */
-    protected function pageHasChanged(int $pageIdentifier): bool
-    {
-        $propertiesLocal = $this->tableCacheRepository->findByUid(static::PAGE_TABLE_NAME, $pageIdentifier);
-        $propertiesForeign = $this->tableCacheRepository->findByUid(
-            static::PAGE_TABLE_NAME,
-            $pageIdentifier,
-            'foreign'
-        );
-        $propertiesLocal = $this->removeIgnoreFieldsFromArray($propertiesLocal, 'pages');
-        $propertiesForeign = $this->removeIgnoreFieldsFromArray($propertiesForeign, 'pages');
-        $changes = array_diff($propertiesLocal, $propertiesForeign);
-        return !empty($changes);
-    }
-
-    /**
-     * Compare rows of any records on a page. Check if they are different
-     */
-    protected function pageContentRecordsHasChanged(Record $record): bool
-    {
-        $tables = $this->tcaService->getAllTableNamesWithPidAndUidField(
-            array_merge($this->config['excludeRelatedTables'], ['pages'])
-        );
-        foreach ($tables as $table) {
-            $propertiesLocal = $this->tableCacheRepository->findByPid($table, $record->getIdentifier());
-            $propertiesForeign = $this->tableCacheRepository->findByPid($table, $record->getIdentifier(), 'foreign');
-            if ($this->areDifferentArrays($propertiesLocal, $propertiesForeign, $table)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Check if multidimensional array with records is different between instances
-     */
-    protected function areDifferentArrays(array $arrayLocal, array $arrayForeign, string $table): bool
-    {
-        $newLocal = $newForeign = [];
-
-        // remove sys file entries from local extensions and their sys_file_metadata records
-        if ('sys_file' === $table) {
-            foreach ($arrayLocal as $index => $localSysFile) {
-                if (!isset($arrayForeign[$index]) && 0 === strpos($localSysFile['identifier'], '/typo3conf/ext/')) {
-                    $this->metaDataBlackList[$index] = $index;
-                    unset($arrayLocal[$index]);
-                }
-            }
-        } elseif ('sys_file_metadata' === $table) {
-            foreach ($arrayLocal as $index => $localSysFileMeta) {
-                if (isset($this->metaDataBlackList[$localSysFileMeta['file']])) {
-                    unset($arrayLocal[$index]);
+        $demands = [];
+        $tca = TcaProcessingService::getCompatibleTca();
+        foreach ($basicRecord->getRelatedRecords() as $table => $records) {
+            if (isset($tca[$table])) {
+                foreach ($records as $record) {
+                    foreach ($tca[$table] as $column => $columnConfig) {
+                        $demand = $this->buildDemand($record, $column, $columnConfig);
+                        if (null !== $demand) {
+                            $demands[] = $demand;
+                        }
+                    }
                 }
             }
         }
-
-        foreach ($arrayLocal as $subLocal) {
-            $subLocal = $this->removeIgnoreFieldsFromArray($subLocal, $table);
-            if (
-                !$this->isRecordDeletedOnLocalAndNonExistingOnForeign($subLocal['uid'], $table)
-                && !$this->isRecordDeletedOnBothInstances($subLocal['uid'], $table)
-            ) {
-                $newLocal[] = $subLocal;
-            }
+        $count = count($demands);
+        if ($count > 1) {
+            $demands = array_replace_recursive(...$demands);
+        } elseif ($count === 1) {
+            $demands = $demands[0];
         }
-        foreach ($arrayForeign as $subForeign) {
-            $subForeign = $this->removeIgnoreFieldsFromArray($subForeign, $table);
-            if (!$this->isRecordDeletedOnBothInstances($subForeign['uid'], $table)) {
-                $newForeign[] = $subForeign;
-            }
-        }
-        return $newForeign !== $newLocal;
+        return $demands;
     }
 
     /**
-     * Sort rows array by sorting field
+     * @param RecordInterface $record
+     * @param string $column
+     * @param array $columnConfig
+     *
+     * @return array|null
+     * @noinspection PhpUnusedParameterInspection
      */
-    protected function sortRowsBySorting(array $rows): array
+    protected function buildDemand(RecordInterface $record, string $column, array $columnConfig): ?array
     {
-        uasort(
-            $rows,
-            static function ($row1, $row2) {
-                return strnatcmp((string)$row1['sorting'], (string)$row2['sorting']);
+        $recordIdentifier = $record->getIdentifier();
+        if ('select' === $columnConfig['type'] && !empty($columnConfig['MM'])) {
+            $additionalWhereParts = [];
+            if (!empty($columnConfig['MM_match_fields'])) {
+                foreach ($columnConfig['MM_match_fields'] as $field => $value) {
+                    $additionalWhereParts[] = "`$field`=\"$value\"";
+                }
             }
-        );
-        return $rows;
-    }
-
-    /**
-     * Respect configuration ignoreFieldsForDifferenceView.[table] and remove these fields
-     */
-    protected function removeIgnoreFieldsFromArray(array $properties, string $table): array
-    {
-        if (!empty($this->config['ignoreFieldsForDifferenceView'][$table])) {
-            $ignoreFields = $this->config['ignoreFieldsForDifferenceView'][$table];
-            $properties = ArrayUtility::removeFromArrayByKey($properties, $ignoreFields);
+            $additionalWhere = implode(' AND ', $additionalWhereParts);
+            $foreignField = !empty($columnConfig['MM_opposite_field']) ? 'uid_foreign' : 'uid_local';
+            return [
+                $columnConfig['MM'] => [
+                    $additionalWhere => [
+                        $foreignField => [
+                            'in' => [$recordIdentifier => $recordIdentifier],
+                            'valueMap' => [
+                                $recordIdentifier => static function (RecordInterface $relatedRecord) use ($record) {
+                                    $record->addRelatedRecord($relatedRecord);
+                                },
+                            ],
+                        ],
+                    ],
+                ],
+            ];
         }
-        return $properties;
+        if (
+            'group' === $columnConfig['type']
+            && 'db' === $columnConfig['internal_type']
+            && !empty($columnConfig['MM'])
+            // These fields are not supported
+            && empty($columnConfig['MM_table_where'])
+            && empty($columnConfig['MM_hasUidField'])
+        ) {
+            $foreignField = !empty($columnConfig['MM_opposite_field']) ? 'uid_foreign' : 'uid_local';
+            $additionalWhereParts = [];
+            if (!empty($columnConfig['MM_match_fields'])) {
+                foreach ($columnConfig['MM_match_fields'] as $field => $value) {
+                    $additionalWhereParts[] = "`$field`=\"$value\"";
+                }
+            }
+            $additionalWhere = implode(' AND ', $additionalWhereParts);
+            return [
+                $columnConfig['MM'] => [
+                    $additionalWhere => [
+                        $foreignField => [
+                            'in' => [$recordIdentifier => $recordIdentifier],
+                            'valueMap' => [
+                                $recordIdentifier => static function (RecordInterface $relatedRecord) use ($record) {
+                                    $record->addRelatedRecord($relatedRecord);
+                                },
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+        }
+        return null;
     }
 
-    /**
-     * Check if record was not generated and at once deleted on local (so it's not existing on foreign)
-     */
-    protected function isRecordDeletedOnLocalAndNonExistingOnForeign(
-        int $identifier,
-        string $tableName = self::PAGE_TABLE_NAME
-    ): bool {
-        if ($this->isRecordDeleted($identifier, 'local', $tableName)) {
-            $properties = $this->tableCacheRepository->findByUid($tableName, $identifier, 'foreign');
-            if (empty($properties)) {
-                return true;
+    protected function fetchMmRecords(RecordInterface $basicRecord): void
+    {
+        $demands = $this->collectDemands($basicRecord);
+
+        foreach ($demands as $table => $aggregatedDemand) {
+            foreach ($aggregatedDemand as $additionalWhere => $fieldRequests) {
+                foreach ($fieldRequests as $field => $fieldParam) {
+                    $this->resolveDemand($table, $additionalWhere, $field, $fieldParam);
+                }
             }
         }
-        return false;
     }
 
-    /**
-     * Check if record is deleted on both instances
-     */
-    protected function isRecordDeletedOnBothInstances(int $identifier, string $tableName): bool
+    protected function resolveDemand(string $table, string $additionalWhere, string $field, array $fieldParam): void
     {
-        return $this->isRecordDeleted($identifier, 'local', $tableName)
-               && $this->isRecordDeleted($identifier, 'foreign', $tableName);
+        $relatedRows = [
+            'local' => [],
+            'foreign' => [],
+        ];
+        $query = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
+        $localRows = $query
+            ->select('*')
+            ->from($table)
+            ->where($additionalWhere)
+            ->andWhere($query->expr()->in($field, $fieldParam['in']))
+            ->execute()
+            ->fetchAllAssociative();
+        foreach ($localRows as $localRow) {
+            $relatedRows['local'][$this->buildRecordIndexIdentifier($localRow)] = $localRow;
+        }
+        $query = DatabaseUtility::buildForeignDatabaseConnection()->createQueryBuilder();
+        $foreignRows = $query
+            ->select('*')
+            ->from($table)
+            ->where($additionalWhere)
+            ->andWhere($query->expr()->in($field, $fieldParam['in']))
+            ->execute()
+            ->fetchAllAssociative();
+        foreach ($foreignRows as $foreignRow) {
+            $relatedRows['foreign'][$this->buildRecordIndexIdentifier($foreignRow)] = $foreignRow;
+        }
+        $this->mapRelatedRecordsByFieldRequest($relatedRows, $field, $fieldParam, $table);
+    }
+
+    protected function buildRecordIndexIdentifier(array $row): string
+    {
+        if (!isset($row['uid'])) {
+            $parts = [
+                $row['uid_local'],
+                $row['uid_foreign'],
+            ];
+            if (isset($row['sorting'])) {
+                $parts[] = $row['sorting'];
+            }
+            return implode(',', $parts);
+        }
+        return (string)$row['uid'];
+    }
+
+    protected function mapRelatedRecordsByFieldRequest(
+        array $relatedRows,
+        string $field,
+        array $values,
+        string $table
+    ): void {
+        $keys = array_merge(array_keys($relatedRows['local']), array_keys($relatedRows['foreign']));
+        foreach ($keys as $key) {
+            $valueMapIndex = null;
+            if (isset($relatedRows['local'][$key][$field])) {
+                $valueMapIndex = $relatedRows['local'][$key][$field];
+            } elseif (isset($relatedRows['foreign'][$key][$field])) {
+                $valueMapIndex = $relatedRows['foreign'][$key][$field];
+            }
+            if (null !== $valueMapIndex && isset($values['valueMap'][$valueMapIndex])) {
+                $localProperties = $relatedRows['local'][$key] ?? [];
+                $foreignProperties = $relatedRows['foreign'][$key] ?? [];
+                $record = new Record($table, $localProperties, $foreignProperties, [], []);
+                $values['valueMap'][$valueMapIndex]($record);
+            }
+        }
     }
 }
