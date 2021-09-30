@@ -69,10 +69,6 @@
     $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\DefaultProvider::class);
     $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\FileProvider::class);
     $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\PageTsProvider::class);
-    if (TYPO3_MODE === 'BE') {
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['extTablesInclusion-PostProcessing'][1593002680] =
-            \In2code\In2publishCore\Config\Provider\PageTsProvider::class;
-    }
     $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\VersionedFileProvider::class);
     if (!$extConf['disableUserConfig']) {
         $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\UserTsProvider::class);
