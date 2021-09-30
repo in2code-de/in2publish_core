@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Functional\Domain\Repository;
 
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\PostProcessing\PostProcessingEventListener;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
@@ -164,5 +165,59 @@ class CommonRepositoryTest extends FunctionalTestCase
         $this->assertSame('sys_category', $category->getTableName());
         $this->assertSame(2, $category->getIdentifier());
         $this->assertSame($canary, $category->getLocalProperty('title'));
+    }
+
+    public function testSelectSingleRelationsAreResolved(): void
+    {
+        $pool = GeneralUtility::makeInstance(ConnectionPool::class);
+        $defaultConnection = $pool->getConnectionByName('Default');
+        $defaultConnection->insert('pages', ['uid' => 5, 'sys_language_uid' => 1]);
+        $defaultConnection->insert('sys_language', ['uid' => 1]);
+
+        $commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
+        $record = $commonRepository->findByIdentifier(5, 'pages');
+
+        $relatedRecords = $record->getRelatedRecords();
+        $this->assertCount(1, $relatedRecords);
+
+        $this->assertArrayHasKey('sys_language', $relatedRecords);
+
+        $relatedLanguages = $relatedRecords['sys_language'];
+        $this->assertCount(1, $relatedLanguages);
+        $this->assertArrayHasKey(1, $relatedLanguages);
+
+        $relatedLanguage = $relatedLanguages[1];
+        $this->assertInstanceOf(RecordInterface::class, $relatedLanguage);
+
+        $this->assertSame('sys_language', $relatedLanguage->getTableName());
+        $this->assertSame(1, $relatedLanguage->getIdentifier());
+    }
+
+    public function testRelatedRecordsArePublished(): void
+    {
+        $pool = GeneralUtility::makeInstance(ConnectionPool::class);
+        $defaultConnection = $pool->getConnectionByName('Default');
+        $foreignConnection = $pool->getConnectionByName('Foreign');
+        $defaultConnection->insert('pages', ['uid' => 5, 'sys_language_uid' => 1]);
+        $defaultConnection->insert('sys_language', ['uid' => 1]);
+
+        $query = $foreignConnection->createQueryBuilder();
+        $query->select('*')->from('sys_language');
+        $result = $query->execute();
+        $rows = $result->fetchAllAssociative();
+        $this->assertEmpty($rows);
+
+        $commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
+        $record = $commonRepository->findByIdentifier(5, 'pages');
+
+        $commonRepository->publishRecordRecursive($record);
+
+        $query = $foreignConnection->createQueryBuilder();
+        $query->select('*')->from('sys_language');
+        $result = $query->execute();
+        $rows = $result->fetchAllAssociative();
+
+        $this->assertCount(1, $rows);
+        $this->assertSame(1, $rows[0]['uid']);
     }
 }
