@@ -1,4 +1,6 @@
 # In2publish Core Change Log
+11.0.0:
+[CLEANUP] Remove outdated compatibility class SignalSlotReplacement
 
 10.2.1:
 
