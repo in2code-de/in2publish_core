@@ -99,3 +99,10 @@ services:
         identifier: 'in2publishcore-postprocessingeventlistener-rootrecordcreationwasfinished'
         method: 'onRootRecordCreationWasFinished'
         event: In2code\In2publishCore\Event\RootRecordCreationWasFinished
+
+  In2code\In2publishCore\Config\Provider\PageTsProvider:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-PageTsProvider-bootCompleted'
+        method: 'processData'
+        event: TYPO3\CMS\Core\Core\Event\BootCompletedEvent
