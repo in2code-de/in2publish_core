@@ -4,7 +4,7 @@
 
 (static function () {
     /***************************************************** Guards *****************************************************/
-    if (!defined('TYPO3_REQUESTTYPE')) {
+    if (!defined('TYPO3')) {
         die('Access denied.');
     }
     if (!class_exists(\In2code\In2publishCore\Service\Context\ContextService::class)) {
