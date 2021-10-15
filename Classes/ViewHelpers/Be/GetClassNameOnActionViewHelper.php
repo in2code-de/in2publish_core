@@ -28,7 +28,10 @@ namespace In2code\In2publishCore\ViewHelpers\Be;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+use function in_array;
 
 class GetClassNameOnActionViewHelper extends AbstractViewHelper
 {
@@ -36,6 +39,7 @@ class GetClassNameOnActionViewHelper extends AbstractViewHelper
     {
         parent::initializeArguments();
         $this->registerArgument('actionName', 'string', 'action name to compare with current action', true);
+        $this->registerArgument('controllerName', 'string', 'action name to compare with current action', true);
         $this->registerArgument('className', 'string', 'class name if action fits', false, ' btn-primary');
         $this->registerArgument('fallbackClassName', 'string', 'fallback class name', false, ' btn-default');
     }
@@ -45,14 +49,14 @@ class GetClassNameOnActionViewHelper extends AbstractViewHelper
      */
     public function render(): string
     {
-        if ($this->getCurrentActionName() === $this->arguments['actionName']) {
+        $currentAction = $this->renderingContext->getControllerAction();
+        $givenActions = GeneralUtility::trimExplode(',', $this->arguments['actionName']);
+
+        $currentController = $this->renderingContext->getControllerName();
+        $givenController = $this->arguments['controllerName'];
+        if ($currentController === $givenController && in_array($currentAction, $givenActions, true)) {
             return $this->arguments['className'];
         }
         return $this->arguments['fallbackClassName'];
-    }
-
-    protected function getCurrentActionName(): string
-    {
-        return $this->renderingContext->getControllerAction();
     }
 }
