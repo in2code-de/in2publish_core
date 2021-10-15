@@ -214,6 +214,14 @@
 				<source>Use this module to collect information which will be required or useful to solve a bug or problem.</source>
 				<target state="translated">Anzeige von Informationen welche erforderlich oder nützlich sind Probleme zu identifizieren und sie zu beheben.</target>
 			</trans-unit>
+			<trans-unit id="moduleselector.compare">
+				<source>Compare Databases</source>
+				<target state="translated">Datenbankvergleich</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.compare.description">
+				<source>The compare tool scans the whole database for differences. This tool is ought to help administrators clean up UID conflicts.</source>
+				<target state="translated">Zeigt unterschiede zwischen den Datenbanken an. Dieses Tools soll Administratoren dabei helfen UID-Konflikte zu lösen.</target>
+			</trans-unit>
 
 			<trans-unit id="system_info.show">
 				<source>Show the system info</source>

@@ -2,6 +2,7 @@ imports:
   - { resource: Component/PostPublishTaskExecution/Services.yaml }
   - { resource: Features/AdminTools/Services.yaml }
   - { resource: Features/CacheInvalidation/Services.yaml }
+  - { resource: Features/CompareDatabaseTool/Services.yaml }
   - { resource: Features/ContextMenuPublishEntry/Services.yaml }
   - { resource: Features/FileEdgeCacheInvalidator/Services.yaml }
   - { resource: Features/NewsSupport/Services.yaml }
