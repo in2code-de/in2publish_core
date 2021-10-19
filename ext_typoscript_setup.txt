@@ -18,6 +18,10 @@ config.tx_extbase.persistence {
     In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\SysRedirect {
       mapping {
         tableName = sys_redirect
+        columns {
+          tx_in2publishcore_page_uid.mapOnProperty = pageUid
+          tx_in2publishcore_foreign_site_id.mapOnProperty = siteId
+        }
       }
     }
   }
