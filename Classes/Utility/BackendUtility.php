@@ -365,7 +365,7 @@ class BackendUtility
         return $buildPageUrl();
     }
 
-    protected static function processLegacySysDomainRecord(int $pageUid, string $stagingLevel): ?string
+    protected static function processLegacySysDomainRecord(int $pageUid, string $stagingLevel): ?UriInterface
     {
         if (false === static::$rtc['sys_domain_deprecation_triggered'] ?? false) {
             trigger_error(self::DEPRECATED_SYS_DOMAIN, E_USER_DEPRECATED);
@@ -384,9 +384,8 @@ class BackendUtility
         }
         $uri = new Uri($domainName);
         $uri = UriUtility::normalizeUri($uri);
-        $uri = $uri->withPath(rtrim($uri->getPath(), '/') . '/index.php')
+        return $uri->withPath(rtrim($uri->getPath(), '/') . '/index.php')
                    ->withQuery($uri->getQuery() . '&id=' . $pageUid);
-        return (string)$uri;
     }
 
     /**
