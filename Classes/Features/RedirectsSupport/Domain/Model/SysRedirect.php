@@ -108,7 +108,7 @@ class SysRedirect extends AbstractEntity
     }
 
     /**
-     * @return int
+     * @return null|int
      */
     public function getPageUid(): ?int
     {
@@ -124,9 +124,9 @@ class SysRedirect extends AbstractEntity
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getSiteId(): string
+    public function getSiteId(): ?string
     {
         return $this->siteId;
     }
