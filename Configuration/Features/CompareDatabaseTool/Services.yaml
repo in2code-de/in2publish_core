@@ -15,4 +15,4 @@ services:
       - name: 'in2publish_core.admin_tool'
         title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.compare'
         description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.compare.description'
-        actions: 'index,compare'
+        actions: 'index,compare,transfer'

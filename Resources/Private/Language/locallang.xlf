@@ -467,6 +467,85 @@
 			<trans-unit id="refresh_page">
 				<source>Refresh page</source>
 			</trans-unit>
+
+			<trans-unit id="compare_database.only_local">
+				<source>New</source>
+			</trans-unit>
+			<trans-unit id="compare_database.only_foreign">
+				<source>Deleted</source>
+			</trans-unit>
+			<trans-unit id="compare_database.diff">
+				<source>Differences</source>
+			</trans-unit>
+			<trans-unit id="compare_database.general">
+				<source>Generally</source>
+			</trans-unit>
+			<trans-unit id="compare_database.general.local_empty">
+				<source>The table is empty on Local</source>
+			</trans-unit>
+			<trans-unit id="compare_database.general.foreign_empty">
+				<source>The table is empty on Foreign</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer">
+				<source>Transfer these changes to the foreign system</source>
+			</trans-unit>
+			<trans-unit id="compare_database.no_differences">
+				<source>No differences were found in the data of the selected tables.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.select_tables">
+				<source>Select the tables to compare</source>
+			</trans-unit>
+			<trans-unit id="compare_database.tables">
+				<source>Tables</source>
+			</trans-unit>
+			<trans-unit id="compare_database.compare">
+				<source>Compare</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer_notice.header">
+				<source>This is not publishing</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer_notice">
+				<source>A transfer is not a publishing. Only the exact record that is selected is transferred. No relations to other records are resolved and no MM-records are displayed nor transferred. You should always prefer normal publishing to this feature. Use this feature only in an emergency and only if you are aware of all the consequences.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.label">
+				<source>Record label</source>
+			</trans-unit>
+			<trans-unit id="compare_database.actions">
+				<source>Actions</source>
+			</trans-unit>
+			<trans-unit id="compare_database.diff">
+				<source>Differences</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.error">
+				<source>Error</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.success">
+				<source>Success</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.db_error">
+				<source>Could not connect to the databases</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.record_missing">
+				<source>The record which should be transferred does not exist anymore.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.exists_on_foreign">
+				<source>The record which should be transferred should not exists on Foreign but it does. It was probably published in the meantime.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.exists_on_local">
+				<source>The record which should be transferred should not exists on Local but it does. It was probably created in the meantime.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.does_not_exists_on_both">
+				<source>The record which should be transferred should exists on both Local and Foreign but it does not. Please reload the comparison view and try again.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.deleted_from_foreign">
+				<source>The record %s[%d] was deleted from foreign.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.transferred_to_foreign">
+				<source>The record %s[%d] was created on foreign.</source>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.updated_on_foreign">
+				<source>The record %s[%d] was updated on foreign.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

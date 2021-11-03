@@ -1,0 +1,34 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+	<div class="tabpanel">
+		<ul class="nav nav-tabs t3js-tabs" role="tablist" id="tabs-DTM-a2a37f157f" data-store-last-tab="1">
+			<f:for each="{differences}" key="table" as="difference" iteration="i">
+				<li role="presentation" class="t3js-tabmenu-item {f:if(condition: i.isFirst, then: 'active')}">
+					<a href="#DTM-{table}" title="" aria-controls="DTM-{table}" role="tab" data-toggle="tab">{table}</a>
+				</li>
+			</f:for>
+		</ul>
+		<div class="tab-content">
+			<f:for each="{differences}" key="table" as="difference" iteration="i">
+				<div role="tabpanel" class="tab-pane {f:if(condition: i.isFirst, then: 'active')}" id="DTM-{table}">
+					<div class="form-section">
+						<f:for each="{difference}" as="line" key="reason">
+							<h3>
+								<f:translate key="compare_database.{reason}" />
+							</h3>
+							<f:if condition="{reason} == 'general'">
+								<f:then>
+									<h4>
+										<f:translate key="compare_database.{reason}.{line}" />
+									</h4>
+								</f:then>
+								<f:else>
+									<f:render partial="Tools/CompareDatabaseTool/TableDetails" arguments="{_all}" />
+								</f:else>
+							</f:if>
+						</f:for>
+					</div>
+				</div>
+			</f:for>
+		</div>
+	</div>
+</html>

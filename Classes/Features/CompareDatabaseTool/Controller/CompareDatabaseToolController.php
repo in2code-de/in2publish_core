@@ -8,7 +8,10 @@ use Doctrine\DBAL\Driver\Connection;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Features\CompareDatabaseTool\Domain\DTO\ComparisonRequest;
 use In2code\In2publishCore\Utility\ArrayUtility;
+use In2code\In2publishCore\Utility\DatabaseUtility;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_column;
 use function array_combine;
@@ -18,7 +21,6 @@ use function array_key_exists;
 use function array_keys;
 use function array_merge;
 use function array_unique;
-use function implode;
 use function max;
 
 class CompareDatabaseToolController extends ActionController
@@ -45,6 +47,7 @@ class CompareDatabaseToolController extends ActionController
     public function indexAction(): void
     {
         $tables = $this->getAllNonExcludedTables();
+        $tables = array_intersect($tables, array_keys($GLOBALS['TCA']));
         $this->view->assign('tables', array_combine($tables, $tables));
     }
 
@@ -56,16 +59,13 @@ class CompareDatabaseToolController extends ActionController
         $allowedTables = $this->getAllNonExcludedTables();
         $requestedTables = $comparisonRequest->getTables();
 
-        $tables = array_intersect($allowedTables, $requestedTables);
+        $tables = array_intersect($allowedTables, $requestedTables, array_keys($GLOBALS['TCA']));
 
         $ignoreFieldsForDiff = $this->configContainer->get('ignoreFieldsForDifferenceView');
 
         $differences = [];
 
         foreach ($tables as $table) {
-            if (!array_key_exists($table, $GLOBALS['TCA'])) {
-                continue;
-            }
             $tableIdentifier = $this->localDatabase->quoteIdentifier($table);
             $localResult = $this->localDatabase->executeQuery("SELECT MAX(uid) from $tableIdentifier")->fetchOne();
             $tableIdentifier = $this->foreignDatabase->quoteIdentifier($table);
@@ -75,11 +75,11 @@ class CompareDatabaseToolController extends ActionController
                 continue;
             }
             if (null === $localResult && $foreignResult > 0) {
-                $differences[$table]['general'][] = 'The table is empty on local';
+                $differences[$table]['general'] = 'local_empty';
                 continue;
             }
             if ($localResult > 0 && null === $foreignResult) {
-                $differences[$table]['general'][] = 'The table is empty on foreign';
+                $differences[$table]['general'] = 'foreign_empty';
                 continue;
             }
 
@@ -128,27 +128,143 @@ class CompareDatabaseToolController extends ActionController
 
                         $localRow = $localRows[$uid];
                         $foreignRow = $foreignRows[$uid];
-                        $localRow = ArrayUtility::removeFromArrayByKey($localRow, $ignoredFields);
-                        $foreignRow = ArrayUtility::removeFromArrayByKey($foreignRow, $ignoredFields);
+                        $localRowCleaned = ArrayUtility::removeFromArrayByKey($localRow, $ignoredFields);
+                        $foreignRowCleaned = ArrayUtility::removeFromArrayByKey($foreignRow, $ignoredFields);
 
-                        $diff = array_diff($localRow, $foreignRow);
+                        $diff = array_diff($localRowCleaned, $foreignRowCleaned);
                         if (!empty($diff)) {
-                            $differences[$table]['diff'][] = $uid;
+                            $differences[$table]['diff'][] = [
+                                'local' => $localRow,
+                                'foreign' => $foreignRow,
+                                'diff' => $diff,
+                            ];
                         }
                     } elseif ($localRowExists && !$foreignRowExists) {
-                        $differences[$table]['only_local'][] = $uid;
+                        $differences[$table]['only_local'][] = $localRows[$uid];
                     } elseif (!$localRowExists && $foreignRowExists) {
-                        $differences[$table]['only_foreign'][] = $uid;
+                        $differences[$table]['only_foreign'][] = $foreignRows[$uid];
                     }
                 }
             }
         }
         foreach ($differences as $table => $places) {
             foreach ($places as $place => $values) {
-                $differences[$table][$place] = implode(', ', $values);
+                $differences[$table][$place] = $values;
             }
         }
         $this->view->assign('differences', $differences);
+    }
+
+    public function transferAction(string $table, int $uid, string $expected): void
+    {
+        $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
+        $foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
+
+        if (null === $localDatabase || null === $foreignDatabase) {
+            $this->addFlashMessage(
+                LocalizationUtility::translate('compare_database.transfer.db_error', 'in2publish_core'),
+                LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
+                AbstractMessage::ERROR
+            );
+            $this->redirect('index');
+        }
+
+        $localQuery = $localDatabase->createQueryBuilder();
+        $localQuery->getRestrictions()->removeAll();
+        $localQuery->select('*')
+                   ->from($table)
+                   ->where($localQuery->expr()->eq('uid', $localQuery->createNamedParameter($uid)))
+                   ->setMaxResults(1);
+        $localResult = $localQuery->execute();
+        $localRow = $localResult->fetchAssociative();
+
+        $foreignQuery = $foreignDatabase->createQueryBuilder();
+        $foreignQuery->getRestrictions()->removeAll();
+        $foreignQuery->select('*')
+                     ->from($table)
+                     ->where($foreignQuery->expr()->eq('uid', $foreignQuery->createNamedParameter($uid)))
+                     ->setMaxResults(1);
+        $foreignResult = $foreignQuery->execute();
+        $foreignRow = $foreignResult->fetchAssociative();
+
+        if (empty($localRow) && empty($foreignRow)) {
+            $this->addFlashMessage(
+                LocalizationUtility::translate('compare_database.transfer.record_missing', 'in2publish_core'),
+                LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
+                AbstractMessage::ERROR
+            );
+            $this->redirect('index');
+        }
+
+        if ($expected === 'only_foreign') {
+            if (!(empty($localRow) && !empty($foreignRow))) {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('compare_database.transfer.exists_on_foreign', 'in2publish_core'),
+                    LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
+                    AbstractMessage::ERROR
+                );
+                $this->redirect('index');
+            }
+            $foreignQuery = $foreignDatabase->createQueryBuilder();
+            $foreignQuery->delete($table)
+                         ->where($localQuery->expr()->eq('uid', $foreignQuery->createNamedParameter($uid)));
+            $foreignResult = $foreignQuery->execute();
+            if (1 === $foreignResult) {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('compare_database.transfer.deleted_from_foreign', 'in2publish_core', [$table, $uid]),
+                    LocalizationUtility::translate('compare_database.transfer.success', 'in2publish_core')
+                );
+            }
+        }
+
+        if ($expected === 'only_local') {
+            if (!(!empty($localRow) && empty($foreignRow))) {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('compare_database.transfer.exists_on_local', 'in2publish_core'),
+                    LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
+                    AbstractMessage::ERROR
+                );
+                $this->redirect('index');
+            }
+            $foreignQuery = $foreignDatabase->createQueryBuilder();
+            $foreignQuery->insert($table)
+                         ->values($localRow);
+            $foreignResult = $foreignQuery->execute();
+            if (1 === $foreignResult) {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('compare_database.transfer.transferred_to_foreign', 'in2publish_core', [$table, $uid]),
+                    LocalizationUtility::translate('compare_database.transfer.success', 'in2publish_core')
+                );
+            }
+        }
+
+        if ($expected === 'diff') {
+            if (!(!empty($localRow) && !empty($foreignRow))) {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('compare_database.transfer.does_not_exists_on_both', 'in2publish_core'),
+                    LocalizationUtility::translate('compare_database.transfer.error', 'in2publish_core'),
+                    AbstractMessage::ERROR
+                );
+                $this->redirect('index');
+            }
+            $foreignQuery = $foreignDatabase->createQueryBuilder();
+            $foreignQuery->update($table);
+            foreach ($localRow as $field => $value) {
+                if ($foreignRow[$field] !== $value) {
+                    $foreignQuery->set($field, $value);
+                }
+            }
+            $foreignQuery->where($foreignQuery->expr()->eq('uid', $foreignQuery->createNamedParameter($uid)));
+            $foreignResult = $foreignQuery->execute();
+            if (1 === $foreignResult) {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('compare_database.transfer.updated_on_foreign', 'in2publish_core', [$table, $uid]),
+                    LocalizationUtility::translate('compare_database.transfer.success', 'in2publish_core')
+                );
+            }
+        }
+
+        $this->redirect('index');
     }
 
     protected function getAllNonExcludedTables(): array
