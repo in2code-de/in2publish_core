@@ -140,6 +140,9 @@ class CommonRepositoryTest extends FunctionalTestCase
                 'fieldname' => 'categories',
             ]
         );
+        // sys_category is a select-MM relation with MM_matchFields and no UID. To identify the MM-Record properly, all
+        // fields which determine the identity of the entity have to be used as identifier.
+        $mmRecordIdentifier = '{"uid_local":2,"uid_foreign":5,"sorting":0,"tablenames":"pages","fieldname":"categories"}';
 
         $commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
         $record = $commonRepository->findByIdentifier(5, 'pages');
@@ -152,9 +155,9 @@ class CommonRepositoryTest extends FunctionalTestCase
 
         $mmRecords = $relatedReferences['sys_category_record_mm'];
         $this->assertCount(1, $mmRecords);
-        $this->assertArrayHasKey('2,5', $mmRecords);
+        $this->assertArrayHasKey($mmRecordIdentifier, $mmRecords);
 
-        $mmRecord = $mmRecords['2,5'];
+        $mmRecord = $mmRecords[$mmRecordIdentifier];
         $relatedCategory = $mmRecord->getRelatedRecords();
         $this->assertArrayHasKey('sys_category', $relatedCategory);
 

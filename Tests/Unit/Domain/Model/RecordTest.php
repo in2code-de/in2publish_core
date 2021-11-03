@@ -313,6 +313,63 @@ class RecordTest extends UnitTestCase
     }
 
     /**
+     * @covers ::createCombinedIdentifier
+     */
+    public function testCreateCombinedIdentifierReturnsIdentityStringForLocalProperties()
+    {
+        $this->assertSame(
+            '{"uid_local":"stub","uid_foreign":"faz","property-z":1337}',
+            Record::createCombinedIdentifier(
+                ['uid_local' => 'stub', 'uid_foreign' => 'faz', 'property-a' => 'noodles', 'property-z' => 1337],
+                [],
+                [
+                    'uid_local',
+                    'uid_foreign',
+                    'property-z',
+                ]
+            )
+        );
+    }
+
+    /**
+     * @covers ::createCombinedIdentifier
+     */
+    public function testCreateCombinedIdentifierReturnsIdentityStringForForeignProperties()
+    {
+        $this->assertSame(
+            '{"uid_local":"stem","uid_foreign":"fab","property-z":1337}',
+            Record::createCombinedIdentifier(
+                [],
+                ['uid_local' => 'stem', 'uid_foreign' => 'fab', 'property-a' => 'noodles', 'property-z' => 1337],
+                [
+                    'uid_local',
+                    'uid_foreign',
+                    'property-z',
+                ]
+            )
+        );
+    }
+
+    /**
+     * @covers ::createCombinedIdentifier
+     */
+    public function testCreateCombinedIdentifierWithIdentityPropertiesPrefersLocalProperties()
+    {
+        $this->assertSame(
+            '{"uid_local":"stub","uid_foreign":"faz","property-z":1337}',
+            Record::createCombinedIdentifier(
+                ['uid_local' => 'stub', 'uid_foreign' => 'faz', 'property-a' => 'noodles', 'property-z' => 1337],
+                ['uid_local' => 'stem', 'uid_foreign' => 'fab', 'property-a' => 'noodles', 'property-z' => 1337],
+                [
+                    'uid_local',
+                    'uid_foreign',
+                    'property-z',
+                ]
+            )
+        );
+    }
+
+    /**
      * @covers ::splitCombinedIdentifier
      */
     public function testSplitCombinedIdentifierReturnsArrayWithExpectedValues()
@@ -337,14 +394,41 @@ class RecordTest extends UnitTestCase
     /**
      * @covers ::splitCombinedIdentifier
      */
-    public function testSplitCombinedIdentifierIgnoresTrailingValues()
+    public function testSplitCombinedIdentifierSupportSortingAsThirdValue()
     {
         $this->assertSame(
             [
                 'uid_local' => 'stub',
                 'uid_foreign' => 'flub',
+                'sorting' => 'club',
             ],
             Record::splitCombinedIdentifier('stub,flub,club')
+        );
+    }
+
+    /**
+     * @covers ::splitCombinedIdentifier
+     */
+    public function testSplitCombinedIdentifierSupportsIdentityString()
+    {
+        $this->assertSame(
+            [
+                'uid_local' => 'stub',
+                'uid_foreign' => 'faz',
+                'property-z' => 1337,
+            ],
+            Record::splitCombinedIdentifier('{"uid_local":"stub","uid_foreign":"faz","property-z":1337}')
+        );
+    }
+
+    /**
+     * @covers ::splitCombinedIdentifier
+     */
+    public function testSplitCombinedIdentifierDoesNotErrorOnInvalidInput()
+    {
+        $this->assertSame(
+            [],
+            Record::splitCombinedIdentifier('')
         );
     }
 

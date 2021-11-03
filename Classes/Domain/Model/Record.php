@@ -53,6 +53,8 @@ use function in_array;
 use function is_array;
 use function is_null;
 use function is_string;
+use function json_decode;
+use function json_encode;
 use function spl_object_hash;
 use function strpos;
 use function uasort;
@@ -163,11 +165,17 @@ class Record implements RecordInterface
     protected $translatedRecords = [];
 
     /**
+     * @var int|string|null
+     */
+    protected $identifier;
+
+    /**
      * @param string $tableName
      * @param array $localProperties
      * @param array $foreignProperties
      * @param array $tca
      * @param array $additionalProperties
+     * @param int|string|null $identifier
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
@@ -176,7 +184,8 @@ class Record implements RecordInterface
         array $localProperties,
         array $foreignProperties,
         array $tca,
-        array $additionalProperties
+        array $additionalProperties,
+        $identifier = null
     ) {
         $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         // Normalize the storage property to be always int, because FAL is inconsistent in this point
@@ -196,6 +205,7 @@ class Record implements RecordInterface
         $this->setDirtyProperties();
         $this->calculateState();
         $this->isParentDisabled = $this->isParentDisabled();
+        $this->identifier = $identifier;
     }
 
     public function getTableName(): string
@@ -680,6 +690,10 @@ class Record implements RecordInterface
      */
     public function getIdentifier()
     {
+        if (null !== $this->identifier) {
+            return $this->identifier;
+        }
+
         if ('physical_folder' === $this->tableName) {
             return $this->getMergedProperty('uid');
         }
@@ -904,29 +918,69 @@ class Record implements RecordInterface
         return false;
     }
 
-    public static function createCombinedIdentifier(array $localProperties, array $foreignProperties): string
-    {
-        if (!empty($localProperties['uid_local']) && !empty($localProperties['uid_foreign'])) {
-            return $localProperties['uid_local'] . ',' . $localProperties['uid_foreign'];
+    /**
+     * @param array $localProperties
+     * @param array $foreignProperties
+     * @param array<string>|null $idFields
+     * @return string
+     */
+    public static function createCombinedIdentifier(
+        array $localProperties,
+        array $foreignProperties,
+        array $idFields = null
+    ): string {
+        if (null !== $idFields) {
+            foreach ([$localProperties, $foreignProperties] as $properties) {
+                $identity = [];
+                foreach ($idFields as $idField) {
+                    if (!isset($properties[$idField])) {
+                        continue 2;
+                    }
+                    $identity[$idField] = $properties[$idField];
+                }
+                return json_encode($identity);
+            }
+            return '';
         }
-
-        if (!empty($foreignProperties['uid_local']) && !empty($foreignProperties['uid_foreign'])) {
-            return $foreignProperties['uid_local'] . ',' . $foreignProperties['uid_foreign'];
+        foreach ([$localProperties, $foreignProperties] as $properties) {
+            if (isset($properties['uid_local'], $properties['uid_foreign'])) {
+                if (isset($properties['sorting'])) {
+                    return $properties['uid_local'] . ',' . $properties['uid_foreign'] . ',' . $properties['sorting'];
+                }
+                return $properties['uid_local'] . ',' . $properties['uid_foreign'];
+            }
         }
         return '';
     }
 
-    public static function splitCombinedIdentifier($combinedIdentifier): array
+    /**
+     * @param string $combinedIdentifier
+     * @return array<string, int>
+     */
+    public static function splitCombinedIdentifier(string $combinedIdentifier): array
     {
-        if (false === strpos($combinedIdentifier, ',')) {
+        if ('' === $combinedIdentifier) {
             return [];
         }
-
+        if ($combinedIdentifier[0] === '{') {
+            return json_decode($combinedIdentifier, true);
+        }
         $identifierArray = explode(',', $combinedIdentifier);
-        return [
-            'uid_local' => $identifierArray[0],
-            'uid_foreign' => $identifierArray[1],
-        ];
+        $count = count($identifierArray);
+        if (3 === $count) {
+            return [
+                'uid_local' => $identifierArray[0],
+                'uid_foreign' => $identifierArray[1],
+                'sorting' => $identifierArray[2],
+            ];
+        }
+        if (2 === $count) {
+            return [
+                'uid_local' => $identifierArray[0],
+                'uid_foreign' => $identifierArray[1],
+            ];
+        }
+        return [];
     }
 
     public function sortRelatedRecords(string $tableName, callable $compareFunction): void

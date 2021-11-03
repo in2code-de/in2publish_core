@@ -149,6 +149,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
      * @param array $additionalProperties array of not persisted properties
      * @param string|null $tableName
      * @param string $idFieldName
+     * @param array<string>|null $idFields
      *
      * @return RecordInterface|null
      */
@@ -158,7 +159,8 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
         array $foreignProperties,
         array $additionalProperties = [],
         string $tableName = null,
-        string $idFieldName = 'uid'
+        string $idFieldName = 'uid',
+        array $idFields = null
     ): ?RecordInterface {
         if (null === $tableName) {
             throw new MissingArgumentException('tableName');
@@ -176,7 +178,8 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
             $localProperties,
             $foreignProperties,
             $tableName,
-            $idFieldName
+            $idFieldName,
+            $idFields
         );
 
         // detects if an instance has been moved upwards or downwards
@@ -212,7 +215,8 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
                 $localProperties,
                 $foreignProperties,
                 (array)$this->tcaService->getConfigurationArrayForTable($tableName),
-                $additionalProperties
+                $additionalProperties,
+                $mergedIdentifier
             );
             if (true === $isRootRecord && true === $this->isRootRecord) {
                 $instance->addAdditionalProperty('isRoot', true);
@@ -430,6 +434,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
      * @param array $foreignProperties
      * @param string|null $tableName
      * @param string $idFieldName
+     * @param array<string>|null $idFields
      *
      * @return int|string
      */
@@ -437,20 +442,21 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
         array $localProperties,
         array $foreignProperties,
         string $tableName,
-        string $idFieldName = 'uid'
+        string $idFieldName = 'uid',
+        array $idFields = null
     ) {
         if ($tableName === 'sys_file') {
             $idFieldName = 'uid';
         }
         if (!empty($localProperties[$idFieldName])) {
-            return $localProperties[$idFieldName];
+            return (int)$localProperties[$idFieldName];
         }
 
         if (!empty($foreignProperties[$idFieldName])) {
-            return $foreignProperties[$idFieldName];
+            return (int)$foreignProperties[$idFieldName];
         }
 
-        $combinedIdentifier = Record::createCombinedIdentifier($localProperties, $foreignProperties);
+        $combinedIdentifier = Record::createCombinedIdentifier($localProperties, $foreignProperties, $idFields);
 
         if ($combinedIdentifier !== '') {
             return $combinedIdentifier;

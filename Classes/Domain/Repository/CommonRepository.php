@@ -401,6 +401,7 @@ class CommonRepository extends BaseRepository
      * @param array $localProperties
      * @param array $foreignProperties
      * @param string $tableName
+     * @param array<string>|null $idFields
      *
      * @return RecordInterface[]
      * @throws MissingArgumentException
@@ -408,7 +409,8 @@ class CommonRepository extends BaseRepository
     protected function convertPropertyArraysToRecords(
         array $localProperties,
         array $foreignProperties,
-        string $tableName
+        string $tableName,
+        array $idFields = null
     ): array {
         $keysToIterate = array_unique(array_merge(array_keys($localProperties), array_keys($foreignProperties)));
 
@@ -474,7 +476,9 @@ class CommonRepository extends BaseRepository
                     (array)$localProperties[$key],
                     (array)$foreignProperties[$key],
                     [],
-                    $tableName
+                    $tableName,
+                    'uid',
+                    $idFields
                 );
             }
         }
@@ -1531,12 +1535,18 @@ class CommonRepository extends BaseRepository
             );
         }
 
+        $idFields = [];
+        $idFields[] = 'uid_local';
+        $idFields[] = 'uid_foreign';
+        $idFields[] = 'sorting';
+
         // build additional where clause
         $additionalWhereArray = [];
         if (!empty($columnConfiguration['MM_match_fields'])) {
             $foreignMatchFields = [];
             foreach ($columnConfiguration['MM_match_fields'] as $matchField => $matchValue) {
                 $foreignMatchFields[] = $matchField . ' LIKE "' . $matchValue . '"';
+                $idFields[] = $matchField;
             }
             $additionalWhereArray = array_merge($additionalWhereArray, $foreignMatchFields);
         }
@@ -1566,7 +1576,7 @@ class CommonRepository extends BaseRepository
             'uid_local,uid_foreign',
             $tableName
         );
-        $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName);
+        $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName, $idFields);
 
         $foreignField = $this->getForeignField($columnConfiguration);
 
