@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Domain\Repository;
  */
 
 use DateTime;
+use DateTimeImmutable;
 use In2code\In2publishCore\Domain\Factory\TaskFactory;
 use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
 use In2code\In2publishCore\Service\Context\ContextService;
@@ -143,5 +144,21 @@ class TaskRepository
             $taskObjects[] = $this->taskFactory->convertToObject($taskProperties);
         }
         return $taskObjects;
+    }
+
+    /**
+     * Removes Tasks from the task table, which are older than a week.
+     * This method only removes Tasks which were successful, so errors can
+     * be investigated, even a long time after they occurred.
+     */
+    public function deleteObsolete(): void
+    {
+        $query = $this->connection->createQueryBuilder();
+        $executionEnd = (new DateTimeImmutable('1 week ago'))->format('Y-m-d H:i:s');
+        $query->delete('tx_in2code_in2publish_task')
+              ->where(
+                  $query->expr()->lte('execution_end', $query->createNamedParameter($executionEnd))
+              );
+        $query->execute();
     }
 }
