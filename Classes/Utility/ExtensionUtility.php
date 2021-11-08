@@ -29,10 +29,15 @@ namespace In2code\In2publishCore\Utility;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use TYPO3\CMS\Core\Core\Bootstrap;
+use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class ExtensionUtility
 {
+    /** @var PackageManager */
+    private static $packageManager;
+
     /**
      * Advantage: Extension version is not cached.
      *
@@ -46,5 +51,27 @@ class ExtensionUtility
         $_EXTKEY = $extension;
         require(ExtensionManagementUtility::extPath($extension, 'ext_emconf.php'));
         return $EM_CONF[$_EXTKEY]['version'];
+    }
+
+    /**
+     * Only use this in a Services.php. Get the PackageManager from the DI container / makeInstance otherwise.
+     *
+     * @param string $extension
+     * @return bool
+     */
+    public static function isLoaded(string $extension): bool
+    {
+        $packageManager = self::createPackageManager();
+        return $packageManager->isPackageActive($extension);
+    }
+
+    private static function createPackageManager(): PackageManager
+    {
+        if (null === self::$packageManager) {
+            $coreCache = Bootstrap::createCache('core', false);
+            $packageCache = Bootstrap::createPackageCache($coreCache);
+            self::$packageManager = Bootstrap::createPackageManager(PackageManager::class, $packageCache);
+        }
+        return self::$packageManager;
     }
 }
