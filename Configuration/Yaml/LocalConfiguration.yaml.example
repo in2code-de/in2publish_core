@@ -392,6 +392,8 @@ tca:
     user: 'In2code\In2publishCore\Domain\Service\Processor\UserProcessor'
     imageManipulation: 'In2code\In2publishCore\Domain\Service\Processor\ImageManipulationProcessor'
     slug: 'In2code\In2publishCore\Domain\Service\Processor\SlugProcessor'
+    category: 'In2code\In2publishCore\Domain\Service\Processor\CategoryProcessor'
+    language: 'In2code\In2publishCore\Domain\Service\Processor\LanguageProcessor'
 
 # Toggle additional features for the content publisher
 features:

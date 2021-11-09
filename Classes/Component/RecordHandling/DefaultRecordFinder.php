@@ -498,6 +498,20 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                 continue;
             }
             switch ($columnConfiguration['type']) {
+                /** @noinspection PhpMissingBreakStatementInspection */
+                case 'category':
+                    $columnConfiguration = [
+                        'foreign_table' => 'sys_category',
+                        'foreign_table_where' => 'AND {#sys_category}.{#sys_language_uid} IN (-1, 0)',
+                        'MM' => 'sys_category_record_mm',
+                        'MM_match_fields' => [
+                            'fieldname' => 'categories',
+                            'tablenames' => $recordTableName,
+                        ],
+                        'MM_opposite_field' => 'items',
+                        'relationship' => 'manyToMany',
+                    ];
+                    // Fall through!
                 case 'select':
                     $whereClause = '';
                     if (!empty($columnConfiguration['foreign_table_where'])) {

@@ -42,12 +42,14 @@ use In2code\In2publishCore\Config\Validator\IntegerInRangeValidator;
 use In2code\In2publishCore\Config\Validator\IPv4PortValidator;
 use In2code\In2publishCore\Config\Validator\IterativeTcaProcessorValidator;
 use In2code\In2publishCore\Config\Validator\ZipExtensionInstalledValidator;
+use In2code\In2publishCore\Domain\Service\Processor\CategoryProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\CheckProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\FlexProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\GroupProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\ImageManipulationProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\InlineProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\InputProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\LanguageProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\NoneProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\PassthroughProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\RadioProcessor;
@@ -278,7 +280,9 @@ class In2publishCoreDefiner implements DefinerInterface
                                             ->addString('text', TextProcessor::class)
                                             ->addString('user', UserProcessor::class)
                                             ->addString('imageManipulation', ImageManipulationProcessor::class)
-                                            ->addString('slug', SlugProcessor::class),
+                                            ->addString('slug', SlugProcessor::class)
+                                            ->addString('category', CategoryProcessor::class)
+                                            ->addString('language', LanguageProcessor::class),
                                      null,
                                      [IterativeTcaProcessorValidator::class]
                                  )
