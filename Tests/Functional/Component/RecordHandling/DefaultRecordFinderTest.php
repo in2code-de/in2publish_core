@@ -32,7 +32,9 @@ namespace In2code\In2publishCore\Tests\Functional\Component\RecordHandling;
 use In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\PostProcessing\PostProcessingEventListener;
+use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
+use In2code\In2publishCore\Features\PhysicalFilePublisher\Domain\Anomaly\PhysicalFilePublisher;
 use In2code\In2publishCore\Tests\FunctionalTestCase;
 use ReflectionProperty;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -54,6 +56,11 @@ class DefaultRecordFinderTest extends FunctionalTestCase
         foreach ($listener[RootRecordCreationWasFinished::class] as $index => $config) {
             if ($config['service'] === PostProcessingEventListener::class) {
                 unset($listener[RootRecordCreationWasFinished::class][$index]);
+            }
+        }
+        foreach ($listener[PublishingOfOneRecordEnded::class] as $index => $config) {
+            if ($config['service'] === PhysicalFilePublisher::class) {
+                unset($listener[PublishingOfOneRecordEnded::class][$index]);
             }
         }
         $reflectionProperty->setValue($listenerProvider, $listener);
@@ -168,7 +175,7 @@ class DefaultRecordFinderTest extends FunctionalTestCase
         );
         // sys_category is a select-MM relation with MM_matchFields and no UID. To identify the MM-Record properly, all
         // fields which determine the identity of the entity have to be used as identifier.
-        $mmRecordIdentifier = '{"uid_local":2,"uid_foreign":5,"sorting":0,"tablenames":"pages","fieldname":"categories"}';
+        $mmRecordIdentifier = '{"uid_local":2,"uid_foreign":5,"sorting":0,"fieldname":"categories","tablenames":"pages"}';
 
         $defaultRecordFinder = GeneralUtility::makeInstance(DefaultRecordFinder::class);
         $record = $defaultRecordFinder->findByIdentifier(5, 'pages');
@@ -200,25 +207,25 @@ class DefaultRecordFinderTest extends FunctionalTestCase
     {
         $pool = GeneralUtility::makeInstance(ConnectionPool::class);
         $defaultConnection = $pool->getConnectionByName('Default');
-        $defaultConnection->insert('pages', ['uid' => 5, 'sys_language_uid' => 1]);
-        $defaultConnection->insert('sys_language', ['uid' => 1]);
+        $defaultConnection->insert('sys_file', ['uid' => 3, 'storage' => 2]);
+        $defaultConnection->insert('sys_file_storage', ['uid' => 2]);
 
         $defaultRecordFinder = GeneralUtility::makeInstance(DefaultRecordFinder::class);
-        $record = $defaultRecordFinder->findByIdentifier(5, 'pages');
+        $record = $defaultRecordFinder->findByIdentifier(3, 'sys_file');
 
         $relatedRecords = $record->getRelatedRecords();
         $this->assertCount(1, $relatedRecords);
 
-        $this->assertArrayHasKey('sys_language', $relatedRecords);
+        $this->assertArrayHasKey('sys_file_storage', $relatedRecords);
 
-        $relatedLanguages = $relatedRecords['sys_language'];
-        $this->assertCount(1, $relatedLanguages);
-        $this->assertArrayHasKey(1, $relatedLanguages);
+        $relatedStorages = $relatedRecords['sys_file_storage'];
+        $this->assertCount(1, $relatedStorages);
+        $this->assertArrayHasKey(2, $relatedStorages);
 
-        $relatedLanguage = $relatedLanguages[1];
-        $this->assertInstanceOf(RecordInterface::class, $relatedLanguage);
+        $relatedStorage = $relatedStorages[2];
+        $this->assertInstanceOf(RecordInterface::class, $relatedStorage);
 
-        $this->assertSame('sys_language', $relatedLanguage->getTableName());
-        $this->assertSame(1, $relatedLanguage->getIdentifier());
+        $this->assertSame('sys_file_storage', $relatedStorage->getTableName());
+        $this->assertSame(2, $relatedStorage->getIdentifier());
     }
 }
