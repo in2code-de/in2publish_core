@@ -93,7 +93,7 @@ class SkipTableVoter
     {
         if (
             'group' === $config['type']
-            && 'db' === ($config['internal_type'] ?? 'none')
+            && 'db' === ($config['internal_type'] ?? 'db')
             && array_key_exists('allowed', $config)
         ) {
             $tables = GeneralUtility::trimExplode(',', $config['allowed']);
