@@ -19,6 +19,7 @@ use TYPO3\CMS\Core\Configuration\ConfigurationManager;
 use TYPO3\CMS\Core\Core\ApplicationContext;
 use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Core\RequestId;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\DependencyInjection\ContainerBuilder;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -29,6 +30,20 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Testbase;
 
+/**
+ * Boilerplate for a unit test phpunit boostrap file.
+ *
+ * This file is loosely maintained within TYPO3 testing-framework, extensions
+ * are encouraged to not use it directly, but to copy it to an own place,
+ * usually in parallel to a UnitTests.xml file.
+ *
+ * This file is defined in UnitTests.xml and called by phpunit
+ * before instantiating the test suites.
+ *
+ * The recommended way to execute the suite is "runTests.sh". See the
+ * according script within TYPO3 core's Build/Scripts directory and
+ * adapt to extensions needs.
+ */
 call_user_func(function () {
     if (!getenv('IN2PUBLISH_CONTEXT')) {
         putenv('IN2PUBLISH_CONTEXT=Local');
@@ -75,13 +90,14 @@ call_user_func(function () {
     // Set all packages to active
     if (interface_exists(PackageCacheInterface::class)) {
         $packageManager = Bootstrap::createPackageManager(
-            UnitTestPackageManager::class,
+            PackageManager::class,
             Bootstrap::createPackageCache($cache)
         );
     } else {
         // v10 compatibility layer
+        // @deprecated Will be removed when v10 compat is dropped from testing-framework
         $packageManager = Bootstrap::createPackageManager(
-            UnitTestPackageManager::class,
+            PackageManager::class,
             $cache
         );
     }
@@ -98,15 +114,19 @@ call_user_func(function () {
     $dependencyInjectionContainerCache = Bootstrap::createCache('di');
     $bootState = new stdClass();
     $bootState->done = false;
+    // After a deprecation grace period, only one of those flag will remain, likely ->done
+    $bootState->complete = true;
     $bootState->cacheDisabled = false;
 
     $logManager = GeneralUtility::makeInstance(LogManager::class);
+    $requestId = new RequestId();
 
     $builder = new ContainerBuilder([
         ClassLoader::class => $classLoader,
         ApplicationContext::class => Environment::getContext(),
         ConfigurationManager::class => $configurationManager,
         LogManager::class => $logManager,
+        RequestId::class => $requestId,
         'cache.di' => $dependencyInjectionContainerCache,
         'cache.core' => $coreCache,
         'cache.assets' => $assetsCache,
@@ -118,5 +138,14 @@ call_user_func(function () {
 
     $container = $builder->createDependencyInjectionContainer($packageManager, $dependencyInjectionContainerCache, false);
 
+    // Push the container to GeneralUtility as we want to make sure its
+    // makeInstance() method creates classes using the container from now on.
     GeneralUtility::setContainer($container);
+
+    // Reset LogManager singleton instance in order for GeneralUtility::makeInstance()
+    // to proxy LogManager retrieval to ContainerInterface->get() from now on.
+    GeneralUtility::removeSingletonInstance(LogManager::class, $logManager);
+
+    // Push PackageManager instance to ExtensionManagementUtility
+    ExtensionManagementUtility::setPackageManager($packageManager);
 });
