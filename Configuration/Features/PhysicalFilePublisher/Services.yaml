@@ -1,0 +1,15 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  In2code\In2publishCore\Features\PhysicalFilePublisher\:
+    resource: '../../../Classes/Features/PhysicalFilePublisher/*'
+
+  In2code\In2publishCore\Features\PhysicalFilePublisher\Domain\Anomaly\PhysicalFilePublisher:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-PhysicalFilePublisher-PublishingOfOneRecordEnded'
+        method: 'publishPhysicalFileOfSysFile'
+        event: In2code\In2publishCore\Event\PublishingOfOneRecordEnded

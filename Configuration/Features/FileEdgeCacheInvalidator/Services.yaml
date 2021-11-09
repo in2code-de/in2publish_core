@@ -1,0 +1,19 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  In2code\In2publishCore\Features\FileEdgeCacheInvalidator\:
+    resource: '../../../Classes/Features/FileEdgeCacheInvalidator/*'
+
+  In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly\PublishedFileIdentifierCollector:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-PublishedFileIdentifierCollector-PhysicalFileWasPublished'
+        method: 'registerPublishedFile'
+        event: In2code\In2publishCore\Event\PhysicalFileWasPublished
+      - name: event.listener
+        identifier: 'in2publishcore-PublishedFileIdentifierCollector-RecursiveRecordPublishingEnded'
+        method: 'writeFlushFileEdgeCacheTask'
+        event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded

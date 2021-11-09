@@ -1,0 +1,19 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  In2code\In2publishCore\Features\RefIndexUpdate\:
+    resource: '../../../Classes/Features/RefIndexUpdate/*'
+
+  In2code\In2publishCore\Features\RefIndexUpdate\Domain\Anomaly\RefIndexUpdater:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-RefIndexUpdater-PublishingOfOneRecordEnded'
+        method: 'registerRefIndexUpdate'
+        event: In2code\In2publishCore\Event\PublishingOfOneRecordEnded
+      - name: event.listener
+        identifier: 'in2publishcore-RefIndexUpdater-RecursiveRecordPublishingEnded'
+        method: 'writeRefIndexUpdateTask'
+        event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded

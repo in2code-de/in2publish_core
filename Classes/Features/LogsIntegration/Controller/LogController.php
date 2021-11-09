@@ -70,7 +70,7 @@ class LogController extends \CoStack\Logs\Controller\LogController
         $config = $this->configurationManager->getConfiguration('FullTypoScript');
         ArrayUtility::mergeRecursiveWithOverrule(
             $this->txLogsViewConfig,
-            GeneralUtility::removeDotsFromTS($config['module.']['tx_logs.']['view.'])
+            GeneralUtility::removeDotsFromTS($config['module.']['tx_logs.']['view.'] ?? [])
         );
     }
 

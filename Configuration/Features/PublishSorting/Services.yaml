@@ -1,0 +1,22 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+    bind:
+      $localDatabase: '@In2code.In2publishCore.Database.Local'
+      $foreignDatabase: '@In2code.In2publishCore.Database.Foreign'
+
+  In2code\In2publishCore\Features\PublishSorting\:
+    resource: '../../../Classes/Features/PublishSorting/*'
+
+  In2code\In2publishCore\Features\PublishSorting\Domain\Anomaly\SortingPublisher:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-SortingPublisher-PublishingOfOneRecordBegan'
+        method: 'collectSortingsToBePublished'
+        event: In2code\In2publishCore\Event\PublishingOfOneRecordBegan
+      - name: event.listener
+        identifier: 'in2publishcore-SortingPublisher-RecursiveRecordPublishingEnded'
+        method: 'publishSortingRecursively'
+        event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded

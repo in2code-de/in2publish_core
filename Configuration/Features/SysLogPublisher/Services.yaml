@@ -1,0 +1,18 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+    bind:
+      $localDatabase: '@In2code.In2publishCore.Database.Local'
+      $foreignDatabase: '@In2code.In2publishCore.Database.Foreign'
+
+  In2code\In2publishCore\Features\SysLogPublisher\:
+    resource: '../../../Classes/Features/SysLogPublisher/*'
+
+  In2code\In2publishCore\Features\SysLogPublisher\Domain\Anomaly\SysLogPublisher:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-SysLogPublisher-PublishingOfOneRecordEnded'
+        method: 'publishSysLog'
+        event: In2code\In2publishCore\Event\PublishingOfOneRecordEnded
