@@ -186,7 +186,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
             foreach ($marker as $markerName => $filterFunc) {
                 if (false !== strpos($string, '###' . $markerName . '###')) {
                     $value = $pageTsConfig['TCEFORM.'][$tableIndex][$fieldIndex][$markerName] ?? null;
-                    $cleanValue = $filterFunc($value);
+                    $cleanValue = (string)$filterFunc($value);
                     $string = str_replace('###' . $markerName . '###', $cleanValue, $string);
                 }
             }
