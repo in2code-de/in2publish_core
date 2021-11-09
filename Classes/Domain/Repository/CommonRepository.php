@@ -660,7 +660,7 @@ class CommonRepository extends BaseRepository
                 && !in_array('sys_file', $excludedTableNames)
             ) {
                 foreach ($matches as $match) {
-                    $relatedRecords[] = $this->findByIdentifier($match, 'sys_file');
+                    $relatedRecords[] = $this->findByIdentifier((int)$match, 'sys_file');
                 }
             }
         }
@@ -674,12 +674,12 @@ class CommonRepository extends BaseRepository
                     switch ($urnParsed['host']) {
                         case 'file':
                             if (isset($data['uid']) && !in_array('sys_file', $excludedTableNames)) {
-                                $relatedRecords[] = $this->findByIdentifier($data['uid'], 'sys_file');
+                                $relatedRecords[] = $this->findByIdentifier((int)$data['uid'], 'sys_file');
                             }
                             break;
                         case 'page':
                             if (isset($data['uid']) && !in_array('pages', $excludedTableNames)) {
-                                $relatedRecords[] = $this->findByIdentifier($data['uid'], 'pages');
+                                $relatedRecords[] = $this->findByIdentifier((int)$data['uid'], 'pages');
                             }
                             break;
                         default:
