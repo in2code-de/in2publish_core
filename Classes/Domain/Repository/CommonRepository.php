@@ -1562,7 +1562,7 @@ class CommonRepository extends BaseRepository
             '',
             '',
             '',
-            'uid_local,uid_foreign',
+            $idFields,
             $tableName
         );
         $foreignProperties = $this->findPropertiesByProperty(
@@ -1573,7 +1573,7 @@ class CommonRepository extends BaseRepository
             '',
             '',
             '',
-            'uid_local,uid_foreign',
+            $idFields,
             $tableName
         );
         $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName, $idFields);
