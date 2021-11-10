@@ -109,9 +109,9 @@ abstract class ActionController extends ExtbaseActionController implements Logge
         parent::addFlashMessage($messageBody, $messageTitle, $severity, $storeInSession);
     }
 
+    // TODO v12: replace TYPO3\CMS\Extbase\Mvc\View\ViewInterface with TYPO3Fluid\Fluid\View\ViewInterface
     protected function initializeView(ViewInterface $view): void
     {
-        parent::initializeView($view);
         $this->view->assign('extensionVersion', ExtensionUtility::getExtensionVersion('in2publish_core'));
         $this->view->assign('config', $this->configContainer->get());
         $this->view->assign('testStatus', $this->environmentService->getTestStatus());
