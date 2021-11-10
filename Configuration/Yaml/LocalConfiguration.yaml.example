@@ -53,18 +53,11 @@ excludeRelatedTables:
   - be_users
   - sys_history
   - sys_log
-  #- sys_note
   - tx_extensionmanager_domain_model_extension
-  - tx_extensionmanager_domain_model_repository
-  #- tx_rsaauth_keys
   - cache_treelist
   - tx_in2publishcore_log
   - tx_in2code_in2publish_task
   - tx_in2code_in2publish_envelope
-  # Added dynamically if realurl is installed
-  - tx_realurl_pathdata
-  - tx_realurl_uniqalias
-  - tx_realurl_urldata
 
 
 # Ignore this fields for DIFF view

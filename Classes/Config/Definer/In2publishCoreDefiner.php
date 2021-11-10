@@ -127,7 +127,6 @@ class In2publishCoreDefiner implements DefinerInterface
         'sys_history',
         'sys_log',
         'tx_extensionmanager_domain_model_extension',
-        'tx_extensionmanager_domain_model_repository',
         'cache_treelist',
         'tx_in2publishcore_log',
         'tx_in2code_in2publish_task',
