@@ -1,0 +1,29 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers" data-namespace-typo3-fluid="true">
+	<f:layout name="Tools" />
+
+	<f:section name="content">
+		<f:section name="content">
+			<h2><f:translate key="module_main_title">Publish Content</f:translate></h2>
+
+			<h3><f:translate key="module.m4.global_config">global config</f:translate></h3>
+
+			<f:debug title="{f:translate(key:'module.m4.global_config')}" inline="true">{globalConfig}</f:debug>
+
+			<h3><f:translate key="module.m4.personal_config">personal config</f:translate></h3>
+
+			<f:debug title="{f:translate(key:'module.m4.personal_config')}" inline="true">{containerDump.fullConfig}</f:debug>
+
+			<h3><f:translate key="module.m4.container_dump">module.m4.container_dump</f:translate></h3>
+
+			<f:form class="form-inline" method="post" addQueryString="1">
+				<div class="form-group mb-2">
+					<label for="emulatePage"><f:translate key="module.m4.emulate_page">module.m4.emulate_page</f:translate></label>
+					<f:form.textfield id="emulatePage" class="form-control" name="emulatePage" value="{emulatePage}" />
+				</div>
+			</f:form>
+
+			<f:debug title="{f:translate(key:'module.m4.container_dump')}" inline="true">{containerDump}</f:debug>
+		</f:section>
+	</f:section>
+</html>

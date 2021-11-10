@@ -1,0 +1,57 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers" data-namespace-typo3-fluid="true"
+>
+	<f:layout name="Tools" />
+
+	<f:section name="content">
+		<h2>
+			<f:translate key="module_main_title">Publish Content</f:translate>
+			-
+			<f:translate key="module.m4.tca">TCA</f:translate>
+		</h2>
+
+		<a id="in2publish--compatible-tca"></a>
+		<h3>
+			<f:translate key="module.m4.tca.compatible">Compatible TCA</f:translate>
+		</h3>
+		<f:render section="navigation" />
+
+		<f:debug title="{f:translate(key:'module.m4.tca.compatible')}" inline="true">{compatibleTca}</f:debug>
+
+		<a id="in2publish--incompatible-tca"></a>
+		<h3>
+			<f:translate key="module.m4.tca.incompatible">Inompatible TCA</f:translate>
+		</h3>
+		<f:render section="navigation" />
+		<f:debug title="{f:translate(key:'module.m4.tca.incompatible')}" inline="true">{incompatibleTca}</f:debug>
+
+		<a id="in2publish--controls"></a>
+		<h3>
+			<f:translate key="module.m4.tca.controls">Controls</f:translate>
+		</h3>
+		<f:render section="navigation" />
+		<f:debug title="{f:translate(key:'module.m4.tca.controls')}" inline="true">{controls}</f:debug>
+
+		<f:link.action action="clearTcaCaches" class="btn btn-warning">
+			<f:translate key="module.m4.flush_tca" />
+		</f:link.action>
+	</f:section>
+
+	<f:section name="navigation">
+		<div>
+			<a href="#in2publish--compatible-tca">
+				<f:translate key="module.m4.tca.navigate.to_compatible">To compatbile TCA</f:translate>
+			</a>
+		</div>
+		<div>
+			<a href="#in2publish--incompatible-tca">
+				<f:translate key="module.m4.tca.navigate.to_incompatible">To incompatbile TCA</f:translate>
+			</a>
+		</div>
+		<div>
+			<a href="#in2publish--controls">
+				<f:translate key="module.m4.tca.navigate.to_controls">To controls</f:translate>
+			</a>
+		</div>
+	</f:section>
+</html>

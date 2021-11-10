@@ -154,6 +154,10 @@
 				<source>Introduction</source>
 				<target state="translated">Übersicht</target>
 			</trans-unit>
+			<trans-unit id="moduleselector.index.description">
+				<source>This tool just lists all other tools.</source>
+				<target state="translated">Dieses Tool listet nur alle anderen Tools auf</target>
+			</trans-unit>
 			<trans-unit id="moduleselector.configuration">
 				<source>Show configuration</source>
 				<target state="translated">Konfigurationsübersicht</target>
@@ -185,14 +189,6 @@
 			<trans-unit id="moduleselector.tca.description">
 				<source>See which parts of the TCA are processed, and the reason why others are not.</source>
 				<target state="translated">Zeige die Teile des TCA die verwendet werden und alle anderen mit der Begründung warum sie nicht verwendet werden.</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.flush_tca">
-				<source>Flush TCA cache</source>
-				<target state="translated">TCA Caches leeren</target>
-			</trans-unit>
-			<trans-unit id="moduleselector.flush_tca.description">
-				<source>Flush all cached TCA entries of in2publish on local.</source>
-				<target state="translated">Löscht alle TCA Einträge im Cache von in2publish in der lokalen Datenbank.</target>
 			</trans-unit>
 			<trans-unit id="moduleselector.flush_envelopes">
 				<source>Remove superfluous envelopes</source>
@@ -341,7 +337,26 @@
 				<source>Flushed all superfluous envelopes.</source>
 				<target state="translated">Alle überflüssigen Envelopes wurden gelöscht.</target>
 			</trans-unit>
-
+			<trans-unit id="module.m4.flush_envelopes">
+				<source>Flush superfluous envelopes.</source>
+				<target state="translated">Überflüssigen Envelopes löschen.</target>
+			</trans-unit>
+			<trans-unit id="module.m4.nothing_to_flush">
+				<source>There are not envelopes to flush.</source>
+				<target state="translated">Es gibt keine Envelopes zum löschen.</target>
+			</trans-unit>
+			<trans-unit id="module.m4.flush_registry">
+				<source>Clear registry entries.</source>
+				<target state="translated">Registry-Einträge löschen.</target>
+			</trans-unit>
+			<trans-unit id="module.m4.flush_registry.description">
+				<source>The Content Publisher stores various information in the registry, like the outcome of the last test run. You can force the removal of these entries here.</source>
+				<target state="translated">Der Content Publisher speichert Informationen wie das Ergebnis des letzten Testlaufs in der Registry. Sie können die Löschung dieser Einträge hier erzwingen.</target>
+			</trans-unit>
+			<trans-unit id="module.m4.flush_tca">
+				<source>Flush processed TCA cache</source>
+				<target state="translated">Cache des verarbeiteten TCA leeren</target>
+			</trans-unit>
 
 			<trans-unit id="test_state_error">
 				<source>In2publish might not work as expected.</source>

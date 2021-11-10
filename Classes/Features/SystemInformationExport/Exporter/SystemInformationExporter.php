@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\ViewHelpers\Tools;
+namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
 
 /*
  * Copyright notice
  *
- * (c) 2017 in2code.de and the following authors:
+ * (c) 2021 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,21 +29,9 @@ namespace In2code\In2publishCore\ViewHelpers\Tools;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry;
-use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
-
-class GetEnabledToolsViewHelper extends AbstractViewHelper
+interface SystemInformationExporter
 {
-    /** @var ToolsRegistry */
-    protected $toolsRegistry;
+    public function getUniqueKey(): string;
 
-    public function __construct(ToolsRegistry $toolsRegistry)
-    {
-        $this->toolsRegistry = $toolsRegistry;
-    }
-
-    public function render(): array
-    {
-        return $this->toolsRegistry->getEntries();
-    }
+    public function getInformation(): array;
 }

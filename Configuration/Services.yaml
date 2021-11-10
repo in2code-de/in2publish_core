@@ -1,5 +1,6 @@
 imports:
   - { resource: Component/PostPublishTaskExecution/Services.yaml }
+  - { resource: Features/AdminTools/Services.yaml }
   - { resource: Features/CacheInvalidation/Services.yaml }
   - { resource: Features/ContextMenuPublishEntry/Services.yaml }
   - { resource: Features/FileEdgeCacheInvalidator/Services.yaml }
@@ -11,6 +12,7 @@ imports:
   - { resource: Features/SimpleOverviewAndAjax/Services.yaml }
   - { resource: Features/SkipEmptyTable/Services.yaml }
   - { resource: Features/SysLogPublisher/Services.yaml }
+  - { resource: Features/SystemInformationExport/Services.yaml }
   - { resource: Features/WarningOnForeign/Services.yaml }
 
 services:

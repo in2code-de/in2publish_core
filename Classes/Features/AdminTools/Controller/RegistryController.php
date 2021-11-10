@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\ViewHelpers\Tools;
+namespace In2code\In2publishCore\Features\AdminTools\Controller;
 
 /*
  * Copyright notice
  *
- * (c) 2017 in2code.de and the following authors:
+ * (c) 2021 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,21 +29,30 @@ namespace In2code\In2publishCore\ViewHelpers\Tools;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry;
-use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use TYPO3\CMS\Core\Registry;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
-class GetEnabledToolsViewHelper extends AbstractViewHelper
+class RegistryController extends ActionController
 {
-    /** @var ToolsRegistry */
-    protected $toolsRegistry;
+    /** @var Registry */
+    protected $registry;
 
-    public function __construct(ToolsRegistry $toolsRegistry)
+    public function __construct(Registry $registry)
     {
-        $this->toolsRegistry = $toolsRegistry;
+        $this->registry = $registry;
     }
 
-    public function render(): array
+    public function indexAction(): void
     {
-        return $this->toolsRegistry->getEntries();
+    }
+
+    /** @throws StopActionException */
+    public function flushRegistryAction(): void
+    {
+        $this->registry->removeAllByNamespace('tx_in2publishcore');
+        $this->addFlashMessage(LocalizationUtility::translate('module.m4.registry_flushed', 'in2publish_core'));
+        $this->redirect('index');
     }
 }

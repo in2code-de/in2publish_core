@@ -1,28 +1,34 @@
-<f:layout name="Tools"/>
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+	<f:layout name="ToolsWhite" />
 
-Index - Information and Stuff
+	<f:section name="content">
+		<f:if condition="{supports}">
+			<h2>Getting Help</h2>
 
-<f:section name="content">
-	<f:if condition="{supports}">
-		<h2>Getting Help</h2>
-
-		<ul>
-		<f:for each="{supports}" as="support">
-			<li><f:format.raw>{support}</f:format.raw></li>
-		</f:for>
-		</ul>
-	</f:if>
+			<ul>
+				<f:for each="{supports}" as="support">
+					<li>
+						<f:format.raw>{support}</f:format.raw>
+					</li>
+				</f:for>
+			</ul>
+		</f:if>
 
 
-	<h2><f:translate key="module_main_title">Publish Content</f:translate>-<f:translate key="module_m4_title">Tools</f:translate></h2>
+		<h2>
+			<f:translate key="module_main_title">Publish Content</f:translate>
+			-
+			<f:translate key="module_m4_title">Tools</f:translate>
+		</h2>
 
-	<p>
-		<f:translate key="module_m3_index_content">The Tools Module</f:translate>
-	</p>
+		<p>
+			<f:translate key="module_m3_index_content">The Tools Module</f:translate>
+		</p>
 
-	<section class="nav-pills-container">
-		<ul class="nav nav-pills nav-stacked">
-			<f:render partial="Tools/IntroductionMenu" arguments="{_all}"/>
-		</ul>
-	</section>
-</f:section>
+		<section class="nav-pills-container">
+			<ul class="nav nav-pills nav-stacked">
+				<f:render partial="Tools/IntroductionMenu" arguments="{_all}" />
+			</ul>
+		</section>
+	</f:section>
+</html>

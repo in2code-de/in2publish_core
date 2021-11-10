@@ -24,7 +24,9 @@ use TYPO3\CMS\Core\DependencyInjection\PublicServicePass;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 return static function (ContainerConfigurator $configurator, ContainerBuilder $builder) {
-    (include __DIR__ . '/Features/LogsIntegration/Services.php')($configurator);
+    (include __DIR__ . '/Features/AdminTools/Services.php')($configurator, $builder);
+    (include __DIR__ . '/Features/LogsIntegration/Services.php')($configurator, $builder);
+    (include __DIR__ . '/Features/SystemInformationExport/Services.php')($configurator, $builder);
 
     $builder->registerForAutoconfiguration(RemoteAdapter::class)->addTag('in2publish_core.adapter.remote');
     $builder->registerForAutoconfiguration(TransmissionAdapter::class)->addTag('in2publish_core.adapter.transmission');
