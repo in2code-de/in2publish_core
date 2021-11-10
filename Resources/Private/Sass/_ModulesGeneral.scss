@@ -661,3 +661,36 @@ div#typo3-docbody.stopScrolling {
 .tx_in2publishcore_admintools .module-docheader-bar-buttons .btn-toolbar .btn-group {
   flex-wrap: wrap;
 }
+
+
+.in2publish-state-icon {
+
+  &--unchanged {
+    color: $nobel;
+  }
+
+  &--changed {
+    color: $goldentainoi;
+  }
+
+  &--added {
+    color: $apple;
+  }
+
+  &--deleted {
+    color: $appleblossom;
+  }
+
+  &--moved {
+    color: $pictonblue;
+  }
+
+  &:before {
+    font-size: 6px;
+    margin-bottom: 2px;
+    display: inline-block;
+    vertical-align: middle;
+    height: 12px;
+    line-height: 12px;
+  }
+}

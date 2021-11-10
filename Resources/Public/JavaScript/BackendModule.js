@@ -24,7 +24,9 @@ define([
 
 	In2publishModule.toggleDirtyPropertiesListContainerListener = function () {
 		$('*[data-action="opendirtypropertieslistcontainer"]').click(function () {
-			var $containerDropdown = $(this).closest('.in2publish-stagelisting__item').find('.in2publish-stagelisting__dropdown:first');
+			var target = $(this).attr('data-target');
+
+			var $containerDropdown = $('*[data-diff-for="' + target + '"]');
 			In2publishModule.openOrCloseStageListingDropdownContainer($containerDropdown);
 
 			var $containerMessages = $(this).closest('.in2publish-stagelisting__item').find('.in2publish-stagelisting__messages:first');

@@ -49,6 +49,7 @@ use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsExcepti
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 
 use function count;
 use function dirname;
@@ -69,13 +70,16 @@ class FileController extends AbstractController
 
     protected RecordPublisher $recordPublisher;
 
+    private ModuleTemplateFactory $moduleTemplateFactory;
+
     public function __construct(
         ConfigContainer $configContainer,
         ExecutionTimeService $executionTimeService,
         EnvironmentService $environmentService,
         RemoteCommandDispatcher $remoteCommandDispatcher,
         FolderPublisherService $folderPublisherService,
-        RecordPublisher $recordPublisher
+        RecordPublisher $recordPublisher,
+        ModuleTemplateFactory $moduleTemplateFactory
     ) {
         parent::__construct(
             $configContainer,
@@ -85,6 +89,7 @@ class FileController extends AbstractController
         );
         $this->folderPublisherService = $folderPublisherService;
         $this->recordPublisher = $recordPublisher;
+        $this->moduleTemplateFactory = $moduleTemplateFactory;
     }
 
     public function indexAction(): ResponseInterface
@@ -94,7 +99,11 @@ class FileController extends AbstractController
         if (null !== $record) {
             $this->view->assign('record', $record);
         }
-        return $this->htmlResponse();
+
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $moduleTemplate->setFlashMessageQueue($this->getFlashMessageQueue());
+        $moduleTemplate->setContent($this->view->render());
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
     /** @throws StopActionException */

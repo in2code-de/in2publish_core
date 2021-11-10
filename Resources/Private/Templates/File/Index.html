@@ -1,4 +1,5 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
+{namespace core=TYPO3\CMS\Core\ViewHelpers}
 <f:layout name="File" />
 
 Index
@@ -9,25 +10,24 @@ Index
 		<f:translate key="module_m3_title">publish files</f:translate>
 	</h2>
 
-	<div class="in2publish-main">
-		<f:render partial="Server" arguments="{_all}" />
-		<div class="in2publish-stagelisting">
+	<div class="table-fit">
+		<table class="table">
+			<thead>
+			<tr>
+				<th>Filename Stage</th>
+				<th>Filename Live</th>
+				<th>Status</th>
+			</tr>
+			</thead>
+			<tbody>
 			<f:render partial="File/Index/FolderList" arguments="{_all}" />
-
-			<f:if condition="{record.relatedRecords}">
-				<ul class="in2publish-unstyledlist in2publish-list-level in2publish-list-level--{record.additionalProperties.depth}">
-					<f:for each="{record.relatedRecords.sys_file}" as="fileRecord">
-						<li>
-							<f:render partial="File/Index/FileList" arguments="{record:fileRecord, config:config}" />
-						</li>
-					</f:for>
-				</ul>
-			</f:if>
-		</div>
+			<f:for each="{record.relatedRecords.sys_file}" as="fileRecord">
+				<f:render partial="File/Index/FileList" arguments="{record:fileRecord, config:config}" />
+			</f:for>
+			</tbody>
+		</table>
 	</div>
-	<f:if condition="{record}">
-		<f:render partial="File/Index/FunctionBar" arguments="{_all}" />
-	</f:if>
+
 	<f:alias map="{moduleName: 'file'}">
 		<f:render partial="Footer" arguments="{_all}" />
 	</f:alias>

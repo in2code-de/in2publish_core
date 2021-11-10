@@ -1,33 +1,74 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
-
+{namespace core=TYPO3\CMS\Core\ViewHelpers}
 <f:if condition="{record}">
-	<div class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.stateRecursive} in2publish-clearfix">
+	<tr class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.stateRecursive}">
 		<f:comment>Left</f:comment>
-		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--left">
-			<i class="in2publish-icon-file"></i>
+		<td>
+			<core:iconForRecord row="{record.localProperties}" table="{record.tableName}"></core:iconForRecord>
 			<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" />
-			<i class="in2publish-icon-info" data-action="opendirtypropertieslistcontainer"></i>
+
+			<div class="btn-group">
+				<button class="btn btn-default" data-action="opendirtypropertieslistcontainer" data-target="{record.tableName}-{record.localProperties.uid}">
+					<core:icon identifier="actions-info"></core:icon>
+				</button>
+				<f:if condition="{record.state} != 'deleted'">
+					<f:then>
+						<f:link.external
+							class="btn btn-default"
+							uri="{publish:File.BuildResourcePath(record:record,stagingLevel:'local')}"
+							target="_blank">
+							<core:icon identifier="actions-eye"></core:icon>
+						</f:link.external>
+					</f:then>
+				</f:if>
+				<button class="btn btn-default">
+					<core:icon identifier="actions-pencil"></core:icon>
+				</button>
+			</div>
+
+			<button class="btn btn-default">
+				<core:icon identifier="actions-square"></core:icon>
+			</button>
+
 			<f:if condition="{record.changedRecursive}">
 				<f:link.action
+					class="btn btn-default"
 					action="publishFile"
 					arguments="{
 						uid:record.identifier,
 						identifier:'{publish:record.getMergedProperty(record:record, propertyName: \'identifier\')}',
 						storage:'{publish:record.getMergedProperty(record:record, propertyName: \'storage\')}'}"
 					additionalAttributes="{data-in2publish-overlay: 'TRUE', data-in2publish-confirm: '{f:translate(key:\'confirm_publish_file\', default:\'Are you sure?\')}'}">
-					<i class="in2publish-icon-publish"></i>
+					Publish
+					<core:icon identifier="actions-arrow-right"></core:icon>
 				</f:link.action>
 			</f:if>
-		</div>
+		</td>
 
 		<f:comment>Right</f:comment>
-		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--right">
-			<i class="in2publish-icon-file"></i>
+		<td>
+			<core:iconForRecord row="{record.foreignProperties}" table="{record.tableName}"></core:iconForRecord>
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" />
-		</div>
 
-		<f:comment>Difference View</f:comment>
-		<f:render partial="File/Index/DirtyPropertiesList" arguments="{_all}" />
-	</div>
+			<f:if condition="{record.state} != 'added'">
+				<f:then>
+					<f:link.external
+						class="btn btn-default"
+						uri="{publish:File.BuildResourcePath(record:record,stagingLevel:'foreign')}"
+						target="_blank">
+						<core:icon identifier="actions-eye"></core:icon>
+					</f:link.external>
+				</f:then>
+			</f:if>
+		</td>
+
+		<td>
+			<i class="in2publish-state-icon in2publish-state-icon--{record.stateRecursive} in2publish-icon-circle"></i>
+			<f:translate key="record.state.{record.stateRecursive}.short"/>
+		</td>
+	</tr>
+
+	<f:comment>Difference View</f:comment>
+	<f:render partial="File/Index/DirtyPropertiesList" arguments="{_all}" />
 </f:if>

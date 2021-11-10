@@ -1,11 +1,10 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
-
+{namespace core=TYPO3\CMS\Core\ViewHelpers}
 <f:if condition="{record}">
-	<div class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.state} in2publish-clearfix">
-
+	<tr>
 		<f:comment>Left</f:comment>
-		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--left">
-			<i class="in2publish-icon-folder"></i>
+		<td>
+			<core:icon identifier="files-folder"></core:icon>
 			<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" fallbackProperty="identifier" />
 			<f:if condition="{record.changed}">
@@ -16,22 +15,23 @@
 					<i class="in2publish-icon-publish"></i>
 				</f:link.action>
 			</f:if>
-		</div>
+		</td>
 
 		<f:comment>Right</f:comment>
-		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--right">
-			<i class="in2publish-icon-folder"></i>
+		<td>
+			<core:icon identifier="files-folder"></core:icon>
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" fallbackProperty="identifier" />
-		</div>
-	</div>
+		</td>
+
+		<td>
+			<i class="in2publish-state-icon in2publish-state-icon--{record.state} in2publish-icon-circle"></i>
+			<f:translate key="record.state.{record.state}.short"/>
+		</td>
+	</tr>
 
 	<f:if condition="{record.relatedRecords}">
-		<ul class="in2publish-unstyledlist in2publish-list-level in2publish-list-level--{record.additionalProperties.depth}">
-			<f:for each="{record.relatedRecords.physical_folder}" as="folderRecord">
-				<li>
-					<f:render partial="File/Index/FolderList" arguments="{record:folderRecord, config:config}" />
-				</li>
-			</f:for>
-		</ul>
+		<f:for each="{record.relatedRecords.physical_folder}" as="folderRecord">
+			<f:render partial="File/Index/FolderList" arguments="{record:folderRecord, config:config}" />
+		</f:for>
 	</f:if>
 </f:if>
