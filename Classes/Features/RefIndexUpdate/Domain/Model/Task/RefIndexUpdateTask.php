@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Features\RefIndexUpdate\Domain\Model\Task;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 

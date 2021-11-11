@@ -1,4 +1,5 @@
 imports:
+  - { resource: Component/PostPublishTaskExecution/Services.yaml }
   - { resource: Features/CacheInvalidation/Services.yaml }
   - { resource: Features/ContextMenuPublishEntry/Services.yaml }
   - { resource: Features/FileEdgeCacheInvalidator/Services.yaml }
@@ -27,6 +28,7 @@ services:
     resource: '../Classes/*'
     exclude:
       - '../Classes/Domain/Model/*'
+      - '../Classes/Component/*'
       - '../Classes/Features/*'
 
   # Services
@@ -72,16 +74,6 @@ services:
     arguments: ['in2publish_core']
 
   # Commands
-
-  In2code\In2publishCore\Command\PublishTaskRunner\RunTasksInQueueCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:publishtasksrunner:runtasksinqueue'
-        description: >
-          Reads all Tasks to execute from the Database and executes them one after another.
-          The success of a Task is echoed to the console or scheduler backend module, including any error message of failed tasks.
-          NOTE: This command is used for internal operations in in2publish_core
-        hidden: true
 
   In2code\In2publishCore\Command\RemoteProcedureCall\ExecuteCommand:
     tags:

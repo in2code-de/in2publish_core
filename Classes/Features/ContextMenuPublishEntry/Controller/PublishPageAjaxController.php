@@ -4,9 +4,32 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\ContextMenuPublishEntry\Controller;
 
-use In2code\In2publishCore\Command\PublishTaskRunner\RunTasksInQueueCommand;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+/*
+ * Copyright notice
+ *
+ * (c) 2021 in2code.de and the following authors:
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
+ *
+ * All rights reserved
+ *
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ *
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
+
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use Psr\Http\Message\ResponseInterface;
@@ -26,17 +49,17 @@ class PublishPageAjaxController
     /** @var PermissionService */
     protected $permissionService;
 
-    /** @var RemoteCommandDispatcher */
-    protected $remoteCommandDispatcher;
+    /** @var TaskExecutionService */
+    protected $taskExecutionService;
 
     public function __construct(
         CommonRepository $commonRepository,
         PermissionService $permissionService,
-        RemoteCommandDispatcher $remoteCommandDispatcher
+        TaskExecutionService $taskExecutionService
     ) {
         $this->commonRepository = $commonRepository;
         $this->permissionService = $permissionService;
-        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
+        $this->taskExecutionService = $taskExecutionService;
     }
 
     public function publishPage(ServerRequestInterface $request): ResponseInterface
@@ -66,8 +89,7 @@ class PublishPageAjaxController
 
                 if (null !== $record && $record->isPublishable()) {
                     $this->commonRepository->publishRecordRecursive($record);
-                    $rceRequest = new RemoteCommandRequest(RunTasksInQueueCommand::IDENTIFIER);
-                    $rceResponse = $this->remoteCommandDispatcher->dispatch($rceRequest);
+                    $rceResponse = $this->taskExecutionService->runTasks();
                     if ($rceResponse->isSuccessful()) {
                         $content['success'] = true;
                         $content['error'] = false;

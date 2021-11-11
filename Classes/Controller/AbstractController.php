@@ -29,11 +29,9 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Command\PublishTaskRunner\RunTasksInQueueCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
 use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -145,26 +143,13 @@ abstract class AbstractController extends ActionController
      */
     protected function runTasks(): void
     {
-        $request = new RemoteCommandRequest(RunTasksInQueueCommand::IDENTIFIER);
-        $response = $this->remoteCommandDispatcher->dispatch($request);
-
         // DI would change the constructor's signature. The amount of code that would be required to change would be
         // enormous since the coupling via inheritance is too high and thus be considered a breaking change.
         // Ergo do not use DI for this particular class. The Task execution should be refactored to a service instead.
-        $taskRepository = GeneralUtility::makeInstance(TaskRepository::class);
-        $taskRepository->deleteObsolete();
+        $taskExecutionService = GeneralUtility::makeInstance(TaskExecutionService::class);
+        $response = $taskExecutionService->runTasks();
 
-        if ($response->isSuccessful()) {
-            $this->logger->info('Task execution results', ['output' => $response->getOutput()]);
-        } else {
-            $this->logger->error(
-                'Task execution failed',
-                [
-                    'output' => $response->getOutput(),
-                    'errors' => $response->getErrors(),
-                    'exit_status' => $response->getExitStatus(),
-                ]
-            );
+        if (!$response->isSuccessful()) {
             $this->addFlashMessage(
                 implode('<br/>', $response->getOutput()) . implode('<br/>', $response->getErrors()),
                 LocalizationUtility::translate('publishing.tasks_failure', 'in2publish_core'),
