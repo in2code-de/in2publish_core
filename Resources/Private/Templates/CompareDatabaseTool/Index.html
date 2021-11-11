@@ -1,0 +1,27 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+	<f:layout name="ToolsWhite" />
+
+	<f:section name="content">
+		<f:form action="compare" objectName="comparisonRequest">
+			<fieldset class="form-section">
+				<h4 class="form-section-headline"><f:translate key="compare_database.select_tables" /></h4>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="tables"><f:translate key="compare_database.tables" /></label>
+							<f:form.select id="tables" class="form-control" options="{tables}" property="tables"
+										   multiple="true" size="30" />
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<f:form.submit class="btn btn-primary" value="{f:translate(key:'compare_database.compare')}" />
+						</div>
+					</div>
+				</div>
+			</fieldset>
+		</f:form>
+	</f:section>
+</html>

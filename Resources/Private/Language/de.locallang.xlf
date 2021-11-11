@@ -214,6 +214,14 @@
 				<source>Use this module to collect information which will be required or useful to solve a bug or problem.</source>
 				<target state="translated">Anzeige von Informationen welche erforderlich oder nützlich sind Probleme zu identifizieren und sie zu beheben.</target>
 			</trans-unit>
+			<trans-unit id="moduleselector.compare">
+				<source>Compare Databases</source>
+				<target state="translated">Datenbankvergleich</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.compare.description">
+				<source>The compare tool scans the whole database for differences. This tool is ought to help administrators clean up UID conflicts.</source>
+				<target state="translated">Zeigt unterschiede zwischen den Datenbanken an. Dieses Tools soll Administratoren dabei helfen UID-Konflikte zu lösen.</target>
+			</trans-unit>
 
 			<trans-unit id="system_info.show">
 				<source>Show the system info</source>
@@ -606,6 +614,111 @@
 			<trans-unit id="refresh_page">
 				<source>Refresh page</source>
 				<target state="translated">Seite neu laden</target>
+			</trans-unit>
+
+			<trans-unit id="compare_database.only_local">
+				<source>New</source>
+				<target state="translated">Neu</target>
+			</trans-unit>
+			<trans-unit id="compare_database.only_foreign">
+				<source>Deleted</source>
+				<target state="translated">Gelöscht</target>
+			</trans-unit>
+			<trans-unit id="compare_database.diff">
+				<source>Differences</source>
+				<target state="translated">Unterschiede</target>
+			</trans-unit>
+			<trans-unit id="compare_database.general">
+				<source>Generally</source>
+				<target state="translated">Generell</target>
+			</trans-unit>
+			<trans-unit id="compare_database.general.local_empty">
+				<source>The table is empty on Local</source>
+				<target state="translated">Die Tabelle is auf Local leer.</target>
+			</trans-unit>
+			<trans-unit id="compare_database.general.foreign_empty">
+				<source>The table is empty on Foreign</source>
+				<target state="translated">Die Tabelle is auf Foreign leer.</target>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer">
+				<source>Transfer these changes to the foreign system</source>
+				<target state="translated">Übertrage diese Änderungen auf das entfernte System</target>
+			</trans-unit>
+			<trans-unit id="compare_database.no_differences">
+				<source>No differences were found in the data of the selected tables.</source>
+				<target state="translated">Es wurden keine Unterschiede in den Daten der gewählten Tabellen entdeckt.</target>
+			</trans-unit>
+			<trans-unit id="compare_database.select_tables">
+				<source>Select the tables to compare</source>
+				<target state="translated">Tabellen für den Vergleich auswählen</target>
+			</trans-unit>
+			<trans-unit id="compare_database.tables">
+				<source>Tables</source>
+				<target state="translated">Tabellen</target>
+			</trans-unit>
+			<trans-unit id="compare_database.compare">
+				<source>Compare</source>
+				<target state="translated">Vergleichen</target>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer_notice.header">
+				<source>This is not publishing</source>
+				<target state="translated">Dies ist kein Publishing</target>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer_notice">
+				<source>A transfer is not a publishing. Only the exact record that is selected is transferred. No relations to other records are resolved and no MM-records are displayed nor transferred. You should always prefer normal publishing to this feature. Use this feature only in an emergency and only if you are aware of all the consequences.</source>
+				<target state="translated">Ein Transfer ist kein Publishing. Es wird dabei nur exakt der Datensatz übertragen, der ausgewählt wird. Es werden keine Verknüpfungen zu anderen Datensätzen aufgelöst und es werden auch keine MM-Datensätze angezeigt oder übertragen. Sie sollten ein normales Publishing immer diesem Feature vorziehen. Nutzen Sie dieses Feature nur im Notfall und nur, wenn Sie sich aller Konsequenzen bewusst sind.</target>
+			</trans-unit>
+			<trans-unit id="compare_database.label">
+				<source>Record label</source>
+				<target state="translated">Datensatztitle</target>
+			</trans-unit>
+			<trans-unit id="compare_database.actions">
+				<source>Actions</source>
+				<target state="translated">Aktionen</target>
+			</trans-unit>
+			<trans-unit id="compare_database.diff">
+				<source>Differences</source>
+				<target state="translated">Unterschiede</target>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.error">
+				<source>Error</source>
+				<target state="translated">Fehler</target>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.success">
+				<source>Success</source>
+				<target state="translated">Erfolg</target>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.db_error">
+				<source>Could not connect to the databases</source>
+				<target state="translated">Unterschiede</target>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.record_missing">
+				<source>The record which should be transferred does not exist anymore.</source>
+				<target state="translated">Der Datensatz der übertragen werden sollte existiert nicht mehr.</target>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.exists_on_foreign">
+				<source>The record which should be transferred should not exists on Foreign but it does. It was probably published in the meantime.</source>
+				<target state="translated">Der Datensatz der übertragen werden sollte sollte nicht auf Foreign existieren, jedoch ist er vorhanden. Möglicherweise wurde er in der Zwischenzeit veröffentlicht.</target>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.exists_on_local">
+				<source>The record which should be transferred should not exists on Local but it does. It was probably created in the meantime.</source>
+				<target state="translated">Der Datensatz der übertragen werden sollte sollte nicht auf Local existieren, jedoch ist er vorhanden. Möglicherweise wurde er in der Zwischenzeit erstellt.</target>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.does_not_exists_on_both">
+				<source>The record which should be transferred should exists on both Local and Foreign but it does not. Please reload the comparison view and try again.</source>
+				<target state="translated">Der Datensatz der übertragen werden sollte sollte auf Local und Foreign existieren, er fehlt jedoch auf mindestens einem System. Bitte versuchen Sie es noch einmal, nachdem Sie die Vergleichsansicht neu geladen haben.</target>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.deleted_from_foreign">
+				<source>The record %s[%d] was deleted from foreign.</source>
+				<target state="translated">Der Datensatz %s[%d] wurde auf Foreign gelöscht.</target>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.transferred_to_foreign">
+				<source>The record %s[%d] was created on foreign.</source>
+				<target state="translated">Der Datensatz %s[%d] wurde auf Foreign erstellt.</target>
+			</trans-unit>
+			<trans-unit id="compare_database.transfer.updated_on_foreign">
+				<source>The record %s[%d] was updated on foreign.</source>
+				<target state="translated">Der Datensatz %s[%d] wurde auf Foreign aktualisiert.</target>
 			</trans-unit>
 		</body>
 	</file>
