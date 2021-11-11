@@ -41,7 +41,7 @@ use const E_USER_DEPRECATED;
 abstract class AbstractTask extends NewTaskAlias
 {
     private const DEPRECATION_MESSAGE = 'The class ' . self::class . ' has been moved. Please use the new class '
-                                        . parent::class . ' instead.';
+                                        . NewTaskAlias::class . ' instead.';
 
     // Only change to actually trigger this deprecation is the destructor
     public function __destruct()

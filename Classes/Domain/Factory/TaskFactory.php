@@ -42,7 +42,7 @@ use const E_USER_DEPRECATED;
 class TaskFactory extends NewTaskFactory
 {
     private const DEPRECATION_MESSAGE = 'The class ' . self::class . ' has been moved. Please use the new class '
-                                        . parent::class . ' instead.';
+                                        . NewTaskFactory::class . ' instead.';
 
     public function __construct()
     {
