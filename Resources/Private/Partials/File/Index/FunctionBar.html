@@ -1,40 +1,66 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
 <f:if condition="{publishingAvailable}">
-	<div class="in2publish-functions-bar">
-		<f:comment>
-			Filter buttons
-		</f:comment>
-		<f:if condition="{config.view.records.filterButtons}">
-			<div class="in2publish-functions-bar__filter">
-				<f:link.action
-					action="toggleFilterStatusAndRedirectToIndex"
-					class="in2publish-icon-status-changed in2publish-functions-bar__filter__link{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'changed\',key:\'files\')}',then:' in2publish-functions-bar--active')}"
-					additionalAttributes="{data-action-toggle-filter-status:1}"
-					arguments="{filter:'changed'}">
-					<i class="in2publish-icon-folder-open" title="Show only changed pages"></i>
-				</f:link.action>
-				<f:link.action
-					action="toggleFilterStatusAndRedirectToIndex"
-					class="in2publish-icon-status-added in2publish-functions-bar__filter__link{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'added\',key:\'files\')}',then:' in2publish-functions-bar--active')}"
-					additionalAttributes="{data-action-toggle-filter-status:1}"
-					arguments="{filter:'added'}">
-					<i class="in2publish-icon-folder-plus" title="Show only added pages"></i>
-				</f:link.action>
-				<f:link.action
-					action="toggleFilterStatusAndRedirectToIndex"
-					class="in2publish-icon-status-deleted in2publish-functions-bar__filter__link{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'deleted\',key:\'files\')}',then:' in2publish-functions-bar--active')}"
-					additionalAttributes="{data-action-toggle-filter-status:1}"
-					arguments="{filter:'deleted'}">
-					<i class="in2publish-icon-folder-minus" title="Show only deleted pages"></i>
-				</f:link.action>
-				<f:link.action
-					action="toggleFilterStatusAndRedirectToIndex"
-					class="in2publish-icon-status-moved in2publish-functions-bar__filter__link{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'moved\',key:\'files\')}',then:' in2publish-functions-bar--active')}"
-					additionalAttributes="{data-action-toggle-filter-status:1}"
-					arguments="{filter:'moved'}">
-					<i class="in2publish-icon-folder-download" title="Show only moved pages"></i>
-				</f:link.action>
-			</div>
-		</f:if>
+	<div class="hstack gap-3">
+		<p class="m-0">
+			Filter by:
+		</p>
+		<div class="form-check form-switch">
+			<input class="form-check-input" type="checkbox" role="switch" id="toggleStatusAdded">
+			<label class="form-check-label m-0" for="toggleStatusAdded">Added</label>
+		</div>
+		<div class="form-check form-switch">
+			<input class="form-check-input" type="checkbox" role="switch" id="toggleStatusChanged">
+			<label class="form-check-label m-0" for="toggleStatusChanged">Changed</label>
+		</div>
+		<div class="form-check form-switch">
+			<input class="form-check-input" type="checkbox" role="switch" id="toggleStatusDeleted">
+			<label class="form-check-label m-0" for="toggleStatusDeleted">Deleted</label>
+		</div>
+		<div class="form-check form-switch">
+			<input class="form-check-input" type="checkbox" role="switch" id="toggleStatusMoved">
+			<label class="form-check-label m-0" for="toggleStatusMoved">Moved</label>
+		</div>
+		<div class="form-check form-switch">
+			<input class="form-check-input" type="checkbox" role="switch" id="toggleStatusUnchanged">
+			<label class="form-check-label m-0" for="toggleStatusUnchanged">Unchanged</label>
+		</div>
 	</div>
+	<f:comment>
+		<![CDATA[
+			<div class="in2publish-functions-bar">
+				<f:if condition="{config.view.records.filterButtons}">
+					<div class="in2publish-functions-bar__filter">
+						<f:link.action
+							action="toggleFilterStatusAndRedirectToIndex"
+							class="in2publish-icon-status-changed in2publish-functions-bar__filter__link{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'changed\',key:\'files\')}',then:' in2publish-functions-bar--active')}"
+							additionalAttributes="{data-action-toggle-filter-status:1}"
+							arguments="{filter:'changed'}">
+							<i class="in2publish-icon-folder-open" title="Show only changed pages"></i>
+						</f:link.action>
+						<f:link.action
+							action="toggleFilterStatusAndRedirectToIndex"
+							class="in2publish-icon-status-added in2publish-functions-bar__filter__link{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'added\',key:\'files\')}',then:' in2publish-functions-bar--active')}"
+							additionalAttributes="{data-action-toggle-filter-status:1}"
+							arguments="{filter:'added'}">
+							<i class="in2publish-icon-folder-plus" title="Show only added pages"></i>
+						</f:link.action>
+						<f:link.action
+							action="toggleFilterStatusAndRedirectToIndex"
+							class="in2publish-icon-status-deleted in2publish-functions-bar__filter__link{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'deleted\',key:\'files\')}',then:' in2publish-functions-bar--active')}"
+							additionalAttributes="{data-action-toggle-filter-status:1}"
+							arguments="{filter:'deleted'}">
+							<i class="in2publish-icon-folder-minus" title="Show only deleted pages"></i>
+						</f:link.action>
+						<f:link.action
+							action="toggleFilterStatusAndRedirectToIndex"
+							class="in2publish-icon-status-moved in2publish-functions-bar__filter__link{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'moved\',key:\'files\')}',then:' in2publish-functions-bar--active')}"
+							additionalAttributes="{data-action-toggle-filter-status:1}"
+							arguments="{filter:'moved'}">
+							<i class="in2publish-icon-folder-download" title="Show only moved pages"></i>
+						</f:link.action>
+					</div>
+				</f:if>
+			</div>
+		]]>
+	</f:comment>
 </f:if>
