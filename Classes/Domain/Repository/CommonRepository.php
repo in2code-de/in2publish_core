@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Domain\Repository;
  */
 
 use Exception;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository as NewTaskRepository;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
@@ -150,7 +151,7 @@ class CommonRepository extends BaseRepository
     /** @var ResourceFactory */
     protected $resourceFactory;
 
-    /** @var TaskRepository */
+    /** @var NewTaskRepository */
     protected $taskRepository;
 
     /** @var ConfigContainer */
@@ -177,7 +178,7 @@ class CommonRepository extends BaseRepository
         ?Connection $foreignDatabase,
         RecordFactory $recordFactory,
         ResourceFactory $resourceFactory,
-        TaskRepository $taskRepository,
+        NewTaskRepository $taskRepository,
         ConfigContainer $configContainer,
         EventDispatcher $eventDispatcher,
         ReplaceMarkersService $replaceMarkersService,

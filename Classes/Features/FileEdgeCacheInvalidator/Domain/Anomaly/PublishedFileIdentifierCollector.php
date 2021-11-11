@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly;
 
-use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Event\PhysicalFileWasPublished;
 use In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Model\Task\FlushFileEdgeCacheTask;
 

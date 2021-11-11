@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Features\NewsSupport\Domain\Model\Task\FlushNewsCacheTask;
 

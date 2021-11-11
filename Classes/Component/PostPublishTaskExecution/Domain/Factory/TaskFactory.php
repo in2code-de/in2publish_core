@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Features\NewsSupport\Domain\Model\Task;
+namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Factory;
 
 /*
  * Copyright notice
@@ -30,31 +30,43 @@ namespace In2code\In2publishCore\Features\NewsSupport\Domain\Model\Task;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use DateTime;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask;
-use TYPO3\CMS\Core\Cache\CacheManager;
-use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class FlushNewsCacheTask extends AbstractTask
+use function json_decode;
+
+/**
+ * converts database rows from tx_in2code_in2publish_task into Task objects
+ */
+class TaskFactory
 {
     /**
-     * Deletes all pages and news caches the same way they will be deleted on local
+     * @param array $taskProperties
      *
-     * @return bool
-     *
-     * @throws NoSuchCacheException
+     * @return AbstractTask
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function executeTask(): bool
+    public function convertToObject(array $taskProperties): AbstractTask
     {
-        /** @var CacheManager $cacheManager */
-        $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
-        foreach ($this->configuration['tagsToFlush'] as $cacheTag) {
-            $cacheManager->getCache('cache_pages')->flushByTag($cacheTag);
-            $cacheManager->getCache('cache_pagesection')->flushByTag($cacheTag);
-            $this->addMessage('Flushed all tx_news related caches for cache tag "' . $cacheTag . '"');
+        $className = $taskProperties['task_type'];
+        $configuration = json_decode($taskProperties['configuration'], true);
+
+        /** @var AbstractTask $object */
+        $object = GeneralUtility::makeInstance($className, $configuration, $taskProperties['uid']);
+        $object->setCreationDate(new DateTime($taskProperties['creation_date']));
+
+        if ($taskProperties['messages']) {
+            $object->setMessages(json_decode($taskProperties['messages'], true));
         }
-        return true;
+        if ($taskProperties['execution_begin']) {
+            $object->setExecutionBegin(new DateTime($taskProperties['execution_begin']));
+        }
+        if ($taskProperties['execution_end']) {
+            $object->setExecutionEnd(new DateTime($taskProperties['execution_end']));
+        }
+
+        return $object;
     }
 }
