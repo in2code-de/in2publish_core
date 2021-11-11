@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use In2code\In2publishCore\Domain\Model\BackendUser;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\SysRedirect;
 
 return [
@@ -23,6 +24,24 @@ return [
             ],
             'siteId' => [
                 'fieldName' => 'tx_in2publishcore_foreign_site_id',
+            ],
+        ],
+    ],
+
+    BackendUser::class => [
+        'tableName' => 'be_users',
+        'properties' => [
+            'userName' => [
+                'fieldName' => 'username',
+            ],
+            'realName' => [
+                'fieldName' => 'realName',
+            ],
+            'email' => [
+                'fieldName' => 'email',
+            ],
+            'isDisabled' => [
+                'fieldName' => 'disable',
             ],
         ],
     ],
