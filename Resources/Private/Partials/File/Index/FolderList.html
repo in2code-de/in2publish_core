@@ -3,28 +3,36 @@
 <f:if condition="{record}">
 	<tr>
 		<f:comment>Left</f:comment>
-		<td>
+		<td class="col-icon">
 			<core:icon identifier="files-folder"></core:icon>
+		</td>
+		<td class="col-filename col-responsive nowrap" colspan="3">
 			<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" fallbackProperty="identifier" />
+		</td>
+		<td class="col-control">
 			<f:if condition="{record.changed}">
 				<f:link.action
+					class="t3js-modal-trigger btn btn-default"
 					action="publishFolder"
 					arguments="{identifier:record.identifier}"
-					additionalAttributes="{data-in2publish-overlay: 'TRUE', data-in2publish-confirm: '{f:translate(key:\'confirm_publish_pages\', default:\'Are you sure?\')}'}">
-					<i class="in2publish-icon-publish"></i>
+					additionalAttributes="{data-title: 'Publish', data-content: '{f:translate(key:\'confirm_publish_pages\', default:\'Are you sure?\')}', data-severity: 'warning'}">
+					Publish
+					<core:icon identifier="actions-arrow-right"></core:icon>
 				</f:link.action>
 			</f:if>
 		</td>
 
 		<f:comment>Right</f:comment>
-		<td>
+		<td class="col-icon">
 			<core:icon identifier="files-folder"></core:icon>
+		</td>
+		<td class="col-filename col-responsive nowrap" colspan="2">
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" fallbackProperty="identifier" />
 		</td>
 
 		<td>
-			<i class="in2publish-state-icon in2publish-state-icon--{record.state} in2publish-icon-circle"></i>
+			<i class="in2publish-state-icon in2publish-state-icon--{record.state} in2publish-icon-circle ms-2"></i>
 			<f:translate key="record.state.{record.state}.short"/>
 		</td>
 	</tr>

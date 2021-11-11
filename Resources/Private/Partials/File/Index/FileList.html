@@ -3,43 +3,65 @@
 <f:if condition="{record}">
 	<tr class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.stateRecursive}">
 		<f:comment>Left</f:comment>
-		<td>
-			<core:iconForRecord row="{record.localProperties}" table="{record.tableName}"></core:iconForRecord>
+		<td class="col-icon">
+			<span data-bs-toggle="tooltip" title="uid={record.localProperties.uid}">
+				<core:iconForRecord row="{record.localProperties}" table="{record.tableName}"></core:iconForRecord>
+			</span>
+		</td>
+		<td class="col-filename col-responsive nowrap">
 			<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" />
-
+		</td>
+		<td class="col-control">
 			<div class="btn-group">
-				<button class="btn btn-default" data-action="opendirtypropertieslistcontainer" data-target="{record.tableName}-{record.localProperties.uid}">
+				<a class="btn btn-default" data-bs-toggle="collapse" href="#{record.tableName}-{record.localProperties.uid}">
 					<core:icon identifier="actions-info"></core:icon>
-				</button>
+				</a>
 				<f:if condition="{record.state} != 'deleted'">
 					<f:then>
 						<f:link.external
 							class="btn btn-default"
 							uri="{publish:File.BuildResourcePath(record:record,stagingLevel:'local')}"
+							additionalAttributes="{'data-bs-toggle': 'tooltip'}"
+							title="View"
 							target="_blank">
 							<core:icon identifier="actions-eye"></core:icon>
 						</f:link.external>
 					</f:then>
 				</f:if>
-				<button class="btn btn-default">
-					<core:icon identifier="actions-pencil"></core:icon>
-				</button>
+				<f:if condition="{record.relatedRecords.sys_file_metadata}">
+					<f:then>
+						<f:for each="{record.relatedRecords.sys_file_metadata}" as="{metaRecord}" iteration="iterator">
+							<f:if condition="{iterator.isFirst}">
+								<a class="btn btn-default" href="{publish:uri.editUri(uid: metaRecord.localProperties.uid, tableName: metaRecord.tableName)}" data-bs-toggle="tooltip" title="Edit">
+									<core:icon identifier="actions-pencil"></core:icon>
+								</a>
+							</f:if>
+						</f:for>
+					</f:then>
+					<f:else>
+						<span class="btn btn-default disabled" aria-hidden="true">
+							<core:icon identifier="empty-empty"></core:icon>
+						</span>
+					</f:else>
+				</f:if>
 			</div>
-
+		</td>
+		<td>
 			<button class="btn btn-default">
 				<core:icon identifier="actions-square"></core:icon>
 			</button>
-
+		</td>
+		<td>
 			<f:if condition="{record.changedRecursive}">
 				<f:link.action
-					class="btn btn-default"
+					class="t3js-modal-trigger btn btn-default"
 					action="publishFile"
 					arguments="{
 						uid:record.identifier,
 						identifier:'{publish:record.getMergedProperty(record:record, propertyName: \'identifier\')}',
 						storage:'{publish:record.getMergedProperty(record:record, propertyName: \'storage\')}'}"
-					additionalAttributes="{data-in2publish-overlay: 'TRUE', data-in2publish-confirm: '{f:translate(key:\'confirm_publish_file\', default:\'Are you sure?\')}'}">
+					additionalAttributes="{data-title: 'Publish', data-content: '{f:translate(key:\'confirm_publish_file\', default:\'Are you sure?\')}', data-severity: 'warning'}">
 					Publish
 					<core:icon identifier="actions-arrow-right"></core:icon>
 				</f:link.action>
@@ -47,15 +69,22 @@
 		</td>
 
 		<f:comment>Right</f:comment>
-		<td>
-			<core:iconForRecord row="{record.foreignProperties}" table="{record.tableName}"></core:iconForRecord>
+		<td class="col-icon">
+			<span data-bs-toggle="tooltip" title="uid={record.foreignProperties.uid}">
+				<core:iconForRecord row="{record.foreignProperties}" table="{record.tableName}"></core:iconForRecord>
+			</span>
+		</td>
+		<td class="col-filename col-responsive nowrap">
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" />
-
+		</td>
+		<td class="col-control">
 			<f:if condition="{record.state} != 'added'">
 				<f:then>
 					<f:link.external
 						class="btn btn-default"
 						uri="{publish:File.BuildResourcePath(record:record,stagingLevel:'foreign')}"
+						additionalAttributes="{'data-bs-toggle': 'tooltip'}"
+						title="View"
 						target="_blank">
 						<core:icon identifier="actions-eye"></core:icon>
 					</f:link.external>
@@ -64,7 +93,7 @@
 		</td>
 
 		<td>
-			<i class="in2publish-state-icon in2publish-state-icon--{record.stateRecursive} in2publish-icon-circle"></i>
+			<i class="in2publish-state-icon in2publish-state-icon--{record.stateRecursive} in2publish-icon-circle ms-2"></i>
 			<f:translate key="record.state.{record.stateRecursive}.short"/>
 		</td>
 	</tr>

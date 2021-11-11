@@ -10,12 +10,22 @@ Index
 		<f:translate key="module_m3_title">publish files</f:translate>
 	</h2>
 
+	<f:if condition="{record}">
+		<f:render partial="File/Index/FunctionBar" arguments="{_all}"/>
+	</f:if>
+
 	<div class="table-fit">
-		<table class="table">
+		<table class="table in2publish-table">
 			<thead>
 			<tr>
-				<th>Filename Stage</th>
-				<th>Filename Live</th>
+				<th class="col-icon"></th>
+				<th class="col-filename col-responsive nowrap">Filename <i>(Stage)</i></th>
+				<th class="col-control actions"></th>
+				<th class="col-control col-selection"></th>
+				<th class="col-control col-publish"><i>[Control]</i></th>
+				<th class="col-icon"></th>
+				<th class="col-filename col-responsive nowrap">Filename <i>(Live)</i></th>
+				<th class="col-control"><i>[Control]</i></th>
 				<th>Status</th>
 			</tr>
 			</thead>

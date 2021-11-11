@@ -45,12 +45,14 @@ use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 
+use TYPO3\CMS\Form\Domain\Model\FormElements\Page;
 use function count;
 use function dirname;
 use function ltrim;
@@ -72,6 +74,8 @@ class FileController extends AbstractController
 
     private ModuleTemplateFactory $moduleTemplateFactory;
 
+    private PageRenderer $pageRenderer;
+
     public function __construct(
         ConfigContainer $configContainer,
         ExecutionTimeService $executionTimeService,
@@ -79,6 +83,7 @@ class FileController extends AbstractController
         RemoteCommandDispatcher $remoteCommandDispatcher,
         FolderPublisherService $folderPublisherService,
         RecordPublisher $recordPublisher,
+        PageRenderer $pageRenderer,
         ModuleTemplateFactory $moduleTemplateFactory
     ) {
         parent::__construct(
@@ -90,6 +95,7 @@ class FileController extends AbstractController
         $this->folderPublisherService = $folderPublisherService;
         $this->recordPublisher = $recordPublisher;
         $this->moduleTemplateFactory = $moduleTemplateFactory;
+        $this->pageRenderer = $pageRenderer;
     }
 
     public function indexAction(): ResponseInterface
@@ -100,6 +106,8 @@ class FileController extends AbstractController
             $this->view->assign('record', $record);
         }
 
+        $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/Backend/Tooltip');
+        $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/Backend/Modal');
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $moduleTemplate->setFlashMessageQueue($this->getFlashMessageQueue());
         $moduleTemplate->setContent($this->view->render());
