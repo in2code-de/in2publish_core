@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\ViewHelpers\Tools;
+namespace In2code\In2publishCore\Features\AdminTools\Controller;
 
 /*
  * Copyright notice
  *
- * (c) 2017 in2code.de and the following authors:
+ * (c) 2021 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,21 +29,24 @@ namespace In2code\In2publishCore\ViewHelpers\Tools;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry;
-use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
-class GetEnabledToolsViewHelper extends AbstractViewHelper
+class TcaController extends ActionController
 {
-    /** @var ToolsRegistry */
-    protected $toolsRegistry;
-
-    public function __construct(ToolsRegistry $toolsRegistry)
+    public function indexAction(): void
     {
-        $this->toolsRegistry = $toolsRegistry;
+        $this->view->assign('incompatibleTca', TcaProcessingService::getIncompatibleTca());
+        $this->view->assign('compatibleTca', TcaProcessingService::getCompatibleTca());
+        $this->view->assign('controls', TcaProcessingService::getControls());
     }
 
-    public function render(): array
+    /** @throws StopActionException */
+    public function clearTcaCachesAction(): void
     {
-        return $this->toolsRegistry->getEntries();
+        GeneralUtility::makeInstance(TcaProcessingService::class)->flushCaches();
+        $this->redirect('index');
     }
 }

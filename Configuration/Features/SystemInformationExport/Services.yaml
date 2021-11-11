@@ -1,0 +1,15 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  In2code\In2publishCore\Features\SystemInformationExport\:
+    resource: '../../../Classes/Features/SystemInformationExport/*'
+
+  In2code\In2publishCore\Features\SystemInformationExport\Controller\SystemInformationExportController:
+    tags:
+      - name: 'in2publish_core.admin_tool'
+        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.system_info'
+        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.system_info.description'
+        actions: 'sysInfoIndex,sysInfoShow,sysInfoDecode,sysInfoDownload,sysInfoUpload'

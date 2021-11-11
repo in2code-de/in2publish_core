@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\ViewHelpers\Tools;
+namespace In2code\In2publishCore\Features\AdminTools\Controller;
 
 /*
  * Copyright notice
  *
- * (c) 2017 in2code.de and the following authors:
+ * (c) 2021 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,21 +29,26 @@ namespace In2code\In2publishCore\ViewHelpers\Tools;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry;
-use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use In2code\In2publishCore\Config\ConfigContainer;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
-class GetEnabledToolsViewHelper extends AbstractViewHelper
+class ShowConfigurationController extends ActionController
 {
-    /** @var ToolsRegistry */
-    protected $toolsRegistry;
+    /** @var ConfigContainer */
+    protected $configContainer;
 
-    public function __construct(ToolsRegistry $toolsRegistry)
+    public function __construct(ConfigContainer $configContainer)
     {
-        $this->toolsRegistry = $toolsRegistry;
+        $this->configContainer = $configContainer;
     }
 
-    public function render(): array
+    public function indexAction(int $emulatePage = null): void
     {
-        return $this->toolsRegistry->getEntries();
+        if (null !== $emulatePage) {
+            $_POST['id'] = $emulatePage;
+        }
+        $this->view->assign('containerDump', $this->configContainer->dump());
+        $this->view->assign('globalConfig', $this->configContainer->getContextFreeConfig());
+        $this->view->assign('emulatePage', $emulatePage);
     }
 }
