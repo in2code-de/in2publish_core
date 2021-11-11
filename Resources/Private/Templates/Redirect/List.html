@@ -9,6 +9,8 @@
 	</f:section>
 
 	<f:section name="Main">
+		<f:render partial="Redirect/Filter" arguments="{_all}" />
+
 		<f:be.widget.paginate objects="{redirects}" as="paginatedRedirects" configuration="{ itemsPerPage: 20, insertAbove: 1, insertBelow: 1, recordsLabel: 'Redirects'}">
 			<f:form action="publish">
 				<table class="table">

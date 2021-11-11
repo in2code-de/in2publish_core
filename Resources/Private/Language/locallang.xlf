@@ -420,6 +420,32 @@
 				<source>This redirect is published</source>
 			</trans-unit>
 
+			<trans-unit id="redirect.status.short.publishable">
+				<source>Ready for publishing</source>
+			</trans-unit>
+			<trans-unit id="redirect.status.short.siteRequired">
+				<source>Missing page or site</source>
+			</trans-unit>
+			<trans-unit id="redirect.status.short.requiresPagePublishing">
+				<source>Requires page publishing</source>
+			</trans-unit>
+			<trans-unit id="redirect.status.short.published">
+				<source>Published</source>
+			</trans-unit>
+
+			<trans-unit id="filter.form.submit">
+				<source>Filter</source>
+			</trans-unit>
+			<trans-unit id="filter.field.has_association">
+				<source>Association</source>
+			</trans-unit>
+			<trans-unit id="filter.field.has_association.present">
+				<source>Association present</source>
+			</trans-unit>
+			<trans-unit id="filter.field.has_association.missing">
+				<source>Association missing</source>
+			</trans-unit>
+
 			<trans-unit id="refresh_page">
 				<source>Refresh page</source>
 			</trans-unit>
