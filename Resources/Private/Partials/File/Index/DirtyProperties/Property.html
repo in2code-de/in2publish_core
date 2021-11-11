@@ -1,0 +1,16 @@
+{namespace publish=In2code\In2publishCore\ViewHelpers}
+
+<f:variable name="propertyKey">{stagingLevel}Properties</f:variable>
+<f:variable name="recordProperties">{record.{propertyKey}}</f:variable>
+<f:if condition="{recordProperties.{propertyName}}">
+	<li class="mb-2">
+		<b class="d-inline-block w-25 pe-2">
+			<publish:Tca.GetFieldLabelFromLocallang fieldName="{propertyName}" tableName="{record.tableName}"/>
+		</b>
+		<span class="d-inline-block w-auto">
+		<publish:Tca.FormatPropertyByTcaDefinition fieldName="{propertyName}" tableName="{record.tableName}">
+			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{propertyName}" stagingLevel="{stagingLevel}" />
+		</publish:Tca.FormatPropertyByTcaDefinition>
+	</span>
+	</li>
+</f:if>

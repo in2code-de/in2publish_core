@@ -1,83 +1,37 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
 
-<tr>
-	<td colspan="3" class="in2publish-stagelisting__dropdown in2publish-stagelisting__dropdown--close in2publish-clearfix" data-diff-for="{record.tableName}-{record.localProperties.uid}">
-		<div class="in2publish-stagelisting__dropdown__item in2publish-stagelisting__dropdown__item--left">
-			<div class="in2publish-stagelisting__dropdown__actions">
-				<f:if condition="{record.state} != 'deleted'">
-					<f:then>
-
-						<f:link.external
-							class="in2publish-notextdecoration"
-							uri="{publish:File.BuildResourcePath(record:record,stagingLevel:'local')}"
-							target="_blank">
-							<i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_file">Preview</f:translate>
-						</f:link.external>
-					</f:then>
-					<f:else>
-						&nbsp;
-					</f:else>
-				</f:if>
-			</div>
-
-			<f:if condition="{record.changedRecursive">
-
-				<f:comment>Show File properties only if they have changed</f:comment>
-				<f:if condition="{record.state} == 'changed'">
-					<f:if condition="{record.dirtyProperties}">
-						<h3><f:translate key="dirty_properties_fileproperties">File properties</f:translate></h3>
-						<ul class="in2publish-stagelisting__dropdown__page in2publish-stagelisting__dropdown__item__list">
-							<f:for each="{record.dirtyProperties}" as="fieldName">
-								<li>
-									<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.tableName}" />
-									<publish:Tca.FormatPropertyByTcaDefinition fieldName="{dirtyProperty}" tableName="{record.tableName}">
-										<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{fieldName}" stagingLevel="local" />
-									</publish:Tca.FormatPropertyByTcaDefinition>
-								</li>
-							</f:for>
-						</ul>
-					</f:if>
-				</f:if>
-			</f:if>
-		</div>
-
-		<div class="in2publish-stagelisting__dropdown__item in2publish-stagelisting__dropdown__item--right">
-			<div class="in2publish-stagelisting__dropdown__actions">
-				<f:if condition="{record.state} != 'added'">
-					<f:then>
-						<f:link.external
-							class="in2publish-notextdecoration"
-							uri="{publish:File.BuildResourcePath(record:record,stagingLevel:'foreign')}"
-							target="_blank">
-							<i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_file">Preview</f:translate>
-						</f:link.external>
-					</f:then>
-					<f:else>
-						&nbsp;
-					</f:else>
-				</f:if>
-			</div>
-
-			<f:if condition="{record.changedRecursive">
-
-				<f:comment>Show File properties only if they have changed</f:comment>
-				<f:if condition="{record.state} == 'changed'">
-					<f:if condition="{record.dirtyProperties}">
-						<h3><f:translate key="dirty_properties_fileproperties">File properties</f:translate></h3>
-						<ul class="in2publish-stagelisting__dropdown__page in2publish-stagelisting__dropdown__item__list">
-							<f:for each="{record.dirtyProperties}" as="fieldName">
-								<li>
-									<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.tableName}" />
-									<publish:Tca.FormatPropertyByTcaDefinition fieldName="{dirtyProperty}" tableName="{record.tableName}">
-										<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{fieldName}" stagingLevel="foreign" />
-									</publish:Tca.FormatPropertyByTcaDefinition>
-								</li>
-							</f:for>
-						</ul>
-					</f:if>
-				</f:if>
-
-			</f:if>
-		</div>
+<tr class="collapse" id="{record.tableName}-{record.localProperties.uid}">
+	<td></td>
+	<td colspan="4">
+		<f:render section="StageProperties" arguments="{ record: record, stagingLevel: 'local'}"/>
 	</td>
+	<td></td>
+	<td colspan="2">
+		<f:render section="StageProperties" arguments="{ record: record, stagingLevel: 'foreign'}"/>
+	</td>
+	<td></td>
 </tr>
+
+<f:section name="StageProperties">
+	<f:variable name="propertyKey">{stagingLevel}Properties</f:variable>
+
+	<ul class="list-unstyled mb-2 ms-0">
+		<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'name', stagingLevel: stagingLevel}"/>
+		<f:if condition="{record.relatedRecords.sys_file_metadata}">
+			<f:for each="{record.relatedRecords.sys_file_metadata}" as="metaRecord" iteration="iterator">
+				<f:if condition="{iterator.isFirst}">
+					<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'title', stagingLevel: stagingLevel}"/>
+					<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'description', stagingLevel: stagingLevel}"/>
+					<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'alternative', stagingLevel: stagingLevel}"/>
+				</f:if>
+			</f:for>
+		</f:if>
+		<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'extension', stagingLevel: stagingLevel}"/>
+		<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'size', stagingLevel: stagingLevel}"/>
+		<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'identifier', stagingLevel: stagingLevel}"/>
+	</ul>
+
+	<f:if condition="{record.{propertyKey}.type} == 2">
+		<f:image class="w-50 h-auto" src="{publish:File.BuildResourcePath(record:record,stagingLevel: stagingLevel)}"/>
+	</f:if>
+</f:section>
