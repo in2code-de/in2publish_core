@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Features\CacheInvalidation\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Features\CacheInvalidation\Domain\Model\Task\FlushFrontendPageCacheTask;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -42,9 +42,7 @@ use function implode;
 
 class CacheInvalidator implements SingletonInterface
 {
-    /**
-     * @var TaskRepository
-     */
+    /** @var TaskRepository */
     protected $taskRepository;
 
     /** @var array<int, int> */

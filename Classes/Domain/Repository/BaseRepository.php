@@ -43,6 +43,7 @@ use function explode;
 use function implode;
 use function is_array;
 use function is_int;
+use function json_encode;
 use function preg_match;
 use function stripos;
 use function strpos;
@@ -81,7 +82,7 @@ abstract class BaseRepository implements LoggerAwareInterface
      * @param string $groupBy
      * @param string $orderBy
      * @param string $limit
-     * @param string $indexField
+     * @param string|array $indexField
      * @param string|null $tableName
      *
      * @return array
@@ -94,7 +95,7 @@ abstract class BaseRepository implements LoggerAwareInterface
         string $groupBy = '',
         string $orderBy = '',
         string $limit = '',
-        string $indexField = 'uid',
+        $indexField = 'uid',
         string $tableName = null
     ): array {
         $propertyArray = [];
@@ -306,12 +307,24 @@ abstract class BaseRepository implements LoggerAwareInterface
      * Sets a new index for all entries in $rows. Does not check for duplicate keys.
      * If there are duplicates, the last one is final.
      *
-     * @param string $indexField Single field name or comma separated, if more than one field.
+     * @param string|array $indexField Single field name or comma separated, if more than one field.
      * @param array $rows The rows to reindex
      * @return array The rows with the new index.
      */
-    protected function indexRowsByField(string $indexField, array $rows): array
+    protected function indexRowsByField($indexField, array $rows): array
     {
+        if (is_array($indexField)) {
+            $newRows = [];
+            foreach ($rows as $row) {
+                $identifier = [];
+                foreach ($indexField as $field) {
+                    $identifier[$field] = $row[$field];
+                }
+                $idString = json_encode($identifier);
+                $newRows[$idString] = $row;
+            }
+            return $newRows;
+        }
         if (strpos($indexField, ',')) {
             $newRows = [];
             $combinedIdentifier = explode(',', $indexField);

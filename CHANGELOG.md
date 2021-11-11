@@ -1,220 +1,261 @@
 # In2publish Core Change Log
 
+10.1.0:
+
+- [META] Set the branch alias version number to 10.1.x-dev
+- [META] Set the EM conf version number to 10.1.0
+- [TESTS] Require the extensionmanager and fix loading order in Functional Tests
+- [BUGFIX] Replace parent::class with the actual parent class (magic constant)
+- [FEATURE] Add admin tool to scan the databases for simple differences
+- [DOCS] Add missing docblocks in CompareDatabaseTool classes
+- [FEATURE] Highlight differences and make transfering possible
+- [FEATURE] Admin overview for compare function in tools module
+- [DOCS] Add missing copyright blocks
+- [FEATURE] Rewrite Tools to service based API
+- [FEATURE] Rewrite tools registration with service configuration
+- [FEATURE] Add Publish Redirects filter
+- [FEATURE] Add association status filter
+- [REFACTOR] Move find-redirect-query to repo
+- [FEATURE] Persist the current filter in the session to keep it during pagination
+- [REFACTOR] Use a DTO for the redirects filter
+- [WIP] Add filter for redirect status
+- [TASK] Filter redirects in publish_redirects module as in redirects_module
+- [TASK] Move query on redirects to repository
+- [BUGFIX] Unify and consolidate Tasks API, add garbage collection
+- [REFACTOR] Move everything task-related to a component folder
+- [BUGFIX] Remove obsolete Tasks
+- [BUGFIX] Use ExtensionManagementUtility instead of not yet existing ExtensionUtility method
+- [BUGFIX] Split service configuration of features and add logs condition
+- [BUGFIX] Ensure types of identifiers when matching RTE content
+- [BUGFIX] Index fetched MM records with all idFields
+- [BUGFIX] Use all identifying fields of an MM record for its combinedIdentifer
+- [TESTS] Move scheduled tests to 6:40 to reduce parallel load on packagist
+- [BUGFIX] Allow a SysRedirect siteID to be null
+- [BUGFIX] Support different controller names in the tools action menu
+- [TYPO] Fix typo in upgrading instructions headline
+- [TEST] Test if select relations are resolved and published
+- [CLEANUP] Remove codeception remnants from TableCacheRepositoryTest
+- [CLEANUP] Remove unused imports from UnitTestsBoostrap
+- [CLEANUP] Remove legacy phpunit file
+- [DEV] Detect ROOT_DIR on both Linux and Darwin
+- [BUGFIX] Move the TcaProcessingService initialization to a method called after the logger injection
+- [RELEASE] Version 10.0.0 without TYPO3 v9 support
+
 10.0.0:
 
-[META] Set the branch alias version number to 10.0.x-dev
-[META] Set the EM conf version number to 10.0.0
-[!!!][FEATURE] Remove TYPO3 v9 support
-[BUGFIX] Ignore redirects source host if the following redirect's host is generic
-[BUGFIX] Ignore errors from storage FlexForms whose drivers were uninstalled
-[BUGFIX] Set a redirects host to '*' if it is selected as site_id during publishing
-[BUGFIX] Collect redirects redirecting to assigned redirects
-[BUGFIX] Properly select all redirects associated with a page
-[REFACTOR] Import all functions and constants
-[TESTS] Remove codeception, ignore phpunit result cache, fix testing matrix
-[TESTS] Rewrite tests following the official docs
-[BUGFIX] Collect publishing failures via real singleton and print exception messages
-[BUGFIX] Remove wrong service defintion which overwrites the RedirectSourceHostReplacement
-[BUGFIX] Cast all UIDs to int when publishing redirects
-[BUGFIX] Mark ForeignSiteIdentifierItemProcFunc as public
-[BUGFIX] Disable page recursion and cast pid to int in when publishing via page tree
-[TYPO] Rename losse to loose
-[BUGFIX] Mark PublishPageAjaxController as public
-[BUGFIX] Bring back all default constructor values for NullRecord
-[BUGFIX] Make FileIndexPostProcessor public
-[META] Add branch alias for 45637-rem-t3v9
-[BUGFIX] Actually publish instead of import the table in PublishCommand
-[REFACTOR] Streamline Import-/PublishCommand
-[CLEANUP] Remove superfluous empty lines, reformat build files
-[CODESTYLE] Remove empty lines, chop down multi-line statements
-[REFACTOR] Move all conditional event listener to Services.php
-[BUGFIX] Call TcaProcessingService::preProcessTca in the constructor
-[BUGFIX] Import constant PHP_EOL in TestResult
-[REFACTOR] Use a constant instead of property for a fixed string
-[CLEANUP] Remove unused methods, constants and properties
-[BUGFIX] Ensure all messages added to AbstractTask are strings
-[REFACTOR] Instantiate UidReservationService in the construtor instead of in-place
-[REFACTOR] Inject the extensions extConf instead of ExtensionConfiguration
-[REFACTOR] Simplify code flow in SshAdapter
-[REFACTOR] Explicitly set second argument for uniqid
-[REFACTOR] Use UnexpectedMissingFileException constructor instead of static factory method
-[REFACTOR] Use TooManyFilesException constructor instead of static factory method
-[COMMENT] Add missing copyright notice in AllSitesCommandException
-[REFACTOR] Use ForeignSiteConfigUnavailableException constructor instead of static factory method
-[REFACTOR] Simplify DocBlocks, streamline properties, update injections
-[REFACTOR] Use FileMissingException constructor instead of static factory method
-[REFACTOR] Use InvalidDynamicValueProviderKeyException constructor instead of static factory method
-[REFACTOR] Use InvalidPageIdArgumentTypeException constructor instead of static factory method
-[META] Ignore false positive on forgotten debug statements
-[BUGFIX] Use $threshold argument in TooManyFilesException message
-[BUGFIX] Make all fopen reads/writes binary safe
-[REFACTOR] Use static closures where appropriate
-[REFACTOR] Simplify nested if statements
-[BUGFIX] Extract value to variable before passing it to a function as referenced parameter
-[COMMENT] Ignore Exceptions, missing parent calls and non-looping loops
-[META] Ignore some control flow "errors" which are intentionally
-[BUGFIX] Define access level for all class constants
-[BUGFIX] Fix wrong DocBlocks
-[FEATURE] Define all missing return type hints
-[BUGFIX] Set the correct return type hint for Abs-X-Nodes
-[!!!][CLEANUP] Remove the unused AbstractTask::modifyConfiguration method
-[CLEANUP] Remove redundant DocBlocks
-[FEATURE] Inject the database connections in RawRecordService
-[BUGFIX] Declare the PermissionService public
-[BUGFIX] Replace all remaining occurrences of TcaProcessingService::getInstance
-[CLEANUP] Remove unused cache property from DatabaseSchemaService
-[FEATURE] User constructor injection and LoggerAwareInterface where possible
-[BUGFIX] Make CommonRepo connections nullable again
-[BUGFIX] Catch exceptions from AbstractDomainTest::determineDomainTypes
-[BUGFIX] Construct connections with a factory that throws exception
-[REFACTOR] Use more readable string keys in the DynamicValuesPostProcessor RegEx
-[BUGFIX] Correctly check for all Provider implementations in the ConfigContainer
-[CLEANUP] Remove parent constructor call in ActionController
-[CLEANUP] Remove unused imports
-[REFACTOR] Simplify conditions, statements and ease debugging
-[BUGFIX] Throw a specific exception on Local when the AllSitesCommand failed
-[FEATURE] Inject the dependencies of all commands
-[CLEANUP] Remove unused PageDoesNotExistException
-[CODESTYLE] Add blank line after opening tag
-[TYPO] Fix writing of documentation
-[FEATURE] Add method to add multiple records to the event RelatedRecordsByRteWereFetched
-[BUGFIX] Remove or fix wrong type hints
-[UPDATE] Require the latest version of typo3/testing-framework
-Wip: [WIP] Add return types
-[BUGFIX] Add missing return type hint for RecordController::publishRecord
-[CLEANUP] Remove redundant class DocBlocks
-[BUGFIX] Ensure the given envelope uid for the RCE command is an integer
-[CODESTYLE] Fix multiline indents
-[CODESTYLE} Enforce PSR-12 Rule "4.5 Method and Function Arguments"
-[CODESTYLE] Enforce PSR-12 rule "5.1 if, elseif, else"
-[BUGFIX] Rename all inherited parameters to their parent to
-[CLEANUP] Remove duplicate DriverInterface implementing
-[TESTS] Remove Bootstrap::initializeBackendRouter from functional bootstrap
-[BUGFIX] Add missing required PHP extensions "pdo" and "zip" to composer.json
-[REFACTOR] Replace all ternary "X ? X : null" with null coalesce operator
-[REFACTOR] Import all FCQNs in docs
-[META] Ignore some unsolvable PhpStorm inspections
-[CLEANUP] Remove unnecessary type casts
-[BUGFIX] Fix diverged identifier issue when resolving MM records
-[COMMENT] Add missing DocBlock for property tis in SkipTableVoter
-[TESTS] Set ApplicationContext via In2publishCore helper
-[CLEANUP] Remove unused imports
-[TYPO] Fix some types in the docs and labels
-[!!!][FEATURE] Add all (easy) return/type hints
-[CLEANUP] Remove unused method LabelService::getLabelFieldsFromTableConfiguration
-[CLEANUP] Remove unused method BaseRepository::quoteString
-[FEATURE] Implement the new doctrine/dbal API from 2.11.0
-[CLEANUP] Remove unnecessary catching of UnsupportedRequestTypeException
-[REFACTOR] Extract common parts from condition branches
-[CLEANUP] Remove redundant type casts or fix the false positive by annotation
-[REFACTOR] Import all classes in files where FQCNs are not required
-[REFACTOR] Resolve unnecessary local variables
-[CLEANUP] Remove extraneous arguments from fetchAllAssociative calls
-[CLEANUP] Remove unused imports, parameters, and variables
-[CLEANUP] Remove all remaining deprecated classes and methods
-[CLEANUP] Remove deprecated argument tableName from CR::getDefaultInstance
-[CLEANUP] Remove the deprecated optionality of the tableName argument in RecordFactory
-[CLEANUP] Remove the deprecated field tableName from BaseRepository
-[CLEANUP] Remove deprecated property identifierFieldName from BaseRepository
-[BUGFIX] Add various missing type hints
-[BUGFIX] Replace deprecated DBAL fetch methods
-[REFACTOR] Remove explicit default values
-[CLEANUP] Remove anything sys_domain table related
-[REFACTOR] Use existing variable instead of redundant array key access
-[DOCS] Fix wrong or missing links in docs
-[DEV] Change the continuation_indent_size editorconfig rule to intellij specific
-[FEATURE] Replace GU::getApplicationContext with Environment class
-[FEATURE] Replace TYPO3_branch constant with Typo3Version class
-[DOCS] Replace old SignalSlotDispatcher docs and examples with event listener
-[CODESTYLE] Enforce PSR-12
-[CLEANUP] Remove unused imports, separate import groups
-[CLEANUP] Remove outdated commands readme
-[CLEANUP] Remove unused imports from CommonRepositoryTest
-[FEATURE] Replace RequiredTablesDataProvider overruleTables signal with event
-[CLEANUP] Remove the unused SignalSlotDispatcher from ext_tables
-[FEATURE] Replace AbstractController checkUserAllowedToPublish signal with event
-[CLEANUP] Remove unused SignalSlotDispatcher from CommonRepository
-[FEATURE] Replace FolderPublisherService afterPublishingFolder signal with event
-[BUGFIX] Add type cast for untyped but annotated parameter
-[TEST] Update test files and test runner stuff
-[DOCS] Document publishing and tools module events
-[BUGFIX] Respect changes in the signal collectSupportPlaces for the event
-[FEATURE] Rewrite SkipEmptyTable to use the new event
-[FEATURE] Rewrite PublishSorting to use the new event
-[FEATURE] Rewrite RedirectCacheUpdater to use the new event
-[FEATURE] Create new event PhysicalFileWasPublished and rewrite FileEdgeCacheInvalidator to use that event
-[FEATURE] Rewrite NewsSupport to use the new event
-[FEATURE] Rewrite RefIndexUpdate to use the new event
-[FEATURE] Rewrite SysLogPublisher to use the new event
-[FEATURE] Rewrite PhysicalFilePublisher to use the new event
-[REFACTOR] Make the AssetTransmitter logger aware and set type hints
-[REFACTOR] Make the AdapterRegistry logger aware and remove redundant stuff
-[CLEANUP] Remove unused signal slot dispatcher from AdapterRegistry
-[REFACTOR] Rename RemoteFalDriver parameter targetFolderId to adhere to LSP
-[FEATURE] Rewrite CacheInvalidation to use the new event
-[REFACTOR] Implement LoggerAware in the SiteService to get the logger injected
-[FEATURE] Rewrite RedirectsSupport to use the new event
-[CLEANUP] Remove superfluous newline from CommonRepository
-[CLEANUP] Remove redundant tableName from PublishingOfOneRecord* events
-[BUGFIX] Do not unpack the support lines after event dispatching
-[BUGFIX] Restore original signal behavior of filterStorages
-[BUGFIX] Actually replace the afterRecordEnrichment signal with the new event
-[BUGFIX] Restore original signal arguments order for publishRecordRecursiveBeforePublishing and publishRecordRecursiveAfterPublishing
-[BUGFIX] Restore original signal arguments order for publishRecordRecursiveEnd
-[BUGFIX] Restore original signal arguments order for publishRecordRecursiveBegin
-[BUGFIX] Restore addition of support labels following CreatedDefaultHelpLabels event
-[FEATURE] Replace filterStorages signal with event
-[FEATURE] Replace collectSupportPlaces signal with event
-[FEATURE] Rewrite File/Fal-IndexPostProcessing to use the new event
-[FEATURE] Replace beforePublishing signal with event
-[BUGFIX] Restore original behavior of the relationResolverRTE signal and allow relatedRecords override in the event
-[FEATURE] Replace deprecated afterRecordEnrichment signal with event
-[FEATURE] Replace publishRecordRecursiveBeforePublishing and publishRecordRecursiveAfterPublishing signals with events
-[FEATURE] Replace publishRecordRecursiveEnd signal with event
-[FEATURE] Replace publishRecordRecursiveBegin signal with event
-[BUGFIX] Fix signal name in SignalSlotReplacement
-[FEATURE] Replace relationResolverRTE signal with event
-[FEATURE] Replace CommonRepository instanceCreated signal with event
-[FEATURE] Replace addAdditionalRelatedRecords signal with event
-[FEATURE] Replace rootRecordFinished signal with event
-[FEATURE] Replace RecordFactory::instanceCreated signal with event
-[REFACTOR] Make all events final
-[FEATURE] Replace isPublishable signal with event
-[FEATURE] Replace shouldSkipSearchingForRelatedRecordsByProperty signal with event
-[FEATURE] Replace shouldSkipSearchingForRelatedRecordsByFlexFormProperty signal with event
-[FEATURE] Replace shouldSkipSearchingForRelatedRecordsByFlexForm signal with event
-[FEATURE] Replace shouldSkipSearchingForRelatedRecords signal with event
-[FEATURE] Replace shouldSkipSearchingForRelatedRecordByTable signal with event
-[FEATURE] Replace shouldSkipFindByProperty signal with event
-[FEATURE] Replace shouldSkipFindByIdentifier signal with event
-[FEATURE] Replace shouldSkipEnrichingPageRecord signal with event
-[FEATURE] Replace shouldIgnoreRecord signal with event
-[FEATURE] Replace shouldSkipRecord signal with event
-[DOCUMENTATION] Add upgrade documentation with details about replacement of signal slots
-[FEATURE] Replace beforeDetailViewRender signal with event
-[FEATURE] Replace folderInstanceCreated signal with event
-[REFACTOR] Resolve extension scanner problems
-[BUGFIX] Do not throw an exception for an invalid value if none was given
-[UPDATE] Move commands registration to Services.yaml
-[UPDATE] Use FQCN to register plugin and module controller
-[CLEANUP] Remove useless logger
-[UPDATE] Register modules and plugins with extension key instead of package format
-[DEPRECATION] Deprecate tools registration using a controller name instead of the class
-[REFACTOR] Use FQCN to register the redirects module controller
-[REFACTOR] Use FQCN to register a plugin controller
-[UPDATE] Import new PageRepository namespace
-[CLEANUP] Resolve version comparisons for TYPO3 < v10
-[!!!][UPDATE] Drop support for TYPO3 v9
-[RELEASE] Version 9.5.1 with support for TSconfig markers in FlexForms
+- [META] Set the branch alias version number to 10.0.x-dev
+- [META] Set the EM conf version number to 10.0.0
+- [!!!][FEATURE] Remove TYPO3 v9 support
+- [BUGFIX] Ignore redirects source host if the following redirect's host is generic
+- [BUGFIX] Ignore errors from storage FlexForms whose drivers were uninstalled
+- [BUGFIX] Set a redirects host to '*' if it is selected as site_id during publishing
+- [BUGFIX] Collect redirects redirecting to assigned redirects
+- [BUGFIX] Properly select all redirects associated with a page
+- [REFACTOR] Import all functions and constants
+- [TESTS] Remove codeception, ignore phpunit result cache, fix testing matrix
+- [TESTS] Rewrite tests following the official docs
+- [BUGFIX] Collect publishing failures via real singleton and print exception messages
+- [BUGFIX] Remove wrong service defintion which overwrites the RedirectSourceHostReplacement
+- [BUGFIX] Cast all UIDs to int when publishing redirects
+- [BUGFIX] Mark ForeignSiteIdentifierItemProcFunc as public
+- [BUGFIX] Disable page recursion and cast pid to int in when publishing via page tree
+- [TYPO] Rename losse to loose
+- [BUGFIX] Mark PublishPageAjaxController as public
+- [BUGFIX] Bring back all default constructor values for NullRecord
+- [BUGFIX] Make FileIndexPostProcessor public
+- [META] Add branch alias for 45637-rem-t3v9
+- [BUGFIX] Actually publish instead of import the table in PublishCommand
+- [REFACTOR] Streamline Import-/PublishCommand
+- [CLEANUP] Remove superfluous empty lines, reformat build files
+- [CODESTYLE] Remove empty lines, chop down multi-line statements
+- [REFACTOR] Move all conditional event listener to Services.php
+- [BUGFIX] Call TcaProcessingService::preProcessTca in the constructor
+- [BUGFIX] Import constant PHP_EOL in TestResult
+- [REFACTOR] Use a constant instead of property for a fixed string
+- [CLEANUP] Remove unused methods, constants and properties
+- [BUGFIX] Ensure all messages added to AbstractTask are strings
+- [REFACTOR] Instantiate UidReservationService in the construtor instead of in-place
+- [REFACTOR] Inject the extensions extConf instead of ExtensionConfiguration
+- [REFACTOR] Simplify code flow in SshAdapter
+- [REFACTOR] Explicitly set second argument for uniqid
+- [REFACTOR] Use UnexpectedMissingFileException constructor instead of static factory method
+- [REFACTOR] Use TooManyFilesException constructor instead of static factory method
+- [COMMENT] Add missing copyright notice in AllSitesCommandException
+- [REFACTOR] Use ForeignSiteConfigUnavailableException constructor instead of static factory method
+- [REFACTOR] Simplify DocBlocks, streamline properties, update injections
+- [REFACTOR] Use FileMissingException constructor instead of static factory method
+- [REFACTOR] Use InvalidDynamicValueProviderKeyException constructor instead of static factory method
+- [REFACTOR] Use InvalidPageIdArgumentTypeException constructor instead of static factory method
+- [META] Ignore false positive on forgotten debug statements
+- [BUGFIX] Use $threshold argument in TooManyFilesException message
+- [BUGFIX] Make all fopen reads/writes binary safe
+- [REFACTOR] Use static closures where appropriate
+- [REFACTOR] Simplify nested if statements
+- [BUGFIX] Extract value to variable before passing it to a function as referenced parameter
+- [COMMENT] Ignore Exceptions, missing parent calls and non-looping loops
+- [META] Ignore some control flow "errors" which are intentionally
+- [BUGFIX] Define access level for all class constants
+- [BUGFIX] Fix wrong DocBlocks
+- [FEATURE] Define all missing return type hints
+- [BUGFIX] Set the correct return type hint for Abs-X-Nodes
+- [!!!][CLEANUP] Remove the unused AbstractTask::modifyConfiguration method
+- [CLEANUP] Remove redundant DocBlocks
+- [FEATURE] Inject the database connections in RawRecordService
+- [BUGFIX] Declare the PermissionService public
+- [BUGFIX] Replace all remaining occurrences of TcaProcessingService::getInstance
+- [CLEANUP] Remove unused cache property from DatabaseSchemaService
+- [FEATURE] User constructor injection and LoggerAwareInterface where possible
+- [BUGFIX] Make CommonRepo connections nullable again
+- [BUGFIX] Catch exceptions from AbstractDomainTest::determineDomainTypes
+- [BUGFIX] Construct connections with a factory that throws exception
+- [REFACTOR] Use more readable string keys in the DynamicValuesPostProcessor RegEx
+- [BUGFIX] Correctly check for all Provider implementations in the ConfigContainer
+- [CLEANUP] Remove parent constructor call in ActionController
+- [CLEANUP] Remove unused imports
+- [REFACTOR] Simplify conditions, statements and ease debugging
+- [BUGFIX] Throw a specific exception on Local when the AllSitesCommand failed
+- [FEATURE] Inject the dependencies of all commands
+- [CLEANUP] Remove unused PageDoesNotExistException
+- [CODESTYLE] Add blank line after opening tag
+- [TYPO] Fix writing of documentation
+- [FEATURE] Add method to add multiple records to the event RelatedRecordsByRteWereFetched
+- [BUGFIX] Remove or fix wrong type hints
+- [UPDATE] Require the latest version of typo3/testing-framework
+- Wip: [WIP] Add return types
+- [BUGFIX] Add missing return type hint for RecordController::publishRecord
+- [CLEANUP] Remove redundant class DocBlocks
+- [BUGFIX] Ensure the given envelope uid for the RCE command is an integer
+- [CODESTYLE] Fix multiline indents
+- [CODESTYLE} Enforce PSR-12 Rule "4.5 Method and Function Arguments"
+- [CODESTYLE] Enforce PSR-12 rule "5.1 if, elseif, else"
+- [BUGFIX] Rename all inherited parameters to their parent to
+- [CLEANUP] Remove duplicate DriverInterface implementing
+- [TESTS] Remove Bootstrap::initializeBackendRouter from functional bootstrap
+- [BUGFIX] Add missing required PHP extensions "pdo" and "zip" to composer.json
+- [REFACTOR] Replace all ternary "X ? X : null" with null coalesce operator
+- [REFACTOR] Import all FCQNs in docs
+- [META] Ignore some unsolvable PhpStorm inspections
+- [CLEANUP] Remove unnecessary type casts
+- [BUGFIX] Fix diverged identifier issue when resolving MM records
+- [COMMENT] Add missing DocBlock for property tis in SkipTableVoter
+- [TESTS] Set ApplicationContext via In2publishCore helper
+- [CLEANUP] Remove unused imports
+- [TYPO] Fix some types in the docs and labels
+- [!!!][FEATURE] Add all (easy) return/type hints
+- [CLEANUP] Remove unused method LabelService::getLabelFieldsFromTableConfiguration
+- [CLEANUP] Remove unused method BaseRepository::quoteString
+- [FEATURE] Implement the new doctrine/dbal API from 2.11.0
+- [CLEANUP] Remove unnecessary catching of UnsupportedRequestTypeException
+- [REFACTOR] Extract common parts from condition branches
+- [CLEANUP] Remove redundant type casts or fix the false positive by annotation
+- [REFACTOR] Import all classes in files where FQCNs are not required
+- [REFACTOR] Resolve unnecessary local variables
+- [CLEANUP] Remove extraneous arguments from fetchAllAssociative calls
+- [CLEANUP] Remove unused imports, parameters, and variables
+- [CLEANUP] Remove all remaining deprecated classes and methods
+- [CLEANUP] Remove deprecated argument tableName from CR::getDefaultInstance
+- [CLEANUP] Remove the deprecated optionality of the tableName argument in RecordFactory
+- [CLEANUP] Remove the deprecated field tableName from BaseRepository
+- [CLEANUP] Remove deprecated property identifierFieldName from BaseRepository
+- [BUGFIX] Add various missing type hints
+- [BUGFIX] Replace deprecated DBAL fetch methods
+- [REFACTOR] Remove explicit default values
+- [CLEANUP] Remove anything sys_domain table related
+- [REFACTOR] Use existing variable instead of redundant array key access
+- [DOCS] Fix wrong or missing links in docs
+- [DEV] Change the continuation_indent_size editorconfig rule to intellij specific
+- [FEATURE] Replace GU::getApplicationContext with Environment class
+- [FEATURE] Replace TYPO3_branch constant with Typo3Version class
+- [DOCS] Replace old SignalSlotDispatcher docs and examples with event listener
+- [CODESTYLE] Enforce PSR-12
+- [CLEANUP] Remove unused imports, separate import groups
+- [CLEANUP] Remove outdated commands readme
+- [CLEANUP] Remove unused imports from CommonRepositoryTest
+- [FEATURE] Replace RequiredTablesDataProvider overruleTables signal with event
+- [CLEANUP] Remove the unused SignalSlotDispatcher from ext_tables
+- [FEATURE] Replace AbstractController checkUserAllowedToPublish signal with event
+- [CLEANUP] Remove unused SignalSlotDispatcher from CommonRepository
+- [FEATURE] Replace FolderPublisherService afterPublishingFolder signal with event
+- [BUGFIX] Add type cast for untyped but annotated parameter
+- [TEST] Update test files and test runner stuff
+- [DOCS] Document publishing and tools module events
+- [BUGFIX] Respect changes in the signal collectSupportPlaces for the event
+- [FEATURE] Rewrite SkipEmptyTable to use the new event
+- [FEATURE] Rewrite PublishSorting to use the new event
+- [FEATURE] Rewrite RedirectCacheUpdater to use the new event
+- [FEATURE] Create new event PhysicalFileWasPublished and rewrite FileEdgeCacheInvalidator to use that event
+- [FEATURE] Rewrite NewsSupport to use the new event
+- [FEATURE] Rewrite RefIndexUpdate to use the new event
+- [FEATURE] Rewrite SysLogPublisher to use the new event
+- [FEATURE] Rewrite PhysicalFilePublisher to use the new event
+- [REFACTOR] Make the AssetTransmitter logger aware and set type hints
+- [REFACTOR] Make the AdapterRegistry logger aware and remove redundant stuff
+- [CLEANUP] Remove unused signal slot dispatcher from AdapterRegistry
+- [REFACTOR] Rename RemoteFalDriver parameter targetFolderId to adhere to LSP
+- [FEATURE] Rewrite CacheInvalidation to use the new event
+- [REFACTOR] Implement LoggerAware in the SiteService to get the logger injected
+- [FEATURE] Rewrite RedirectsSupport to use the new event
+- [CLEANUP] Remove superfluous newline from CommonRepository
+- [CLEANUP] Remove redundant tableName from PublishingOfOneRecord* events
+- [BUGFIX] Do not unpack the support lines after event dispatching
+- [BUGFIX] Restore original signal behavior of filterStorages
+- [BUGFIX] Actually replace the afterRecordEnrichment signal with the new event
+- [BUGFIX] Restore original signal arguments order for publishRecordRecursiveBeforePublishing and publishRecordRecursiveAfterPublishing
+- [BUGFIX] Restore original signal arguments order for publishRecordRecursiveEnd
+- [BUGFIX] Restore original signal arguments order for publishRecordRecursiveBegin
+- [BUGFIX] Restore addition of support labels following CreatedDefaultHelpLabels event
+- [FEATURE] Replace filterStorages signal with event
+- [FEATURE] Replace collectSupportPlaces signal with event
+- [FEATURE] Rewrite File/Fal-IndexPostProcessing to use the new event
+- [FEATURE] Replace beforePublishing signal with event
+- [BUGFIX] Restore original behavior of the relationResolverRTE signal and allow relatedRecords override in the event
+- [FEATURE] Replace deprecated afterRecordEnrichment signal with event
+- [FEATURE] Replace publishRecordRecursiveBeforePublishing and publishRecordRecursiveAfterPublishing signals with events
+- [FEATURE] Replace publishRecordRecursiveEnd signal with event
+- [FEATURE] Replace publishRecordRecursiveBegin signal with event
+- [BUGFIX] Fix signal name in SignalSlotReplacement
+- [FEATURE] Replace relationResolverRTE signal with event
+- [FEATURE] Replace CommonRepository instanceCreated signal with event
+- [FEATURE] Replace addAdditionalRelatedRecords signal with event
+- [FEATURE] Replace rootRecordFinished signal with event
+- [FEATURE] Replace RecordFactory::instanceCreated signal with event
+- [REFACTOR] Make all events final
+- [FEATURE] Replace isPublishable signal with event
+- [FEATURE] Replace shouldSkipSearchingForRelatedRecordsByProperty signal with event
+- [FEATURE] Replace shouldSkipSearchingForRelatedRecordsByFlexFormProperty signal with event
+- [FEATURE] Replace shouldSkipSearchingForRelatedRecordsByFlexForm signal with event
+- [FEATURE] Replace shouldSkipSearchingForRelatedRecords signal with event
+- [FEATURE] Replace shouldSkipSearchingForRelatedRecordByTable signal with event
+- [FEATURE] Replace shouldSkipFindByProperty signal with event
+- [FEATURE] Replace shouldSkipFindByIdentifier signal with event
+- [FEATURE] Replace shouldSkipEnrichingPageRecord signal with event
+- [FEATURE] Replace shouldIgnoreRecord signal with event
+- [FEATURE] Replace shouldSkipRecord signal with event
+- [DOCUMENTATION] Add upgrade documentation with details about replacement of signal slots
+- [FEATURE] Replace beforeDetailViewRender signal with event
+- [FEATURE] Replace folderInstanceCreated signal with event
+- [REFACTOR] Resolve extension scanner problems
+- [BUGFIX] Do not throw an exception for an invalid value if none was given
+- [UPDATE] Move commands registration to Services.yaml
+- [UPDATE] Use FQCN to register plugin and module controller
+- [CLEANUP] Remove useless logger
+- [UPDATE] Register modules and plugins with extension key instead of package format
+- [DEPRECATION] Deprecate tools registration using a controller name instead of the class
+- [REFACTOR] Use FQCN to register the redirects module controller
+- [REFACTOR] Use FQCN to register a plugin controller
+- [UPDATE] Import new PageRepository namespace
+- [CLEANUP] Resolve version comparisons for TYPO3 < v10
+- [!!!][UPDATE] Drop support for TYPO3 v9
+- [RELEASE] Version 9.5.1 with support for TSconfig markers in FlexForms
 
 9.5.1:
 
-[META] Set the EM conf version number to 9.5.1
-[BUGFIX] Ignore missing slashes which some drivers omit (mistakenly)
-[DOCS] Add missing condition for folderFileLimit setting
-[BUGFIX] Support TSconfig markers in FlexForm additional_where_clause
-[BUGFIX] Catch exceptions from the ForeignEnvironmentService before they appear in actions
-[RELEASE] Version 9.5.0 with performance improvements, sorting publishing, and more features and fixes
+- [META] Set the EM conf version number to 9.5.1
+- [BUGFIX] Ignore missing slashes which some drivers omit (mistakenly)
+- [DOCS] Add missing condition for folderFileLimit setting
+- [BUGFIX] Support TSconfig markers in FlexForm additional_where_clause
+- [BUGFIX] Catch exceptions from the ForeignEnvironmentService before they appear in actions
+- [RELEASE] Version 9.5.0 with performance improvements, sorting publishing, and more features and fixes
 
 9.5.0:
 

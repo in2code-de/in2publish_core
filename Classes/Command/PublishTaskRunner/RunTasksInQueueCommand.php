@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Command\PublishTaskRunner;
 /*
  * Copyright notice
  *
- * (c) 2019 in2code.de and the following authors:
+ * (c) 2021 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,58 +29,25 @@ namespace In2code\In2publishCore\Command\PublishTaskRunner;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
-use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Command\RunTasksInQueueCommand as NewRunTasksInQueueCommand;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Service\Context\ContextService;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Throwable;
 
-use function json_encode;
+use function trigger_error;
 
-class RunTasksInQueueCommand extends Command
+use const E_USER_DEPRECATED;
+
+/**
+ * @deprecated Please use \In2code\In2publishCore\Component\PostPublishTaskExecution\Command\RunTasksInQueueCommand directly
+ */
+class RunTasksInQueueCommand extends NewRunTasksInQueueCommand
 {
-    public const IDENTIFIER = 'in2publish_core:publishtasksrunner:runtasksinqueue';
-
-    /** @var ContextService */
-    protected $contextService;
-
-    /** @var TaskRepository */
-    protected $taskRepository;
+    private const DEPRECATION_MESSAGE = 'The class ' . self::class . ' has been moved. Please use the new class '
+                                        . NewRunTasksInQueueCommand::class . ' instead.';
 
     public function __construct(ContextService $contextService, TaskRepository $taskRepository, string $name = null)
     {
-        parent::__construct($name);
-        $this->contextService = $contextService;
-        $this->taskRepository = $taskRepository;
-    }
-
-    public function isEnabled(): bool
-    {
-        return $this->contextService->isForeign();
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $result = [];
-        // Tasks which should get executed do not have an execution begin
-        $tasksToExecute = $this->taskRepository->findByExecutionBegin();
-        /** @var AbstractTask $task */
-        foreach ($tasksToExecute as $task) {
-            try {
-                $success = $task->execute();
-                $result[] = 'Task ' . $task->getUid() . ($success ? ' was executed successfully' : ' failed');
-                $result[] = $task->getMessages();
-            } catch (Throwable $e) {
-                $result[] = $e->getMessage();
-            }
-            $this->taskRepository->update($task);
-        }
-        if (empty($result)) {
-            $result[] = 'There was nothing to execute';
-        }
-        $output->write(json_encode($result));
-        return Command::SUCCESS;
+        trigger_error(self::DEPRECATION_MESSAGE, E_USER_DEPRECATED);
+        parent::__construct($contextService, $taskRepository, $name);
     }
 }

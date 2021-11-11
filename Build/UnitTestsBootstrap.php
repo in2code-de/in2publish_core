@@ -13,7 +13,6 @@
  */
 
 use Composer\Autoload\ClassLoader;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use TYPO3\CMS\Core\Cache\Backend\NullBackend;
 use TYPO3\CMS\Core\Cache\Frontend\PhpFrontend;
 use TYPO3\CMS\Core\Configuration\ConfigurationManager;
@@ -22,12 +21,10 @@ use TYPO3\CMS\Core\Core\Bootstrap;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\DependencyInjection\ContainerBuilder;
-use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Package\Cache\PackageCacheInterface;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Package\UnitTestPackageManager;
-use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\Testbase;

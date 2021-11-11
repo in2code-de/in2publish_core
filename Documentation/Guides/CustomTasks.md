@@ -17,11 +17,10 @@ declare(strict_types=1);
 
 namespace YourVendor\YourPackage\Domain\Task;
 
-use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
-use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class MyTask extends AbstractTask
+class MyTask extends \In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask
 {
     protected function executeTask(): bool
     {
@@ -53,8 +52,7 @@ Most of the time, you want to add a task when a specific record was published. Y
 When a record was published, the `register` method will be called. We can not filter for specific record, e.g. for a table and property.
 
 ```PHP
-use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
-use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask;use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 
 class MyTask extends AbstractTask
 {
@@ -124,7 +122,7 @@ declare(strict_types=1);
 namespace YourVendor\YourPackage\Domain\Anomaly;
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
 use TYPO3\CMS\Core\SingletonInterface;use TYPO3\CMS\Core\Utility\GeneralUtility;
 use YourVendor\YourPackage\Domain\Task\MyTask;
 
@@ -183,9 +181,7 @@ declare(strict_types=1);
 
 namespace YourVendor\YourPackage\Domain\Task;
 
-use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
-
-class MyTask extends AbstractTask
+class MyTask extends \In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask
 {
     public function modifyConfiguration()
     {

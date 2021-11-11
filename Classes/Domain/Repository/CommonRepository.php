@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Domain\Repository;
  */
 
 use Exception;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository as NewTaskRepository;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
@@ -150,7 +151,7 @@ class CommonRepository extends BaseRepository
     /** @var ResourceFactory */
     protected $resourceFactory;
 
-    /** @var TaskRepository */
+    /** @var NewTaskRepository */
     protected $taskRepository;
 
     /** @var ConfigContainer */
@@ -177,7 +178,7 @@ class CommonRepository extends BaseRepository
         ?Connection $foreignDatabase,
         RecordFactory $recordFactory,
         ResourceFactory $resourceFactory,
-        TaskRepository $taskRepository,
+        NewTaskRepository $taskRepository,
         ConfigContainer $configContainer,
         EventDispatcher $eventDispatcher,
         ReplaceMarkersService $replaceMarkersService,
@@ -401,6 +402,7 @@ class CommonRepository extends BaseRepository
      * @param array $localProperties
      * @param array $foreignProperties
      * @param string $tableName
+     * @param array<string>|null $idFields
      *
      * @return RecordInterface[]
      * @throws MissingArgumentException
@@ -408,7 +410,8 @@ class CommonRepository extends BaseRepository
     protected function convertPropertyArraysToRecords(
         array $localProperties,
         array $foreignProperties,
-        string $tableName
+        string $tableName,
+        array $idFields = null
     ): array {
         $keysToIterate = array_unique(array_merge(array_keys($localProperties), array_keys($foreignProperties)));
 
@@ -474,7 +477,9 @@ class CommonRepository extends BaseRepository
                     (array)$localProperties[$key],
                     (array)$foreignProperties[$key],
                     [],
-                    $tableName
+                    $tableName,
+                    'uid',
+                    $idFields
                 );
             }
         }
@@ -656,7 +661,7 @@ class CommonRepository extends BaseRepository
                 && !in_array('sys_file', $excludedTableNames)
             ) {
                 foreach ($matches as $match) {
-                    $relatedRecords[] = $this->findByIdentifier($match, 'sys_file');
+                    $relatedRecords[] = $this->findByIdentifier((int)$match, 'sys_file');
                 }
             }
         }
@@ -670,12 +675,12 @@ class CommonRepository extends BaseRepository
                     switch ($urnParsed['host']) {
                         case 'file':
                             if (isset($data['uid']) && !in_array('sys_file', $excludedTableNames)) {
-                                $relatedRecords[] = $this->findByIdentifier($data['uid'], 'sys_file');
+                                $relatedRecords[] = $this->findByIdentifier((int)$data['uid'], 'sys_file');
                             }
                             break;
                         case 'page':
                             if (isset($data['uid']) && !in_array('pages', $excludedTableNames)) {
-                                $relatedRecords[] = $this->findByIdentifier($data['uid'], 'pages');
+                                $relatedRecords[] = $this->findByIdentifier((int)$data['uid'], 'pages');
                             }
                             break;
                         default:
@@ -1531,12 +1536,18 @@ class CommonRepository extends BaseRepository
             );
         }
 
+        $idFields = [];
+        $idFields[] = 'uid_local';
+        $idFields[] = 'uid_foreign';
+        $idFields[] = 'sorting';
+
         // build additional where clause
         $additionalWhereArray = [];
         if (!empty($columnConfiguration['MM_match_fields'])) {
             $foreignMatchFields = [];
             foreach ($columnConfiguration['MM_match_fields'] as $matchField => $matchValue) {
                 $foreignMatchFields[] = $matchField . ' LIKE "' . $matchValue . '"';
+                $idFields[] = $matchField;
             }
             $additionalWhereArray = array_merge($additionalWhereArray, $foreignMatchFields);
         }
@@ -1552,7 +1563,7 @@ class CommonRepository extends BaseRepository
             '',
             '',
             '',
-            'uid_local,uid_foreign',
+            $idFields,
             $tableName
         );
         $foreignProperties = $this->findPropertiesByProperty(
@@ -1563,10 +1574,10 @@ class CommonRepository extends BaseRepository
             '',
             '',
             '',
-            'uid_local,uid_foreign',
+            $idFields,
             $tableName
         );
-        $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName);
+        $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $tableName, $idFields);
 
         $foreignField = $this->getForeignField($columnConfiguration);
 

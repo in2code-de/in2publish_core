@@ -29,119 +29,71 @@ namespace In2code\In2publishCore\Tools;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use TYPO3\CMS\Core\Database\TableConfigurationPostProcessingHookInterface;
+use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry as NewToolsRegistry;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
-use function class_exists;
-
-use function sprintf;
-use function trigger_error;
+use function user_error;
 
 use const E_USER_DEPRECATED;
 
-class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcessingHookInterface
+/**
+ * @deprecated This class is superseded by \In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry and admin
+ *  tools registration via Services.yaml. See Documentation/Guides/CustomTools.md
+ */
+class ToolsRegistry implements SingletonInterface
 {
-    private const DEPREACTED_NON_FQCN_TOOL = 'Tools registration without a FQCN is deprecated and will be removed in'
-                                             . ' in2publish_core version 11. Registered controller name: %s';
+    private const DEPRECATED_ROOT_TOOLS_REGISTRY = 'Using the ToolsRegistry is deprecated. Please register your tool via service tag. See Documentation/Guides/CustomTools.md';
+    private const DEPRECATED_GET_TOOLS = 'The class '
+                                         . self::class
+                                         . ' is deprecated. Please use '
+                                         . NewToolsRegistry::class
+                                         . ' instead.';
+    private const DEPRECATED_REMOVE_TOOLS = 'The method removeTool of the old ToolsRegistry is deprecated and will be removed in in2publish_core v11. There is no replacement.';
 
-    protected $entries = [];
+    /** @var NewToolsRegistry */
+    protected $toolsRegistry;
 
-    public function __construct()
+    public function __construct(NewToolsRegistry $toolsRegistry)
     {
-        $this->registerHookForPostProcessing();
+        $this->toolsRegistry = $toolsRegistry;
     }
 
     /**
-     * @param string $name
-     * @param string $description
-     * @param string $controller
-     * @param string $action
-     * @param string $extensionName
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
+     * @deprecated Using the ToolsRegistry is deprecated. Please register your tool via service tag.
+     *  See Documentation/Guides/CustomTools.md
      */
     public function addTool(
         string $name,
         string $description,
         string $controller,
-        string $action,
-        string $extensionName = 'in2publish_core'
+        string $action
     ): void {
-        $this->entries[$name] = [
-            'name' => $name,
-            'description' => $description,
-            'controller' => $controller,
-            'action' => $action,
-            'extensionName' => GeneralUtility::underscoredToUpperCamelCase($extensionName),
-        ];
-    }
-
-    public function getTools(): array
-    {
-        // Do not inject the ConfigurationManager, because it will not contain the configured tools.
-        $configuration = GeneralUtility::makeInstance(ObjectManager::class)
-                                       ->get(ConfigurationManagerInterface::class)
-                                       ->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK);
-        $controllerConfig = $configuration['controllerConfiguration'];
-        foreach ($this->entries as $name => $config) {
-            $controller = $config['controller'];
-            if (isset($controllerConfig[$controller]['alias'])) {
-                $this->entries[$name]['alias'] = $controllerConfig[$controller]['alias'];
-            }
-        }
-        return $this->entries;
-    }
-
-    public function removeTool(string $name): void
-    {
-        unset($this->entries[$name]);
-    }
-
-    public function processData(): void
-    {
-        $controllerActions = [];
-        foreach ($this->entries as $entry) {
-            $controllerName = $entry['controller'];
-            $actionName = $entry['action'];
-
-            if (!class_exists($controllerName)) {
-                trigger_error(sprintf(self::DEPREACTED_NON_FQCN_TOOL, $controllerName), E_USER_DEPRECATED);
-                $controllerName = 'In2code\\In2publishCore\\Controller\\' . $controllerName . 'Controller';
-            }
-
-            if (!isset($controllerActions[$controllerName])) {
-                $controllerActions[$controllerName] = $actionName;
-            } else {
-                $controllerActions[$controllerName] .= ',' . $actionName;
-            }
-        }
-
-        ExtensionUtility::registerModule(
-            'in2publish_core',
-            'tools',
-            'm4',
-            '',
-            $controllerActions,
-            [
-                'access' => 'admin',
-                'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Tools.svg',
-                'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod4.xlf',
-            ]
+        user_error(self::DEPRECATED_ROOT_TOOLS_REGISTRY, E_USER_DEPRECATED);
+        $this->toolsRegistry->addTool(
+            $controller,
+            $name,
+            $description,
+            $action
         );
     }
 
     /**
-     * @SuppressWarnings(PHPMD.Superglobals)
+     * @deprecated This class is deprecated. Use \In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry
+     *  instead. See Documentation/Guides/CustomTools.md
      */
-    protected function registerHookForPostProcessing(): void
+    public function getTools(): array
     {
-        $scOptions = &$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS'];
-        if (!isset($scOptions['GLOBAL']['extTablesInclusion-PostProcessing'][1517414708])) {
-            $scOptions['GLOBAL']['extTablesInclusion-PostProcessing'][1517414708] = static::class;
-        }
+        user_error(self::DEPRECATED_GET_TOOLS, E_USER_DEPRECATED);
+        return $this->toolsRegistry->getEntries();
+    }
+
+    /**
+     * @param string $name
+     * @deprecated The method removeTool of the old ToolsRegistry is deprecated
+     *  and will be removed in in2publish_core v11. There is no replacement.
+     */
+    public function removeTool(string $name): void
+    {
+        user_error(self::DEPRECATED_REMOVE_TOOLS, E_USER_DEPRECATED);
     }
 }

@@ -1,3 +1,21 @@
+imports:
+  - { resource: Component/PostPublishTaskExecution/Services.yaml }
+  - { resource: Features/AdminTools/Services.yaml }
+  - { resource: Features/CacheInvalidation/Services.yaml }
+  - { resource: Features/CompareDatabaseTool/Services.yaml }
+  - { resource: Features/ContextMenuPublishEntry/Services.yaml }
+  - { resource: Features/FileEdgeCacheInvalidator/Services.yaml }
+  - { resource: Features/NewsSupport/Services.yaml }
+  - { resource: Features/PhysicalFilePublisher/Services.yaml }
+  - { resource: Features/PublishSorting/Services.yaml }
+  - { resource: Features/RedirectsSupport/Services.yaml }
+  - { resource: Features/RefIndexUpdate/Services.yaml }
+  - { resource: Features/SimpleOverviewAndAjax/Services.yaml }
+  - { resource: Features/SkipEmptyTable/Services.yaml }
+  - { resource: Features/SysLogPublisher/Services.yaml }
+  - { resource: Features/SystemInformationExport/Services.yaml }
+  - { resource: Features/WarningOnForeign/Services.yaml }
+
 services:
   _defaults:
     autowire: true
@@ -11,7 +29,10 @@ services:
 
   In2code\In2publishCore\:
     resource: '../Classes/*'
-    exclude: '../Classes/Domain/Model/*'
+    exclude:
+      - '../Classes/Domain/Model/*'
+      - '../Classes/Component/*'
+      - '../Classes/Features/*'
 
   # Services
 
@@ -44,16 +65,10 @@ services:
   In2code\In2publishCore\Domain\PostProcessing\Processor\FileIndexPostProcessor:
     public: true
 
-  In2code\In2publishCore\Features\WarningOnForeign\Service\HeaderWarningColorRenderer:
-    public: true
-
   In2code\In2publishCore\Service\Permission\PermissionService:
     public: true
 
-  In2code\In2publishCore\Features\ContextMenuPublishEntry\Controller\PublishPageAjaxController:
-    public: true
-
-  In2code\In2publishCore\Features\RedirectsSupport\DataProvider\ForeignSiteIdentifierItemProcFunc:
+  In2code\In2publishCore\Domain\Repository\TaskRepository:
     public: true
 
   cache.in2publish_core:
@@ -62,16 +77,6 @@ services:
     arguments: ['in2publish_core']
 
   # Commands
-
-  In2code\In2publishCore\Command\PublishTaskRunner\RunTasksInQueueCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:publishtasksrunner:runtasksinqueue'
-        description: >
-          Reads all Tasks to execute from the Database and executes them one after another.
-          The success of a Task is echoed to the console or scheduler backend module, including any error message of failed tasks.
-          NOTE: This command is used for internal operations in in2publish_core
-        hidden: true
 
   In2code\In2publishCore\Command\RemoteProcedureCall\ExecuteCommand:
     tags:
@@ -203,199 +208,3 @@ services:
         identifier: 'in2publishcore-postprocessingeventlistener-rootrecordcreationwasfinished'
         method: 'onRootRecordCreationWasFinished'
         event: In2code\In2publishCore\Event\RootRecordCreationWasFinished
-
-  In2code\In2publishCore\Features\CacheInvalidation\Domain\Anomaly\CacheInvalidator:
-    tags:
-      - name: event.listener
-        identifier: 'in2publishcore-CacheInvalidator-PublishingOfOneRecordBegan'
-        method: 'registerClearCacheTasks'
-        event: In2code\In2publishCore\Event\PublishingOfOneRecordBegan
-      - name: event.listener
-        identifier: 'in2publishcore-CacheInvalidator-RecursiveRecordPublishingEnded'
-        method: 'writeClearCacheTask'
-        event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded
-
-  In2code\In2publishCore\Features\PhysicalFilePublisher\Domain\Anomaly\PhysicalFilePublisher:
-    tags:
-      - name: event.listener
-        identifier: 'in2publishcore-PhysicalFilePublisher-PublishingOfOneRecordEnded'
-        method: 'publishPhysicalFileOfSysFile'
-        event: In2code\In2publishCore\Event\PublishingOfOneRecordEnded
-
-  In2code\In2publishCore\Features\SysLogPublisher\Domain\Anomaly\SysLogPublisher:
-    tags:
-      - name: event.listener
-        identifier: 'in2publishcore-SysLogPublisher-PublishingOfOneRecordEnded'
-        method: 'publishSysLog'
-        event: In2code\In2publishCore\Event\PublishingOfOneRecordEnded
-
-  In2code\In2publishCore\Features\RefIndexUpdate\Domain\Anomaly\RefIndexUpdater:
-    tags:
-      - name: event.listener
-        identifier: 'in2publishcore-RefIndexUpdater-PublishingOfOneRecordEnded'
-        method: 'registerRefIndexUpdate'
-        event: In2code\In2publishCore\Event\PublishingOfOneRecordEnded
-      - name: event.listener
-        identifier: 'in2publishcore-RefIndexUpdater-RecursiveRecordPublishingEnded'
-        method: 'writeRefIndexUpdateTask'
-        event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded
-
-  In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Anomaly\PublishedFileIdentifierCollector:
-    tags:
-      - name: event.listener
-        identifier: 'in2publishcore-PublishedFileIdentifierCollector-PhysicalFileWasPublished'
-        method: 'registerPublishedFile'
-        event: In2code\In2publishCore\Event\PhysicalFileWasPublished
-      - name: event.listener
-        identifier: 'in2publishcore-PublishedFileIdentifierCollector-RecursiveRecordPublishingEnded'
-        method: 'writeFlushFileEdgeCacheTask'
-        event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded
-
-  In2code\In2publishCore\Features\PublishSorting\Domain\Anomaly\SortingPublisher:
-    tags:
-      - name: event.listener
-        identifier: 'in2publishcore-SortingPublisher-PublishingOfOneRecordBegan'
-        method: 'collectSortingsToBePublished'
-        event: In2code\In2publishCore\Event\PublishingOfOneRecordBegan
-      - name: event.listener
-        identifier: 'in2publishcore-SortingPublisher-RecursiveRecordPublishingEnded'
-        method: 'publishSortingRecursively'
-        event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded
-
-  In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter:
-    tags:
-      - name: event.listener
-        identifier: 'in2publishcore-SkipTableVoter-VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped'
-        method: 'shouldSkipSearchingForRelatedRecordsByProperty'
-        event: In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped
-      - name: event.listener
-        identifier: 'in2publishcore-SkipTableVoter-VoteIfFindingByIdentifierShouldBeSkipped'
-        method: 'shouldSkipFindByIdentifier'
-        event: In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped
-      - name: event.listener
-        identifier: 'in2publishcore-SkipTableVoter-VoteIfFindingByPropertyShouldBeSkipped'
-        method: 'shouldSkipFindByProperty'
-        event: In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped
-      - name: event.listener
-        identifier: 'in2publishcore-SkipTableVoter-VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped'
-        method: 'shouldSkipSearchingForRelatedRecordByTable'
-        event: In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped
-
-  In2code\In2publishCore\EventListener\SignalSlotReplacement:
-    tags:
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onFolderInstanceWasCreated'
-        event: In2code\In2publishCore\Event\FolderInstanceWasCreated
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onRecordWasCreatedForDetailAction'
-        event: In2code\In2publishCore\Event\RecordWasCreatedForDetailAction
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onVoteIfRecordShouldBeSkipped'
-        event: In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onVoteIfRecordShouldBeIgnored'
-        event: In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onVoteIfPageRecordEnrichingShouldBeSkipped'
-        event: In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onVoteIfFindingByIdentifierShouldBeSkipped'
-        event: In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onVoteIfFindingByPropertyShouldBeSkipped'
-        event: In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onVoteIfSearchingForRelatedRecordsByTableShouldBeSkipped'
-        event: In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onVoteIfSearchingForRelatedRecordsShouldBeSkipped'
-        event: In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onVoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped'
-        event: In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onVoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped'
-        event: In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onVoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped'
-        event: In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onVoteIfRecordIsPublishable'
-        event: In2code\In2publishCore\Event\VoteIfRecordIsPublishable
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onRecordInstanceWasInstantiated'
-        event: In2code\In2publishCore\Event\RecordInstanceWasInstantiated
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onRootRecordCreationWasFinished'
-        event: In2code\In2publishCore\Event\RootRecordCreationWasFinished
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onAllRelatedRecordsWereAddedToOneRecord'
-        event: In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onCommonRepositoryWasInstantiated'
-        event: In2code\In2publishCore\Event\CommonRepositoryWasInstantiated
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onRelatedRecordsByRteWereFetched'
-        event: In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onRecursiveRecordPublishingBegan'
-        event: In2code\In2publishCore\Event\RecursiveRecordPublishingBegan
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onRecursiveRecordPublishingEnded'
-        event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onPublishingOfOneRecordBegan'
-        event: In2code\In2publishCore\Event\PublishingOfOneRecordBegan
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onPublishingOfOneRecordEnded'
-        event: In2code\In2publishCore\Event\PublishingOfOneRecordEnded
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onRecordWasEnriched'
-        event: In2code\In2publishCore\Event\RecordWasEnriched
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onRecordWasSelectedForPublishing'
-        event: In2code\In2publishCore\Event\RecordWasSelectedForPublishing
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onCreatedDefaultHelpLabels'
-        event: In2code\In2publishCore\Event\CreatedDefaultHelpLabels
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onStoragesForTestingWereFetched'
-        event: In2code\In2publishCore\Event\StoragesForTestingWereFetched
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onFolderWasPublished'
-        event: In2code\In2publishCore\Event\FolderWasPublished
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onVoteIfUserIsAllowedToPublish'
-        event: In2code\In2publishCore\Event\VoteIfUserIsAllowedToPublish
-      - name: event.listener
-        identifier: 'legacy-slot'
-        method: 'onRequiredTablesWereIdentified'
-        event: In2code\In2publishCore\Event\RequiredTablesWereIdentified

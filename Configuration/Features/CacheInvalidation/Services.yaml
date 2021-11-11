@@ -1,0 +1,19 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  In2code\In2publishCore\Features\CacheInvalidation\:
+    resource: '../../../Classes/Features/CacheInvalidation/*'
+
+  In2code\In2publishCore\Features\CacheInvalidation\Domain\Anomaly\CacheInvalidator:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-CacheInvalidator-PublishingOfOneRecordBegan'
+        method: 'registerClearCacheTasks'
+        event: In2code\In2publishCore\Event\PublishingOfOneRecordBegan
+      - name: event.listener
+        identifier: 'in2publishcore-CacheInvalidator-RecursiveRecordPublishingEnded'
+        method: 'writeClearCacheTask'
+        event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded

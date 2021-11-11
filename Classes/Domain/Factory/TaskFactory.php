@@ -7,8 +7,7 @@ namespace In2code\In2publishCore\Domain\Factory;
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de and the following authors:
- * Alex Kellner <alexander.kellner@in2code.de>,
+ * (c) 2021 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -30,43 +29,23 @@ namespace In2code\In2publishCore\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use DateTime;
-use In2code\In2publishCore\Domain\Model\Task\AbstractTask;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Factory\TaskFactory as NewTaskFactory;
 
-use function json_decode;
+use function trigger_error;
+
+use const E_USER_DEPRECATED;
 
 /**
- * converts database rows from tx_in2code_in2publish_task into Task objects
+ * @deprecated Please use \In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Factory\TaskFactory
+ *     directly.
  */
-class TaskFactory
+class TaskFactory extends NewTaskFactory
 {
-    /**
-     * @param array $taskProperties
-     *
-     * @return AbstractTask
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    public function convertToObject(array $taskProperties): AbstractTask
+    private const DEPRECATION_MESSAGE = 'The class ' . self::class . ' has been moved. Please use the new class '
+                                        . NewTaskFactory::class . ' instead.';
+
+    public function __construct()
     {
-        $className = $taskProperties['task_type'];
-        $configuration = json_decode($taskProperties['configuration'], true);
-
-        /** @var AbstractTask $object */
-        $object = GeneralUtility::makeInstance($className, $configuration, $taskProperties['uid']);
-        $object->setCreationDate(new DateTime($taskProperties['creation_date']));
-
-        if ($taskProperties['messages']) {
-            $object->setMessages(json_decode($taskProperties['messages'], true));
-        }
-        if ($taskProperties['execution_begin']) {
-            $object->setExecutionBegin(new DateTime($taskProperties['execution_begin']));
-        }
-        if ($taskProperties['execution_end']) {
-            $object->setExecutionEnd(new DateTime($taskProperties['execution_end']));
-        }
-
-        return $object;
+        trigger_error(self::DEPRECATION_MESSAGE, E_USER_DEPRECATED);
     }
 }

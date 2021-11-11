@@ -101,7 +101,7 @@ class SysRedirect extends AbstractEntity
         $this->pageUid = $pageUid;
     }
 
-    public function getSiteId(): string
+    public function getSiteId(): ?string
     {
         return $this->siteId;
     }

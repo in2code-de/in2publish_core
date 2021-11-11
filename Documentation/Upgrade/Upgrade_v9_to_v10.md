@@ -1,4 +1,4 @@
-# Upgrading instructions vor in2publish_core from v9 to v10
+# Upgrading instructions for in2publish_core from v9 to v10
 
 ## Replace signal slots by PSR-14 events
 

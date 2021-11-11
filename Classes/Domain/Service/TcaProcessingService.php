@@ -79,6 +79,9 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
     /** @var TcaProcessingService */
     protected static $instance;
 
+    /** @var ConfigContainer */
+    protected $configContainer;
+
     protected $defaultProcessor = [
         'check' => CheckProcessor::class,
         'flex' => FlexProcessor::class,
@@ -123,8 +126,12 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
     public function __construct(FrontendInterface $cache, ConfigContainer $configContainer)
     {
         $this->cache = $cache;
+        $this->configContainer = $configContainer;
+    }
 
-        $configuredProcessor = $configContainer->get('tca.processor');
+    public function initializeObject(): void
+    {
+        $configuredProcessor = $this->configContainer->get('tca.processor');
         if (is_array($configuredProcessor)) {
             foreach ($configuredProcessor as $type => $class) {
                 if (!class_exists($class)) {

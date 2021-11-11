@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\ViewHelpers\Tools;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Tools\ToolsRegistry;
+use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class GetEnabledToolsViewHelper extends AbstractViewHelper
@@ -44,6 +44,6 @@ class GetEnabledToolsViewHelper extends AbstractViewHelper
 
     public function render(): array
     {
-        return $this->toolsRegistry->getTools();
+        return $this->toolsRegistry->getEntries();
     }
 }

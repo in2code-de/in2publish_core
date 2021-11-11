@@ -4,6 +4,32 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Functional\Domain\Repository;
 
+/*
+ * Copyright notice
+ *
+ * (c) 2021 in2code.de and the following authors:
+ * Oliver Eglseder <oliver.eglseder@in2code.de>
+ *
+ * All rights reserved
+ *
+ * This script is part of the TYPO3 project. The TYPO3 project is
+ * free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * The GNU General Public License can be found at
+ * http://www.gnu.org/copyleft/gpl.html.
+ *
+ * This script is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * This copyright notice MUST APPEAR in all copies of the script!
+ */
+
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\PostProcessing\PostProcessingEventListener;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
@@ -139,6 +165,9 @@ class CommonRepositoryTest extends FunctionalTestCase
                 'fieldname' => 'categories',
             ]
         );
+        // sys_category is a select-MM relation with MM_matchFields and no UID. To identify the MM-Record properly, all
+        // fields which determine the identity of the entity have to be used as identifier.
+        $mmRecordIdentifier = '{"uid_local":2,"uid_foreign":5,"sorting":0,"tablenames":"pages","fieldname":"categories"}';
 
         $commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
         $record = $commonRepository->findByIdentifier(5, 'pages');
@@ -151,9 +180,9 @@ class CommonRepositoryTest extends FunctionalTestCase
 
         $mmRecords = $relatedReferences['sys_category_record_mm'];
         $this->assertCount(1, $mmRecords);
-        $this->assertArrayHasKey('2,5', $mmRecords);
+        $this->assertArrayHasKey($mmRecordIdentifier, $mmRecords);
 
-        $mmRecord = $mmRecords['2,5'];
+        $mmRecord = $mmRecords[$mmRecordIdentifier];
         $relatedCategory = $mmRecord->getRelatedRecords();
         $this->assertArrayHasKey('sys_category', $relatedCategory);
 
@@ -164,5 +193,59 @@ class CommonRepositoryTest extends FunctionalTestCase
         $this->assertSame('sys_category', $category->getTableName());
         $this->assertSame(2, $category->getIdentifier());
         $this->assertSame($canary, $category->getLocalProperty('title'));
+    }
+
+    public function testSelectSingleRelationsAreResolved(): void
+    {
+        $pool = GeneralUtility::makeInstance(ConnectionPool::class);
+        $defaultConnection = $pool->getConnectionByName('Default');
+        $defaultConnection->insert('pages', ['uid' => 5, 'sys_language_uid' => 1]);
+        $defaultConnection->insert('sys_language', ['uid' => 1]);
+
+        $commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
+        $record = $commonRepository->findByIdentifier(5, 'pages');
+
+        $relatedRecords = $record->getRelatedRecords();
+        $this->assertCount(1, $relatedRecords);
+
+        $this->assertArrayHasKey('sys_language', $relatedRecords);
+
+        $relatedLanguages = $relatedRecords['sys_language'];
+        $this->assertCount(1, $relatedLanguages);
+        $this->assertArrayHasKey(1, $relatedLanguages);
+
+        $relatedLanguage = $relatedLanguages[1];
+        $this->assertInstanceOf(RecordInterface::class, $relatedLanguage);
+
+        $this->assertSame('sys_language', $relatedLanguage->getTableName());
+        $this->assertSame(1, $relatedLanguage->getIdentifier());
+    }
+
+    public function testRelatedRecordsArePublished(): void
+    {
+        $pool = GeneralUtility::makeInstance(ConnectionPool::class);
+        $defaultConnection = $pool->getConnectionByName('Default');
+        $foreignConnection = $pool->getConnectionByName('Foreign');
+        $defaultConnection->insert('pages', ['uid' => 5, 'sys_language_uid' => 1]);
+        $defaultConnection->insert('sys_language', ['uid' => 1]);
+
+        $query = $foreignConnection->createQueryBuilder();
+        $query->select('*')->from('sys_language');
+        $result = $query->execute();
+        $rows = $result->fetchAllAssociative();
+        $this->assertEmpty($rows);
+
+        $commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
+        $record = $commonRepository->findByIdentifier(5, 'pages');
+
+        $commonRepository->publishRecordRecursive($record);
+
+        $query = $foreignConnection->createQueryBuilder();
+        $query->select('*')->from('sys_language');
+        $result = $query->execute();
+        $rows = $result->fetchAllAssociative();
+
+        $this->assertCount(1, $rows);
+        $this->assertSame(1, $rows[0]['uid']);
     }
 }

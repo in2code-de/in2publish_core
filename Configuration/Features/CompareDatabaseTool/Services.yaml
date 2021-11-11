@@ -1,0 +1,18 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+    bind:
+      $localDatabase: '@In2code.In2publishCore.Database.Local'
+      $foreignDatabase: '@In2code.In2publishCore.Database.Foreign'
+
+  In2code\In2publishCore\Features\CompareDatabaseTool\:
+    resource: '../../../Classes/Features/CompareDatabaseTool/*'
+
+  In2code\In2publishCore\Features\CompareDatabaseTool\Controller\CompareDatabaseToolController:
+    tags:
+      - name: 'in2publish_core.admin_tool'
+        title: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.compare'
+        description: 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.compare.description'
+        actions: 'index,compare,transfer'

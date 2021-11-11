@@ -34,6 +34,7 @@ use function putenv;
 abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functional\FunctionalTestCase
 {
     protected $testExtensionsToLoad = [
+        'typo3/sysext/extensionmanager',
         'typo3conf/ext/in2publish_core',
     ];
 
@@ -204,7 +205,6 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
                     $testbase->setUpTestDatabase($dbPathSqlite, $originalLForeignDatabaseName);
                 }
             }
-            $testbase->loadExtensionTables();
             if ($this->initializeDatabase) {
                 $foreignBackup = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Foreign'];
                 $defaultBackup = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default'];
@@ -230,6 +230,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
                     copy($dbPathSqlite, $dbPathSqliteEmpty);
                 }
             }
+            $testbase->loadExtensionTables();
         }
         $this->initializeIn2publishConfig();
 

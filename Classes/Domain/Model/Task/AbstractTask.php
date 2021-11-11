@@ -7,8 +7,7 @@ namespace In2code\In2publishCore\Domain\Model\Task;
 /*
  * Copyright notice
  *
- * (c) 2015 in2code.de and the following authors:
- * Alex Kellner <alexander.kellner@in2code.de>,
+ * (c) 2021 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -30,150 +29,23 @@ namespace In2code\In2publishCore\Domain\Model\Task;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use DateTime;
-use In2code\In2publishCore\Utility\ArrayUtility;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask as NewTaskAlias;
+
+use function trigger_error;
+
+use const E_USER_DEPRECATED;
 
 /**
- * Any Task must inherit from this class. This AbstractTask works like a Template for Task execution strategy
+ * @deprecated Please use \In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask directly.
  */
-abstract class AbstractTask
+abstract class AbstractTask extends NewTaskAlias
 {
-    /** @var int */
-    protected $uid;
+    private const DEPRECATION_MESSAGE = 'The class ' . self::class . ' has been moved. Please use the new class '
+                                        . NewTaskAlias::class . ' instead.';
 
-    /** @var array */
-    protected $configuration;
-
-    /** @var DateTime|null */
-    protected $creationDate;
-
-    /** @var DateTime|null */
-    protected $executionBegin;
-
-    /** @var DateTime|null */
-    protected $executionEnd;
-
-    /** @var array<string> */
-    private $messages = [];
-
-    final public function __construct(array $configuration, int $uid = 0)
+    // Only change to actually trigger this deprecation is the destructor
+    public function __destruct()
     {
-        $this->configuration = $configuration;
-        $this->uid = $uid;
-    }
-
-    final public function execute(): bool
-    {
-        $this->beforeExecute();
-        $success = $this->executeTask();
-        $this->afterExecute();
-        return $success;
-    }
-
-    /**
-     * @api Implement this in your Task
-     */
-    abstract protected function executeTask(): bool;
-
-    final protected function beforeExecute(): void
-    {
-        $this->executionBegin = new DateTime();
-    }
-
-    final protected function afterExecute(): void
-    {
-        $this->executionEnd = new DateTime();
-    }
-
-    final public function getUid(): int
-    {
-        return $this->uid;
-    }
-
-    /** @return mixed */
-    final public function getConfiguration(string $path = '')
-    {
-        if ($path) {
-            return ArrayUtility::getValueByPath($this->configuration, $path);
-        }
-        return $this->configuration;
-    }
-
-    final public function getCreationDate(): ?DateTime
-    {
-        return $this->creationDate;
-    }
-
-    final public function setCreationDate(DateTime $creationDate): AbstractTask
-    {
-        $this->creationDate = $creationDate;
-        return $this;
-    }
-
-    final public function getExecutionBegin(): ?DateTime
-    {
-        return $this->executionBegin;
-    }
-
-    final public function getExecutionBeginForPersistence(): string
-    {
-        if ($this->executionBegin instanceof DateTime) {
-            return $this->executionBegin->format('Y-m-d H:i:s');
-        }
-        return 'NULL';
-    }
-
-    final public function setExecutionBegin(DateTime $executionBegin = null): AbstractTask
-    {
-        $this->executionBegin = $executionBegin;
-        return $this;
-    }
-
-    final public function getExecutionEnd(): ?DateTime
-    {
-        return $this->executionEnd;
-    }
-
-    final public function getExecutionEndForPersistence(): string
-    {
-        if ($this->executionEnd instanceof DateTime) {
-            return $this->executionEnd->format('Y-m-d H:i:s');
-        }
-        return 'NULL';
-    }
-
-    /**
-     * @param DateTime|null $executionEnd
-     *
-     * @return AbstractTask
-     */
-    final public function setExecutionEnd(DateTime $executionEnd = null): AbstractTask
-    {
-        $this->executionEnd = $executionEnd;
-        return $this;
-    }
-
-    final public function getMessages(): array
-    {
-        return $this->messages;
-    }
-
-    /**
-     * @param array<string> $messages
-     *
-     * @return AbstractTask
-     */
-    final public function setMessages(array $messages): AbstractTask
-    {
-        $this->messages = [];
-        foreach ($messages as $message) {
-            $this->addMessage($message);
-        }
-        return $this;
-    }
-
-    final public function addMessage(string $string): void
-    {
-        $this->messages[] = $string;
+        trigger_error(self::DEPRECATION_MESSAGE, E_USER_DEPRECATED);
     }
 }

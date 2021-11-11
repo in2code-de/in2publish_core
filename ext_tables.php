@@ -86,69 +86,10 @@
             ]
         );
     }
-    if ($configContainer->get('module.m4')) {
-        $toolsRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-            \In2code\In2publishCore\Tools\ToolsRegistry::class
-        );
 
-        /*********************************************** Register Tools ***********************************************/
-        $toolsRegistry->addTool(
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.index',
-            '',
-            \In2code\In2publishCore\Controller\ToolsController::class,
-            'index'
-        );
-        $toolsRegistry->addTool(
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test',
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.test.description',
-            \In2code\In2publishCore\Controller\ToolsController::class,
-            'test'
-        );
-        $toolsRegistry->addTool(
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration',
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.configuration.description',
-            \In2code\In2publishCore\Controller\ToolsController::class,
-            'configuration'
-        );
-        if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('logs')) {
-            $toolsRegistry->addTool(
-                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.logs',
-                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.logs.description',
-                In2code\In2publishCore\Features\LogsIntegration\Controller\LogController::class,
-                'filter,delete,deleteAlike'
-            );
-        }
-        $toolsRegistry->addTool(
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca',
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.tca.description',
-            \In2code\In2publishCore\Controller\ToolsController::class,
-            'tca'
-        );
-        $toolsRegistry->addTool(
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca',
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_tca.description',
-            \In2code\In2publishCore\Controller\ToolsController::class,
-            'clearTcaCaches'
-        );
-        $toolsRegistry->addTool(
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry',
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_registry.description',
-            \In2code\In2publishCore\Controller\ToolsController::class,
-            'flushRegistry'
-        );
-        $toolsRegistry->addTool(
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes',
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.flush_envelopes.description',
-            \In2code\In2publishCore\Controller\ToolsController::class,
-            'flushEnvelopes'
-        );
-        $toolsRegistry->addTool(
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.system_info',
-            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:moduleselector.system_info.description',
-            \In2code\In2publishCore\Controller\ToolsController::class,
-            'sysInfoIndex,sysInfoShow,sysInfoDecode,sysInfoDownload,sysInfoUpload'
-        );
-    }
+
+    /************************************************* Register Tools *************************************************/
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['extTablesInclusion-PostProcessing'][] = \In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry::class;
 
 
     /******************************************* Context Menu Publish Entry *******************************************/

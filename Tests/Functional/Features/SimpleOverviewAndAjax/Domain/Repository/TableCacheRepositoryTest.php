@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\Tests\In2code\In2publishCore\Features\SimpleOve
 
 use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository\TableCacheRepository;
 use In2code\In2publishCore\Tests\FunctionalTestCase;
-use In2code\In2publishCore\Tests\UnitTester;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -39,21 +38,6 @@ use PHPUnit\Framework\MockObject\MockObject;
  */
 class TableCacheRepositoryTest extends FunctionalTestCase
 {
-    /**
-     * @var UnitTester
-     */
-    protected $tester;
-
-    protected function _before(): void
-    {
-        $this->tester->setUp();
-    }
-
-    protected function _after(): void
-    {
-        $this->tester->tearDown();
-    }
-
     protected function getTableCacheRepositoryInstance(): TableCacheRepository
     {
         /** @var TableCacheRepository|MockObject $mock */
