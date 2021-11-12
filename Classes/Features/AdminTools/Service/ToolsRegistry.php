@@ -34,7 +34,6 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Database\TableConfigurationPostProcessingHookInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
@@ -82,7 +81,7 @@ class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcess
     public function getEntries(): array
     {
         // Do not inject the ConfigurationManager, because it will not contain the configured tools.
-        $configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
+        $configurationManager = GeneralUtility::makeInstance(ConfigurationManagerInterface::class);
         $configuration = $configurationManager->getConfiguration(
             ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK
         );
