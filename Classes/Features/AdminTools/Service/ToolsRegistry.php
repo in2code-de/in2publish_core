@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\Features\AdminTools\Service;
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\Database\TableConfigurationPostProcessingHookInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
@@ -44,7 +43,7 @@ use function trigger_error;
 
 use const E_USER_DEPRECATED;
 
-class ToolsRegistry implements SingletonInterface, TableConfigurationPostProcessingHookInterface
+class ToolsRegistry implements SingletonInterface
 {
     private const DEPRECATED_NON_FQCN_TOOL = 'Tools registration without a FQCN is deprecated and will be removed in in2publish_core version 11. Registered controller name: %s';
 

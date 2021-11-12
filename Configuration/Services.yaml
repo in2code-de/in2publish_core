@@ -37,6 +37,10 @@ services:
       - '../Classes/Component/*'
       - '../Classes/Features/*'
 
+  TYPO3\CMS\Backend\Middleware\BackendRouteInitialization:
+    alias: In2code\In2publishCore\Middleware\BackendRouteInitialization
+    public: true
+
   # Services
 
   In2code.In2publishCore.Database.Local:
@@ -105,4 +109,4 @@ services:
       - name: event.listener
         identifier: 'in2publishcore-PageTsProvider-bootCompleted'
         method: 'processData'
-        event: TYPO3\CMS\Core\Core\Event\BootCompletedEvent
+        event: In2code\In2publishCore\Event\ExtTablesPostProcessingEvent
