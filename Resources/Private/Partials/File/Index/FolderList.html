@@ -1,7 +1,7 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
 {namespace core=TYPO3\CMS\Core\ViewHelpers}
 <f:if condition="{record}">
-	<tr>
+	<tr class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.state}">
 		<f:comment>Left</f:comment>
 		<td class="col-icon">
 			<core:icon identifier="files-folder"></core:icon>

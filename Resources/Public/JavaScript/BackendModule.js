@@ -4,6 +4,8 @@ define([
 	'jquery'
 ], function ($) {
 	var In2publishModule = {
+		isNewUI: (document.querySelector('.typo3-fullDoc[data-ui-refresh]') !== null),
+		unchangedFilter: false,
 		changedFilter: false,
 		addedFilter: false,
 		deletedFilter: false,
@@ -17,8 +19,13 @@ define([
 
 	In2publishModule.initialize = function () {
 		In2publishModule.toggleDirtyPropertiesListContainerListener();
-		In2publishModule.setFilterForPageView();
-		In2publishModule.filterButtonsListener();
+		if (In2publishModule.isNewUI) {
+			In2publishModule.filterItemsByStatus();
+			In2publishModule.setupFilterListeners();
+		} else {
+			In2publishModule.setFilterForPageView();
+			In2publishModule.filterButtonsListener();
+		}
 		In2publishModule.overlayListener();
 	};
 
@@ -152,6 +159,41 @@ define([
 	In2publishModule.hidePreLoader = function () {
 		In2publishModule.objects.preLoader.addClass('in2publish-preloader--hidden');
 		In2publishModule.objects.typo3DocBody.removeClass('stopScrolling');
+	};
+
+	In2publishModule.setupFilterListeners = function () {
+		const filters = document.querySelectorAll('.js-in2publish-filter');
+
+		(Array.from(filters)).forEach(function (filter) {
+			filter.addEventListener('click', function(event) {
+				fetch(event.currentTarget.getAttribute('data-href'));
+
+				In2publishModule.filterItemsByStatus();
+			});
+		});
+	}
+
+	In2publishModule.filterItemsByStatus = function () {
+		In2publishModule.changedFilter = (document.querySelector('.js-in2publish-filter[value="changed"]:checked') !== null);
+		In2publishModule.addedFilter = (document.querySelector('.js-in2publish-filter[value="added"]:checked') !== null);
+		In2publishModule.deletedFilter = (document.querySelector('.js-in2publish-filter[value="deleted"]:checked') !== null);
+		In2publishModule.movedFilter = (document.querySelector('.js-in2publish-filter[value="moved"]:checked') !== null);
+		In2publishModule.unchangedFilter = (document.querySelector('.js-in2publish-filter[value="unchanged"]:checked') !== null);
+
+		if (In2publishModule.changedFilter ||
+			In2publishModule.addedFilter ||
+			In2publishModule.deletedFilter ||
+			In2publishModule.movedFilter ||
+			In2publishModule.unchangedFilter
+		) {
+			In2publishModule.hideOrShowPages($('.in2publish-stagelisting__item--changed'), In2publishModule.changedFilter);
+			In2publishModule.hideOrShowPages($('.in2publish-stagelisting__item--added'), In2publishModule.addedFilter);
+			In2publishModule.hideOrShowPages($('.in2publish-stagelisting__item--deleted'), In2publishModule.deletedFilter);
+			In2publishModule.hideOrShowPages($('.in2publish-stagelisting__item--moved'), In2publishModule.movedFilter);
+			In2publishModule.hideOrShowPages($('.in2publish-stagelisting__item--unchanged'), In2publishModule.unchangedFilter);
+		} else {
+			$('.in2publish-stagelisting__item').show();
+		}
 	};
 
 	$(function () {
