@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  */
 
 use In2code\In2publishCore\Config\ConfigContainer;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 class ShowConfigurationController extends ActionController
@@ -42,7 +43,7 @@ class ShowConfigurationController extends ActionController
         $this->configContainer = $configContainer;
     }
 
-    public function indexAction(int $emulatePage = null): void
+    public function indexAction(int $emulatePage = null): ResponseInterface
     {
         if (null !== $emulatePage) {
             $_POST['id'] = $emulatePage;
@@ -50,5 +51,6 @@ class ShowConfigurationController extends ActionController
         $this->view->assign('containerDump', $this->configContainer->dump());
         $this->view->assign('globalConfig', $this->configContainer->getContextFreeConfig());
         $this->view->assign('emulatePage', $emulatePage);
+        return $this->htmlResponse();
     }
 }

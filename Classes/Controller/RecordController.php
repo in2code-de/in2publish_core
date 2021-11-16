@@ -43,6 +43,7 @@ use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Service\Error\FailureCollector;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use In2code\In2publishCore\Utility\LogUtility;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -105,7 +106,7 @@ class RecordController extends AbstractController
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function indexAction(): void
+    public function indexAction(): ResponseInterface
     {
         GeneralUtility::makeInstance(TcaProcessingService::class);
         $record = $this->recordFinder->findRecordByUidForOverview($this->pid, 'pages');
@@ -119,6 +120,7 @@ class RecordController extends AbstractController
             $this->addFlashMessage($message, $title, $severity);
         }
         $this->view->assign('record', $record);
+        return $this->htmlResponse();
     }
 
     /**
@@ -130,13 +132,14 @@ class RecordController extends AbstractController
      *
      * @return void
      */
-    public function detailAction(int $identifier, string $tableName): void
+    public function detailAction(int $identifier, string $tableName): ResponseInterface
     {
         $record = $this->recordFinder->findRecordByUidForPublishing($identifier, $tableName);
 
         $this->eventDispatcher->dispatch(new RecordWasCreatedForDetailAction($this, $record));
 
         $this->view->assign('record', $record);
+        return $this->htmlResponse();
     }
 
     /**
@@ -180,9 +183,10 @@ class RecordController extends AbstractController
      *
      * @throws StopActionException
      */
-    public function toggleFilterStatusAndRedirectToIndexAction(string $filter): void
+    public function toggleFilterStatusAndRedirectToIndexAction(string $filter): ResponseInterface
     {
         $this->toggleFilterStatusAndRedirect('in2publish_filter_records_', $filter, 'index');
+        return $this->htmlResponse();
     }
 
     protected function publishRecord(int $identifier, array $exceptTableNames = []): void

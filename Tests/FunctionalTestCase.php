@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests;
 
+use RuntimeException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\DriverManager;
 use Exception;
@@ -60,7 +61,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
      * This method should be called with parent::setUp() in your test cases!
      *
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     protected function setUp(): void
     {
@@ -248,7 +249,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
     protected function getContainer(): ContainerInterface
     {
         if (!$this->container instanceof ContainerInterface) {
-            throw new \RuntimeException('Please invoke parent::setUp() before calling getContainer().', 1589221777);
+            throw new RuntimeException('Please invoke parent::setUp() before calling getContainer().', 1589221777);
         }
         return $this->container;
     }

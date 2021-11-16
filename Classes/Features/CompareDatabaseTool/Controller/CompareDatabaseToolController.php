@@ -34,6 +34,7 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Features\CompareDatabaseTool\Domain\DTO\ComparisonRequest;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -69,11 +70,12 @@ class CompareDatabaseToolController extends ActionController
         $this->foreignDatabase = $foreignDatabase;
     }
 
-    public function indexAction(): void
+    public function indexAction(): ResponseInterface
     {
         $tables = $this->getAllNonExcludedTables();
         $tables = array_intersect($tables, array_keys($GLOBALS['TCA']));
         $this->view->assign('tables', array_combine($tables, $tables));
+        return $this->htmlResponse();
     }
 
     public function compareAction(ComparisonRequest $comparisonRequest = null): void

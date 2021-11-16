@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  */
 
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -44,9 +45,10 @@ class LetterboxController extends ActionController
         $this->letterbox = $letterbox;
     }
 
-    public function indexAction(): void
+    public function indexAction(): ResponseInterface
     {
         $this->view->assign('canFlush', $this->letterbox->hasUnAnsweredEnvelopes());
+        return $this->htmlResponse();
     }
 
     /** @throws StopActionException */

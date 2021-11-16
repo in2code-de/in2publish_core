@@ -30,7 +30,9 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Controller;
  */
 
 use In2code\In2publishCore\Features\SystemInformationExport\Service\SystemInformationExportService;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Extbase\Http\ForwardResponse;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -60,18 +62,20 @@ class SystemInformationExportController extends ActionController
         $this->sysInfoExportService = $sysInfoExportService;
     }
 
-    public function sysInfoIndexAction(): void
+    public function sysInfoIndexAction(): ResponseInterface
     {
+        return $this->htmlResponse();
     }
 
-    public function sysInfoShowAction(): void
+    public function sysInfoShowAction(): ResponseInterface
     {
         $info = $this->sysInfoExportService->getSystemInformation();
         $this->view->assign('info', $info);
         $this->view->assign('infoJson', json_encode($info));
+        return $this->htmlResponse();
     }
 
-    public function sysInfoDecodeAction(string $json = ''): void
+    public function sysInfoDecodeAction(string $json = ''): ResponseInterface
     {
         if (!empty($json)) {
             $info = json_decode($json, true);
@@ -87,6 +91,7 @@ class SystemInformationExportController extends ActionController
             }
         }
         $this->view->assign('infoJson', $json);
+        return $this->htmlResponse();
     }
 
     public function sysInfoDownloadAction(): void
@@ -109,15 +114,15 @@ class SystemInformationExportController extends ActionController
         die;
     }
 
-    public function sysInfoUploadAction(): void
+    public function sysInfoUploadAction(): ResponseInterface
     {
         try {
             /** @var array $file */
             $file = $this->request->getArgument('jsonFile');
         } catch (NoSuchArgumentException $e) {
-            return;
+            return $this->htmlResponse(null);
         }
         $content = file_get_contents($file['tmp_name']);
-        $this->forward('sysInfoDecode', null, null, ['json' => $content]);
+        return (new ForwardResponse('sysInfoDecode'))->withArguments(['json' => $content]);
     }
 }

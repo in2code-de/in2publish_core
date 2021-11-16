@@ -33,6 +33,7 @@ use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 class TestController extends ActionController
@@ -50,7 +51,7 @@ class TestController extends ActionController
     }
 
     /** @throws In2publishCoreException */
-    public function indexAction(): void
+    public function indexAction(): ResponseInterface
     {
         $testingResults = $this->testingService->runAllTests();
 
@@ -66,5 +67,6 @@ class TestController extends ActionController
         $this->environmentService->setTestResult($success);
 
         $this->view->assign('testingResults', $testingResults);
+        return $this->htmlResponse();
     }
 }

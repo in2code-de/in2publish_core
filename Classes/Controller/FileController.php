@@ -41,6 +41,7 @@ use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
+use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
@@ -89,13 +90,14 @@ class FileController extends AbstractController
         $this->recordPublisher = $recordPublisher;
     }
 
-    public function indexAction(): void
+    public function indexAction(): ResponseInterface
     {
         $record = $this->tryToGetFolderInstance($this->pid === 0 ? null : $this->pid);
 
         if (null !== $record) {
             $this->view->assign('record', $record);
         }
+        return $this->htmlResponse();
     }
 
     /** @throws StopActionException */

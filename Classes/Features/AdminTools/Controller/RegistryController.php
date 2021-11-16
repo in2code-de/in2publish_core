@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Registry;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
@@ -44,8 +45,9 @@ class RegistryController extends ActionController
         $this->registry = $registry;
     }
 
-    public function indexAction(): void
+    public function indexAction(): ResponseInterface
     {
+        return $this->htmlResponse();
     }
 
     /** @throws StopActionException */

@@ -382,7 +382,7 @@ class BackendUtility
      */
     protected static function getRuntimeCache(): VariableFrontend
     {
-        return GeneralUtility::makeInstance(CacheManager::class)->getCache('cache_runtime');
+        return GeneralUtility::makeInstance(CacheManager::class)->getCache('runtime');
     }
 
     protected static function getForeignUriClosure(

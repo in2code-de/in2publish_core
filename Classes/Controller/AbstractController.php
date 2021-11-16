@@ -35,6 +35,7 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
@@ -122,8 +123,9 @@ abstract class AbstractController extends ActionController
     /**
      * Dummy Method to use when an error occurred. This Method must never throw an exception.
      */
-    public function blankAction(): void
+    public function blankAction(): ResponseInterface
     {
+        return $this->htmlResponse();
     }
 
     /** @throws StopActionException */

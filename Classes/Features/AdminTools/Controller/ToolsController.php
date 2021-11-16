@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
 use In2code\In2publishCore\Event\CreatedDefaultHelpLabels;
 use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -54,7 +55,7 @@ class ToolsController extends ActionController
         $this->toolsRegistry = $toolsRegistry;
     }
 
-    public function indexAction(): void
+    public function indexAction(): ResponseInterface
     {
         $testStates = $this->environmentService->getTestStatus();
 
@@ -80,7 +81,7 @@ class ToolsController extends ActionController
         $supports = $event->getSupports();
 
         $this->view->assign('supports', $supports);
-
         $this->view->assign('tools', $this->toolsRegistry->getEntries());
+        return $this->htmlResponse();
     }
 }

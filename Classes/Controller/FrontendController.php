@@ -31,12 +31,13 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Utility\BackendUtility;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as ExtbaseActionController;
 
 class FrontendController extends ExtbaseActionController
 {
     /** Preview action for vertical or horizontal view */
-    public function previewAction(int $identifier = 1): void
+    public function previewAction(int $identifier = 1): ResponseInterface
     {
         $this->view->assign(
             'local_preview',
@@ -46,5 +47,6 @@ class FrontendController extends ExtbaseActionController
             'foreign_preview',
             (string)BackendUtility::buildPreviewUri('pages', $identifier, 'foreign')
         );
+        return $this->htmlResponse();
     }
 }

@@ -34,10 +34,10 @@ use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use InvalidArgumentException;
 use LogicException;
+use PDO;
 use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Database\Query\QueryHelper;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
@@ -353,7 +353,7 @@ class DatabaseUtility
     /**
      * Copied from deprecated QueryGenerator
      * see: Deprecation-92080-DeprecatedQueryGeneratorAndQueryView.html
-     * 
+     *
      * Recursively fetch all descendants of a given page
      *
      * @param int $id uid of the page
@@ -379,10 +379,11 @@ class DatabaseUtility
         if ($id && $depth > 0) {
             $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
             $queryBuilder->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
-            $queryBuilder->select('uid')
+            $queryBuilder
+                ->select('uid')
                 ->from('pages')
                 ->where(
-                    $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($id, \PDO::PARAM_INT)),
+                    $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($id, PDO::PARAM_INT)),
                     $queryBuilder->expr()->eq('sys_language_uid', 0)
                 )
                 ->orderBy('uid');
@@ -395,7 +396,7 @@ class DatabaseUtility
                     $theList .= ',' . $row['uid'];
                 }
                 if ($depth > 1) {
-                    $theSubList =self::getTreeList($row['uid'], $depth - 1, $begin - 1, $permClause);
+                    $theSubList = self::getTreeList($row['uid'], $depth - 1, $begin - 1, $permClause);
                     if (!empty($theList) && !empty($theSubList) && ($theSubList[0] !== ',')) {
                         $theList .= ',';
                     }
@@ -423,4 +424,3 @@ class DatabaseUtility
         return preg_replace('/^(?:(AND|OR)[[:space:]]*)+/i', '', trim($constraint)) ?: '';
     }
 }
-
