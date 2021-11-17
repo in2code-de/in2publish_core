@@ -7,10 +7,17 @@
 		<b class="d-inline-block w-25 pe-2">
 			<publish:Tca.GetFieldLabelFromLocallang fieldName="{propertyName}" tableName="{record.tableName}"/>
 		</b>
-		<span class="d-inline-block w-auto">
-		<publish:Tca.FormatPropertyByTcaDefinition fieldName="{propertyName}" tableName="{record.tableName}">
-			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{propertyName}" stagingLevel="{stagingLevel}" />
-		</publish:Tca.FormatPropertyByTcaDefinition>
-	</span>
+		<span class="d-inline-block w-auto{f:if(condition: '{publish:record.isPropertyDirty(record: \'{record}\', property: \'{propertyName}\')} && {stagingLevel} === \'local\'', then: '  in2publish-state--changed')}">
+			<f:if condition="{content}">
+				<f:then>
+					{content -> f:format.raw()}
+				</f:then>
+				<f:else>
+					<publish:Tca.FormatPropertyByTcaDefinition fieldName="{propertyName}" tableName="{record.tableName}">
+						<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{propertyName}" stagingLevel="{stagingLevel}" />
+					</publish:Tca.FormatPropertyByTcaDefinition>
+				</f:else>
+			</f:if>
+		</span>
 	</li>
 </f:if>

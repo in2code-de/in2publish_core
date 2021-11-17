@@ -27,7 +27,9 @@
 			</f:for>
 		</f:if>
 		<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'extension', stagingLevel: stagingLevel}"/>
-		<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'size', stagingLevel: stagingLevel}"/>
+		<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'size', stagingLevel: stagingLevel}" contentAs="content">
+			{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'size', record: record, stagingLevel: stagingLevel) -> f:format.bytes()}
+		</f:render>
 		<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'identifier', stagingLevel: stagingLevel}"/>
 	</ul>
 
