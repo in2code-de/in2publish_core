@@ -27,22 +27,4 @@ return [
             ],
         ],
     ],
-
-    BackendUser::class => [
-        'tableName' => 'be_users',
-        'properties' => [
-            'userName' => [
-                'fieldName' => 'username',
-            ],
-            'realName' => [
-                'fieldName' => 'realName',
-            ],
-            'email' => [
-                'fieldName' => 'email',
-            ],
-            'isDisabled' => [
-                'fieldName' => 'disable',
-            ],
-        ],
-    ],
 ];
