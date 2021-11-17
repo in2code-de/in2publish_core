@@ -10,7 +10,16 @@
 		</td>
 		<td class="col-filename col-responsive nowrap">
 			<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
-			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" />
+			<span class="in2publish-stagelisting__item-filename">
+				<f:if condition="{record.stateRecursive} === 'deleted'">
+					<f:then>
+						<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" />
+					</f:then>
+					<f:else>
+						<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" />
+					</f:else>
+				</f:if>
+			</span>
 		</td>
 		<td class="col-control">
 			<div class="btn-group">
