@@ -33,8 +33,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class GetT3VersionViewHelper extends AbstractViewHelper
 {
-    /** @var Typo3Version */
-    private $typo3version;
+    private Typo3Version $typo3version;
 
     public function __construct(Typo3Version $typo3version)
     {

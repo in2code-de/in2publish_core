@@ -51,14 +51,11 @@ use function max;
 
 class CompareDatabaseToolController extends ActionController
 {
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
-    /** @var Connection */
-    protected $localDatabase;
+    protected Connection $localDatabase;
 
-    /** @var Connection */
-    protected $foreignDatabase;
+    protected Connection $foreignDatabase;
 
     public function __construct(
         ConfigContainer $configContainer,

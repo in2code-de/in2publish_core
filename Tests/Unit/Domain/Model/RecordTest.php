@@ -1280,9 +1280,6 @@ class RecordTest extends UnitTestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function propertiesDataProvider(): array
     {
         // @formatter:off

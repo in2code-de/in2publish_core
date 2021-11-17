@@ -40,8 +40,7 @@ use function in_array;
 
 class FileEdgeCacheInvalidationService
 {
-    /** @var null|Connection */
-    protected $connection;
+    protected ?Connection $connection;
 
     public function __construct()
     {

@@ -58,11 +58,9 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
 {
     public const ADAPTER_KEY = 'ssh';
 
-    /** @var ForeignEnvironmentService */
-    private $foreignEnvironmentService;
+    private ForeignEnvironmentService $foreignEnvironmentService;
 
-    /** @var RemoteCommandDispatcher */
-    private $remoteCommandDispatcher;
+    private RemoteCommandDispatcher $remoteCommandDispatcher;
 
     /** @var null|resource */
     protected $sshSession;
@@ -70,7 +68,7 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
     /** @var null|resource */
     protected $sftSession;
 
-    protected $createMasks = [
+    protected array $createMasks = [
         'decimalFileMask' => 0000,
         'decimalFolderMask' => 0000,
     ];

@@ -39,11 +39,9 @@ class UnexpectedMissingFileException extends In2publishCoreException
     public const CODE = 1583161654;
     protected const MESSAGE = 'The file "%s" from storage "%d" requested for local processing does not exist';
 
-    /** @var string */
-    private $identifier;
+    private string $identifier;
 
-    /** @var int */
-    private $storage;
+    private int $storage;
 
     public function __construct(string $identifier, int $storage, Throwable $previous = null)
     {

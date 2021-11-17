@@ -36,11 +36,9 @@ use TYPO3\CMS\Core\Site\Entity\Site;
 
 class PageSlugService
 {
-    /** @var SiteService */
-    protected $siteService;
+    protected SiteService $siteService;
 
-    /** @var ConnectionPool */
-    protected $connectionPool;
+    protected ConnectionPool $connectionPool;
 
     public function __construct(SiteService $siteService, ConnectionPool $connectionPool)
     {

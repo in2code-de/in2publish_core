@@ -38,7 +38,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PageTsProvider implements ProviderInterface, ContextualProvider
 {
-    protected $locked = true;
+    protected bool $locked = true;
 
     /**
      * This method is called after loading all ext_tables.php

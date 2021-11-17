@@ -46,8 +46,7 @@ class FileIndexPostProcessor implements PostProcessor, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var ResourceFactory */
-    protected $resourceFactory;
+    protected ResourceFactory $resourceFactory;
 
     public function __construct(ResourceFactory $resourceFactory)
     {

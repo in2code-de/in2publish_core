@@ -33,8 +33,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class GetFilterStatusViewHelper extends AbstractViewHelper
 {
-    /** @var BackendUserAuthentication */
-    protected $backendUser;
+    protected BackendUserAuthentication $backendUser;
 
     /** @SuppressWarnings(PHPMD.Superglobals) */
     public function __construct()

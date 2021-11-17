@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Domain\Factory;
 
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\In2publishCoreException;
@@ -61,26 +62,19 @@ class FolderRecordFactory implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var ResourceFactory */
-    protected $resourceFactory;
+    protected ResourceFactory $resourceFactory;
 
-    /** @var RecordFinder */
-    protected $recordFinder;
+    protected RecordFinder $recordFinder;
 
-    /** @var Connection */
-    protected $foreignDatabase;
+    protected Connection $foreignDatabase;
 
-    /** @var array */
-    protected $configuration = [];
+    protected array $configuration = [];
 
-    /** @var DriverInterface */
-    protected $localDriver;
+    protected DriverInterface $localDriver;
 
-    /** @var RemoteFileAbstractionLayerDriver */
-    protected $foreignDriver;
+    protected RemoteFileAbstractionLayerDriver $foreignDriver;
 
-    /** @var FileIndexFactory */
-    protected $fileIndexFactory;
+    protected FileIndexFactory $fileIndexFactory;
 
     public function __construct(
         ResourceFactory $resourceFactory,

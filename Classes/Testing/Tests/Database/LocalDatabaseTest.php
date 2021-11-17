@@ -40,8 +40,7 @@ use function in_array;
 
 class LocalDatabaseTest implements TestCaseInterface
 {
-    /** @var RequiredTablesDataProvider */
-    protected $requiredTablesDataProvider;
+    protected RequiredTablesDataProvider $requiredTablesDataProvider;
 
     public function __construct(RequiredTablesDataProvider $requiredTablesDataProvider)
     {

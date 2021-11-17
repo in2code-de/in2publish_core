@@ -36,8 +36,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class RecordHandlerFactory
 {
-    /** @var ConfigContainer */
-    private $configContainer;
+    private ConfigContainer $configContainer;
 
     public function __construct(ConfigContainer $configContainer)
     {

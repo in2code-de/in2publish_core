@@ -42,11 +42,9 @@ use function preg_match;
 
 class SshConnectionTest implements TestCaseInterface
 {
-    /** @var RemoteCommandDispatcher */
-    protected $rceDispatcher;
+    protected RemoteCommandDispatcher $rceDispatcher;
 
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
     public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, ConfigContainer $configContainer)
     {

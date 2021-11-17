@@ -41,14 +41,11 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
 {
     protected const ARG_IDENTIFIER = 'identifier';
 
-    /** @var RawRecordService */
-    protected $rawRecordService;
+    protected RawRecordService $rawRecordService;
 
-    /** @var TcaService */
-    protected $tcaService;
+    protected TcaService $tcaService;
 
-    /** @var SiteService */
-    protected $siteService;
+    protected SiteService $siteService;
 
     protected $tagName = 'a';
 

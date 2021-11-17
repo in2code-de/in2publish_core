@@ -40,26 +40,19 @@ use function sprintf;
 
 class SysRedirect extends AbstractEntity
 {
-    /** @var string */
-    protected $sourceHost;
+    protected string $sourceHost;
 
-    /** @var string */
-    protected $sourcePath;
+    protected string $sourcePath;
 
-    /** @var string */
-    protected $target;
+    protected string $target;
 
-    /** @var int */
-    protected $pageUid;
+    protected int $pageUid;
 
-    /** @var string */
-    protected $siteId;
+    protected string $siteId;
 
-    /** @var bool */
-    protected $deleted;
+    protected bool $deleted;
 
-    /** @var array */
-    protected $rtc = [];
+    protected array $rtc = [];
 
     public function getSourceHost(): string
     {

@@ -48,11 +48,9 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
 {
     public const DB_CONFIG_TEST_TYPE = 'DB Config Test';
 
-    /** @var RemoteCommandDispatcher */
-    protected $rceDispatcher;
+    protected RemoteCommandDispatcher $rceDispatcher;
 
-    /** @var Random */
-    protected $random;
+    protected Random $random;
 
     public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, Random $random)
     {

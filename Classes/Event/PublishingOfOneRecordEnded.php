@@ -39,11 +39,9 @@ use const E_USER_DEPRECATED;
 
 final class PublishingOfOneRecordEnded
 {
-    /** @var RecordInterface */
-    private $record;
+    private RecordInterface $record;
 
-    /** @var RecordPublisher */
-    private $recordPublisher;
+    private RecordPublisher $recordPublisher;
 
     public function __construct(RecordInterface $record, RecordPublisher $recordPublisher)
     {

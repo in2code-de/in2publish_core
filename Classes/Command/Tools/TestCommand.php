@@ -46,14 +46,11 @@ class TestCommand extends Command
     public const EXIT_TESTS_FAILED = 240;
     public const IDENTIFIER = 'in2publish_core:tools:test';
 
-    /** @var ContextService */
-    private $contextService;
+    private ContextService $contextService;
 
-    /** @var TestingService */
-    private $testingService;
+    private TestingService $testingService;
 
-    /** @var EnvironmentService */
-    private $environmentService;
+    private EnvironmentService $environmentService;
 
     public function __construct(
         ContextService $contextService,

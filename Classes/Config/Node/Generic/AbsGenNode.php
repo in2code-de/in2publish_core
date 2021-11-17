@@ -40,7 +40,7 @@ abstract class AbsGenNode extends AbstractNode
     /**
      * @var string[]
      */
-    protected static $types = [
+    protected static array $types = [
         Node::T_STRING => GenString::class,
         Node::T_INTEGER => GenInteger::class,
     ];

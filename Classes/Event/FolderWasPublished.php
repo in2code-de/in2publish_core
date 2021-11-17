@@ -31,14 +31,11 @@ namespace In2code\In2publishCore\Event;
 
 final class FolderWasPublished
 {
-    /** @var int */
-    private $storage;
+    private int $storage;
 
-    /** @var string */
-    private $folderIdentifier;
+    private string $folderIdentifier;
 
-    /** @var bool */
-    private $success;
+    private bool $success;
 
     public function __construct(int $storage, string $folderIdentifier, bool $success)
     {

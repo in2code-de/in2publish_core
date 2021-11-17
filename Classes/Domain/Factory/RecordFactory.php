@@ -62,11 +62,9 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var TcaService */
-    protected $tcaService;
+    protected TcaService $tcaService;
 
-    /** @var EventDispatcher */
-    protected $eventDispatcher;
+    protected EventDispatcher $eventDispatcher;
 
     /**
      * Runtime cache to cache already created Records
@@ -77,21 +75,16 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
      *
      * @var RecordInterface[][]
      */
-    protected $runtimeCache = [];
+    protected array $runtimeCache = [];
 
     /**
      * Array of $tableName => array($uid, $uid) entries
      * indicating if the record to instantiate is already
      * in instantiation
-     *
-     * @var array
      */
-    protected $instantiationQueue = [];
+    protected array $instantiationQueue = [];
 
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'maximumPageRecursion' => 0,
         'maximumContentRecursion' => 0,
         'maximumOverallRecursion' => 0,
@@ -99,28 +92,30 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
         'includeSysFileReference' => false,
     ];
 
-    /** @var int current recursion depth of makeInstance */
-    protected $currentDepth = 0;
+    /**
+     * current recursion depth of makeInstance
+     */
+    protected int $currentDepth = 0;
 
     /**
      * array of table names to be excluded from publishing
      * currently only used for related records of "page records"
-     *
-     * @var array
      */
-    protected $excludedTableNames = [];
+    protected array $excludedTableNames = [];
 
-    /** @var int current depth of related page records */
-    protected $pagesDepth = 1;
+    /**
+     * current depth of related page records
+     */
+    protected int $pagesDepth = 1;
 
-    /** @var int current depth of related content records (anything but page) */
-    protected $relatedRecordsDepth = 1;
+    /**
+     * current depth of related content records (anything but page)
+     */
+    protected int $relatedRecordsDepth = 1;
 
-    /** @var bool */
-    protected $pageRecursionEnabled = true;
+    protected bool $pageRecursionEnabled = true;
 
-    /**  @var bool */
-    protected $isRootRecord = false;
+    protected bool $isRootRecord = false;
 
     public function __construct(
         ConfigContainer $configContainer,

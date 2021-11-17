@@ -53,17 +53,13 @@ class ImportCommand extends Command implements LoggerAwareInterface
     public const EXIT_INVALID_TABLE = 220;
     public const IDENTIFIER = 'in2publish_core:table:import';
 
-    /** @var Connection */
-    protected $localDatabase;
+    protected Connection $localDatabase;
 
-    /** @var Connection */
-    private $foreignDatabase;
+    private Connection $foreignDatabase;
 
-    /** @var ContextService */
-    private $contextService;
+    private ContextService $contextService;
 
-    /** @var DatabaseSchemaService */
-    private $databaseSchemaService;
+    private DatabaseSchemaService $databaseSchemaService;
 
     public function __construct(
         Connection $localDatabase,

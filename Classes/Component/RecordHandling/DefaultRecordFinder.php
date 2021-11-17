@@ -135,38 +135,27 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
     public const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)~';
     public const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
 
-    /** @var Connection */
-    protected $localDatabase;
+    protected ?Connection $localDatabase;
 
-    /** @var Connection */
-    protected $foreignDatabase;
+    protected ?Connection $foreignDatabase;
 
-    /** @var RecordFactory */
-    protected $recordFactory;
+    protected RecordFactory $recordFactory;
 
-    /** @var ResourceFactory */
-    protected $resourceFactory;
+    protected ResourceFactory $resourceFactory;
 
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
-    /** @var EventDispatcher */
-    protected $eventDispatcher;
+    protected EventDispatcher $eventDispatcher;
 
-    /** @var ReplaceMarkersService */
-    protected $replaceMarkersService;
+    protected ReplaceMarkersService $replaceMarkersService;
 
-    /** @var FlexFormTools */
-    protected $flexFormTools;
+    protected FlexFormTools $flexFormTools;
 
-    /** @var FlexFormService */
-    private $flexFormService;
+    private FlexFormService $flexFormService;
 
-    /** @var TcaService */
-    protected $tcaService;
+    protected TcaService $tcaService;
 
-    /** @var TcaProcessingService */
-    protected $tcaProcessingService;
+    protected TcaProcessingService $tcaProcessingService;
 
     public function __construct(
         Connection $localDatabase,

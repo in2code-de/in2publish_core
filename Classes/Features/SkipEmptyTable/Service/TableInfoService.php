@@ -41,14 +41,12 @@ use function array_unique;
 
 class TableInfoService implements SingletonInterface
 {
-    /** @var Connection */
-    protected $localConnection;
+    protected ?Connection $localConnection;
 
-    /** @var Connection */
-    protected $foreignConnection;
+    protected ?Connection $foreignConnection;
 
     /** @var array<string, array<string, array<int>|bool>> */
-    protected $tableInfo = [];
+    protected array $tableInfo = [];
 
     public function __construct()
     {

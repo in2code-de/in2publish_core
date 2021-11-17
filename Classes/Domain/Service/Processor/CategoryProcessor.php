@@ -31,5 +31,5 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
 
 class CategoryProcessor extends AbstractProcessor
 {
-    protected $canHoldRelations = true;
+    protected bool $canHoldRelations = true;
 }

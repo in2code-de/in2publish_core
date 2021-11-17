@@ -37,8 +37,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class RegistryController extends ActionController
 {
-    /** @var Registry */
-    protected $registry;
+    protected Registry $registry;
 
     public function __construct(Registry $registry)
     {

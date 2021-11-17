@@ -63,21 +63,18 @@ use function sprintf;
  */
 class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 {
-    /** @var RemoteCommandDispatcher */
-    protected $rceDispatcher;
+    protected RemoteCommandDispatcher $rceDispatcher;
 
-    /** @var Letterbox */
-    protected $letterBox;
+    protected Letterbox $letterBox;
 
-    /** @var array */
-    protected $remoteDriverSettings = [];
+    protected array $remoteDriverSettings = [];
 
     /**
      * Maybe most important property in this class, since sending envelopes is very costly
      *
      * @var array
      */
-    protected static $cache = [];
+    protected static array $cache = [];
 
     /**
      * RemoteFileAbstractionLayerDriver constructor.

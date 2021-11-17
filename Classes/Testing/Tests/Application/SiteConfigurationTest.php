@@ -46,14 +46,11 @@ use function sprintf;
 
 class SiteConfigurationTest implements TestCaseInterface
 {
-    /** @var FrontendInterface */
-    protected $cache;
+    protected FrontendInterface $cache;
 
-    /** @var SiteFinder */
-    protected $siteFinder;
+    protected SiteFinder $siteFinder;
 
-    /** @var ForeignSiteFinder */
-    protected $foreignSiteFinder;
+    protected ForeignSiteFinder $foreignSiteFinder;
 
     public function __construct(FrontendInterface $cache, SiteFinder $siteFinder, ForeignSiteFinder $foreignSiteFinder)
     {

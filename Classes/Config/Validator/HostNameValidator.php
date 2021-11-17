@@ -37,8 +37,7 @@ use function is_resource;
 
 class HostNameValidator implements ValidatorInterface
 {
-    /** @var int */
-    protected $port;
+    protected int $port;
 
     /**
      * @param int $port Set an other port if the default one is actually used

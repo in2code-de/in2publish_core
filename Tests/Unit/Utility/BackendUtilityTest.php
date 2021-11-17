@@ -44,7 +44,7 @@ use TYPO3\CMS\Core\Database\Query\Restriction\DefaultRestrictionContainer;
  */
 class BackendUtilityTest extends UnitTestCase
 {
-    protected $rows = [];
+    protected array $rows = [];
 
     protected function setUp(): void
     {

@@ -43,11 +43,9 @@ class ConfigFormatTestCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:configformattest';
 
-    /** @var ValidationContainer */
-    protected $validationContainer;
+    protected ValidationContainer $validationContainer;
 
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
     public function __construct(
         ValidationContainer $validationContainer,

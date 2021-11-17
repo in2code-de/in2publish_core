@@ -37,13 +37,11 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 
 class LocalDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
-    /** @var Connection */
-    protected $localConnection;
+    protected ?Connection $localConnection;
 
-    /** @var SiteFinder */
-    protected $siteFinder;
+    protected SiteFinder $siteFinder;
 
-    protected $prefix = 'local';
+    protected string $prefix = 'local';
 
     /**
      * @SuppressWarnings(PHPMD.StaticAccess)

@@ -44,8 +44,7 @@ use function strpos;
 
 class ForeignConfigurationFormatTest implements TestCaseInterface
 {
-    /** @var RemoteCommandDispatcher */
-    protected $remoteCommandDispatcher;
+    protected RemoteCommandDispatcher $remoteCommandDispatcher;
 
     public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher)
     {

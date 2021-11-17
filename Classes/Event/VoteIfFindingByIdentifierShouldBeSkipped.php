@@ -38,14 +38,11 @@ use const E_USER_DEPRECATED;
 
 final class VoteIfFindingByIdentifierShouldBeSkipped extends AbstractVotingEvent
 {
-    /** @var RecordFinder */
-    private $recordFinder;
+    private RecordFinder $recordFinder;
 
-    /** @var int */
-    private $identifier;
+    private int $identifier;
 
-    /** @var string */
-    private $tableName;
+    private string $tableName;
 
     public function __construct(RecordFinder $recordFinder, int $identifier, string $tableName)
     {

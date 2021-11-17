@@ -35,8 +35,7 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 
 class ConfigurationMigrationTest implements TestCaseInterface
 {
-    /** @var ConfigContainer */
-    private $configContainer;
+    private ConfigContainer $configContainer;
 
     public function __construct(ConfigContainer $configContainer)
     {

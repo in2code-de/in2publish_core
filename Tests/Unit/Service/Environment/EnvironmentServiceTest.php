@@ -81,9 +81,6 @@ class EnvironmentServiceTest extends UnitTestCase
         $environmentService->setTestResult(true);
     }
 
-    /**
-     *
-     */
     public function getResultRegistryReturnAndExpectedValueDataProvider(): array
     {
         $configurationHash = sha1(serialize(['boo' => ['far' => ['faz' => 'fuz']]]));

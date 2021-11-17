@@ -46,17 +46,13 @@ class TaskRepository
 {
     public const TASK_TABLE_NAME = 'tx_in2code_in2publish_task';
 
-    /** @var ContextService */
-    protected $contextService;
+    protected ContextService $contextService;
 
-    /** @var TaskFactory */
-    protected $taskFactory;
+    protected TaskFactory $taskFactory;
 
-    /** @var Connection */
-    protected $connection;
+    protected ?Connection $connection;
 
-    /** @var string */
-    protected $creationDate;
+    protected string $creationDate;
 
     public function __construct(ContextService $contextService, TaskFactory $taskFactory)
     {

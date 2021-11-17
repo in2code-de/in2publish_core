@@ -39,11 +39,9 @@ use const E_USER_DEPRECATED;
 
 final class VoteIfRecordShouldBeSkipped extends AbstractVotingEvent
 {
-    /** @var RecordPublisher */
-    private $recordPublisher;
+    private RecordPublisher $recordPublisher;
 
-    /** @var RecordInterface */
-    private $record;
+    private RecordInterface $record;
 
     public function __construct(RecordPublisher $recordPublisher, RecordInterface $record)
     {

@@ -42,14 +42,13 @@ use function implode;
 
 class CacheInvalidator implements SingletonInterface
 {
-    /** @var TaskRepository */
-    protected $taskRepository;
+    protected TaskRepository $taskRepository;
 
     /** @var array<int, int> */
-    protected $clearCachePids = [];
+    protected array $clearCachePids = [];
 
     /** @var array<int, null|string> */
-    protected $clearCacheCommands = [];
+    protected array $clearCacheCommands = [];
 
     public function __construct(TaskRepository $taskRepository)
     {

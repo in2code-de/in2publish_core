@@ -73,19 +73,15 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
     public const CACHE_KEY_TCA_INCOMPATIBLE = 'tca_incompatible';
     public const CACHE_KEY_CONTROLS = 'controls';
     public const DEFAULT_EXTRAS = 'defaultExtras';
-
-    /** @var FrontendInterface */
-    protected $cache;
-
     public const SOFT_REF = 'softref';
 
-    /** @var TcaProcessingService */
-    protected static $instance;
+    protected FrontendInterface $cache;
 
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected static TcaProcessingService $instance;
 
-    protected $defaultProcessor = [
+    protected ConfigContainer $configContainer;
+
+    protected array $defaultProcessor = [
         'check' => CheckProcessor::class,
         'flex' => FlexProcessor::class,
         'group' => GroupProcessor::class,
@@ -103,28 +99,28 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
     /**
      * @var AbstractProcessor[]
      */
-    protected $processors = [];
+    protected array $processors = [];
 
     /**
      * Stores the part of the TCA that can be used for relation resolving
      *
      * @var array<array|null>
      */
-    protected $compatibleTca = [];
+    protected array $compatibleTca = [];
 
     /**
      * Stores the part of the TCA that can not be used for relation resolving including reasons
      *
      * @var array[]
      */
-    protected $incompatibleTca = [];
+    protected array $incompatibleTca = [];
 
     /**
      * Stores the controls for each table from TCA
      *
      * @var array[]
      */
-    protected $controls = [];
+    protected array $controls = [];
 
     public function __construct(FrontendInterface $cache, ConfigContainer $configContainer)
     {

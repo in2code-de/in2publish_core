@@ -63,20 +63,16 @@ use function substr;
  */
 class IndexingFolderRecordFactory
 {
-    /** @var int Maximum number of files which are supported to exist in a single folder */
-    protected $threshold;
+    /** Maximum number of files which are supported to exist in a single folder */
+    protected int $threshold;
 
-    /** @var RemoteStorage */
-    protected $remoteStorage;
+    protected RemoteStorage $remoteStorage;
 
-    /** @var ResourceFactory */
-    protected $resourceFactory;
+    protected ResourceFactory $resourceFactory;
 
-    /** @var RecordFinder */
-    protected $recordFinder;
+    protected RecordFinder $recordFinder;
 
-    /** @var ResourceStorage */
-    protected $localStorage;
+    protected ResourceStorage $localStorage;
 
     public function __construct(
         ConfigContainer $configContainer,

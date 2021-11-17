@@ -35,8 +35,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PostProcessorFactory
 {
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
     public function __construct(ConfigContainer $configContainer)
     {

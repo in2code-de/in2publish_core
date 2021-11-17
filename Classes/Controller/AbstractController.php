@@ -55,11 +55,9 @@ abstract class AbstractController extends ActionController
 {
     public const BLANK_ACTION = 'blankAction';
 
-    /** @var BackendUserAuthentication */
-    protected $backendUser;
+    protected BackendUserAuthentication $backendUser;
 
-    /** @var RemoteCommandDispatcher */
-    protected $remoteCommandDispatcher;
+    protected RemoteCommandDispatcher $remoteCommandDispatcher;
 
     /**
      * @SuppressWarnings(PHPMD.Superglobals)

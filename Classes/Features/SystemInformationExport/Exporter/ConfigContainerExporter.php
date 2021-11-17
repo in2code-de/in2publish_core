@@ -35,8 +35,7 @@ use TYPO3\CMS\Core\Utility\ArrayUtility;
 
 class ConfigContainerExporter implements SystemInformationExporter
 {
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
     public function __construct(ConfigContainer $configContainer)
     {

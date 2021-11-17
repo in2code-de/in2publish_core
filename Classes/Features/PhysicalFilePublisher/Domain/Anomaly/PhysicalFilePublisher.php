@@ -50,14 +50,12 @@ class PhysicalFilePublisher implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var FilePublisherService */
-    protected $filePublisherService;
+    protected FilePublisherService $filePublisherService;
 
-    /** @var EventDispatcher */
-    protected $eventDispatcher;
+    protected EventDispatcher $eventDispatcher;
 
     /** @var array<string, array<int|string, bool>> */
-    protected $publishedRecords = [];
+    protected array $publishedRecords = [];
 
     public function __construct(FilePublisherService $filePublisherService, EventDispatcher $eventDispatcher)
     {

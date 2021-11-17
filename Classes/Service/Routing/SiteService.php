@@ -46,19 +46,15 @@ class SiteService implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected $cache = [];
+    protected array $cache = [];
 
-    /** @var RawRecordService */
-    protected $rawRecordService;
+    protected RawRecordService $rawRecordService;
 
-    /** @var TcaService */
-    protected $tcaService;
+    protected TcaService $tcaService;
 
-    /** @var SiteFinder */
-    protected $siteFinder;
+    protected SiteFinder $siteFinder;
 
-    /** @var ForeignSiteFinder */
-    protected $foreignSiteFinder;
+    protected ForeignSiteFinder $foreignSiteFinder;
 
     public function __construct(
         RawRecordService $rawRecordService,

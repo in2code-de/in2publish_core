@@ -35,11 +35,10 @@ use TYPO3\CMS\Core\SingletonInterface;
 
 class RequiredTablesDataProvider implements SingletonInterface
 {
-    /** @var EventDispatcher */
-    protected $eventDispatcher;
+    protected EventDispatcher $eventDispatcher;
 
     /** * @var array */
-    protected $cache = [];
+    protected array $cache = [];
 
     public function __construct(EventDispatcher $eventDispatcher)
     {

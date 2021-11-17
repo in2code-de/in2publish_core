@@ -43,14 +43,11 @@ class FalIndexPostProcessor implements PostProcessor, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var ResourceFactory */
-    protected $resourceFactory;
+    protected ResourceFactory $resourceFactory;
 
-    /** @var RemoteStorage */
-    protected $remoteStorage;
+    protected RemoteStorage $remoteStorage;
 
-    /** @var IndexingFolderRecordFactory */
-    protected $ifrFactory;
+    protected IndexingFolderRecordFactory $ifrFactory;
 
     public function __construct(
         ResourceFactory $resourceFactory,

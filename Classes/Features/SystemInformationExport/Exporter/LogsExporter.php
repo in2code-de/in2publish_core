@@ -38,8 +38,7 @@ use function substr;
 
 class LogsExporter implements SystemInformationExporter
 {
-    /** @var ConnectionPool */
-    protected $connectionPool;
+    protected ConnectionPool $connectionPool;
 
     public function __construct(ConnectionPool $connectionPool)
     {

@@ -42,17 +42,14 @@ class TestResult
     public const ERROR = 'error';
     public const SKIPPED = 'notice';
 
-    /** @var string */
-    protected $severity;
+    protected string $severity;
 
-    /** @var string */
-    protected $label;
+    protected string $label;
 
     /** @var array<string> */
-    protected $messages;
+    protected array $messages;
 
-    /** @var array|null */
-    protected $labelArguments;
+    protected ?array $labelArguments;
 
     /**
      * Error constructor.

@@ -27,7 +27,7 @@ use In2code\In2publishCore\Event\PhysicalFileWasPublished;
 
 class PhysicalFilePublishingListener
 {
-    protected $messages = [];
+    protected array $messages = [];
 
     public function onPhysicalFileWasPublished(PhysicalFileWasPublished $event): void
     {

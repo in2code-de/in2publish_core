@@ -42,11 +42,9 @@ class RunTasksInQueueCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:publishtasksrunner:runtasksinqueue';
 
-    /** @var ContextService */
-    protected $contextService;
+    protected ContextService $contextService;
 
-    /** @var TaskRepository */
-    protected $taskRepository;
+    protected TaskRepository $taskRepository;
 
     public function __construct(ContextService $contextService, TaskRepository $taskRepository, string $name = null)
     {

@@ -39,20 +39,15 @@ use const E_USER_DEPRECATED;
 
 final class VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped extends AbstractVotingEvent
 {
-    /** @var RecordFinder */
-    private $recordFinder;
+    private RecordFinder $recordFinder;
 
-    /** @var RecordInterface */
-    private $record;
+    private RecordInterface $record;
 
-    /** @var string */
-    private $column;
+    private string $column;
 
-    /** @var string */
-    private $key;
+    private string $key;
 
-    /** @var array */
-    private $config;
+    private array $config;
 
     /** @var mixed */
     private $flexFormData;

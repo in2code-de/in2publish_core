@@ -47,13 +47,11 @@ use function json_decode;
 
 class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
-    /** @var RemoteCommandDispatcher */
-    protected $rceDispatcher;
+    protected RemoteCommandDispatcher $rceDispatcher;
 
-    /** @var Connection */
-    protected $foreignConnection;
+    protected ?Connection $foreignConnection;
 
-    protected $prefix = 'foreign';
+    protected string $prefix = 'foreign';
 
     public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher)
     {

@@ -37,8 +37,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Builder
 {
-    /** @var NodeCollection */
-    protected $nodes;
+    protected NodeCollection $nodes;
 
     public function __construct()
     {

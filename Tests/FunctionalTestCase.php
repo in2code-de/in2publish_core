@@ -39,10 +39,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
         'typo3conf/ext/in2publish_core',
     ];
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
 
     /**
      * This internal variable tracks if the given test is the first test of
@@ -53,7 +50,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
      *
      * @var string
      */
-    private static $currestTestCaseClass;
+    private static ?string $currestTestCaseClass = null;
 
     /**
      * Set up creates a test instance and database.
@@ -243,9 +240,6 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
         $GLOBALS['BE_USER'] = $backendUserAuthentication;
     }
 
-    /**
-     * @return ContainerInterface
-     */
     protected function getContainer(): ContainerInterface
     {
         if (!$this->container instanceof ContainerInterface) {
@@ -304,7 +298,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
     public function initializeIn2publishConfig(array $config = [])
     {
         $testConfigProvider = new class implements ProviderInterface {
-            public $config = [];
+            public array $config = [];
 
             public function isAvailable(): bool
             {

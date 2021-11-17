@@ -47,14 +47,11 @@ class FilePublisherService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var RemoteFileAbstractionLayerDriver */
-    protected $remoteFalDriver;
+    protected RemoteFileAbstractionLayerDriver $remoteFalDriver;
 
-    /** @var ResourceFactory */
-    protected $resourceFactory;
+    protected ResourceFactory $resourceFactory;
 
-    /** @var AssetTransmitter */
-    protected $assetTransmitter;
+    protected AssetTransmitter $assetTransmitter;
 
     public function __construct(
         RemoteFileAbstractionLayerDriver $remoteFalDriver,

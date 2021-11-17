@@ -42,8 +42,7 @@ use function is_array;
 
 class AdapterSelectionTest implements TestCaseInterface
 {
-    /** @var AdapterRegistry */
-    protected $adapterRegistry;
+    protected AdapterRegistry $adapterRegistry;
 
     public function __construct(AdapterRegistry $adapterRegistry)
     {

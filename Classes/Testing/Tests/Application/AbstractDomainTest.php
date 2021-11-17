@@ -51,7 +51,7 @@ abstract class AbstractDomainTest
     /**
      * @api Set this in the inheriting test class
      */
-    protected $prefix = '';
+    protected string $prefix = '';
 
     abstract protected function getPageToSiteBaseMapping(): array;
 

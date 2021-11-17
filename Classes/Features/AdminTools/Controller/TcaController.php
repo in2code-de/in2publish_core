@@ -36,8 +36,7 @@ use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class TcaController extends ActionController
 {
-    /** @var TcaProcessingService */
-    protected $tcaProcessingService;
+    protected TcaProcessingService $tcaProcessingService;
 
     public function __construct(TcaProcessingService $tcaProcessingService)
     {

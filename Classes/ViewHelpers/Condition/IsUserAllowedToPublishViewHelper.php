@@ -33,8 +33,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class IsUserAllowedToPublishViewHelper extends AbstractViewHelper
 {
-    /** @var PermissionService */
-    protected $permissionService;
+    protected PermissionService $permissionService;
 
     public function __construct(PermissionService $permissionService)
     {

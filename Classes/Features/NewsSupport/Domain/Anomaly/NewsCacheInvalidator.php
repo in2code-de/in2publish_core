@@ -35,14 +35,13 @@ use In2code\In2publishCore\Features\NewsSupport\Domain\Model\Task\FlushNewsCache
 
 class NewsCacheInvalidator
 {
-    /** @var TaskRepository */
-    protected $taskRepository;
+    protected TaskRepository $taskRepository;
 
     /** @var array<int, string> */
-    protected $newsCacheUidArray = [];
+    protected array $newsCacheUidArray = [];
 
     /** @var array<int, string> */
-    protected $newsCachePidArray = [];
+    protected array $newsCachePidArray = [];
 
     public function __construct(TaskRepository $taskRepository)
     {

@@ -43,11 +43,9 @@ use const PHP_EOL;
 
 class ToolsController extends ActionController
 {
-    /** @var EnvironmentService */
-    protected $environmentService;
+    protected EnvironmentService $environmentService;
 
-    /** @var ToolsRegistry */
-    protected $toolsRegistry;
+    protected ToolsRegistry $toolsRegistry;
 
     public function __construct(EnvironmentService $environmentService, ToolsRegistry $toolsRegistry)
     {

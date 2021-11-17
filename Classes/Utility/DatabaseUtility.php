@@ -62,14 +62,11 @@ use const PHP_EOL;
 
 class DatabaseUtility
 {
-    /** @var Logger */
-    protected static $logger;
+    protected static ?Logger $logger = null;
 
-    /** @var Connection */
-    protected static $foreignConnection;
+    protected static ?Connection $foreignConnection = null;
 
     /**
-     * @return Connection|null
      * @throws Throwable
      */
     public static function buildForeignDatabaseConnection(): ?Connection

@@ -44,8 +44,7 @@ class GetFirstDomainFromRootlineViewHelper extends AbstractViewHelper
 {
     protected const DEPRECATED_VIEWHELPER = 'The ViewHelper "%s" is deprecated and will be removed in in2publish_core version 11. Use %s instead.';
 
-    /** @var SiteService */
-    private $siteService;
+    private SiteService $siteService;
 
     public function __construct(SiteService $siteService)
     {

@@ -52,11 +52,9 @@ use function unlink;
 
 class TransmissionAdapterTest implements TestCaseInterface
 {
-    /** @var AssetTransmitter */
-    protected $assetTransmitter;
+    protected AssetTransmitter $assetTransmitter;
 
-    /** @var RemoteCommandDispatcher */
-    protected $remoteCommandDispatcher;
+    protected RemoteCommandDispatcher $remoteCommandDispatcher;
 
     public function __construct(AssetTransmitter $assetTransmitter, RemoteCommandDispatcher $remoteCommandDispatcher)
     {

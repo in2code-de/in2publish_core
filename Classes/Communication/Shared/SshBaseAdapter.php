@@ -55,10 +55,7 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'debug' => '',
         'host' => '',
         'port' => '',
@@ -71,18 +68,14 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
         'foreignKeyFingerprintHashingMethod' => '',
     ];
 
-    /**
-     * @var array
-     */
-    protected $supportedHashMethods = [
+    protected array $supportedHashMethods = [
         'SSH2_FINGERPRINT_MD5',
         'SSH2_FINGERPRINT_SHA1',
     ];
 
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
-    protected $initialized = false;
+    protected bool $initialized = false;
 
     public function __construct(ConfigContainer $configContainer)
     {

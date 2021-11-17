@@ -36,8 +36,7 @@ use function array_keys;
 
 class ExtConfExporter implements SystemInformationExporter
 {
-    /** @var ExtensionConfiguration */
-    protected $extensionConfiguration;
+    protected ExtensionConfiguration $extensionConfiguration;
 
     public function __construct(ExtensionConfiguration $extensionConfiguration)
     {

@@ -39,17 +39,13 @@ use const E_USER_DEPRECATED;
 
 final class VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped extends AbstractVotingEvent
 {
-    /** @var RecordFinder */
-    private $recordFinder;
+    private RecordFinder $recordFinder;
 
-    /** @var RecordInterface */
-    private $record;
+    private RecordInterface $record;
 
-    /** @var string */
-    private $propertyName;
+    private string $propertyName;
 
-    /** @var array */
-    private $columnConfiguration;
+    private array $columnConfiguration;
 
     public function __construct(
         RecordFinder $recordFinder,

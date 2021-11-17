@@ -39,14 +39,11 @@ use const E_USER_DEPRECATED;
 
 final class VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped extends AbstractVotingEvent
 {
-    /** @var RecordFinder */
-    private $recordFinder;
+    private RecordFinder $recordFinder;
 
-    /** @var RecordInterface */
-    private $record;
+    private RecordInterface $record;
 
-    /** @var string */
-    private $tableName;
+    private string $tableName;
 
     public function __construct(RecordFinder $recordFinder, RecordInterface $record, string $tableName)
     {

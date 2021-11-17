@@ -20,7 +20,7 @@ class UnitTestCase extends \TYPO3\TestingFramework\Core\Unit\UnitTestCase
     public function initializeIn2publishConfig(array $config = [])
     {
         $testConfigProvider = new class implements ProviderInterface {
-            public $config = [];
+            public array $config = [];
 
             public function isAvailable(): bool
             {

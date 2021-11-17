@@ -35,8 +35,7 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 class ShowConfigurationController extends ActionController
 {
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
     public function __construct(ConfigContainer $configContainer)
     {

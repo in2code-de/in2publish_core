@@ -37,7 +37,7 @@ use function trim;
 
 class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
 {
-    protected $tableConfiguration = [];
+    protected array $tableConfiguration = [];
 
     public function initializeArguments(): void
     {
@@ -55,7 +55,7 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
         $fieldName = $this->arguments['fieldName'];
         $tableName = $this->arguments['tableName'];
 
-        $this->tableConfiguration = $GLOBALS['TCA'][$tableName]['columns'][$fieldName];
+        $this->tableConfiguration = $GLOBALS['TCA'][$tableName]['columns'][$fieldName] ?? [];
         $value = trim($this->renderChildren());
 
         if (empty($this->tableConfiguration['config']['type'])) {

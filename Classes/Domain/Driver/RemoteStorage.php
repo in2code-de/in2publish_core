@@ -46,14 +46,11 @@ class RemoteStorage implements ResourceStorageInterface
     public const FILES_KEY = 'files';
     public const HAS_FOLDER_KEY = 'hasFolder';
 
-    /** @var Letterbox */
-    protected $letterbox;
+    protected Letterbox $letterbox;
 
-    /** @var RemoteCommandDispatcher */
-    protected $remoteCommandDispatcher;
+    protected RemoteCommandDispatcher $remoteCommandDispatcher;
 
-    /** @var array */
-    protected static $cache = [];
+    protected static array $cache = [];
 
     public function __construct(Letterbox $letterbox, RemoteCommandDispatcher $remoteCommandDispatcher)
     {

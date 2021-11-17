@@ -37,11 +37,10 @@ class PostProcessingEventListener
 {
     private const TABLE_SYS_FILE = 'sys_file';
 
-    /** @var PostProcessor */
-    protected $postProcessor;
+    protected PostProcessor $postProcessor;
 
     /** @var RecordInterface[] */
-    protected $registeredInstances = [];
+    protected array $registeredInstances = [];
 
     public function __construct(PostProcessor $postProcessor)
     {

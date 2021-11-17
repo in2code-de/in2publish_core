@@ -33,9 +33,9 @@ use function in_array;
 
 class RecordHandlerRegistry
 {
-    private $finders = [];
+    private array $finders = [];
 
-    private $publishers = [];
+    private array $publishers = [];
 
     public function isHandlerRegistered(string $service): bool
     {

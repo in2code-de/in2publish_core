@@ -45,16 +45,15 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
 
     public const TABLE = 'tx_in2code_in2publish_envelope';
 
-    /** @var ContextService */
-    protected $contextService;
+    protected ContextService $contextService;
 
-    /** @var bool */
-    protected $keepEnvelopes;
+    protected bool $keepEnvelopes;
 
     public function __construct(ContextService $contextService, ConfigContainer $configContainer)
     {
         $this->contextService = $contextService;
-        $this->keepEnvelopes = $configContainer->get('debug.keepEnvelopes');
+        // Type cast this value because this class is also used on foreign and there's no such setting.
+        $this->keepEnvelopes = (bool)$configContainer->get('debug.keepEnvelopes');
     }
 
     /**

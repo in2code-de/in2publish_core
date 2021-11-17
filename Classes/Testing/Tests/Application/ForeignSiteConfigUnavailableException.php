@@ -38,8 +38,7 @@ class ForeignSiteConfigUnavailableException extends In2publishCoreException
     public const MESSAGE = 'An error occurred during fetching the remote site configuration';
     public const CODE = 1549900962;
 
-    /** @var RemoteCommandResponse */
-    protected $response;
+    protected RemoteCommandResponse $response;
 
     public function __construct(RemoteCommandResponse $response, Throwable $previous = null)
     {

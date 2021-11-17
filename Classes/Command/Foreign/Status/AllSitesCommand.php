@@ -41,8 +41,7 @@ class AllSitesCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:allsites';
 
-    /** @var SiteFinder */
-    protected $siteFinder;
+    protected SiteFinder $siteFinder;
 
     public function __construct(SiteFinder $siteFinder, string $name = null)
     {

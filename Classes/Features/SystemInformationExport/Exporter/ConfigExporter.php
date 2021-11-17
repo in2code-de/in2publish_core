@@ -33,8 +33,7 @@ use In2code\In2publishCore\Config\ConfigContainer;
 
 class ConfigExporter implements SystemInformationExporter
 {
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
     public function __construct(ConfigContainer $configContainer)
     {

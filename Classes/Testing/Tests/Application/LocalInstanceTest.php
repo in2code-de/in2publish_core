@@ -40,8 +40,7 @@ use function array_merge;
 
 class LocalInstanceTest implements TestCaseInterface
 {
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
     public function __construct(ConfigContainer $configContainer)
     {

@@ -38,8 +38,7 @@ class Typo3VersionCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:typo3version';
 
-    /** @var Typo3Version */
-    private $typo3Version;
+    private Typo3Version $typo3Version;
 
     public function __construct(Typo3Version $typo3Version, string $name = null)
     {

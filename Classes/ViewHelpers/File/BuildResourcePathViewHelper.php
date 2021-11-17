@@ -42,17 +42,14 @@ use function rtrim;
 
 class BuildResourcePathViewHelper extends AbstractViewHelper
 {
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
-    /** @var ResourceFactory */
-    protected $resourceFactory;
+    protected ResourceFactory $resourceFactory;
 
-    /** @var RemoteFileAbstractionLayerDriver */
-    protected $remoteFileAbstractionLayerDriver;
+    protected RemoteFileAbstractionLayerDriver $remoteFileAbstractionLayerDriver;
 
     /** @var Uri[] */
-    protected $domains;
+    protected array $domains;
 
     public function __construct(
         ConfigContainer $configContainer,

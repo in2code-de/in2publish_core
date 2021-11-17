@@ -33,9 +33,9 @@ class InputProcessor extends AbstractProcessor
 {
     public const WIZARDS = 'wizards';
 
-    protected $canHoldRelations = true;
+    protected bool $canHoldRelations = true;
 
-    protected $required = [
+    protected array $required = [
         'inputs without wizards most likely do not hold relations' => self::WIZARDS,
     ];
 }

@@ -73,64 +73,45 @@ use const E_USER_DEPRECATED;
  */
 class Record implements RecordInterface
 {
-    /**
-     * @var string
-     */
-    protected $tableName = 'pages';
+    protected string $tableName = 'pages';
 
     /**
      * Internal state, set by calculateState after object creation
-     *
-     * @var string
      */
-    protected $state = self::RECORD_STATE_UNCHANGED;
+    protected string $state = self::RECORD_STATE_UNCHANGED;
 
-    /**
-     * @var array
-     */
-    protected $localProperties = [];
+    protected array $localProperties = [];
 
-    /**
-     * @var array
-     */
-    protected $foreignProperties = [];
+    protected array $foreignProperties = [];
 
     /**
      * Short said: difference between local and foreign properties
-     *
-     * @var array
      */
-    protected $dirtyProperties = [];
+    protected array $dirtyProperties = [];
 
     /**
      * e.g. the depth of the current record
-     *
-     * @var array
      */
-    protected $additionalProperties = [];
+    protected array $additionalProperties = [];
 
     /**
      * records which are related to this record.
      *
      * @var RecordInterface[][]
      */
-    protected $relatedRecords = [];
+    protected array $relatedRecords = [];
 
     /**
      * TableConfigurationArray of this record
      * $GLOBALS['TCA'][$this->tableName]
-     *
-     * @var array
      */
-    protected $tca = [];
+    protected array $tca = [];
 
     /**
      * Internal (volatile) cache
      * used to store results of getters to improve performance
-     *
-     * @var array
      */
-    protected $runtimeCache = [];
+    protected array $runtimeCache = [];
 
     /**
      * reference to the parent record. The parent record is
@@ -139,32 +120,22 @@ class Record implements RecordInterface
      * will not be set if debug.disableParentRecords = TRUE
      * alteration of this value can be prohibited by setting
      * $this->parentRecordIsLocked = TRUE (or public setter)
-     *
-     * @var null|RecordInterface
      */
-    protected $parentRecord;
+    protected ?RecordInterface $parentRecord = null;
 
     /**
      * indicates if $this->parentRecord can be changed by the setter
-     *
-     * @var bool
      */
-    protected $parentRecordIsLocked = false;
+    protected bool $parentRecordIsLocked = false;
 
-    /**
-     * @var bool
-     */
-    protected $isParentDisabled = false;
+    protected bool $isParentDisabled = false;
 
-    /**
-     * @var ConfigContainer
-     */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
     /**
      * @var RecordInterface[]
      */
-    protected $translatedRecords = [];
+    protected array $translatedRecords = [];
 
     /**
      * @var int|string|null

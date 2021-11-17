@@ -40,7 +40,6 @@ use In2code\In2publishCore\In2publishCoreException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
-use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
 use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Http\Uri;
@@ -58,11 +57,9 @@ class ForeignSiteFinder implements LoggerAwareInterface
 
     private const UNSERIALIZE_ALLOWED_CLASS = [Site::class, Uri::class, SiteLanguage::class];
 
-    /** @var RemoteCommandDispatcher */
-    protected $rceDispatcher;
+    protected RemoteCommandDispatcher $rceDispatcher;
 
-    /** @var VariableFrontend */
-    protected $cache;
+    protected FrontendInterface $cache;
 
     public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, FrontendInterface $cache)
     {

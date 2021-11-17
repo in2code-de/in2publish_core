@@ -55,14 +55,11 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
 {
     use LoggerAwareTrait;
 
-    /** @var EventDispatcher */
-    protected $eventDispatcher;
+    protected EventDispatcher $eventDispatcher;
 
-    /** @var Connection */
-    protected $foreignDatabase;
+    protected Connection $foreignDatabase;
 
-    /** @var TcaService */
-    protected $tcaService;
+    protected TcaService $tcaService;
 
     /** @var array */
     private $visitedRecords = [];

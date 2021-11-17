@@ -91,13 +91,10 @@ class EnvelopeDispatcher
     /**
      * Limits the amount of files in a folder for pre fetching. If there are more than $prefetchLimit files in
      * the selected folder they will not be processed when not requested explicitly.
-     *
-     * @var int
      */
-    protected $prefetchLimit = 51;
+    protected int $prefetchLimit = 51;
 
-    /** @var ResourceFactory */
-    private $resourceFactory;
+    private ResourceFactory $resourceFactory;
 
     public function __construct(ResourceFactory $resourceFactory)
     {

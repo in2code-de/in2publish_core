@@ -50,16 +50,19 @@ abstract class ActionController extends ExtbaseActionController implements Logge
 {
     use LoggerAwareTrait;
 
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
-    /** @var EnvironmentService */
-    protected $environmentService;
+    protected EnvironmentService $environmentService;
 
-    /** UID of the selected Page in the page tree */
+    /**
+     * UID of the selected Page in the page tree
+     * or combined folder identifier of the folder selected in the folder tree.
+     *
+     * @var int|string
+     */
     protected $pid;
 
-    protected $forcePidInteger = true;
+    protected bool $forcePidInteger = true;
 
     /**
      * Creates a logger for the instantiated controller object.

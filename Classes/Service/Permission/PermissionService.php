@@ -34,8 +34,7 @@ use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 class PermissionService
 {
-    /** @var EventDispatcher */
-    protected $eventDispatcher;
+    protected EventDispatcher $eventDispatcher;
 
     public function __construct(EventDispatcher $eventDispatcher)
     {

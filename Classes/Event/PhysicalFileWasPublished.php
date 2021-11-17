@@ -33,8 +33,7 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 
 final class PhysicalFileWasPublished
 {
-    /** @var RecordInterface */
-    private $record;
+    private RecordInterface $record;
 
     public function __construct(RecordInterface $record)
     {

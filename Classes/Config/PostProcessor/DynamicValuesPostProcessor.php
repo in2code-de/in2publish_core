@@ -50,10 +50,9 @@ class DynamicValuesPostProcessor implements PostProcessorInterface, LoggerAwareI
 
     protected const DYNAMIC_REFERENCE_PATTERN = '/^%(?P<key>[\w]+)\((?P<string>[^\)]*)\)%$/';
 
-    /** @var DynamicValueProviderRegistry */
-    protected $dynamicValueProviderRegistry;
+    protected DynamicValueProviderRegistry $dynamicValueProviderRegistry;
 
-    protected $rtc = [];
+    protected array $rtc = [];
 
     public function __construct(DynamicValueProviderRegistry $dynamicValueProviderRegistry)
     {

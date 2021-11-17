@@ -50,8 +50,7 @@ class ToolsRegistry implements SingletonInterface
                                          . ' instead.';
     private const DEPRECATED_REMOVE_TOOLS = 'The method removeTool of the old ToolsRegistry is deprecated and will be removed in in2publish_core v11. There is no replacement.';
 
-    /** @var NewToolsRegistry */
-    protected $toolsRegistry;
+    protected NewToolsRegistry $toolsRegistry;
 
     public function __construct(NewToolsRegistry $toolsRegistry)
     {

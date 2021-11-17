@@ -37,7 +37,7 @@ use function preg_match;
 
 class CssColorValueValidator implements ValidatorInterface
 {
-    protected $colorNames = [
+    protected array $colorNames = [
         'black',
         'silver',
         'gray',

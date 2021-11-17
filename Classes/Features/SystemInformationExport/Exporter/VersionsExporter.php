@@ -39,8 +39,7 @@ use const PHP_VERSION;
 
 class VersionsExporter implements SystemInformationExporter
 {
-    /** @var ConnectionPool */
-    protected $connectionPool;
+    protected ConnectionPool $connectionPool;
 
     public function __construct(ConnectionPool $connectionPool)
     {

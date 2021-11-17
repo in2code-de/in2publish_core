@@ -34,11 +34,9 @@ use In2code\In2publishCore\Service\Context\ContextService;
 
 class DefaultProvider implements ProviderInterface
 {
-    /** @var ConfigContainer */
-    private $configContainer;
+    private ConfigContainer $configContainer;
 
-    /** @var ContextService */
-    private $contextService;
+    private ContextService $contextService;
 
     public function __construct(ConfigContainer $configContainer, ContextService $contextService)
     {

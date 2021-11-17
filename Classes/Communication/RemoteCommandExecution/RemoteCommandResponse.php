@@ -46,20 +46,11 @@ use const PHP_EOL;
 
 class RemoteCommandResponse
 {
-    /**
-     * @var array
-     */
-    protected $output = [];
+    protected array $output = [];
 
-    /**
-     * @var array
-     */
-    protected $errors = [];
+    protected array $errors = [];
 
-    /**
-     * @var int
-     */
-    protected $exitStatus = 0;
+    protected int $exitStatus = 0;
 
     /**
      * RemoteCommandResponse constructor.

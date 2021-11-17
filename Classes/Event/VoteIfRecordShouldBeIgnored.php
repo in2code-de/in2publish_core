@@ -38,17 +38,13 @@ use const E_USER_DEPRECATED;
 
 final class VoteIfRecordShouldBeIgnored extends AbstractVotingEvent
 {
-    /** @var RecordFinder */
-    private $recordFinder;
+    private RecordFinder $recordFinder;
 
-    /** @var array */
-    private $localProperties;
+    private array $localProperties;
 
-    /** @var array */
-    private $foreignProperties;
+    private array $foreignProperties;
 
-    /** @var string */
-    private $tableName;
+    private string $tableName;
 
     public function __construct(
         RecordFinder $recordFinder,

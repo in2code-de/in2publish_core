@@ -38,8 +38,7 @@ use function interface_exists;
 
 class RecordHandlingCompilerPass implements CompilerPassInterface
 {
-    /** @var string */
-    private $tagName;
+    private string $tagName;
 
     public function __construct(string $tagName)
     {

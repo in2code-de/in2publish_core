@@ -54,8 +54,7 @@ use function time;
 
 class SystemInformationExportController extends ActionController
 {
-    /** @var SystemInformationExportService */
-    protected $sysInfoExportService;
+    protected SystemInformationExportService $sysInfoExportService;
 
     public function __construct(SystemInformationExportService $sysInfoExportService)
     {

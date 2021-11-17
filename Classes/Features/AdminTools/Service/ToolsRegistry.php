@@ -47,13 +47,11 @@ class ToolsRegistry implements SingletonInterface
 {
     private const DEPRECATED_NON_FQCN_TOOL = 'Tools registration without a FQCN is deprecated and will be removed in in2publish_core version 11. Registered controller name: %s';
 
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
-    /** @var ExtensionConfiguration */
-    protected $extensionConfiguration;
+    protected ExtensionConfiguration $extensionConfiguration;
 
-    protected $entries = [];
+    protected array $entries = [];
 
     public function __construct(ConfigContainer $configContainer, ExtensionConfiguration $extensionConfiguration)
     {

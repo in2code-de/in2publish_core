@@ -12,8 +12,7 @@ use function json_encode;
 
 class SingleDatabaseRepository
 {
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
     public function __construct(Connection $connection)
     {

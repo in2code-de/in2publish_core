@@ -51,11 +51,9 @@ class ForeignEnvironmentService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var FrontendInterface */
-    protected $cache;
+    protected FrontendInterface $cache;
 
-    /** @var RemoteCommandDispatcher */
-    protected $remoteCommandDispatcher;
+    protected RemoteCommandDispatcher $remoteCommandDispatcher;
 
     public function __construct(FrontendInterface $cache, RemoteCommandDispatcher $remoteCommandDispatcher)
     {

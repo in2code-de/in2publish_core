@@ -34,7 +34,7 @@ use In2code\In2publishCore\Features\SystemInformationExport\Exporter\SystemInfor
 class SystemInformationExportService
 {
     /** @var array<SystemInformationExporter> */
-    protected $exporter = [];
+    protected array $exporter = [];
 
     public function registerExporter(SystemInformationExporter $exporter): void
     {

@@ -47,23 +47,18 @@ use function array_keys;
 
 class PageRecordRedirectEnhancer
 {
-    /** @var RecordFinder */
-    protected $recordFinder;
+    protected RecordFinder $recordFinder;
 
-    /** @var Connection */
-    protected $localDatabase;
+    protected Connection $localDatabase;
 
-    /** @var Connection */
-    protected $foreignDatabase;
+    protected Connection $foreignDatabase;
 
-    /** @var SysRedirectRepository */
-    protected $repo;
+    protected SysRedirectRepository $repo;
 
-    /** @var LinkService */
-    protected $linkService;
+    protected LinkService $linkService;
 
     /** @var array<string, array<int>> */
-    protected $looseRedirects = [];
+    protected array $looseRedirects = [];
 
     public function __construct(
         RecordFinder $recordFinder,

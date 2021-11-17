@@ -59,23 +59,18 @@ class ShallowRecordFinder implements RecordFinder
 {
     public const PAGE_TABLE_NAME = 'pages';
 
-    /** @var TcaService */
-    protected $tcaService;
+    protected TcaService $tcaService;
 
-    /** @var EventDispatcher */
-    protected $eventDispatcher;
+    protected EventDispatcher $eventDispatcher;
 
     /** @var RecordFactory Only used for events which require an instance of this class */
-    protected $recordFactory;
+    protected RecordFactory $recordFactory;
 
-    /** @var TcaProcessingService */
-    protected $tcaProcessingService;
+    protected TcaProcessingService $tcaProcessingService;
 
-    /** @var ShallowFolderRecordFactory */
-    protected $shallowFolderRecordFactory;
+    protected ShallowFolderRecordFactory $shallowFolderRecordFactory;
 
-    /** @var DualDatabaseRepository */
-    protected $dualDatabaseRepository;
+    protected DualDatabaseRepository $dualDatabaseRepository;
 
     /** @var array */
     protected $config;

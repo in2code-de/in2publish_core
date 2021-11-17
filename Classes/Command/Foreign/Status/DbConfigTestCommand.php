@@ -43,8 +43,7 @@ class DbConfigTestCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:dbconfigtest';
 
-    /** @var Connection */
-    protected $localDatabase;
+    protected Connection $localDatabase;
 
     public function __construct(Connection $localDatabase, string $name = null)
     {

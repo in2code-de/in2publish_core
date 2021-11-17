@@ -38,11 +38,9 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 class TestController extends ActionController
 {
-    /** @var TestingService */
-    protected $testingService;
+    protected TestingService $testingService;
 
-    /** @var EnvironmentService */
-    protected $environmentService;
+    protected EnvironmentService $environmentService;
 
     public function __construct(TestingService $testingService, EnvironmentService $environmentService)
     {

@@ -33,8 +33,7 @@ use TYPO3\CMS\Extensionmanager\Utility\ListUtility;
 
 class InstalledExtensionsExporter implements SystemInformationExporter
 {
-    /** @var ListUtility */
-    protected $listUtility;
+    protected ListUtility $listUtility;
 
     public function __construct(ListUtility $listUtility)
     {

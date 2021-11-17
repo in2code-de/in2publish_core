@@ -36,11 +36,9 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 
 class SitesConfigurationExporter implements SystemInformationExporter
 {
-    /** @var SiteFinder */
-    protected $siteFinder;
+    protected SiteFinder $siteFinder;
 
-    /** @var ForeignSiteFinder */
-    protected $foreignSiteFinder;
+    protected ForeignSiteFinder $foreignSiteFinder;
 
     public function __construct(SiteFinder $siteFinder, ForeignSiteFinder $foreignSiteFinder)
     {

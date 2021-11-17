@@ -54,12 +54,12 @@ class AdapterRegistry implements SingletonInterface, LoggerAwareInterface
     /**
      * @var string[][][]
      */
-    protected $adapter = [
+    protected array $adapter = [
         'remote' => [],
         'transmission' => [],
     ];
 
-    protected $adapterMap = [
+    protected array $adapterMap = [
         'remote' => [
             'interface' => RceAdapter::class,
             'tester' => RemoteAdapterTest::class,
@@ -70,7 +70,7 @@ class AdapterRegistry implements SingletonInterface, LoggerAwareInterface
         ],
     ];
 
-    protected $config = [
+    protected array $config = [
         'adapter' => [
             'remote' => 'ssh',
             'transmission' => 'ssh',

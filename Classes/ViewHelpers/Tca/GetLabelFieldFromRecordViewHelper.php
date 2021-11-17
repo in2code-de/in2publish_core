@@ -34,8 +34,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class GetLabelFieldFromRecordViewHelper extends AbstractViewHelper
 {
-    /** @var LabelService */
-    protected $labelService;
+    protected LabelService $labelService;
 
     public function __construct(LabelService $labelService)
     {

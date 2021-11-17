@@ -67,11 +67,9 @@ class RceInitializationPerformanceTest implements TestCaseInterface
         ],
     ];
 
-    /** @var AdapterRegistry */
-    private $adapterRegistry;
+    private AdapterRegistry $adapterRegistry;
 
-    /** @var RemoteCommandDispatcher */
-    private $remoteCommandDispatcher;
+    private RemoteCommandDispatcher $remoteCommandDispatcher;
 
     public function __construct(AdapterRegistry $adapterRegistry, RemoteCommandDispatcher $remoteCommandDispatcher)
     {

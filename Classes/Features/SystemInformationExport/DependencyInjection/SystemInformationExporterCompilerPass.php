@@ -36,8 +36,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class SystemInformationExporterCompilerPass implements CompilerPassInterface
 {
-    /** @var string */
-    private $tagName;
+    private string $tagName;
 
     public function __construct(string $tagName)
     {

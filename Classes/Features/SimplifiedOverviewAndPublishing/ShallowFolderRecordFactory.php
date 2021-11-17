@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing;
 
+use In2code\In2publishCore\Component\FalHandling\Finder\Factory\FileIndexFactory;
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
-use In2code\In2publishCore\Domain\Factory\FileIndexFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\StorageDriverExtractor;
 use LogicException;
@@ -15,17 +15,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ShallowFolderRecordFactory
 {
-    /** @var ResourceFactory */
-    protected $resourceFactory;
+    protected ResourceFactory $resourceFactory;
 
-    /** @var DriverInterface */
-    protected $localDriver;
+    protected DriverInterface $localDriver;
 
-    /** @var RemoteFileAbstractionLayerDriver */
-    protected $foreignDriver;
+    protected RemoteFileAbstractionLayerDriver $foreignDriver;
 
-    /** @var FileIndexFactory */
-    protected $fileIndexFactory;
+    protected FileIndexFactory $fileIndexFactory;
 
     public function __construct(ResourceFactory $resourceFactory)
     {

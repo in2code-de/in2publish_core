@@ -47,11 +47,10 @@ class TcaService implements SingletonInterface
     protected const TYPE_ROOT = 'root';
     protected const TYPE_PAGE = 'page';
 
-    /** @var array */
-    protected $tableNames;
+    protected array $tableNames;
 
     /** @var array RunTime Cache */
-    protected $rtc = [];
+    protected array $rtc = [];
 
     public function __construct()
     {

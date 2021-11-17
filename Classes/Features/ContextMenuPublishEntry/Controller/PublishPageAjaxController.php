@@ -44,17 +44,13 @@ use function json_encode;
 
 class PublishPageAjaxController
 {
-    /** @var PermissionService */
-    protected $permissionService;
+    protected PermissionService $permissionService;
 
-    /** @var TaskExecutionService */
-    protected $taskExecutionService;
+    protected TaskExecutionService $taskExecutionService;
 
-    /** @var RecordFinder */
-    protected $recordFinder;
+    protected RecordFinder $recordFinder;
 
-    /** @var RecordPublisher */
-    protected $recordPublisher;
+    protected RecordPublisher $recordPublisher;
 
     public function __construct(
         RecordFinder $recordFinder,

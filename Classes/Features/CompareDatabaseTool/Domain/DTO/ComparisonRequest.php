@@ -32,7 +32,7 @@ namespace In2code\In2publishCore\Features\CompareDatabaseTool\Domain\DTO;
 class ComparisonRequest
 {
     /** @var array<string> */
-    protected $tables = [];
+    protected array $tables = [];
 
     public function getTables(): array
     {

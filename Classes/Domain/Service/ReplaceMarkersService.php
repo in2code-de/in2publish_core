@@ -55,11 +55,9 @@ class ReplaceMarkersService implements LoggerAwareInterface
     // Also replace optional quotes around the REC_FIELD_ because we will quote the actual value
     protected const REC_FIELD_REGEX = '~\'?###REC_FIELD_(.*?)###\'?~';
 
-    /** @var FlexFormTools */
-    protected $flexFormTools;
+    protected FlexFormTools $flexFormTools;
 
-    /** @var TcaProcessingService */
-    protected $tcaProcessingService;
+    protected TcaProcessingService $tcaProcessingService;
 
     public function __construct(FlexFormTools $flexFormTools, TcaProcessingService $tcaProcessingService)
     {

@@ -47,8 +47,7 @@ use function unlink;
 
 class FileUtility
 {
-    /** @var Logger */
-    protected static $logger;
+    protected static Logger $logger;
 
     protected static function initializeLogger(): void
     {

@@ -41,14 +41,11 @@ use function trim;
 
 class FolderPublisherService
 {
-    /** @var EventDispatcher */
-    protected $eventDispatcher;
+    protected EventDispatcher $eventDispatcher;
 
-    /** @var ResourceFactory */
-    protected $resourceFactory;
+    protected ResourceFactory $resourceFactory;
 
-    /** @var RemoteFileAbstractionLayerDriver */
-    private $remoteFileAbstractionLayerDriver;
+    private RemoteFileAbstractionLayerDriver $remoteFileAbstractionLayerDriver;
 
     public function __construct(
         EventDispatcher $eventDispatcher,

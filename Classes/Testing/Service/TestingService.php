@@ -39,8 +39,7 @@ use function get_class;
 
 class TestingService
 {
-    /** @var TestCaseService */
-    protected $testCaseService;
+    protected TestCaseService $testCaseService;
 
     public function __construct(TestCaseService $testCaseService)
     {

@@ -36,8 +36,7 @@ use TYPO3\CMS\Core\Resource\ResourceFactory;
 
 class DefaultStorageIsConfiguredTest implements TestCaseInterface
 {
-    /** @var ResourceFactory */
-    protected $resourceFactory;
+    protected ResourceFactory $resourceFactory;
 
     public function __construct(ResourceFactory $resourceFactory)
     {

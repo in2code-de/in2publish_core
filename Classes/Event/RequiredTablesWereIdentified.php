@@ -36,7 +36,7 @@ use function in_array;
 
 final class RequiredTablesWereIdentified
 {
-    private $tables;
+    private array $tables;
 
     public function __construct($tables)
     {

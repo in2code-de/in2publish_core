@@ -41,7 +41,7 @@ class LogController extends \CoStack\Logs\Controller\LogController
     /**
      * TODO: Check if the configuration can be accessed and merged somewhere else
      */
-    protected $txLogsViewConfig = [
+    protected array $txLogsViewConfig = [
         'templateRootPaths' => [
             20 => 'EXT:in2publish_core/Resources/Private/Templates',
         ],

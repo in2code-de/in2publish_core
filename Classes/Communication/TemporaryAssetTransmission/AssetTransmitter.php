@@ -47,14 +47,11 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var AdapterInterface */
-    protected $adapter;
+    protected ?AdapterInterface $adapter = null;
 
-    /** @var AdapterRegistry */
-    protected $adapterRegistry;
+    protected AdapterRegistry $adapterRegistry;
 
-    /** @var string */
-    protected $foreignRootPath;
+    protected string $foreignRootPath;
 
     public function __construct(ConfigContainer $configContainer, AdapterRegistry $adapterRegistry)
     {

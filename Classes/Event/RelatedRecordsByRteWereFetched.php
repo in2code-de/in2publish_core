@@ -39,17 +39,13 @@ use const E_USER_DEPRECATED;
 
 final class RelatedRecordsByRteWereFetched
 {
-    /** @var RecordFinder */
-    private $recordFinder;
+    private RecordFinder $recordFinder;
 
-    /** @var string */
-    private $bodyText;
+    private string $bodyText;
 
-    /** @var array */
-    private $excludedTableNames;
+    private array $excludedTableNames;
 
-    /** @var array */
-    private $relatedRecords;
+    private array $relatedRecords;
 
     public function __construct(
         RecordFinder $recordFinder,

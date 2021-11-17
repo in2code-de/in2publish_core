@@ -50,20 +50,15 @@ use const PATHINFO_EXTENSION;
 
 class FileIndexFactory
 {
-    /** @var DriverInterface */
-    protected $localDriver;
+    protected DriverInterface $localDriver;
 
-    /** @var DriverInterface */
-    protected $foreignDriver;
+    protected DriverInterface $foreignDriver;
 
-    /** @var array */
-    protected $sysFileTca = [];
+    protected array $sysFileTca = [];
 
-    /** @var ContextService */
-    protected $contextService;
+    protected ContextService $contextService;
 
-    /** @var UidReservationService */
-    protected $uidReservationService;
+    protected UidReservationService $uidReservationService;
 
     /**
      * @param DriverInterface $localDriver

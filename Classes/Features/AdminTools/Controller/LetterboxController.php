@@ -37,8 +37,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class LetterboxController extends ActionController
 {
-    /** @var Letterbox */
-    protected $letterbox;
+    protected Letterbox $letterbox;
 
     public function __construct(Letterbox $letterbox)
     {

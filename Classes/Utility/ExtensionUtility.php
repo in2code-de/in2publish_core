@@ -35,8 +35,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class ExtensionUtility
 {
-    /** @var PackageManager */
-    private static $packageManager;
+    private static ?PackageManager $packageManager = null;
 
     /**
      * Advantage: Extension version is not cached.

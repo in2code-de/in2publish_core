@@ -34,8 +34,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class GetEnabledToolsViewHelper extends AbstractViewHelper
 {
-    /** @var ToolsRegistry */
-    protected $toolsRegistry;
+    protected ToolsRegistry $toolsRegistry;
 
     public function __construct(ToolsRegistry $toolsRegistry)
     {

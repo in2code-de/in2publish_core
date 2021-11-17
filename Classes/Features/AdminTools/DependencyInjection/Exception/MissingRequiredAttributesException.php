@@ -42,17 +42,15 @@ class MissingRequiredAttributesException extends In2publishCoreException
     private const MESSAGE_1 = 'The service %s defines the tag "%s" which requires the attributes %s to be defined, but the attribute %s is missing';
     private const MESSAGE_N = 'The service %s defines the tag "%s" which requires the attributes %s to be defined, but the attributes %s are missing';
 
-    /** @var string */
-    protected $serviceName;
+    protected string $serviceName;
 
-    /** @var string */
-    protected $tagName;
+    protected string $tagName;
 
     /** @var array<string> */
-    protected $requiredAttributes;
+    protected array $requiredAttributes;
 
     /** @var array<string> */
-    protected $missingRequiredKeys;
+    protected array $missingRequiredKeys;
 
     public function __construct(
         string $serviceName,
