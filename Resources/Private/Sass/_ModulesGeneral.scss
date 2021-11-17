@@ -178,6 +178,10 @@ a.in2publish-notextdecoration {
     .in2publish-icon-file {
       @extend .icon-file-broken;
     }
+
+    .in2publish-stagelisting__item-filename {
+      color: $appleblossom;
+    }
   }
 
   .in2publish-stagelisting__item--removed & {
@@ -664,7 +668,17 @@ div#typo3-docbody.stopScrolling {
 
 
 .in2publish-state-icon {
+  &:before {
+    font-size: 6px;
+    margin-bottom: 2px;
+    display: inline-block;
+    vertical-align: middle;
+    height: 12px;
+    line-height: 12px;
+  }
+}
 
+.in2publish-state {
   &--unchanged {
     color: $nobel;
   }
@@ -684,14 +698,13 @@ div#typo3-docbody.stopScrolling {
   &--moved {
     color: $pictonblue;
   }
+}
 
-  &:before {
-    font-size: 6px;
-    margin-bottom: 2px;
-    display: inline-block;
-    vertical-align: middle;
-    height: 12px;
-    line-height: 12px;
+.in2publish-stagelisting__item {
+  &--deleted {
+    .in2publish-stagelisting__item-filename {
+      color: $appleblossom;
+    }
   }
 }
 
