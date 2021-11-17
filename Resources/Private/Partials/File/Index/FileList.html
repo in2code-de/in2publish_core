@@ -5,7 +5,7 @@
 		<f:comment>Left</f:comment>
 		<td class="col-icon">
 			<span data-bs-toggle="tooltip" title="uid={record.localProperties.uid}">
-				<core:iconForRecord row="{record.localProperties}" table="{record.tableName}"></core:iconForRecord>
+				<core:iconForResource resource="{publish:miscellaneous.getFileResourceByUid(uid: record.localProperties.uid)}"/>
 			</span>
 		</td>
 		<td class="col-filename col-responsive nowrap">
@@ -80,7 +80,7 @@
 		<f:comment>Right</f:comment>
 		<td class="col-icon">
 			<span data-bs-toggle="tooltip" title="uid={record.foreignProperties.uid}">
-				<core:iconForRecord row="{record.foreignProperties}" table="{record.tableName}"></core:iconForRecord>
+				<core:iconForResource resource="{publish:miscellaneous.getFileResourceByUid(uid: record.foreignProperties.uid)}"/>
 			</span>
 		</td>
 		<td class="col-filename col-responsive nowrap">
