@@ -517,9 +517,37 @@
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Adapter\TransmissionAdapterTest -->
 
-			<trans-unit id="adapter.all_transmission_adapter_tests__passed">
-				<source>All adapter tests for the TATAPI component have passed</source>
-				<target state="translated">Alle Adaptertests für die TATAPI-Komponente waren erfolgreich</target>
+			<trans-unit id="adapter.transmission.all_tests_passed">
+				<source>TATAPI: All adapter tests for the TATAPI component have passed and a file has been transferred successfully.</source>
+				<target state="translated">TATAPI: Alle Adaptertests für die TATAPI-Komponente waren erfolgreich und eine Datei konnte erfolgreich übertragen werden.</target>
+			</trans-unit>
+			<trans-unit id="adapter.transmission.asset_transmitter_error">
+				<source>TATAPI: Error in asset transmitter</source>
+				<target state="translated">TATAPI: Ein Fehler im AssetTransmitter ist aufgetreten</target>
+			</trans-unit>
+			<trans-unit id="adapter.transmission.file_not_transferred">
+				<source>TATAPI: The file has not been transferred</source>
+				<target state="translated">TATAPI: Die Datei wurde nicht übertragen</target>
+			</trans-unit>
+			<trans-unit id="adapter.transmission.file_cat_failed">
+				<source>TATAPI: Checking the file on foreign failed</source>
+				<target state="translated">TATAPI: Beim überprüfen der übertragenen Datei ist ein Fehler aufgetreten</target>
+			</trans-unit>
+			<trans-unit id="adapter.transmission.file_cat_failed_manual_remove">
+				<source xml:space="preserve">TATAPI: Checking the file on foreign failed. Please delete the file %s on foreign manually</source>
+				<target state="translated" xml:space="preserve">TATAPI: Beim überprüfen der übertragenen Datei ist ein Fehler aufgetreten. Bitte löschen Sie dei Datei %s manuell auf dem entfernten System</target>
+			</trans-unit>
+			<trans-unit id="adapter.transmission.content_altered">
+				<source xml:space="preserve">TATAPI: The file has been copied to foreign but the files contents are altered</source>
+				<target state="translated" xml:space="preserve">TATAPI: Die Datei wurde übertragen, jedoch wurde bei der Übertragung der Inhalt geändert.</target>
+			</trans-unit>
+			<trans-unit id="adapter.transmission.content_altered_manual_remove">
+				<source xml:space="preserve">TATAPI: The file has been copied to foreign but the files contents are altered. The file could not be deleted after this test. Please delete the file %s on foreign manually</source>
+				<target state="translated" xml:space="preserve">TATAPI: Die Datei wurde übertragen, jedoch wurde bei der Übertragung der Inhalt geändert. Die Datei konnte nach diesem Test nicht gelöscht werden. Bitte löschen Sie dei Datei %s manuell auf dem entfernten System</target>
+			</trans-unit>
+			<trans-unit id="adapter.transmission.file_deletion_failed">
+				<source xml:space="preserve">TATAPI: The transmission was successful, but the deletion of the temporary file on foreign failed. Please delete the file %s on foreign manually</source>
+				<target state="translated" xml:space="preserve">TATAPI: Der Dateiübrtagungstest war erfolgreich, jedoch konnte die Testdatei nach diesem Test nicht gelöscht werden. Bitte löschen Sie dei Datei %s manuell auf dem entfernten System</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Adapter\AdapterSelectionTest -->

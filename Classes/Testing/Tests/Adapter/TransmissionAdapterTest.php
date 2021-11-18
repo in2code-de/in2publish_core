@@ -29,23 +29,160 @@ namespace In2code\In2publishCore\Testing\Tests\Adapter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
+use In2code\In2publishCore\Communication\TemporaryAssetTransmission\AssetTransmitter;
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface;
+use In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use Throwable;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_merge;
+use function bin2hex;
+use function file_put_contents;
+use function is_file;
+use function random_bytes;
+use function register_shutdown_function;
+use function strpos;
+use function uniqid;
+use function unlink;
 
 class TransmissionAdapterTest implements TestCaseInterface
 {
+    /** @var AssetTransmitter */
+    protected $assetTransmitter;
+
+    /** @var RemoteCommandDispatcher */
+    protected $remoteCommandDispatcher;
+
+    public function __construct(AssetTransmitter $assetTransmitter, RemoteCommandDispatcher $remoteCommandDispatcher)
+    {
+        $this->assetTransmitter = $assetTransmitter;
+        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
+    }
+
     public function run(): TestResult
     {
-        return new TestResult('adapter.all_transmission_adapter_tests__passed');
+        try {
+            $canary = bin2hex(random_bytes(16));
+        } catch (Throwable $e) {
+            $canary = uniqid('tx_in2publishcore_test_', true);
+        }
+        $localTmpFile = GeneralUtility::tempnam('tx_in2publishlocal_test_', '.txt');
+        file_put_contents($localTmpFile, $canary);
+        register_shutdown_function(static function () use ($localTmpFile) {
+            if (is_file($localTmpFile)) {
+                unlink($localTmpFile);
+            }
+        });
+
+        try {
+            $foreignTmpFile = $this->assetTransmitter->transmitTemporaryFile($localTmpFile);
+        } catch (Throwable $exception) {
+            return new TestResult(
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.asset_transmitter_error',
+                TestResult::ERROR,
+                [(string)$exception]
+            );
+        }
+
+        GeneralUtility::unlink_tempfile($localTmpFile);
+
+        $getContentResponse = $this->getForeignFileContents($foreignTmpFile);
+        if (!$getContentResponse->isSuccessful()) {
+            $needle = 'cat: ' . $foreignTmpFile . ': No such file or directory';
+            if (false !== strpos($getContentResponse->getErrorsString(), $needle)) {
+                return new TestResult(
+                    'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.file_not_transferred',
+                    TestResult::ERROR,
+                    [$getContentResponse->getOutputString(), $getContentResponse->getErrorsString()]
+                );
+            }
+            $rmResponse = $this->removeForeignFile($foreignTmpFile);
+            if ($rmResponse->isSuccessful()) {
+                return new TestResult(
+                    'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.file_cat_failed',
+                    TestResult::ERROR,
+                    [$getContentResponse->getOutputString(), $getContentResponse->getErrorsString()]
+                );
+            }
+            return new TestResult(
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.file_cat_failed_manual_remove',
+                TestResult::ERROR,
+                [
+                    $getContentResponse->getOutputString(),
+                    $getContentResponse->getErrorsString(),
+                    $rmResponse->getOutputString(),
+                    $rmResponse->getErrorsString(),
+                ],
+                [$foreignTmpFile]
+            );
+        }
+
+        $rmResponse = $this->removeForeignFile($foreignTmpFile);
+
+        if ($getContentResponse->getOutputString() !== $canary) {
+            if ($rmResponse->isSuccessful()) {
+                return new TestResult(
+                    'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.content_altered',
+                    TestResult::ERROR,
+                    [$getContentResponse->getOutputString(), $getContentResponse->getErrorsString()]
+                );
+            }
+            return new TestResult(
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.content_altered_manual_remove',
+                TestResult::ERROR,
+                [
+                    'Expected: "' . $canary . '"',
+                    'Actual: "' . $getContentResponse->getOutputString() . '"',
+                    $getContentResponse->getErrorsString(),
+                    $rmResponse->getOutputString(),
+                    $rmResponse->getErrorsString(),
+                ],
+                [$foreignTmpFile]
+            );
+        }
+
+        if (!$rmResponse->isSuccessful()) {
+            return new TestResult(
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.file_deletion_failed',
+                TestResult::ERROR,
+                [$rmResponse->getOutputString(), $rmResponse->getErrorsString()],
+                [$foreignTmpFile]
+            );
+        }
+
+        return new TestResult(
+            'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.all_tests_passed'
+        );
+    }
+
+    protected function removeForeignFile(string $foreignTmpFile): RemoteCommandResponse
+    {
+        $rceRequest = new RemoteCommandRequest('rm', [], [$foreignTmpFile]);
+        $rceRequest->setDispatcher('');
+        $rceRequest->usePhp(false);
+
+        return $this->remoteCommandDispatcher->dispatch($rceRequest);
+    }
+
+    protected function getForeignFileContents(string $foreignTmpFile): RemoteCommandResponse
+    {
+        $rceRequest = new RemoteCommandRequest('cat', [], [$foreignTmpFile]);
+        $rceRequest->setDispatcher('');
+        $rceRequest->usePhp(false);
+
+        return $this->remoteCommandDispatcher->dispatch($rceRequest);
     }
 
     /** @SuppressWarnings(PHPMD.Superglobals) */
     public function getDependencies(): array
     {
         $dependencies = [
+            ConfigurationFormatTest::class,
             AdapterSelectionTest::class,
         ];
         if (isset($GLOBALS['in2publish_core']['virtual_tests'][AdapterInterface::class])) {
