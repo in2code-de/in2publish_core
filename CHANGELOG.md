@@ -1,5 +1,12 @@
 # In2publish Core Change Log
 
+10.1.1:
+
+- [META] Set the EM conf version number to 10.1.1
+- [BUGFIX] Use subfolder inside of typo3temp to allow symlinking the location
+- [BUGFIX] Add missing test to assert that the TATAPI works as expected
+- [RELEASE] Version 10.1.0 with consolidated tasks API, redirect filter and admin DB compare tool
+
 10.1.0:
 
 - [META] Set the branch alias version number to 10.1.x-dev
