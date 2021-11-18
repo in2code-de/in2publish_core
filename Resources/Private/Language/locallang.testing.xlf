@@ -411,8 +411,29 @@
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Adapter\TransmissionAdapterTest -->
 
-			<trans-unit id="adapter.all_transmission_adapter_tests__passed">
-				<source>All adapter tests for the TATAPI component have passed</source>
+			<trans-unit id="adapter.transmission.all_tests_passed">
+				<source>TATAPI: All adapter tests for the TATAPI component have passed and a file has been transferred successfully.</source>
+			</trans-unit>
+			<trans-unit id="adapter.transmission.asset_transmitter_error">
+				<source>TATAPI: Error in asset transmitter</source>
+			</trans-unit>
+			<trans-unit id="adapter.transmission.file_not_transferred">
+				<source>TATAPI: The file has not been transferred</source>
+			</trans-unit>
+			<trans-unit id="adapter.transmission.file_cat_failed">
+				<source>TATAPI: Checking the file on foreign failed</source>
+			</trans-unit>
+			<trans-unit id="adapter.transmission.file_cat_failed_manual_remove">
+				<source xml:space="preserve">TATAPI: Checking the file on foreign failed. Please delete the file %s on foreign manually</source>
+			</trans-unit>
+			<trans-unit id="adapter.transmission.content_altered">
+				<source xml:space="preserve">TATAPI: The file has been copied to foreign but the files contents are altered</source>
+			</trans-unit>
+			<trans-unit id="adapter.transmission.content_altered_manual_remove">
+				<source xml:space="preserve">TATAPI: The file has been copied to foreign but the files contents are altered. The file could not be deleted after this test. Please delete the file %s on foreign manually</source>
+			</trans-unit>
+			<trans-unit id="adapter.transmission.file_deletion_failed">
+				<source xml:space="preserve">TATAPI: The transmission was successful, but the deletion of the temporary file on foreign failed. Please delete the file %s on foreign manually</source>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Adapter\AdapterSelectionTest -->
