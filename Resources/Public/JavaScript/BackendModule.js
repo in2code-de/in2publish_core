@@ -10,6 +10,7 @@ define([
 		addedFilter: false,
 		deletedFilter: false,
 		movedFilter: false,
+		publisherBag: [],
 		objects: {
 			body: undefined,
 			preLoader: undefined,
@@ -23,6 +24,7 @@ define([
 			In2publishModule.setupClearableInputs();
 			In2publishModule.filterItemsByStatus();
 			In2publishModule.setupFilterListeners();
+			In2publishModule.setupPublisherBagListeners();
 		} else {
 			In2publishModule.setFilterForPageView();
 			In2publishModule.filterButtonsListener();
@@ -215,6 +217,99 @@ define([
 			input.clearable();
 		});
 	};
+
+	In2publishModule.setupPublisherBagListeners = function () {
+		const publisherBagToggle = document.querySelector('.js-publisherbag-toggle');
+		if (publisherBagToggle) {
+			publisherBagToggle.addEventListener('change', function (event) {
+				In2publishModule.togglePublisherBagSelectorVisibility();
+
+				if (!event.target.checked) {
+					In2publishModule.resetPublisherBag();
+				}
+			});
+		}
+
+		(Array.from(document.querySelectorAll('.js-publisherbag-check'))).forEach(function (input) {
+			input.addEventListener('click', function (event) {
+				event.currentTarget.classList.toggle('in2publish-icon-toggle--active');
+				In2publishModule.fillPublisherBag();
+				In2publishModule.renderPublisherBag();
+				In2publishModule.renderPublishButton();
+			});
+		});
+	};
+
+	In2publishModule.togglePublisherBagSelectorVisibility = function () {
+		(Array.from(document.querySelectorAll('.js-publisherbag-check'))).forEach(function (input) {
+			input.classList.toggle('invisible');
+		});
+	};
+
+	In2publishModule.fillPublisherBag = function () {
+		const tempBag = [];
+
+		(Array.from(document.querySelectorAll('.js-publisherbag-check.in2publish-icon-toggle--active'))).forEach(function (item) {
+			const stageItem = item.closest('.in2publish-stagelisting__item');
+
+			tempBag.push({
+				id: stageItem.getAttribute('data-id'),
+				type: stageItem.getAttribute('data-type'),
+				name: stageItem.getAttribute('data-name'),
+				identifier: stageItem.getAttribute('data-identifier'),
+				storage: stageItem.getAttribute('data-storage')
+			})
+		});
+
+		In2publishModule.publisherBag = tempBag;
+	};
+
+	In2publishModule.renderPublisherBag = function () {
+		const publisherBagTable = document.querySelector('.in2publish-publisherbag');
+		const tableBody = document.querySelector('.js-publisherbag-content');
+		tableBody.innerHTML = '';
+
+		In2publishModule.publisherBag.forEach(function (bagItem) {
+			const tableRow = document.createElement('tr');
+			const tableCell = document.createElement('td');
+			tableCell.innerText = bagItem.name;
+
+			tableRow.appendChild(tableCell);
+			tableBody.appendChild(tableRow);
+		});
+
+		if (In2publishModule.publisherBag.length > 0) {
+			publisherBagTable.classList.remove('d-none');
+		}
+		else {
+			publisherBagTable.classList.add('d-none');
+		}
+	}
+
+	In2publishModule.renderPublishButton = function () {
+		const publishAllButton = document.querySelector('.js-publish-all');
+		const publishMultiButton = document.querySelector('.js-publish-multi');
+
+		if (In2publishModule.publisherBag.length > 0) {
+			publishAllButton.classList.add('d-none');
+			publishMultiButton.innerText = publishMultiButton.getAttribute('data-label').replace('(count)', In2publishModule.publisherBag.length);
+			publishMultiButton.classList.remove('d-none');
+		} else {
+			publishAllButton.classList.remove('d-none');
+			publishMultiButton.classList.add('d-none');
+		}
+	}
+
+	In2publishModule.resetPublisherBag = function () {
+		In2publishModule.publisherBag = [];
+
+		(Array.from(document.querySelectorAll('.js-publisherbag-check'))).forEach(function (input) {
+			input.classList.remove('in2publish-icon-toggle--active');
+		});
+
+		In2publishModule.renderPublisherBag();
+		In2publishModule.renderPublishButton();
+	}
 
 	In2publishModule.filterItemsByStatus = function () {
 		In2publishModule.changedFilter = (document.querySelector('.js-in2publish-filter[value="changed"]:checked') !== null);

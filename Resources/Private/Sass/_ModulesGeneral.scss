@@ -708,6 +708,28 @@ div#typo3-docbody.stopScrolling {
   }
 }
 
+.in2publish-icon-toggle {
+  $this: &;
+
+  &__on {
+    display: none;
+  }
+
+  &__off {
+    display: initial;
+  }
+
+  &--active {
+    #{$this}__on {
+      display: initial;
+    }
+
+    #{$this}__off {
+      display: none;
+    }
+  }
+}
+
 .in2publish-table {
   .col-filename {
     width: 50%;
