@@ -1,6 +1,14 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
 <f:if condition="{publishingAvailable}">
 	<div class="hstack gap-3 my-2">
+		<div class="input-group w-25">
+			<span class="input-group-text" id="search-input-addon">
+				<core:icon identifier="actions-search"/>
+			</span>
+			<div class="form-control-clearable">
+				<input type="text" class="t3js-clearable form-control js-form-search" placeholder="Search term" aria-label="Search term" aria-describedby="search-input-addon">
+			</div>
+		</div>
 		<p class="m-0">
 			Filter by:
 		</p>

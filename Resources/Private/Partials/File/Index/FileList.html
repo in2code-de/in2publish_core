@@ -1,7 +1,8 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
 {namespace core=TYPO3\CMS\Core\ViewHelpers}
 <f:if condition="{record}">
-	<tr class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.stateRecursive}">
+	<tr class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.stateRecursive}"
+		data-searchable="{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'local')}|{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'foreign')}">
 		<f:comment>Left</f:comment>
 		<td class="col-icon">
 			<span data-bs-toggle="tooltip" title="uid={record.localProperties.uid}">

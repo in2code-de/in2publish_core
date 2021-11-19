@@ -1,7 +1,8 @@
 {namespace publish=In2code\In2publishCore\ViewHelpers}
 {namespace core=TYPO3\CMS\Core\ViewHelpers}
 <f:if condition="{record}">
-	<tr class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.state}">
+	<tr class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.state}"
+		data-searchable="{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'local', fallbackProperty: 'identifier')}|{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'foreign', fallbackProperty: 'identifier')}">
 		<f:comment>Left</f:comment>
 		<td class="col-icon">
 			<core:icon identifier="files-folder"></core:icon>

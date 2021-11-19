@@ -1,8 +1,8 @@
 'use strict';
 
 define([
-	'jquery'
-], function ($) {
+	'jquery', 'TYPO3/CMS/Core/Event/DebounceEvent', 'TYPO3/CMS/Backend/Input/Clearable'
+], function ($, DebounceEvent) {
 	var In2publishModule = {
 		isNewUI: (document.querySelector('.typo3-fullDoc[data-ui-refresh]') !== null),
 		unchangedFilter: false,
@@ -20,6 +20,7 @@ define([
 	In2publishModule.initialize = function () {
 		In2publishModule.toggleDirtyPropertiesListContainerListener();
 		if (In2publishModule.isNewUI) {
+			In2publishModule.setupClearableInputs();
 			In2publishModule.filterItemsByStatus();
 			In2publishModule.setupFilterListeners();
 		} else {
@@ -171,7 +172,49 @@ define([
 				In2publishModule.filterItemsByStatus();
 			});
 		});
+
+		const searchForm = document.querySelector('.js-form-search');
+		if (searchForm) {
+			new DebounceEvent('input', function (event) {
+				const searchValue = event.target.value;
+				const elements = document.querySelectorAll('.in2publish-stagelisting__item');
+
+				(Array.from(elements)).forEach(function (item) {
+					if (searchValue !== '') {
+						const searchable = item.getAttribute('data-searchable');
+
+						if (!searchable.includes(searchValue)) {
+							item.classList.add('d-none');
+						}
+						else {
+							item.classList.remove('d-none');
+						}
+					}
+					else {
+						item.classList.remove('d-none');
+					}
+				});
+
+			}, 250).bindTo(searchForm);
+
+			const searchFormClear = document.querySelector('.js-form-search + .close');
+			if (searchFormClear) {
+				searchFormClear.addEventListener('click', function () {
+					const elements = document.querySelectorAll('.in2publish-stagelisting__item');
+
+					(Array.from(elements)).forEach(function (item) {
+						item.classList.remove('d-none');
+					});
+				});
+			}
+		}
 	}
+
+	In2publishModule.setupClearableInputs = function () {
+		(Array.from(document.querySelectorAll('.t3js-clearable'))).forEach(function (input) {
+			input.clearable();
+		});
+	};
 
 	In2publishModule.filterItemsByStatus = function () {
 		In2publishModule.changedFilter = (document.querySelector('.js-in2publish-filter[value="changed"]:checked') !== null);
