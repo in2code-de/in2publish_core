@@ -33,7 +33,7 @@
 							class="btn btn-default"
 							uri="{publish:File.BuildResourcePath(record:record,stagingLevel:'local')}"
 							additionalAttributes="{'data-bs-toggle': 'tooltip'}"
-							title="View"
+							title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:view')}"
 							target="_blank">
 							<core:icon identifier="actions-eye"></core:icon>
 						</f:link.external>
@@ -43,7 +43,7 @@
 					<f:then>
 						<f:for each="{record.relatedRecords.sys_file_metadata}" as="{metaRecord}" iteration="iterator">
 							<f:if condition="{iterator.isFirst}">
-								<a class="btn btn-default" href="{publish:uri.editUri(uid: metaRecord.localProperties.uid, tableName: metaRecord.tableName)}" data-bs-toggle="tooltip" title="Edit">
+								<a class="btn btn-default" href="{publish:uri.editUri(uid: metaRecord.localProperties.uid, tableName: metaRecord.tableName)}" data-bs-toggle="tooltip" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:edit')}">
 									<core:icon identifier="actions-pencil"></core:icon>
 								</a>
 							</f:if>
@@ -71,8 +71,8 @@
 						uid:record.identifier,
 						identifier:'{publish:record.getMergedProperty(record:record, propertyName: \'identifier\')}',
 						storage:'{publish:record.getMergedProperty(record:record, propertyName: \'storage\')}'}"
-					additionalAttributes="{data-title: 'Publish', data-content: '{f:translate(key:\'confirm_publish_file\', default:\'Are you sure?\')}', data-severity: 'warning'}">
-					Publish
+					additionalAttributes="{data-title: '{f:translate(key:\'publish\')}', data-content: '{f:translate(key:\'confirm_publish_file\')}', data-severity: 'warning'}">
+					<f:translate key="publish"/>
 					<core:icon identifier="actions-arrow-right"></core:icon>
 				</f:link.action>
 			</f:if>
@@ -94,7 +94,7 @@
 						class="btn btn-default"
 						uri="{publish:File.BuildResourcePath(record:record,stagingLevel:'foreign')}"
 						additionalAttributes="{'data-bs-toggle': 'tooltip'}"
-						title="View"
+						title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:view')}"
 						target="_blank">
 						<core:icon identifier="actions-eye"></core:icon>
 					</f:link.external>

@@ -68,6 +68,9 @@
 			<trans-unit id="confirm_publish_pages">
 				<source>Do you really want to publish this page?</source>
 			</trans-unit>
+			<trans-unit id="publish">
+				<source>Publish</source>
+			</trans-unit>
 			<trans-unit id="publish_pages">
 				<source>Publish this page</source>
 			</trans-unit>
@@ -195,6 +198,18 @@
 			</trans-unit>
 			<trans-unit id="system_info.upload.upload">
 				<source>Upload!</source>
+			</trans-unit>
+
+			<trans-unit id="record.filter">
+				<source>Filter by:</source>
+			</trans-unit>
+
+			<trans-unit id="record.filename">
+				<source>Filename</source>
+			</trans-unit>
+
+			<trans-unit id="record.state">
+				<source>Status</source>
 			</trans-unit>
 
 			<trans-unit id="record.state.unchanged">

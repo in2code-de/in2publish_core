@@ -6,11 +6,11 @@
 				<core:icon identifier="actions-search"/>
 			</span>
 			<div class="form-control-clearable">
-				<input type="text" class="t3js-clearable form-control js-form-search" placeholder="Search term" aria-label="Search term" aria-describedby="search-input-addon">
+				<input type="text" class="t3js-clearable form-control js-form-search" placeholder="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels.enterSearchString')}" aria-label="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels.enterSearchString')}" aria-describedby="search-input-addon">
 			</div>
 		</div>
 		<p class="m-0">
-			Filter by:
+			<f:translate key="record.filter"/>
 		</p>
 		<div class="form-check form-switch">
 			<input
@@ -21,7 +21,9 @@
 				value="added"
 				data-href="{f:uri.action(action: 'toggleFilterStatusAndRedirectToIndex', arguments: { filter: 'added' })}"
 				{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'added\',key:\'files\')}',then:' checked')}>
-			<label class="form-check-label m-0" for="toggleStatusAdded">Added</label>
+			<label class="form-check-label m-0" for="toggleStatusAdded">
+				<f:translate key="record.state.added.short"/>
+			</label>
 		</div>
 		<div class="form-check form-switch">
 			<input
@@ -32,7 +34,9 @@
 				value="changed"
 				data-href="{f:uri.action(action: 'toggleFilterStatusAndRedirectToIndex', arguments: { filter: 'changed' })}"
 				{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'changed\',key:\'files\')}',then:' checked')}>
-			<label class="form-check-label m-0" for="toggleStatusChanged">Changed</label>
+			<label class="form-check-label m-0" for="toggleStatusChanged">
+				<f:translate key="record.state.changed.short"/>
+			</label>
 		</div>
 		<div class="form-check form-switch">
 			<input
@@ -43,7 +47,9 @@
 				value="deleted"
 				data-href="{f:uri.action(action: 'toggleFilterStatusAndRedirectToIndex', arguments: { filter: 'deleted' })}"
 				{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'deleted\',key:\'files\')}',then:' checked')}>
-			<label class="form-check-label m-0" for="toggleStatusDeleted">Deleted</label>
+			<label class="form-check-label m-0" for="toggleStatusDeleted">
+				<f:translate key="record.state.deleted.short"/>
+			</label>
 		</div>
 		<div class="form-check form-switch">
 			<input
@@ -54,7 +60,9 @@
 				value="moved"
 				data-href="{f:uri.action(action: 'toggleFilterStatusAndRedirectToIndex', arguments: { filter: 'moved' })}"
 				{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'moved\',key:\'files\')}',then:' checked')}>
-			<label class="form-check-label m-0" for="toggleStatusMoved">Moved</label>
+			<label class="form-check-label m-0" for="toggleStatusMoved">
+				<f:translate key="record.state.moved.short"/>
+			</label>
 		</div>
 		<div class="form-check form-switch">
 			<input
@@ -65,7 +73,9 @@
 				value="unchanged"
 				data-href="{f:uri.action(action: 'toggleFilterStatusAndRedirectToIndex', arguments: { filter: 'unchanged' })}"
 				{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'unchanged\',key:\'files\')}',then:' checked')}>
-			<label class="form-check-label m-0" for="toggleStatusUnchanged">Unchanged</label>
+			<label class="form-check-label m-0" for="toggleStatusUnchanged">
+				<f:translate key="record.state.unchanged.short"/>
+			</label>
 		</div>
 	</div>
 </f:if>

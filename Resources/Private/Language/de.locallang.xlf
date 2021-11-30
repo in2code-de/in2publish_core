@@ -89,6 +89,10 @@
 				<source>Do you really want to publish this page?</source>
 				<target state="translated">Möchten Sie diese Seite wirklich veröffentlichen?</target>
 			</trans-unit>
+			<trans-unit id="publish">
+				<source>Publish</source>
+				<target>Publizieren</target>
+			</trans-unit>
 			<trans-unit id="publish_pages">
 				<source>Publish this page</source>
 				<target state="translated">Diese Seite publizieren</target>
@@ -258,6 +262,21 @@
 			<trans-unit id="system_info.upload.upload">
 				<source>Upload!</source>
 				<target state="translated">Hochladen!</target>
+			</trans-unit>
+
+			<trans-unit id="record.filter">
+				<source>Filter by:</source>
+				<target>Filtern nach:</target>
+			</trans-unit>
+
+			<trans-unit id="record.filename">
+				<source>Filename</source>
+				<target>Dateiname</target>
+			</trans-unit>
+
+			<trans-unit id="record.state">
+				<source>Status</source>
+				<target>Status</target>
 			</trans-unit>
 
 			<trans-unit id="record.state.unchanged">
