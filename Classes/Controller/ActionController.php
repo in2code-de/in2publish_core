@@ -37,7 +37,6 @@ use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\ExtensionUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as ExtbaseActionController;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 
@@ -85,31 +84,6 @@ abstract class ActionController extends ExtbaseActionController implements Logge
             $pid = 0;
         }
         $this->pid = $pid;
-    }
-
-    /**
-     * Additionally creates the controller context if not done yet.
-     * Do NOT call this Method before $this->initializeAction() is going to be executed
-     * because it relies on $this->request and $this->response to be set
-     *
-     * @param string $messageBody
-     * @param string $messageTitle
-     * @param int $severity
-     * @param bool $storeInSession
-     *
-     * @return void
-     */
-    public function addFlashMessage(
-        $messageBody,
-        $messageTitle = '',
-        $severity = AbstractMessage::OK,
-        $storeInSession = true
-    ): void {
-        if ($this->controllerContext === null) {
-            $this->logger->debug('Prematurely building ControllerContext');
-            $this->controllerContext = $this->buildControllerContext();
-        }
-        parent::addFlashMessage($messageBody, $messageTitle, $severity, $storeInSession);
     }
 
     // TODO v12: replace TYPO3\CMS\Extbase\Mvc\View\ViewInterface with TYPO3Fluid\Fluid\View\ViewInterface
