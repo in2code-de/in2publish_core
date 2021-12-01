@@ -30,8 +30,8 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
 use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Controller\Traits\RunTasks;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
@@ -39,13 +39,11 @@ use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\Arguments;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
-use function implode;
 use function is_bool;
 
 /**
@@ -53,6 +51,8 @@ use function is_bool;
  */
 abstract class AbstractController extends ActionController
 {
+    use RunTasks;
+
     public const BLANK_ACTION = 'blankAction';
 
     protected BackendUserAuthentication $backendUser;
@@ -135,25 +135,5 @@ abstract class AbstractController extends ActionController
         }
         $this->backendUser->setAndSaveSessionData($filterName . $status, !$currentStatus);
         $this->redirect($action);
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    protected function runTasks(): void
-    {
-        // DI would change the constructor's signature. The amount of code that would be required to change would be
-        // enormous since the coupling via inheritance is too high and thus be considered a breaking change.
-        // Ergo do not use DI for this particular class. The Task execution should be refactored to a service instead.
-        $taskExecutionService = GeneralUtility::makeInstance(TaskExecutionService::class);
-        $response = $taskExecutionService->runTasks();
-
-        if (!$response->isSuccessful()) {
-            $this->addFlashMessage(
-                implode('<br/>', $response->getOutput()) . implode('<br/>', $response->getErrors()),
-                LocalizationUtility::translate('publishing.tasks_failure', 'in2publish_core'),
-                AbstractMessage::ERROR
-            );
-        }
     }
 }
