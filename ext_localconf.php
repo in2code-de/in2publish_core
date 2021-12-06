@@ -53,9 +53,6 @@
     /**************************************** Register Config Definer/Provider ****************************************/
     $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\In2publishCoreDefiner::class);
     $configContainer->registerDefiner(
-        \In2code\In2publishCore\Features\SimpleOverviewAndAjax\Config\Definer\SimpleOverviewAndAjaxDefiner::class
-    );
-    $configContainer->registerDefiner(
         \In2code\In2publishCore\Features\WarningOnForeign\Config\Definer\WarningOnForeignDefiner::class
     );
     $configContainer->registerDefiner(

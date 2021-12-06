@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Factory;
+namespace In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing;
 
 /*
  * Copyright notice
  *
- * (c) 2016 in2code.de and the following authors:
- * Alex Kellner <alexander.kellner@in2code.de>,
+ * (c) 2021 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -30,15 +29,18 @@ namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder;
+use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
-use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Repository\TableCacheRepository;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_column;
 use function array_keys;
@@ -49,7 +51,7 @@ use function count;
 use function implode;
 use function sort;
 
-class FakeRecordFactory
+class ShallowRecordFinder implements RecordFinder
 {
     public const PAGE_TABLE_NAME = 'pages';
 
@@ -58,9 +60,6 @@ class FakeRecordFactory
 
     /** @var Connection */
     protected $foreignDatabase;
-
-    /** @var TableCacheRepository */
-    protected $tableCacheRepository;
 
     /** @var TcaService */
     protected $tcaService;
@@ -71,34 +70,41 @@ class FakeRecordFactory
     /** @var array */
     protected $config;
 
-    /** @var array */
-    protected $metaDataBlackList = [];
-
     public function __construct(
-        Connection $localDatabase,
-        Connection $foreignDatabase,
-        TableCacheRepository $tableCacheRepository,
         TcaService $tcaService,
         RawRecordService $rawRecordService,
         ConfigContainer $configContainer
     ) {
-        $this->localDatabase = $localDatabase;
-        $this->foreignDatabase = $foreignDatabase;
-        $this->tableCacheRepository = $tableCacheRepository;
+        $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
+        $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->tcaService = $tcaService;
         $this->rawRecordService = $rawRecordService;
         $this->config = $configContainer->get();
     }
 
-    /**
-     * Build a record tree with a minimum information (try to keep queries reduced)
-     */
-    public function buildFromStartPage(int $identifier): RecordInterface
-    {
-        return $this->buildVersion2($identifier);
+    public function findRecordByUid(
+        int $uid,
+        string $table,
+        bool $disablePageRecursion = false
+    ): ?RecordInterface {
+        if (self::PAGE_TABLE_NAME === 'pages') {
+            return $this->findPageRecord($uid);
+        }
+        // Fallback
+        return GeneralUtility
+            ::makeInstance(DefaultRecordFinder::class)
+            ->findRecordByUid($uid, $table, $disablePageRecursion);
     }
 
-    protected function buildVersion2(int $identifier): RecordInterface
+    public function findRecordsByProperties(array $properties, string $table, bool $simulateRoot = false): array
+    {
+        // Fallback
+        return GeneralUtility
+            ::makeInstance(DefaultRecordFinder::class)
+            ->findRecordsByProperties($properties, $table, $simulateRoot);
+    }
+
+    protected function findPageRecord(int $identifier): RecordInterface
     {
         $depth = 0;
 
@@ -296,8 +302,6 @@ class FakeRecordFactory
         $this->fetchMmRecords($record);
         return $record;
     }
-
-
 
     protected function collectDemands(RecordInterface $basicRecord): array
     {
