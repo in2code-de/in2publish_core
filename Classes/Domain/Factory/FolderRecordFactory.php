@@ -29,10 +29,10 @@ namespace In2code\In2publishCore\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\StorageDriverExtractor;
@@ -64,8 +64,8 @@ class FolderRecordFactory implements LoggerAwareInterface
     /** @var ResourceFactory */
     protected $resourceFactory;
 
-    /** @var CommonRepository */
-    protected $commonRepository;
+    /** @var RecordFinder */
+    protected $recordFinder;
 
     /** @var Connection */
     protected $foreignDatabase;
@@ -84,12 +84,12 @@ class FolderRecordFactory implements LoggerAwareInterface
 
     public function __construct(
         ResourceFactory $resourceFactory,
-        CommonRepository $commonRepository,
+        RecordFinder $recordFinder,
         Connection $foreignDatabase,
         ConfigContainer $configContainer
     ) {
         $this->resourceFactory = $resourceFactory;
-        $this->commonRepository = $commonRepository;
+        $this->recordFinder = $recordFinder;
         $this->foreignDatabase = $foreignDatabase;
         $this->configuration = $configContainer->get('factory.fal');
     }
@@ -166,7 +166,7 @@ class FolderRecordFactory implements LoggerAwareInterface
 
         // Now let's find all files inside of the selected folder by the folders hash.
         $properties = ['folder_hash' => $hashedIdentifier, 'storage' => $storageUid];
-        $files = $this->commonRepository->findByProperties($properties, true, 'sys_file');
+        $files = $this->recordFinder->findRecordsByProperties($properties, 'sys_file', true);
 
         // Identify sys_file entries with identical identifiers and add all duplicates as related record.
         $files = $this->moveSameSysFileRecordsToRelatedRecords($files);
@@ -537,8 +537,8 @@ class FolderRecordFactory implements LoggerAwareInterface
         // because they should have been found by the folder hash already, but i'm a
         // generous developer and allow FAL to completely fuck up the folder hash
         foreach ($onlyDiskIdentifiers[$side] as $index => $onlyDiskIdentifier) {
-            $disconnectedSysFiles = $this->commonRepository
-                ->findByProperty('identifier', $onlyDiskIdentifier, 'sys_file');
+            $disconnectedSysFiles = $this->recordFinder
+                ->findRecordsByProperties(['identifier' => $onlyDiskIdentifier], 'sys_file');
             // if a sys_file record could be reclaimed use it
             if (!empty($disconnectedSysFiles)) {
                 // repair the entry a.k.a reconnect it by updating the folder hash

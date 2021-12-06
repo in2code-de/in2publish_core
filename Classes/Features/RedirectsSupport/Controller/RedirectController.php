@@ -30,9 +30,10 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
  */
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
+use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Controller\AbstractController;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
@@ -51,23 +52,27 @@ use function sprintf;
 
 class RedirectController extends AbstractController
 {
-    /** @var CommonRepository */
-    protected $commonRepository;
-
     /** @var ForeignSiteFinder */
     protected $foreignSiteFinder;
 
     /** @var SysRedirectRepository */
     protected $sysRedirectRepo;
 
+    /** @var RecordFinder */
+    protected $recordFinder;
+
+    /** @var RecordPublisher */
+    protected $recordPublisher;
+
     public function __construct(
         ConfigContainer $configContainer,
         ExecutionTimeService $executionTimeService,
         EnvironmentService $environmentService,
         RemoteCommandDispatcher $remoteCommandDispatcher,
-        CommonRepository $commonRepository,
         ForeignSiteFinder $foreignSiteFinder,
-        SysRedirectRepository $sysRedirectRepo
+        SysRedirectRepository $sysRedirectRepo,
+        RecordFinder $recordFinder,
+        RecordPublisher $recordPublisher
     ) {
         parent::__construct(
             $configContainer,
@@ -75,9 +80,10 @@ class RedirectController extends AbstractController
             $environmentService,
             $remoteCommandDispatcher
         );
-        $this->commonRepository = $commonRepository;
         $this->foreignSiteFinder = $foreignSiteFinder;
         $this->sysRedirectRepo = $sysRedirectRepo;
+        $this->recordFinder = $recordFinder;
+        $this->recordPublisher = $recordPublisher;
     }
 
     /** @throws Throwable */
@@ -137,9 +143,9 @@ class RedirectController extends AbstractController
         unset($redirect);
 
         foreach ($redirects as $redirect) {
-            $record = $this->commonRepository->findByIdentifier($redirect, 'sys_redirect');
+            $record = $this->recordFinder->findRecordByUid($redirect, 'sys_redirect');
             if (null !== $record) {
-                $this->commonRepository->publishRecordRecursive($record);
+                $this->recordPublisher->publishRecordRecursive($record);
             }
         }
 

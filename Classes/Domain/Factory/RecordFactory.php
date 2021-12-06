@@ -30,11 +30,11 @@ namespace In2code\In2publishCore\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
 use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
@@ -143,7 +143,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
     /**
      * Creates a fresh instance of a record and sets all related Records.
      *
-     * @param CommonRepository $commonRepository Needed for recursion
+     * @param DefaultRecordFinder $commonRecordFinder Needed for recursion
      * @param array $localProperties Properties of the record from local Database
      * @param array $foreignProperties Properties of the record from foreign Database
      * @param array $additionalProperties array of not persisted properties
@@ -154,7 +154,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
      * @return RecordInterface|null
      */
     public function makeInstance(
-        CommonRepository $commonRepository,
+        DefaultRecordFinder $commonRecordFinder,
         array $localProperties,
         array $foreignProperties,
         array $additionalProperties = [],
@@ -252,16 +252,16 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
                         $identifier = $instance->getForeignProperty('original');
                     }
                     if (!empty($identifier)) {
-                        $record = $commonRepository->findByIdentifier($identifier, 'sys_file');
+                        $record = $commonRecordFinder->findByIdentifier($identifier, 'sys_file');
                         $instance->addRelatedRecord($record);
                     }
                 }
             } elseif ($this->currentDepth < $this->config['maximumOverallRecursion']) {
                 $this->currentDepth++;
                 if ($tableName === 'pages') {
-                    $instance = $this->findRelatedRecordsForPageRecord($instance, $commonRepository);
+                    $instance = $this->findRelatedRecordsForPageRecord($instance, $commonRecordFinder);
                 } else {
-                    $instance = $this->findRelatedRecordsForContentRecord($instance, $commonRepository);
+                    $instance = $this->findRelatedRecordsForContentRecord($instance, $commonRecordFinder);
                 }
                 $this->currentDepth--;
             } else {
@@ -288,7 +288,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
 
     protected function findRelatedRecordsForContentRecord(
         RecordInterface $record,
-        CommonRepository $commonRepository
+        DefaultRecordFinder $commonRecordFinder
     ): RecordInterface {
         if ($this->relatedRecordsDepth < $this->config['maximumContentRecursion']) {
             $this->relatedRecordsDepth++;
@@ -297,9 +297,9 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
                 $excludedTableNames[] = 'pages';
             }
 
-            $this->findTranslations($record, $commonRepository);
+            $this->findTranslations($record, $commonRecordFinder);
 
-            $record = $commonRepository->enrichRecordWithRelatedRecords($record, $excludedTableNames);
+            $record = $commonRecordFinder->enrichRecordWithRelatedRecords($record, $excludedTableNames);
 
             $this->eventDispatcher->dispatch(new AllRelatedRecordsWereAddedToOneRecord($this, $record));
 
@@ -310,7 +310,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
 
     protected function findRelatedRecordsForPageRecord(
         Record $record,
-        CommonRepository $commonRepository
+        DefaultRecordFinder $commonRecordFinder
     ): RecordInterface {
         if ($record->getIdentifier() === 0) {
             $tableNamesToExclude =
@@ -333,16 +333,16 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
         // if page recursion depth reached
         if ($this->pagesDepth < $this->config['maximumPageRecursion'] && $this->pageRecursionEnabled) {
             $this->pagesDepth++;
-            $record = $commonRepository->enrichPageRecord($record, $tableNamesToExclude);
+            $record = $commonRecordFinder->enrichPageRecord($record, $tableNamesToExclude);
             $this->pagesDepth--;
         } else {
             // get related records without table pages
             $tableNamesToExclude[] = 'pages';
-            $record = $commonRepository->enrichPageRecord($record, $tableNamesToExclude);
+            $record = $commonRecordFinder->enrichPageRecord($record, $tableNamesToExclude);
         }
         $relatedRecordsDepth = $this->relatedRecordsDepth;
         $this->relatedRecordsDepth = 0;
-        $record = $this->findRelatedRecordsForContentRecord($record, $commonRepository);
+        $record = $this->findRelatedRecordsForContentRecord($record, $commonRecordFinder);
         $this->relatedRecordsDepth = $relatedRecordsDepth;
         return $record;
     }
@@ -567,7 +567,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
         $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($this, $record));
     }
 
-    protected function findTranslations(RecordInterface $record, CommonRepository $commonRepository): void
+    protected function findTranslations(RecordInterface $record, DefaultRecordFinder $commonRecordFinder): void
     {
         $tableName = $record->getTableName();
 
@@ -580,7 +580,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
             if (null !== $language && 0 === (int)$language) {
                 $fieldName = $this->tcaService->getTransOrigPointerField($tableName);
                 if ($fieldName) {
-                    $translatedRecords = $commonRepository->findByProperties(
+                    $translatedRecords = $commonRecordFinder->findByProperties(
                         [$fieldName => $record->getIdentifier()],
                         false,
                         $tableName

@@ -29,9 +29,9 @@ namespace In2code\In2publishCore\Features\RedirectsSupport;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
 use In2code\In2publishCore\Utility\BackendUtility;
@@ -46,8 +46,8 @@ use function array_keys;
 
 class PageRecordRedirectEnhancer
 {
-    /** @var CommonRepository */
-    protected $commonRepository;
+    /** @var RecordFinder */
+    protected $recordFinder;
 
     /** @var Connection */
     protected $localDatabase;
@@ -61,12 +61,12 @@ class PageRecordRedirectEnhancer
     protected $looseRedirects;
 
     public function __construct(
-        CommonRepository $commonRepository,
+        RecordFinder $recordFinder,
         Connection $localDatabase,
         Connection $foreignDatabase,
         SysRedirectRepository $repo
     ) {
-        $this->commonRepository = $commonRepository;
+        $this->recordFinder = $recordFinder;
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
         $this->repo = $repo;
@@ -80,12 +80,11 @@ class PageRecordRedirectEnhancer
         }
 
         // Find associated sys_redirects
-        $relatedRedirects = $this->commonRepository->findByProperties(
+        $relatedRedirects = $this->recordFinder->findRecordsByProperties(
             [
                 'tx_in2publishcore_page_uid' => $pid,
                 'tx_in2publishcore_foreign_site_id' => null,
             ],
-            false,
             'sys_redirect'
         );
         $record->addRelatedRecords($relatedRedirects);

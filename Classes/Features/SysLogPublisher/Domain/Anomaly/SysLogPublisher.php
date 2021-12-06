@@ -52,20 +52,31 @@ class SysLogPublisher
     public function publishSysLog(PublishingOfOneRecordEnded $event): void
     {
         $record = $event->getRecord();
-        $commonRepository = $event->getCommonRepository();
         if ('pages' !== $record->getTableName()) {
             return;
         }
 
-        $sysLog = $commonRepository->findLastPropertiesByPropertyAndTableName(
-            $this->localDatabase,
-            self::TABLE_SYS_LOG,
-            'event_pid',
-            $record->getIdentifier()
-        );
+        $sysLog = $this->findLatestSysLogForPage($record->getIdentifier());
         if (!empty($sysLog)) {
             unset($sysLog['uid']);
             $this->foreignDatabase->insert(self::TABLE_SYS_LOG, $sysLog);
         }
+    }
+
+    protected function findLatestSysLogForPage(int $identifier): ?array
+    {
+        $query = $this->localDatabase->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $query->select('*')
+              ->from(self::TABLE_SYS_LOG)
+              ->where($query->expr()->eq('event_pid', $query->createNamedParameter($identifier)))
+              ->orderBy('uid', 'DESC')
+              ->setMaxResults(1);
+        $result = $query->execute();
+        $row = $result->fetchAssociative();
+        if (!$row) {
+            return null;
+        }
+        return $row;
     }
 }

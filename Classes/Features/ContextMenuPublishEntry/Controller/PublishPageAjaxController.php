@@ -30,7 +30,8 @@ namespace In2code\In2publishCore\Features\ContextMenuPublishEntry\Controller;
  */
 
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
+use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,21 +44,26 @@ use function json_encode;
 
 class PublishPageAjaxController
 {
-    /** @var CommonRepository */
-    protected $commonRepository;
-
     /** @var PermissionService */
     protected $permissionService;
 
     /** @var TaskExecutionService */
     protected $taskExecutionService;
 
+    /** @var RecordFinder */
+    protected $recordFinder;
+
+    /** @var RecordPublisher */
+    protected $recordPublisher;
+
     public function __construct(
-        CommonRepository $commonRepository,
+        RecordFinder $recordFinder,
+        RecordPublisher $recordPublisher,
         PermissionService $permissionService,
         TaskExecutionService $taskExecutionService
     ) {
-        $this->commonRepository = $commonRepository;
+        $this->recordFinder = $recordFinder;
+        $this->recordPublisher = $recordPublisher;
         $this->permissionService = $permissionService;
         $this->taskExecutionService = $taskExecutionService;
     }
@@ -84,11 +90,10 @@ class PublishPageAjaxController
             $content['label'] = 'context_menu_publish_entry.missing_page';
         } else {
             try {
-                $this->commonRepository->disablePageRecursion();
-                $record = $this->commonRepository->findByIdentifier((int)$page, 'pages');
+                $record = $this->recordFinder->findRecordByUid((int)$page, 'pages', true);
 
                 if (null !== $record && $record->isPublishable()) {
-                    $this->commonRepository->publishRecordRecursive($record);
+                    $this->recordPublisher->publishRecordRecursive($record);
                     $rceResponse = $this->taskExecutionService->runTasks();
                     if ($rceResponse->isSuccessful()) {
                         $content['success'] = true;

@@ -29,26 +29,44 @@ namespace In2code\In2publishCore\Event;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 
+use function trigger_error;
+
+use const E_USER_DEPRECATED;
+
 final class VoteIfRecordShouldBeSkipped extends AbstractVotingEvent
 {
-    /** @var CommonRepository */
-    private $commonRepository;
+    /** @var RecordPublisher */
+    private $recordPublisher;
 
     /** @var RecordInterface */
     private $record;
 
-    public function __construct(CommonRepository $commonRepository, RecordInterface $record)
+    public function __construct(RecordPublisher $recordPublisher, RecordInterface $record)
     {
-        $this->commonRepository = $commonRepository;
+        $this->recordPublisher = $recordPublisher;
         $this->record = $record;
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in in2publish_core v11, please use
+     *     \In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped::getRecordPublisher instead.
+     */
     public function getCommonRepository(): CommonRepository
     {
-        return $this->commonRepository;
+        trigger_error(
+            'The method \In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped::getCommonRepository is deprecated and will be removed in in2publish_core v11, please use \In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped::getRecordPublisher instead.',
+            E_USER_DEPRECATED
+        );
+        return $this->recordFinder;
+    }
+
+    public function getRecordPublisher(): RecordPublisher
+    {
+        return $this->recordPublisher;
     }
 
     public function getRecord(): RecordInterface

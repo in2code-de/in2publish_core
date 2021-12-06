@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyFilesException;
@@ -36,7 +37,6 @@ use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Utility\FileUtility;
 use In2code\In2publishCore\Utility\FolderUtility;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
@@ -72,8 +72,8 @@ class IndexingFolderRecordFactory
     /** @var ResourceFactory */
     protected $resourceFactory;
 
-    /** @var CommonRepository */
-    protected $commonRepository;
+    /** @var RecordFinder */
+    protected $recordFinder;
 
     /** @var ResourceStorage */
     protected $localStorage;
@@ -82,12 +82,12 @@ class IndexingFolderRecordFactory
         ConfigContainer $configContainer,
         RemoteStorage $remoteStorage,
         ResourceFactory $resourceFactory,
-        CommonRepository $commonRepository
+        RecordFinder $recordFinder
     ) {
         $this->threshold = $configContainer->get('factory.fal.folderFileLimit');
         $this->remoteStorage = $remoteStorage;
         $this->resourceFactory = $resourceFactory;
-        $this->commonRepository = $commonRepository;
+        $this->recordFinder = $recordFinder;
     }
 
     public function overruleLocalStorage(ResourceStorage $localStorage): void
@@ -174,7 +174,7 @@ class IndexingFolderRecordFactory
         }
 
         $properties = ['folder_hash' => $localFolder->getHashedIdentifier(), 'storage' => $storageUid];
-        $records = $this->commonRepository->findByProperties($properties, true, 'sys_file');
+        $records = $this->recordFinder->findRecordsByProperties($properties, 'sys_file', true);
         $records = $this->filterRecords($localFiles, $remoteFiles, $records);
         $rootFolder->addRelatedRecords($records);
 

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Config\Definer;
+namespace In2code\In2publishCore\Component\RecordHandling;
 
 /*
  * Copyright notice
  *
- * (c) 2018 in2code.de and the following authors:
+ * (c) 2021 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,21 +29,12 @@ namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Config\Definer;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Config\Builder;
-use In2code\In2publishCore\Config\Definer\DefinerInterface;
-use In2code\In2publishCore\Config\Node\NodeCollection;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 
-class SimpleOverviewAndAjaxDefiner implements DefinerInterface
+interface RecordFinder
 {
-    public function getLocalDefinition(): NodeCollection
-    {
-        return Builder::start()
-                      ->addArray('factory', Builder::start()->addBoolean('simpleOverviewAndAjax', false))
-                      ->end();
-    }
+    public function findRecordByUid(int $uid, string $table, bool $disablePageRecursion = false): ?RecordInterface;
 
-    public function getForeignDefinition(): NodeCollection
-    {
-        return Builder::start()->end();
-    }
+    /** @return array<RecordInterface> */
+    public function findRecordsByProperties(array $properties, string $table, bool $simulateRoot = false): array;
 }
