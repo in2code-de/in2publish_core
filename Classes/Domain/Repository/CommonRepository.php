@@ -1879,7 +1879,7 @@ class CommonRepository extends BaseRepository
      * @return void
      * @throws Throwable
      */
-    public function publishRecordRecursive(RecordInterface $record, array $excludedTables = ['p ages']): void
+    public function publishRecordRecursive(RecordInterface $record, array $excludedTables = ['pages']): void
     {
         try {
             // Dispatch Anomaly
