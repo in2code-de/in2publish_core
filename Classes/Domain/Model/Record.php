@@ -989,7 +989,7 @@ class Record implements RecordInterface
         $path = '';
         $record = $this;
         do {
-            $path = '/ ' . $record->tableName . ' [' . $record->getIdentifier() .  '] ' . $path;
+            $path = '/ ' . $record->tableName . ' [' . $record->getIdentifier() . '] ' . $path;
         } while ($record->tableName !== 'pages' && $record = $record->parentRecord);
         return $path;
     }
