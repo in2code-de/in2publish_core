@@ -37,6 +37,7 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
+use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Event\RecordWasEnriched;
 use In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
@@ -164,6 +165,9 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
     /** @var TcaService */
     protected $tcaService;
 
+    /** @var TcaProcessingService */
+    protected $tcaProcessingService;
+
     public function __construct(
         ?Connection $localDatabase,
         ?Connection $foreignDatabase,
@@ -174,7 +178,8 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
         ReplaceMarkersService $replaceMarkersService,
         FlexFormTools $flexFormTools,
         FlexFormService $flexFormService,
-        TcaService $tcaService
+        TcaService $tcaService,
+        TcaProcessingService $tcaProcessingService
     ) {
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
@@ -186,6 +191,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
         $this->flexFormTools = $flexFormTools;
         $this->flexFormService = $flexFormService;
         $this->tcaService = $tcaService;
+        $this->tcaProcessingService = $tcaProcessingService;
     }
 
     public function findRecordByUid(int $uid, string $table, bool $disablePageRecursion = false): ?RecordInterface
@@ -480,7 +486,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
         }
         $recordTableName = $record->getTableName();
         // keep the following extra line for debugging issues
-        $columns = $record->getColumnsTca();
+        $columns = $this->tcaProcessingService->getCompatibleTcaColumns($recordTableName);
         foreach ($columns as $propertyName => $columnConfiguration) {
             if ($this->shouldSkipSearchingForRelatedRecordsByProperty($record, $propertyName, $columnConfiguration)) {
                 continue;

@@ -30,22 +30,29 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  */
 
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class TcaController extends ActionController
 {
+    /** @var TcaProcessingService */
+    protected $tcaProcessingService;
+
+    public function __construct(TcaProcessingService $tcaProcessingService)
+    {
+        $this->tcaProcessingService = $tcaProcessingService;
+    }
+
     public function indexAction(): void
     {
-        $this->view->assign('incompatibleTca', TcaProcessingService::getIncompatibleTca());
-        $this->view->assign('compatibleTca', TcaProcessingService::getCompatibleTca());
+        $this->view->assign('incompatibleTca', $this->tcaProcessingService->getIncompatibleTcaParts());
+        $this->view->assign('compatibleTca', $this->tcaProcessingService->getCompatibleTcaParts());
     }
 
     /** @throws StopActionException */
     public function clearTcaCachesAction(): void
     {
-        GeneralUtility::makeInstance(TcaProcessingService::class)->flushCaches();
+        $this->tcaProcessingService->flushCaches();
         $this->redirect('index');
     }
 }

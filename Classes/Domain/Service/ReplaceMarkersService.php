@@ -58,9 +58,13 @@ class ReplaceMarkersService implements LoggerAwareInterface
     /** @var FlexFormTools */
     protected $flexFormTools;
 
-    public function __construct(FlexFormTools $flexFormTools)
+    /** @var TcaProcessingService */
+    protected $tcaProcessingService;
+
+    public function __construct(FlexFormTools $flexFormTools, TcaProcessingService $tcaProcessingService)
     {
         $this->flexFormTools = $flexFormTools;
+        $this->tcaProcessingService = $tcaProcessingService;
     }
 
     /**
@@ -231,7 +235,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
 
             $pageTs = BackendUtility::getPagesTSconfig($record->getPageIdentifier());
             $dataStructIdentifier = $this->flexFormTools->getDataStructureIdentifier(
-                ['config' => $record->getColumnsTca()[$propertyName]],
+                ['config' => $this->tcaProcessingService->getCompatibleTcaColumns($tableName)[$propertyName]],
                 $tableName,
                 $propertyName,
                 $record->getLocalProperties()

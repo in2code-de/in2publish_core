@@ -51,13 +51,15 @@ use function explode;
 use function implode;
 use function in_array;
 use function is_array;
-use function is_null;
 use function is_string;
 use function json_decode;
 use function json_encode;
 use function spl_object_hash;
 use function strpos;
+use function trigger_error;
 use function uasort;
+
+use const E_USER_DEPRECATED;
 
 /**
  * The most important class of this application. A Record is a Database
@@ -638,7 +640,7 @@ class Record implements RecordInterface
      */
     public function hasDeleteField(): bool
     {
-        return TcaProcessingService::hasDeleteField($this->tableName);
+        return !empty($GLOBALS['TCA'][$this->tableName]['ctrl']['delete']);
     }
 
     /**
@@ -646,15 +648,7 @@ class Record implements RecordInterface
      */
     public function getDeleteField(): string
     {
-        return TcaProcessingService::getDeleteField($this->tableName);
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    public function getColumnsTca(): array
-    {
-        return TcaProcessingService::getColumnsFor($this->tableName);
+        return $GLOBALS['TCA'][$this->tableName]['ctrl']['delete'] ?? '';
     }
 
     public function getParentRecord(): ?RecordInterface
@@ -1158,5 +1152,19 @@ class Record implements RecordInterface
     public function isRemovedFromLocalDatabase(): bool
     {
         return $this->isForeignRecordDeleted() && !$this->isRecordRepresentByProperties($this->localProperties);
+    }
+
+    /**
+     * @deprecated Please use <code>$tcaProcessingService->getCompatibleTcaColumns($record->getTableName())</code>
+     *     instead.
+     * @codeCoverageIgnore
+     */
+    public function getColumnsTca(): array
+    {
+        trigger_error(
+            'The method \In2code\In2publishCore\Domain\Model\Record::getColumnsTca is deprecated and will be removed in in2publish_core v11. Please use "$tcaProcessingService->getCompatibleTcaColumns($record->getTableName())" instead.',
+            E_USER_DEPRECATED
+        );
+        return GeneralUtility::makeInstance(TcaProcessingService::class)->getCompatibleTcaColumns($this->tableName);
     }
 }

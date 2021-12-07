@@ -33,6 +33,14 @@ use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 
 class TcaExporter implements SystemInformationExporter
 {
+    /** @var TcaProcessingService */
+    protected $tcaProcessingService;
+
+    public function __construct(TcaProcessingService $tcaProcessingService)
+    {
+        $this->tcaProcessingService = $tcaProcessingService;
+    }
+
     public function getUniqueKey(): string
     {
         return 'TCA';
@@ -42,8 +50,8 @@ class TcaExporter implements SystemInformationExporter
     {
         return [
             'full' => $GLOBALS['TCA'],
-            'compatible' => TcaProcessingService::getCompatibleTca(),
-            'incompatible' => TcaProcessingService::getIncompatibleTca(),
+            'compatible' => $this->tcaProcessingService->getCompatibleTcaParts(),
+            'incompatible' => $this->tcaProcessingService->getIncompatibleTcaParts(),
         ];
     }
 }
