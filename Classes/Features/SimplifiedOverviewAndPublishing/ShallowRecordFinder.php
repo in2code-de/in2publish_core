@@ -29,12 +29,18 @@ namespace In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Doctrine\DBAL\Driver\Exception;
 use In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder;
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
+use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
+use In2code\In2publishCore\Event\RecordWasEnriched;
+use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Database\RawRecordService;
@@ -44,6 +50,7 @@ use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_column;
+use function array_combine;
 use function array_keys;
 use function array_merge;
 use function array_replace_recursive;
@@ -71,6 +78,12 @@ class ShallowRecordFinder implements RecordFinder
     /** @var EventDispatcher */
     protected $eventDispatcher;
 
+    /** @var RecordFactory Only used for events which require an instance of this class */
+    protected $recordFactory;
+
+    /** @var TcaProcessingService */
+    protected $tcaProcessingService;
+
     /** @var array */
     protected $config;
 
@@ -78,6 +91,8 @@ class ShallowRecordFinder implements RecordFinder
         TcaService $tcaService,
         RawRecordService $rawRecordService,
         EventDispatcher $eventDispatcher,
+        RecordFactory $recordFactory,
+        TcaProcessingService $tcaProcessingService,
         ConfigContainer $configContainer
     ) {
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
@@ -85,6 +100,8 @@ class ShallowRecordFinder implements RecordFinder
         $this->tcaService = $tcaService;
         $this->rawRecordService = $rawRecordService;
         $this->eventDispatcher = $eventDispatcher;
+        $this->recordFactory = $recordFactory;
+        $this->tcaProcessingService = $tcaProcessingService;
         $this->config = $configContainer->get();
     }
 
@@ -114,97 +131,19 @@ class ShallowRecordFinder implements RecordFinder
     {
         $depth = 0;
 
-        $localProperties = $this->rawRecordService->getRawRecord('pages', $identifier, 'local') ?? [];
-        $foreignProperties = $this->rawRecordService->getRawRecord('pages', $identifier, 'foreign') ?? [];
-        $pagesTca = $this->tcaService->getConfigurationArrayForTable('pages');
-        $record = new Record(
-            'pages',
-            $localProperties,
-            $foreignProperties,
-            $pagesTca,
-            ['depth' => $depth]
-        );
-        unset($localProperties, $foreignProperties);
-        $records[$record->getIdentifier()] = $record;
+        $rootRecord = $this->createRootRecord($identifier, $depth);
 
-        $deleteField = $pagesTca['ctrl']['delete'] ?? null;
+        $pageRecords[$rootRecord->getIdentifier()] = $rootRecord;
+
         $rows = [];
 
-        $relatedRecords = [
-            $record->getIdentifier() => [
-                'local' => $record->getLocalProperties(),
-                'foreign' => $record->getForeignProperties(),
-            ],
-        ];
-        do {
-            if ($depth++ >= $this->config['factory']['maximumPageRecursion'] || $disablePageRecursion) {
-                break;
-            }
-
-            $query = $this->localDatabase->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $query->select('*')
-                  ->from('pages')
-                  ->where($query->expr()->in('pid', array_keys($relatedRecords)));
-            $result = $query->execute();
-            $localRows = array_column($result->fetchAllAssociative(), null, 'uid');
-
-            $query = $this->foreignDatabase->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $query->select('*')
-                  ->from('pages')
-                  ->where($query->expr()->in('pid', array_keys($relatedRecords)));
-            $result = $query->execute();
-            $foreignRows = array_column($result->fetchAllAssociative(), null, 'uid');
-
-            $relatedRecords = [];
-            $commonUids = array_unique(array_merge(array_keys($localRows), array_keys($foreignRows)));
-            foreach ($commonUids as $uid) {
-                $relatedRecords[$uid] = [
-                    'local' => $localRows[$uid] ?? [],
-                    'foreign' => $foreignRows[$uid] ?? [],
-                ];
-                $rows[$uid] = [
-                    'additionalProperties' => [
-                        'depth' => $depth,
-                    ],
-                    'local' => $localRows[$uid] ?? [],
-                    'foreign' => $foreignRows[$uid] ?? [],
-                ];
-            }
-        } while (!empty($relatedRecords));
-
-        $missingRecords = [];
-        foreach ($rows as $uid => $rowSet) {
-            if ([] === $rowSet['local']) {
-                $missingRecords['local'][$uid] = $uid;
-            } elseif ([] === $rowSet['foreign']) {
-                $missingRecords['foreign'][$uid] = $uid;
-            }
-        }
-        if (!empty($missingRecords['local'])) {
-            $query = $this->localDatabase->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $query->select('*')
-                  ->from('pages')
-                  ->where($query->expr()->in('uid', $missingRecords['local']));
-            $result = $query->execute();
-            foreach ($result->fetchAllAssociative() as $row) {
-                $rows[$row['uid']]['local'] = $row;
-            }
-        }
-        if (!empty($missingRecords['foreign'])) {
-            $query = $this->foreignDatabase->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $query->select('*')
-                  ->from('pages')
-                  ->where($query->expr()->in('uid', $missingRecords['foreign']));
-            $result = $query->execute();
-            foreach ($result->fetchAllAssociative() as $row) {
-                $rows[$row['uid']]['foreign'] = $row;
-            }
+        if (!$disablePageRecursion) {
+            $rows = $this->fetchPageRecords($depth, $rootRecord, $rows);
         }
 
+        $rows = $this->findMissedRowsByUid($rows, 'pages');
+
+        $deleteField = $GLOBALS['TCA']['pages']['ctrl']['delete'] ?? null;
         foreach ($rows as $uid => $rowSet) {
             $localProperties = $rowSet['local'];
             $foreignProperties = $rowSet['foreign'];
@@ -215,19 +154,19 @@ class ShallowRecordFinder implements RecordFinder
                 continue;
             }
 
-            $relatedRecord = new Record(
+            $pageRecord = $this->createTheRecordAndAddItToItsParentPage(
+                $pageRecords,
                 'pages',
                 $localProperties,
                 $foreignProperties,
-                $pagesTca,
                 $rowSet['additionalProperties']
             );
-            $records[$uid] = $relatedRecord;
-            $pid = $relatedRecord->getMergedProperty('pid');
-            $records[$pid]->addRelatedRecord($relatedRecord);
+            if (null !== $pageRecord) {
+                $pageRecords[$uid] = $pageRecord;
+            }
         }
 
-        $pids = array_keys($records);
+        $pids = array_keys($pageRecords);
         sort($pids);
 
         $tables = $this->tcaService->getAllTableNames(
@@ -238,88 +177,67 @@ class ShallowRecordFinder implements RecordFinder
         );
 
         foreach ($tables as $table) {
-            $query = $this->localDatabase->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $query->select('*')
-                  ->from($table)
-                  ->where($query->expr()->in('pid', $pids))
-                  ->orderBy('uid');
-            $result = $query->execute();
-            $localRows = array_column($result->fetchAllAssociative(), null, 'uid');
-
-            $query = $this->foreignDatabase->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $query->select('*')
-                  ->from($table)
-                  ->where($query->expr()->in('pid', $pids))
-                  ->orderBy('uid');
-            $result = $query->execute();
-            $foreignRows = array_column($result->fetchAllAssociative(), null, 'uid');
-
-            $commonUids = array_unique(array_merge(array_keys($localRows), array_keys($foreignRows)));
-            $relatedRecords = [];
-            foreach ($commonUids as $uid) {
-                $relatedRecords[$uid] = [
-                    'local' => $localRows[$uid] ?? [],
-                    'foreign' => $foreignRows[$uid] ?? [],
-                ];
-            }
-
-            $missingRecords = [];
-            foreach ($relatedRecords as $uid => $rowSet) {
-                if ([] === $rowSet['local']) {
-                    $missingRecords['local'][$uid] = $uid;
-                } elseif ([] === $rowSet['foreign']) {
-                    $missingRecords['foreign'][$uid] = $uid;
-                }
-            }
-            if (!empty($missingRecords['local'])) {
-                $query = $this->localDatabase->createQueryBuilder();
-                $query->getRestrictions()->removeAll();
-                $query->select('*')
-                      ->from('pages')
-                      ->where($query->expr()->in('uid', $missingRecords['local']));
-                $result = $query->execute();
-                foreach ($result->fetchAllAssociative() as $row) {
-                    $relatedRecords[$row['uid']]['local'] = $row;
-                }
-            }
-            if (!empty($missingRecords['foreign'])) {
-                $query = $this->foreignDatabase->createQueryBuilder();
-                $query->getRestrictions()->removeAll();
-                $query->select('*')
-                      ->from('pages')
-                      ->where($query->expr()->in('uid', $missingRecords['foreign']));
-                $result = $query->execute();
-                foreach ($result->fetchAllAssociative() as $row) {
-                    $relatedRecords[$row['uid']]['foreign'] = $row;
-                }
-            }
-
-            foreach ($relatedRecords as $rowSet) {
-                if ($this->shouldIgnoreRecord($rowSet['local'] ?? [], $rowSet['foreign'] ?? [], $table)) {
-                    continue;
-                }
-
-                $relatedRecord = new Record(
-                    $table,
-                    $rowSet['local'] ?? [],
-                    $rowSet['foreign'] ?? [],
-                    $GLOBALS['TCA'][$table],
-                    ['depth' => $depth]
-                );
-                $pid = $relatedRecord->getPageIdentifier();
-                $records[$pid]->addRelatedRecord($relatedRecord);
-            }
+            $this->findRelatedRecords($table, $pids, $pageRecords);
         }
-        $this->fetchMmRecords($record);
+        $this->fetchMmRecords($rootRecord);
+
+        foreach ($pageRecords as $pid => $record) {
+            $event = new RecordWasEnriched($record);
+            $this->eventDispatcher->dispatch($event);
+            // The event may replace the record instance
+            $pageRecords[$pid] = $record = $event->getRecord();
+            $this->eventDispatcher->dispatch(new AllRelatedRecordsWereAddedToOneRecord($this->recordFactory, $record));
+        }
+
+        $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($this->recordFactory, $rootRecord));
+        return $rootRecord;
+    }
+
+    protected function createRootRecord(int $identifier, int $depth): RecordInterface
+    {
+        $localProperties = $this->rawRecordService->getRawRecord('pages', $identifier, 'local') ?? [];
+        $foreignProperties = $this->rawRecordService->getRawRecord('pages', $identifier, 'foreign') ?? [];
+        $rootRecord = new Record(
+            'pages',
+            $localProperties,
+            $foreignProperties,
+            $GLOBALS['TCA']['pages'],
+            ['depth' => $depth, 'isRoot' => true]
+        );
+        $this->eventDispatcher->dispatch(new RecordInstanceWasInstantiated($this->recordFactory, $rootRecord));
+        return $rootRecord;
+    }
+
+    protected function createTheRecordAndAddItToItsParentPage(
+        array $pageRecords,
+        string $table,
+        array $localProperties,
+        array $foreignProperties,
+        array $additionalProperties
+    ): ?RecordInterface {
+        if ($this->shouldIgnoreRecord($localProperties, $foreignProperties, $table)) {
+            return null;
+        }
+
+        $record = new Record(
+            $table,
+            $localProperties,
+            $foreignProperties,
+            $GLOBALS['TCA'][$table] ?? [],
+            $additionalProperties
+        );
+
+        $pid = $record->getMergedProperty('pid');
+        $pageRecords[$pid]->addRelatedRecord($record);
+
+        $this->eventDispatcher->dispatch(new RecordInstanceWasInstantiated($this->recordFactory, $record));
         return $record;
     }
 
     protected function collectDemands(RecordInterface $basicRecord): array
     {
         $demands = [];
-        $tca = TcaProcessingService::getCompatibleTca();
+        $tca = $this->tcaProcessingService->getCompatibleTcaParts();
         foreach ($basicRecord->getRelatedRecords() as $table => $records) {
             if (isset($tca[$table])) {
                 foreach ($records as $record) {
@@ -497,5 +415,141 @@ class ShallowRecordFinder implements RecordFinder
         $event = new VoteIfRecordShouldBeIgnored($this, $localProperties, $foreignProperties, $tableName);
         $this->eventDispatcher->dispatch($event);
         return $event->getVotingResult();
+    }
+
+    protected function fetchPageRecords(int $depth, RecordInterface $rootRecord, array $rows): array
+    {
+        $relatedRecords = [
+            $rootRecord->getIdentifier() => [
+                'local' => $rootRecord->getLocalProperties(),
+                'foreign' => $rootRecord->getForeignProperties(),
+            ],
+        ];
+
+        do {
+            if ($depth++ >= $this->config['factory']['maximumPageRecursion']) {
+                break;
+            }
+
+            $query = $this->localDatabase->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->select('*')
+                  ->from('pages')
+                  ->where($query->expr()->in('pid', array_keys($relatedRecords)));
+            $result = $query->execute();
+            $localRows = array_column($result->fetchAllAssociative(), null, 'uid');
+
+            $query = $this->foreignDatabase->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->select('*')
+                  ->from('pages')
+                  ->where($query->expr()->in('pid', array_keys($relatedRecords)));
+            $result = $query->execute();
+            $foreignRows = array_column($result->fetchAllAssociative(), null, 'uid');
+
+            $relatedRecords = [];
+            $commonUids = array_unique(array_merge(array_keys($localRows), array_keys($foreignRows)));
+            foreach ($commonUids as $uid) {
+                $relatedRecords[$uid] = [
+                    'local' => $localRows[$uid] ?? [],
+                    'foreign' => $foreignRows[$uid] ?? [],
+                ];
+                $rows[$uid] = [
+                    'additionalProperties' => [
+                        'depth' => $depth,
+                    ],
+                    'local' => $localRows[$uid] ?? [],
+                    'foreign' => $foreignRows[$uid] ?? [],
+                ];
+            }
+        } while (!empty($relatedRecords));
+
+        return $rows;
+    }
+
+    protected function findMissedRowsByUid(array $rows, string $table): array
+    {
+        $missingRecords = [];
+        foreach ($rows as $uid => $rowSet) {
+            if ([] === $rowSet['local']) {
+                $missingRecords['local'][$uid] = $uid;
+            } elseif ([] === $rowSet['foreign']) {
+                $missingRecords['foreign'][$uid] = $uid;
+            }
+        }
+
+        if (!empty($missingRecords['local'])) {
+            $query = $this->localDatabase->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->select('*')
+                  ->from($table)
+                  ->where($query->expr()->in('uid', $missingRecords['local']));
+            $result = $query->execute();
+            foreach ($result->fetchAllAssociative() as $row) {
+                $rows[$row['uid']]['local'] = $row;
+            }
+        }
+
+        if (!empty($missingRecords['foreign'])) {
+            $query = $this->foreignDatabase->createQueryBuilder();
+            $query->getRestrictions()->removeAll();
+            $query->select('*')
+                  ->from($table)
+                  ->where($query->expr()->in('uid', $missingRecords['foreign']));
+            $result = $query->execute();
+            foreach ($result->fetchAllAssociative() as $row) {
+                $rows[$row['uid']]['foreign'] = $row;
+            }
+        }
+
+        return $rows;
+    }
+
+    /**
+     * @param string $table
+     * @param array $pids
+     * @param array<int, RecordInterface> $pageRecords
+     * @throws Exception
+     */
+    protected function findRelatedRecords(string $table, array $pids, array $pageRecords): void
+    {
+        $query = $this->localDatabase->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $query->select('*')
+              ->from($table)
+              ->where($query->expr()->in('pid', $pids))
+              ->orderBy('uid');
+        $result = $query->execute();
+        $localRows = array_column($result->fetchAllAssociative(), null, 'uid');
+
+        $query = $this->foreignDatabase->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $query->select('*')
+              ->from($table)
+              ->where($query->expr()->in('pid', $pids))
+              ->orderBy('uid');
+        $result = $query->execute();
+        $foreignRows = array_column($result->fetchAllAssociative(), null, 'uid');
+
+        $commonUids = array_unique(array_merge(array_keys($localRows), array_keys($foreignRows)));
+        $relatedRecords = [];
+        foreach ($commonUids as $uid) {
+            $relatedRecords[$uid] = [
+                'local' => $localRows[$uid] ?? [],
+                'foreign' => $foreignRows[$uid] ?? [],
+            ];
+        }
+
+        $relatedRecords = $this->findMissedRowsByUid($relatedRecords, $table);
+
+        foreach ($relatedRecords as $rowSet) {
+            $this->createTheRecordAndAddItToItsParentPage(
+                $pageRecords,
+                $table,
+                $rowSet['local'] ?? [],
+                $rowSet['foreign'] ?? [],
+                []
+            );
+        }
     }
 }
