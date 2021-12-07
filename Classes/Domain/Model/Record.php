@@ -138,7 +138,7 @@ class Record implements RecordInterface
      * alteration of this value can be prohibited by setting
      * $this->parentRecordIsLocked = TRUE (or public setter)
      *
-     * @var RecordInterface
+     * @var null|RecordInterface
      */
     protected $parentRecord;
 
@@ -992,18 +992,11 @@ class Record implements RecordInterface
 
     public function getBreadcrumb(): string
     {
-        $path = '/ ' . $this->tableName . ' [' . $this->getIdentifier() . ']';
-        return $this->getRecordPath($this->parentRecord) . $path;
-    }
-
-    protected function getRecordPath(RecordInterface $record = null): string
-    {
         $path = '';
-        if (!is_null($record)) {
-            $path = '/ ' . $record->getTableName() . ' [' . $record->getIdentifier() . '] ';
-            $path = $this->getRecordPath($record->getParentRecord()) . $path;
-        }
-
+        $record = $this;
+        do {
+            $path = '/ ' . $record->tableName . ' [' . $record->getIdentifier() .  '] ' . $path;
+        } while ($record->tableName !== 'pages' && $record = $record->parentRecord);
         return $path;
     }
 
