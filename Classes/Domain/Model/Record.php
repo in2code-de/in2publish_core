@@ -1045,7 +1045,9 @@ class Record implements RecordInterface
      */
     public function addChangedRelatedRecordsRecursive(array $relatedRecordsFlat = [], array &$done = []): array
     {
-        foreach ($this->getRelatedRecords() as $relatedRecords) {
+        $relatedRecordsPerTable = $this->getRelatedRecords();
+        unset($relatedRecordsPerTable['pages']);
+        foreach ($relatedRecordsPerTable as $relatedRecords) {
             foreach ($relatedRecords as $relatedRecord) {
                 $splObjectHash = spl_object_hash($relatedRecord);
                 if (!isset($relatedRecordsFlat[$splObjectHash]) && $relatedRecord->isChanged()) {
