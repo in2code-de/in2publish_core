@@ -80,10 +80,14 @@ class SignalSlotReplacement
     /** @var LogManager */
     protected $logManager;
 
-    public function __construct(Dispatcher $dispatcher, LogManager $logManager)
+    /** @var RecordFactory */
+    protected $recordFactory;
+
+    public function __construct(Dispatcher $dispatcher, LogManager $logManager, RecordFactory $recordFactory)
     {
         $this->dispatcher = $dispatcher;
         $this->logManager = $logManager;
+        $this->recordFactory = $recordFactory;
     }
 
     public function onFolderInstanceWasCreated(FolderInstanceWasCreated $event): void
@@ -289,7 +293,7 @@ class SignalSlotReplacement
             'shouldSkipSearchingForRelatedRecordsByProperty',
             [
                 ['yes' => 0, 'no' => 0],
-                $event->getCommonRecordFinder(),
+                $event->getRecordFinder(),
                 [
                     'record' => $event->getRecord(),
                     'propertyName' => $event->getPropertyName(),
@@ -323,7 +327,7 @@ class SignalSlotReplacement
                 RecordFactory::class,
                 'instanceCreated',
                 [
-                    $event->getRecordFactory(),
+                    $this->recordFactory,
                     $event->getRecord(),
                 ]
             );
@@ -339,7 +343,7 @@ class SignalSlotReplacement
                 RecordFactory::class,
                 'rootRecordFinished',
                 [
-                    $event->getRecordFactory(),
+                    $this->recordFactory,
                     $event->getRecord(),
                 ]
             );
@@ -355,7 +359,7 @@ class SignalSlotReplacement
             'addAdditionalRelatedRecords',
             [
                 $event->getRecord(),
-                $event->getRecordFactory(),
+                $this->recordFactory,
             ]
         );
     }
