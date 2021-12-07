@@ -159,6 +159,9 @@ class ShallowRecordFinder implements RecordFinder
                     'foreign' => $foreignRows[$uid] ?? [],
                 ];
                 $rows[$uid] = [
+                    'additionalProperties' => [
+                        'depth' => $depth,
+                    ],
                     'local' => $localRows[$uid] ?? [],
                     'foreign' => $foreignRows[$uid] ?? [],
                 ];
@@ -211,7 +214,7 @@ class ShallowRecordFinder implements RecordFinder
                 $localProperties,
                 $foreignProperties,
                 $pagesTca,
-                ['depth' => $depth]
+                $rowSet['additionalProperties']
             );
             $records[$uid] = $relatedRecord;
             $pid = $relatedRecord->getMergedProperty('pid');
