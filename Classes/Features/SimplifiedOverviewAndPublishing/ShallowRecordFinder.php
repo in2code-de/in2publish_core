@@ -34,12 +34,13 @@ use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_column;
@@ -67,18 +68,23 @@ class ShallowRecordFinder implements RecordFinder
     /** @var RawRecordService */
     protected $rawRecordService;
 
+    /** @var EventDispatcher */
+    protected $eventDispatcher;
+
     /** @var array */
     protected $config;
 
     public function __construct(
         TcaService $tcaService,
         RawRecordService $rawRecordService,
+        EventDispatcher $eventDispatcher,
         ConfigContainer $configContainer
     ) {
         $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
         $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->tcaService = $tcaService;
         $this->rawRecordService = $rawRecordService;
+        $this->eventDispatcher = $eventDispatcher;
         $this->config = $configContainer->get();
     }
 
@@ -291,6 +297,10 @@ class ShallowRecordFinder implements RecordFinder
             }
 
             foreach ($relatedRecords as $rowSet) {
+                if ($this->shouldIgnoreRecord($rowSet['local'] ?? [], $rowSet['foreign'] ?? [], $table)) {
+                    continue;
+                }
+
                 $relatedRecord = new Record(
                     $table,
                     $rowSet['local'] ?? [],
@@ -480,5 +490,12 @@ class ShallowRecordFinder implements RecordFinder
                 $values['valueMap'][$valueMapIndex]($record);
             }
         }
+    }
+
+    protected function shouldIgnoreRecord(array $localProperties, array $foreignProperties, string $tableName): bool
+    {
+        $event = new VoteIfRecordShouldBeIgnored($this, $localProperties, $foreignProperties, $tableName);
+        $this->eventDispatcher->dispatch($event);
+        return $event->getVotingResult();
     }
 }
