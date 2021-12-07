@@ -40,7 +40,6 @@ class TcaController extends ActionController
     {
         $this->view->assign('incompatibleTca', TcaProcessingService::getIncompatibleTca());
         $this->view->assign('compatibleTca', TcaProcessingService::getCompatibleTca());
-        $this->view->assign('controls', TcaProcessingService::getControls());
     }
 
     /** @throws StopActionException */
