@@ -88,7 +88,7 @@ class ShallowRecordFinder implements RecordFinder
         bool $disablePageRecursion = false
     ): ?RecordInterface {
         if (self::PAGE_TABLE_NAME === 'pages') {
-            return $this->findPageRecord($uid);
+            return $this->findPageRecord($uid, $disablePageRecursion);
         }
         // Fallback
         return GeneralUtility
@@ -104,7 +104,7 @@ class ShallowRecordFinder implements RecordFinder
             ->findRecordsByProperties($properties, $table, $simulateRoot);
     }
 
-    protected function findPageRecord(int $identifier): RecordInterface
+    protected function findPageRecord(int $identifier, bool $disablePageRecursion): RecordInterface
     {
         $depth = 0;
 
@@ -131,7 +131,7 @@ class ShallowRecordFinder implements RecordFinder
             ],
         ];
         do {
-            if ($depth++ >= $this->config['factory']['maximumPageRecursion']) {
+            if ($depth++ >= $this->config['factory']['maximumPageRecursion'] || $disablePageRecursion) {
                 break;
             }
 
