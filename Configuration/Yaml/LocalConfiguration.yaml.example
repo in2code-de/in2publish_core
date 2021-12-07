@@ -114,6 +114,11 @@ ignoreFieldsForDifferenceView:
   sys_file_metadata:
     - tstamp
     - crdate
+  sys_redirect:
+    - updatedon
+    - source_host
+    - hitcount
+    - lasthiton
 
 # factory settings (configuration about building relations in in2publish)
 factory:

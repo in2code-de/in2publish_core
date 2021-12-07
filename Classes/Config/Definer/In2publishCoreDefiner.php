@@ -111,6 +111,12 @@ class In2publishCoreDefiner implements DefinerInterface
             'tstamp',
             'crdate',
         ],
+        'sys_redirect' => [
+            'updatedon',
+            'source_host',
+            'hitcount',
+            'lasthiton',
+        ],
     ];
 
     protected $defaultIgnoredTables = [
