@@ -65,6 +65,13 @@ class FalIndexPostProcessor implements PostProcessor, LoggerAwareInterface
     /** @param RecordInterface[] $records */
     public function postProcess(array $records): void
     {
+        $identifiers = [];
+        foreach ($records as $record) {
+            $storage = $this->getStorage($record);
+            $identifiers[$storage->getUid()][] = $record->getForeignProperty('identifier') ?? $record->getLocalProperty('identifier');
+        }
+        $this->remoteStorage->prefetch($identifiers);
+
         foreach ($records as $file) {
             $storage = $this->getStorage($file);
 

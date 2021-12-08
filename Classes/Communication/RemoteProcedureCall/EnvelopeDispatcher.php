@@ -82,6 +82,7 @@ class EnvelopeDispatcher
     public const CMD_STORAGE_GET_FOLDERS_IN_FOLDER = 'getStorageGetFoldersInFolder';
     public const CMD_STORAGE_GET_FILES_IN_FOLDER = 'getStorageGetFilesInFolder';
     public const CMD_STORAGE_GET_FILE = 'getStorageGetFile';
+    public const CMD_STORAGE_PREFETCH = 'prefetch';
     /*
      * Others
      */
@@ -467,6 +468,25 @@ class EnvelopeDispatcher
             return FileUtility::extractFileInformation($file);
         }
         return [];
+    }
+
+    public function prefetch(array $request): array
+    {
+        $response = [];
+
+        foreach ($request['identifiers'] as $storageUid => $identifiers) {
+            $storage = $this->resourceFactory->getStorageObject($storageUid);
+            $storage->setEvaluatePermissions(false);
+            foreach ($identifiers as $identifier) {
+                $response[$identifier] = [];
+                if ($storage->hasFile($request['identifier'])) {
+                    $file = $storage->getFile($request['identifier']);
+                    $response[$identifier] = FileUtility::extractFileInformation($file);
+                }
+            }
+        }
+
+        return $response;
     }
 
     /** @SuppressWarnings(PHPMD.Superglobals) */
