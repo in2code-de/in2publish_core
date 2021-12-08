@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\Driver\Exception;
+use Closure;
 use In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder;
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Config\ConfigContainer;
@@ -42,37 +42,26 @@ use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
 use In2code\In2publishCore\Event\RecordWasEnriched;
 use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
+use In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing\Domain\Repository\DualDatabaseRepository;
 use In2code\In2publishCore\Service\Configuration\TcaService;
-use In2code\In2publishCore\Service\Database\RawRecordService;
-use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-use function array_column;
+use function array_diff_assoc;
+use function array_flip;
 use function array_keys;
 use function array_merge;
 use function array_replace_recursive;
-use function array_unique;
 use function count;
 use function implode;
-use function sort;
+use function reset;
 
 class ShallowRecordFinder implements RecordFinder
 {
     public const PAGE_TABLE_NAME = 'pages';
 
-    /** @var Connection */
-    protected $localDatabase;
-
-    /** @var Connection */
-    protected $foreignDatabase;
-
     /** @var TcaService */
     protected $tcaService;
-
-    /** @var RawRecordService */
-    protected $rawRecordService;
 
     /** @var EventDispatcher */
     protected $eventDispatcher;
@@ -83,24 +72,30 @@ class ShallowRecordFinder implements RecordFinder
     /** @var TcaProcessingService */
     protected $tcaProcessingService;
 
+    /** @var ShallowFolderRecordFactory */
+    protected $shallowFolderRecordFactory;
+
+    /** @var DualDatabaseRepository */
+    protected $dualDatabaseRepository;
+
     /** @var array */
     protected $config;
 
     public function __construct(
         TcaService $tcaService,
-        RawRecordService $rawRecordService,
         EventDispatcher $eventDispatcher,
         RecordFactory $recordFactory,
         TcaProcessingService $tcaProcessingService,
+        ShallowFolderRecordFactory $shallowFolderRecordFactory,
+        DualDatabaseRepository $dualDatabaseRepository,
         ConfigContainer $configContainer
     ) {
-        $this->localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
-        $this->foreignDatabase = DatabaseUtility::buildForeignDatabaseConnection();
         $this->tcaService = $tcaService;
-        $this->rawRecordService = $rawRecordService;
         $this->eventDispatcher = $eventDispatcher;
         $this->recordFactory = $recordFactory;
         $this->tcaProcessingService = $tcaProcessingService;
+        $this->shallowFolderRecordFactory = $shallowFolderRecordFactory;
+        $this->dualDatabaseRepository = $dualDatabaseRepository;
         $this->config = $configContainer->get();
     }
 
@@ -130,45 +125,29 @@ class ShallowRecordFinder implements RecordFinder
 
     protected function findPageRecord(int $identifier, bool $excludePages): RecordInterface
     {
-        $depth = 0;
+        $rootRecord = null;
 
-        $rootRecord = $this->createRootRecord($identifier, $depth);
+        $rowSet = ['local' => [], 'foreign' => []];
+        if ($identifier !== 0) {
+            $rows = $this->dualDatabaseRepository->findByProperty('pages', 'uid', [$identifier]);
+            $rowSet = $rows[$identifier];
+        }
+        $rowSet['additional'] = ['depth' => 0, 'isRoot' => true];
+        $this->createRecord(
+            'pages',
+            $rowSet,
+            static function (RecordInterface $record) use (&$rootRecord): void {
+                $rootRecord = $record;
+            }
+        );
 
-        $pageRecords[$rootRecord->getIdentifier()] = $rootRecord;
-
-        $rows = [];
+        $pageRecords = [
+            $rootRecord->getIdentifier() => $rootRecord,
+        ];
 
         if (!$excludePages) {
-            $rows = $this->fetchPageRecords($depth, $rootRecord, $rows);
+            $pageRecords = $this->addChildPagesRecursively($pageRecords);
         }
-
-        $rows = $this->findMissedRowsByUid($rows, 'pages');
-
-        $deleteField = $GLOBALS['TCA']['pages']['ctrl']['delete'] ?? null;
-        foreach ($rows as $uid => $rowSet) {
-            $localProperties = $rowSet['local'];
-            $foreignProperties = $rowSet['foreign'];
-            if (
-                ([] === $localProperties || (null !== $deleteField && $localProperties[$deleteField]))
-                && ([] === $foreignProperties || (null !== $deleteField && $foreignProperties[$deleteField]))
-            ) {
-                continue;
-            }
-
-            $pageRecord = $this->createTheRecordAndAddItToItsParentPage(
-                $pageRecords,
-                'pages',
-                $localProperties,
-                $foreignProperties,
-                $rowSet['additionalProperties']
-            );
-            if (null !== $pageRecord) {
-                $pageRecords[$uid] = $pageRecord;
-            }
-        }
-
-        $pids = array_keys($pageRecords);
-        sort($pids);
 
         $tables = $this->tcaService->getAllTableNames(
             array_merge(
@@ -178,9 +157,10 @@ class ShallowRecordFinder implements RecordFinder
         );
 
         foreach ($tables as $table) {
-            $this->findRelatedRecords($table, $pids, $pageRecords);
+            $this->findRelatedRecords($table, array_keys($pageRecords), $pageRecords);
         }
         $this->fetchMmRecords($rootRecord);
+        $this->resolveImages($pageRecords);
 
         foreach ($pageRecords as $pid => $record) {
             $event = new RecordWasEnriched($record);
@@ -194,52 +174,173 @@ class ShallowRecordFinder implements RecordFinder
         return $rootRecord;
     }
 
-    protected function createRootRecord(int $identifier, int $depth): RecordInterface
+    protected function resolveImages(array $pageRecords): void
     {
-        $localProperties = $this->rawRecordService->getRawRecord('pages', $identifier, 'local') ?? [];
-        $foreignProperties = $this->rawRecordService->getRawRecord('pages', $identifier, 'foreign') ?? [];
-        $rootRecord = new Record(
-            'pages',
-            $localProperties,
-            $foreignProperties,
-            $GLOBALS['TCA']['pages'],
-            ['depth' => $depth, 'isRoot' => true]
-        );
-        $this->eventDispatcher->dispatch(new RecordInstanceWasInstantiated($this->recordFactory, $rootRecord));
-        return $rootRecord;
-    }
-
-    protected function createTheRecordAndAddItToItsParentPage(
-        array $pageRecords,
-        string $table,
-        array $localProperties,
-        array $foreignProperties,
-        array $additionalProperties
-    ): ?RecordInterface {
-        if ($this->shouldIgnoreRecord($localProperties, $foreignProperties, $table)) {
-            return null;
+        $referenceRecords = [];
+        foreach ($pageRecords as $pageRecord) {
+            $relatedReferences = $pageRecord->getRelatedRecords()['sys_file_reference'] ?? [];
+            foreach ($relatedReferences as $relatedReference) {
+                $referenceRecords[$relatedReference->getIdentifier()] = $relatedReference;
+            }
         }
 
-        $record = new Record(
-            $table,
-            $localProperties,
-            $foreignProperties,
-            $GLOBALS['TCA'][$table] ?? [],
-            $additionalProperties
-        );
+        if (empty($referenceRecords)) {
+            return;
+        }
 
-        $pid = $record->getMergedProperty('pid');
-        $pageRecords[$pid]->addRelatedRecord($record);
+        /** @var array<int, array<RecordInterface> $fileToReferenceMap */
+        $fileToReferenceMap = [];
+        foreach ($referenceRecords as $referenceRecord) {
+            $uid = $referenceRecord->getLocalProperty('uid_local') ?: $referenceRecord->getForeignProperty('uid_local');
+            $fileToReferenceMap[$uid][] = $referenceRecord;
+        }
 
-        $this->eventDispatcher->dispatch(new RecordInstanceWasInstantiated($this->recordFactory, $record));
-        return $record;
+        $uids = array_keys($fileToReferenceMap);
+
+        if (empty($uids)) {
+            return;
+        }
+
+        $relatedRecords = $this->dualDatabaseRepository->findByProperty('sys_file', 'uid', $uids);
+        $relatedRecords = $this->dualDatabaseRepository->findMissingRows('sys_file', $relatedRecords);
+
+        $sysFileRecords = [];
+
+        $setParentRecord = static function (RecordInterface $record) use (&$sysFileRecords): void {
+            $sysFileRecords[] = $record;
+        };
+
+        foreach ($relatedRecords as $rowSet) {
+            $this->createRecord('sys_file', $rowSet, $setParentRecord);
+        }
+
+        $this->shallowFolderRecordFactory->processRecords($sysFileRecords);
+
+        $this->attachMetadata($sysFileRecords);
+
+        foreach ($sysFileRecords as $sysFileRecord) {
+            $uid = $sysFileRecord->getIdentifier();
+            foreach ($fileToReferenceMap[$uid] ?? [] as $referenceRecord) {
+                $referenceRecord->addRelatedRecord($sysFileRecord);
+            }
+        }
     }
 
-    protected function collectDemands(RecordInterface $basicRecord): array
+    /**
+     * @param array<RecordInterface> $sysFileRecords
+     */
+    protected function attachMetadata(array $sysFileRecords): void
+    {
+        if (empty($sysFileRecords)) {
+            return;
+        }
+
+        $indexedRecords = [];
+
+        foreach ($sysFileRecords as $record) {
+            $sysFileUid = $record->getIdentifier();
+            $indexedRecords[$sysFileUid] = $record;
+        }
+
+        $uids = array_keys($indexedRecords);
+
+        if (empty($uids)) {
+            return;
+        }
+
+        $relatedRecords = $this->dualDatabaseRepository->findByProperty('sys_file_metadata', 'file', $uids);
+        $relatedRecords = $this->dualDatabaseRepository->findMissingRows('sys_file_metadata', $relatedRecords);
+
+        $setParentRecord = static function (RecordInterface $record) use ($indexedRecords): void {
+            $sysFileUid = $record->getLocalProperty('file') ?: $record->getForeignProperty('file');
+            $indexedRecords[$sysFileUid]->addRelatedRecord($record);
+        };
+
+        foreach ($relatedRecords as $rowSet) {
+            $this->createRecord('sys_file_metadata', $rowSet, $setParentRecord);
+        }
+    }
+
+    protected function addChildPagesRecursively(array $pageRecords): array
+    {
+        $rootRecord = reset($pageRecords);
+
+        $rows = $this->fetchChildPagesRecursively($rootRecord);
+        $rows = $this->dualDatabaseRepository->findMissingRows('pages', $rows);
+
+        $setParentRecord = static function (RecordInterface $record) use (&$pageRecords): void {
+            $pid = $record->getLocalProperty('pid') ?? $record->getForeignProperty('pid');
+            $pageRecords[$record->getIdentifier()] = $record;
+            $pageRecords[$pid]->addRelatedRecord($record);
+        };
+
+        foreach ($rows as $rowSet) {
+            $this->createRecord('pages', $rowSet, $setParentRecord);
+        }
+
+        return $pageRecords;
+    }
+
+    protected function fetchChildPagesRecursively(RecordInterface $rootRecord): array
+    {
+        $rows = [];
+        $depth = 1;
+
+        $iterationRows = [
+            $rootRecord->getIdentifier() => [
+                'local' => $rootRecord->getLocalProperties(),
+                'foreign' => $rootRecord->getForeignProperties(),
+            ],
+        ];
+
+        do {
+            if ($depth++ >= $this->config['factory']['maximumPageRecursion']) {
+                break;
+            }
+
+            $iterationRows = $this->dualDatabaseRepository->findByProperty('pages', 'pid', array_keys($iterationRows));
+
+            foreach ($iterationRows as $uid => $rowSet) {
+                $rows[$uid] = [
+                    'additional' => [
+                        'depth' => $depth,
+                    ],
+                    'local' => $rowSet['local'],
+                    'foreign' => $rowSet['foreign'],
+                ];
+            }
+        } while (!empty($iterationRows));
+
+        return $rows;
+    }
+
+    /**
+     * @param string $table
+     * @param array $pids
+     * @param array<int, RecordInterface> $pageRecords
+     */
+    protected function findRelatedRecords(string $table, array $pids, array $pageRecords): void
+    {
+        $relatedRecords = $this->dualDatabaseRepository->findByProperty($table, 'pid', $pids);
+        $relatedRecords = $this->dualDatabaseRepository->findMissingRows($table, $relatedRecords);
+
+        $setParentRecord = static function (RecordInterface $record) use ($pageRecords): void {
+            $pid = $record->getMergedProperty('pid');
+            $parentRecord = $pageRecords[$pid];
+            $parentRecord->addRelatedRecord($record);
+            $record->addAdditionalProperty('depth', $parentRecord->getAdditionalProperty('depth') + 1);
+        };
+
+        foreach ($relatedRecords as $rowSet) {
+            $this->createRecord($table, $rowSet, $setParentRecord);
+        }
+    }
+
+    protected function collectDemands(RecordInterface $rootRecord): array
     {
         $demands = [];
         $tca = $this->tcaProcessingService->getCompatibleTcaParts();
-        foreach ($basicRecord->getRelatedRecords() as $table => $records) {
+        foreach ($rootRecord->getRelatedRecords() as $table => $records) {
             if (isset($tca[$table])) {
                 foreach ($records as $record) {
                     foreach ($tca[$table] as $column => $columnConfig) {
@@ -329,9 +430,9 @@ class ShallowRecordFinder implements RecordFinder
         return null;
     }
 
-    protected function fetchMmRecords(RecordInterface $basicRecord): void
+    protected function fetchMmRecords(RecordInterface $rootRecord): void
     {
-        $demands = $this->collectDemands($basicRecord);
+        $demands = $this->collectDemands($rootRecord);
 
         foreach ($demands as $table => $aggregatedDemand) {
             foreach ($aggregatedDemand as $additionalWhere => $fieldRequests) {
@@ -342,215 +443,89 @@ class ShallowRecordFinder implements RecordFinder
         }
     }
 
-    protected function resolveDemand(string $table, string $additionalWhere, string $field, array $fieldParam): void
+    protected function resolveDemand(string $table, string $additionalWhere, string $field, array $request): void
     {
-        $relatedRows = [
-            'local' => [],
-            'foreign' => [],
-        ];
-        $query = DatabaseUtility::buildLocalDatabaseConnection()->createQueryBuilder();
-        $localRows = $query
-            ->select('*')
-            ->from($table)
-            ->where($additionalWhere)
-            ->andWhere($query->expr()->in($field, $fieldParam['in']))
-            ->execute()
-            ->fetchAllAssociative();
-        foreach ($localRows as $localRow) {
-            $relatedRows['local'][$this->buildRecordIndexIdentifier($localRow)] = $localRow;
-        }
-        $query = DatabaseUtility::buildForeignDatabaseConnection()->createQueryBuilder();
-        $foreignRows = $query
-            ->select('*')
-            ->from($table)
-            ->where($additionalWhere)
-            ->andWhere($query->expr()->in($field, $fieldParam['in']))
-            ->execute()
-            ->fetchAllAssociative();
-        foreach ($foreignRows as $foreignRow) {
-            $relatedRows['foreign'][$this->buildRecordIndexIdentifier($foreignRow)] = $foreignRow;
-        }
-        $this->mapRelatedRecordsByFieldRequest($relatedRows, $field, $fieldParam, $table);
+        $relatedRows = $this->dualDatabaseRepository->findMm($table, $field, $request['in'], $additionalWhere);
+        $this->mapRelatedRecordsByRequest($table, $relatedRows, $field, $request['valueMap']);
     }
 
-    protected function buildRecordIndexIdentifier(array $row): string
+    protected function mapRelatedRecordsByRequest(string $table, array $rows, string $property, array $valueMap): void
     {
-        if (!isset($row['uid'])) {
-            $parts = [
-                $row['uid_local'],
-                $row['uid_foreign'],
-            ];
-            if (isset($row['sorting'])) {
-                $parts[] = $row['sorting'];
-            }
-            return implode(',', $parts);
-        }
-        return (string)$row['uid'];
-    }
-
-    protected function mapRelatedRecordsByFieldRequest(
-        array $relatedRows,
-        string $field,
-        array $values,
-        string $table
-    ): void {
-        $keys = array_merge(array_keys($relatedRows['local']), array_keys($relatedRows['foreign']));
-        foreach ($keys as $key) {
-            $valueMapIndex = null;
-            if (isset($relatedRows['local'][$key][$field])) {
-                $valueMapIndex = $relatedRows['local'][$key][$field];
-            } elseif (isset($relatedRows['foreign'][$key][$field])) {
-                $valueMapIndex = $relatedRows['foreign'][$key][$field];
-            }
-            if (null !== $valueMapIndex && isset($values['valueMap'][$valueMapIndex])) {
-                $localProperties = $relatedRows['local'][$key] ?? [];
-                $foreignProperties = $relatedRows['foreign'][$key] ?? [];
-                $record = new Record($table, $localProperties, $foreignProperties, [], []);
-                $values['valueMap'][$valueMapIndex]($record);
+        foreach ($rows as $rowSet) {
+            $requestedProperty = $rowSet['local'][$property] ?? $rows['foreign'][$property];
+            if (isset($valueMap[$requestedProperty])) {
+                $this->createRecord($table, $rowSet, $valueMap[$requestedProperty]);
             }
         }
     }
 
-    protected function shouldIgnoreRecord(array $localProperties, array $foreignProperties, string $tableName): bool
+    protected function createRecord(string $table, array $rowSet, Closure $setParentRecord): void
     {
-        $event = new VoteIfRecordShouldBeIgnored($this, $localProperties, $foreignProperties, $tableName);
+        if ($this->isIgnoredRecord($table, $rowSet)) {
+            return;
+        }
+
+        $record = new Record(
+            $table,
+            $rowSet['local'],
+            $rowSet['foreign'],
+            $GLOBALS['TCA'][$table] ?? [],
+            $rowSet['additional']
+        );
+
+        $setParentRecord($record);
+
+        $this->eventDispatcher->dispatch(new RecordInstanceWasInstantiated($this->recordFactory, $record));
+    }
+
+    protected function isIgnoredRecord(string $table, array $rowSet): bool
+    {
+        if ($this->isDeletedAndUnchangedRecord($table, $rowSet)) {
+            return true;
+        }
+
+        if ($this->isRemovedAndDeletedRecord($table, $rowSet)) {
+            return true;
+        }
+
+        if ($this->shouldIgnoreRecord($table, $rowSet)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function isDeletedAndUnchangedRecord(string $table, array $rowSet): bool
+    {
+        $deleteField = $GLOBALS['TCA'][$table]['ctrl']['delete'] ?? null;
+        if (null === $deleteField || !$rowSet['local'][$deleteField]) {
+            return false;
+        }
+        $differences = array_diff_assoc($rowSet['local'], $rowSet['foreign']);
+        return empty($differences);
+    }
+
+    protected function isRemovedAndDeletedRecord(string $table, array $rowSet): bool
+    {
+        $deleteField = $GLOBALS['TCA'][$table]['ctrl']['delete'] ?? null;
+        if (null === $deleteField || !$rowSet['local'][$deleteField]) {
+            return false;
+        }
+        if ($this->config['factory']['treatRemovedAndDeletedAsDifference']) {
+            // "Removed and deleted" only refers to the local side.
+            // If the record is not exactly 1. deleted on foreign and 2. removed on local this feature does not apply.
+            /** @noinspection NestedPositiveIfStatementsInspection */
+            if (empty($rowSet['local']) && $rowSet['foreign'][$deleteField]) {
+                return false;
+            }
+        }
+        return (empty($rowSet['local']) && $rowSet['foreign'][$deleteField]) || empty($rowSet['foreign']);
+    }
+
+    protected function shouldIgnoreRecord(string $table, array $rowSet): bool
+    {
+        $event = new VoteIfRecordShouldBeIgnored($this, $rowSet['local'], $rowSet['foreign'], $table);
         $this->eventDispatcher->dispatch($event);
         return $event->getVotingResult();
-    }
-
-    protected function fetchPageRecords(int $depth, RecordInterface $rootRecord, array $rows): array
-    {
-        $relatedRecords = [
-            $rootRecord->getIdentifier() => [
-                'local' => $rootRecord->getLocalProperties(),
-                'foreign' => $rootRecord->getForeignProperties(),
-            ],
-        ];
-
-        do {
-            if ($depth++ >= $this->config['factory']['maximumPageRecursion']) {
-                break;
-            }
-
-            $query = $this->localDatabase->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $query->select('*')
-                  ->from('pages')
-                  ->where($query->expr()->in('pid', array_keys($relatedRecords)));
-            $result = $query->execute();
-            $localRows = array_column($result->fetchAllAssociative(), null, 'uid');
-
-            $query = $this->foreignDatabase->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $query->select('*')
-                  ->from('pages')
-                  ->where($query->expr()->in('pid', array_keys($relatedRecords)));
-            $result = $query->execute();
-            $foreignRows = array_column($result->fetchAllAssociative(), null, 'uid');
-
-            $relatedRecords = [];
-            $commonUids = array_unique(array_merge(array_keys($localRows), array_keys($foreignRows)));
-            foreach ($commonUids as $uid) {
-                $relatedRecords[$uid] = [
-                    'local' => $localRows[$uid] ?? [],
-                    'foreign' => $foreignRows[$uid] ?? [],
-                ];
-                $rows[$uid] = [
-                    'additionalProperties' => [
-                        'depth' => $depth,
-                    ],
-                    'local' => $localRows[$uid] ?? [],
-                    'foreign' => $foreignRows[$uid] ?? [],
-                ];
-            }
-        } while (!empty($relatedRecords));
-
-        return $rows;
-    }
-
-    protected function findMissedRowsByUid(array $rows, string $table): array
-    {
-        $missingRecords = [];
-        foreach ($rows as $uid => $rowSet) {
-            if ([] === $rowSet['local']) {
-                $missingRecords['local'][$uid] = $uid;
-            } elseif ([] === $rowSet['foreign']) {
-                $missingRecords['foreign'][$uid] = $uid;
-            }
-        }
-
-        if (!empty($missingRecords['local'])) {
-            $query = $this->localDatabase->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $query->select('*')
-                  ->from($table)
-                  ->where($query->expr()->in('uid', $missingRecords['local']));
-            $result = $query->execute();
-            foreach ($result->fetchAllAssociative() as $row) {
-                $rows[$row['uid']]['local'] = $row;
-            }
-        }
-
-        if (!empty($missingRecords['foreign'])) {
-            $query = $this->foreignDatabase->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $query->select('*')
-                  ->from($table)
-                  ->where($query->expr()->in('uid', $missingRecords['foreign']));
-            $result = $query->execute();
-            foreach ($result->fetchAllAssociative() as $row) {
-                $rows[$row['uid']]['foreign'] = $row;
-            }
-        }
-
-        return $rows;
-    }
-
-    /**
-     * @param string $table
-     * @param array $pids
-     * @param array<int, RecordInterface> $pageRecords
-     * @throws Exception
-     */
-    protected function findRelatedRecords(string $table, array $pids, array $pageRecords): void
-    {
-        $query = $this->localDatabase->createQueryBuilder();
-        $query->getRestrictions()->removeAll();
-        $query->select('*')
-              ->from($table)
-              ->where($query->expr()->in('pid', $pids))
-              ->orderBy('uid');
-        $result = $query->execute();
-        $localRows = array_column($result->fetchAllAssociative(), null, 'uid');
-
-        $query = $this->foreignDatabase->createQueryBuilder();
-        $query->getRestrictions()->removeAll();
-        $query->select('*')
-              ->from($table)
-              ->where($query->expr()->in('pid', $pids))
-              ->orderBy('uid');
-        $result = $query->execute();
-        $foreignRows = array_column($result->fetchAllAssociative(), null, 'uid');
-
-        $commonUids = array_unique(array_merge(array_keys($localRows), array_keys($foreignRows)));
-        $relatedRecords = [];
-        foreach ($commonUids as $uid) {
-            $relatedRecords[$uid] = [
-                'local' => $localRows[$uid] ?? [],
-                'foreign' => $foreignRows[$uid] ?? [],
-            ];
-        }
-
-        $relatedRecords = $this->findMissedRowsByUid($relatedRecords, $table);
-
-        foreach ($relatedRecords as $rowSet) {
-            $this->createTheRecordAndAddItToItsParentPage(
-                $pageRecords,
-                $table,
-                $rowSet['local'] ?? [],
-                $rowSet['foreign'] ?? [],
-                []
-            );
-        }
     }
 }
