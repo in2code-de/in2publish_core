@@ -194,11 +194,17 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
         $this->tcaProcessingService = $tcaProcessingService;
     }
 
-    public function findRecordByUid(int $uid, string $table, bool $disablePageRecursion = false): ?RecordInterface
+    public function findRecordByUidForOverview(int $uid, string $table, bool $excludePages = false): ?RecordInterface
     {
-        if ($disablePageRecursion) {
+        if ($excludePages) {
             $this->disablePageRecursion();
         }
+        return $this->findByIdentifier($uid, $table);
+    }
+
+    public function findRecordByUidForPublishing(int $uid, string $table): ?RecordInterface
+    {
+        $this->disablePageRecursion();
         return $this->findByIdentifier($uid, $table);
     }
 

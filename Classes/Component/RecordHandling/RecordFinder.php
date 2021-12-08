@@ -33,8 +33,19 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 
 interface RecordFinder
 {
-    public function findRecordByUid(int $uid, string $table, bool $disablePageRecursion = false): ?RecordInterface;
+    /**
+     * Overview: The record is show in the "Publish Overview" module or any other place where the level of detail can
+     * be traded for performance. It is sufficient to display the record with its most important relations.
+     */
+    public function findRecordByUidForOverview(int $uid, string $table, bool $excludePages = false): ?RecordInterface;
 
-    /** @return array<RecordInterface> */
+    /**
+     * Publishing: Build the record with all relations, but without any child pages.
+     */
+    public function findRecordByUidForPublishing(int $uid, string $table): ?RecordInterface;
+
+    /**
+     * @return array<RecordInterface>
+     */
     public function findRecordsByProperties(array $properties, string $table, bool $simulateRoot = false): array;
 }

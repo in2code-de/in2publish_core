@@ -108,7 +108,7 @@ class RecordController extends AbstractController
     public function indexAction(): void
     {
         GeneralUtility::makeInstance(TcaProcessingService::class);
-        $record = $this->recordFinder->findRecordByUid($this->pid, 'pages');
+        $record = $this->recordFinder->findRecordByUidForOverview($this->pid, 'pages');
         $failures = $this->failureCollector->getFailures();
 
         if (!empty($failures)) {
@@ -132,7 +132,7 @@ class RecordController extends AbstractController
      */
     public function detailAction(int $identifier, string $tableName): void
     {
-        $record = $this->recordFinder->findRecordByUid($identifier, $tableName, true);
+        $record = $this->recordFinder->findRecordByUidForPublishing($identifier, $tableName);
 
         $this->eventDispatcher->dispatch(new RecordWasCreatedForDetailAction($this, $record));
 
@@ -187,7 +187,7 @@ class RecordController extends AbstractController
 
     protected function publishRecord(int $identifier, array $exceptTableNames = []): void
     {
-        $record = $this->recordFinder->findRecordByUid($identifier, 'pages');
+        $record = $this->recordFinder->findRecordByUidForPublishing($identifier, 'pages');
 
         $this->eventDispatcher->dispatch(new RecordWasSelectedForPublishing($record, $this));
 

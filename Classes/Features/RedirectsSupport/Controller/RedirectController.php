@@ -143,7 +143,7 @@ class RedirectController extends AbstractController
         unset($redirect);
 
         foreach ($redirects as $redirect) {
-            $record = $this->recordFinder->findRecordByUid($redirect, 'sys_redirect');
+            $record = $this->recordFinder->findRecordByUidForPublishing($redirect, 'sys_redirect');
             if (null !== $record) {
                 $this->recordPublisher->publishRecordRecursive($record);
             }

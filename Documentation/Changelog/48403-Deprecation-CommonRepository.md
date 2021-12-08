@@ -60,7 +60,7 @@ use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 $recordFinder = GeneralUtility::makeInstance(RecordFinder::class);
-$record = $recordFinder->findRecordByUid(1, 'pages');
+$record = $recordFinder->findRecordByUidForPublishing(1, 'pages');
 
 $recordPublisher = GeneralUtility::makeInstance(RecordPublisher::class);
 $recordPublisher->publishRecordRecursive($record);

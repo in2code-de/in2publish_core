@@ -150,7 +150,7 @@ class SysRedirect extends AbstractEntity
     {
         if (!isset($this->rtc['record'])) {
             $this->rtc['record'] = GeneralUtility::makeInstance(RecordFinder::class)
-                                                 ->findRecordByUid($this->uid, 'sys_redirect');
+                                                 ->findRecordByUidForPublishing($this->uid, 'sys_redirect');
         }
         return $this->rtc['record'];
     }

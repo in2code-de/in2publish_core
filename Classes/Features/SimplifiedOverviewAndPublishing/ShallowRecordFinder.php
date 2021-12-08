@@ -50,7 +50,6 @@ use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_column;
-use function array_combine;
 use function array_keys;
 use function array_merge;
 use function array_replace_recursive;
@@ -105,18 +104,23 @@ class ShallowRecordFinder implements RecordFinder
         $this->config = $configContainer->get();
     }
 
-    public function findRecordByUid(
-        int $uid,
-        string $table,
-        bool $disablePageRecursion = false
-    ): ?RecordInterface {
+    public function findRecordByUidForOverview(int $uid, string $table, bool $excludePages = false): ?RecordInterface
+    {
         if (self::PAGE_TABLE_NAME === 'pages') {
-            return $this->findPageRecord($uid, $disablePageRecursion);
+            return $this->findPageRecord($uid, $excludePages);
         }
         // Fallback
         return GeneralUtility
             ::makeInstance(DefaultRecordFinder::class)
-            ->findRecordByUid($uid, $table, $disablePageRecursion);
+            ->findRecordByUidForOverview($uid, $table, $excludePages);
+    }
+
+    public function findRecordByUidForPublishing(int $uid, string $table): ?RecordInterface
+    {
+        // Fallback
+        return GeneralUtility
+            ::makeInstance(DefaultRecordFinder::class)
+            ->findRecordByUidForPublishing($uid, $table);
     }
 
     public function findRecordsByProperties(array $properties, string $table, bool $simulateRoot = false): array
@@ -127,7 +131,7 @@ class ShallowRecordFinder implements RecordFinder
             ->findRecordsByProperties($properties, $table, $simulateRoot);
     }
 
-    protected function findPageRecord(int $identifier, bool $disablePageRecursion): RecordInterface
+    protected function findPageRecord(int $identifier, bool $excludePages): RecordInterface
     {
         $depth = 0;
 
@@ -137,7 +141,7 @@ class ShallowRecordFinder implements RecordFinder
 
         $rows = [];
 
-        if (!$disablePageRecursion) {
+        if (!$excludePages) {
             $rows = $this->fetchPageRecords($depth, $rootRecord, $rows);
         }
 

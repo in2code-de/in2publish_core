@@ -90,7 +90,7 @@ class PublishPageAjaxController
             $content['label'] = 'context_menu_publish_entry.missing_page';
         } else {
             try {
-                $record = $this->recordFinder->findRecordByUid((int)$page, 'pages', true);
+                $record = $this->recordFinder->findRecordByUidForPublishing((int)$page, 'pages');
 
                 if (null !== $record && $record->isPublishable()) {
                     $this->recordPublisher->publishRecordRecursive($record);
