@@ -117,10 +117,7 @@ class ShallowRecordFinder implements RecordFinder
 
     public function findRecordByUidForPublishing(int $uid, string $table): ?RecordInterface
     {
-        // Fallback
-        return GeneralUtility
-            ::makeInstance(DefaultRecordFinder::class)
-            ->findRecordByUidForPublishing($uid, $table);
+        return $this->findRecordByUidForOverview($uid, $table, true);
     }
 
     public function findRecordsByProperties(array $properties, string $table, bool $simulateRoot = false): array
