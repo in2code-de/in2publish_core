@@ -479,8 +479,8 @@ class EnvelopeDispatcher
             $storage->setEvaluatePermissions(false);
             foreach ($identifiers as $identifier) {
                 $response[$identifier] = [];
-                if ($storage->hasFile($request['identifier'])) {
-                    $file = $storage->getFile($request['identifier']);
+                if ($storage->hasFile($identifier)) {
+                    $file = $storage->getFile($identifier);
                     $response[$identifier] = FileUtility::extractFileInformation($file);
                 }
             }

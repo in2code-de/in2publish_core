@@ -50,6 +50,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
 use function array_column;
+use function array_combine;
 use function array_keys;
 use function is_array;
 use function sprintf;
@@ -244,7 +245,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
             static::$cache[$this->storageUid][$this->getHashCacheIdentifier($fileIdentifier, 'sha1')] = $info['hash'] ?? null;
         }
 
-        return array_column($response, 'exists');
+        return array_combine(array_keys($response), array_column($response, 'exists'));
     }
 
     protected function writeFileCaches(array $files): void
