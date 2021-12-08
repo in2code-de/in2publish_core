@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing;
 
+use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Factory\FileIndexFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\StorageDriverExtractor;
@@ -20,7 +21,7 @@ class ShallowFolderRecordFactory
     /** @var DriverInterface */
     protected $localDriver;
 
-    /** @var DriverInterface */
+    /** @var RemoteFileAbstractionLayerDriver */
     protected $foreignDriver;
 
     /** @var FileIndexFactory */
@@ -68,6 +69,19 @@ class ShallowFolderRecordFactory
      */
     protected function filterFileRecords(array $files): array
     {
+        $fileIdentifiers = [];
+        foreach ($files as $file) {
+            if ($file->hasForeignProperty('identifier')) {
+                $foreignFileId = $file->getForeignProperty('identifier');
+            } else {
+                $foreignFileId = $file->getLocalProperty('identifier');
+            }
+            $fileIdentifiers[] = $foreignFileId;
+        }
+
+        // Fetch file information for all files at once to save time.
+        $foreignFileExistence = $this->foreignDriver->filesExists($fileIdentifiers);
+
         foreach ($files as $index => $file) {
             $fdb = $file->foreignRecordExists();
             $ldb = $file->localRecordExists();
@@ -84,7 +98,7 @@ class ShallowFolderRecordFactory
             }
 
             $lfs = $this->localDriver->fileExists($localFileId);
-            $ffs = $this->foreignDriver->fileExists($foreignFileId);
+            $ffs = $foreignFileExistence[$foreignFileId];
 
             if ($ldb && !$lfs && !$ffs && !$fdb) {
                 // CODE: [0] OLDB; The file exists only in the local database. Ignore the orphaned DB record.

@@ -48,7 +48,6 @@ use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_diff_assoc;
-use function array_flip;
 use function array_keys;
 use function array_merge;
 use function array_replace_recursive;

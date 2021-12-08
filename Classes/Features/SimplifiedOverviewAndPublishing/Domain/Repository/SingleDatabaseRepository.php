@@ -8,7 +8,6 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryHelper;
 
 use function array_column;
-use function implode;
 use function json_encode;
 
 class SingleDatabaseRepository

@@ -49,6 +49,7 @@ use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
+use function array_column;
 use function array_keys;
 use function is_array;
 use function sprintf;
@@ -219,6 +220,31 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         };
 
         return $this->cache($this->getFileExistsCacheIdentifier($fileIdentifier), $callback);
+    }
+
+    /**
+     * Batch processing for multiple file identifiers. Also pre-caches the methods getFileInfoByIdentifier and hash
+     *
+     * @param array $fileIdentifiers
+     * @return array
+     * @throws Throwable
+     */
+    public function filesExists(array $fileIdentifiers): array
+    {
+        $response = $this->executeEnvelope(
+            new Envelope(
+                EnvelopeDispatcher::CMD_FILES_EXISTS,
+                ['storage' => $this->storageUid, 'fileIdentifiers' => $fileIdentifiers]
+            )
+        );
+
+        foreach ($response as $fileIdentifier => $info) {
+            static::$cache[$this->storageUid][$this->getFileExistsCacheIdentifier($fileIdentifier)] = $info['exists'];
+            static::$cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier)] = $info['fifo'] ?? null;
+            static::$cache[$this->storageUid][$this->getHashCacheIdentifier($fileIdentifier, 'sha1')] = $info['hash'] ?? null;
+        }
+
+        return array_column($response, 'exists');
     }
 
     protected function writeFileCaches(array $files): void
