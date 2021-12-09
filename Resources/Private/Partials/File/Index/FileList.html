@@ -5,9 +5,11 @@
 		data-searchable="{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'local')}|{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'foreign')}">
 		<f:comment>Left</f:comment>
 		<td class="col-icon">
-			<span data-bs-toggle="tooltip" title="uid={record.localProperties.uid}">
-				<core:iconForResource resource="{publish:miscellaneous.getFileResourceByUid(uid: record.localProperties.uid)}"/>
-			</span>
+			<f:if condition="{record.localProperties.uid}">
+				<span data-bs-toggle="tooltip" title="uid={record.localProperties.uid}">
+					<core:iconForResource resource="{publish:miscellaneous.getFileResourceByUid(uid: record.localProperties.uid)}"/>
+				</span>
+			</f:if>
 		</td>
 		<td class="col-filename col-responsive nowrap">
 			<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
@@ -80,9 +82,11 @@
 
 		<f:comment>Right</f:comment>
 		<td class="col-icon">
-			<span data-bs-toggle="tooltip" title="uid={record.foreignProperties.uid}">
-				<core:iconForResource resource="{publish:miscellaneous.getFileResourceByUid(uid: record.foreignProperties.uid)}"/>
-			</span>
+			<f:if condition="{record.foreignProperties.uid}">
+				<span data-bs-toggle="tooltip" title="uid={record.foreignProperties.uid}">
+					<core:iconForResource resource="{publish:miscellaneous.getFileResourceByUid(uid: record.foreignProperties.uid)}"/>
+				</span>
+			</f:if>
 		</td>
 		<td class="col-filename col-responsive nowrap">
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" />
