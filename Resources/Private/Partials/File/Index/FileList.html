@@ -43,7 +43,7 @@
 				</f:if>
 				<f:if condition="{record.relatedRecords.sys_file_metadata}">
 					<f:then>
-						<f:for each="{record.relatedRecords.sys_file_metadata}" as="{metaRecord}" iteration="iterator">
+						<f:for each="{record.relatedRecords.sys_file_metadata}" as="metaRecord" iteration="iterator">
 							<f:if condition="{iterator.isFirst}">
 								<a class="btn btn-default" href="{publish:uri.editUri(uid: metaRecord.localProperties.uid, tableName: metaRecord.tableName)}" data-bs-toggle="tooltip" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:edit')}">
 									<core:icon identifier="actions-pencil"></core:icon>
