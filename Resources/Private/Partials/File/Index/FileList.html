@@ -82,9 +82,9 @@
 
 		<f:comment>Right</f:comment>
 		<td class="col-icon">
-			<f:if condition="{record.foreignProperties.uid}">
+			<f:if condition="{record.localProperties.uid} && {record.foreignProperties.uid}">
 				<span data-bs-toggle="tooltip" title="uid={record.foreignProperties.uid}">
-					<core:iconForResource resource="{publish:miscellaneous.getFileResourceByUid(uid: record.foreignProperties.uid)}"/>
+					<core:iconForResource resource="{publish:miscellaneous.getFileResourceByUid(uid: record.localProperties.uid)}"/>
 				</span>
 			</f:if>
 		</td>
