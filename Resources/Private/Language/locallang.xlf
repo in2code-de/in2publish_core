@@ -243,6 +243,9 @@
 			<trans-unit id="record.state.moved.short">
 				<source>Moved</source>
 			</trans-unit>
+			<trans-unit id="record.state.moved-and-changed.short">
+				<source>Moved/Changed</source>
+			</trans-unit>
 
 			<trans-unit id="module.m4.configuration">
 				<source>Configuration</source>

@@ -321,6 +321,10 @@
 				<source>Moved</source>
 				<target state="translated">Verschoben</target>
 			</trans-unit>
+			<trans-unit id="record.state.moved-and-changed.short">
+				<source>Moved/Changed</source>
+				<target state="translated">Verschoben/Verändert</target>
+			</trans-unit>
 
 			<trans-unit id="module.m4.configuration">
 				<source>Configuration</source>
