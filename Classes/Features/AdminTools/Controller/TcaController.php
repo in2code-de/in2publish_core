@@ -30,12 +30,15 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  */
 
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class TcaController extends ActionController
 {
+    use AdminToolsModuleTemplate;
+
     protected TcaProcessingService $tcaProcessingService;
 
     public function __construct(TcaProcessingService $tcaProcessingService)

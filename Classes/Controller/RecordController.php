@@ -34,6 +34,7 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDis
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
@@ -63,6 +64,8 @@ use function strpos;
  */
 class RecordController extends AbstractController
 {
+    use ControllerModuleTemplate;
+
     protected FailureCollector $failureCollector;
 
     protected PermissionService $permissionService;

@@ -36,25 +36,27 @@ use In2code\In2publishCore\Service\Database\RawRecordService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
+use function array_merge;
+use function get_object_vars;
 use function sprintf;
 
 class SysRedirect extends AbstractEntity
 {
-    protected string $sourceHost;
+    protected ?string $sourceHost = null;
 
-    protected string $sourcePath;
+    protected ?string $sourcePath = null;
 
-    protected string $target;
+    protected ?string $target = null;
 
-    protected int $pageUid;
+    protected ?int $pageUid = null;
 
-    protected string $siteId;
+    protected ?string $siteId = null;
 
-    protected bool $deleted;
+    protected ?bool $deleted = null;
 
     protected array $rtc = [];
 
-    public function getSourceHost(): string
+    public function getSourceHost(): ?string
     {
         return $this->sourceHost;
     }
@@ -64,7 +66,7 @@ class SysRedirect extends AbstractEntity
         $this->sourceHost = $sourceHost;
     }
 
-    public function getSourcePath(): string
+    public function getSourcePath(): ?string
     {
         return $this->sourcePath;
     }
@@ -74,7 +76,7 @@ class SysRedirect extends AbstractEntity
         $this->sourcePath = $sourcePath;
     }
 
-    public function getTarget(): string
+    public function getTarget(): ?string
     {
         return $this->target;
     }
@@ -104,7 +106,7 @@ class SysRedirect extends AbstractEntity
         $this->siteId = $siteId;
     }
 
-    public function isDeleted(): bool
+    public function isDeleted(): ?bool
     {
         return $this->deleted;
     }
@@ -136,6 +138,9 @@ class SysRedirect extends AbstractEntity
         }
         $rawRecordService = GeneralUtility::makeInstance(RawRecordService::class);
         $record = $rawRecordService->getRawRecord('pages', $this->pageUid, 'local');
+        if (null === $record) {
+            return null;
+        }
         return GeneralUtility::makeInstance(TcaService::class)->getRecordLabel($record, 'pages');
     }
 

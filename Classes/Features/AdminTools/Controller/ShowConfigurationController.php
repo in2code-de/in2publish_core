@@ -30,11 +30,14 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  */
 
 use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 class ShowConfigurationController extends ActionController
 {
+    use AdminToolsModuleTemplate;
+
     protected ConfigContainer $configContainer;
 
     public function __construct(ConfigContainer $configContainer)

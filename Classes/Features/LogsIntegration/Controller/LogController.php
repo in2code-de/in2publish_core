@@ -29,29 +29,15 @@ namespace In2code\In2publishCore\Features\LogsIntegration\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use CoStack\Logs\Controller\LogController as LogsController;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
-use TYPO3\CMS\Core\Utility\ArrayUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
+use TYPO3\CMS\Fluid\View\TemplateView;
+use TYPO3Fluid\Fluid\View\ViewInterface;
 
-use function array_reverse;
-use function ksort;
-
-class LogController extends \CoStack\Logs\Controller\LogController
+class LogController extends LogsController
 {
-    /**
-     * TODO: Check if the configuration can be accessed and merged somewhere else
-     */
-    protected array $txLogsViewConfig = [
-        'templateRootPaths' => [
-            20 => 'EXT:in2publish_core/Resources/Private/Templates',
-        ],
-        'partialRootPaths' => [
-            20 => 'EXT:in2publish_core/Resources/Private/Partials',
-        ],
-        'layoutRootPaths' => [
-            20 => 'EXT:in2publish_core/Resources/Private/Layouts',
-        ],
-    ];
+    use AdminToolsModuleTemplate;
 
     public function __construct(ExecutionTimeService $executionTimeService)
     {
@@ -60,32 +46,31 @@ class LogController extends \CoStack\Logs\Controller\LogController
 
     /**
      * @SuppressWarnings(PHPMD.Superglobals)
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function initializeAction(): void
     {
         parent::initializeAction();
         $this->logConfiguration = $GLOBALS['TYPO3_CONF_VARS']['LOG']['In2code']['In2publishCore'];
-
-        $config = $this->configurationManager->getConfiguration('FullTypoScript');
-        ArrayUtility::mergeRecursiveWithOverrule(
-            $this->txLogsViewConfig,
-            GeneralUtility::removeDotsFromTS($config['module.']['tx_logs.']['view.'] ?? [])
-        );
     }
 
-    /**
-     * @param array $extbaseFrameworkConfiguration
-     * @param string $setting
-     *
-     * @return array
-     */
-    protected function getViewProperty($extbaseFrameworkConfiguration, $setting): array
+    protected function resolveView(): ViewInterface
     {
-        if (isset($this->txLogsViewConfig[$setting])) {
-            ksort($this->txLogsViewConfig[$setting]);
-            return array_reverse($this->txLogsViewConfig[$setting]);
+        $view = parent::resolveView();
+        if ($view instanceof TemplateView) {
+            $templatePaths = $view->getTemplatePaths();
+            $templatePaths->setTemplateRootPaths([
+                0 => 'EXT:logs/Resources/Private/Templates/',
+                10 => 'EXT:in2publish_core/Resources/Private/Templates/',
+            ]);
+            $templatePaths->setLayoutRootPaths([
+                0 => 'EXT:logs/Resources/Private/Layouts/',
+                10 => 'EXT:in2publish_core/Resources/Private/Layouts/',
+            ]);
+            $templatePaths->setPartialRootPaths([
+                0 => 'EXT:logs/Resources/Private/Partials/',
+                10 => 'EXT:in2publish_core/Resources/Private/Partials/',
+            ]);
         }
-        return parent::getViewProperty($extbaseFrameworkConfiguration, $setting);
+        return $view;
     }
 }

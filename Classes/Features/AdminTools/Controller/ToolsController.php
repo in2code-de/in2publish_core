@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  */
 
 use In2code\In2publishCore\Event\CreatedDefaultHelpLabels;
-use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry;
+use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
@@ -43,14 +43,13 @@ use const PHP_EOL;
 
 class ToolsController extends ActionController
 {
+    use AdminToolsModuleTemplate;
+
     protected EnvironmentService $environmentService;
 
-    protected ToolsRegistry $toolsRegistry;
-
-    public function __construct(EnvironmentService $environmentService, ToolsRegistry $toolsRegistry)
+    public function __construct(EnvironmentService $environmentService)
     {
         $this->environmentService = $environmentService;
-        $this->toolsRegistry = $toolsRegistry;
     }
 
     public function indexAction(): ResponseInterface
