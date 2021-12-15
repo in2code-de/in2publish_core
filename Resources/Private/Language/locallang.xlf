@@ -546,6 +546,10 @@
 			<trans-unit id="compare_database.transfer.updated_on_foreign">
 				<source>The record %s[%d] was updated on foreign.</source>
 			</trans-unit>
+
+			<trans-unit id="module_m3_index_content">
+				<source>Admin tools</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

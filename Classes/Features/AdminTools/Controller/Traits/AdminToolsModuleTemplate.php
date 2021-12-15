@@ -56,6 +56,7 @@ trait AdminToolsModuleTemplate
 
     protected function render(): string
     {
+        $this->moduleTemplate->setModuleClass('tx_in2publishcore_admintools');
         $docHeader = $this->moduleTemplate->getDocHeaderComponent();
         $buttonBar = $docHeader->getButtonBar();
 

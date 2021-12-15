@@ -1,14 +1,14 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
 	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers" data-namespace-typo3-fluid="true"
 >
-	<f:for each="{publish:tools.getEnabledTools()}" as="entry">
-		<li class="btn {publish:Be.GetClassNameOnAction(actionName:'{entry.action}', controllerName:'{entry.alias}')}">
-			<f:link.action action="{publish:string.firstInList(entries: entry.action)}" controller="{entry.alias}">
-				<f:translate key="{entry.name}">{entry.name}</f:translate>
-				<f:if condition="{entry.description}">:
-					<f:translate key="{entry.description}">{entry.description}</f:translate>
-				</f:if>
-			</f:link.action>
-		</li>
-	</f:for>
+	<ul class="flex-column">
+		<f:for each="{tools}" as="entry">
+			<li>
+				<f:link.action action="{entry.initialAction}" controller="{entry.alias}">
+					<f:translate key="{entry.name}">{entry.name}</f:translate>
+					<f:if condition="{entry.description}">:<f:translate key="{entry.description}">{entry.description}</f:translate></f:if>
+				</f:link.action>
+			</li>
+		</f:for>
+	</ul>
 </html>

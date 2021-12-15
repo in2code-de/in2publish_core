@@ -720,6 +720,11 @@
 				<source>The record %s[%d] was updated on foreign.</source>
 				<target state="translated">Der Datensatz %s[%d] wurde auf Foreign aktualisiert.</target>
 			</trans-unit>
+
+			<trans-unit id="module_m3_index_content">
+				<source>Admin tools</source>
+				<target state="translated">Administrationswerkzeuge</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
