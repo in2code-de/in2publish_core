@@ -126,14 +126,18 @@ abstract class AbstractController extends ActionController
         return $this->htmlResponse();
     }
 
-    /** @throws StopActionException */
-    protected function toggleFilterStatusAndRedirect(string $filterName, string $status, string $action): void
+    protected function toggleFilterStatus(string $filterName, string $status): array
     {
         $currentStatus = $this->backendUser->getSessionData($filterName . $status);
         if (!is_bool($currentStatus)) {
             $currentStatus = false;
         }
         $this->backendUser->setAndSaveSessionData($filterName . $status, !$currentStatus);
-        $this->redirect($action);
+        return [
+            'name' => $filterName,
+            'status' => $status,
+            'oldStatus' => $currentStatus,
+            'newStatus' => $this->backendUser->getSessionData($filterName . $status),
+        ];
     }
 }

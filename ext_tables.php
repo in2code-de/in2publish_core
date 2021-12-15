@@ -61,7 +61,7 @@
             'm1',
             '',
             [
-                \In2code\In2publishCore\Controller\RecordController::class => 'index,detail,publishRecord,toggleFilterStatusAndRedirectToIndex',
+                \In2code\In2publishCore\Controller\RecordController::class => 'index,detail,publishRecord,toggleFilterStatus',
             ],
             [
                 'access' => 'user,group',
@@ -77,7 +77,7 @@
             'm3',
             '',
             [
-                \In2code\In2publishCore\Controller\FileController::class => 'index,publishFolder,publishFile,toggleFilterStatusAndRedirectToIndex',
+                \In2code\In2publishCore\Controller\FileController::class => 'index,publishFolder,publishFile,toggleFilterStatus',
             ],
             [
                 'access' => 'user,group',

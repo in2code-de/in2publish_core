@@ -17,7 +17,7 @@
 				<target state="translated">Übersicht Seiten und Datensätze veröffentlichen</target>
 			</trans-unit>
 			<trans-unit id="module_m3_title">
-				<source>publish files</source>
+				<source>Publish files</source>
 				<target state="translated">Dateien veröffentlichen</target>
 			</trans-unit>
 			<trans-unit id="module_m4_title">

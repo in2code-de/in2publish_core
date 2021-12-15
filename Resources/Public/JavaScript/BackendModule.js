@@ -169,7 +169,14 @@ define([
 
 		(Array.from(filters)).forEach(function (filter) {
 			filter.addEventListener('click', function(event) {
-				fetch(event.currentTarget.getAttribute('data-href'));
+				const input = event.currentTarget;
+				input.disabled = true;
+				fetch(input.getAttribute('data-href'))
+					.then(response => response.json())
+					.then(data => input.checked = data.newStatus)
+					.finally(() => {
+						input.disabled = false;
+					});
 
 				In2publishModule.filterItemsByStatus();
 			});

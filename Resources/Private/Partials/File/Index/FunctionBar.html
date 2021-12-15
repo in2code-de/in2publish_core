@@ -19,7 +19,7 @@
 				role="switch"
 				id="toggleStatusAdded"
 				value="added"
-				data-href="{f:uri.action(action: 'toggleFilterStatusAndRedirectToIndex', arguments: { filter: 'added' })}"
+				data-href="{f:uri.action(action: 'toggleFilterStatus', arguments: { filter: 'added' })}"
 				{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'added\',key:\'files\')}',then:' checked')}>
 			<label class="form-check-label m-0" for="toggleStatusAdded">
 				<f:translate key="record.state.added.short"/>
@@ -32,7 +32,7 @@
 				role="switch"
 				id="toggleStatusChanged"
 				value="changed"
-				data-href="{f:uri.action(action: 'toggleFilterStatusAndRedirectToIndex', arguments: { filter: 'changed' })}"
+				data-href="{f:uri.action(action: 'toggleFilterStatus', arguments: { filter: 'changed' })}"
 				{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'changed\',key:\'files\')}',then:' checked')}>
 			<label class="form-check-label m-0" for="toggleStatusChanged">
 				<f:translate key="record.state.changed.short"/>
@@ -45,7 +45,7 @@
 				role="switch"
 				id="toggleStatusDeleted"
 				value="deleted"
-				data-href="{f:uri.action(action: 'toggleFilterStatusAndRedirectToIndex', arguments: { filter: 'deleted' })}"
+				data-href="{f:uri.action(action: 'toggleFilterStatus', arguments: { filter: 'deleted' })}"
 				{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'deleted\',key:\'files\')}',then:' checked')}>
 			<label class="form-check-label m-0" for="toggleStatusDeleted">
 				<f:translate key="record.state.deleted.short"/>
@@ -58,7 +58,7 @@
 				role="switch"
 				id="toggleStatusMoved"
 				value="moved"
-				data-href="{f:uri.action(action: 'toggleFilterStatusAndRedirectToIndex', arguments: { filter: 'moved' })}"
+				data-href="{f:uri.action(action: 'toggleFilterStatus', arguments: { filter: 'moved' })}"
 				{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'moved\',key:\'files\')}',then:' checked')}>
 			<label class="form-check-label m-0" for="toggleStatusMoved">
 				<f:translate key="record.state.moved.short"/>
@@ -71,7 +71,7 @@
 				role="switch"
 				id="toggleStatusUnchanged"
 				value="unchanged"
-				data-href="{f:uri.action(action: 'toggleFilterStatusAndRedirectToIndex', arguments: { filter: 'unchanged' })}"
+				data-href="{f:uri.action(action: 'toggleFilterStatus', arguments: { filter: 'unchanged' })}"
 				{f:if(condition:'{publish:Miscellaneous.GetFilterStatus(filter:\'unchanged\',key:\'files\')}',then:' checked')}>
 			<label class="form-check-label m-0" for="toggleStatusUnchanged">
 				<f:translate key="record.state.unchanged.short"/>

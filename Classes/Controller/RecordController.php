@@ -54,6 +54,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use function array_keys;
 use function array_merge;
 use function implode;
+use function json_encode;
 use function rawurldecode;
 use function strpos;
 
@@ -179,13 +180,11 @@ class RecordController extends AbstractController
      * in the current backendUser's session.
      *
      * @param string $filter "changed", "added", "deleted"
-     *
-     * @throws StopActionException
      */
-    public function toggleFilterStatusAndRedirectToIndexAction(string $filter): ResponseInterface
+    public function toggleFilterStatusAction(string $filter): ResponseInterface
     {
-        $this->toggleFilterStatusAndRedirect('in2publish_filter_records_', $filter, 'index');
-        return $this->htmlResponse();
+        $return = $this->toggleFilterStatus('in2publish_filter_records_', $filter);
+        return $this->jsonResponse(json_encode($return));
     }
 
     protected function publishRecord(int $identifier, array $exceptTableNames = []): void

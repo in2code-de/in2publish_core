@@ -44,17 +44,17 @@ use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Throwable;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 
-use TYPO3\CMS\Form\Domain\Model\FormElements\Page;
 use function count;
 use function dirname;
+use function json_encode;
 use function ltrim;
 use function reset;
 use function strpos;
@@ -186,12 +186,11 @@ class FileController extends AbstractController
      * toggle filter status and save the filter status in the current backendUser's session.
      *
      * @param string $filter "changed", "added", "deleted"
-     *
-     * @throws StopActionException
      */
-    public function toggleFilterStatusAndRedirectToIndexAction(string $filter): void
+    public function toggleFilterStatusAction(string $filter): ResponseInterface
     {
-        $this->toggleFilterStatusAndRedirect('in2publish_filter_files_', $filter, 'index');
+        $return = $this->toggleFilterStatus('in2publish_filter_files_', $filter);
+        return $this->jsonResponse(json_encode($return));
     }
 
     /**
