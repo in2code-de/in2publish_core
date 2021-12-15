@@ -1,48 +1,50 @@
-{namespace publish=In2code\In2publishCore\ViewHelpers}
-{namespace core=TYPO3\CMS\Core\ViewHelpers}
-<f:layout name="File" />
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
+	  data-namespace-typo3-fluid="true"
+>
+	<f:layout name="File" />
 
-Index
+	<f:section name="content">
+		<h2>
+			<f:translate key="module_main_title">TYPO3 Content Publisher</f:translate> -
+			<f:translate key="module_m3_title">publish files</f:translate>
+		</h2>
 
-<f:section name="content">
-	<h2>
-		<f:translate key="module_main_title">TYPO3 Content Publisher</f:translate> -
-		<f:translate key="module_m3_title">publish files</f:translate>
-	</h2>
+		<f:if condition="{record}">
+			<f:render partial="File/Index/FunctionBar" arguments="{_all}" />
+		</f:if>
 
-	<f:if condition="{record}">
-		<f:render partial="File/Index/FunctionBar" arguments="{_all}"/>
-	</f:if>
+		<div class="table-fit">
+			<table class="table in2publish-table">
+				<thead>
+				<tr>
+					<th class="col-icon"></th>
+					<th class="col-filename col-responsive nowrap"><f:translate key="record.filename"/> <i>(Local)</i></th>
+					<th class="col-control actions"></th>
+					<th class="col-control col-selection"></th>
+					<th class="col-control col-publish">
+						<i>[<f:translate key="LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels._CONTROL_"/>]</i>
+					</th>
+					<th class="col-icon"></th>
+					<th class="col-filename col-responsive nowrap"><f:translate key="record.filename"/> <i>(Foreign)</i></th>
+					<th class="col-control">
+						<i>[<f:translate key="LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels._CONTROL_"/>]</i>
+					</th>
+					<th><f:translate key="record.state"/></th>
+				</tr>
+				</thead>
+				<tbody>
+				<f:render partial="File/Index/FolderList" arguments="{_all}" />
+				<f:for each="{record.relatedRecords.sys_file}" as="fileRecord">
+					<f:render partial="File/Index/FileList" arguments="{record:fileRecord, config:config}" />
+				</f:for>
+				</tbody>
+			</table>
+		</div>
 
-	<div class="table-fit">
-		<table class="table in2publish-table">
-			<thead>
-			<tr>
-				<th class="col-icon"></th>
-				<th class="col-filename col-responsive nowrap"><f:translate key="record.filename"/> <i>(Local)</i></th>
-				<th class="col-control actions"></th>
-				<th class="col-control col-selection"></th>
-				<th class="col-control col-publish">
-					<i>[<f:translate key="LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels._CONTROL_"/>]</i>
-				</th>
-				<th class="col-icon"></th>
-				<th class="col-filename col-responsive nowrap"><f:translate key="record.filename"/> <i>(Foreign)</i></th>
-				<th class="col-control">
-					<i>[<f:translate key="LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels._CONTROL_"/>]</i>
-				</th>
-				<th><f:translate key="record.state"/></th>
-			</tr>
-			</thead>
-			<tbody>
-			<f:render partial="File/Index/FolderList" arguments="{_all}" />
-			<f:for each="{record.relatedRecords.sys_file}" as="fileRecord">
-				<f:render partial="File/Index/FileList" arguments="{record:fileRecord, config:config}" />
-			</f:for>
-			</tbody>
-		</table>
-	</div>
-
-	<f:alias map="{moduleName: 'file'}">
-		<f:render partial="Footer" arguments="{_all}" />
-	</f:alias>
-</f:section>
+		<f:alias map="{moduleName: 'file'}">
+			<f:render partial="Footer" arguments="{_all}" />
+		</f:alias>
+	</f:section>
+</html>
