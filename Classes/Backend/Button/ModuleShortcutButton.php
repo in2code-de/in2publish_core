@@ -32,7 +32,10 @@ namespace In2code\In2publishCore\Backend\Button;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Template\Components\Buttons\Action\ShortcutButton;
 use TYPO3\CMS\Core\Routing\Route;
+use TYPO3\CMS\Extbase\Mvc\ExtbaseRequestParameters;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+
+use function ucfirst;
 
 class ModuleShortcutButton extends ShortcutButton
 {
@@ -40,6 +43,7 @@ class ModuleShortcutButton extends ShortcutButton
     {
         /** @var Route $route */
         $route = $request->getAttribute('route');
+        $arguments = $request->getQueryParams();
         $modConf = $route->getOption('moduleConfiguration');
         $pageId = $request->getParsedBody()['id'] ?? $request->getQueryParams()['id'] ?? null;
         $displayName = LocalizationUtility::translate($modConf['labels'] . ':mlang_tabs_tab');
@@ -48,10 +52,14 @@ class ModuleShortcutButton extends ShortcutButton
             if (0 === $pageId) {
                 $displayName .= ' Root (ID 0)';
             } else {
-                $this->setArguments(['id' => $pageId]);
+                $arguments['id'] = $pageId;
                 $displayName .= ' Page ' . $pageId;
             }
         }
+        /** @var ExtbaseRequestParameters $extbase */
+        $extbase = $request->getAttribute('extbase');
+        $displayName .= ' ' . ucfirst($extbase->getControllerActionName());
+        $this->setArguments($arguments);
 
         $this->setRouteIdentifier($route->getOption('_identifier'));
         $this->setDisplayName($displayName);
