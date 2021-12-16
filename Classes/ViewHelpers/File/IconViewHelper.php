@@ -69,7 +69,7 @@ class IconViewHelper extends AbstractViewHelper
         $mimeType = explode(',', $record->getMergedProperty('mime_type'))[0];
         $iconIdentifier = $mimeTypeIcon = $this->iconRegistry->getIconIdentifierForMimeType($mimeType);
 
-        if ($mimeTypeIcon !== null) {
+        if ($mimeTypeIcon === null) {
             $extension = explode(',', $record->getMergedProperty('extension'))[0];
             $fileExtensionIcon = $this->iconRegistry->getIconIdentifierForFileExtension($extension);
             if ($fileExtensionIcon === 'mimetypes-other-other') {
