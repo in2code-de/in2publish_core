@@ -1,14 +1,13 @@
-{namespace publish=In2code\In2publishCore\ViewHelpers}
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
+	  data-namespace-typo3-fluid="true"
+>
+	<div class="overlay"></div>
 
-<div class="overlay"></div>
+	<f:render partial="LoadingOverlay" />
 
-<div class="typo3-fullDoc" data-ui-refresh>
-	<div id="typo3-docbody" data-module="m3">
-		<div id="typo3-inner-docbody">
-			<f:render partial="LoadingOverlay" />
-			<f:flashMessages />
-			<f:render section="content" />
-			<f:render partial="Typo3Version" />
-		</div>
-	</div>
-</div>
+	<f:flashMessages />
+
+	<f:render section="Main" />
+</html>

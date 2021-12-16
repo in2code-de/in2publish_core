@@ -5,7 +5,7 @@
 >
 	<f:layout name="File" />
 
-	<f:section name="content">
+	<f:section name="Main">
 		<h2>
 			<f:translate key="module_main_title">TYPO3 Content Publisher</f:translate> -
 			<f:translate key="module_m3_title">publish files</f:translate>
@@ -18,27 +18,27 @@
 		<div class="table-fit">
 			<table class="table in2publish-table">
 				<thead>
-				<tr>
-					<th class="col-icon"></th>
-					<th class="col-filename col-responsive nowrap"><f:translate key="record.filename"/> <i>(Local)</i></th>
-					<th class="col-control actions"></th>
-					<th class="col-control col-selection"></th>
-					<th class="col-control col-publish">
-						<i>[<f:translate key="LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels._CONTROL_"/>]</i>
-					</th>
-					<th class="col-icon"></th>
-					<th class="col-filename col-responsive nowrap"><f:translate key="record.filename"/> <i>(Foreign)</i></th>
-					<th class="col-control">
-						<i>[<f:translate key="LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels._CONTROL_"/>]</i>
-					</th>
-					<th><f:translate key="record.state"/></th>
-				</tr>
+					<tr>
+						<th class="col-icon"></th>
+						<th class="col-filename col-responsive nowrap"><f:translate key="record.filename"/> <i>(Local)</i></th>
+						<th class="col-control actions"></th>
+						<th class="col-control col-selection"></th>
+						<th class="col-control col-publish">
+							<i>[<f:translate key="LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels._CONTROL_"/>]</i>
+						</th>
+						<th class="col-icon"></th>
+						<th class="col-filename col-responsive nowrap"><f:translate key="record.filename"/> <i>(Foreign)</i></th>
+						<th class="col-control">
+							<i>[<f:translate key="LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels._CONTROL_"/>]</i>
+						</th>
+						<th><f:translate key="record.state"/></th>
+					</tr>
 				</thead>
 				<tbody>
-				<f:render partial="File/Index/FolderList" arguments="{_all}" />
-				<f:for each="{record.relatedRecords.sys_file}" as="fileRecord">
-					<f:render partial="File/Index/FileList" arguments="{record:fileRecord, config:config}" />
-				</f:for>
+					<f:render partial="File/Index/FolderList" arguments="{_all}" />
+					<f:for each="{record.relatedRecords.sys_file}" as="fileRecord">
+						<f:render partial="File/Index/FileList" arguments="{record:fileRecord, config:config}" />
+					</f:for>
 				</tbody>
 			</table>
 		</div>

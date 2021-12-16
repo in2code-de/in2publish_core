@@ -3,8 +3,8 @@
 define([
 	'jquery', 'TYPO3/CMS/Core/Event/DebounceEvent', 'TYPO3/CMS/Backend/Input/Clearable'
 ], function ($, DebounceEvent) {
-	var In2publishModule = {
-		isNewUI: (document.querySelector('.typo3-fullDoc[data-ui-refresh]') !== null),
+	var In2publishCoreModule = {
+		isPublishFilesModule: (document.querySelector('.module[data-module-name="file_In2publishCoreM3"]') !== null),
 		unchangedFilter: false,
 		changedFilter: false,
 		addedFilter: false,
@@ -18,33 +18,32 @@ define([
 		}
 	};
 
-	In2publishModule.initialize = function () {
-		In2publishModule.toggleDirtyPropertiesListContainerListener();
-		if (In2publishModule.isNewUI) {
-			In2publishModule.setupClearableInputs();
-			In2publishModule.filterItemsByStatus();
-			In2publishModule.setupFilterListeners();
-			In2publishModule.setupPublisherBagListeners();
+	In2publishCoreModule.initialize = function () {
+		In2publishCoreModule.toggleDirtyPropertiesListContainerListener();
+		if (In2publishCoreModule.isPublishFilesModule) {
+			In2publishCoreModule.setupClearableInputs();
+			In2publishCoreModule.setupFilterListeners();
 		} else {
-			In2publishModule.setFilterForPageView();
-			In2publishModule.filterButtonsListener();
+			In2publishCoreModule.setFilterForPageView();
+			In2publishCoreModule.filterButtonsListener();
 		}
-		In2publishModule.overlayListener();
+		In2publishCoreModule.overlayListener();
+		In2publishCoreModule.ajaxUriListener();
 	};
 
-	In2publishModule.toggleDirtyPropertiesListContainerListener = function () {
+	In2publishCoreModule.toggleDirtyPropertiesListContainerListener = function () {
 		$('*[data-action="opendirtypropertieslistcontainer"]').click(function () {
 			var target = $(this).attr('data-target');
 
 			var $containerDropdown = $('*[data-diff-for="' + target + '"]');
-			In2publishModule.openOrCloseStageListingDropdownContainer($containerDropdown);
+			In2publishCoreModule.openOrCloseStageListingDropdownContainer($containerDropdown);
 
 			var $containerMessages = $(this).closest('.in2publish-stagelisting__item').find('.in2publish-stagelisting__messages:first');
-			In2publishModule.openOrCloseStageListingMessagesContainer($containerMessages);
+			In2publishCoreModule.openOrCloseStageListingMessagesContainer($containerMessages);
 		});
 	};
 
-	In2publishModule.openOrCloseStageListingDropdownContainer = function ($container) {
+	In2publishCoreModule.openOrCloseStageListingDropdownContainer = function ($container) {
 		if ($container.hasClass('in2publish-stagelisting__dropdown--close')) {
 			$('.in2publish-stagelisting__dropdown--open')
 				.removeClass('in2publish-stagelisting__dropdown--open')
@@ -62,7 +61,7 @@ define([
 		}
 	};
 
-	In2publishModule.openOrCloseStageListingMessagesContainer = function ($container) {
+	In2publishCoreModule.openOrCloseStageListingMessagesContainer = function ($container) {
 		if ($container.length > 0) {
 			if ($container.hasClass('in2publish-stagelisting__messages--close')) {
 				$('.in2publish-stagelisting__messages--open')
@@ -82,48 +81,48 @@ define([
 		}
 	};
 
-	In2publishModule.setFilterForPageView = function () {
-		In2publishModule.changedFilter = $('.in2publish-icon-status-changed').hasClass('in2publish-functions-bar--active');
-		In2publishModule.addedFilter = $('.in2publish-icon-status-added').hasClass('in2publish-functions-bar--active');
-		In2publishModule.deletedFilter = $('.in2publish-icon-status-deleted').hasClass('in2publish-functions-bar--active');
-		In2publishModule.movedFilter = $('.in2publish-icon-status-moved').hasClass('in2publish-functions-bar--active');
+	In2publishCoreModule.setFilterForPageView = function () {
+		In2publishCoreModule.changedFilter = $('.in2publish-icon-status-changed').hasClass('in2publish-functions-bar--active');
+		In2publishCoreModule.addedFilter = $('.in2publish-icon-status-added').hasClass('in2publish-functions-bar--active');
+		In2publishCoreModule.deletedFilter = $('.in2publish-icon-status-deleted').hasClass('in2publish-functions-bar--active');
+		In2publishCoreModule.movedFilter = $('.in2publish-icon-status-moved').hasClass('in2publish-functions-bar--active');
 
-		if (In2publishModule.changedFilter ||
-			In2publishModule.addedFilter ||
-			In2publishModule.deletedFilter ||
-			In2publishModule.movedFilter
+		if (In2publishCoreModule.changedFilter ||
+			In2publishCoreModule.addedFilter ||
+			In2publishCoreModule.deletedFilter ||
+			In2publishCoreModule.movedFilter
 		) {
 			$('.in2publish-stagelisting__item--unchanged').parent().hide();
-			In2publishModule.hideOrShowPages($('.in2publish-stagelisting__item--changed').parent(), In2publishModule.changedFilter);
-			In2publishModule.hideOrShowPages($('.in2publish-stagelisting__item--added').parent(), In2publishModule.addedFilter);
-			In2publishModule.hideOrShowPages($('.in2publish-stagelisting__item--deleted').parent(), In2publishModule.deletedFilter);
-			In2publishModule.hideOrShowPages($('.in2publish-stagelisting__item--moved').parent(), In2publishModule.movedFilter);
+			In2publishCoreModule.hideOrShowPages($('.in2publish-stagelisting__item--changed').parent(), In2publishCoreModule.changedFilter);
+			In2publishCoreModule.hideOrShowPages($('.in2publish-stagelisting__item--added').parent(), In2publishCoreModule.addedFilter);
+			In2publishCoreModule.hideOrShowPages($('.in2publish-stagelisting__item--deleted').parent(), In2publishCoreModule.deletedFilter);
+			In2publishCoreModule.hideOrShowPages($('.in2publish-stagelisting__item--moved').parent(), In2publishCoreModule.movedFilter);
 		} else {
 			$('.in2publish-stagelisting__item').parent().show();
 		}
 	};
 
-	In2publishModule.hideOrShowPages = function (pages, status) {
+	In2publishCoreModule.hideOrShowPages = function (pages, status) {
 		if (status) {
 			pages.each(function () {
 				var $this = $(this);
 				$this.show();
-				In2publishModule.showParentPages($this);
+				In2publishCoreModule.showParentPages($this);
 			});
 		} else {
 			pages.hide();
 		}
 	};
 
-	In2publishModule.showParentPages = function (element) {
+	In2publishCoreModule.showParentPages = function (element) {
 		var parentPage = element.parent().closest('ul').siblings('.in2publish-stagelisting__item').parent();
 		if (undefined !== parentPage && parentPage.length) {
 			parentPage.show();
-			In2publishModule.showParentPages(parentPage);
+			In2publishCoreModule.showParentPages(parentPage);
 		}
 	};
 
-	In2publishModule.filterButtonsListener = function () {
+	In2publishCoreModule.filterButtonsListener = function () {
 		$('*[data-action-toggle-filter-status]').click(function (e) {
 			e.preventDefault();
 			var $this = $(this);
@@ -131,11 +130,11 @@ define([
 			$.ajax({
 				url: $this.prop('href')
 			});
-			In2publishModule.setFilterForPageView();
+			In2publishCoreModule.setFilterForPageView();
 		});
 	};
 
-	In2publishModule.overlayListener = function () {
+	In2publishCoreModule.overlayListener = function () {
 		$('[data-in2publish-confirm]').each(function () {
 			var element = $(this);
 			element.on('click', function (event) {
@@ -148,40 +147,65 @@ define([
 					}
 				}
 				if ('TRUE' === element.data('in2publish-overlay')) {
-					In2publishModule.showPreloader();
+					In2publishCoreModule.showPreloader();
 				}
 			});
 		});
 	};
 
-	In2publishModule.showPreloader = function () {
-		In2publishModule.objects.preLoader.removeClass('in2publish-preloader--hidden');
-		In2publishModule.objects.typo3DocBody.addClass('stopScrolling');
+	In2publishCoreModule.showPreloader = function () {
+		In2publishCoreModule.objects.preLoader.removeClass('in2publish-preloader--hidden');
+		In2publishCoreModule.objects.typo3DocBody.addClass('stopScrolling');
 	};
 
-	In2publishModule.hidePreLoader = function () {
-		In2publishModule.objects.preLoader.addClass('in2publish-preloader--hidden');
-		In2publishModule.objects.typo3DocBody.removeClass('stopScrolling');
-	};
+	In2publishCoreModule.ajaxUriListener = function () {
+		$('*[data-action-ajax-uri]').click(function (e) {
+			var $this = $(this);
+			var uri = $this.data('action-ajax-uri');
+			if ('href' === uri) {
+				uri = $this.prop('href');
+				e.preventDefault();
+			}
+			var once = true === $this.data('action-ajax-once');
+			var container = $this.data('action-ajax-result');
+			var filled = false;
+			if (undefined !== container) {
+				var $container = $(container);
+				filled = true === $container.data('container-filled');
+			}
 
-	In2publishModule.setupFilterListeners = function () {
-		const filters = document.querySelectorAll('.js-in2publish-filter');
-
-		(Array.from(filters)).forEach(function (filter) {
-			filter.addEventListener('click', function(event) {
-				const input = event.currentTarget;
-				input.disabled = true;
-				fetch(input.getAttribute('data-href'))
-					.then(response => response.json())
-					.then(data => input.checked = data.newStatus)
-					.finally(() => {
-						input.disabled = false;
-					});
-
-				In2publishModule.filterItemsByStatus();
-			});
+			if (!once || !filled) {
+				$.ajax({
+					url: uri,
+					beforeSend: function () {
+						In2publishCoreModule.showPreloader();
+					},
+					complete: function () {
+						In2publishCoreModule.hidePreLoader();
+					},
+					success: function (data) {
+						if (data && undefined !== container) {
+							$container.html(data);
+							$container.data('container-filled', true);
+						}
+						In2publishCoreModule.openOrCloseStageListingDropdownContainer(
+							$container.find('.in2publish-stagelisting__dropdown')
+						);
+						In2publishCoreModule.openOrCloseStageListingMessagesContainer(
+							$container.find('.in2publish-stagelisting__messages')
+						);
+					}
+				});
+			}
 		});
+	};
 
+	In2publishCoreModule.hidePreLoader = function () {
+		In2publishCoreModule.objects.preLoader.addClass('in2publish-preloader--hidden');
+		In2publishCoreModule.objects.typo3DocBody.removeClass('stopScrolling');
+	};
+
+	In2publishCoreModule.setupFilterListeners = function () {
 		const searchForm = document.querySelector('.js-form-search');
 		if (searchForm) {
 			new DebounceEvent('input', function (event) {
@@ -219,134 +243,18 @@ define([
 		}
 	}
 
-	In2publishModule.setupClearableInputs = function () {
+	In2publishCoreModule.setupClearableInputs = function () {
 		(Array.from(document.querySelectorAll('.t3js-clearable'))).forEach(function (input) {
 			input.clearable();
 		});
 	};
 
-	In2publishModule.setupPublisherBagListeners = function () {
-		const publisherBagToggle = document.querySelector('.js-publisherbag-toggle');
-		if (publisherBagToggle) {
-			publisherBagToggle.addEventListener('change', function (event) {
-				In2publishModule.togglePublisherBagSelectorVisibility();
-
-				if (!event.target.checked) {
-					In2publishModule.resetPublisherBag();
-				}
-			});
-		}
-
-		(Array.from(document.querySelectorAll('.js-publisherbag-check'))).forEach(function (input) {
-			input.addEventListener('click', function (event) {
-				event.currentTarget.classList.toggle('in2publish-icon-toggle--active');
-				In2publishModule.fillPublisherBag();
-				In2publishModule.renderPublisherBag();
-				In2publishModule.renderPublishButton();
-			});
-		});
-	};
-
-	In2publishModule.togglePublisherBagSelectorVisibility = function () {
-		(Array.from(document.querySelectorAll('.js-publisherbag-check'))).forEach(function (input) {
-			input.classList.toggle('invisible');
-		});
-	};
-
-	In2publishModule.fillPublisherBag = function () {
-		const tempBag = [];
-
-		(Array.from(document.querySelectorAll('.js-publisherbag-check.in2publish-icon-toggle--active'))).forEach(function (item) {
-			const stageItem = item.closest('.in2publish-stagelisting__item');
-
-			tempBag.push({
-				id: stageItem.getAttribute('data-id'),
-				type: stageItem.getAttribute('data-type'),
-				name: stageItem.getAttribute('data-name'),
-				identifier: stageItem.getAttribute('data-identifier'),
-				storage: stageItem.getAttribute('data-storage')
-			})
-		});
-
-		In2publishModule.publisherBag = tempBag;
-	};
-
-	In2publishModule.renderPublisherBag = function () {
-		const publisherBagTable = document.querySelector('.in2publish-publisherbag');
-		const tableBody = document.querySelector('.js-publisherbag-content');
-		tableBody.innerHTML = '';
-
-		In2publishModule.publisherBag.forEach(function (bagItem) {
-			const tableRow = document.createElement('tr');
-			const tableCell = document.createElement('td');
-			tableCell.innerText = bagItem.name;
-
-			tableRow.appendChild(tableCell);
-			tableBody.appendChild(tableRow);
-		});
-
-		if (In2publishModule.publisherBag.length > 0) {
-			publisherBagTable.classList.remove('d-none');
-		}
-		else {
-			publisherBagTable.classList.add('d-none');
-		}
-	}
-
-	In2publishModule.renderPublishButton = function () {
-		const publishAllButton = document.querySelector('.js-publish-all');
-		const publishMultiButton = document.querySelector('.js-publish-multi');
-
-		if (In2publishModule.publisherBag.length > 0) {
-			publishAllButton.classList.add('d-none');
-			publishMultiButton.innerText = publishMultiButton.getAttribute('data-label').replace('(count)', In2publishModule.publisherBag.length);
-			publishMultiButton.classList.remove('d-none');
-		} else {
-			publishAllButton.classList.remove('d-none');
-			publishMultiButton.classList.add('d-none');
-		}
-	}
-
-	In2publishModule.resetPublisherBag = function () {
-		In2publishModule.publisherBag = [];
-
-		(Array.from(document.querySelectorAll('.js-publisherbag-check'))).forEach(function (input) {
-			input.classList.remove('in2publish-icon-toggle--active');
-		});
-
-		In2publishModule.renderPublisherBag();
-		In2publishModule.renderPublishButton();
-	}
-
-	In2publishModule.filterItemsByStatus = function () {
-		In2publishModule.changedFilter = (document.querySelector('.js-in2publish-filter[value="changed"]:checked') !== null);
-		In2publishModule.addedFilter = (document.querySelector('.js-in2publish-filter[value="added"]:checked') !== null);
-		In2publishModule.deletedFilter = (document.querySelector('.js-in2publish-filter[value="deleted"]:checked') !== null);
-		In2publishModule.movedFilter = (document.querySelector('.js-in2publish-filter[value="moved"]:checked') !== null);
-		In2publishModule.unchangedFilter = (document.querySelector('.js-in2publish-filter[value="unchanged"]:checked') !== null);
-
-		if (In2publishModule.changedFilter ||
-			In2publishModule.addedFilter ||
-			In2publishModule.deletedFilter ||
-			In2publishModule.movedFilter ||
-			In2publishModule.unchangedFilter
-		) {
-			In2publishModule.hideOrShowPages($('.in2publish-stagelisting__item--changed'), In2publishModule.changedFilter);
-			In2publishModule.hideOrShowPages($('.in2publish-stagelisting__item--added'), In2publishModule.addedFilter);
-			In2publishModule.hideOrShowPages($('.in2publish-stagelisting__item--deleted'), In2publishModule.deletedFilter);
-			In2publishModule.hideOrShowPages($('.in2publish-stagelisting__item--moved'), In2publishModule.movedFilter);
-			In2publishModule.hideOrShowPages($('.in2publish-stagelisting__item--unchanged'), In2publishModule.unchangedFilter);
-		} else {
-			$('.in2publish-stagelisting__item').show();
-		}
-	};
-
 	$(function () {
-		In2publishModule.objects.body = $('body');
-		In2publishModule.objects.preLoader = $('.in2publish-preloader');
-		In2publishModule.objects.typo3DocBody = $('#typo3-docbody');
-		In2publishModule.initialize();
+		In2publishCoreModule.objects.body = $('body');
+		In2publishCoreModule.objects.preLoader = $('.in2publish-preloader');
+		In2publishCoreModule.objects.typo3DocBody = $('#typo3-docbody');
+		In2publishCoreModule.initialize();
 	});
 
-	return In2publishModule;
+	return In2publishCoreModule;
 });
