@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Domain\PostProcessing\Processor;
+namespace In2code\In2publishCore\Component\FalHandling\PostProcessing;
 
 /*
  * Copyright notice

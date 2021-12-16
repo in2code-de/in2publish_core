@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Domain\Factory;
+namespace In2code\In2publishCore\Component\FalHandling\RecordFactory;
 
 /*
  * Copyright notice
@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\FalHandling\RecordFactory\Factory\FileIndexFactory;
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
@@ -58,7 +59,7 @@ use function sprintf;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class FolderRecordFactory implements LoggerAwareInterface
+class DefaultFolderRecordFactory implements LoggerAwareInterface, FolderRecordFactory
 {
     use LoggerAwareTrait;
 

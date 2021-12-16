@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Domain\Factory;
+namespace In2code\In2publishCore\Component\FalHandling\RecordFactory\Factory;
 
 /*
  * Copyright notice

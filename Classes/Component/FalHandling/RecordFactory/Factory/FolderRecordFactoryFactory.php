@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Domain\PostProcessing;
+namespace In2code\In2publishCore\Component\FalHandling\RecordFactory\Factory;
 
 /*
  * Copyright notice
@@ -29,24 +29,26 @@ namespace In2code\In2publishCore\Domain\PostProcessing;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\FalHandling\RecordFactory\DefaultFolderRecordFactory;
+use In2code\In2publishCore\Component\FalHandling\RecordFactory\FolderRecordFactory;
+use In2code\In2publishCore\Component\FalHandling\RecordFactory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Domain\PostProcessing\Processor\PostProcessor;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class PostProcessorFactory
+class FolderRecordFactoryFactory
 {
-    protected ConfigContainer $configContainer;
+    private ConfigContainer $configContainer;
 
     public function __construct(ConfigContainer $configContainer)
     {
         $this->configContainer = $configContainer;
     }
 
-    public function createPostProcessor(): PostProcessor
+    public function createFolderRecordFactory(): FolderRecordFactory
     {
-        if ($this->configContainer->get('factory.fal.reserveSysFileUids')) {
-            return GeneralUtility::makeInstance(Processor\FileIndexPostProcessor::class);
+        if (false === $this->configContainer->get('factory.fal.reserveSysFileUids')) {
+            return GeneralUtility::makeInstance(IndexingFolderRecordFactory::class);
         }
-        return GeneralUtility::makeInstance(Processor\FalIndexPostProcessor::class);
+        return GeneralUtility::makeInstance(DefaultFolderRecordFactory::class);
     }
 }

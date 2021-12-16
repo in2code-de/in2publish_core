@@ -29,8 +29,8 @@ namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\FalHandling\RecordFactory\Factory\FileIndexFactory;
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
-use In2code\In2publishCore\Domain\Factory\FileIndexFactory;
 use In2code\In2publishCore\Utility\FileUtility;
 use In2code\In2publishCore\Utility\FolderUtility;
 use ReflectionProperty;

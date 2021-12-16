@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Domain\Factory;
+namespace In2code\In2publishCore\Component\FalHandling\RecordFactory;
 
 /*
  * Copyright notice
@@ -29,12 +29,12 @@ namespace In2code\In2publishCore\Domain\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\FalHandling\RecordFactory\Exception\TooManyFilesException;
+use In2code\In2publishCore\Component\FalHandling\RecordFactory\Exception\TooManyForeignFilesException;
+use In2code\In2publishCore\Component\FalHandling\RecordFactory\Exception\TooManyLocalFilesException;
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
-use In2code\In2publishCore\Domain\Factory\Exception\TooManyFilesException;
-use In2code\In2publishCore\Domain\Factory\Exception\TooManyForeignFilesException;
-use In2code\In2publishCore\Domain\Factory\Exception\TooManyLocalFilesException;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\FileUtility;
@@ -61,7 +61,7 @@ use function substr;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class IndexingFolderRecordFactory
+class IndexingFolderRecordFactory implements FolderRecordFactory
 {
     /** Maximum number of files which are supported to exist in a single folder */
     protected int $threshold;

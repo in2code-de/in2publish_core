@@ -42,6 +42,7 @@ use TYPO3\CMS\Core\DependencyInjection\PublicServicePass;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 return static function (ContainerConfigurator $configurator, ContainerBuilder $builder) {
+    (include __DIR__ . '/Component/FalHandling/Services.php')($configurator, $builder);
     (include __DIR__ . '/Component/PostPublishTaskExecution/Services.php')($configurator, $builder);
     (include __DIR__ . '/Component/RecordHandling/Services.php')($configurator, $builder);
     (include __DIR__ . '/Features/AdminTools/Services.php')($configurator, $builder);

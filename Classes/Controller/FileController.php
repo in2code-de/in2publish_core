@@ -31,11 +31,10 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\FalHandling\RecordFactory\Exception\TooManyFilesException;
+use In2code\In2publishCore\Component\FalHandling\RecordFactory\FolderRecordFactory;
 use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Domain\Factory\Exception\TooManyFilesException;
-use In2code\In2publishCore\Domain\Factory\FolderRecordFactory;
-use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
@@ -76,6 +75,8 @@ class FileController extends AbstractController
 
     private PageRenderer $pageRenderer;
 
+    private FolderRecordFactory $folderRecordFactory;
+
     public function __construct(
         ConfigContainer $configContainer,
         ExecutionTimeService $executionTimeService,
@@ -96,6 +97,11 @@ class FileController extends AbstractController
         $this->recordPublisher = $recordPublisher;
         $this->moduleTemplateFactory = $moduleTemplateFactory;
         $this->pageRenderer = $pageRenderer;
+    }
+
+    public function injectFolderRecordFactory(FolderRecordFactory $folderRecordFactory): void
+    {
+        $this->folderRecordFactory = $folderRecordFactory;
     }
 
     public function indexAction(): ResponseInterface
@@ -197,19 +203,14 @@ class FileController extends AbstractController
      * @param string|null $identifier CombinedIdentifier as FAL would use it
      *
      * @return RecordInterface|null The record or null if it can not be handled
-     * @throws InsufficientFolderAccessPermissionsException
      */
     protected function tryToGetFolderInstance(?string $identifier): ?RecordInterface
     {
-        if (false === $this->configContainer->get('factory.fal.reserveSysFileUids')) {
-            try {
-                $record = GeneralUtility::makeInstance(IndexingFolderRecordFactory::class)->makeInstance($identifier);
-            } catch (TooManyFilesException $exception) {
-                $this->renderTooManyFilesFlashMessage($exception);
-                return null;
-            }
-        } else {
-            $record = GeneralUtility::makeInstance(FolderRecordFactory::class)->makeInstance($identifier);
+        try {
+            $record = $this->folderRecordFactory->makeInstance($identifier);
+        } catch (TooManyFilesException $exception) {
+            $this->renderTooManyFilesFlashMessage($exception);
+            return null;
         }
         $this->emitFolderInstanceCreated($record);
         return $record;

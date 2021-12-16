@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Domain\Factory\Exception;
+namespace In2code\In2publishCore\Component\FalHandling\RecordFactory\Exception;
 
 /*
  * Copyright notice
@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Domain\Factory\Exception;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-class TooManyLocalFilesException extends TooManyFilesException
+class TooManyForeignFilesException extends TooManyFilesException
 {
-    public const CODE = 1555492761;
+    public const CODE = 1555492770;
 }

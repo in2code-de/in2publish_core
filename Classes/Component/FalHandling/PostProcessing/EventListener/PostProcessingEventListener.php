@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Domain\PostProcessing;
+namespace In2code\In2publishCore\Component\FalHandling\PostProcessing\EventListener;
 
 /*
  * Copyright notice
@@ -29,8 +29,8 @@ namespace In2code\In2publishCore\Domain\PostProcessing;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\FalHandling\PostProcessing\PostProcessor;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\PostProcessing\Processor\PostProcessor;
 use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
 
 class PostProcessingEventListener

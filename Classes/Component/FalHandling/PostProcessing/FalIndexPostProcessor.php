@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Domain\PostProcessing\Processor;
+namespace In2code\In2publishCore\Component\FalHandling\PostProcessing;
 
 /*
  * Copyright notice
@@ -29,8 +29,8 @@ namespace In2code\In2publishCore\Domain\PostProcessing\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\FalHandling\RecordFactory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
-use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\FileUtility;
 use InvalidArgumentException;
