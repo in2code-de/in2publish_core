@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\FalHandling\RecordFactory;
+namespace In2code\In2publishCore\Component\FalHandling;
 
 /*
  * Copyright notice
@@ -29,15 +29,26 @@ namespace In2code\In2publishCore\Component\FalHandling\RecordFactory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\FalHandling\RecordFactory\Exception\TooManyFilesException;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use Throwable;
 
-interface FolderRecordFactory
+interface FalPublisher
 {
     /**
-     * @param string|null $identifier A FAL combined identifier or null for the default storage
-     * @return RecordInterface
-     * @throws TooManyFilesException If the folder can not be processed because it contains too many files.
+     * Publish the sys_file record and the file on disk.
+     *
+     * @param RecordInterface $record The instance of the sys_file record to publish.
+     * @return void
+     * @throws Throwable Bubbles exceptions from the publishing mechanism but ensures tasks are executed.
      */
-    public function makeInstance(?string $identifier): RecordInterface;
+    public function publishFile(RecordInterface $record): void;
+
+    /**
+     * Publishes a folder by creating or removing it via FAL on foreign.
+     *
+     * @param string $identifier A FAL combined identifier (like "1:/images/corporate/")
+     * @return void
+     * @throws Throwable Bubbles exceptions from the publishing mechanism but ensures tasks are executed.
+     */
+    public function publishFolder(string $identifier): void;
 }

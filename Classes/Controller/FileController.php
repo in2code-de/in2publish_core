@@ -31,14 +31,13 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Component\FalHandling\RecordFactory\Exception\TooManyFilesException;
-use In2code\In2publishCore\Component\FalHandling\RecordFactory\FolderRecordFactory;
+use In2code\In2publishCore\Component\FalHandling\FalFinder;
+use In2code\In2publishCore\Component\FalHandling\FalPublisher;
+use In2code\In2publishCore\Component\FalHandling\Finder\Exception\TooManyFilesException;
 use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
-use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
-use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
@@ -65,8 +64,6 @@ use function strpos;
  */
 class FileController extends AbstractController
 {
-    protected FolderPublisherService $folderPublisherService;
-
     protected bool $forcePidInteger = false;
 
     protected RecordPublisher $recordPublisher;
@@ -75,14 +72,15 @@ class FileController extends AbstractController
 
     private PageRenderer $pageRenderer;
 
-    private FolderRecordFactory $folderRecordFactory;
+    private FalFinder $falFinder;
+
+    protected FalPublisher $falPublisher;
 
     public function __construct(
         ConfigContainer $configContainer,
         ExecutionTimeService $executionTimeService,
         EnvironmentService $environmentService,
         RemoteCommandDispatcher $remoteCommandDispatcher,
-        FolderPublisherService $folderPublisherService,
         RecordPublisher $recordPublisher,
         PageRenderer $pageRenderer,
         ModuleTemplateFactory $moduleTemplateFactory
@@ -93,15 +91,20 @@ class FileController extends AbstractController
             $environmentService,
             $remoteCommandDispatcher
         );
-        $this->folderPublisherService = $folderPublisherService;
         $this->recordPublisher = $recordPublisher;
         $this->moduleTemplateFactory = $moduleTemplateFactory;
         $this->pageRenderer = $pageRenderer;
+        $this->pageRenderer->addInlineLanguageLabelFile('EXT:in2publish_core/Resources/Private/Language/locallang_m3_js.xlf');
     }
 
-    public function injectFolderRecordFactory(FolderRecordFactory $folderRecordFactory): void
+    public function injectFalFinder(FalFinder $falFinder): void
     {
-        $this->folderRecordFactory = $folderRecordFactory;
+        $this->falFinder = $falFinder;
+    }
+
+    public function injectFalPublisher(FalPublisher $falPublisher): void
+    {
+        $this->falPublisher = $falPublisher;
     }
 
     public function indexAction(): ResponseInterface
@@ -123,15 +126,13 @@ class FileController extends AbstractController
     /** @throws StopActionException */
     public function publishFolderAction(string $identifier): void
     {
-        $success = $this->folderPublisherService->publish($identifier);
-        $this->runTasks();
-
-        if ($success) {
+        try {
+            $this->falPublisher->publishFolder($identifier);
             $this->addFlashMessage(
                 LocalizationUtility::translate('file_publishing.folder', 'in2publish_core', [$identifier]),
                 LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
             );
-        } else {
+        } catch (Throwable $exception) {
             $this->addFlashMessage(
                 LocalizationUtility::translate('file_publishing.failure.folder', 'in2publish_core', [$identifier]),
                 LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
@@ -171,7 +172,7 @@ class FileController extends AbstractController
             }
 
             try {
-                $this->recordPublisher->publishRecordRecursive($relatedRecord);
+                $this->falPublisher->publishFile($relatedRecord);
                 $this->addFlashMessage(
                     LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
                     LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
@@ -182,7 +183,6 @@ class FileController extends AbstractController
                     LocalizationUtility::translate('file_publishing.failure', 'in2publish_core')
                 );
             }
-            $this->runTasks();
         }
 
         $this->redirect('index');
@@ -207,12 +207,11 @@ class FileController extends AbstractController
     protected function tryToGetFolderInstance(?string $identifier): ?RecordInterface
     {
         try {
-            $record = $this->folderRecordFactory->makeInstance($identifier);
+            $record = $this->falFinder->findFalRecord($identifier);
         } catch (TooManyFilesException $exception) {
             $this->renderTooManyFilesFlashMessage($exception);
             return null;
         }
-        $this->emitFolderInstanceCreated($record);
         return $record;
     }
 
@@ -230,10 +229,5 @@ class FileController extends AbstractController
         );
         $arguments['exception'] = $exception;
         $this->logger->warning('The folder file limit has been exceeded', $arguments);
-    }
-
-    protected function emitFolderInstanceCreated(RecordInterface $record): void
-    {
-        $this->eventDispatcher->dispatch(new FolderInstanceWasCreated($record));
     }
 }

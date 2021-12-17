@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\FalHandling\RecordFactory\Exception;
+namespace In2code\In2publishCore\Component\FalHandling\Finder\Exception;
 
 /*
  * Copyright notice

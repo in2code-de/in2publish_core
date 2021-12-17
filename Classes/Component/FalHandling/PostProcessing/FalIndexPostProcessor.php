@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Component\FalHandling\PostProcessing;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\FalHandling\RecordFactory\IndexingFolderRecordFactory;
+use In2code\In2publishCore\Component\FalHandling\Finder\IndexingFalFinder;
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\FileUtility;
@@ -47,16 +47,16 @@ class FalIndexPostProcessor implements PostProcessor, LoggerAwareInterface
 
     protected RemoteStorage $remoteStorage;
 
-    protected IndexingFolderRecordFactory $ifrFactory;
+    protected IndexingFalFinder $indexingFalFinder;
 
     public function __construct(
         ResourceFactory $resourceFactory,
         RemoteStorage $remoteStorage,
-        IndexingFolderRecordFactory $indexingFolderRecordFactory
+        IndexingFalFinder $indexingFalFinder
     ) {
         $this->resourceFactory = $resourceFactory;
         $this->remoteStorage = $remoteStorage;
-        $this->ifrFactory = $indexingFolderRecordFactory;
+        $this->indexingFalFinder = $indexingFalFinder;
     }
 
     /** @param RecordInterface[] $records */
@@ -97,10 +97,10 @@ class FalIndexPostProcessor implements PostProcessor, LoggerAwareInterface
 
                 $foreignFileInfo = $this->remoteStorage->getFile($storage->getUid(), $foreignIdentifier);
 
-                $this->ifrFactory->overruleLocalStorage($storage);
-                $this->ifrFactory->overruleRemoteStorage($this->remoteStorage);
+                $this->indexingFalFinder->overruleLocalStorage($storage);
+                $this->indexingFalFinder->overruleRemoteStorage($this->remoteStorage);
                 // do not use the return value since we only desire the record update of the file
-                $this->ifrFactory->filterRecords(
+                $this->indexingFalFinder->filterRecords(
                     [$localIdentifier => $localFileInfo],
                     [$foreignIdentifier => $foreignFileInfo],
                     [$file]

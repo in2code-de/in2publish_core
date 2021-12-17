@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\FalHandling\RecordFactory;
+namespace In2code\In2publishCore\Component\FalHandling\Finder;
 
 /*
  * Copyright notice
@@ -29,12 +29,14 @@ namespace In2code\In2publishCore\Component\FalHandling\RecordFactory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\FalHandling\RecordFactory\Factory\FileIndexFactory;
+use In2code\In2publishCore\Component\FalHandling\FalFinder;
+use In2code\In2publishCore\Component\FalHandling\Finder\Factory\FileIndexFactory;
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use In2code\In2publishCore\Utility\StorageDriverExtractor;
@@ -43,6 +45,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Resource\Folder;
@@ -59,7 +62,7 @@ use function sprintf;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class DefaultFolderRecordFactory implements LoggerAwareInterface, FolderRecordFactory
+class DefaultFalFinder implements LoggerAwareInterface, FalFinder
 {
     use LoggerAwareTrait;
 
@@ -68,6 +71,8 @@ class DefaultFolderRecordFactory implements LoggerAwareInterface, FolderRecordFa
     protected RecordFinder $recordFinder;
 
     protected Connection $foreignDatabase;
+
+    protected EventDispatcher $eventDispatcher;
 
     protected array $configuration = [];
 
@@ -81,51 +86,14 @@ class DefaultFolderRecordFactory implements LoggerAwareInterface, FolderRecordFa
         ResourceFactory $resourceFactory,
         RecordFinder $recordFinder,
         Connection $foreignDatabase,
+        EventDispatcher $eventDispatcher,
         ConfigContainer $configContainer
     ) {
         $this->resourceFactory = $resourceFactory;
         $this->recordFinder = $recordFinder;
         $this->foreignDatabase = $foreignDatabase;
+        $this->eventDispatcher = $eventDispatcher;
         $this->configuration = $configContainer->get('factory.fal');
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    protected function initializeDependenciesAndGetFolder(?string $identifier): Folder
-    {
-        // Determine the current folder. If the identifier is NULL there was no folder selected.
-        if (null === $identifier) {
-            // Special case: The module was opened, but no storage/folder has been selected.
-            // Get the default storage and the default folder to show.
-            $localStorage = $this->resourceFactory->getDefaultStorage();
-            // Notice: ->getDefaultFolder does not return the default folder to show, but to upload files to.
-            // The root level folder is the "real" default and also respects mount points of the current user.
-            $localFolder = $localStorage->getRootLevelFolder();
-        } else {
-            // This is the normal case. The identifier identifies the folder including its storage.
-            try {
-                $localFolder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
-            } /** @noinspection PhpRedundantCatchClauseInspection */ catch (FolderDoesNotExistException $exception) {
-                [$storage] = GeneralUtility::trimExplode(':', $identifier);
-                $localStorage = $this->resourceFactory->getStorageObject($storage);
-                $localFolder = $localStorage->getRootLevelFolder();
-            }
-            $localStorage = $localFolder->getStorage();
-        }
-
-        // Get the storages driver to prevent unintentional indexing by using storage methods.
-        $this->localDriver = StorageDriverExtractor::getLocalDriver($localStorage);
-        $this->foreignDriver = StorageDriverExtractor::getForeignDriver($localStorage);
-
-        $this->fileIndexFactory = GeneralUtility::makeInstance(
-            FileIndexFactory::class,
-            $this->localDriver,
-            $this->foreignDriver
-        );
-
-        // Drop the reference to the local storage, since i've got the driver objects for both sides now.
-        return $localFolder;
     }
 
     /**
@@ -135,7 +103,7 @@ class DefaultFolderRecordFactory implements LoggerAwareInterface, FolderRecordFa
      *
      * I only work with drivers so i don't "accidentally" index files...
      */
-    public function makeInstance(?string $identifier): RecordInterface
+    public function findFalRecord(?string $identifier): RecordInterface
     {
         /*
          * IMPORTANT NOTICES (a.k.a "never forget about this"-Notices):
@@ -199,7 +167,50 @@ class DefaultFolderRecordFactory implements LoggerAwareInterface, FolderRecordFa
         // [0] OLDB, [3] OFDB, [4] OL, [6] ODB, [9] OF, [11] NFFS, [12] NLFS, [14] ALL and [15] NONE
         $files = $this->filterFileRecords($files);
 
-        return $record->addRelatedRecords($files);
+        $folderRecord = $record->addRelatedRecords($files);
+
+        $this->eventDispatcher->dispatch(new FolderInstanceWasCreated($folderRecord));
+
+        return $folderRecord;
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     */
+    protected function initializeDependenciesAndGetFolder(?string $identifier): Folder
+    {
+        // Determine the current folder. If the identifier is NULL there was no folder selected.
+        if (null === $identifier) {
+            // Special case: The module was opened, but no storage/folder has been selected.
+            // Get the default storage and the default folder to show.
+            $localStorage = $this->resourceFactory->getDefaultStorage();
+            // Notice: ->getDefaultFolder does not return the default folder to show, but to upload files to.
+            // The root level folder is the "real" default and also respects mount points of the current user.
+            $localFolder = $localStorage->getRootLevelFolder();
+        } else {
+            // This is the normal case. The identifier identifies the folder including its storage.
+            try {
+                $localFolder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
+            } /** @noinspection PhpRedundantCatchClauseInspection */ catch (FolderDoesNotExistException $exception) {
+                [$storage] = GeneralUtility::trimExplode(':', $identifier);
+                $localStorage = $this->resourceFactory->getStorageObject($storage);
+                $localFolder = $localStorage->getRootLevelFolder();
+            }
+            $localStorage = $localFolder->getStorage();
+        }
+
+        // Get the storages driver to prevent unintentional indexing by using storage methods.
+        $this->localDriver = StorageDriverExtractor::getLocalDriver($localStorage);
+        $this->foreignDriver = StorageDriverExtractor::getForeignDriver($localStorage);
+
+        $this->fileIndexFactory = GeneralUtility::makeInstance(
+            FileIndexFactory::class,
+            $this->localDriver,
+            $this->foreignDriver
+        );
+
+        // Drop the reference to the local storage, since i've got the driver objects for both sides now.
+        return $localFolder;
     }
 
     /**

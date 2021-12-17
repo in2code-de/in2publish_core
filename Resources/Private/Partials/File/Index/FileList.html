@@ -8,21 +8,17 @@
 			data-searchable="{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'local')}|{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'foreign')}">
 			<f:comment>Left</f:comment>
 			<td class="col-icon">
-				<f:if condition="{record.localProperties.uid}">
-					<span data-bs-toggle="tooltip" title="uid={record.localProperties.uid}">
-						<core:iconForResource resource="{publish:miscellaneous.getFileResourceByUid(uid: record.localProperties.uid)}"/>
-					</span>
-				</f:if>
+				<publish:file.icon record="{record}" />
 			</td>
 			<td class="col-filename col-responsive nowrap">
 				<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
 				<span class="in2publish-stagelisting__item-filename">
-					<f:if condition="{record.state} === 'deleted'">
+					<f:if condition="{record.localProperties.name}">
 						<f:then>
-							<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" />
+							{record.localProperties.name}
 						</f:then>
 						<f:else>
-							<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" />
+							{record.foreignProperties.name}
 						</f:else>
 					</f:if>
 				</span>
@@ -43,16 +39,39 @@
 								<core:icon identifier="actions-eye" />
 							</f:link.external>
 						</f:then>
+						<f:else>
+							<span class="btn btn-default disabled" aria-hidden="true">
+								<core:icon identifier="empty-empty" />
+							</span>
+						</f:else>
 					</f:if>
-					<f:if condition="{record.relatedRecords.sys_file_metadata}">
+					<f:if condition="{record.state} != 'deleted' && {record.relatedRecords.sys_file_metadata}">
 						<f:then>
-							<f:for each="{record.relatedRecords.sys_file_metadata}" as="metaRecord" iteration="iterator">
-								<f:if condition="{iterator.isFirst}">
-									<a class="btn btn-default" href="{publish:uri.editUri(uid: metaRecord.localProperties.uid, tableName: metaRecord.tableName)}" data-bs-toggle="tooltip" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:edit')}">
-										<core:icon identifier="actions-pencil" />
-									</a>
-								</f:if>
-							</f:for>
+							<f:if condition="{record.relatedRecords.sys_file_metadata -> f:count()} > 1">
+								<f:then>
+									<button class="btn btn-default dropdown-toggle dropdown-toggle-no-chevron" type="button" id="translations_{record.identifier}" data-bs-toggle="dropdown" data-bs-boundary="window" aria-expanded="false">
+										<core:icon identifier="actions-translate" />
+									</button>
+									<ul class="dropdown-menu dropdown-list" aria-labelledby="translations_{record.identifier}">
+										<f:for each="{record.relatedRecords.sys_file_metadata}" as="metaRecord" iteration="iterator">
+											<li>
+												<a href="{publish:uri.editUri(uid: metaRecord.localProperties.uid, tableName: metaRecord.tableName)}" class="dropdown-item" title="{publish:record.getMergedProperty(record: record, propertyName: 'name')}">
+													<publish:record.languageFlagIcon record="{metaRecord}" side="local" /> <publish:record.getMergedProperty record="{record}" propertyName="name" />
+												</a>
+											</li>
+										</f:for>
+									</ul>
+								</f:then>
+								<f:else>
+									<f:for each="{record.relatedRecords.sys_file_metadata}" as="metaRecord" iteration="iterator">
+										<f:if condition="{iterator.isFirst}">
+											<a class="btn btn-default" href="{publish:uri.editUri(uid: metaRecord.localProperties.uid, tableName: metaRecord.tableName)}" data-bs-toggle="tooltip" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:edit')}">
+												<core:icon identifier="actions-pencil" />
+											</a>
+										</f:if>
+									</f:for>
+								</f:else>
+							</f:if>
 						</f:then>
 						<f:else>
 							<span class="btn btn-default disabled" aria-hidden="true">
@@ -62,17 +81,19 @@
 					</f:if>
 				</div>
 			</td>
-			<td></td>
+			<td>
+			</td>
 			<td>
 				<f:if condition="{record.changedRecursive}">
 					<f:link.action
-						class="t3js-modal-trigger btn btn-default"
+						class="js-publish-trigger js-publish-overlay btn btn-default"
 						action="publishFile"
 						arguments="{
 							uid:record.identifier,
 							identifier:'{publish:record.getMergedProperty(record:record, propertyName: \'identifier\')}',
 							storage:'{publish:record.getMergedProperty(record:record, propertyName: \'storage\')}'}"
-						additionalAttributes="{data-title: '{f:translate(key:\'publish\')}', data-content: '{f:translate(key:\'confirm_publish_file\')}', data-severity: 'warning'}">
+						data="{type: 'file', name: '{publish:record.getMergedProperty(record: record, propertyName: \'identifier\')}'}"
+					>
 						<f:translate key="publish"/>
 						<core:icon identifier="actions-arrow-right" />
 					</f:link.action>
@@ -81,14 +102,17 @@
 
 			<f:comment>Right</f:comment>
 			<td class="col-icon">
-				<f:if condition="{record.localProperties.uid} && {record.foreignProperties.uid}">
-					<span data-bs-toggle="tooltip" title="uid={record.foreignProperties.uid}">
-						<core:iconForResource resource="{publish:miscellaneous.getFileResourceByUid(uid: record.localProperties.uid)}"/>
-					</span>
-				</f:if>
+				<publish:file.icon record="{record}" />
 			</td>
 			<td class="col-filename col-responsive nowrap">
-				<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" />
+				<f:if condition="{record.foreignProperties.name}">
+					<f:then>
+						{record.foreignProperties.name}
+					</f:then>
+					<f:else>
+						---
+					</f:else>
+				</f:if>
 			</td>
 			<td class="col-control">
 				<f:if condition="{record.state} != 'added'">
@@ -102,6 +126,11 @@
 							<core:icon identifier="actions-eye" />
 						</f:link.external>
 					</f:then>
+					<f:else>
+						<span class="btn btn-default disabled" aria-hidden="true">
+							<core:icon identifier="empty-empty" />
+						</span>
+					</f:else>
 				</f:if>
 			</td>
 

@@ -29,6 +29,10 @@ namespace In2code\In2publishCore\Config\Definer;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\FalHandling\FalFinder;
+use In2code\In2publishCore\Component\FalHandling\FalPublisher;
+use In2code\In2publishCore\Component\FalHandling\Finder\DefaultFalFinder;
+use In2code\In2publishCore\Component\FalHandling\Publisher\DefaultFalPublisher;
 use In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder;
 use In2code\In2publishCore\Component\RecordHandling\DefaultRecordPublisher;
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
@@ -195,6 +199,8 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addArray(
                                      'fal',
                                      Builder::start()
+                                            ->addString('finder', DefaultFalFinder::class, [ClassImplementsValidator::class => [FalFinder::class]])
+                                            ->addString('publisher', DefaultFalPublisher::class, [ClassImplementsValidator::class => [FalPublisher::class]])
                                             ->addBoolean('reserveSysFileUids', false)
                                             ->addBoolean('reclaimSysFileEntries', false)
                                             ->addBoolean('autoRepairFolderHash', false)

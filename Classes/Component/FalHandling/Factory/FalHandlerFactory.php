@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\FalHandling\RecordFactory\Factory;
+namespace In2code\In2publishCore\Component\FalHandling\Factory;
 
 /*
  * Copyright notice
@@ -29,13 +29,12 @@ namespace In2code\In2publishCore\Component\FalHandling\RecordFactory\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\FalHandling\RecordFactory\DefaultFolderRecordFactory;
-use In2code\In2publishCore\Component\FalHandling\RecordFactory\FolderRecordFactory;
-use In2code\In2publishCore\Component\FalHandling\RecordFactory\IndexingFolderRecordFactory;
+use In2code\In2publishCore\Component\FalHandling\FalFinder;
+use In2code\In2publishCore\Component\FalHandling\FalPublisher;
 use In2code\In2publishCore\Config\ConfigContainer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class FolderRecordFactoryFactory
+class FalHandlerFactory
 {
     private ConfigContainer $configContainer;
 
@@ -44,11 +43,15 @@ class FolderRecordFactoryFactory
         $this->configContainer = $configContainer;
     }
 
-    public function createFolderRecordFactory(): FolderRecordFactory
+    public function createFalFinder(): FalFinder
     {
-        if (false === $this->configContainer->get('factory.fal.reserveSysFileUids')) {
-            return GeneralUtility::makeInstance(IndexingFolderRecordFactory::class);
-        }
-        return GeneralUtility::makeInstance(DefaultFolderRecordFactory::class);
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return GeneralUtility::makeInstance($this->configContainer->get('factory.fal.finder'));
+    }
+
+    public function createFalPublisher(): FalPublisher
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return GeneralUtility::makeInstance($this->configContainer->get('factory.fal.publisher'));
     }
 }

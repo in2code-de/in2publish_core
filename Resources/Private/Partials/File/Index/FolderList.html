@@ -14,10 +14,11 @@
 		<td class="col-control">
 			<f:if condition="{record.changed}">
 				<f:link.action
-					class="t3js-modal-trigger btn btn-default"
+					class="js-publish-trigger js-publish-overlay btn btn-default"
 					action="publishFolder"
 					arguments="{identifier:record.identifier}"
-					additionalAttributes="{data-title: '{f:translate(key:\'publish\')}', data-content: '{f:translate(key:\'confirm_publish_pages\', default:\'Are you sure?\')}', data-severity: 'warning'}">
+					data="{type: 'folder', name: '{publish:record.getMergedProperty(record: record, propertyName: \'identifier\')}'}"
+				>
 					<f:translate key="publish"/>
 					<core:icon identifier="actions-arrow-right"></core:icon>
 				</f:link.action>

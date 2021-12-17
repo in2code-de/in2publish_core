@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\FalHandling\RecordFactory;
+namespace In2code\In2publishCore\Component\FalHandling\Finder;
 
 /*
  * Copyright notice
@@ -29,16 +29,19 @@ namespace In2code\In2publishCore\Component\FalHandling\RecordFactory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\FalHandling\RecordFactory\Exception\TooManyFilesException;
-use In2code\In2publishCore\Component\FalHandling\RecordFactory\Exception\TooManyForeignFilesException;
-use In2code\In2publishCore\Component\FalHandling\RecordFactory\Exception\TooManyLocalFilesException;
+use In2code\In2publishCore\Component\FalHandling\FalFinder;
+use In2code\In2publishCore\Component\FalHandling\Finder\Exception\TooManyFilesException;
+use In2code\In2publishCore\Component\FalHandling\Finder\Exception\TooManyForeignFilesException;
+use In2code\In2publishCore\Component\FalHandling\Finder\Exception\TooManyLocalFilesException;
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Utility\FileUtility;
 use In2code\In2publishCore\Utility\FolderUtility;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
@@ -61,9 +64,9 @@ use function substr;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class IndexingFolderRecordFactory implements FolderRecordFactory
+class IndexingFalFinder implements FalFinder
 {
-    /** Maximum number of files which are supported to exist in a single folder */
+    /** @var int Maximum number of files which are supported to exist in a single folder */
     protected int $threshold;
 
     protected RemoteStorage $remoteStorage;
@@ -74,16 +77,20 @@ class IndexingFolderRecordFactory implements FolderRecordFactory
 
     protected ResourceStorage $localStorage;
 
+    protected EventDispatcher $eventDispatcher;
+
     public function __construct(
         ConfigContainer $configContainer,
         RemoteStorage $remoteStorage,
         ResourceFactory $resourceFactory,
-        RecordFinder $recordFinder
+        RecordFinder $recordFinder,
+        EventDispatcher $eventDispatcher
     ) {
         $this->threshold = $configContainer->get('factory.fal.folderFileLimit');
         $this->remoteStorage = $remoteStorage;
         $this->resourceFactory = $resourceFactory;
         $this->recordFinder = $recordFinder;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function overruleLocalStorage(ResourceStorage $localStorage): void
@@ -106,7 +113,7 @@ class IndexingFolderRecordFactory implements FolderRecordFactory
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function makeInstance(?string $dir): RecordInterface
+    public function findFalRecord(?string $dir): RecordInterface
     {
         // determine current folder
         try {
@@ -173,6 +180,8 @@ class IndexingFolderRecordFactory implements FolderRecordFactory
         $records = $this->recordFinder->findRecordsByProperties($properties, 'sys_file', true);
         $records = $this->filterRecords($localFiles, $remoteFiles, $records);
         $rootFolder->addRelatedRecords($records);
+
+        $this->eventDispatcher->dispatch(new FolderInstanceWasCreated($rootFolder));
 
         return $rootFolder;
     }

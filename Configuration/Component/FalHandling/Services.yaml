@@ -9,11 +9,14 @@ services:
   In2code\In2publishCore\Component\FalHandling\:
     resource: '../../../Classes/Component/FalHandling/*'
 
-  In2code\In2publishCore\Component\FalHandling\RecordFactory\FolderRecordFactory:
-    factory: [ '@In2code\In2publishCore\Component\FalHandling\RecordFactory\Factory\FolderRecordFactoryFactory', 'createFolderRecordFactory' ]
+  In2code\In2publishCore\Component\FalHandling\FalFinder:
+    factory: [ '@In2code\In2publishCore\Component\FalHandling\Factory\FalHandlerFactory', 'createFalFinder' ]
+
+  In2code\In2publishCore\Component\FalHandling\FalPublisher:
+    factory: [ '@In2code\In2publishCore\Component\FalHandling\Factory\FalHandlerFactory', 'createFalPublisher' ]
 
   In2code\In2publishCore\Component\FalHandling\PostProcessing\PostProcessor:
-    factory: ['@In2code\In2publishCore\Component\FalHandling\PostProcessing\Factory\PostProcessorFactory', 'createPostProcessor']
+    factory: [ '@In2code\In2publishCore\Component\FalHandling\PostProcessing\Factory\PostProcessorFactory', 'createPostProcessor' ]
 
   In2code\In2publishCore\Component\FalHandling\PostProcessing\EventListener\PostProcessingEventListener:
     tags:

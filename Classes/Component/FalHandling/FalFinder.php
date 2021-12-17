@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\FalHandling\RecordFactory\Exception;
+namespace In2code\In2publishCore\Component\FalHandling;
 
 /*
  * Copyright notice
  *
- * (c) 2016 in2code.de and the following authors:
+ * (c) 2021 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,7 +29,17 @@ namespace In2code\In2publishCore\Component\FalHandling\RecordFactory\Exception;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-class TooManyLocalFilesException extends TooManyFilesException
+use In2code\In2publishCore\Component\FalHandling\Finder\Exception\TooManyFilesException;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
+
+interface FalFinder
 {
-    public const CODE = 1555492761;
+    /**
+     * The actual FalFinder must dispatch the FolderInstanceWasCreated event before returning the Record instance.
+     *
+     * @param string|null $identifier A FAL combined identifier or null for the default storage
+     * @return RecordInterface
+     * @throws TooManyFilesException If the folder can not be processed because it contains too many files.
+     */
+    public function findFalRecord(?string $identifier): RecordInterface;
 }

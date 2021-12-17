@@ -1,8 +1,8 @@
 'use strict';
 
 define([
-	'jquery', 'TYPO3/CMS/Core/Event/DebounceEvent', 'TYPO3/CMS/Backend/Input/Clearable'
-], function ($, DebounceEvent) {
+	'jquery', 'TYPO3/CMS/Core/Event/DebounceEvent', 'TYPO3/CMS/Backend/Modal', 'TYPO3/CMS/Backend/Input/Clearable'
+], function ($, DebounceEvent, Modal) {
 	var In2publishCoreModule = {
 		isPublishFilesModule: (document.querySelector('.module[data-module-name="file_In2publishCoreM3"]') !== null),
 		unchangedFilter: false,
@@ -15,7 +15,7 @@ define([
 			body: undefined,
 			preLoader: undefined,
 			typo3DocBody: undefined
-		}
+		},
 	};
 
 	In2publishCoreModule.initialize = function () {
@@ -23,6 +23,7 @@ define([
 		if (In2publishCoreModule.isPublishFilesModule) {
 			In2publishCoreModule.setupClearableInputs();
 			In2publishCoreModule.setupFilterListeners();
+			In2publishCoreModule.setupPublishListeners();
 		} else {
 			In2publishCoreModule.setFilterForPageView();
 			In2publishCoreModule.filterButtonsListener();
@@ -218,12 +219,10 @@ define([
 
 						if (!searchable.includes(searchValue)) {
 							item.classList.add('d-none');
-						}
-						else {
+						} else {
 							item.classList.remove('d-none');
 						}
-					}
-					else {
+					} else {
 						item.classList.remove('d-none');
 					}
 				});
@@ -241,6 +240,58 @@ define([
 				});
 			}
 		}
+	}
+
+	In2publishCoreModule.setupPublishListeners = function () {
+		document.querySelectorAll('.js-publish-trigger').forEach(
+			element => element.addEventListener(
+				'click',
+				In2publishCoreModule.publishFileEventListener,
+				{capture: true}
+			)
+		)
+	};
+
+	In2publishCoreModule.publishFileEventListener = function (event) {
+		event.preventDefault();
+		const target = event.currentTarget;
+		const type = target.dataset.type;
+		const configuration = {
+			title: TYPO3.lang['tx_in2publishcore.modal.publish.title'],
+			content: TYPO3.lang['tx_in2publishcore.modal.publish.' + type + '.text']
+				.replace('$name$', target.dataset.name),
+			severity: 0,
+			buttons: [
+				{
+					text: TYPO3.lang['tx_in2publishcore.action.abort'],
+					btnClass: 'btn btn-default',
+					name: 'abort',
+					active: true,
+					trigger: function () {
+						Modal.currentModal.trigger('modal-dismiss');
+					}
+				},
+				{
+					text: TYPO3.lang['tx_in2publishcore.actions.publish'],
+					btnClass: 'btn btn-success',
+					name: 'publish',
+					trigger: () => {
+						Modal.currentModal.trigger('modal-dismiss');
+						if (target.classList.contains('js-publish-overlay')) {
+							In2publishCoreModule.showPreloader();
+						}
+						target.removeEventListener(
+							'click',
+							In2publishCoreModule.publishFileEventListener,
+							{capture: true}
+						);
+						target.dispatchEvent(event);
+						window.location = target.href;
+					}
+				}
+			]
+		};
+		Modal.advanced(configuration);
 	}
 
 	In2publishCoreModule.setupClearableInputs = function () {
