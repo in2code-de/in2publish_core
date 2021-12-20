@@ -21,6 +21,8 @@ define([
 	In2publishCoreModule.initialize = function () {
 		In2publishCoreModule.toggleDirtyPropertiesListContainerListener();
 		if (In2publishCoreModule.isPublishFilesModule) {
+			In2publishCoreModule.filterItemsByStatus();
+			In2publishCoreModule.setupFilterListeners();
 			In2publishCoreModule.setupClearableInputs();
 			In2publishCoreModule.setupFilterListeners();
 			In2publishCoreModule.setupPublishListeners();
@@ -30,6 +32,29 @@ define([
 		}
 		In2publishCoreModule.overlayListener();
 		In2publishCoreModule.ajaxUriListener();
+	};
+
+	In2publishCoreModule.filterItemsByStatus = function () {
+		In2publishCoreModule.changedFilter = (document.querySelector('.js-in2publish-filter[value="changed"]:checked') !== null);
+		In2publishCoreModule.addedFilter = (document.querySelector('.js-in2publish-filter[value="added"]:checked') !== null);
+		In2publishCoreModule.deletedFilter = (document.querySelector('.js-in2publish-filter[value="deleted"]:checked') !== null);
+		In2publishCoreModule.movedFilter = (document.querySelector('.js-in2publish-filter[value="moved"]:checked') !== null);
+		In2publishCoreModule.unchangedFilter = (document.querySelector('.js-in2publish-filter[value="unchanged"]:checked') !== null);
+
+		if (In2publishCoreModule.changedFilter ||
+			In2publishCoreModule.addedFilter ||
+			In2publishCoreModule.deletedFilter ||
+			In2publishCoreModule.movedFilter ||
+			In2publishCoreModule.unchangedFilter
+		) {
+			In2publishCoreModule.hideOrShowPages($('.in2publish-stagelisting__item--changed'), In2publishCoreModule.changedFilter);
+			In2publishCoreModule.hideOrShowPages($('.in2publish-stagelisting__item--added'), In2publishCoreModule.addedFilter);
+			In2publishCoreModule.hideOrShowPages($('.in2publish-stagelisting__item--deleted'), In2publishCoreModule.deletedFilter);
+			In2publishCoreModule.hideOrShowPages($('.in2publish-stagelisting__item--moved'), In2publishCoreModule.movedFilter);
+			In2publishCoreModule.hideOrShowPages($('.in2publish-stagelisting__item--unchanged'), In2publishCoreModule.unchangedFilter);
+		} else {
+			$('.in2publish-stagelisting__item').show();
+		}
 	};
 
 	In2publishCoreModule.toggleDirtyPropertiesListContainerListener = function () {
@@ -207,6 +232,27 @@ define([
 	};
 
 	In2publishCoreModule.setupFilterListeners = function () {
+		const filters = document.querySelectorAll('.js-in2publish-filter');
+
+		(Array.from(filters)).forEach(function (filter) {
+			filter.addEventListener('click', function(event) {
+				const input = event.currentTarget;
+				input.disabled = true;
+				fetch(input.getAttribute('data-href'))
+					.then(response => response.json())
+					// Do not reset the buttons state to its actual value because it is more confusing that having
+					// a filter state not properly set when reloading the page
+					// .then(data => input.checked = data.newStatus)
+					.finally(() => {
+						// The request might be so fast that the user only sees a flicker when the input gets disabled.
+						// Set a timeout to make the disabled state more visible and prevent spamming.
+						setTimeout(() => input.disabled = false, 100);
+					});
+
+				In2publishCoreModule.filterItemsByStatus();
+			});
+		});
+
 		const searchForm = document.querySelector('.js-form-search');
 		if (searchForm) {
 			new DebounceEvent('input', function (event) {
