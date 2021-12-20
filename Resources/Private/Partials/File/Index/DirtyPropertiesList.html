@@ -1,48 +1,51 @@
-{namespace publish=In2code\In2publishCore\ViewHelpers}
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
+	  data-namespace-typo3-fluid="true"
+>
+	<tr class="collapse" id="{record.tableName}-{record.localProperties.uid}">
+		<td></td>
+		<td colspan="4">
+			<f:render section="StageProperties" arguments="{ record: record, stagingLevel: 'local'}"/>
+		</td>
+		<td></td>
+		<td colspan="2">
+			<f:render section="StageProperties" arguments="{ record: record, stagingLevel: 'foreign'}"/>
+		</td>
+		<td></td>
+	</tr>
 
-<tr class="collapse" id="{record.tableName}-{record.localProperties.uid}">
-	<td></td>
-	<td colspan="4">
-		<f:render section="StageProperties" arguments="{ record: record, stagingLevel: 'local'}"/>
-	</td>
-	<td></td>
-	<td colspan="2">
-		<f:render section="StageProperties" arguments="{ record: record, stagingLevel: 'foreign'}"/>
-	</td>
-	<td></td>
-</tr>
+	<f:section name="StageProperties">
+		<f:variable name="propertyKey">{stagingLevel}Properties</f:variable>
 
-<f:section name="StageProperties">
-	<f:variable name="propertyKey">{stagingLevel}Properties</f:variable>
+		<f:if condition="{record.{propertyKey}}">
+			<ul class="list-unstyled mb-2 ms-0">
+				<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'name', stagingLevel: stagingLevel}"/>
+				<f:if condition="{record.relatedRecords.sys_file_metadata}">
+					<f:for each="{record.relatedRecords.sys_file_metadata}" as="metaRecord" iteration="iterator">
+						<f:if condition="{iterator.isFirst}">
+							<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'title', stagingLevel: stagingLevel}"/>
+							<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'description', stagingLevel: stagingLevel}"/>
+							<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'alternative', stagingLevel: stagingLevel}"/>
+						</f:if>
+					</f:for>
+				</f:if>
+				<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'extension', stagingLevel: stagingLevel}"/>
+				<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'size', stagingLevel: stagingLevel}" contentAs="content">
+					<f:format.bytes><publish:miscellaneous.getPropertyFromStagingDefinition propertyName="size" record="{record}" stagingLevel="{stagingLevel}" /></f:format.bytes>
+				</f:render>
+				<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'identifier', stagingLevel: stagingLevel}"/>
+			</ul>
 
-	<f:if condition="{record.{propertyKey}}">
-		<ul class="list-unstyled mb-2 ms-0">
-			<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'name', stagingLevel: stagingLevel}"/>
-			<f:if condition="{record.relatedRecords.sys_file_metadata}">
-				<f:for each="{record.relatedRecords.sys_file_metadata}" as="metaRecord" iteration="iterator">
-					<f:if condition="{iterator.isFirst}">
-						<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'title', stagingLevel: stagingLevel}"/>
-						<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'description', stagingLevel: stagingLevel}"/>
-						<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'alternative', stagingLevel: stagingLevel}"/>
-					</f:if>
-				</f:for>
-			</f:if>
-			<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'extension', stagingLevel: stagingLevel}"/>
-			<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'size', stagingLevel: stagingLevel}" contentAs="content">
-				{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'size', record: record, stagingLevel: stagingLevel) -> f:format.bytes()}
-			</f:render>
-			<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'identifier', stagingLevel: stagingLevel}"/>
-		</ul>
-
-		<f:if condition="{record.{propertyKey}.type} == 2">
-			<f:if condition="{stagingLevel} == 'foreign'">
-				<f:then>
-					<img class="w-50 h-auto" src="{publish:File.BuildResourcePath(record:record,stagingLevel: stagingLevel)}"/>
-				</f:then>
-				<f:else>
-					<f:image class="w-50 h-auto" src="{record.{propertyKey}.uid}"/>
-				</f:else>
+			<f:if condition="{record.{propertyKey}.type} == 2">
+				<f:if condition="{stagingLevel} == 'foreign'">
+					<f:then>
+						<img class="w-50 h-auto" src="{publish:File.BuildResourcePath(record:record,stagingLevel: stagingLevel)}"/>
+					</f:then>
+					<f:else>
+						<f:image class="w-50 h-auto" src="{record.{propertyKey}.uid}"/>
+					</f:else>
+				</f:if>
 			</f:if>
 		</f:if>
-	</f:if>
-</f:section>
+	</f:section>
+</html>
