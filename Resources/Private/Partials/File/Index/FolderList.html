@@ -2,6 +2,9 @@
 {namespace core=TYPO3\CMS\Core\ViewHelpers}
 <f:if condition="{record}">
 	<tr class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.state}"
+		data-type="folder"
+		data-id="{record.identifier}"
+		data-name="{publish:record.getMergedProperty(record:record, propertyName: 'name')}"
 		data-searchable="{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'local', fallbackProperty: 'identifier')}|{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'foreign', fallbackProperty: 'identifier')}">
 		<f:comment>Left</f:comment>
 		<td class="col-icon">
