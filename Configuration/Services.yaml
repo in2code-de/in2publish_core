@@ -68,6 +68,9 @@ services:
   In2code\In2publishCore\Service\Permission\PermissionService:
     public: true
 
+  In2code\In2publishCore\Domain\Service\Publishing\RunningRequestService:
+    public: true
+
   In2code\In2publishCore\Domain\Repository\TaskRepository:
     public: true
 
@@ -99,3 +102,17 @@ services:
         identifier: 'in2publishcore-postprocessingeventlistener-rootrecordcreationwasfinished'
         method: 'onRootRecordCreationWasFinished'
         event: In2code\In2publishCore\Event\RootRecordCreationWasFinished
+
+  In2code\In2publishCore\EventListener\RecursivePublishingListener:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-recursivePublishingListener-recursiverecordpublishingbegan'
+        method: 'onRecordPublishingBegan'
+        event: In2code\In2publishCore\Event\RecursiveRecordPublishingBegan
+
+  In2code\In2publishCore\EventListener\RecursivePublishingEndedListener:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-recursivePublishingEndedListener-recursiverecordpublishingended'
+        method: 'onRecordPublishingEnded'
+        event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded

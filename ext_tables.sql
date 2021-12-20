@@ -29,6 +29,18 @@ CREATE TABLE tx_in2code_in2publish_task
     PRIMARY KEY (uid)
 ) ENGINE = InnoDB;
 
+CREATE TABLE tx_in2publishcore_running_request
+(
+    uid              int(11) unsigned   NOT NULL auto_increment,
+
+    record_id        int(11) unsigned   NOT NULL,
+    table_name       varchar(255)       DEFAULT '' NOT NULL,
+    request_token    varchar(255)       DEFAULT ''  NOT NULL,
+    timestamp_begin  int(11)            unsigned DEFAULT '0' NOT NULL,
+
+    PRIMARY KEY (uid)
+) ENGINE = InnoDB;
+
 CREATE TABLE tx_in2code_in2publish_envelope
 (
     uid      int(11) unsigned        NOT NULL auto_increment,
