@@ -6,7 +6,7 @@ This feature has an integration in the Content Publisher Enterprise Edition, whi
 
 Please read the [Known Issues Documentation](../KnownIssues.md) before activation.
 Enable the feature:
-```YAML
+```yaml
 features:
   contextMenuPublishEntry:
     enable: TRUE
