@@ -11,7 +11,7 @@
 			data-searchable="{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'local', fallbackProperty: 'identifier')}|{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'foreign', fallbackProperty: 'identifier')}">
 			<f:comment>Left</f:comment>
 			<td class="col-icon">
-				<core:icon identifier="files-folder"></core:icon>
+				<core:icon identifier="files-folder" />
 			</td>
 			<td class="col-filename col-responsive nowrap" colspan="3">
 				<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
@@ -26,14 +26,14 @@
 						data="{type: 'folder', name: '{publish:record.getMergedProperty(record: record, propertyName: \'identifier\')}'}"
 					>
 						<f:translate key="publish"/>
-						<core:icon identifier="actions-arrow-right"></core:icon>
+						<core:icon identifier="actions-arrow-right" />
 					</f:link.action>
 				</f:if>
 			</td>
 
 			<f:comment>Right</f:comment>
 			<td class="col-icon">
-				<core:icon identifier="files-folder"></core:icon>
+				<core:icon identifier="files-folder" />
 			</td>
 			<td class="col-filename col-responsive nowrap" colspan="2">
 				<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" fallbackProperty="identifier" />
