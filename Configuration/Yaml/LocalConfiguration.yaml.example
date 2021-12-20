@@ -113,6 +113,7 @@ ignoreFieldsForDifferenceView:
     - hitcount
     - lasthiton
 
+
 # factory settings (configuration about building relations in in2publish)
 factory:
 
