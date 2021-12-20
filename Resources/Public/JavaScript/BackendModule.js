@@ -24,7 +24,6 @@ define([
 			In2publishCoreModule.filterItemsByStatus();
 			In2publishCoreModule.setupFilterListeners();
 			In2publishCoreModule.setupClearableInputs();
-			In2publishCoreModule.setupFilterListeners();
 			In2publishCoreModule.setupPublishListeners();
 		} else {
 			In2publishCoreModule.setFilterForPageView();
