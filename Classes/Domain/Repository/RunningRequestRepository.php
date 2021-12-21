@@ -35,14 +35,14 @@ class RunningRequestRepository
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function containsRunningRequestForRecord(Record $record): bool
+    public function existsRunningRequestForRecord(int $identifier, string $tableName): bool
     {
         $statement = $this->connection->select(
             ['uid'],
             self::RUNNING_REQUEST_TABLE_NAME,
             [
-                'record_id' => $record->getIdentifier(),
-                'table_name' => $record->getTableName()
+                'record_id' => $identifier,
+                'table_name' => $tableName
             ]
         );
         return $statement->rowCount() > 0;

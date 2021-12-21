@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\Domain\Model;
  */
 
 use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Domain\Service\Publishing\RunningRequestService;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Event\VoteIfRecordIsPublishable;
 use In2code\In2publishCore\Service\Configuration\TcaService;
@@ -1151,10 +1150,6 @@ class Record implements RecordInterface
     public function isPublishable(): bool
     {
         if (!$this->isChangedRecursive()) {
-            return false;
-        }
-        $runningRequestService = GeneralUtility::makeInstance(RunningRequestService::class);
-        if ($runningRequestService->isPublishingRequestRunningForThisRecord($this)) {
             return false;
         }
 

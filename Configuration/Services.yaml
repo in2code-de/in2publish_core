@@ -116,3 +116,10 @@ services:
         identifier: 'in2publishcore-recursivePublishingEndedListener-recursiverecordpublishingended'
         method: 'onRecordPublishingEnded'
         event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded
+
+  In2code\In2publishCore\EventListener\PublishingRequestIsRunningVoter:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-publishingRequestIsRunningVoter-VoteIfRecordIsPublishable'
+        method: 'isPublishable'
+        event: In2code\In2publishCore\Event\VoteIfRecordIsPublishable

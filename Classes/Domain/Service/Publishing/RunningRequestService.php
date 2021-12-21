@@ -4,7 +4,6 @@
 namespace In2code\In2publishCore\Domain\Service\Publishing;
 
 
-use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Repository\RunningRequestRepository;
 
 class RunningRequestService
@@ -19,8 +18,11 @@ class RunningRequestService
         $this->runningRequestRepository = $runningRequestRepository;
     }
 
-    public function isPublishingRequestRunningForThisRecord(Record $record): bool
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function isPublishingRequestRunningForThisRecord(int $identifier, string $tableName): bool
     {
-        return $this->runningRequestRepository->containsRunningRequestForRecord($record);
+        return $this->runningRequestRepository->existsRunningRequestForRecord($identifier, $tableName);
     }
 }
