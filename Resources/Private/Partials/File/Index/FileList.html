@@ -81,9 +81,7 @@
 					</f:if>
 				</div>
 			</td>
-			<td>
-			</td>
-			<td>
+			<td class="col-control col-publish">
 				<f:if condition="{record.changedRecursive}">
 					<f:link.action
 						class="js-publish-trigger js-publish-overlay btn btn-default"
@@ -134,7 +132,7 @@
 				</f:if>
 			</td>
 
-			<td>
+			<td class="col-state">
 				<i class="in2publish-state-icon in2publish-state--{record.stateRecursive} in2publish-icon-circle ms-2"></i>
 				<f:translate key="record.state.{record.stateRecursive}.short"/>
 			</td>

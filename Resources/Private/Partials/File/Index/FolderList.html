@@ -13,11 +13,11 @@
 			<td class="col-icon">
 				<core:icon identifier="files-folder" />
 			</td>
-			<td class="col-filename col-responsive nowrap" colspan="3">
+			<td class="col-filename col-responsive nowrap" colspan="2">
 				<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
 				<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" fallbackProperty="identifier" />
 			</td>
-			<td class="col-control">
+			<td class="col-control col-publish">
 				<f:if condition="{record.changed}">
 					<f:link.action
 						class="js-publish-trigger js-publish-overlay btn btn-default"
@@ -39,7 +39,7 @@
 				<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" fallbackProperty="identifier" />
 			</td>
 
-			<td>
+			<td class="col-state">
 				<i class="in2publish-state-icon in2publish-state--{record.state} in2publish-icon-circle ms-2"></i>
 				<f:translate key="record.state.{record.state}.short"/>
 			</td>
