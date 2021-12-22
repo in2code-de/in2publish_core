@@ -253,7 +253,7 @@ class Record implements RecordInterface
                 }
             }
             foreach ($this->getRelatedRecords() as $tableName => $relatedRecords) {
-                if ($tableName === 'pages') {
+                if ($tableName === 'pages' || $tableName === 'physical_folder') {
                     continue;
                 }
                 foreach ($relatedRecords as $relatedRecord) {
