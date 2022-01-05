@@ -13,7 +13,7 @@
 			<td class="col-icon">
 				<core:icon identifier="files-folder" />
 			</td>
-			<td class="col-filename col-responsive nowrap" colspan="2">
+			<td class="col-filename col-filename--local col-responsive nowrap" colspan="2">
 				<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
 				<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" fallbackProperty="identifier" />
 			</td>
@@ -35,7 +35,7 @@
 			<td class="col-icon">
 				<core:icon identifier="files-folder" />
 			</td>
-			<td class="col-filename col-responsive nowrap" colspan="2">
+			<td class="col-filename col-filename--foreign col-responsive nowrap" colspan="2">
 				<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" fallbackProperty="identifier" />
 			</td>
 
