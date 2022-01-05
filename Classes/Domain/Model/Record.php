@@ -57,6 +57,7 @@ use function json_encode;
 use function spl_object_hash;
 use function strpos;
 use function trigger_error;
+use function trim;
 use function uasort;
 
 use const E_USER_DEPRECATED;
@@ -991,7 +992,7 @@ class Record implements RecordInterface
         do {
             $path = '/ ' . $record->tableName . ' [' . $record->getIdentifier() . '] ' . $path;
         } while ($record->tableName !== 'pages' && $record = $record->parentRecord);
-        return $path;
+        return rtrim($path, ' ');
     }
 
     /** @return RecordInterface[] */
