@@ -1,0 +1,17 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+    bind:
+      $localDatabase: '@In2code.In2publishCore.Database.Local'
+      $foreignDatabase: '@In2code.In2publishCore.Database.Foreign'
+
+  In2code\In2publishCore\Component\RecordHandling\:
+    resource: '../../../Classes/Component/RecordHandling/*'
+
+  In2code\In2publishCore\Component\RecordHandling\RecordFinder:
+    factory: ['@In2code\In2publishCore\Component\RecordHandling\Factory\RecordHandlerFactory', 'createRecordFinder']
+
+  In2code\In2publishCore\Component\RecordHandling\RecordPublisher:
+    factory: [ '@In2code\In2publishCore\Component\RecordHandling\Factory\RecordHandlerFactory', 'createRecordPublisher' ]

@@ -228,8 +228,6 @@ interface RecordInterface
      */
     public function setParentRecord(RecordInterface $parentRecord): RecordInterface;
 
-    public function getColumnsTca(): array;
-
     public function hasAdditionalProperty(string $propertyName): bool;
 
     public function getPropertiesBySideIdentifier(string $side): array;

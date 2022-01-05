@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Config\Definer;
+namespace In2code\In2publishCore\Config\Migration;
 
 /*
  * Copyright notice
  *
- * (c) 2018 in2code.de and the following authors:
+ * (c) 2021 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,21 +29,21 @@ namespace In2code\In2publishCore\Features\SimpleOverviewAndAjax\Config\Definer;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Config\Builder;
-use In2code\In2publishCore\Config\Definer\DefinerInterface;
-use In2code\In2publishCore\Config\Node\NodeCollection;
-
-class SimpleOverviewAndAjaxDefiner implements DefinerInterface
+interface MigrationInterface
 {
-    public function getLocalDefinition(): NodeCollection
-    {
-        return Builder::start()
-                      ->addArray('factory', Builder::start()->addBoolean('simpleOverviewAndAjax', false))
-                      ->end();
-    }
+    /**
+     * Run over the whole configuration and set new configuration values for deprecated options.
+     * Log deprecations once per request at max!
+     *
+     * @param array $config
+     * @return array
+     */
+    public function migrate(array $config): array;
 
-    public function getForeignDefinition(): NodeCollection
-    {
-        return Builder::start()->end();
-    }
+    /**
+     * Returns all collected messages/deprecations created during the migration. Used to debug the config container.
+     *
+     * @return array
+     */
+    public function getMessages(): array;
 }

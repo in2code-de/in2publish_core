@@ -20,7 +20,6 @@ define([
 		In2publishModule.setFilterForPageView();
 		In2publishModule.filterButtonsListener();
 		In2publishModule.overlayListener();
-		In2publishModule.ajaxUriListener();
 	};
 
 	In2publishModule.toggleDirtyPropertiesListContainerListener = function () {
@@ -146,48 +145,6 @@ define([
 	In2publishModule.showPreloader = function () {
 		In2publishModule.objects.preLoader.removeClass('in2publish-preloader--hidden');
 		In2publishModule.objects.typo3DocBody.addClass('stopScrolling');
-	};
-
-	In2publishModule.ajaxUriListener = function () {
-		$('*[data-action-ajax-uri]').click(function (e) {
-			var $this = $(this);
-			var uri = $this.data('action-ajax-uri');
-			if ('href' === uri) {
-				uri = $this.prop('href');
-				e.preventDefault();
-			}
-			var once = true === $this.data('action-ajax-once');
-			var container = $this.data('action-ajax-result');
-			var filled = false;
-			if (undefined !== container) {
-				var $container = $(container);
-				filled = true === $container.data('container-filled');
-			}
-
-			if (!once || !filled) {
-				$.ajax({
-					url: uri,
-					beforeSend: function () {
-						In2publishModule.showPreloader();
-					},
-					complete: function () {
-						In2publishModule.hidePreLoader();
-					},
-					success: function (data) {
-						if (data && undefined !== container) {
-							$container.html(data);
-							$container.data('container-filled', true);
-						}
-						In2publishModule.openOrCloseStageListingDropdownContainer(
-							$container.find('.in2publish-stagelisting__dropdown')
-						);
-						In2publishModule.openOrCloseStageListingMessagesContainer(
-							$container.find('.in2publish-stagelisting__messages')
-						);
-					}
-				});
-			}
-		});
 	};
 
 	In2publishModule.hidePreLoader = function () {

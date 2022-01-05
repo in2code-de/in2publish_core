@@ -114,9 +114,22 @@ ignoreFieldsForDifferenceView:
   sys_file_metadata:
     - tstamp
     - crdate
+  sys_redirect:
+    - updatedon
+    - source_host
+    - hitcount
+    - lasthiton
 
 # factory settings (configuration about building relations in in2publish)
 factory:
+
+  # The class which is used to fetch all records from persistence.
+  # @user
+  finder: 'In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder'
+
+  # The class which is used to publish a record (recursively)
+  # @user
+  publisher: 'In2code\In2publishCore\Component\RecordHandling\DefaultRecordPublisher'
 
   # [Performance]
   # depth of pages to fetch in hierarchy
@@ -135,13 +148,6 @@ factory:
   # Resolve properties of records (and pages) which target records from "pages" table
   # Use with care: Related pages will be published through the relation chain, too
   resolvePageRelations: FALSE
-
-  # [Performance] [BETA]
-  # Overview output will be build mainly from information of the local system. Status will be guessed by simple queries.
-  # Details are available through an AJAX request and comparison with the foreign system.
-  # Warning: Overview does not include everything (e.g. file records) and is not as robust as on default mode
-  # @user
-  simpleOverviewAndAjax: FALSE
 
   # THIS OPTION COMES WITHOUT ANY WARRANTY. USE AT YOUR OWN RISK.
   #

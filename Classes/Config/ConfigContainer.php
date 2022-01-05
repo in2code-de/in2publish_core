@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Config;
  */
 
 use In2code\In2publishCore\Config\Definer\DefinerInterface;
+use In2code\In2publishCore\Config\Migration\MigrationInterface;
 use In2code\In2publishCore\Config\Node\Node;
 use In2code\In2publishCore\Config\Node\NodeCollection;
 use In2code\In2publishCore\Config\PostProcessor\PostProcessorInterface;
@@ -44,6 +45,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_combine;
 use function array_fill;
 use function array_keys;
+use function array_merge;
 use function asort;
 use function count;
 
@@ -60,6 +62,9 @@ class ConfigContainer implements SingletonInterface
 
     /** @var PostProcessorInterface[] */
     protected $postProcessors = [];
+
+    /** @var MigrationInterface[] */
+    protected $migrations = [];
 
     /** @var array|null */
     protected $config;
@@ -170,12 +175,26 @@ class ConfigContainer implements SingletonInterface
             }
         }
 
+        $config = $this->migrateConfig($config);
+
         if ($this->contextService->isLocal()) {
             $config = $this->getLocalDefinition()->cast($config);
         } else {
             $config = $this->getForeignDefinition()->cast($config);
         }
 
+        return $config;
+    }
+
+    protected function migrateConfig(array $config): array
+    {
+        foreach ($this->migrations as $class => $migration) {
+            if (null === $migration) {
+                $this->migrations[$class] = $migration = GeneralUtility::makeInstance($class);
+            }
+
+            $config = $migration->migrate($config);
+        }
         return $config;
     }
 
@@ -242,6 +261,27 @@ class ConfigContainer implements SingletonInterface
     }
 
     /**
+     * All migrations must be registered in ext_localconf.php!
+     * Migrations must implement the MigrationInterface.
+     */
+    public function registerMigration(string $migration): void
+    {
+        $this->migrations[$migration] = null;
+    }
+
+    public function getMigrationMessages(): array
+    {
+        $messages = [];
+        foreach ($this->migrations as $class => $migration) {
+            if (null === $migration) {
+                $this->migrations[$class] = $migration = GeneralUtility::makeInstance($class);
+            }
+            $messages[] = $migration->getMessages();
+        }
+        return array_merge([], ...$messages);
+    }
+
+    /**
      * Returns the information about all registered classes which are responsible for the resulting configuration.
      */
     public function dump(): array
@@ -277,6 +317,7 @@ class ConfigContainer implements SingletonInterface
             'providers' => $orderedProviderConfig,
             'definers' => array_keys($cloned->definers),
             'postProcessors' => array_keys($cloned->postProcessors),
+            'migrations' => $cloned->migrations,
         ];
     }
 }

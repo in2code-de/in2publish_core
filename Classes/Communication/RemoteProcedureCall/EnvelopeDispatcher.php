@@ -34,6 +34,7 @@ use In2code\In2publishCore\Domain\Factory\FileIndexFactory;
 use In2code\In2publishCore\Utility\FileUtility;
 use In2code\In2publishCore\Utility\FolderUtility;
 use ReflectionProperty;
+use Throwable;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
@@ -59,6 +60,7 @@ class EnvelopeDispatcher
      */
     public const CMD_FOLDER_EXISTS = 'folderExists';
     public const CMD_FILE_EXISTS = 'fileExists';
+    public const CMD_FILES_EXISTS = 'filesExists';
     public const CMD_GET_PERMISSIONS = 'getPermissions';
     public const CMD_GET_FOLDERS_IN_FOLDER = 'getFoldersInFolder';
     public const CMD_GET_FILES_IN_FOLDER = 'getFilesInFolder';
@@ -80,6 +82,7 @@ class EnvelopeDispatcher
     public const CMD_STORAGE_GET_FOLDERS_IN_FOLDER = 'getStorageGetFoldersInFolder';
     public const CMD_STORAGE_GET_FILES_IN_FOLDER = 'getStorageGetFilesInFolder';
     public const CMD_STORAGE_GET_FILE = 'getStorageGetFile';
+    public const CMD_STORAGE_PREFETCH = 'prefetch';
     /*
      * Others
      */
@@ -207,6 +210,33 @@ class EnvelopeDispatcher
             return $files;
         }
         return [];
+    }
+
+    protected function filesExists(array $request): array
+    {
+        $storage = $this->getStorage($request);
+        $driver = $this->getStorageDriver($storage);
+        $fileIdentifiers = $request['fileIdentifiers'];
+
+        $response = [];
+
+        foreach ($fileIdentifiers as $fileIdentifier) {
+            $response[$fileIdentifier] = [
+                'exists' => false,
+                'fifo' => null,
+                'hash' => null,
+            ];
+            try {
+                $response[$fileIdentifier]['exists'] = $driver->fileExists($fileIdentifier);
+                if ($response[$fileIdentifier]) {
+                    $response[$fileIdentifier]['fifo'] = $driver->getFileInfoByIdentifier($fileIdentifier);
+                    $response[$fileIdentifier]['hash'] = $driver->hash($fileIdentifier, 'sha1');
+                }
+            } catch (Throwable $exception) {
+            }
+        }
+
+        return $response;
     }
 
     protected function getFilesInFolder(array $request): array
@@ -438,6 +468,25 @@ class EnvelopeDispatcher
             return FileUtility::extractFileInformation($file);
         }
         return [];
+    }
+
+    public function prefetch(array $request): array
+    {
+        $response = [];
+
+        foreach ($request['identifiers'] as $storageUid => $identifiers) {
+            $storage = $this->resourceFactory->getStorageObject($storageUid);
+            $storage->setEvaluatePermissions(false);
+            foreach ($identifiers as $identifier) {
+                $response[$identifier] = [];
+                if ($storage->hasFile($identifier)) {
+                    $file = $storage->getFile($identifier);
+                    $response[$identifier] = FileUtility::extractFileInformation($file);
+                }
+            }
+        }
+
+        return $response;
     }
 
     /** @SuppressWarnings(PHPMD.Superglobals) */

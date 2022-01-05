@@ -32,6 +32,10 @@ namespace In2code\In2publishCore\Event;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 
+use function trigger_error;
+
+use const E_USER_DEPRECATED;
+
 final class RootRecordCreationWasFinished
 {
     /** @var RecordFactory */
@@ -46,8 +50,13 @@ final class RootRecordCreationWasFinished
         $this->record = $record;
     }
 
+    /** @deprecated It is not guaranteed that the record was created using the RecordFactory. You can get an instance of the RecordFactory via GeneralUtility::makeInstance or dependency injection if you absolutely need it, it's a singleton. This getter will be removed in in2publish_core v11. */
     public function getRecordFactory(): RecordFactory
     {
+        trigger_error(
+            'The method \In2code\In2publishCore\Event\RootRecordCreationWasFinished::getRecordFactory is deprecated. It is not guaranteed that the record was created using the RecordFactory. You can get an instance of the RecordFactory via GeneralUtility::makeInstance or dependency injection if you absolutely need it, it\'s a singleton. This getter will be removed in in2publish_core v11.',
+            E_USER_DEPRECATED
+        );
         return $this->recordFactory;
     }
 

@@ -34,6 +34,15 @@
 				<source>One or more options are not configured correctly.</source>
 			</trans-unit>
 
+			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationMigrationTest -->
+
+			<trans-unit id="configuration.migration.okay">
+				<source>The configuration does not contain migrated/deprecated settings.</source>
+			</trans-unit>
+			<trans-unit id="configuration.migration.messages">
+				<source>The configuration contains migrated/deprecated settings.</source>
+			</trans-unit>
+
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ForeignConfigurationFormatTest -->
 
 			<trans-unit id="configuration.foreign_format_okay">

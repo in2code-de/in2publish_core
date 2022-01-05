@@ -128,7 +128,7 @@ class GroupProcessor extends AbstractProcessor
 
     public function canPreProcessInternalTypeDbTable(string $table): bool
     {
-        if (!TcaProcessingService::tableExists($table)) {
+        if (!array_key_exists($table, $GLOBALS['TCA'])) {
             $this->lastReasons[static::INTERNAL_TYPE] =
                 'Can not reference the table "' . $table . '" from "foreign_table. It is not present in the TCA';
             return false;
@@ -153,7 +153,7 @@ class GroupProcessor extends AbstractProcessor
             $allowedTables = [$allowed];
         }
         foreach ($allowedTables as $table) {
-            if (!TcaProcessingService::tableExists($table)) {
+            if (!array_key_exists($table, $GLOBALS['TCA'])) {
                 $this->lastReasons[static::INTERNAL_TYPE] =
                     'Can not reference the table "' . $table . '" from "allowed. It is not present in the TCA';
                 return false;

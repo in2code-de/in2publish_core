@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Tests\Unit\Service;
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
+use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 
@@ -48,8 +49,9 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $record = $this->getRecordStub('tx_unit_test_table');
 
         $flexFormTools = $this->createMock(FlexFormTools::class);
+        $tcaProcessingService = $this->createMock(TcaProcessingService::class);
 
-        $replaceMarkerService = new class($flexFormTools) extends ReplaceMarkersService {
+        $replaceMarkerService = new class($flexFormTools, $tcaProcessingService) extends ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
                 return [
@@ -81,8 +83,9 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $record = $this->getRecordStub('tx_unit_test_table');
 
         $flexFormTools = $this->createMock(FlexFormTools::class);
+        $tcaProcessingService = $this->createMock(TcaProcessingService::class);
 
-        $replaceMarkerService = new class($flexFormTools) extends ReplaceMarkersService {
+        $replaceMarkerService = new class($flexFormTools, $tcaProcessingService) extends ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
                 return [

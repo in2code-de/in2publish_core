@@ -29,21 +29,26 @@ namespace In2code\In2publishCore\Event;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
+
+use function trigger_error;
+
+use const E_USER_DEPRECATED;
 
 final class RecursiveRecordPublishingEnded
 {
     /** @var RecordInterface */
     private $record;
 
-    /** @var CommonRepository */
-    private $commonRepository;
+    /** @var RecordPublisher */
+    private $recordPublisher;
 
-    public function __construct(RecordInterface $record, CommonRepository $commonRepository)
+    public function __construct(RecordInterface $record, RecordPublisher $recordPublisher)
     {
         $this->record = $record;
-        $this->commonRepository = $commonRepository;
+        $this->recordPublisher = $recordPublisher;
     }
 
     public function getRecord(): RecordInterface
@@ -51,8 +56,21 @@ final class RecursiveRecordPublishingEnded
         return $this->record;
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in in2publish_core v11, please use
+     *     \In2code\In2publishCore\Event\RecursiveRecordPublishingEnded::getRecordPublisher instead.
+     */
     public function getCommonRepository(): CommonRepository
     {
-        return $this->commonRepository;
+        trigger_error(
+            'The method \In2code\In2publishCore\Event\RecursiveRecordPublishingEnded::getCommonRepository is deprecated and will be removed in in2publish_core v11, please use \In2code\In2publishCore\Event\RecursiveRecordPublishingEnded::getRecordPublisher instead.',
+            E_USER_DEPRECATED
+        );
+        return $this->recordPublisher;
+    }
+
+    public function getRecordPublisher(): RecordPublisher
+    {
+        return $this->recordPublisher;
     }
 }

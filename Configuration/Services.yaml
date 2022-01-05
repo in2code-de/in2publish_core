@@ -1,5 +1,6 @@
 imports:
   - { resource: Component/PostPublishTaskExecution/Services.yaml }
+  - { resource: Component/RecordHandling/Services.yaml }
   - { resource: Features/AdminTools/Services.yaml }
   - { resource: Features/CacheInvalidation/Services.yaml }
   - { resource: Features/CompareDatabaseTool/Services.yaml }
@@ -10,7 +11,7 @@ imports:
   - { resource: Features/PublishSorting/Services.yaml }
   - { resource: Features/RedirectsSupport/Services.yaml }
   - { resource: Features/RefIndexUpdate/Services.yaml }
-  - { resource: Features/SimpleOverviewAndAjax/Services.yaml }
+  - { resource: Features/SimplifiedOverviewAndPublishing/Services.yaml }
   - { resource: Features/SkipEmptyTable/Services.yaml }
   - { resource: Features/SysLogPublisher/Services.yaml }
   - { resource: Features/SystemInformationExport/Services.yaml }
@@ -51,9 +52,6 @@ services:
     public: true
 
   In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory:
-    public: true
-
-  In2code\In2publishCore\Domain\Repository\CommonRepository:
     public: true
 
   In2code\In2publishCore\Service\Environment\ForeignEnvironmentService:

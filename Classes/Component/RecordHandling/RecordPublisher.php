@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Event;
+namespace In2code\In2publishCore\Component\RecordHandling;
 
 /*
  * Copyright notice
@@ -29,20 +29,9 @@ namespace In2code\In2publishCore\Event;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 
-final class CommonRepositoryWasInstantiated
+interface RecordPublisher
 {
-    /** @var CommonRepository */
-    private $commonRepository;
-
-    public function __construct(CommonRepository $commonRepository)
-    {
-        $this->commonRepository = $commonRepository;
-    }
-
-    public function getCommonRepository(): CommonRepository
-    {
-        return $this->commonRepository;
-    }
+    public function publishRecordRecursive(RecordInterface $record, array $excludedTables = ['pages']): void;
 }
