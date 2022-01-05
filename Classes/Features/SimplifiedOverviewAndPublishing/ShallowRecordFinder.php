@@ -100,7 +100,7 @@ class ShallowRecordFinder implements RecordFinder
 
     public function findRecordByUidForOverview(int $uid, string $table, bool $excludePages = false): ?RecordInterface
     {
-        if (self::PAGE_TABLE_NAME === 'pages') {
+        if (self::PAGE_TABLE_NAME === $table) {
             return $this->findPageRecord($uid, $excludePages);
         }
         // Fallback
