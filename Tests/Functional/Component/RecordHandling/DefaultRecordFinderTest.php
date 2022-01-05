@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Tests\Functional\Component\RecordHandling;
 use In2code\In2publishCore\Component\FalHandling\PostProcessing\EventListener\PostProcessingEventListener;
 use In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
 use In2code\In2publishCore\Features\PhysicalFilePublisher\Domain\Anomaly\PhysicalFilePublisher;
 use In2code\In2publishCore\Tests\FunctionalTestCase;
@@ -56,11 +55,6 @@ class DefaultRecordFinderTest extends FunctionalTestCase
         foreach ($listener[RootRecordCreationWasFinished::class] as $index => $config) {
             if ($config['service'] === PostProcessingEventListener::class) {
                 unset($listener[RootRecordCreationWasFinished::class][$index]);
-            }
-        }
-        foreach ($listener[PublishingOfOneRecordEnded::class] as $index => $config) {
-            if ($config['service'] === PhysicalFilePublisher::class) {
-                unset($listener[PublishingOfOneRecordEnded::class][$index]);
             }
         }
         $reflectionProperty->setValue($listenerProvider, $listener);
