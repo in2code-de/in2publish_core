@@ -1,5 +1,42 @@
 # In2publish Core Change Log
 
+10.2.0:
+
+- [META] Set the branch alias version number to 10.2.x-dev
+- [META] Set the EM conf version number to 10.2.0
+- [FEATURE] Merge SimplePublishing into SimpleOverviewAndAjax to create SimplePublishing
+- [QA] Fix unit tests by providing correct constructor args and trimming superfluous whitespace
+- [BUGFIX] Actually compare the given tablename in ShallowRecordFinder
+- [DOCS] Update readme: better description, removed missing images, updated codacy badge
+- [FEATURE] Automatically migrate SimpleOverviewAndAjax and SimplifiedOverviewAndPublishing to SimplifiedOverviewAndPublishing
+- [DOCS] Document the new feature SimplifiedOverviewAndPublishing and its caveats
+- [BUGFIX] Correctly prefetch files for storages and return fifo with appropriate key
+- [FEATURE] Implement batch-prefetching for FalIndexPostProcessor, too
+- [FEATURE] Speed up file operations by prefetching all files by their identifier
+- [FEATURE] Support more features, process files, extract DB Queries to Repos
+- [FEATURE] Use the shallow record as record to publish
+- [META] Set branch alias for the branch feature/simple-publishing
+- [FEATURE] Split RecordFinder->findRecordByUid by use case
+- [FEATURE] Support most common and required events during record creation
+- [CODESTYLE] Remove doubled whitespace from string concatenation
+- [DEPRECATION] Deprecate static access to TcaProcessingService
+- [CLEANUP] Remove useless "controls" section from the Inspect TCA Tool
+- [BUGFIX] Ignore sys_redirect fields which must/can be different for the comparison
+- [DEPRECATION] Deprecate RecordFactory getters from all events
+- [BUGFIX] Limit breadcrumbs to the first page up in the hierarchy
+- [FEATURE] Support the VoteIfRecordShouldBeIgnored event in the ShallowRecordFinder
+- [BUGFIX] Do not show page records in breadcrumbs
+- [BUGFIX] Set correct depth for records from ShallowRecordFinder
+- [FEATURE] Support disablePageRecursion flag in ShallowRecordFinder
+- [CLEANUP] Remove the event CommonRepositoryWasInstantiated
+- [FEATURE] Replace SimpleOverViewAndAjax with SimplifiedOverviewAndPublishing
+- [FEATURE] Split CommonRepository into finder and publisher classes
+- [FEATURE] Merge simpleOverviewAndAjax and SimplePublishing
+- [BUGFIX] Restore default excluded table "pages" when publishing
+- [CLEANUP] Remove useless logging from RecordController
+- [REFACTOR] Skip unnecessary ActionController parent
+- [RELEASE] Version 10.1.1 with TATAPI subfolder and an actual TATAPI test
+
 10.1.1:
 
 - [META] Set the EM conf version number to 10.1.1
