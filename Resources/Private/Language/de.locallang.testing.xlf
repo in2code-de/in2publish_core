@@ -42,6 +42,17 @@
 				<target state="translated">Eine oder mehrere Optionen sind nicht korrekt konfiguriert.</target>
 			</trans-unit>
 
+			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationMigrationTest -->
+
+			<trans-unit id="configuration.migration.okay">
+				<source>The configuration does not contain migrated/deprecated settings.</source>
+				<target state="translated">Die Konfiguration enthält keine veraltete/ersetze Einstellungen.</target>
+			</trans-unit>
+			<trans-unit id="configuration.migration.messages">
+				<source>The configuration contains migrated/deprecated settings.</source>
+				<target state="translated">Die Konfiguration enthält veraltete/ersetze Einstellungen.</target>
+			</trans-unit>
+
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ForeignConfigurationFormatTest -->
 
 			<trans-unit id="configuration.foreign_format_okay">

@@ -43,7 +43,7 @@ class NullRecord extends Record
      * @param array $foreignProperties
      * @param array $tca
      * @param array $additionalProperties
-     * @SuppressWarnings("PHPMD.UnusedFormalParameter")
+     * @SuppressWarnings("PHPMD.Superglobals")
      * @noinspection MagicMethodsValidityInspection
      * @noinspection PhpMissingParentConstructorInspection
      */
@@ -59,7 +59,7 @@ class NullRecord extends Record
         $this->localProperties = $localProperties;
         $this->foreignProperties = $foreignProperties;
         if (empty($tca)) {
-            $tca = TcaProcessingService::getCompleteTcaForTable($tableName);
+            $tca = $GLOBALS['TCA'][$tableName];
         }
         $this->tca = $tca;
         $this->dirtyProperties = [];

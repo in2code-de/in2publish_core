@@ -152,7 +152,6 @@ tx_in2publish {
 
  * Debug Settings (debug.*)
  * Factory recursion settings (factory.*recursion)
- * Simple Overview and Ajax (factory.simpleOverviewAndAjax)
  * Publish Files Module folder file limit (factory.fal.folderFileLimit)
  * File Preview Domain (Useful in PageTS) (filePreviewDomainName)
  * View a) filter buttons b) breadcrumb c) titleField (view.*)

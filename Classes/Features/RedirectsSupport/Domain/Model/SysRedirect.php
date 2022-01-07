@@ -29,8 +29,8 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Model;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -149,8 +149,8 @@ class SysRedirect extends AbstractEntity
     public function getRecord(): RecordInterface
     {
         if (!isset($this->rtc['record'])) {
-            $this->rtc['record'] = GeneralUtility::makeInstance(CommonRepository::class)
-                                                 ->findByIdentifier($this->uid, 'sys_redirect');
+            $this->rtc['record'] = GeneralUtility::makeInstance(RecordFinder::class)
+                                                 ->findRecordByUidForPublishing($this->uid, 'sys_redirect');
         }
         return $this->rtc['record'];
     }

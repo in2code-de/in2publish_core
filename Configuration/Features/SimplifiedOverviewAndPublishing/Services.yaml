@@ -1,0 +1,23 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing\:
+    resource: '../../../Classes/Features/SimplifiedOverviewAndPublishing/*'
+
+  In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing\Domain\Repository\DualDatabaseRepository:
+    arguments:
+      $localRepository: '@In2code.In2publishCore.Features.SimplifiedOverviewAndPublishing.LocalDatabaseRepository'
+      $foreignRepository: '@In2code.In2publishCore.Features.SimplifiedOverviewAndPublishing.ForeignDatabaseRepository'
+
+  'In2code.In2publishCore.Features.SimplifiedOverviewAndPublishing.LocalDatabaseRepository':
+    class: 'In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing\Domain\Repository\SingleDatabaseRepository'
+    arguments:
+      $connection: '@In2code.In2publishCore.Database.Local'
+
+  'In2code.In2publishCore.Features.SimplifiedOverviewAndPublishing.ForeignDatabaseRepository':
+    class: 'In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing\Domain\Repository\SingleDatabaseRepository'
+    arguments:
+      $connection: '@In2code.In2publishCore.Database.Foreign'

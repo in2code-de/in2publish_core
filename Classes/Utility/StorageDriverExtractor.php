@@ -42,6 +42,8 @@ use function get_class;
 class StorageDriverExtractor
 {
     /**
+     * @param ResourceStorage $localStorage
+     * @return DriverInterface
      * @throws ReflectionException
      */
     public static function getLocalDriver(ResourceStorage $localStorage): DriverInterface
@@ -52,10 +54,11 @@ class StorageDriverExtractor
     }
 
     /**
-     * @return DriverInterface|RemoteFileAbstractionLayerDriver
+     * @param ResourceStorage $localStorage
+     * @return RemoteFileAbstractionLayerDriver
      * @throws DriverException
      */
-    public static function getForeignDriver(ResourceStorage $localStorage): DriverInterface
+    public static function getForeignDriver(ResourceStorage $localStorage): RemoteFileAbstractionLayerDriver
     {
         $foreignDriver = GeneralUtility::makeInstance(RemoteFileAbstractionLayerDriver::class);
         $foreignDriver->setStorageUid($localStorage->getUid());

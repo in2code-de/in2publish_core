@@ -116,6 +116,22 @@ class RemoteStorage implements ResourceStorageInterface
         return static::$cache[$storage][$identifier][static::FILES_KEY][$identifier];
     }
 
+    public function prefetch(array $identifiers): void
+    {
+        $result = $this->executeEnvelope(
+            EnvelopeDispatcher::CMD_STORAGE_PREFETCH,
+            ['identifiers' => $identifiers]
+        );
+
+        foreach ($identifiers as $storage => $fileIdentifiers) {
+            foreach ($fileIdentifiers as $fileIdentifier) {
+                $row = $result[$fileIdentifier] ?? [];
+                $storage = $row['storage'] ?? $storage;
+                static::$cache[$storage][$fileIdentifier][static::FILES_KEY][$fileIdentifier] = $row;
+            }
+        }
+    }
+
     /**
      * @param string $command
      * @param array $arguments

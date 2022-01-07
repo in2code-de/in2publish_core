@@ -31,12 +31,12 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\Exception\TooManyFilesException;
 use In2code\In2publishCore\Domain\Factory\FolderRecordFactory;
 use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
@@ -65,11 +65,11 @@ class FileController extends AbstractController
     /** @var FolderPublisherService */
     protected $folderPublisherService;
 
-    /** @var CommonRepository */
-    protected $commonRepository;
-
     /** @var bool */
     protected $forcePidInteger = false;
+
+    /** @var RecordPublisher */
+    protected $recordPublisher;
 
     public function __construct(
         ConfigContainer $configContainer,
@@ -77,7 +77,7 @@ class FileController extends AbstractController
         EnvironmentService $environmentService,
         RemoteCommandDispatcher $remoteCommandDispatcher,
         FolderPublisherService $folderPublisherService,
-        CommonRepository $commonRepository
+        RecordPublisher $recordPublisher
     ) {
         parent::__construct(
             $configContainer,
@@ -86,7 +86,7 @@ class FileController extends AbstractController
             $remoteCommandDispatcher
         );
         $this->folderPublisherService = $folderPublisherService;
-        $this->commonRepository = $commonRepository;
+        $this->recordPublisher = $recordPublisher;
     }
 
     public function indexAction(): void
@@ -149,7 +149,7 @@ class FileController extends AbstractController
             }
 
             try {
-                $this->commonRepository->publishRecordRecursive($relatedRecord);
+                $this->recordPublisher->publishRecordRecursive($relatedRecord);
                 $this->addFlashMessage(
                     LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
                     LocalizationUtility::translate('file_publishing.success', 'in2publish_core')

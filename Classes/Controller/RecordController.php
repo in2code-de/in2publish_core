@@ -31,13 +31,13 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
+use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
 use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
-use In2code\In2publishCore\Features\SimpleOverviewAndAjax\Domain\Factory\FakeRecordFactory;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Service\Error\FailureCollector;
@@ -62,17 +62,17 @@ use function strpos;
  */
 class RecordController extends AbstractController
 {
-    /** @var CommonRepository */
-    protected $commonRepository;
-
     /** @var FailureCollector */
     protected $failureCollector;
 
-    /** @var FakeRecordFactory */
-    protected $fakeRecordFactory;
-
     /** @var PermissionService */
     protected $permissionService;
+
+    /** @var RecordFinder */
+    protected $recordFinder;
+
+    /** @var RecordPublisher */
+    protected $recordPublisher;
 
     public function __construct(
         ConfigContainer $configContainer,
@@ -80,8 +80,9 @@ class RecordController extends AbstractController
         EnvironmentService $environmentService,
         RemoteCommandDispatcher $remoteCommandDispatcher,
         FailureCollector $failureCollector,
-        FakeRecordFactory $fakeRecordFactory,
-        PermissionService $permissionService
+        PermissionService $permissionService,
+        RecordFinder $recordFinder,
+        RecordPublisher $recordPublisher
     ) {
         parent::__construct(
             $configContainer,
@@ -90,16 +91,9 @@ class RecordController extends AbstractController
             $remoteCommandDispatcher
         );
         $this->failureCollector = $failureCollector;
-        $this->fakeRecordFactory = $fakeRecordFactory;
         $this->permissionService = $permissionService;
-    }
-
-    public function initializeAction(): void
-    {
-        parent::initializeAction();
-        if (static::BLANK_ACTION !== $this->actionMethodName) {
-            $this->commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
-        }
+        $this->recordFinder = $recordFinder;
+        $this->recordPublisher = $recordPublisher;
     }
 
     /**
@@ -113,13 +107,8 @@ class RecordController extends AbstractController
      */
     public function indexAction(): void
     {
-        $this->logger->debug('Called indexAction');
         GeneralUtility::makeInstance(TcaProcessingService::class);
-        if (!$this->configContainer->get('factory.simpleOverviewAndAjax')) {
-            $record = $this->commonRepository->findByIdentifier($this->pid, 'pages');
-        } else {
-            $record = $this->fakeRecordFactory->buildFromStartPage($this->pid);
-        }
+        $record = $this->recordFinder->findRecordByUidForOverview($this->pid, 'pages');
         $failures = $this->failureCollector->getFailures();
 
         if (!empty($failures)) {
@@ -143,9 +132,7 @@ class RecordController extends AbstractController
      */
     public function detailAction(int $identifier, string $tableName): void
     {
-        $this->logger->debug('Called detailAction');
-        $this->commonRepository->disablePageRecursion();
-        $record = $this->commonRepository->findByIdentifier($identifier, $tableName);
+        $record = $this->recordFinder->findRecordByUidForPublishing($identifier, $tableName);
 
         $this->eventDispatcher->dispatch(new RecordWasCreatedForDetailAction($this, $record));
 
@@ -200,12 +187,12 @@ class RecordController extends AbstractController
 
     protected function publishRecord(int $identifier, array $exceptTableNames = []): void
     {
-        $record = $this->commonRepository->findByIdentifier($identifier, 'pages');
+        $record = $this->recordFinder->findRecordByUidForPublishing($identifier, 'pages');
 
         $this->eventDispatcher->dispatch(new RecordWasSelectedForPublishing($record, $this));
 
         try {
-            $this->commonRepository->publishRecordRecursive(
+            $this->recordPublisher->publishRecordRecursive(
                 $record,
                 array_merge($this->configContainer->get('excludeRelatedTables'), $exceptTableNames)
             );

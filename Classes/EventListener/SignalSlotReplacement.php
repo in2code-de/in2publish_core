@@ -38,7 +38,6 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
 use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
-use In2code\In2publishCore\Event\CommonRepositoryWasInstantiated;
 use In2code\In2publishCore\Event\CreatedDefaultHelpLabels;
 use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Event\FolderWasPublished;
@@ -81,10 +80,14 @@ class SignalSlotReplacement
     /** @var LogManager */
     protected $logManager;
 
-    public function __construct(Dispatcher $dispatcher, LogManager $logManager)
+    /** @var RecordFactory */
+    protected $recordFactory;
+
+    public function __construct(Dispatcher $dispatcher, LogManager $logManager, RecordFactory $recordFactory)
     {
         $this->dispatcher = $dispatcher;
         $this->logManager = $logManager;
+        $this->recordFactory = $recordFactory;
     }
 
     public function onFolderInstanceWasCreated(FolderInstanceWasCreated $event): void
@@ -122,7 +125,7 @@ class SignalSlotReplacement
             'shouldSkipRecord',
             [
                 ['yes' => 0, 'no' => 0],
-                $event->getCommonRepository(),
+                $event->getRecordPublisher(),
                 ['record' => $record, 'tableName' => $tableName],
             ]
         );
@@ -137,7 +140,7 @@ class SignalSlotReplacement
             'shouldIgnoreRecord',
             [
                 ['yes' => 0, 'no' => 0],
-                $event->getCommonRepository(),
+                $event->getRecordFinder(),
                 [
                     'localProperties' => $event->getLocalProperties(),
                     'foreignProperties' => $event->getForeignProperties(),
@@ -156,7 +159,7 @@ class SignalSlotReplacement
             'shouldSkipEnrichingPageRecord',
             [
                 ['yes' => 0, 'no' => 0],
-                $event->getCommonRepository(),
+                $event->getRecordFinder(),
                 [
                     'record' => $event->getRecord(),
                 ],
@@ -173,7 +176,7 @@ class SignalSlotReplacement
             'shouldSkipFindByIdentifier',
             [
                 ['yes' => 0, 'no' => 0],
-                $event->getCommonRepository(),
+                $event->getRecordFinder(),
                 [
                     'identifier' => $event->getIdentifier(),
                     'tableName' => $event->getTableName(),
@@ -191,7 +194,7 @@ class SignalSlotReplacement
             'shouldSkipFindByProperty',
             [
                 ['yes' => 0, 'no' => 0],
-                $event->getCommonRepository(),
+                $event->getRecordFinder(),
                 [
                     'propertyName' => $event->getPropertyName(),
                     'propertyValue' => $event->getPropertyValue(),
@@ -211,7 +214,7 @@ class SignalSlotReplacement
             'shouldSkipSearchingForRelatedRecordByTable',
             [
                 ['yes' => 0, 'no' => 0],
-                $event->getCommonRepository(),
+                $event->getRecordFinder(),
                 [
                     'record' => $event->getRecord(),
                     'tableName' => $event->getTableName(),
@@ -230,7 +233,7 @@ class SignalSlotReplacement
             'shouldSkipSearchingForRelatedRecords',
             [
                 ['yes' => 0, 'no' => 0],
-                $event->getCommonRepository(),
+                $event->getRecordFinder(),
                 [
                     'record' => $event->getRecord(),
                 ],
@@ -248,7 +251,7 @@ class SignalSlotReplacement
             'shouldSkipSearchingForRelatedRecordsByFlexForm',
             [
                 ['yes' => 0, 'no' => 0],
-                $event->getCommonRepository(),
+                $event->getRecordFinder(),
                 [
                     'record' => $event->getRecord(),
                     'column' => $event->getColumn(),
@@ -270,7 +273,7 @@ class SignalSlotReplacement
             'shouldSkipSearchingForRelatedRecordsByFlexFormProperty',
             [
                 ['yes' => 0, 'no' => 0],
-                $event->getCommonRepository(),
+                $event->getRecordFinder(),
                 [
                     'record' => $event->getRecord(),
                     'config' => $event->getConfig(),
@@ -290,7 +293,7 @@ class SignalSlotReplacement
             'shouldSkipSearchingForRelatedRecordsByProperty',
             [
                 ['yes' => 0, 'no' => 0],
-                $event->getCommonRepository(),
+                $event->getRecordFinder(),
                 [
                     'record' => $event->getRecord(),
                     'propertyName' => $event->getPropertyName(),
@@ -324,7 +327,7 @@ class SignalSlotReplacement
                 RecordFactory::class,
                 'instanceCreated',
                 [
-                    $event->getRecordFactory(),
+                    $this->recordFactory,
                     $event->getRecord(),
                 ]
             );
@@ -340,7 +343,7 @@ class SignalSlotReplacement
                 RecordFactory::class,
                 'rootRecordFinished',
                 [
-                    $event->getRecordFactory(),
+                    $this->recordFactory,
                     $event->getRecord(),
                 ]
             );
@@ -356,18 +359,7 @@ class SignalSlotReplacement
             'addAdditionalRelatedRecords',
             [
                 $event->getRecord(),
-                $event->getRecordFactory(),
-            ]
-        );
-    }
-
-    public function onCommonRepositoryWasInstantiated(CommonRepositoryWasInstantiated $event): void
-    {
-        $this->dispatcher->dispatch(
-            CommonRepository::class,
-            'instanceCreated',
-            [
-                $event->getCommonRepository(),
+                $this->recordFactory,
             ]
         );
     }
@@ -378,9 +370,9 @@ class SignalSlotReplacement
         try {
             $this->dispatcher->dispatch(
                 CommonRepository::class,
-                CommonRepository::SIGNAL_RELATION_RESOLVER_RTE,
+                'relationResolverRTE',
                 [
-                    $event->getCommonRepository(),
+                    $event->getRecordFinder(),
                     $event->getBodyText(),
                     $event->getExcludedTableNames(),
                     &$relatedRecords,
@@ -394,7 +386,7 @@ class SignalSlotReplacement
                 [
                     'exception' => $e,
                     'signalClass' => CommonRepository::class,
-                    'signalName' => CommonRepository::SIGNAL_RELATION_RESOLVER_RTE,
+                    'signalName' => 'relationResolverRTE',
                 ]
             );
         }
@@ -407,7 +399,7 @@ class SignalSlotReplacement
             'publishRecordRecursiveBegin',
             [
                 $event->getRecord(),
-                $event->getCommonRepository(),
+                $event->getRecordPublisher(),
             ]
         );
     }
@@ -419,7 +411,7 @@ class SignalSlotReplacement
             'publishRecordRecursiveEnd',
             [
                 $event->getRecord(),
-                $event->getCommonRepository(),
+                $event->getRecordPublisher(),
             ]
         );
     }
@@ -433,7 +425,7 @@ class SignalSlotReplacement
             [
                 $record->getTableName(),
                 $record,
-                $event->getCommonRepository(),
+                $event->getRecordPublisher(),
             ]
         );
     }
@@ -447,7 +439,7 @@ class SignalSlotReplacement
             [
                 $record->getTableName(),
                 $record,
-                $event->getCommonRepository(),
+                $event->getRecordPublisher(),
             ]
         );
     }

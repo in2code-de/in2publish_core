@@ -53,9 +53,6 @@
     /**************************************** Register Config Definer/Provider ****************************************/
     $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\In2publishCoreDefiner::class);
     $configContainer->registerDefiner(
-        \In2code\In2publishCore\Features\SimpleOverviewAndAjax\Config\Definer\SimpleOverviewAndAjaxDefiner::class
-    );
-    $configContainer->registerDefiner(
         \In2code\In2publishCore\Features\WarningOnForeign\Config\Definer\WarningOnForeignDefiner::class
     );
     $configContainer->registerDefiner(
@@ -90,6 +87,10 @@
     $dynamicValueProviderRegistry->registerDynamicValue(
         'env',
         \In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\EnvVarProvider::class
+    );
+
+    $configContainer->registerMigration(
+        \In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing\Config\Migration\SimplifiedOverviewAndPublishingMigration::class
     );
 
     /******************************************** Configure Compare Plugin ********************************************/

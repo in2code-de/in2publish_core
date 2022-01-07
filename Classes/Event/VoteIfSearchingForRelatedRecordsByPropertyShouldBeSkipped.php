@@ -29,13 +29,18 @@ namespace In2code\In2publishCore\Event;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 
+use function trigger_error;
+
+use const E_USER_DEPRECATED;
+
 final class VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped extends AbstractVotingEvent
 {
-    /** @var CommonRepository */
-    private $commonRepository;
+    /** @var RecordFinder */
+    private $recordFinder;
 
     /** @var RecordInterface */
     private $record;
@@ -47,20 +52,33 @@ final class VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped extends Ab
     private $columnConfiguration;
 
     public function __construct(
-        CommonRepository $commonRepository,
+        RecordFinder $recordFinder,
         RecordInterface $record,
         string $propertyName,
         array $columnConfiguration
     ) {
-        $this->commonRepository = $commonRepository;
+        $this->recordFinder = $recordFinder;
         $this->record = $record;
         $this->propertyName = $propertyName;
         $this->columnConfiguration = $columnConfiguration;
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in in2publish_core v11, please use
+     *     \In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped::getRecordFinder instead.
+     */
     public function getCommonRepository(): CommonRepository
     {
-        return $this->commonRepository;
+        trigger_error(
+            'The method \In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped::getCommonRepository is deprecated and will be removed in in2publish_core v11, please use \In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped::getRecordFinder instead.',
+            E_USER_DEPRECATED
+        );
+        return $this->recordFinder;
+    }
+
+    public function getRecordFinder(): RecordFinder
+    {
+        return $this->recordFinder;
     }
 
     public function getRecord(): RecordInterface

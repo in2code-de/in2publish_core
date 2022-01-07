@@ -51,13 +51,16 @@ use function explode;
 use function implode;
 use function in_array;
 use function is_array;
-use function is_null;
 use function is_string;
 use function json_decode;
 use function json_encode;
 use function spl_object_hash;
 use function strpos;
+use function trigger_error;
+use function trim;
 use function uasort;
+
+use const E_USER_DEPRECATED;
 
 /**
  * The most important class of this application. A Record is a Database
@@ -138,7 +141,7 @@ class Record implements RecordInterface
      * alteration of this value can be prohibited by setting
      * $this->parentRecordIsLocked = TRUE (or public setter)
      *
-     * @var RecordInterface
+     * @var null|RecordInterface
      */
     protected $parentRecord;
 
@@ -638,7 +641,7 @@ class Record implements RecordInterface
      */
     public function hasDeleteField(): bool
     {
-        return TcaProcessingService::hasDeleteField($this->tableName);
+        return !empty($GLOBALS['TCA'][$this->tableName]['ctrl']['delete']);
     }
 
     /**
@@ -646,15 +649,7 @@ class Record implements RecordInterface
      */
     public function getDeleteField(): string
     {
-        return TcaProcessingService::getDeleteField($this->tableName);
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    public function getColumnsTca(): array
-    {
-        return TcaProcessingService::getColumnsFor($this->tableName);
+        return $GLOBALS['TCA'][$this->tableName]['ctrl']['delete'] ?? '';
     }
 
     public function getParentRecord(): ?RecordInterface
@@ -992,19 +987,12 @@ class Record implements RecordInterface
 
     public function getBreadcrumb(): string
     {
-        $path = '/ ' . $this->tableName . ' [' . $this->getIdentifier() . ']';
-        return $this->getRecordPath($this->parentRecord) . $path;
-    }
-
-    protected function getRecordPath(RecordInterface $record = null): string
-    {
         $path = '';
-        if (!is_null($record)) {
-            $path = '/ ' . $record->getTableName() . ' [' . $record->getIdentifier() . '] ';
-            $path = $this->getRecordPath($record->getParentRecord()) . $path;
-        }
-
-        return $path;
+        $record = $this;
+        do {
+            $path = '/ ' . $record->tableName . ' [' . $record->getIdentifier() . '] ' . $path;
+        } while ($record->tableName !== 'pages' && $record = $record->parentRecord);
+        return rtrim($path, ' ');
     }
 
     /** @return RecordInterface[] */
@@ -1045,7 +1033,9 @@ class Record implements RecordInterface
      */
     public function addChangedRelatedRecordsRecursive(array $relatedRecordsFlat = [], array &$done = []): array
     {
-        foreach ($this->getRelatedRecords() as $relatedRecords) {
+        $relatedRecordsPerTable = $this->getRelatedRecords();
+        unset($relatedRecordsPerTable['pages']);
+        foreach ($relatedRecordsPerTable as $relatedRecords) {
             foreach ($relatedRecords as $relatedRecord) {
                 $splObjectHash = spl_object_hash($relatedRecord);
                 if (!isset($relatedRecordsFlat[$splObjectHash]) && $relatedRecord->isChanged()) {
@@ -1163,5 +1153,19 @@ class Record implements RecordInterface
     public function isRemovedFromLocalDatabase(): bool
     {
         return $this->isForeignRecordDeleted() && !$this->isRecordRepresentByProperties($this->localProperties);
+    }
+
+    /**
+     * @deprecated Please use <code>$tcaProcessingService->getCompatibleTcaColumns($record->getTableName())</code>
+     *     instead.
+     * @codeCoverageIgnore
+     */
+    public function getColumnsTca(): array
+    {
+        trigger_error(
+            'The method \In2code\In2publishCore\Domain\Model\Record::getColumnsTca is deprecated and will be removed in in2publish_core v11. Please use "$tcaProcessingService->getCompatibleTcaColumns($record->getTableName())" instead.',
+            E_USER_DEPRECATED
+        );
+        return GeneralUtility::makeInstance(TcaProcessingService::class)->getCompatibleTcaColumns($this->tableName);
     }
 }

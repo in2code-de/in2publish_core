@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Tests\Functional\Domain\Repository;
+namespace In2code\In2publishCore\Tests\Functional\Component\RecordHandling;
 
 /*
  * Copyright notice
@@ -29,9 +29,9 @@ namespace In2code\In2publishCore\Tests\Functional\Domain\Repository;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\PostProcessing\PostProcessingEventListener;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\RootRecordCreationWasFinished;
 use In2code\In2publishCore\Tests\FunctionalTestCase;
 use ReflectionProperty;
@@ -41,7 +41,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function uniqid;
 
-class CommonRepositoryTest extends FunctionalTestCase
+class DefaultRecordFinderTest extends FunctionalTestCase
 {
     protected function setUp(): void
     {
@@ -71,8 +71,8 @@ class CommonRepositoryTest extends FunctionalTestCase
         $defaultConnection->insert('pages', ['uid' => 1]);
         $defaultConnection->insert('tt_content', ['uid' => 4, 'pid' => 1]);
 
-        $commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
-        $record = $commonRepository->findByIdentifier(1, 'pages');
+        $defaultRecordFinder = GeneralUtility::makeInstance(DefaultRecordFinder::class);
+        $record = $defaultRecordFinder->findByIdentifier(1, 'pages');
 
         $this->assertSame('pages', $record->getTableName());
         $this->assertSame(1, $record->getIdentifier());
@@ -101,18 +101,18 @@ class CommonRepositoryTest extends FunctionalTestCase
         $defaultConnection = $pool->getConnectionByName('Default');
         $defaultConnection->insert('tt_content', ['uid' => 13]);
         $defaultConnection->insert('sys_file_reference',
-                                   [
-                                       'uid' => 55,
-                                       'tablenames' => 'tt_content',
-                                       'fieldname' => 'media',
-                                       'uid_foreign' => 13,
-                                       'uid_local' => 44,
-                                   ]
+            [
+                'uid' => 55,
+                'tablenames' => 'tt_content',
+                'fieldname' => 'media',
+                'uid_foreign' => 13,
+                'uid_local' => 44,
+            ]
         );
         $defaultConnection->insert('sys_file', ['uid' => 44, 'name' => 'FooBar.file']);
 
-        $commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
-        $record = $commonRepository->findByIdentifier(13, 'tt_content');
+        $defaultRecordFinder = GeneralUtility::makeInstance(DefaultRecordFinder::class);
+        $record = $defaultRecordFinder->findByIdentifier(13, 'tt_content');
 
         $this->assertSame('tt_content', $record->getTableName());
         $this->assertSame(13, $record->getIdentifier());
@@ -169,8 +169,8 @@ class CommonRepositoryTest extends FunctionalTestCase
         // fields which determine the identity of the entity have to be used as identifier.
         $mmRecordIdentifier = '{"uid_local":2,"uid_foreign":5,"sorting":0,"tablenames":"pages","fieldname":"categories"}';
 
-        $commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
-        $record = $commonRepository->findByIdentifier(5, 'pages');
+        $defaultRecordFinder = GeneralUtility::makeInstance(DefaultRecordFinder::class);
+        $record = $defaultRecordFinder->findByIdentifier(5, 'pages');
 
         $this->assertSame('pages', $record->getTableName());
         $this->assertSame(5, $record->getIdentifier());
@@ -202,8 +202,8 @@ class CommonRepositoryTest extends FunctionalTestCase
         $defaultConnection->insert('pages', ['uid' => 5, 'sys_language_uid' => 1]);
         $defaultConnection->insert('sys_language', ['uid' => 1]);
 
-        $commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
-        $record = $commonRepository->findByIdentifier(5, 'pages');
+        $defaultRecordFinder = GeneralUtility::makeInstance(DefaultRecordFinder::class);
+        $record = $defaultRecordFinder->findByIdentifier(5, 'pages');
 
         $relatedRecords = $record->getRelatedRecords();
         $this->assertCount(1, $relatedRecords);
@@ -219,33 +219,5 @@ class CommonRepositoryTest extends FunctionalTestCase
 
         $this->assertSame('sys_language', $relatedLanguage->getTableName());
         $this->assertSame(1, $relatedLanguage->getIdentifier());
-    }
-
-    public function testRelatedRecordsArePublished(): void
-    {
-        $pool = GeneralUtility::makeInstance(ConnectionPool::class);
-        $defaultConnection = $pool->getConnectionByName('Default');
-        $foreignConnection = $pool->getConnectionByName('Foreign');
-        $defaultConnection->insert('pages', ['uid' => 5, 'sys_language_uid' => 1]);
-        $defaultConnection->insert('sys_language', ['uid' => 1]);
-
-        $query = $foreignConnection->createQueryBuilder();
-        $query->select('*')->from('sys_language');
-        $result = $query->execute();
-        $rows = $result->fetchAllAssociative();
-        $this->assertEmpty($rows);
-
-        $commonRepository = GeneralUtility::makeInstance(CommonRepository::class);
-        $record = $commonRepository->findByIdentifier(5, 'pages');
-
-        $commonRepository->publishRecordRecursive($record);
-
-        $query = $foreignConnection->createQueryBuilder();
-        $query->select('*')->from('sys_language');
-        $result = $query->execute();
-        $rows = $result->fetchAllAssociative();
-
-        $this->assertCount(1, $rows);
-        $this->assertSame(1, $rows[0]['uid']);
     }
 }

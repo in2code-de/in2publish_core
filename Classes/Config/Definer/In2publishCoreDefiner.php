@@ -29,9 +29,14 @@ namespace In2code\In2publishCore\Config\Definer;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder;
+use In2code\In2publishCore\Component\RecordHandling\DefaultRecordPublisher;
+use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
+use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use In2code\In2publishCore\Config\Builder;
 use In2code\In2publishCore\Config\Node\Node;
 use In2code\In2publishCore\Config\Node\NodeCollection;
+use In2code\In2publishCore\Config\Validator\ClassImplementsValidator;
 use In2code\In2publishCore\Config\Validator\DirectoryExistsValidator;
 use In2code\In2publishCore\Config\Validator\IntegerInRangeValidator;
 use In2code\In2publishCore\Config\Validator\IPv4PortValidator;
@@ -106,6 +111,12 @@ class In2publishCoreDefiner implements DefinerInterface
             'tstamp',
             'crdate',
         ],
+        'sys_redirect' => [
+            'updatedon',
+            'source_host',
+            'hitcount',
+            'lasthiton',
+        ],
     ];
 
     protected $defaultIgnoredTables = [
@@ -164,6 +175,8 @@ class In2publishCoreDefiner implements DefinerInterface
                       ->addArray(
                           'factory',
                           Builder::start()
+                                 ->addString('finder', DefaultRecordFinder::class, [ClassImplementsValidator::class => [RecordFinder::class]])
+                                 ->addString('publisher', DefaultRecordPublisher::class, [ClassImplementsValidator::class => [RecordPublisher::class]])
                                  ->addInteger('maximumPageRecursion', 2)
                                  ->addInteger('maximumContentRecursion', 6)
                                  ->addInteger('maximumOverallRecursion', 8)

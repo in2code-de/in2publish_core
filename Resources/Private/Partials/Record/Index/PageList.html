@@ -12,7 +12,7 @@
 			</f:if>
 			<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{config.view.titleField}" stagingLevel="local" fallbackProperty="title"/>
-			<i class="in2publish-icon-info" {publish:Attribute.DirtyPropertiesIconDataAttributes(record:record)}></i>
+			<i class="in2publish-icon-info" data-action="opendirtypropertieslistcontainer"></i>
 			<f:if condition="{record.publishable}">
 				<f:link.action
 					action="publishRecord"
@@ -32,25 +32,14 @@
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{config.view.titleField}" stagingLevel="foreign" fallbackProperty="title" />
 		</div>
 
-		<f:if condition="{config.factory.simpleOverviewAndAjax}">
+		<f:if condition="{config.debug.allInformation}">
 			<f:then>
-				<div class="simpleOverviewAndAjaxContainerForRecord{record.tableName}{record.identifier}">
-					<f:comment>
-						Container for AJAX request results: Difference View
-					</f:comment>
-				</div>
+				<f:comment>Difference View</f:comment>
+				<f:render partial="Record/Index/AllPropertiesList" arguments="{_all}" />
 			</f:then>
 			<f:else>
-				<f:if condition="{config.debug.allInformation}">
-					<f:then>
-						<f:comment>Difference View</f:comment>
-						<f:render partial="Record/Index/AllPropertiesList" arguments="{_all}" />
-					</f:then>
-					<f:else>
-						<f:comment>Difference View</f:comment>
-						<f:render partial="Record/Index/DirtyPropertiesList" arguments="{_all}" />
-					</f:else>
-				</f:if>
+				<f:comment>Difference View</f:comment>
+				<f:render partial="Record/Index/DirtyPropertiesList" arguments="{_all}" />
 			</f:else>
 		</f:if>
 	</div>
