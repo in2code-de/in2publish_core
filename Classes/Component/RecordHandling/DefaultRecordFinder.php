@@ -1697,12 +1697,11 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
             !empty($columnConfiguration['foreign_field'])
             || !empty($columnConfiguration['foreign_selector'])
             || !empty($columnConfiguration['filter'])
-            || !empty($columnConfiguration['foreign_types'])
             || !empty($columnConfiguration['foreign_table_field'])
         ) {
             $this->logger->error(
-                'Inline MM relations with foreign_field, foreign_types, symmetric_field, filter, '
-                . 'foreign_table_field or foreign_selector are not supported',
+                'Inline MM relations with foreign_field, foreign_selector,'
+                . ' filter, or foreign_table_field are not supported',
                 [
                     'columnConfiguration' => $columnConfiguration,
                     'recordTableName' => $recordTableName,
