@@ -123,31 +123,39 @@ class FileController extends AbstractController
         return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
-    /** @throws StopActionException */
-    public function publishFolderAction(string $identifier): void
+    /**
+     * @param bool $skipNotification Used by the Enterprise Edition. Do not remove despite unused in the CE.
+     * @throws StopActionException
+     */
+    public function publishFolderAction(string $identifier, bool $skipNotification = false): void
     {
         try {
             $this->falPublisher->publishFolder($identifier);
-            $this->addFlashMessage(
-                LocalizationUtility::translate('file_publishing.folder', 'in2publish_core', [$identifier]),
-                LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
-            );
+            if (!$skipNotification) {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('file_publishing.folder', 'in2publish_core', [$identifier]),
+                    LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
+                );
+            }
         } catch (Throwable $exception) {
-            $this->addFlashMessage(
-                LocalizationUtility::translate('file_publishing.failure.folder', 'in2publish_core', [$identifier]),
-                LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
-                AbstractMessage::ERROR
-            );
+            if (!$skipNotification) {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('file_publishing.failure.folder', 'in2publish_core', [$identifier]),
+                    LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
+                    AbstractMessage::ERROR
+                );
+            }
         }
 
         $this->redirect('index');
     }
 
     /**
+     * @param bool $skipNotification Used by the Enterprise Edition. Do not remove despite unused in the CE.
      * @throws InsufficientFolderAccessPermissionsException
      * @throws StopActionException
      */
-    public function publishFileAction(int $uid, string $identifier, int $storage): void
+    public function publishFileAction(int $uid, string $identifier, int $storage, bool $skipNotification = false): void
     {
         // Special case: The file was moved hence the identifier is a merged one
         if (strpos($identifier, ',')) {
@@ -173,15 +181,23 @@ class FileController extends AbstractController
 
             try {
                 $this->falPublisher->publishFile($relatedRecord);
-                $this->addFlashMessage(
-                    LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
-                    LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
-                );
+                if (!$skipNotification) {
+                    $this->addFlashMessage(
+                        LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
+                        LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
+                    );
+                }
             } catch (Throwable $e) {
-                $this->addFlashMessage(
-                    LocalizationUtility::translate('file_publishing.failure.file', 'in2publish_core', [$identifier]),
-                    LocalizationUtility::translate('file_publishing.failure', 'in2publish_core')
-                );
+                if (!$skipNotification) {
+                    $this->addFlashMessage(
+                        LocalizationUtility::translate(
+                            'file_publishing.failure.file',
+                            'in2publish_core',
+                            [$identifier]
+                        ),
+                        LocalizationUtility::translate('file_publishing.failure', 'in2publish_core')
+                    );
+                }
             }
         }
 
