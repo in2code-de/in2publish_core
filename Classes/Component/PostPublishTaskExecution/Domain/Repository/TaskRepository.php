@@ -117,9 +117,9 @@ class TaskRepository
      *
      * @param DateTime|null $executionBegin
      *
-     * @return array|NULL
+     * @return AbstractTask[]
      */
-    public function findByExecutionBegin(DateTime $executionBegin = null): ?array
+    public function findByExecutionBegin(DateTime $executionBegin = null): array
     {
         $query = $this->connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
