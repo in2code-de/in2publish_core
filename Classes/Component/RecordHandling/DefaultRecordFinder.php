@@ -169,8 +169,8 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
     protected $tcaProcessingService;
 
     public function __construct(
-        ?Connection $localDatabase,
-        ?Connection $foreignDatabase,
+        Connection $localDatabase,
+        Connection $foreignDatabase,
         RecordFactory $recordFactory,
         ResourceFactory $resourceFactory,
         ConfigContainer $configContainer,
