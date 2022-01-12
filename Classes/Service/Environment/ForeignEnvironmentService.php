@@ -29,9 +29,9 @@ namespace In2code\In2publishCore\Service\Environment;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Command\Status\CreateMasksCommand;
-use In2code\In2publishCore\Command\Status\DbInitQueryEncodedCommand;
-use In2code\In2publishCore\Command\Status\EncryptionKeyCommand;
+use In2code\In2publishCore\Command\Foreign\Status\CreateMasksCommand;
+use In2code\In2publishCore\Command\Foreign\Status\DbInitQueryEncodedCommand;
+use In2code\In2publishCore\Command\Foreign\Status\EncryptionKeyCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use Psr\Log\LoggerAwareInterface;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Command;
+namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Command\Foreign;
 
 /*
  * Copyright notice

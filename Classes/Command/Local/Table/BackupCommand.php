@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Table;
+namespace In2code\In2publishCore\Command\Local\Table;
 
 /*
  * Copyright notice

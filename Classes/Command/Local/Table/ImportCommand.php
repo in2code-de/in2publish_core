@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Table;
+namespace In2code\In2publishCore\Command\Local\Table;
 
 /*
  * Copyright notice
@@ -29,8 +29,6 @@ namespace In2code\In2publishCore\Command\Table;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Service\Database\DatabaseSchemaService;
@@ -44,18 +42,16 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TYPO3\CMS\Core\Database\Connection;
 
-use function array_filter;
 use function sprintf;
 
-class PublishCommand extends Command implements LoggerAwareInterface
+class ImportCommand extends Command implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
     public const ARG_TABLE_NAME = 'tableName';
-    public const ARG_TABLE_NAME_DESCRIPTION = 'The table to publish';
+    public const ARG_TABLE_NAME_DESCRIPTION = 'The table to back up';
     public const EXIT_INVALID_TABLE = 220;
-    public const EXIT_REMOTE_BACKUP_FAILED = 221;
-    public const IDENTIFIER = 'in2publish_core:table:publish';
+    public const IDENTIFIER = 'in2publish_core:table:import';
 
     /** @var Connection */
     protected $localDatabase;
@@ -69,15 +65,11 @@ class PublishCommand extends Command implements LoggerAwareInterface
     /** @var DatabaseSchemaService */
     private $databaseSchemaService;
 
-    /** @var RemoteCommandDispatcher */
-    private $remoteCommandDispatcher;
-
     public function __construct(
         Connection $localDatabase,
         Connection $foreignDatabase,
         ContextService $contextService,
         DatabaseSchemaService $databaseSchemaService,
-        RemoteCommandDispatcher $remoteCommandDispatcher,
         string $name = null
     ) {
         parent::__construct($name);
@@ -85,7 +77,6 @@ class PublishCommand extends Command implements LoggerAwareInterface
         $this->foreignDatabase = $foreignDatabase;
         $this->contextService = $contextService;
         $this->databaseSchemaService = $databaseSchemaService;
-        $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
     protected function configure(): void
@@ -107,42 +98,30 @@ class PublishCommand extends Command implements LoggerAwareInterface
         if (!$this->databaseSchemaService->tableExists($tableName)) {
             $errOutput->writeln(sprintf('The table "%s" does not exist', $tableName));
             $this->logger->error(
-                'The table that should be backed up before publish does not exist',
+                'The table that should be backed up before import does not exist',
                 ['table' => $tableName]
             );
             return static::EXIT_INVALID_TABLE;
         }
 
-        $request = new RemoteCommandRequest(BackupCommand::IDENTIFIER, [], [$tableName]);
-        $response = $this->remoteCommandDispatcher->dispatch($request);
+        $this->logger->notice('Called Import Table Command for table', ['table' => $tableName]);
 
-        if (!$response->isSuccessful()) {
-            $outputString = $response->getOutputString();
-            $errorsString = $response->getErrorsString();
-            $exitStatus = $response->getExitStatus();
-            $this->logger->error(
-                'Could not create backup on remote:',
-                ['errors' => $errorsString, 'exit_status' => $exitStatus, 'output' => $outputString]
-            );
-            $errOutput->writeln(array_filter(['Could not create backup on remote:', $outputString, $errorsString]));
-            return static::EXIT_REMOTE_BACKUP_FAILED;
-        }
-        $this->logger->info('Backup seems to be successful.');
+        DatabaseUtility::backupTable($this->localDatabase, $tableName);
 
         try {
             $rowCount = DatabaseUtility::copyTableContents(
-                $this->localDatabase,
                 $this->foreignDatabase,
+                $this->localDatabase,
                 $tableName
             );
             $this->logger->notice('Successfully truncated table, importing rows', ['rowCount' => $rowCount]);
             $this->logger->notice('Finished importing of table', ['table' => $tableName]);
         } catch (In2publishCoreException $exception) {
             $this->logger->critical(
-                'Could not truncate foreign table. Skipping publish',
+                'Could not truncate local table. Skipping import',
                 ['table' => $tableName, 'exception' => $exception]
             );
-            $errOutput->writeln(sprintf('Could not truncate foreign table "%s". Skipping import', $tableName));
+            $errOutput->writeln(sprintf('Could not truncate local table "%s". Skipping import', $tableName));
         }
 
         return Command::SUCCESS;

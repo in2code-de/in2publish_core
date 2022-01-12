@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Status;
+namespace In2code\In2publishCore\Command\Foreign\Status;
 
 /*
  * Copyright notice
@@ -33,20 +33,17 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function base64_encode;
-use function json_encode;
-
-class DbInitQueryEncodedCommand extends Command
+class GlobalConfigurationCommand extends Command
 {
-    public const IDENTIFIER = 'in2publish_core:status:dbinitqueryencoded';
+    public const IDENTIFIER = 'in2publish_core:status:globalconfiguration';
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $dbInit = '';
-        if (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'])) {
-            $dbInit = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'];
-        }
-        $output->writeln('DBinit: ' . base64_encode(json_encode($dbInit)));
+        $utf8fileSystem = empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'])
+            ? 'empty'
+            : $GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'];
+        $output->writeln('Utf8Filesystem: ' . $utf8fileSystem);
+        $output->writeln('adminOnly: ' . ($GLOBALS['TYPO3_CONF_VARS']['BE']['adminOnly'] ?? 'empty'));
         return Command::SUCCESS;
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Status;
+namespace In2code\In2publishCore\Command\Foreign\Status;
 
 /*
  * Copyright notice
@@ -32,24 +32,34 @@ namespace In2code\In2publishCore\Command\Status;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TYPO3\CMS\Core\Information\Typo3Version;
+use TYPO3\CMS\Core\Site\SiteFinder;
 
-class Typo3VersionCommand extends Command
+use function base64_encode;
+use function json_encode;
+
+class ShortSiteConfigurationCommand extends Command
 {
-    public const IDENTIFIER = 'in2publish_core:status:typo3version';
+    public const IDENTIFIER = 'in2publish_core:status:shortsiteconfiguration';
 
-    /** @var Typo3Version */
-    private $typo3Version;
+    /** @var SiteFinder */
+    protected $siteFinder;
 
-    public function __construct(Typo3Version $typo3Version, string $name = null)
+    public function __construct(SiteFinder $siteFinder, string $name = null)
     {
         parent::__construct($name);
-        $this->typo3Version = $typo3Version;
+        $this->siteFinder = $siteFinder;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('TYPO3: ' . $this->typo3Version->getVersion());
+        $shortInfo = [];
+        foreach ($this->siteFinder->getAllSites() as $site) {
+            $shortInfo[$site->getIdentifier()] = [
+                'base' => $site->getBase()->__toString(),
+                'rootPageId' => $site->getRootPageId(),
+            ];
+        }
+        $output->writeln('ShortSiteConfig: ' . base64_encode(json_encode($shortInfo)));
         return Command::SUCCESS;
     }
 }

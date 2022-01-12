@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Status;
+namespace In2code\In2publishCore\Command\Foreign\Status;
 
 /*
  * Copyright notice
@@ -33,17 +33,14 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class GlobalConfigurationCommand extends Command
+class CreateMasksCommand extends Command
 {
-    public const IDENTIFIER = 'in2publish_core:status:globalconfiguration';
+    public const IDENTIFIER = 'in2publish_core:status:createmasks';
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $utf8fileSystem = empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'])
-            ? 'empty'
-            : $GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'];
-        $output->writeln('Utf8Filesystem: ' . $utf8fileSystem);
-        $output->writeln('adminOnly: ' . ($GLOBALS['TYPO3_CONF_VARS']['BE']['adminOnly'] ?? 'empty'));
+        $output->writeln('FileCreateMask: ' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['fileCreateMask']);
+        $output->writeln('FolderCreateMask: ' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['folderCreateMask']);
         return Command::SUCCESS;
     }
 }

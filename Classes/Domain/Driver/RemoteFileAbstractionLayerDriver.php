@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Domain\Driver;
 
 use Doctrine\DBAL\Driver\Exception as DriverException;
 use Exception;
-use In2code\In2publishCore\Command\RemoteProcedureCall\ExecuteCommand;
+use In2code\In2publishCore\Command\Foreign\RemoteProcedureCall\ExecuteCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Envelope;

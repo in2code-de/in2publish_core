@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Status;
+namespace In2code\In2publishCore\Command\Foreign\Status;
 
 /*
  * Copyright notice
  *
- * (c) 2020 in2code.de and the following authors:
+ * (c) 2019 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -34,14 +34,19 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function base64_encode;
+use function json_encode;
 
-class EncryptionKeyCommand extends Command
+class DbInitQueryEncodedCommand extends Command
 {
-    public const IDENTIFIER = 'in2publish_core:status:encryptionkey';
+    public const IDENTIFIER = 'in2publish_core:status:dbinitqueryencoded';
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('EKey: ' . base64_encode($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']));
+        $dbInit = '';
+        if (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'])) {
+            $dbInit = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'];
+        }
+        $output->writeln('DBinit: ' . base64_encode(json_encode($dbInit)));
         return Command::SUCCESS;
     }
 }

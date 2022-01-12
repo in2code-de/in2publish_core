@@ -30,8 +30,8 @@ namespace In2code\In2publishCore\Domain\Service;
  */
 
 use Closure;
-use In2code\In2publishCore\Command\Status\AllSitesCommand;
-use In2code\In2publishCore\Command\Status\SiteConfigurationCommand;
+use In2code\In2publishCore\Command\Foreign\Status\AllSitesCommand;
+use In2code\In2publishCore\Command\Foreign\Status\SiteConfigurationCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
