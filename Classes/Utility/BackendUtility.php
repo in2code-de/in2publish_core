@@ -472,15 +472,15 @@ class BackendUtility
         $sysLanguageUid = (int)$context->getPropertyFromAspect('language', 'id', 0);
         $pageRepository = GeneralUtility::makeInstance(PageRepository::class, $context);
         return 'PageRepository_getPage_' . md5(
-                implode(
-                    '-',
-                    [
+            implode(
+                '-',
+                [
                         $pageUid,
                         '',
                         $pageRepository->where_hid_del,
                         $sysLanguageUid,
                     ]
-                )
-            );
+            )
+        );
     }
 }

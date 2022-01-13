@@ -53,7 +53,9 @@ class SystemInformationExporterCompilerPass implements CompilerPassInterface
 
         foreach ($container->findTaggedServiceIds($this->tagName) as $serviceName => $tags) {
             $container->findDefinition($serviceName)->setPublic(true);
-            $serviceDefinition->addMethodCall('registerExporter', [
+            $serviceDefinition->addMethodCall(
+                'registerExporter',
+                [
                     new Reference($serviceName),
                 ]
             );

@@ -51,7 +51,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $flexFormTools = $this->createMock(FlexFormTools::class);
         $tcaProcessingService = $this->createMock(TcaProcessingService::class);
 
-        $replaceMarkerService = new class($flexFormTools, $tcaProcessingService) extends ReplaceMarkersService {
+        $replaceMarkerService = new class ($flexFormTools, $tcaProcessingService) extends ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
                 return [
@@ -85,7 +85,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $flexFormTools = $this->createMock(FlexFormTools::class);
         $tcaProcessingService = $this->createMock(TcaProcessingService::class);
 
-        $replaceMarkerService = new class($flexFormTools, $tcaProcessingService) extends ReplaceMarkersService {
+        $replaceMarkerService = new class ($flexFormTools, $tcaProcessingService) extends ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
                 return [

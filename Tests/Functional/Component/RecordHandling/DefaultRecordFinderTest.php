@@ -100,7 +100,8 @@ class DefaultRecordFinderTest extends FunctionalTestCase
         $pool = GeneralUtility::makeInstance(ConnectionPool::class);
         $defaultConnection = $pool->getConnectionByName('Default');
         $defaultConnection->insert('tt_content', ['uid' => 13]);
-        $defaultConnection->insert('sys_file_reference',
+        $defaultConnection->insert(
+            'sys_file_reference',
             [
                 'uid' => 55,
                 'tablenames' => 'tt_content',
