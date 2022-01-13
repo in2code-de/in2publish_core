@@ -78,7 +78,8 @@ class ForeignSiteFinder implements LoggerAwareInterface
 
             if ($response->getExitStatus() === SiteConfigurationCommand::EXIT_PAGE_HIDDEN_OR_DISCONNECTED) {
                 throw new PageNotFoundException('PageNotFound on foreign during site identification', 1619783372);
-            } elseif ($response->getExitStatus() === SiteConfigurationCommand::EXIT_NO_SITE) {
+            }
+            if ($response->getExitStatus() === SiteConfigurationCommand::EXIT_NO_SITE) {
                 throw new SiteNotFoundException();
             }
             if ($response->isSuccessful()) {

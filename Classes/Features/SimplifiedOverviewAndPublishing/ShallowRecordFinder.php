@@ -99,8 +99,7 @@ class ShallowRecordFinder implements RecordFinder
             return $this->findPageRecord($uid, $excludePages);
         }
         // Fallback
-        return GeneralUtility
-            ::makeInstance(DefaultRecordFinder::class)
+        return GeneralUtility::makeInstance(DefaultRecordFinder::class)
             ->findRecordByUidForOverview($uid, $table, $excludePages);
     }
 
@@ -112,8 +111,7 @@ class ShallowRecordFinder implements RecordFinder
     public function findRecordsByProperties(array $properties, string $table, bool $simulateRoot = false): array
     {
         // Fallback
-        return GeneralUtility
-            ::makeInstance(DefaultRecordFinder::class)
+        return GeneralUtility::makeInstance(DefaultRecordFinder::class)
             ->findRecordsByProperties($properties, $table, $simulateRoot);
     }
 

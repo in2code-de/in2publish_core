@@ -78,7 +78,6 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
      * @param RecordInterface $record
      * @param array $excludedTables
      *
-     * @return void
      * @throws Throwable
      */
     public function publishRecordRecursive(RecordInterface $record, array $excludedTables = ['pages']): void
@@ -169,8 +168,6 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
      *
      * @param RecordInterface $record
      * @param array $excludedTables
-     *
-     * @return void
      */
     protected function publishRelatedRecordsRecursive(RecordInterface $record, array $excludedTables): void
     {
@@ -214,8 +211,6 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
      * foreign Database with all record properties
      *
      * @param RecordInterface $record
-     *
-     * @return void
      */
     protected function updateForeignRecord(RecordInterface $record): void
     {
@@ -230,8 +225,6 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
      * foreign database with all record properties
      *
      * @param RecordInterface $record
-     *
-     * @return void
      */
     protected function addForeignRecord(RecordInterface $record): void
     {
@@ -248,8 +241,6 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
      * must be enabled in the Configuration
      *
      * @param RecordInterface $record
-     *
-     * @return void
      */
     protected function deleteForeignRecord(RecordInterface $record): void
     {

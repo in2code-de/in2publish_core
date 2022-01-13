@@ -234,8 +234,6 @@ interface RecordInterface
 
     /**
      * Prohibits changing this records parent record (prohibits changing parents of moved records)
-     *
-     * @return void
      */
     public function lockParentRecord(): void;
 

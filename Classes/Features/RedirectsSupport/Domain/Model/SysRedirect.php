@@ -36,8 +36,6 @@ use In2code\In2publishCore\Service\Database\RawRecordService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
-use function array_merge;
-use function get_object_vars;
 use function sprintf;
 
 class SysRedirect extends AbstractEntity

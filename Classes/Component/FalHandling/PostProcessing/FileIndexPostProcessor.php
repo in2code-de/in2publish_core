@@ -71,7 +71,8 @@ class FileIndexPostProcessor implements PostProcessor, LoggerAwareInterface
             if (isset($skipStorages[$uid])) {
                 $skipStorages[$uid][] = $record->getTableName() . '[' . $record->getIdentifier() . ']';
                 continue;
-            } elseif (!isset($storages[$uid])) {
+            }
+            if (!isset($storages[$uid])) {
                 try {
                     $storages[$uid] = $this->resourceFactory->getStorageObject($uid);
                 } catch (InvalidArgumentException $exception) {

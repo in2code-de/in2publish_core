@@ -134,7 +134,6 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @param string $identifier
      *
-     * @return void
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -341,7 +340,6 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
     /**
      * Never called
      *
-     * @return void
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */

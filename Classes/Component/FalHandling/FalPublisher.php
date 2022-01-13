@@ -38,7 +38,6 @@ interface FalPublisher
      * Publish the sys_file record and the file on disk.
      *
      * @param RecordInterface $record The instance of the sys_file record to publish.
-     * @return void
      * @throws Throwable Bubbles exceptions from the publishing mechanism but ensures tasks are executed.
      */
     public function publishFile(RecordInterface $record): void;
@@ -47,7 +46,6 @@ interface FalPublisher
      * Publishes a folder by creating or removing it via FAL on foreign.
      *
      * @param string $identifier A FAL combined identifier (like "1:/images/corporate/")
-     * @return void
      * @throws Throwable Bubbles exceptions from the publishing mechanism but ensures tasks are executed.
      */
     public function publishFolder(string $identifier): void;

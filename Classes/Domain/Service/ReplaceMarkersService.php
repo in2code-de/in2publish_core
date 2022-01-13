@@ -290,8 +290,6 @@ class ReplaceMarkersService implements LoggerAwareInterface
      * Log if markers are not substituted or if there are errors
      *
      * @param $string
-     *
-     * @return void
      */
     protected function checkForMarkersAndErrors($string): void
     {

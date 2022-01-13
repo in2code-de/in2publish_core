@@ -258,7 +258,7 @@ class BackendUtility
      * @param int $identifier
      * @param string $stagingLevel
      *
-     * @return null|UriInterface
+     * @return UriInterface|null
      */
     public static function buildPreviewUri(string $table, int $identifier, string $stagingLevel): ?UriInterface
     {
@@ -360,7 +360,6 @@ class BackendUtility
      *
      * This basically removes the trailing dots of sub-array keys in TypoScript.
      * The result can be used to create a query string with GeneralUtility::implodeArrayForUrl().
-     *
      */
     protected static function parseAdditionalGetParameters(array &$parameters, array $typoScript): void
     {

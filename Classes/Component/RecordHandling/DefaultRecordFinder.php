@@ -501,6 +501,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                         'relationship' => 'manyToMany',
                     ];
                     // Fall through!
+                    // no break
                 case 'select':
                     $whereClause = '';
                     if (!empty($columnConfiguration['foreign_table_where'])) {
@@ -1889,8 +1890,6 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
 
     /**
      * Disable Page Recursion
-     *
-     * @return void
      */
     public function disablePageRecursion(): void
     {

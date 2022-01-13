@@ -98,8 +98,6 @@ abstract class AbsGenNode extends AbstractNode
     /**
      * @param ValidationContainer $container
      * @param mixed $value
-     *
-     * @return void
      */
     abstract protected function validateKey(ValidationContainer $container, $value): void;
 }

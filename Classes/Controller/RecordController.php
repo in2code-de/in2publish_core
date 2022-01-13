@@ -102,7 +102,6 @@ class RecordController extends AbstractController
      * If none is chosen, a Record with uid = 0 is created which
      * represents the instance root
      *
-     * @return void
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
@@ -129,8 +128,6 @@ class RecordController extends AbstractController
      *
      * @param int $identifier record identifier
      * @param string $tableName
-     *
-     * @return void
      */
     public function detailAction(int $identifier, string $tableName): ResponseInterface
     {

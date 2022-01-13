@@ -101,8 +101,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * Sets the storage uid the driver belongs to
      *
      * @param int $storageUid
-     *
-     * @return void
      */
     public function setStorageUid($storageUid): void
     {
@@ -112,7 +110,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
     /**
      * Initializes this object. This is called by the storage after the driver has been attached.
      *
-     * @return void
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      * @throws DriverException
@@ -430,7 +427,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
     }
 
     /**
-     *
      * Returns the permissions of a file/folder as an array
      * (keys r, w) of boolean flags
      *
@@ -467,9 +463,9 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         $callback = function () use ($fileIdentifier, $propertiesToExtract) {
             if (!$this->fileExists($fileIdentifier)) {
                 throw new InvalidArgumentException('File ' . $fileIdentifier . ' does not exist.', 1476199721);
-            } else {
-                return $this->executeEnvelope(
-                    new Envelope(
+            }
+            return $this->executeEnvelope(
+                new Envelope(
                         EnvelopeDispatcher::CMD_GET_FILE_INFO_BY_IDENTIFIER,
                         [
                             'storage' => $this->storageUid,
@@ -477,8 +473,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
                             'propertiesToExtract' => $propertiesToExtract,
                         ]
                     )
-                );
-            }
+            );
         };
 
         return $this->cache($this->getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier), $callback);

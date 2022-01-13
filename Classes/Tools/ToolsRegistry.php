@@ -32,8 +32,6 @@ namespace In2code\In2publishCore\Tools;
 use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry as NewToolsRegistry;
 use TYPO3\CMS\Core\SingletonInterface;
 
-use function user_error;
-
 use const E_USER_DEPRECATED;
 
 /**
@@ -67,7 +65,7 @@ class ToolsRegistry implements SingletonInterface
         string $controller,
         string $action
     ): void {
-        user_error(self::DEPRECATED_ROOT_TOOLS_REGISTRY, E_USER_DEPRECATED);
+        trigger_error(self::DEPRECATED_ROOT_TOOLS_REGISTRY, E_USER_DEPRECATED);
         $this->toolsRegistry->addTool(
             $controller,
             $name,
@@ -82,7 +80,7 @@ class ToolsRegistry implements SingletonInterface
      */
     public function getTools(): array
     {
-        user_error(self::DEPRECATED_GET_TOOLS, E_USER_DEPRECATED);
+        trigger_error(self::DEPRECATED_GET_TOOLS, E_USER_DEPRECATED);
         return $this->toolsRegistry->getEntries();
     }
 
@@ -93,6 +91,6 @@ class ToolsRegistry implements SingletonInterface
      */
     public function removeTool(string $name): void
     {
-        user_error(self::DEPRECATED_REMOVE_TOOLS, E_USER_DEPRECATED);
+        trigger_error(self::DEPRECATED_REMOVE_TOOLS, E_USER_DEPRECATED);
     }
 }

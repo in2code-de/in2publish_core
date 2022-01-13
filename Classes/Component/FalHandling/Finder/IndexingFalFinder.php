@@ -339,9 +339,8 @@ class IndexingFalFinder implements FalFinder
         if ($count > $this->threshold) {
             if ($side === 'foreign') {
                 throw new TooManyForeignFilesException($folderIdentifier, $count, $this->threshold);
-            } else {
-                throw new TooManyLocalFilesException($folderIdentifier, $count, $this->threshold);
             }
+            throw new TooManyLocalFilesException($folderIdentifier, $count, $this->threshold);
         }
     }
 }

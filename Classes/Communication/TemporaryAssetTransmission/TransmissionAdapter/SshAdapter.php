@@ -62,10 +62,10 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
 
     private RemoteCommandDispatcher $remoteCommandDispatcher;
 
-    /** @var null|resource */
+    /** @var resource|null */
     protected $sshSession;
 
-    /** @var null|resource */
+    /** @var resource|null */
     protected $sftSession;
 
     protected array $createMasks = [

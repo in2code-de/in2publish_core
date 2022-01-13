@@ -498,8 +498,6 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
     /**
      * @param string $instanceTableName
      * @param int|string $mergedIdentifier
-     *
-     * @return void
      */
     protected function finishedInstantiation(string $instanceTableName, $mergedIdentifier): void
     {

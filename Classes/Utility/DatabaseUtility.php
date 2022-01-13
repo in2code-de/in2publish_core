@@ -140,7 +140,7 @@ class DatabaseUtility
     /**
      * @param string $side
      *
-     * @return null|Connection
+     * @return Connection|null
      * @throws Throwable
      */
     public static function buildDatabaseConnectionForSide(string $side): ?Connection

@@ -550,8 +550,6 @@ class Record implements RecordInterface
      * when parentRecord is locked nothing will happen
      *
      * @param RecordInterface $record
-     *
-     * @return void
      */
     public function addRelatedRecord(RecordInterface $record): void
     {
@@ -579,8 +577,6 @@ class Record implements RecordInterface
      *
      * @param RecordInterface $record
      * @param string $tableName
-     *
-     * @return void
      */
     public function addRelatedRecordRaw(RecordInterface $record, string $tableName = 'pages'): void
     {

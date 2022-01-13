@@ -171,7 +171,8 @@ class FileController extends AbstractController
 
             if (0 === ($recordsCount = count($relatedRecords))) {
                 throw new RuntimeException('Did not find any record matching the publishing arguments', 1475656572);
-            } elseif (1 === $recordsCount) {
+            }
+            if (1 === $recordsCount) {
                 $relatedRecord = reset($relatedRecords);
             } elseif (isset($relatedRecords[$uid])) {
                 $relatedRecord = $relatedRecords[$uid];

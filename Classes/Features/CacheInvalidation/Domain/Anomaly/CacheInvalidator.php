@@ -47,7 +47,7 @@ class CacheInvalidator implements SingletonInterface
     /** @var array<int, int> */
     protected array $clearCachePids = [];
 
-    /** @var array<int, null|string> */
+    /** @var array<int, string|null> */
     protected array $clearCacheCommands = [];
 
     public function __construct(TaskRepository $taskRepository)
