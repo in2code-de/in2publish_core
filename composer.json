@@ -19,6 +19,7 @@
 	},
 	"require-dev": {
 		"typo3/cms-extensionmanager": "^10.4",
+		"typo3/cms-redirects": "^10.4",
 		"typo3/testing-framework": "^6.10"
 	},
 	"suggest": {
@@ -37,7 +38,11 @@
 	"config": {
 		"vendor-dir": ".Build/vendor",
 		"bin-dir": ".Build/bin",
-		"sort-packages": true
+		"sort-packages": true,
+		"allow-plugins": {
+			"typo3/class-alias-loader": true,
+			"typo3/cms-composer-installers": true
+		}
 	},
 	"scripts": {
 		"post-autoload-dump": [
