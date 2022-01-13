@@ -125,7 +125,7 @@
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Database\TableGarbageCollectorTest -->
-			<trans-unit id="garbage_collector_task_missing">
+			<trans-unit id="database.garbage_collector_task_missing">
 				<source>A table garbage collector task for table tx_in2publishcore_running_request is missing</source>
 			</trans-unit>
 
