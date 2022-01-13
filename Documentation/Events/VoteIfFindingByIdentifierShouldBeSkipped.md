@@ -10,8 +10,7 @@ This event is dispatched before the content publisher queries the local and fore
 
 ## What
 
-* `commonRepository`: The instance of the CommonRepository which is going to be used to fetch the rows from the
-  databases.
+* `recordFinder`: The instance of the `RecordFinder` which is going to be used to fetch the rows from the databases.
 * `identifier`: The identifier (uid) of the rows which are requested.
 * `tableName`: The table where the row(s) will be fetched from.
 

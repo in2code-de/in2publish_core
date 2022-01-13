@@ -33,7 +33,6 @@ use Closure;
 use In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder;
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
@@ -67,9 +66,6 @@ class ShallowRecordFinder implements RecordFinder
 
     protected EventDispatcher $eventDispatcher;
 
-    /** @var RecordFactory Only used for events which require an instance of this class */
-    protected RecordFactory $recordFactory;
-
     protected TcaProcessingService $tcaProcessingService;
 
     protected ShallowFolderRecordFactory $shallowFolderRecordFactory;
@@ -82,7 +78,6 @@ class ShallowRecordFinder implements RecordFinder
     public function __construct(
         TcaService $tcaService,
         EventDispatcher $eventDispatcher,
-        RecordFactory $recordFactory,
         TcaProcessingService $tcaProcessingService,
         ShallowFolderRecordFactory $shallowFolderRecordFactory,
         DualDatabaseRepository $dualDatabaseRepository,
@@ -90,7 +85,6 @@ class ShallowRecordFinder implements RecordFinder
     ) {
         $this->tcaService = $tcaService;
         $this->eventDispatcher = $eventDispatcher;
-        $this->recordFactory = $recordFactory;
         $this->tcaProcessingService = $tcaProcessingService;
         $this->shallowFolderRecordFactory = $shallowFolderRecordFactory;
         $this->dualDatabaseRepository = $dualDatabaseRepository;
@@ -169,10 +163,10 @@ class ShallowRecordFinder implements RecordFinder
             $this->eventDispatcher->dispatch($event);
             // The event may replace the record instance
             $pageRecords[$pid] = $record = $event->getRecord();
-            $this->eventDispatcher->dispatch(new AllRelatedRecordsWereAddedToOneRecord($this->recordFactory, $record));
+            $this->eventDispatcher->dispatch(new AllRelatedRecordsWereAddedToOneRecord($record));
         }
 
-        $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($this->recordFactory, $rootRecord));
+        $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($rootRecord));
         return $rootRecord;
     }
 
@@ -483,7 +477,7 @@ class ShallowRecordFinder implements RecordFinder
 
         $setParentRecord($record);
 
-        $this->eventDispatcher->dispatch(new RecordInstanceWasInstantiated($this->recordFactory, $record));
+        $this->eventDispatcher->dispatch(new RecordInstanceWasInstantiated($record));
     }
 
     protected function isIgnoredRecord(string $table, array $rowSet): bool

@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Features\AdminTools\Service;
  */
 
 use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Features\AdminTools\Service\Exception\ClassNotFoundException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -38,15 +39,9 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
 use function class_exists;
 use function implode;
-use function sprintf;
-use function trigger_error;
-
-use const E_USER_DEPRECATED;
 
 class ToolsRegistry implements SingletonInterface
 {
-    private const DEPRECATED_NON_FQCN_TOOL = 'Tools registration without a FQCN is deprecated and will be removed in in2publish_core version 11. Registered controller name: %s';
-
     protected ConfigContainer $configContainer;
 
     protected ExtensionConfiguration $extensionConfiguration;
@@ -100,6 +95,9 @@ class ToolsRegistry implements SingletonInterface
         return $processedTools;
     }
 
+    /**
+     * @throws ClassNotFoundException
+     */
     public function processData(): void
     {
         if (!$this->configContainer->get('module.m4')) {
@@ -113,8 +111,7 @@ class ToolsRegistry implements SingletonInterface
                 $actions = GeneralUtility::trimExplode(',', $entry['action'], true);
 
                 if (!class_exists($controllerName)) {
-                    trigger_error(sprintf(self::DEPRECATED_NON_FQCN_TOOL, $controllerName), E_USER_DEPRECATED);
-                    $controllerName = 'In2code\\In2publishCore\\Controller\\' . $controllerName . 'Controller';
+                    throw new ClassNotFoundException($controllerName);
                 }
 
                 foreach ($actions as $action) {

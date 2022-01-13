@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\Component\RecordHandling;
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
@@ -51,7 +50,7 @@ use function strpos;
 /**
  * DefaultRecordPublisher - published a record recursively including all related records.
  */
-class DefaultRecordPublisher extends CommonRepository implements RecordPublisher, LoggerAwareInterface
+class DefaultRecordPublisher implements RecordPublisher, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

@@ -34,7 +34,6 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
@@ -130,7 +129,7 @@ use function trim;
  *
  * @SuppressWarnings(PHPMD) This class has issues... Will be removed with query aggregation feature.
  */
-class DefaultRecordFinder extends CommonRepository implements RecordFinder, LoggerAwareInterface
+class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

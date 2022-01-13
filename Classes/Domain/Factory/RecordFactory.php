@@ -235,7 +235,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
                 $instance->setState(RecordInterface::RECORD_STATE_MOVED);
             }
 
-            $this->eventDispatcher->dispatch(new RecordInstanceWasInstantiated($this, $instance));
+            $this->eventDispatcher->dispatch(new RecordInstanceWasInstantiated($instance));
 
             /* special case of tables without TCA (currently only sys_file_processedfile).
              * Normally we would just ignore them, but:
@@ -282,7 +282,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
         }
         if (true === $isRootRecord && true === $this->isRootRecord) {
             $this->isRootRecord = false;
-            $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($this, $instance));
+            $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($instance));
         }
         return $instance;
     }
@@ -302,7 +302,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
 
             $record = $commonRecordFinder->enrichRecordWithRelatedRecords($record, $excludedTableNames);
 
-            $this->eventDispatcher->dispatch(new AllRelatedRecordsWereAddedToOneRecord($this, $record));
+            $this->eventDispatcher->dispatch(new AllRelatedRecordsWereAddedToOneRecord($record));
 
             $this->relatedRecordsDepth--;
         }
@@ -565,7 +565,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
     {
         $this->isRootRecord = false;
         $record = GeneralUtility::makeInstance(NullRecord::class);
-        $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($this, $record));
+        $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($record));
     }
 
     protected function findTranslations(RecordInterface $record, DefaultRecordFinder $commonRecordFinder): void

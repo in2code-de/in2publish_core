@@ -87,19 +87,10 @@ call_user_func(function () {
     );
 
     // Set all packages to active
-    if (interface_exists(PackageCacheInterface::class)) {
-        $packageManager = Bootstrap::createPackageManager(
-            PackageManager::class,
-            Bootstrap::createPackageCache($cache)
-        );
-    } else {
-        // v10 compatibility layer
-        // @deprecated Will be removed when v10 compat is dropped from testing-framework
-        $packageManager = Bootstrap::createPackageManager(
-            PackageManager::class,
-            $cache
-        );
-    }
+    $packageManager = Bootstrap::createPackageManager(
+        PackageManager::class,
+        Bootstrap::createPackageCache($cache)
+    );
 
     GeneralUtility::setSingletonInstance(PackageManager::class, $packageManager);
     ExtensionManagementUtility::setPackageManager($packageManager);

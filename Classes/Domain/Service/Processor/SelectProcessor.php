@@ -29,6 +29,8 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder;
+
 class SelectProcessor extends AbstractProcessor
 {
     protected bool $canHoldRelations = true;
@@ -82,7 +84,7 @@ class SelectProcessor extends AbstractProcessor
     {
         $processed = parent::preProcess($config);
         if ($this->isSysCategoryField($config)) {
-            /* @see \In2code\In2publishCore\Domain\Repository\CommonRepository::getLocalField */
+            /* @see DefaultRecordFinder::getLocalField */
             $processed['MM_opposite_field'] = $config['MM_opposite_field'];
         }
         return $processed;
