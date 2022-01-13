@@ -82,27 +82,25 @@ abstract class AbstractController extends ActionController
     protected function initializeAction(): void
     {
         parent::initializeAction();
-        if (static::class !== ToolsController::class) {
-            try {
-                if (null !== DatabaseUtility::buildForeignDatabaseConnection()) {
-                    return;
-                }
-                $this->addFlashMessage(
-                    LocalizationUtility::translate('error_not_connected', 'in2publish_core'),
-                    '',
-                    AbstractMessage::ERROR
-                );
-            } catch (Throwable $exception) {
-                $this->addFlashMessage(
-                    (string)$exception,
-                    LocalizationUtility::translate('error_connecting', 'in2publish_core')
-                    . ': ' . $exception->getMessage(),
-                    AbstractMessage::ERROR
-                );
+        try {
+            if (null !== DatabaseUtility::buildForeignDatabaseConnection()) {
+                return;
             }
-            $this->actionMethodName = static::BLANK_ACTION;
-            $this->arguments = $this->objectManager->get(Arguments::class);
+            $this->addFlashMessage(
+                LocalizationUtility::translate('error_not_connected', 'in2publish_core'),
+                '',
+                AbstractMessage::ERROR
+            );
+        } catch (Throwable $exception) {
+            $this->addFlashMessage(
+                (string)$exception,
+                LocalizationUtility::translate('error_connecting', 'in2publish_core')
+                . ': ' . $exception->getMessage(),
+                AbstractMessage::ERROR
+            );
         }
+        $this->actionMethodName = static::BLANK_ACTION;
+        $this->arguments = $this->objectManager->get(Arguments::class);
     }
 
     protected function initializeView(ViewInterface $view): void
