@@ -62,6 +62,10 @@ class TransmissionAdapterTest implements TestCaseInterface
         $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     public function run(): TestResult
     {
         try {
@@ -176,7 +180,6 @@ class TransmissionAdapterTest implements TestCaseInterface
         return $this->remoteCommandDispatcher->dispatch($rceRequest);
     }
 
-    /** @SuppressWarnings(PHPMD.Superglobals) */
     public function getDependencies(): array
     {
         $dependencies = [

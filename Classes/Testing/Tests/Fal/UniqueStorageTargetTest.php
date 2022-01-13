@@ -49,6 +49,9 @@ use function get_class;
 use function ltrim;
 use function uniqid;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class UniqueStorageTargetTest implements TestCaseInterface
 {
     protected FalStorageTestSubjectsProvider $testSubjectProvider;
@@ -65,6 +68,9 @@ class UniqueStorageTargetTest implements TestCaseInterface
      * @return TestResult
      * @throws ReflectionException
      * @throws DriverException
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function run(): TestResult
     {

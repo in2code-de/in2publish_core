@@ -63,8 +63,6 @@ class FileIndexFactory
     /**
      * @param DriverInterface $localDriver
      * @param DriverInterface $foreignDriver
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct(DriverInterface $localDriver, DriverInterface $foreignDriver)
     {
@@ -81,8 +79,6 @@ class FileIndexFactory
      * @param string $identifier
      *
      * @return RecordInterface
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function makeInstanceForSide(string $side, string $identifier): RecordInterface
     {
@@ -114,6 +110,7 @@ class FileIndexFactory
      * @param string $identifier
      * @param string $side
      * @param bool $clearOpposite Set to true if you want to remove all properties from the "opposite" side
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag) Will _probably_ be removed with query aggregation feature.
      */
     public function updateFileIndexInfoBySide(
         RecordInterface $record,
@@ -224,7 +221,8 @@ class FileIndexFactory
         if ($this->contextService->isLocal()) {
             $databaseConnection = DatabaseUtility::buildDatabaseConnectionForSide($side);
 
-            if (0 === $count = $databaseConnection->count('uid', 'sys_file', ['uid' => $uid])) {
+            $count = $databaseConnection->count('uid', 'sys_file', ['uid' => $uid]);
+            if (0 === $count) {
                 $databaseConnection->insert('sys_file', $fileInfo);
             } elseif ($count > 0) {
                 $databaseConnection->update('sys_file', ['uid' => $uid], $fileInfo);

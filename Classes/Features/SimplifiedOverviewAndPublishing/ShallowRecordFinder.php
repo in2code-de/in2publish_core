@@ -55,6 +55,10 @@ use function count;
 use function implode;
 use function reset;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ShallowRecordFinder implements RecordFinder
 {
     public const PAGE_TABLE_NAME = 'pages';
@@ -93,6 +97,9 @@ class ShallowRecordFinder implements RecordFinder
         $this->config = $configContainer->get();
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     */
     public function findRecordByUidForOverview(int $uid, string $table, bool $excludePages = false): ?RecordInterface
     {
         if (self::PAGE_TABLE_NAME === $table) {
@@ -108,6 +115,9 @@ class ShallowRecordFinder implements RecordFinder
         return $this->findRecordByUidForOverview($uid, $table, true);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     */
     public function findRecordsByProperties(array $properties, string $table, bool $simulateRoot = false): array
     {
         // Fallback
@@ -166,6 +176,10 @@ class ShallowRecordFinder implements RecordFinder
         return $rootRecord;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     protected function resolveImages(array $pageRecords): void
     {
         $referenceRecords = [];
@@ -360,6 +374,8 @@ class ShallowRecordFinder implements RecordFinder
      *
      * @return array|null
      * @noinspection PhpUnusedParameterInspection
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function buildDemand(RecordInterface $record, string $column, array $columnConfig): ?array
     {

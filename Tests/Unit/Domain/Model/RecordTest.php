@@ -11,6 +11,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 use function strcmp;
 
+/**
+ * @SuppressWarnings(PHPMD)
+ */
 class RecordTest extends UnitTestCase
 {
     /**

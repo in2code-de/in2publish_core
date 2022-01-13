@@ -58,8 +58,7 @@ use function sprintf;
 /**
  * Class RemoteFileAbstractionLayerDriver
  *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD) Wanna have a lot of issues? Implement DriverInterface. I don't even try at this point.
  */
 class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 {
@@ -80,8 +79,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * RemoteFileAbstractionLayerDriver constructor.
      *
      * @param array $configuration
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct(array $configuration = [])
     {
@@ -111,7 +108,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * Initializes this object. This is called by the storage after the driver has been attached.
      *
      *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      * @throws DriverException
      */
     public function initialize(): void
@@ -237,8 +233,8 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
             $fileExistsCacheIdentifier = $this->getFileExistsCacheIdentifier($fileIdentifier);
             static::$cache[$this->storageUid][$fileExistsCacheIdentifier] = $info['exists'];
 
-            $getFileInfoByIdentifierCacheIdentifier = $this->getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier);
-            static::$cache[$this->storageUid][$getFileInfoByIdentifierCacheIdentifier] = $info['fifo'] ?? null;
+            $identifierCacheIdentifier = $this->getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier);
+            static::$cache[$this->storageUid][$identifierCacheIdentifier] = $info['fifo'] ?? null;
 
             $hashCacheIdentifier = $this->getHashCacheIdentifier($fileIdentifier, 'sha1');
             static::$cache[$this->storageUid][$hashCacheIdentifier] = $info['hash'] ?? null;
@@ -709,8 +705,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @param string $fileIdentifier
      * @param string $targetFolderIdentifier
      * @param string $newFileName
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function moveFileWithinStorage($fileIdentifier, $targetFolderIdentifier, $newFileName): string
     {
@@ -731,8 +725,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * @return mixed
      *
      * @throws Throwable
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function executeEnvelope(Envelope $envelope)
     {

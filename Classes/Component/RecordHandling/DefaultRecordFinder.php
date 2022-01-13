@@ -127,6 +127,8 @@ use function trim;
  *                '- continue as long as depth < maxDepth
  *
  *  this loop breaks in the factory when maximumRecursionDepth is reached
+ *
+ * @SuppressWarnings(PHPMD) This class has issues... Will be removed with query aggregation feature.
  */
 class DefaultRecordFinder extends CommonRepository implements RecordFinder, LoggerAwareInterface
 {
@@ -183,6 +185,9 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
         $this->tcaProcessingService = $tcaProcessingService;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     */
     public function findRecordByUidForOverview(int $uid, string $table, bool $excludePages = false): ?RecordInterface
     {
         if ($excludePages) {
@@ -295,6 +300,8 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
      * @param bool $simulateRoot
      * @return array<RecordInterface>
      * @throws MissingArgumentException
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     public function findRecordsByProperties(array $properties, string $table, bool $simulateRoot = false): array
     {

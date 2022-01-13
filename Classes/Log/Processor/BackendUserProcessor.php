@@ -48,9 +48,6 @@ class BackendUserProcessor extends AbstractProcessor
         return $logRecord->addData(['be_user' => $data]);
     }
 
-    /**
-     * @SuppressWarnings("PHPMD.Superglobals")
-     */
     protected function getBackendUser(): ?BackendUserAuthentication
     {
         return $GLOBALS['BE_USER'] ?? null;

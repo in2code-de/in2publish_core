@@ -42,7 +42,6 @@ class RemoteAdapterTest implements TestCaseInterface
         return new TestResult('adapter.all_remote_adapter_tests__passed');
     }
 
-    /** @SuppressWarnings(PHPMD.Superglobals) */
     public function getDependencies(): array
     {
         $dependencies = [

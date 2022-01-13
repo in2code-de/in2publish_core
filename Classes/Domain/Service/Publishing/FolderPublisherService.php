@@ -45,16 +45,16 @@ class FolderPublisherService
 
     protected ResourceFactory $resourceFactory;
 
-    private RemoteFileAbstractionLayerDriver $remoteFileAbstractionLayerDriver;
+    private RemoteFileAbstractionLayerDriver $remoteFalDriver;
 
     public function __construct(
         EventDispatcher $eventDispatcher,
         ResourceFactory $resourceFactory,
-        RemoteFileAbstractionLayerDriver $remoteFileAbstractionLayerDriver
+        RemoteFileAbstractionLayerDriver $remoteFalDriver
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->resourceFactory = $resourceFactory;
-        $this->remoteFileAbstractionLayerDriver = $remoteFileAbstractionLayerDriver;
+        $this->remoteFalDriver = $remoteFalDriver;
     }
 
     public function publish(string $combinedIdentifier): bool
@@ -62,13 +62,13 @@ class FolderPublisherService
         [$storage, $folderIdentifier] = GeneralUtility::trimExplode(':', $combinedIdentifier);
         $storage = (int)$storage;
 
-        $this->remoteFileAbstractionLayerDriver->setStorageUid($storage);
-        $this->remoteFileAbstractionLayerDriver->initialize();
+        $this->remoteFalDriver->setStorageUid($storage);
+        $this->remoteFalDriver->initialize();
 
         // Determine if the folder should get published or deleted.
         // If it exists locally then create it on foreign else remove it.
         if ($this->resourceFactory->getStorageObject($storage)->hasFolder($folderIdentifier)) {
-            $createdFolder = $this->remoteFileAbstractionLayerDriver->createFolder(
+            $createdFolder = $this->remoteFalDriver->createFolder(
                 basename($folderIdentifier),
                 dirname($folderIdentifier),
                 true
@@ -77,7 +77,7 @@ class FolderPublisherService
             // leading or trailing slashes (like fal_s3/aus_driver_amazon_s3)
             $success = trim($folderIdentifier, '/') === trim($createdFolder, '/');
         } else {
-            $success = $this->remoteFileAbstractionLayerDriver->deleteFolder($folderIdentifier, true);
+            $success = $this->remoteFalDriver->deleteFolder($folderIdentifier, true);
         }
         $this->eventDispatcher->dispatch(new FolderWasPublished($storage, $folderIdentifier, $success));
         return $success;

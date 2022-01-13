@@ -47,7 +47,6 @@ class LocalInstanceTest implements TestCaseInterface
         $this->configContainer = $configContainer;
     }
 
-    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function run(): TestResult
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();

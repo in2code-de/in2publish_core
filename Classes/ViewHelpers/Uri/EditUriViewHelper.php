@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\ViewHelpers\Uri;
 
+use Closure;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
@@ -18,7 +19,10 @@ class EditUriViewHelper extends AbstractViewHelper
         $this->registerArgument('uid', 'integer', 'identifier of the record to be edited', true);
     }
 
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public static function renderStatic(array $arguments, Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
 

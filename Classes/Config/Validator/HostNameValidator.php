@@ -47,7 +47,10 @@ class HostNameValidator implements ValidatorInterface
         $this->port = $port;
     }
 
-    /** @param mixed $value */
+    /**
+     * @param mixed $value
+     * @SuppressWarnings(PHPMD.ErrorControlOperator) I don't remember the reason but I had one. I swear.
+     */
     public function validate(ValidationContainer $container, $value): void
     {
         $resource = @fsockopen($value, $this->port, $errorCode, $errorMessage, 1);

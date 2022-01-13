@@ -324,7 +324,6 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
 
     /**
      * @return mixed
-     * @SuppressWarnings(PHPMD.Superglobals)
      * @deprecated Use <code>$GLOBALS['TCA']</code> instead.
      */
     public static function getCompleteTca()
@@ -340,7 +339,6 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
      * @param string $tableName
      *
      * @return array
-     * @SuppressWarnings(PHPMD.Superglobals)
      * @deprecated Use <code>$GLOBALS['TCA']</code> instead.
      */
     public static function getCompleteTcaForTable(string $tableName): array

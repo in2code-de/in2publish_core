@@ -32,6 +32,9 @@ use function getenv;
 use function in_array;
 use function putenv;
 
+/**
+ * @SuppressWarnings(PHPMD)
+ */
 abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functional\FunctionalTestCase
 {
     protected $testExtensionsToLoad = [

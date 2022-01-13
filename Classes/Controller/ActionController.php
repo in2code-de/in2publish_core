@@ -67,8 +67,6 @@ abstract class ActionController extends ExtbaseActionController implements Logge
      * Creates a logger for the instantiated controller object.
      * When extending from this class and using an own constructor don't forget
      * to call this constructor method at the end of your own implementation
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct(
         ConfigContainer $configContainer,
@@ -86,7 +84,11 @@ abstract class ActionController extends ExtbaseActionController implements Logge
         $this->pid = $pid;
     }
 
-    // TODO v12: replace TYPO3\CMS\Extbase\Mvc\View\ViewInterface with TYPO3Fluid\Fluid\View\ViewInterface
+    /**
+     * TODO v12: replace TYPO3\CMS\Extbase\Mvc\View\ViewInterface with TYPO3Fluid\Fluid\View\ViewInterface
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function initializeView(ViewInterface $view): void
     {
         $this->view->assign('extensionVersion', ExtensionUtility::getExtensionVersion('in2publish_core'));

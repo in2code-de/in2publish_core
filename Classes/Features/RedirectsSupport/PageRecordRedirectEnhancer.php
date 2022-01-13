@@ -77,7 +77,9 @@ class PageRecordRedirectEnhancer
     public function addRedirectsToPageRecord(AllRelatedRecordsWereAddedToOneRecord $event): void
     {
         $record = $event->getRecord();
-        if ('pages' !== $record->getTableName() || ($pid = $record->getIdentifier()) < 1) {
+        $pid = $record->getIdentifier();
+
+        if ($pid < 1 || 'pages' !== $record->getTableName()) {
             return;
         }
 
@@ -188,6 +190,9 @@ class PageRecordRedirectEnhancer
               ->execute();
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     protected function findMissingRowsByUid(array $redirects): array
     {
         $missingRows = ['local' => [], 'foreign' => []];
@@ -217,6 +222,9 @@ class PageRecordRedirectEnhancer
         return $redirects;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     protected function findRedirectsByUri(RecordInterface $record): array
     {
         $basicUris = [];

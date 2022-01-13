@@ -54,6 +54,10 @@ class ForeignInstanceTest implements TestCaseInterface
         $this->typo3Version = $typo3Version;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     public function run(): TestResult
     {
         $request = new RemoteCommandRequest(AllCommand::IDENTIFIER);

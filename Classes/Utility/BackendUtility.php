@@ -68,6 +68,10 @@ use function rtrim;
 use function stripos;
 use function strpos;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) Maybe refactor this into a service with ordered strategies.
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Can't help this without splitting
+ */
 class BackendUtility
 {
     /**
@@ -78,7 +82,11 @@ class BackendUtility
      *
      * @return int|string Returns the page ID or the folder ID when navigating in the file list
      *
-     * @SuppressWarnings(PHPMD.StaticAccess)
+     * See the class comment for more info
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.IfStatementAssignment)
      */
     public static function getPageIdentifier($identifier = null, string $table = null)
     {
@@ -259,6 +267,9 @@ class BackendUtility
      * @param string $stagingLevel
      *
      * @return UriInterface|null
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public static function buildPreviewUri(string $table, int $identifier, string $stagingLevel): ?UriInterface
     {
@@ -416,6 +427,7 @@ class BackendUtility
             try {
                 return $buildPageUrl();
             } catch (Throwable $exception) {
+                // Ignore expections
             } finally {
                 $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] = $encryptionKey;
 

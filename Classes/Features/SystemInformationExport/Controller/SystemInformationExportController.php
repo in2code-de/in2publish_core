@@ -96,6 +96,9 @@ class SystemInformationExportController extends ActionController
         return $this->htmlResponse();
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExitExpression) Don't use PSR-14 for historic reasons. Revisit in in2publish_core v12.
+     */
     public function sysInfoDownloadAction(): void
     {
         $info = $this->sysInfoExportService->getSystemInformation();

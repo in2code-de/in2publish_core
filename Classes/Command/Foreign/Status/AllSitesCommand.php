@@ -49,6 +49,9 @@ class AllSitesCommand extends Command
         $this->siteFinder = $siteFinder;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $sites = $this->siteFinder->getAllSites(false);

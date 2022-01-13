@@ -64,9 +64,6 @@ class PageTsProvider implements ProviderInterface, ContextualProvider
         return true;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
     public function getConfig(): array
     {
         $uid = In2publishBackendUtility::getPageIdentifier();

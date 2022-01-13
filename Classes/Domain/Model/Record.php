@@ -69,7 +69,10 @@ use const E_USER_DEPRECATED;
  * the singleton "implementation". The Pattern will break when a Record
  * gets instantiated without the use of the Factory
  *
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength) Will change with the query aggregation feature
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) Will change with the query aggregation feature
  */
 class Record implements RecordInterface
 {
@@ -149,8 +152,6 @@ class Record implements RecordInterface
      * @param array $tca
      * @param array $additionalProperties
      * @param int|string|null $identifier
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct(
         string $tableName,
@@ -236,6 +237,8 @@ class Record implements RecordInterface
      * @param array $alreadyVisited
      *
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) PR welcome
      */
     public function getStateRecursive(array &$alreadyVisited = []): string
     {
@@ -693,6 +696,8 @@ class Record implements RecordInterface
      * @param $propertyName
      *
      * @return mixed
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) PR welcome
      */
     public function getMergedProperty($propertyName)
     {
@@ -741,6 +746,8 @@ class Record implements RecordInterface
 
     /**
      * Sets this Records state depending on the local and foreign properties
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) PR welcome
      */
     public function calculateState(): void
     {

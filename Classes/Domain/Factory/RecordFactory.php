@@ -57,6 +57,8 @@ use function max;
  * This class is called recursively for the record, any related
  * records and any of the related records related records and so on to the extend
  * of the setting maximumRecursionDepth
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) Well, happens. Will be removed with query aggregation feature.
  */
 class RecordFactory implements SingletonInterface, LoggerAwareInterface
 {
@@ -147,6 +149,10 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
      * @param array<string>|null $idFields
      *
      * @return RecordInterface|null
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) Will be removed with query aggregation feature
+     * @SuppressWarnings(PHPMD.NPathComplexity) Will be removed with query aggregation feature
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength) Will be removed with query aggregation feature
      */
     public function makeInstance(
         DefaultRecordFinder $commonRecordFinder,
@@ -359,6 +365,8 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
      * @param array $foreignProperties
      *
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) PR welcome
      */
     protected function detectAndAlterMovedInstance(
         string $tableName,

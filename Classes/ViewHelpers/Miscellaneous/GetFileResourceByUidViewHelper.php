@@ -42,6 +42,9 @@ class GetFileResourceByUidViewHelper extends AbstractViewHelper
         $this->registerArgument('uid', 'integer', 'UID of the file to get the resource for', true);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
         return GeneralUtility::makeInstance(ResourceFactory::class)->getFileObject($arguments['uid']);

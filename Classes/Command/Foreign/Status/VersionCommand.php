@@ -38,6 +38,9 @@ class VersionCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:version';
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('Version: ' . ExtensionUtility::getExtensionVersion('in2publish_core'));

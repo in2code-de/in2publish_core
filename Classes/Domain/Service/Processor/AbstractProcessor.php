@@ -32,6 +32,9 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
 use function array_key_exists;
 use function array_merge;
 
+/**
+ * @SuppressWarnings(PHPMD.NumberOfChildren) Required through TYPO3's growing count of TCA types
+ */
 abstract class AbstractProcessor implements ProcessorInterface
 {
     /**

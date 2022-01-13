@@ -56,8 +56,6 @@ class RemoteCommandDispatcher implements SingletonInterface, LoggerAwareInterfac
      * @param RemoteCommandRequest $request
      *
      * @return RemoteCommandResponse
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function dispatch(RemoteCommandRequest $request): RemoteCommandResponse
     {

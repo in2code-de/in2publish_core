@@ -41,6 +41,8 @@ use function putenv;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Service\Context\ContextService
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ContextServiceTest extends UnitTestCase
 {
@@ -75,7 +77,7 @@ class ContextServiceTest extends UnitTestCase
 
         $environmentReflection = new ReflectionProperty(Environment::class, 'context');
         $environmentReflection->setAccessible(true);
-        $environmentReflection->setValue(Environment::class, new ApplicationContext($value));
+        $environmentReflection->setValue(Environment::class, $applicationContext);
     }
 
     /**

@@ -451,7 +451,6 @@ class TcaServiceTest extends UnitTestCase
 
     /**
      * @param array $tca
-     * @SuppressWarnings("PHPMD.Superglobals")
      */
     protected function setTca(array $tca = []): void
     {
@@ -460,7 +459,6 @@ class TcaServiceTest extends UnitTestCase
 
     /**
      * @param mixed $languageService
-     * @SuppressWarnings("PHPMD.Superglobals")
      */
     protected function setLanguageService($languageService): void
     {

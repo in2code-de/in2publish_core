@@ -56,6 +56,9 @@ class FileIndexPostProcessor implements PostProcessor, LoggerAwareInterface
     /**
      * @param RecordInterface[] $records
      * @throws ReflectionException
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function postProcess(array $records): void
     {
@@ -65,7 +68,8 @@ class FileIndexPostProcessor implements PostProcessor, LoggerAwareInterface
         $storages = [];
         $skipStorages = [];
         foreach ($records as $record) {
-            if (null === $uid = $record->getLocalProperty('storage')) {
+            $uid = $record->getLocalProperty('storage');
+            if (null === $uid) {
                 $uid = $record->getForeignProperty('storage');
             }
             if (isset($skipStorages[$uid])) {

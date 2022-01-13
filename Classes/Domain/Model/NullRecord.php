@@ -41,7 +41,6 @@ class NullRecord extends Record
      * @param array $foreignProperties
      * @param array $tca
      * @param array $additionalProperties
-     * @SuppressWarnings("PHPMD.Superglobals")
      * @noinspection MagicMethodsValidityInspection
      * @noinspection PhpMissingParentConstructorInspection
      */

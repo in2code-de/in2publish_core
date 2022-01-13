@@ -54,6 +54,9 @@ use function implode;
 use function reset;
 use function sprintf;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) I probably really need all these classes.
+ */
 class RedirectController extends AbstractController
 {
     use ControllerModuleTemplate;

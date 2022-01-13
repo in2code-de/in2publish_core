@@ -61,8 +61,6 @@ class TcaService implements SingletonInterface
      * @param string[] $exceptTableNames
      *
      * @return string[]
-     *
-     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function getAllTableNamesAllowedOnRootLevel(array $exceptTableNames = []): array
     {
@@ -88,7 +86,6 @@ class TcaService implements SingletonInterface
      * Get label field name from table
      *
      * @return string Field name of the configured label field or empty string if not set
-     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function getLabelFieldFromTable(string $tableName): string
     {
@@ -100,7 +97,6 @@ class TcaService implements SingletonInterface
 
     /**
      * @return string Field name of the configured label_alt field or empty string if not set
-     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function getLabelAltFieldFromTable(string $tableName): string
     {
@@ -110,7 +106,6 @@ class TcaService implements SingletonInterface
         return '';
     }
 
-    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getLabelAltForceFromTable(string $tableName): bool
     {
         if (isset($GLOBALS['TCA'][$tableName]['ctrl']['label_alt_force'])) {
@@ -142,7 +137,6 @@ class TcaService implements SingletonInterface
 
     /**
      * @return string Field name of the configured title field or empty string if not set
-     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function getTitleFieldFromTable(string $tableName): string
     {
@@ -152,7 +146,6 @@ class TcaService implements SingletonInterface
         return '';
     }
 
-    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getSortingField(string $tableName): string
     {
         $sortingField = '';
@@ -164,7 +157,6 @@ class TcaService implements SingletonInterface
         return $sortingField;
     }
 
-    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getNameOfSortingField(string $tableName): string
     {
         if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['sortby'])) {
@@ -173,7 +165,6 @@ class TcaService implements SingletonInterface
         return '';
     }
 
-    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getDeletedField(string $tableName): string
     {
         $deleteField = '';
@@ -185,7 +176,6 @@ class TcaService implements SingletonInterface
 
     /**
      * Records whose deleted field evaluate to true will not be shown in the frontend.
-     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function getDisableField(string $tableName): string
     {
@@ -195,7 +185,6 @@ class TcaService implements SingletonInterface
         return '';
     }
 
-    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getLanguageField(string $tableName): string
     {
         if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['languageField'])) {
@@ -204,7 +193,6 @@ class TcaService implements SingletonInterface
         return '';
     }
 
-    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getTransOrigPointerField(string $tableName): string
     {
         if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['transOrigPointerField'])) {
@@ -241,13 +229,11 @@ class TcaService implements SingletonInterface
         return $result;
     }
 
-    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getConfigurationArrayForTable(string $table): ?array
     {
         return $GLOBALS['TCA'][$table] ?? null;
     }
 
-    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function getColumnConfigurationForTableColumn(string $table, string $column): ?array
     {
         return $GLOBALS['TCA'][$table]['columns'][$column] ?? null;
@@ -285,7 +271,6 @@ class TcaService implements SingletonInterface
         return $label;
     }
 
-    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function isHiddenRootTable(string $tableName): bool
     {
         return isset($GLOBALS['TCA'][$tableName]['ctrl']['hideTable'], $GLOBALS['TCA'][$tableName]['ctrl']['rootLevel'])
@@ -294,7 +279,6 @@ class TcaService implements SingletonInterface
     }
 
     /**
-     * @SuppressWarnings("PHPMD.Superglobals")
      * @codeCoverageIgnore
      */
     protected function localizeLabel(string $label): string

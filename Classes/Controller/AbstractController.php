@@ -58,9 +58,6 @@ abstract class AbstractController extends ActionController
 
     protected RemoteCommandDispatcher $remoteCommandDispatcher;
 
-    /**
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
     public function __construct(
         ConfigContainer $configContainer,
         ExecutionTimeService $executionTimeService,
@@ -74,8 +71,6 @@ abstract class AbstractController extends ActionController
 
     /**
      * Sets action to blankAction if the foreign DB is not reachable. Prevents further errors.
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function initializeAction(): void
     {

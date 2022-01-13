@@ -78,6 +78,11 @@ class CompareDatabaseToolController extends ActionController
         return $this->htmlResponse();
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) PR welcome
+     * @SuppressWarnings(PHPMD.NPathComplexity) PR welcome
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength) PR welcome
+     */
     public function compareAction(ComparisonRequest $comparisonRequest = null): ResponseInterface
     {
         if (null === $comparisonRequest) {
@@ -183,6 +188,11 @@ class CompareDatabaseToolController extends ActionController
         return $this->htmlResponse();
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) PR welcome
+     * @SuppressWarnings(PHPMD.NPathComplexity) PR welcome
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength) PR welcome
+     */
     public function transferAction(string $table, int $uid, string $expected): void
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();

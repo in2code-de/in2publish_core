@@ -93,6 +93,10 @@ class Filter
         $this->association = $association ?: null;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) The method is pretty easy to understand
+     * @SuppressWarnings(PHPMD.NPathComplexity) The method is pretty easy to understand
+     */
     public function modifyQuery(QueryInterface $query): void
     {
         $and = [];

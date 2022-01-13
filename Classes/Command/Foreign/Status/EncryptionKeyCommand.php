@@ -39,6 +39,9 @@ class EncryptionKeyCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:encryptionkey';
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('EKey: ' . base64_encode($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']));

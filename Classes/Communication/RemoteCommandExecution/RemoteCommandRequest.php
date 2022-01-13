@@ -80,7 +80,8 @@ class RemoteCommandRequest
             ]
         );
         $isComposerMode = defined('TYPO3_COMPOSER_MODE') && true === TYPO3_COMPOSER_MODE;
-        if ($dispatcher = $configContainer->get('foreign.dispatcher')) {
+        $dispatcher = $configContainer->get('foreign.dispatcher');
+        if ($dispatcher) {
             $this->dispatcher = $dispatcher;
         } elseif ($isComposerMode && file_exists(Environment::getPublicPath() . '/vendor/bin/typo3')) {
             $this->dispatcher = './vendor/bin/typo3';

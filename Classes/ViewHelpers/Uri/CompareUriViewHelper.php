@@ -88,7 +88,6 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
         if (null === $site) {
             return '';
         }
-        $url = '';
         try {
             $url = $site->getRouter()->generateUri(
                 $route,
@@ -99,8 +98,6 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
                 ]
             );
         } catch (Throwable $exception) {
-        }
-        if (empty($url)) {
             return '';
         }
 

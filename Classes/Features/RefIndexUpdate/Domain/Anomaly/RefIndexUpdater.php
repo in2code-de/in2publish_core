@@ -60,7 +60,6 @@ class RefIndexUpdater
         }
     }
 
-    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function writeRefIndexUpdateTask(): void
     {
         if (empty($this->configuration)) {

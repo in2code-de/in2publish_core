@@ -295,7 +295,7 @@ class ConfigContainer implements SingletonInterface
         $fullConfig = $cloned->get();
 
         $priority = [];
-        foreach ($cloned->providers as $class => $config) {
+        foreach (array_keys($cloned->providers) as $class) {
             $provider = GeneralUtility::makeInstance($class);
             if ($provider instanceof ProviderInterface) {
                 $priority[$class] = $provider->getPriority();

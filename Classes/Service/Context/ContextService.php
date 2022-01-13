@@ -55,7 +55,6 @@ class ContextService implements SingletonInterface
         return $this->context;
     }
 
-    /** @SuppressWarnings(PHPMD.StaticAccess) */
     protected function determineContext(): string
     {
         $environmentVariable = getenv(static::ENV_VAR_NAME) ?: getenv(static::REDIRECT_ENV_VAR_NAME) ?: false;

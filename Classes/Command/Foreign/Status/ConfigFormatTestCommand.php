@@ -57,6 +57,9 @@ class ConfigFormatTestCommand extends Command
         $this->configContainer = $configContainer;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $definition = $this->configContainer->getForeignDefinition();

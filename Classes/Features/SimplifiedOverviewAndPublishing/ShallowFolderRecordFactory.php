@@ -13,6 +13,9 @@ use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class ShallowFolderRecordFactory
 {
     protected ResourceFactory $resourceFactory;
@@ -64,7 +67,9 @@ class ShallowFolderRecordFactory
      * @noinspection DuplicatedCode
      * @noinspection MissingOrEmptyGroupStatementInspection
      * @noinspection PhpStatementHasEmptyBodyInspection
-     * @noinspection RedundantElseClauseInspection
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function filterFileRecords(array $files): array
     {

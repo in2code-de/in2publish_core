@@ -103,7 +103,6 @@ class TestCaseService
         return $tests;
     }
 
-    /** @SuppressWarnings("PHPMD.Superglobals") */
     protected function getTestClasses(): array
     {
         return $GLOBALS['in2publish_core']['tests'];

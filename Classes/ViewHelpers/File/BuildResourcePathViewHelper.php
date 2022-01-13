@@ -61,9 +61,6 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
         $this->remoteFileAbstractionLayerDriver = $remoteFileAbstractionLayerDriver;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
     public function initialize(): void
     {
         $config = $this->configContainer->get('filePreviewDomainName');
@@ -79,9 +76,6 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
         $this->registerArgument('stagingLevel', 'string', 'Sets the staging level [LOCAL/foreign]', true, 'local');
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
     public function render(): string
     {
         /** @var Record $record */

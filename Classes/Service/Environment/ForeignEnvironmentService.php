@@ -96,7 +96,6 @@ class ForeignEnvironmentService implements LoggerAwareInterface
         return $decodedDbInit;
     }
 
-    /** @SuppressWarnings(PHPMD.Superglobals) */
     public function getCreateMasks(): array
     {
         if (!$this->cache->has('create_masks')) {

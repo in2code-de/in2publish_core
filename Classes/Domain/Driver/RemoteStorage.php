@@ -136,8 +136,6 @@ class RemoteStorage implements ResourceStorageInterface
      * @return mixed
      *
      * @throws Throwable
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function executeEnvelope(string $command, array $arguments = [])
     {

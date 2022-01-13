@@ -60,6 +60,10 @@ use function time;
 
 use const PHP_EOL;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) Ignore for now. Refactoring will fix this.
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Ignore for now. Refactoring will fix this.
+ */
 class DatabaseUtility
 {
     protected static ?Logger $logger = null;
@@ -172,6 +176,7 @@ class DatabaseUtility
 
     /**
      * @throws Throwable
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected static function createBackup(Connection $connection, string $tableName, string $backupFolder): void
     {
@@ -359,6 +364,7 @@ class DatabaseUtility
      * @param string $permClause
      * @return string comma separated list of descendant pages
      * @throws Exception
+     * @SuppressWarnings(PHPMD)
      */
     public static function getTreeList($id, $depth, $begin = 0, $permClause = '')
     {

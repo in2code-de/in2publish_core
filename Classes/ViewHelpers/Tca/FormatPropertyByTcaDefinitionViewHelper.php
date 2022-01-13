@@ -48,7 +48,6 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
 
     /**
      * Get formatted output by TCA definition
-     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function render(): string
     {

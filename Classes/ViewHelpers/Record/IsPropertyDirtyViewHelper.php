@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\ViewHelpers\Record;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Closure;
 use In2code\In2publishCore\Domain\Model\Record;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -40,7 +41,10 @@ class IsPropertyDirtyViewHelper extends AbstractViewHelper
         $this->registerArgument('property', 'string', 'name of the property that should be checked', true);
     }
 
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public static function renderStatic(array $arguments, Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
         return in_array($arguments['property'], $arguments['record']->getDirtyProperties());
     }

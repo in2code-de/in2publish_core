@@ -59,6 +59,9 @@ class BackupCommand extends Command implements LoggerAwareInterface
         $this->addArgument(self::ARG_TABLE_NAME, InputArgument::REQUIRED, self::ARG_TABLE_NAME_DESCRIPTION);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $tableName = $input->getArgument(self::ARG_TABLE_NAME);

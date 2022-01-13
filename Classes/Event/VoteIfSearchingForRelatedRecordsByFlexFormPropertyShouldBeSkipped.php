@@ -37,6 +37,9 @@ use function trigger_error;
 
 use const E_USER_DEPRECATED;
 
+/**
+ * @SuppressWarnings(PHPMD.LongClassName) Event names should be descriptive.
+ */
 final class VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped extends AbstractVotingEvent
 {
     private RecordFinder $recordFinder;

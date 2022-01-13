@@ -77,10 +77,6 @@ class AdapterRegistry implements SingletonInterface, LoggerAwareInterface
         ],
     ];
 
-    /**
-     * @SuppressWarnings(PHPMD.Superglobals)
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
     public function __construct(ExtensionConfiguration $extensionConfiguration)
     {
         if (!isset($GLOBALS['in2publish_core']['tests'])) {
@@ -153,7 +149,6 @@ class AdapterRegistry implements SingletonInterface, LoggerAwareInterface
         throw new In2publishCoreException('Could not determine adapter or type for ' . $interface, 1507906038);
     }
 
-    /** @SuppressWarnings(PHPMD.Superglobals) */
     protected function addTests(array $tests, string $interface): void
     {
         $GLOBALS['in2publish_core']['virtual_tests'][$interface] = $tests;
@@ -169,7 +164,6 @@ class AdapterRegistry implements SingletonInterface, LoggerAwareInterface
         return $this->config['adapter'];
     }
 
-    /** @SuppressWarnings(PHPMD.Superglobals) */
     protected function getLanguageService(): LanguageService
     {
         return $GLOBALS['LANG'];

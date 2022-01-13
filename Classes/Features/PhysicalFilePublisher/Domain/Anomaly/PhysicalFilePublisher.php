@@ -73,8 +73,6 @@ class PhysicalFilePublisher implements SingletonInterface, LoggerAwareInterface
      * @param PublishingOfOneRecordEnded $event
      *
      * @throws Exception
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function publishPhysicalFileOfSysFile(PublishingOfOneRecordEnded $event): void
     {

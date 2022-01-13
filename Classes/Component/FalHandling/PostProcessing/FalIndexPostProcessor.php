@@ -59,7 +59,11 @@ class FalIndexPostProcessor implements PostProcessor, LoggerAwareInterface
         $this->indexingFalFinder = $indexingFalFinder;
     }
 
-    /** @param RecordInterface[] $records */
+    /**
+     * @param RecordInterface[] $records
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     public function postProcess(array $records): void
     {
         $identifiers = [];
@@ -116,7 +120,8 @@ class FalIndexPostProcessor implements PostProcessor, LoggerAwareInterface
             $storages[0] = $this->resourceFactory->getStorageObject(0);
         }
 
-        if (null !== ($storageUid = $record->getLocalProperty('storage'))) {
+        $storageUid = $record->getLocalProperty('storage');
+        if (null !== $storageUid) {
             try {
                 $storages[$storageUid] = $this->resourceFactory->getStorageObject($storageUid);
             } catch (InvalidArgumentException $exception) {

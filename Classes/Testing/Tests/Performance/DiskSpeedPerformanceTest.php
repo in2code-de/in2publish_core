@@ -104,6 +104,7 @@ class DiskSpeedPerformanceTest implements TestCaseInterface
         $readAndWriteTime = microtime(true) - $start;
         $writeTime = $readAndWriteTime - $readTime;
 
+        $messages = [];
         $messages[] = 'Read: ' . $readTime . ' msec';
         $messages[] = 'Write: ' . $writeTime . ' msec';
 

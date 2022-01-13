@@ -137,6 +137,9 @@ class In2publishCoreDefiner implements DefinerInterface
         'tx_in2code_in2publish_envelope',
     ];
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function getLocalDefinition(): NodeCollection
     {
         return Builder::start()

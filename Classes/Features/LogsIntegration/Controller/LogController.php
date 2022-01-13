@@ -44,9 +44,6 @@ class LogController extends LogsController
         $executionTimeService->start();
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
     protected function initializeAction(): void
     {
         parent::initializeAction();

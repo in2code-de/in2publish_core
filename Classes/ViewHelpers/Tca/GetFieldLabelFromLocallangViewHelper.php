@@ -39,7 +39,6 @@ class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
 
     protected LanguageService $languageService;
 
-    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function __construct()
     {
         $this->tca = $GLOBALS['TCA'];

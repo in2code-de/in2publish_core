@@ -43,9 +43,6 @@ class LocalDomainTest extends AbstractDomainTest implements TestCaseInterface
 
     protected string $prefix = 'local';
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
     public function __construct(SiteFinder $siteFinder)
     {
         $this->localConnection = DatabaseUtility::buildLocalDatabaseConnection();

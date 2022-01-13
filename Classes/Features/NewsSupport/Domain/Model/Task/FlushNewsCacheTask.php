@@ -43,8 +43,6 @@ class FlushNewsCacheTask extends AbstractTask
      * @return bool
      *
      * @throws NoSuchCacheException
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function executeTask(): bool
     {

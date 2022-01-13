@@ -110,8 +110,6 @@ class IndexingFalFinder implements FalFinder
      *
      * @throws TooManyFilesException
      * @throws InsufficientFolderAccessPermissionsException
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function findFalRecord(?string $dir): RecordInterface
     {
@@ -194,6 +192,9 @@ class IndexingFalFinder implements FalFinder
      * @param string $side
      *
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     protected function updateFilesByMovedRecords(array $records, array $files, string $side): array
     {
@@ -259,6 +260,9 @@ class IndexingFalFinder implements FalFinder
      * @param RecordInterface[] $records
      *
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function filterRecords(array $localFiles, array $remoteFiles, array $records): array
     {

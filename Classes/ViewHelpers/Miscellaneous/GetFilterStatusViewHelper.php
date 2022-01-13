@@ -35,7 +35,6 @@ class GetFilterStatusViewHelper extends AbstractViewHelper
 {
     protected BackendUserAuthentication $backendUser;
 
-    /** @SuppressWarnings(PHPMD.Superglobals) */
     public function __construct()
     {
         $this->backendUser = $GLOBALS['BE_USER'];

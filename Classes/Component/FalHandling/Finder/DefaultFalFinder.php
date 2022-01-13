@@ -60,7 +60,7 @@ use function array_values;
 use function sprintf;
 
 /**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD) This class has issues. Will be rewritten with query aggregation feature.
  */
 class DefaultFalFinder implements LoggerAwareInterface, FalFinder
 {
@@ -174,9 +174,6 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
         return $folderRecord;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
     protected function initializeDependenciesAndGetFolder(?string $identifier): Folder
     {
         // Determine the current folder. If the identifier is NULL there was no folder selected.
@@ -473,7 +470,6 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
         return $subFolders;
     }
 
-    /** @SuppressWarnings(PHPMD.StaticAccess) */
     protected function makePhysicalFolderInstance(string $identifier, int $depth): RecordInterface
     {
         return GeneralUtility::makeInstance(

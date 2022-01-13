@@ -101,9 +101,6 @@ class RecordController extends AbstractController
      * Create a Record instance of the current selected page
      * If none is chosen, a Record with uid = 0 is created which
      * represents the instance root
-     *
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function indexAction(): ResponseInterface
     {

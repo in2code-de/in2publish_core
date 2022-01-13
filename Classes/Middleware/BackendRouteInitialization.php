@@ -54,6 +54,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * Patch: https://review.typo3.org/c/Packages/TYPO3.CMS/+/72160
  *
  * Have a look at the event ExtTablesPostProcessingEvent for more information.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Can't reduce. It is already as small as possible. And an XCLASS...
  */
 class BackendRouteInitialization implements MiddlewareInterface
 {
@@ -69,10 +71,6 @@ class BackendRouteInitialization implements MiddlewareInterface
 
     /**
      * Resolve the &route (or &M) GET/POST parameter, and also resolves a Route object
-     *
-     * @param ServerRequestInterface $request
-     * @param RequestHandlerInterface $handler
-     * @return ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {

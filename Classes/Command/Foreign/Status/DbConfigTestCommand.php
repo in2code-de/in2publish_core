@@ -51,6 +51,9 @@ class DbConfigTestCommand extends Command
         $this->localDatabase = $localDatabase;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $queryBuilder = $this->localDatabase->createQueryBuilder();

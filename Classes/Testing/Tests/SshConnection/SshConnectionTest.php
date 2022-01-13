@@ -52,7 +52,6 @@ class SshConnectionTest implements TestCaseInterface
         $this->configContainer = $configContainer;
     }
 
-    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function run(): TestResult
     {
         $request = new RemoteCommandRequest();

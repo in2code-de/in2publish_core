@@ -45,8 +45,6 @@ class TaskFactory
      * @param array $taskProperties
      *
      * @return AbstractTask
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function convertToObject(array $taskProperties): AbstractTask
     {

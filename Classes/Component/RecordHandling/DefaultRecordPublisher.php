@@ -49,7 +49,7 @@ use function is_array;
 use function strpos;
 
 /**
- * DefaultRecordFinder - published a record recursively including all related records.
+ * DefaultRecordPublisher - published a record recursively including all related records.
  */
 class DefaultRecordPublisher extends CommonRepository implements RecordPublisher, LoggerAwareInterface
 {
@@ -96,6 +96,9 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
         }
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     protected function publishRecordRecursiveInternal(RecordInterface $record, array $excludedTables): void
     {
         $tableName = $record->getTableName();
@@ -168,6 +171,8 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
      *
      * @param RecordInterface $record
      * @param array $excludedTables
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function publishRelatedRecordsRecursive(RecordInterface $record, array $excludedTables): void
     {
@@ -175,15 +180,18 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
             $this->publishRecordRecursiveInternal($translatedRecord, $excludedTables);
         }
 
+        $recordTable = $record->getTableName();
+        $languageField = $this->tcaService->getLanguageField($recordTable);
+        $pointerField = $this->tcaService->getTransOrigPointerField($recordTable);
+
         if (
-            $record->hasAdditionalProperty('isRoot')
+            !empty($languageField)
+            && !empty($pointerField)
             && $record->getAdditionalProperty('isRoot') === true
-            && !empty($languageField = $this->tcaService->getLanguageField($record->getTableName()))
             && (
                 $record->getLocalProperty($languageField) > 0
                 || $record->getForeignProperty($languageField) > 0
             )
-            && !empty($pointerField = $this->tcaService->getTransOrigPointerField($record->getTableName()))
             && $record->getMergedProperty($pointerField) > 0
         ) {
             $translationOriginals = $record->getRelatedRecordByTableAndProperty(

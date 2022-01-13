@@ -53,6 +53,10 @@ use function is_callable;
 use function method_exists;
 use function strtolower;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) Should refactor this into well structured component.
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class EnvelopeDispatcher
 {
     /*
@@ -230,6 +234,7 @@ class EnvelopeDispatcher
                     $response[$fileIdentifier]['hash'] = $driver->hash($fileIdentifier, 'sha1');
                 }
             } catch (Throwable $exception) {
+                // Ignore exception. Should revisit.
             }
         }
 
@@ -390,8 +395,6 @@ class EnvelopeDispatcher
      * @param ResourceStorage $storage
      *
      * @return File|null
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function getFileObject(DriverInterface $driver, string $identifier, ResourceStorage $storage): ?File
     {
@@ -443,7 +446,6 @@ class EnvelopeDispatcher
         ];
     }
 
-    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function getStorageGetFoldersInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -451,7 +453,6 @@ class EnvelopeDispatcher
         return FolderUtility::extractFoldersInformation($folders);
     }
 
-    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function getStorageGetFilesInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -459,7 +460,6 @@ class EnvelopeDispatcher
         return FileUtility::extractFilesInformation($files);
     }
 
-    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function getStorageGetFile(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -489,7 +489,6 @@ class EnvelopeDispatcher
         return $response;
     }
 
-    /** @SuppressWarnings(PHPMD.Superglobals) */
     public function getSetDbInit(): string
     {
         if (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'])) {

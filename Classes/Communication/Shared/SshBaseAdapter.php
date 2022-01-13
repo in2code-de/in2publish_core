@@ -108,6 +108,8 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
      * @return resource
      *
      * @throws In2publishCoreException
+     *
+     * @SuppressWarnings(PHPMD.ErrorControlOperator) Don't leak sensitive error info.
      */
     protected function establishSshSession()
     {

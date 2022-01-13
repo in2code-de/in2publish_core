@@ -126,6 +126,7 @@ class FileController extends AbstractController
     /**
      * @param bool $skipNotification Used by the Enterprise Edition. Do not remove despite unused in the CE.
      * @throws StopActionException
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag) On purpose
      */
     public function publishFolderAction(string $identifier, bool $skipNotification = false): void
     {
@@ -154,6 +155,7 @@ class FileController extends AbstractController
      * @param bool $skipNotification Used by the Enterprise Edition. Do not remove despite unused in the CE.
      * @throws InsufficientFolderAccessPermissionsException
      * @throws StopActionException
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag) On purpose
      */
     public function publishFileAction(int $uid, string $identifier, int $storage, bool $skipNotification = false): void
     {
@@ -169,7 +171,9 @@ class FileController extends AbstractController
         if (null !== $record) {
             $relatedRecords = $record->getRelatedRecordByTableAndProperty('sys_file', 'identifier', $identifier);
 
-            if (0 === ($recordsCount = count($relatedRecords))) {
+            $recordsCount = count($relatedRecords);
+
+            if (0 === $recordsCount) {
                 throw new RuntimeException('Did not find any record matching the publishing arguments', 1475656572);
             }
             if (1 === $recordsCount) {

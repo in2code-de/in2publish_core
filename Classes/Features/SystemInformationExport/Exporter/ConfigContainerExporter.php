@@ -68,6 +68,7 @@ class ConfigContainerExporter implements SystemInformationExporter
                         $cfgArray = ArrayUtility::setValueByPath($cfgArray, $protectedValue, $value, '.');
                     }
                 } catch (Throwable $e) {
+                    // Ignore errors from get/setValueByPath. They may occur, although they shouldn't.
                 }
             }
             unset($cfgArray);
@@ -80,6 +81,7 @@ class ConfigContainerExporter implements SystemInformationExporter
                         $providerCfg = ArrayUtility::setValueByPath($providerCfg, $protectedValue, $value, '.');
                     }
                 } catch (Throwable $e) {
+                    // Ignore errors from get/setValueByPath. They may occur, although they shouldn't.
                 }
             }
             unset($providerCfg);

@@ -40,6 +40,9 @@ class DbInitQueryEncodedCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:dbinitqueryencoded';
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $dbInit = '';
