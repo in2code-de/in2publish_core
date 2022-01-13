@@ -33,8 +33,6 @@ class TableGarbageCollectorTest implements TestCaseInterface
             ->execute();
         $garbageCollectionTasksExists = $statement->rowCount() > 0;
 
-
-
         if ($garbageCollectionTasksExists == false) {
             return new TestResult(
                 'database.garbage_collector_task_missing',
@@ -49,5 +47,4 @@ class TableGarbageCollectorTest implements TestCaseInterface
     {
         return [];
     }
-
 }
