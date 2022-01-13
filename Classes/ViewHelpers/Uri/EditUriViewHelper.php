@@ -12,6 +12,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class EditUriViewHelper extends AbstractViewHelper
 {
+    /** @noinspection ReturnTypeCanBeDeclaredInspection */
     public function initializeArguments()
     {
         parent::initializeArguments();
@@ -22,7 +23,7 @@ class EditUriViewHelper extends AbstractViewHelper
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public static function renderStatic(array $arguments, Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    public static function renderStatic(array $arguments, Closure $renderChildrenClosure, RenderingContextInterface $renderingContext): string
     {
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
 

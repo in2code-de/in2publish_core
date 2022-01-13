@@ -104,7 +104,7 @@ class DefaultRecordPublisher implements RecordPublisher, LoggerAwareInterface
 
         if (
             !empty($this->visitedRecords[$tableName])
-            && in_array($record->getIdentifier(), $this->visitedRecords[$tableName])
+            && in_array($record->getIdentifier(), $this->visitedRecords[$tableName], false)
         ) {
             return;
         }
@@ -187,11 +187,11 @@ class DefaultRecordPublisher implements RecordPublisher, LoggerAwareInterface
             !empty($languageField)
             && !empty($pointerField)
             && $record->getAdditionalProperty('isRoot') === true
+            && $record->getMergedProperty($pointerField) > 0
             && (
                 $record->getLocalProperty($languageField) > 0
                 || $record->getForeignProperty($languageField) > 0
             )
-            && $record->getMergedProperty($pointerField) > 0
         ) {
             $translationOriginals = $record->getRelatedRecordByTableAndProperty(
                 $record->getTableName(),

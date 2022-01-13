@@ -68,7 +68,7 @@ final class RequiredTablesWereIdentified
         }
     }
 
-    public function getTables()
+    public function getTables(): array
     {
         return $this->tables;
     }

@@ -118,7 +118,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
     }
 
     /**
-     * Replace ###REC_FIELD_fieldname### with it's value
+     * Replace ###REC_FIELD_fieldname### with its value
      *
      * @param RecordInterface $record
      * @param string $string
@@ -267,7 +267,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
      */
     protected function getSimplifiedDataStructureIdentifier(string $dataStructureIdentifier): string
     {
-        $identifierArray = json_decode($dataStructureIdentifier, true);
+        $identifierArray = json_decode($dataStructureIdentifier, true, 512, JSON_THROW_ON_ERROR);
 
         if (
             isset($identifierArray['type'], $identifierArray['dataStructureKey'])
@@ -300,11 +300,6 @@ class ReplaceMarkersService implements LoggerAwareInterface
         }
     }
 
-    /**
-     * @param int $pageId
-     *
-     * @return int
-     */
     protected function getStoragePidFromPage(int $pageId): int
     {
         $rootLine = BackendUtility::BEgetRootLine($pageId);

@@ -60,7 +60,7 @@ use function uasort;
 /**
  * The most important class of this application. A Record is a Database
  * row and identifies itself by tableName + identifier (usually uid).
- * The combination of tableName + identifier is unique. Therefore a Record is
+ * The combination of tableName + identifier is unique. Therefore, a Record is
  * considered a singleton automatically. The RecordFactory takes care of
  * the singleton "implementation". The Pattern will break when a Record
  * gets instantiated without the use of the Factory
@@ -227,7 +227,7 @@ class Record implements RecordInterface
      *        Show changed status even if parent is
      *        unchanged but if children has changed
      *
-     * Notice: This method does not returns RECORD_STATE_CHANGED
+     * Notice: This method does not return RECORD_STATE_CHANGED
      * even if the first changed related record is added or deleted
      *
      * @param array $alreadyVisited
@@ -240,7 +240,7 @@ class Record implements RecordInterface
     {
         if (
             !empty($alreadyVisited[$this->tableName])
-            && in_array($this->getIdentifier(), $alreadyVisited[$this->tableName])
+            && in_array($this->getIdentifier(), $alreadyVisited[$this->tableName], false)
         ) {
             return static::RECORD_STATE_UNCHANGED;
         }
@@ -558,9 +558,9 @@ class Record implements RecordInterface
                 // Ignore the foreign `pid`. It differs only when the record was moved but the record will be shown
                 // beneath its new parent anyway.
                 if (
-                    !($this->isPagesTable() && $record->isPagesTable())
+                    $this->isTranslationOriginal($record)
+                    || !($this->isPagesTable() && $record->isPagesTable())
                     || $record->getSuperordinatePageIdentifier() === $this->getIdentifier()
-                    || $this->isTranslationOriginal($record)
                 ) {
                     if (!$this->isParentDisabled) {
                         $record->setParentRecord($this);
@@ -908,7 +908,7 @@ class Record implements RecordInterface
                     }
                     $identity[$idField] = $properties[$idField];
                 }
-                return json_encode($identity);
+                return json_encode($identity, JSON_THROW_ON_ERROR);
             }
             return '';
         }
@@ -933,7 +933,7 @@ class Record implements RecordInterface
             return [];
         }
         if ($combinedIdentifier[0] === '{') {
-            return json_decode($combinedIdentifier, true);
+            return json_decode($combinedIdentifier, true, 512, JSON_THROW_ON_ERROR);
         }
         $identifierArray = explode(',', $combinedIdentifier);
         $count = count($identifierArray);

@@ -166,7 +166,7 @@ class SysRedirect extends AbstractEntity
             // Sites are preferred. If a site is given, use it.
             return 'publishable';
         }
-        if (null === $this->pageUid && null === $this->siteId) {
+        if (null === $this->pageUid) {
             // Can not publish without site or page
             return 'siteRequired';
         }

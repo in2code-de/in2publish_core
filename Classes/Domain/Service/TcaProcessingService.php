@@ -224,7 +224,7 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
                     $this->compatibleTca[$table][$column] = $this->processors[$type]->preProcess($config);
                     $this->compatibleTca[$table][$column][static::TYPE] = $type;
                 } else {
-                    // Set the reasons why it can not be pre processed. Useful for Extension authors
+                    // Set the reasons why it can not be pre-processed. Useful for Extension authors
                     foreach ($this->processors[$type]->getLastReasons() as $key => $reason) {
                         $this->incompatibleTca[$table][$column]['type'] = $type;
                         $this->incompatibleTca[$table][$column]['reasons'][$key] = $reason;

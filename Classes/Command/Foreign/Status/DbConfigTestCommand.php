@@ -63,7 +63,8 @@ class DbConfigTestCommand extends Command
         );
         $queryBuilder->select('*')->from('tx_in2code_in2publish_task')->where($predicates);
         $result = $queryBuilder->execute()->fetchAllAssociative();
-        $output->writeln('DB Config: ' . base64_encode(json_encode(array_column($result, 'configuration'))));
+        $value = base64_encode(json_encode(array_column($result, 'configuration'), JSON_THROW_ON_ERROR));
+        $output->writeln('DB Config: ' . $value);
         return Command::SUCCESS;
     }
 }

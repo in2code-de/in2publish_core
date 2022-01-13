@@ -40,7 +40,7 @@ class HostNameValidator implements ValidatorInterface
     protected int $port;
 
     /**
-     * @param int $port Set an other port if the default one is actually used
+     * @param int $port Set another port if the default one is actually used
      */
     public function __construct(int $port = 61252)
     {
@@ -49,13 +49,13 @@ class HostNameValidator implements ValidatorInterface
 
     /**
      * @param mixed $value
-     * @SuppressWarnings(PHPMD.ErrorControlOperator) I don't remember the reason but I had one. I swear.
+     * @SuppressWarnings(PHPMD.ErrorControlOperator) I don't remember the reason, but I had one. I swear.
      */
     public function validate(ValidationContainer $container, $value): void
     {
         $resource = @fsockopen($value, $this->port, $errorCode, $errorMessage, 1);
-        if (false === $resource && (0 === $errorCode || 111 !== $errorCode)) {
-            $container->addError("The host $value is not reachable: $errorMessage");
+        if (false === $resource) {
+            $container->addError("The host $value is not reachable: [$errorCode] $errorMessage");
         }
         if (is_resource($resource)) {
             fclose($resource);

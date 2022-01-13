@@ -151,7 +151,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
             }
 
             foreach ($diffOnForeign as $tableName => $fieldArray) {
-                if (is_array($fieldArray['fields']) && isset($fieldArray['fields'])) {
+                if (is_array($fieldArray['fields'])) {
                     foreach (array_keys($fieldArray['fields']) as $fieldOnlyOnForeign) {
                         $fieldDifferences[] = $tableName . '.' . $fieldOnlyOnForeign . ': Only exists on foreign';
                     }
@@ -202,6 +202,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
 
     protected function areDifferentDatabases(Connection $local, Connection $foreign): bool
     {
+        /** @noinspection RandomApiMigrationInspection */
         $random = mt_rand(1, PHP_INT_MAX);
         $local->insert(
             'tx_in2code_in2publish_task',

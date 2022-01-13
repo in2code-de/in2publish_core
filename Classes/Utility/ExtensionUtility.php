@@ -60,8 +60,7 @@ class ExtensionUtility
      */
     public static function isLoaded(string $extension): bool
     {
-        $packageManager = self::createPackageManager();
-        return $packageManager->isPackageActive($extension);
+        return self::createPackageManager()->isPackageActive($extension);
     }
 
     private static function createPackageManager(): PackageManager

@@ -72,7 +72,7 @@ class LogsExporter implements SystemInformationExporter
             );
             $logData = $log['data'];
             $logDataJson = substr($logData, 2);
-            $logsFormatted[$message] = json_decode($logDataJson, true);
+            $logsFormatted[$message] = json_decode($logDataJson, true, 512, JSON_THROW_ON_ERROR);
         }
         return $logsFormatted;
     }

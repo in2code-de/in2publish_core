@@ -80,7 +80,7 @@ class ForeignEnvironmentService implements LoggerAwareInterface
                     break;
                 }
             }
-            $decodedDbInit = json_decode(base64_decode($encodedDbInit), true);
+            $decodedDbInit = json_decode(base64_decode($encodedDbInit), true, 512, JSON_THROW_ON_ERROR);
             $this->cache->set('foreign_db_init', $decodedDbInit, [], 86400);
         } else {
             $this->logger->error(

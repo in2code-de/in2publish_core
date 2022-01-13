@@ -73,14 +73,14 @@ class SystemInformationExportController extends ActionController
     {
         $info = $this->sysInfoExportService->getSystemInformation();
         $this->view->assign('info', $info);
-        $this->view->assign('infoJson', json_encode($info));
+        $this->view->assign('infoJson', json_encode($info, JSON_THROW_ON_ERROR));
         return $this->htmlResponse();
     }
 
     public function sysInfoDecodeAction(string $json = ''): ResponseInterface
     {
         if (!empty($json)) {
-            $info = json_decode($json, true);
+            $info = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
             if (is_array($info)) {
                 $this->view->assign('info', $info);
             } else {
@@ -102,7 +102,7 @@ class SystemInformationExportController extends ActionController
     public function sysInfoDownloadAction(): void
     {
         $info = $this->sysInfoExportService->getSystemInformation();
-        $json = json_encode($info);
+        $json = json_encode($info, JSON_THROW_ON_ERROR);
 
         $downloadName = 'cp_sysinfo_' . time() . '.json';
         header('Content-Disposition: attachment; filename="' . $downloadName . '"');
@@ -125,7 +125,7 @@ class SystemInformationExportController extends ActionController
             /** @var array $file */
             $file = $this->request->getArgument('jsonFile');
         } catch (NoSuchArgumentException $e) {
-            return $this->htmlResponse(null);
+            return $this->htmlResponse();
         }
         $content = file_get_contents($file['tmp_name']);
         return (new ForwardResponse('sysInfoDecode'))->withArguments(['json' => $content]);

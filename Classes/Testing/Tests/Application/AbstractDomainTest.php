@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\Result;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
@@ -40,7 +40,6 @@ use function array_key_exists;
 use function array_merge;
 use function parse_url;
 use function sprintf;
-use function substr;
 
 abstract class AbstractDomainTest
 {
@@ -134,7 +133,7 @@ abstract class AbstractDomainTest
         return $messages;
     }
 
-    protected function findAllRootPages(): ResultStatement
+    protected function findAllRootPages(): Result
     {
         $query = $this->getConnection()->createQueryBuilder();
         $query->getRestrictions()->removeAll();
@@ -173,7 +172,7 @@ abstract class AbstractDomainTest
 
             // parse_url a host without scheme will put the host in "path"
             $path = $urlParts['path'] ?? '/';
-            if ('/' !== substr($path, 0, 1)) {
+            if (0 !== strpos($path, '/')) {
                 return self::DOMAIN_TYPE_SITE;
             }
 

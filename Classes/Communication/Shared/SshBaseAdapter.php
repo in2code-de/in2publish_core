@@ -258,7 +258,7 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
         if (empty($config['foreignKeyFingerprintHashingMethod'])) {
             $config['foreignKeyFingerprintHashingMethod'] = SSH2_FINGERPRINT_MD5 | SSH2_FINGERPRINT_HEX;
         } else {
-            if (!in_array($config['foreignKeyFingerprintHashingMethod'], $this->supportedHashMethods)) {
+            if (!in_array($config['foreignKeyFingerprintHashingMethod'], $this->supportedHashMethods, true)) {
                 throw new In2publishCoreException(
                     'SSH Connection: The defined foreignKeyFingerprintHashingMethod is not supported',
                     1493822754

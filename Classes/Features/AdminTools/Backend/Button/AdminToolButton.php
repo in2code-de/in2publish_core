@@ -59,9 +59,6 @@ class AdminToolButton extends LinkButton
         foreach ($this->dataAttributes as $attributeName => $attributeValue) {
             $attributes['data-' . $attributeName] = $attributeValue;
         }
-        if ($this->hasOnClick()) {
-            $attributes['onclick'] = $this->getOnClick();
-        }
         if ($this->isDisabled()) {
             $attributes['disabled'] = 'disabled';
             $attributes['class'] .= ' disabled';

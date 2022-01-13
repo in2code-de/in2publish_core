@@ -60,8 +60,8 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
     }
 
     /**
-     * @param string $source Absolute local path to file(return value of
-     *     \TYPO3\CMS\Core\Resource\Driver\DriverInterface::getFileForLocalProcessing)
+     * @param string $source Absolute local path to file => return value of
+     *     \TYPO3\CMS\Core\Resource\Driver\DriverInterface::getFileForLocalProcessing
      *
      * @return string Absolute path of the transmitted file on foreign
      *
@@ -79,6 +79,7 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
         if (null === $this->adapter) {
             try {
                 $adapterClass = $this->adapterRegistry->getAdapter(AdapterInterface::class);
+                /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
                 $this->adapter = GeneralUtility::makeInstance($adapterClass);
             } catch (Throwable $exception) {
                 $this->logger->debug('SshAdapter initialization failed. See previous log for reason.');

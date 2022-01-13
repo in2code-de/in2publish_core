@@ -104,24 +104,24 @@ class IndexingFalFinder implements FalFinder
     }
 
     /**
-     * @param string|null $dir Directory which is currently selected in the directory tree
+     * @param string|null $identifier Directory which is currently selected in the directory tree
      *
      * @return RecordInterface
      *
      * @throws TooManyFilesException
      * @throws InsufficientFolderAccessPermissionsException
      */
-    public function findFalRecord(?string $dir): RecordInterface
+    public function findFalRecord(?string $identifier): RecordInterface
     {
         // determine current folder
         try {
-            if (null === $dir) {
+            if (null === $identifier) {
                 $localFolder = $this->resourceFactory->getDefaultStorage()->getRootLevelFolder();
             } else {
-                $localFolder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($dir);
+                $localFolder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
             }
         } /** @noinspection PhpRedundantCatchClauseInspection */ catch (FolderDoesNotExistException $exception) {
-            $resourceStorage = $this->resourceFactory->getStorageObject(substr($dir, 0, strpos($dir, ':')));
+            $resourceStorage = $this->resourceFactory->getStorageObject(substr($identifier, 0, strpos($identifier, ':')));
             $localFolder = $resourceStorage->getRootLevelFolder();
         }
 
@@ -162,12 +162,12 @@ class IndexingFalFinder implements FalFinder
         );
 
         $folderIdentifiers = array_unique(array_merge(array_keys($localSubFolders), array_keys($remoteSubFolders)));
-        foreach ($folderIdentifiers as $identifier) {
+        foreach ($folderIdentifiers as $subFolderIdentifier) {
             $subFolder = GeneralUtility::makeInstance(
                 Record::class,
                 'physical_folder',
-                $localSubFolders[$identifier] ?? [],
-                $remoteSubFolders[$identifier] ?? [],
+                $localSubFolders[$subFolderIdentifier] ?? [],
+                $remoteSubFolders[$subFolderIdentifier] ?? [],
                 [],
                 ['depth' => 2]
             );
@@ -279,7 +279,7 @@ class IndexingFalFinder implements FalFinder
             $foreignFileName = $file->hasForeignProperty('identifier') ? $file->getForeignProperty('identifier') : '';
 
             // remove records from the list which do not have at least one file on the disk which they represent
-            if (!in_array($localFileName, $filesOnDisk) && !in_array($foreignFileName, $filesOnDisk)) {
+            if (!in_array($localFileName, $filesOnDisk, true) && !in_array($foreignFileName, $filesOnDisk, true)) {
                 unset($records[$index]);
             } else {
                 if ($file->getState() === RecordInterface::RECORD_STATE_MOVED) {

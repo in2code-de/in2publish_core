@@ -29,6 +29,8 @@ namespace In2code\In2publishCore\ViewHelpers\Miscellaneous;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Closure;
+use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
@@ -36,6 +38,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class GetFileResourceByUidViewHelper extends AbstractViewHelper
 {
+    /** @noinspection ReturnTypeCanBeDeclaredInspection */
     public function initializeArguments()
     {
         parent::initializeArguments();
@@ -45,8 +48,11 @@ class GetFileResourceByUidViewHelper extends AbstractViewHelper
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public static function renderStatic(array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
-    {
+    public static function renderStatic(
+        array $arguments,
+        Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ): File {
         return GeneralUtility::makeInstance(ResourceFactory::class)->getFileObject($arguments['uid']);
     }
 }

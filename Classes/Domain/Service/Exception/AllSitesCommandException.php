@@ -39,7 +39,7 @@ use const PHP_EOL;
 
 class AllSitesCommandException extends In2publishCoreException
 {
-    protected const MESSAGE = 'Exception during the fetching of all foreign sites. Code [%d]: Errors: "%s"; Outout: "%s".';
+    protected const MESSAGE = 'Exception during the fetching of all foreign sites. Code [%d]: Errors: "%s"; Output: "%s".';
     public const CODE = 1631616241;
 
     private array $errors;

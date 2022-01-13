@@ -77,7 +77,7 @@ class SingleDatabaseRepository
             if (isset($row['fieldname'])) {
                 $parts['fieldname'] = $row['fieldname'];
             }
-            return json_encode($parts);
+            return json_encode($parts, JSON_THROW_ON_ERROR);
         }
         return (string)$row['uid'];
     }

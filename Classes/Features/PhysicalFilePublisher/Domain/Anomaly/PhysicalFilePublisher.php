@@ -97,7 +97,7 @@ class PhysicalFilePublisher implements SingletonInterface, LoggerAwareInterface
 
         $combinedIdentifier = sprintf('%d:%s', $storage, $identifier);
 
-        // If the combined identifier already passed this method is was published, so we can skip it
+        // If the combined identifier already passed this method it was published, so we can skip it
         if (isset($this->publishedRecords[$table][$combinedIdentifier])) {
             return;
         }

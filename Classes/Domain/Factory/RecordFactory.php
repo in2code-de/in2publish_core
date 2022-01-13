@@ -55,7 +55,7 @@ use function max;
 /**
  * RecordFactory: This class is responsible for create instances of Record.
  * This class is called recursively for the record, any related
- * records and any of the related records related records and so on to the extend
+ * records and any of the related records and so on to the extent
  * of the setting maximumRecursionDepth
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) Well, happens. Will be removed with query aggregation feature.
@@ -310,7 +310,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
     }
 
     protected function findRelatedRecordsForPageRecord(
-        Record $record,
+        RecordInterface $record,
         DefaultRecordFinder $commonRecordFinder
     ): RecordInterface {
         if ($record->getIdentifier() === 0) {
@@ -376,7 +376,10 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
     ): bool {
         $hasBeenMoved = false;
         // 1. it was created already
-        if (!empty($this->runtimeCache[$tableName][$identifier]) && !in_array($tableName, $this->excludedTableNames)) {
+        if (
+            !empty($this->runtimeCache[$tableName][$identifier])
+            && !in_array($tableName, $this->excludedTableNames, true)
+        ) {
             $record = $this->runtimeCache[$tableName][$identifier];
             // consequence of 5.
             if ($record->getState() === RecordInterface::RECORD_STATE_MOVED) {
@@ -393,14 +396,14 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
                 }
                 // 3. it is modified
             } elseif ($record->getState() !== RecordInterface::RECORD_STATE_UNCHANGED) {
-                if ($record->foreignRecordExists() && empty($foreignProperties) && !empty($localProperties)) {
+                if (empty($foreignProperties) && !empty($localProperties) && $record->foreignRecordExists()) {
                     // 2. it has only foreign properties && 4. the missing properties are given
                     // the current relation is set wrong. This record is referenced
                     // by the record which is parent on the foreign side
                     $record->getParentRecord()->removeRelatedRecord($record);
                     $record->setLocalProperties($localProperties);
                     $hasBeenMoved = true;
-                } elseif ($record->localRecordExists() && empty($localProperties) && !empty($foreignProperties)) {
+                } elseif (empty($localProperties) && !empty($foreignProperties) && $record->localRecordExists()) {
                     // 2. it has only local properties && 4. the missing properties are given
                     $record->setForeignProperties($foreignProperties);
                     // the current parent is correct, prevent changes to

@@ -60,7 +60,7 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
     public function replaceLocalWithForeignSourceHost(PublishingOfOneRecordBegan $event): void
     {
         $record = $event->getRecord();
-        if ('sys_redirect' !== $record->getTableName() || !in_array($record->getState(), self::CHANGED_STATES)) {
+        if ('sys_redirect' !== $record->getTableName() || !in_array($record->getState(), self::CHANGED_STATES, true)) {
             return;
         }
 

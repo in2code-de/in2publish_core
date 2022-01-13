@@ -78,8 +78,7 @@ class SysRedirectRepository extends Repository
         }
 
         $query->select('*')->from('sys_redirect')->where(...$predicates);
-        $result = $query->execute();
-        return $result->fetchAllAssociative();
+        return $query->execute()->fetchAllAssociative();
     }
 
     public function findRawByUids(Connection $connection, array $uids): array
@@ -93,8 +92,7 @@ class SysRedirectRepository extends Repository
         $query->select('*')
               ->from('sys_redirect')
               ->where($query->expr()->in('uid', $uids));
-        $result = $query->execute();
-        return $result->fetchAllAssociative();
+        return $query->execute()->fetchAllAssociative();
     }
 
     public function findByRawTarget(Connection $connection, string $target, array $except): array
@@ -110,7 +108,6 @@ class SysRedirectRepository extends Repository
         return $query->execute()->fetchAllAssociative();
     }
 
-    /** @return QueryResultInterface<SysRedirect> */
     public function findForPublishing(array $uidList, ?Filter $filter): QueryResultInterface
     {
         $query = $this->getQueryForRedirectsToBePublished($uidList);
@@ -126,6 +123,7 @@ class SysRedirectRepository extends Repository
     {
         $query = $this->createUnrestrictedQuery();
         $query->matching($query->equals('uid', $redirect));
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $query->execute()->getFirst();
     }
 

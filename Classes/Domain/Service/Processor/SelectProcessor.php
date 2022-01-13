@@ -62,7 +62,7 @@ class SelectProcessor extends AbstractProcessor
     ];
 
     /**
-     * Override: Detects and allows owning side relations to categories
+     * Override: Detects and allows owning side relations to category records.
      *
      * {@inheritDoc}
      */

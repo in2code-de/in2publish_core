@@ -71,8 +71,8 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
 
         if ($response->isSuccessful()) {
             $result = $this->tokenizeResponse($response->getOutput());
-            $configs = json_decode(base64_decode($result['DB Config']), true);
-            if (is_array($configs) && in_array($random, $configs)) {
+            $configs = json_decode(base64_decode($result['DB Config']), true, 512, JSON_THROW_ON_ERROR);
+            if (is_array($configs) && in_array($random, $configs, true)) {
                 $testResult = new TestResult('application.foreign_database_config.success');
             } else {
                 $testResult = new TestResult(

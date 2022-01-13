@@ -48,13 +48,12 @@ use function call_user_func;
 use function call_user_func_array;
 use function dirname;
 use function get_class;
-use function is_array;
 use function is_callable;
 use function method_exists;
 use function strtolower;
 
 /**
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) Should refactor this into well structured component.
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) Should refactor this into well-structured component.
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class EnvelopeDispatcher
@@ -93,7 +92,7 @@ class EnvelopeDispatcher
     public const CMD_GET_SET_DB_INIT = 'getSetDbInit';
 
     /**
-     * Limits the amount of files in a folder for pre fetching. If there are more than $prefetchLimit files in
+     * Limits the amount of files in a folder for pre-fetching. If there are more than $prefetchLimit files in
      * the selected folder they will not be processed when not requested explicitly.
      */
     protected int $prefetchLimit = 51;
@@ -109,7 +108,9 @@ class EnvelopeDispatcher
     {
         $command = $envelope->getCommand();
         if (method_exists($this, $command)) {
-            $envelope->setResponse(call_user_func([$this, $command], $envelope->getRequest()));
+            $request = $envelope->getRequest();
+            $response = $this->$command($request);
+            $envelope->setResponse($response);
             return true;
         }
 
@@ -185,14 +186,12 @@ class EnvelopeDispatcher
                     $driver,
                     call_user_func([$driver, 'getFilesInFolder'], $directory)
                 );
-                if (is_array($files)) {
-                    foreach ($files as $file) {
-                        $fileObject = $this->getFileObject($driver, $file, $storage);
-                        $files[$file] = [];
-                        $files[$file]['hash'] = $driver->hash($file, 'sha1');
-                        $files[$file]['info'] = $driver->getFileInfoByIdentifier($file);
-                        $files[$file]['publicUrl'] = $storage->getPublicUrl($fileObject);
-                    }
+                foreach ($files as $file) {
+                    $fileObject = $this->getFileObject($driver, $file, $storage);
+                    $files[$file] = [];
+                    $files[$file]['hash'] = $driver->hash($file, 'sha1');
+                    $files[$file]['info'] = $driver->getFileInfoByIdentifier($file);
+                    $files[$file]['publicUrl'] = $storage->getPublicUrl($fileObject);
                 }
             } else {
                 $fileObject = $this->getFileObject($driver, $fileIdentifier, $storage);

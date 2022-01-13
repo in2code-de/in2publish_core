@@ -79,7 +79,7 @@ class RunTasksInQueueCommand extends Command
         if (empty($result)) {
             $result[] = 'There was nothing to execute';
         }
-        $output->write(json_encode($result));
+        $output->write(json_encode($result, JSON_THROW_ON_ERROR));
         return Command::SUCCESS;
     }
 }

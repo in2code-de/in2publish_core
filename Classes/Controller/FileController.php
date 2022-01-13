@@ -45,7 +45,6 @@ use Throwable;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
-use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -153,7 +152,6 @@ class FileController extends AbstractController
 
     /**
      * @param bool $skipNotification Used by the Enterprise Edition. Do not remove despite unused in the CE.
-     * @throws InsufficientFolderAccessPermissionsException
      * @throws StopActionException
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag) On purpose
      */
@@ -217,7 +215,7 @@ class FileController extends AbstractController
     public function toggleFilterStatusAction(string $filter): ResponseInterface
     {
         $return = $this->toggleFilterStatus('in2publish_filter_files_', $filter);
-        return $this->jsonResponse(json_encode($return));
+        return $this->jsonResponse(json_encode($return, JSON_THROW_ON_ERROR));
     }
 
     /**

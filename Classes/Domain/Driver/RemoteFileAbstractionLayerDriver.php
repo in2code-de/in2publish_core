@@ -40,7 +40,6 @@ use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use InvalidArgumentException;
-use LogicException;
 use RuntimeException;
 use Throwable;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
@@ -58,7 +57,7 @@ use function sprintf;
 /**
  * Class RemoteFileAbstractionLayerDriver
  *
- * @SuppressWarnings(PHPMD) Wanna have a lot of issues? Implement DriverInterface. I don't even try at this point.
+ * @SuppressWarnings(PHPMD) Want to have a lot of issues? Implement DriverInterface. I don't even try at this point.
  */
 class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
 {
@@ -146,12 +145,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
             );
             ArrayUtility::mergeRecursiveWithOverrule($this->configuration, $driverConfiguration);
         }
-        if (!is_array($this->remoteDriverSettings)) {
-            throw new LogicException(
-                'Could not find the remote storage with UID "' . $this->storageUid . '"',
-                1474470724
-            );
-        }
     }
 
     public function isOnline(): bool
@@ -214,7 +207,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
     }
 
     /**
-     * Batch processing for multiple file identifiers. Also pre-caches the methods getFileInfoByIdentifier and hash
+     * Batch processing for multiple file identifiers. Also, pre-caches the methods getFileInfoByIdentifier and hash
      *
      * @param array $fileIdentifiers
      * @return array
@@ -453,7 +446,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      * Returns information about a file.
      *
      * @param string $fileIdentifier
-     * @param array $propertiesToExtract Array of properties which are be extracted
+     * @param array $propertiesToExtract Array of properties which are being extracted
      *                                   If empty all will be extracted
      */
     public function getFileInfoByIdentifier($fileIdentifier, array $propertiesToExtract = []): array
@@ -752,6 +745,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
             );
         }
 
+        /** @noinspection CallableParameterUseCaseInTypeContextInspection */
         $envelope = $this->letterBox->receiveEnvelope($uid);
 
         if (false === $envelope) {

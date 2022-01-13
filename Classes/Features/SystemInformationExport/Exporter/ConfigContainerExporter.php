@@ -50,7 +50,7 @@ class ConfigContainerExporter implements SystemInformationExporter
     public function getInformation(): array
     {
         $full = $this->configContainer->getContextFreeConfig();
-        $pers = $this->configContainer->get();
+        $personal = $this->configContainer->get();
 
         $containerDump = $this->configContainer->dump();
         unset($containerDump['fullConfig']);
@@ -60,10 +60,11 @@ class ConfigContainerExporter implements SystemInformationExporter
             'sshConnection.privateKeyPassphrase',
         ];
         foreach ($protectedValues as $protectedValue) {
-            foreach ([&$full, &$pers] as &$cfgArray) {
+            foreach ([&$full, &$personal] as &$cfgArray) {
                 try {
                     $value = ArrayUtility::getValueByPath($cfgArray, $protectedValue, '.');
                     if (!empty($value)) {
+                        /** @noinspection SpellCheckingInspection */
                         $value = 'xxxxxxxx (masked)';
                         $cfgArray = ArrayUtility::setValueByPath($cfgArray, $protectedValue, $value, '.');
                     }
@@ -77,6 +78,7 @@ class ConfigContainerExporter implements SystemInformationExporter
                 try {
                     $value = ArrayUtility::getValueByPath($providerCfg, $protectedValue, '.');
                     if (!empty($value)) {
+                        /** @noinspection SpellCheckingInspection */
                         $value = 'xxxxxxxx (masked)';
                         $providerCfg = ArrayUtility::setValueByPath($providerCfg, $protectedValue, $value, '.');
                     }

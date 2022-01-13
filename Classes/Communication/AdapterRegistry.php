@@ -153,7 +153,7 @@ class AdapterRegistry implements SingletonInterface, LoggerAwareInterface
     {
         $GLOBALS['in2publish_core']['virtual_tests'][$interface] = $tests;
         foreach ($tests as $test) {
-            if (!in_array($test, $GLOBALS['in2publish_core']['tests'])) {
+            if (!in_array($test, $GLOBALS['in2publish_core']['tests'], true)) {
                 $GLOBALS['in2publish_core']['tests'][] = $test;
             }
         }

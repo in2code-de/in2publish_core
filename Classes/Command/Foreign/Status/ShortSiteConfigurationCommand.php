@@ -61,7 +61,7 @@ class ShortSiteConfigurationCommand extends Command
                 'rootPageId' => $site->getRootPageId(),
             ];
         }
-        $output->writeln('ShortSiteConfig: ' . base64_encode(json_encode($shortInfo)));
+        $output->writeln('ShortSiteConfig: ' . base64_encode(json_encode($shortInfo, JSON_THROW_ON_ERROR)));
         return Command::SUCCESS;
     }
 }

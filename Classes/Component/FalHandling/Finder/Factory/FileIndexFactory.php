@@ -36,8 +36,8 @@ use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Service\Database\UidReservationService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use LogicException;
+use TYPO3\CMS\Core\Resource\AbstractFile;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
-use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
@@ -60,10 +60,6 @@ class FileIndexFactory
 
     protected UidReservationService $uidReservationService;
 
-    /**
-     * @param DriverInterface $localDriver
-     * @param DriverInterface $foreignDriver
-     */
     public function __construct(DriverInterface $localDriver, DriverInterface $foreignDriver)
     {
         $this->localDriver = $localDriver;
@@ -74,12 +70,6 @@ class FileIndexFactory
         $this->uidReservationService = GeneralUtility::makeInstance(UidReservationService::class);
     }
 
-    /**
-     * @param string $side
-     * @param string $identifier
-     *
-     * @return RecordInterface
-     */
     public function makeInstanceForSide(string $side, string $identifier): RecordInterface
     {
         $foreignProperties = [];
@@ -243,23 +233,23 @@ class FileIndexFactory
         [$fileType] = explode('/', $fileInfo['mime_type']);
         switch (strtolower($fileType)) {
             case 'text':
-                $type = File::FILETYPE_TEXT;
+                $type = AbstractFile::FILETYPE_TEXT;
                 break;
             case 'image':
-                $type = File::FILETYPE_IMAGE;
+                $type = AbstractFile::FILETYPE_IMAGE;
                 break;
             case 'audio':
-                $type = File::FILETYPE_AUDIO;
+                $type = AbstractFile::FILETYPE_AUDIO;
                 break;
             case 'video':
-                $type = File::FILETYPE_VIDEO;
+                $type = AbstractFile::FILETYPE_VIDEO;
                 break;
             case 'application':
             case 'software':
-                $type = File::FILETYPE_APPLICATION;
+                $type = AbstractFile::FILETYPE_APPLICATION;
                 break;
             default:
-                $type = File::FILETYPE_UNKNOWN;
+                $type = AbstractFile::FILETYPE_UNKNOWN;
         }
         return $type;
     }

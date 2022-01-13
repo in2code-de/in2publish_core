@@ -34,6 +34,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class IsPropertyDirtyViewHelper extends AbstractViewHelper
 {
+    /** @noinspection ReturnTypeCanBeDeclaredInspection */
     public function initializeArguments()
     {
         parent::initializeArguments();
@@ -46,6 +47,6 @@ class IsPropertyDirtyViewHelper extends AbstractViewHelper
      */
     public static function renderStatic(array $arguments, Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
     {
-        return in_array($arguments['property'], $arguments['record']->getDirtyProperties());
+        return in_array($arguments['property'], $arguments['record']->getDirtyProperties(), true);
     }
 }

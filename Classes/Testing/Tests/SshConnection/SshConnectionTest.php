@@ -70,7 +70,7 @@ class SshConnectionTest implements TestCaseInterface
             );
         }
 
-        // This is the first time a RCE is executed so we have to test here for the missing document root folder
+        // This is the first time a RCE is executed, so we have to test here for the missing document root folder
         if (!$response->isSuccessful()) {
             return new TestResult(
                 'ssh_connection.foreign_document_root_missing',

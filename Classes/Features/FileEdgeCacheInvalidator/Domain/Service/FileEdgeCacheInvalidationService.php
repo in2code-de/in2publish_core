@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Servic
  */
 
 use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\Result;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
@@ -77,7 +78,7 @@ class FileEdgeCacheInvalidationService
      * @param int[] $uidList
      * @return ResultStatement
      */
-    protected function selectSysRefIndexRecords(array $uidList): ResultStatement
+    protected function selectSysRefIndexRecords(array $uidList): Result
     {
         $query = $this->connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
@@ -94,7 +95,7 @@ class FileEdgeCacheInvalidationService
      * @param int[] $uidList
      * @return ResultStatement
      */
-    protected function selectSysFileReferenceRecords(array $uidList): ResultStatement
+    protected function selectSysFileReferenceRecords(array $uidList): Result
     {
         $query = $this->connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
@@ -124,7 +125,10 @@ class FileEdgeCacheInvalidationService
         $tableNames = $schemaManager->listTableNames();
 
         foreach ($recordCollection->getRecords() as $table => $recordUidList) {
-            if (!in_array($table, $tableNames) || !array_key_exists('pid', $schemaManager->listTableColumns($table))) {
+            if (
+                !in_array($table, $tableNames, true)
+                || !array_key_exists('pid', $schemaManager->listTableColumns($table))
+            ) {
                 continue;
             }
             $query = $this->connection->createQueryBuilder();

@@ -98,7 +98,7 @@ class TableInfoService implements SingletonInterface
             return !$atLeastOneRowExists;
         } catch (Throwable $exception) {
             // Ignore any errors.
-            // They might indicate that the table does not exists, but that's not this classes' responsibility
+            // They might indicate that the table does not exist, but that's not this classes' responsibility
         }
         return false;
     }

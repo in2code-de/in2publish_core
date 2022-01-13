@@ -150,7 +150,7 @@ class ConfigContainer implements SingletonInterface
      *
      * @param array $priority
      *
-     * @return array|array[]|bool[]|int[]|string[] Sorted, merged and type casted configuration.
+     * @return array|array[]|bool[]|int[]|string[] Sorted, merged and type cast configuration.
      */
     protected function processConfig(array $priority): array
     {
@@ -232,7 +232,7 @@ class ConfigContainer implements SingletonInterface
     /**
      * All providers must be registered in ext_localconf.php!
      * Providers registered in ext_tables.php will not overrule configurations of already loaded extensions.
-     * Providers must implement the ProviderInterface or they won't be called.
+     * Providers must implement the ProviderInterface, or they won't be called.
      */
     public function registerProvider(string $provider): void
     {
@@ -241,7 +241,7 @@ class ConfigContainer implements SingletonInterface
 
     /**
      * All definers must be registered in ext_localconf.php!
-     * Definers must implement the DefinerInterface or they won't be called.
+     * Definers must implement the DefinerInterface, or they won't be called.
      */
     public function registerDefiner(string $definer): void
     {
@@ -250,7 +250,7 @@ class ConfigContainer implements SingletonInterface
 
     /**
      * All post processors must be registered in ext_localconf.php!
-     * PostProcessors must implement the PostProcessorInterface or they won't be called.
+     * PostProcessors must implement the PostProcessorInterface, or they won't be called.
      */
     public function registerPostProcessor(string $postProcessor): void
     {

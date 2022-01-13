@@ -124,7 +124,6 @@ class RecordController extends AbstractController
      * Normally called via AJAX
      *
      * @param int $identifier record identifier
-     * @param string $tableName
      */
     public function detailAction(int $identifier, string $tableName): ResponseInterface
     {
@@ -178,7 +177,7 @@ class RecordController extends AbstractController
     public function toggleFilterStatusAction(string $filter): ResponseInterface
     {
         $return = $this->toggleFilterStatus('in2publish_filter_records_', $filter);
-        return $this->jsonResponse(json_encode($return));
+        return $this->jsonResponse(json_encode($return, JSON_THROW_ON_ERROR));
     }
 
     protected function publishRecord(int $identifier, array $exceptTableNames = []): void

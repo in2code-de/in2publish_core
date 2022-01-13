@@ -94,6 +94,7 @@ class DatabaseUtility
                     throw $exception;
                 }
 
+                /** @noinspection PhpInternalEntityUsedInspection */
                 if (!in_array('in2publish_foreign', $connectionPool->getConnectionNames(), true)) {
                     $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['in2publish_foreign'] = [
                         'dbname' => $configuration['name'],
@@ -186,6 +187,7 @@ class DatabaseUtility
         $addDropTable = $publishTableSettings['addDropTable'];
         $zipBackup = $publishTableSettings['zipBackup'];
 
+        /** @noinspection PhpInternalEntityUsedInspection */
         static::$logger->notice(
             'Creating a backup for "' . $tableName . '"',
             [
@@ -365,6 +367,8 @@ class DatabaseUtility
      * @return string comma separated list of descendant pages
      * @throws Exception
      * @SuppressWarnings(PHPMD)
+     * @noinspection PhpMissingParamTypeInspection
+     * @noinspection CallableParameterUseCaseInTypeContextInspection
      */
     public static function getTreeList($id, $depth, $begin = 0, $permClause = '')
     {
@@ -419,7 +423,7 @@ class DatabaseUtility
      * This function should be used when you can't guarantee that the string
      * that you want to use as a WHERE fragment is not prefixed.
      *
-     * @param string $constraint The where part fragment with a possible leading AND or OR operator
+     * @param string $constraint The where part fragment with a possible leading "AND" or "OR" operator
      * @return string The modified where part without leading operator
      */
     public static function stripLogicalOperatorPrefix(string $constraint): string

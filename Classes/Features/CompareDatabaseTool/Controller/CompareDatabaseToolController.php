@@ -29,13 +29,13 @@ namespace In2code\In2publishCore\Features\CompareDatabaseTool\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\Driver\Connection;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use In2code\In2publishCore\Features\CompareDatabaseTool\Domain\DTO\ComparisonRequest;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;

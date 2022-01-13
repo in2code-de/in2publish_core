@@ -40,7 +40,6 @@ use function array_shift;
 use function count;
 use function glob;
 use function is_array;
-use function is_int;
 use function sprintf;
 use function trim;
 use function unlink;
@@ -65,10 +64,7 @@ class FileUtility
 
         $backups = glob($backupFolder . '*_' . $tableName . '.*');
 
-        if (
-            is_array($backups)
-            && is_int($keepBackups)
-        ) {
+        if (is_array($backups)) {
             while (count($backups) >= $keepBackups) {
                 $backupFileName = array_shift($backups);
                 try {
@@ -122,7 +118,7 @@ class FileUtility
         if ($file instanceof AbstractFile) {
             $info['uid'] = $file->getUid();
         } else {
-            $info['uid'] = sprintf('%s:%s', $file->getStorage(), $file->getIdentifier());
+            $info['uid'] = sprintf('%s:%s', $file->getStorage()->getUid(), $file->getIdentifier());
         }
 
         return $info;

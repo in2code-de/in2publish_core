@@ -33,7 +33,7 @@ use BadMethodCallException;
 use TYPO3\CMS\Core\Resource\Driver\AbstractHierarchicalFilesystemDriver;
 
 /**
- * @SuppressWarnings(PHPMD) Wanna have a lot of issues? Implement DriverInterface. I don't even try at this point.
+ * @SuppressWarnings(PHPMD) Want to have a lot of issues? Implement DriverInterface. I don't even try at this point.
  */
 abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFilesystemDriver
 {

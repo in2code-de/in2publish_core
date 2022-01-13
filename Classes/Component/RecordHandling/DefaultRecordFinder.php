@@ -370,7 +370,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
      *
      * this method ignores following property arrays:
      *      - deleted on both sides and identical
-     *      - is deleted local and non existing on foreign
+     *      - is deleted local and non-existing on foreign
      *
      * structure:
      *  $properties['uid'] = array(
@@ -469,7 +469,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
     /**
      * Adds all related Records to the given Record
      * until maximum recursion depth is reached
-     * Any related Record must be connected by valid TCA of the given one
+     * Any related Record must be connected by valid TCA of the given one.
      * Relations are only solved for the given record as "owning side"
      *
      * Records which relate on the given Record are not included,
@@ -506,8 +506,8 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                         'MM_opposite_field' => 'items',
                         'relationship' => 'manyToMany',
                     ];
-                    // Fall through!
-                    // no break
+                // Fall through!
+                // no break
                 case 'select':
                     $whereClause = '';
                     if (!empty($columnConfiguration['foreign_table_where'])) {
@@ -630,7 +630,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
             }
             if (
                 count($matches) > 0
-                && !in_array('sys_file_processedfile', $excludedTableNames)
+                && !in_array('sys_file_processedfile', $excludedTableNames, true)
             ) {
                 foreach ($matches as $match) {
                     if (!empty($match)) {
@@ -652,7 +652,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
             $matches = array_filter($matches);
             if (
                 count($matches) > 0
-                && !in_array('sys_file', $excludedTableNames)
+                && !in_array('sys_file', $excludedTableNames, true)
             ) {
                 foreach ($matches as $match) {
                     $relatedRecords[] = $this->findByIdentifier((int)$match, 'sys_file');
@@ -668,12 +668,12 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                     parse_str(htmlspecialchars_decode($urnParsed['query']), $data);
                     switch ($urnParsed['host']) {
                         case 'file':
-                            if (isset($data['uid']) && !in_array('sys_file', $excludedTableNames)) {
+                            if (isset($data['uid']) && !in_array('sys_file', $excludedTableNames, true)) {
                                 $relatedRecords[] = $this->findByIdentifier((int)$data['uid'], 'sys_file');
                             }
                             break;
                         case 'page':
-                            if (isset($data['uid']) && !in_array('pages', $excludedTableNames)) {
+                            if (isset($data['uid']) && !in_array('pages', $excludedTableNames, true)) {
                                 $relatedRecords[] = $this->findByIdentifier((int)$data['uid'], 'pages');
                             }
                             break;
@@ -743,6 +743,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
      * @throws InvalidPointerFieldValueException
      * @throws InvalidTcaException
      * @throws InvalidIdentifierException
+     * @noinspection PhpRedundantCatchClauseInspection
      */
     protected function getFlexFormDefinition(RecordInterface $record, string $column, array $columnConfiguration): array
     {
@@ -875,7 +876,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
             if (
                 empty($config['type'])
                 // Treat input and text always as field with relation because we can't access defaultExtras
-                // settings here and better assume it's a RTE field
+                // settings here and better assume it's an RTE field
                 || !in_array($config['type'], ['select', 'group', 'inline', 'input', 'text'])
             ) {
                 unset($flexFormDefinition[$key]);
@@ -910,7 +911,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                 if (!is_array($workingData)) {
                     // $workingData is unpacked by the else part and can be any data type.
                     // If th index is [ANY] $workingData is expected to be an array.
-                    // TYPO3 saves empty arrays as non self-closing <el> xml tags whose value parses to string,
+                    // TYPO3 saves empty arrays as non-self-closing <el> xml tags whose value parses to string,
                     // not back to empty arrays, that's why values can be string instead of array.
                     return null;
                 }
@@ -957,7 +958,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
      * Records like Plugins may have related Records defined in FlexForms
      * This method searched for the FlexForm Structure and
      * combines it with the FlexForm data array.
-     * Currently only FlexForms using "select" and "group/db"-relations are supported
+     * Currently, only FlexForms using "select" and "group/db"-relations are supported
      *
      * @param RecordInterface $record
      * @param string $column
@@ -1158,7 +1159,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
             if (!empty($identifierArray)) {
                 $identifierToTableMap = [];
                 foreach ($tableNames as $tableName) {
-                    if (in_array($tableName, $excludedTableNames)) {
+                    if (in_array($tableName, $excludedTableNames, true)) {
                         continue;
                     }
                     foreach ($identifierArray as $identifier) {
@@ -1208,7 +1209,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                 }
             }
         } else {
-            if (in_array($tableName, $excludedTableNames)) {
+            if (in_array($tableName, $excludedTableNames, true)) {
                 return $records;
             }
             if ($columnConfiguration['MM']) {
@@ -1276,7 +1277,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                         );
                         continue;
                     }
-                    if (!in_array($originalTableName, $excludedTableNames)) {
+                    if (!in_array($originalTableName, $excludedTableNames, true)) {
                         $originalRecord = $this->findByIdentifier($localUid, $originalTableName);
                         if ($originalRecord !== null) {
                             $relatedRecord->addRelatedRecord($originalRecord);
@@ -1457,18 +1458,14 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
         $tableName = $columnConfiguration['foreign_table'];
         $isL10nPointer = $propertyName === $this->tcaService->getTransOrigPointerField($record->getTableName());
         // Ignore $excludedTableNames if the field points to the record's l10Parent, which is required to be published.
-        if (!$isL10nPointer && (empty($tableName) || in_array($tableName, $excludedTableNames))) {
+        if (!$isL10nPointer && (empty($tableName) || in_array($tableName, $excludedTableNames, true))) {
             return [];
         }
         $records = [];
 
-        if (null !== $recordIdentifierOverride) {
-            $recordIdentifier = $recordIdentifierOverride;
-        } else {
-            $recordIdentifier = $record->getMergedProperty($propertyName);
-        }
+        $recordIdentifier = $recordIdentifierOverride ?? $record->getMergedProperty($propertyName);
 
-        if ($recordIdentifier !== null && trim((string)$recordIdentifier) !== '' && (int)$recordIdentifier > 0) {
+        if ($recordIdentifier !== null && (int)$recordIdentifier > 0 && trim((string)$recordIdentifier) !== '') {
             // if the relation is an MM type, then select all identifiers from the MM table
             if (!empty($columnConfiguration['MM'])) {
                 $records = $this->fetchRelatedRecordsBySelectMm($columnConfiguration, $record, $excludedTableNames);
@@ -1577,7 +1574,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
 
         foreach ($records as $relationRecord) {
             $originalTableName = $columnConfiguration['foreign_table'];
-            if (!in_array($originalTableName, $excludedTableNames)) {
+            if (!in_array($originalTableName, $excludedTableNames, true)) {
                 if ($relationRecord->hasLocalProperty($foreignField)) {
                     $identifier = $relationRecord->getLocalProperty($foreignField);
                 } elseif ($relationRecord->hasForeignProperty($foreignField)) {
@@ -1620,7 +1617,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
     ): array {
         $recordIdentifier = $record->getIdentifier();
         $tableName = $columnConfiguration['foreign_table'];
-        if (in_array($tableName, $excludedTableNames)) {
+        if (in_array($tableName, $excludedTableNames, true)) {
             return [];
         }
 
@@ -1786,7 +1783,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
             }
 
             $originalTableName = $columnConfiguration['foreign_table'];
-            if (!in_array($originalTableName, $excludedTableNames)) {
+            if (!in_array($originalTableName, $excludedTableNames, true)) {
                 $originalRecord = $this->findByIdentifier($localUid, $columnConfiguration['foreign_table']);
                 if ($originalRecord !== null) {
                     $mmRecord->addRelatedRecord($originalRecord);
@@ -2103,7 +2100,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                 foreach ($indexField as $field) {
                     $identifier[$field] = $row[$field];
                 }
-                $idString = json_encode($identifier);
+                $idString = json_encode($identifier, JSON_THROW_ON_ERROR);
                 $newRows[$idString] = $row;
             }
             return $newRows;

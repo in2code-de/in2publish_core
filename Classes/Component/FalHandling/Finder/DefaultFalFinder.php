@@ -101,12 +101,12 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
      * backend module and attaches all sub folders and files as related records.
      * Also takes care of files that have not been indexed yet by FAL.
      *
-     * I only work with drivers so i don't "accidentally" index files...
+     * I only work with drivers, so I don't "accidentally" index files...
      */
     public function findFalRecord(?string $identifier): RecordInterface
     {
         /*
-         * IMPORTANT NOTICES (a.k.a "never forget about this"-Notices):
+         * IMPORTANT NOTICES (a.k.a. "never forget about this"-Notices):
          *  1. The local folder always exist, because it's the one which has been selected (or the default)
          *  2. The foreign folder might not exist
          *  3. NEVER USE THE STORAGE, it might create new file index entries
@@ -115,19 +115,19 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
          */
         $localFolder = $this->initializeDependenciesAndGetFolder($identifier);
 
-        // Get the FAL-cleaned folder identifier (this should not be necessary, but i mistrust FAL)
+        // Get the FAL-cleaned folder identifier (this should not be necessary, but I mistrust FAL)
         $storageUid = $localFolder->getStorage()->getUid();
         $identifier = $localFolder->getIdentifier();
         // Also get the hashed identifier, which will be used later for temporary index creation and record searching.
         $hashedIdentifier = $localFolder->getHashedIdentifier();
 
-        // Create the main record instance. This represent the selected folder.
+        // Create the main record instance. This represents the selected folder.
         $record = $this->makePhysicalFolderInstance($identifier, 1);
 
         // Add all related sub folders
         $record->addRelatedRecords($this->getSubFolderRecordInstances($identifier));
 
-        // Now let's find all files inside of the selected folder by the folders hash.
+        // Now let's find all files inside the selected folder by the folders hash.
         $properties = ['folder_hash' => $hashedIdentifier, 'storage' => $storageUid];
         $files = $this->recordFinder->findRecordsByProperties($properties, 'sys_file', true);
 
@@ -196,7 +196,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
             $localStorage = $localFolder->getStorage();
         }
 
-        // Get the storages driver to prevent unintentional indexing by using storage methods.
+        // Get the storages' driver to prevent unintentional indexing by using storage methods.
         $this->localDriver = StorageDriverExtractor::getLocalDriver($localStorage);
         $this->foreignDriver = StorageDriverExtractor::getForeignDriver($localStorage);
 
@@ -206,7 +206,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
             $this->foreignDriver
         );
 
-        // Drop the reference to the local storage, since i've got the driver objects for both sides now.
+        // Drop the reference to the local storage, since I've got the driver objects for both sides now.
         return $localFolder;
     }
 
@@ -217,7 +217,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
      *      FDB = Foreign Database
      *      LFS = Local File System
      *      LDB = Local Database
-     *  These filters files and entries i do not consider, because they do not represent an actual file.
+     *  These filters files and entries I do not consider, because they do not represent an actual file.
      *  Prefer $this->localDriver over $foreignDriver where applicable, because it will be faster.
      *
      * @param RecordInterface[] $files
@@ -226,7 +226,6 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
      * @noinspection DuplicatedCode
      * @noinspection MissingOrEmptyGroupStatementInspection
      * @noinspection PhpStatementHasEmptyBodyInspection
-     * @noinspection RedundantElseClauseInspection
      */
     protected function filterFileRecords(array $files): array
     {
@@ -372,7 +371,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
                     // if the identifiers are the same: mark the as "indexed on both sides"
                     $indexedIdentifiers['both'][$identifier] = $localIdentifier;
                 } else {
-                    // otherwise mark it as indexed on the respective side. this takes care of moved (renamed) files
+                    // otherwise, mark it as indexed on the respective side. this takes care of moved (renamed) files
                     $indexedIdentifiers['local'][$identifier] = $localIdentifier;
                     $indexedIdentifiers['foreign'][$identifier] = $foreignIdentifier;
                 }
@@ -425,17 +424,16 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
 
     /**
      * Search on the disk for all files in the current folder and build a list of file identifiers
-     * for each local and foreign, so i can identify e.g. not indexed files.
+     * for each local and foreign, so I can identify e.g. not indexed files.
      * Move all entries occurring on both sides to the "both" index afterwards.
      *
-     * The resulting array has the three keys: local, foreign and both. Therefore i know where the files were found.
+     * The resulting array has the three keys: local, foreign and both. Therefore, I know where the files were found.
      */
     protected function buildDiskIdentifiersList(string $identifier): array
     {
         $diskIdentifiers = [
             'local' => $this->getFilesIdentifiersInFolder($identifier, $this->localDriver),
             'foreign' => $this->getFilesIdentifiersInFolder($identifier, $this->foreignDriver),
-            'both' => [],
         ];
 
         $diskIdentifiers['both'] = array_intersect($diskIdentifiers['local'], $diskIdentifiers['foreign']);
@@ -551,14 +549,14 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
         string $side
     ): array {
         // the chance is vanishing low to find a file by its identifier in the database
-        // because they should have been found by the folder hash already, but i'm a
-        // generous developer and allow FAL to completely fuck up the folder hash
+        // because they should have been found by the folder hash already, but I'm a
+        // generous developer and allow FAL to completely f*** up the folder hash
         foreach ($onlyDiskIdentifiers[$side] as $index => $onlyDiskIdentifier) {
             $disconnectedSysFiles = $this->recordFinder
                 ->findRecordsByProperties(['identifier' => $onlyDiskIdentifier], 'sys_file');
             // if a sys_file record could be reclaimed use it
             if (!empty($disconnectedSysFiles)) {
-                // repair the entry a.k.a reconnect it by updating the folder hash
+                // repair the entry a.k.a. reconnect it by updating the folder hash
                 if (true === $this->configuration['autoRepairFolderHash']) {
                     foreach ($disconnectedSysFiles as $sysFileEntry) {
                         // update on the local side if record has been found on the local side.
@@ -581,8 +579,8 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
                 foreach ($disconnectedSysFiles as $disconnectedSysFile) {
                     $files[$disconnectedSysFile->getIdentifier()] = $disconnectedSysFile;
                 }
-                // remove the identifier from the list of missing database record identifiers
-                // so i can deal with them later
+                // remove the identifier from the list of missing database
+                // record identifiers, so I can deal with them later
                 unset($onlyDiskIdentifiers[$side][$index]);
             }
         }
@@ -592,7 +590,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
     /**
      * mergeSysFileByIdentifier feature: Finds sys_file duplicates and "merges" them.
      *
-     * If the foreign sys_file was not referenced in the foreign's sys_file_reference table the the
+     * If the foreign sys_file was not referenced in the foreign's sys_file_reference table the
      * UID of the foreign record can be overwritten to restore a consistent state.
      *
      * @param RecordInterface[] $files
@@ -702,7 +700,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
                && isset($identifierList[$localIdentifier])
                // But there is no foreign record with the same identifier AND the same uid
                && !isset($identifierList[$localIdentifier][$localUid])
-               // The foreign part of the local record does not exists OR is temporary (= Not index for a remote file)
+               // The foreign part of the local record does not exist OR is temporary (= Not index for a remote file)
                && !$file->foreignRecordExists();
     }
 
@@ -800,7 +798,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
 
     /**
      * TYPO3 may create more than one sys_file record for an actual file (or different versions of it).
-     * Each sys_file record will be shown as an independent record in the publish files module.
+     * Each sys_file record will be shown as an independent record in the Publish Files module.
      * To prevent these duplications, we take every sys_file record which has an identical identifier as any previous
      * record and attach that record as a related record, so they will be published as one.
      *

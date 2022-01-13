@@ -38,7 +38,6 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 
 use function array_key_exists;
 use function class_exists;
-use function is_array;
 
 class AdapterSelectionTest implements TestCaseInterface
 {
@@ -52,7 +51,7 @@ class AdapterSelectionTest implements TestCaseInterface
     public function run(): TestResult
     {
         $config = $this->adapterRegistry->getConfig();
-        if (!is_array($config) || !array_key_exists('remote', $config) || !array_key_exists('transmission', $config)) {
+        if (!array_key_exists('remote', $config) || !array_key_exists('transmission', $config)) {
             return new TestResult('adapter.adapter_selection.config_error', TestResult::ERROR);
         }
 

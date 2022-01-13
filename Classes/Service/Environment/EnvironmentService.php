@@ -94,7 +94,7 @@ class EnvironmentService implements SingletonInterface
     /** @codeCoverageIgnore */
     protected function getPackagesHash(): string
     {
-        return sha1(json_encode($this->packageManager->getActivePackages()));
+        return sha1(json_encode($this->packageManager->getActivePackages(), JSON_THROW_ON_ERROR));
     }
 
     /** @codeCoverageIgnore */

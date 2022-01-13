@@ -98,7 +98,7 @@ class Builder
         array $validators = [],
         Builder $builder = null
     ): self {
-        if ($builder instanceof Builder) {
+        if ($builder instanceof self) {
             $nodes = $builder->end();
         } else {
             $nodes = GeneralUtility::makeInstance(NodeCollection::class);
@@ -110,7 +110,7 @@ class Builder
 
     public function addGenericScalar(string $keyType, string $type = Node::T_STRING): self
     {
-        $valueNode = Builder::start()->addNode($type, '*:' . $type)->end();
+        $valueNode = self::start()->addNode($type, '*:' . $type)->end();
         $keyNode = AbsGenNode::fromType($keyType, '*:' . $keyType, $valueNode, null);
         $this->nodes->addNode($keyNode);
         return $this;
@@ -118,7 +118,7 @@ class Builder
 
     public function addGenericArray(string $keyType, Builder $nodes): self
     {
-        $valueNodes = Builder::start()->addArray('*:' . $keyType, $nodes)->end();
+        $valueNodes = self::start()->addArray('*:' . $keyType, $nodes)->end();
         $keyNode = AbsGenNode::fromType($keyType, '*:' . $keyType, $valueNodes, null);
         $this->nodes->addNode($keyNode);
         return $this;

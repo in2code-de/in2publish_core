@@ -41,22 +41,17 @@ use function json_decode;
  */
 class TaskFactory
 {
-    /**
-     * @param array $taskProperties
-     *
-     * @return AbstractTask
-     */
     public function convertToObject(array $taskProperties): AbstractTask
     {
         $className = $taskProperties['task_type'];
-        $configuration = json_decode($taskProperties['configuration'], true);
+        $configuration = json_decode($taskProperties['configuration'], true, 512, JSON_THROW_ON_ERROR);
 
         /** @var AbstractTask $object */
         $object = GeneralUtility::makeInstance($className, $configuration, $taskProperties['uid']);
         $object->setCreationDate(new DateTime($taskProperties['creation_date']));
 
         if ($taskProperties['messages']) {
-            $object->setMessages(json_decode($taskProperties['messages'], true));
+            $object->setMessages(json_decode($taskProperties['messages'], true, 512, JSON_THROW_ON_ERROR));
         }
         if ($taskProperties['execution_begin']) {
             $object->setExecutionBegin(new DateTime($taskProperties['execution_begin']));

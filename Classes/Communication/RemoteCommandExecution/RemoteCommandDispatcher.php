@@ -52,16 +52,12 @@ class RemoteCommandDispatcher implements SingletonInterface, LoggerAwareInterfac
         $this->adapterRegistry = $adapterRegistry;
     }
 
-    /**
-     * @param RemoteCommandRequest $request
-     *
-     * @return RemoteCommandResponse
-     */
     public function dispatch(RemoteCommandRequest $request): RemoteCommandResponse
     {
         if (null === $this->adapter) {
             try {
                 $adapterClass = $this->adapterRegistry->getAdapter(AdapterInterface::class);
+                /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
                 $this->adapter = GeneralUtility::makeInstance($adapterClass);
             } catch (Throwable $exception) {
                 $this->logger->debug('SshAdapter initialization failed. See previous log for reason.');
