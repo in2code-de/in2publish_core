@@ -50,6 +50,9 @@ class ConfigContainerExporter implements SystemInformationExporter
 
     public function getInformation(): array
     {
+        $full = $this->configContainer->getContextFreeConfig();
+        $pers = $this->configContainer->get();
+
         $containerDump = $this->configContainer->dump();
         unset($containerDump['fullConfig']);
 
