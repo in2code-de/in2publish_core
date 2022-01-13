@@ -1,6 +1,9 @@
 <?php
 
-/** @noinspection PhpUndefinedVariableInspection */
+/**
+ * @var array $EM_CONF
+ * @var string $_EXTKEY
+ */
 
 $EM_CONF[$_EXTKEY] = [
     'title' => 'in2publish Core',
