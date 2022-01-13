@@ -46,7 +46,6 @@ class ToolsRegistry implements SingletonInterface
                                          . ' is deprecated. Please use '
                                          . NewToolsRegistry::class
                                          . ' instead.';
-    private const DEPRECATED_REMOVE_TOOLS = 'The method removeTool of the old ToolsRegistry is deprecated and will be removed in in2publish_core v11. There is no replacement.';
 
     protected NewToolsRegistry $toolsRegistry;
 
@@ -82,15 +81,5 @@ class ToolsRegistry implements SingletonInterface
     {
         trigger_error(self::DEPRECATED_GET_TOOLS, E_USER_DEPRECATED);
         return $this->toolsRegistry->getEntries();
-    }
-
-    /**
-     * @param string $name
-     * @deprecated The method removeTool of the old ToolsRegistry is deprecated
-     *  and will be removed in in2publish_core v11. There is no replacement.
-     */
-    public function removeTool(string $name): void
-    {
-        trigger_error(self::DEPRECATED_REMOVE_TOOLS, E_USER_DEPRECATED);
     }
 }
