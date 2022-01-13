@@ -236,8 +236,10 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         foreach ($response as $fileIdentifier => $info) {
             $fileExistsCacheIdentifier = $this->getFileExistsCacheIdentifier($fileIdentifier);
             static::$cache[$this->storageUid][$fileExistsCacheIdentifier] = $info['exists'];
+
             $getFileInfoByIdentifierCacheIdentifier = $this->getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier);
             static::$cache[$this->storageUid][$getFileInfoByIdentifierCacheIdentifier] = $info['fifo'] ?? null;
+
             $hashCacheIdentifier = $this->getHashCacheIdentifier($fileIdentifier, 'sha1');
             static::$cache[$this->storageUid][$hashCacheIdentifier] = $info['hash'] ?? null;
         }
@@ -466,13 +468,13 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
             }
             return $this->executeEnvelope(
                 new Envelope(
-                        EnvelopeDispatcher::CMD_GET_FILE_INFO_BY_IDENTIFIER,
-                        [
-                            'storage' => $this->storageUid,
-                            'fileIdentifier' => $fileIdentifier,
-                            'propertiesToExtract' => $propertiesToExtract,
-                        ]
-                    )
+                    EnvelopeDispatcher::CMD_GET_FILE_INFO_BY_IDENTIFIER,
+                    [
+                        'storage' => $this->storageUid,
+                        'fileIdentifier' => $fileIdentifier,
+                        'propertiesToExtract' => $propertiesToExtract,
+                    ]
+                )
             );
         };
 
