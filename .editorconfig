@@ -38,6 +38,9 @@ indent_size = 4
 indent_style = space
 indent_size = 2
 
+[grumphp.yml]
+indent_size = 4
+
 [*.t3s]
 indent_style = space
 indent_size = 2
