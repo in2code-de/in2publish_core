@@ -76,7 +76,7 @@ class ConfigurationUtility
         return $result;
     }
 
-    protected static function overruleResultByAdditional(array $original, array $additional, $result): array
+    protected static function overruleResultByAdditional(array $original, array $additional, array $result): array
     {
         foreach ($additional as $key => $value) {
             if ($value === '__UNSET') {

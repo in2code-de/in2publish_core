@@ -111,7 +111,7 @@ class Builder
     public function addGenericScalar(string $keyType, string $type = Node::T_STRING): self
     {
         $valueNode = self::start()->addNode($type, '*:' . $type)->end();
-        $keyNode = AbsGenNode::fromType($keyType, '*:' . $keyType, $valueNode, null);
+        $keyNode = AbsGenNode::fromType($keyType, '*:' . $keyType, $valueNode);
         $this->nodes->addNode($keyNode);
         return $this;
     }
@@ -119,7 +119,7 @@ class Builder
     public function addGenericArray(string $keyType, Builder $nodes): self
     {
         $valueNodes = self::start()->addArray('*:' . $keyType, $nodes)->end();
-        $keyNode = AbsGenNode::fromType($keyType, '*:' . $keyType, $valueNodes, null);
+        $keyNode = AbsGenNode::fromType($keyType, '*:' . $keyType, $valueNodes);
         $this->nodes->addNode($keyNode);
         return $this;
     }

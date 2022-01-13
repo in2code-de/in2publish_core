@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Doctrine\DBAL\Result;
 use In2code\In2publishCore\Service\Routing\SiteService;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
@@ -61,6 +62,9 @@ class PageSlugService
               )
               ->where($query->expr()->isNull('d.page_uid'));
         $statement = $query->execute();
+        if (!$statement instanceof Result) {
+            return;
+        }
         foreach ($statement as $row) {
             $uid = (int)$row['uid'];
             $languageId = (int)$row['sys_language_uid'];
@@ -70,7 +74,7 @@ class PageSlugService
             if (!$site instanceof Site) {
                 continue;
             }
-            $url = (string)$site->getRouter()->generateUri($uid, ['_language' => $languageId]);
+            $url = (string)$site->getRouter()->generateUri((string)$uid, ['_language' => $languageId]);
             $dataTableConnection->insert(
                 'tx_in2publishcore_pages_slug_data',
                 [

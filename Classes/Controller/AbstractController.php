@@ -92,6 +92,7 @@ abstract class AbstractController extends ActionController
                 AbstractMessage::ERROR
             );
         }
+        /** @psalm-suppress InternalProperty */
         $this->actionMethodName = static::BLANK_ACTION;
         $this->arguments = $this->objectManager->get(Arguments::class);
     }

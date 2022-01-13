@@ -49,6 +49,7 @@ class ExtensionUtility
         $EM_CONF = [];
         $_EXTKEY = $extension;
         require(ExtensionManagementUtility::extPath($extension, 'ext_emconf.php'));
+        /** @psalm-suppress EmptyArrayAccess */
         return $EM_CONF[$_EXTKEY]['version'];
     }
 

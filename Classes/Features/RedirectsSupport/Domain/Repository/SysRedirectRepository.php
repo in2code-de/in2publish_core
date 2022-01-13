@@ -54,6 +54,7 @@ class SysRedirectRepository extends Repository
                 // redirects to the host-less redirect. It just belongs.
                 $predicates[] = $query->expr()->eq('target', $query->createNamedParameter($uri->getPath()));
             } else {
+                /** @psalm-suppress ImplicitToStringCast */
                 $predicates[] = $query->expr()->andX(
                     $query->expr()->eq('target', $query->createNamedParameter($uri->getPath())),
                     $query->expr()->orX(
@@ -69,6 +70,7 @@ class SysRedirectRepository extends Repository
                 $uid = (int)$uid;
             }
             unset($uid);
+            /** @psalm-suppress ImplicitToStringCast */
             $predicates = [
                 $query->expr()->andX(
                     $query->expr()->notIn('uid', $exceptUid),
@@ -108,6 +110,10 @@ class SysRedirectRepository extends Repository
         return $query->execute()->fetchAllAssociative();
     }
 
+    /**
+     * @psalm-suppress InvalidReturnStatement
+     * @psalm-suppress InvalidReturnType
+     */
     public function findForPublishing(array $uidList, ?Filter $filter): QueryResultInterface
     {
         $query = $this->getQueryForRedirectsToBePublished($uidList);

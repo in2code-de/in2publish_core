@@ -85,7 +85,7 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
             $testResult = new TestResult(
                 'application.foreign_database_config.unexpected_error',
                 TestResult::ERROR,
-                [$response->getErrors(), $response->getOutput()]
+                [$response->getErrorsString(), $response->getOutputString()]
             );
         }
         $connection->delete('tx_in2code_in2publish_task', ['task_type' => self::DB_CONFIG_TEST_TYPE]);

@@ -173,7 +173,7 @@ class CompareDatabaseToolController extends ActionController
                         }
                     } elseif ($localRowExists && !$foreignRowExists) {
                         $differences[$table]['only_local'][] = $localRows[$uid];
-                    } elseif (!$localRowExists && $foreignRowExists) {
+                    } elseif ($foreignRowExists) {
                         $differences[$table]['only_foreign'][] = $foreignRows[$uid];
                     }
                 }

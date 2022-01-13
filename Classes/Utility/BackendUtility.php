@@ -457,12 +457,12 @@ class BackendUtility
         };
     }
 
-    protected static function getLocalUriClosure(Site $site, int $pageUid, $additionalQueryParams): Closure
+    protected static function getLocalUriClosure(Site $site, int $pageUid, array $additionalQueryParams): Closure
     {
         return static function () use ($site, $pageUid, $additionalQueryParams): ?UriInterface {
             try {
                 return $site->getRouter()->generateUri(
-                    $pageUid,
+                    (string)$pageUid,
                     $additionalQueryParams,
                     '',
                     RouterInterface::ABSOLUTE_URL

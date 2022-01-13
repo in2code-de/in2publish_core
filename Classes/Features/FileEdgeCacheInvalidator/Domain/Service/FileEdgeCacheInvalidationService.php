@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Servic
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Result;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
@@ -76,7 +75,8 @@ class FileEdgeCacheInvalidationService
 
     /**
      * @param int[] $uidList
-     * @return ResultStatement
+     * @psalm-suppress InvalidReturnStatement
+     * @psalm-suppress InvalidReturnType
      */
     protected function selectSysRefIndexRecords(array $uidList): Result
     {
@@ -93,7 +93,8 @@ class FileEdgeCacheInvalidationService
 
     /**
      * @param int[] $uidList
-     * @return ResultStatement
+     * @psalm-suppress InvalidReturnStatement
+     * @psalm-suppress InvalidReturnType
      */
     protected function selectSysFileReferenceRecords(array $uidList): Result
     {
@@ -110,7 +111,7 @@ class FileEdgeCacheInvalidationService
         return $query->execute();
     }
 
-    protected function addResultsToCollection(ResultStatement $statement, RecordCollection $recordCollection): void
+    protected function addResultsToCollection(Result $statement, RecordCollection $recordCollection): void
     {
         while ($row = $statement->fetchAssociative()) {
             $table = $row['table'];

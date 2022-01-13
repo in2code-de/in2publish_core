@@ -37,7 +37,7 @@ use function array_keys;
 
 class PublishedFileIdentifierCollector
 {
-    /** @var array<int, true> */
+    /** @var array<true> */
     protected array $collectedRecords = [];
 
     protected TaskRepository $taskRepository;

@@ -190,7 +190,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
                 $localFolder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
             } /** @noinspection PhpRedundantCatchClauseInspection */ catch (FolderDoesNotExistException $exception) {
                 [$storage] = GeneralUtility::trimExplode(':', $identifier);
-                $localStorage = $this->resourceFactory->getStorageObject($storage);
+                $localStorage = $this->resourceFactory->getStorageObject((int)$storage);
                 $localFolder = $localStorage->getRootLevelFolder();
             }
             $localStorage = $localFolder->getStorage();
@@ -226,6 +226,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
      * @noinspection DuplicatedCode
      * @noinspection MissingOrEmptyGroupStatementInspection
      * @noinspection PhpStatementHasEmptyBodyInspection
+     * @psalm-suppress RedundantCondition
      */
     protected function filterFileRecords(array $files): array
     {
@@ -378,7 +379,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
             } elseif (null !== $localIdentifier && null === $foreignIdentifier) {
                 // only local
                 $indexedIdentifiers['local'][$identifier] = $localIdentifier;
-            } elseif (null === $localIdentifier && null !== $foreignIdentifier) {
+            } elseif (null !== $foreignIdentifier) {
                 // only foreign
                 $indexedIdentifiers['foreign'][$identifier] = $foreignIdentifier;
             }

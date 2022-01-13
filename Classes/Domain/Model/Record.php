@@ -435,12 +435,7 @@ class Record implements RecordInterface
         return !empty($pointerField) && $record->getIdentifier() === $this->getMergedProperty($pointerField);
     }
 
-    /**
-     * @param scalar $propertyName
-     *
-     * @return bool
-     */
-    protected function isDirtyProperty($propertyName): bool
+    protected function isDirtyProperty(string $propertyName): bool
     {
         return !array_key_exists($propertyName, $this->localProperties)
                || !array_key_exists($propertyName, $this->foreignProperties)
@@ -695,7 +690,7 @@ class Record implements RecordInterface
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity) PR welcome
      */
-    public function getMergedProperty($propertyName)
+    public function getMergedProperty(string $propertyName)
     {
         if ($this->hasLocalProperty($propertyName)) {
             $localValue = $this->getLocalProperty($propertyName);
@@ -939,15 +934,15 @@ class Record implements RecordInterface
         $count = count($identifierArray);
         if (3 === $count) {
             return [
-                'uid_local' => $identifierArray[0],
-                'uid_foreign' => $identifierArray[1],
-                'sorting' => $identifierArray[2],
+                'uid_local' => (int)$identifierArray[0],
+                'uid_foreign' => (int)$identifierArray[1],
+                'sorting' => (int)$identifierArray[2],
             ];
         }
         if (2 === $count) {
             return [
-                'uid_local' => $identifierArray[0],
-                'uid_foreign' => $identifierArray[1],
+                'uid_local' => (int)$identifierArray[0],
+                'uid_foreign' => (int)$identifierArray[1],
             ];
         }
         return [];
@@ -965,8 +960,8 @@ class Record implements RecordInterface
         $path = '';
         $record = $this;
         do {
-            $path = '/ ' . $record->tableName . ' [' . $record->getIdentifier() . '] ' . $path;
-        } while ($record->tableName !== 'pages' && $record = $record->parentRecord);
+            $path = '/ ' . $record->getTableName() . ' [' . $record->getIdentifier() . '] ' . $path;
+        } while ($record->getTableName() !== 'pages' && $record = $record->getParentRecord());
         return rtrim($path, ' ');
     }
 

@@ -248,7 +248,7 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
 
     public function getCompatibleTcaColumns(string $table): array
     {
-        return $this->compatibleTca[$table];
+        return $this->compatibleTca[$table] ?? [];
     }
 
     public function flushCaches(): void

@@ -182,10 +182,7 @@ class RemoteCommandRequest
         }
     }
 
-    /**
-     * @param scalar $value
-     */
-    public function setOption($value): void
+    public function setOption(string $value): void
     {
         $this->options[$value] = $value;
     }

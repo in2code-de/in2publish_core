@@ -327,7 +327,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
             $this->recordFactory->simulateRootRecord();
         }
         foreach ($properties as $propertyName => $propertyValue) {
-            if ($this->shouldSkipFindByProperty($propertyName, $propertyValue, $tableName)) {
+            if ($this->shouldSkipFindByProperty((string)$propertyName, $propertyValue, $tableName)) {
                 return [];
             }
         }
@@ -1906,7 +1906,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
         return $event->getVotingResult();
     }
 
-    protected function shouldSkipFindByProperty($propertyName, $propertyValue, $tableName): bool
+    protected function shouldSkipFindByProperty(string $propertyName, $propertyValue, string $tableName): bool
     {
         $event = new VoteIfFindingByPropertyShouldBeSkipped($this, $propertyName, $propertyValue, $tableName);
         $this->eventDispatcher->dispatch($event);
@@ -1938,9 +1938,9 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
     protected function shouldSkipSearchingForRelatedRecordsByFlexForm(
         RecordInterface $record,
         string $column,
-        $columnConfiguration,
-        $flexFormDefinition,
-        $flexFormData
+        array $columnConfiguration,
+        array $flexFormDefinition,
+        array $flexFormData
     ): bool {
         $event = new VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped(
             $this,

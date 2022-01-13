@@ -118,7 +118,10 @@ abstract class AbstractNode implements Node
         }
     }
 
-    public function merge(Node $node): void
+    /**
+     * @psalm-suppress NoInterfaceProperties
+     */
+    public function merge(AbstractNode $node): void
     {
         if (!empty($node->default)) {
             if (empty($this->default)) {

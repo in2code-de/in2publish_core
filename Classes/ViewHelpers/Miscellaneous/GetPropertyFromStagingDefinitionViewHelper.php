@@ -103,7 +103,7 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
                 return $this->getSiteName();
             }
 
-            return LocalizationUtility::translate('label_production', 'in2publish_core');
+            return LocalizationUtility::translate('label_production', 'in2publish_core') ?? 'label_production';
         }
         return static::EMPTY_FIELD_VALUE;
     }

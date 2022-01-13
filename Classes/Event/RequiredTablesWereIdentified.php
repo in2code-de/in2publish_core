@@ -38,7 +38,7 @@ final class RequiredTablesWereIdentified
 {
     private array $tables;
 
-    public function __construct($tables)
+    public function __construct(array $tables)
     {
         $this->setTables($tables);
     }
@@ -73,7 +73,7 @@ final class RequiredTablesWereIdentified
         return $this->tables;
     }
 
-    public function setTables($tables): void
+    public function setTables(array $tables): void
     {
         $this->tables = array_values(array_filter(array_unique($tables)));
     }

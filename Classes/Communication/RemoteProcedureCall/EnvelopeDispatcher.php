@@ -44,11 +44,9 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 
 use function array_map;
 use function basename;
-use function call_user_func;
 use function call_user_func_array;
 use function dirname;
 use function get_class;
-use function is_callable;
 use function method_exists;
 use function strtolower;
 
@@ -126,10 +124,7 @@ class EnvelopeDispatcher
         if ($driver->folderExists($folderIdentifier)) {
             $files = [];
 
-            if (
-                is_callable([$driver, 'countFilesInFolder'])
-                && $driver->countFilesInFolder($folderIdentifier) < $this->prefetchLimit
-            ) {
+            if ($driver->countFilesInFolder($folderIdentifier) < $this->prefetchLimit) {
                 $fileIdentifiers = $this->convertIdentifiers($driver, $driver->getFilesInFolder($folderIdentifier));
 
                 foreach ($fileIdentifiers as $fileIdentifier) {
@@ -178,13 +173,10 @@ class EnvelopeDispatcher
         $fileIdentifier = $request['fileIdentifier'];
         $directory = PathUtility::dirname($fileIdentifier);
         if ($driver->folderExists($directory)) {
-            if (
-                is_callable([$driver, 'countFilesInFolder'])
-                && $driver->countFilesInFolder($directory) < $this->prefetchLimit
-            ) {
+            if ($driver->countFilesInFolder($directory) < $this->prefetchLimit) {
                 $files = $this->convertIdentifiers(
                     $driver,
-                    call_user_func([$driver, 'getFilesInFolder'], $directory)
+                    $driver->getFilesInFolder($directory)
                 );
                 foreach ($files as $file) {
                     $fileObject = $this->getFileObject($driver, $file, $storage);
@@ -228,7 +220,7 @@ class EnvelopeDispatcher
             ];
             try {
                 $response[$fileIdentifier]['exists'] = $driver->fileExists($fileIdentifier);
-                if ($response[$fileIdentifier]) {
+                if ($response[$fileIdentifier]['exists']) {
                     $response[$fileIdentifier]['fifo'] = $driver->getFileInfoByIdentifier($fileIdentifier);
                     $response[$fileIdentifier]['hash'] = $driver->hash($fileIdentifier, 'sha1');
                 }

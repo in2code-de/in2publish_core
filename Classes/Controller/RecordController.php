@@ -193,7 +193,7 @@ class RecordController extends AbstractController
             );
         } catch (Throwable $exception) {
             $this->logger->error('Error while publishing', ['exception' => $exception]);
-            $this->addFlashMessage($exception->getMessage(), AbstractMessage::ERROR);
+            $this->addFlashMessage($exception->getMessage(), '', AbstractMessage::ERROR);
         }
         $this->runTasks();
     }

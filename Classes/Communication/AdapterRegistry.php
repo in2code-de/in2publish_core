@@ -52,7 +52,7 @@ class AdapterRegistry implements SingletonInterface, LoggerAwareInterface
     use LoggerAwareTrait;
 
     /**
-     * @var string[][][]
+     * @var array<string, array<string, array<string, mixed>>>
      */
     protected array $adapter = [
         'remote' => [],

@@ -52,6 +52,7 @@ use function array_column;
 use function array_combine;
 use function array_keys;
 use function is_array;
+use function is_bool;
 use function sprintf;
 
 /**
@@ -188,7 +189,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      */
     public function fileExists($fileIdentifier): bool
     {
-        $callback = function () use ($fileIdentifier) {
+        $callback = function () use ($fileIdentifier): bool {
             $response = $this->executeEnvelope(
                 new Envelope(
                     EnvelopeDispatcher::CMD_FILE_EXISTS,
@@ -425,7 +426,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      *
      * @return array
      *
-     * @return string
      * @throws Throwable
      */
     public function getPermissions($identifier): array
@@ -479,21 +479,27 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
      */
     public function getFolderInfoByIdentifier($folderIdentifier): array
     {
-        $callback = function () use ($folderIdentifier) {
-            $folderIdentifier = $this->canonicalizeAndCheckFolderIdentifier($folderIdentifier);
+        $callback =
+            /**
+             * @return array<int|string>
+             *
+             * @psalm-return array{identifier: string, name: string, storage: int}
+             */
+            function () use ($folderIdentifier): array {
+                $folderIdentifier = $this->canonicalizeAndCheckFolderIdentifier($folderIdentifier);
 
-            if (!$this->folderExists($folderIdentifier)) {
-                throw new FolderDoesNotExistException(
-                    'Folder "' . $folderIdentifier . '" does not exist.',
-                    1314516810
-                );
-            }
-            return [
-                'identifier' => $folderIdentifier,
-                'name' => PathUtility::basename($folderIdentifier),
-                'storage' => $this->storageUid,
-            ];
-        };
+                if (!$this->folderExists($folderIdentifier)) {
+                    throw new FolderDoesNotExistException(
+                        'Folder "' . $folderIdentifier . '" does not exist.',
+                        1314516810
+                    );
+                }
+                return [
+                    'identifier' => $folderIdentifier,
+                    'name' => PathUtility::basename($folderIdentifier),
+                    'storage' => $this->storageUid,
+                ];
+            };
 
         return $this->cache($this->getGetFolderInfoByIdentifierCacheIdentifier($folderIdentifier), $callback);
     }
@@ -535,25 +541,30 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
             throw new InvalidArgumentException('This Driver does not support optional arguments', 1476202118);
         }
 
-        $callback = function () use ($folderIdentifier) {
-            if (!$this->folderExists($folderIdentifier)) {
-                throw new InvalidArgumentException(
-                    'Cannot list items in directory ' . $folderIdentifier . ' - does not exist or is no directory',
-                    1475235331
+        $callback = /**
+         * @return (int|string)[]
+         *
+         * @psalm-return list<array-key>
+         */
+            function () use ($folderIdentifier): array {
+                if (!$this->folderExists($folderIdentifier)) {
+                    throw new InvalidArgumentException(
+                        'Cannot list items in directory ' . $folderIdentifier . ' - does not exist or is no directory',
+                        1475235331
+                    );
+                }
+
+                $files = $this->executeEnvelope(
+                    new Envelope(
+                        EnvelopeDispatcher::CMD_GET_FILES_IN_FOLDER,
+                        ['storage' => $this->storageUid, 'folderIdentifier' => $folderIdentifier]
+                    )
                 );
-            }
 
-            $files = $this->executeEnvelope(
-                new Envelope(
-                    EnvelopeDispatcher::CMD_GET_FILES_IN_FOLDER,
-                    ['storage' => $this->storageUid, 'folderIdentifier' => $folderIdentifier]
-                )
-            );
+                $this->writeFileCaches($files);
 
-            $this->writeFileCaches($files);
-
-            return array_keys($files);
-        };
+                return array_keys($files);
+            };
 
         return $this->cache($this->getGetFilesInFolderCacheIdentifier($folderIdentifier), $callback);
     }
@@ -723,7 +734,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
     {
         $uid = $this->letterBox->sendEnvelope($envelope);
 
-        if (false === $uid) {
+        if (is_bool($uid)) {
             throw new In2publishCoreException(
                 'Could not send ' . $envelope->getCommand() . ' request to remote system',
                 1476296011

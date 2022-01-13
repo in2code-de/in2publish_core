@@ -109,18 +109,20 @@ class ArrayUtility
 
     /**
      * @param array $array
-     * @param $value
-     * @param $key
+     * @param string $value
+     * @param array-key $key
      *
-     * @return bool|int
+     * @return bool|int|string
      */
-    protected static function autoCastString(array &$array, $value, $key)
+    protected static function autoCastString(array &$array, string $value, $key)
     {
-        if (strtolower((string)$value) === 'true') {
+        $lowercaseValue = strtolower($value);
+
+        if ($lowercaseValue === 'true') {
             return true;
         }
 
-        if (strtolower((string)$value) === 'false') {
+        if ($lowercaseValue === 'false') {
             return false;
         }
 
@@ -128,7 +130,7 @@ class ArrayUtility
             return (int)$value;
         }
 
-        if ((string)$value === '' || strtolower((string)$value) === 'null') {
+        if ($value === '' || $lowercaseValue === 'null') {
             unset($array[$key]);
         }
 

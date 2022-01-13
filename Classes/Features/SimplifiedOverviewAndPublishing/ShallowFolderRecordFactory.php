@@ -70,6 +70,7 @@ class ShallowFolderRecordFactory
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @psalm-suppress RedundantCondition Actually more readable with redundancy
      */
     protected function filterFileRecords(array $files): array
     {

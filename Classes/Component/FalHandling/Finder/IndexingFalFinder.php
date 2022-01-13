@@ -121,7 +121,8 @@ class IndexingFalFinder implements FalFinder
                 $localFolder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
             }
         } /** @noinspection PhpRedundantCatchClauseInspection */ catch (FolderDoesNotExistException $exception) {
-            $resourceStorage = $this->resourceFactory->getStorageObject(substr($identifier, 0, strpos($identifier, ':')));
+            $storageUid = (int)substr($identifier, 0, strpos($identifier, ':'));
+            $resourceStorage = $this->resourceFactory->getStorageObject($storageUid);
             $localFolder = $resourceStorage->getRootLevelFolder();
         }
 
@@ -144,7 +145,7 @@ class IndexingFalFinder implements FalFinder
         $remoteFiles = [];
 
         // get the actual information from remote if the folder actually exists
-        if (true === $this->remoteStorage->hasFolder($storageUid, $folderIdentifier)) {
+        if (true === $this->remoteStorage->hasFolder((string)$storageUid, $folderIdentifier)) {
             $remoteProperties = $localProperties;
             $remoteSubFolders = $this->remoteStorage->getFoldersInFolder($storageUid, $folderIdentifier);
             $remoteFiles = $this->remoteStorage->getFilesInFolder($storageUid, $folderIdentifier);
@@ -225,7 +226,8 @@ class IndexingFalFinder implements FalFinder
             }
             foreach ($relatedFolders as $folder => $fileInfo) {
                 if ($side === 'foreign') {
-                    if ($storage->hasFolder((int)$fileInfo['storageUid'], $folder)) {
+                    /** @var RemoteStorage $storage */
+                    if ($storage->hasFolder((string)$fileInfo['storageUid'], $folder)) {
                         $filesInFolder = $storage->getFilesInFolder((int)$fileInfo['storageUid'], $folder);
                         foreach ($fileInfo['files'] as $identifier) {
                             if (isset($filesInFolder[$identifier])) {
@@ -233,12 +235,18 @@ class IndexingFalFinder implements FalFinder
                             }
                         }
                     }
-                } elseif ($storage->hasFolder($folder)) {
-                    $filesInFolder = $storage->getFolder($folder)->getFiles();
-                    $filesInFolder = FileUtility::extractFilesInformation($filesInFolder);
-                    foreach ($fileInfo['files'] as $identifier) {
-                        if (isset($filesInFolder[$identifier])) {
-                            $files[$identifier] = $filesInFolder[$identifier];
+                } else {
+                    /**
+                     * @var ResourceStorage $storage
+                     * @noinspection NestedPositiveIfStatementsInspection
+                     */
+                    if ($storage->hasFolder($folder)) {
+                        $filesInFolder = $storage->getFolder($folder)->getFiles();
+                        $filesInFolder = FileUtility::extractFilesInformation($filesInFolder);
+                        foreach ($fileInfo['files'] as $identifier) {
+                            if (isset($filesInFolder[$identifier])) {
+                                $files[$identifier] = $filesInFolder[$identifier];
+                            }
                         }
                     }
                 }

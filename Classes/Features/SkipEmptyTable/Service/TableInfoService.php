@@ -45,7 +45,7 @@ class TableInfoService implements SingletonInterface
 
     protected ?Connection $foreignConnection;
 
-    /** @var array<string, array<string, array<int>|bool>> */
+    /** @var array<string, array<string, array<int|bool>>> */
     protected array $tableInfo = [];
 
     public function __construct()
@@ -59,6 +59,7 @@ class TableInfoService implements SingletonInterface
         if (!isset($this->tableInfo[$table])) {
             $this->tableInfo[$table] = $this->queryTableInfo($table);
         }
+        /** @psalm-suppress InvalidReturnStatement */
         return $this->tableInfo[$table]['isEmpty'];
     }
 

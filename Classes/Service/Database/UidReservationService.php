@@ -58,7 +58,7 @@ class UidReservationService
      */
     public function getReservedUid(): int
     {
-        $nextAutoIncrement = (int)max(
+        $nextAutoIncrement = max(
             $this->fetchSysFileAutoIncrementFromDatabase($this->localDatabaseConnection),
             $this->fetchSysFileAutoIncrementFromDatabase($this->foreignDatabaseConnection)
         );

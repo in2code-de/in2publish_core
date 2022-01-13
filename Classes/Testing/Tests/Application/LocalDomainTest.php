@@ -37,7 +37,7 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 
 class LocalDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
-    protected ?Connection $localConnection;
+    protected Connection $localConnection;
 
     protected SiteFinder $siteFinder;
 

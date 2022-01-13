@@ -188,7 +188,7 @@ class ShallowRecordFinder implements RecordFinder
             return;
         }
 
-        /** @var array<int, array<RecordInterface> $fileToReferenceMap */
+        /** @var array<int, array<RecordInterface>> $fileToReferenceMap */
         $fileToReferenceMap = [];
         foreach ($referenceRecords as $referenceRecord) {
             $uid = $referenceRecord->getLocalProperty('uid_local') ?: $referenceRecord->getForeignProperty('uid_local');

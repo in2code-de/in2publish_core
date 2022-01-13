@@ -58,7 +58,7 @@ class RemoteStorage implements ResourceStorageInterface
         $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
-    public function hasFolder(int $storage, string $identifier): bool
+    public function hasFolder(string $storage, string $identifier): bool
     {
         if (!isset(static::$cache[$storage][$identifier][static::HAS_FOLDER_KEY])) {
             $result = $this->executeEnvelope(

@@ -121,7 +121,7 @@ abstract class AbstractDomainTest
         return $messages;
     }
 
-    public function getMessagesForSitesWithoutDomain($results): array
+    public function getMessagesForSitesWithoutDomain(array $results): array
     {
         $messages = [];
         if (!empty($results[self::DOMAIN_TYPE_NONE])) {
@@ -133,6 +133,10 @@ abstract class AbstractDomainTest
         return $messages;
     }
 
+    /**
+     * @psalm-suppress InvalidReturnType
+     * @psalm-suppress InvalidReturnStatement
+     */
     protected function findAllRootPages(): Result
     {
         $query = $this->getConnection()->createQueryBuilder();

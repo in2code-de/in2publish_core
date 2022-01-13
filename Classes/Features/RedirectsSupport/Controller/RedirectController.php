@@ -186,7 +186,7 @@ class RedirectController extends AbstractController
             $redirectObj->setSiteId($properties['siteId']);
             $this->sysRedirectRepo->update($redirectObj);
             $this->addFlashMessage(
-                sprintf('Associated redirect %s with site %s', $redirectObj, $redirectObj->getSiteId())
+                sprintf('Associated redirect %s with site %s', $redirectObj->__toString(), $redirectObj->getSiteId())
             );
             if (isset($_POST['_saveandpublish'])) {
                 $this->redirect('publish', null, null, ['redirects' => [$redirectObj->getUid()]]);

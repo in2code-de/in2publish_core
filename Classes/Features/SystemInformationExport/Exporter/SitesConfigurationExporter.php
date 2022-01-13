@@ -69,7 +69,7 @@ class SitesConfigurationExporter implements SystemInformationExporter
                 foreach ($site->getAllLanguages() as $language) {
                     $languageId = $language->getLanguageId();
                     try {
-                        $uri = $site->getRouter()->generateUri($rootPageId, ['_language' => $languageId])->__toString();
+                        $uri = $site->getRouter()->generateUri((string)$rootPageId, ['_language' => $languageId])->__toString();
                     } catch (Throwable $throwable) {
                         $uri = (string)$throwable;
                     }
@@ -82,7 +82,7 @@ class SitesConfigurationExporter implements SystemInformationExporter
                     ];
                 }
                 try {
-                    $uri = $site->getRouter()->generateUri($rootPageId)->__toString();
+                    $uri = $site->getRouter()->generateUri((string)$rootPageId)->__toString();
                 } catch (Throwable $throwable) {
                     $uri = (string)$throwable;
                 }

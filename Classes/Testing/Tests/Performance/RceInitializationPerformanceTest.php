@@ -54,11 +54,16 @@ use function xdebug_is_enabled;
 
 class RceInitializationPerformanceTest implements TestCaseInterface
 {
-    // TODO: let adapters provide their expected execution time themselves
+    /**
+     * TODO: let adapters provide their expected execution time themselves
+     *
+     * @psalm-suppress UndefinedClass
+     */
     protected const THRESHOLD = [
         SshAdapter::class => [
             TestResult::OK => 0.3,
         ],
+        /* @phpstan-ignore-next-line */
         PhpSecLibAdapter::class => [
             TestResult::OK => 1.1,
         ],

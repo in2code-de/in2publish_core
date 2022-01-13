@@ -219,7 +219,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
                 $additionalProperties,
                 $mergedIdentifier
             );
-            if (true === $isRootRecord && true === $this->isRootRecord) {
+            if (true === $isRootRecord) {
                 $instance->addAdditionalProperty('isRoot', true);
             }
 
@@ -280,7 +280,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
             $this->finishedInstantiation($tableName, $mergedIdentifier);
             $this->runtimeCache[$tableName][$mergedIdentifier] = $instance;
         }
-        if (true === $isRootRecord && true === $this->isRootRecord) {
+        if (true === $isRootRecord) {
             $this->isRootRecord = false;
             $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($instance));
         }
@@ -438,7 +438,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
      *
      * @param array $localProperties
      * @param array $foreignProperties
-     * @param string|null $tableName
+     * @param string $tableName
      * @param string $idFieldName
      * @param array<string>|null $idFields
      *

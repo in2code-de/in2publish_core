@@ -68,7 +68,7 @@ class CaseSensitivityTest implements TestCaseInterface
             ) {
                 $affected[] = sprintf(
                     '[%d] %s (Local: %s; Foreign: %s)',
-                    $keys,
+                    $key,
                     $storages['local'][$key]['name'],
                     $local['caseSensitive'] ? 'true' : 'false',
                     $foreign['caseSensitive'] ? 'true' : 'false'

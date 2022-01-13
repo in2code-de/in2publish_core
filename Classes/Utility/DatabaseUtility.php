@@ -364,13 +364,17 @@ class DatabaseUtility
      * @param int $depth
      * @param int $begin
      * @param string $permClause
+     *
      * @return string comma separated list of descendant pages
+     *
      * @throws Exception
+     *
+     * @noinspection PhpMissingParamTypeInspection
      * @SuppressWarnings(PHPMD)
      * @noinspection PhpMissingParamTypeInspection
      * @noinspection CallableParameterUseCaseInTypeContextInspection
      */
-    public static function getTreeList($id, $depth, $begin = 0, $permClause = '')
+    public static function getTreeList($id, $depth, $begin = 0, $permClause = ''): string
     {
         $depth = (int)$depth;
         $begin = (int)$begin;
@@ -411,7 +415,7 @@ class DatabaseUtility
                 }
             }
         }
-        return $theList;
+        return (string)$theList;
     }
 
     /**

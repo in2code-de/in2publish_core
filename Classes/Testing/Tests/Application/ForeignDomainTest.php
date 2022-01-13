@@ -49,7 +49,7 @@ class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
     protected RemoteCommandDispatcher $rceDispatcher;
 
-    protected ?Connection $foreignConnection;
+    protected Connection $foreignConnection;
 
     protected string $prefix = 'foreign';
 

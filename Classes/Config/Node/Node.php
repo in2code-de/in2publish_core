@@ -52,7 +52,7 @@ interface Node
     /** @return string[]|int[]|bool[]|array[] */
     public function getDefaults(): array;
 
-    public function merge(Node $node): void;
+    public function merge(AbstractNode $node): void;
 
     public function mergeArrays(array $original, array $additional): array;
 

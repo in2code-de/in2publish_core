@@ -294,7 +294,11 @@ class PageRecordRedirectEnhancer
         }
     }
 
-    /** @return array<int, RecordInterface> */
+    /**
+     * @return array[][]
+     *
+     * @psalm-return array<int|string, array{local?: array}>
+     */
     protected function getExistingRedirects(RecordInterface $record): array
     {
         $redirects = [];

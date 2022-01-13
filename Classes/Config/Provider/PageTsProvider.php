@@ -68,7 +68,7 @@ class PageTsProvider implements ProviderInterface, ContextualProvider
     {
         $uid = In2publishBackendUtility::getPageIdentifier();
         // get the pageTS | Manually pass rootline to disable caching.
-        $pageTs = CoreBackendUtility::getPagesTSconfig($uid);
+        $pageTs = CoreBackendUtility::getPagesTSconfig((int)$uid);
 
         $configuration = [];
         if (!empty($pageTs['tx_in2publish.'])) {

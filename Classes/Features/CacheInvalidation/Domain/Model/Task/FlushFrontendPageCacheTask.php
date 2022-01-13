@@ -66,6 +66,7 @@ class FlushFrontendPageCacheTask extends AbstractTask
         /** @var DataHandler $dataHandler */
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
         $dataHandler->BE_USER = $GLOBALS['BE_USER'];
+        /** @psalm-suppress InternalProperty */
         $dataHandler->admin = true;
         return $dataHandler;
     }

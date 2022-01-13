@@ -55,13 +55,13 @@ class ConfigContainer implements SingletonInterface
 
     protected array $providers = [];
 
-    /** @var DefinerInterface[] */
+    /** @var array<class-string<DefinerInterface>, DefinerInterface|null> */
     protected array $definers = [];
 
-    /** @var PostProcessorInterface[] */
+    /** @var array<class-string<PostProcessorInterface>, PostProcessorInterface|null> */
     protected array $postProcessors = [];
 
-    /** @var MigrationInterface[] */
+    /** @var array<class-string<MigrationInterface>, MigrationInterface|null> */
     protected array $migrations = [];
 
     protected ?array $config = null;
