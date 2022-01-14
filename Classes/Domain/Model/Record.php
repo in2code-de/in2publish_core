@@ -923,7 +923,7 @@ class Record implements RecordInterface
 
     /**
      * @param string $combinedIdentifier
-     * @return array<string, int>
+     * @return array<string, int|string>
      */
     public static function splitCombinedIdentifier(string $combinedIdentifier): array
     {
@@ -937,15 +937,15 @@ class Record implements RecordInterface
         $count = count($identifierArray);
         if (3 === $count) {
             return [
-                'uid_local' => (int)$identifierArray[0],
-                'uid_foreign' => (int)$identifierArray[1],
-                'sorting' => (int)$identifierArray[2],
+                'uid_local' => $identifierArray[0],
+                'uid_foreign' => $identifierArray[1],
+                'sorting' => $identifierArray[2],
             ];
         }
         if (2 === $count) {
             return [
-                'uid_local' => (int)$identifierArray[0],
-                'uid_foreign' => (int)$identifierArray[1],
+                'uid_local' => $identifierArray[0],
+                'uid_foreign' => $identifierArray[1],
             ];
         }
         return [];
