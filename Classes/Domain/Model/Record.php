@@ -190,6 +190,12 @@ class Record implements RecordInterface
         array $additionalProperties,
         $identifier = null
     ) {
+        if ([false] === $localProperties) {
+            $localProperties = [];
+        }
+        if ([false] === $foreignProperties) {
+            $foreignProperties = [];
+        }
         $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         // Normalize the storage property to be always int, because FAL is inconsistent in this point
         if ('physical_folder' === $tableName) {
@@ -446,7 +452,7 @@ class Record implements RecordInterface
             );
 
         foreach ($propertyNames as $propertyName) {
-            if ($this->isDirtyProperty($propertyName)) {
+            if ($this->isDirtyProperty((string)$propertyName)) {
                 $this->dirtyProperties[] = $propertyName;
             }
         }
