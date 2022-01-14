@@ -64,7 +64,8 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
     /** @var TcaService */
     protected $tcaService;
 
-    private array $visitedRecords = [];
+    /** @var array */
+    private $visitedRecords = [];
 
     public function __construct(EventDispatcher $eventDispatcher, Connection $foreignDatabase, TcaService $tcaService)
     {
