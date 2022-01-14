@@ -388,15 +388,15 @@ class EnvelopeDispatcher
     }
 
     /**
-     * @param $driver
-     * @param $identifier
-     * @param $storage
+     * @param DriverInterface $driver
+     * @param string $identifier
+     * @param ResourceStorage $storage
      *
-     * @return File|null|object
+     * @return File|null
      *
      * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    protected function getFileObject($driver, $identifier, $storage)
+    protected function getFileObject(DriverInterface $driver, string $identifier, ResourceStorage $storage): ?File
     {
         $fileIndexFactory = GeneralUtility::makeInstance(FileIndexFactory::class, $driver, $driver);
 
