@@ -380,13 +380,6 @@ class EnvelopeDispatcher
         return $driverReflection->getValue($storage);
     }
 
-    /**
-     * @param DriverInterface $driver
-     * @param string $identifier
-     * @param ResourceStorage $storage
-     *
-     * @return File|null
-     */
     protected function getFileObject(DriverInterface $driver, string $identifier, ResourceStorage $storage): ?File
     {
         $fileIndexFactory = GeneralUtility::makeInstance(FileIndexFactory::class, $driver, $driver);
