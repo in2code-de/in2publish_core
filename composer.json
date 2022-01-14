@@ -24,7 +24,7 @@
 		"typo3/cms-filelist": "^11.5",
 		"typo3/cms-redirects": "^11.5",
 		"typo3/cms-reports": "^11.5",
-		"typo3/testing-framework": "^6.10"
+		"typo3/testing-framework": "^6.12"
 	},
 	"suggest": {
 		"vertexvaar/logs": "Require version ^1.3. Provides a log reader with lots of filters and options"
