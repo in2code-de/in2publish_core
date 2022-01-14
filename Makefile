@@ -1,7 +1,6 @@
 # Settings
-MAKEFLAGS += --silent
+MAKEFLAGS += --silent --always-make
 SHELL := /bin/bash
-.PHONY: help .prepare install
 
 # colors
 RED     := $(shell tput -Txterm setaf 1)
@@ -41,9 +40,27 @@ help:
 	[ -f $$HOME/.composer/auth.json ] || echo "{}" > $$HOME/.composer/auth.json
 	mkdir -p $$HOME/.phive
 
+.prepare-tests:
+	if [[ ! -d .Build ]]; then ./Build/Scripts/runTests.sh -s composerInstall; fi
+
 ## Initialize the project and install phive and composer dependencies
 install: .prepare
 	chmod +x .project/githooks/*
 	git config core.hooksPath .project/githooks/
 	docker run --rm -it -u$$(id -u):$$(id -g) -v $$PWD:$$PWD -w $$PWD -v $$HOME/.phive:/tmp/phive in2code/php:7.4-fpm phive install
 	docker run --rm -it -u$$(id -u):$$(id -g) -v $$PWD:$$PWD -w $$PWD -v $$HOME/.composer/cache:/tmp/composer/cache -v $$HOME/.composer/auth.json:/tmp/composer/auth.json in2code/php:7.4-fpm composer install
+
+## Run grumphp which will run all code quality tools concurrently
+qa-code-quality:
+	docker run --rm -it -u$$(id -u):$$(id -g) -v $$PWD:$$PWD -w $$PWD -v $$HOME/.phive:/tmp/phive in2code/php:7.4-fpm .project/phars/grumphp -c .project/qa/grumphp.yml run
+
+## Run all automated tests in the in2publish_core test suite
+qa-tests: .prepare-tests qa-tests-unit qa-tests-functional
+
+## Run all unit tests
+qa-tests-unit:
+	./Build/Scripts/runTests.sh
+
+## Run all functional tests
+qa-tests-functional:
+	./Build/Scripts/runTests.sh -s functional
