@@ -53,9 +53,12 @@ use function is_array;
 use function is_string;
 use function json_decode;
 use function json_encode;
+use function rtrim;
 use function spl_object_hash;
 use function strpos;
 use function uasort;
+
+use const JSON_THROW_ON_ERROR;
 
 /**
  * The most important class of this application. A Record is a Database
