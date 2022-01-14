@@ -334,6 +334,9 @@ class EnvelopeDispatcher
         $driver = $this->getStorageDriver($storage);
         $identifier = $request['identifier'];
         $file = $this->getFileObject($driver, $identifier, $storage);
+        if (null === $file) {
+            return null;
+        }
         return $storage->getPublicUrl($file);
     }
 
