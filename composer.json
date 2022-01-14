@@ -18,7 +18,10 @@
 		"doctrine/dbal": "^2.11.0"
 	},
 	"require-dev": {
+		"symfony/polyfill-php80": "^1.24",
+		"symfony/polyfill-php81": "^1.24",
 		"typo3/cms-extensionmanager": "^11.4",
+		"typo3/cms-filelist": "^11.5",
 		"typo3/cms-redirects": "^11.5",
 		"typo3/cms-reports": "^11.5",
 		"typo3/testing-framework": "^6.10"
