@@ -55,8 +55,8 @@ indent_size = 4
 ij_continuation_indent_size = 8
 
 [*.sql]
-indent_style = tab
-indent_size = 2
+indent_style = space
+indent_size = 4
 
 [.eslintrc]
 indent_style = space
