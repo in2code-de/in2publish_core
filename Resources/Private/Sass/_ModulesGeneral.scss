@@ -255,12 +255,36 @@ a.in2publish-notextdecoration {
 // ----- start the dropdown -----
 
 .in2publish-stagelisting__dropdown {
-  display: none;
   overflow: hidden;
   background-color: $alto;
   color: $scorpion;
   border: 10px solid $dovegray;
   // word-break: break-all;
+
+  &--open {
+    //position: relative;
+    //top: -8px;
+    margin-bottom: 10px;
+  }
+
+  &--close {
+    display: none;
+  }
+
+  &__item {
+    width: 50%;
+    float: left;
+    line-height: 30px;
+    padding: 0;
+
+    &--full {
+      width: 100%;
+    }
+
+    h3 {
+      line-height: 30px;
+    }
+  }
 
   a {
     color: currentColor;
@@ -306,29 +330,8 @@ a.in2publish-notextdecoration {
   .in2publish-stagelisting__item--moved & {
     border-color: $mariner;
   }
-
 }
 
-.in2publish-stagelisting__dropdown--open {
-  //position: relative;
-  //top: -8px;
-  margin-bottom: 10px;
-}
-
-.in2publish-stagelisting__dropdown__item {
-  width: 50%;
-  float: left;
-  line-height: 30px;
-  padding: 0;
-
-  &--full {
-    width: 100%;
-  }
-
-  h3 {
-    line-height: 30px;
-  }
-}
 
 .in2publish-backend .in2publish-stagelisting__dropdown__item__list > li {
   border-style: none;

@@ -57,16 +57,23 @@ define([
 	};
 
 	In2publishCoreModule.toggleDirtyPropertiesListContainerListener = function () {
-		$('*[data-action="opendirtypropertieslistcontainer"]').click(function () {
-			var target = $(this).attr('data-target');
-
-			var $containerDropdown = $('*[data-diff-for="' + target + '"]');
-			In2publishCoreModule.openOrCloseStageListingDropdownContainer($containerDropdown);
-
-			var $containerMessages = $(this).closest('.in2publish-stagelisting__item').find('.in2publish-stagelisting__messages:first');
-			In2publishCoreModule.openOrCloseStageListingMessagesContainer($containerMessages);
-		});
+		document.querySelectorAll('[data-action="opendirtypropertieslistcontainer"]').forEach(
+			el => el.addEventListener('click', In2publishCoreModule.toggleDirtyPropertiesListContainer)
+		);
 	};
+
+	/**
+	 * @param {Event} event
+	 */
+	In2publishCoreModule.toggleDirtyPropertiesListContainer = function (event) {
+		/** @var {HTMLElement} target */
+		const target = event.currentTarget;
+		const row = target.closest('.in2publish-stagelisting__item');
+		const dirtyPropertiesContainer = row.querySelector('.in2publish-stagelisting__dropdown');
+
+		dirtyPropertiesContainer.classList.toggle('in2publish-stagelisting__dropdown--close');
+		dirtyPropertiesContainer.classList.toggle('in2publish-stagelisting__dropdown--open');
+	}
 
 	In2publishCoreModule.openOrCloseStageListingDropdownContainer = function ($container) {
 		if ($container.hasClass('in2publish-stagelisting__dropdown--close')) {
@@ -83,26 +90,6 @@ define([
 				.removeClass('in2publish-stagelisting__dropdown--open')
 				.addClass('in2publish-stagelisting__dropdown--close')
 				.hide();
-		}
-	};
-
-	In2publishCoreModule.openOrCloseStageListingMessagesContainer = function ($container) {
-		if ($container.length > 0) {
-			if ($container.hasClass('in2publish-stagelisting__messages--close')) {
-				$('.in2publish-stagelisting__messages--open')
-					.removeClass('in2publish-stagelisting__messages--open')
-					.addClass('in2publish-stagelisting__messages--close')
-					.hide();
-				$container
-					.removeClass('in2publish-stagelisting__messages--close')
-					.addClass('in2publish-stagelisting__messages--open')
-					.show();
-			} else {
-				$container
-					.removeClass('in2publish-stagelisting__messages--open')
-					.addClass('in2publish-stagelisting__messages--close')
-					.hide();
-			}
 		}
 	};
 
@@ -216,9 +203,6 @@ define([
 						In2publishCoreModule.openOrCloseStageListingDropdownContainer(
 							$container.find('.in2publish-stagelisting__dropdown')
 						);
-						In2publishCoreModule.openOrCloseStageListingMessagesContainer(
-							$container.find('.in2publish-stagelisting__messages')
-						);
 					}
 				});
 			}
@@ -234,7 +218,7 @@ define([
 		const filters = document.querySelectorAll('.js-in2publish-filter');
 
 		(Array.from(filters)).forEach(function (filter) {
-			filter.addEventListener('click', function(event) {
+			filter.addEventListener('click', function (event) {
 				const input = event.currentTarget;
 				input.disabled = true;
 				fetch(input.getAttribute('data-href'))
