@@ -1073,7 +1073,14 @@ class Record implements RecordInterface
     public function getPageIdentifier(): int
     {
         if ($this->isPagesTable()) {
-            return $this->getL10nParentIdentifier() ?? $this->getIdentifier();
+            $identifier = $this->getL10nParentIdentifier();
+            if (null === $identifier) {
+                $identifier = $this->getIdentifier();
+                if (is_string($identifier)) {
+                    $identifier = (int)explode(',', $identifier)[0];
+                }
+            }
+            return $identifier;
         }
         if ($this->hasLocalProperty('pid')) {
             return (int)$this->getLocalProperty('pid');
