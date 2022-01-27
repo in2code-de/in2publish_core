@@ -10,9 +10,11 @@ services:
     resource: '../../../Classes/Component/FalHandling/*'
 
   In2code\In2publishCore\Component\FalHandling\FalFinder:
+    public: true
     factory: [ '@In2code\In2publishCore\Component\FalHandling\Factory\FalHandlerFactory', 'createFalFinder' ]
 
   In2code\In2publishCore\Component\FalHandling\FalPublisher:
+    public: true
     factory: [ '@In2code\In2publishCore\Component\FalHandling\Factory\FalHandlerFactory', 'createFalPublisher' ]
 
   In2code\In2publishCore\Component\FalHandling\PostProcessing\PostProcessor:
