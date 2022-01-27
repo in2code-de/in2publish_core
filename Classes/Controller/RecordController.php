@@ -47,6 +47,7 @@ use In2code\In2publishCore\Utility\LogUtility;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -83,7 +84,8 @@ class RecordController extends AbstractController
         FailureCollector $failureCollector,
         PermissionService $permissionService,
         RecordFinder $recordFinder,
-        RecordPublisher $recordPublisher
+        RecordPublisher $recordPublisher,
+        PageRenderer $pageRenderer
     ) {
         parent::__construct(
             $configContainer,
@@ -95,6 +97,14 @@ class RecordController extends AbstractController
         $this->permissionService = $permissionService;
         $this->recordFinder = $recordFinder;
         $this->recordPublisher = $recordPublisher;
+        $pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
+        $pageRenderer->addCssFile(
+            'EXT:in2publish_core/Resources/Public/Css/Modules.css',
+            'stylesheet',
+            'all',
+            '',
+            false
+        );
     }
 
     /**

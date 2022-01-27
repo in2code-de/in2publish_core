@@ -23,33 +23,18 @@
     $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \In2code\In2publishCore\Service\Context\ContextService::class
     );
-    $pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \TYPO3\CMS\Core\Page\PageRenderer::class
-    );
     $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \TYPO3\CMS\Core\Imaging\IconRegistry::class
     );
+    $isForeign = $contextService->isForeign();
 
-    /***************************************** Add JS and CSS for the Backend *****************************************/
-    $pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
-    $pageRenderer->addCssFile(
-        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath(
-            'in2publish_core',
-            'Resources/Public/Css/Modules.css'
-        ),
-        'stylesheet',
-        'all',
-        '',
-        false
-    );
-
-    if ($contextService->isForeign()) {
-        if ($configContainer->get('features.warningOnForeign.colorizeHeader.enable')) {
-            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][1582191172] = \In2code\In2publishCore\Features\WarningOnForeign\Service\HeaderWarningColorRenderer::class . '->render';
-        }
+    /******************************************* Colorize the BE on Foreign *******************************************/
+    if ($isForeign && $configContainer->get('features.warningOnForeign.colorizeHeader.enable')) {
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][1582191172] = \In2code\In2publishCore\Features\WarningOnForeign\Service\HeaderWarningColorRenderer::class . '->render';
     }
+
     /************************************************* END ON FOREIGN *************************************************/
-    if ($contextService->isForeign()) {
+    if ($isForeign) {
         return;
     }
 
@@ -86,7 +71,6 @@
             ]
         );
     }
-
 
     /******************************************* Context Menu Publish Entry *******************************************/
     if ($configContainer->get('features.contextMenuPublishEntry.enable')) {

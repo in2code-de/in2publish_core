@@ -44,6 +44,7 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Extbase\Pagination\QueryResultPaginator;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -77,7 +78,8 @@ class RedirectController extends AbstractController
         ForeignSiteFinder $foreignSiteFinder,
         SysRedirectRepository $sysRedirectRepo,
         RecordFinder $recordFinder,
-        RecordPublisher $recordPublisher
+        RecordPublisher $recordPublisher,
+        PageRenderer $pageRenderer
     ) {
         parent::__construct(
             $configContainer,
@@ -89,6 +91,13 @@ class RedirectController extends AbstractController
         $this->sysRedirectRepo = $sysRedirectRepo;
         $this->recordFinder = $recordFinder;
         $this->recordPublisher = $recordPublisher;
+        $pageRenderer->addCssFile(
+            'EXT:in2publish_core/Resources/Public/Css/Modules.css',
+            'stylesheet',
+            'all',
+            '',
+            false
+        );
     }
 
     /** @throws Throwable */

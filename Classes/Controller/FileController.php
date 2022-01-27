@@ -94,6 +94,14 @@ class FileController extends AbstractController
         $this->moduleTemplateFactory = $moduleTemplateFactory;
         $this->pageRenderer = $pageRenderer;
         $this->pageRenderer->addInlineLanguageLabelFile('EXT:in2publish_core/Resources/Private/Language/locallang_m3_js.xlf');
+        $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
+        $this->pageRenderer->addCssFile(
+            'EXT:in2publish_core/Resources/Public/Css/Modules.css',
+            'stylesheet',
+            'all',
+            '',
+            false
+        );
     }
 
     public function injectFalFinder(FalFinder $falFinder): void
