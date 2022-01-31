@@ -37,12 +37,16 @@ use In2code\In2publishCore\Controller\AbstractController;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
+use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\SaveAndPublishButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
+use TYPO3\CMS\Core\Imaging\Icon;
+use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
@@ -70,6 +74,10 @@ class RedirectController extends AbstractController
 
     protected RecordPublisher $recordPublisher;
 
+    protected IconFactory $iconFactory;
+
+    protected LanguageService $languageService;
+
     public function __construct(
         ConfigContainer $configContainer,
         ExecutionTimeService $executionTimeService,
@@ -79,7 +87,8 @@ class RedirectController extends AbstractController
         SysRedirectRepository $sysRedirectRepo,
         RecordFinder $recordFinder,
         RecordPublisher $recordPublisher,
-        PageRenderer $pageRenderer
+        PageRenderer $pageRenderer,
+        IconFactory $iconFactory
     ) {
         parent::__construct(
             $configContainer,
@@ -98,6 +107,8 @@ class RedirectController extends AbstractController
             '',
             false
         );
+        $this->iconFactory = $iconFactory;
+        $this->languageService = $GLOBALS['LANG'];
     }
 
     /** @throws Throwable */
@@ -182,9 +193,10 @@ class RedirectController extends AbstractController
     /**
      * @param int $redirect
      * @param array|null $properties
+     * @return ResponseInterface
      * @throws Throwable
      */
-    public function selectSiteAction(int $redirect, array $properties = null): void
+    public function selectSiteAction(int $redirect, array $properties = null): ResponseInterface
     {
         $redirectObj = $this->sysRedirectRepo->findUnrestrictedByIdentifier($redirect);
         if (null === $redirectObj) {
@@ -214,5 +226,17 @@ class RedirectController extends AbstractController
         }
         $this->view->assign('redirect', $redirectObj);
         $this->view->assign('siteOptions', $siteOptions);
+
+        $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
+        $button = $buttonBar->makeLinkButton();
+        $button->setIcon($this->iconFactory->getIcon('actions-close', Icon::SIZE_SMALL));
+        $button->setClasses('btn btn-sm');
+        $button->setHref($this->uriBuilder->reset()->uriFor('list'));
+        $title = $this->languageService->sL('LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:back');
+        $button->setTitle($title);
+        $buttonBar->addButton($button);
+        $buttonBar->addButton(new SaveAndPublishButton($this->iconFactory));
+
+        return $this->htmlResponse();
     }
 }
