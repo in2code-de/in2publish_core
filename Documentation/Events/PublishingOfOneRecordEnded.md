@@ -18,5 +18,8 @@ This event is intended to be used as a trigger for additional publishing actions
 
 ### Example
 
-See the `\In2code\In2publishCore\Features\PhysicalFilePublisher\EventListener\PhysicalFilePublisherEventListener` for a
-real-world example.
+See the `\In2code\In2publishCore\Features\PhysicalFilePublisher\Domain\Anomaly\PhysicalFilePublisher` for a real-world
+example.
+
+To have an event which is triggered after the complete publication of the dataset, `TaskExecutionWasFinished` should be
+used.
