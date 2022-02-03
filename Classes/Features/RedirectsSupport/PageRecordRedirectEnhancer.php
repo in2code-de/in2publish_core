@@ -39,10 +39,12 @@ use PDO;
 use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Http\Uri;
+use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
 use function array_keys;
+use function array_merge;
 
 class PageRecordRedirectEnhancer
 {
@@ -60,16 +62,20 @@ class PageRecordRedirectEnhancer
 
     protected $looseRedirects;
 
+    protected LinkService $linkService;
+
     public function __construct(
         RecordFinder $recordFinder,
         Connection $localDatabase,
         Connection $foreignDatabase,
-        SysRedirectRepository $repo
+        SysRedirectRepository $repo,
+        LinkService $linkService
     ) {
         $this->recordFinder = $recordFinder;
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
         $this->repo = $repo;
+        $this->linkService = $linkService;
     }
 
     public function addRedirectsToPageRecord(AllRelatedRecordsWereAddedToOneRecord $event): void
@@ -94,10 +100,35 @@ class PageRecordRedirectEnhancer
 
     public function run(RecordInterface $record): void
     {
-        $redirects = $this->findRedirectsByUri($record);
+        $redirects1 = $this->findRedirectsByDynamicTarget($record);
+        $redirects2 = $this->findRedirectsByUri($record);
+        $redirects = array_merge($redirects1, $redirects2);
         $redirects = $this->findMissingRowsByUid($redirects);
         $this->createAndAddRecordsToRecord($record, $redirects);
         $this->processLooseRedirects($record);
+    }
+
+    /**
+     * @return array<RecordInterface>
+     */
+    protected function findRedirectsByDynamicTarget(RecordInterface $record): array
+    {
+        $collected = [];
+
+        $target = $this->linkService->asString([
+            'type' => 'page',
+            'pageuid' => $record->getIdentifier(),
+            'parameters' => '_language=' . $record->getRecordLanguage(),
+        ]);
+        $rows = $this->repo->findByRawTarget($this->localDatabase, $target);
+        foreach ($rows as $row) {
+            $collected[$row['uid']]['local'] = $row;
+        }
+        $rows = $this->repo->findByRawTarget($this->foreignDatabase, $target);
+        foreach ($rows as $row) {
+            $collected[$row['uid']]['foreign'] = $row;
+        }
+        return $collected;
     }
 
     protected function collectRedirectsByUri(
