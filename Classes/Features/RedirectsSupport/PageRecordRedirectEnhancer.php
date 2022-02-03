@@ -44,7 +44,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
 use function array_keys;
-use function array_merge;
 
 class PageRecordRedirectEnhancer
 {
@@ -100,9 +99,11 @@ class PageRecordRedirectEnhancer
 
     public function run(RecordInterface $record): void
     {
-        $redirects1 = $this->findRedirectsByDynamicTarget($record);
-        $redirects2 = $this->findRedirectsByUri($record);
-        $redirects = array_merge($redirects1, $redirects2);
+        $redirects = $this->findRedirectsByDynamicTarget($record);
+        $redirects = $this->findMissingRowsByUid($redirects);
+        $this->createAndAddRecordsToRecord($record, $redirects);
+
+        $redirects = $this->findRedirectsByUri($record);
         $redirects = $this->findMissingRowsByUid($redirects);
         $this->createAndAddRecordsToRecord($record, $redirects);
         $this->processLooseRedirects($record);
@@ -120,23 +121,26 @@ class PageRecordRedirectEnhancer
             'pageuid' => $record->getIdentifier(),
             'parameters' => '_language=' . $record->getRecordLanguage(),
         ]);
-        $rows = $this->repo->findByRawTarget($this->localDatabase, $target);
+
+        $except = [];
+        $relatedRedirects = $record->getRelatedRecords()['sys_redirect'] ?? [];
+        foreach ($relatedRedirects as $relatedRedirect) {
+            $except[] = $relatedRedirect->getIdentifier();
+        }
+
+        $rows = $this->repo->findByRawTarget($this->localDatabase, $target, $except);
         foreach ($rows as $row) {
             $collected[$row['uid']]['local'] = $row;
         }
-        $rows = $this->repo->findByRawTarget($this->foreignDatabase, $target);
+        $rows = $this->repo->findByRawTarget($this->foreignDatabase, $target, $except);
         foreach ($rows as $row) {
             $collected[$row['uid']]['foreign'] = $row;
         }
         return $collected;
     }
 
-    protected function collectRedirectsByUri(
-        array $uris,
-        array $collected,
-        string $side,
-        Connection $connection
-    ): array {
+    protected function collectRedirectsByUri(array $uris, array $collected, string $side, Connection $connection): array
+    {
         $newRows = $this->repo->findRawByUris($connection, $uris, array_keys($collected));
 
         if (empty($newRows)) {
