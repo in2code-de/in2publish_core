@@ -120,6 +120,8 @@ factory:
   # The class which is used to fetch all records from persistence.
   # @user
   finder: 'In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder'
+  # Alternatives (only with in2publish Enterprise Edition):
+  #finder: 'In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing\ShallowRecordFinder' # READ EXT:in2publish/Documentation/Book/7_7_SimpleFiles.md
 
   # The class which is used to publish a record (recursively)
   # @user
@@ -163,6 +165,8 @@ factory:
     # folder as related records.
     # This setting determines the strategy.
     finder: 'In2code\In2publishCore\Component\FalHandling\Finder\DefaultFalFinder'
+    # Alternatives:
+    #finder: 'In2code\In2publish\Features\SimpleFiles\Component\FalHandling\Finder\SimpleFilesFinder' # READ EXT:in2publish_core/Documentation/Features/SimplifiedOverviewAndPublishing.md
 
     # FAL Publisher. The class used to publish folders by identifier and files by their record instances.
     # The default publisher should suffice for nearly all use cases. Please consider implementing your code with
