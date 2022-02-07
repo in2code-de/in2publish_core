@@ -29,8 +29,6 @@ namespace In2code\In2publishCore\Domain\Model;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Service\TcaProcessingService;
-
 /**
  * Representation of a (default: Page-) Record that does not exist, neither on Local nor on Foreign.
  * Does not need any constructor argument

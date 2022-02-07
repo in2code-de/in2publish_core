@@ -57,7 +57,6 @@ use function json_encode;
 use function spl_object_hash;
 use function strpos;
 use function trigger_error;
-use function trim;
 use function uasort;
 
 use const E_USER_DEPRECATED;
