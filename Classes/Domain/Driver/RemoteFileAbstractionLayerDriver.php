@@ -240,9 +240,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         );
 
         foreach ($response as $fileIdentifier => $info) {
-            static::$cache[$this->storageUid][$this->getFileExistsCacheIdentifier($fileIdentifier)] = $info['exists'];
-            static::$cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier)] = $info['fifo'] ?? null;
-            static::$cache[$this->storageUid][$this->getHashCacheIdentifier($fileIdentifier, 'sha1')] = $info['hash'] ?? null;
+            $fileExistsCacheIdentifier = $this->getFileExistsCacheIdentifier($fileIdentifier);
+            static::$cache[$this->storageUid][$fileExistsCacheIdentifier] = $info['exists'];
+            $getFileInfoByIdentifierCacheIdentifier = $this->getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier);
+            static::$cache[$this->storageUid][$getFileInfoByIdentifierCacheIdentifier] = $info['fifo'] ?? null;
+            $hashCacheIdentifier = $this->getHashCacheIdentifier($fileIdentifier, 'sha1');
+            static::$cache[$this->storageUid][$hashCacheIdentifier] = $info['hash'] ?? null;
         }
 
         return array_combine(array_keys($response), array_column($response, 'exists'));
