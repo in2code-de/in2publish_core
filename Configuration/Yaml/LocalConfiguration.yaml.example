@@ -23,9 +23,9 @@ foreign:
   dispatcher:
 
   # Additional environment variables to set before executing a remote cli command. The keys are the variable names
-  envVars: []
+  envVars: [ ]
     # MY_VAR: myValue
-    # MY_ENV:
+  # MY_ENV:
 
   # Set your production systems database credentials here. If you use port forwarding to
   # the server where the database is installed, the host is 127.0.0.1 and the port is your forwarded port.
@@ -348,7 +348,7 @@ tasks:
   realUrl:
 
     # Exclude pages with these dokTypes from realUrl generation.
-    excludedDokTypes: [254]
+    excludedDokTypes: [ 254 ]
 
     # Create a web request for the published page.
     requestFrontend: FALSE
