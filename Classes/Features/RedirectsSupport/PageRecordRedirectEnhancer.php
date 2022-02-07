@@ -59,9 +59,11 @@ class PageRecordRedirectEnhancer
     /** @var SysRedirectRepository */
     protected $repo;
 
-    protected $looseRedirects;
+    /** @var LinkService */
+    protected $linkService;
 
-    protected LinkService $linkService;
+    /** @var array<string, array<int>> */
+    protected $looseRedirects = [];
 
     public function __construct(
         RecordFinder $recordFinder,
