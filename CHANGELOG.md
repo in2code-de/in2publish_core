@@ -1,5 +1,42 @@
 # In2publish Core Change Log
 
+10.2.1:
+
+- [META] Set the EM conf version number to 10.2.1
+- [BUGFIX] Provide performance threshold for RCE HttpAdapter
+- [REFACTOR] Use variables to prevent codestyle issues
+- [CODESTYLE] Fix imports and length exceeding lines
+- [CODESTYLE] Reformat config files
+- [BUGFIX] Define RecordFinder/-Publisher as public services
+- [BUGFIX] Use annotations instead of type hint and provide default value for array property
+- [BUGFIX] Don't fetch redirects multiple times, fix redirect merging
+- [BUGFIX] Resolves redirects by their t3 URI target
+- [BUGFIX] Introduce TaskExecutionWasFinished Event
+- [BUGFIX] Keep PageTsProvider disabled until the BE User was determined
+- [BUGFIX] Declare missing return type for EnvelopeDispatcher::getFileObject
+- [BUGFIX] Early return in EnvelopeDispatcher::getPublicUrl when a file could not be found
+- [BUGFIX] Add fallback for empty paths (especially filePreviewDomainName)
+- [BUGFIX] Streamline local/foreign props in Record and fix TypeError when calculating dirty props
+- [BUGFIX] Correctly split identifier for Record::getPageIdentifier
+- [BUGFIX] Cast string replacements to string before using it
+- [BUGFIX] Add missing import of GeneralUtility in ContextServiceTest
+- [BUGFIX] Use annotation instead of property type in DefaultRecordPublisher
+- [BUGFIX] Annotate TYPO3 variables in ext_emconf.php
+- [BUGFIX] Require typo3/cms-redirects for development
+- [CODESTYLE] Fix CS issues and imports
+- [BUGFIX] Rethrow the existing DBAL exception instead of creating a new one
+- [BUGFIX] Process the configuration in ConfigContainerExporter again
+- [BUGFIX] Replace non-existent class with its string representation
+- [BUGFIX] Remove ToolsController check from AbstractController, inheritance was removed
+- [BUGFIX] Fix message composing in MissingRequiredAttributesException
+- [BUGFIX] Return correct property in VoteIfRecordShouldBeSkipped::getCommonRepository
+- [BUGFIX] Declare missing property DefaultRecordPublisher::$visitedRecords
+- [CLEANUP] Remove nullable modifier from DefaultRecordFinder injections
+- [BUGFIX] Prevent registration of commands on sides which are not allowed
+- [BUGFIX] Set correct return type for TaskRepository::findByExecutionBegin
+- [BUGFIX] Ignore if "foreign_types" is used in inline MM relations
+- [RELEASE] Version 10.2.0 with SimplifiedOverviewAndPublish
+
 10.2.0:
 
 - [META] Set the branch alias version number to 10.2.x-dev
