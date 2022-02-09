@@ -40,6 +40,7 @@ use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
+use In2code\In2publishHttp\Communication\RemoteCommandExecution\RemoteAdapter\HttpAdapter;
 use In2code\In2publishSeclib\Communication\RemoteCommandExecution\RemoteAdapter\PhpSecLibAdapter;
 use ReflectionException;
 use ReflectionProperty;
@@ -60,6 +61,9 @@ class RceInitializationPerformanceTest implements TestCaseInterface
         ],
         PhpSecLibAdapter::class => [
             TestResult::OK => 1.1,
+        ],
+        HttpAdapter::class => [
+            TestResult::OK => 0.2,
         ],
     ];
 
