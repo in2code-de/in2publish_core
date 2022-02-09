@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Status;
+namespace In2code\In2publishCore\Command\Foreign\Status;
 
 /*
  * Copyright notice
@@ -29,18 +29,39 @@ namespace In2code\In2publishCore\Command\Status;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use TYPO3\CMS\Core\Database\Connection;
 
-class CreateMasksCommand extends Command
+use function array_column;
+use function base64_encode;
+use function json_encode;
+
+class DbConfigTestCommand extends Command
 {
-    public const IDENTIFIER = 'in2publish_core:status:createmasks';
+    public const IDENTIFIER = 'in2publish_core:status:dbconfigtest';
+
+    /** @var Connection */
+    protected $localDatabase;
+
+    public function __construct(Connection $localDatabase, string $name = null)
+    {
+        parent::__construct($name);
+        $this->localDatabase = $localDatabase;
+    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('FileCreateMask: ' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['fileCreateMask']);
-        $output->writeln('FolderCreateMask: ' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['folderCreateMask']);
+        $queryBuilder = $this->localDatabase->createQueryBuilder();
+        $predicates = $queryBuilder->expr()->eq(
+            'task_type',
+            $queryBuilder->createNamedParameter(ForeignDatabaseConfigTest::DB_CONFIG_TEST_TYPE)
+        );
+        $queryBuilder->select('*')->from('tx_in2code_in2publish_task')->where($predicates);
+        $result = $queryBuilder->execute()->fetchAllAssociative();
+        $output->writeln('DB Config: ' . base64_encode(json_encode(array_column($result, 'configuration'))));
         return Command::SUCCESS;
     }
 }

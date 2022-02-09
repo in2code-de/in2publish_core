@@ -31,6 +31,8 @@ services:
   In2code\In2publishCore\:
     resource: '../Classes/*'
     exclude:
+      - '../Classes/Command/Local/*'
+      - '../Classes/Command/Foreign/*'
       - '../Classes/Domain/Model/*'
       - '../Classes/Component/*'
       - '../Classes/Features/*'
@@ -39,14 +41,14 @@ services:
 
   In2code.In2publishCore.Database.Local:
     class: 'TYPO3\CMS\Core\Database\Connection'
-    factory: ['@In2code\In2publishCore\Factory\ConnectionFactory', 'createLocalConnection']
+    factory: [ '@In2code\In2publishCore\Factory\ConnectionFactory', 'createLocalConnection' ]
 
   In2code.In2publishCore.Database.Foreign:
     class: 'TYPO3\CMS\Core\Database\Connection'
-    factory: ['@In2code\In2publishCore\Factory\ConnectionFactory', 'createForeignConnection']
+    factory: [ '@In2code\In2publishCore\Factory\ConnectionFactory', 'createForeignConnection' ]
 
   In2code\In2publishCore\Domain\PostProcessing\Processor\PostProcessor:
-    factory: ['@In2code\In2publishCore\Domain\PostProcessing\PostProcessorFactory', 'createPostProcessor']
+    factory: [ '@In2code\In2publishCore\Domain\PostProcessing\PostProcessorFactory', 'createPostProcessor' ]
 
   In2code\In2publishCore\Domain\Factory\FolderRecordFactory:
     public: true
@@ -71,119 +73,10 @@ services:
 
   cache.in2publish_core:
     class: TYPO3\CMS\Core\Cache\Frontend\FrontendInterface
-    factory: ['@TYPO3\CMS\Core\Cache\CacheManager', 'getCache']
-    arguments: ['in2publish_core']
+    factory: [ '@TYPO3\CMS\Core\Cache\CacheManager', 'getCache' ]
+    arguments: [ 'in2publish_core' ]
 
   # Commands
-
-  In2code\In2publishCore\Command\RemoteProcedureCall\ExecuteCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:rpc:execute'
-        description: 'Receives an envelope and executes the contained command'
-        hidden: true
-
-  In2code\In2publishCore\Command\Status\AllCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:status:all'
-        description: 'Prints the configured fileCreateMask and folderCreateMask'
-        hidden: true
-
-  In2code\In2publishCore\Command\Status\AllSitesCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:status:allsites'
-        description: 'Prints all Sites serialized and encoded. Internal CLI API.'
-        hidden: true
-
-  In2code\In2publishCore\Command\Status\ConfigFormatTestCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:status:configformattest'
-        description: 'Tests the configuration on foreign for its format'
-        hidden: true
-
-  In2code\In2publishCore\Command\Status\CreateMasksCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:status:createmasks'
-        description: 'Prints the configured fileCreateMask and folderCreateMask'
-        hidden: true
-
-  In2code\In2publishCore\Command\Status\DbConfigTestCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:status:dbconfigtest'
-        description: 'Reads from the local task table and writes all found hashes for the db config test'
-        hidden: true
-
-  In2code\In2publishCore\Command\Status\DbInitQueryEncodedCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:status:dbinitqueryencoded'
-        description: 'Prints the initCommands as json and base64 encoded string'
-        hidden: true
-
-  In2code\In2publishCore\Command\Status\GlobalConfigurationCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:status:globalconfiguration'
-        description: 'Prints global configuration values'
-        hidden: true
-
-  In2code\In2publishCore\Command\Status\EncryptionKeyCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:status:encryptionkey'
-        description: 'Prints the encryption key as base64 encoded string'
-        hidden: true
-
-  In2code\In2publishCore\Command\Status\ShortSiteConfigurationCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:status:shortsiteconfiguration'
-        description: 'Prints a base64 encoded json array containing all configured sites'
-        hidden: true
-
-  In2code\In2publishCore\Command\Status\SiteConfigurationCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:status:siteconfiguration'
-        description: 'Outputs the requested Site serialized and encoded.'
-        hidden: true
-
-  In2code\In2publishCore\Command\Status\Typo3VersionCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:status:typo3version'
-        description: 'Prints TYPO3 version'
-        hidden: true
-
-  In2code\In2publishCore\Command\Status\VersionCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:status:version'
-        description: 'Prints the version number of the currently installed in2publish_core extension'
-        hidden: true
-
-  In2code\In2publishCore\Command\Table\BackupCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:table:backup'
-        description: 'Stores a backup of the complete local table into the configured directory'
-
-  In2code\In2publishCore\Command\Table\ImportCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:table:import'
-        description: 'Stores a backup of the complete local table into the configured directory'
-
-  In2code\In2publishCore\Command\Table\PublishCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:table:publish'
-        description: 'Copies a complete table from stage to production and overwrites all old entries!'
 
   In2code\In2publishCore\Command\Tools\TestCommand:
     tags:

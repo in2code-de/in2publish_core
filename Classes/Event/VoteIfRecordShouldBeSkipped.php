@@ -61,7 +61,7 @@ final class VoteIfRecordShouldBeSkipped extends AbstractVotingEvent
             'The method \In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped::getCommonRepository is deprecated and will be removed in in2publish_core v11, please use \In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped::getRecordPublisher instead.',
             E_USER_DEPRECATED
         );
-        return $this->recordFinder;
+        return $this->recordPublisher;
     }
 
     public function getRecordPublisher(): RecordPublisher

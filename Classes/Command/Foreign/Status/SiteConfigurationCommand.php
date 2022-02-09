@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Status;
+namespace In2code\In2publishCore\Command\Foreign\Status;
 
 /*
  * Copyright notice
@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Command\Status;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Command\Status\Exception\InvalidPageIdArgumentTypeException;
+use In2code\In2publishCore\Command\Foreign\Status\Exception\InvalidPageIdArgumentTypeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

@@ -49,7 +49,7 @@ class MissingRequiredAttributesException extends In2publishCoreException
     protected $tagName;
 
     /** @var array<string> */
-    protected $requiredAttributesString;
+    protected $requiredAttributes;
 
     /** @var array<string> */
     protected $missingRequiredKeys;
@@ -63,18 +63,9 @@ class MissingRequiredAttributesException extends In2publishCoreException
     ) {
         $this->serviceName = $serviceName;
         $this->tagName = $tagName;
-        $this->requiredAttributesString = $requiredAttributes;
+        $this->requiredAttributes = $requiredAttributes;
         $this->missingRequiredKeys = $missingRequiredKeys;
-        parent::__construct(
-            sprintf(
-                1 === count($missingRequiredKeys) ? self::MESSAGE_1 : self::MESSAGE_N,
-                $tagName,
-                implode(', ', $requiredAttributes),
-                implode(', ', $missingRequiredKeys)
-            ),
-            self::CODE,
-            $previous
-        );
+        parent::__construct($this->composeMessage(), self::CODE, $previous);
     }
 
     public function getTagName(): string
@@ -83,14 +74,26 @@ class MissingRequiredAttributesException extends In2publishCoreException
     }
 
     /** @return array<string> */
-    public function getRequiredAttributesString(): array
+    public function getRequiredAttributes(): array
     {
-        return $this->requiredAttributesString;
+        return $this->requiredAttributes;
     }
 
     /** @return array<string> */
     public function getMissingRequiredKeys(): array
     {
         return $this->missingRequiredKeys;
+    }
+
+    private function composeMessage(): string
+    {
+        $requiredList = implode(', ', $this->requiredAttributes);
+        $missingList = implode(', ', $this->missingRequiredKeys);
+
+        if (1 === count($this->missingRequiredKeys)) {
+            return sprintf(self::MESSAGE_1, $this->serviceName, $this->tagName, $requiredList, $missingList);
+        }
+
+        return sprintf(self::MESSAGE_N, $this->serviceName, $this->tagName, $requiredList, $missingList);
     }
 }

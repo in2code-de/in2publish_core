@@ -32,10 +32,12 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Service;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Command\RunTasksInQueueCommand;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Command\Foreign\RunTasksInQueueCommand;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Event\TaskExecutionWasFinished;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 class TaskExecutionService implements LoggerAwareInterface
 {
@@ -47,10 +49,17 @@ class TaskExecutionService implements LoggerAwareInterface
     /** @var TaskRepository */
     protected $taskRepository;
 
-    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, TaskRepository $taskRepository)
-    {
+    /** @var EventDispatcher */
+    private $eventDispatcher;
+
+    public function __construct(
+        RemoteCommandDispatcher $remoteCommandDispatcher,
+        TaskRepository $taskRepository,
+        EventDispatcher $eventDispatcher
+    ) {
         $this->remoteCommandDispatcher = $remoteCommandDispatcher;
         $this->taskRepository = $taskRepository;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function runTasks(): RemoteCommandResponse
@@ -59,6 +68,8 @@ class TaskExecutionService implements LoggerAwareInterface
         $response = $this->remoteCommandDispatcher->dispatch($request);
 
         $this->taskRepository->deleteObsolete();
+
+        $this->eventDispatcher->dispatch(new TaskExecutionWasFinished($response));
 
         if ($response->isSuccessful()) {
             $this->logger->info('Task execution results', ['output' => $response->getOutput()]);

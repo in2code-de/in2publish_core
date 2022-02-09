@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Status;
+namespace In2code\In2publishCore\Command\Foreign\Status;
 
 /*
  * Copyright notice
@@ -32,24 +32,18 @@ namespace In2code\In2publishCore\Command\Status;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TYPO3\CMS\Core\Information\Typo3Version;
 
-class Typo3VersionCommand extends Command
+class GlobalConfigurationCommand extends Command
 {
-    public const IDENTIFIER = 'in2publish_core:status:typo3version';
-
-    /** @var Typo3Version */
-    private $typo3Version;
-
-    public function __construct(Typo3Version $typo3Version, string $name = null)
-    {
-        parent::__construct($name);
-        $this->typo3Version = $typo3Version;
-    }
+    public const IDENTIFIER = 'in2publish_core:status:globalconfiguration';
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln('TYPO3: ' . $this->typo3Version->getVersion());
+        $utf8fileSystem = empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'])
+            ? 'empty'
+            : $GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'];
+        $output->writeln('Utf8Filesystem: ' . $utf8fileSystem);
+        $output->writeln('adminOnly: ' . ($GLOBALS['TYPO3_CONF_VARS']['BE']['adminOnly'] ?? 'empty'));
         return Command::SUCCESS;
     }
 }

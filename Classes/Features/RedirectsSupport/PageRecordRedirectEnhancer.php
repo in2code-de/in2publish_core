@@ -39,6 +39,7 @@ use PDO;
 use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Http\Uri;
+use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
@@ -58,18 +59,24 @@ class PageRecordRedirectEnhancer
     /** @var SysRedirectRepository */
     protected $repo;
 
-    protected $looseRedirects;
+    /** @var LinkService */
+    protected $linkService;
+
+    /** @var array<string, array<int>> */
+    protected $looseRedirects = [];
 
     public function __construct(
         RecordFinder $recordFinder,
         Connection $localDatabase,
         Connection $foreignDatabase,
-        SysRedirectRepository $repo
+        SysRedirectRepository $repo,
+        LinkService $linkService
     ) {
         $this->recordFinder = $recordFinder;
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
         $this->repo = $repo;
+        $this->linkService = $linkService;
     }
 
     public function addRedirectsToPageRecord(AllRelatedRecordsWereAddedToOneRecord $event): void
@@ -94,18 +101,48 @@ class PageRecordRedirectEnhancer
 
     public function run(RecordInterface $record): void
     {
+        $redirects = $this->findRedirectsByDynamicTarget($record);
+        $redirects = $this->findMissingRowsByUid($redirects);
+        $this->createAndAddRecordsToRecord($record, $redirects);
+
         $redirects = $this->findRedirectsByUri($record);
         $redirects = $this->findMissingRowsByUid($redirects);
         $this->createAndAddRecordsToRecord($record, $redirects);
         $this->processLooseRedirects($record);
     }
 
-    protected function collectRedirectsByUri(
-        array $uris,
-        array $collected,
-        string $side,
-        Connection $connection
-    ): array {
+    /**
+     * @return array<RecordInterface>
+     */
+    protected function findRedirectsByDynamicTarget(RecordInterface $record): array
+    {
+        $collected = [];
+
+        $target = $this->linkService->asString([
+            'type' => 'page',
+            'pageuid' => $record->getIdentifier(),
+            'parameters' => '_language=' . $record->getRecordLanguage(),
+        ]);
+
+        $except = [];
+        $relatedRedirects = $record->getRelatedRecords()['sys_redirect'] ?? [];
+        foreach ($relatedRedirects as $relatedRedirect) {
+            $except[] = $relatedRedirect->getIdentifier();
+        }
+
+        $rows = $this->repo->findByRawTarget($this->localDatabase, $target, $except);
+        foreach ($rows as $row) {
+            $collected[$row['uid']]['local'] = $row;
+        }
+        $rows = $this->repo->findByRawTarget($this->foreignDatabase, $target, $except);
+        foreach ($rows as $row) {
+            $collected[$row['uid']]['foreign'] = $row;
+        }
+        return $collected;
+    }
+
+    protected function collectRedirectsByUri(array $uris, array $collected, string $side, Connection $connection): array
+    {
         $newRows = $this->repo->findRawByUris($connection, $uris, array_keys($collected));
 
         if (empty($newRows)) {

@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Domain\Driver;
 
 use Doctrine\DBAL\Driver\Exception as DriverException;
 use Exception;
-use In2code\In2publishCore\Command\RemoteProcedureCall\ExecuteCommand;
+use In2code\In2publishCore\Command\Foreign\RemoteProcedureCall\ExecuteCommand;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Communication\RemoteProcedureCall\Envelope;
@@ -240,9 +240,12 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
         );
 
         foreach ($response as $fileIdentifier => $info) {
-            static::$cache[$this->storageUid][$this->getFileExistsCacheIdentifier($fileIdentifier)] = $info['exists'];
-            static::$cache[$this->storageUid][$this->getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier)] = $info['fifo'] ?? null;
-            static::$cache[$this->storageUid][$this->getHashCacheIdentifier($fileIdentifier, 'sha1')] = $info['hash'] ?? null;
+            $fileExistsCacheIdentifier = $this->getFileExistsCacheIdentifier($fileIdentifier);
+            static::$cache[$this->storageUid][$fileExistsCacheIdentifier] = $info['exists'];
+            $getFileInfoByIdentifierCacheIdentifier = $this->getGetFileInfoByIdentifierCacheIdentifier($fileIdentifier);
+            static::$cache[$this->storageUid][$getFileInfoByIdentifierCacheIdentifier] = $info['fifo'] ?? null;
+            $hashCacheIdentifier = $this->getHashCacheIdentifier($fileIdentifier, 'sha1');
+            static::$cache[$this->storageUid][$hashCacheIdentifier] = $info['hash'] ?? null;
         }
 
         return array_combine(array_keys($response), array_column($response, 'exists'));

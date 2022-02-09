@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Tests\Unit\Service\Context;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use LogicException;
-
 use ReflectionProperty;
 use TYPO3\CMS\Core\Core\ApplicationContext;
 use TYPO3\CMS\Core\Core\Environment;
@@ -82,7 +81,6 @@ class ContextServiceTest extends UnitTestCase
         $environmentReflection->setAccessible(true);
         $environmentReflection->setValue(Environment::class, new ApplicationContext($value));
     }
-
 
     /**
      * @covers ::__construct

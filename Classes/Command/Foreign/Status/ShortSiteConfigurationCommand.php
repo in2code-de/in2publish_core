@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Status;
+namespace In2code\In2publishCore\Command\Foreign\Status;
 
 /*
  * Copyright notice
@@ -32,18 +32,34 @@ namespace In2code\In2publishCore\Command\Status;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use TYPO3\CMS\Core\Site\SiteFinder;
 
-class GlobalConfigurationCommand extends Command
+use function base64_encode;
+use function json_encode;
+
+class ShortSiteConfigurationCommand extends Command
 {
-    public const IDENTIFIER = 'in2publish_core:status:globalconfiguration';
+    public const IDENTIFIER = 'in2publish_core:status:shortsiteconfiguration';
+
+    /** @var SiteFinder */
+    protected $siteFinder;
+
+    public function __construct(SiteFinder $siteFinder, string $name = null)
+    {
+        parent::__construct($name);
+        $this->siteFinder = $siteFinder;
+    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $utf8fileSystem = empty($GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'])
-            ? 'empty'
-            : $GLOBALS['TYPO3_CONF_VARS']['SYS']['UTF8filesystem'];
-        $output->writeln('Utf8Filesystem: ' . $utf8fileSystem);
-        $output->writeln('adminOnly: ' . ($GLOBALS['TYPO3_CONF_VARS']['BE']['adminOnly'] ?? 'empty'));
+        $shortInfo = [];
+        foreach ($this->siteFinder->getAllSites() as $site) {
+            $shortInfo[$site->getIdentifier()] = [
+                'base' => $site->getBase()->__toString(),
+                'rootPageId' => $site->getRootPageId(),
+            ];
+        }
+        $output->writeln('ShortSiteConfig: ' . base64_encode(json_encode($shortInfo)));
         return Command::SUCCESS;
     }
 }

@@ -175,8 +175,16 @@ class In2publishCoreDefiner implements DefinerInterface
                       ->addArray(
                           'factory',
                           Builder::start()
-                                 ->addString('finder', DefaultRecordFinder::class, [ClassImplementsValidator::class => [RecordFinder::class]])
-                                 ->addString('publisher', DefaultRecordPublisher::class, [ClassImplementsValidator::class => [RecordPublisher::class]])
+                                 ->addString(
+                                     'finder',
+                                     DefaultRecordFinder::class,
+                                     [ClassImplementsValidator::class => [RecordFinder::class]]
+                                 )
+                                 ->addString(
+                                     'publisher',
+                                     DefaultRecordPublisher::class,
+                                     [ClassImplementsValidator::class => [RecordPublisher::class]]
+                                 )
                                  ->addInteger('maximumPageRecursion', 2)
                                  ->addInteger('maximumContentRecursion', 6)
                                  ->addInteger('maximumOverallRecursion', 8)

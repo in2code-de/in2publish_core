@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\PublishTaskRunner;
+namespace In2code\In2publishCore\Command\Foreign\PublishTaskRunner;
 
 /*
  * Copyright notice
@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Command\PublishTaskRunner;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Command\RunTasksInQueueCommand as NewRunTasksInQueueCommand;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Command\Foreign\RunTasksInQueueCommand as NewRunTasksInQueueCommand;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Service\Context\ContextService;
 
@@ -38,7 +38,7 @@ use function trigger_error;
 use const E_USER_DEPRECATED;
 
 /**
- * @deprecated Please use \In2code\In2publishCore\Component\PostPublishTaskExecution\Command\RunTasksInQueueCommand directly
+ * @deprecated Please use \In2code\In2publishCore\Component\PostPublishTaskExecution\Command\Foreign\RunTasksInQueueCommand directly
  */
 class RunTasksInQueueCommand extends NewRunTasksInQueueCommand
 {

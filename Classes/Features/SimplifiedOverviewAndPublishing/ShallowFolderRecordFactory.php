@@ -66,6 +66,9 @@ class ShallowFolderRecordFactory
     /**
      * @see \In2code\In2publishCore\Domain\Factory\FolderRecordFactory::filterFileRecords
      * @noinspection DuplicatedCode
+     * @noinspection MissingOrEmptyGroupStatementInspection
+     * @noinspection PhpStatementHasEmptyBodyInspection
+     * @noinspection RedundantElseClauseInspection
      */
     protected function filterFileRecords(array $files): array
     {
@@ -120,10 +123,7 @@ class ShallowFolderRecordFactory
                 // CODE: [3] OFDB; The file exists only in the foreign database. Ignore the orphaned DB record.
                 unset($files[$index]);
                 continue;
-            } /**
-             * @noinspection MissingOrEmptyGroupStatementInspection
-             * @noinspection PhpStatementHasEmptyBodyInspection
-             */ elseif ($ldb && $lfs && !$ffs && !$fdb) {
+            } elseif ($ldb && $lfs && !$ffs && !$fdb) {
                 // CODE: [4] OL; Nothing to do here. The record exists only on local and will be displayed correctly.
             } elseif ($ldb && !$lfs && $ffs && !$fdb) {
                 // CODE: [5] LDFF; Foreign disk file got indexed, local database record is ignored. See [9] OF.
@@ -147,10 +147,7 @@ class ShallowFolderRecordFactory
                     'The FAL case LFFD is impossible due to prior record transformation',
                     1475573724
                 );
-            } /**
-             * @noinspection MissingOrEmptyGroupStatementInspection
-             * @noinspection PhpStatementHasEmptyBodyInspection
-             */ elseif (!$ldb && !$lfs && $ffs && $fdb) {
+            } elseif (!$ldb && !$lfs && $ffs && $fdb) {
                 // CODE: [9] OF; Nothing to do here;
             } elseif ($ldb && $lfs && $ffs && !$fdb) {
                 // CODE: [10] NFDB; Indexed the foreign file. See [14] ALL

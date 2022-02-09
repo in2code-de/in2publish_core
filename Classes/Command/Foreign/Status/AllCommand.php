@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Status;
+namespace In2code\In2publishCore\Command\Foreign\Status;
 
 /*
  * Copyright notice
@@ -29,39 +29,33 @@ namespace In2code\In2publishCore\Command\Status;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Console\CommandRegistry;
 
-use function array_column;
-use function base64_encode;
-use function json_encode;
-
-class DbConfigTestCommand extends Command
+class AllCommand extends Command
 {
-    public const IDENTIFIER = 'in2publish_core:status:dbconfigtest';
+    public const IDENTIFIER = 'in2publish_core:status:all';
 
-    /** @var Connection */
-    protected $localDatabase;
+    /** @var CommandRegistry */
+    protected $cmdRegistry;
 
-    public function __construct(Connection $localDatabase, string $name = null)
+    public function __construct(CommandRegistry $commandRegistry, string $name = null)
     {
         parent::__construct($name);
-        $this->localDatabase = $localDatabase;
+        $this->cmdRegistry = $commandRegistry;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $queryBuilder = $this->localDatabase->createQueryBuilder();
-        $predicates = $queryBuilder->expr()->eq(
-            'task_type',
-            $queryBuilder->createNamedParameter(ForeignDatabaseConfigTest::DB_CONFIG_TEST_TYPE)
-        );
-        $queryBuilder->select('*')->from('tx_in2code_in2publish_task')->where($predicates);
-        $result = $queryBuilder->execute()->fetchAllAssociative();
-        $output->writeln('DB Config: ' . base64_encode(json_encode(array_column($result, 'configuration'))));
+        $this->cmdRegistry->getCommandByIdentifier(VersionCommand::IDENTIFIER)->execute($input, $output);
+        $this->cmdRegistry->getCommandByIdentifier(CreateMasksCommand::IDENTIFIER)->execute($input, $output);
+        $this->cmdRegistry->getCommandByIdentifier(GlobalConfigurationCommand::IDENTIFIER)->execute($input, $output);
+        $this->cmdRegistry->getCommandByIdentifier(Typo3VersionCommand::IDENTIFIER)->execute($input, $output);
+        $this->cmdRegistry->getCommandByIdentifier(DbInitQueryEncodedCommand::IDENTIFIER)->execute($input, $output);
+        $this->cmdRegistry->getCommandByIdentifier(ShortSiteConfigurationCommand::IDENTIFIER)->execute($input, $output);
+        $this->cmdRegistry->getCommandByIdentifier(DbConfigTestCommand::IDENTIFIER)->execute($input, $output);
         return Command::SUCCESS;
     }
 }

@@ -93,7 +93,9 @@ class AdminToolCompilerPass implements CompilerPassInterface
         $dependencyOrderingService = new DependencyOrderingService();
         $orderedAdminTools = $dependencyOrderingService->orderByDependencies($unorderedAdminTools);
         foreach ($orderedAdminTools as $adminTool) {
-            $toolsRegistryDefinition->addMethodCall('addTool', [
+            $toolsRegistryDefinition->addMethodCall(
+                'addTool',
+                [
                     $adminTool['serviceName'],
                     $adminTool['title'],
                     $adminTool['description'],

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Status;
+namespace In2code\In2publishCore\Event;
 
 /*
  * Copyright notice
  *
- * (c) 2020 in2code.de and the following authors:
+ * (c) 2022 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,19 +29,20 @@ namespace In2code\In2publishCore\Command\Status;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
 
-use function base64_encode;
-
-class EncryptionKeyCommand extends Command
+final class TaskExecutionWasFinished
 {
-    public const IDENTIFIER = 'in2publish_core:status:encryptionkey';
+    /** @var RemoteCommandResponse */
+    private $remoteCommandResponse;
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __construct(RemoteCommandResponse $remoteCommandResponse)
     {
-        $output->writeln('EKey: ' . base64_encode($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']));
-        return Command::SUCCESS;
+        $this->remoteCommandResponse = $remoteCommandResponse;
+    }
+
+    public function getRemoteCommandResponse(): RemoteCommandResponse
+    {
+        return $this->remoteCommandResponse;
     }
 }

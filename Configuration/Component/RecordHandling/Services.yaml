@@ -11,7 +11,9 @@ services:
     resource: '../../../Classes/Component/RecordHandling/*'
 
   In2code\In2publishCore\Component\RecordHandling\RecordFinder:
-    factory: ['@In2code\In2publishCore\Component\RecordHandling\Factory\RecordHandlerFactory', 'createRecordFinder']
+    public: true
+    factory: [ '@In2code\In2publishCore\Component\RecordHandling\Factory\RecordHandlerFactory', 'createRecordFinder' ]
 
   In2code\In2publishCore\Component\RecordHandling\RecordPublisher:
+    public: true
     factory: [ '@In2code\In2publishCore\Component\RecordHandling\Factory\RecordHandlerFactory', 'createRecordPublisher' ]

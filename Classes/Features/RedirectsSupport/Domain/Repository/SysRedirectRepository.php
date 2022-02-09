@@ -97,6 +97,19 @@ class SysRedirectRepository extends Repository
         return $result->fetchAllAssociative();
     }
 
+    public function findByRawTarget(Connection $connection, string $target, array $except): array
+    {
+        $query = $connection->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $query->select('*')
+              ->from('sys_redirect')
+              ->where($query->expr()->eq('target', $query->createNamedParameter($target)));
+        if (!empty($except)) {
+            $query->andWhere($query->expr()->notIn('uid', $except));
+        }
+        return $query->execute()->fetchAllAssociative();
+    }
+
     /** @return QueryResultInterface<SysRedirect> */
     public function findForPublishing(array $uidList, ?Filter $filter): QueryResultInterface
     {

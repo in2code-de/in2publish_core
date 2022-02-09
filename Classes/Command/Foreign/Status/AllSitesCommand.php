@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Status;
+namespace In2code\In2publishCore\Command\Foreign\Status;
 
 /*
  * Copyright notice
  *
- * (c) 2019 in2code.de and the following authors:
+ * (c) 2021 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -35,11 +35,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use TYPO3\CMS\Core\Site\SiteFinder;
 
 use function base64_encode;
-use function json_encode;
+use function serialize;
 
-class ShortSiteConfigurationCommand extends Command
+class AllSitesCommand extends Command
 {
-    public const IDENTIFIER = 'in2publish_core:status:shortsiteconfiguration';
+    public const IDENTIFIER = 'in2publish_core:status:allsites';
 
     /** @var SiteFinder */
     protected $siteFinder;
@@ -52,14 +52,8 @@ class ShortSiteConfigurationCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $shortInfo = [];
-        foreach ($this->siteFinder->getAllSites() as $site) {
-            $shortInfo[$site->getIdentifier()] = [
-                'base' => $site->getBase()->__toString(),
-                'rootPageId' => $site->getRootPageId(),
-            ];
-        }
-        $output->writeln('ShortSiteConfig: ' . base64_encode(json_encode($shortInfo)));
+        $sites = $this->siteFinder->getAllSites(false);
+        $output->writeln('Sites: ' . base64_encode(serialize($sites)));
         return Command::SUCCESS;
     }
 }

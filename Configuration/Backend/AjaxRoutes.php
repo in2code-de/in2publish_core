@@ -7,6 +7,6 @@ use In2code\In2publishCore\Features\ContextMenuPublishEntry\Controller\PublishPa
 return [
     'in2publishcore_contextmenupublishentry_publish' => [
         'path' => '/tx_in2publishcore/contextmenupublishentry/publish',
-        'target' => PublishPageAjaxController::class . '::publishPage'
-    ]
+        'target' => PublishPageAjaxController::class . '::publishPage',
+    ],
 ];

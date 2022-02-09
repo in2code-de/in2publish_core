@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Status;
+namespace In2code\In2publishCore\Command\Foreign\Status;
 
 /*
  * Copyright notice
@@ -29,43 +29,18 @@ namespace In2code\In2publishCore\Command\Status;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Config\ValidationContainer;
+use In2code\In2publishCore\Utility\ExtensionUtility;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use function array_column;
-use function base64_encode;
-use function json_encode;
-
-class ConfigFormatTestCommand extends Command
+class VersionCommand extends Command
 {
-    public const IDENTIFIER = 'in2publish_core:status:configformattest';
-
-    /** @var ValidationContainer */
-    protected $validationContainer;
-
-    /** @var ConfigContainer */
-    protected $configContainer;
-
-    public function __construct(
-        ValidationContainer $validationContainer,
-        ConfigContainer $configContainer,
-        string $name = null
-    ) {
-        parent::__construct($name);
-        $this->validationContainer = $validationContainer;
-        $this->configContainer = $configContainer;
-    }
+    public const IDENTIFIER = 'in2publish_core:status:version';
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $definition = $this->configContainer->getForeignDefinition();
-        $actual = $this->configContainer->get();
-        $definition->validate($this->validationContainer, $actual);
-        $errors = $this->validationContainer->getErrors();
-        $output->writeln('Config Format Test: ' . base64_encode(json_encode(array_column($errors, 'configuration'))));
+        $output->writeln('Version: ' . ExtensionUtility::getExtensionVersion('in2publish_core'));
         return Command::SUCCESS;
     }
 }

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Status;
+namespace In2code\In2publishCore\Command\Foreign\Status;
 
 /*
  * Copyright notice
  *
- * (c) 2021 in2code.de and the following authors:
+ * (c) 2020 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -32,28 +32,16 @@ namespace In2code\In2publishCore\Command\Status;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TYPO3\CMS\Core\Site\SiteFinder;
 
 use function base64_encode;
-use function serialize;
 
-class AllSitesCommand extends Command
+class EncryptionKeyCommand extends Command
 {
-    public const IDENTIFIER = 'in2publish_core:status:allsites';
-
-    /** @var SiteFinder */
-    protected $siteFinder;
-
-    public function __construct(SiteFinder $siteFinder, string $name = null)
-    {
-        parent::__construct($name);
-        $this->siteFinder = $siteFinder;
-    }
+    public const IDENTIFIER = 'in2publish_core:status:encryptionkey';
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $sites = $this->siteFinder->getAllSites(false);
-        $output->writeln('Sites: ' . base64_encode(serialize($sites)));
+        $output->writeln('EKey: ' . base64_encode($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']));
         return Command::SUCCESS;
     }
 }

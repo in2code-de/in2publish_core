@@ -6,6 +6,9 @@ namespace In2code\In2publishCore\Config\Validator;
 
 use In2code\In2publishCore\Config\ValidationContainer;
 
+use function class_exists;
+use function is_subclass_of;
+
 /*
  * Copyright notice
  *
@@ -30,9 +33,6 @@ use In2code\In2publishCore\Config\ValidationContainer;
  *
  * This copyright notice MUST APPEAR in all copies of the script!
  */
-
-use function class_exists;
-use function is_subclass_of;
 
 class ClassImplementsValidator implements ValidatorInterface
 {

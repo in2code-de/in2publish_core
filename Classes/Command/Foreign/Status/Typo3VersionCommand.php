@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Status;
+namespace In2code\In2publishCore\Command\Foreign\Status;
 
 /*
  * Copyright notice
@@ -32,30 +32,24 @@ namespace In2code\In2publishCore\Command\Status;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TYPO3\CMS\Core\Console\CommandRegistry;
+use TYPO3\CMS\Core\Information\Typo3Version;
 
-class AllCommand extends Command
+class Typo3VersionCommand extends Command
 {
-    public const IDENTIFIER = 'in2publish_core:status:all';
+    public const IDENTIFIER = 'in2publish_core:status:typo3version';
 
-    /** @var CommandRegistry */
-    protected $cmdRegistry;
+    /** @var Typo3Version */
+    private $typo3Version;
 
-    public function __construct(CommandRegistry $commandRegistry, string $name = null)
+    public function __construct(Typo3Version $typo3Version, string $name = null)
     {
         parent::__construct($name);
-        $this->cmdRegistry = $commandRegistry;
+        $this->typo3Version = $typo3Version;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->cmdRegistry->getCommandByIdentifier(VersionCommand::IDENTIFIER)->execute($input, $output);
-        $this->cmdRegistry->getCommandByIdentifier(CreateMasksCommand::IDENTIFIER)->execute($input, $output);
-        $this->cmdRegistry->getCommandByIdentifier(GlobalConfigurationCommand::IDENTIFIER)->execute($input, $output);
-        $this->cmdRegistry->getCommandByIdentifier(Typo3VersionCommand::IDENTIFIER)->execute($input, $output);
-        $this->cmdRegistry->getCommandByIdentifier(DbInitQueryEncodedCommand::IDENTIFIER)->execute($input, $output);
-        $this->cmdRegistry->getCommandByIdentifier(ShortSiteConfigurationCommand::IDENTIFIER)->execute($input, $output);
-        $this->cmdRegistry->getCommandByIdentifier(DbConfigTestCommand::IDENTIFIER)->execute($input, $output);
+        $output->writeln('TYPO3: ' . $this->typo3Version->getVersion());
         return Command::SUCCESS;
     }
 }

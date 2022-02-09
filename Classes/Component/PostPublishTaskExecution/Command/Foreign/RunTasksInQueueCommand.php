@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Command;
+namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Command\Foreign;
 
 /*
  * Copyright notice
@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Command;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Service\Context\ContextService;
 use Symfony\Component\Console\Command\Command;
@@ -66,7 +65,6 @@ class RunTasksInQueueCommand extends Command
         $result = [];
         // Tasks which should get executed do not have an execution begin
         $tasksToExecute = $this->taskRepository->findByExecutionBegin();
-        /** @var \In2code\In2publishCore\Component\PostPublishTaskExecution\Model\Task\AbstractTask $task */
         foreach ($tasksToExecute as $task) {
             try {
                 $success = $task->execute();

@@ -57,7 +57,6 @@ use function json_encode;
 use function spl_object_hash;
 use function strpos;
 use function trigger_error;
-use function trim;
 use function uasort;
 
 use const E_USER_DEPRECATED;
@@ -190,6 +189,12 @@ class Record implements RecordInterface
         array $additionalProperties,
         $identifier = null
     ) {
+        if ([false] === $localProperties) {
+            $localProperties = [];
+        }
+        if ([false] === $foreignProperties) {
+            $foreignProperties = [];
+        }
         $this->configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
         // Normalize the storage property to be always int, because FAL is inconsistent in this point
         if ('physical_folder' === $tableName) {
@@ -446,7 +451,7 @@ class Record implements RecordInterface
             );
 
         foreach ($propertyNames as $propertyName) {
-            if ($this->isDirtyProperty($propertyName)) {
+            if ($this->isDirtyProperty((string)$propertyName)) {
                 $this->dirtyProperties[] = $propertyName;
             }
         }
@@ -1073,7 +1078,14 @@ class Record implements RecordInterface
     public function getPageIdentifier(): int
     {
         if ($this->isPagesTable()) {
-            return $this->getL10nParentIdentifier() ?? $this->getIdentifier();
+            $identifier = $this->getL10nParentIdentifier();
+            if (null === $identifier) {
+                $identifier = $this->getIdentifier();
+                if (is_string($identifier)) {
+                    $identifier = (int)explode(',', $identifier)[0];
+                }
+            }
+            return $identifier;
         }
         if ($this->hasLocalProperty('pid')) {
             return (int)$this->getLocalProperty('pid');

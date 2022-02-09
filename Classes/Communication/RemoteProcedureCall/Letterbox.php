@@ -87,7 +87,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
                     'Failed to send envelope [' . $uid . ']',
                     ['envelope' => $envelope->toArray(), 'exception' => $exception]
                 );
-                throw new $exception;
+                throw $exception;
             }
         }
 

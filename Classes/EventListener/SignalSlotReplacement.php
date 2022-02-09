@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\EventListener;
 use In2code\In2publishCore\Controller\AbstractController;
 use In2code\In2publishCore\Controller\FileController;
 use In2code\In2publishCore\Controller\RecordController;
-use In2code\In2publishCore\Controller\ToolsController;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
@@ -478,7 +477,7 @@ class SignalSlotReplacement
     public function onCreatedDefaultHelpLabels(CreatedDefaultHelpLabels $event): void
     {
         [$supports] = $this->dispatcher->dispatch(
-            ToolsController::class,
+            'In2code\\In2publishCore\\Controller\\ToolsController',
             'collectSupportPlaces',
             [
                 $event->getSupports(),

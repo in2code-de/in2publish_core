@@ -2,13 +2,15 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Utility;
+namespace In2code\In2publishCore\Command\Foreign\Status;
 
 /*
  * Copyright notice
  *
- * (c) 2020 in2code.de and the following authors:
+ * (c) 2019 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
+ *
+ * All rights reserved
  *
  * This script is part of the TYPO3 project. The TYPO3 project is
  * free software; you can redistribute it and/or modify
@@ -27,25 +29,18 @@ namespace In2code\In2publishCore\Utility;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Psr\Http\Message\UriInterface;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
-use function explode;
-
-class UriUtility
+class CreateMasksCommand extends Command
 {
-    public static function normalizeUri(UriInterface $uri): UriInterface
+    public const IDENTIFIER = 'in2publish_core:status:createmasks';
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if (empty($uri->getScheme())) {
-            $uri = $uri->withScheme('https');
-        }
-        if (empty($uri->getHost())) {
-            $path = $uri->getPath();
-            [$host, $path] = explode('/', $path, 2);
-            if (empty($path)) {
-                $path = '';
-            }
-            $uri = $uri->withHost($host)->withPath($path);
-        }
-        return $uri;
+        $output->writeln('FileCreateMask: ' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['fileCreateMask']);
+        $output->writeln('FolderCreateMask: ' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['folderCreateMask']);
+        return Command::SUCCESS;
     }
 }
