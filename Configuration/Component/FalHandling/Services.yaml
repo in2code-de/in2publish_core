@@ -1,0 +1,32 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+    bind:
+      $foreignDatabase: '@In2code.In2publishCore.Database.Foreign'
+
+  In2code\In2publishCore\Component\FalHandling\:
+    resource: '../../../Classes/Component/FalHandling/*'
+
+  In2code\In2publishCore\Component\FalHandling\FalFinder:
+    public: true
+    factory: [ '@In2code\In2publishCore\Component\FalHandling\Factory\FalHandlerFactory', 'createFalFinder' ]
+
+  In2code\In2publishCore\Component\FalHandling\FalPublisher:
+    public: true
+    factory: [ '@In2code\In2publishCore\Component\FalHandling\Factory\FalHandlerFactory', 'createFalPublisher' ]
+
+  In2code\In2publishCore\Component\FalHandling\PostProcessing\PostProcessor:
+    factory: [ '@In2code\In2publishCore\Component\FalHandling\PostProcessing\Factory\PostProcessorFactory', 'createPostProcessor' ]
+
+  In2code\In2publishCore\Component\FalHandling\PostProcessing\EventListener\PostProcessingEventListener:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-postprocessingeventlistener-recordinstancewasinstantiated'
+        method: 'onRecordInstanceWasInstantiated'
+        event: In2code\In2publishCore\Event\RecordInstanceWasInstantiated
+      - name: event.listener
+        identifier: 'in2publishcore-postprocessingeventlistener-rootrecordcreationwasfinished'
+        method: 'onRootRecordCreationWasFinished'
+        event: In2code\In2publishCore\Event\RootRecordCreationWasFinished

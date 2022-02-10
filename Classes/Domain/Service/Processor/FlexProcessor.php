@@ -58,8 +58,6 @@ use function array_key_exists;
 
 class FlexProcessor extends AbstractProcessor
 {
-    protected $canHoldRelations = true;
-
     public const DS = 'ds';
     public const DS_POINTER_FIELD = 'ds_pointerField';
     public const DS_POINTER_FIELD_SEARCH_PARENT = 'ds_pointerField_searchParent';
@@ -68,16 +66,18 @@ class FlexProcessor extends AbstractProcessor
     public const MISSING_POINTER_FIELD = 'can not resolve flexform values without "ds_pointerField" or default value';
     public const DEFAULT_VALUE = 'default';
 
-    protected $forbidden = [
+    protected bool $canHoldRelations = true;
+
+    protected array $forbidden = [
         'ds_pointerField_searchParent is not supported' => self::DS_POINTER_FIELD_SEARCH_PARENT,
         'ds_pointerField_searchParent_subField is not supported' => self::DS_POINTER_FIELD_SEARCH_PARENT_SUB_FIELD,
     ];
 
-    protected $required = [
+    protected array $required = [
         'can not resolve flexform values without "ds"' => self::DS,
     ];
 
-    protected $allowed = [
+    protected array $allowed = [
         self::SEARCH,
         self::DS_POINTER_FIELD,
     ];

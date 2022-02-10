@@ -32,49 +32,42 @@ namespace In2code\In2publishCore\Domain\Service\Processor;
 use function array_key_exists;
 use function array_merge;
 
+/**
+ * @SuppressWarnings(PHPMD.NumberOfChildren) Required through TYPO3's growing count of TCA types
+ */
 abstract class AbstractProcessor implements ProcessorInterface
 {
     /**
      * Overwrite and set TRUE for types like "select" or "inline"
-     *
-     * @var bool
      */
-    protected $canHoldRelations = false;
+    protected bool $canHoldRelations = false;
 
     /**
      * Do not overwrite this!
      * Stores the reasons for a column configuration not being suitable for resolving relations
-     *
-     * @var array
      */
-    protected $lastReasons = [];
+    protected array $lastReasons = [];
 
     /**
      * Overwrite this in your Processor if canHoldRelations is TRUE!
      * Fields that are forbidden for the processor type, indexed by the reason
      *    e.g. "itemsProcFunc is not supported by in2publish" => "itemsProcFunc"
-     *
-     * @var array
      */
-    protected $forbidden = [];
+    protected array $forbidden = [];
 
     /**
      * Overwrite this in your Processor if canHoldRelations is TRUE!
      * Field names that must be contained in the configuration, indexed by their reason why
      *    e.g. "can not select without a foreign table" => "foreign_table"
-     *
-     * @var array
      */
-    protected $required = [];
+    protected array $required = [];
 
     /**
      * Overwrite this in your Processor if canHoldRelations is TRUE and these are needed!
      * Fields that are optional and are which taken into account for relations solving. Has no specific index
      *    e.g. "foreign_table_where"
-     *
-     * @var array
      */
-    protected $allowed = [];
+    protected array $allowed = [];
 
     /**
      * Overwrite this in your Processor if canHoldRelations is TRUE!

@@ -43,8 +43,7 @@ class ContextService implements SingletonInterface
     public const ENV_VAR_NAME = 'IN2PUBLISH_CONTEXT';
     public const REDIRECT_ENV_VAR_NAME = 'REDIRECT_IN2PUBLISH_CONTEXT';
 
-    /** @var string */
-    protected $context;
+    protected string $context;
 
     public function __construct()
     {
@@ -56,7 +55,6 @@ class ContextService implements SingletonInterface
         return $this->context;
     }
 
-    /** @SuppressWarnings(PHPMD.StaticAccess) */
     protected function determineContext(): string
     {
         $environmentVariable = getenv(static::ENV_VAR_NAME) ?: getenv(static::REDIRECT_ENV_VAR_NAME) ?: false;

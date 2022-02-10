@@ -38,6 +38,9 @@ indent_size = 4
 indent_style = space
 indent_size = 2
 
+[grumphp.yml]
+indent_size = 4
+
 [*.t3s]
 indent_style = space
 indent_size = 2
@@ -52,8 +55,8 @@ indent_size = 4
 ij_continuation_indent_size = 8
 
 [*.sql]
-indent_style = tab
-indent_size = 2
+indent_style = space
+indent_size = 4
 
 [.eslintrc]
 indent_style = space
@@ -63,3 +66,7 @@ indent_size = 4
 [{ext_typoscript_setup.txt, *.typoscript, setup.txt, constants.txt, setup.ts, constants.ts}]
 indent_style = space
 indent_size = 2
+
+[*.neon]
+indent_style = tab
+indent_size = 4

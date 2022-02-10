@@ -38,7 +38,6 @@ use function implode;
 
 class VersionedFileProvider extends FileProvider
 {
-    /** @SuppressWarnings(PHPMD.Superglobals) */
     public function getConfig(): array
     {
         $path = $this->getResolvedFilePath();

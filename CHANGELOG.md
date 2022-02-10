@@ -1,5 +1,107 @@
 # In2publish Core Change Log
 
+11.0.0:
+
+- [META] Set the branch alias version number to 11.0.x-dev
+- [META] Set the EM conf version number to 11.0.0
+- [!!!][FEATURE] Add TYPO3 v11 compatibility
+- [META] Set correct PHP compatibility in ext_emconf.php
+- [DOCS] Add alternative finder configuration as example to the config file
+- [BUGFIX] Update Module Layout of Redirects assignment view
+- [BUGFIX] Make Record- and FalHandler public
+- [BUGFIX] Load CSS/JS only when required
+- [BUGFIX] Fix overview comparison container toggle
+- [CODESYTLE] Unify SQL code style
+- [BUGFIX] Recompile the CSS
+- [BUGFIX] Upgrade lower bound of typo3/testing-framework to a working version
+- [BUGFIX] Require polyfills (required in GH actions)
+- [BUGFIX] Require typo3/cms-reports (required in GH actions)
+- [BUGFIX] Declare missing return type for EnvelopeDispatcher::getFileObject
+- [DEV] Add make targets to run tests and QA tools
+- [BUGFIX] Remove int type casting from splitCombinedIdentifier (strings are valid identifiers)
+- [BUGFIX] Correctly split identifier for Record::getPageIdentifier
+- [BUGFIX] Remove TaskRepository from service definition
+- [BUGFIX] Remove CommonRepository from service definition
+- [BUGFIX] Fix all psalm issues
+- [BUGFIX] Fix issues reported by PHPStorm
+- [CLEANUP] Resolve all deprecation introduced in CP CE v10
+- [BUGFIX] Fix all PHPMD issues
+- [CLEANUP] Remove deprecated method ToolsRegistry::removeTool
+- [CODESTYLE] Fix phpcs errors
+- [CODESTYLE] Automatically fix with php-cs-fixer
+- [QA] Add qa tools
+- [BUGFIX] Allow skipping notification (for enterprise edition)
+- [UPDATE] Require at least TYPO3 v11.5
+- [TESTS] Remove listener from publishing test
+- [FEATURE] Add more data attributes to identify rows
+- [BUGFIX] Ignore related folders for the recursive state of records
+- [BUGFIX] Add classes to file module control columns
+- [BUGFIX] Self-close core:icon ViewHelper
+- [BUGFIX] Remove duplicate filter listener setup
+- [REFACTOR] Replace legacy fluid NS imports with html tags in file related fluid files
+- [CLEANUP] Remove unused fluid NS imports in File Layout
+- [BUGFIX] Add missing ignored fields for sys_redirects
+- [BUGFIX] Add missing data attributes for folders in the file list
+- [BUGFIX] Move the file state filter toggles back to in2publish_core
+- [DOCS] Lowercase all code block language injections
+- [REFACTOR] Wrap the File/DirtyProperties partial in html/xmlns tags
+- [DOCS] Add the factroy.fal.(finder|publisher) settings to the example yaml config
+- [FEATURE] Refactor FAL handling into finder/publisher, support localized file meta, overlay and more
+- [FEATURE] Rename the JS module and move the multi-publishing function to the enterprise edition
+- [BUGFIX] Set correct condition to enable the file icon type fallback
+- [FEATURE] Extract FAL file factories and processors to component
+- [FEATURE] Always render file icons and fix missing empty buttons
+- [BUGFIX] Respect setting view.records.filterButtons
+- [FEATURE] Simplify filter status toggles
+- [BUGFIX] Use and check against the local file to show the foreign-side file type icon
+- [BUGFIX] Use resource path for foreign images and f:image for local ones to prevent Fluid errors
+- [TASK] Add state label for "moved-and-changed" status
+- [BUGFIX] Fix for-loop as-property breaking edit link generation
+- [BUGFIX] Wrap image/file output that is potentially null with proper conditions
+- [TASK] Remove displayed storage/page path from layout
+- [TASK] Add localizations for new file publishing UI
+- [FEATURE] Initial frontend integration of multi-selection in file publish module
+- [FEATURE] Add search functionality to file publish list
+- [TASK] Add branch alias to make installation work with in2publish enabled
+- [TASK] Highlight changed properties in property list
+- [TASK] Show specific file-type icons with core:iconForResource in file publishing list
+- [TASK] Rename state color classes to use a uniform in2publish-state- prefix
+- [TASK] Show filename of deleted file on local side
+- [TASK] Re-add filtering functionality in file publishing overview
+- [WIP][TASK] Add HTML structure for new filter display in function bar
+- [WIP][TASK] Implement initial version of new properties list, showing more file properties
+- [WIP][TASK] More closely follow TYPO3's way of using tables in the backend
+- [WIP][TASK] Integrate new file publishing overview design
+- [BUGFIX] Update the compare DB tabs to work with TYPO3 v11 JS
+- [BUGFIX] Fix admin tools welcome page layout
+- [BUGFIX] Keep all request arguments for module bookmarks
+- [BUGFIX] Update module layouts for TYPO3 v11
+- [REFACTOR] Extract AbstractController::runTasks to trait and use setter injection
+- [CLEANUP] Remove ActionController::addFlashMessage workaround
+- [REFACTOR] Replace property type annotations with property type hints
+- [REFACTOR] Move extbase classes BackendUser and BackendUserRepository from in2publish_core to in2publish
+- [REFACTOR] Run rector and adapt some special cases
+- [BUGFIX] XCLASS the BackendRouteInitialization middleware to create an event after loading ext_tables
+- [BUGFIX] Create the ConfigurationManager via interface
+- [UPGRADE] Move deprecated generic Extbase domain classes BackendUser and BackendUserRepository to own Extbase classes
+- [UPGRADE] Copy deprecated QueryHelper and QueryGenerator functions to Database utility
+- [UPGRADE] Remove call of deprecated method ExtbaseActionController::initializeView
+- [CLEANUP] Remove non-existent tables from excludeRelatedTables
+- [UPGRADE] Remove deprecated use of ObjectManager
+- [META] Support PHP 8.0
+- [TESTS] Run tests with PHP 7.4 and 8.0
+- [META] Remove ignore-as-root composer extra
+- [TESTS] Fix functional tests for TYPO3 v11
+- [UPGRADE] Add category and language TCA processor
+- [TESTS] Update tests for TYPO3 v11
+- [BUGFIX] Use internal_type=db as default type for type=group
+- [BUGFIX] Replace isLoaded in Services.php with a workaround
+- [BUGFIX] Remove extTablesInclusion-PostProcessing hook from ext_localconf.php
+- [UPGRADE] Replace deprecated constant TYPO3_REQUESTTYPE
+- [UPGRADE] Replace TableConfigurationPostProcessingHookInterface with TYPO3\CMS\Core\Core\Event\BootCompletedEvent
+- [CLEANUP] Remove outdated compatibility class SignalSlotReplacement
+- [!!!][UPDATE] Require TYPO3 v11
+
 10.2.1:
 
 - [META] Set the EM conf version number to 10.2.1

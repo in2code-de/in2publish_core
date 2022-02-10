@@ -87,7 +87,9 @@ class TestCaseService
         return false;
     }
 
-    /** @return TestCaseInterface[] */
+    /**
+     * @return array<class-string<TestCaseInterface>, TestCaseInterface>
+     */
     protected function getTestObjects(): array
     {
         $tests = [];
@@ -103,7 +105,9 @@ class TestCaseService
         return $tests;
     }
 
-    /** @SuppressWarnings("PHPMD.Superglobals") */
+    /**
+     * @return array<string>
+     */
     protected function getTestClasses(): array
     {
         return $GLOBALS['in2publish_core']['tests'];

@@ -68,6 +68,10 @@ use function rtrim;
 use function stripos;
 use function strpos;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) Maybe refactor this into a service with ordered strategies.
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Can't help this without splitting
+ */
 class BackendUtility
 {
     /**
@@ -78,7 +82,12 @@ class BackendUtility
      *
      * @return int|string Returns the page ID or the folder ID when navigating in the file list
      *
-     * @SuppressWarnings(PHPMD.StaticAccess)
+     * See the class comment for more info
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.IfStatementAssignment)
+     * @noinspection CallableParameterUseCaseInTypeContextInspection
      */
     public static function getPageIdentifier($identifier = null, string $table = null)
     {
@@ -129,13 +138,17 @@ class BackendUtility
         $tableNames = $localConnection->getSchemaManager()->listTableNames();
 
         // get id from record ?data[tt_content][13]=foo
-        if (null !== ($data = GeneralUtility::_GP('data')) && is_array($data) && in_array(key($data), $tableNames)) {
+        $data = GeneralUtility::_GP('data');
+        if (
+            is_array($data)
+            && in_array(key($data), $tableNames, true)
+        ) {
             $table = key($data);
             if (
                 is_array($data[$table])
                 && is_string(key($data[$table]))
-                && 0 === strpos(key($data[$table]), 'NEW_')
                 && array_key_exists('pid', current($data[$table]))
+                && 0 === strpos(key($data[$table]), 'NEW_')
             ) {
                 return (int)current($data[$table])['pid'];
             }
@@ -194,7 +207,7 @@ class BackendUtility
     }
 
     /**
-     * Create an URI to edit a record
+     * Create a URI to edit a record
      *
      * @param string $tableName
      * @param int $identifier
@@ -214,8 +227,7 @@ class BackendUtility
             ],
             'returnUrl' => $uriBuilder->buildUriFromRoute('web_In2publishCoreM1')->__toString(),
         ];
-        $editUri = $uriBuilder->buildUriFromRoute('record_edit', $uriParameters);
-        return $editUri->__toString();
+        return $uriBuilder->buildUriFromRoute('record_edit', $uriParameters)->__toString();
     }
 
     /**
@@ -247,8 +259,7 @@ class BackendUtility
             'returnUrl' => $uriBuilder->buildUriFromRoutePath($route, $returnParameters)->__toString(),
         ];
 
-        $undoRui = $uriBuilder->buildUriFromRoute('record_history', $uriParameters);
-        return $undoRui->__toString();
+        return $uriBuilder->buildUriFromRoute('record_history', $uriParameters)->__toString();
     }
 
     /**
@@ -258,7 +269,10 @@ class BackendUtility
      * @param int $identifier
      * @param string $stagingLevel
      *
-     * @return null|UriInterface
+     * @return UriInterface|null
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public static function buildPreviewUri(string $table, int $identifier, string $stagingLevel): ?UriInterface
     {
@@ -273,7 +287,11 @@ class BackendUtility
             PageRepository::DOKTYPE_RECYCLER,
             PageRepository::DOKTYPE_SYSFOLDER,
         ];
-        if ('pages' === $table && array_key_exists('doktype', $row) && in_array($row['doktype'], $excludeDokTypes)) {
+        if (
+            'pages' === $table
+            && array_key_exists('doktype', $row)
+            && in_array($row['doktype'], $excludeDokTypes, false)
+        ) {
             return null;
         }
 
@@ -360,7 +378,6 @@ class BackendUtility
      *
      * This basically removes the trailing dots of sub-array keys in TypoScript.
      * The result can be used to create a query string with GeneralUtility::implodeArrayForUrl().
-     *
      */
     protected static function parseAdditionalGetParameters(array &$parameters, array $typoScript): void
     {
@@ -382,7 +399,7 @@ class BackendUtility
      */
     protected static function getRuntimeCache(): VariableFrontend
     {
-        return GeneralUtility::makeInstance(CacheManager::class)->getCache('cache_runtime');
+        return GeneralUtility::makeInstance(CacheManager::class)->getCache('runtime');
     }
 
     protected static function getForeignUriClosure(
@@ -394,7 +411,7 @@ class BackendUtility
         return static function () use ($buildPageUrl, $site, $language, $pageUid): ?UriInterface {
             // Please forgive me for this ugliest of all hacks. I tried everything.
 
-            // temporarily point the pages table to the foreign database connection, to make PageRepository->getPage fetch the foreign page
+            // temporarily point the pages' table to the foreign database connection, to make PageRepository->getPage fetch the foreign page
             $backup = $GLOBALS['TYPO3_CONF_VARS']['DB']['TableMapping']['pages'] ?? null;
             $GLOBALS['TYPO3_CONF_VARS']['DB']['TableMapping']['pages'] = 'in2publish_foreign';
 
@@ -417,6 +434,7 @@ class BackendUtility
             try {
                 return $buildPageUrl();
             } catch (Throwable $exception) {
+                // Ignore exception
             } finally {
                 $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] = $encryptionKey;
 
@@ -439,12 +457,12 @@ class BackendUtility
         };
     }
 
-    protected static function getLocalUriClosure(Site $site, int $pageUid, $additionalQueryParams): Closure
+    protected static function getLocalUriClosure(Site $site, int $pageUid, array $additionalQueryParams): Closure
     {
         return static function () use ($site, $pageUid, $additionalQueryParams): ?UriInterface {
             try {
                 return $site->getRouter()->generateUri(
-                    $pageUid,
+                    (string)$pageUid,
                     $additionalQueryParams,
                     '',
                     RouterInterface::ABSOLUTE_URL

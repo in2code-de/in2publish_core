@@ -31,14 +31,11 @@ namespace In2code\In2publishCore\Event;
 
 class StoragesForTestingWereFetched
 {
-    /** @var array */
-    private $localStorages;
+    private array $localStorages;
 
-    /** @var array */
-    private $foreignStorages;
+    private array $foreignStorages;
 
-    /** @var string */
-    private $purpose;
+    private string $purpose;
 
     public function __construct(array $localStorages, array $foreignStorages, string $purpose)
     {

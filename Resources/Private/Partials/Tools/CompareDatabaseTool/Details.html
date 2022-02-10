@@ -1,9 +1,9 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
-	<div class="tabpanel">
+	<div role="tabpanel">
 		<ul class="nav nav-tabs t3js-tabs" role="tablist" id="tabs-DTM-a2a37f157f" data-store-last-tab="1">
 			<f:for each="{differences}" key="table" as="difference" iteration="i">
-				<li role="presentation" class="t3js-tabmenu-item {f:if(condition: i.isFirst, then: 'active')}">
-					<a href="#DTM-{table}" title="" aria-controls="DTM-{table}" role="tab" data-toggle="tab">{table}</a>
+				<li role="presentation" class="t3js-tabmenu-item nav-item">
+					<a href="#DTM-{table}" class="nav-link {f:if(condition: i.isFirst, then: 'active')}" title="" aria-controls="DTM-{table}" role="tab" data-bs-toggle="tab" aria-selected="{f:if(condition: i.isFirst, then: 'true', else: 'false')}">{table}</a>
 				</li>
 			</f:for>
 		</ul>

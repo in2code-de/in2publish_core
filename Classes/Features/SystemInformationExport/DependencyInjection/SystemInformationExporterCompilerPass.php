@@ -34,10 +34,11 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
+use function array_keys;
+
 class SystemInformationExporterCompilerPass implements CompilerPassInterface
 {
-    /** @var string */
-    private $tagName;
+    private string $tagName;
 
     public function __construct(string $tagName)
     {
@@ -51,7 +52,7 @@ class SystemInformationExporterCompilerPass implements CompilerPassInterface
             return;
         }
 
-        foreach ($container->findTaggedServiceIds($this->tagName) as $serviceName => $tags) {
+        foreach (array_keys($container->findTaggedServiceIds($this->tagName)) as $serviceName) {
             $container->findDefinition($serviceName)->setPublic(true);
             $serviceDefinition->addMethodCall(
                 'registerExporter',

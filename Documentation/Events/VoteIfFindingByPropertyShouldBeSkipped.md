@@ -7,7 +7,7 @@ Refer to [Voting Events](Voting-Events.md) for general information about this ki
 
 ## When
 
-This event will be seen once each time before the `CommonRepository` is going to search for a single record by a single
+This event will be seen once each time before the `RecordFinder` is going to search for a single record by a single
 property **AND** once for each property when searching for records by multiple properties.
 
 This can result in thousands of events of this type, depending on the number of records on your page and relations in
@@ -15,7 +15,7 @@ your TCA.
 
 ## What
 
-* `commonRepository`: The instance of the common repository that is going to query the databases.
+* `recordFinder`: The instance of the `RecordFinder` that is going to query the databases.
 * `propertyName`: The property name which will be used as field name in the query.
 * `propertyValue`: The value which the database row has to match in the `propertyName` column.
 * `tableName`: The table name the query will select from.

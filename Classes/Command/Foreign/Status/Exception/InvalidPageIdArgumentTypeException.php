@@ -39,8 +39,7 @@ class InvalidPageIdArgumentTypeException extends In2publishCoreException
     private const MESSAGE = 'The argument pageId must be an integer, got string "%s"';
     public const CODE = 1561653002;
 
-    /** @var string */
-    protected $pageId;
+    protected string $pageId;
 
     public function __construct(string $pageId, Throwable $previous = null)
     {

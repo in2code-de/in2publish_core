@@ -40,8 +40,7 @@ class ExecutionTimeService implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var float|null */
-    protected $startTime;
+    protected ?float $startTime = null;
 
     public function start(): void
     {

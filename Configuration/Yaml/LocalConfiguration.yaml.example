@@ -53,18 +53,11 @@ excludeRelatedTables:
   - be_users
   - sys_history
   - sys_log
-  #- sys_note
   - tx_extensionmanager_domain_model_extension
-  - tx_extensionmanager_domain_model_repository
-  #- tx_rsaauth_keys
   - cache_treelist
   - tx_in2publishcore_log
   - tx_in2code_in2publish_task
   - tx_in2code_in2publish_envelope
-  # Added dynamically if realurl is installed
-  - tx_realurl_pathdata
-  - tx_realurl_uniqalias
-  - tx_realurl_urldata
 
 
 # Ignore this fields for DIFF view
@@ -120,12 +113,15 @@ ignoreFieldsForDifferenceView:
     - hitcount
     - lasthiton
 
+
 # factory settings (configuration about building relations in in2publish)
 factory:
 
   # The class which is used to fetch all records from persistence.
   # @user
   finder: 'In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder'
+  # Alternatives (only with in2publish Enterprise Edition):
+  #finder: 'In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing\ShallowRecordFinder' # READ EXT:in2publish/Documentation/Book/7_7_SimpleFiles.md
 
   # The class which is used to publish a record (recursively)
   # @user
@@ -164,6 +160,18 @@ factory:
 
   # FAL related settings
   fal:
+
+    # FAL Finder. The class to use to find a folder as an instance of the RecordInterface, containing all files of that
+    # folder as related records.
+    # This setting determines the strategy.
+    finder: 'In2code\In2publishCore\Component\FalHandling\Finder\DefaultFalFinder'
+    # Alternatives:
+    #finder: 'In2code\In2publish\Features\SimpleFiles\Component\FalHandling\Finder\SimpleFilesFinder' # READ EXT:in2publish_core/Documentation/Features/SimplifiedOverviewAndPublishing.md
+
+    # FAL Publisher. The class used to publish folders by identifier and files by their record instances.
+    # The default publisher should suffice for nearly all use cases. Please consider implementing your code with
+    # event listeners over changing this setting.
+    publisher: 'In2code\In2publishCore\Component\FalHandling\Publisher\DefaultFalPublisher'
 
     # Set this to FALSE if you take care of the auto_increment yourself (e.g. when having FAL uploads in the
     # foreign frontend. If set to TRUE it will enable the auto_increment synchronization whenever
@@ -392,6 +400,8 @@ tca:
     user: 'In2code\In2publishCore\Domain\Service\Processor\UserProcessor'
     imageManipulation: 'In2code\In2publishCore\Domain\Service\Processor\ImageManipulationProcessor'
     slug: 'In2code\In2publishCore\Domain\Service\Processor\SlugProcessor'
+    category: 'In2code\In2publishCore\Domain\Service\Processor\CategoryProcessor'
+    language: 'In2code\In2publishCore\Domain\Service\Processor\LanguageProcessor'
 
 # Toggle additional features for the content publisher
 features:

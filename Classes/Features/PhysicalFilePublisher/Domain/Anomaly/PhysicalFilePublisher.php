@@ -50,14 +50,12 @@ class PhysicalFilePublisher implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var FilePublisherService */
-    protected $filePublisherService;
+    protected FilePublisherService $filePublisherService;
 
-    /** @var EventDispatcher */
-    protected $eventDispatcher;
+    protected EventDispatcher $eventDispatcher;
 
     /** @var array<string, array<int|string, bool>> */
-    protected $publishedRecords = [];
+    protected array $publishedRecords = [];
 
     public function __construct(FilePublisherService $filePublisherService, EventDispatcher $eventDispatcher)
     {
@@ -75,8 +73,6 @@ class PhysicalFilePublisher implements SingletonInterface, LoggerAwareInterface
      * @param PublishingOfOneRecordEnded $event
      *
      * @throws Exception
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function publishPhysicalFileOfSysFile(PublishingOfOneRecordEnded $event): void
     {
@@ -101,7 +97,7 @@ class PhysicalFilePublisher implements SingletonInterface, LoggerAwareInterface
 
         $combinedIdentifier = sprintf('%d:%s', $storage, $identifier);
 
-        // If the combined identifier already passed this method is was published, so we can skip it
+        // If the combined identifier already passed this method it was published, so we can skip it
         if (isset($this->publishedRecords[$table][$combinedIdentifier])) {
             return;
         }

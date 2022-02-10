@@ -34,7 +34,7 @@ use function array_key_exists;
 abstract class AbstractMigration implements MigrationInterface
 {
     /** @var string[] */
-    protected $messages = [];
+    protected array $messages = [];
 
     protected function addMessage(string $message): void
     {

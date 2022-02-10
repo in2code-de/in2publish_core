@@ -46,20 +46,11 @@ use const PHP_EOL;
 
 class RemoteCommandResponse
 {
-    /**
-     * @var array
-     */
-    protected $output = [];
+    protected array $output = [];
 
-    /**
-     * @var array
-     */
-    protected $errors = [];
+    protected array $errors = [];
 
-    /**
-     * @var int
-     */
-    protected $exitStatus = 0;
+    protected int $exitStatus = 0;
 
     /**
      * RemoteCommandResponse constructor.
@@ -143,7 +134,7 @@ class RemoteCommandResponse
         }
         $sanitized = [];
         foreach ($response as $row => $string) {
-            $sanitized[(int)$row] = filter_var(
+            $sanitized[$row] = filter_var(
                 $string,
                 FILTER_SANITIZE_STRING,
                 FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_NO_ENCODE_QUOTES

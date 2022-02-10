@@ -40,9 +40,9 @@ use function sprintf;
 class RawRecordService implements SingletonInterface
 {
     /** @var array<string, Connection> */
-    protected $databases;
+    protected array $databases;
 
-    protected $cache = [];
+    protected array $cache = [];
 
     public function __construct(Connection $localDatabase, Connection $foreignDatabase)
     {

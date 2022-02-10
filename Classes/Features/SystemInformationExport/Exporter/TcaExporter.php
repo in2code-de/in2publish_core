@@ -33,8 +33,7 @@ use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 
 class TcaExporter implements SystemInformationExporter
 {
-    /** @var TcaProcessingService */
-    protected $tcaProcessingService;
+    protected TcaProcessingService $tcaProcessingService;
 
     public function __construct(TcaProcessingService $tcaProcessingService)
     {

@@ -34,8 +34,7 @@ use TYPO3\CMS\Core\Page\PageRenderer;
 
 class HeaderWarningColorRenderer
 {
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
     public function __construct(ConfigContainer $configContainer)
     {

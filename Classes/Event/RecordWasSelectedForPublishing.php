@@ -34,11 +34,9 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 
 final class RecordWasSelectedForPublishing
 {
-    /** @var RecordInterface */
-    private $record;
+    private RecordInterface $record;
 
-    /** @var RecordController */
-    private $recordController;
+    private RecordController $recordController;
 
     public function __construct(RecordInterface $record, RecordController $recordController)
     {

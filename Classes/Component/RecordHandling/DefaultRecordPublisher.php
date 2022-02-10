@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\Component\RecordHandling;
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
@@ -49,20 +48,17 @@ use function is_array;
 use function strpos;
 
 /**
- * DefaultRecordFinder - published a record recursively including all related records.
+ * DefaultRecordPublisher - published a record recursively including all related records.
  */
-class DefaultRecordPublisher extends CommonRepository implements RecordPublisher, LoggerAwareInterface
+class DefaultRecordPublisher implements RecordPublisher, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var EventDispatcher */
-    protected $eventDispatcher;
+    protected EventDispatcher $eventDispatcher;
 
-    /** @var Connection */
-    protected $foreignDatabase;
+    protected Connection $foreignDatabase;
 
-    /** @var TcaService */
-    protected $tcaService;
+    protected TcaService $tcaService;
 
     /** @var array */
     private $visitedRecords = [];
@@ -81,7 +77,6 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
      * @param RecordInterface $record
      * @param array $excludedTables
      *
-     * @return void
      * @throws Throwable
      */
     public function publishRecordRecursive(RecordInterface $record, array $excludedTables = ['pages']): void
@@ -100,13 +95,16 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
         }
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     protected function publishRecordRecursiveInternal(RecordInterface $record, array $excludedTables): void
     {
         $tableName = $record->getTableName();
 
         if (
             !empty($this->visitedRecords[$tableName])
-            && in_array($record->getIdentifier(), $this->visitedRecords[$tableName])
+            && in_array($record->getIdentifier(), $this->visitedRecords[$tableName], false)
         ) {
             return;
         }
@@ -173,7 +171,7 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
      * @param RecordInterface $record
      * @param array $excludedTables
      *
-     * @return void
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function publishRelatedRecordsRecursive(RecordInterface $record, array $excludedTables): void
     {
@@ -181,16 +179,19 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
             $this->publishRecordRecursiveInternal($translatedRecord, $excludedTables);
         }
 
+        $recordTable = $record->getTableName();
+        $languageField = $this->tcaService->getLanguageField($recordTable);
+        $pointerField = $this->tcaService->getTransOrigPointerField($recordTable);
+
         if (
-            $record->hasAdditionalProperty('isRoot')
+            !empty($languageField)
+            && !empty($pointerField)
             && $record->getAdditionalProperty('isRoot') === true
-            && !empty($languageField = $this->tcaService->getLanguageField($record->getTableName()))
+            && $record->getMergedProperty($pointerField) > 0
             && (
                 $record->getLocalProperty($languageField) > 0
                 || $record->getForeignProperty($languageField) > 0
             )
-            && !empty($pointerField = $this->tcaService->getTransOrigPointerField($record->getTableName()))
-            && $record->getMergedProperty($pointerField) > 0
         ) {
             $translationOriginals = $record->getRelatedRecordByTableAndProperty(
                 $record->getTableName(),
@@ -217,8 +218,6 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
      * foreign Database with all record properties
      *
      * @param RecordInterface $record
-     *
-     * @return void
      */
     protected function updateForeignRecord(RecordInterface $record): void
     {
@@ -233,8 +232,6 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
      * foreign database with all record properties
      *
      * @param RecordInterface $record
-     *
-     * @return void
      */
     protected function addForeignRecord(RecordInterface $record): void
     {
@@ -251,8 +248,6 @@ class DefaultRecordPublisher extends CommonRepository implements RecordPublisher
      * must be enabled in the Configuration
      *
      * @param RecordInterface $record
-     *
-     * @return void
      */
     protected function deleteForeignRecord(RecordInterface $record): void
     {

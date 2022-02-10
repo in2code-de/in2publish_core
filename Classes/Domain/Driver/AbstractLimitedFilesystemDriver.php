@@ -33,7 +33,7 @@ use BadMethodCallException;
 use TYPO3\CMS\Core\Resource\Driver\AbstractHierarchicalFilesystemDriver;
 
 /**
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD) Want to have a lot of issues? Implement DriverInterface. I don't even try at this point.
  */
 abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFilesystemDriver
 {
@@ -134,7 +134,6 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
      *
      * @param string $identifier
      *
-     * @return void
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -341,7 +340,6 @@ abstract class AbstractLimitedFilesystemDriver extends AbstractHierarchicalFiles
     /**
      * Never called
      *
-     * @return void
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */

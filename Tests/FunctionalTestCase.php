@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests;
 
+use RuntimeException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\DriverManager;
 use Exception;
@@ -31,6 +32,9 @@ use function getenv;
 use function in_array;
 use function putenv;
 
+/**
+ * @SuppressWarnings(PHPMD)
+ */
 abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functional\FunctionalTestCase
 {
     protected $testExtensionsToLoad = [
@@ -38,10 +42,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
         'typo3conf/ext/in2publish_core',
     ];
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
 
     /**
      * This internal variable tracks if the given test is the first test of
@@ -52,7 +53,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
      *
      * @var string
      */
-    private static $currestTestCaseClass;
+    private static ?string $currestTestCaseClass = null;
 
     /**
      * Set up creates a test instance and database.
@@ -60,7 +61,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
      * This method should be called with parent::setUp() in your test cases!
      *
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     protected function setUp(): void
     {
@@ -242,13 +243,10 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
         $GLOBALS['BE_USER'] = $backendUserAuthentication;
     }
 
-    /**
-     * @return ContainerInterface
-     */
     protected function getContainer(): ContainerInterface
     {
         if (!$this->container instanceof ContainerInterface) {
-            throw new \RuntimeException('Please invoke parent::setUp() before calling getContainer().', 1589221777);
+            throw new RuntimeException('Please invoke parent::setUp() before calling getContainer().', 1589221777);
         }
         return $this->container;
     }
@@ -303,7 +301,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
     public function initializeIn2publishConfig(array $config = [])
     {
         $testConfigProvider = new class implements ProviderInterface {
-            public $config = [];
+            public array $config = [];
 
             public function isAvailable(): bool
             {

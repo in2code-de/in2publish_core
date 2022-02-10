@@ -38,23 +38,18 @@ use In2code\In2publishCore\Utility\ArrayUtility;
  */
 abstract class AbstractTask
 {
-    /** @var int */
-    protected $uid;
+    protected int $uid;
 
-    /** @var array */
-    protected $configuration;
+    protected array $configuration;
 
-    /** @var DateTime|null */
-    protected $creationDate;
+    protected ?DateTime $creationDate = null;
 
-    /** @var DateTime|null */
-    protected $executionBegin;
+    protected ?DateTime $executionBegin = null;
 
-    /** @var DateTime|null */
-    protected $executionEnd;
+    protected ?DateTime $executionEnd = null;
 
     /** @var array<string> */
-    private $messages = [];
+    private array $messages = [];
 
     final public function __construct(array $configuration, int $uid = 0)
     {

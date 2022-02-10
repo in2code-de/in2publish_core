@@ -41,11 +41,9 @@ use function sprintf;
 
 class CaseSensitivityTest implements TestCaseInterface
 {
-    /** @var FlexFormService */
-    protected $flexFormService;
+    protected FlexFormService $flexFormService;
 
-    /** @var FalStorageTestSubjectsProvider */
-    protected $testSubjectProvider;
+    protected FalStorageTestSubjectsProvider $testSubjectProvider;
 
     public function __construct(
         FlexFormService $flexFormService,
@@ -70,7 +68,7 @@ class CaseSensitivityTest implements TestCaseInterface
             ) {
                 $affected[] = sprintf(
                     '[%d] %s (Local: %s; Foreign: %s)',
-                    $keys,
+                    $key,
                     $storages['local'][$key]['name'],
                     $local['caseSensitive'] ? 'true' : 'false',
                     $foreign['caseSensitive'] ? 'true' : 'false'

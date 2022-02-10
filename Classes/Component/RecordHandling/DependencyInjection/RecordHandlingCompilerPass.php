@@ -34,12 +34,12 @@ use In2code\In2publishCore\Component\RecordHandling\RecordHandlerRegistry;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+use function array_keys;
 use function interface_exists;
 
 class RecordHandlingCompilerPass implements CompilerPassInterface
 {
-    /** @var string */
-    private $tagName;
+    private string $tagName;
 
     public function __construct(string $tagName)
     {
@@ -53,7 +53,7 @@ class RecordHandlingCompilerPass implements CompilerPassInterface
             return;
         }
 
-        foreach ($container->findTaggedServiceIds($this->tagName) as $serviceName => $tags) {
+        foreach (array_keys($container->findTaggedServiceIds($this->tagName)) as $serviceName) {
             $definition = $container->findDefinition($serviceName);
             if (interface_exists($definition->getClass())) {
                 continue;

@@ -26,6 +26,9 @@ class DiffViewHelper extends AbstractViewHelper
         $this->registerArgument(self::ARG_NEW, 'string', 'The new string', true);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public static function renderStatic(
         array $arguments,
         Closure $renderChildrenClosure,

@@ -36,17 +36,17 @@ class InlineProcessor extends AbstractProcessor
     public const FOREIGN_TABLE_FIELD = 'foreign_table_field';
     public const SYMMETRIC_FIELD = 'symmetric_field';
 
-    protected $canHoldRelations = true;
+    protected bool $canHoldRelations = true;
 
-    protected $forbidden = [
+    protected array $forbidden = [
         'symmetric_field is set on the foreign side of relations, which must not be resolved' => self::SYMMETRIC_FIELD,
     ];
 
-    protected $required = [
+    protected array $required = [
         'Must be set, there is no type "inline" without a foreign table' => self::FOREIGN_TABLE,
     ];
 
-    protected $allowed = [
+    protected array $allowed = [
         self::FOREIGN_FIELD,
         self::FOREIGN_MATCH_FIELDS,
         self::FOREIGN_TABLE_FIELD,

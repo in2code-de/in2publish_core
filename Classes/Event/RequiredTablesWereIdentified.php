@@ -36,9 +36,9 @@ use function in_array;
 
 final class RequiredTablesWereIdentified
 {
-    private $tables;
+    private array $tables;
 
-    public function __construct($tables)
+    public function __construct(array $tables)
     {
         $this->setTables($tables);
     }
@@ -68,12 +68,12 @@ final class RequiredTablesWereIdentified
         }
     }
 
-    public function getTables()
+    public function getTables(): array
     {
         return $this->tables;
     }
 
-    public function setTables($tables): void
+    public function setTables(array $tables): void
     {
         $this->tables = array_values(array_filter(array_unique($tables)));
     }

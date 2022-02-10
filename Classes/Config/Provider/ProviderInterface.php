@@ -42,7 +42,7 @@ interface ProviderInterface extends SingletonInterface
     public function isAvailable(): bool;
 
     /**
-     * @return array The returned config must be context sensitive (local <-> foreign)
+     * @return array The returned config must be context-sensitive (local <-> foreign)
      */
     public function getConfig(): array;
 

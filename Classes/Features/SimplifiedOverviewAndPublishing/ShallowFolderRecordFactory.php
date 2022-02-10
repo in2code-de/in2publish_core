@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing;
 
+use In2code\In2publishCore\Component\FalHandling\Finder\Factory\FileIndexFactory;
 use In2code\In2publishCore\Domain\Driver\RemoteFileAbstractionLayerDriver;
-use In2code\In2publishCore\Domain\Factory\FileIndexFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Utility\StorageDriverExtractor;
 use LogicException;
@@ -13,19 +13,18 @@ use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class ShallowFolderRecordFactory
 {
-    /** @var ResourceFactory */
-    protected $resourceFactory;
+    protected ResourceFactory $resourceFactory;
 
-    /** @var DriverInterface */
-    protected $localDriver;
+    protected DriverInterface $localDriver;
 
-    /** @var RemoteFileAbstractionLayerDriver */
-    protected $foreignDriver;
+    protected RemoteFileAbstractionLayerDriver $foreignDriver;
 
-    /** @var FileIndexFactory */
-    protected $fileIndexFactory;
+    protected FileIndexFactory $fileIndexFactory;
 
     public function __construct(ResourceFactory $resourceFactory)
     {
@@ -68,7 +67,10 @@ class ShallowFolderRecordFactory
      * @noinspection DuplicatedCode
      * @noinspection MissingOrEmptyGroupStatementInspection
      * @noinspection PhpStatementHasEmptyBodyInspection
-     * @noinspection RedundantElseClauseInspection
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @psalm-suppress RedundantCondition Actually more readable with redundancy
      */
     protected function filterFileRecords(array $files): array
     {
@@ -107,23 +109,27 @@ class ShallowFolderRecordFactory
                 // CODE: [0] OLDB; The file exists only in the local database. Ignore the orphaned DB record.
                 unset($files[$index]);
                 continue;
-            } elseif (!$ldb && $lfs && !$ffs && !$fdb) {
+            }
+            if (!$ldb && $lfs && !$ffs && !$fdb) {
                 // CODE: [1] OLFS; Fixed earlier. See [4] OL
                 throw new LogicException(
                     'The FAL case OLFS is impossible due to prior record transformation',
                     1475178450
                 );
-            } elseif (!$ldb && !$lfs && $ffs && !$fdb) {
+            }
+            if (!$ldb && !$lfs && $ffs && !$fdb) {
                 // CODE: [2] OFFS; Fixed earlier. See [9] OF
                 throw new LogicException(
                     'The FAL case OFFS is impossible due to prior record transformation',
                     1475250513
                 );
-            } elseif (!$ldb && !$lfs && !$ffs && $fdb) {
+            }
+            if (!$ldb && !$lfs && !$ffs && $fdb) {
                 // CODE: [3] OFDB; The file exists only in the foreign database. Ignore the orphaned DB record.
                 unset($files[$index]);
                 continue;
-            } elseif ($ldb && $lfs && !$ffs && !$fdb) {
+            }
+            if ($ldb && $lfs && !$ffs && !$fdb) {
                 // CODE: [4] OL; Nothing to do here. The record exists only on local and will be displayed correctly.
             } elseif ($ldb && !$lfs && $ffs && !$fdb) {
                 // CODE: [5] LDFF; Foreign disk file got indexed, local database record is ignored. See [9] OF.

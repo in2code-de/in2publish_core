@@ -4,14 +4,10 @@
 >
 	<f:layout name="Default"/>
 
-	<f:section name="HeaderNavigationRight">
-		<f:comment>Disable default pagePath and pageInfo.</f:comment>
-	</f:section>
-
 	<f:section name="Main">
 		<f:render partial="Redirect/Filter" arguments="{_all}" />
 
-		<f:be.widget.paginate objects="{redirects}" as="paginatedRedirects" configuration="{ itemsPerPage: 20, insertAbove: 1, insertBelow: 1, recordsLabel: 'Redirects'}">
+		<f:render partial="Pagination" arguments="{paginator: paginator, pagination: pagination, insertAbove: 1, insertBelow: 1}" contentAs="content">
 			<f:form action="publish">
 				<table class="table">
 					<thead>
@@ -25,7 +21,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<f:for each="{paginatedRedirects}" as="redirect">
+						<f:for each="{paginator.paginatedItems}" as="redirect">
 							<tr>
 								<td>{redirect.uid}</td>
 								<td>{redirect.sourceHost}</td>
@@ -98,7 +94,7 @@
 					</f:if>
 				</table>
 			</f:form>
-		</f:be.widget.paginate>
+		</f:render>
 		<div class="row">
 			<div class="col-md-6">
 				<f:translate key="redirect.legend.status"/>

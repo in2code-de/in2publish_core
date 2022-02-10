@@ -57,20 +57,15 @@ class PublishCommand extends Command implements LoggerAwareInterface
     public const EXIT_REMOTE_BACKUP_FAILED = 221;
     public const IDENTIFIER = 'in2publish_core:table:publish';
 
-    /** @var Connection */
-    protected $localDatabase;
+    protected Connection $localDatabase;
 
-    /** @var Connection */
-    private $foreignDatabase;
+    private Connection $foreignDatabase;
 
-    /** @var ContextService */
-    private $contextService;
+    private ContextService $contextService;
 
-    /** @var DatabaseSchemaService */
-    private $databaseSchemaService;
+    private DatabaseSchemaService $databaseSchemaService;
 
-    /** @var RemoteCommandDispatcher */
-    private $remoteCommandDispatcher;
+    private RemoteCommandDispatcher $remoteCommandDispatcher;
 
     public function __construct(
         Connection $localDatabase,

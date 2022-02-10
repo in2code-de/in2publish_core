@@ -39,8 +39,7 @@ class ConnectionUnavailableException extends In2publishCoreException
     protected const MESSAGE = 'The connection for side "%s" is not available.';
     public const CODE = 1631623822;
 
-    /** @var string */
-    private $side;
+    private string $side;
 
     public function __construct(string $side, Throwable $previous = null)
     {

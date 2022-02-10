@@ -1,37 +1,54 @@
-{namespace publish=In2code\In2publishCore\ViewHelpers}
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
+	  data-namespace-typo3-fluid="true"
+>
+	<f:if condition="{record}">
+		<tr class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.state}"
+			data-type="folder"
+			data-id="{record.identifier}"
+			data-name="{publish:record.getMergedProperty(record:record, propertyName: 'name')}"
+			data-searchable="{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'local', fallbackProperty: 'identifier')}|{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'foreign', fallbackProperty: 'identifier')}">
+			<f:comment>Left</f:comment>
+			<td class="col-icon">
+				<core:icon identifier="files-folder" />
+			</td>
+			<td class="col-filename col-filename--local col-responsive nowrap" colspan="2">
+				<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
+				<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" fallbackProperty="identifier" />
+			</td>
+			<td class="col-control col-publish">
+				<f:if condition="{record.changed}">
+					<f:link.action
+						class="js-publish-trigger js-publish-overlay btn btn-default"
+						action="publishFolder"
+						arguments="{identifier:record.identifier}"
+						data="{type: 'folder', name: '{publish:record.getMergedProperty(record: record, propertyName: \'identifier\')}'}"
+					>
+						<f:translate key="publish"/>
+						<core:icon identifier="actions-arrow-right" />
+					</f:link.action>
+				</f:if>
+			</td>
 
-<f:if condition="{record}">
-	<div class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.state} in2publish-clearfix">
+			<f:comment>Right</f:comment>
+			<td class="col-icon">
+				<core:icon identifier="files-folder" />
+			</td>
+			<td class="col-filename col-filename--foreign col-responsive nowrap" colspan="2">
+				<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" fallbackProperty="identifier" />
+			</td>
 
-		<f:comment>Left</f:comment>
-		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--left">
-			<i class="in2publish-icon-folder"></i>
-			<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
-			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" fallbackProperty="identifier" />
-			<f:if condition="{record.changed}">
-				<f:link.action
-					action="publishFolder"
-					arguments="{identifier:record.identifier}"
-					additionalAttributes="{data-in2publish-overlay: 'TRUE', data-in2publish-confirm: '{f:translate(key:\'confirm_publish_pages\', default:\'Are you sure?\')}'}">
-					<i class="in2publish-icon-publish"></i>
-				</f:link.action>
-			</f:if>
-		</div>
+			<td class="col-state">
+				<i class="in2publish-state-icon in2publish-state--{record.state} in2publish-icon-circle ms-2"></i>
+				<f:translate key="record.state.{record.state}.short"/>
+			</td>
+		</tr>
 
-		<f:comment>Right</f:comment>
-		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--right">
-			<i class="in2publish-icon-folder"></i>
-			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="foreign" fallbackProperty="identifier" />
-		</div>
-	</div>
-
-	<f:if condition="{record.relatedRecords}">
-		<ul class="in2publish-unstyledlist in2publish-list-level in2publish-list-level--{record.additionalProperties.depth}">
+		<f:if condition="{record.relatedRecords}">
 			<f:for each="{record.relatedRecords.physical_folder}" as="folderRecord">
-				<li>
-					<f:render partial="File/Index/FolderList" arguments="{record:folderRecord, config:config}" />
-				</li>
+				<f:render partial="File/Index/FolderList" arguments="{record:folderRecord, config:config}" />
 			</f:for>
-		</ul>
+		</f:if>
 	</f:if>
-</f:if>
+</html>

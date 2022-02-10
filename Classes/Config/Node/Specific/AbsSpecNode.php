@@ -38,7 +38,7 @@ use function array_key_exists;
 
 abstract class AbsSpecNode extends AbstractNode
 {
-    protected static $types = [
+    protected static array $types = [
         Node::T_STRING => SpecString::class,
         Node::T_OPTIONAL_STRING => SpecOptionalString::class,
         Node::T_INTEGER => SpecInteger::class,
@@ -50,9 +50,9 @@ abstract class AbsSpecNode extends AbstractNode
     /**
      * @param string $type
      * @param string $name
-     * @param string|int|bool|array $default
+     * @param string|int|bool|array|null $default
      * @param array $validators
-     * @param NodeCollection|null $nodes
+     * @param NodeCollection $nodes
      *
      * @return SpecString|SpecOptionalString|SpecInteger|SpecArray|SpecStrictArray|SpecBoolean
      */

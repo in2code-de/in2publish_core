@@ -28,14 +28,17 @@ namespace In2code\In2publishCore\Utility;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use Doctrine\DBAL\Driver\Exception;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use InvalidArgumentException;
 use LogicException;
+use PDO;
 use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -57,16 +60,17 @@ use function time;
 
 use const PHP_EOL;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) Ignore for now. Refactoring will fix this.
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) Ignore for now. Refactoring will fix this.
+ */
 class DatabaseUtility
 {
-    /** @var Logger */
-    protected static $logger;
+    protected static ?Logger $logger = null;
 
-    /** @var Connection */
-    protected static $foreignConnection;
+    protected static ?Connection $foreignConnection = null;
 
     /**
-     * @return Connection|null
      * @throws Throwable
      */
     public static function buildForeignDatabaseConnection(): ?Connection
@@ -90,6 +94,7 @@ class DatabaseUtility
                     throw $exception;
                 }
 
+                /** @noinspection PhpInternalEntityUsedInspection */
                 if (!in_array('in2publish_foreign', $connectionPool->getConnectionNames(), true)) {
                     $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['in2publish_foreign'] = [
                         'dbname' => $configuration['name'],
@@ -140,7 +145,7 @@ class DatabaseUtility
     /**
      * @param string $side
      *
-     * @return null|Connection
+     * @return Connection|null
      * @throws Throwable
      */
     public static function buildDatabaseConnectionForSide(string $side): ?Connection
@@ -172,6 +177,7 @@ class DatabaseUtility
 
     /**
      * @throws Throwable
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected static function createBackup(Connection $connection, string $tableName, string $backupFolder): void
     {
@@ -181,6 +187,7 @@ class DatabaseUtility
         $addDropTable = $publishTableSettings['addDropTable'];
         $zipBackup = $publishTableSettings['zipBackup'];
 
+        /** @noinspection PhpInternalEntityUsedInspection */
         static::$logger->notice(
             'Creating a backup for "' . $tableName . '"',
             [
@@ -345,5 +352,86 @@ class DatabaseUtility
     protected static function insertRow(Connection $connection, string $tableName, array $row): int
     {
         return $connection->insert($tableName, $row);
+    }
+
+    /**
+     * Copied from deprecated QueryGenerator
+     * see: Deprecation-92080-DeprecatedQueryGeneratorAndQueryView.html
+     *
+     * Recursively fetch all descendants of a given page
+     *
+     * @param int $id uid of the page
+     * @param int $depth
+     * @param int $begin
+     * @param string $permClause
+     *
+     * @return string comma separated list of descendant pages
+     *
+     * @throws Exception
+     *
+     * @noinspection PhpMissingParamTypeInspection
+     * @SuppressWarnings(PHPMD)
+     * @noinspection PhpMissingParamTypeInspection
+     * @noinspection CallableParameterUseCaseInTypeContextInspection
+     */
+    public static function getTreeList($id, $depth, $begin = 0, $permClause = ''): string
+    {
+        $depth = (int)$depth;
+        $begin = (int)$begin;
+        $id = (int)$id;
+        if ($id < 0) {
+            $id = abs($id);
+        }
+        if ($begin === 0) {
+            $theList = $id;
+        } else {
+            $theList = '';
+        }
+        if ($id && $depth > 0) {
+            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
+            $queryBuilder->getRestrictions()->removeAll()->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+            $queryBuilder
+                ->select('uid')
+                ->from('pages')
+                ->where(
+                    $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($id, PDO::PARAM_INT)),
+                    $queryBuilder->expr()->eq('sys_language_uid', 0)
+                )
+                ->orderBy('uid');
+            if ($permClause !== '') {
+                $queryBuilder->andWhere(self::stripLogicalOperatorPrefix($permClause));
+            }
+            $statement = $queryBuilder->execute();
+            while ($row = $statement->fetchAssociative()) {
+                if ($begin <= 0) {
+                    $theList .= ',' . $row['uid'];
+                }
+                if ($depth > 1) {
+                    $theSubList = self::getTreeList($row['uid'], $depth - 1, $begin - 1, $permClause);
+                    if (!empty($theList) && !empty($theSubList) && ($theSubList[0] !== ',')) {
+                        $theList .= ',';
+                    }
+                    $theList .= $theSubList;
+                }
+            }
+        }
+        return (string)$theList;
+    }
+
+    /**
+     * Copied from deprecated QueryHelper
+     * see: Deprecation-92080-DeprecatedQueryGeneratorAndQueryView.html
+     *
+     * Removes the prefixes AND/OR from the input string.
+     *
+     * This function should be used when you can't guarantee that the string
+     * that you want to use as a WHERE fragment is not prefixed.
+     *
+     * @param string $constraint The where part fragment with a possible leading "AND" or "OR" operator
+     * @return string The modified where part without leading operator
+     */
+    public static function stripLogicalOperatorPrefix(string $constraint): string
+    {
+        return preg_replace('/^(?:(AND|OR)[[:space:]]*)+/i', '', trim($constraint)) ?: '';
     }
 }

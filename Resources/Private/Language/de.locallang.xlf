@@ -17,7 +17,7 @@
 				<target state="translated">Übersicht Seiten und Datensätze veröffentlichen</target>
 			</trans-unit>
 			<trans-unit id="module_m3_title">
-				<source>publish files</source>
+				<source>Publish files</source>
 				<target state="translated">Dateien veröffentlichen</target>
 			</trans-unit>
 			<trans-unit id="module_m4_title">
@@ -88,6 +88,10 @@
 			<trans-unit id="confirm_publish_pages">
 				<source>Do you really want to publish this page?</source>
 				<target state="translated">Möchten Sie diese Seite wirklich veröffentlichen?</target>
+			</trans-unit>
+			<trans-unit id="publish">
+				<source>Publish</source>
+				<target>Publizieren</target>
 			</trans-unit>
 			<trans-unit id="publish_pages">
 				<source>Publish this page</source>
@@ -260,6 +264,21 @@
 				<target state="translated">Hochladen!</target>
 			</trans-unit>
 
+			<trans-unit id="record.filter">
+				<source>Filter by:</source>
+				<target>Filtern nach:</target>
+			</trans-unit>
+
+			<trans-unit id="record.filename">
+				<source>Filename</source>
+				<target>Dateiname</target>
+			</trans-unit>
+
+			<trans-unit id="record.state">
+				<source>Status</source>
+				<target>Status</target>
+			</trans-unit>
+
 			<trans-unit id="record.state.unchanged">
 				<source>Record unchanged</source>
 				<target state="translated">Unverändert</target>
@@ -279,6 +298,32 @@
 			<trans-unit id="record.state.moved">
 				<source>Record moved</source>
 				<target state="translated">Datensatz verschoben</target>
+			</trans-unit>
+
+
+			<trans-unit id="record.state.unchanged.short">
+				<source>Unchanged</source>
+				<target state="translated">Unverändert</target>
+			</trans-unit>
+			<trans-unit id="record.state.changed.short">
+				<source>Changed</source>
+				<target state="translated">Verändert</target>
+			</trans-unit>
+			<trans-unit id="record.state.added.short">
+				<source>New</source>
+				<target state="translated">Neu</target>
+			</trans-unit>
+			<trans-unit id="record.state.deleted.short">
+				<source>Deleted</source>
+				<target state="translated">Gelöscht</target>
+			</trans-unit>
+			<trans-unit id="record.state.moved.short">
+				<source>Moved</source>
+				<target state="translated">Verschoben</target>
+			</trans-unit>
+			<trans-unit id="record.state.moved-and-changed.short">
+				<source>Moved/Changed</source>
+				<target state="translated">Verschoben/Verändert</target>
 			</trans-unit>
 
 			<trans-unit id="module.m4.configuration">
@@ -719,6 +764,11 @@
 			<trans-unit id="compare_database.transfer.updated_on_foreign">
 				<source>The record %s[%d] was updated on foreign.</source>
 				<target state="translated">Der Datensatz %s[%d] wurde auf Foreign aktualisiert.</target>
+			</trans-unit>
+
+			<trans-unit id="module_m3_index_content">
+				<source>Admin tools</source>
+				<target state="translated">Administrationswerkzeuge</target>
 			</trans-unit>
 		</body>
 	</file>

@@ -47,14 +47,11 @@ class FilePublisherService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var RemoteFileAbstractionLayerDriver */
-    protected $remoteFalDriver;
+    protected RemoteFileAbstractionLayerDriver $remoteFalDriver;
 
-    /** @var ResourceFactory */
-    protected $resourceFactory;
+    protected ResourceFactory $resourceFactory;
 
-    /** @var AssetTransmitter */
-    protected $assetTransmitter;
+    protected AssetTransmitter $assetTransmitter;
 
     public function __construct(
         RemoteFileAbstractionLayerDriver $remoteFalDriver,
@@ -148,7 +145,6 @@ class FilePublisherService implements LoggerAwareInterface
     protected function getLocalReadableFilePathForIdentifier(int $storage, string $fileIdentifier): string
     {
         $resourceStorage = $this->resourceFactory->getStorageObject($storage);
-        $file = $resourceStorage->getFile($fileIdentifier);
-        return $file->getForLocalProcessing(false);
+        return $resourceStorage->getFile($fileIdentifier)->getForLocalProcessing(false);
     }
 }

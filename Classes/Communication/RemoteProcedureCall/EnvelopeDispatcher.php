@@ -29,8 +29,8 @@ namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\FalHandling\Finder\Factory\FileIndexFactory;
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
-use In2code\In2publishCore\Domain\Factory\FileIndexFactory;
 use In2code\In2publishCore\Utility\FileUtility;
 use In2code\In2publishCore\Utility\FolderUtility;
 use ReflectionProperty;
@@ -44,15 +44,16 @@ use TYPO3\CMS\Core\Utility\PathUtility;
 
 use function array_map;
 use function basename;
-use function call_user_func;
 use function call_user_func_array;
 use function dirname;
 use function get_class;
-use function is_array;
-use function is_callable;
 use function method_exists;
 use function strtolower;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) Should refactor this into well-structured component.
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class EnvelopeDispatcher
 {
     /*
@@ -89,15 +90,12 @@ class EnvelopeDispatcher
     public const CMD_GET_SET_DB_INIT = 'getSetDbInit';
 
     /**
-     * Limits the amount of files in a folder for pre fetching. If there are more than $prefetchLimit files in
+     * Limits the amount of files in a folder for pre-fetching. If there are more than $prefetchLimit files in
      * the selected folder they will not be processed when not requested explicitly.
-     *
-     * @var int
      */
-    protected $prefetchLimit = 51;
+    protected int $prefetchLimit = 51;
 
-    /** @var ResourceFactory */
-    private $resourceFactory;
+    private ResourceFactory $resourceFactory;
 
     public function __construct(ResourceFactory $resourceFactory)
     {
@@ -108,7 +106,9 @@ class EnvelopeDispatcher
     {
         $command = $envelope->getCommand();
         if (method_exists($this, $command)) {
-            $envelope->setResponse(call_user_func([$this, $command], $envelope->getRequest()));
+            $request = $envelope->getRequest();
+            $response = $this->$command($request);
+            $envelope->setResponse($response);
             return true;
         }
 
@@ -124,10 +124,7 @@ class EnvelopeDispatcher
         if ($driver->folderExists($folderIdentifier)) {
             $files = [];
 
-            if (
-                is_callable([$driver, 'countFilesInFolder'])
-                && $driver->countFilesInFolder($folderIdentifier) < $this->prefetchLimit
-            ) {
+            if ($driver->countFilesInFolder($folderIdentifier) < $this->prefetchLimit) {
                 $fileIdentifiers = $this->convertIdentifiers($driver, $driver->getFilesInFolder($folderIdentifier));
 
                 foreach ($fileIdentifiers as $fileIdentifier) {
@@ -176,22 +173,17 @@ class EnvelopeDispatcher
         $fileIdentifier = $request['fileIdentifier'];
         $directory = PathUtility::dirname($fileIdentifier);
         if ($driver->folderExists($directory)) {
-            if (
-                is_callable([$driver, 'countFilesInFolder'])
-                && $driver->countFilesInFolder($directory) < $this->prefetchLimit
-            ) {
+            if ($driver->countFilesInFolder($directory) < $this->prefetchLimit) {
                 $files = $this->convertIdentifiers(
                     $driver,
-                    call_user_func([$driver, 'getFilesInFolder'], $directory)
+                    $driver->getFilesInFolder($directory)
                 );
-                if (is_array($files)) {
-                    foreach ($files as $file) {
-                        $fileObject = $this->getFileObject($driver, $file, $storage);
-                        $files[$file] = [];
-                        $files[$file]['hash'] = $driver->hash($file, 'sha1');
-                        $files[$file]['info'] = $driver->getFileInfoByIdentifier($file);
-                        $files[$file]['publicUrl'] = $storage->getPublicUrl($fileObject);
-                    }
+                foreach ($files as $file) {
+                    $fileObject = $this->getFileObject($driver, $file, $storage);
+                    $files[$file] = [];
+                    $files[$file]['hash'] = $driver->hash($file, 'sha1');
+                    $files[$file]['info'] = $driver->getFileInfoByIdentifier($file);
+                    $files[$file]['publicUrl'] = $storage->getPublicUrl($fileObject);
                 }
             } else {
                 $fileObject = $this->getFileObject($driver, $fileIdentifier, $storage);
@@ -228,11 +220,12 @@ class EnvelopeDispatcher
             ];
             try {
                 $response[$fileIdentifier]['exists'] = $driver->fileExists($fileIdentifier);
-                if ($response[$fileIdentifier]) {
+                if ($response[$fileIdentifier]['exists']) {
                     $response[$fileIdentifier]['fifo'] = $driver->getFileInfoByIdentifier($fileIdentifier);
                     $response[$fileIdentifier]['hash'] = $driver->hash($fileIdentifier, 'sha1');
                 }
             } catch (Throwable $exception) {
+                // Ignore exception. Should revisit.
             }
         }
 
@@ -387,15 +380,6 @@ class EnvelopeDispatcher
         return $driverReflection->getValue($storage);
     }
 
-    /**
-     * @param DriverInterface $driver
-     * @param string $identifier
-     * @param ResourceStorage $storage
-     *
-     * @return File|null
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
     protected function getFileObject(DriverInterface $driver, string $identifier, ResourceStorage $storage): ?File
     {
         $fileIndexFactory = GeneralUtility::makeInstance(FileIndexFactory::class, $driver, $driver);
@@ -446,7 +430,6 @@ class EnvelopeDispatcher
         ];
     }
 
-    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function getStorageGetFoldersInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -454,7 +437,6 @@ class EnvelopeDispatcher
         return FolderUtility::extractFoldersInformation($folders);
     }
 
-    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function getStorageGetFilesInFolder(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -462,7 +444,6 @@ class EnvelopeDispatcher
         return FileUtility::extractFilesInformation($files);
     }
 
-    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function getStorageGetFile(array $request): array
     {
         $storage = $this->getStorage($request);
@@ -492,7 +473,6 @@ class EnvelopeDispatcher
         return $response;
     }
 
-    /** @SuppressWarnings(PHPMD.Superglobals) */
     public function getSetDbInit(): string
     {
         if (!empty($GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'])) {

@@ -32,10 +32,10 @@ namespace In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Servic
 class RecordCollection
 {
     /** @var int[] */
-    protected $pages = [];
+    protected array $pages = [];
 
     /** @var array<string, int[]> */
-    protected $records = [];
+    protected array $records = [];
 
     public function addRecord(string $table, int $uid): void
     {

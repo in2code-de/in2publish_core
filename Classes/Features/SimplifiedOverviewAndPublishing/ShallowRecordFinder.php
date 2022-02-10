@@ -33,7 +33,6 @@ use Closure;
 use In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder;
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
@@ -55,27 +54,23 @@ use function count;
 use function implode;
 use function reset;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class ShallowRecordFinder implements RecordFinder
 {
     public const PAGE_TABLE_NAME = 'pages';
 
-    /** @var TcaService */
-    protected $tcaService;
+    protected TcaService $tcaService;
 
-    /** @var EventDispatcher */
-    protected $eventDispatcher;
+    protected EventDispatcher $eventDispatcher;
 
-    /** @var RecordFactory Only used for events which require an instance of this class */
-    protected $recordFactory;
+    protected TcaProcessingService $tcaProcessingService;
 
-    /** @var TcaProcessingService */
-    protected $tcaProcessingService;
+    protected ShallowFolderRecordFactory $shallowFolderRecordFactory;
 
-    /** @var ShallowFolderRecordFactory */
-    protected $shallowFolderRecordFactory;
-
-    /** @var DualDatabaseRepository */
-    protected $dualDatabaseRepository;
+    protected DualDatabaseRepository $dualDatabaseRepository;
 
     /** @var array */
     protected $config;
@@ -83,7 +78,6 @@ class ShallowRecordFinder implements RecordFinder
     public function __construct(
         TcaService $tcaService,
         EventDispatcher $eventDispatcher,
-        RecordFactory $recordFactory,
         TcaProcessingService $tcaProcessingService,
         ShallowFolderRecordFactory $shallowFolderRecordFactory,
         DualDatabaseRepository $dualDatabaseRepository,
@@ -91,21 +85,22 @@ class ShallowRecordFinder implements RecordFinder
     ) {
         $this->tcaService = $tcaService;
         $this->eventDispatcher = $eventDispatcher;
-        $this->recordFactory = $recordFactory;
         $this->tcaProcessingService = $tcaProcessingService;
         $this->shallowFolderRecordFactory = $shallowFolderRecordFactory;
         $this->dualDatabaseRepository = $dualDatabaseRepository;
         $this->config = $configContainer->get();
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     */
     public function findRecordByUidForOverview(int $uid, string $table, bool $excludePages = false): ?RecordInterface
     {
         if (self::PAGE_TABLE_NAME === $table) {
             return $this->findPageRecord($uid, $excludePages);
         }
         // Fallback
-        return GeneralUtility
-            ::makeInstance(DefaultRecordFinder::class)
+        return GeneralUtility::makeInstance(DefaultRecordFinder::class)
             ->findRecordByUidForOverview($uid, $table, $excludePages);
     }
 
@@ -114,11 +109,13 @@ class ShallowRecordFinder implements RecordFinder
         return $this->findRecordByUidForOverview($uid, $table, true);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     */
     public function findRecordsByProperties(array $properties, string $table, bool $simulateRoot = false): array
     {
         // Fallback
-        return GeneralUtility
-            ::makeInstance(DefaultRecordFinder::class)
+        return GeneralUtility::makeInstance(DefaultRecordFinder::class)
             ->findRecordsByProperties($properties, $table, $simulateRoot);
     }
 
@@ -166,13 +163,17 @@ class ShallowRecordFinder implements RecordFinder
             $this->eventDispatcher->dispatch($event);
             // The event may replace the record instance
             $pageRecords[$pid] = $record = $event->getRecord();
-            $this->eventDispatcher->dispatch(new AllRelatedRecordsWereAddedToOneRecord($this->recordFactory, $record));
+            $this->eventDispatcher->dispatch(new AllRelatedRecordsWereAddedToOneRecord($record));
         }
 
-        $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($this->recordFactory, $rootRecord));
+        $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($rootRecord));
         return $rootRecord;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     protected function resolveImages(array $pageRecords): void
     {
         $referenceRecords = [];
@@ -187,7 +188,7 @@ class ShallowRecordFinder implements RecordFinder
             return;
         }
 
-        /** @var array<int, array<RecordInterface> $fileToReferenceMap */
+        /** @var array<int, array<RecordInterface>> $fileToReferenceMap */
         $fileToReferenceMap = [];
         foreach ($referenceRecords as $referenceRecord) {
             $uid = $referenceRecord->getLocalProperty('uid_local') ?: $referenceRecord->getForeignProperty('uid_local');
@@ -367,6 +368,8 @@ class ShallowRecordFinder implements RecordFinder
      *
      * @return array|null
      * @noinspection PhpUnusedParameterInspection
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function buildDemand(RecordInterface $record, string $column, array $columnConfig): ?array
     {
@@ -474,7 +477,7 @@ class ShallowRecordFinder implements RecordFinder
 
         $setParentRecord($record);
 
-        $this->eventDispatcher->dispatch(new RecordInstanceWasInstantiated($this->recordFactory, $record));
+        $this->eventDispatcher->dispatch(new RecordInstanceWasInstantiated($record));
     }
 
     protected function isIgnoredRecord(string $table, array $rowSet): bool

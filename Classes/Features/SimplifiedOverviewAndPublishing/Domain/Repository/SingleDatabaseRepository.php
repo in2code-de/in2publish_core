@@ -12,8 +12,7 @@ use function json_encode;
 
 class SingleDatabaseRepository
 {
-    /** @var Connection */
-    private $connection;
+    private Connection $connection;
 
     public function __construct(Connection $connection)
     {
@@ -78,7 +77,7 @@ class SingleDatabaseRepository
             if (isset($row['fieldname'])) {
                 $parts['fieldname'] = $row['fieldname'];
             }
-            return json_encode($parts);
+            return json_encode($parts, JSON_THROW_ON_ERROR);
         }
         return (string)$row['uid'];
     }

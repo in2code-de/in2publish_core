@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Features\FileEdgeCacheInvalidator\Domain\Servic
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\Result;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
@@ -40,8 +40,7 @@ use function in_array;
 
 class FileEdgeCacheInvalidationService
 {
-    /** @var null|Connection */
-    protected $connection;
+    protected ?Connection $connection;
 
     public function __construct()
     {
@@ -76,9 +75,10 @@ class FileEdgeCacheInvalidationService
 
     /**
      * @param int[] $uidList
-     * @return ResultStatement
+     * @psalm-suppress InvalidReturnStatement
+     * @psalm-suppress InvalidReturnType
      */
-    protected function selectSysRefIndexRecords(array $uidList): ResultStatement
+    protected function selectSysRefIndexRecords(array $uidList): Result
     {
         $query = $this->connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
@@ -93,9 +93,10 @@ class FileEdgeCacheInvalidationService
 
     /**
      * @param int[] $uidList
-     * @return ResultStatement
+     * @psalm-suppress InvalidReturnStatement
+     * @psalm-suppress InvalidReturnType
      */
-    protected function selectSysFileReferenceRecords(array $uidList): ResultStatement
+    protected function selectSysFileReferenceRecords(array $uidList): Result
     {
         $query = $this->connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
@@ -110,7 +111,7 @@ class FileEdgeCacheInvalidationService
         return $query->execute();
     }
 
-    protected function addResultsToCollection(ResultStatement $statement, RecordCollection $recordCollection): void
+    protected function addResultsToCollection(Result $statement, RecordCollection $recordCollection): void
     {
         while ($row = $statement->fetchAssociative()) {
             $table = $row['table'];
@@ -125,7 +126,10 @@ class FileEdgeCacheInvalidationService
         $tableNames = $schemaManager->listTableNames();
 
         foreach ($recordCollection->getRecords() as $table => $recordUidList) {
-            if (!in_array($table, $tableNames) || !array_key_exists('pid', $schemaManager->listTableColumns($table))) {
+            if (
+                !in_array($table, $tableNames, true)
+                || !array_key_exists('pid', $schemaManager->listTableColumns($table))
+            ) {
                 continue;
             }
             $query = $this->connection->createQueryBuilder();

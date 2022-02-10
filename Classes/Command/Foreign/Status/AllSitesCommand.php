@@ -41,8 +41,7 @@ class AllSitesCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:allsites';
 
-    /** @var SiteFinder */
-    protected $siteFinder;
+    protected SiteFinder $siteFinder;
 
     public function __construct(SiteFinder $siteFinder, string $name = null)
     {
@@ -50,6 +49,9 @@ class AllSitesCommand extends Command
         $this->siteFinder = $siteFinder;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $sites = $this->siteFinder->getAllSites(false);

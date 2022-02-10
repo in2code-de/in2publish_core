@@ -46,14 +46,11 @@ class RemoteStorage implements ResourceStorageInterface
     public const FILES_KEY = 'files';
     public const HAS_FOLDER_KEY = 'hasFolder';
 
-    /** @var Letterbox */
-    protected $letterbox;
+    protected Letterbox $letterbox;
 
-    /** @var RemoteCommandDispatcher */
-    protected $remoteCommandDispatcher;
+    protected RemoteCommandDispatcher $remoteCommandDispatcher;
 
-    /** @var array */
-    protected static $cache = [];
+    protected static array $cache = [];
 
     public function __construct(Letterbox $letterbox, RemoteCommandDispatcher $remoteCommandDispatcher)
     {
@@ -61,7 +58,7 @@ class RemoteStorage implements ResourceStorageInterface
         $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 
-    public function hasFolder(int $storage, string $identifier): bool
+    public function hasFolder(string $storage, string $identifier): bool
     {
         if (!isset(static::$cache[$storage][$identifier][static::HAS_FOLDER_KEY])) {
             $result = $this->executeEnvelope(
@@ -139,8 +136,6 @@ class RemoteStorage implements ResourceStorageInterface
      * @return mixed
      *
      * @throws Throwable
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function executeEnvelope(string $command, array $arguments = [])
     {

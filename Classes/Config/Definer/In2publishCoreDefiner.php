@@ -29,6 +29,10 @@ namespace In2code\In2publishCore\Config\Definer;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\FalHandling\FalFinder;
+use In2code\In2publishCore\Component\FalHandling\FalPublisher;
+use In2code\In2publishCore\Component\FalHandling\Finder\DefaultFalFinder;
+use In2code\In2publishCore\Component\FalHandling\Publisher\DefaultFalPublisher;
 use In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder;
 use In2code\In2publishCore\Component\RecordHandling\DefaultRecordPublisher;
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
@@ -42,12 +46,14 @@ use In2code\In2publishCore\Config\Validator\IntegerInRangeValidator;
 use In2code\In2publishCore\Config\Validator\IPv4PortValidator;
 use In2code\In2publishCore\Config\Validator\IterativeTcaProcessorValidator;
 use In2code\In2publishCore\Config\Validator\ZipExtensionInstalledValidator;
+use In2code\In2publishCore\Domain\Service\Processor\CategoryProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\CheckProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\FlexProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\GroupProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\ImageManipulationProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\InlineProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\InputProcessor;
+use In2code\In2publishCore\Domain\Service\Processor\LanguageProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\NoneProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\PassthroughProcessor;
 use In2code\In2publishCore\Domain\Service\Processor\RadioProcessor;
@@ -61,7 +67,7 @@ use In2code\In2publishCore\Domain\Service\Processor\UserProcessor;
  */
 class In2publishCoreDefiner implements DefinerInterface
 {
-    protected $defaultIgnoredFields = [
+    protected array $defaultIgnoredFields = [
         'pages' => [
             'pid',
             'uid',
@@ -119,19 +125,21 @@ class In2publishCoreDefiner implements DefinerInterface
         ],
     ];
 
-    protected $defaultIgnoredTables = [
+    protected array $defaultIgnoredTables = [
         'be_groups',
         'be_users',
         'sys_history',
         'sys_log',
         'tx_extensionmanager_domain_model_extension',
-        'tx_extensionmanager_domain_model_repository',
         'cache_treelist',
         'tx_in2publishcore_log',
         'tx_in2code_in2publish_task',
         'tx_in2code_in2publish_envelope',
     ];
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function getLocalDefinition(): NodeCollection
     {
         return Builder::start()
@@ -194,6 +202,8 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addArray(
                                      'fal',
                                      Builder::start()
+                                            ->addString('finder', DefaultFalFinder::class, [ClassImplementsValidator::class => [FalFinder::class]])
+                                            ->addString('publisher', DefaultFalPublisher::class, [ClassImplementsValidator::class => [FalPublisher::class]])
                                             ->addBoolean('reserveSysFileUids', false)
                                             ->addBoolean('reclaimSysFileEntries', false)
                                             ->addBoolean('autoRepairFolderHash', false)
@@ -278,7 +288,9 @@ class In2publishCoreDefiner implements DefinerInterface
                                             ->addString('text', TextProcessor::class)
                                             ->addString('user', UserProcessor::class)
                                             ->addString('imageManipulation', ImageManipulationProcessor::class)
-                                            ->addString('slug', SlugProcessor::class),
+                                            ->addString('slug', SlugProcessor::class)
+                                            ->addString('category', CategoryProcessor::class)
+                                            ->addString('language', LanguageProcessor::class),
                                      null,
                                      [IterativeTcaProcessorValidator::class]
                                  )

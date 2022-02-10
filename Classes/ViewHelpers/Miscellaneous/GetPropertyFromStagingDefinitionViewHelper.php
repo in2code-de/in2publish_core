@@ -36,6 +36,9 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 use function ucfirst;
 
+/**
+ * @SuppressWarnings(PHPMD.LongClassName) Can't change that now. Probably going to deprecate/remove this VH anyway.
+ */
 class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
 {
     protected const EMPTY_FIELD_VALUE = '---';
@@ -100,14 +103,11 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
                 return $this->getSiteName();
             }
 
-            return LocalizationUtility::translate('label_production', 'in2publish_core');
+            return LocalizationUtility::translate('label_production', 'in2publish_core') ?? 'label_production';
         }
         return static::EMPTY_FIELD_VALUE;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
     protected function getSiteName(): string
     {
         return $GLOBALS['TYPO3_CONF_VARS']['SYS']['sitename'];

@@ -55,18 +55,18 @@ use function max;
 /**
  * RecordFactory: This class is responsible for create instances of Record.
  * This class is called recursively for the record, any related
- * records and any of the related records related records and so on to the extend
+ * records and any of the related records and so on to the extent
  * of the setting maximumRecursionDepth
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) Well, happens. Will be removed with query aggregation feature.
  */
 class RecordFactory implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var TcaService */
-    protected $tcaService;
+    protected TcaService $tcaService;
 
-    /** @var EventDispatcher */
-    protected $eventDispatcher;
+    protected EventDispatcher $eventDispatcher;
 
     /**
      * Runtime cache to cache already created Records
@@ -77,21 +77,16 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
      *
      * @var RecordInterface[][]
      */
-    protected $runtimeCache = [];
+    protected array $runtimeCache = [];
 
     /**
      * Array of $tableName => array($uid, $uid) entries
      * indicating if the record to instantiate is already
      * in instantiation
-     *
-     * @var array
      */
-    protected $instantiationQueue = [];
+    protected array $instantiationQueue = [];
 
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'maximumPageRecursion' => 0,
         'maximumContentRecursion' => 0,
         'maximumOverallRecursion' => 0,
@@ -99,28 +94,30 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
         'includeSysFileReference' => false,
     ];
 
-    /** @var int current recursion depth of makeInstance */
-    protected $currentDepth = 0;
+    /**
+     * current recursion depth of makeInstance
+     */
+    protected int $currentDepth = 0;
 
     /**
      * array of table names to be excluded from publishing
      * currently only used for related records of "page records"
-     *
-     * @var array
      */
-    protected $excludedTableNames = [];
+    protected array $excludedTableNames = [];
 
-    /** @var int current depth of related page records */
-    protected $pagesDepth = 1;
+    /**
+     * current depth of related page records
+     */
+    protected int $pagesDepth = 1;
 
-    /** @var int current depth of related content records (anything but page) */
-    protected $relatedRecordsDepth = 1;
+    /**
+     * current depth of related content records (anything but page)
+     */
+    protected int $relatedRecordsDepth = 1;
 
-    /** @var bool */
-    protected $pageRecursionEnabled = true;
+    protected bool $pageRecursionEnabled = true;
 
-    /**  @var bool */
-    protected $isRootRecord = false;
+    protected bool $isRootRecord = false;
 
     public function __construct(
         ConfigContainer $configContainer,
@@ -152,6 +149,10 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
      * @param array<string>|null $idFields
      *
      * @return RecordInterface|null
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) Will be removed with query aggregation feature
+     * @SuppressWarnings(PHPMD.NPathComplexity) Will be removed with query aggregation feature
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength) Will be removed with query aggregation feature
      */
     public function makeInstance(
         DefaultRecordFinder $commonRecordFinder,
@@ -218,7 +219,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
                 $additionalProperties,
                 $mergedIdentifier
             );
-            if (true === $isRootRecord && true === $this->isRootRecord) {
+            if (true === $isRootRecord) {
                 $instance->addAdditionalProperty('isRoot', true);
             }
 
@@ -234,7 +235,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
                 $instance->setState(RecordInterface::RECORD_STATE_MOVED);
             }
 
-            $this->eventDispatcher->dispatch(new RecordInstanceWasInstantiated($this, $instance));
+            $this->eventDispatcher->dispatch(new RecordInstanceWasInstantiated($instance));
 
             /* special case of tables without TCA (currently only sys_file_processedfile).
              * Normally we would just ignore them, but:
@@ -279,9 +280,9 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
             $this->finishedInstantiation($tableName, $mergedIdentifier);
             $this->runtimeCache[$tableName][$mergedIdentifier] = $instance;
         }
-        if (true === $isRootRecord && true === $this->isRootRecord) {
+        if (true === $isRootRecord) {
             $this->isRootRecord = false;
-            $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($this, $instance));
+            $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($instance));
         }
         return $instance;
     }
@@ -301,7 +302,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
 
             $record = $commonRecordFinder->enrichRecordWithRelatedRecords($record, $excludedTableNames);
 
-            $this->eventDispatcher->dispatch(new AllRelatedRecordsWereAddedToOneRecord($this, $record));
+            $this->eventDispatcher->dispatch(new AllRelatedRecordsWereAddedToOneRecord($record));
 
             $this->relatedRecordsDepth--;
         }
@@ -309,7 +310,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
     }
 
     protected function findRelatedRecordsForPageRecord(
-        Record $record,
+        RecordInterface $record,
         DefaultRecordFinder $commonRecordFinder
     ): RecordInterface {
         if ($record->getIdentifier() === 0) {
@@ -364,6 +365,8 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
      * @param array $foreignProperties
      *
      * @return bool
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) PR welcome
      */
     protected function detectAndAlterMovedInstance(
         string $tableName,
@@ -373,7 +376,10 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
     ): bool {
         $hasBeenMoved = false;
         // 1. it was created already
-        if (!empty($this->runtimeCache[$tableName][$identifier]) && !in_array($tableName, $this->excludedTableNames)) {
+        if (
+            !empty($this->runtimeCache[$tableName][$identifier])
+            && !in_array($tableName, $this->excludedTableNames, true)
+        ) {
             $record = $this->runtimeCache[$tableName][$identifier];
             // consequence of 5.
             if ($record->getState() === RecordInterface::RECORD_STATE_MOVED) {
@@ -390,14 +396,14 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
                 }
                 // 3. it is modified
             } elseif ($record->getState() !== RecordInterface::RECORD_STATE_UNCHANGED) {
-                if ($record->foreignRecordExists() && empty($foreignProperties) && !empty($localProperties)) {
+                if (empty($foreignProperties) && !empty($localProperties) && $record->foreignRecordExists()) {
                     // 2. it has only foreign properties && 4. the missing properties are given
                     // the current relation is set wrong. This record is referenced
                     // by the record which is parent on the foreign side
                     $record->getParentRecord()->removeRelatedRecord($record);
                     $record->setLocalProperties($localProperties);
                     $hasBeenMoved = true;
-                } elseif ($record->localRecordExists() && empty($localProperties) && !empty($foreignProperties)) {
+                } elseif (empty($localProperties) && !empty($foreignProperties) && $record->localRecordExists()) {
                     // 2. it has only local properties && 4. the missing properties are given
                     $record->setForeignProperties($foreignProperties);
                     // the current parent is correct, prevent changes to
@@ -432,7 +438,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
      *
      * @param array $localProperties
      * @param array $foreignProperties
-     * @param string|null $tableName
+     * @param string $tableName
      * @param string $idFieldName
      * @param array<string>|null $idFields
      *
@@ -503,8 +509,6 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
     /**
      * @param string $instanceTableName
      * @param int|string $mergedIdentifier
-     *
-     * @return void
      */
     protected function finishedInstantiation(string $instanceTableName, $mergedIdentifier): void
     {
@@ -564,7 +568,7 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
     {
         $this->isRootRecord = false;
         $record = GeneralUtility::makeInstance(NullRecord::class);
-        $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($this, $record));
+        $this->eventDispatcher->dispatch(new RootRecordCreationWasFinished($record));
     }
 
     protected function findTranslations(RecordInterface $record, DefaultRecordFinder $commonRecordFinder): void

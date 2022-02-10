@@ -42,11 +42,9 @@ use function preg_match;
 
 class SshConnectionTest implements TestCaseInterface
 {
-    /** @var RemoteCommandDispatcher */
-    protected $rceDispatcher;
+    protected RemoteCommandDispatcher $rceDispatcher;
 
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
     public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, ConfigContainer $configContainer)
     {
@@ -54,7 +52,6 @@ class SshConnectionTest implements TestCaseInterface
         $this->configContainer = $configContainer;
     }
 
-    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function run(): TestResult
     {
         $request = new RemoteCommandRequest();
@@ -73,7 +70,7 @@ class SshConnectionTest implements TestCaseInterface
             );
         }
 
-        // This is the first time a RCE is executed so we have to test here for the missing document root folder
+        // This is the first time a RCE is executed, so we have to test here for the missing document root folder
         if (!$response->isSuccessful()) {
             return new TestResult(
                 'ssh_connection.foreign_document_root_missing',

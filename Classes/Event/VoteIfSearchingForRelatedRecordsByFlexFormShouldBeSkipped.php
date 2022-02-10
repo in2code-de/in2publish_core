@@ -31,31 +31,23 @@ namespace In2code\In2publishCore\Event;
 
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 
-use function trigger_error;
-
-use const E_USER_DEPRECATED;
-
+/**
+ * @SuppressWarnings(PHPMD.LongClassName) Event names should be descriptive.
+ */
 final class VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped extends AbstractVotingEvent
 {
-    /** @var RecordFinder */
-    private $recordFinder;
+    private RecordFinder $recordFinder;
 
-    /** @var RecordInterface */
-    private $record;
+    private RecordInterface $record;
 
-    /** @var string */
-    private $column;
+    private string $column;
 
-    /** @var array */
-    private $columnConfiguration;
+    private array $columnConfiguration;
 
-    /** @var array */
-    private $flexFormDefinition;
+    private array $flexFormDefinition;
 
-    /** @var array */
-    private $flexFormData;
+    private array $flexFormData;
 
     public function __construct(
         RecordFinder $recordFinder,
@@ -71,19 +63,6 @@ final class VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped extends Ab
         $this->columnConfiguration = $columnConfiguration;
         $this->flexFormDefinition = $flexFormDefinition;
         $this->flexFormData = $flexFormData;
-    }
-
-    /**
-     * @deprecated This method is deprecated and will be removed in in2publish_core v11, please use
-     *     \In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped::getRecordFinder instead.
-     */
-    public function getCommonRepository(): CommonRepository
-    {
-        trigger_error(
-            'The method \In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped::getCommonRepository is deprecated and will be removed in in2publish_core v11, please use \In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped::getRecordFinder instead.',
-            E_USER_DEPRECATED
-        );
-        return $this->recordFinder;
     }
 
     public function getRecordFinder(): RecordFinder

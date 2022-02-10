@@ -8,7 +8,6 @@ Each time a record has all related records added. This event will be thrown for 
 
 ## What
 
-* `recordFactory`: The instance of the record factory that created all the records.
 * `record`: The record which just has gotten all related records added.
 
 ## Possibilities

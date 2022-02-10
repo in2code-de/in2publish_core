@@ -34,6 +34,7 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDis
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
@@ -43,8 +44,10 @@ use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Service\Error\FailureCollector;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use In2code\In2publishCore\Utility\LogUtility;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -52,6 +55,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use function array_keys;
 use function array_merge;
 use function implode;
+use function json_encode;
 use function rawurldecode;
 use function strpos;
 
@@ -62,17 +66,15 @@ use function strpos;
  */
 class RecordController extends AbstractController
 {
-    /** @var FailureCollector */
-    protected $failureCollector;
+    use ControllerModuleTemplate;
 
-    /** @var PermissionService */
-    protected $permissionService;
+    protected FailureCollector $failureCollector;
 
-    /** @var RecordFinder */
-    protected $recordFinder;
+    protected PermissionService $permissionService;
 
-    /** @var RecordPublisher */
-    protected $recordPublisher;
+    protected RecordFinder $recordFinder;
+
+    protected RecordPublisher $recordPublisher;
 
     public function __construct(
         ConfigContainer $configContainer,
@@ -82,7 +84,8 @@ class RecordController extends AbstractController
         FailureCollector $failureCollector,
         PermissionService $permissionService,
         RecordFinder $recordFinder,
-        RecordPublisher $recordPublisher
+        RecordPublisher $recordPublisher,
+        PageRenderer $pageRenderer
     ) {
         parent::__construct(
             $configContainer,
@@ -94,18 +97,22 @@ class RecordController extends AbstractController
         $this->permissionService = $permissionService;
         $this->recordFinder = $recordFinder;
         $this->recordPublisher = $recordPublisher;
+        $pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
+        $pageRenderer->addCssFile(
+            'EXT:in2publish_core/Resources/Public/Css/Modules.css',
+            'stylesheet',
+            'all',
+            '',
+            false
+        );
     }
 
     /**
      * Create a Record instance of the current selected page
      * If none is chosen, a Record with uid = 0 is created which
      * represents the instance root
-     *
-     * @return void
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
-    public function indexAction(): void
+    public function indexAction(): ResponseInterface
     {
         GeneralUtility::makeInstance(TcaProcessingService::class);
         $record = $this->recordFinder->findRecordByUidForOverview($this->pid, 'pages');
@@ -119,6 +126,7 @@ class RecordController extends AbstractController
             $this->addFlashMessage($message, $title, $severity);
         }
         $this->view->assign('record', $record);
+        return $this->htmlResponse();
     }
 
     /**
@@ -126,17 +134,15 @@ class RecordController extends AbstractController
      * Normally called via AJAX
      *
      * @param int $identifier record identifier
-     * @param string $tableName
-     *
-     * @return void
      */
-    public function detailAction(int $identifier, string $tableName): void
+    public function detailAction(int $identifier, string $tableName): ResponseInterface
     {
         $record = $this->recordFinder->findRecordByUidForPublishing($identifier, $tableName);
 
         $this->eventDispatcher->dispatch(new RecordWasCreatedForDetailAction($this, $record));
 
         $this->view->assign('record', $record);
+        return $this->htmlResponse();
     }
 
     /**
@@ -177,12 +183,11 @@ class RecordController extends AbstractController
      * in the current backendUser's session.
      *
      * @param string $filter "changed", "added", "deleted"
-     *
-     * @throws StopActionException
      */
-    public function toggleFilterStatusAndRedirectToIndexAction(string $filter): void
+    public function toggleFilterStatusAction(string $filter): ResponseInterface
     {
-        $this->toggleFilterStatusAndRedirect('in2publish_filter_records_', $filter, 'index');
+        $return = $this->toggleFilterStatus('in2publish_filter_records_', $filter);
+        return $this->jsonResponse(json_encode($return, JSON_THROW_ON_ERROR));
     }
 
     protected function publishRecord(int $identifier, array $exceptTableNames = []): void
@@ -198,7 +203,7 @@ class RecordController extends AbstractController
             );
         } catch (Throwable $exception) {
             $this->logger->error('Error while publishing', ['exception' => $exception]);
-            $this->addFlashMessage($exception->getMessage(), AbstractMessage::ERROR);
+            $this->addFlashMessage($exception->getMessage(), '', AbstractMessage::ERROR);
         }
         $this->runTasks();
     }

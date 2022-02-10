@@ -21,6 +21,9 @@ class TableRowLabelViewHelper extends AbstractViewHelper
         $this->registerArgument('row', 'array', 'The row itself', true);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public static function renderStatic(
         array $arguments,
         Closure $renderChildrenClosure,

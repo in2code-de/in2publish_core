@@ -44,17 +44,13 @@ use function json_encode;
 
 class PublishPageAjaxController
 {
-    /** @var PermissionService */
-    protected $permissionService;
+    protected PermissionService $permissionService;
 
-    /** @var TaskExecutionService */
-    protected $taskExecutionService;
+    protected TaskExecutionService $taskExecutionService;
 
-    /** @var RecordFinder */
-    protected $recordFinder;
+    protected RecordFinder $recordFinder;
 
-    /** @var RecordPublisher */
-    protected $recordPublisher;
+    protected RecordPublisher $recordPublisher;
 
     public function __construct(
         RecordFinder $recordFinder,
@@ -114,7 +110,7 @@ class PublishPageAjaxController
 
         $lArgs = !empty($content['lArgs']) ? $content['lArgs'] : null;
         $content['message'] = LocalizationUtility::translate($content['label'], 'in2publish_core', $lArgs);
-        $response->getBody()->write(json_encode($content));
+        $response->getBody()->write(json_encode($content, JSON_THROW_ON_ERROR));
 
         return $response->withHeader('Content-Type', 'application/json');
     }

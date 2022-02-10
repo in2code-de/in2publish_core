@@ -10,11 +10,9 @@ use function array_unique;
 
 class DualDatabaseRepository
 {
-    /** @var SingleDatabaseRepository */
-    private $localRepository;
+    private SingleDatabaseRepository $localRepository;
 
-    /** @var SingleDatabaseRepository */
-    private $foreignRepository;
+    private SingleDatabaseRepository $foreignRepository;
 
     public function __construct(SingleDatabaseRepository $localRepository, SingleDatabaseRepository $foreignRepository)
     {

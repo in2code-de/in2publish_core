@@ -5,7 +5,7 @@ The Publish Overview Module will show a page's title as record name.
 You can change the rendered field by setting a different value for the title field.
 The new field must exist in the `pages` table.
 
-```YAML
+```yaml
 view:
   titleField: nav_title
 ```

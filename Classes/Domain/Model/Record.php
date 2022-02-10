@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\Domain\Model;
  */
 
 use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Event\VoteIfRecordIsPublishable;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Permission\PermissionService;
@@ -54,83 +53,67 @@ use function is_array;
 use function is_string;
 use function json_decode;
 use function json_encode;
+use function rtrim;
 use function spl_object_hash;
 use function strpos;
-use function trigger_error;
 use function uasort;
 
-use const E_USER_DEPRECATED;
+use const JSON_THROW_ON_ERROR;
 
 /**
  * The most important class of this application. A Record is a Database
  * row and identifies itself by tableName + identifier (usually uid).
- * The combination of tableName + identifier is unique. Therefore a Record is
+ * The combination of tableName + identifier is unique. Therefore, a Record is
  * considered a singleton automatically. The RecordFactory takes care of
  * the singleton "implementation". The Pattern will break when a Record
  * gets instantiated without the use of the Factory
  *
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength) Will change with the query aggregation feature
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) Will change with the query aggregation feature
  */
 class Record implements RecordInterface
 {
-    /**
-     * @var string
-     */
-    protected $tableName = 'pages';
+    protected string $tableName = 'pages';
 
     /**
      * Internal state, set by calculateState after object creation
-     *
-     * @var string
      */
-    protected $state = self::RECORD_STATE_UNCHANGED;
+    protected string $state = self::RECORD_STATE_UNCHANGED;
 
-    /**
-     * @var array
-     */
-    protected $localProperties = [];
+    protected array $localProperties = [];
 
-    /**
-     * @var array
-     */
-    protected $foreignProperties = [];
+    protected array $foreignProperties = [];
 
     /**
      * Short said: difference between local and foreign properties
-     *
-     * @var array
      */
-    protected $dirtyProperties = [];
+    protected array $dirtyProperties = [];
 
     /**
      * e.g. the depth of the current record
-     *
-     * @var array
      */
-    protected $additionalProperties = [];
+    protected array $additionalProperties = [];
 
     /**
      * records which are related to this record.
      *
      * @var RecordInterface[][]
      */
-    protected $relatedRecords = [];
+    protected array $relatedRecords = [];
 
     /**
      * TableConfigurationArray of this record
      * $GLOBALS['TCA'][$this->tableName]
-     *
-     * @var array
      */
-    protected $tca = [];
+    protected array $tca = [];
 
     /**
      * Internal (volatile) cache
      * used to store results of getters to improve performance
-     *
-     * @var array
      */
-    protected $runtimeCache = [];
+    protected array $runtimeCache = [];
 
     /**
      * reference to the parent record. The parent record is
@@ -139,32 +122,22 @@ class Record implements RecordInterface
      * will not be set if debug.disableParentRecords = TRUE
      * alteration of this value can be prohibited by setting
      * $this->parentRecordIsLocked = TRUE (or public setter)
-     *
-     * @var null|RecordInterface
      */
-    protected $parentRecord;
+    protected ?RecordInterface $parentRecord = null;
 
     /**
      * indicates if $this->parentRecord can be changed by the setter
-     *
-     * @var bool
      */
-    protected $parentRecordIsLocked = false;
+    protected bool $parentRecordIsLocked = false;
 
-    /**
-     * @var bool
-     */
-    protected $isParentDisabled = false;
+    protected bool $isParentDisabled = false;
 
-    /**
-     * @var ConfigContainer
-     */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
     /**
      * @var RecordInterface[]
      */
-    protected $translatedRecords = [];
+    protected array $translatedRecords = [];
 
     /**
      * @var int|string|null
@@ -178,8 +151,6 @@ class Record implements RecordInterface
      * @param array $tca
      * @param array $additionalProperties
      * @param int|string|null $identifier
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct(
         string $tableName,
@@ -259,18 +230,20 @@ class Record implements RecordInterface
      *        Show changed status even if parent is
      *        unchanged but if children has changed
      *
-     * Notice: This method does not returns RECORD_STATE_CHANGED
+     * Notice: This method does not return RECORD_STATE_CHANGED
      * even if the first changed related record is added or deleted
      *
      * @param array $alreadyVisited
      *
      * @return string
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) PR welcome
      */
     public function getStateRecursive(array &$alreadyVisited = []): string
     {
         if (
             !empty($alreadyVisited[$this->tableName])
-            && in_array($this->getIdentifier(), $alreadyVisited[$this->tableName])
+            && in_array($this->getIdentifier(), $alreadyVisited[$this->tableName], false)
         ) {
             return static::RECORD_STATE_UNCHANGED;
         }
@@ -282,7 +255,7 @@ class Record implements RecordInterface
                 }
             }
             foreach ($this->getRelatedRecords() as $tableName => $relatedRecords) {
-                if ($tableName === 'pages') {
+                if ($tableName === 'pages' || $tableName === 'physical_folder') {
                     continue;
                 }
                 foreach ($relatedRecords as $relatedRecord) {
@@ -465,12 +438,7 @@ class Record implements RecordInterface
         return !empty($pointerField) && $record->getIdentifier() === $this->getMergedProperty($pointerField);
     }
 
-    /**
-     * @param scalar $propertyName
-     *
-     * @return bool
-     */
-    protected function isDirtyProperty($propertyName): bool
+    protected function isDirtyProperty(string $propertyName): bool
     {
         return !array_key_exists($propertyName, $this->localProperties)
                || !array_key_exists($propertyName, $this->foreignProperties)
@@ -579,8 +547,6 @@ class Record implements RecordInterface
      * when parentRecord is locked nothing will happen
      *
      * @param RecordInterface $record
-     *
-     * @return void
      */
     public function addRelatedRecord(RecordInterface $record): void
     {
@@ -590,9 +556,9 @@ class Record implements RecordInterface
                 // Ignore the foreign `pid`. It differs only when the record was moved but the record will be shown
                 // beneath its new parent anyway.
                 if (
-                    !($this->isPagesTable() && $record->isPagesTable())
+                    $this->isTranslationOriginal($record)
+                    || !($this->isPagesTable() && $record->isPagesTable())
                     || $record->getSuperordinatePageIdentifier() === $this->getIdentifier()
-                    || $this->isTranslationOriginal($record)
                 ) {
                     if (!$this->isParentDisabled) {
                         $record->setParentRecord($this);
@@ -608,8 +574,6 @@ class Record implements RecordInterface
      *
      * @param RecordInterface $record
      * @param string $tableName
-     *
-     * @return void
      */
     public function addRelatedRecordRaw(RecordInterface $record, string $tableName = 'pages'): void
     {
@@ -726,8 +690,10 @@ class Record implements RecordInterface
      * @param $propertyName
      *
      * @return mixed
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) PR welcome
      */
-    public function getMergedProperty($propertyName)
+    public function getMergedProperty(string $propertyName)
     {
         if ($this->hasLocalProperty($propertyName)) {
             $localValue = $this->getLocalProperty($propertyName);
@@ -774,6 +740,8 @@ class Record implements RecordInterface
 
     /**
      * Sets this Records state depending on the local and foreign properties
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) PR welcome
      */
     public function calculateState(): void
     {
@@ -938,7 +906,7 @@ class Record implements RecordInterface
                     }
                     $identity[$idField] = $properties[$idField];
                 }
-                return json_encode($identity);
+                return json_encode($identity, JSON_THROW_ON_ERROR);
             }
             return '';
         }
@@ -955,7 +923,7 @@ class Record implements RecordInterface
 
     /**
      * @param string $combinedIdentifier
-     * @return array<string, int>
+     * @return array<string, int|string>
      */
     public static function splitCombinedIdentifier(string $combinedIdentifier): array
     {
@@ -963,7 +931,7 @@ class Record implements RecordInterface
             return [];
         }
         if ($combinedIdentifier[0] === '{') {
-            return json_decode($combinedIdentifier, true);
+            return json_decode($combinedIdentifier, true, 512, JSON_THROW_ON_ERROR);
         }
         $identifierArray = explode(',', $combinedIdentifier);
         $count = count($identifierArray);
@@ -995,8 +963,8 @@ class Record implements RecordInterface
         $path = '';
         $record = $this;
         do {
-            $path = '/ ' . $record->tableName . ' [' . $record->getIdentifier() . '] ' . $path;
-        } while ($record->tableName !== 'pages' && $record = $record->parentRecord);
+            $path = '/ ' . $record->getTableName() . ' [' . $record->getIdentifier() . '] ' . $path;
+        } while ($record->getTableName() !== 'pages' && $record = $record->getParentRecord());
         return rtrim($path, ' ');
     }
 
@@ -1165,19 +1133,5 @@ class Record implements RecordInterface
     public function isRemovedFromLocalDatabase(): bool
     {
         return $this->isForeignRecordDeleted() && !$this->isRecordRepresentByProperties($this->localProperties);
-    }
-
-    /**
-     * @deprecated Please use <code>$tcaProcessingService->getCompatibleTcaColumns($record->getTableName())</code>
-     *     instead.
-     * @codeCoverageIgnore
-     */
-    public function getColumnsTca(): array
-    {
-        trigger_error(
-            'The method \In2code\In2publishCore\Domain\Model\Record::getColumnsTca is deprecated and will be removed in in2publish_core v11. Please use "$tcaProcessingService->getCompatibleTcaColumns($record->getTableName())" instead.',
-            E_USER_DEPRECATED
-        );
-        return GeneralUtility::makeInstance(TcaProcessingService::class)->getCompatibleTcaColumns($this->tableName);
     }
 }

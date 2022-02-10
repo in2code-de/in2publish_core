@@ -35,17 +35,14 @@ use TYPO3\CMS\Core\Database\Connection;
 
 class SortingPublisher
 {
-    /** @var Connection */
-    protected $localDatabase;
+    protected Connection $localDatabase;
 
-    /** @var Connection */
-    protected $foreignDatabase;
+    protected Connection $foreignDatabase;
 
-    /** @var TcaService */
-    protected $tcaService;
+    protected TcaService $tcaService;
 
     /** @var array<string, array<int, int>> */
-    protected $sortingsToBePublished = [];
+    protected array $sortingsToBePublished = [];
 
     public function __construct(Connection $localDatabase, Connection $foreignDatabase, TcaService $tcaService)
     {

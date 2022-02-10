@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2015-01-20T12:00:00Z" product-name="in2publish_core">
+		<header/>
+		<body>
+			<trans-unit id="tx_in2publishcore.actions.publish">
+				<source>Publish</source>
+			</trans-unit>
+			<trans-unit id="tx_in2publishcore.action.abort">
+				<source>Abort</source>
+			</trans-unit>
+			<trans-unit id="tx_in2publishcore.modal.publish.title">
+				<source>Confirm publish</source>
+			</trans-unit>
+			<trans-unit id="tx_in2publishcore.modal.publish.file.text">
+				<source>Are you sure you want to publish the file $name$? This cannot be reversed.</source>
+			</trans-unit>
+			<trans-unit id="tx_in2publishcore.modal.publish.folder.text">
+				<source>Are you sure you want to publish the folder $name$? This cannot be reversed.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

@@ -36,8 +36,7 @@ use function is_subclass_of;
 
 class ClassImplementsValidator implements ValidatorInterface
 {
-    /** @var string */
-    protected $interface;
+    protected string $interface;
 
     /**
      * @param string $interface The interface which has to be implemented

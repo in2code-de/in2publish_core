@@ -15,7 +15,7 @@ this event for all FlexForm fields, regardless if they define a relation to anot
 
 ## What
 
-* `commonRepository`: The instance of the CommonRepository which is going to be used to search for the records.
+* `recordFinder`: The instance of the `RecordFinder` which is going to be used to search for the records.
 * `record`: The current record which is going to have its related records by FlexForm added.
 * `column`: The name of the column of the current record which is configured with type `flex`.
 * `key`: The name of the FlexForm field which is going to be looked at for relation resolving.

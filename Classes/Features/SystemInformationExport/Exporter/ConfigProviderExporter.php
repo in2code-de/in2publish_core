@@ -33,8 +33,7 @@ use In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValu
 
 class ConfigProviderExporter implements SystemInformationExporter
 {
-    /** @var DynamicValueProviderRegistry */
-    private $dynamicValueProviderRegistry;
+    private DynamicValueProviderRegistry $dynamicValueProviderRegistry;
 
     public function __construct(DynamicValueProviderRegistry $dynamicValueProviderRegistry)
     {

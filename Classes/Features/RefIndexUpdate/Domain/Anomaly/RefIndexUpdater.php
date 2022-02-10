@@ -38,11 +38,10 @@ use function is_int;
 
 class RefIndexUpdater
 {
-    /** @var TaskRepository */
-    protected $taskRepository;
+    protected TaskRepository $taskRepository;
 
     /** @var array<string, array<int, int>> */
-    protected $configuration = [];
+    protected array $configuration = [];
 
     public function __construct(TaskRepository $taskRepository)
     {
@@ -61,7 +60,6 @@ class RefIndexUpdater
         }
     }
 
-    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function writeRefIndexUpdateTask(): void
     {
         if (empty($this->configuration)) {

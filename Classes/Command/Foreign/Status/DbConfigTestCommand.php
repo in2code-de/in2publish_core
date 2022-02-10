@@ -43,8 +43,7 @@ class DbConfigTestCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:dbconfigtest';
 
-    /** @var Connection */
-    protected $localDatabase;
+    protected Connection $localDatabase;
 
     public function __construct(Connection $localDatabase, string $name = null)
     {
@@ -52,6 +51,9 @@ class DbConfigTestCommand extends Command
         $this->localDatabase = $localDatabase;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $queryBuilder = $this->localDatabase->createQueryBuilder();
@@ -61,7 +63,8 @@ class DbConfigTestCommand extends Command
         );
         $queryBuilder->select('*')->from('tx_in2code_in2publish_task')->where($predicates);
         $result = $queryBuilder->execute()->fetchAllAssociative();
-        $output->writeln('DB Config: ' . base64_encode(json_encode(array_column($result, 'configuration'))));
+        $value = base64_encode(json_encode(array_column($result, 'configuration'), JSON_THROW_ON_ERROR));
+        $output->writeln('DB Config: ' . $value);
         return Command::SUCCESS;
     }
 }

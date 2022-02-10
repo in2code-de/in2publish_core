@@ -41,14 +41,12 @@ use function array_unique;
 
 class TableInfoService implements SingletonInterface
 {
-    /** @var Connection */
-    protected $localConnection;
+    protected ?Connection $localConnection;
 
-    /** @var Connection */
-    protected $foreignConnection;
+    protected ?Connection $foreignConnection;
 
-    /** @var array<string, array<string, array<int>|bool>> */
-    protected $tableInfo = [];
+    /** @var array<string, array<string, array<int|bool>>> */
+    protected array $tableInfo = [];
 
     public function __construct()
     {
@@ -61,6 +59,7 @@ class TableInfoService implements SingletonInterface
         if (!isset($this->tableInfo[$table])) {
             $this->tableInfo[$table] = $this->queryTableInfo($table);
         }
+        /** @psalm-suppress InvalidReturnStatement */
         return $this->tableInfo[$table]['isEmpty'];
     }
 
@@ -100,7 +99,7 @@ class TableInfoService implements SingletonInterface
             return !$atLeastOneRowExists;
         } catch (Throwable $exception) {
             // Ignore any errors.
-            // They might indicate that the table does not exists, but that's not this classes' responsibility
+            // They might indicate that the table does not exist, but that's not this classes' responsibility
         }
         return false;
     }

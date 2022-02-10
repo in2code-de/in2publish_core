@@ -128,7 +128,7 @@ use YourVendor\YourPackage\Domain\Task\MyTask;
 
 class MyAnomaly implements SingletonInterface
 {
-    protected $data = [];
+    protected array $data = [];
 
     public function collectInfo(string $tableName, RecordInterface $record)
     {

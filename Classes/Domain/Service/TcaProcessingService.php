@@ -47,17 +47,11 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-use function array_key_exists;
-use function array_keys;
 use function class_exists;
 use function gettype;
 use function is_array;
 use function is_string;
-use function trigger_error;
-
-use const E_USER_DEPRECATED;
 
 class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
 {
@@ -73,19 +67,15 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
     public const CACHE_KEY_TCA_INCOMPATIBLE = 'tca_incompatible';
     public const CACHE_KEY_CONTROLS = 'controls';
     public const DEFAULT_EXTRAS = 'defaultExtras';
-
-    /** @var FrontendInterface */
-    protected $cache;
-
     public const SOFT_REF = 'softref';
 
-    /** @var TcaProcessingService */
-    protected static $instance;
+    protected FrontendInterface $cache;
 
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected static TcaProcessingService $instance;
 
-    protected $defaultProcessor = [
+    protected ConfigContainer $configContainer;
+
+    protected array $defaultProcessor = [
         'check' => CheckProcessor::class,
         'flex' => FlexProcessor::class,
         'group' => GroupProcessor::class,
@@ -103,28 +93,28 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
     /**
      * @var AbstractProcessor[]
      */
-    protected $processors = [];
+    protected array $processors = [];
 
     /**
      * Stores the part of the TCA that can be used for relation resolving
      *
      * @var array<array|null>
      */
-    protected $compatibleTca = [];
+    protected array $compatibleTca = [];
 
     /**
      * Stores the part of the TCA that can not be used for relation resolving including reasons
      *
      * @var array[]
      */
-    protected $incompatibleTca = [];
+    protected array $incompatibleTca = [];
 
     /**
      * Stores the controls for each table from TCA
      *
      * @var array[]
      */
-    protected $controls = [];
+    protected array $controls = [];
 
     public function __construct(FrontendInterface $cache, ConfigContainer $configContainer)
     {
@@ -234,7 +224,7 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
                     $this->compatibleTca[$table][$column] = $this->processors[$type]->preProcess($config);
                     $this->compatibleTca[$table][$column][static::TYPE] = $type;
                 } else {
-                    // Set the reasons why it can not be pre processed. Useful for Extension authors
+                    // Set the reasons why it can not be pre-processed. Useful for Extension authors
                     foreach ($this->processors[$type]->getLastReasons() as $key => $reason) {
                         $this->incompatibleTca[$table][$column]['type'] = $type;
                         $this->incompatibleTca[$table][$column]['reasons'][$key] = $reason;
@@ -258,149 +248,11 @@ class TcaProcessingService implements LoggerAwareInterface, SingletonInterface
 
     public function getCompatibleTcaColumns(string $table): array
     {
-        return $this->compatibleTca[$table];
+        return $this->compatibleTca[$table] ?? [];
     }
 
     public function flushCaches(): void
     {
         $this->cache->flush();
-    }
-
-    /**
-     * @deprecated Please use the non-static method getIncompatibleTcaParts instead.
-     */
-    public static function getIncompatibleTca(): array
-    {
-        trigger_error(
-            'The method \In2code\In2publishCore\Domain\Service\TcaProcessingService::getIncompatibleTca is deprecated. Please use the non-static method getIncompatibleTcaParts instead.',
-            E_USER_DEPRECATED
-        );
-        return GeneralUtility::makeInstance(static::class)->getIncompatibleTcaParts();
-    }
-
-    /**
-     * @deprecated Please use the non-static method getCompatibleTcaParts instead.
-     */
-    public static function getCompatibleTca(): array
-    {
-        trigger_error(
-            'The method \In2code\In2publishCore\Domain\Service\TcaProcessingService::getCompatibleTca is deprecated. Please use the non-static method getCompatibleTcaParts instead.',
-            E_USER_DEPRECATED
-        );
-        return GeneralUtility::makeInstance(static::class)->getCompatibleTcaParts();
-    }
-
-    /**
-     * @deprecated Use <code>$GLOBALS['TCA'][$table]['ctrl']</code> instead.
-     */
-    public static function getControls(): array
-    {
-        trigger_error(
-            'The method \In2code\In2publishCore\Domain\Service\TcaProcessingService::getControls is deprecated. Please use "$GLOBALS[\'TCA\']" instead.',
-            E_USER_DEPRECATED
-        );
-        return GeneralUtility::makeInstance(static::class)->controls;
-    }
-
-    /**
-     * @deprecated Use <code>array_keys($GLOBALS['TCA'])</code> instead.
-     */
-    public static function getAllTables(): array
-    {
-        trigger_error(
-            'The method \In2code\In2publishCore\Domain\Service\TcaProcessingService::getAllTables is deprecated. Please use "array_keys($GLOBALS[\'TCA\'])" instead.',
-            E_USER_DEPRECATED
-        );
-        return array_keys($GLOBALS['TCA']);
-    }
-
-    /**
-     * @deprecated Use <code>array_key_exists($table, $GLOBALS['TCA'])</code> instead.
-     */
-    public static function tableExists(string $table): bool
-    {
-        trigger_error(
-            'The method \In2code\In2publishCore\Domain\Service\TcaProcessingService::tableExists is deprecated. Please use "array_key_exists($table, $GLOBALS[\'TCA\'])" instead.',
-            E_USER_DEPRECATED
-        );
-        return array_key_exists($table, $GLOBALS['TCA']);
-    }
-
-    /**
-     * @return mixed
-     * @SuppressWarnings(PHPMD.Superglobals)
-     * @deprecated Use <code>$GLOBALS['TCA']</code> instead.
-     */
-    public static function getCompleteTca()
-    {
-        trigger_error(
-            'The method \In2code\In2publishCore\Domain\Service\TcaProcessingService::getCompleteTca is deprecated. Please use "$GLOBALS[\'TCA\']" instead.',
-            E_USER_DEPRECATED
-        );
-        return $GLOBALS[static::TCA];
-    }
-
-    /**
-     * @param string $tableName
-     *
-     * @return array
-     * @SuppressWarnings(PHPMD.Superglobals)
-     * @deprecated Use <code>$GLOBALS['TCA']</code> instead.
-     */
-    public static function getCompleteTcaForTable(string $tableName): array
-    {
-        trigger_error(
-            'The method \In2code\In2publishCore\Domain\Service\TcaProcessingService::getCompleteTcaForTable is deprecated. Please use "$GLOBALS[\'TCA\']" instead.',
-            E_USER_DEPRECATED
-        );
-        return $GLOBALS[static::TCA][$tableName];
-    }
-
-    /**
-     * @deprecated Please use the non-static method getCompatibleTcaColumns instead.
-     */
-    public static function getColumnsFor(string $table): array
-    {
-        trigger_error(
-            'The method \In2code\In2publishCore\Domain\Service\TcaProcessingService::getColumnsFor is deprecated. Please use the non-static method \In2code\In2publishCore\Domain\Service\TcaProcessingService::getCompatibleTcaColumns instead.',
-            E_USER_DEPRECATED
-        );
-        return GeneralUtility::makeInstance(static::class)->getCompatibleTcaColumns($table);
-    }
-
-    /**
-     * @deprecated Use <code>$GLOBALS['TCA'][$table]['ctrl']</code> instead.
-     */
-    public static function getControlsFor(string $table): array
-    {
-        trigger_error(
-            'The method \In2code\In2publishCore\Domain\Service\TcaProcessingService::getControlsFor is deprecated. Please use "$GLOBALS[\'TCA\'][$table][\'ctrl\']" instead.',
-            E_USER_DEPRECATED
-        );
-        return ['delete' => $GLOBALS['TCA'][$table]['ctrl']['delete'] ?? ''];
-    }
-
-    /**
-     * @deprecated Use <code>!empty($GLOBALS['TCA'][$table]['ctrl']['delete'])</code> instead.
-     */
-    public static function hasDeleteField(string $table): bool
-    {
-        trigger_error(
-            'The method \In2code\In2publishCore\Domain\Service\TcaProcessingService::getCompleteTcaForTable is deprecated. Please use "!empty($GLOBALS[\'TCA\'][$table][\'ctrl\'][\'delete\'])" instead.',
-            E_USER_DEPRECATED
-        );
-        return !empty($GLOBALS['TCA'][$table]['ctrl']['delete']);
-    }
-
-    /**
-     * @deprecated Use <code>$GLOBALS['TCA'][$table]['ctrl']['delete'] ?? null</code> instead.
-     */
-    public static function getDeleteField(string $table): string
-    {
-        trigger_error(
-            'The method \In2code\In2publishCore\Domain\Service\TcaProcessingService::getDeleteField is deprecated. Please use "$GLOBALS[\'TCA\'][$table][\'ctrl\'][\'delete\'] ?? null" instead.',
-            E_USER_DEPRECATED
-        );
-        return $GLOBALS['TCA'][$table]['ctrl']['delete'] ?? '';
     }
 }

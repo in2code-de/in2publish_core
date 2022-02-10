@@ -36,8 +36,7 @@ use function array_merge;
 
 class TestsStatusExporter implements SystemInformationExporter
 {
-    /** @var TestingService */
-    protected $testingService;
+    protected TestingService $testingService;
 
     public function __construct(TestingService $testingService)
     {

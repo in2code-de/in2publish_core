@@ -39,8 +39,7 @@ class FileMissingException extends In2publishCoreException
     public const CODE = 1583161274;
     protected const MESSAGE = 'The file "%s" does not exist';
 
-    /** @var string */
-    protected $fileName;
+    protected string $fileName;
 
     public function __construct(string $fileName, Throwable $previous = null)
     {

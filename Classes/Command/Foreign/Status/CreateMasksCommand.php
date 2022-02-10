@@ -37,6 +37,9 @@ class CreateMasksCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:createmasks';
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('FileCreateMask: ' . $GLOBALS['TYPO3_CONF_VARS']['SYS']['fileCreateMask']);

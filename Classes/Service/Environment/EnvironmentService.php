@@ -45,14 +45,11 @@ class EnvironmentService implements SingletonInterface
     public const STATE_PACKAGES_CHANGED = 'environment_changed';
     public const STATE_CONFIGURATION_CHANGED = 'configuration_changed';
 
-    /** @var Registry */
-    protected $registry;
+    protected Registry $registry;
 
-    /** @var PackageManager */
-    protected $packageManager;
+    protected PackageManager $packageManager;
 
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
     public function __construct(Registry $registry, PackageManager $packageManager, ConfigContainer $configContainer)
     {
@@ -97,7 +94,7 @@ class EnvironmentService implements SingletonInterface
     /** @codeCoverageIgnore */
     protected function getPackagesHash(): string
     {
-        return sha1(json_encode($this->packageManager->getActivePackages()));
+        return sha1(json_encode($this->packageManager->getActivePackages(), JSON_THROW_ON_ERROR));
     }
 
     /** @codeCoverageIgnore */

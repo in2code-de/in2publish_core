@@ -33,8 +33,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class ExecutionTimeViewHelper extends AbstractViewHelper
 {
-    /** @var ExecutionTimeService */
-    protected $executionTimeService;
+    protected ExecutionTimeService $executionTimeService;
 
     public function __construct(ExecutionTimeService $executionTimeService)
     {

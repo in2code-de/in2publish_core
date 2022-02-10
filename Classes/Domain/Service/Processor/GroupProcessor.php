@@ -42,18 +42,14 @@ class GroupProcessor extends AbstractProcessor
     public const ALLOWED = 'allowed';
     public const UPLOAD_FOLDER = 'uploadfolder';
 
-    protected $canHoldRelations = true;
+    protected bool $canHoldRelations = true;
 
-    protected $forbidden = [
+    protected array $forbidden = [
         'relations are only resolved from the owning side, MM_oppositeUsage marks the opposite side' => self::MM_OPPOSITE_USAGE,
         'MM_opposite_field is set for the foreign side of relations, which must not be resolved' => self::MM_OPPOSITE_FIELD,
     ];
 
-    protected $required = [
-        'the internal type determines the relation target' => self::INTERNAL_TYPE,
-    ];
-
-    protected $allowed = [
+    protected array $allowed = [
         self::ALLOWED,
         self::FOREIGN_TABLE,
         self::MM,
@@ -69,7 +65,7 @@ class GroupProcessor extends AbstractProcessor
             return false;
         }
 
-        $internalType = $config[static::INTERNAL_TYPE];
+        $internalType = $config[static::INTERNAL_TYPE] ?? 'db';
 
         if ($internalType === static::INTERNAL_TYPE_DB) {
             return $this->canPreProcessInternalTypeDb($config);

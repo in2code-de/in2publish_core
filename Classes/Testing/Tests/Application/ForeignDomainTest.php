@@ -47,13 +47,11 @@ use function json_decode;
 
 class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
-    /** @var RemoteCommandDispatcher */
-    protected $rceDispatcher;
+    protected RemoteCommandDispatcher $rceDispatcher;
 
-    /** @var Connection */
-    protected $foreignConnection;
+    protected Connection $foreignConnection;
 
-    protected $prefix = 'foreign';
+    protected string $prefix = 'foreign';
 
     public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher)
     {
@@ -76,7 +74,7 @@ class ForeignDomainTest extends AbstractDomainTest implements TestCaseInterface
             $responseParts = GeneralUtility::trimExplode(':', $response->getOutputString());
             $base64encoded = $responseParts[1];
             $jsonEncoded = base64_decode($base64encoded);
-            $shortSiteConfig = json_decode($jsonEncoded, true);
+            $shortSiteConfig = json_decode($jsonEncoded, true, 512, JSON_THROW_ON_ERROR);
         } else {
             throw new ForeignSiteConfigUnavailableException($response);
         }

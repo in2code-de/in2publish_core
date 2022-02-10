@@ -37,6 +37,7 @@ use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Domain\Service\ReplaceMarkersService
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class ReplaceMarkersServiceTest extends UnitTestCase
 {
@@ -114,6 +115,8 @@ class ReplaceMarkersServiceTest extends UnitTestCase
      * @param bool $isParentRecordDisabled
      *
      * @return Record
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     protected function getRecordStub(string $table, array $getIgnoreFields = [], bool $isParentRecordDisabled = false)
     {

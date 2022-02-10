@@ -41,8 +41,7 @@ use function sprintf;
 
 class MissingStoragesTest implements TestCaseInterface
 {
-    /** @var FalStorageTestSubjectsProvider */
-    protected $testSubjectProvider;
+    protected FalStorageTestSubjectsProvider $testSubjectProvider;
 
     public function __construct(FalStorageTestSubjectsProvider $testSubjectProvider)
     {

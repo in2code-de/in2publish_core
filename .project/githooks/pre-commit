@@ -1,0 +1,28 @@
+#!/bin/sh
+
+#
+# This is a modified version which runs in a docker container instead of the local machine.
+#
+
+# Ensure the phive directory already exists
+mkdir -p $HOME/.phive
+
+# Fetch the GIT diff and format it as command input:
+DIFF=$(git -c diff.mnemonicprefix=false -c diff.noprefix=false --no-pager diff -r -p -m -M --full-index --no-color --staged | cat)
+
+# Run GrumPHP
+( \
+  cd "./" && printf "%s\n" "${DIFF}" \
+  | \
+  exec \
+    docker run \
+      --rm \
+      -v $HOME/.phive:/tmp/phive \
+      -v $PWD:$PWD \
+      -w $PWD \
+      -e GRUMPHP_GIT_WORKING_DIR="$(git rev-parse --show-toplevel)" \
+      in2code/php:7.4-fpm \
+      '.project/phars/grumphp' \
+      'git:pre-commit' \
+      '--skip-success-output' \
+)

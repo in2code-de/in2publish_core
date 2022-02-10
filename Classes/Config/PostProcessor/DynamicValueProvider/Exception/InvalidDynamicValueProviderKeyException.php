@@ -39,8 +39,7 @@ class InvalidDynamicValueProviderKeyException extends In2publishCoreException
     protected const MESSAGE = 'A dynamic value provider for key "%s" was not registered';
     public const CODE = 1595409903;
 
-    /** @var string */
-    protected $providerKey;
+    protected string $providerKey;
 
     public function __construct(string $providerKey, Throwable $previous = null)
     {
