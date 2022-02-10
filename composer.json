@@ -55,10 +55,8 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "10.2.x-dev",
-			"dev-develop": "10.2.x-dev",
-			"dev-feature/v11": "11.0.x-dev",
-			"dev-feature/47830-file-publish-ui": "11.0.x-dev"
+			"dev-master-v11": "11.0.x-dev",
+			"dev-develop-v11": "11.0.x-dev"
 		},
 		"typo3/cms": {
 			"cms-package-dir": "{$vendor-dir}/typo3/cms",
