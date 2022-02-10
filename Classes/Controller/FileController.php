@@ -31,26 +31,27 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\FalHandling\FalFinder;
+use In2code\In2publishCore\Component\FalHandling\FalPublisher;
+use In2code\In2publishCore\Component\FalHandling\Finder\Exception\TooManyFilesException;
 use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Domain\Factory\Exception\TooManyFilesException;
-use In2code\In2publishCore\Domain\Factory\FolderRecordFactory;
-use In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
-use In2code\In2publishCore\Domain\Service\Publishing\FolderPublisherService;
-use In2code\In2publishCore\Event\FolderInstanceWasCreated;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
+use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Throwable;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Core\Resource\Exception\InsufficientFolderAccessPermissionsException;
+use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function count;
 use function dirname;
+use function json_encode;
 use function ltrim;
 use function reset;
 use function strpos;
@@ -62,22 +63,26 @@ use function strpos;
  */
 class FileController extends AbstractController
 {
-    /** @var FolderPublisherService */
-    protected $folderPublisherService;
+    protected bool $forcePidInteger = false;
 
-    /** @var bool */
-    protected $forcePidInteger = false;
+    protected RecordPublisher $recordPublisher;
 
-    /** @var RecordPublisher */
-    protected $recordPublisher;
+    private ModuleTemplateFactory $moduleTemplateFactory;
+
+    private PageRenderer $pageRenderer;
+
+    private FalFinder $falFinder;
+
+    protected FalPublisher $falPublisher;
 
     public function __construct(
         ConfigContainer $configContainer,
         ExecutionTimeService $executionTimeService,
         EnvironmentService $environmentService,
         RemoteCommandDispatcher $remoteCommandDispatcher,
-        FolderPublisherService $folderPublisherService,
-        RecordPublisher $recordPublisher
+        RecordPublisher $recordPublisher,
+        PageRenderer $pageRenderer,
+        ModuleTemplateFactory $moduleTemplateFactory
     ) {
         parent::__construct(
             $configContainer,
@@ -85,46 +90,80 @@ class FileController extends AbstractController
             $environmentService,
             $remoteCommandDispatcher
         );
-        $this->folderPublisherService = $folderPublisherService;
         $this->recordPublisher = $recordPublisher;
+        $this->moduleTemplateFactory = $moduleTemplateFactory;
+        $this->pageRenderer = $pageRenderer;
+        $this->pageRenderer->addInlineLanguageLabelFile('EXT:in2publish_core/Resources/Private/Language/locallang_m3_js.xlf');
+        $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
+        $this->pageRenderer->addCssFile(
+            'EXT:in2publish_core/Resources/Public/Css/Modules.css',
+            'stylesheet',
+            'all',
+            '',
+            false
+        );
     }
 
-    public function indexAction(): void
+    public function injectFalFinder(FalFinder $falFinder): void
+    {
+        $this->falFinder = $falFinder;
+    }
+
+    public function injectFalPublisher(FalPublisher $falPublisher): void
+    {
+        $this->falPublisher = $falPublisher;
+    }
+
+    public function indexAction(): ResponseInterface
     {
         $record = $this->tryToGetFolderInstance($this->pid === 0 ? null : $this->pid);
 
         if (null !== $record) {
             $this->view->assign('record', $record);
         }
+
+        $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/Backend/Tooltip');
+        $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/Backend/Modal');
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $moduleTemplate->setFlashMessageQueue($this->getFlashMessageQueue());
+        $moduleTemplate->setContent($this->view->render());
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
-    /** @throws StopActionException */
-    public function publishFolderAction(string $identifier): void
+    /**
+     * @param bool $skipNotification Used by the Enterprise Edition. Do not remove despite unused in the CE.
+     * @throws StopActionException
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag) On purpose
+     */
+    public function publishFolderAction(string $identifier, bool $skipNotification = false): void
     {
-        $success = $this->folderPublisherService->publish($identifier);
-        $this->runTasks();
-
-        if ($success) {
-            $this->addFlashMessage(
-                LocalizationUtility::translate('file_publishing.folder', 'in2publish_core', [$identifier]),
-                LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
-            );
-        } else {
-            $this->addFlashMessage(
-                LocalizationUtility::translate('file_publishing.failure.folder', 'in2publish_core', [$identifier]),
-                LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
-                AbstractMessage::ERROR
-            );
+        try {
+            $this->falPublisher->publishFolder($identifier);
+            if (!$skipNotification) {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('file_publishing.folder', 'in2publish_core', [$identifier]),
+                    LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
+                );
+            }
+        } catch (Throwable $exception) {
+            if (!$skipNotification) {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('file_publishing.failure.folder', 'in2publish_core', [$identifier]),
+                    LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
+                    AbstractMessage::ERROR
+                );
+            }
         }
 
         $this->redirect('index');
     }
 
     /**
-     * @throws InsufficientFolderAccessPermissionsException
+     * @param bool $skipNotification Used by the Enterprise Edition. Do not remove despite unused in the CE.
      * @throws StopActionException
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag) On purpose
      */
-    public function publishFileAction(int $uid, string $identifier, int $storage): void
+    public function publishFileAction(int $uid, string $identifier, int $storage, bool $skipNotification = false): void
     {
         // Special case: The file was moved hence the identifier is a merged one
         if (strpos($identifier, ',')) {
@@ -138,9 +177,12 @@ class FileController extends AbstractController
         if (null !== $record) {
             $relatedRecords = $record->getRelatedRecordByTableAndProperty('sys_file', 'identifier', $identifier);
 
-            if (0 === ($recordsCount = count($relatedRecords))) {
+            $recordsCount = count($relatedRecords);
+
+            if (0 === $recordsCount) {
                 throw new RuntimeException('Did not find any record matching the publishing arguments', 1475656572);
-            } elseif (1 === $recordsCount) {
+            }
+            if (1 === $recordsCount) {
                 $relatedRecord = reset($relatedRecords);
             } elseif (isset($relatedRecords[$uid])) {
                 $relatedRecord = $relatedRecords[$uid];
@@ -149,18 +191,25 @@ class FileController extends AbstractController
             }
 
             try {
-                $this->recordPublisher->publishRecordRecursive($relatedRecord);
-                $this->addFlashMessage(
-                    LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
-                    LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
-                );
+                $this->falPublisher->publishFile($relatedRecord);
+                if (!$skipNotification) {
+                    $this->addFlashMessage(
+                        LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
+                        LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
+                    );
+                }
             } catch (Throwable $e) {
-                $this->addFlashMessage(
-                    LocalizationUtility::translate('file_publishing.failure.file', 'in2publish_core', [$identifier]),
-                    LocalizationUtility::translate('file_publishing.failure', 'in2publish_core')
-                );
+                if (!$skipNotification) {
+                    $this->addFlashMessage(
+                        LocalizationUtility::translate(
+                            'file_publishing.failure.file',
+                            'in2publish_core',
+                            [$identifier]
+                        ),
+                        LocalizationUtility::translate('file_publishing.failure', 'in2publish_core')
+                    );
+                }
             }
-            $this->runTasks();
         }
 
         $this->redirect('index');
@@ -170,33 +219,26 @@ class FileController extends AbstractController
      * toggle filter status and save the filter status in the current backendUser's session.
      *
      * @param string $filter "changed", "added", "deleted"
-     *
-     * @throws StopActionException
      */
-    public function toggleFilterStatusAndRedirectToIndexAction(string $filter): void
+    public function toggleFilterStatusAction(string $filter): ResponseInterface
     {
-        $this->toggleFilterStatusAndRedirect('in2publish_filter_files_', $filter, 'index');
+        $return = $this->toggleFilterStatus('in2publish_filter_files_', $filter);
+        return $this->jsonResponse(json_encode($return, JSON_THROW_ON_ERROR));
     }
 
     /**
      * @param string|null $identifier CombinedIdentifier as FAL would use it
      *
      * @return RecordInterface|null The record or null if it can not be handled
-     * @throws InsufficientFolderAccessPermissionsException
      */
     protected function tryToGetFolderInstance(?string $identifier): ?RecordInterface
     {
-        if (false === $this->configContainer->get('factory.fal.reserveSysFileUids')) {
-            try {
-                $record = GeneralUtility::makeInstance(IndexingFolderRecordFactory::class)->makeInstance($identifier);
-            } catch (TooManyFilesException $exception) {
-                $this->renderTooManyFilesFlashMessage($exception);
-                return null;
-            }
-        } else {
-            $record = GeneralUtility::makeInstance(FolderRecordFactory::class)->makeInstance($identifier);
+        try {
+            $record = $this->falFinder->findFalRecord($identifier);
+        } catch (TooManyFilesException $exception) {
+            $this->renderTooManyFilesFlashMessage($exception);
+            return null;
         }
-        $this->emitFolderInstanceCreated($record);
         return $record;
     }
 
@@ -214,10 +256,5 @@ class FileController extends AbstractController
         );
         $arguments['exception'] = $exception;
         $this->logger->warning('The folder file limit has been exceeded', $arguments);
-    }
-
-    protected function emitFolderInstanceCreated(RecordInterface $record): void
-    {
-        $this->eventDispatcher->dispatch(new FolderInstanceWasCreated($record));
     }
 }

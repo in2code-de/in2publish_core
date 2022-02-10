@@ -42,11 +42,9 @@ class RunTasksInQueueCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:publishtasksrunner:runtasksinqueue';
 
-    /** @var ContextService */
-    protected $contextService;
+    protected ContextService $contextService;
 
-    /** @var TaskRepository */
-    protected $taskRepository;
+    protected TaskRepository $taskRepository;
 
     public function __construct(ContextService $contextService, TaskRepository $taskRepository, string $name = null)
     {
@@ -60,6 +58,9 @@ class RunTasksInQueueCommand extends Command
         return $this->contextService->isForeign();
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $result = [];
@@ -78,7 +79,7 @@ class RunTasksInQueueCommand extends Command
         if (empty($result)) {
             $result[] = 'There was nothing to execute';
         }
-        $output->write(json_encode($result));
+        $output->write(json_encode($result, JSON_THROW_ON_ERROR));
         return Command::SUCCESS;
     }
 }

@@ -48,11 +48,9 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
 {
     public const DB_CONFIG_TEST_TYPE = 'DB Config Test';
 
-    /** @var RemoteCommandDispatcher */
-    protected $rceDispatcher;
+    protected RemoteCommandDispatcher $rceDispatcher;
 
-    /** @var Random */
-    protected $random;
+    protected Random $random;
 
     public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, Random $random)
     {
@@ -73,8 +71,8 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
 
         if ($response->isSuccessful()) {
             $result = $this->tokenizeResponse($response->getOutput());
-            $configs = json_decode(base64_decode($result['DB Config']), true);
-            if (is_array($configs) && in_array($random, $configs)) {
+            $configs = json_decode(base64_decode($result['DB Config']), true, 512, JSON_THROW_ON_ERROR);
+            if (is_array($configs) && in_array($random, $configs, true)) {
                 $testResult = new TestResult('application.foreign_database_config.success');
             } else {
                 $testResult = new TestResult(
@@ -87,7 +85,7 @@ class ForeignDatabaseConfigTest implements TestCaseInterface
             $testResult = new TestResult(
                 'application.foreign_database_config.unexpected_error',
                 TestResult::ERROR,
-                [$response->getErrors(), $response->getOutput()]
+                [$response->getErrorsString(), $response->getOutputString()]
             );
         }
         $connection->delete('tx_in2code_in2publish_task', ['task_type' => self::DB_CONFIG_TEST_TYPE]);

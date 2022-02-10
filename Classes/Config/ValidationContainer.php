@@ -37,10 +37,10 @@ use function implode;
 class ValidationContainer
 {
     /** @var string[] */
-    protected $path = [];
+    protected array $path = [];
 
     /** @var string[] */
-    protected $errors = [];
+    protected array $errors = [];
 
     /** @param mixed $value */
     public function validate(Node $node, $value): void

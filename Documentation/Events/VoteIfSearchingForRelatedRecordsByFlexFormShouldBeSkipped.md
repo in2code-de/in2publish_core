@@ -17,7 +17,7 @@ event `VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped` which would be
 
 ## What
 
-* `commonRepository`: The instance of the CommonRepository which is going to be used to search for records.
+* `recordFinder`: The instance of the `RecordFinder` which is going to be used to search for records.
 * `record`: The current record which is going to have its related records by FlexForm added.
 * `column`: The name of the column of the current record which is configured with type `flex`.
 * `columnConfiguration`: The TCA `columns` configuration for the `column`.

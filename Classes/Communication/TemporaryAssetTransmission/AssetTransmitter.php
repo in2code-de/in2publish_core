@@ -47,14 +47,11 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var AdapterInterface */
-    protected $adapter;
+    protected ?AdapterInterface $adapter = null;
 
-    /** @var AdapterRegistry */
-    protected $adapterRegistry;
+    protected AdapterRegistry $adapterRegistry;
 
-    /** @var string */
-    protected $foreignRootPath;
+    protected string $foreignRootPath;
 
     public function __construct(ConfigContainer $configContainer, AdapterRegistry $adapterRegistry)
     {
@@ -63,8 +60,8 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
     }
 
     /**
-     * @param string $source Absolute local path to file(return value of
-     *     \TYPO3\CMS\Core\Resource\Driver\DriverInterface::getFileForLocalProcessing)
+     * @param string $source Absolute local path to file => return value of
+     *     \TYPO3\CMS\Core\Resource\Driver\DriverInterface::getFileForLocalProcessing
      *
      * @return string Absolute path of the transmitted file on foreign
      *
@@ -82,6 +79,7 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
         if (null === $this->adapter) {
             try {
                 $adapterClass = $this->adapterRegistry->getAdapter(AdapterInterface::class);
+                /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
                 $this->adapter = GeneralUtility::makeInstance($adapterClass);
             } catch (Throwable $exception) {
                 $this->logger->debug('SshAdapter initialization failed. See previous log for reason.');

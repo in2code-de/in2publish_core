@@ -29,8 +29,11 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use In2code\In2publishCore\Features\SystemInformationExport\Service\SystemInformationExportService;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Extbase\Http\ForwardResponse;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\NoSuchArgumentException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -52,29 +55,32 @@ use function time;
 
 class SystemInformationExportController extends ActionController
 {
-    /** @var SystemInformationExportService */
-    protected $sysInfoExportService;
+    use AdminToolsModuleTemplate;
+
+    protected SystemInformationExportService $sysInfoExportService;
 
     public function __construct(SystemInformationExportService $sysInfoExportService)
     {
         $this->sysInfoExportService = $sysInfoExportService;
     }
 
-    public function sysInfoIndexAction(): void
+    public function sysInfoIndexAction(): ResponseInterface
     {
+        return $this->htmlResponse();
     }
 
-    public function sysInfoShowAction(): void
+    public function sysInfoShowAction(): ResponseInterface
     {
         $info = $this->sysInfoExportService->getSystemInformation();
         $this->view->assign('info', $info);
-        $this->view->assign('infoJson', json_encode($info));
+        $this->view->assign('infoJson', json_encode($info, JSON_THROW_ON_ERROR));
+        return $this->htmlResponse();
     }
 
-    public function sysInfoDecodeAction(string $json = ''): void
+    public function sysInfoDecodeAction(string $json = ''): ResponseInterface
     {
         if (!empty($json)) {
-            $info = json_decode($json, true);
+            $info = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
             if (is_array($info)) {
                 $this->view->assign('info', $info);
             } else {
@@ -87,12 +93,16 @@ class SystemInformationExportController extends ActionController
             }
         }
         $this->view->assign('infoJson', $json);
+        return $this->htmlResponse();
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExitExpression) Don't use PSR-14 for historic reasons. Revisit in in2publish_core v12.
+     */
     public function sysInfoDownloadAction(): void
     {
         $info = $this->sysInfoExportService->getSystemInformation();
-        $json = json_encode($info);
+        $json = json_encode($info, JSON_THROW_ON_ERROR);
 
         $downloadName = 'cp_sysinfo_' . time() . '.json';
         header('Content-Disposition: attachment; filename="' . $downloadName . '"');
@@ -109,15 +119,15 @@ class SystemInformationExportController extends ActionController
         die;
     }
 
-    public function sysInfoUploadAction(): void
+    public function sysInfoUploadAction(): ResponseInterface
     {
         try {
             /** @var array $file */
             $file = $this->request->getArgument('jsonFile');
         } catch (NoSuchArgumentException $e) {
-            return;
+            return $this->htmlResponse();
         }
         $content = file_get_contents($file['tmp_name']);
-        $this->forward('sysInfoDecode', null, null, ['json' => $content]);
+        return (new ForwardResponse('sysInfoDecode'))->withArguments(['json' => $content]);
     }
 }

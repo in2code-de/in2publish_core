@@ -51,14 +51,11 @@ class ExecuteCommand extends Command implements LoggerAwareInterface
     public const EXIT_EXECUTION_FAILED = 232;
     public const IDENTIFIER = 'in2publish_core:rpc:execute';
 
-    /** @var ContextService */
-    protected $contextService;
+    protected ContextService $contextService;
 
-    /** @var Letterbox */
-    protected $letterbox;
+    protected Letterbox $letterbox;
 
-    /** @var EnvelopeDispatcher */
-    protected $envelopeDispatcher;
+    protected EnvelopeDispatcher $envelopeDispatcher;
 
     public function __construct(
         ContextService $contextService,

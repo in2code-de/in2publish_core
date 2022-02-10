@@ -34,12 +34,11 @@ use In2code\In2publishCore\Utility\BackendUtility as In2publishBackendUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility as CoreBackendUtility;
 use TYPO3\CMS\Core\Database\Connection;
-use TYPO3\CMS\Core\Database\TableConfigurationPostProcessingHookInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class PageTsProvider implements ProviderInterface, ContextualProvider, TableConfigurationPostProcessingHookInterface
+class PageTsProvider implements ProviderInterface, ContextualProvider
 {
-    protected $locked = true;
+    protected bool $locked = true;
 
     /**
      * This method is called after loading all ext_tables.php
@@ -65,14 +64,11 @@ class PageTsProvider implements ProviderInterface, ContextualProvider, TableConf
         return true;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
     public function getConfig(): array
     {
         $uid = In2publishBackendUtility::getPageIdentifier();
         // get the pageTS | Manually pass rootline to disable caching.
-        $pageTs = CoreBackendUtility::getPagesTSconfig($uid);
+        $pageTs = CoreBackendUtility::getPagesTSconfig((int)$uid);
 
         $configuration = [];
         if (!empty($pageTs['tx_in2publish.'])) {

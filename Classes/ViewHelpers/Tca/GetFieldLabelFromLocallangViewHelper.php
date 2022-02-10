@@ -35,13 +35,10 @@ use function ucfirst;
 
 class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
 {
-    /** @var array */
-    protected $tca;
+    protected array $tca;
 
-    /** @var LanguageService */
-    protected $languageService;
+    protected LanguageService $languageService;
 
-    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function __construct()
     {
         $this->tca = $GLOBALS['TCA'];

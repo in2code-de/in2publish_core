@@ -30,25 +30,16 @@ namespace In2code\In2publishCore\Event;
  */
 
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
-
-use function trigger_error;
-
-use const E_USER_DEPRECATED;
 
 final class VoteIfRecordShouldBeIgnored extends AbstractVotingEvent
 {
-    /** @var RecordFinder */
-    private $recordFinder;
+    private RecordFinder $recordFinder;
 
-    /** @var array */
-    private $localProperties;
+    private array $localProperties;
 
-    /** @var array */
-    private $foreignProperties;
+    private array $foreignProperties;
 
-    /** @var string */
-    private $tableName;
+    private string $tableName;
 
     public function __construct(
         RecordFinder $recordFinder,
@@ -60,19 +51,6 @@ final class VoteIfRecordShouldBeIgnored extends AbstractVotingEvent
         $this->localProperties = $localProperties;
         $this->foreignProperties = $foreignProperties;
         $this->tableName = $tableName;
-    }
-
-    /**
-     * @deprecated This method is deprecated and will be removed in in2publish_core v11, please use
-     *     \In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored::getRecordFinder instead.
-     */
-    public function getCommonRepository(): CommonRepository
-    {
-        trigger_error(
-            'The method \In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored::getCommonRepository is deprecated and will be removed in in2publish_core v11, please use \In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored::getRecordFinder instead.',
-            E_USER_DEPRECATED
-        );
-        return $this->recordFinder;
     }
 
     public function getRecordFinder(): RecordFinder

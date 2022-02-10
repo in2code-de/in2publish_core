@@ -45,17 +45,13 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     public const PURPOSE_MISSING = 'missing';
     public const PURPOSE_UNIQUE_TARGET = 'uniqueTarget';
 
-    /** @var EventDispatcher */
-    protected $eventDispatcher;
+    protected EventDispatcher $eventDispatcher;
 
-    /** @var array */
-    protected $localStorages = [];
+    protected array $localStorages = [];
 
-    /** @var array */
-    protected $foreignStorages = [];
+    protected array $foreignStorages = [];
 
-    /** @var bool */
-    protected $initialized = false;
+    protected bool $initialized = false;
 
     public function __construct(EventDispatcher $eventDispatcher)
     {

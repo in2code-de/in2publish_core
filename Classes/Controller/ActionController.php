@@ -37,7 +37,6 @@ use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\ExtensionUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as ExtbaseActionController;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 
@@ -50,23 +49,24 @@ abstract class ActionController extends ExtbaseActionController implements Logge
 {
     use LoggerAwareTrait;
 
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
-    /** @var EnvironmentService */
-    protected $environmentService;
+    protected EnvironmentService $environmentService;
 
-    /** UID of the selected Page in the page tree */
+    /**
+     * UID of the selected Page in the page tree
+     * or combined folder identifier of the folder selected in the folder tree.
+     *
+     * @var int|string
+     */
     protected $pid;
 
-    protected $forcePidInteger = true;
+    protected bool $forcePidInteger = true;
 
     /**
      * Creates a logger for the instantiated controller object.
      * When extending from this class and using an own constructor don't forget
      * to call this constructor method at the end of your own implementation
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     public function __construct(
         ConfigContainer $configContainer,
@@ -85,33 +85,12 @@ abstract class ActionController extends ExtbaseActionController implements Logge
     }
 
     /**
-     * Additionally creates the controller context if not done yet.
-     * Do NOT call this Method before $this->initializeAction() is going to be executed
-     * because it relies on $this->request and $this->response to be set
+     * TODO v12: replace TYPO3\CMS\Extbase\Mvc\View\ViewInterface with TYPO3Fluid\Fluid\View\ViewInterface
      *
-     * @param string $messageBody
-     * @param string $messageTitle
-     * @param int $severity
-     * @param bool $storeInSession
-     *
-     * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function addFlashMessage(
-        $messageBody,
-        $messageTitle = '',
-        $severity = AbstractMessage::OK,
-        $storeInSession = true
-    ): void {
-        if ($this->controllerContext === null) {
-            $this->logger->debug('Prematurely building ControllerContext');
-            $this->controllerContext = $this->buildControllerContext();
-        }
-        parent::addFlashMessage($messageBody, $messageTitle, $severity, $storeInSession);
-    }
-
     protected function initializeView(ViewInterface $view): void
     {
-        parent::initializeView($view);
         $this->view->assign('extensionVersion', ExtensionUtility::getExtensionVersion('in2publish_core'));
         $this->view->assign('config', $this->configContainer->get());
         $this->view->assign('testStatus', $this->environmentService->getTestStatus());

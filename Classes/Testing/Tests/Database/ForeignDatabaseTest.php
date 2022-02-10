@@ -42,8 +42,7 @@ use function in_array;
 
 class ForeignDatabaseTest implements TestCaseInterface
 {
-    /** @var RequiredTablesDataProvider */
-    protected $requiredTablesDataProvider;
+    protected RequiredTablesDataProvider $requiredTablesDataProvider;
 
     public function __construct(RequiredTablesDataProvider $requiredTablesDataProvider)
     {

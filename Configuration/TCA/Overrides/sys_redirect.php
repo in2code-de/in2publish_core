@@ -44,7 +44,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
             'displayCond' => 'FIELD:tx_in2publishcore_foreign_site_id:REQ:false',
             'config' => [
                 'type' => 'group',
-                'internal_type' => 'db',
                 'allowed' => 'pages',
                 'size' => 1,
                 'maxitems' => 1,

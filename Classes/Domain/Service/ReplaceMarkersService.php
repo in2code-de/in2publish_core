@@ -40,6 +40,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function explode;
 use function implode;
+use function is_int;
 use function json_decode;
 use function preg_replace_callback;
 use function str_replace;
@@ -55,11 +56,9 @@ class ReplaceMarkersService implements LoggerAwareInterface
     // Also replace optional quotes around the REC_FIELD_ because we will quote the actual value
     protected const REC_FIELD_REGEX = '~\'?###REC_FIELD_(.*?)###\'?~';
 
-    /** @var FlexFormTools */
-    protected $flexFormTools;
+    protected FlexFormTools $flexFormTools;
 
-    /** @var TcaProcessingService */
-    protected $tcaProcessingService;
+    protected TcaProcessingService $tcaProcessingService;
 
     public function __construct(FlexFormTools $flexFormTools, TcaProcessingService $tcaProcessingService)
     {
@@ -120,7 +119,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
     }
 
     /**
-     * Replace ###REC_FIELD_fieldname### with it's value
+     * Replace ###REC_FIELD_fieldname### with its value
      *
      * @param RecordInterface $record
      * @param string $string
@@ -154,7 +153,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
             $string = str_replace('###CURRENT_PID###', (string)$pageIdentifier, $string);
         }
         if (false !== strpos($string, '###THIS_UID###')) {
-            $string = str_replace('###THIS_UID###', $record->getIdentifier(), $string);
+            $string = str_replace('###THIS_UID###', (string)$record->getIdentifier(), $string);
         }
         if (false !== strpos($string, '###STORAGE_PID###')) {
             $string = str_replace('###STORAGE_PID###', (string)$this->getStoragePidFromPage($pageIdentifier), $string);
@@ -166,18 +165,9 @@ class ReplaceMarkersService implements LoggerAwareInterface
     {
         if (false !== strpos($string, '###PAGE_TSCONFIG')) {
             $marker = [
-                'PAGE_TSCONFIG_ID' => function ($input) {
-                    return (int)$input;
-                },
-                'PAGE_TSCONFIG_IDLIST' => function ($input) {
-                    return implode(
-                        ',',
-                        GeneralUtility::intExplode(',', $input)
-                    );
-                },
-                'PAGE_TSCONFIG_STR' => function ($input) {
-                    return DatabaseUtility::quoteString($input);
-                },
+                'PAGE_TSCONFIG_ID' => fn ($input): int => (int)$input,
+                'PAGE_TSCONFIG_IDLIST' => fn ($input): string => implode(',', GeneralUtility::intExplode(',', $input)),
+                'PAGE_TSCONFIG_STR' => fn ($input): string => DatabaseUtility::quoteString($input),
             ];
 
             $pageTsConfig = $this->getPagesTsConfig($record->getPageIdentifier());
@@ -219,18 +209,9 @@ class ReplaceMarkersService implements LoggerAwareInterface
             $tableName = $record->getTableName();
 
             $marker = [
-                'PAGE_TSCONFIG_ID' => function ($input) {
-                    return (int)$input;
-                },
-                'PAGE_TSCONFIG_IDLIST' => function ($input) {
-                    return implode(
-                        ',',
-                        GeneralUtility::intExplode(',', $input)
-                    );
-                },
-                'PAGE_TSCONFIG_STR' => function ($input) {
-                    return DatabaseUtility::quoteString($input);
-                },
+                'PAGE_TSCONFIG_ID' => fn ($input): int => (int)$input,
+                'PAGE_TSCONFIG_IDLIST' => fn ($input): string => implode(',', GeneralUtility::intExplode(',', $input)),
+                'PAGE_TSCONFIG_STR' => fn ($input): string => DatabaseUtility::quoteString($input),
             ];
 
             $pageTs = BackendUtility::getPagesTSconfig($record->getPageIdentifier());
@@ -253,6 +234,9 @@ class ReplaceMarkersService implements LoggerAwareInterface
                             if (false !== strpos($string, '###' . $markerName . '###')) {
                                 $value = $values[$markerName] ?? 0;
                                 $cleanValue = $filterFunc($value);
+                                if (is_int($cleanValue)) {
+                                    $cleanValue = (string)$cleanValue;
+                                }
                                 $string = str_replace('###' . $markerName . '###', $cleanValue, $string);
                             }
                         }
@@ -269,7 +253,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
      */
     protected function getSimplifiedDataStructureIdentifier(string $dataStructureIdentifier): string
     {
-        $identifierArray = json_decode($dataStructureIdentifier, true);
+        $identifierArray = json_decode($dataStructureIdentifier, true, 512, JSON_THROW_ON_ERROR);
 
         if (
             isset($identifierArray['type'], $identifierArray['dataStructureKey'])
@@ -292,10 +276,8 @@ class ReplaceMarkersService implements LoggerAwareInterface
      * Log if markers are not substituted or if there are errors
      *
      * @param $string
-     *
-     * @return void
      */
-    protected function checkForMarkersAndErrors($string): void
+    protected function checkForMarkersAndErrors(string $string): void
     {
         if (strpos($string, '###') !== false) {
             $this->logger->error('Could not replace marker', ['string' => $string]);
@@ -304,13 +286,6 @@ class ReplaceMarkersService implements LoggerAwareInterface
         }
     }
 
-    /**
-     * @param int $pageId
-     *
-     * @return int
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
     protected function getStoragePidFromPage(int $pageId): int
     {
         $rootLine = BackendUtility::BEgetRootLine($pageId);

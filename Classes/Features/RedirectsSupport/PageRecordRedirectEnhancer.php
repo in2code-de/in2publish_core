@@ -47,23 +47,18 @@ use function array_keys;
 
 class PageRecordRedirectEnhancer
 {
-    /** @var RecordFinder */
-    protected $recordFinder;
+    protected RecordFinder $recordFinder;
 
-    /** @var Connection */
-    protected $localDatabase;
+    protected Connection $localDatabase;
 
-    /** @var Connection */
-    protected $foreignDatabase;
+    protected Connection $foreignDatabase;
 
-    /** @var SysRedirectRepository */
-    protected $repo;
+    protected SysRedirectRepository $repo;
 
-    /** @var LinkService */
-    protected $linkService;
+    protected LinkService $linkService;
 
     /** @var array<string, array<int>> */
-    protected $looseRedirects = [];
+    protected array $looseRedirects = [];
 
     public function __construct(
         RecordFinder $recordFinder,
@@ -82,7 +77,9 @@ class PageRecordRedirectEnhancer
     public function addRedirectsToPageRecord(AllRelatedRecordsWereAddedToOneRecord $event): void
     {
         $record = $event->getRecord();
-        if ('pages' !== $record->getTableName() || ($pid = $record->getIdentifier()) < 1) {
+        $pid = $record->getIdentifier();
+
+        if ($pid < 1 || 'pages' !== $record->getTableName()) {
             return;
         }
 
@@ -193,6 +190,9 @@ class PageRecordRedirectEnhancer
               ->execute();
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     protected function findMissingRowsByUid(array $redirects): array
     {
         $missingRows = ['local' => [], 'foreign' => []];
@@ -222,6 +222,9 @@ class PageRecordRedirectEnhancer
         return $redirects;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     protected function findRedirectsByUri(RecordInterface $record): array
     {
         $basicUris = [];
@@ -291,7 +294,11 @@ class PageRecordRedirectEnhancer
         }
     }
 
-    /** @return array<int, RecordInterface> */
+    /**
+     * @return array[][]
+     *
+     * @psalm-return array<int|string, array{local?: array}>
+     */
     protected function getExistingRedirects(RecordInterface $record): array
     {
         $redirects = [];

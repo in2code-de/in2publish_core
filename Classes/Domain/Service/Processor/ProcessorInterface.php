@@ -59,7 +59,7 @@ interface ProcessorInterface
     public function canPreProcess(array $config): bool;
 
     /**
-     * PreProcess the configuration. Returns an array with only necessary information in an standardized format
+     * PreProcess the configuration. Returns an array with only necessary information in a standardized format
      *
      * @param array $config
      *

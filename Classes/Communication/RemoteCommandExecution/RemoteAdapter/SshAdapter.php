@@ -55,7 +55,6 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
     /** @var resource */
     protected $session;
 
-    /** @SuppressWarnings(PHPMD.StaticAccess) */
     public function execute(RemoteCommandRequest $request): RemoteCommandResponse
     {
         if (null === $this->session) {

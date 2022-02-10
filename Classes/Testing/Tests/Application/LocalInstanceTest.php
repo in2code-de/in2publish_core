@@ -40,15 +40,13 @@ use function array_merge;
 
 class LocalInstanceTest implements TestCaseInterface
 {
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
     public function __construct(ConfigContainer $configContainer)
     {
         $this->configContainer = $configContainer;
     }
 
-    /** @SuppressWarnings("PHPMD.Superglobals") */
     public function run(): TestResult
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();

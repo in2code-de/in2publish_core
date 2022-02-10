@@ -9,7 +9,7 @@ This event will be seen each time a single record was published.
 ## What
 
 * `record`: The record instance which was published.
-* `commonRepository`: The instance of the CommonRepository which was used to publish the record.
+* `recordPublisher`: The instance of the `RecordPublisher ` which was used to publish the record.
 
 ## Possibilities
 

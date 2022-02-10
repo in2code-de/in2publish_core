@@ -40,8 +40,7 @@ class InvalidCompilerPassTagException extends In2publishCoreException
     public const CODE = 1638799486;
     private const MESSAGE = 'The compiler pass %s does not handle tags other than %s';
 
-    /** @var string */
-    private $compilerClass;
+    private string $compilerClass;
 
     /** @var array<string> */
     private $handledTags;

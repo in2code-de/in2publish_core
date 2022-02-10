@@ -40,14 +40,11 @@ use function sprintf;
 
 class UidReservationService
 {
-    /** @var Connection */
-    protected $localDatabaseConnection;
+    protected ?Connection $localDatabaseConnection;
 
-    /** @var Connection */
-    protected $foreignDatabaseConnection;
+    protected ?Connection $foreignDatabaseConnection;
 
-    /** @var array */
-    protected $cache = [];
+    protected array $cache = [];
 
     public function __construct()
     {
@@ -61,7 +58,7 @@ class UidReservationService
      */
     public function getReservedUid(): int
     {
-        $nextAutoIncrement = (int)max(
+        $nextAutoIncrement = max(
             $this->fetchSysFileAutoIncrementFromDatabase($this->localDatabaseConnection),
             $this->fetchSysFileAutoIncrementFromDatabase($this->foreignDatabaseConnection)
         );

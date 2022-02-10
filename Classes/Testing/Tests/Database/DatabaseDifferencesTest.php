@@ -47,6 +47,11 @@ use const PHP_INT_MAX;
 
 class DatabaseDifferencesTest implements TestCaseInterface
 {
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function run(): TestResult
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
@@ -99,7 +104,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
                             }
                         } elseif ($fieldExistsOnForeign && !$fieldExistsOnLocal) {
                             $fieldDifferences[] = $tableName . '.' . $fieldName . ': Only exists on foreign';
-                        } elseif (!$fieldExistsOnForeign && $fieldExistsOnLocal) {
+                        } elseif ($fieldExistsOnLocal) {
                             $fieldDifferences[] = $tableName . '.' . $fieldName . ': Only exists on local';
                         } else {
                             continue;
@@ -130,7 +135,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
                         } elseif ($propExistsLocal && !$propExistsForeign) {
                             $tableDifferences[] = 'Table property ' . $tableName . '.' . $propertyName
                                                   . ': Only exists on foreign';
-                        } elseif (!$propExistsLocal && $propExistsForeign) {
+                        } elseif ($propExistsForeign) {
                             $tableDifferences[] = 'Table property ' . $tableName . '.' . $propertyName
                                                   . ': Only exists on local';
                         } else {
@@ -146,7 +151,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
             }
 
             foreach ($diffOnForeign as $tableName => $fieldArray) {
-                if (is_array($fieldArray['fields']) && isset($fieldArray['fields'])) {
+                if (is_array($fieldArray['fields'])) {
                     foreach (array_keys($fieldArray['fields']) as $fieldOnlyOnForeign) {
                         $fieldDifferences[] = $tableName . '.' . $fieldOnlyOnForeign . ': Only exists on foreign';
                     }
@@ -197,6 +202,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
 
     protected function areDifferentDatabases(Connection $local, Connection $foreign): bool
     {
+        /** @noinspection RandomApiMigrationInspection */
         $random = mt_rand(1, PHP_INT_MAX);
         $local->insert(
             'tx_in2code_in2publish_task',

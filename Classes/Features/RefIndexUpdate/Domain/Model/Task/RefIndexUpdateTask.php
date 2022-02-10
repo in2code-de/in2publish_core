@@ -52,8 +52,6 @@ class RefIndexUpdateTask extends AbstractTask
      *      ]
      *
      * @return bool
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function executeTask(): bool
     {

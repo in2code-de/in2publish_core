@@ -51,26 +51,23 @@ use function count;
 
 class ConfigContainer implements SingletonInterface
 {
-    /** @var ContextService */
-    protected $contextService;
+    protected ContextService $contextService;
 
-    /** @var array */
-    protected $providers = [];
+    protected array $providers = [];
 
-    /** @var DefinerInterface[] */
-    protected $definers = [];
+    /** @var array<class-string<DefinerInterface>, DefinerInterface|null> */
+    protected array $definers = [];
 
-    /** @var PostProcessorInterface[] */
-    protected $postProcessors = [];
+    /** @var array<class-string<PostProcessorInterface>, PostProcessorInterface|null> */
+    protected array $postProcessors = [];
 
-    /** @var MigrationInterface[] */
-    protected $migrations = [];
+    /** @var array<class-string<MigrationInterface>, MigrationInterface|null> */
+    protected array $migrations = [];
 
-    /** @var array|null */
-    protected $config;
+    protected ?array $config = null;
 
     /** @var NodeCollection[]|null[] */
-    protected $definition = [
+    protected array $definition = [
         'local' => null,
         'foreign' => null,
     ];
@@ -153,7 +150,7 @@ class ConfigContainer implements SingletonInterface
      *
      * @param array $priority
      *
-     * @return array|array[]|bool[]|int[]|string[] Sorted, merged and type casted configuration.
+     * @return array|array[]|bool[]|int[]|string[] Sorted, merged and type cast configuration.
      */
     protected function processConfig(array $priority): array
     {
@@ -235,7 +232,7 @@ class ConfigContainer implements SingletonInterface
     /**
      * All providers must be registered in ext_localconf.php!
      * Providers registered in ext_tables.php will not overrule configurations of already loaded extensions.
-     * Providers must implement the ProviderInterface or they won't be called.
+     * Providers must implement the ProviderInterface, or they won't be called.
      */
     public function registerProvider(string $provider): void
     {
@@ -244,7 +241,7 @@ class ConfigContainer implements SingletonInterface
 
     /**
      * All definers must be registered in ext_localconf.php!
-     * Definers must implement the DefinerInterface or they won't be called.
+     * Definers must implement the DefinerInterface, or they won't be called.
      */
     public function registerDefiner(string $definer): void
     {
@@ -253,7 +250,7 @@ class ConfigContainer implements SingletonInterface
 
     /**
      * All post processors must be registered in ext_localconf.php!
-     * PostProcessors must implement the PostProcessorInterface or they won't be called.
+     * PostProcessors must implement the PostProcessorInterface, or they won't be called.
      */
     public function registerPostProcessor(string $postProcessor): void
     {
@@ -298,7 +295,7 @@ class ConfigContainer implements SingletonInterface
         $fullConfig = $cloned->get();
 
         $priority = [];
-        foreach ($cloned->providers as $class => $config) {
+        foreach (array_keys($cloned->providers) as $class) {
             $provider = GeneralUtility::makeInstance($class);
             if ($provider instanceof ProviderInterface) {
                 $priority[$class] = $provider->getPriority();

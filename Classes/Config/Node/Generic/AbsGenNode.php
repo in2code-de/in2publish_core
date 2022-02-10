@@ -40,7 +40,7 @@ abstract class AbsGenNode extends AbstractNode
     /**
      * @var string[]
      */
-    protected static $types = [
+    protected static array $types = [
         Node::T_STRING => GenString::class,
         Node::T_INTEGER => GenInteger::class,
     ];
@@ -49,11 +49,11 @@ abstract class AbsGenNode extends AbstractNode
      * @param string $type
      * @param string $name
      * @param NodeCollection $nodes
-     * @param string|int|bool|array $default
+     * @param string|int|bool|array|null $default
      *
      * @return GenString|GenInteger
      */
-    public static function fromType(string $type, string $name, NodeCollection $nodes, $default): AbsGenNode
+    public static function fromType(string $type, string $name, NodeCollection $nodes, $default = null): AbsGenNode
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return GeneralUtility::makeInstance(static::$types[$type], $name, [], $nodes, $default);
@@ -98,8 +98,6 @@ abstract class AbsGenNode extends AbstractNode
     /**
      * @param ValidationContainer $container
      * @param mixed $value
-     *
-     * @return void
      */
     abstract protected function validateKey(ValidationContainer $container, $value): void;
 }

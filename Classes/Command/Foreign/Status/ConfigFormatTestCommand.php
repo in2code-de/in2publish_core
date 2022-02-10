@@ -43,11 +43,9 @@ class ConfigFormatTestCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:configformattest';
 
-    /** @var ValidationContainer */
-    protected $validationContainer;
+    protected ValidationContainer $validationContainer;
 
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
     public function __construct(
         ValidationContainer $validationContainer,
@@ -59,13 +57,17 @@ class ConfigFormatTestCommand extends Command
         $this->configContainer = $configContainer;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $definition = $this->configContainer->getForeignDefinition();
         $actual = $this->configContainer->get();
         $definition->validate($this->validationContainer, $actual);
         $errors = $this->validationContainer->getErrors();
-        $output->writeln('Config Format Test: ' . base64_encode(json_encode(array_column($errors, 'configuration'))));
+        $value = base64_encode(json_encode(array_column($errors, 'configuration'), JSON_THROW_ON_ERROR));
+        $output->writeln('Config Format Test: ' . $value);
         return Command::SUCCESS;
     }
 }

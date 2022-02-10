@@ -1,0 +1,79 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers" data-namespace-typo3-fluid="true">
+
+	<f:if condition="{insertAbove}">
+		<f:render section="paginator" arguments="{paginator: paginator, pagination: pagination}" />
+	</f:if>
+
+	<f:format.raw>{content}</f:format.raw>
+
+	<f:if condition="{insertBelow}">
+		<f:render section="paginator" arguments="{paginator: paginator, pagination: pagination}" />
+	</f:if>
+
+	<f:section name="paginator">
+		<f:if condition="{paginator.numberOfPages} > 1">
+			<nav class="pagination-wrap">
+				<ul class="pagination pagination-block">
+					<f:if condition="{paginator.currentPageNumber} > {pagination.firstPageNumber}">
+						<f:then>
+							<li>
+								<f:link.action arguments="{page: 1}"
+											   title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:first')}">
+									<core:icon identifier="actions-view-paging-first" />
+								</f:link.action>
+							</li>
+							<li>
+								<f:link.action arguments="{page: pagination.previousPageNumber}"
+											   title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:previous')}">
+									<core:icon identifier="actions-view-paging-previous" />
+								</f:link.action>
+							</li>
+						</f:then>
+						<f:else>
+							<li class="disabled"><span><core:icon identifier="actions-view-paging-first" /></span></li>
+							<li class="disabled"><span><core:icon identifier="actions-view-paging-previous" /></span></li>
+						</f:else>
+					</f:if>
+					<li><span>Page {pagination.firstPageNumber} - {paginator.numberOfPages}</span></li>
+					<li><span>
+					Page
+					<f:form style="display:inline-block;">
+						<f:form.textfield
+							additionalAttributes="{min: '1', data-number-of-pages: '{pagination.lastPageNumber}'}"
+							name="page" class="form-control input-sm paginator-input" size="5"
+							value="{paginator.currentPageNumber}" type="number" />
+					</f:form>
+					/ {pagination.lastPageNumber}</span>
+					</li>
+					<f:if condition="{paginator.currentPageNumber} < {paginator.numberOfPages}">
+						<f:then>
+							<li>
+								<f:link.action arguments="{page: '{pagination.nextPageNumber}'}"
+											   title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:next')}">
+									<core:icon identifier="actions-view-paging-next" />
+								</f:link.action>
+							</li>
+							<li>
+								<f:link.action arguments="{page: paginator.numberOfPages}"
+											   title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:last')}">
+									<core:icon identifier="actions-view-paging-last" />
+								</f:link.action>
+							</li>
+						</f:then>
+						<f:else>
+							<li class="disabled"><span><core:icon identifier="actions-view-paging-next" /></span></li>
+							<li class="disabled"><span><core:icon identifier="actions-view-paging-last" /></span></li>
+						</f:else>
+					</f:if>
+					<li>
+						<f:link.action arguments="{page: paginator.currentPageNumber}"
+									   title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:reload')}">
+							<core:icon identifier="actions-refresh" />
+						</f:link.action>
+					</li>
+				</ul>
+			</nav>
+		</f:if>
+	</f:section>
+</html>

@@ -43,16 +43,14 @@ class FlushNewsCacheTask extends AbstractTask
      * @return bool
      *
      * @throws NoSuchCacheException
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function executeTask(): bool
     {
         /** @var CacheManager $cacheManager */
         $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
         foreach ($this->configuration['tagsToFlush'] as $cacheTag) {
-            $cacheManager->getCache('cache_pages')->flushByTag($cacheTag);
-            $cacheManager->getCache('cache_pagesection')->flushByTag($cacheTag);
+            $cacheManager->getCache('pages')->flushByTag($cacheTag);
+            $cacheManager->getCache('pagesection')->flushByTag($cacheTag);
             $this->addMessage('Flushed all tx_news related caches for cache tag "' . $cacheTag . '"');
         }
         return true;

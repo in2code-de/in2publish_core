@@ -12,6 +12,13 @@
         return;
     }
 
+    /************************************************* Patching TYPO3 *************************************************/
+    // Issue: https://forge.typo3.org/issues/95962
+    // Patch: https://review.typo3.org/c/Packages/TYPO3.CMS/+/72160
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\TYPO3\CMS\Backend\Middleware\BackendRouteInitialization::class] = [
+        'className' => \In2code\In2publishCore\Middleware\BackendRouteInitialization::class
+    ];
+
     /*********************************************** Settings/Instances ***********************************************/
     $extConf = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \TYPO3\CMS\Core\Configuration\ExtensionConfiguration::class
@@ -69,10 +76,6 @@
     $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\DefaultProvider::class);
     $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\FileProvider::class);
     $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\PageTsProvider::class);
-    if (TYPO3_MODE === 'BE') {
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['extTablesInclusion-PostProcessing'][1593002680] =
-            \In2code\In2publishCore\Config\Provider\PageTsProvider::class;
-    }
     $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\VersionedFileProvider::class);
     if (!$extConf['disableUserConfig']) {
         $configContainer->registerProvider(\In2code\In2publishCore\Config\Provider\UserTsProvider::class);

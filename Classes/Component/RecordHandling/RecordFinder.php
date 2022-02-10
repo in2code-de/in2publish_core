@@ -36,6 +36,8 @@ interface RecordFinder
     /**
      * Overview: The record is show in the "Publish Overview" module or any other place where the level of detail can
      * be traded for performance. It is sufficient to display the record with its most important relations.
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     public function findRecordByUidForOverview(int $uid, string $table, bool $excludePages = false): ?RecordInterface;
 
@@ -46,6 +48,8 @@ interface RecordFinder
 
     /**
      * @return array<RecordInterface>
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     public function findRecordsByProperties(array $properties, string $table, bool $simulateRoot = false): array;
 }

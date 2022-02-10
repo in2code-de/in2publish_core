@@ -4,7 +4,7 @@
 
 (static function () {
     /***************************************************** Guards *****************************************************/
-    if (!defined('TYPO3_REQUESTTYPE')) {
+    if (!defined('TYPO3')) {
         die('Access denied.');
     }
     if (!class_exists(\In2code\In2publishCore\Service\Context\ContextService::class)) {
@@ -23,33 +23,18 @@
     $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \In2code\In2publishCore\Service\Context\ContextService::class
     );
-    $pageRenderer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \TYPO3\CMS\Core\Page\PageRenderer::class
-    );
     $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \TYPO3\CMS\Core\Imaging\IconRegistry::class
     );
+    $isForeign = $contextService->isForeign();
 
-    /***************************************** Add JS and CSS for the Backend *****************************************/
-    $pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
-    $pageRenderer->addCssFile(
-        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath(
-            'in2publish_core',
-            'Resources/Public/Css/Modules.css'
-        ),
-        'stylesheet',
-        'all',
-        '',
-        false
-    );
-
-    if ($contextService->isForeign()) {
-        if ($configContainer->get('features.warningOnForeign.colorizeHeader.enable')) {
-            $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][1582191172] = \In2code\In2publishCore\Features\WarningOnForeign\Service\HeaderWarningColorRenderer::class . '->render';
-        }
+    /******************************************* Colorize the BE on Foreign *******************************************/
+    if ($isForeign && $configContainer->get('features.warningOnForeign.colorizeHeader.enable')) {
+        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_pagerenderer.php']['render-preProcess'][1582191172] = \In2code\In2publishCore\Features\WarningOnForeign\Service\HeaderWarningColorRenderer::class . '->render';
     }
+
     /************************************************* END ON FOREIGN *************************************************/
-    if ($contextService->isForeign()) {
+    if ($isForeign) {
         return;
     }
 
@@ -61,7 +46,7 @@
             'm1',
             '',
             [
-                \In2code\In2publishCore\Controller\RecordController::class => 'index,detail,publishRecord,toggleFilterStatusAndRedirectToIndex',
+                \In2code\In2publishCore\Controller\RecordController::class => 'index,detail,publishRecord,toggleFilterStatus',
             ],
             [
                 'access' => 'user,group',
@@ -77,7 +62,7 @@
             'm3',
             '',
             [
-                \In2code\In2publishCore\Controller\FileController::class => 'index,publishFolder,publishFile,toggleFilterStatusAndRedirectToIndex',
+                \In2code\In2publishCore\Controller\FileController::class => 'index,publishFolder,publishFile,toggleFilterStatus',
             ],
             [
                 'access' => 'user,group',
@@ -86,11 +71,6 @@
             ]
         );
     }
-
-
-    /************************************************* Register Tools *************************************************/
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['extTablesInclusion-PostProcessing'][] = \In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry::class;
-
 
     /******************************************* Context Menu Publish Entry *******************************************/
     if ($configContainer->get('features.contextMenuPublishEntry.enable')) {

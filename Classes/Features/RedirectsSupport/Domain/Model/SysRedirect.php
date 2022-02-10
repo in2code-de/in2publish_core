@@ -40,28 +40,21 @@ use function sprintf;
 
 class SysRedirect extends AbstractEntity
 {
-    /** @var string */
-    protected $sourceHost;
+    protected ?string $sourceHost = null;
 
-    /** @var string */
-    protected $sourcePath;
+    protected ?string $sourcePath = null;
 
-    /** @var string */
-    protected $target;
+    protected ?string $target = null;
 
-    /** @var int */
-    protected $pageUid;
+    protected ?int $pageUid = null;
 
-    /** @var string */
-    protected $siteId;
+    protected ?string $siteId = null;
 
-    /** @var bool */
-    protected $deleted;
+    protected ?bool $deleted = null;
 
-    /** @var array */
-    protected $rtc = [];
+    protected array $rtc = [];
 
-    public function getSourceHost(): string
+    public function getSourceHost(): ?string
     {
         return $this->sourceHost;
     }
@@ -71,7 +64,7 @@ class SysRedirect extends AbstractEntity
         $this->sourceHost = $sourceHost;
     }
 
-    public function getSourcePath(): string
+    public function getSourcePath(): ?string
     {
         return $this->sourcePath;
     }
@@ -81,7 +74,7 @@ class SysRedirect extends AbstractEntity
         $this->sourcePath = $sourcePath;
     }
 
-    public function getTarget(): string
+    public function getTarget(): ?string
     {
         return $this->target;
     }
@@ -111,7 +104,7 @@ class SysRedirect extends AbstractEntity
         $this->siteId = $siteId;
     }
 
-    public function isDeleted(): bool
+    public function isDeleted(): ?bool
     {
         return $this->deleted;
     }
@@ -143,6 +136,9 @@ class SysRedirect extends AbstractEntity
         }
         $rawRecordService = GeneralUtility::makeInstance(RawRecordService::class);
         $record = $rawRecordService->getRawRecord('pages', $this->pageUid, 'local');
+        if (null === $record) {
+            return null;
+        }
         return GeneralUtility::makeInstance(TcaService::class)->getRecordLabel($record, 'pages');
     }
 
@@ -170,7 +166,7 @@ class SysRedirect extends AbstractEntity
             // Sites are preferred. If a site is given, use it.
             return 'publishable';
         }
-        if (null === $this->pageUid && null === $this->siteId) {
+        if (null === $this->pageUid) {
             // Can not publish without site or page
             return 'siteRequired';
         }

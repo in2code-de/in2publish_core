@@ -35,6 +35,10 @@ use TYPO3\CMS\Core\Log\Processor\AbstractProcessor;
 
 class BackendUserProcessor extends AbstractProcessor
 {
+    /**
+     * @noinspection PhpInternalEntityUsedInspection
+     * @psalm-suppress InternalProperty
+     */
     public function processLogRecord(LogRecord $logRecord): LogRecord
     {
         $backendUser = $this->getBackendUser();
@@ -48,9 +52,6 @@ class BackendUserProcessor extends AbstractProcessor
         return $logRecord->addData(['be_user' => $data]);
     }
 
-    /**
-     * @SuppressWarnings("PHPMD.Superglobals")
-     */
     protected function getBackendUser(): ?BackendUserAuthentication
     {
         return $GLOBALS['BE_USER'] ?? null;

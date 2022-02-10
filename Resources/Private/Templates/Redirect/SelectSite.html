@@ -3,17 +3,6 @@
 >
 	<f:layout name="Default"/>
 
-	<f:section name="HeaderNavigationRight">
-		<f:comment>Disable default pagePath and pageInfo.</f:comment>
-	</f:section>
-
-	<f:section name="HeaderButtonsLeft">
-		<div class="btn-toolbar" role="toolbar" aria-label="">
-			<f:link.action action="list" class="btn btn-default btn-sm" title="Close"><core:icon identifier="actions-close"/> <f:translate key="LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:back" /></f:link.action>
-			<button name="_saveandpublish" class="btn btn-default btn-sm " value="1" title="Save" form="EditDocumentController"><core:icon identifier="actions-document-synchronize" size="small" /> <f:translate key="save_and_publish" /></button>
-		</div>
-	</f:section>
-
 	<f:section name="Main">
 		<h2>Assign Site to {redirect}</h2>
 		<f:form name="editform" action="selectSite" objectName="properties" object="{redirect}" method="post" id="EditDocumentController">

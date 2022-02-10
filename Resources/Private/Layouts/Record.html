@@ -1,26 +1,13 @@
-{namespace publish=In2code\In2publishCore\ViewHelpers}
-<f:be.container>
-
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
 	<div class="overlay"></div>
 
-	<div class="typo3-fullDoc">
-		<div id="typo3-docheader">
-			<div id="typo3-docheader-row2">
-				<div class="docheader-row2-left typo3-docheader-functions in2publish-backend-select"></div>
-				<div class="docheader-row2-right">
-					<f:be.pagePath />
-				</div>
-			</div>
-		</div>
-		<div id="typo3-docbody" class="in2publish-module" data-module="m1">
-			<div id="typo3-inner-docbody" class="in2publish-backend">
-				<div class="container container-full">
-					<f:render partial="LoadingOverlay" />
-					<f:flashMessages />
-					<f:render section="content" />
-					<f:render partial="Typo3Version" />
-				</div>
+	<div class="in2publish-module">
+		<div id="typo3-inner-docbody" class="in2publish-backend">
+			<div class="container container-full">
+				<f:render partial="LoadingOverlay" />
+				<f:flashMessages />
+				<f:render section="content" />
 			</div>
 		</div>
 	</div>
-</f:be.container>
+</html>

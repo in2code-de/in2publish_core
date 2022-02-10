@@ -32,7 +32,7 @@ namespace In2code\In2publishCore\Event;
 final class CreatedDefaultHelpLabels
 {
     /** @var string[] */
-    private $supports;
+    private array $supports;
 
     public function __construct(array $supports)
     {

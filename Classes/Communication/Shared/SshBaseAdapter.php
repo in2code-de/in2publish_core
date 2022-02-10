@@ -55,10 +55,7 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var array
-     */
-    protected $config = [
+    protected array $config = [
         'debug' => '',
         'host' => '',
         'port' => '',
@@ -71,18 +68,14 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
         'foreignKeyFingerprintHashingMethod' => '',
     ];
 
-    /**
-     * @var array
-     */
-    protected $supportedHashMethods = [
+    protected array $supportedHashMethods = [
         'SSH2_FINGERPRINT_MD5',
         'SSH2_FINGERPRINT_SHA1',
     ];
 
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
-    protected $initialized = false;
+    protected bool $initialized = false;
 
     public function __construct(ConfigContainer $configContainer)
     {
@@ -115,6 +108,8 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
      * @return resource
      *
      * @throws In2publishCoreException
+     *
+     * @SuppressWarnings(PHPMD.ErrorControlOperator) Don't leak sensitive error info.
      */
     protected function establishSshSession()
     {
@@ -136,12 +131,11 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
                         . $keyFingerPrint . '"; Configured: "' . $this->config['foreignKeyFingerprint'] . '"',
                         1426868565
                     );
-                } else {
-                    throw new In2publishCoreException(
-                        'Identification of foreign host failed, SSH Key Fingerprint mismatch!!!',
-                        1425401452
-                    );
                 }
+                throw new In2publishCoreException(
+                    'Identification of foreign host failed, SSH Key Fingerprint mismatch!!!',
+                    1425401452
+                );
             }
         }
 
@@ -235,12 +229,14 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
                     'SSH Connection: Option ' . $requiredFileKey . ' is empty',
                     1425400434
                 );
-            } elseif (!file_exists($config[$requiredFileKey])) {
+            }
+            if (!file_exists($config[$requiredFileKey])) {
                 throw new In2publishCoreException(
                     'SSH Connection: The File defined in ' . $requiredFileKey . ' does not exist',
                     1425400440
                 );
-            } elseif (!is_readable($config[$requiredFileKey])) {
+            }
+            if (!is_readable($config[$requiredFileKey])) {
                 throw new In2publishCoreException(
                     'SSH Connection: The File defined in ' . $requiredFileKey . ' is not readable',
                     1425400444
@@ -255,13 +251,14 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
     {
         if (empty($config['foreignKeyFingerprint'])) {
             throw new In2publishCoreException('SSH Connection: Option foreignKeyFingerprint is empty', 1425400689);
-        } elseif (strpos($config['foreignKeyFingerprint'], ':') !== false) {
+        }
+        if (strpos($config['foreignKeyFingerprint'], ':') !== false) {
             $config['foreignKeyFingerprint'] = strtoupper(str_replace(':', '', $config['foreignKeyFingerprint']));
         }
         if (empty($config['foreignKeyFingerprintHashingMethod'])) {
             $config['foreignKeyFingerprintHashingMethod'] = SSH2_FINGERPRINT_MD5 | SSH2_FINGERPRINT_HEX;
         } else {
-            if (!in_array($config['foreignKeyFingerprintHashingMethod'], $this->supportedHashMethods)) {
+            if (!in_array($config['foreignKeyFingerprintHashingMethod'], $this->supportedHashMethods, true)) {
                 throw new In2publishCoreException(
                     'SSH Connection: The defined foreignKeyFingerprintHashingMethod is not supported',
                     1493822754

@@ -17,7 +17,7 @@ skipping of this record.
 
 ## What
 
-* `commonRepository`: The instance of the CommonRepository which is going to be used to search for related records.
+* `recordFinder`: The instance of the `RecordFinder` which is going to be used to search for related records.
 * `record`: The current (page or content) record which is going to have its related records added.
 * `propertyName`: The name of the column in the TCA of the record's table which is going to be resolved.
 * `columnConfiguration`: The TCA of the column.

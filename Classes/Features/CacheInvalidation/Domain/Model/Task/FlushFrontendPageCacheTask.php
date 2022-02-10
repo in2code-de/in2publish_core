@@ -49,8 +49,6 @@ class FlushFrontendPageCacheTask extends AbstractTask
      *        'pid' => 'all'
      *        'pid' => 'pages'
      *        'pid' => 'cacheTag:pagetag1'
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function executeTask(): bool
     {
@@ -63,15 +61,12 @@ class FlushFrontendPageCacheTask extends AbstractTask
         return true;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.Superglobals)
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
     protected function getDataHandler(): DataHandler
     {
         /** @var DataHandler $dataHandler */
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
         $dataHandler->BE_USER = $GLOBALS['BE_USER'];
+        /** @psalm-suppress InternalProperty */
         $dataHandler->admin = true;
         return $dataHandler;
     }

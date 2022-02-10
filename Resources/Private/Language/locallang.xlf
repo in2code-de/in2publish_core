@@ -14,7 +14,7 @@
 				<source>publish pages and records overview</source>
 			</trans-unit>
 			<trans-unit id="module_m3_title">
-				<source>publish files</source>
+				<source>Publish files</source>
 			</trans-unit>
 			<trans-unit id="module_m4_title">
 				<source>administration tools</source>
@@ -67,6 +67,9 @@
 			</trans-unit>
 			<trans-unit id="confirm_publish_pages">
 				<source>Do you really want to publish this page?</source>
+			</trans-unit>
+			<trans-unit id="publish">
+				<source>Publish</source>
 			</trans-unit>
 			<trans-unit id="publish_pages">
 				<source>Publish this page</source>
@@ -197,6 +200,18 @@
 				<source>Upload!</source>
 			</trans-unit>
 
+			<trans-unit id="record.filter">
+				<source>Filter by:</source>
+			</trans-unit>
+
+			<trans-unit id="record.filename">
+				<source>Filename</source>
+			</trans-unit>
+
+			<trans-unit id="record.state">
+				<source>Status</source>
+			</trans-unit>
+
 			<trans-unit id="record.state.unchanged">
 				<source>Record unchanged</source>
 			</trans-unit>
@@ -211,6 +226,25 @@
 			</trans-unit>
 			<trans-unit id="record.state.moved">
 				<source>Record moved</source>
+			</trans-unit>
+
+			<trans-unit id="record.state.unchanged.short">
+				<source>Unchanged</source>
+			</trans-unit>
+			<trans-unit id="record.state.changed.short">
+				<source>Changed</source>
+			</trans-unit>
+			<trans-unit id="record.state.added.short">
+				<source>New</source>
+			</trans-unit>
+			<trans-unit id="record.state.deleted.short">
+				<source>Deleted</source>
+			</trans-unit>
+			<trans-unit id="record.state.moved.short">
+				<source>Moved</source>
+			</trans-unit>
+			<trans-unit id="record.state.moved-and-changed.short">
+				<source>Moved/Changed</source>
 			</trans-unit>
 
 			<trans-unit id="module.m4.configuration">
@@ -545,6 +579,10 @@
 			</trans-unit>
 			<trans-unit id="compare_database.transfer.updated_on_foreign">
 				<source>The record %s[%d] was updated on foreign.</source>
+			</trans-unit>
+
+			<trans-unit id="module_m3_index_content">
+				<source>Admin tools</source>
 			</trans-unit>
 		</body>
 	</file>

@@ -41,8 +41,7 @@ class ShortSiteConfigurationCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:shortsiteconfiguration';
 
-    /** @var SiteFinder */
-    protected $siteFinder;
+    protected SiteFinder $siteFinder;
 
     public function __construct(SiteFinder $siteFinder, string $name = null)
     {
@@ -50,6 +49,9 @@ class ShortSiteConfigurationCommand extends Command
         $this->siteFinder = $siteFinder;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $shortInfo = [];
@@ -59,7 +61,7 @@ class ShortSiteConfigurationCommand extends Command
                 'rootPageId' => $site->getRootPageId(),
             ];
         }
-        $output->writeln('ShortSiteConfig: ' . base64_encode(json_encode($shortInfo)));
+        $output->writeln('ShortSiteConfig: ' . base64_encode(json_encode($shortInfo, JSON_THROW_ON_ERROR)));
         return Command::SUCCESS;
     }
 }

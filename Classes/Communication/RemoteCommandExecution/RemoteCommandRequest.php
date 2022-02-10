@@ -44,45 +44,21 @@ use const TYPO3_COMPOSER_MODE;
  */
 class RemoteCommandRequest
 {
-    /**
-     * @var bool
-     */
-    protected $usePhp = true;
+    protected bool $usePhp = true;
 
-    /**
-     * @var string
-     */
-    protected $pathToPhp = '';
+    protected string $pathToPhp = '';
 
-    /**
-     * @var string
-     */
-    protected $workingDirectory = '';
+    protected string $workingDirectory = '';
 
-    /**
-     * @var array
-     */
-    protected $environmentVariables;
+    protected array $environmentVariables;
 
-    /**
-     * @var string
-     */
-    protected $dispatcher;
+    protected string $dispatcher;
 
-    /**
-     * @var string
-     */
-    protected $command = '';
+    protected string $command = '';
 
-    /**
-     * @var array
-     */
-    protected $arguments = [];
+    protected array $arguments = [];
 
-    /**
-     * @var array
-     */
-    protected $options = [];
+    protected array $options = [];
 
     /**
      * RemoteCommandRequest constructor.
@@ -104,7 +80,8 @@ class RemoteCommandRequest
             ]
         );
         $isComposerMode = defined('TYPO3_COMPOSER_MODE') && true === TYPO3_COMPOSER_MODE;
-        if ($dispatcher = $configContainer->get('foreign.dispatcher')) {
+        $dispatcher = $configContainer->get('foreign.dispatcher');
+        if ($dispatcher) {
             $this->dispatcher = $dispatcher;
         } elseif ($isComposerMode && file_exists(Environment::getPublicPath() . '/vendor/bin/typo3')) {
             $this->dispatcher = './vendor/bin/typo3';
@@ -205,10 +182,7 @@ class RemoteCommandRequest
         }
     }
 
-    /**
-     * @param scalar $value
-     */
-    public function setOption($value): void
+    public function setOption(string $value): void
     {
         $this->options[$value] = $value;
     }

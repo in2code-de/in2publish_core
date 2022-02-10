@@ -33,8 +33,7 @@ use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 
 class ForeignSiteIdentifierItemProcFunc
 {
-    /** @var ForeignSiteFinder */
-    protected $foreignSiteFinder;
+    protected ForeignSiteFinder $foreignSiteFinder;
 
     public function __construct(ForeignSiteFinder $foreignSiteFinder)
     {

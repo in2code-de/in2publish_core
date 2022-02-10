@@ -33,20 +33,15 @@ use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
 class Filter
 {
-    /** @var null|string */
-    protected $domain;
+    protected ?string $domain;
 
-    /** @var null|string */
-    protected $source;
+    protected ?string $source;
 
-    /** @var null|string */
-    protected $target;
+    protected ?string $target;
 
-    /** @var null|int */
-    protected $code;
+    protected ?int $code;
 
-    /** @var null|string */
-    protected $association;
+    protected ?string $association;
 
     public function getDomain(): ?string
     {
@@ -98,6 +93,10 @@ class Filter
         $this->association = $association ?: null;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) The method is pretty easy to understand
+     * @SuppressWarnings(PHPMD.NPathComplexity) The method is pretty easy to understand
+     */
     public function modifyQuery(QueryInterface $query): void
     {
         $and = [];

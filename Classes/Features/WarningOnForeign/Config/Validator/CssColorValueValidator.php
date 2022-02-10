@@ -37,7 +37,7 @@ use function preg_match;
 
 class CssColorValueValidator implements ValidatorInterface
 {
-    protected $colorNames = [
+    protected array $colorNames = [
         'black',
         'silver',
         'gray',
@@ -202,7 +202,7 @@ class CssColorValueValidator implements ValidatorInterface
 
     public function validate(ValidationContainer $container, $value): void
     {
-        if (!in_array($value, $this->colorNames) && !preg_match(self::REGEX, $value)) {
+        if (!in_array($value, $this->colorNames, true) && !preg_match(self::REGEX, $value)) {
             $container->addError('The chosen css value is invalid');
         }
     }

@@ -39,11 +39,9 @@ use function trim;
 
 class LabelService
 {
-    /** @var string */
-    protected $emptyFieldValue = '---';
+    protected string $emptyFieldValue = '---';
 
-    /** @var TcaService */
-    protected $tcaService;
+    protected TcaService $tcaService;
 
     public function __construct(TcaService $tcaService)
     {

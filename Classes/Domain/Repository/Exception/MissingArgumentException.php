@@ -39,8 +39,7 @@ class MissingArgumentException extends In2publishCoreException
     protected const MESSAGE = 'The argument "%s" is required.';
     public const CODE = 1631016625;
 
-    /** @var string */
-    protected $argumentName;
+    protected string $argumentName;
 
     public function __construct(string $argumentName, Throwable $previous = null)
     {

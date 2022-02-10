@@ -29,11 +29,13 @@ namespace In2code\In2publishCore\Features\CompareDatabaseTool\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\Driver\Connection;
 use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use In2code\In2publishCore\Features\CompareDatabaseTool\Domain\DTO\ComparisonRequest;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -50,14 +52,13 @@ use function max;
 
 class CompareDatabaseToolController extends ActionController
 {
-    /** @var ConfigContainer */
-    protected $configContainer;
+    use AdminToolsModuleTemplate;
 
-    /** @var Connection */
-    protected $localDatabase;
+    protected ConfigContainer $configContainer;
 
-    /** @var Connection */
-    protected $foreignDatabase;
+    protected Connection $localDatabase;
+
+    protected Connection $foreignDatabase;
 
     public function __construct(
         ConfigContainer $configContainer,
@@ -69,14 +70,20 @@ class CompareDatabaseToolController extends ActionController
         $this->foreignDatabase = $foreignDatabase;
     }
 
-    public function indexAction(): void
+    public function indexAction(): ResponseInterface
     {
         $tables = $this->getAllNonExcludedTables();
         $tables = array_intersect($tables, array_keys($GLOBALS['TCA']));
         $this->view->assign('tables', array_combine($tables, $tables));
+        return $this->htmlResponse();
     }
 
-    public function compareAction(ComparisonRequest $comparisonRequest = null): void
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) PR welcome
+     * @SuppressWarnings(PHPMD.NPathComplexity) PR welcome
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength) PR welcome
+     */
+    public function compareAction(ComparisonRequest $comparisonRequest = null): ResponseInterface
     {
         if (null === $comparisonRequest) {
             $this->redirect('index');
@@ -166,7 +173,7 @@ class CompareDatabaseToolController extends ActionController
                         }
                     } elseif ($localRowExists && !$foreignRowExists) {
                         $differences[$table]['only_local'][] = $localRows[$uid];
-                    } elseif (!$localRowExists && $foreignRowExists) {
+                    } elseif ($foreignRowExists) {
                         $differences[$table]['only_foreign'][] = $foreignRows[$uid];
                     }
                 }
@@ -178,8 +185,14 @@ class CompareDatabaseToolController extends ActionController
             }
         }
         $this->view->assign('differences', $differences);
+        return $this->htmlResponse();
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity) PR welcome
+     * @SuppressWarnings(PHPMD.NPathComplexity) PR welcome
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength) PR welcome
+     */
     public function transferAction(string $table, int $uid, string $expected): void
     {
         $localDatabase = DatabaseUtility::buildLocalDatabaseConnection();
@@ -236,7 +249,11 @@ class CompareDatabaseToolController extends ActionController
             $foreignResult = $foreignQuery->execute();
             if (1 === $foreignResult) {
                 $this->addFlashMessage(
-                    LocalizationUtility::translate('compare_database.transfer.deleted_from_foreign', 'in2publish_core', [$table, $uid]),
+                    LocalizationUtility::translate(
+                        'compare_database.transfer.deleted_from_foreign',
+                        'in2publish_core',
+                        [$table, $uid]
+                    ),
                     LocalizationUtility::translate('compare_database.transfer.success', 'in2publish_core')
                 );
             }

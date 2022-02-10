@@ -36,10 +36,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class DynamicValueProviderRegistry implements SingletonInterface
 {
     /** @var string[] */
-    protected $classes = [];
+    protected array $classes = [];
 
     /** @var DynamicValueProviderInterface[] */
-    protected $objects = [];
+    protected array $objects = [];
 
     /**
      * @param string $key The key which will be used in the configuration to call the registered provider

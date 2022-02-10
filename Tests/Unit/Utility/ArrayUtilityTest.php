@@ -37,9 +37,6 @@ use In2code\In2publishCore\Utility\ArrayUtility;
  */
 class ArrayUtilityTest extends UnitTestCase
 {
-    /**
-     * @return array
-     */
     public function removeFromArrayByKeyReturnsVoidDataProvider(): array
     {
         return [

@@ -34,14 +34,23 @@ use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Controller\AbstractController;
+use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
+use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\SaveAndPublishButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
+use TYPO3\CMS\Core\Imaging\Icon;
+use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Pagination\SimplePagination;
+use TYPO3\CMS\Extbase\Pagination\QueryResultPaginator;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_column;
@@ -50,19 +59,24 @@ use function implode;
 use function reset;
 use function sprintf;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects) I probably really need all these classes.
+ */
 class RedirectController extends AbstractController
 {
-    /** @var ForeignSiteFinder */
-    protected $foreignSiteFinder;
+    use ControllerModuleTemplate;
 
-    /** @var SysRedirectRepository */
-    protected $sysRedirectRepo;
+    protected ForeignSiteFinder $foreignSiteFinder;
 
-    /** @var RecordFinder */
-    protected $recordFinder;
+    protected SysRedirectRepository $sysRedirectRepo;
 
-    /** @var RecordPublisher */
-    protected $recordPublisher;
+    protected RecordFinder $recordFinder;
+
+    protected RecordPublisher $recordPublisher;
+
+    protected IconFactory $iconFactory;
+
+    protected LanguageService $languageService;
 
     public function __construct(
         ConfigContainer $configContainer,
@@ -72,7 +86,9 @@ class RedirectController extends AbstractController
         ForeignSiteFinder $foreignSiteFinder,
         SysRedirectRepository $sysRedirectRepo,
         RecordFinder $recordFinder,
-        RecordPublisher $recordPublisher
+        RecordPublisher $recordPublisher,
+        PageRenderer $pageRenderer,
+        IconFactory $iconFactory
     ) {
         parent::__construct(
             $configContainer,
@@ -84,6 +100,15 @@ class RedirectController extends AbstractController
         $this->sysRedirectRepo = $sysRedirectRepo;
         $this->recordFinder = $recordFinder;
         $this->recordPublisher = $recordPublisher;
+        $pageRenderer->addCssFile(
+            'EXT:in2publish_core/Resources/Public/Css/Modules.css',
+            'stylesheet',
+            'all',
+            '',
+            false
+        );
+        $this->iconFactory = $iconFactory;
+        $this->languageService = $GLOBALS['LANG'];
     }
 
     /** @throws Throwable */
@@ -103,9 +128,11 @@ class RedirectController extends AbstractController
 
     /**
      * @param Filter|null $filter
+     * @param int $page
+     * @return ResponseInterface
      * @throws Throwable
      */
-    public function listAction(Filter $filter = null): void
+    public function listAction(Filter $filter = null, int $page = 1): ResponseInterface
     {
         $foreignConnection = DatabaseUtility::buildForeignDatabaseConnection();
         $uidList = [];
@@ -115,14 +142,19 @@ class RedirectController extends AbstractController
             $query->select('uid')->from('sys_redirect')->where($query->expr()->eq('deleted', 1));
             $uidList = array_column($query->execute()->fetchAllAssociative(), 'uid');
         }
+        $redirects = $this->sysRedirectRepo->findForPublishing($uidList, $filter);
+        $paginator = new QueryResultPaginator($redirects, $page, 15);
+        $pagination = new SimplePagination($paginator);
         $this->view->assignMultiple(
             [
-                'redirects' => $this->sysRedirectRepo->findForPublishing($uidList, $filter),
+                'paginator' => $paginator,
+                'pagination' => $pagination,
                 'hosts' => $this->sysRedirectRepo->findHostsOfRedirects(),
                 'statusCodes' => $this->sysRedirectRepo->findStatusCodesOfRedirects(),
                 'filter' => $filter,
             ]
         );
+        return $this->htmlResponse();
     }
 
     /** @throws Throwable */
@@ -161,9 +193,10 @@ class RedirectController extends AbstractController
     /**
      * @param int $redirect
      * @param array|null $properties
+     * @return ResponseInterface
      * @throws Throwable
      */
-    public function selectSiteAction(int $redirect, array $properties = null): void
+    public function selectSiteAction(int $redirect, array $properties = null): ResponseInterface
     {
         $redirectObj = $this->sysRedirectRepo->findUnrestrictedByIdentifier($redirect);
         if (null === $redirectObj) {
@@ -174,7 +207,7 @@ class RedirectController extends AbstractController
             $redirectObj->setSiteId($properties['siteId']);
             $this->sysRedirectRepo->update($redirectObj);
             $this->addFlashMessage(
-                sprintf('Associated redirect %s with site %s', $redirectObj, $redirectObj->getSiteId())
+                sprintf('Associated redirect %s with site %s', $redirectObj->__toString(), $redirectObj->getSiteId())
             );
             if (isset($_POST['_saveandpublish'])) {
                 $this->redirect('publish', null, null, ['redirects' => [$redirectObj->getUid()]]);
@@ -193,5 +226,17 @@ class RedirectController extends AbstractController
         }
         $this->view->assign('redirect', $redirectObj);
         $this->view->assign('siteOptions', $siteOptions);
+
+        $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
+        $button = $buttonBar->makeLinkButton();
+        $button->setIcon($this->iconFactory->getIcon('actions-close', Icon::SIZE_SMALL));
+        $button->setClasses('btn btn-sm');
+        $button->setHref($this->uriBuilder->reset()->uriFor('list'));
+        $title = $this->languageService->sL('LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:back');
+        $button->setTitle($title);
+        $buttonBar->addButton($button);
+        $buttonBar->addButton(new SaveAndPublishButton($this->iconFactory));
+
+        return $this->htmlResponse();
     }
 }

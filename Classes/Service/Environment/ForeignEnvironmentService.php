@@ -51,11 +51,9 @@ class ForeignEnvironmentService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var FrontendInterface */
-    protected $cache;
+    protected FrontendInterface $cache;
 
-    /** @var RemoteCommandDispatcher */
-    protected $remoteCommandDispatcher;
+    protected RemoteCommandDispatcher $remoteCommandDispatcher;
 
     public function __construct(FrontendInterface $cache, RemoteCommandDispatcher $remoteCommandDispatcher)
     {
@@ -82,7 +80,7 @@ class ForeignEnvironmentService implements LoggerAwareInterface
                     break;
                 }
             }
-            $decodedDbInit = json_decode(base64_decode($encodedDbInit), true);
+            $decodedDbInit = json_decode(base64_decode($encodedDbInit), true, 512, JSON_THROW_ON_ERROR);
             $this->cache->set('foreign_db_init', $decodedDbInit, [], 86400);
         } else {
             $this->logger->error(
@@ -98,7 +96,6 @@ class ForeignEnvironmentService implements LoggerAwareInterface
         return $decodedDbInit;
     }
 
-    /** @SuppressWarnings(PHPMD.Superglobals) */
     public function getCreateMasks(): array
     {
         if (!$this->cache->has('create_masks')) {

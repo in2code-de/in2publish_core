@@ -34,7 +34,6 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
@@ -127,46 +126,37 @@ use function trim;
  *                '- continue as long as depth < maxDepth
  *
  *  this loop breaks in the factory when maximumRecursionDepth is reached
+ *
+ * @SuppressWarnings(PHPMD) This class has issues... Will be removed with query aggregation feature.
  */
-class DefaultRecordFinder extends CommonRepository implements RecordFinder, LoggerAwareInterface
+class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
     public const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)~';
     public const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
 
-    /** @var Connection */
-    protected $localDatabase;
+    protected ?Connection $localDatabase;
 
-    /** @var Connection */
-    protected $foreignDatabase;
+    protected ?Connection $foreignDatabase;
 
-    /** @var RecordFactory */
-    protected $recordFactory;
+    protected RecordFactory $recordFactory;
 
-    /** @var ResourceFactory */
-    protected $resourceFactory;
+    protected ResourceFactory $resourceFactory;
 
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
-    /** @var EventDispatcher */
-    protected $eventDispatcher;
+    protected EventDispatcher $eventDispatcher;
 
-    /** @var ReplaceMarkersService */
-    protected $replaceMarkersService;
+    protected ReplaceMarkersService $replaceMarkersService;
 
-    /** @var FlexFormTools */
-    protected $flexFormTools;
+    protected FlexFormTools $flexFormTools;
 
-    /** @var FlexFormService */
-    private $flexFormService;
+    private FlexFormService $flexFormService;
 
-    /** @var TcaService */
-    protected $tcaService;
+    protected TcaService $tcaService;
 
-    /** @var TcaProcessingService */
-    protected $tcaProcessingService;
+    protected TcaProcessingService $tcaProcessingService;
 
     public function __construct(
         Connection $localDatabase,
@@ -194,6 +184,9 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
         $this->tcaProcessingService = $tcaProcessingService;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     */
     public function findRecordByUidForOverview(int $uid, string $table, bool $excludePages = false): ?RecordInterface
     {
         if ($excludePages) {
@@ -306,6 +299,8 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
      * @param bool $simulateRoot
      * @return array<RecordInterface>
      * @throws MissingArgumentException
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */
     public function findRecordsByProperties(array $properties, string $table, bool $simulateRoot = false): array
     {
@@ -332,7 +327,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
             $this->recordFactory->simulateRootRecord();
         }
         foreach ($properties as $propertyName => $propertyValue) {
-            if ($this->shouldSkipFindByProperty($propertyName, $propertyValue, $tableName)) {
+            if ($this->shouldSkipFindByProperty((string)$propertyName, $propertyValue, $tableName)) {
                 return [];
             }
         }
@@ -375,7 +370,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
      *
      * this method ignores following property arrays:
      *      - deleted on both sides and identical
-     *      - is deleted local and non existing on foreign
+     *      - is deleted local and non-existing on foreign
      *
      * structure:
      *  $properties['uid'] = array(
@@ -474,7 +469,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
     /**
      * Adds all related Records to the given Record
      * until maximum recursion depth is reached
-     * Any related Record must be connected by valid TCA of the given one
+     * Any related Record must be connected by valid TCA of the given one.
      * Relations are only solved for the given record as "owning side"
      *
      * Records which relate on the given Record are not included,
@@ -498,6 +493,21 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                 continue;
             }
             switch ($columnConfiguration['type']) {
+                /** @noinspection PhpMissingBreakStatementInspection */
+                case 'category':
+                    $columnConfiguration = [
+                        'foreign_table' => 'sys_category',
+                        'foreign_table_where' => 'AND {#sys_category}.{#sys_language_uid} IN (-1, 0)',
+                        'MM' => 'sys_category_record_mm',
+                        'MM_match_fields' => [
+                            'fieldname' => 'categories',
+                            'tablenames' => $recordTableName,
+                        ],
+                        'MM_opposite_field' => 'items',
+                        'relationship' => 'manyToMany',
+                    ];
+                // Fall through!
+                // no break
                 case 'select':
                     $whereClause = '';
                     if (!empty($columnConfiguration['foreign_table_where'])) {
@@ -620,7 +630,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
             }
             if (
                 count($matches) > 0
-                && !in_array('sys_file_processedfile', $excludedTableNames)
+                && !in_array('sys_file_processedfile', $excludedTableNames, true)
             ) {
                 foreach ($matches as $match) {
                     if (!empty($match)) {
@@ -642,7 +652,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
             $matches = array_filter($matches);
             if (
                 count($matches) > 0
-                && !in_array('sys_file', $excludedTableNames)
+                && !in_array('sys_file', $excludedTableNames, true)
             ) {
                 foreach ($matches as $match) {
                     $relatedRecords[] = $this->findByIdentifier((int)$match, 'sys_file');
@@ -658,12 +668,12 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                     parse_str(htmlspecialchars_decode($urnParsed['query']), $data);
                     switch ($urnParsed['host']) {
                         case 'file':
-                            if (isset($data['uid']) && !in_array('sys_file', $excludedTableNames)) {
+                            if (isset($data['uid']) && !in_array('sys_file', $excludedTableNames, true)) {
                                 $relatedRecords[] = $this->findByIdentifier((int)$data['uid'], 'sys_file');
                             }
                             break;
                         case 'page':
-                            if (isset($data['uid']) && !in_array('pages', $excludedTableNames)) {
+                            if (isset($data['uid']) && !in_array('pages', $excludedTableNames, true)) {
                                 $relatedRecords[] = $this->findByIdentifier((int)$data['uid'], 'pages');
                             }
                             break;
@@ -733,6 +743,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
      * @throws InvalidPointerFieldValueException
      * @throws InvalidTcaException
      * @throws InvalidIdentifierException
+     * @noinspection PhpRedundantCatchClauseInspection
      */
     protected function getFlexFormDefinition(RecordInterface $record, string $column, array $columnConfiguration): array
     {
@@ -865,7 +876,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
             if (
                 empty($config['type'])
                 // Treat input and text always as field with relation because we can't access defaultExtras
-                // settings here and better assume it's a RTE field
+                // settings here and better assume it's an RTE field
                 || !in_array($config['type'], ['select', 'group', 'inline', 'input', 'text'])
             ) {
                 unset($flexFormDefinition[$key]);
@@ -900,7 +911,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                 if (!is_array($workingData)) {
                     // $workingData is unpacked by the else part and can be any data type.
                     // If th index is [ANY] $workingData is expected to be an array.
-                    // TYPO3 saves empty arrays as non self-closing <el> xml tags whose value parses to string,
+                    // TYPO3 saves empty arrays as non-self-closing <el> xml tags whose value parses to string,
                     // not back to empty arrays, that's why values can be string instead of array.
                     return null;
                 }
@@ -947,7 +958,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
      * Records like Plugins may have related Records defined in FlexForms
      * This method searched for the FlexForm Structure and
      * combines it with the FlexForm data array.
-     * Currently only FlexForms using "select" and "group/db"-relations are supported
+     * Currently, only FlexForms using "select" and "group/db"-relations are supported
      *
      * @param RecordInterface $record
      * @param string $column
@@ -1148,7 +1159,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
             if (!empty($identifierArray)) {
                 $identifierToTableMap = [];
                 foreach ($tableNames as $tableName) {
-                    if (in_array($tableName, $excludedTableNames)) {
+                    if (in_array($tableName, $excludedTableNames, true)) {
                         continue;
                     }
                     foreach ($identifierArray as $identifier) {
@@ -1198,7 +1209,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                 }
             }
         } else {
-            if (in_array($tableName, $excludedTableNames)) {
+            if (in_array($tableName, $excludedTableNames, true)) {
                 return $records;
             }
             if ($columnConfiguration['MM']) {
@@ -1266,7 +1277,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                         );
                         continue;
                     }
-                    if (!in_array($originalTableName, $excludedTableNames)) {
+                    if (!in_array($originalTableName, $excludedTableNames, true)) {
                         $originalRecord = $this->findByIdentifier($localUid, $originalTableName);
                         if ($originalRecord !== null) {
                             $relatedRecord->addRelatedRecord($originalRecord);
@@ -1336,7 +1347,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
         $flexFormData = ''
     ): array {
         $records = [];
-        switch ($columnConfiguration['internal_type']) {
+        switch (($columnConfiguration['internal_type'] ?? 'db')) {
             case 'db':
                 $records = $this->fetchRelatedRecordsByGroupTypeDb(
                     $columnConfiguration,
@@ -1447,18 +1458,14 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
         $tableName = $columnConfiguration['foreign_table'];
         $isL10nPointer = $propertyName === $this->tcaService->getTransOrigPointerField($record->getTableName());
         // Ignore $excludedTableNames if the field points to the record's l10Parent, which is required to be published.
-        if (!$isL10nPointer && (empty($tableName) || in_array($tableName, $excludedTableNames))) {
+        if (!$isL10nPointer && (empty($tableName) || in_array($tableName, $excludedTableNames, true))) {
             return [];
         }
         $records = [];
 
-        if (null !== $recordIdentifierOverride) {
-            $recordIdentifier = $recordIdentifierOverride;
-        } else {
-            $recordIdentifier = $record->getMergedProperty($propertyName);
-        }
+        $recordIdentifier = $recordIdentifierOverride ?? $record->getMergedProperty($propertyName);
 
-        if ($recordIdentifier !== null && trim((string)$recordIdentifier) !== '' && (int)$recordIdentifier > 0) {
+        if ($recordIdentifier !== null && (int)$recordIdentifier > 0 && trim((string)$recordIdentifier) !== '') {
             // if the relation is an MM type, then select all identifiers from the MM table
             if (!empty($columnConfiguration['MM'])) {
                 $records = $this->fetchRelatedRecordsBySelectMm($columnConfiguration, $record, $excludedTableNames);
@@ -1567,7 +1574,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
 
         foreach ($records as $relationRecord) {
             $originalTableName = $columnConfiguration['foreign_table'];
-            if (!in_array($originalTableName, $excludedTableNames)) {
+            if (!in_array($originalTableName, $excludedTableNames, true)) {
                 if ($relationRecord->hasLocalProperty($foreignField)) {
                     $identifier = $relationRecord->getLocalProperty($foreignField);
                 } elseif ($relationRecord->hasForeignProperty($foreignField)) {
@@ -1610,7 +1617,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
     ): array {
         $recordIdentifier = $record->getIdentifier();
         $tableName = $columnConfiguration['foreign_table'];
-        if (in_array($tableName, $excludedTableNames)) {
+        if (in_array($tableName, $excludedTableNames, true)) {
             return [];
         }
 
@@ -1776,7 +1783,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
             }
 
             $originalTableName = $columnConfiguration['foreign_table'];
-            if (!in_array($originalTableName, $excludedTableNames)) {
+            if (!in_array($originalTableName, $excludedTableNames, true)) {
                 $originalRecord = $this->findByIdentifier($localUid, $columnConfiguration['foreign_table']);
                 if ($originalRecord !== null) {
                     $mmRecord->addRelatedRecord($originalRecord);
@@ -1886,8 +1893,6 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
 
     /**
      * Disable Page Recursion
-     *
-     * @return void
      */
     public function disablePageRecursion(): void
     {
@@ -1901,7 +1906,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
         return $event->getVotingResult();
     }
 
-    protected function shouldSkipFindByProperty($propertyName, $propertyValue, $tableName): bool
+    protected function shouldSkipFindByProperty(string $propertyName, $propertyValue, string $tableName): bool
     {
         $event = new VoteIfFindingByPropertyShouldBeSkipped($this, $propertyName, $propertyValue, $tableName);
         $this->eventDispatcher->dispatch($event);
@@ -1933,9 +1938,9 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
     protected function shouldSkipSearchingForRelatedRecordsByFlexForm(
         RecordInterface $record,
         string $column,
-        $columnConfiguration,
-        $flexFormDefinition,
-        $flexFormData
+        array $columnConfiguration,
+        array $flexFormDefinition,
+        array $flexFormData
     ): bool {
         $event = new VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped(
             $this,
@@ -2095,7 +2100,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                 foreach ($indexField as $field) {
                     $identifier[$field] = $row[$field];
                 }
-                $idString = json_encode($identifier);
+                $idString = json_encode($identifier, JSON_THROW_ON_ERROR);
                 $newRows[$idString] = $row;
             }
             return $newRows;

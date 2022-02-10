@@ -30,21 +30,19 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
 use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Controller\Traits\RunTasks;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
+use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\Arguments;
-use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
-use function implode;
 use function is_bool;
 
 /**
@@ -52,17 +50,14 @@ use function is_bool;
  */
 abstract class AbstractController extends ActionController
 {
+    use RunTasks;
+
     public const BLANK_ACTION = 'blankAction';
 
-    /** @var BackendUserAuthentication */
-    protected $backendUser;
+    protected BackendUserAuthentication $backendUser;
 
-    /** @var RemoteCommandDispatcher */
-    protected $remoteCommandDispatcher;
+    protected RemoteCommandDispatcher $remoteCommandDispatcher;
 
-    /**
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
     public function __construct(
         ConfigContainer $configContainer,
         ExecutionTimeService $executionTimeService,
@@ -76,8 +71,6 @@ abstract class AbstractController extends ActionController
 
     /**
      * Sets action to blankAction if the foreign DB is not reachable. Prevents further errors.
-     *
-     * @SuppressWarnings(PHPMD.StaticAccess)
      */
     protected function initializeAction(): void
     {
@@ -99,10 +92,12 @@ abstract class AbstractController extends ActionController
                 AbstractMessage::ERROR
             );
         }
+        /** @psalm-suppress InternalProperty */
         $this->actionMethodName = static::BLANK_ACTION;
         $this->arguments = $this->objectManager->get(Arguments::class);
     }
 
+    // TODO v12: replace TYPO3\CMS\Extbase\Mvc\View\ViewInterface with TYPO3Fluid\Fluid\View\ViewInterface
     protected function initializeView(ViewInterface $view): void
     {
         parent::initializeView($view);
@@ -121,38 +116,23 @@ abstract class AbstractController extends ActionController
     /**
      * Dummy Method to use when an error occurred. This Method must never throw an exception.
      */
-    public function blankAction(): void
+    public function blankAction(): ResponseInterface
     {
+        return $this->htmlResponse();
     }
 
-    /** @throws StopActionException */
-    protected function toggleFilterStatusAndRedirect(string $filterName, string $status, string $action): void
+    protected function toggleFilterStatus(string $filterName, string $status): array
     {
         $currentStatus = $this->backendUser->getSessionData($filterName . $status);
         if (!is_bool($currentStatus)) {
             $currentStatus = false;
         }
         $this->backendUser->setAndSaveSessionData($filterName . $status, !$currentStatus);
-        $this->redirect($action);
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
-    protected function runTasks(): void
-    {
-        // DI would change the constructor's signature. The amount of code that would be required to change would be
-        // enormous since the coupling via inheritance is too high and thus be considered a breaking change.
-        // Ergo do not use DI for this particular class. The Task execution should be refactored to a service instead.
-        $taskExecutionService = GeneralUtility::makeInstance(TaskExecutionService::class);
-        $response = $taskExecutionService->runTasks();
-
-        if (!$response->isSuccessful()) {
-            $this->addFlashMessage(
-                implode('<br/>', $response->getOutput()) . implode('<br/>', $response->getErrors()),
-                LocalizationUtility::translate('publishing.tasks_failure', 'in2publish_core'),
-                AbstractMessage::ERROR
-            );
-        }
+        return [
+            'name' => $filterName,
+            'status' => $status,
+            'oldStatus' => $currentStatus,
+            'newStatus' => $this->backendUser->getSessionData($filterName . $status),
+        ];
     }
 }

@@ -36,11 +36,9 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 
 class ConfigurationFormatTest implements TestCaseInterface
 {
-    /** @var ValidationContainer */
-    private $validationContainer;
+    private ValidationContainer $validationContainer;
 
-    /** @var ConfigContainer */
-    private $configContainer;
+    private ConfigContainer $configContainer;
 
     public function __construct(ValidationContainer $validationContainer, ConfigContainer $configContainer)
     {

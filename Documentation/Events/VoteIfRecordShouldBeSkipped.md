@@ -11,7 +11,6 @@ of times during a single publishing process, depending on the number of records 
 
 ## What
 
-* `commonRepository`: The instance of the CommonRepository which is going to publish the record
 * `record`: The record instance which is going to be published (if not voted otherwise).
 
 ## Possibilities

@@ -37,8 +37,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Builder
 {
-    /** @var NodeCollection */
-    protected $nodes;
+    protected NodeCollection $nodes;
 
     public function __construct()
     {
@@ -99,7 +98,7 @@ class Builder
         array $validators = [],
         Builder $builder = null
     ): self {
-        if ($builder instanceof Builder) {
+        if ($builder instanceof self) {
             $nodes = $builder->end();
         } else {
             $nodes = GeneralUtility::makeInstance(NodeCollection::class);
@@ -111,16 +110,16 @@ class Builder
 
     public function addGenericScalar(string $keyType, string $type = Node::T_STRING): self
     {
-        $valueNode = Builder::start()->addNode($type, '*:' . $type)->end();
-        $keyNode = AbsGenNode::fromType($keyType, '*:' . $keyType, $valueNode, null);
+        $valueNode = self::start()->addNode($type, '*:' . $type)->end();
+        $keyNode = AbsGenNode::fromType($keyType, '*:' . $keyType, $valueNode);
         $this->nodes->addNode($keyNode);
         return $this;
     }
 
     public function addGenericArray(string $keyType, Builder $nodes): self
     {
-        $valueNodes = Builder::start()->addArray('*:' . $keyType, $nodes)->end();
-        $keyNode = AbsGenNode::fromType($keyType, '*:' . $keyType, $valueNodes, null);
+        $valueNodes = self::start()->addArray('*:' . $keyType, $nodes)->end();
+        $keyNode = AbsGenNode::fromType($keyType, '*:' . $keyType, $valueNodes);
         $this->nodes->addNode($keyNode);
         return $this;
     }

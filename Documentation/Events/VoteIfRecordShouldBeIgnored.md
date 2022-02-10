@@ -13,7 +13,7 @@ be published.
 
 ## What
 
-* `commonRepository`: The instance of the CommonRepository which was used to fetch the rows.
+* `recordFinder`: The instance of the `RecordFinder` which was used to fetch the rows.
 * `localProperties`: The row from the local database as array.
 * `foreignProperties`: The row from the foreign database as array.
 * `tableName`: The table name where the rows are fetched from.

@@ -1,4 +1,5 @@
 imports:
+  - { resource: Component/FalHandling/Services.yaml }
   - { resource: Component/PostPublishTaskExecution/Services.yaml }
   - { resource: Component/RecordHandling/Services.yaml }
   - { resource: Features/AdminTools/Services.yaml }
@@ -37,6 +38,10 @@ services:
       - '../Classes/Component/*'
       - '../Classes/Features/*'
 
+  TYPO3\CMS\Backend\Middleware\BackendRouteInitialization:
+    alias: In2code\In2publishCore\Middleware\BackendRouteInitialization
+    public: true
+
   # Services
 
   In2code.In2publishCore.Database.Local:
@@ -47,28 +52,10 @@ services:
     class: 'TYPO3\CMS\Core\Database\Connection'
     factory: [ '@In2code\In2publishCore\Factory\ConnectionFactory', 'createForeignConnection' ]
 
-  In2code\In2publishCore\Domain\PostProcessing\Processor\PostProcessor:
-    factory: [ '@In2code\In2publishCore\Domain\PostProcessing\PostProcessorFactory', 'createPostProcessor' ]
-
-  In2code\In2publishCore\Domain\Factory\FolderRecordFactory:
-    public: true
-
-  In2code\In2publishCore\Domain\Factory\IndexingFolderRecordFactory:
-    public: true
-
   In2code\In2publishCore\Service\Environment\ForeignEnvironmentService:
     public: true
 
-  In2code\In2publishCore\Domain\PostProcessing\Processor\FalIndexPostProcessor:
-    public: true
-
-  In2code\In2publishCore\Domain\PostProcessing\Processor\FileIndexPostProcessor:
-    public: true
-
   In2code\In2publishCore\Service\Permission\PermissionService:
-    public: true
-
-  In2code\In2publishCore\Domain\Repository\TaskRepository:
     public: true
 
   cache.in2publish_core:
@@ -89,13 +76,9 @@ services:
 
   # EventListener
 
-  In2code\In2publishCore\Domain\PostProcessing\PostProcessingEventListener:
+  In2code\In2publishCore\Config\Provider\PageTsProvider:
     tags:
       - name: event.listener
-        identifier: 'in2publishcore-postprocessingeventlistener-recordinstancewasinstantiated'
-        method: 'onRecordInstanceWasInstantiated'
-        event: In2code\In2publishCore\Event\RecordInstanceWasInstantiated
-      - name: event.listener
-        identifier: 'in2publishcore-postprocessingeventlistener-rootrecordcreationwasfinished'
-        method: 'onRootRecordCreationWasFinished'
-        event: In2code\In2publishCore\Event\RootRecordCreationWasFinished
+        identifier: 'in2publishcore-PageTsProvider-bootCompleted'
+        method: 'processData'
+        event: In2code\In2publishCore\Event\ExtTablesPostProcessingEvent

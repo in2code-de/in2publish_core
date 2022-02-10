@@ -52,14 +52,14 @@ class AdapterRegistry implements SingletonInterface, LoggerAwareInterface
     use LoggerAwareTrait;
 
     /**
-     * @var string[][][]
+     * @var array<string, array<string, array<string, mixed>>>
      */
-    protected $adapter = [
+    protected array $adapter = [
         'remote' => [],
         'transmission' => [],
     ];
 
-    protected $adapterMap = [
+    protected array $adapterMap = [
         'remote' => [
             'interface' => RceAdapter::class,
             'tester' => RemoteAdapterTest::class,
@@ -70,17 +70,13 @@ class AdapterRegistry implements SingletonInterface, LoggerAwareInterface
         ],
     ];
 
-    protected $config = [
+    protected array $config = [
         'adapter' => [
             'remote' => 'ssh',
             'transmission' => 'ssh',
         ],
     ];
 
-    /**
-     * @SuppressWarnings(PHPMD.Superglobals)
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
     public function __construct(ExtensionConfiguration $extensionConfiguration)
     {
         if (!isset($GLOBALS['in2publish_core']['tests'])) {
@@ -153,12 +149,11 @@ class AdapterRegistry implements SingletonInterface, LoggerAwareInterface
         throw new In2publishCoreException('Could not determine adapter or type for ' . $interface, 1507906038);
     }
 
-    /** @SuppressWarnings(PHPMD.Superglobals) */
     protected function addTests(array $tests, string $interface): void
     {
         $GLOBALS['in2publish_core']['virtual_tests'][$interface] = $tests;
         foreach ($tests as $test) {
-            if (!in_array($test, $GLOBALS['in2publish_core']['tests'])) {
+            if (!in_array($test, $GLOBALS['in2publish_core']['tests'], true)) {
                 $GLOBALS['in2publish_core']['tests'][] = $test;
             }
         }
@@ -169,7 +164,6 @@ class AdapterRegistry implements SingletonInterface, LoggerAwareInterface
         return $this->config['adapter'];
     }
 
-    /** @SuppressWarnings(PHPMD.Superglobals) */
     protected function getLanguageService(): LanguageService
     {
         return $GLOBALS['LANG'];

@@ -36,8 +36,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractTagBasedViewHelper;
 
 class RecordHistoryViewHelper extends AbstractTagBasedViewHelper
 {
-    /** @var UriBuilder */
-    protected $uriBuilder;
+    protected UriBuilder $uriBuilder;
 
     protected $tagName = 'a';
 

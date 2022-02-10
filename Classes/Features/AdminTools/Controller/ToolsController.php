@@ -30,8 +30,9 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  */
 
 use In2code\In2publishCore\Event\CreatedDefaultHelpLabels;
-use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry;
+use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -42,19 +43,16 @@ use const PHP_EOL;
 
 class ToolsController extends ActionController
 {
-    /** @var EnvironmentService */
-    protected $environmentService;
+    use AdminToolsModuleTemplate;
 
-    /** @var ToolsRegistry */
-    protected $toolsRegistry;
+    protected EnvironmentService $environmentService;
 
-    public function __construct(EnvironmentService $environmentService, ToolsRegistry $toolsRegistry)
+    public function __construct(EnvironmentService $environmentService)
     {
         $this->environmentService = $environmentService;
-        $this->toolsRegistry = $toolsRegistry;
     }
 
-    public function indexAction(): void
+    public function indexAction(): ResponseInterface
     {
         $testStates = $this->environmentService->getTestStatus();
 
@@ -80,7 +78,7 @@ class ToolsController extends ActionController
         $supports = $event->getSupports();
 
         $this->view->assign('supports', $supports);
-
         $this->view->assign('tools', $this->toolsRegistry->getEntries());
+        return $this->htmlResponse();
     }
 }

@@ -40,10 +40,9 @@ class GetIsoBySysLanguageUidViewHelper extends AbstractViewHelper
     protected const LANGUAGE = 'language';
     protected const TBL_SYS_LANGUAGE = 'sys_language';
 
-    /** @var ConnectionPool */
-    protected $connectionPool;
+    protected ConnectionPool $connectionPool;
 
-    protected $rtc = [];
+    protected array $rtc = [];
 
     public function __construct(ConnectionPool $connectionPool)
     {

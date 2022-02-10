@@ -12,8 +12,7 @@ page record and per table which potentially has records stored on that page reco
 
 ## What
 
-* `commonRepository`: The instance of the CommonRepository which is going to be used to search for records on the page
-  record.
+* `recordFinder`: The instance of the `RecordFinder` which is going to be used to search for records on the page record.
 * `record`: The current page record which is going to have its related records by PID added.
 * `tableName`: The table which is going to be queried.
 

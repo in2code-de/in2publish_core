@@ -42,20 +42,17 @@ use function is_string;
 
 abstract class AbstractNode implements Node
 {
-    /** @var string */
-    protected $name;
+    protected string $name;
 
     /** @var string[] */
-    protected $validators;
+    protected array $validators;
 
-    /** @var NodeCollection */
-    protected $nodes;
+    protected NodeCollection $nodes;
 
     /** @var string|int|bool|array */
     protected $default;
 
-    /** @var bool */
-    protected $skipValidators = false;
+    protected bool $skipValidators = false;
 
     /**
      * @param string $name
@@ -121,7 +118,10 @@ abstract class AbstractNode implements Node
         }
     }
 
-    public function merge(Node $node): void
+    /**
+     * @psalm-suppress NoInterfaceProperties
+     */
+    public function merge(AbstractNode $node): void
     {
         if (!empty($node->default)) {
             if (empty($this->default)) {

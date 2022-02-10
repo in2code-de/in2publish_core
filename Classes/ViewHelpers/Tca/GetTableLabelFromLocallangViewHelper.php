@@ -33,8 +33,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 class GetTableLabelFromLocallangViewHelper extends AbstractViewHelper
 {
-    /** @var TcaService */
-    protected $tcaService;
+    protected TcaService $tcaService;
 
     public function __construct(TcaService $tcaService)
     {

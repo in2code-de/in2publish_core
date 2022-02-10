@@ -38,8 +38,7 @@ class AllCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:all';
 
-    /** @var CommandRegistry */
-    protected $cmdRegistry;
+    protected CommandRegistry $cmdRegistry;
 
     public function __construct(CommandRegistry $commandRegistry, string $name = null)
     {

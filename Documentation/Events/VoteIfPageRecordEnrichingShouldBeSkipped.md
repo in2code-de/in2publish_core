@@ -11,7 +11,7 @@ that are stored on that page. This event is created right in between the instant
 
 ## What
 
-* `commonRepository`: The instance of the CommonRepository which will be used to find related records.
+* `recordFinder`: The instance of the `RecordFinder` which will be used to find related records.
 * `record`: The page record instance.
 
 ## Possibilities

@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<ruleset name="PHPMD rule set"
+         xmlns="http://pmd.sf.net/ruleset/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 https://pmd.sourceforge.io/ruleset_xml_schema.xsd"
+         xsi:noNamespaceSchemaLocation="https://pmd.sourceforge.io/ruleset_xml_schema.xsd"
+>
+    <description>PHPMD rules</description>
+
+    <rule ref="rulesets/codesize.xml" />
+    <rule ref="rulesets/cleancode.xml">
+        <exclude name="ElseExpression"/>
+        <exclude name="StaticAccess"/>
+    </rule>
+    <rule ref="rulesets/controversial.xml">
+        <exclude name="Superglobals"/>
+    </rule>
+    <rule ref="rulesets/design.xml" />
+    <rule ref="rulesets/naming.xml">
+        <exclude name="LongVariable"/>
+        <exclude name="ShortVariable"/>
+    </rule>
+    <rule ref="rulesets/unusedcode.xml" />
+
+    <rule ref="rulesets/cleancode.xml/StaticAccess">
+        <properties>
+            <property name="exceptions">
+                <value>
+                    \DateTime,
+                    \DateInterval,
+                    \DateTimeZone,
+                    \TYPO3\CMS\Backend\Utility\BackendUtility,
+                    \TYPO3\CMS\Core\Context\LanguageAspectFactory,
+                    \TYPO3\CMS\Core\Core\Bootstrap,
+                    \TYPO3\CMS\Core\Core\Environment,
+                    \TYPO3\CMS\Core\Database\Query\QueryHelper,
+                    \TYPO3\CMS\Core\Log\LogLevel,
+                    \TYPO3\CMS\Core\Utility\ArrayUtility,
+                    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility,
+                    \TYPO3\CMS\Core\Utility\GeneralUtility,
+                    \TYPO3\CMS\Core\Utility\MathUtility,
+                    \TYPO3\CMS\Core\Utility\PathUtility,
+                    \TYPO3\CMS\Core\Utility\VersionNumberUtility,
+                    \TYPO3\CMS\Extbase\Utility\ExtensionUtility,
+                    \TYPO3\CMS\Extbase\Utility\LocalizationUtility,
+                    \TYPO3\CMS\Extbase\Reflection\ObjectAccess,
+                    \In2code\In2publishCore\Config\Node\Specific\AbsSpecNode,
+                    \In2code\In2publishCore\Domain\Model\Record,
+                    \In2code\In2publishCore\Communication\RemoteProcedureCall\Envelope,
+                    \In2code\In2publishCore\Testing\Utility\TestLabelLocalizer,
+                    \In2code\In2publishCore\Utility\ArrayUtility,
+                    \In2code\In2publishCore\Utility\BackendUtility,
+                    \In2code\In2publishCore\Utility\ConfigurationUtility,
+                    \In2code\In2publishCore\Utility\DatabaseUtility,
+                    \In2code\In2publishCore\Utility\ExtensionUtility,
+                    \In2code\In2publishCore\Utility\FileUtility,
+                    \In2code\In2publishCore\Utility\FolderUtility,
+                    \In2code\In2publishCore\Utility\LogUtility,
+                    \In2code\In2publishCore\Utility\StorageDriverExtractor,
+                    \In2code\In2publishCore\Utility\UriUtility,
+                    \Spyc
+                </value>
+            </property>
+        </properties>
+    </rule>
+
+    <rule ref="rulesets/naming.xml/LongVariable">
+        <properties>
+            <property name="maximum">
+                <value>30</value>
+            </property>
+        </properties>
+    </rule>
+    <rule ref="rulesets/naming.xml/ShortVariable">
+        <properties>
+            <property name="minimum">
+                <value>2</value>
+            </property>
+        </properties>
+    </rule>
+
+    <exclude-pattern>.Build</exclude-pattern>
+    <exclude-pattern>.github</exclude-pattern>
+    <exclude-pattern>.idea</exclude-pattern>
+    <exclude-pattern>.phive</exclude-pattern>
+    <exclude-pattern>Build</exclude-pattern>
+    <exclude-pattern>Configuration</exclude-pattern>
+    <exclude-pattern>Documentation</exclude-pattern>
+    <exclude-pattern>Resources</exclude-pattern>
+</ruleset>

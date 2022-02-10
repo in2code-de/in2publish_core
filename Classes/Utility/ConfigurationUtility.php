@@ -76,7 +76,7 @@ class ConfigurationUtility
         return $result;
     }
 
-    protected static function overruleResultByAdditional(array $original, array $additional, $result): array
+    protected static function overruleResultByAdditional(array $original, array $additional, array $result): array
     {
         foreach ($additional as $key => $value) {
             if ($value === '__UNSET') {
@@ -101,8 +101,8 @@ class ConfigurationUtility
      */
     private static function getResultingValue(array $original, array $additional, $key)
     {
-        $originalValue = array_key_exists($key, $original) ? $original[$key] : null;
-        $additionalValue = array_key_exists($key, $additional) ? $additional[$key] : null;
+        $originalValue = $original[$key] ?? null;
+        $additionalValue = $additional[$key] ?? null;
 
         if (is_array($originalValue) && is_array($additionalValue)) {
             // Merge recursively

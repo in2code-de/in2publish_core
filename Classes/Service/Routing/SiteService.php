@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Service\Routing;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Database\RawRecordService;
+use LogicException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Exception\Page\PageNotFoundException;
@@ -46,19 +47,15 @@ class SiteService implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected $cache = [];
+    protected array $cache = [];
 
-    /** @var RawRecordService */
-    protected $rawRecordService;
+    protected RawRecordService $rawRecordService;
 
-    /** @var TcaService */
-    protected $tcaService;
+    protected TcaService $tcaService;
 
-    /** @var SiteFinder */
-    protected $siteFinder;
+    protected SiteFinder $siteFinder;
 
-    /** @var ForeignSiteFinder */
-    protected $foreignSiteFinder;
+    protected ForeignSiteFinder $foreignSiteFinder;
 
     public function __construct(
         RawRecordService $rawRecordService,
@@ -74,6 +71,7 @@ class SiteService implements SingletonInterface, LoggerAwareInterface
 
     public function getSiteForPidAndStagingLevel(int $pid, string $side): ?Site
     {
+        /** @noinspection CallableParameterUseCaseInTypeContextInspection */
         $pid = $this->determineDefaultLanguagePid($pid, $side);
         if (null === $pid) {
             return null;
@@ -119,11 +117,13 @@ class SiteService implements SingletonInterface, LoggerAwareInterface
                 $siteFinder = $this->siteFinder;
             } elseif ('foreign' === $side) {
                 $siteFinder = $this->foreignSiteFinder;
+            } else {
+                throw new LogicException('Unsupported side "' . $side . '"', 1642107159);
             }
             try {
                 $site = $siteFinder->getSiteByPageId($pid);
             } catch (PageNotFoundException $e) {
-                $site = null;
+                // Site stays null
             } catch (SiteNotFoundException $e) {
                 $this->logMissingSiteOnce($pid, $side);
             }

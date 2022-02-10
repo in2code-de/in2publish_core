@@ -42,8 +42,7 @@ class ConfigurationValuesTest implements TestCaseInterface
 {
     public const PROCESSOR_INTERFACE = ProcessorInterface::class;
 
-    /** @var array */
-    protected $configuration = [];
+    protected array $configuration = [];
 
     public function __construct(ConfigContainer $configContainer)
     {

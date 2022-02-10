@@ -61,7 +61,6 @@ class BackendUserProcessorTest extends UnitTestCase
      * @covers ::__construct
      * @covers ::getBackendUser
      * @covers ::processLogRecord
-     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function testBackendUserProcessorAddsBackendUserUidToLogEntryData()
     {
@@ -83,7 +82,6 @@ class BackendUserProcessorTest extends UnitTestCase
      * @covers ::__construct
      * @covers ::getBackendUser
      * @covers ::processLogRecord
-     * @SuppressWarnings("PHPMD.Superglobals")
      */
     public function testBackendUserProcessorAddsUnknownValueStringToLogEntryIfBackendUserIsKnownButHasNoId()
     {

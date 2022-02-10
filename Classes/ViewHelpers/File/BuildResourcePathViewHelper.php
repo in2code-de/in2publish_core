@@ -42,17 +42,14 @@ use function rtrim;
 
 class BuildResourcePathViewHelper extends AbstractViewHelper
 {
-    /** @var ConfigContainer */
-    protected $configContainer;
+    protected ConfigContainer $configContainer;
 
-    /** @var ResourceFactory */
-    protected $resourceFactory;
+    protected ResourceFactory $resourceFactory;
 
-    /** @var RemoteFileAbstractionLayerDriver */
-    protected $remoteFileAbstractionLayerDriver;
+    protected RemoteFileAbstractionLayerDriver $remoteFileAbstractionLayerDriver;
 
     /** @var Uri[] */
-    protected $domains;
+    protected array $domains;
 
     public function __construct(
         ConfigContainer $configContainer,
@@ -64,9 +61,6 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
         $this->remoteFileAbstractionLayerDriver = $remoteFileAbstractionLayerDriver;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
     public function initialize(): void
     {
         $config = $this->configContainer->get('filePreviewDomainName');
@@ -82,9 +76,6 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
         $this->registerArgument('stagingLevel', 'string', 'Sets the staging level [LOCAL/foreign]', true, 'local');
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.StaticAccess)
-     */
     public function render(): string
     {
         /** @var Record $record */

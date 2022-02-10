@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="4"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config"
+    autoloader="phpstan_bootstrap.php"
+>
+    <projectFiles>
+        <directory name="../../Classes" />
+        <ignoreFiles>
+            <directory name="../../.Build/" />
+        </ignoreFiles>
+    </projectFiles>
+
+    <issueHandlers>
+        <InternalMethod>
+            <errorLevel type="suppress">
+                <directory name="../../Classes" />
+            </errorLevel>
+        </InternalMethod>
+        <InternalClass>
+            <errorLevel type="suppress">
+                <directory name="../../Classes" />
+            </errorLevel>
+        </InternalClass>
+        <UndefinedClass>
+            <errorLevel type="suppress">
+                <referencedClass name="Spyc" />
+                <referencedClass name="CoStack\Logs\Controller\LogController" />
+            </errorLevel>
+        </UndefinedClass>
+    </issueHandlers>
+</psalm>

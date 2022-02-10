@@ -40,15 +40,13 @@ use function array_shift;
 use function count;
 use function glob;
 use function is_array;
-use function is_int;
 use function sprintf;
 use function trim;
 use function unlink;
 
 class FileUtility
 {
-    /** @var Logger */
-    protected static $logger;
+    protected static ?Logger $logger = null;
 
     protected static function initializeLogger(): void
     {
@@ -66,29 +64,27 @@ class FileUtility
 
         $backups = glob($backupFolder . '*_' . $tableName . '.*');
 
-        if (
-            is_array($backups)
-            && is_int($keepBackups)
-        ) {
-            while (count($backups) >= $keepBackups) {
-                $backupFileName = array_shift($backups);
-                try {
-                    if (unlink($backupFileName)) {
-                        static::$logger->notice('Deleted old backup "' . $backupFileName . '"');
-                    } else {
-                        static::$logger->error('Could not delete backup "' . $backupFileName . '"');
-                    }
-                } catch (Throwable $exception) {
-                    static::$logger->critical(
-                        'An error occurred while deletion of "' . $backupFileName . '"',
-                        [
-                            'code' => $exception->getCode(),
-                            'message' => $exception->getMessage(),
-                            'file' => $exception->getFile(),
-                            'line' => $exception->getLine(),
-                        ]
-                    );
+        if (!is_array($backups)) {
+            return;
+        }
+        while (count($backups) >= $keepBackups) {
+            $backupFileName = array_shift($backups);
+            try {
+                if (unlink($backupFileName)) {
+                    static::$logger->notice('Deleted old backup "' . $backupFileName . '"');
+                } else {
+                    static::$logger->error('Could not delete backup "' . $backupFileName . '"');
                 }
+            } catch (Throwable $exception) {
+                static::$logger->critical(
+                    'An error occurred while deletion of "' . $backupFileName . '"',
+                    [
+                        'code' => $exception->getCode(),
+                        'message' => $exception->getMessage(),
+                        'file' => $exception->getFile(),
+                        'line' => $exception->getLine(),
+                    ]
+                );
             }
         }
     }
@@ -123,7 +119,7 @@ class FileUtility
         if ($file instanceof AbstractFile) {
             $info['uid'] = $file->getUid();
         } else {
-            $info['uid'] = sprintf('%s:%s', $file->getStorage(), $file->getIdentifier());
+            $info['uid'] = sprintf('%s:%s', $file->getStorage()->getUid(), $file->getIdentifier());
         }
 
         return $info;

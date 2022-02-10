@@ -96,6 +96,9 @@ div.typo3-fullDoc {
 
 .in2publish-module {
   background: $scorpion;
+  margin: -48px -24px;
+  padding-top: 24px;
+  min-height: calc(100vh - 41px);
 }
 
 legend {
@@ -175,6 +178,7 @@ a.in2publish-notextdecoration {
     .in2publish-icon-file {
       @extend .icon-file-broken;
     }
+
   }
 
   .in2publish-stagelisting__item--removed & {
@@ -251,12 +255,36 @@ a.in2publish-notextdecoration {
 // ----- start the dropdown -----
 
 .in2publish-stagelisting__dropdown {
-  display: none;
   overflow: hidden;
   background-color: $alto;
   color: $scorpion;
   border: 10px solid $dovegray;
   // word-break: break-all;
+
+  &--open {
+    //position: relative;
+    //top: -8px;
+    margin-bottom: 10px;
+  }
+
+  &--close {
+    display: none;
+  }
+
+  &__item {
+    width: 50%;
+    float: left;
+    line-height: 30px;
+    padding: 0;
+
+    &--full {
+      width: 100%;
+    }
+
+    h3 {
+      line-height: 30px;
+    }
+  }
 
   a {
     color: currentColor;
@@ -302,29 +330,8 @@ a.in2publish-notextdecoration {
   .in2publish-stagelisting__item--moved & {
     border-color: $mariner;
   }
-
 }
 
-.in2publish-stagelisting__dropdown--open {
-  //position: relative;
-  //top: -8px;
-  margin-bottom: 10px;
-}
-
-.in2publish-stagelisting__dropdown__item {
-  width: 50%;
-  float: left;
-  line-height: 30px;
-  padding: 0;
-
-  &--full {
-    width: 100%;
-  }
-
-  h3 {
-    line-height: 30px;
-  }
-}
 
 .in2publish-backend .in2publish-stagelisting__dropdown__item__list > li {
   border-style: none;
@@ -541,4 +548,194 @@ div#typo3-docbody.stopScrolling {
 .in2publish-removevalue:before {
   right: 4px;
   bottom: 4px;
+}
+
+// Old pagination style
+
+.pagination .t3-icon {
+  margin: 0
+}
+
+.pagination .paginator-input {
+  display: inline-block;
+  width: auto;
+  margin: -6px 0;
+  height: 26px;
+  padding: 4px 4px;
+  font-size: 11px;
+  line-height: 1.5;
+  border-radius: 2px;
+}
+
+.pagination-block {
+  display: block
+}
+
+
+.pagination {
+  display: inline-block;
+  padding-left: 0;
+  margin: 18px 0;
+  border-radius: 2px
+}
+
+.pagination > li {
+  display: inline
+}
+
+.pagination > li > a, .pagination > li > span {
+  position: relative;
+  float: left;
+  padding: 6px 6px;
+  margin-left: -1px;
+  line-height: 1.5;
+  color: #212424;
+  text-decoration: none;
+  background-color: #fff;
+  border: 1px solid #ddd
+}
+
+.pagination > li > a:focus, .pagination > li > a:hover, .pagination > li > span:focus, .pagination > li > span:hover {
+  z-index: 2;
+  color: #000;
+  background-color: #f5f5f5;
+  border-color: #ddd
+}
+
+.pagination > li:first-child > a, .pagination > li:first-child > span {
+  margin-left: 0;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px
+}
+
+.pagination > li:last-child > a, .pagination > li:last-child > span {
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px
+}
+
+.pagination > .active > a, .pagination > .active > a:focus, .pagination > .active > a:hover, .pagination > .active > span, .pagination > .active > span:focus, .pagination > .active > span:hover {
+  z-index: 3;
+  color: #fff;
+  cursor: default;
+  background-color: #0078e6;
+  border-color: #0078e6
+}
+
+.pagination > .disabled > a, .pagination > .disabled > a:focus, .pagination > .disabled > a:hover, .pagination > .disabled > span, .pagination > .disabled > span:focus, .pagination > .disabled > span:hover {
+  color: #d7d7d7;
+  cursor: not-allowed;
+  background-color: #fff;
+  border-color: #ddd
+}
+
+.pagination-lg > li > a, .pagination-lg > li > span {
+  padding: 12px 12px;
+  font-size: 15px;
+  line-height: 1.3333333
+}
+
+.pagination-lg > li:first-child > a, .pagination-lg > li:first-child > span {
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px
+}
+
+.pagination-lg > li:last-child > a, .pagination-lg > li:last-child > span {
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px
+}
+
+.pagination-sm > li > a, .pagination-sm > li > span {
+  padding: 4px 4px;
+  font-size: 11px;
+  line-height: 1.5
+}
+
+.pagination-sm > li:first-child > a, .pagination-sm > li:first-child > span {
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px
+}
+
+.pagination-sm > li:last-child > a, .pagination-sm > li:last-child > span {
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px
+}
+
+// Fix buttons in admin tools module
+
+.tx_in2publishcore_admintools .module-docheader-bar-buttons .btn-toolbar .btn-group {
+  flex-wrap: wrap;
+}
+
+
+.in2publish-state-icon {
+  &:before {
+    font-size: 6px;
+    margin-bottom: 2px;
+    display: inline-block;
+    vertical-align: middle;
+    height: 12px;
+    line-height: 12px;
+  }
+}
+
+.in2publish-state {
+  &--unchanged {
+    color: $nobel;
+  }
+
+  &--changed {
+    color: $goldentainoi;
+  }
+
+  &--moved-and-changed {
+    color: $goldentainoi;
+  }
+
+  &--added {
+    color: $apple;
+  }
+
+  &--deleted {
+    color: $appleblossom;
+  }
+
+  &--moved {
+    color: $pictonblue;
+  }
+}
+
+.in2publish-stagelisting__item {
+  &--deleted {
+    .in2publish-stagelisting__item-filename {
+      color: $appleblossom;
+    }
+  }
+}
+
+.in2publish-icon-toggle {
+  $this: &;
+
+  &__on {
+    display: none;
+  }
+
+  &__off {
+    display: initial;
+  }
+
+  &--active {
+    #{$this}__on {
+      display: initial;
+    }
+
+    #{$this}__off {
+      display: none;
+    }
+  }
+}
+
+.in2publish-table {
+  .col-filename {
+    width: 50%;
+  }
 }

@@ -37,11 +37,9 @@ class SysLogPublisher
 {
     protected const TABLE_SYS_LOG = 'sys_log';
 
-    /** @var Connection */
-    protected $localDatabase;
+    protected Connection $localDatabase;
 
-    /** @var Connection */
-    protected $foreignDatabase;
+    protected Connection $foreignDatabase;
 
     public function __construct(Connection $localDatabase, Connection $foreignDatabase)
     {

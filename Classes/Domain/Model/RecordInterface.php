@@ -122,11 +122,11 @@ interface RecordInterface
      *      ARRAY: both arrays merged
      *      STRING: strings concatenated with a comma
      *
-     * @param $propertyName
+     * @param string $propertyName
      *
      * @return mixed
      */
-    public function getMergedProperty($propertyName);
+    public function getMergedProperty(string $propertyName);
 
     /** @return RecordInterface[][] */
     public function getRelatedRecords(): array;
@@ -234,8 +234,6 @@ interface RecordInterface
 
     /**
      * Prohibits changing this records parent record (prohibits changing parents of moved records)
-     *
-     * @return void
      */
     public function lockParentRecord(): void;
 

@@ -35,8 +35,7 @@ use In2code\In2publishCore\Service\Database\RawRecordService;
 
 class RecordIsPublishableVoter
 {
-    /** @var RawRecordService */
-    protected $rawRecordService;
+    protected RawRecordService $rawRecordService;
 
     public function __construct(RawRecordService $rawRecordService)
     {

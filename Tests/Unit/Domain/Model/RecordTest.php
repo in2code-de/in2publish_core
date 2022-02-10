@@ -11,6 +11,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 use function strcmp;
 
+/**
+ * @SuppressWarnings(PHPMD)
+ */
 class RecordTest extends UnitTestCase
 {
     /**
@@ -1280,9 +1283,6 @@ class RecordTest extends UnitTestCase
         );
     }
 
-    /**
-     * @return array
-     */
     public function propertiesDataProvider(): array
     {
         // @formatter:off
