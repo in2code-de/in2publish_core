@@ -63,7 +63,7 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
 
         switch ($this->tableConfiguration['config']['type']) {
             case 'input':
-                $this->changeValueForTypeInput($value);
+                $value = $this->changeValueForTypeInput($value);
                 break;
             case 'text':
                 $value = nl2br1($value);
