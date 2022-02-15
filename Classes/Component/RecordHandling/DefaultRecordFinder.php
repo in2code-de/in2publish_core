@@ -1804,7 +1804,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
      */
     protected function isIgnoredRecord(array $localProperties, array $foreignProperties, string $tableName): bool
     {
-        if ($this->isDeletedAndUnchangedRecord($localProperties, $foreignProperties)) {
+        if ($this->isDeletedAndUnchangedRecord($localProperties, $foreignProperties, $tableName)) {
             return true;
         }
 
@@ -1851,12 +1851,20 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
      *
      * @param array $localProperties
      * @param array $foreignProperties
+     * @param string $tableName
      *
      * @return bool
      */
-    protected function isDeletedAndUnchangedRecord(array $localProperties, array $foreignProperties): bool
-    {
-        return $localProperties['deleted'] === '1' && !count(array_diff($localProperties, $foreignProperties));
+    protected function isDeletedAndUnchangedRecord(
+        array $localProperties,
+        array $foreignProperties,
+        string $tableName
+    ): bool {
+        $deleteField = $GLOBALS['TCA'][$tableName]['ctrl']['delete'] ?? null;
+        return null !== $deleteField
+               && array_key_exists($deleteField, $localProperties)
+               && $localProperties[$deleteField]
+               && !count(array_diff($localProperties, $foreignProperties));
     }
 
     /**

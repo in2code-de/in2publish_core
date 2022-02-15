@@ -40,10 +40,9 @@ class UriUtility
         }
         if (empty($uri->getHost())) {
             $path = $uri->getPath();
-            [$host, $path] = explode('/', $path, 2);
-            if (empty($path)) {
-                $path = '';
-            }
+            $parts = explode('/', $path, 2);
+            $host = $parts[0];
+            $path = $parts[1] ?? '';
             $uri = $uri->withHost($host)->withPath($path);
         }
         return $uri;
