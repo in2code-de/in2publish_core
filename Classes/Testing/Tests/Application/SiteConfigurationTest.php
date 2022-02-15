@@ -42,6 +42,7 @@ use function array_key_exists;
 use function array_keys;
 use function array_merge;
 use function array_unique;
+use function json_encode;
 use function sprintf;
 
 class SiteConfigurationTest implements TestCaseInterface
@@ -107,7 +108,7 @@ class SiteConfigurationTest implements TestCaseInterface
                             'direction' => $localLanguage->getDirection(),
                             'typo3Language' => $localLanguage->getTypo3Language(),
                             'fallbackType' => $localLanguage->getFallbackType(),
-                            'fallbackLanguageIds' => $localLanguage->getFallbackLanguageIds(),
+                            'fallbackLanguageIds' => json_encode($localLanguage->getFallbackLanguageIds()),
                             'enabled' => $localLanguage->isEnabled(),
                         ];
 
@@ -120,7 +121,7 @@ class SiteConfigurationTest implements TestCaseInterface
                             'direction' => $foreignLanguage->getDirection(),
                             'typo3Language' => $foreignLanguage->getTypo3Language(),
                             'fallbackType' => $foreignLanguage->getFallbackType(),
-                            'fallbackLanguageIds' => $foreignLanguage->getFallbackLanguageIds(),
+                            'fallbackLanguageIds' => json_encode($foreignLanguage->getFallbackLanguageIds()),
                             'enabled' => $foreignLanguage->isEnabled(),
                         ];
 
