@@ -1212,7 +1212,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
             if (in_array($tableName, $excludedTableNames, true)) {
                 return $records;
             }
-            if ($columnConfiguration['MM']) {
+            if (!empty($columnConfiguration['MM'])) {
                 // skip if this record is not the owning side of the relation
                 if (!empty($columnConfiguration['MM_oppositeUsage'])) {
                     return $records;
