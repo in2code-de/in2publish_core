@@ -84,7 +84,7 @@ class ToolsRegistry implements SingletonInterface
             if ($this->evaluateCondition($config)) {
                 $controller = $config['controller'];
                 $processedTools[$key] = $config;
-                $actions = GeneralUtility::trimExplode(',', $processedTools[$key]['actions']);
+                $actions = GeneralUtility::trimExplode(',', $processedTools[$key]['action']);
                 $processedTools[$key]['initialAction'] = $actions[0];
                 if (isset($controllerConfig[$controller]['alias'])) {
                     $processedTools[$key]['alias'] = $controllerConfig[$controller]['alias'];
