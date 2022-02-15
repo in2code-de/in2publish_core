@@ -1201,7 +1201,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
             if (in_array($tableName, $excludedTableNames)) {
                 return $records;
             }
-            if ($columnConfiguration['MM']) {
+            if (!empty($columnConfiguration['MM'])) {
                 // skip if this record is not the owning side of the relation
                 if (!empty($columnConfiguration['MM_oppositeUsage'])) {
                     return $records;
