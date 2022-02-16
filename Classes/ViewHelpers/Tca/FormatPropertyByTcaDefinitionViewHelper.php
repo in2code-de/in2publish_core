@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-use function nl2br as nl2br1;
+use function nl2br;
 use function strftime;
 use function trim;
 
@@ -63,10 +63,10 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
 
         switch ($this->tableConfiguration['config']['type']) {
             case 'input':
-                $this->changeValueForTypeInput($value);
+                $value = $this->changeValueForTypeInput($value);
                 break;
             case 'text':
-                $value = nl2br1($value);
+                $value = nl2br($value);
                 break;
             default:
         }
@@ -80,12 +80,17 @@ class FormatPropertyByTcaDefinitionViewHelper extends AbstractViewHelper
 
     protected function changeValueForTypeInput(string $value): string
     {
-        if (GeneralUtility::inList($this->tableConfiguration['config']['eval'], 'password')) {
+        $eval = $this->tableConfiguration['config']['eval'] ?? null;
+        if (null === $eval) {
+            return $value;
+        }
+
+        if (GeneralUtility::inList($eval, 'password')) {
             return '*******';
         }
         if (
-            GeneralUtility::inList($this->tableConfiguration['config']['eval'], 'datetime')
-            || GeneralUtility::inList($this->tableConfiguration['config']['eval'], 'date')
+            GeneralUtility::inList($eval, 'datetime')
+            || GeneralUtility::inList($eval, 'date')
         ) {
             if ($value !== '0') {
                 $value = strftime('%d.%m.%Y', (int)$value);

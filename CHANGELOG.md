@@ -1,5 +1,22 @@
 # In2publish Core Change Log
 
+11.0.1:
+
+- [META] Set the EM conf version number to 11.0.1
+- [DOCS] Update changelog
+- [META] Set the EM conf version number to 10.2.2
+- [BUGFIX] Show the actual key for differences in site configs
+- [BUGFIX] Check the actual delete field of a table to determine if the record is deleted
+- [BUGFIX] Prevent access on undefined array key
+- [CLEANUP] Strip a superfluous function import as alias
+- [BUGFIX] Actually use the value formatted by its TCA eval field
+- [BUGFIX] Include array key existence check when looking for group/db MM tables
+- [BUGFIX] Format arrays as strings before comparing them with array_diff
+- [BUGFIX] Fix array key for registered tool actions
+- [BUGFIX] Check if deprecated config values are set before evaluation
+- [TYPO] Fix message when there are no envelopes to flush
+- [RELEASE] Version 11.0.0 with TYPO3 v11 compatibility
+
 11.0.0:
 
 - [META] Set the branch alias version number to 11.0.x-dev
@@ -101,6 +118,18 @@
 - [UPGRADE] Replace TableConfigurationPostProcessingHookInterface with TYPO3\CMS\Core\Core\Event\BootCompletedEvent
 - [CLEANUP] Remove outdated compatibility class SignalSlotReplacement
 - [!!!][UPDATE] Require TYPO3 v11
+
+10.2.2:
+
+- [META] Set the EM conf version number to 10.2.2
+- [BUGFIX] Show the actual key for differences in site configs
+- [BUGFIX] Check the actual delete field of a table to determine if the record is deleted
+- [BUGFIX] Prevent access on undefined array key
+- [BUGFIX] Include array key existence check when looking for group/db MM tables
+- [BUGFIX] Format arrays as strings before comparing them with array_diff
+- [BUGFIX] Check if deprecated config values are set before evaluation
+- [TYPO] Fix message when there are no envelopes to flush
+- [RELEASE] Version 10.2.1 with a lot of bugfixes
 
 10.2.1:
 

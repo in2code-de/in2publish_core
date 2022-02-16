@@ -43,11 +43,17 @@ class SimplifiedOverviewAndPublishingMigration extends AbstractMigration
     public function migrate(array $config): array
     {
         $enable = false;
-        if ($config['factory']['simpleOverviewAndAjax']) {
+        if (
+            isset($config['factory']['simpleOverviewAndAjax'])
+            && $config['factory']['simpleOverviewAndAjax']
+        ) {
             $this->addMessage(sprintf(self::MESSAGE, 'factory.simpleOverviewAndAjax'));
             $enable = true;
         }
-        if ($config['features']['simplePublishing']['enable']) {
+        if (
+            isset($config['features']['simplePublishing']['enable'])
+            && $config['features']['simplePublishing']['enable']
+        ) {
             $this->addMessage(sprintf(self::MESSAGE, 'features.simplePublishing.enable'));
             $enable = true;
         }
