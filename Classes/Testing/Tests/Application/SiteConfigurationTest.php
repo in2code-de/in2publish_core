@@ -128,8 +128,9 @@ class SiteConfigurationTest implements TestCaseInterface
                         $differences = array_keys(array_diff($localLanguageArray, $foreignLanguageArray));
                         foreach ($differences as $difference) {
                             $siteErrors[] = sprintf(
-                                'Site %s differences: %s <> %s',
+                                'Site %s differences in %s: %s <> %s',
                                 $siteIdentifier,
+                                $difference,
                                 $localLanguageArray[$difference],
                                 $foreignLanguageArray[$difference]
                             );
