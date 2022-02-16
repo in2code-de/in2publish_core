@@ -265,7 +265,7 @@
 				<source>Flush superfluous envelopes.</source>
 			</trans-unit>
 			<trans-unit id="module.m4.nothing_to_flush">
-				<source>There are not envelopes to flush.</source>
+				<source>There are no envelopes to flush.</source>
 			</trans-unit>
 			<trans-unit id="module.m4.flush_registry">
 				<source>Clear registry entries.</source>
