@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\ContextMenuPublishEntry\Controller;
 
-use In2code\In2publishCore\Command\PublishTaskRunner\RunTasksInQueueCommand;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
 use In2code\In2publishCore\Domain\Repository\CommonRepository;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use Psr\Http\Message\ResponseInterface;
@@ -49,12 +47,8 @@ class PublishPageAjaxController
 
                 if ($record->isPublishable()) {
                     $commonRepository->publishRecordRecursive($record);
-                    $dispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
-                    $request = GeneralUtility::makeInstance(
-                        RemoteCommandRequest::class,
-                        RunTasksInQueueCommand::IDENTIFIER
-                    );
-                    $rceResponse = $dispatcher->dispatch($request);
+                    $taskExecutionService = GeneralUtility::makeInstance(TaskExecutionService::class);
+                    $rceResponse = $taskExecutionService->runTasks();
                     if ($rceResponse->isSuccessful()) {
                         $content['success'] = true;
                         $content['error'] = false;

@@ -29,9 +29,7 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Command\PublishTaskRunner\RunTasksInQueueCommand;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Throwable;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
@@ -152,21 +150,9 @@ abstract class AbstractController extends ActionController
      */
     protected function runTasks()
     {
-        $dispatcher = GeneralUtility::makeInstance(RemoteCommandDispatcher::class);
-        $request = GeneralUtility::makeInstance(RemoteCommandRequest::class, RunTasksInQueueCommand::IDENTIFIER);
-        $response = $dispatcher->dispatch($request);
-
-        if ($response->isSuccessful()) {
-            $this->logger->info('Task execution results', ['output' => $response->getOutput()]);
-        } else {
-            $this->logger->error(
-                'Task execution failed',
-                [
-                    'output' => $response->getOutput(),
-                    'errors' => $response->getErrors(),
-                    'exit_status' => $response->getExitStatus(),
-                ]
-            );
+        $taskExecutionService = GeneralUtility::makeInstance(TaskExecutionService::class);
+        $response = $taskExecutionService->runTasks();
+        if (!$response->isSuccessful()) {
             $this->addFlashMessage(
                 implode('<br/>', $response->getOutput()) . implode('<br/>', $response->getErrors()),
                 LocalizationUtility::translate('publishing.tasks_failure', 'in2publish_core'),
