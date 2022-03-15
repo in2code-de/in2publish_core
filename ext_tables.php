@@ -65,7 +65,7 @@
             ],
             [
                 'access' => 'user,group',
-                'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Record.svg',
+                'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Overview.svg',
                 'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod1.xlf',
             ]
         );
