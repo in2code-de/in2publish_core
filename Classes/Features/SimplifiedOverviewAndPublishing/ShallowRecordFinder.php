@@ -131,7 +131,7 @@ class ShallowRecordFinder implements RecordFinder
             $rows = $this->dualDatabaseRepository->findByProperty('pages', 'uid', [$identifier]);
             $rowSet = $rows[$identifier];
         }
-        $rowSet['additional'] = ['depth' => 0, 'isRoot' => true];
+        $rowSet['additional'] = ['depth' => 1, 'isRoot' => true];
         $this->createRecord(
             'pages',
             $rowSet,
