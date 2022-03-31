@@ -414,10 +414,6 @@
 				<source>The Content Publisher stores various information in the registry, like the outcome of the last test run. You can force the removal of these entries here.</source>
 				<target state="translated">Der Content Publisher speichert Informationen wie das Ergebnis des letzten Testlaufs in der Registry. Sie können die Löschung dieser Einträge hier erzwingen.</target>
 			</trans-unit>
-			<trans-unit id="module.m4.flush_tca">
-				<source>Flush processed TCA cache</source>
-				<target state="translated">Cache des verarbeiteten TCA leeren</target>
-			</trans-unit>
 
 			<trans-unit id="test_state_error">
 				<source>In2publish might not work as expected.</source>

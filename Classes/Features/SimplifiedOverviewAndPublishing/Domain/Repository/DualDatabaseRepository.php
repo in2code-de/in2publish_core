@@ -20,10 +20,27 @@ class DualDatabaseRepository
         $this->foreignRepository = $foreignRepository;
     }
 
-    public function findByProperty(string $table, string $property, array $values): array
-    {
-        $localRows = $this->localRepository->findByProperty($table, $property, $values);
-        $foreignRows = $this->foreignRepository->findByProperty($table, $property, $values);
+    public function findByProperty(
+        string $table,
+        string $property,
+        array $values,
+        string $additionalWhere = null
+    ): array {
+        $localRows = $this->localRepository->findByProperty($table, $property, $values, $additionalWhere);
+        $foreignRows = $this->foreignRepository->findByProperty($table, $property, $values, $additionalWhere);
+
+        return $this->mergeRowsByIdentifier($localRows, $foreignRows);
+    }
+
+    public function findByPropertyWithJoin(
+        string $mmTable,
+        string $table,
+        string $property,
+        array $values,
+        string $additionalWhere = null
+    ): array {
+        $localRows = $this->localRepository->findByPropertyWithJoin($mmTable, $table, $property, $values, $additionalWhere);
+        $foreignRows = $this->foreignRepository->findByPropertyWithJoin($mmTable, $table, $property, $values, $additionalWhere);
 
         return $this->mergeRowsByIdentifier($localRows, $foreignRows);
     }

@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
@@ -22,9 +23,14 @@
             <directory>../Tests/Unit/</directory>
         </testsuite>
     </testsuites>
+    <coverage>
+        <include>
+            <directory>../Classes/</directory>
+        </include>
+    </coverage>
     <php>
-        <const name="TYPO3_MODE" value="BE" />
-        <ini name="display_errors" value="1" />
-        <env name="TYPO3_CONTEXT" value="Testing" />
+        <const name="TYPO3_MODE" value="BE"/>
+        <ini name="display_errors" value="1"/>
+        <env name="TYPO3_CONTEXT" value="Testing"/>
     </php>
 </phpunit>

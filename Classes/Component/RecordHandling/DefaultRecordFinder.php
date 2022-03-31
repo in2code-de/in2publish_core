@@ -30,13 +30,13 @@ namespace In2code\In2publishCore\Component\RecordHandling;
  */
 
 use Exception;
+use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
-use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Event\RecordWasEnriched;
 use In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
@@ -156,7 +156,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
 
     protected TcaService $tcaService;
 
-    protected TcaProcessingService $tcaProcessingService;
+    protected TcaPreProcessingService $tcaPreProcessingService;
 
     public function __construct(
         Connection $localDatabase,
@@ -169,7 +169,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
         FlexFormTools $flexFormTools,
         FlexFormService $flexFormService,
         TcaService $tcaService,
-        TcaProcessingService $tcaProcessingService
+        TcaPreProcessingService $tcaPreProcessingService
     ) {
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
@@ -181,7 +181,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
         $this->flexFormTools = $flexFormTools;
         $this->flexFormService = $flexFormService;
         $this->tcaService = $tcaService;
-        $this->tcaProcessingService = $tcaProcessingService;
+        $this->tcaPreProcessingService = $tcaPreProcessingService;
     }
 
     /**
@@ -491,7 +491,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
         }
         $recordTableName = $record->getTableName();
         // keep the following extra line for debugging issues
-        $columns = $this->tcaProcessingService->getCompatibleTcaColumns($recordTableName);
+        $columns = $this->tcaPreProcessingService->getCompatibleTcaColumns($recordTableName);
         foreach ($columns as $propertyName => $columnConfiguration) {
             if ($this->shouldSkipSearchingForRelatedRecordsByProperty($record, $propertyName, $columnConfiguration)) {
                 continue;

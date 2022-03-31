@@ -30,6 +30,8 @@ namespace In2code\In2publishCore\Domain\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use InvalidArgumentException;
 use Psr\Log\LoggerAwareInterface;
@@ -71,7 +73,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
 
     protected FlexFormTools $flexFormTools;
 
-    protected TcaProcessingService $tcaProcessingService;
+    protected TcaPreProcessingService $tcaPreProcessingService;
 
     protected SiteFinder $siteFinder;
 
@@ -79,12 +81,12 @@ class ReplaceMarkersService implements LoggerAwareInterface
 
     public function __construct(
         FlexFormTools $flexFormTools,
-        TcaProcessingService $tcaProcessingService,
+        TcaPreProcessingService $tcaPreProcessingService,
         SiteFinder $siteFinder,
         Connection $localDatabase
     ) {
         $this->flexFormTools = $flexFormTools;
-        $this->tcaProcessingService = $tcaProcessingService;
+        $this->tcaPreProcessingService = $tcaPreProcessingService;
         $this->siteFinder = $siteFinder;
         $this->localDatabase = $localDatabase;
     }
@@ -95,13 +97,13 @@ class ReplaceMarkersService implements LoggerAwareInterface
      * If a Marker could not be replaced a Log is written.
      * This should, however, not be needed.
      *
-     * @param RecordInterface $record
+     * @param DatabaseRecord $record
      * @param string $string
      * @param string $propertyName
      *
      * @return string
      */
-    public function replaceMarkers(RecordInterface $record, string $string, string $propertyName): string
+    public function replaceMarkers(DatabaseRecord $record, string $string, string $propertyName): string
     {
         if (strpos($string, '#') !== false) {
             $string = $this->replaceRecFieldMarker($record, $string);
@@ -144,24 +146,21 @@ class ReplaceMarkersService implements LoggerAwareInterface
     }
 
     /**
-     * Replace ###REC_FIELD_fieldname### with its value
+     * Replace ###REC_FIELD_fieldname### with it's value
      *
-     * @param RecordInterface $record
+     * @param DatabaseRecord $record
      * @param string $string
      *
      * @return string
      */
-    protected function replaceRecFieldMarker(RecordInterface $record, string $string): string
+    protected function replaceRecFieldMarker(DatabaseRecord $record, string $string): string
     {
         if (strpos($string, '###REC_FIELD_') !== false) {
             $string = preg_replace_callback(
                 self::REC_FIELD_REGEX,
                 function ($matches) use ($record) {
                     $propertyName = $matches[1];
-                    $propertyValue = $record->getLocalProperty($propertyName);
-                    if ($propertyValue === null) {
-                        $propertyValue = $record->getForeignProperty($propertyName);
-                    }
+                    $propertyValue = $record->getProp($propertyName);
                     return $this->localDatabase->quote((string)$propertyValue);
                 },
                 $string
@@ -170,15 +169,15 @@ class ReplaceMarkersService implements LoggerAwareInterface
         return $string;
     }
 
-    protected function replacePageMarker(string $string, RecordInterface $record): string
+    protected function replacePageMarker(string $string, DatabaseRecord $record): string
     {
-        $pageIdentifier = $record->getPageIdentifier();
+        $pageIdentifier = $record->getPageId();
 
         if (false !== strpos($string, '###CURRENT_PID###')) {
             $string = str_replace('###CURRENT_PID###', (string)$pageIdentifier, $string);
         }
         if (false !== strpos($string, '###THIS_UID###')) {
-            $string = str_replace('###THIS_UID###', (string)$record->getIdentifier(), $string);
+            $string = str_replace('###THIS_UID###', (string)$record->getId(), $string);
         }
         if (false !== strpos($string, '###STORAGE_PID###')) {
             $string = str_replace('###STORAGE_PID###', (string)$this->getStoragePidFromPage($pageIdentifier), $string);
@@ -186,7 +185,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
         return $string;
     }
 
-    protected function replacePageTsConfigMarkers(RecordInterface $record, string $string, string $propertyName): string
+    protected function replacePageTsConfigMarkers(DatabaseRecord $record, string $string, string $propertyName): string
     {
         if (false !== strpos($string, '###PAGE_TSCONFIG')) {
             $marker = [
@@ -195,8 +194,8 @@ class ReplaceMarkersService implements LoggerAwareInterface
                 'PAGE_TSCONFIG_STR' => fn($input): string => $this->localDatabase->quote($input),
             ];
 
-            $pageTsConfig = $this->getPagesTsConfig($record->getPageIdentifier());
-            $tableIndex = $record->getTableName() . '.';
+            $pageTsConfig = $this->getPagesTsConfig($record->getPageId());
+            $tableIndex = $record->getTable() . '.';
             $fieldIndex = $propertyName . '.';
             foreach ($marker as $markerName => $filterFunc) {
                 if (false !== strpos($string, '###' . $markerName . '###')) {
@@ -241,7 +240,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
 
             $pageTs = BackendUtility::getPagesTSconfig($record->getPageIdentifier());
             $dataStructIdentifier = $this->flexFormTools->getDataStructureIdentifier(
-                ['config' => $this->tcaProcessingService->getCompatibleTcaColumns($tableName)[$propertyName]],
+                ['config' => $this->tcaPreProcessingService->getCompatibleTcaColumns($tableName)[$propertyName]],
                 $tableName,
                 $propertyName,
                 $record->getLocalProperties()
@@ -259,9 +258,6 @@ class ReplaceMarkersService implements LoggerAwareInterface
                             if (false !== strpos($string, '###' . $markerName . '###')) {
                                 $value = $values[$markerName] ?? 0;
                                 $cleanValue = $filterFunc($value);
-                                if (is_int($cleanValue)) {
-                                    $cleanValue = (string)$cleanValue;
-                                }
                                 $string = str_replace('###' . $markerName . '###', $cleanValue, $string);
                             }
                         }
@@ -363,8 +359,10 @@ class ReplaceMarkersService implements LoggerAwareInterface
      * Log if markers are not substituted or if there are errors
      *
      * @param $string
+     *
+     * @return void
      */
-    protected function checkForMarkersAndErrors(string $string): void
+    protected function checkForMarkersAndErrors($string): void
     {
         if (strpos($string, '###') !== false) {
             $this->logger->error('Could not replace marker', ['string' => $string]);
@@ -373,6 +371,13 @@ class ReplaceMarkersService implements LoggerAwareInterface
         }
     }
 
+    /**
+     * @param int $pageId
+     *
+     * @return int
+     *
+     * @SuppressWarnings(PHPMD.StaticAccess)
+     */
     protected function getStoragePidFromPage(int $pageId): int
     {
         $rootLine = BackendUtility::BEgetRootLine($pageId);

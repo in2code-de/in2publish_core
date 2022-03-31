@@ -33,10 +33,10 @@ namespace In2code\In2publishCore\Controller;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
+use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
-use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
 use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
 use In2code\In2publishCore\In2publishCoreException;
@@ -114,7 +114,7 @@ class RecordController extends AbstractController
      */
     public function indexAction(): ResponseInterface
     {
-        GeneralUtility::makeInstance(TcaProcessingService::class);
+        GeneralUtility::makeInstance(TcaPreProcessingService::class);
         $record = $this->recordFinder->findRecordByUidForOverview($this->pid, 'pages');
         $failures = $this->failureCollector->getFailures();
 

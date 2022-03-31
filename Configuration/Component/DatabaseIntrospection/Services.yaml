@@ -1,0 +1,11 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+    bind:
+      $localDatabase: '@In2code.In2publishCore.Database.Local'
+      $cache: '@cache.in2publish_core'
+
+  In2code\In2publishCore\Component\DatabaseIntrospection\:
+    resource: '../../../Classes/Component/DatabaseIntrospection/*'

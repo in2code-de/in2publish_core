@@ -29,34 +29,102 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use In2code\In2publishCore\Component\TcaHandling\Demand\DemandService;
+use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Component\TcaHandling\Query\QueryService;
+use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
+
+use function array_keys;
 
 class TcaController extends ActionController
 {
     use AdminToolsModuleTemplate;
 
-    protected TcaProcessingService $tcaProcessingService;
+    protected TcaPreProcessingService $tcaPreProcessingService;
 
-    public function __construct(TcaProcessingService $tcaProcessingService)
+    protected DemandService $demandService;
+
+    protected QueryService $queryService;
+
+    public function __construct(TcaPreProcessingService $tcaPreProcessingService)
     {
-        $this->tcaProcessingService = $tcaProcessingService;
+        $this->tcaPreProcessingService = $tcaPreProcessingService;
+    }
+
+    public function injectDemandService(DemandService $demandService): void
+    {
+        $this->demandService = $demandService;
+    }
+
+    public function injectQueryService(QueryService $queryService): void
+    {
+        $this->queryService = $queryService;
     }
 
     public function indexAction(): ResponseInterface
     {
-        $this->view->assign('incompatibleTca', $this->tcaProcessingService->getIncompatibleTcaParts());
-        $this->view->assign('compatibleTca', $this->tcaProcessingService->getCompatibleTcaParts());
-        return $this->htmlResponse();
-    }
+        $this->view->assign('incompatibleTca', $this->tcaPreProcessingService->getIncompatibleTcaParts());
+        $compatibleTcaParts = $this->tcaPreProcessingService->getCompatibleTcaParts();
+        $this->view->assign('compatibleTca', $compatibleTcaParts);
 
-    /** @throws StopActionException */
-    public function clearTcaCachesAction(): void
-    {
-        $this->tcaProcessingService->flushCaches();
-        $this->redirect('index');
+        $rootRecord = new DatabaseRecord('pages', 0, [], []);
+
+        $demand = [];
+        $demand['select']['pages']['']['uid'][1] = $rootRecord;
+
+        $currentRecursion = 0;
+        $recursionLimit = 0;
+
+        $newRecords = [];
+        $pages = [];
+        $newRecords[] = $pages[] = $page = $this->queryService->resolveDemand($demand)[0];
+
+        // Find all translations of the first page.
+        // They have the same PID as the first page, so they will not be found in the rootline.
+        $transOrigPointerField = $GLOBALS['TCA']['pages']['ctrl']['transOrigPointerField'];
+        $demand = [];
+        $demand['select']['pages'][''][$transOrigPointerField][$page->getId()] = $page;
+        $newRecords[] = $pages[] = $this->queryService->resolveDemand($demand)[0];
+
+        while ($recursionLimit > $currentRecursion++) {
+            $demand = [];
+            foreach ($newRecords as $newRecord) {
+                $demand['select']['pages']['']['pid'][$newRecord->getId()] = $newRecord;
+            }
+            $newRecords = $this->queryService->resolveDemand($demand);
+            foreach ($newRecords as $newRecord) {
+                $pages[] = $newRecord;
+            }
+        }
+
+        $demand = [];
+        $TCA = $GLOBALS['TCA'];
+        unset($TCA['pages']);
+        foreach (array_keys($TCA) as $table) {
+            foreach ($pages as $page) {
+                $demand['select'][$table]['']['pid'][$page->getId()] = $page;
+            }
+        }
+        $newRecords = $this->queryService->resolveDemand($demand);
+        foreach ($pages as $page) {
+            $newRecords[] = $page;
+        }
+
+        $currentRecursion = 0;
+        $recursionLimit = 5;
+
+        while ($recursionLimit > $currentRecursion++) {
+            $demand = $this->demandService->buildDemandForRecords($newRecords);
+
+            $newRecords = $this->queryService->resolveDemand($demand);
+            if (empty($newRecords)) {
+                break;
+            }
+        }
+
+        return $this->htmlResponse();
     }
 }

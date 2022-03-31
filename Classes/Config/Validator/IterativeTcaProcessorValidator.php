@@ -29,8 +29,8 @@ namespace In2code\In2publishCore\Config\Validator;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\ProcessorInterface;
 use In2code\In2publishCore\Config\ValidationContainer;
-use In2code\In2publishCore\Domain\Service\Processor\ProcessorInterface;
 
 use function class_exists;
 use function is_subclass_of;

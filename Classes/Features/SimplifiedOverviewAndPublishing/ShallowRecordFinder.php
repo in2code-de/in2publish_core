@@ -32,10 +32,11 @@ namespace In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing;
 use Closure;
 use In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder;
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
+use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
 use In2code\In2publishCore\Event\RecordInstanceWasInstantiated;
 use In2code\In2publishCore\Event\RecordWasEnriched;
@@ -54,23 +55,27 @@ use function count;
 use function implode;
 use function reset;
 
-/**
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class ShallowRecordFinder implements RecordFinder
 {
     public const PAGE_TABLE_NAME = 'pages';
 
-    protected TcaService $tcaService;
+    /** @var TcaService */
+    protected $tcaService;
 
-    protected EventDispatcher $eventDispatcher;
+    /** @var EventDispatcher */
+    protected $eventDispatcher;
 
-    protected TcaProcessingService $tcaProcessingService;
+    /** @var RecordFactory Only used for events which require an instance of this class */
+    protected $recordFactory;
 
-    protected ShallowFolderRecordFactory $shallowFolderRecordFactory;
+    /** @var TcaPreProcessingService */
+    protected $tcaPreProcessingService;
 
-    protected DualDatabaseRepository $dualDatabaseRepository;
+    /** @var ShallowFolderRecordFactory */
+    protected $shallowFolderRecordFactory;
+
+    /** @var DualDatabaseRepository */
+    protected $dualDatabaseRepository;
 
     /** @var array */
     protected $config;
@@ -78,29 +83,29 @@ class ShallowRecordFinder implements RecordFinder
     public function __construct(
         TcaService $tcaService,
         EventDispatcher $eventDispatcher,
-        TcaProcessingService $tcaProcessingService,
+        RecordFactory $recordFactory,
+        TcaPreProcessingService $tcaPreProcessingService,
         ShallowFolderRecordFactory $shallowFolderRecordFactory,
         DualDatabaseRepository $dualDatabaseRepository,
         ConfigContainer $configContainer
     ) {
         $this->tcaService = $tcaService;
         $this->eventDispatcher = $eventDispatcher;
-        $this->tcaProcessingService = $tcaProcessingService;
+        $this->recordFactory = $recordFactory;
+        $this->tcaPreProcessingService = $tcaPreProcessingService;
         $this->shallowFolderRecordFactory = $shallowFolderRecordFactory;
         $this->dualDatabaseRepository = $dualDatabaseRepository;
         $this->config = $configContainer->get();
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
-     */
     public function findRecordByUidForOverview(int $uid, string $table, bool $excludePages = false): ?RecordInterface
     {
         if (self::PAGE_TABLE_NAME === $table) {
             return $this->findPageRecord($uid, $excludePages);
         }
         // Fallback
-        return GeneralUtility::makeInstance(DefaultRecordFinder::class)
+        return GeneralUtility
+            ::makeInstance(DefaultRecordFinder::class)
             ->findRecordByUidForOverview($uid, $table, $excludePages);
     }
 
@@ -109,13 +114,11 @@ class ShallowRecordFinder implements RecordFinder
         return $this->findRecordByUidForOverview($uid, $table, true);
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
-     */
     public function findRecordsByProperties(array $properties, string $table, bool $simulateRoot = false): array
     {
         // Fallback
-        return GeneralUtility::makeInstance(DefaultRecordFinder::class)
+        return GeneralUtility
+            ::makeInstance(DefaultRecordFinder::class)
             ->findRecordsByProperties($properties, $table, $simulateRoot);
     }
 
@@ -170,10 +173,6 @@ class ShallowRecordFinder implements RecordFinder
         return $rootRecord;
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     */
     protected function resolveImages(array $pageRecords): void
     {
         $referenceRecords = [];
@@ -188,7 +187,7 @@ class ShallowRecordFinder implements RecordFinder
             return;
         }
 
-        /** @var array<int, array<RecordInterface>> $fileToReferenceMap */
+        /** @var array<int, array<RecordInterface> $fileToReferenceMap */
         $fileToReferenceMap = [];
         foreach ($referenceRecords as $referenceRecord) {
             $uid = $referenceRecord->getLocalProperty('uid_local') ?: $referenceRecord->getForeignProperty('uid_local');
@@ -352,7 +351,7 @@ class ShallowRecordFinder implements RecordFinder
     protected function collectDemands(RecordInterface $rootRecord): array
     {
         $demands = [];
-        $tca = $this->tcaProcessingService->getCompatibleTcaParts();
+        $tca = $this->tcaPreProcessingService->getCompatibleTcaParts();
         foreach ($rootRecord->getRelatedRecords() as $table => $records) {
             if (isset($tca[$table])) {
                 foreach ($records as $record) {
@@ -381,8 +380,6 @@ class ShallowRecordFinder implements RecordFinder
      *
      * @return array|null
      * @noinspection PhpUnusedParameterInspection
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function buildDemand(RecordInterface $record, string $column, array $columnConfig): ?array
     {

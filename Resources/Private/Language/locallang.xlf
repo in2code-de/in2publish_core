@@ -313,9 +313,6 @@
 			<trans-unit id="module.m4.flush_registry.description">
 				<source>The Content Publisher stores various information in the registry, like the outcome of the last test run. You can force the removal of these entries here.</source>
 			</trans-unit>
-			<trans-unit id="module.m4.flush_tca">
-				<source>Flush processed TCA cache</source>
-			</trans-unit>
 
 			<trans-unit id="test_state_error">
 				<source>In2publish might not work as expected.</source>

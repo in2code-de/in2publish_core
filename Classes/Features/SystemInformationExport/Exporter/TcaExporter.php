@@ -29,15 +29,15 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 
 class TcaExporter implements SystemInformationExporter
 {
-    protected TcaProcessingService $tcaProcessingService;
+    protected TcaPreProcessingService $tcaPreProcessingService;
 
-    public function __construct(TcaProcessingService $tcaProcessingService)
+    public function __construct(TcaPreProcessingService $tcaPreProcessingService)
     {
-        $this->tcaProcessingService = $tcaProcessingService;
+        $this->tcaPreProcessingService = $tcaPreProcessingService;
     }
 
     public function getUniqueKey(): string
@@ -49,8 +49,8 @@ class TcaExporter implements SystemInformationExporter
     {
         return [
             'full' => $GLOBALS['TCA'],
-            'compatible' => $this->tcaProcessingService->getCompatibleTcaParts(),
-            'incompatible' => $this->tcaProcessingService->getIncompatibleTcaParts(),
+            'compatible' => $this->tcaPreProcessingService->getCompatibleTcaParts(),
+            'incompatible' => $this->tcaPreProcessingService->getIncompatibleTcaParts(),
         ];
     }
 }

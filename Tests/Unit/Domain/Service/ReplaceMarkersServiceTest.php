@@ -29,9 +29,9 @@ namespace In2code\In2publishCore\Tests\Unit\Domain\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
-use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Database\Connection;
@@ -53,11 +53,11 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $record = $this->getRecordStub('tx_unit_test_table');
 
         $flexFormTools = $this->createMock(FlexFormTools::class);
-        $tcaProcessingService = $this->createMock(TcaProcessingService::class);
+        $tcaPreProcessingService = $this->createMock(TcaPreProcessingService::class);
         $siteFinder = $this->createMock(SiteFinder::class);
         $connection = $this->createMock(Connection::class);
 
-        $replaceMarkerService = new class ($flexFormTools, $tcaProcessingService, $siteFinder, $connection) extends ReplaceMarkersService {
+        $replaceMarkerService = new class ($flexFormTools, $tcaPreProcessingService, $siteFinder, $connection) extends ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
                 return [
@@ -89,11 +89,11 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $record = $this->getRecordStub('tx_unit_test_table');
 
         $flexFormTools = $this->createMock(FlexFormTools::class);
-        $tcaProcessingService = $this->createMock(TcaProcessingService::class);
+        $tcaPreProcessingService = $this->createMock(TcaPreProcessingService::class);
         $siteFinder = $this->createMock(SiteFinder::class);
         $connection = $this->createMock(Connection::class);
 
-        $replaceMarkerService = new class ($flexFormTools, $tcaProcessingService, $siteFinder, $connection) extends ReplaceMarkersService {
+        $replaceMarkerService = new class ($flexFormTools, $tcaPreProcessingService, $siteFinder, $connection) extends ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
                 return [

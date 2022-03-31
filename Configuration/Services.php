@@ -45,6 +45,7 @@ return static function (ContainerConfigurator $configurator, ContainerBuilder $b
     (include __DIR__ . '/Component/FalHandling/Services.php')($configurator, $builder);
     (include __DIR__ . '/Component/PostPublishTaskExecution/Services.php')($configurator, $builder);
     (include __DIR__ . '/Component/RecordHandling/Services.php')($configurator, $builder);
+    (include __DIR__ . '/Component/TcaHandling/Services.php')($configurator, $builder);
     (include __DIR__ . '/Features/AdminTools/Services.php')($configurator, $builder);
     (include __DIR__ . '/Features/LogsIntegration/Services.php')($configurator, $builder);
     (include __DIR__ . '/Features/SystemInformationExport/Services.php')($configurator, $builder);
