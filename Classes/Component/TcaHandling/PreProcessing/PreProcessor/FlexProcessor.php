@@ -31,11 +31,9 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
 
 use Closure;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\FlexFormFlatteningService;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Service\FlexFormService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
 use function array_keys;
@@ -77,16 +75,13 @@ use const JSON_THROW_ON_ERROR;
 
 class FlexProcessor extends AbstractProcessor
 {
-    protected $type = 'flex';
+    protected string $type = 'flex';
 
-    /** @var FlexFormTools */
-    protected $flexFormTools;
+    protected FlexFormTools $flexFormTools;
 
-    /** @var FlexFormService */
-    protected $flexFormService;
+    protected FlexFormService $flexFormService;
 
-    /** @var FlexFormFlatteningService */
-    protected $flexFormFlatteningService;
+    protected FlexFormFlatteningService $flexFormFlatteningService;
 
     public function injectFlexFormTools(FlexFormTools $flexFormTools): void
     {
@@ -103,16 +98,16 @@ class FlexProcessor extends AbstractProcessor
         $this->flexFormFlatteningService = $flexFormFlatteningService;
     }
 
-    protected $forbidden = [
+    protected array $forbidden = [
         'ds_pointerField_searchParent' => 'ds_pointerField_searchParent is not supported',
         'ds_pointerField_searchParent_subField' => 'ds_pointerField_searchParent_subField is not supported',
     ];
 
-    protected $required = [
+    protected array $required = [
         'ds' => 'can not resolve flexform values without "ds"',
     ];
 
-    protected $allowed = [
+    protected array $allowed = [
         'search',
         'ds_pointerField',
     ];
@@ -130,9 +125,7 @@ class FlexProcessor extends AbstractProcessor
 
     protected function buildResolver(string $table, string $column, array $processedTca): Closure
     {
-        $tcaPreProcessingService = GeneralUtility::makeInstance(TcaPreProcessingService::class);
-
-        foreach ($processedTca['ds'] as $dsPointerValue => $flexForm) {
+        foreach (array_keys($processedTca['ds']) as $dsPointerValue) {
             $dataStructureIdentifier = json_encode(
                 [
                     'type' => 'tca',
@@ -146,25 +139,25 @@ class FlexProcessor extends AbstractProcessor
             $parsedFlexForm = $this->flexFormTools->parseDataStructureByIdentifier($dataStructureIdentifier);
             $flattenedFlexForm = $this->flexFormFlatteningService->flattenFlexFormDefinition($parsedFlexForm);
 
-            $tcaPreProcessingService->preProcessTcaColumns(
+            $this->tcaPreProcessingService->preProcessTcaColumns(
                 $table . '/' . $column . '/' . $dsPointerValue,
                 $flattenedFlexForm
             );
         }
 
-        return function (DatabaseRecord $record) use (
-            $table,
-            $column,
-            $processedTca,
-            $tcaPreProcessingService
-        ): array {
+        return function (DatabaseRecord $record) use ($table, $column, $processedTca): array {
             $dataStructureIdentifierJson = $this->flexFormTools->getDataStructureIdentifier(
                 ['config' => $processedTca],
                 $table,
                 $column,
                 $record->getLocalProps() ?: $record->getForeignProps()
             );
-            $dataStructureKey = json_decode($dataStructureIdentifierJson, true, 512, JSON_THROW_ON_ERROR)['dataStructureKey'];
+            $dataStructureKey = json_decode(
+                $dataStructureIdentifierJson,
+                true,
+                512,
+                JSON_THROW_ON_ERROR
+            )['dataStructureKey'];
 
             $localValues = $record->getLocalProps()[$column] ?? [];
             if ([] !== $localValues) {
@@ -182,7 +175,7 @@ class FlexProcessor extends AbstractProcessor
             $flexFormTableName = $table . '/' . $column . '/' . $dataStructureKey;
             $virtualRecord = new DatabaseRecord($flexFormTableName, $record->getId(), $localValues, $foreignValues);
 
-            $compatibleTcaParts = $tcaPreProcessingService->getCompatibleTcaParts();
+            $compatibleTcaParts = $this->tcaPreProcessingService->getCompatibleTcaParts();
 
             $demands = [];
             foreach ($flexFormFields as $flexFormField) {

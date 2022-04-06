@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\DependencyInjection;
 
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessorRegistry;
+use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -23,7 +23,7 @@ class TcaPreProcessorCompilerPass implements CompilerPassInterface
 
     public function process(ContainerBuilder $container): void
     {
-        $registryDefinition = $container->findDefinition(TcaPreProcessorRegistry::class);
+        $registryDefinition = $container->findDefinition(TcaPreProcessingService::class);
         if (!$registryDefinition) {
             return;
         }

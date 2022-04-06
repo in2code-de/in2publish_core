@@ -40,17 +40,17 @@ use function trim;
 
 class InlineProcessor extends AbstractProcessor
 {
-    protected $type = 'inline';
+    protected string $type = 'inline';
 
-    protected $forbidden = [
+    protected array $forbidden = [
         'symmetric_field' => 'symmetric_field is set on the foreign side of relations, which must not be resolved',
     ];
 
-    protected $required = [
+    protected array $required = [
         'foreign_table' => 'Must be set, there is no type "inline" without a foreign table',
     ];
 
-    protected $allowed = [
+    protected array $allowed = [
         'foreign_field',
         'foreign_match_fields',
         'foreign_table_field',

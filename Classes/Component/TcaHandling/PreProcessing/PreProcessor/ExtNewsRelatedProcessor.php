@@ -10,7 +10,7 @@ use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 
 class ExtNewsRelatedProcessor extends AbstractProcessor
 {
-    protected $type = 'group';
+    protected string $type = 'group';
 
     protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
 

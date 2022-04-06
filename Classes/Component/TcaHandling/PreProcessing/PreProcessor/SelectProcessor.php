@@ -45,9 +45,9 @@ use function trim;
 
 class SelectProcessor extends AbstractProcessor
 {
-    protected $type = 'select';
+    protected string $type = 'select';
 
-    protected $forbidden = [
+    protected array $forbidden = [
         'itemsProcFunc' => 'itemsProcFunc is not supported',
         'fileFolder' => 'fileFolder is not supported',
         'allowNonIdValues' => 'allowNonIdValues can not be resolved by in2publish',
@@ -55,11 +55,11 @@ class SelectProcessor extends AbstractProcessor
         'special' => 'special is not supported',
     ];
 
-    protected $required = [
+    protected array $required = [
         'foreign_table' => 'Can not select without another table',
     ];
 
-    protected $allowed = [
+    protected array $allowed = [
         'foreign_table_where',
         'MM',
         'MM_hasUidField',

@@ -47,17 +47,17 @@ use function trim;
 
 class GroupProcessor extends AbstractProcessor
 {
-    protected $type = 'group';
+    protected string $type = 'group';
 
-    protected $required = [
+    protected array $required = [
         'allowed' => 'The field "allowed" is required',
     ];
 
-    protected $forbidden = [
+    protected array $forbidden = [
         'MM_opposite_field' => 'MM_opposite_field is set for the foreign side of relations, which must not be resolved',
     ];
 
-    protected $allowed = [
+    protected array $allowed = [
         'internal_type',
         'MM',
         'MM_hasUidField',

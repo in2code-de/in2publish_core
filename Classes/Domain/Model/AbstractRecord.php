@@ -50,15 +50,6 @@ abstract class AbstractRecord implements Record
             $this->addTranslation($childRecord);
             return;
         }
-        if (!$this->isTranslatedRecord($this) && $this->isTranslatedRecord($childRecord)) {
-            $classification = $childRecord->getClassification();
-            $languageField = $GLOBALS['TCA'][$classification]['ctrl']['languageField'];
-            $language = $childRecord->getProp($languageField);
-            foreach ($this->translations[$language] ?? [] as $translation) {
-                $translation->addChild($childRecord);
-            }
-            return;
-        }
 
         $this->children[$childRecord->getClassification()][$childRecord->getId()] = $childRecord;
         $childRecord->addParent($this);

@@ -9,7 +9,7 @@ use In2code\In2publishCore\Component\TcaHandling\PreProcessing\ProcessingResult;
 
 class ExtNewsRelatedFromProcessor extends AbstractProcessor
 {
-    protected $type = 'group';
+    protected string $type = 'group';
 
     public function getTable(): string
     {

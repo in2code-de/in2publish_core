@@ -6,23 +6,18 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing;
 
 use TYPO3\CMS\Core\SingletonInterface;
 
-use function asort;
 use function is_array;
 use function ksort;
 
 class TcaPreProcessingService implements SingletonInterface
 {
+
     /**
-     * @var TcaPreProcessorRegistry
+     * @var array<TcaPreProcessor>
      */
-    protected $tcaPreProcessorRegistry;
+    protected array $processors;
 
     protected $initialized = false;
-
-    public function injectTcaPreProcessorRegistry(TcaPreProcessorRegistry $tcaPreProcessorRegistry): void
-    {
-        $this->tcaPreProcessorRegistry = $tcaPreProcessorRegistry;
-    }
 
     /**
      * Stores the part of the TCA that can be used for relation resolving
@@ -37,6 +32,26 @@ class TcaPreProcessingService implements SingletonInterface
      * @var array[]
      */
     protected $incompatibleTca = [];
+
+    public function register(TcaPreProcessor $processor): void
+    {
+        $this->processors[$processor->getType()][$processor->getTable()][$processor->getColumn()] = $processor;
+        $processor->setTcaPreProcessingService($this);
+    }
+
+    protected function getProcessor(string $type, string $table, string $column): ?TcaPreProcessor
+    {
+        if (isset($this->processors[$type][$table][$column])) {
+            return $this->processors[$type][$table][$column];
+        }
+        if (isset($this->processors[$type][$table]['*'])) {
+            return $this->processors[$type][$table]['*'];
+        }
+        if (isset($this->processors[$type]['*']['*'])) {
+            return $this->processors[$type]['*']['*'];
+        }
+        return null;
+    }
 
     public function getIncompatibleTcaParts(): array
     {
@@ -100,7 +115,7 @@ class TcaPreProcessingService implements SingletonInterface
 
             // If there's no processor for the type it is not a standard type of TYPO3
             // The incident will be logged and the field will be skipped
-            $tcaPreProcessor = $this->tcaPreProcessorRegistry->getProcessor($type, $table, $column);
+            $tcaPreProcessor = $this->getProcessor($type, $table, $column);
             if (null === $tcaPreProcessor) {
                 $this->incompatibleTca[$table][$column] = 'The type "'
                                                           .

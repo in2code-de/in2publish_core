@@ -8,10 +8,10 @@ class DatabaseRecord extends AbstractDatabaseRecord
 {
     protected int $id;
 
-    public function __construct(string $table, int $propertyHash, array $localFields, array $foreignFields)
+    public function __construct(string $table, int $id, array $localFields, array $foreignFields)
     {
         $this->table = $table;
-        $this->id = $propertyHash;
+        $this->id = $id;
 
         $this->localProps = $localFields;
         $this->foreignProps = $foreignFields;

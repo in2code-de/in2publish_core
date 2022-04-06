@@ -32,12 +32,18 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandService;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\TcaHandling\Query\QueryService;
+use In2code\In2publishCore\Component\TcaHandling\TempRecordIndex;
+use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
+use function array_diff;
 use function array_keys;
+use function array_merge;
+use function implode;
+use function preg_match_all;
 
 class TcaController extends ActionController
 {
@@ -48,6 +54,8 @@ class TcaController extends ActionController
     protected DemandService $demandService;
 
     protected QueryService $queryService;
+
+    protected ConfigContainer $configContainer;
 
     public function __construct(TcaPreProcessingService $tcaPreProcessingService)
     {
@@ -64,6 +72,11 @@ class TcaController extends ActionController
         $this->queryService = $queryService;
     }
 
+    public function injectConfigContainer(ConfigContainer $configContainer): void
+    {
+        $this->configContainer = $configContainer;
+    }
+
     public function indexAction(): ResponseInterface
     {
         $this->view->assign('incompatibleTca', $this->tcaPreProcessingService->getIncompatibleTcaParts());
@@ -76,39 +89,51 @@ class TcaController extends ActionController
         $demand['select']['pages']['']['uid'][1] = $rootRecord;
 
         $currentRecursion = 0;
-        $recursionLimit = 0;
+        $recursionLimit = 5;
+
+        $allRecords = new TempRecordIndex();
 
         $newRecords = [];
-        $pages = [];
-        $newRecords[] = $pages[] = $page = $this->queryService->resolveDemand($demand)[0];
+        $newRecords[] = $page = $this->queryService->resolveDemand($demand, $allRecords)[0];
+        $allRecords->addRecord($page);
 
         // Find all translations of the first page.
         // They have the same PID as the first page, so they will not be found in the rootline.
         $transOrigPointerField = $GLOBALS['TCA']['pages']['ctrl']['transOrigPointerField'];
         $demand = [];
         $demand['select']['pages'][''][$transOrigPointerField][$page->getId()] = $page;
-        $newRecords[] = $pages[] = $this->queryService->resolveDemand($demand)[0];
+        $pageTranslations = $this->queryService->resolveDemand($demand, $allRecords);
+        $allRecords->addRecords($pageTranslations);
+        foreach ($pageTranslations as $pageTranslation) {
+            $newRecords[] = $pageTranslation;
+        }
 
-        while ($recursionLimit > $currentRecursion++) {
+        while ($recursionLimit > $currentRecursion++ && !empty($newRecords)) {
             $demand = [];
             foreach ($newRecords as $newRecord) {
                 $demand['select']['pages']['']['pid'][$newRecord->getId()] = $newRecord;
             }
-            $newRecords = $this->queryService->resolveDemand($demand);
-            foreach ($newRecords as $newRecord) {
-                $pages[] = $newRecord;
-            }
+            $newRecords = $this->queryService->resolveDemand($demand, $allRecords);
+            $allRecords->addRecords($newRecords);
         }
 
+        $pages = $allRecords->getRecordByClassification('pages');
         $demand = [];
-        $TCA = $GLOBALS['TCA'];
-        unset($TCA['pages']);
-        foreach (array_keys($TCA) as $table) {
+        $excludeRelatedTables = $this->configContainer->get('excludeRelatedTables');
+
+        $regex = '/,(' . implode('|', array_merge(['pages'], $excludeRelatedTables)) . '),/iU';
+        $tables = array_keys($GLOBALS['TCA']);
+        $tablesString = ',' . implode(',,', $tables) . ',';
+        $matches = [];
+        preg_match_all($regex, $tablesString, $matches);
+        $nonExcludedTables = array_diff($tables, $matches[1]);
+
+        foreach ($nonExcludedTables as $table) {
             foreach ($pages as $page) {
                 $demand['select'][$table]['']['pid'][$page->getId()] = $page;
             }
         }
-        $newRecords = $this->queryService->resolveDemand($demand);
+        $newRecords = $this->queryService->resolveDemand($demand, $allRecords);
         foreach ($pages as $page) {
             $newRecords[] = $page;
         }
@@ -116,13 +141,11 @@ class TcaController extends ActionController
         $currentRecursion = 0;
         $recursionLimit = 5;
 
-        while ($recursionLimit > $currentRecursion++) {
+        while ($recursionLimit > $currentRecursion++ && !empty($newRecords)) {
             $demand = $this->demandService->buildDemandForRecords($newRecords);
 
-            $newRecords = $this->queryService->resolveDemand($demand);
-            if (empty($newRecords)) {
-                break;
-            }
+            $newRecords = $this->queryService->resolveDemand($demand, $allRecords);
+            $allRecords->addRecords($newRecords);
         }
 
         return $this->htmlResponse();

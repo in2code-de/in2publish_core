@@ -31,7 +31,9 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
 
 use Closure;
 use Exception;
+use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\Exception\MissingPreProcessorTypeException;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\ProcessingResult;
+use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessor;
 
 use function array_key_exists;
@@ -42,48 +44,51 @@ abstract class AbstractProcessor implements TcaPreProcessor
 {
     protected const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
 
+    protected TcaPreProcessingService $tcaPreProcessingService;
+
+    /**
+     * Injected when PreProcessor are registered
+     */
+    public function setTcaPreProcessingService(TcaPreProcessingService $tcaPreProcessingService): void
+    {
+        $this->tcaPreProcessingService = $tcaPreProcessingService;
+    }
+
     /**
      * Overwrite this in your processor!
      * Return the TCA type your processor handles.
-     * @var string
      * @api
      */
-    protected $type;
+    protected string $type;
 
     /**
      * Overwrite this in your processor!
      * Fields that are forbidden for the processor type, indexed by the reason
      *    e.g. "itemsProcFunc is not supported by in2publish" => "itemsProcFunc"
-     *
-     * @var array
      * @api
      */
-    protected $forbidden = [];
+    protected array $forbidden = [];
 
     /**
      * Overwrite this in your Processor!
      * Field names that must be contained in the configuration, indexed by their reason why
      *    e.g. "can not select without a foreign table" => "foreign_table"
-     *
-     * @var array
      * @api
      */
-    protected $required = [];
+    protected array $required = [];
 
     /**
      * Overwrite this in your processor if these are needed!
      * Fields that are optional and are which taken into account for relations solving. Has no specific index
      *    e.g. "foreign_table_where"
-     *
-     * @var array
      * @api
      */
-    protected $allowed = [];
+    protected array $allowed = [];
 
     public function getType(): string
     {
         if (!isset($this->type)) {
-            throw new Exception('You must set $this->type in your processor');
+            throw new MissingPreProcessorTypeException($this);
         }
         return $this->type;
     }

@@ -43,9 +43,9 @@ class TextProcessor extends AbstractProcessor
 {
     public const REGEX_T3URN = '~[\"\'\s](?P<URN>t3\://(?:file|page)\?uid=\d+)[\"\'\s]~';
 
-    protected $type = 'text';
+    protected string $type = 'text';
 
-    protected $required = [
+    protected array $required = [
         'enableRichtext' => 'Text which is not rich text does not contain relations as t3 URNs',
     ];
 

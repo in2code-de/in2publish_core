@@ -35,7 +35,7 @@ use function in_array;
 
 class InputProcessor extends TextProcessor
 {
-    protected $type = 'input';
+    protected string $type = 'input';
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
