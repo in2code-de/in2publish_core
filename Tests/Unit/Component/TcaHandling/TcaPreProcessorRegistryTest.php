@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Tests\Unit\Component\TcaPreProcessing;
+namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling;
 
 use Exception;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;

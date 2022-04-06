@@ -123,7 +123,7 @@ class FlexProcessor extends AbstractProcessor
             !array_key_exists('ds_pointerField', $tca)
             && empty($tca['ds']['default'])
         ) {
-            return ['can not resolve flexform values without "ds_pointerField" or default value'];
+            return ['Can not resolve flexform values without "ds_pointerField" or default value'];
         }
         return [];
     }

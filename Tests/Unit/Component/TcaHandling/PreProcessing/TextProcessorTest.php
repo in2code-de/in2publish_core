@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Tests\Unit\Component\TcaPreProcessing\PreProcessing;
+namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing;
 
 use Closure;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\TextProcessor;
