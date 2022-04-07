@@ -31,7 +31,9 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
 
 use Closure;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\FlexFormFlatteningService;
-use In2code\In2publishCore\Domain\Model\DatabaseRecord;
+use In2code\In2publishCore\Domain\Model\DatabaseEntityRecord;
+use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Model\VirtualFlexFormRecord;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Service\FlexFormService;
 
@@ -145,7 +147,10 @@ class FlexProcessor extends AbstractProcessor
             );
         }
 
-        return function (DatabaseRecord $record) use ($table, $column, $processedTca): array {
+        return function (Record $record) use ($table, $column, $processedTca): array {
+            if (!($record instanceof DatabaseEntityRecord)) {
+                return [];
+            }
             $dataStructureIdentifierJson = $this->flexFormTools->getDataStructureIdentifier(
                 ['config' => $processedTca],
                 $table,
@@ -162,18 +167,20 @@ class FlexProcessor extends AbstractProcessor
             $localValues = $record->getLocalProps()[$column] ?? [];
             if ([] !== $localValues) {
                 $localValues = $this->flexFormService->convertFlexFormContentToArray($localValues);
+                $localValues['pid'] = $record->getProp('pid');
             }
             $localValues = $this->flattenFlexFormData($localValues);
             $foreignValues = $record->getForeignProps()[$column] ?? [];
             if ([] !== $foreignValues) {
                 $foreignValues = $this->flexFormService->convertFlexFormContentToArray($foreignValues);
+                $foreignValues['pid'] = $record->getProp('pid');
             }
             $localValues = $this->flattenFlexFormData($localValues);
 
             $flexFormFields = array_unique(array_merge(array_keys($localValues), array_keys($foreignValues)));
 
             $flexFormTableName = $table . '/' . $column . '/' . $dataStructureKey;
-            $virtualRecord = new DatabaseRecord($flexFormTableName, $record->getId(), $localValues, $foreignValues);
+            $virtualRecord = new VirtualFlexFormRecord($record, $flexFormTableName, $localValues, $foreignValues);
 
             $compatibleTcaParts = $this->tcaPreProcessingService->getCompatibleTcaParts();
 

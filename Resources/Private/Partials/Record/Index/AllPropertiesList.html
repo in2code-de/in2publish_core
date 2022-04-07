@@ -19,8 +19,8 @@
 		<ul>
 			<f:for each="{record.localProperties}" key="fieldName" as="value">
 				<li>
-					<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.tableName}" />
-					<publish:Tca.FormatPropertyByTcaDefinition fieldName="{fieldName}" tableName="{record.tableName}">
+					<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.classification}" />
+					<publish:Tca.FormatPropertyByTcaDefinition fieldName="{fieldName}" tableName="{record.classification}">
 						{value}
 					</publish:Tca.FormatPropertyByTcaDefinition>
 				</li>
@@ -42,8 +42,8 @@
 		<ul>
 			<f:for each="{record.foreignProperties}" key="fieldName" as="value">
 				<li>
-					<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.tableName}" />
-					<publish:Tca.FormatPropertyByTcaDefinition fieldName="{fieldName}" tableName="{record.tableName}">
+					<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.classification}" />
+					<publish:Tca.FormatPropertyByTcaDefinition fieldName="{fieldName}" tableName="{record.classification}">
 						{value}
 					</publish:Tca.FormatPropertyByTcaDefinition>
 				</li>
@@ -51,7 +51,7 @@
 		</ul>
 	</div>
 	<div class="in2publish-stagelisting__dropdown__item in2publish-stagelisting__dropdown__item--full">
-		<f:for each="{record.relatedRecords}" key="tableName" as="relatedRecords">
+		<f:for each="{record.children}" key="tableName" as="relatedRecords">
 			<f:comment><h3 class="" title="{tableName}">
 				<publish:Tca.GetTableLabelFromLocallang tableName="{tableName}" />
 			</h3></f:comment>

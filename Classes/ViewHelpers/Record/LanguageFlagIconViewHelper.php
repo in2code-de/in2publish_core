@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\ViewHelpers\Record;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use TYPO3\CMS\Backend\Configuration\TranslationConfigurationProvider;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
@@ -59,16 +60,16 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerArgument(self::ARG_RECORD, RecordInterface::class, 'The record to get the flag for', true);
+        $this->registerArgument(self::ARG_RECORD, Record::class, 'The record to get the flag for', true);
         $this->registerArgument(self::ARG_SIDE, 'string', '"local"/"foreign" as the language property side', true);
     }
 
     public function render(): string
     {
-        /** @var RecordInterface $record */
+        /** @var Record $record */
         $record = $this->arguments[self::ARG_RECORD];
 
-        $table = $record->getTableName();
+        $table = $record->getClassification();
 
         $languageField = $GLOBALS['TCA'][$table]['ctrl']['languageField'] ?? null;
         if (null === $languageField) {
@@ -79,6 +80,7 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
             $this->translateTools->getSystemLanguages(),
             fn (array $languageRecord): bool => $this->backendUser->checkLanguageAccess($languageRecord['uid'])
         );
+
         $language = $record->getPropertyBySideIdentifier($this->arguments['side'], $languageField);
 
         $systemLanguage = $systemLanguages[$language] ?? null;

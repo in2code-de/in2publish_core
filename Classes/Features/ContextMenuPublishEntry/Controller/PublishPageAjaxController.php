@@ -30,8 +30,6 @@ namespace In2code\In2publishCore\Features\ContextMenuPublishEntry\Controller;
  */
 
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
-use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
-use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -48,18 +46,11 @@ class PublishPageAjaxController
 
     protected TaskExecutionService $taskExecutionService;
 
-    protected RecordFinder $recordFinder;
-
-    protected RecordPublisher $recordPublisher;
 
     public function __construct(
-        RecordFinder $recordFinder,
-        RecordPublisher $recordPublisher,
         PermissionService $permissionService,
         TaskExecutionService $taskExecutionService
     ) {
-        $this->recordFinder = $recordFinder;
-        $this->recordPublisher = $recordPublisher;
         $this->permissionService = $permissionService;
         $this->taskExecutionService = $taskExecutionService;
     }

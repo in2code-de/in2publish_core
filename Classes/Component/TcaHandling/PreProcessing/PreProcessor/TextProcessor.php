@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
  */
 
 use Closure;
-use In2code\In2publishCore\Domain\Model\DatabaseRecord;
+use In2code\In2publishCore\Domain\Model\Record;
 
 use function array_replace_recursive;
 use function htmlspecialchars_decode;
@@ -62,7 +62,7 @@ class TextProcessor extends AbstractProcessor
 
     protected function buildResolver(string $table, string $column, array $processedTca): Closure
     {
-        return function (DatabaseRecord $record) use ($column) {
+        return function (Record $record) use ($column) {
             $localValue = $record->getLocalProps()[$column] ?? '';
             $foreignValue = $record->getForeignProps()[$column] ?? '';
 
@@ -76,7 +76,7 @@ class TextProcessor extends AbstractProcessor
         };
     }
 
-    protected function findRelationsInText(string $text, DatabaseRecord $record)
+    protected function findRelationsInText(string $text, Record $record)
     {
         if (strpos($text, 't3://') === false) {
             return [];

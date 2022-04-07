@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
  ***************************************************************/
 
 use Closure;
-use Exception;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\Exception\MissingPreProcessorTypeException;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\ProcessingResult;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;

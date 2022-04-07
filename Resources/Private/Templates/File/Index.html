@@ -36,7 +36,7 @@
 				</thead>
 				<tbody>
 					<f:render partial="File/Index/FolderList" arguments="{_all}" />
-					<f:for each="{record.relatedRecords.sys_file}" as="fileRecord">
+					<f:for each="{record.children.sys_file}" as="fileRecord">
 						<f:render partial="File/Index/FileList" arguments="{record:fileRecord, config:config}" />
 					</f:for>
 				</tbody>

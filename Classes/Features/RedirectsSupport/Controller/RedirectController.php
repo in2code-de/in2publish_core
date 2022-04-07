@@ -71,9 +71,6 @@ class RedirectController extends AbstractController
 
     protected SysRedirectRepository $sysRedirectRepo;
 
-    protected RecordFinder $recordFinder;
-
-    protected RecordPublisher $recordPublisher;
 
     protected IconFactory $iconFactory;
 
@@ -86,8 +83,6 @@ class RedirectController extends AbstractController
         RemoteCommandDispatcher $remoteCommandDispatcher,
         ForeignSiteFinder $foreignSiteFinder,
         SysRedirectRepository $sysRedirectRepo,
-        RecordFinder $recordFinder,
-        RecordPublisher $recordPublisher,
         PageRenderer $pageRenderer,
         IconFactory $iconFactory
     ) {

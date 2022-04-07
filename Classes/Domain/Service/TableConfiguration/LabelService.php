@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Domain\Service\TableConfiguration;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
@@ -51,28 +51,36 @@ class LabelService
     /**
      * Get label field from record
      *
-     * @param RecordInterface $record
+     * @param Record $record
      * @param string $stagingLevel "local" or "foreign"
      *
      * @return string
      */
-    public function getLabelField(RecordInterface $record, string $stagingLevel = 'local'): string
+    public function getLabelField(Record $record, string $stagingLevel = 'local'): string
     {
-        $table = $record->getTableName();
+        $table = $record->getClassification();
 
         if ($table === 'sys_file_reference') {
+            switch ($stagingLevel) {
+                case 'local':
+                    $props = $record->getLocalProps();
+                    break;
+                case 'foreign':
+                    $props = $record->getForeignProps();
+                    break;
+            }
             return sprintf(
                 '%d [%d,%d]',
-                $record->getPropertyBySideIdentifier($stagingLevel, 'uid'),
-                $record->getPropertyBySideIdentifier($stagingLevel, 'uid_local'),
-                $record->getPropertyBySideIdentifier($stagingLevel, 'uid_foreign')
+                $record->getId(),
+                $props['uid_local'],
+                $props['uid_foreign']
             );
         }
-        $row = ObjectAccess::getProperty($record, $stagingLevel . 'Properties');
-        if (empty($row)) {
+        $props = $record->getPropsBySide($stagingLevel);
+        if (empty($props)) {
             return $this->emptyFieldValue;
         }
-        $label = $this->tcaService->getRecordLabel($row, $table);
+        $label = $this->tcaService->getRecordLabel($props, $table);
         if (trim($label) === '') {
             $label = $this->emptyFieldValue;
         }

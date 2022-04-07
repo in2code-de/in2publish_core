@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
 
 use Closure;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
-use In2code\In2publishCore\Domain\Model\DatabaseRecord;
+use In2code\In2publishCore\Domain\Model\Record;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_filter;
@@ -130,7 +130,7 @@ class GroupProcessor extends AbstractProcessor
             }
 
             if (!$isSingleTable) {
-                return static function (DatabaseRecord $record) use (
+                return static function (Record $record) use (
                     $mmTable,
                     $column,
                     $selectField,
@@ -159,7 +159,7 @@ class GroupProcessor extends AbstractProcessor
                 };
             }
 
-            return static function (DatabaseRecord $record) use (
+            return static function (Record $record) use (
                 $mmTable,
                 $foreignTable,
                 $selectField,
@@ -172,7 +172,7 @@ class GroupProcessor extends AbstractProcessor
         }
 
         if (!$isSingleTable) {
-            return static function (DatabaseRecord $record) use ($column) {
+            return static function (Record $record) use ($column) {
                 $localValue = $record->getLocalProps()[$column] ?? '';
                 $foreignValue = $record->getForeignProps()[$column] ?? '';
 
@@ -195,7 +195,7 @@ class GroupProcessor extends AbstractProcessor
             };
         }
 
-        return static function (DatabaseRecord $record) use ($column, $foreignTable) {
+        return static function (Record $record) use ($column, $foreignTable) {
             $localValue = $record->getLocalProps()[$column] ?? '';
             $foreignValue = $record->getForeignProps()[$column] ?? '';
 

@@ -4,6 +4,16 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Domain\Model;
 
+use LogicException;
+
+use function array_diff;
+use function array_diff_assoc;
+use function array_flip;
+use function array_intersect;
+use function array_keys;
+use function array_search;
+use function in_array;
+
 abstract class AbstractRecord implements Record
 {
     // Initialize this in your constructor
@@ -39,18 +49,27 @@ abstract class AbstractRecord implements Record
         return $this->foreignProps;
     }
 
-    public function getProp(string $propName)
+    /**
+     * @return scalar
+     */
+    public function getProp(string $prop)
     {
-        return $this->localProps[$propName] ?? $this->foreignProps[$propName] ?? null;
+        return $this->localProps[$prop] ?? $this->foreignProps[$prop] ?? null;
+    }
+
+    public function getPropsBySide(string $side): array
+    {
+        switch ($side) {
+            case Record::LOCAL:
+                return $this->localProps;
+            case Record::FOREIGN:
+                return $this->foreignProps;
+        }
+        throw new LogicException("Side $side is unknown");
     }
 
     public function addChild(Record $childRecord): void
     {
-        if ($this->isTranslationParent($childRecord)) {
-            $this->addTranslation($childRecord);
-            return;
-        }
-
         $this->children[$childRecord->getClassification()][$childRecord->getId()] = $childRecord;
         $childRecord->addParent($this);
     }
@@ -65,58 +84,133 @@ abstract class AbstractRecord implements Record
         $this->parents[] = $parentRecord;
     }
 
+    public function removeParent(Record $record): void
+    {
+        foreach (array_keys($this->parents, $record) as $idx) {
+            unset ($this->parents[$idx]);
+        }
+    }
+
     public function getParents(): array
     {
         return $this->parents;
     }
 
-    protected function isTranslationParent(Record $childRecord): bool
-    {
-        if (!$this->isTranslatedRecord($childRecord)) {
-            return false;
-        }
-        $classification = $this->getClassification();
-        if ($classification !== $childRecord->getClassification()) {
-            return false;
-        }
-        $transOrigPointerField = $GLOBALS['TCA'][$classification]['ctrl']['transOrigPointerField'];
-        /** @noinspection IfReturnReturnSimplificationInspection */
-        if ($this->getId() !== (int)$childRecord->getProp($transOrigPointerField)) {
-            return false;
-        }
-        return true;
-    }
-
     public function setTranslationParent(Record $translationParent): void
     {
+        if (null !== $this->translationParent) {
+            throw new LogicException('Can not add more than one translation parent');
+        }
         $this->translationParent = $translationParent;
     }
 
-    protected function addTranslation(Record $childRecord): void
+    public function getTranslationParent(): ?Record
     {
-        $languageField = $GLOBALS['TCA'][$childRecord->getClassification()]['ctrl']['languageField'];
-        $language = $childRecord->getProp($languageField);
+        return $this->translationParent;
+    }
+
+    public function addTranslation(Record $childRecord): void
+    {
+        $language = $childRecord->getLanguage();
         $this->translations[$language][$childRecord->getId()] = $childRecord;
         $childRecord->setTranslationParent($this);
     }
 
-    protected function isTranslatedRecord(Record $childRecord): bool
+    public function getTranslations(): array
     {
-        $classification = $childRecord->getClassification();
-        if (!isset($GLOBALS['TCA'][$classification])) {
-            return false;
+        return $this->translations;
+    }
+
+    public function removeChild(Record $record): void
+    {
+        $classification = $record->getClassification();
+        unset($this->children[$classification][$record->getId()]);
+        if (empty($this->children[$classification])) {
+            unset($this->children[$classification]);
         }
-        $languageField = $GLOBALS['TCA'][$classification]['ctrl']['languageField'] ?? null;
-        if (null === $languageField) {
-            return false;
+        $record->removeParent($this);
+    }
+
+    public function isChanged(): bool
+    {
+        return $this->localProps !== $this->foreignProps;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getState(): string
+    {
+        $localRecordExists = [] !== $this->localProps;
+        $foreignRecordExists = [] !== $this->foreignProps;
+
+        if ($localRecordExists && !$foreignRecordExists) {
+            return Record::S_ADDED;
         }
-        $transOrigPointerField = $GLOBALS['TCA'][$classification]['ctrl']['transOrigPointerField'] ?? null;
-        if (null === $transOrigPointerField) {
-            return false;
+        if (!$localRecordExists && $foreignRecordExists) {
+            return Record::S_DELETED;
         }
-        if (0 >= (int)$childRecord->getProp($languageField)) {
-            return false;
+
+        $isSoftDeleted = false;
+        $deleteField = $GLOBALS['TCA'][$this->getClassification()]['ctrl']['delete'] ?? null;
+        if ($deleteField) {
+            $isSoftDeleted = $this->localProps[$deleteField];
+            if ($isSoftDeleted && $this->foreignProps[$deleteField]) {
+                $isSoftDeleted = false;
+            }
         }
-        return true;
+        if ($isSoftDeleted) {
+            return Record::S_SOFT_DELETED;
+        }
+        $changedProps = $this->getChangedProps();
+        if (empty($changedProps)) {
+            return Record::S_UNCHANGED;
+        }
+
+        $changedPropsAsKeys = array_flip($changedProps);
+        unset($changedPropsAsKeys['pid']);
+        $sortbyField = $GLOBALS['TCA'][$this->getClassification()]['ctrl']['sortby'] ?? null;
+        if (null !== $sortbyField) {
+            unset($changedPropsAsKeys[$sortbyField]);
+        }
+        if (empty($changedPropsAsKeys)) {
+            return Record::S_MOVED;
+        }
+        return Record::S_CHANGED;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getStateRecursive(): string
+    {
+        $state = $this->getState();
+        if ($state !== Record::S_UNCHANGED) {
+            return $state;
+        }
+        foreach ($this->children as $records) {
+            foreach ($records as $record) {
+                $state = $record->getStateRecursive();
+                if ($state !== Record::S_UNCHANGED) {
+                    return Record::S_CHANGED;
+                }
+            }
+        }
+        return Record::S_UNCHANGED;
+    }
+
+    public function getLanguage(): int
+    {
+        return 0;
+    }
+
+    public function getTransOrigPointer(): int
+    {
+        return 0;
+    }
+
+    public function getChangedProps(): array
+    {
+        return array_keys(array_diff_assoc($this->localProps, $this->foreignProps));
     }
 }

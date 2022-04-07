@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
 
 use Closure;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
-use In2code\In2publishCore\Domain\Model\DatabaseRecord;
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -118,7 +118,7 @@ class SelectProcessor extends AbstractProcessor
                 $foreignTableWhere = trim(substr($foreignTableWhere, 4));
             }
 
-            return function (DatabaseRecord $record) use (
+            return function (Record $record) use (
                 $column,
                 $mmTable,
                 $foreignTable,
@@ -137,7 +137,7 @@ class SelectProcessor extends AbstractProcessor
             };
         }
 
-        return function (DatabaseRecord $record) use ($column, $foreignTable, $foreignTableWhere): array {
+        return function (Record $record) use ($column, $foreignTable, $foreignTableWhere): array {
             $value = $record->getProp($column);
             if (empty($value)) {
                 return [];

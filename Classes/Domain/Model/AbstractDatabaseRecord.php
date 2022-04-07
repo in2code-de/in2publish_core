@@ -6,6 +6,13 @@ namespace In2code\In2publishCore\Domain\Model;
 
 abstract class AbstractDatabaseRecord extends AbstractRecord
 {
+    // Defaults for values if the given CTRL key does not exist in the TCA ctrl section
+    protected const CTRL_DEFAULT = [
+        'languageField' => 0,
+        'transOrigPointerField' => 0,
+        'delete' => false,
+    ];
+
     protected string $table;
 
     public function getClassification(): string
@@ -18,22 +25,26 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
         return $this->table;
     }
 
-    /**
-     * @return int The UID of the page this record is stored in. If this record is a page record, it returns its default
-     *     language id.
-     */
-    public function getPageId(): int
+    public function getLanguage(): int
     {
-        if ('pages' === $this->table) {
-            $languageField = $GLOBALS['TCA']['pages']['ctrl']['languageField'] ?? null;
-            $transOrigPointerField = $GLOBALS['TCA']['pages']['ctrl']['transOrigPointerField'] ?? null;
+        return $this->getCtrlProp('languageField');
+    }
 
-            if (null !== $languageField && null !== $transOrigPointerField && $this->getProp($languageField) > 0) {
-                return $this->getProp($transOrigPointerField);
-            }
+    public function getTransOrigPointer(): int
+    {
+        return $this->getCtrlProp('transOrigPointerField');
+    }
 
-            return $this->id;
+    protected function getCtrlProp(string $ctrlName)
+    {
+        $value = self::CTRL_DEFAULT[$ctrlName] ?? null;
+
+        $valueField = $GLOBALS['TCA'][$this->table]['ctrl'][$ctrlName] ?? null;
+
+        if (null !== $valueField) {
+            $value = $this->getProp($valueField) ?? $value;
         }
-        return $this->getProp('pid');
+
+        return $value;
     }
 }

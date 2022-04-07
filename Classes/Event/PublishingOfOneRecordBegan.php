@@ -34,9 +34,6 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 
 final class PublishingOfOneRecordBegan
 {
-    private RecordInterface $record;
-
-    private RecordPublisher $recordPublisher;
 
     public function __construct(RecordInterface $record, RecordPublisher $recordPublisher)
     {

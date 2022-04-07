@@ -19,14 +19,14 @@
 		<div class="in2publish-stagelisting__dropdown__actions">
 			<f:if condition="{record.state} != 'deleted'">
 				<f:then>
-					<publish:Link.RecordHistory class="in2publish-notextdecoration" uid="{record.identifier}" table="{record.tableName}"><i class="in2publish-icon-history"></i><f:translate key="dirty_properties_history_page">Page History</f:translate></publish:Link.RecordHistory>
-					<f:if condition="{record.identifier} > 1">
-						<be:link.editRecord class="in2publish-notextdecoration" uid="{record.identifier}" table="{record.tableName}">
+					<publish:Link.RecordHistory class="in2publish-notextdecoration" uid="{record.id}" table="{record.classification}"><i class="in2publish-icon-history"></i><f:translate key="dirty_properties_history_page">Page History</f:translate></publish:Link.RecordHistory>
+					<f:if condition="{record.id} > 1">
+						<be:link.editRecord class="in2publish-notextdecoration" uid="{record.id}" table="{record.classification}">
 							<i class="in2publish-icon-edit"></i>
 							<f:translate key="dirty_properties_edit" default="edit" />
 						</be:link.editRecord>
 					</f:if>
-					<publish:Link.PreviewRecord class="in2publish-notextdecoration" identifier="{record.identifier}" table="{record.tableName}" stagingLevel="local" target="_blank">
+					<publish:Link.PreviewRecord class="in2publish-notextdecoration" identifier="{record.id}" table="{record.classification}" stagingLevel="local" target="_blank">
 						<i class="in2publish-icon-eye"></i>
 						<f:translate key="dirty_properties_preview_page">Preview</f:translate>
 					</publish:Link.PreviewRecord>
@@ -50,17 +50,17 @@
 					<ul class="in2publish-stagelisting__dropdown__page in2publish-stagelisting__dropdown__item__list">
 						<f:for each="{record.dirtyProperties}" as="fieldName">
 							<li>
-								<f:if condition="{record.tableName} == 'pages'">
-									<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" uid="{record.identifier}" table="{record.tableName}"><i class="in2publish-icon-history"></i></publish:Link.RecordHistory>
-									<f:if condition="{record.identifier} > 1 && {record.state} != 'deleted'">
-										<be:link.editRecord class="in2publish-notextdecoration" uid="{record.identifier}" table="{record.tableName}">
+								<f:if condition="{record.classification} == 'pages'">
+									<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" uid="{record.id}" table="{record.classification}"><i class="in2publish-icon-history"></i></publish:Link.RecordHistory>
+									<f:if condition="{record.id} > 1 && {record.state} != 'deleted'">
+										<be:link.editRecord class="in2publish-notextdecoration" uid="{record.id}" table="{record.classification}">
 											<i class="in2publish-icon-edit"></i>
 											<f:translate key="dirty_properties_edit" default="edit" />
 										</be:link.editRecord>
 									</f:if>
 								</f:if>
-								<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.tableName}" />
-								<publish:Tca.FormatPropertyByTcaDefinition fieldName="{dirtyProperty}" tableName="{record.tableName}">
+								<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.classification}" />
+								<publish:Tca.FormatPropertyByTcaDefinition fieldName="{dirtyProperty}" tableName="{record.classification}">
 									<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{fieldName}" stagingLevel="local" />
 								</publish:Tca.FormatPropertyByTcaDefinition>
 							</li>
@@ -73,16 +73,16 @@
 			<f:comment>
 				Show children records with dirty properties
 			</f:comment>
-			<f:for each="{record.relatedRecords}" key="tableName" as="relatedRecords">
+			<f:for each="{record.children}" key="tableName" as="relatedRecords">
 				<f:if condition="{publish:Miscellaneous.HasChangedRecords(records:relatedRecords)}">
 					<h3 title="{tableName}"><publish:Tca.GetTableLabelFromLocallang tableName="{tableName}" /></h3>
 					<ul class="in2publish-stagelisting__dropdown__item__list">
 						<f:for each="{relatedRecords}" as="relatedRecord">
 							<f:if condition="{relatedRecord.changed}">
 								<li>
-									<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" uid="{record.identifier}" table="{record.tableName}"><i class="in2publish-icon-history"></i></publish:Link.RecordHistory>
-									<f:if condition="{record.identifier} > 1">
-										<be:link.editRecord class="in2publish-notextdecoration" uid="{record.identifier}" table="{record.tableName}">
+									<publish:Link.RecordHistory class="in2publish-notextdecoration" title="{f:translate(key:'dirty_properties_undo',default:'undo')}" uid="{record.id}" table="{record.classification}"><i class="in2publish-icon-history"></i></publish:Link.RecordHistory>
+									<f:if condition="{record.id} > 1">
+										<be:link.editRecord class="in2publish-notextdecoration" uid="{record.id}" table="{record.classification}">
 											<i class="in2publish-icon-edit"></i>
 											<f:translate key="dirty_properties_edit" default="edit" />
 										</be:link.editRecord>
@@ -105,9 +105,9 @@
 					<f:if condition="{record.foreignPreviewAvailable}">
 						<f:then>
 							<f:if condition="{record.localPreviewAvailable}">
-								<publish:uri.compareUri identifier="{record.identifier}" class="in2publish-notextdecoration"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_compare">Compare</f:translate></publish:uri.compareUri>
+								<publish:uri.compareUri identifier="{record.id}" class="in2publish-notextdecoration"><i class="in2publish-icon-eye"></i><f:translate key="dirty_properties_preview_compare">Compare</f:translate></publish:uri.compareUri>
 							</f:if>
-							<publish:Link.PreviewRecord class="in2publish-notextdecoration" identifier="{record.identifier}" table="{record.tableName}" stagingLevel="foreign" target="_blank">
+							<publish:Link.PreviewRecord class="in2publish-notextdecoration" identifier="{record.id}" table="{record.classification}" stagingLevel="foreign" target="_blank">
 								<i class="in2publish-icon-eye"></i>
 								<f:translate key="dirty_properties_preview_page">Preview</f:translate>
 							</publish:Link.PreviewRecord>
@@ -134,8 +134,8 @@
 				<ul class="in2publish-stagelisting__dropdown__page in2publish-stagelisting__dropdown__item__list">
 					<f:for each="{record.dirtyProperties}" as="fieldName">
 						<li>
-							<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.tableName}" />
-							<publish:Tca.FormatPropertyByTcaDefinition fieldName="{dirtyProperty}" tableName="{record.tableName}">
+							<publish:Tca.GetFieldLabelFromLocallang fieldName="{fieldName}" tableName="{record.classification}" />
+							<publish:Tca.FormatPropertyByTcaDefinition fieldName="{dirtyProperty}" tableName="{record.classification}">
 								<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{fieldName}" stagingLevel="foreign" />
 							</publish:Tca.FormatPropertyByTcaDefinition>
 						</li>
@@ -148,7 +148,7 @@
 		<f:comment>
 			Show children records with dirty properties
 		</f:comment>
-		<f:for each="{record.relatedRecords}" key="tableName" as="relatedRecords">
+		<f:for each="{record.children}" key="tableName" as="relatedRecords">
 			<f:if condition="{publish:Miscellaneous.HasChangedRecords(records:relatedRecords)}">
 				<h3 title="{tableName}"><publish:Tca.GetTableLabelFromLocallang tableName="{tableName}" /></h3>
 				<ul class="in2publish-stagelisting__dropdown__item__list">

@@ -29,9 +29,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
 use In2code\In2publishCore\Utility\BackendUtility;
@@ -47,8 +45,6 @@ use function array_keys;
 
 class PageRecordRedirectEnhancer
 {
-    protected RecordFinder $recordFinder;
-
     protected Connection $localDatabase;
 
     protected Connection $foreignDatabase;
@@ -61,13 +57,11 @@ class PageRecordRedirectEnhancer
     protected array $looseRedirects = [];
 
     public function __construct(
-        RecordFinder $recordFinder,
         Connection $localDatabase,
         Connection $foreignDatabase,
         SysRedirectRepository $repo,
         LinkService $linkService
     ) {
-        $this->recordFinder = $recordFinder;
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
         $this->repo = $repo;
@@ -96,7 +90,7 @@ class PageRecordRedirectEnhancer
         $this->run($record);
     }
 
-    public function run(RecordInterface $record): void
+    public function run(Record $record): void
     {
         $redirects = $this->findRedirectsByDynamicTarget($record);
         $redirects = $this->findMissingRowsByUid($redirects);
@@ -111,14 +105,14 @@ class PageRecordRedirectEnhancer
     /**
      * @return array<array{local?: mixed, foreign?: mixed}>
      */
-    protected function findRedirectsByDynamicTarget(RecordInterface $record): array
+    protected function findRedirectsByDynamicTarget(Record $record): array
     {
         $collected = [];
 
         $target = $this->linkService->asString([
             'type' => 'page',
-            'pageuid' => $record->getIdentifier(),
-            'parameters' => '_language=' . $record->getRecordLanguage(),
+            'pageuid' => $record->getId(),
+            'parameters' => '_language=' . $record->getLanguage(),
         ]);
 
         $except = [];
@@ -306,7 +300,7 @@ class PageRecordRedirectEnhancer
         foreach ($existingRedirects as $redirectRecord) {
             $row = [];
             if ($redirectRecord->localRecordExists()) {
-                $row['local'] = $redirectRecord->getLocalProperties();
+                $row['local'] = $redirectRecord->get();
             }
             if ($redirectRecord->foreignRecordExists()) {
                 $row['local'] = $redirectRecord->getForeignProperties();

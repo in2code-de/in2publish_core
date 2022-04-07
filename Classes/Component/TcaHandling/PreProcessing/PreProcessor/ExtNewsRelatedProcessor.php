@@ -6,7 +6,7 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
 
 use Closure;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
-use In2code\In2publishCore\Domain\Model\DatabaseRecord;
+use In2code\In2publishCore\Domain\Model\Record;
 
 class ExtNewsRelatedProcessor extends AbstractProcessor
 {
@@ -32,9 +32,10 @@ class ExtNewsRelatedProcessor extends AbstractProcessor
 
     protected function buildResolver(string $table, string $column, array $processedTca): Closure
     {
-        return static function (DatabaseRecord $record) {
+        return static function (Record $record) {
             $demands = [];
-            $demands['join']['tx_news_domain_model_news_related_mm']['tx_news_domain_model_news']['']['uid_foreign'][$record->getId()] = $record;
+            $demands['join']['tx_news_domain_model_news_related_mm']['tx_news_domain_model_news']['']['uid_foreign'][$record->getId(
+            )] = $record;
             return $demands;
         };
     }

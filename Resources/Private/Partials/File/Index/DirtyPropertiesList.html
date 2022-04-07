@@ -2,7 +2,7 @@
 	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
-	<tr class="collapse" id="{record.tableName}-{record.localProperties.uid}">
+	<tr class="collapse" id="{record.classification}-{record.localProperties.uid}">
 		<td></td>
 		<td colspan="4">
 			<f:render section="StageProperties" arguments="{ record: record, stagingLevel: 'local'}"/>
@@ -20,8 +20,8 @@
 		<f:if condition="{record.{propertyKey}}">
 			<ul class="list-unstyled mb-2 ms-0">
 				<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'name', stagingLevel: stagingLevel}"/>
-				<f:if condition="{record.relatedRecords.sys_file_metadata}">
-					<f:for each="{record.relatedRecords.sys_file_metadata}" as="metaRecord" iteration="iterator">
+				<f:if condition="{record.children.sys_file_metadata}">
+					<f:for each="{record.children.sys_file_metadata}" as="metaRecord" iteration="iterator">
 						<f:if condition="{iterator.isFirst}">
 							<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'title', stagingLevel: stagingLevel}"/>
 							<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'description', stagingLevel: stagingLevel}"/>

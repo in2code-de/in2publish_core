@@ -6,7 +6,7 @@
 	<f:if condition="{record}">
 		<tr class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.state}"
 			data-type="folder"
-			data-id="{record.identifier}"
+			data-id="{record.id}"
 			data-name="{publish:record.getMergedProperty(record:record, propertyName: 'name')}"
 			data-searchable="{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'local', fallbackProperty: 'identifier')}|{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'foreign', fallbackProperty: 'identifier')}">
 			<f:comment>Left</f:comment>
@@ -45,8 +45,8 @@
 			</td>
 		</tr>
 
-		<f:if condition="{record.relatedRecords}">
-			<f:for each="{record.relatedRecords.physical_folder}" as="folderRecord">
+		<f:if condition="{record.children}">
+			<f:for each="{record.children.physical_folder}" as="folderRecord">
 				<f:render partial="File/Index/FolderList" arguments="{record:folderRecord, config:config}" />
 			</f:for>
 		</f:if>

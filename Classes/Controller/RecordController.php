@@ -33,6 +33,7 @@ namespace In2code\In2publishCore\Controller;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
+use In2code\In2publishCore\Component\TcaHandling\DerServiceUmbenennen;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
@@ -72,9 +73,8 @@ class RecordController extends AbstractController
 
     protected PermissionService $permissionService;
 
-    protected RecordFinder $recordFinder;
 
-    protected RecordPublisher $recordPublisher;
+    protected DerServiceUmbenennen $derService;
 
     public function __construct(
         ConfigContainer $configContainer,
@@ -83,8 +83,6 @@ class RecordController extends AbstractController
         RemoteCommandDispatcher $remoteCommandDispatcher,
         FailureCollector $failureCollector,
         PermissionService $permissionService,
-        RecordFinder $recordFinder,
-        RecordPublisher $recordPublisher,
         PageRenderer $pageRenderer
     ) {
         parent::__construct(
@@ -95,8 +93,6 @@ class RecordController extends AbstractController
         );
         $this->failureCollector = $failureCollector;
         $this->permissionService = $permissionService;
-        $this->recordFinder = $recordFinder;
-        $this->recordPublisher = $recordPublisher;
         $pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
         $pageRenderer->addCssFile(
             'EXT:in2publish_core/Resources/Public/Css/Modules.css',
@@ -107,6 +103,11 @@ class RecordController extends AbstractController
         );
     }
 
+    public function injectDerService(DerServiceUmbenennen $derService): void
+    {
+        $this->derService = $derService;
+    }
+
     /**
      * Create a Record instance of the current selected page
      * If none is chosen, a Record with uid = 0 is created which
@@ -114,18 +115,9 @@ class RecordController extends AbstractController
      */
     public function indexAction(): ResponseInterface
     {
-        GeneralUtility::makeInstance(TcaPreProcessingService::class);
-        $record = $this->recordFinder->findRecordByUidForOverview($this->pid, 'pages');
-        $failures = $this->failureCollector->getFailures();
+        $rootRecord = $this->derService->neueMagie('pages', $this->pid);
 
-        if (!empty($failures)) {
-            $message = '"' . implode('"; "', array_keys($failures)) . '"';
-            $title = LocalizationUtility::translate('relation_resolving_errors', 'in2publish_core');
-            $mostCriticalLogLevel = $this->failureCollector->getMostCriticalLogLevel();
-            $severity = LogUtility::translateLogLevelToSeverity($mostCriticalLogLevel);
-            $this->addFlashMessage($message, $title, $severity);
-        }
-        $this->view->assign('record', $record);
+        $this->view->assign('rootRecord', $rootRecord);
         return $this->htmlResponse();
     }
 

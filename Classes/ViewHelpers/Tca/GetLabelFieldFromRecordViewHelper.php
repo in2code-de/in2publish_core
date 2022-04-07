@@ -28,6 +28,7 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\TableConfiguration\LabelService;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -44,7 +45,7 @@ class GetLabelFieldFromRecordViewHelper extends AbstractViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerArgument('record', RecordInterface::class, 'The record whith the property', true);
+        $this->registerArgument('record', Record::class, 'The record whith the property', true);
         $this->registerArgument('stagingLevel', 'string', '"local" (default) or "foreign"', false, 'local');
     }
 

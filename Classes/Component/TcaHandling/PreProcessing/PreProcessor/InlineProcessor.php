@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
 
 use Closure;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
-use In2code\In2publishCore\Domain\Model\DatabaseRecord;
+use In2code\In2publishCore\Domain\Model\Record;
 
 use function implode;
 use function preg_match;
@@ -58,10 +58,12 @@ class InlineProcessor extends AbstractProcessor
         'MM_match_fields',
         'MM_opposite_field',
     ];
+
     protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
 
-    public function injectDatabaseIdentifierQuotingService(DatabaseIdentifierQuotingService $databaseIdentifierQuotingService): void
-    {
+    public function injectDatabaseIdentifierQuotingService(
+        DatabaseIdentifierQuotingService $databaseIdentifierQuotingService
+    ): void {
         $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
     }
 
@@ -92,7 +94,7 @@ class InlineProcessor extends AbstractProcessor
                 $additionalWhere = $matches['where'];
             }
 
-            return static function (DatabaseRecord $record) use (
+            return static function (Record $record) use (
                 $mmTable,
                 $foreignTable,
                 $selectField,
@@ -116,9 +118,9 @@ class InlineProcessor extends AbstractProcessor
         }
         $additionalWhere = implode(' AND ', $foreignMatchFields);
 
-        return function (DatabaseRecord $record) use ($foreignTable, $foreignField, $foreignTableField, $additionalWhere) {
+        return function (Record $record) use ($foreignTable, $foreignField, $foreignTableField, $additionalWhere) {
             if (null !== $foreignTableField) {
-                $additionalWhere .= ' AND ' . $foreignTableField . ' = "' . $record->getTable() . '"';
+                $additionalWhere .= ' AND ' . $foreignTableField . ' = "' . $record->getClassification() . '"';
             }
             $additionalWhere = trim($additionalWhere);
             if (str_starts_with($additionalWhere, 'AND ')) {

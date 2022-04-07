@@ -31,8 +31,11 @@ namespace In2code\In2publishCore\Domain\Service;
  */
 
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Domain\Model\DatabaseEntityRecord;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Model\VirtualFlexFormRecord;
 use InvalidArgumentException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -52,13 +55,10 @@ use function is_array;
 use function is_bool;
 use function is_int;
 use function is_string;
-use function json_decode;
 use function preg_replace_callback;
 use function sprintf;
 use function str_replace;
 use function strpos;
-
-use const JSON_THROW_ON_ERROR;
 
 /**
  * Replace markers in TCA definition
@@ -97,47 +97,22 @@ class ReplaceMarkersService implements LoggerAwareInterface
      * If a Marker could not be replaced a Log is written.
      * This should, however, not be needed.
      *
-     * @param DatabaseRecord $record
+     * @param Record $record
      * @param string $string
      * @param string $propertyName
      *
      * @return string
      */
-    public function replaceMarkers(DatabaseRecord $record, string $string, string $propertyName): string
+    public function replaceMarkers(Record $record, string $string, string $propertyName): string
     {
-        if (strpos($string, '#') !== false) {
+        if ($record instanceof DatabaseEntityRecord && str_contains($string, '#')) {
             $string = $this->replaceRecFieldMarker($record, $string);
             $string = $this->replacePageMarker($string, $record);
-            $string = $this->replacePageTsConfigMarkers($record, $string, $propertyName);
-            $string = $this->replaceStaticMarker($string);
-            $string = $this->replaceSiteMarker($string, $record);
-            $this->checkForMarkersAndErrors($string);
-        }
-        return $string;
-    }
-
-    /**
-     * replaces ###MARKER### where possible. It's missing
-     * a lot of Markers support due to lack of documentation
-     * If a Marker could not be replaced a Log is written.
-     * This should, however, not be needed.
-     *
-     * @param RecordInterface $record
-     * @param string $string
-     * @param string $propertyName
-     * @param string $key
-     * @return string
-     */
-    public function replaceFlexFormMarkers(
-        RecordInterface $record,
-        string $string,
-        string $propertyName,
-        string $key
-    ): string {
-        if (strpos($string, '#') !== false) {
-            $string = $this->replaceRecFieldMarker($record, $string);
-            $string = $this->replacePageMarker($string, $record);
-            $string = $this->replaceFlexFormFieldMarkers($record, $string, $propertyName, $key);
+            if ($record instanceof VirtualFlexFormRecord) {
+                $string = $this->replaceFlexFormFieldMarkers($record, $string, $propertyName);
+            } else {
+                $string = $this->replacePageTsConfigMarkers($record, $string, $propertyName);
+            }
             $string = $this->replaceStaticMarker($string);
             $string = $this->replaceSiteMarker($string, $record);
             $this->checkForMarkersAndErrors($string);
@@ -153,7 +128,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
      *
      * @return string
      */
-    protected function replaceRecFieldMarker(DatabaseRecord $record, string $string): string
+    protected function replaceRecFieldMarker(DatabaseEntityRecord $record, string $string): string
     {
         if (strpos($string, '###REC_FIELD_') !== false) {
             $string = preg_replace_callback(
@@ -169,7 +144,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
         return $string;
     }
 
-    protected function replacePageMarker(string $string, DatabaseRecord $record): string
+    protected function replacePageMarker(string $string, DatabaseEntityRecord $record): string
     {
         $pageIdentifier = $record->getPageId();
 
@@ -185,8 +160,11 @@ class ReplaceMarkersService implements LoggerAwareInterface
         return $string;
     }
 
-    protected function replacePageTsConfigMarkers(DatabaseRecord $record, string $string, string $propertyName): string
-    {
+    protected function replacePageTsConfigMarkers(
+        DatabaseEntityRecord $record,
+        string $string,
+        string $propertyName
+    ): string {
         if (false !== strpos($string, '###PAGE_TSCONFIG')) {
             $marker = [
                 'PAGE_TSCONFIG_ID' => fn($input): int => (int)$input,
@@ -224,36 +202,29 @@ class ReplaceMarkersService implements LoggerAwareInterface
     }
 
     private function replaceFlexFormFieldMarkers(
-        RecordInterface $record,
+        VirtualFlexFormRecord $record,
         string $string,
-        string $propertyName,
-        string $key
+        string $propertyName
     ): string {
         if (false !== strpos($string, '###PAGE_TSCONFIG')) {
-            $tableName = $record->getTableName();
+            [$table, $prop, $dsKey] = explode('/', $record->getClassification());
 
             $marker = [
-                'PAGE_TSCONFIG_ID' => fn($input): int => (int)$input,
+                'PAGE_TSCONFIG_ID' => static fn($input): string => (string)(int)$input,
                 'PAGE_TSCONFIG_IDLIST' => fn($input): string => implode(',', GeneralUtility::intExplode(',', $input)),
                 'PAGE_TSCONFIG_STR' => fn($input): string => $this->localDatabase->quote($input),
             ];
 
-            $pageTs = BackendUtility::getPagesTSconfig($record->getPageIdentifier());
-            $dataStructIdentifier = $this->flexFormTools->getDataStructureIdentifier(
-                ['config' => $this->tcaPreProcessingService->getCompatibleTcaColumns($tableName)[$propertyName]],
-                $tableName,
-                $propertyName,
-                $record->getLocalProperties()
-            );
-            $simpleStructId = $this->getSimplifiedDataStructureIdentifier($dataStructIdentifier);
-            if (empty($pageTs['TCEFORM.'][$tableName . '.'][$propertyName . '.'][$simpleStructId . '.'])) {
+            $pageTs = BackendUtility::getPagesTSconfig($record->getPageId());
+            $simpleStructId = $this->getSimplifiedDataStructureIdentifier($dsKey);
+            if (empty($pageTs['TCEFORM.'][$table . '.'][$prop . '.'][$simpleStructId . '.'])) {
                 return $string;
             }
-            $flexPageTs = $pageTs['TCEFORM.'][$tableName . '.'][$propertyName . '.'][$simpleStructId . '.'];
+            $flexPageTs = $pageTs['TCEFORM.'][$table . '.'][$prop . '.'][$simpleStructId . '.'];
 
             foreach ($flexPageTs as $sheets) {
                 foreach ($sheets as $field => $values) {
-                    if ($field === $key . '.') {
+                    if ($field === $propertyName . '.') {
                         foreach ($marker as $markerName => $filterFunc) {
                             if (false !== strpos($string, '###' . $markerName . '###')) {
                                 $value = $values[$markerName] ?? 0;
@@ -336,20 +307,14 @@ class ReplaceMarkersService implements LoggerAwareInterface
      */
     protected function getSimplifiedDataStructureIdentifier(string $dataStructureIdentifier): string
     {
-        $identifierArray = json_decode($dataStructureIdentifier, true, 512, JSON_THROW_ON_ERROR);
+        $explodedKey = explode(',', $dataStructureIdentifier);
 
-        if (
-            isset($identifierArray['type'], $identifierArray['dataStructureKey'])
-            && 'tca' === $identifierArray['type']
-        ) {
-            $explodedKey = explode(',', $identifierArray['dataStructureKey']);
-            if (!empty($explodedKey[1]) && $explodedKey[1] !== 'list' && $explodedKey[1] !== '*') {
-                return $explodedKey[1];
-            }
+        if (!empty($explodedKey[1]) && $explodedKey[1] !== 'list' && $explodedKey[1] !== '*') {
+            return $explodedKey[1];
+        }
 
-            if (!empty($explodedKey[0]) && $explodedKey[0] !== 'list' && $explodedKey[0] !== '*') {
-                return $explodedKey[0];
-            }
+        if (!empty($explodedKey[0]) && $explodedKey[0] !== 'list' && $explodedKey[0] !== '*') {
+            return $explodedKey[0];
         }
 
         return 'default';

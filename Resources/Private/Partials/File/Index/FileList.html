@@ -6,7 +6,7 @@
 	<f:if condition="{record}">
 		<tr class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.stateRecursive}"
 			data-type="file"
-			data-id="{record.identifier}"
+			data-id="{record.id}"
 			data-name="{publish:record.getMergedProperty(record:record, propertyName: 'name')}"
 			data-identifier-local="{record.localProperties.identifier}"
 			data-identifier-foreign="{record.foreignProperties.identifier}"
@@ -32,7 +32,7 @@
 			</td>
 			<td class="col-control">
 				<div class="btn-group">
-					<a class="btn btn-default" data-bs-toggle="collapse" href="#{record.tableName}-{record.localProperties.uid}">
+					<a class="btn btn-default" data-bs-toggle="collapse" href="#{record.classification}-{record.localProperties.uid}">
 						<core:icon identifier="actions-info" />
 					</a>
 					<f:if condition="{record.state} != 'deleted'">
@@ -52,15 +52,15 @@
 							</span>
 						</f:else>
 					</f:if>
-					<f:if condition="{record.state} != 'deleted' && {record.relatedRecords.sys_file_metadata}">
+					<f:if condition="{record.state} != 'deleted' && {record.children.sys_file_metadata}">
 						<f:then>
-							<f:if condition="{record.relatedRecords.sys_file_metadata -> f:count()} > 1">
+							<f:if condition="{record.children.sys_file_metadata -> f:count()} > 1">
 								<f:then>
-									<button class="btn btn-default dropdown-toggle dropdown-toggle-no-chevron" type="button" id="translations_{record.identifier}" data-bs-toggle="dropdown" data-bs-boundary="window" aria-expanded="false">
+									<button class="btn btn-default dropdown-toggle dropdown-toggle-no-chevron" type="button" id="translations_{record.id}" data-bs-toggle="dropdown" data-bs-boundary="window" aria-expanded="false">
 										<core:icon identifier="actions-translate" />
 									</button>
-									<ul class="dropdown-menu dropdown-list" aria-labelledby="translations_{record.identifier}">
-										<f:for each="{record.relatedRecords.sys_file_metadata}" as="metaRecord" iteration="iterator">
+									<ul class="dropdown-menu dropdown-list" aria-labelledby="translations_{record.id}">
+										<f:for each="{record.children.sys_file_metadata}" as="metaRecord" iteration="iterator">
 											<li>
 												<a href="{publish:uri.editUri(uid: metaRecord.localProperties.uid, tableName: metaRecord.tableName)}" class="dropdown-item" title="{publish:record.getMergedProperty(record: record, propertyName: 'name')}">
 													<publish:record.languageFlagIcon record="{metaRecord}" side="local" /> <publish:record.getMergedProperty record="{record}" propertyName="name" />
@@ -70,7 +70,7 @@
 									</ul>
 								</f:then>
 								<f:else>
-									<f:for each="{record.relatedRecords.sys_file_metadata}" as="metaRecord" iteration="iterator">
+									<f:for each="{record.children.sys_file_metadata}" as="metaRecord" iteration="iterator">
 										<f:if condition="{iterator.isFirst}">
 											<a class="btn btn-default" href="{publish:uri.editUri(uid: metaRecord.localProperties.uid, tableName: metaRecord.tableName)}" data-bs-toggle="tooltip" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:edit')}">
 												<core:icon identifier="actions-pencil" />
