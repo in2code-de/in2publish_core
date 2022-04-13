@@ -1,10 +1,9 @@
 <?php
 
+declare(strict_types=1);
 
 namespace In2code\In2publishCore\Domain\Repository;
 
-
-use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RunningRequest;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
@@ -13,11 +12,10 @@ class RunningRequestRepository
 {
     public const RUNNING_REQUEST_TABLE_NAME = 'tx_in2publishcore_running_request';
 
-    /**
-     * @var Connection|null
-     */
-    protected $connection = null;
+    /** @var Connection */
+    protected $connection;
 
+    protected $rtc = [];
 
     public function __construct()
     {
@@ -33,28 +31,25 @@ class RunningRequestRepository
     }
 
     /**
-     * @throws \Doctrine\DBAL\Exception
+     * @param int|string $identifier
      */
-    public function existsRunningRequestForRecord(int $identifier, string $tableName): bool
+    public function hasRunningRequest($identifier, string $tableName): bool
     {
-        $statement = $this->connection->select(
-            ['uid'],
-            self::RUNNING_REQUEST_TABLE_NAME,
-            [
-                'record_id' => $identifier,
-                'table_name' => $tableName
-            ]
-        );
-        return $statement->rowCount() > 0;
+        if (!isset($this->rtc['content'])) {
+            $rows = $this->connection->select(['*'], self::RUNNING_REQUEST_TABLE_NAME);
+            foreach ($rows as $row) {
+                $this->rtc['content'][$row['table_name']][$row['record_id']] = true;
+            }
+        }
+        return isset($this->rtc['content'][$tableName][$identifier]);
     }
 
-    public function deleteAllByRecordTableAndRecordIdentifier(string $table, int $identifier): void
+    public function deleteAllByToken(string $token): void
     {
         $query = $this->connection->createQueryBuilder();
         $query->delete(self::RUNNING_REQUEST_TABLE_NAME)
-            ->where($query->expr()->eq('table_name', $query->createNamedParameter($table)))
-            ->andWhere($query->expr()->eq('record_id', $query->createNamedParameter($identifier)))
-            ->execute();
+              ->where($query->expr()->eq('request_token', $query->createNamedParameter($token)))
+              ->execute();
     }
 
     protected function mapProperties(RunningRequest $runningRequest): array
@@ -63,7 +58,7 @@ class RunningRequestRepository
             'record_id' => $runningRequest->getRecordId(),
             'table_name' => $runningRequest->getTableName(),
             'request_token' => $runningRequest->getRequestToken(),
-            'timestamp_begin' => $runningRequest->getTimestampBegin()
+            'timestamp_begin' => $runningRequest->getTimestampBegin(),
         ];
     }
 }

@@ -68,9 +68,6 @@ services:
   In2code\In2publishCore\Service\Permission\PermissionService:
     public: true
 
-  In2code\In2publishCore\Domain\Service\Publishing\RunningRequestService:
-    public: true
-
   In2code\In2publishCore\Domain\Repository\TaskRepository:
     public: true
 
@@ -103,23 +100,22 @@ services:
         method: 'onRootRecordCreationWasFinished'
         event: In2code\In2publishCore\Event\RootRecordCreationWasFinished
 
-  In2code\In2publishCore\EventListener\RecursivePublishingListener:
+  In2code\In2publishCore\Domain\Service\Publishing\RunningRequestService:
     tags:
       - name: event.listener
-        identifier: 'in2publishcore-recursivePublishingListener-recursiverecordpublishingbegan'
+        identifier: 'in2publishcore-RunningRequestService-RecursiveRecordPublishingBegan'
         method: 'onRecordPublishingBegan'
         event: In2code\In2publishCore\Event\RecursiveRecordPublishingBegan
-
-  In2code\In2publishCore\EventListener\RecursivePublishingEndedListener:
-    tags:
       - name: event.listener
-        identifier: 'in2publishcore-recursivePublishingEndedListener-recursiverecordpublishingended'
+        identifier: 'in2publishcore-RunningRequestService-RecursiveRecordPublishingEnded'
         method: 'onRecordPublishingEnded'
         event: In2code\In2publishCore\Event\RecursiveRecordPublishingEnded
-
-  In2code\In2publishCore\EventListener\PublishingRequestIsRunningVoter:
-    tags:
       - name: event.listener
-        identifier: 'in2publishcore-publishingRequestIsRunningVoter-VoteIfRecordIsPublishable'
+        identifier: 'in2publishcore-RunningRequestService-VoteIfRecordIsPublishable'
         method: 'isPublishable'
         event: In2code\In2publishCore\Event\VoteIfRecordIsPublishable
+      - name: event.listener
+        identifier: 'in2publishcore-RunningRequestService-DetermineIfRecordIsPublishing'
+        method: 'isPublishing'
+        event: In2code\In2publishCore\Event\DetermineIfRecordIsPublishing
+
