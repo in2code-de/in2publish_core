@@ -10,13 +10,17 @@ use In2code\In2publishCore\Domain\Model\RunningRequest;
 use In2code\In2publishCore\Domain\Repository\RunningRequestRepository;
 use In2code\In2publishCore\Event\DetermineIfRecordIsPublishing;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
-use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Event\VoteIfRecordIsPublishable;
+use TYPO3\CMS\Core\SingletonInterface;
 
-class RunningRequestService
+use function register_shutdown_function;
+
+class RunningRequestService implements SingletonInterface
 {
     /** @var RunningRequestRepository */
     protected $runningRequestRepository;
+
+    protected $shutdownFunctionRegistered = false;
 
     public function __construct(RunningRequestRepository $runningRequestRepository)
     {
@@ -25,6 +29,15 @@ class RunningRequestService
 
     public function onRecordPublishingBegan(RecursiveRecordPublishingBegan $event): void
     {
+        if (!$this->shutdownFunctionRegistered) {
+            $repository = $this->runningRequestRepository;
+            $token = $_REQUEST['token'];
+            register_shutdown_function(static function () use ($repository, $token) {
+                $repository->deleteAllByToken($token);
+            });
+            $this->shutdownFunctionRegistered = true;
+        }
+
         /** @var Record $record */
         $record = $event->getRecord();
 
@@ -44,11 +57,6 @@ class RunningRequestService
 
         $runningRequest = new RunningRequest($recordId, $tableName, $requestToken);
         $this->runningRequestRepository->add($runningRequest);
-    }
-
-    public function onRecordPublishingEnded(RecursiveRecordPublishingEnded $event): void
-    {
-        $this->runningRequestRepository->deleteAllByToken($_REQUEST['token']);
     }
 
     public function isPublishable(VoteIfRecordIsPublishable $event): void
