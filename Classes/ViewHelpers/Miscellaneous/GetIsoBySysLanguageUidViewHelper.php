@@ -66,7 +66,7 @@ class GetIsoBySysLanguageUidViewHelper extends AbstractViewHelper
                   ->from(self::TBL_SYS_LANGUAGE)
                   ->where($query->expr()->eq('uid', $query->createNamedParameter($language)));
             $statement = $query->execute();
-            $this->rtc[$language] = (string)$statement->fetchOne();
+            $this->rtc[$language] = (string)$statement->fetch();
         }
 
         return $this->rtc[$language];

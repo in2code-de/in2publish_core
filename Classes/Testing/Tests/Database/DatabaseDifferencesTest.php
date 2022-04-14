@@ -212,7 +212,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
                            ->where($query->expr()->eq('task_type', $query->createNamedParameter('Backend Test')))
                            ->execute();
         $identical = false;
-        while ($result = $statement->fetchAssociative()) {
+        while ($result = $statement->fetch()) {
             if ($uid === (int)$result['uid'] && $random === (int)$result['configuration']) {
                 $identical = true;
                 break;

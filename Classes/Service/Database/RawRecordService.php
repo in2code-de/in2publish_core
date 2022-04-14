@@ -76,7 +76,7 @@ class RawRecordService implements SingletonInterface
               ->where($query->expr()->eq('uid', $query->createNamedParameter($uid, PDO::PARAM_INT)))
               ->setMaxResults(1);
         $statement = $query->execute();
-        $result = $statement->fetchAssociative();
+        $result = $statement->fetch();
         return is_array($result) ? $result : null;
     }
 }
