@@ -36,6 +36,11 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
+use TYPO3\CMS\Core\Exception\SiteNotFoundException;
+use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Utility\Exception\MissingArrayPathException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function explode;
@@ -60,10 +65,13 @@ class ReplaceMarkersService implements LoggerAwareInterface
 
     protected TcaProcessingService $tcaProcessingService;
 
-    public function __construct(FlexFormTools $flexFormTools, TcaProcessingService $tcaProcessingService)
+    protected SiteFinder $siteFinder;
+
+    public function __construct(FlexFormTools $flexFormTools, TcaProcessingService $tcaProcessingService, SiteFinder $siteFinder)
     {
         $this->flexFormTools = $flexFormTools;
         $this->tcaProcessingService = $tcaProcessingService;
+        $this->siteFinder = $siteFinder;
     }
 
     /**
@@ -85,6 +93,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
             $string = $this->replacePageMarker($string, $record);
             $string = $this->replacePageTsConfigMarkers($record, $string, $propertyName);
             $string = $this->replaceStaticMarker($string);
+            $string = $this->replaceSiteMarker($string, $record);
             $this->checkForMarkersAndErrors($string);
         }
         return $string;
@@ -245,6 +254,66 @@ class ReplaceMarkersService implements LoggerAwareInterface
                 }
             }
         }
+        return $string;
+    }
+
+    /**
+     * Replaces ###SITE:siteConfigKey### markers in TCA with their respective values
+     *
+     * @param string $string
+     * @param RecordInterface $record
+     * @return array|string|string[]
+     */
+    private function replaceSiteMarker(string $string, RecordInterface $record)
+    {
+        if (false !== strpos($string, '###SITE:')) {
+            /** @var Site|null $site */
+            $site = null;
+
+            try {
+                $site = $this->siteFinder->getSiteByPageId($record->getPageIdentifier());
+            } catch (SiteNotFoundException $exception) {
+                return $string;
+            }
+
+            preg_match_all('(###SITE:([^#]+)###)', $string, $matches, PREG_SET_ORDER);
+
+            if (empty($matches)) {
+                return $string;
+            }
+
+            $configuration = $site->getConfiguration();
+            $replacements = [];
+
+            array_walk($matches, function($match) use (&$replacements, &$configuration) {
+                $setting = $match[1];
+
+                try {
+                    $value = ArrayUtility::getValueByPath($configuration, $setting, '.');
+                } catch (MissingArrayPathException $exception) {
+                    $value = '';
+                }
+
+                if (is_string($value)) {
+                    $value = DatabaseUtility::quoteString($value);
+                } elseif (is_array($value)) {
+                    $value = implode(',', array_map(static function ($item) {
+                        return DatabaseUtility::quoteString($item);
+                    }, $value));
+                } elseif (is_bool($value)) {
+                    $value = (int)$value;
+                }
+
+                $replacements[$match[0]] = $value;
+            });
+
+            $string = str_replace(
+                array_keys($replacements),
+                array_values($replacements),
+                $string
+            );
+        }
+
         return $string;
     }
 
