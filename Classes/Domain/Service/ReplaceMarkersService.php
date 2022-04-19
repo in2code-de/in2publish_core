@@ -122,6 +122,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
             $string = $this->replacePageMarker($string, $record);
             $string = $this->replaceFlexFormFieldMarkers($record, $string, $propertyName, $key);
             $string = $this->replaceStaticMarker($string);
+            $string = $this->replaceSiteMarker($string, $record);
             $this->checkForMarkersAndErrors($string);
         }
         return $string;
