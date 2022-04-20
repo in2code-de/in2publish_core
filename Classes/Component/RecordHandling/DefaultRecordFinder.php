@@ -450,11 +450,15 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                     }
                 }
             }
-            if (!$this->isIgnoredRecord((array)$localProperties[$key], (array)$foreignProperties[$key], $tableName)) {
+
+            $localPropertiesArray = (array)($localProperties[$key] ?? []);
+            $foreignPropertiesArray = (array)($foreignProperties[$key] ?? []);
+
+            if (!$this->isIgnoredRecord($localPropertiesArray, $foreignPropertiesArray, $tableName)) {
                 $foundRecords[$key] = $this->recordFactory->makeInstance(
                     $this,
-                    (array)$localProperties[$key],
-                    (array)$foreignProperties[$key],
+                    $localPropertiesArray,
+                    $foreignPropertiesArray,
                     [],
                     $tableName,
                     'uid',
