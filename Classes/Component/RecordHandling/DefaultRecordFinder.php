@@ -1065,6 +1065,9 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
         $recordId = $record->getIdentifier();
         switch ($config['type']) {
             case 'select':
+                if (empty($config['foreign_table'])) {
+                    break;
+                }
                 $whereClause = '';
                 if (!empty($config['foreign_table_where'])) {
                     $whereClause = $config['foreign_table_where'];
