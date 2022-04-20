@@ -1,8 +1,8 @@
 <?php
 
+declare(strict_types=1);
 
 namespace In2code\In2publishCore\Testing\Tests\Database;
-
 
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
@@ -24,16 +24,17 @@ class TableGarbageCollectorTest implements TestCaseInterface
         }
 
         $query = $localDatabase->createQueryBuilder();
-        $statement = $query->select('*')
-            ->from('tx_scheduler_task')
-            ->where($query->expr()->like(
-                'serialized_task_object',
-                $query->createNamedParameter('%tx_in2publishcore_running_request%'))
-            )
-            ->execute();
-        $garbageCollectionTasksExists = $statement->rowCount() > 0;
+        $query->count('*')
+              ->from('tx_scheduler_task')
+              ->where(
+                  $query->expr()->like(
+                      'serialized_task_object',
+                      $query->createNamedParameter('%tx_in2publishcore_running_request%')
+                  )
+              );
+        $statement = $query->execute();
 
-        if ($garbageCollectionTasksExists == false) {
+        if (0 === $statement->fetchColumn()) {
             return new TestResult(
                 'database.garbage_collector_task_missing',
                 TestResult::ERROR
