@@ -34,6 +34,7 @@ use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
+use TYPO3\CMS\Core\Site\SiteFinder;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Domain\Service\ReplaceMarkersService
