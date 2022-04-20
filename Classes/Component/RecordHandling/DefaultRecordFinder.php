@@ -1177,7 +1177,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                     }
                 }
                 foreach ($identifierToTableMap as $tableName => $identifiers) {
-                    if ($columnConfiguration['MM']) {
+                    if (!empty($columnConfiguration['MM'])) {
                         $this->logger->alert(
                             'Missing implementation: GROUP MM',
                             [
