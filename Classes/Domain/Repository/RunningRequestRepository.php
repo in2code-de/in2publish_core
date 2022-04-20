@@ -33,11 +33,15 @@ class RunningRequestRepository
     /**
      * @param int|string $identifier
      */
-    public function hasRunningRequest($identifier, string $tableName): bool
+    public function isPublishingInDifferentRequest($identifier, string $tableName, string $token): bool
     {
         if (!isset($this->rtc['content'])) {
-            $rows = $this->connection->select(['*'], self::RUNNING_REQUEST_TABLE_NAME);
-            foreach ($rows as $row) {
+            $query = $this->connection->createQueryBuilder();
+            $query->select('*')
+                  ->from(self::RUNNING_REQUEST_TABLE_NAME)
+                  ->where($query->expr()->neq('request_token', $query->createNamedParameter($token)));
+            $result = $query->execute();
+            foreach ($result->fetchAll() as $row) {
                 $this->rtc['content'][$row['table_name']][$row['record_id']] = true;
             }
         }

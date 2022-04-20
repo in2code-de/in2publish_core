@@ -65,14 +65,18 @@ class RunningRequestService implements SingletonInterface
 
     public function isPublishable(VoteIfRecordIsPublishable $event): void
     {
-        if ($this->runningRequestRepository->hasRunningRequest($event->getIdentifier(), $event->getTable())) {
+        $id = $event->getIdentifier();
+        $table = $event->getTable();
+        if ($this->runningRequestRepository->isPublishingInDifferentRequest($id, $table, $this->requestToken)) {
             $event->voteNo();
         }
     }
 
     public function isPublishing(DetermineIfRecordIsPublishing $event): void
     {
-        if ($this->runningRequestRepository->hasRunningRequest($event->getIdentifier(), $event->getTableName())) {
+        $id = $event->getIdentifier();
+        $table = $event->getTableName();
+        if ($this->runningRequestRepository->isPublishingInDifferentRequest($id, $table, $this->requestToken)) {
             $event->setIsPublishing();
         }
     }
