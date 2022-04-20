@@ -1153,6 +1153,9 @@ class Record implements RecordInterface
         if (!$this->isChangedRecursive()) {
             return false;
         }
+        if ($this->isPublishing()) {
+            return false;
+        }
 
         $permissionService = GeneralUtility::makeInstance(PermissionService::class);
         if (!$permissionService->isUserAllowedToPublish()) {
