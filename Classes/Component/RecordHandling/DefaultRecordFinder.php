@@ -1166,7 +1166,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                     }
                 }
                 foreach ($identifierToTableMap as $tableName => $identifiers) {
-                    if ($columnConfiguration['MM']) {
+                    if (!empty($columnConfiguration['MM'])) {
                         $this->logger->alert(
                             'Missing implementation: GROUP MM',
                             [
