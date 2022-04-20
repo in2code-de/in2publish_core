@@ -100,14 +100,14 @@
         [\In2code\In2publishCore\Controller\FrontendController::class => 'preview'],
         [\In2code\In2publishCore\Controller\FrontendController::class => 'preview']
     );
+
     /******************************************** Configure Garbage Collector  ****************************************/
     // Register table tx_in2publishcore_running_request  in table garbage collector
-    if (!is_array($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][\TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask::class]['options']['tables']['tx_in2publishcore_running_request'])) {
-        $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][\TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask::class]['options']['tables']['tx_in2publishcore_running_request'] = [
-            'dateField' => 'timestamp_begin',
-            'expirePeriod' => 1,
-        ];
-    }
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][\TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask::class]['options']['tables']['tx_in2publishcore_running_request'] = [
+        'dateField' => 'timestamp_begin',
+        'expirePeriod' => 1,
+    ];
+
     /***************************************** Register Communication Adapter *****************************************/
     $adapterRegistry->registerAdapter(
         \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter::ADAPTER_TYPE,
