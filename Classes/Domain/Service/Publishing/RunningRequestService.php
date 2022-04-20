@@ -13,6 +13,8 @@ use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\VoteIfRecordIsPublishable;
 use TYPO3\CMS\Core\SingletonInterface;
 
+use function bin2hex;
+use function random_bytes;
 use function register_shutdown_function;
 
 class RunningRequestService implements SingletonInterface
@@ -20,18 +22,21 @@ class RunningRequestService implements SingletonInterface
     /** @var RunningRequestRepository */
     protected $runningRequestRepository;
 
+    protected $requestToken;
+
     protected $shutdownFunctionRegistered = false;
 
     public function __construct(RunningRequestRepository $runningRequestRepository)
     {
         $this->runningRequestRepository = $runningRequestRepository;
+        $this->requestToken = bin2hex(random_bytes(16));
     }
 
     public function onRecordPublishingBegan(RecursiveRecordPublishingBegan $event): void
     {
         if (!$this->shutdownFunctionRegistered) {
             $repository = $this->runningRequestRepository;
-            $token = $_REQUEST['token'];
+            $token = $this->requestToken;
             register_shutdown_function(static function () use ($repository, $token) {
                 $repository->deleteAllByToken($token);
             });
@@ -53,9 +58,8 @@ class RunningRequestService implements SingletonInterface
     {
         $recordId = $record->getIdentifier();
         $tableName = $record->getTableName();
-        $requestToken = $_REQUEST['token'];
 
-        $runningRequest = new RunningRequest($recordId, $tableName, $requestToken);
+        $runningRequest = new RunningRequest($recordId, $tableName, $this->requestToken);
         $this->runningRequestRepository->add($runningRequest);
     }
 
