@@ -61,6 +61,8 @@ class ReplaceMarkersService implements LoggerAwareInterface
     // Also replace optional quotes around the REC_FIELD_ because we will quote the actual value
     protected const REC_FIELD_REGEX = '~\'?###REC_FIELD_(.*?)###\'?~';
 
+    protected const SITE_FIELD_REGEX = '(###SITE:([^#]+)###)';
+
     protected FlexFormTools $flexFormTools;
 
     protected TcaProcessingService $tcaProcessingService;
@@ -268,16 +270,13 @@ class ReplaceMarkersService implements LoggerAwareInterface
     private function replaceSiteMarker(string $string, RecordInterface $record)
     {
         if (false !== strpos($string, '###SITE:')) {
-            /** @var Site|null $site */
-            $site = null;
-
             try {
                 $site = $this->siteFinder->getSiteByPageId($record->getPageIdentifier());
             } catch (SiteNotFoundException $exception) {
                 return $string;
             }
 
-            preg_match_all('(###SITE:([^#]+)###)', $string, $matches, PREG_SET_ORDER);
+            preg_match_all(self::SITE_FIELD_REGEX, $string, $matches, PREG_SET_ORDER);
 
             if (empty($matches)) {
                 return $string;
@@ -286,7 +285,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
             $configuration = $site->getConfiguration();
             $replacements = [];
 
-            array_walk($matches, function($match) use (&$replacements, &$configuration) {
+            array_walk($matches, static function($match) use (&$replacements, &$configuration): void {
                 $setting = $match[1];
 
                 try {
