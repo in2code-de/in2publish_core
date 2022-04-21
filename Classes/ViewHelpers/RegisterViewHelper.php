@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\ViewHelpers;
 
-use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
@@ -18,12 +17,12 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  * Example get a value:
  *  <f:if condition="{in2:register(name:'isOkay')}>...<f:if>
  */
-class RegisterViewHelper extends AbstractViewHelper implements SingletonInterface
+class RegisterViewHelper extends AbstractViewHelper
 {
     protected const VALUE_NONE = "\0";
 
     /** @var array */
-    protected $register = [];
+    protected static $register = [];
 
     public function initializeArguments(): void
     {
@@ -41,8 +40,8 @@ class RegisterViewHelper extends AbstractViewHelper implements SingletonInterfac
         $value = $this->arguments['value'];
 
         if ($value !== self::VALUE_NONE) {
-            $this->register[$name] = $value;
+            self::$register[$name] = $value;
         }
-        return $this->register[$name] ?? null;
+        return self::$register[$name] ?? null;
     }
 }
