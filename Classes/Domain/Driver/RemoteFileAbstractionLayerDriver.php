@@ -670,9 +670,9 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
                     EnvelopeDispatcher::CMD_CREATE_FOLDER,
                     [
                         'storage' => $this->storageUid,
-                        '$newFolderName' => $newFolderName,
-                        '$parentFolderIdentifier' => $parentFolderIdentifier,
-                        '$recursive' => $recursive,
+                        'newFolderName' => $newFolderName,
+                        'parentFolderIdentifier' => $parentFolderIdentifier,
+                        'recursive' => $recursive,
                     ]
                 )
             );
