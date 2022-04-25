@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Tests\Unit\Service;
+namespace In2code\In2publishCore\Tests\Unit\Domain\Service;
 
 /*
  * Copyright notice
@@ -34,6 +34,9 @@ use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
+use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Site\Entity\Site;
+use TYPO3\CMS\Core\Site\SiteFinder;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Domain\Service\ReplaceMarkersService
@@ -45,14 +48,16 @@ class ReplaceMarkersServiceTest extends UnitTestCase
      * @covers ::replaceMarkers
      * @covers ::replacePageTsConfigMarkers
      */
-    public function testReplaceMarkerServiceSupportsPageTsConfigId()
+    public function testReplaceMarkerServiceSupportsPageTsConfigId(): void
     {
         $record = $this->getRecordStub('tx_unit_test_table');
 
         $flexFormTools = $this->createMock(FlexFormTools::class);
         $tcaProcessingService = $this->createMock(TcaProcessingService::class);
+        $siteFinder = $this->createMock(SiteFinder::class);
+        $connection = $this->createMock(Connection::class);
 
-        $replaceMarkerService = new class ($flexFormTools, $tcaProcessingService) extends ReplaceMarkersService {
+        $replaceMarkerService = new class ($flexFormTools, $tcaProcessingService, $siteFinder, $connection) extends ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
                 return [
@@ -79,14 +84,16 @@ class ReplaceMarkersServiceTest extends UnitTestCase
      * @covers ::replaceMarkers
      * @covers ::replacePageTsConfigMarkers
      */
-    public function testReplaceMarkerServiceSupportsPageTsConfigIdList()
+    public function testReplaceMarkerServiceSupportsPageTsConfigIdList(): void
     {
         $record = $this->getRecordStub('tx_unit_test_table');
 
         $flexFormTools = $this->createMock(FlexFormTools::class);
         $tcaProcessingService = $this->createMock(TcaProcessingService::class);
+        $siteFinder = $this->createMock(SiteFinder::class);
+        $connection = $this->createMock(Connection::class);
 
-        $replaceMarkerService = new class ($flexFormTools, $tcaProcessingService) extends ReplaceMarkersService {
+        $replaceMarkerService = new class ($flexFormTools, $tcaProcessingService, $siteFinder, $connection) extends ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
                 return [
@@ -107,6 +114,50 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         );
 
         $this->assertSame('foo 52,11,9 bar', $replacement);
+    }
+    /**
+     * @covers ::replaceSiteMarker
+     */
+    public function testReplaceSiteMarker(): void
+    {
+        $record = $this->getRecordStub('tx_unit_test_table');
+
+        $flexFormTools = $this->createMock(FlexFormTools::class);
+        $tcaProcessingService = $this->createMock(TcaProcessingService::class);
+        $siteFinder = $this->createMock(SiteFinder::class);
+        $siteFinder->method('getSiteByPageId')->willReturn(
+            new Site('test', 1, [
+                'rootPageId' => 1,
+                'nested' => [
+                    'custom' => 'test',
+                ],
+                'stringArray' => [
+                    'string1',
+                    'string2',
+                    'string3',
+                ],
+                'boolOption' => false,
+            ])
+        );
+        $connection = $this->createMock(Connection::class);
+        $connection->method('quote')->willReturnCallback(static function ($input) {
+            return "'$input'";
+        });
+
+        $replaceMarkerService = new ReplaceMarkersService(
+            $flexFormTools,
+            $tcaProcessingService,
+            $siteFinder,
+            $connection
+        );
+
+        $replacement = $replaceMarkerService->replaceMarkers(
+            $record,
+            '###SITE:rootPageId### ###SITE:nested.custom### ###SITE:stringArray### ###SITE:boolOption###',
+            'tx_unit_test_field'
+        );
+
+        $this->assertSame('1 \'test\' \'string1\',\'string2\',\'string3\' 0', $replacement);
     }
 
     /**
