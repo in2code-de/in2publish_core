@@ -60,7 +60,7 @@ class LogsExporter implements SystemInformationExporter
                                 ->setMaxResults(500)
                                 ->orderBy('uid', 'DESC')
                                 ->execute()
-                                ->fetchAllAssociative();
+                                ->fetchAll();
 
         $logsFormatted = [];
         foreach ($logs as $log) {

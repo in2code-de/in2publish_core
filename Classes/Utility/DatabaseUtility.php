@@ -204,7 +204,7 @@ class DatabaseUtility
         }
 
         $res = $connection->executeQuery('SHOW CREATE TABLE ' . $tableName);
-        $result = $res->fetchAllAssociative();
+        $result = $res->fetchAll();
 
         $data .= $result[0]['Create Table'] . ';' . PHP_EOL;
 
@@ -212,7 +212,7 @@ class DatabaseUtility
         $query->getRestrictions()->removeAll();
         $resultSet = $query->select('*')->from($tableName)->execute();
 
-        while (($row = $resultSet->fetchAssociative())) {
+        while (($row = $resultSet->fetch())) {
             $data .=
                 'INSERT INTO ' . $tableName . ' VALUES (' .
                 implode(',', array_map([$connection, 'quote'], $row)) .
@@ -310,7 +310,7 @@ class DatabaseUtility
             $query->getRestrictions()->removeAll();
             $queryResult = $query->select('*')->from($tableName)->execute();
             $rows = $queryResult->rowCount();
-            while ($row = $queryResult->fetchAssociative()) {
+            while ($row = $queryResult->fetch()) {
                 if (1 !== static::insertRow($toDatabase, $tableName, $row)) {
                     throw new In2publishCoreException('Failed to import row into "' . $tableName . '"', 1562570305);
                 }
