@@ -110,7 +110,7 @@ class UidReservationService
                 ->from('sys_file')
                 ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid)))
                 ->execute()
-                ->fetch();
+                ->fetchColumn();
 
             if (0 !== $numberOfRows) {
                 return false;

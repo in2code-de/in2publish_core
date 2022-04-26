@@ -156,7 +156,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
             $query = $database->createQueryBuilder();
             $query->getRestrictions()->removeAll();
             $query->count('uid')->from(static::TABLE)->where($query->expr()->isNotNull('response'));
-            return $query->execute()->fetch() > 0;
+            return $query->execute()->fetchColumn() > 0;
         }
         return false;
     }

@@ -753,7 +753,7 @@ class FolderRecordFactory implements LoggerAwareInterface
               ->andWhere($query->expr()->eq('uid_local', $query->createNamedParameter($oldUid)));
         try {
             $result = $query->execute();
-            $count = $result->fetch();
+            $count = $result->fetchColumn();
         } catch (Throwable $exception) {
             $this->logger->critical(
                 'Could not count foreign references by uid',
@@ -773,7 +773,7 @@ class FolderRecordFactory implements LoggerAwareInterface
               ->where($query->expr()->eq('uid', $query->createNamedParameter($newUid)));
         try {
             $result = $query->execute();
-            $count = $result->fetch();
+            $count = $result->fetchColumn();
         } catch (Throwable $exception) {
             $this->logger->critical(
                 'Could not count foreign indices by uid',
