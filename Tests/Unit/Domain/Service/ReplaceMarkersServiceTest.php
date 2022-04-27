@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Tests\Unit\Domain\Service;
  */
 
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Tests\UnitTestCase;
@@ -57,7 +58,8 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $siteFinder = $this->createMock(SiteFinder::class);
         $connection = $this->createMock(Connection::class);
 
-        $replaceMarkerService = new class ($flexFormTools, $tcaPreProcessingService, $siteFinder, $connection) extends ReplaceMarkersService {
+        $replaceMarkerService = new class ($flexFormTools, $tcaPreProcessingService, $siteFinder, $connection) extends
+            ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
                 return [
@@ -93,7 +95,8 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $siteFinder = $this->createMock(SiteFinder::class);
         $connection = $this->createMock(Connection::class);
 
-        $replaceMarkerService = new class ($flexFormTools, $tcaPreProcessingService, $siteFinder, $connection) extends ReplaceMarkersService {
+        $replaceMarkerService = new class ($flexFormTools, $tcaPreProcessingService, $siteFinder, $connection) extends
+            ReplaceMarkersService {
             protected function getPagesTsConfig(int $pageIdentifier): array
             {
                 return [
@@ -115,6 +118,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
 
         $this->assertSame('foo 52,11,9 bar', $replacement);
     }
+
     /**
      * @covers ::replaceSiteMarker
      */
@@ -123,7 +127,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $record = $this->getRecordStub('tx_unit_test_table');
 
         $flexFormTools = $this->createMock(FlexFormTools::class);
-        $tcaProcessingService = $this->createMock(TcaProcessingService::class);
+        $tcaProcessingService = $this->createMock(TcaPreProcessingService::class);
         $siteFinder = $this->createMock(SiteFinder::class);
         $siteFinder->method('getSiteByPageId')->willReturn(
             new Site('test', 1, [
@@ -134,15 +138,16 @@ class ReplaceMarkersServiceTest extends UnitTestCase
                 'stringArray' => [
                     'string1',
                     'string2',
-                    'string3',
+                    'string3' => [
+                        'foo1',
+                        'foo2',
+                    ]
                 ],
                 'boolOption' => false,
             ])
         );
         $connection = $this->createMock(Connection::class);
-        $connection->method('quote')->willReturnCallback(static function ($input) {
-            return "'$input'";
-        });
+        $connection->method('quote')->willReturnCallback(static fn(string $input): string => "'$input'");
 
         $replaceMarkerService = new ReplaceMarkersService(
             $flexFormTools,
@@ -157,7 +162,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
             'tx_unit_test_field'
         );
 
-        $this->assertSame('1 \'test\' \'string1\',\'string2\',\'string3\' 0', $replacement);
+        $this->assertSame('1 \'test\' \'string1\',\'string2\',\'foo1\',\'foo2\' 0', $replacement);
     }
 
     /**
@@ -181,8 +186,8 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         ];
         $this->initializeIn2publishConfig($config);
 
-        $record = $this->createMock(Record::class);
-        $record->method('getTablename')->willReturn($table);
+        $record = $this->createMock(DatabaseRecord::class);
+        $record->method('getTable')->willReturn($table);
         return $record;
     }
 }

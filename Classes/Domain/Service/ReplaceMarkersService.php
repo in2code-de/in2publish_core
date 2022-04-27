@@ -34,7 +34,6 @@ use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingS
 use In2code\In2publishCore\Domain\Model\DatabaseEntityRecord;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Model\VirtualFlexFormRecord;
 use InvalidArgumentException;
 use Psr\Log\LoggerAwareInterface;
@@ -243,14 +242,14 @@ class ReplaceMarkersService implements LoggerAwareInterface
     /**
      * Replaces ###SITE:siteConfigKey### markers in TCA with their respective values
      */
-    protected function replaceSiteMarker(string $string, RecordInterface $record): string
+    protected function replaceSiteMarker(string $string, DatabaseRecord $record): string
     {
         if (false === strpos($string, '###SITE:')) {
             return $string;
         }
 
         try {
-            $site = $this->siteFinder->getSiteByPageId($record->getPageIdentifier());
+            $site = $this->siteFinder->getSiteByPageId($record->getPageId());
         } catch (SiteNotFoundException $exception) {
             return $string;
         }
