@@ -20,11 +20,6 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
         return $this->table;
     }
 
-    public function getTable(): string
-    {
-        return $this->table;
-    }
-
     public function getLanguage(): int
     {
         return $this->getCtrlProp('languageField');

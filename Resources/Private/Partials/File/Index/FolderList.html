@@ -14,7 +14,6 @@
 				<core:icon identifier="files-folder" />
 			</td>
 			<td class="col-filename col-filename--local col-responsive nowrap" colspan="2">
-				<f:if condition="{config.debug.showRecordDepth}">[{record.additionalProperties.depth}]</f:if>
 				<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="name" stagingLevel="local" fallbackProperty="identifier" />
 			</td>
 			<td class="col-control col-publish">

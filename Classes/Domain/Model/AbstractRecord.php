@@ -6,13 +6,9 @@ namespace In2code\In2publishCore\Domain\Model;
 
 use LogicException;
 
-use function array_diff;
 use function array_diff_assoc;
 use function array_flip;
-use function array_intersect;
 use function array_keys;
-use function array_search;
-use function in_array;
 
 abstract class AbstractRecord implements Record
 {

@@ -267,9 +267,6 @@ view:
     # Activate Filter buttons
     filterButtons: TRUE
 
-    # show record connection to root record as breadcrumb in overview module. Applies only when debug.allInformation = FALSE.
-    breadcrumb: FALSE
-
   # Backend module Publish files
   files:
     # Activate Filter buttons
@@ -336,14 +333,8 @@ debug:
   # Show foreign key fingerprint instead of throwing an exception.
   showForeignKeyFingerprint: FALSE
 
-  # Show depth of records in publishing view.
-  showRecordDepth: FALSE
-
   # show execution time in backend modules in footer
   showExecutionTime: TRUE
-
-  # show all information in publishing overview module (which records are related to the current page)
-  allInformation: FALSE
 
   # Do not delete Envelope entries after they fulfilled their purpose
   keepEnvelopes: FALSE

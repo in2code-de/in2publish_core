@@ -187,7 +187,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
         $this->initializeIn2publishConfig($config);
 
         $record = $this->createMock(DatabaseRecord::class);
-        $record->method('getTable')->willReturn($table);
+        $record->method('getClassification')->willReturn($table);
         return $record;
     }
 }

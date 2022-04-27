@@ -1,0 +1,34 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers" data-namespace-typo3-fluid="true">
+	<div class="in2publish-stagelisting__item in2publish-stagelisting__item--{record.stateRecursive} {f:if(condition:record.removedFromLocalDatabase, then:'in2publish-stagelisting__item--removed')} in2publish-clearfix">
+		<f:comment>
+			Left
+		</f:comment>
+		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--left">
+			<i class="in2publish-icon-folder" title="{f:translate(key:'record.state.{record.stateRecursive}',default:record.stateRecursive)}"></i>
+			<f:if condition="{record.language} > 0">
+				<core:icon identifier="flags-{publish:miscellaneous.getIsoBySysLanguageUid(language: record.language)}" />
+			</f:if>
+			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{config.view.titleField}" stagingLevel="local" fallbackProperty="title"/>
+			<i class="in2publish-icon-info" data-action="opendirtypropertieslistcontainer"></i>
+			<f:if condition="{record.publishable}">
+				<f:link.action
+					action="publishRecord"
+					arguments="{identifier:record.identifier}"
+					title="{f:translate(key:'publish_pages', default:'Publish this page')}"
+					additionalAttributes="{publish:Attribute.PublishingDataAttributes()}">
+					<i class="in2publish-icon-publish"></i>
+				</f:link.action>
+			</f:if>
+		</div>
+
+		<f:comment>
+			Right
+		</f:comment>
+		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--right">
+			<i class="in2publish-icon-folder" title="{f:translate(key:'record.state.{record.stateRecursive}',default:record.stateRecursive)}"></i>
+			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{config.view.titleField}" stagingLevel="foreign" fallbackProperty="title" />
+		</div>
+
+		<f:render partial="Record/Index/DirtyPropertiesList" arguments="{_all}" />
+	</div>
+</html>

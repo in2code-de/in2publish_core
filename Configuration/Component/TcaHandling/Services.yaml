@@ -11,3 +11,7 @@ services:
 
   In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService:
     public: true
+
+  In2code\In2publishCore\Component\TcaHandling\RecordIndex:
+    shared: true
+    public: true

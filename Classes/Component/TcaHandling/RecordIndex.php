@@ -8,9 +8,9 @@ use In2code\In2publishCore\Domain\Model\Record;
 
 use function array_keys;
 use function array_search;
-use function in_array;
+use function In2code\In2publishCore\merge_record;
 
-class TempRecordIndex
+class RecordIndex
 {
     /**
      * @var array<string, array<array-key, Record>>
@@ -19,7 +19,7 @@ class TempRecordIndex
 
     public function addRecord(Record $record): void
     {
-        $this->records[$record->getClassification()][$record->getId()] = $record;
+        merge_record($this->records, $record);
         foreach ($record->getChildren() as $childRecord) {
             $this->addRecord($childRecord);
         }

@@ -50,7 +50,7 @@ class TextProcessorTest extends UnitTestCase
         ]);
 
         $databaseRecord = $this->createMock(DatabaseRecord::class);
-        $databaseRecord->method('getTable')->willReturn('tableNameFoo');
+        $databaseRecord->method('getClassification')->willReturn('tableNameFoo');
         $databaseRecord->method('getId')->willReturn(1);
         $databaseRecord->method('getLocalProps')->willReturn(['fieldNameBar' => 'lalala \'t3://page?uid=14\' fofofo']);
         $databaseRecord->method('getForeignProps')->willReturn([]);
@@ -78,7 +78,7 @@ class TextProcessorTest extends UnitTestCase
         ]);
 
         $databaseRecord = $this->createMock(DatabaseRecord::class);
-        $databaseRecord->method('getTable')->willReturn('tableNameFoo');
+        $databaseRecord->method('getClassification')->willReturn('tableNameFoo');
         $databaseRecord->method('getId')->willReturn(1);
         $databaseRecord->method('getLocalProps')->willReturn(['fieldNameBar' => 'lalala t3://file?uid=14 fofofo']);
         $databaseRecord->method('getForeignProps')->willReturn([]);
@@ -106,7 +106,7 @@ class TextProcessorTest extends UnitTestCase
         ]);
 
         $databaseRecord = $this->createMock(DatabaseRecord::class);
-        $databaseRecord->method('getTable')->willReturn('tableNameFoo');
+        $databaseRecord->method('getClassification')->willReturn('tableNameFoo');
         $databaseRecord->method('getId')->willReturn(1);
         $databaseRecord->method('getLocalProps')->willReturn(['fieldNameBar' => 'lalalat3://file?uid=14 fofofo']);
         $databaseRecord->method('getForeignProps')->willReturn([]);
@@ -133,7 +133,7 @@ class TextProcessorTest extends UnitTestCase
         ]);
 
         $databaseRecord = $this->createMock(DatabaseRecord::class);
-        $databaseRecord->method('getTable')->willReturn('tableNameFoo');
+        $databaseRecord->method('getClassification')->willReturn('tableNameFoo');
         $databaseRecord->method('getId')->willReturn(1);
         $databaseRecord->method('getLocalProps')->willReturn(['fieldNameBar' => 'lalala t3://page?uid=14 fofofo']);
         $databaseRecord->method('getForeignProps')->willReturn(['fieldNameBar' => 'lalala t3://page?uid=15 fofofo']);

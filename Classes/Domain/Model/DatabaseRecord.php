@@ -40,6 +40,7 @@ class DatabaseRecord extends AbstractDatabaseRecord implements DatabaseEntityRec
     {
         return $this->id;
     }
+
     /**
      * @return int The UID of the page this record is stored in. If this record is a page record, it returns its default
      *     language id.

@@ -7,6 +7,8 @@
     if (!defined('TYPO3_REQUESTTYPE')) {
         die('Access denied.');
     }
+    $functions = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('in2publish_core') . '/Functions/functions.php';
+    require $functions;
     if (!class_exists(\In2code\In2publishCore\Service\Context\ContextService::class)) {
         // Early return when installing per ZIP: autoload is not yet generated
         return;

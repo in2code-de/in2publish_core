@@ -40,7 +40,7 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
         ];
 
         $record = new DatabaseRecord($table, $identifier, $localFields, $foreignFields);
-        $actualTable = $record->getTable();
+        $actualTable = $record->getClassification();
         $actualIdentifier = $record->getId();
         $actualLocalFields = $record->getLocalProps();
         $actualForeignFields = $record->getForeignProps();

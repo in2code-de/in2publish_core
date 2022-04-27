@@ -1,0 +1,13 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers" data-namespace-typo3-fluid="true">
+
+	<f:if condition="{record.children.pages}">
+		<f:for each="{record.children.pages}" as="page">
+			<f:render partial="Record/PageRow" arguments="{config: config, record: page, depth: depth}" />
+			<f:variable name="depth" value="{publish:math.add(value: depth, increment: 1)}" />
+			<ul class="in2publish-unstyledlist in2publish-list-level in2publish-list-level--{depth}">
+				<f:render partial="Record/PageRecursion" arguments="{config:config, record: page, depth:depth}" />
+			</ul>
+			<f:variable name="depth" value="{publish:math.subtract(value: depth, increment: 1)}" />
+		</f:for>
+	</f:if>
+</html>

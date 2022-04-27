@@ -8,13 +8,13 @@
 		</h2>
 
 		<div class="in2publish-main">
-			<f:render partial="Server" arguments="{_all}" />
 			<div class="in2publish-stagelisting">
-				<f:render partial="Record/Index/PageList" arguments="{_all}" />
+				<f:variable name="depth" value="0" />
+				<f:render partial="Record/PageRecursion" arguments="{config: config, record: recordTree, depth: depth}" />
 			</div>
 		</div>
 
-		<f:if condition="{rootRecord}">
+		<f:if condition="{recordTree}">
 			<f:render partial="Record/Index/FunctionBar" arguments="{_all}" />
 		</f:if>
 		<f:alias map="{moduleName: 'record'}">

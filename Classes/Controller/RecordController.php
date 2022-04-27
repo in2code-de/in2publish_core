@@ -115,9 +115,9 @@ class RecordController extends AbstractController
      */
     public function indexAction(): ResponseInterface
     {
-        $rootRecord = $this->derService->neueMagie('pages', $this->pid);
+        $recordTree = $this->derService->buildRecordTree('pages', $this->pid);
 
-        $this->view->assign('rootRecord', $rootRecord);
+        $this->view->assign('recordTree', $recordTree);
         return $this->htmlResponse();
     }
 

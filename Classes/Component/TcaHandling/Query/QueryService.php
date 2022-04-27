@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Query;
 
-use In2code\In2publishCore\Component\TcaHandling\TempRecordIndex;
+use In2code\In2publishCore\Component\TcaHandling\RecordIndex;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
-use In2code\In2publishCore\Domain\Model\DatabaseRecord;
-use In2code\In2publishCore\Domain\Model\MmDatabaseRecord;
+use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing\Domain\Repository\DualDatabaseRepository;
 
 use function array_keys;
-use function array_merge;
+use function array_merge_recursive;
+use function In2code\In2publishCore\merge_record;
+use function In2code\In2publishCore\merge_records;
 
 class QueryService
 {
     protected DualDatabaseRepository $dualDatabaseRepository;
     protected RecordFactory $recordFactory;
+    protected RecordIndex $recordIndex;
 
     public function injectDualDatabaseRepository(DualDatabaseRepository $dualDatabaseRepository): void
     {
@@ -28,19 +31,34 @@ class QueryService
         $this->recordFactory = $recordFactory;
     }
 
-    public function resolveDemand(array $demand, TempRecordIndex $index): array
+    public function injectRecordIndex(RecordIndex $recordIndex): void
     {
-        $records = [];
-        if (!empty($demand['select'])) {
-            $records[] = $this->resolveSelectDemand($demand['select'], $index);
-        }
-        if (!empty($demand['join'])) {
-            $records[] = $this->resolveJoinDemand($demand['join'], $index);
-        }
-        return array_merge([], ...$records);
+        $this->recordIndex = $recordIndex;
     }
 
-    protected function resolveSelectDemand(mixed $select, TempRecordIndex $index)
+    /**
+     * @param array<string, array<string, array<string, array<string, array<Record|RecordTree>>>>> $demand
+     * @return array<string, array<int|string, Record>>
+     */
+    public function resolveDemand(array $demand): array
+    {
+        $return = [];
+        if (!empty($demand['select'])) {
+            $records = $this->resolveSelectDemand($demand['select']);
+            merge_records($return, $records);
+        }
+        if (!empty($demand['join'])) {
+            $records[] = $this->resolveJoinDemand($demand['join']);
+            merge_records($return, $records);
+        }
+        return $return;
+    }
+
+    /**
+     * @param array<string, array<string, array<string, array<Record|RecordTree>>>> $select
+     * @return array<string, array<int|string, Record>>
+     */
+    protected function resolveSelectDemand(array $select): array
     {
         $records = [];
         foreach ($select as $table => $tableSelect) {
@@ -53,9 +71,15 @@ class QueryService
                         $additionalWhere
                     );
                     foreach ($rows as $uid => $row) {
-                        $record = $index->getRecord($table, $uid);
+                        $record = $this->recordIndex->getRecord($table, $uid);
                         if (null === $record) {
-                            $records[] = $record = $this->recordFactory->createDatabaseRecord($table, $uid, $row['local'], $row['foreign']);
+                            $record = $this->recordFactory->createDatabaseRecord(
+                                $table,
+                                $uid,
+                                $row['local'],
+                                $row['foreign']
+                            );
+                            merge_record($records, $record);
                         }
                         $mapValue = $record->getProp($property);
                         $valueMaps[$mapValue]->addChild($record);
@@ -66,7 +90,11 @@ class QueryService
         return $records;
     }
 
-    protected function resolveJoinDemand(mixed $join, TempRecordIndex $index)
+    /**
+     * @param array<string, array<string, array<string, array<string, array<Record|RecordTree>>>>> $join
+     * @return array
+     */
+    protected function resolveJoinDemand(array $join)
     {
         $records = [];
         foreach ($join as $joinTable => $JoinSelect) {
@@ -81,7 +109,7 @@ class QueryService
                             $additionalWhere
                         );
                         foreach ($rows as $mmId => $row) {
-                            $mmRecord = $index->getRecord($table, $mmId);
+                            $mmRecord = $this->recordIndex->getRecord($table, $mmId);
                             if (null === $mmRecord) {
                                 $mmRecord = $this->recordFactory->createMmRecord(
                                     $joinTable,
@@ -91,7 +119,7 @@ class QueryService
                                 );
                                 if (!empty($row['local']['table']) || !empty($row['foreign']['table'])) {
                                     $uid = $row['local']['table']['uid'] ?? $row['foreign']['table']['uid'];
-                                    $tableRecord = $index->getRecord($table, $uid);
+                                    $tableRecord = $this->recordIndex->getRecord($table, $uid);
                                     if (null === $tableRecord) {
                                         $tableRecord = $this->recordFactory->createDatabaseRecord(
                                             $table,
@@ -99,6 +127,7 @@ class QueryService
                                             $row['local']['table'] ?? [],
                                             $row['foreign']['table'] ?? []
                                         );
+//                                    $records = merge_record($records, $tableRecord);
                                     }
                                     $mmRecord->addChild($tableRecord);
                                 }

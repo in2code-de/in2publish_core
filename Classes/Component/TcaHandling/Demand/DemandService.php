@@ -8,6 +8,7 @@ use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingS
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 
 use function array_replace_recursive;
+use function In2code\In2publishCore\flatten_records;
 
 class DemandService
 {
@@ -21,7 +22,7 @@ class DemandService
     public function buildDemandForRecords(array $records): array
     {
         $demand = [];
-        foreach ($records as $record) {
+        foreach (flatten_records($records) as $record) {
             $demand[] = $this->buildDemand($record);
         }
         return array_replace_recursive([], ...$demand);
@@ -30,7 +31,7 @@ class DemandService
     protected function buildDemand(DatabaseRecord $record): array
     {
         $demand = [];
-        $preProcessedTca = $this->preProcessedTca[$record->getTable()];
+        $preProcessedTca = $this->preProcessedTca[$record->getClassification()] ?? [];
         foreach ($preProcessedTca as $column) {
             $demand[] = $column['resolver']($record);
         }

@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Domain\Service;
 
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Domain\Model\DatabaseEntityRecord;
-use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\VirtualFlexFormRecord;
 use InvalidArgumentException;
@@ -122,7 +121,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
     /**
      * Replace ###REC_FIELD_fieldname### with it's value
      *
-     * @param DatabaseRecord $record
+     * @param DatabaseEntityRecord $record
      * @param string $string
      *
      * @return string
@@ -172,7 +171,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
             ];
 
             $pageTsConfig = $this->getPagesTsConfig($record->getPageId());
-            $tableIndex = $record->getTable() . '.';
+            $tableIndex = $record->getClassification() . '.';
             $fieldIndex = $propertyName . '.';
             foreach ($marker as $markerName => $filterFunc) {
                 if (false !== strpos($string, '###' . $markerName . '###')) {
@@ -242,7 +241,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
     /**
      * Replaces ###SITE:siteConfigKey### markers in TCA with their respective values
      */
-    protected function replaceSiteMarker(string $string, DatabaseRecord $record): string
+    protected function replaceSiteMarker(string $string, DatabaseEntityRecord $record): string
     {
         if (false === strpos($string, '###SITE:')) {
             return $string;
