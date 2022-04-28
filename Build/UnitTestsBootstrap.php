@@ -23,7 +23,6 @@ use TYPO3\CMS\Core\Core\RequestId;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\DependencyInjection\ContainerBuilder;
 use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\Package\Cache\PackageCacheInterface;
 use TYPO3\CMS\Core\Package\PackageManager;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -47,6 +46,8 @@ call_user_func(function () {
     if (!getenv('IN2PUBLISH_CONTEXT')) {
         putenv('IN2PUBLISH_CONTEXT=Local');
     }
+    require __DIR__ . '/../Functions/functions.php';
+
     $testbase = new Testbase();
 
     // These if's are for core testing (package typo3/cms) only. cms-composer-installer does
