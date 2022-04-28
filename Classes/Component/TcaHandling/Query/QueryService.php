@@ -37,7 +37,7 @@ class QueryService
     }
 
     /**
-     * @param array<string, array<string, array<string, array<string, array<Record|RecordTree>>>>> $demand
+     * @param array<string, array<string, array<string, array<string, array<int, array<Record|RecordTree>>>>>> $demand
      * @return array<string, array<int|string, Record>>
      */
     public function resolveDemand(array $demand): array
@@ -55,7 +55,7 @@ class QueryService
     }
 
     /**
-     * @param array<string, array<string, array<string, array<Record|RecordTree>>>> $select
+     * @param array<string, array<string, array<string, array<int, array<Record|RecordTree>>>>> $select
      * @return array<string, array<int|string, Record>>
      */
     protected function resolveSelectDemand(array $select): array
@@ -82,7 +82,9 @@ class QueryService
                             merge_record($records, $record);
                         }
                         $mapValue = $record->getProp($property);
-                        $valueMaps[$mapValue]->addChild($record);
+                        foreach ($valueMaps[$mapValue] as $parent) {
+                            $parent->addChild($record);
+                        }
                     }
                 }
             }
@@ -91,7 +93,7 @@ class QueryService
     }
 
     /**
-     * @param array<string, array<string, array<string, array<string, array<Record|RecordTree>>>>> $join
+     * @param array<string, array<string, array<string, array<string, array<int, array<Record|RecordTree>>>>>> $join
      * @return array
      */
     protected function resolveJoinDemand(array $join)
@@ -133,7 +135,9 @@ class QueryService
                                 }
                             }
                             $mapValue = $mmRecord->getProp($property);
-                            $valueMaps[$mapValue]->addChild($mmRecord);
+                            foreach ($valueMaps[$mapValue] as $parent) {
+                                $parent->addChild($mmRecord);
+                            }
                         }
                     }
                 }

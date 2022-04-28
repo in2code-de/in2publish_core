@@ -78,11 +78,11 @@ class DerServiceUmbenennen
             return $return;
         }
         $demand = [];
-        $demand['select'][$table]['']['uid'][$id] = $recordTree;
+        $demand['select'][$table]['']['uid'][$id][] = $recordTree;
 
         $transOrigPointerField = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] ?? null;
         if (null !== $transOrigPointerField) {
-            $demand['select'][$table][''][$transOrigPointerField][$id] = $recordTree;
+            $demand['select'][$table][''][$transOrigPointerField][$id][] = $recordTree;
         }
 
         return $this->queryService->resolveDemand($demand);
@@ -99,7 +99,7 @@ class DerServiceUmbenennen
         while ($recursionLimit > $currentRecursion++ && !empty($records)) {
             $demand = [];
             foreach ($records['pages'] ?? [] as $record) {
-                $demand['select']['pages']['']['pid'][$record->getId()] = $record;
+                $demand['select']['pages']['']['pid'][$record->getId()][] = $record;
             }
             $records = $this->queryService->resolveDemand($demand);
         }
@@ -117,7 +117,7 @@ class DerServiceUmbenennen
 
         foreach ($nonExcludedTables as $table) {
             foreach ($pages as $page) {
-                $demand['select'][$table]['']['pid'][$page->getId()] = $page;
+                $demand['select'][$table]['']['pid'][$page->getId()][] = $page;
             }
         }
         $records = $this->queryService->resolveDemand($demand);
@@ -131,7 +131,7 @@ class DerServiceUmbenennen
     public function findRecordsByTca(array $records): void
     {
         $currentRecursion = 0;
-        $recursionLimit = 7;
+        $recursionLimit = 8;
 
         while ($recursionLimit > $currentRecursion++ && !empty($records)) {
             $demand = $this->demandService->buildDemandForRecords($records);

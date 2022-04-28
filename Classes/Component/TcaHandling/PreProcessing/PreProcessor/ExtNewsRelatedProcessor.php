@@ -35,7 +35,7 @@ class ExtNewsRelatedProcessor extends AbstractProcessor
         return static function (Record $record) {
             $demands = [];
             $demands['join']['tx_news_domain_model_news_related_mm']['tx_news_domain_model_news']['']['uid_foreign'][$record->getId(
-            )] = $record;
+            )][] = $record;
             return $demands;
         };
     }

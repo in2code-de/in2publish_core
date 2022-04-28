@@ -93,10 +93,10 @@ class TextProcessor extends AbstractProcessor
             parse_str(htmlspecialchars_decode($urnParsed['query']), $data);
 
             if ('file' === $urnParsed['host'] && isset($data['uid'])) {
-                $demands['select']['sys_file']['']['uid'][$data['uid']] = $record;
+                $demands['select']['sys_file']['']['uid'][$data['uid']][] = $record;
             }
             if ('page' === $urnParsed['host'] && isset($data['uid'])) {
-                $demands['select']['pages']['']['uid'][$data['uid']] = $record;
+                $demands['select']['pages']['']['uid'][$data['uid']][] = $record;
             }
         }
         return $demands;

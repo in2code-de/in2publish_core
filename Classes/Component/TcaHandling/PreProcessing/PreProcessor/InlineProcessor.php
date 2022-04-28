@@ -101,7 +101,7 @@ class InlineProcessor extends AbstractProcessor
                 $additionalWhere
             ) {
                 $demands = [];
-                $demands['join'][$mmTable][$foreignTable][$additionalWhere][$selectField][$record->getId()] = $record;
+                $demands['join'][$mmTable][$foreignTable][$additionalWhere][$selectField][$record->getId()][] = $record;
                 return $demands;
             };
         }
@@ -132,7 +132,7 @@ class InlineProcessor extends AbstractProcessor
             }
 
             $demands = [];
-            $demands['select'][$foreignTable][$additionalWhere][$foreignField][$record->getId()] = $record;
+            $demands['select'][$foreignTable][$additionalWhere][$foreignField][$record->getId()][] = $record;
             return $demands;
         };
     }

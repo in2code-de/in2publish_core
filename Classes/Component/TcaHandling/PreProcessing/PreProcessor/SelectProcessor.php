@@ -132,7 +132,7 @@ class SelectProcessor extends AbstractProcessor
                 }
 
                 $demand = [];
-                $demand['join'][$mmTable][$foreignTable][$additionalWhere][$selectField][$record->getId()] = $record;
+                $demand['join'][$mmTable][$foreignTable][$additionalWhere][$selectField][$record->getId()][] = $record;
                 return $demand;
             };
         }
@@ -156,7 +156,7 @@ class SelectProcessor extends AbstractProcessor
             $demands = [];
             $splittedValues = GeneralUtility::trimExplode(',', $value);
             foreach ($splittedValues as $splittedValue) {
-                $demands['select'][$foreignTable][$additionalWhere]['uid'][$splittedValue] = $record;
+                $demands['select'][$foreignTable][$additionalWhere]['uid'][$splittedValue][] = $record;
             }
 
             return $demands;
