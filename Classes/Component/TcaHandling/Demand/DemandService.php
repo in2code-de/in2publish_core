@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\TcaHandling\Demand;
 
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 
 use function array_replace_recursive;
-use function In2code\In2publishCore\flatten_records;
 
 class DemandService
 {
@@ -19,10 +19,10 @@ class DemandService
         $this->preProcessedTca = $tcaPreProcessingService->getCompatibleTcaParts();
     }
 
-    public function buildDemandForRecords(array $records): array
+    public function buildDemandForRecords(RecordCollection $records): array
     {
         $demand = [];
-        foreach (flatten_records($records) as $record) {
+        foreach ($records->getRecordsFlat() as $record) {
             $demand[] = $this->buildDemand($record);
         }
         return array_replace_recursive([], ...$demand);

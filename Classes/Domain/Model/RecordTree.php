@@ -2,8 +2,6 @@
 
 namespace In2code\In2publishCore\Domain\Model;
 
-use function In2code\In2publishCore\merge_record;
-
 class RecordTree
 {
     /**
@@ -21,6 +19,6 @@ class RecordTree
 
     public function addChild(Record $record): void
     {
-        merge_record($this->children, $record);
+        $this->children[$record->getClassification()][$record->getId()] = $record;
     }
 }

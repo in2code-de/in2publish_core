@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Query;
 
+use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Component\TcaHandling\RecordIndex;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
@@ -11,9 +12,6 @@ use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing\Domain\Repository\DualDatabaseRepository;
 
 use function array_keys;
-use function array_merge_recursive;
-use function In2code\In2publishCore\merge_record;
-use function In2code\In2publishCore\merge_records;
 
 class QueryService
 {
@@ -38,29 +36,29 @@ class QueryService
 
     /**
      * @param array<string, array<string, array<string, array<string, array<int, array<Record|RecordTree>>>>>> $demand
-     * @return array<string, array<int|string, Record>>
+     * @return RecordCollection<int, Record>
      */
-    public function resolveDemand(array $demand): array
+    public function resolveDemand(array $demand): RecordCollection
     {
-        $return = [];
+        $recordCollection = new RecordCollection();
         if (!empty($demand['select'])) {
-            $records = $this->resolveSelectDemand($demand['select']);
-            merge_records($return, $records);
+            $selectRecordCollection = $this->resolveSelectDemand($demand['select']);
+            $recordCollection->addRecordCollection($selectRecordCollection);
         }
         if (!empty($demand['join'])) {
-            $records[] = $this->resolveJoinDemand($demand['join']);
-            merge_records($return, $records);
+            $joinRecordCollection = $this->resolveJoinDemand($demand['join']);
+            $recordCollection->addRecordCollection($joinRecordCollection);
         }
-        return $return;
+        return $recordCollection;
     }
 
     /**
      * @param array<string, array<string, array<string, array<int, array<Record|RecordTree>>>>> $select
-     * @return array<string, array<int|string, Record>>
+     * @return RecordCollection<int, Record>
      */
-    protected function resolveSelectDemand(array $select): array
+    protected function resolveSelectDemand(array $select): RecordCollection
     {
-        $records = [];
+        $recordCollection = new RecordCollection();
         foreach ($select as $table => $tableSelect) {
             foreach ($tableSelect as $additionalWhere => $properties) {
                 foreach ($properties as $property => $valueMaps) {
@@ -79,7 +77,7 @@ class QueryService
                                 $row['local'],
                                 $row['foreign']
                             );
-                            merge_record($records, $record);
+                            $recordCollection->addRecord($record);
                         }
                         $mapValue = $record->getProp($property);
                         foreach ($valueMaps[$mapValue] as $parent) {
@@ -89,16 +87,16 @@ class QueryService
                 }
             }
         }
-        return $records;
+        return $recordCollection;
     }
 
     /**
      * @param array<string, array<string, array<string, array<string, array<int, array<Record|RecordTree>>>>>> $join
-     * @return array
+     * @return RecordCollection<int, Record>
      */
-    protected function resolveJoinDemand(array $join)
+    protected function resolveJoinDemand(array $join): RecordCollection
     {
-        $records = [];
+        $recordCollection = new RecordCollection();
         foreach ($join as $joinTable => $JoinSelect) {
             foreach ($JoinSelect as $table => $tableSelect) {
                 foreach ($tableSelect as $additionalWhere => $properties) {
@@ -143,6 +141,6 @@ class QueryService
                 }
             }
         }
-        return $records;
+        return $recordCollection;
     }
 }

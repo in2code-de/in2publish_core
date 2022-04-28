@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\FlexProcessor;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\FlexFormFlatteningService;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Domain\Model\AbstractDatabaseRecord;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
@@ -80,11 +81,11 @@ class FlexProcessorTest extends UnitTestCase
         $flexFormService = $this->createMock(FlexFormService::class);
         $flexFormFlatteningService = $this->createMock(FlexFormFlatteningService::class);
         $flexFormFlatteningService->expects($this->exactly(2))
-                                  ->method('flattenFlexFormDefinition')
-                                  ->willReturnOnConsecutiveCalls(
-                                      ['foo' => 'bar'],
-                                      ['bar' => 'baz']
-                                  );
+            ->method('flattenFlexFormDefinition')
+            ->willReturnOnConsecutiveCalls(
+                ['foo' => 'bar'],
+                ['bar' => 'baz']
+            );
         $tcaPreProcessingService = $this->createMock(TcaPreProcessingService::class);
         $tcaPreProcessingService->expects($this->exactly(2))->method('preProcessTcaColumns')->withConsecutive(
             ['tableNameFoo/fieldNameBar/foo_pi1,bar', ['foo' => 'bar']],
@@ -111,7 +112,7 @@ class FlexProcessorTest extends UnitTestCase
     /** @noinspection JsonEncodingApiUsageInspection */
     public function testFlexProcessorResolvesDemandForFlexFormFields(): void
     {
-        $databaseRecord = new DatabaseRecord('tableNameFoo', 1, ['fieldNameBar' => 1], []);
+        $databaseRecord = new DatabaseRecord('tableNameFoo', 1, ['fieldNameBar' => 1], [], []);
 
         $flexProcessor = new FlexProcessor();
 
@@ -135,21 +136,22 @@ class FlexProcessorTest extends UnitTestCase
         ];
 
         $mockedSelectDemand = [];
-        $mockedSelectDemand['select']['tableNameBar']['columnNameFoo'][3] = $databaseRecord;
+        $mockedSelectDemand['select']['tableNameBar']['columnNameFoo'][3]['tableNameFoo' . "\0" . 1] = $databaseRecord;
         $mockedInlineDemand = [];
-        $mockedInlineDemand['select']['tableNameFoo']['columnNameBar'][5] = $databaseRecord;
+        $mockedInlineDemand['select']['tableNameFoo']['columnNameBar'][5]['tableNameFoo' . "\0" . 1] = $databaseRecord;
 
         $called = ['select.fooBar' => 0, 'inline.barFoo' => 0];
 
         $compatibleTcaParts = [];
         $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['select.fooBar']['resolver'] = function ($record) use (&$called, $mockedSelectDemand) {
             $called['select.fooBar']++;
-            $this->assertInstanceOf(DatabaseRecord::class, $record);
+            $this->assertInstanceOf(AbstractDatabaseRecord::class, $record);
             return $mockedSelectDemand;
         };
-        $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['inline.barFoo']['resolver'] = function ($record) use (&$called, $mockedInlineDemand) {
+        $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['inline.barFoo']['resolver'] = function ($record
+        ) use (&$called, $mockedInlineDemand) {
             $called['inline.barFoo']++;
-            $this->assertInstanceOf(DatabaseRecord::class, $record);
+            $this->assertInstanceOf(AbstractDatabaseRecord::class, $record);
             return $mockedInlineDemand;
         };
 
@@ -179,8 +181,8 @@ class FlexProcessorTest extends UnitTestCase
         $demand = $resolver($databaseRecord);
 
         $expectedDemand = [];
-        $expectedDemand['select']['tableNameBar']['columnNameFoo'][3] = $databaseRecord;
-        $expectedDemand['select']['tableNameFoo']['columnNameBar'][5] = $databaseRecord;
+        $expectedDemand['select']['tableNameBar']['columnNameFoo'][3]['tableNameFoo' . "\0" . 1] = $databaseRecord;
+        $expectedDemand['select']['tableNameFoo']['columnNameBar'][5]['tableNameFoo' . "\0" . 1] = $databaseRecord;
 
         $this->assertSame($expectedDemand, $demand);
         $this->assertSame(1, $called['select.fooBar']);

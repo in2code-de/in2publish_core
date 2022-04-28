@@ -59,7 +59,7 @@ class TextProcessorTest extends UnitTestCase
         $demand = $resolver($databaseRecord);
 
         $expectedDemand = [];
-        $expectedDemand['select']['pages']['']['uid'][14] = $databaseRecord;
+        $expectedDemand['select']['pages']['']['uid'][14]['tableNameFoo' . "\0" . 1] = $databaseRecord;
 
         $this->assertSame($expectedDemand, $demand);
     }
@@ -87,7 +87,7 @@ class TextProcessorTest extends UnitTestCase
         $demand = $resolver($databaseRecord);
 
         $expectedDemand = [];
-        $expectedDemand['select']['sys_file']['']['uid'][14] = $databaseRecord;
+        $expectedDemand['select']['sys_file']['']['uid'][14]['tableNameFoo' . "\0" . 1] = $databaseRecord;
 
         $this->assertSame($expectedDemand, $demand);
     }
@@ -142,8 +142,8 @@ class TextProcessorTest extends UnitTestCase
         $demand = $resolver($databaseRecord);
 
         $expectedDemand = [];
-        $expectedDemand['select']['pages']['']['uid'][14] = $databaseRecord;
-        $expectedDemand['select']['pages']['']['uid'][15] = $databaseRecord;
+        $expectedDemand['select']['pages']['']['uid'][14]['tableNameFoo' . "\0" . 1] = $databaseRecord;
+        $expectedDemand['select']['pages']['']['uid'][15]['tableNameFoo' . "\0" . 1] = $databaseRecord;
 
         $this->assertSame($expectedDemand, $demand);
     }

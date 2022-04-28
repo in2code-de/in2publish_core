@@ -100,14 +100,15 @@ class SelectProcessorTest extends UnitTestCase
         $resolver = $processingResult->getValue()['resolver'];
 
         $databaseRecord = $this->createMock(DatabaseRecord::class);
+        $databaseRecord->method('getClassification')->willReturn('tableNameFoo');
         $databaseRecord->method('getId')->willReturn(4);
         $databaseRecord->method('getProp')->willReturn('15, 56');
 
         $demand = $resolver($databaseRecord);
 
         $expectedDemand = [];
-        $expectedDemand['select']['tableNameBeng']['fieldname = "fieldvalue"']['uid'][15] = $databaseRecord;
-        $expectedDemand['select']['tableNameBeng']['fieldname = "fieldvalue"']['uid'][56] = $databaseRecord;
+        $expectedDemand['select']['tableNameBeng']['fieldname = "fieldvalue"']['uid'][15]['tableNameFoo' . "\0" . 4] = $databaseRecord;
+        $expectedDemand['select']['tableNameBeng']['fieldname = "fieldvalue"']['uid'][56]['tableNameFoo' . "\0" . 4] = $databaseRecord;
 
         $this->assertSame($expectedDemand, $demand);
     }
@@ -142,11 +143,12 @@ class SelectProcessorTest extends UnitTestCase
 
         $databaseRecord = $this->createMock(DatabaseRecord::class);
         $databaseRecord->method('getId')->willReturn(4);
+        $databaseRecord->method('getClassification')->willReturn('tableNameFoo');
 
         $demand = $resolver($databaseRecord);
 
         $expectedDemand = [];
-        $expectedDemand['join']['tableNameFoo_tableNameBeng_MM']['tableNameBeng']['fieldname = "fieldvalue" AND fieldName2 = "fieldValue2"']['uid_local'][4] = $databaseRecord;
+        $expectedDemand['join']['tableNameFoo_tableNameBeng_MM']['tableNameBeng']['fieldname = "fieldvalue" AND fieldName2 = "fieldValue2"']['uid_local'][4]['tableNameFoo' . "\0" . 4] = $databaseRecord;
 
         $this->assertSame($expectedDemand, $demand);
     }

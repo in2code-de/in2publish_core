@@ -8,18 +8,22 @@ use In2code\In2publishCore\Domain\Model\Record;
 
 use function array_keys;
 use function array_search;
-use function In2code\In2publishCore\merge_record;
 
 class RecordIndex
 {
     /**
-     * @var array<string, array<array-key, Record>>
+     * @var RecordCollection<int, Record>
      */
-    private $records = [];
+    private $records;
+
+    public function __construct()
+    {
+        $this->records = new RecordCollection();
+    }
 
     public function addRecord(Record $record): void
     {
-        merge_record($this->records, $record);
+        $this->records->addRecord($record);
         foreach ($record->getChildren() as $childRecord) {
             $this->addRecord($childRecord);
         }
@@ -40,7 +44,7 @@ class RecordIndex
      */
     public function getRecord(string $classification, $id): ?Record
     {
-        return $this->records[$classification][$id] ?? null;
+        return $this->records->getRecord($classification, $id);
     }
 
     public function getRecordByClassification(string $classification): array
@@ -50,7 +54,7 @@ class RecordIndex
 
     public function connectTranslations(): void
     {
-        $classifications = array_keys($this->records);
+        $classifications = $this->records->getClassifications();
         foreach ($classifications as $idx => $classification) {
             if (
                 !isset($GLOBALS['TCA'][$classification])

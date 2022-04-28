@@ -34,6 +34,7 @@ use In2code\In2publishCore\Domain\Model\Record;
 
 use function array_replace_recursive;
 use function htmlspecialchars_decode;
+use function In2code\In2publishCore\record_key;
 use function parse_str;
 use function parse_url;
 use function preg_match_all;
@@ -93,10 +94,10 @@ class TextProcessor extends AbstractProcessor
             parse_str(htmlspecialchars_decode($urnParsed['query']), $data);
 
             if ('file' === $urnParsed['host'] && isset($data['uid'])) {
-                $demands['select']['sys_file']['']['uid'][$data['uid']][] = $record;
+                $demands['select']['sys_file']['']['uid'][$data['uid']][record_key($record)] = $record;
             }
             if ('page' === $urnParsed['host'] && isset($data['uid'])) {
-                $demands['select']['pages']['']['uid'][$data['uid']][] = $record;
+                $demands['select']['pages']['']['uid'][$data['uid']][record_key($record)] = $record;
             }
         }
         return $demands;

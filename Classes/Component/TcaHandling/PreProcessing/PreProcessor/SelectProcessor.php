@@ -38,6 +38,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_filter;
 use function array_key_exists;
 use function implode;
+use function In2code\In2publishCore\record_key;
 use function preg_match;
 use function str_starts_with;
 use function substr;
@@ -132,7 +133,7 @@ class SelectProcessor extends AbstractProcessor
                 }
 
                 $demand = [];
-                $demand['join'][$mmTable][$foreignTable][$additionalWhere][$selectField][$record->getId()][] = $record;
+                $demand['join'][$mmTable][$foreignTable][$additionalWhere][$selectField][$record->getId()][record_key($record)] = $record;
                 return $demand;
             };
         }
@@ -156,7 +157,7 @@ class SelectProcessor extends AbstractProcessor
             $demands = [];
             $splittedValues = GeneralUtility::trimExplode(',', $value);
             foreach ($splittedValues as $splittedValue) {
-                $demands['select'][$foreignTable][$additionalWhere]['uid'][$splittedValue][] = $record;
+                $demands['select'][$foreignTable][$additionalWhere]['uid'][$splittedValue][record_key($record)] = $record;
             }
 
             return $demands;
