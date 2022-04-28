@@ -34,6 +34,7 @@ use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseI
 use In2code\In2publishCore\Domain\Model\Record;
 
 use function implode;
+use function In2code\In2publishCore\record_key;
 use function preg_match;
 use function substr;
 use function trim;
@@ -101,7 +102,7 @@ class InlineProcessor extends AbstractProcessor
                 $additionalWhere
             ) {
                 $demands = [];
-                $demands['join'][$mmTable][$foreignTable][$additionalWhere][$selectField][$record->getId()][] = $record;
+                $demands['join'][$mmTable][$foreignTable][$additionalWhere][$selectField][$record->getId()][record_key($record)] = $record;
                 return $demands;
             };
         }
@@ -132,7 +133,7 @@ class InlineProcessor extends AbstractProcessor
             }
 
             $demands = [];
-            $demands['select'][$foreignTable][$additionalWhere][$foreignField][$record->getId()][] = $record;
+            $demands['select'][$foreignTable][$additionalWhere][$foreignField][$record->getId()][record_key($record)] = $record;
             return $demands;
         };
     }

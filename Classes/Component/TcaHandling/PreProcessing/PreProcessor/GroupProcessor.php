@@ -39,6 +39,7 @@ use function array_key_exists;
 use function array_merge;
 use function array_unique;
 use function implode;
+use function In2code\In2publishCore\record_key;
 use function preg_match;
 use function strpos;
 use function strrpos;
@@ -153,7 +154,7 @@ class GroupProcessor extends AbstractProcessor
                         $table = substr($value, 0, $position);
                         $id = substr($value, $position + 1);
 
-                        $demands['join'][$mmTable][$table][$additionalWhere][$selectField][$id][] = $record;
+                        $demands['join'][$mmTable][$table][$additionalWhere][$selectField][$id][record_key($record)] = $record;
                     }
                     return $demands;
                 };
@@ -166,7 +167,7 @@ class GroupProcessor extends AbstractProcessor
                 $additionalWhere
             ) {
                 $demands = [];
-                $demands['join'][$mmTable][$foreignTable][$additionalWhere][$selectField][$record->getId()][] = $record;
+                $demands['join'][$mmTable][$foreignTable][$additionalWhere][$selectField][$record->getId()][record_key($record)] = $record;
                 return $demands;
             };
         }
@@ -189,7 +190,7 @@ class GroupProcessor extends AbstractProcessor
                     $table = substr($value, 0, $position);
                     $id = substr($value, $position + 1);
 
-                    $demands['select'][$table]['']['uid'][$id][] = $record;
+                    $demands['select'][$table]['']['uid'][$id][record_key($record)] = $record;
                 }
                 return $demands;
             };
@@ -205,7 +206,7 @@ class GroupProcessor extends AbstractProcessor
             $demands = [];
             $values = array_filter(array_merge($localEntries, $foreignEntries));
             foreach ($values as $value) {
-                $demands['select'][$foreignTable]['']['uid'][$value][] = $record;
+                $demands['select'][$foreignTable]['']['uid'][$value][record_key($record)] = $record;
             }
 
             return $demands;
