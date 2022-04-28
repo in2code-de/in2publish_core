@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor;
 
-use Closure;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\ProcessingResult;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\NoOpResolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 
 class ExtNewsRelatedFromProcessor extends AbstractProcessor
 {
@@ -29,10 +30,8 @@ class ExtNewsRelatedFromProcessor extends AbstractProcessor
         );
     }
 
-    protected function buildResolver(string $table, string $column, array $processedTca): Closure
+    protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
-        return static function () {
-            // No-op
-        };
+        return new NoOpResolver();
     }
 }

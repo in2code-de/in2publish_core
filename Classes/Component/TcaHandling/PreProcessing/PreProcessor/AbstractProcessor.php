@@ -29,11 +29,11 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
  * This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use Closure;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\Exception\MissingPreProcessorTypeException;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\ProcessingResult;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessor;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 
 use function array_key_exists;
 use function array_keys;
@@ -41,7 +41,7 @@ use function array_merge;
 
 abstract class AbstractProcessor implements TcaPreProcessor
 {
-    protected const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
+    public const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
 
     protected TcaPreProcessingService $tcaPreProcessingService;
 
@@ -144,5 +144,5 @@ abstract class AbstractProcessor implements TcaPreProcessor
         return [];
     }
 
-    abstract protected function buildResolver(string $table, string $column, array $processedTca): Closure;
+    abstract protected function buildResolver(string $table, string $column, array $processedTca): Resolver;
 }

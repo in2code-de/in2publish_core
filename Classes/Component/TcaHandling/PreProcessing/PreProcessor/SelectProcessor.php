@@ -29,17 +29,15 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Closure;
-use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
-use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\SelectMmResolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\SelectResolver;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_filter;
 use function array_key_exists;
 use function implode;
-use function preg_match;
 use function str_starts_with;
 use function substr;
 use function trim;
@@ -95,7 +93,7 @@ class SelectProcessor extends AbstractProcessor
         return [];
     }
 
-    protected function buildResolver(string $table, string $column, array $processedTca): Closure
+    protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
         $foreignTable = $processedTca['foreign_table'];
         $foreignTableWhere = $processedTca['foreign_table_where'] ?? '';
@@ -119,46 +117,24 @@ class SelectProcessor extends AbstractProcessor
                 $foreignTableWhere = trim(substr($foreignTableWhere, 4));
             }
 
-            return function (Demands $demands, Record $record) use (
+            return new SelectMmResolver(
+                $this->databaseIdentifierQuotingService,
+                $this->replaceMarkersService,
+                $foreignTableWhere,
                 $column,
                 $mmTable,
                 $foreignTable,
-                $foreignTableWhere,
                 $selectField
-            ): void {
-                $additionalWhere = $this->replaceMarkersService->replaceMarkers($record, $foreignTableWhere, $column);
-                $additionalWhere = $this->databaseIdentifierQuotingService->dododo($additionalWhere);
-                if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
-                    $additionalWhere = $matches['where'];
-                }
-
-                $value = $record->getId();
-
-                $demands->addJoin($mmTable, $foreignTable, $additionalWhere, $selectField, $value, $record);
-            };
+            );
         }
 
-        return function (Demands $demands, Record $record) use ($column, $foreignTable, $foreignTableWhere): void {
-            $value = $record->getProp($column);
-            if (empty($value)) {
-                return;
-            }
-
-            $additionalWhere = $this->replaceMarkersService->replaceMarkers($record, $foreignTableWhere, $column);
-            $additionalWhere = trim($additionalWhere);
-            if (str_starts_with($additionalWhere, 'AND ')) {
-                $additionalWhere = trim(substr($additionalWhere, 4));
-            }
-            $additionalWhere = $this->databaseIdentifierQuotingService->dododo($additionalWhere);
-            if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
-                $additionalWhere = $matches['where'];
-            }
-
-            $splittedValues = GeneralUtility::trimExplode(',', $value);
-            foreach ($splittedValues as $splittedValue) {
-                $demands->addSelect($foreignTable, $additionalWhere, 'uid', $splittedValue, $record);
-            }
-        };
+        return new SelectResolver(
+            $this->databaseIdentifierQuotingService,
+            $this->replaceMarkersService,
+            $column,
+            $foreignTable,
+            $foreignTableWhere
+        );
     }
 
     /**

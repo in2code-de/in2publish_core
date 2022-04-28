@@ -29,20 +29,11 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Closure;
-use In2code\In2publishCore\Component\TcaHandling\Demands;
-use In2code\In2publishCore\Domain\Model\Record;
-
-use function htmlspecialchars_decode;
-use function parse_str;
-use function parse_url;
-use function preg_match_all;
-use function strpos;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\TextResolver;
 
 class TextProcessor extends AbstractProcessor
 {
-    public const REGEX_T3URN = '~[\"\'\s](?P<URN>t3\://(?:file|page)\?uid=\d+)[\"\'\s]~';
-
     protected string $type = 'text';
 
     protected array $required = [
@@ -60,40 +51,8 @@ class TextProcessor extends AbstractProcessor
         return [];
     }
 
-    protected function buildResolver(string $table, string $column, array $processedTca): Closure
+    protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
-        return function (Demands $demands, Record $record) use ($column): void {
-            $localValue = $record->getLocalProps()[$column] ?? '';
-            $foreignValue = $record->getForeignProps()[$column] ?? '';
-
-            $values = $localValue === $foreignValue ? [$localValue] : [$localValue, $foreignValue];
-            foreach ($values as $text) {
-                $this->findRelationsInText($demands, $text, $record);
-            }
-        };
-    }
-
-    protected function findRelationsInText(Demands $demands, string $text, Record $record): void
-    {
-        if (strpos($text, 't3://') === false) {
-            return;
-        }
-        preg_match_all(self::REGEX_T3URN, $text, $matches);
-        if (empty($matches['URN'])) {
-            return;
-        }
-
-        foreach ($matches['URN'] as $urn) {
-            // Do NOT use LinkService because the URN might either be not local or not available or trigger FAL.
-            $urnParsed = parse_url($urn);
-            parse_str(htmlspecialchars_decode($urnParsed['query']), $data);
-
-            if ('file' === $urnParsed['host'] && isset($data['uid'])) {
-                $demands->addSelect('sys_file', '', 'uid', $data['uid'], $record);
-            }
-            if ('page' === $urnParsed['host'] && isset($data['uid'])) {
-                $demands->addSelect('pages', '', 'uid', $data['uid'], $record);
-            }
-        }
+        return new TextResolver($column);
     }
 }

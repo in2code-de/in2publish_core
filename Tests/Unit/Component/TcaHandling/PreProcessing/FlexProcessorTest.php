@@ -8,8 +8,10 @@ use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\FlexProcessor;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\FlexFormFlatteningService;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use In2code\In2publishCore\Domain\Model\AbstractDatabaseRecord;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Service\FlexFormService;
@@ -139,22 +141,42 @@ class FlexProcessorTest extends UnitTestCase
         $called = ['select.fooBar' => 0, 'inline.barFoo' => 0];
 
         $compatibleTcaParts = [];
-        $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['select.fooBar']['resolver'] = function (
-            Demands $demands,
-            $record
-        ) use (&$called, $databaseRecord) {
-            $called['select.fooBar']++;
-            $this->assertInstanceOf(AbstractDatabaseRecord::class, $record);
-            $demands->addSelect('tableNameBar','', 'columnNameFoo', 3, $databaseRecord);
-        };
-        $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['inline.barFoo']['resolver'] = function (
-            Demands $demands,
-            $record
-        ) use (&$called, $databaseRecord) {
-            $called['inline.barFoo']++;
-            $this->assertInstanceOf(AbstractDatabaseRecord::class, $record);
-            $demands->addSelect('tableNameFoo','', 'columnNameBar', 5, $databaseRecord);
-        };
+        $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['select.fooBar']['resolver'] =
+            new class($called, $databaseRecord) implements Resolver {
+
+                protected array $called;
+                protected DatabaseRecord $databaseRecord;
+
+                public function __construct(array &$called, DatabaseRecord $databaseRecord)
+                {
+                    $this->called = &$called;
+                    $this->databaseRecord = $databaseRecord;
+                }
+
+                public function resolve(Demands $demands, Record $record): void
+                {
+                    $this->called['select.fooBar']++;
+                    $demands->addSelect('tableNameBar', '', 'columnNameFoo', 3, $this->databaseRecord);
+                }
+            };
+        $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['inline.barFoo']['resolver'] =
+            new class($called, $databaseRecord) implements Resolver {
+
+                protected array $called;
+                protected DatabaseRecord $databaseRecord;
+
+                public function __construct(array &$called, DatabaseRecord $databaseRecord)
+                {
+                    $this->called = &$called;
+                    $this->databaseRecord = $databaseRecord;
+                }
+
+                public function resolve(Demands $demands, Record $record): void
+                {
+                    $this->called['inline.barFoo']++;
+                    $demands->addSelect('tableNameFoo', '', 'columnNameBar', 5, $this->databaseRecord);
+                }
+            };
 
         $flexFormService = $this->createMock(FlexFormService::class);
         $flexFormService->method('convertFlexFormContentToArray')->willReturn($flexFormContent);
@@ -177,10 +199,11 @@ class FlexProcessorTest extends UnitTestCase
 
         $processingResult = $flexProcessor->process('tableNameFoo', 'fieldNameBar', $flexFieldTca);
 
+        /** @var Resolver $resolver */
         $resolver = $processingResult->getValue()['resolver'];
 
         $demands = new Demands();
-        $resolver($demands, $databaseRecord);
+        $resolver->resolve($demands, $databaseRecord);
 
         $expectedDemand = [];
         $expectedDemand['tableNameBar']['']['columnNameFoo'][3]['tableNameFoo' . "\0" . 1] = $databaseRecord;

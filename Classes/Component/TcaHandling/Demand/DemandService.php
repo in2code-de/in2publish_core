@@ -7,6 +7,9 @@ namespace In2code\In2publishCore\Component\TcaHandling\Demand;
 use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
+
+use function array_column;
 
 class DemandService
 {
@@ -22,8 +25,10 @@ class DemandService
         $demand = new Demands();
         foreach ($records->getRecordsFlat() as $record) {
             $preProcessedTca = $this->preProcessedTca[$record->getClassification()] ?? [];
-            foreach ($preProcessedTca as $column) {
-                $column['resolver']($demand, $record);
+            /** @var Resolver $resolver */
+            $resolvers = array_column($preProcessedTca, 'resolver');
+            foreach ($resolvers as $resolver) {
+                $resolver->resolve($demand, $record);
             }
         }
         return $demand;

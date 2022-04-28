@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor;
 
-use Closure;
-use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
-use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\StaticJoinResolver;
 
 class ExtNewsRelatedProcessor extends AbstractProcessor
 {
@@ -31,17 +30,13 @@ class ExtNewsRelatedProcessor extends AbstractProcessor
         return 'related';
     }
 
-    protected function buildResolver(string $table, string $column, array $processedTca): Closure
+    protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
-        return static function (Demands $demands, Record $record): void {
-            $demands->addJoin(
-                'tx_news_domain_model_news_related_mm',
-                'tx_news_domain_model_news',
-                '',
-                'uid_foreign',
-                $record->getId(),
-                $record
-            );
-        };
+        return new StaticJoinResolver(
+            'tx_news_domain_model_news_related_mm',
+            'tx_news_domain_model_news',
+            '',
+            'uid_foreign'
+        );
     }
 }

@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing;
 use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\SelectProcessor;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Tests\UnitTestCase;
@@ -17,7 +18,12 @@ class SelectProcessorTest extends UnitTestCase
 {
     public function testSelectProcessorReturnsCompatibleResultForCompatibleColumn(): void
     {
+        $quotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
+        $replaceMarkersService = $this->createMock(ReplaceMarkersService::class);
+
         $selectProcessor = new SelectProcessor();
+        $selectProcessor->injectDatabaseIdentifierQuotingService($quotingService);
+        $selectProcessor->injectReplaceMarkersService($replaceMarkersService);
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'select',
             'foreign_table' => 'tableNameBeng',
@@ -43,7 +49,12 @@ class SelectProcessorTest extends UnitTestCase
     public function testSelectProcessorFlagsColumnsWithForbiddenTcaAsIncompatible(array $tca): void
     {
         $tca = array_merge($tca, ['type' => 'select', 'foreign_table' => 'tableNameBeng']);
+        $quotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
+        $replaceMarkersService = $this->createMock(ReplaceMarkersService::class);
+
         $selectProcessor = new SelectProcessor();
+        $selectProcessor->injectDatabaseIdentifierQuotingService($quotingService);
+        $selectProcessor->injectReplaceMarkersService($replaceMarkersService);
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
         $this->assertFalse($processingResult->isCompatible());
     }
@@ -71,7 +82,12 @@ class SelectProcessorTest extends UnitTestCase
             'MM_table_where' => '',
             'rootLevel' => '',
         ];
+        $quotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
+        $replaceMarkersService = $this->createMock(ReplaceMarkersService::class);
+
         $selectProcessor = new SelectProcessor();
+        $selectProcessor->injectDatabaseIdentifierQuotingService($quotingService);
+        $selectProcessor->injectReplaceMarkersService($replaceMarkersService);
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $bigTca);
         $this->assertSame($expectedTca, $processingResult->getValue()['tca']);
     }
@@ -92,12 +108,16 @@ class SelectProcessorTest extends UnitTestCase
         $diqs = $this->createMock(DatabaseIdentifierQuotingService::class);
         $diqs->method('dododo')->willReturnArgument(0);
 
+        $quotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
+
         $selectProcessor = new SelectProcessor();
+        $selectProcessor->injectDatabaseIdentifierQuotingService($quotingService);
         $selectProcessor->injectReplaceMarkersService($replaceMarkerService);
         $selectProcessor->injectDatabaseIdentifierQuotingService($diqs);
 
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
 
+        /** @var Resolver $resolver */
         $resolver = $processingResult->getValue()['resolver'];
 
         $databaseRecord = $this->createMock(DatabaseRecord::class);
@@ -106,7 +126,7 @@ class SelectProcessorTest extends UnitTestCase
         $databaseRecord->method('getProp')->willReturn('15, 56');
 
         $demands = new Demands();
-        $resolver($demands, $databaseRecord);
+        $resolver->resolve($demands, $databaseRecord);
 
         $expectedDemand = [];
         $expectedDemand['tableNameBeng']['fieldname = "fieldvalue"']['uid'][15]['tableNameFoo' . "\0" . 4] = $databaseRecord;
@@ -141,6 +161,7 @@ class SelectProcessorTest extends UnitTestCase
 
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
 
+        /** @var Resolver $resolver */
         $resolver = $processingResult->getValue()['resolver'];
 
         $databaseRecord = $this->createMock(DatabaseRecord::class);
@@ -148,7 +169,7 @@ class SelectProcessorTest extends UnitTestCase
         $databaseRecord->method('getClassification')->willReturn('tableNameFoo');
 
         $demands = new Demands();
-        $resolver($demands, $databaseRecord);
+        $resolver->resolve($demands, $databaseRecord);
 
         $expectedDemand = [];
         $expectedDemand['tableNameFoo_tableNameBeng_MM']['tableNameBeng']['fieldname = "fieldvalue" AND fieldName2 = "fieldValue2"']['uid_local'][4]['tableNameFoo' . "\0" . 4] = $databaseRecord;

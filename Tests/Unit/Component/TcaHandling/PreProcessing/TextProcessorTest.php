@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing;
 use Closure;
 use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\TextProcessor;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
@@ -34,7 +35,7 @@ class TextProcessorTest extends UnitTestCase
             'type' => 'text',
             'enableRichtext' => true,
         ]);
-        $this->assertInstanceOf(Closure::class, $value['resolver']);
+        $this->assertInstanceOf(Resolver::class, $value['resolver']);
     }
 
     /**
@@ -56,9 +57,10 @@ class TextProcessorTest extends UnitTestCase
         $databaseRecord->method('getLocalProps')->willReturn(['fieldNameBar' => 'lalala \'t3://page?uid=14\' fofofo']);
         $databaseRecord->method('getForeignProps')->willReturn([]);
 
+        /** @var Resolver $resolver */
         $resolver = $processingResult->getValue()['resolver'];
         $demands = new Demands();
-        $resolver($demands, $databaseRecord);
+        $resolver->resolve($demands, $databaseRecord);
 
         $expectedDemand = [];
         $expectedDemand['pages']['']['uid'][14]['tableNameFoo' . "\0" . 1] = $databaseRecord;
@@ -87,8 +89,9 @@ class TextProcessorTest extends UnitTestCase
 
         $demands = new Demands();
 
+        /** @var Resolver $resolver */
         $resolver = $processingResult->getValue()['resolver'];
-        $resolver($demands, $databaseRecord);
+        $resolver->resolve($demands, $databaseRecord);
 
         $expectedDemand = [];
         $expectedDemand['sys_file']['']['uid'][14]['tableNameFoo' . "\0" . 1] = $databaseRecord;
@@ -117,8 +120,9 @@ class TextProcessorTest extends UnitTestCase
 
         $demands = new Demands();
 
+        /** @var Resolver $resolver */
         $resolver = $processingResult->getValue()['resolver'];
-        $resolver($demands, $databaseRecord);
+        $resolver->resolve($demands, $databaseRecord);
 
         $expectedDemand = [];
 
@@ -146,8 +150,9 @@ class TextProcessorTest extends UnitTestCase
 
         $demands = new Demands();
 
+        /** @var Resolver $resolver */
         $resolver = $processingResult->getValue()['resolver'];
-        $resolver($demands, $databaseRecord);
+        $resolver->resolve($demands, $databaseRecord);
 
         $expectedDemand = [];
         $expectedDemand['pages']['']['uid'][14]['tableNameFoo' . "\0" . 1] = $databaseRecord;

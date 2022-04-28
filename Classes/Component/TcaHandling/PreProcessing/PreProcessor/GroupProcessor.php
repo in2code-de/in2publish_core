@@ -29,20 +29,18 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Closure;
-use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
-use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\GroupMmMultiTableResolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\GroupMultiTableResolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\GroupSingleTableResolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\StaticJoinResolver;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-use function array_filter;
 use function array_key_exists;
-use function array_merge;
-use function array_unique;
 use function implode;
 use function preg_match;
 use function strpos;
-use function strrpos;
 use function substr;
 use function trim;
 
@@ -103,7 +101,7 @@ class GroupProcessor extends AbstractProcessor
         return $reasons;
     }
 
-    protected function buildResolver(string $table, string $column, array $processedTca): Closure
+    protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
         $foreignTable = $processedTca['allowed'];
         $isSingleTable = $this->isSingleTable($foreignTable);
@@ -131,77 +129,17 @@ class GroupProcessor extends AbstractProcessor
             }
 
             if (!$isSingleTable) {
-                return static function (Demands $demands, Record $record) use (
-                    $mmTable,
-                    $column,
-                    $selectField,
-                    $additionalWhere
-                ): void {
-                    $localValue = $record->getLocalProps()[$column] ?? '';
-                    $foreignValue = $record->getForeignProps()[$column] ?? '';
-
-                    $localEntries = GeneralUtility::trimExplode(',', $localValue, true);
-                    $foreignEntries = GeneralUtility::trimExplode(',', $foreignValue, true);
-
-                    $values = array_unique(array_filter(array_merge($localEntries, $foreignEntries)));
-
-                    foreach ($values as $value) {
-                        $position = strrpos($value, '_');
-                        if (false === $position) {
-                            continue;
-                        }
-                        $table = substr($value, 0, $position);
-                        $id = substr($value, $position + 1);
-
-                        $demands->addJoin($mmTable, $table, $additionalWhere, $selectField, $id, $record);
-                    }
-                };
+                return new GroupMmMultiTableResolver($mmTable, $column, $selectField, $additionalWhere);
             }
 
-            return static function (Demands $demands, Record $record) use (
-                $mmTable,
-                $foreignTable,
-                $selectField,
-                $additionalWhere
-            ): void {
-                $demands->addJoin($mmTable, $foreignTable, $additionalWhere, $selectField, $record->getId(), $record);
-            };
+            return new StaticJoinResolver($mmTable, $foreignTable, $additionalWhere, $selectField);
         }
 
         if (!$isSingleTable) {
-            return static function (Demands $demands, Record $record) use ($column): void {
-                $localValue = $record->getLocalProps()[$column] ?? '';
-                $foreignValue = $record->getForeignProps()[$column] ?? '';
-
-                $localEntries = GeneralUtility::trimExplode(',', $localValue, true);
-                $foreignEntries = GeneralUtility::trimExplode(',', $foreignValue, true);
-
-                $values = array_unique(array_filter(array_merge($localEntries, $foreignEntries)));
-                foreach ($values as $value) {
-                    $position = strrpos($value, '_');
-                    if (false === $position) {
-                        continue;
-                    }
-                    $table = substr($value, 0, $position);
-                    $id = substr($value, $position + 1);
-
-                    $demands->addSelect($table, '', 'uid', $id, $record);
-                }
-            };
+            return new GroupMultiTableResolver($column);
         }
 
-        return static function (Demands $demands, Record $record) use ($column, $foreignTable): void {
-            $localValue = $record->getLocalProps()[$column] ?? '';
-            $foreignValue = $record->getForeignProps()[$column] ?? '';
-
-            $localEntries = GeneralUtility::trimExplode(',', $localValue, true);
-            $foreignEntries = GeneralUtility::trimExplode(',', $foreignValue, true);
-
-            $values = array_filter(array_merge($localEntries, $foreignEntries));
-            foreach ($values as $value) {
-                $demands->addSelect($foreignTable, '', 'uid', $value, $record);
-            }
-        };
+        return new GroupSingleTableResolver($column, $foreignTable);
     }
 
     protected function isSingleTable($allowed): bool

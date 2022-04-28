@@ -29,23 +29,14 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Closure;
-use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\FlexFormFlatteningService;
-use In2code\In2publishCore\Domain\Model\DatabaseEntityRecord;
-use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\VirtualFlexFormRecord;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\FlexResolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Service\FlexFormService;
 
 use function array_key_exists;
 use function array_keys;
-use function array_merge;
-use function array_pop;
-use function array_unique;
-use function implode;
-use function is_array;
-use function json_decode;
 use function json_encode;
 
 use const JSON_THROW_ON_ERROR;
@@ -125,7 +116,7 @@ class FlexProcessor extends AbstractProcessor
         return [];
     }
 
-    protected function buildResolver(string $table, string $column, array $processedTca): Closure
+    protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
         foreach (array_keys($processedTca['ds']) as $dsPointerValue) {
             $dataStructureIdentifier = json_encode(
@@ -147,66 +138,14 @@ class FlexProcessor extends AbstractProcessor
             );
         }
 
-        return function (Demands $demands, Record $record) use ($table, $column, $processedTca): void {
-            if (!($record instanceof DatabaseEntityRecord)) {
-                return;
-            }
-            $dataStructureIdentifierJson = $this->flexFormTools->getDataStructureIdentifier(
-                ['config' => $processedTca],
-                $table,
-                $column,
-                $record->getLocalProps() ?: $record->getForeignProps()
-            );
-            $dataStructureKey = json_decode(
-                $dataStructureIdentifierJson,
-                true,
-                512,
-                JSON_THROW_ON_ERROR
-            )['dataStructureKey'];
-
-            $localValues = $record->getLocalProps()[$column] ?? [];
-            if ([] !== $localValues) {
-                $localValues = $this->flexFormService->convertFlexFormContentToArray($localValues);
-                $localValues['pid'] = $record->getProp('pid');
-            }
-            $localValues = $this->flattenFlexFormData($localValues);
-            $foreignValues = $record->getForeignProps()[$column] ?? [];
-            if ([] !== $foreignValues) {
-                $foreignValues = $this->flexFormService->convertFlexFormContentToArray($foreignValues);
-                $foreignValues['pid'] = $record->getProp('pid');
-            }
-            $localValues = $this->flattenFlexFormData($localValues);
-
-            $flexFormFields = array_unique(array_merge(array_keys($localValues), array_keys($foreignValues)));
-
-            $flexFormTableName = $table . '/' . $column . '/' . $dataStructureKey;
-            $virtualRecord = new VirtualFlexFormRecord($record, $flexFormTableName, $localValues, $foreignValues);
-
-            $compatibleTcaParts = $this->tcaPreProcessingService->getCompatibleTcaParts();
-
-            foreach ($flexFormFields as $flexFormField) {
-                $resolver = $compatibleTcaParts[$flexFormTableName][$flexFormField]['resolver'] ?? null;
-                if (null !== $resolver) {
-                    $resolver($demands, $virtualRecord);
-                }
-            }
-        };
-    }
-
-    protected function flattenFlexFormData(array $data, array $path = []): array
-    {
-        $newData = [];
-        foreach ($data as $key => $value) {
-            $path[] = $key;
-            if (is_array($value)) {
-                foreach ($this->flattenFlexFormData($value, $path) as $subKey => $subVal) {
-                    $newData[$subKey] = $subVal;
-                }
-            } else {
-                $newData[implode('.', $path)] = $value;
-            }
-            array_pop($path);
-        }
-        return $newData;
+        return new FlexResolver(
+            $this->flexFormTools,
+            $this->flexFormService,
+            $this->flexFormFlatteningService,
+            $this->tcaPreProcessingService,
+            $table,
+            $column,
+            $processedTca
+        );
     }
 }

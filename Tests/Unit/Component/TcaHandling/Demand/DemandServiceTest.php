@@ -8,6 +8,7 @@ use In2code\In2publishCore\Component\TcaHandling\Demand\DemandService;
 use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
@@ -24,8 +25,11 @@ class DemandServiceTest extends UnitTestCase
         $compatibleTcaParts = [
             'table_foo' => [
                 'column_foo' => [
-                    'resolver' => static function (Demands $demands, Record $record) {
-                        $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
+                    'resolver' => new class implements Resolver {
+                        public function resolve(Demands $demands, Record $record): void
+                        {
+                            $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
+                        }
                     },
                 ],
             ],
@@ -50,15 +54,21 @@ class DemandServiceTest extends UnitTestCase
         $compatibleTcaParts = [
             'table_foo' => [
                 'column_foo' => [
-                    'resolver' => static function (Demands $demands, Record $record) {
-                        $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
+                    'resolver' => new class implements Resolver {
+                        public function resolve(Demands $demands, Record $record): void
+                        {
+                            $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
+                        }
                     },
                 ],
             ],
             'table_bar' => [
                 'column_bar' => [
-                    'resolver' => static function (Demands $demands, Record $record) {
-                        $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
+                    'resolver' => new class implements Resolver {
+                        public function resolve(Demands $demands, Record $record): void
+                        {
+                            $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
+                        }
                     },
                 ],
             ],

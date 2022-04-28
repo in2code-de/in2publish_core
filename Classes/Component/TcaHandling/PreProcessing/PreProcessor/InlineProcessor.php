@@ -29,10 +29,10 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Closure;
-use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
-use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\InlineSelectResolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\StaticJoinResolver;
 
 use function implode;
 use function preg_match;
@@ -68,7 +68,7 @@ class InlineProcessor extends AbstractProcessor
         $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
     }
 
-    protected function buildResolver(string $table, string $column, array $processedTca): Closure
+    protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
         $foreignTable = $processedTca['foreign_table'];
         $foreignField = $processedTca['foreign_field'];
@@ -95,14 +95,7 @@ class InlineProcessor extends AbstractProcessor
                 $additionalWhere = $matches['where'];
             }
 
-            return static function (Demands $demands, Record $record) use (
-                $mmTable,
-                $foreignTable,
-                $selectField,
-                $additionalWhere
-            ): void {
-                $demands->addJoin($mmTable, $foreignTable, $additionalWhere, $selectField, $record->getId(), $record);
-            };
+            return new StaticJoinResolver($mmTable, $foreignTable, $selectField, $additionalWhere);
         }
 
         $foreignTableField = $processedTca['foreign_table_field'] ?? null;
@@ -117,25 +110,12 @@ class InlineProcessor extends AbstractProcessor
         }
         $additionalWhere = implode(' AND ', $foreignMatchFields);
 
-        return function (Demands $demands, Record $record) use (
+        return new InlineSelectResolver(
+            $this->databaseIdentifierQuotingService,
             $foreignTable,
             $foreignField,
             $foreignTableField,
             $additionalWhere
-        ): void {
-            if (null !== $foreignTableField) {
-                $additionalWhere .= ' AND ' . $foreignTableField . ' = "' . $record->getClassification() . '"';
-            }
-            $additionalWhere = trim($additionalWhere);
-            if (str_starts_with($additionalWhere, 'AND ')) {
-                $additionalWhere = trim(substr($additionalWhere, 4));
-            }
-            $additionalWhere = $this->databaseIdentifierQuotingService->dododo($additionalWhere);
-            if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
-                $additionalWhere = $matches['where'];
-            }
-
-            $demands->addSelect($foreignTable, $additionalWhere, $foreignField, $record->getId(), $record);
-        };
+        );
     }
 }
