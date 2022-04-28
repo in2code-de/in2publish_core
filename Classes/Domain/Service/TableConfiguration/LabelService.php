@@ -69,6 +69,9 @@ class LabelService
                     $props = $record->getForeignProps();
                     break;
             }
+            if (empty($props['uid_local'])) {
+                return '---';
+            }
             return sprintf(
                 '%d [%d,%d]',
                 $record->getId(),
