@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing;
 
 use Closure;
+use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\TextProcessor;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
@@ -56,12 +57,13 @@ class TextProcessorTest extends UnitTestCase
         $databaseRecord->method('getForeignProps')->willReturn([]);
 
         $resolver = $processingResult->getValue()['resolver'];
-        $demand = $resolver($databaseRecord);
+        $demands = new Demands();
+        $resolver($demands, $databaseRecord);
 
         $expectedDemand = [];
-        $expectedDemand['select']['pages']['']['uid'][14]['tableNameFoo' . "\0" . 1] = $databaseRecord;
+        $expectedDemand['pages']['']['uid'][14]['tableNameFoo' . "\0" . 1] = $databaseRecord;
 
-        $this->assertSame($expectedDemand, $demand);
+        $this->assertSame($expectedDemand, $demands->getSelect());
     }
 
     /**
@@ -83,13 +85,15 @@ class TextProcessorTest extends UnitTestCase
         $databaseRecord->method('getLocalProps')->willReturn(['fieldNameBar' => 'lalala t3://file?uid=14 fofofo']);
         $databaseRecord->method('getForeignProps')->willReturn([]);
 
+        $demands = new Demands();
+
         $resolver = $processingResult->getValue()['resolver'];
-        $demand = $resolver($databaseRecord);
+        $resolver($demands, $databaseRecord);
 
         $expectedDemand = [];
-        $expectedDemand['select']['sys_file']['']['uid'][14]['tableNameFoo' . "\0" . 1] = $databaseRecord;
+        $expectedDemand['sys_file']['']['uid'][14]['tableNameFoo' . "\0" . 1] = $databaseRecord;
 
-        $this->assertSame($expectedDemand, $demand);
+        $this->assertSame($expectedDemand, $demands->getSelect());
     }
 
     /**
@@ -111,12 +115,14 @@ class TextProcessorTest extends UnitTestCase
         $databaseRecord->method('getLocalProps')->willReturn(['fieldNameBar' => 'lalalat3://file?uid=14 fofofo']);
         $databaseRecord->method('getForeignProps')->willReturn([]);
 
+        $demands = new Demands();
+
         $resolver = $processingResult->getValue()['resolver'];
-        $demand = $resolver($databaseRecord);
+        $resolver($demands, $databaseRecord);
 
         $expectedDemand = [];
 
-        $this->assertSame($expectedDemand, $demand);
+        $this->assertSame($expectedDemand, $demands->getSelect());
     }
 
     /**
@@ -138,14 +144,16 @@ class TextProcessorTest extends UnitTestCase
         $databaseRecord->method('getLocalProps')->willReturn(['fieldNameBar' => 'lalala t3://page?uid=14 fofofo']);
         $databaseRecord->method('getForeignProps')->willReturn(['fieldNameBar' => 'lalala t3://page?uid=15 fofofo']);
 
+        $demands = new Demands();
+
         $resolver = $processingResult->getValue()['resolver'];
-        $demand = $resolver($databaseRecord);
+        $resolver($demands, $databaseRecord);
 
         $expectedDemand = [];
-        $expectedDemand['select']['pages']['']['uid'][14]['tableNameFoo' . "\0" . 1] = $databaseRecord;
-        $expectedDemand['select']['pages']['']['uid'][15]['tableNameFoo' . "\0" . 1] = $databaseRecord;
+        $expectedDemand['pages']['']['uid'][14]['tableNameFoo' . "\0" . 1] = $databaseRecord;
+        $expectedDemand['pages']['']['uid'][15]['tableNameFoo' . "\0" . 1] = $databaseRecord;
 
-        $this->assertSame($expectedDemand, $demand);
+        $this->assertSame($expectedDemand, $demands->getSelect());
     }
 
     /**

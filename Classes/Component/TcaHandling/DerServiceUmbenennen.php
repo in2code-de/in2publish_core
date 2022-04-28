@@ -15,7 +15,6 @@ use function array_diff;
 use function array_keys;
 use function array_merge;
 use function implode;
-use function In2code\In2publishCore\record_key;
 use function preg_match_all;
 
 class DerServiceUmbenennen
@@ -68,22 +67,25 @@ class DerServiceUmbenennen
         return $recordTree;
     }
 
-    private function findRequestedRecordWithTranslations(string $table, int $id, RecordTree $recordTree): RecordCollection
-    {
+    private function findRequestedRecordWithTranslations(
+        string $table,
+        int $id,
+        RecordTree $recordTree
+    ): RecordCollection {
         if ('pages' === $table && 0 === $id) {
             $pageTreeRootRecord = $this->recordFactory->createPageTreeRootRecord();
             $recordTree->addChild($pageTreeRootRecord);
             return new RecordCollection([$pageTreeRootRecord]);
         }
-        $demand = [];
-        $demand['select'][$table]['']['uid'][$id][-1] = $recordTree;
+        $demands = new Demands();
+        $demands->addSelect($table, '', 'uid', $id, $recordTree);
 
         $transOrigPointerField = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] ?? null;
         if (null !== $transOrigPointerField) {
-            $demand['select'][$table][''][$transOrigPointerField][$id][-1] = $recordTree;
+            $demands->addSelect($table, '', $transOrigPointerField, $id, $recordTree);
         }
 
-        return $this->queryService->resolveDemand($demand);
+        return $this->queryService->resolveDemand($demands);
     }
 
     /**
@@ -95,12 +97,12 @@ class DerServiceUmbenennen
         $recursionLimit = 5;
 
         while ($recursionLimit > $currentRecursion++ && !empty($records)) {
-            $demand = [];
+            $demands = new Demands();
             $recordsArray = $records['pages'] ?? [];
             foreach ($recordsArray as $record) {
-                $demand['select']['pages']['']['pid'][$record->getId()][record_key($record)] = $record;
+                $demands->addSelect('pages', '', 'pid', $record->getId(), $record);
             }
-            $records = $this->queryService->resolveDemand($demand);
+            $records = $this->queryService->resolveDemand($demands);
         }
     }
 
@@ -112,16 +114,16 @@ class DerServiceUmbenennen
         if (empty($pages)) {
             return $recordCollection;
         }
-        $demand = [];
+        $demands = new Demands();
 
         $nonExcludedTables = $this->getAllTablesWhichAreNotExcluded();
 
         foreach ($nonExcludedTables as $table) {
             foreach ($pages as $page) {
-                $demand['select'][$table]['']['pid'][$page->getId()][record_key($page)] = $page;
+                $demands->addSelect($table, '', 'pid', $page->getId(), $page);
             }
         }
-        $resolvedRecords = $this->queryService->resolveDemand($demand);
+        $resolvedRecords = $this->queryService->resolveDemand($demands);
         $recordCollection->addRecordCollection($resolvedRecords);
         return $recordCollection;
     }

@@ -6,7 +6,6 @@ namespace In2code\In2publishCore\Component\TcaHandling;
 
 use In2code\In2publishCore\Domain\Model\Record;
 
-use function array_keys;
 use function array_search;
 
 class RecordIndex

@@ -118,10 +118,8 @@ class TcaPreProcessingService implements SingletonInterface
             $tcaPreProcessor = $this->getProcessor($type, $table, $column);
             if (null === $tcaPreProcessor) {
                 $this->incompatibleTca[$table][$column] = 'The type "'
-                                                          .
-                                                          $type
-                                                          .
-                                                          '" can not hold relations or there was no pre processor defined';
+                    . $type
+                    . '" can not hold relations or there was no pre processor defined';
                 continue;
             }
 

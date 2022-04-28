@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Query;
 
+use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Component\TcaHandling\RecordIndex;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing\Domain\Repository\DualDatabaseRepository;
 
 use function array_keys;
@@ -35,31 +35,20 @@ class QueryService
     }
 
     /**
-     * @param array<string, array<string, array<string, array<string, array<int, array<Record|RecordTree>>>>>> $demand
+     * @param Demands $demands
      * @return RecordCollection<int, Record>
      */
-    public function resolveDemand(array $demand): RecordCollection
+    public function resolveDemand(Demands $demands): RecordCollection
     {
         $recordCollection = new RecordCollection();
-        if (!empty($demand['select'])) {
-            $selectRecordCollection = $this->resolveSelectDemand($demand['select']);
-            $recordCollection->addRecordCollection($selectRecordCollection);
-        }
-        if (!empty($demand['join'])) {
-            $joinRecordCollection = $this->resolveJoinDemand($demand['join']);
-            $recordCollection->addRecordCollection($joinRecordCollection);
-        }
+        $this->resolveSelectDemand($demands, $recordCollection);
+        $this->resolveJoinDemand($demands, $recordCollection);
         return $recordCollection;
     }
 
-    /**
-     * @param array<string, array<string, array<string, array<int, array<Record|RecordTree>>>>> $select
-     * @return RecordCollection<int, Record>
-     */
-    protected function resolveSelectDemand(array $select): RecordCollection
+    protected function resolveSelectDemand(Demands $demands, RecordCollection $recordCollection): void
     {
-        $recordCollection = new RecordCollection();
-        foreach ($select as $table => $tableSelect) {
+        foreach ($demands->getSelect() as $table => $tableSelect) {
             foreach ($tableSelect as $additionalWhere => $properties) {
                 foreach ($properties as $property => $valueMaps) {
                     $rows = $this->dualDatabaseRepository->findByProperty(
@@ -87,17 +76,11 @@ class QueryService
                 }
             }
         }
-        return $recordCollection;
     }
 
-    /**
-     * @param array<string, array<string, array<string, array<string, array<int, array<Record|RecordTree>>>>>> $join
-     * @return RecordCollection<int, Record>
-     */
-    protected function resolveJoinDemand(array $join): RecordCollection
+    protected function resolveJoinDemand(Demands $demands, RecordCollection $recordCollection): void
     {
-        $recordCollection = new RecordCollection();
-        foreach ($join as $joinTable => $JoinSelect) {
+        foreach ($demands->getJoin() as $joinTable => $JoinSelect) {
             foreach ($JoinSelect as $table => $tableSelect) {
                 foreach ($tableSelect as $additionalWhere => $properties) {
                     foreach ($properties as $property => $valueMaps) {
@@ -141,6 +124,5 @@ class QueryService
                 }
             }
         }
-        return $recordCollection;
     }
 }

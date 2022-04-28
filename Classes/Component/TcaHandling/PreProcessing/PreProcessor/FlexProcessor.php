@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
  */
 
 use Closure;
+use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\FlexFormFlatteningService;
 use In2code\In2publishCore\Domain\Model\DatabaseEntityRecord;
 use In2code\In2publishCore\Domain\Model\Record;
@@ -41,7 +42,6 @@ use function array_key_exists;
 use function array_keys;
 use function array_merge;
 use function array_pop;
-use function array_replace_recursive;
 use function array_unique;
 use function implode;
 use function is_array;
@@ -147,9 +147,9 @@ class FlexProcessor extends AbstractProcessor
             );
         }
 
-        return function (Record $record) use ($table, $column, $processedTca): array {
+        return function (Demands $demands, Record $record) use ($table, $column, $processedTca): void {
             if (!($record instanceof DatabaseEntityRecord)) {
-                return [];
+                return;
             }
             $dataStructureIdentifierJson = $this->flexFormTools->getDataStructureIdentifier(
                 ['config' => $processedTca],
@@ -184,14 +184,12 @@ class FlexProcessor extends AbstractProcessor
 
             $compatibleTcaParts = $this->tcaPreProcessingService->getCompatibleTcaParts();
 
-            $demands = [];
             foreach ($flexFormFields as $flexFormField) {
                 $resolver = $compatibleTcaParts[$flexFormTableName][$flexFormField]['resolver'] ?? null;
                 if (null !== $resolver) {
-                    $demands[] = $resolver($virtualRecord);
+                    $resolver($demands, $virtualRecord);
                 }
             }
-            return array_replace_recursive([], ...$demands);
         };
     }
 

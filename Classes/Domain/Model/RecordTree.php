@@ -2,7 +2,7 @@
 
 namespace In2code\In2publishCore\Domain\Model;
 
-class RecordTree
+class RecordTree implements Node
 {
     /**
      * @var array<string, array<int|string, Record>>
@@ -20,5 +20,15 @@ class RecordTree
     public function addChild(Record $record): void
     {
         $this->children[$record->getClassification()][$record->getId()] = $record;
+    }
+
+    public function getClassification(): string
+    {
+        return '_root';
+    }
+
+    public function getId(): int
+    {
+        return -1;
     }
 }

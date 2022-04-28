@@ -46,8 +46,6 @@ call_user_func(function () {
     if (!getenv('IN2PUBLISH_CONTEXT')) {
         putenv('IN2PUBLISH_CONTEXT=Local');
     }
-    require __DIR__ . '/../Functions/functions.php';
-
     $testbase = new Testbase();
 
     // These if's are for core testing (package typo3/cms) only. cms-composer-installer does

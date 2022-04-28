@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
  */
 
 use Closure;
+use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
 use In2code\In2publishCore\Domain\Model\Record;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -39,7 +40,6 @@ use function array_key_exists;
 use function array_merge;
 use function array_unique;
 use function implode;
-use function In2code\In2publishCore\record_key;
 use function preg_match;
 use function strpos;
 use function strrpos;
@@ -97,7 +97,7 @@ class GroupProcessor extends AbstractProcessor
         foreach ($allowedTables as $allowedTable) {
             if (!array_key_exists($allowedTable, $GLOBALS['TCA'])) {
                 $reasons[] = 'Can not reference the table "' . $allowedTable
-                             . '" from "allowed. It is not present in the TCA';
+                    . '" from "allowed. It is not present in the TCA';
             }
         }
         return $reasons;
@@ -131,19 +131,18 @@ class GroupProcessor extends AbstractProcessor
             }
 
             if (!$isSingleTable) {
-                return static function (Record $record) use (
+                return static function (Demands $demands, Record $record) use (
                     $mmTable,
                     $column,
                     $selectField,
                     $additionalWhere
-                ) {
+                ): void {
                     $localValue = $record->getLocalProps()[$column] ?? '';
                     $foreignValue = $record->getForeignProps()[$column] ?? '';
 
                     $localEntries = GeneralUtility::trimExplode(',', $localValue, true);
                     $foreignEntries = GeneralUtility::trimExplode(',', $foreignValue, true);
 
-                    $demands = [];
                     $values = array_unique(array_filter(array_merge($localEntries, $foreignEntries)));
 
                     foreach ($values as $value) {
@@ -154,33 +153,29 @@ class GroupProcessor extends AbstractProcessor
                         $table = substr($value, 0, $position);
                         $id = substr($value, $position + 1);
 
-                        $demands['join'][$mmTable][$table][$additionalWhere][$selectField][$id][record_key($record)] = $record;
+                        $demands->addJoin($mmTable, $table, $additionalWhere, $selectField, $id, $record);
                     }
-                    return $demands;
                 };
             }
 
-            return static function (Record $record) use (
+            return static function (Demands $demands, Record $record) use (
                 $mmTable,
                 $foreignTable,
                 $selectField,
                 $additionalWhere
-            ) {
-                $demands = [];
-                $demands['join'][$mmTable][$foreignTable][$additionalWhere][$selectField][$record->getId()][record_key($record)] = $record;
-                return $demands;
+            ): void {
+                $demands->addJoin($mmTable, $foreignTable, $additionalWhere, $selectField, $record->getId(), $record);
             };
         }
 
         if (!$isSingleTable) {
-            return static function (Record $record) use ($column) {
+            return static function (Demands $demands, Record $record) use ($column): void {
                 $localValue = $record->getLocalProps()[$column] ?? '';
                 $foreignValue = $record->getForeignProps()[$column] ?? '';
 
                 $localEntries = GeneralUtility::trimExplode(',', $localValue, true);
                 $foreignEntries = GeneralUtility::trimExplode(',', $foreignValue, true);
 
-                $demands = [];
                 $values = array_unique(array_filter(array_merge($localEntries, $foreignEntries)));
                 foreach ($values as $value) {
                     $position = strrpos($value, '_');
@@ -190,26 +185,22 @@ class GroupProcessor extends AbstractProcessor
                     $table = substr($value, 0, $position);
                     $id = substr($value, $position + 1);
 
-                    $demands['select'][$table]['']['uid'][$id][record_key($record)] = $record;
+                    $demands->addSelect($table, '', 'uid', $id, $record);
                 }
-                return $demands;
             };
         }
 
-        return static function (Record $record) use ($column, $foreignTable) {
+        return static function (Demands $demands, Record $record) use ($column, $foreignTable): void {
             $localValue = $record->getLocalProps()[$column] ?? '';
             $foreignValue = $record->getForeignProps()[$column] ?? '';
 
             $localEntries = GeneralUtility::trimExplode(',', $localValue, true);
             $foreignEntries = GeneralUtility::trimExplode(',', $foreignValue, true);
 
-            $demands = [];
             $values = array_filter(array_merge($localEntries, $foreignEntries));
             foreach ($values as $value) {
-                $demands['select'][$foreignTable]['']['uid'][$value][record_key($record)] = $record;
+                $demands->addSelect($foreignTable, '', 'uid', $value, $record);
             }
-
-            return $demands;
         };
     }
 

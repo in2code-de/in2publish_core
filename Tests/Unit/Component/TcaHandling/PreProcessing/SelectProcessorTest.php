@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing;
 
+use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\SelectProcessor;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
@@ -104,13 +105,14 @@ class SelectProcessorTest extends UnitTestCase
         $databaseRecord->method('getId')->willReturn(4);
         $databaseRecord->method('getProp')->willReturn('15, 56');
 
-        $demand = $resolver($databaseRecord);
+        $demands = new Demands();
+        $resolver($demands, $databaseRecord);
 
         $expectedDemand = [];
-        $expectedDemand['select']['tableNameBeng']['fieldname = "fieldvalue"']['uid'][15]['tableNameFoo' . "\0" . 4] = $databaseRecord;
-        $expectedDemand['select']['tableNameBeng']['fieldname = "fieldvalue"']['uid'][56]['tableNameFoo' . "\0" . 4] = $databaseRecord;
+        $expectedDemand['tableNameBeng']['fieldname = "fieldvalue"']['uid'][15]['tableNameFoo' . "\0" . 4] = $databaseRecord;
+        $expectedDemand['tableNameBeng']['fieldname = "fieldvalue"']['uid'][56]['tableNameFoo' . "\0" . 4] = $databaseRecord;
 
-        $this->assertSame($expectedDemand, $demand);
+        $this->assertSame($expectedDemand, $demands->getSelect());
     }
 
     /**
@@ -145,11 +147,12 @@ class SelectProcessorTest extends UnitTestCase
         $databaseRecord->method('getId')->willReturn(4);
         $databaseRecord->method('getClassification')->willReturn('tableNameFoo');
 
-        $demand = $resolver($databaseRecord);
+        $demands = new Demands();
+        $resolver($demands, $databaseRecord);
 
         $expectedDemand = [];
-        $expectedDemand['join']['tableNameFoo_tableNameBeng_MM']['tableNameBeng']['fieldname = "fieldvalue" AND fieldName2 = "fieldValue2"']['uid_local'][4]['tableNameFoo' . "\0" . 4] = $databaseRecord;
+        $expectedDemand['tableNameFoo_tableNameBeng_MM']['tableNameBeng']['fieldname = "fieldvalue" AND fieldName2 = "fieldValue2"']['uid_local'][4]['tableNameFoo' . "\0" . 4] = $databaseRecord;
 
-        $this->assertSame($expectedDemand, $demand);
+        $this->assertSame($expectedDemand, $demands->getJoin());
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing;
 
+use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\FlexProcessor;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\FlexFormFlatteningService;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
@@ -135,24 +136,24 @@ class FlexProcessorTest extends UnitTestCase
             ],
         ];
 
-        $mockedSelectDemand = [];
-        $mockedSelectDemand['select']['tableNameBar']['columnNameFoo'][3]['tableNameFoo' . "\0" . 1] = $databaseRecord;
-        $mockedInlineDemand = [];
-        $mockedInlineDemand['select']['tableNameFoo']['columnNameBar'][5]['tableNameFoo' . "\0" . 1] = $databaseRecord;
-
         $called = ['select.fooBar' => 0, 'inline.barFoo' => 0];
 
         $compatibleTcaParts = [];
-        $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['select.fooBar']['resolver'] = function ($record) use (&$called, $mockedSelectDemand) {
+        $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['select.fooBar']['resolver'] = function (
+            Demands $demands,
+            $record
+        ) use (&$called, $databaseRecord) {
             $called['select.fooBar']++;
             $this->assertInstanceOf(AbstractDatabaseRecord::class, $record);
-            return $mockedSelectDemand;
+            $demands->addSelect('tableNameBar','', 'columnNameFoo', 3, $databaseRecord);
         };
-        $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['inline.barFoo']['resolver'] = function ($record
-        ) use (&$called, $mockedInlineDemand) {
+        $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['inline.barFoo']['resolver'] = function (
+            Demands $demands,
+            $record
+        ) use (&$called, $databaseRecord) {
             $called['inline.barFoo']++;
             $this->assertInstanceOf(AbstractDatabaseRecord::class, $record);
-            return $mockedInlineDemand;
+            $demands->addSelect('tableNameFoo','', 'columnNameBar', 5, $databaseRecord);
         };
 
         $flexFormService = $this->createMock(FlexFormService::class);
@@ -178,13 +179,14 @@ class FlexProcessorTest extends UnitTestCase
 
         $resolver = $processingResult->getValue()['resolver'];
 
-        $demand = $resolver($databaseRecord);
+        $demands = new Demands();
+        $resolver($demands, $databaseRecord);
 
         $expectedDemand = [];
-        $expectedDemand['select']['tableNameBar']['columnNameFoo'][3]['tableNameFoo' . "\0" . 1] = $databaseRecord;
-        $expectedDemand['select']['tableNameFoo']['columnNameBar'][5]['tableNameFoo' . "\0" . 1] = $databaseRecord;
+        $expectedDemand['tableNameBar']['']['columnNameFoo'][3]['tableNameFoo' . "\0" . 1] = $databaseRecord;
+        $expectedDemand['tableNameFoo']['']['columnNameBar'][5]['tableNameFoo' . "\0" . 1] = $databaseRecord;
 
-        $this->assertSame($expectedDemand, $demand);
+        $this->assertSame($expectedDemand, $demands->getSelect());
         $this->assertSame(1, $called['select.fooBar']);
         $this->assertSame(1, $called['inline.barFoo']);
     }

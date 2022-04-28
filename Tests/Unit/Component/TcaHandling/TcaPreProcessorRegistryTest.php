@@ -39,7 +39,7 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
             'name' => 'bar',
         ];
 
-        $record = new DatabaseRecord($table, $identifier, $localFields, $foreignFields);
+        $record = new DatabaseRecord($table, $identifier, $localFields, $foreignFields, []);
         $actualTable = $record->getClassification();
         $actualIdentifier = $record->getId();
         $actualLocalFields = $record->getLocalProps();
@@ -60,8 +60,8 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
      */
     public function testRecordCanBeAddedAsChild(): void
     {
-        $parent = new DatabaseRecord('foo', 1, [], []);
-        $child = new DatabaseRecord('bar', 1, [], []);
+        $parent = new DatabaseRecord('foo', 1, [], [], []);
+        $child = new DatabaseRecord('bar', 1, [], [], []);
 
         $parent->addChild($child);
 
@@ -75,7 +75,7 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
      */
     public function testGetPropReturnsValueWithFallback(): void
     {
-        $record = new DatabaseRecord('foo', 1, ['bar' => 'beng'], ['boo' => 'bang']);
+        $record = new DatabaseRecord('foo', 1, ['bar' => 'beng'], ['boo' => 'bang'], []);
 
         $this->assertSame('beng', $record->getProp('bar'));
         $this->assertSame('bang', $record->getProp('boo'));
@@ -84,7 +84,7 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
 
     public function testGetPageIdReturnsIdOfPage(): void
     {
-        $record = new DatabaseRecord('pages', 1, [], []);
+        $record = new DatabaseRecord('pages', 1, [], [], []);
 
         $actual = $record->getPageId();
 
@@ -106,7 +106,8 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
             [
                 'language' => 1,
                 'trans_parent' => 5
-            ]
+            ],
+            []
         );
 
         $actual = $record->getPageId();
@@ -116,7 +117,7 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
 
     public function testGetPageIdOnOtherTableThanPagesReturnsPid(): void
     {
-        $record = new DatabaseRecord('foo', 1, ['pid' => 2], ['pid' => 2]);
+        $record = new DatabaseRecord('foo', 1, ['pid' => 2], ['pid' => 2], []);
 
         $actual = $record->getPageId();
 

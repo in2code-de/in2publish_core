@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Demand;
 
+use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
-use In2code\In2publishCore\Domain\Model\DatabaseRecord;
-
-use function array_replace_recursive;
 
 class DemandService
 {
@@ -19,22 +17,16 @@ class DemandService
         $this->preProcessedTca = $tcaPreProcessingService->getCompatibleTcaParts();
     }
 
-    public function buildDemandForRecords(RecordCollection $records): array
+    public function buildDemandForRecords(RecordCollection $records): Demands
     {
-        $demand = [];
+        $demand = new Demands();
         foreach ($records->getRecordsFlat() as $record) {
-            $demand[] = $this->buildDemand($record);
+            $preProcessedTca = $this->preProcessedTca[$record->getClassification()] ?? [];
+            foreach ($preProcessedTca as $column) {
+                $column['resolver']($demand, $record);
+            }
         }
-        return array_replace_recursive([], ...$demand);
+        return $demand;
     }
 
-    protected function buildDemand(DatabaseRecord $record): array
-    {
-        $demand = [];
-        $preProcessedTca = $this->preProcessedTca[$record->getClassification()] ?? [];
-        foreach ($preProcessedTca as $column) {
-            $demand[] = $column['resolver']($record);
-        }
-        return array_replace_recursive([], ...$demand);
-    }
 }

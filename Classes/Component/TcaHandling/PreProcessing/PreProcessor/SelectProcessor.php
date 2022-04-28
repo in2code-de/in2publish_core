@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
  */
 
 use Closure;
+use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
@@ -38,7 +39,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_filter;
 use function array_key_exists;
 use function implode;
-use function In2code\In2publishCore\record_key;
 use function preg_match;
 use function str_starts_with;
 use function substr;
@@ -119,29 +119,29 @@ class SelectProcessor extends AbstractProcessor
                 $foreignTableWhere = trim(substr($foreignTableWhere, 4));
             }
 
-            return function (Record $record) use (
+            return function (Demands $demands, Record $record) use (
                 $column,
                 $mmTable,
                 $foreignTable,
                 $foreignTableWhere,
                 $selectField
-            ): ?array {
+            ): void {
                 $additionalWhere = $this->replaceMarkersService->replaceMarkers($record, $foreignTableWhere, $column);
                 $additionalWhere = $this->databaseIdentifierQuotingService->dododo($additionalWhere);
                 if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
                     $additionalWhere = $matches['where'];
                 }
 
-                $demand = [];
-                $demand['join'][$mmTable][$foreignTable][$additionalWhere][$selectField][$record->getId()][record_key($record)] = $record;
-                return $demand;
+                $value = $record->getId();
+
+                $demands->addJoin($mmTable, $foreignTable, $additionalWhere, $selectField, $value, $record);
             };
         }
 
-        return function (Record $record) use ($column, $foreignTable, $foreignTableWhere): array {
+        return function (Demands $demands, Record $record) use ($column, $foreignTable, $foreignTableWhere): void {
             $value = $record->getProp($column);
             if (empty($value)) {
-                return [];
+                return;
             }
 
             $additionalWhere = $this->replaceMarkersService->replaceMarkers($record, $foreignTableWhere, $column);
@@ -154,13 +154,10 @@ class SelectProcessor extends AbstractProcessor
                 $additionalWhere = $matches['where'];
             }
 
-            $demands = [];
             $splittedValues = GeneralUtility::trimExplode(',', $value);
             foreach ($splittedValues as $splittedValue) {
-                $demands['select'][$foreignTable][$additionalWhere]['uid'][$splittedValue][record_key($record)] = $record;
+                $demands->addSelect($foreignTable, $additionalWhere, 'uid', $splittedValue, $record);
             }
-
-            return $demands;
         };
     }
 
@@ -175,8 +172,8 @@ class SelectProcessor extends AbstractProcessor
     protected function isSysCategoryField(array $config): bool
     {
         return isset($config['foreign_table'], $config['MM_opposite_field'], $config['MM'])
-               && 'sys_category' === $config['foreign_table']
-               && 'items' === $config['MM_opposite_field']
-               && 'sys_category_record_mm' === $config['MM'];
+            && 'sys_category' === $config['foreign_table']
+            && 'items' === $config['MM_opposite_field']
+            && 'sys_category_record_mm' === $config['MM'];
     }
 }

@@ -30,11 +30,10 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
  */
 
 use Closure;
+use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Domain\Model\Record;
 
-use function array_replace_recursive;
 use function htmlspecialchars_decode;
-use function In2code\In2publishCore\record_key;
 use function parse_str;
 use function parse_url;
 use function preg_match_all;
@@ -63,43 +62,38 @@ class TextProcessor extends AbstractProcessor
 
     protected function buildResolver(string $table, string $column, array $processedTca): Closure
     {
-        return function (Record $record) use ($column) {
+        return function (Demands $demands, Record $record) use ($column): void {
             $localValue = $record->getLocalProps()[$column] ?? '';
             $foreignValue = $record->getForeignProps()[$column] ?? '';
 
-            $demands = [];
             $values = $localValue === $foreignValue ? [$localValue] : [$localValue, $foreignValue];
             foreach ($values as $text) {
-                $demands[] = $this->findRelationsInText($text, $record);
+                $this->findRelationsInText($demands, $text, $record);
             }
-
-            return array_replace_recursive([], ...$demands);
         };
     }
 
-    protected function findRelationsInText(string $text, Record $record)
+    protected function findRelationsInText(Demands $demands, string $text, Record $record): void
     {
         if (strpos($text, 't3://') === false) {
-            return [];
+            return;
         }
         preg_match_all(self::REGEX_T3URN, $text, $matches);
         if (empty($matches['URN'])) {
-            return [];
+            return;
         }
 
-        $demands = [];
         foreach ($matches['URN'] as $urn) {
             // Do NOT use LinkService because the URN might either be not local or not available or trigger FAL.
             $urnParsed = parse_url($urn);
             parse_str(htmlspecialchars_decode($urnParsed['query']), $data);
 
             if ('file' === $urnParsed['host'] && isset($data['uid'])) {
-                $demands['select']['sys_file']['']['uid'][$data['uid']][record_key($record)] = $record;
+                $demands->addSelect('sys_file', '', 'uid', $data['uid'], $record);
             }
             if ('page' === $urnParsed['host'] && isset($data['uid'])) {
-                $demands['select']['pages']['']['uid'][$data['uid']][record_key($record)] = $record;
+                $demands->addSelect('pages', '', 'uid', $data['uid'], $record);
             }
         }
-        return $demands;
     }
 }

@@ -30,11 +30,11 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
  */
 
 use Closure;
+use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
 use In2code\In2publishCore\Domain\Model\Record;
 
 use function implode;
-use function In2code\In2publishCore\record_key;
 use function preg_match;
 use function substr;
 use function trim;
@@ -95,15 +95,13 @@ class InlineProcessor extends AbstractProcessor
                 $additionalWhere = $matches['where'];
             }
 
-            return static function (Record $record) use (
+            return static function (Demands $demands, Record $record) use (
                 $mmTable,
                 $foreignTable,
                 $selectField,
                 $additionalWhere
-            ) {
-                $demands = [];
-                $demands['join'][$mmTable][$foreignTable][$additionalWhere][$selectField][$record->getId()][record_key($record)] = $record;
-                return $demands;
+            ): void {
+                $demands->addJoin($mmTable, $foreignTable, $additionalWhere, $selectField, $record->getId(), $record);
             };
         }
 
@@ -119,7 +117,12 @@ class InlineProcessor extends AbstractProcessor
         }
         $additionalWhere = implode(' AND ', $foreignMatchFields);
 
-        return function (Record $record) use ($foreignTable, $foreignField, $foreignTableField, $additionalWhere) {
+        return function (Demands $demands, Record $record) use (
+            $foreignTable,
+            $foreignField,
+            $foreignTableField,
+            $additionalWhere
+        ): void {
             if (null !== $foreignTableField) {
                 $additionalWhere .= ' AND ' . $foreignTableField . ' = "' . $record->getClassification() . '"';
             }
@@ -132,9 +135,7 @@ class InlineProcessor extends AbstractProcessor
                 $additionalWhere = $matches['where'];
             }
 
-            $demands = [];
-            $demands['select'][$foreignTable][$additionalWhere][$foreignField][$record->getId()][record_key($record)] = $record;
-            return $demands;
+            $demands->addSelect($foreignTable, $additionalWhere, $foreignField, $record->getId(), $record);
         };
     }
 }

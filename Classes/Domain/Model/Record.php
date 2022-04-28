@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Domain\Model;
 
-interface Record
+interface Record extends Node
 {
     public const LOCAL = 'local';
     public const FOREIGN = 'foreign';
@@ -14,13 +14,6 @@ interface Record
     public const S_SOFT_DELETED = 'soft_deleted';
     public const S_DELETED = 'deleted';
     public const S_UNCHANGED = 'unchanged';
-
-    public function getClassification(): string;
-
-    /**
-     * @return array-key
-     */
-    public function getId();
 
     public function getLocalProps(): array;
 
@@ -37,8 +30,6 @@ interface Record
      * @return array The list of names of props that are different.
      */
     public function getChangedProps(): array;
-
-    public function addChild(Record $childRecord): void;
 
     public function removeChild(Record $record): void;
 

@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\Demand;
 
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandService;
+use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
 /**
@@ -22,9 +24,11 @@ class DemandServiceTest extends UnitTestCase
         $compatibleTcaParts = [
             'table_foo' => [
                 'column_foo' => [
-                    'resolver' => static function() { return ['select_statement_1', 'select_statement_2'];}
-                ]
-            ]
+                    'resolver' => static function (Demands $demands, Record $record) {
+                        $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
+                    },
+                ],
+            ],
         ];
 
         $tcaProcessingService = $this->createMock(TcaPreProcessingService::class);
@@ -32,8 +36,10 @@ class DemandServiceTest extends UnitTestCase
         $demandService->injectTcaPreProcessingService($tcaProcessingService);
 
         $demand = $demandService->buildDemandForRecords(new RecordCollection([$record]));
-        $this->assertIsArray($demand);
-        $this->assertSame(['select_statement_1', 'select_statement_2'], $demand);
+        $this->assertInstanceOf(Demands::class, $demand);
+        $expected = [];
+        $expected['foo']['bar']['baz']['beng']['table_foo' . "\0" . 1234] = $record;
+        $this->assertSame($expected, $demand->getSelect());
     }
 
     public function testBuildDemandForRecordsReturnsResolversOfAllRecords(): void
@@ -44,14 +50,18 @@ class DemandServiceTest extends UnitTestCase
         $compatibleTcaParts = [
             'table_foo' => [
                 'column_foo' => [
-                    'resolver' => static function($record1) { return ['select1' => 'select_statement_from_' . $record1->getTable()];}
-                ]
+                    'resolver' => static function (Demands $demands, Record $record) {
+                        $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
+                    },
+                ],
             ],
             'table_bar' => [
                 'column_bar' => [
-                    'resolver' => static function($record2) { return ['select2' => 'select_statement_from_' . $record2->getTable()];}
-                ]
-            ]
+                    'resolver' => static function (Demands $demands, Record $record) {
+                        $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
+                    },
+                ],
+            ],
         ];
 
         $tcaProcessingService = $this->createMock(TcaPreProcessingService::class);
@@ -59,7 +69,12 @@ class DemandServiceTest extends UnitTestCase
         $demandService->injectTcaPreProcessingService($tcaProcessingService);
 
         $demand = $demandService->buildDemandForRecords(new RecordCollection([$record1, $record2]));
-        $this->assertIsArray($demand);
-        $this->assertEquals(['select1' =>'select_statement_from_table_foo', 'select2' =>'select_statement_from_table_bar'], $demand);
+        $this->assertInstanceOf(Demands::class, $demand);
+
+        $expected = [];
+        $expected['foo']['bar']['baz']['beng']['table_foo' . "\0" . 1234] = $record1;
+        $expected['foo']['bar']['baz']['beng']['table_bar' . "\0" . 1234] = $record2;
+
+        $this->assertEquals($expected, $demand->getSelect());
     }
 }
