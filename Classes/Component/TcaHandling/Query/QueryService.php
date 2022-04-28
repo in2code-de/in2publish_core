@@ -127,7 +127,7 @@ class QueryService
                                             $row['local']['table'] ?? [],
                                             $row['foreign']['table'] ?? []
                                         );
-//                                    $records = merge_record($records, $tableRecord);
+                                        $recordCollection->addRecord($tableRecord);
                                     }
                                     $mmRecord->addChild($tableRecord);
                                 }
