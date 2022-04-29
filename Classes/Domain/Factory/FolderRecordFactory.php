@@ -806,7 +806,7 @@ class FolderRecordFactory implements LoggerAwareInterface
         /** @var RecordInterface[] $fileRecords */
         $fileRecords = [];
         foreach ($files as $idx => $file) {
-            $localIdentifier = $file->getLocalProperty('identifier');
+            $localIdentifier = $file->getLocalProperty('identifier') ?? $file->getForeignProperty('identifier');
             if (isset($fileRecords[$localIdentifier])) {
                 $fileRecords[$localIdentifier]->addRelatedRecord($file);
                 unset($files[$idx]);
