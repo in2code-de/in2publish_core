@@ -61,7 +61,7 @@ class BackendUtilityTest extends UnitTestCase
         $connection->method('getSchemaManager')->willReturn($schemaManager);
 
         $result = $this->createMock(MysqliStatement::class);
-        $result->method('fetch')->willReturnCallback(
+        $result->method('fetchAssociative')->willReturnCallback(
             function () {
                 return $this->rows;
             }

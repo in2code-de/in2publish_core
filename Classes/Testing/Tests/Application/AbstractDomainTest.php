@@ -59,7 +59,7 @@ abstract class AbstractDomainTest
     public function run(): TestResult
     {
         $statement = $this->findAllRootPages();
-        $pageIds = array_column($statement->fetchAll(), 'uid');
+        $pageIds = array_column($statement->fetchAllAssociative(), 'uid');
         if (empty($pageIds)) {
             return new TestResult(sprintf('application.no_%s_sites_found', $this->prefix), TestResult::WARNING);
         }

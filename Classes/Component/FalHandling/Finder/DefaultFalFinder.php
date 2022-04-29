@@ -758,7 +758,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
               ->andWhere($query->expr()->eq('uid_local', $query->createNamedParameter($oldUid)));
         try {
             $result = $query->execute();
-            $count = $result->fetchColumn();
+            $count = $result->fetchOne();
         } catch (Throwable $exception) {
             $this->logger->critical(
                 'Could not count foreign references by uid',
@@ -778,7 +778,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
               ->where($query->expr()->eq('uid', $query->createNamedParameter($newUid)));
         try {
             $result = $query->execute();
-            $count = $result->fetchColumn();
+            $count = $result->fetchOne();
         } catch (Throwable $exception) {
             $this->logger->critical(
                 'Could not count foreign indices by uid',

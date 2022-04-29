@@ -51,7 +51,7 @@ class RecordPublishingTest extends FunctionalTestCase
         $query = $foreignConnection->createQueryBuilder();
         $query->select('*')->from('sys_file_storage');
         $result = $query->execute();
-        $rows = $result->fetchAll();
+        $rows = $result->fetchAllAssociative();
         $this->assertEmpty($rows);
 
         $defaultRecordFinder = GeneralUtility::makeInstance(DefaultRecordFinder::class);
@@ -63,7 +63,7 @@ class RecordPublishingTest extends FunctionalTestCase
         $query = $foreignConnection->createQueryBuilder();
         $query->select('*')->from('sys_file_storage');
         $result = $query->execute();
-        $rows = $result->fetchAll();
+        $rows = $result->fetchAllAssociative();
 
         $this->assertCount(1, $rows);
         $this->assertSame(2, $rows[0]['uid']);

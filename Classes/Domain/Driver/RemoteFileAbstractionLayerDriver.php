@@ -139,7 +139,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
                                                 ->where($query->expr()->eq('uid', $this->storageUid))
                                                 ->setMaxResults(1)
                                                 ->execute()
-                                                ->fetch();
+                                                ->fetchAssociative();
             $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
             $driverConfiguration = $flexFormService->convertFlexFormContentToArray(
                 $this->remoteDriverSettings['configuration']

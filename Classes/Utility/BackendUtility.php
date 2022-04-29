@@ -159,7 +159,7 @@ class BackendUtility
                             ->where($query->expr()->eq('uid', (int)key($data[$table])))
                             ->setMaxResults(1)
                             ->execute()
-                            ->fetch();
+                            ->fetchAssociative();
             if (false !== $result && isset($result['pid'])) {
                 return (int)$result['pid'];
             }
@@ -180,7 +180,7 @@ class BackendUtility
                                 ->where($query->expr()->eq('uid', (int)$rollbackData[1]))
                                 ->setMaxResults(1)
                                 ->execute()
-                                ->fetch();
+                                ->fetchAssociative();
                 if (false !== $result && isset($result['pid'])) {
                     return (int)$result['pid'];
                 }
@@ -197,7 +197,7 @@ class BackendUtility
                          ->where($query->expr()->eq('uid', (int)$identifier))
                          ->setMaxResults(1)
                          ->execute()
-                         ->fetch();
+                         ->fetchAssociative();
             if (isset($row['pid'])) {
                 return (int)$row['pid'];
             }
