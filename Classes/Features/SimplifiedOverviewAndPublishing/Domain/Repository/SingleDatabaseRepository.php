@@ -41,7 +41,7 @@ class SingleDatabaseRepository
         }
 
         $result = $query->execute();
-        return array_column($result->fetchAllAssociative(), null, 'uid');
+        return array_column($result->fetchAll(), null, 'uid');
     }
 
     public function findMm(string $table, string $property, array $values, string $where): array
@@ -55,7 +55,7 @@ class SingleDatabaseRepository
         $result = $query->execute();
 
         $rows = [];
-        while ($row = $result->fetchAssociative()) {
+        while ($row = $result->fetch()) {
             $rows[$this->buildRecordIndexIdentifier($row)] = $row;
         }
         return $rows;

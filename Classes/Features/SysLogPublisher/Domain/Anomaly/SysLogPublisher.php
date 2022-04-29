@@ -71,7 +71,7 @@ class SysLogPublisher
               ->orderBy('uid', 'DESC')
               ->setMaxResults(1);
         $result = $query->execute();
-        $row = $result->fetchAssociative();
+        $row = $result->fetch();
         if (!$row) {
             return null;
         }

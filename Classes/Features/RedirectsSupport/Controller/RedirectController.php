@@ -140,7 +140,7 @@ class RedirectController extends AbstractController
             $query = $foreignConnection->createQueryBuilder();
             $query->getRestrictions()->removeAll();
             $query->select('uid')->from('sys_redirect')->where($query->expr()->eq('deleted', 1));
-            $uidList = array_column($query->execute()->fetchAllAssociative(), 'uid');
+            $uidList = array_column($query->execute()->fetchAll(), 'uid');
         }
         $redirects = $this->sysRedirectRepo->findForPublishing($uidList, $filter);
         $paginator = new QueryResultPaginator($redirects, $page, 15);

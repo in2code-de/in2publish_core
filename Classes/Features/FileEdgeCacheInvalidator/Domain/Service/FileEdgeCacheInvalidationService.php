@@ -113,7 +113,7 @@ class FileEdgeCacheInvalidationService
 
     protected function addResultsToCollection(Result $statement, RecordCollection $recordCollection): void
     {
-        while ($row = $statement->fetchAssociative()) {
+        while ($row = $statement->fetch()) {
             $table = $row['table'];
             $uid = (int)$row['uid'];
             $recordCollection->addRecord($table, $uid);
@@ -138,7 +138,7 @@ class FileEdgeCacheInvalidationService
             $query->where($query->expr()->in('uid', $recordUidList));
             $query->groupBy('pid');
             $statement = $query->execute();
-            while ($page = $statement->fetchOne()) {
+            while ($page = $statement->fetch()) {
                 $recordCollection->addRecord('pages', $page);
             }
         }

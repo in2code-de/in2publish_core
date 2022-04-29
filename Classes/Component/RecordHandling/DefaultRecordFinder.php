@@ -2093,7 +2093,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
         if (!empty($limit)) {
             $query->setMaxResults((int)$limit);
         }
-        $rows = $query->execute()->fetchAllAssociative();
+        $rows = $query->execute()->fetchAll();
 
         return $this->indexRowsByField($indexField, $rows);
     }
@@ -2195,7 +2195,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
         if (!empty($limit)) {
             $query->setMaxResults((int)$limit);
         }
-        $rows = $query->execute()->fetchAllAssociative();
+        $rows = $query->execute()->fetchAll();
 
         return $this->indexRowsByField($indexField, $rows);
     }
