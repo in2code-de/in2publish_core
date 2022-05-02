@@ -89,19 +89,28 @@
 				</div>
 			</td>
 			<td class="col-control col-publish">
-				<f:if condition="{record.changedRecursive}">
-					<f:link.action
-						class="js-publish-trigger js-publish-overlay btn btn-default"
-						action="publishFile"
-						arguments="{
-							uid:record.identifier,
-							identifier:'{publish:record.getMergedProperty(record:record, propertyName: \'identifier\')}',
-							storage:'{publish:record.getMergedProperty(record:record, propertyName: \'storage\')}'}"
-						data="{type: 'file', name: '{publish:record.getMergedProperty(record: record, propertyName: \'identifier\')}'}"
-					>
-						<f:translate key="publish"/>
-						<core:icon identifier="actions-arrow-right" />
-					</f:link.action>
+				<f:if condition="{record.publishing}">
+					<f:then>
+						<a href="#" class="btn btn-default disabled" title="{f:translate(key:'publishing_file', default:'this file is currently being published')}">
+							<core:icon identifier="spinner-circle" />
+						</a>
+					</f:then>
+					<f:else>
+						<f:if condition="{record.changedRecursive}">
+							<f:link.action
+								class="js-publish-trigger js-publish-overlay btn btn-default"
+								action="publishFile"
+								arguments="{
+									uid:record.identifier,
+									identifier:'{publish:record.getMergedProperty(record:record, propertyName: \'identifier\')}',
+									storage:'{publish:record.getMergedProperty(record:record, propertyName: \'storage\')}'}"
+								data="{type: 'file', name: '{publish:record.getMergedProperty(record: record, propertyName: \'identifier\')}'}"
+							>
+								<f:translate key="publish"/>
+								<core:icon identifier="actions-arrow-right" />
+							</f:link.action>
+						</f:if>
+					</f:else>
 				</f:if>
 			</td>
 
