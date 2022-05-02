@@ -9,6 +9,7 @@ use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Model\RunningRequest;
 use In2code\In2publishCore\Domain\Repository\RunningRequestRepository;
 use In2code\In2publishCore\Event\DetermineIfRecordIsPublishing;
+use In2code\In2publishCore\Event\RecordsWereSelectedForPublishing;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\VoteIfRecordIsPublishable;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -32,21 +33,24 @@ class RunningRequestService implements SingletonInterface
         $this->requestToken = bin2hex(random_bytes(16));
     }
 
-    public function onRecordPublishingBegan(RecursiveRecordPublishingBegan $event): void
+    public function onRecursiveRecordPublishingBegan(RecursiveRecordPublishingBegan $event): void
     {
-        if (!$this->shutdownFunctionRegistered) {
-            $repository = $this->runningRequestRepository;
-            $token = $this->requestToken;
-            register_shutdown_function(static function () use ($repository, $token) {
-                $repository->deleteAllByToken($token);
-            });
-            $this->shutdownFunctionRegistered = true;
-        }
+        $this->registerShutdownFunction();
 
         /** @var Record $record */
         $record = $event->getRecord();
 
         $this->writeToRunningRequestsTable($record);
+        $this->runningRequestRepository->flush();
+    }
+
+    public function onRecordsWereSelectedForPublishing(RecordsWereSelectedForPublishing $event): void
+    {
+        $this->registerShutdownFunction();
+
+        foreach ($event->getRecords() as $record) {
+            $this->writeToRunningRequestsTable($record);
+        }
         $this->runningRequestRepository->flush();
     }
 
@@ -79,6 +83,18 @@ class RunningRequestService implements SingletonInterface
         $table = $event->getTableName();
         if ($this->runningRequestRepository->isPublishingInDifferentRequest($id, $table, $this->requestToken)) {
             $event->setIsPublishing();
+        }
+    }
+
+    protected function registerShutdownFunction(): void
+    {
+        if (!$this->shutdownFunctionRegistered) {
+            $repository = $this->runningRequestRepository;
+            $token = $this->requestToken;
+            register_shutdown_function(static function () use ($repository, $token) {
+                $repository->deleteAllByToken($token);
+            });
+            $this->shutdownFunctionRegistered = true;
         }
     }
 }
