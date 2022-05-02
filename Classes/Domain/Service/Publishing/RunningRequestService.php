@@ -47,11 +47,7 @@ class RunningRequestService implements SingletonInterface
         $record = $event->getRecord();
 
         $this->writeToRunningRequestsTable($record);
-        foreach ($record->getRelatedRecords() as $relatedRecords) {
-            foreach ($relatedRecords as $relatedRecord) {
-                $this->writeToRunningRequestsTable($relatedRecord);
-            }
-        }
+        $this->runningRequestRepository->flush();
     }
 
     protected function writeToRunningRequestsTable(RecordInterface $record): void
@@ -59,8 +55,13 @@ class RunningRequestService implements SingletonInterface
         $recordId = $record->getIdentifier();
         $tableName = $record->getTableName();
 
-        $runningRequest = new RunningRequest($recordId, $tableName, $this->requestToken);
-        $this->runningRequestRepository->add($runningRequest);
+        $this->runningRequestRepository->add($recordId, $tableName, $this->requestToken);
+
+        foreach ($record->getRelatedRecords() as $relatedRecords) {
+            foreach ($relatedRecords as $relatedRecord) {
+                $this->writeToRunningRequestsTable($relatedRecord);
+            }
+        }
     }
 
     public function isPublishable(VoteIfRecordIsPublishable $event): void

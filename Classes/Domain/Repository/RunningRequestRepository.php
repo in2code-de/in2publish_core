@@ -15,6 +15,8 @@ class RunningRequestRepository
     /** @var Connection */
     protected $connection;
 
+    protected $inserts = [];
+
     protected $rtc = [];
 
     public function __construct()
@@ -22,12 +24,22 @@ class RunningRequestRepository
         $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
     }
 
-    public function add(RunningRequest $runningRequest): void
+    public function add($recordId, $tableName, $token): void
     {
-        $this->connection->insert(
-            self::RUNNING_REQUEST_TABLE_NAME,
-            $this->mapProperties($runningRequest)
-        );
+        $uniqueKey = $tableName . '/' . $recordId;
+        $this->inserts[$uniqueKey] = [
+            'uid' => null,
+            'record_id' => $recordId,
+            'table_name' => $tableName,
+            'request_token' => $token,
+            'timestamp_begin' => $GLOBALS['EXEC_TIME'],
+        ];
+    }
+
+    public function flush(): void
+    {
+        $this->connection->bulkInsert(self::RUNNING_REQUEST_TABLE_NAME, $this->inserts);
+        $this->inserts = [];
     }
 
     /**
@@ -38,8 +50,8 @@ class RunningRequestRepository
         if (!isset($this->rtc['content'])) {
             $query = $this->connection->createQueryBuilder();
             $query->select('*')
-                  ->from(self::RUNNING_REQUEST_TABLE_NAME)
-                  ->where($query->expr()->neq('request_token', $query->createNamedParameter($token)));
+                ->from(self::RUNNING_REQUEST_TABLE_NAME)
+                ->where($query->expr()->neq('request_token', $query->createNamedParameter($token)));
             $result = $query->execute();
             foreach ($result->fetchAll() as $row) {
                 $this->rtc['content'][$row['table_name']][$row['record_id']] = true;
@@ -52,17 +64,7 @@ class RunningRequestRepository
     {
         $query = $this->connection->createQueryBuilder();
         $query->delete(self::RUNNING_REQUEST_TABLE_NAME)
-              ->where($query->expr()->eq('request_token', $query->createNamedParameter($token)))
-              ->execute();
-    }
-
-    protected function mapProperties(RunningRequest $runningRequest): array
-    {
-        return [
-            'record_id' => $runningRequest->getRecordId(),
-            'table_name' => $runningRequest->getTableName(),
-            'request_token' => $runningRequest->getRequestToken(),
-            'timestamp_begin' => $runningRequest->getTimestampBegin(),
-        ];
+            ->where($query->expr()->eq('request_token', $query->createNamedParameter($token)))
+            ->execute();
     }
 }
