@@ -11,6 +11,7 @@
 			<f:if condition="{record.changed}">
 				<f:link.action
 					action="publishFolder"
+					class="in2publish-link-publish"
 					arguments="{identifier:record.identifier}"
 					additionalAttributes="{data-in2publish-overlay: 'TRUE', data-in2publish-confirm: '{f:translate(key:\'confirm_publish_pages\', default:\'Are you sure?\')}'}">
 					<i class="in2publish-icon-publish"></i>

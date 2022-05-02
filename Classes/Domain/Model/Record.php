@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Domain\Model;
 
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Service\TcaProcessingService;
+use In2code\In2publishCore\Event\DetermineIfRecordIsPublishing;
 use In2code\In2publishCore\Event\VoteIfRecordIsPublishable;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Permission\PermissionService;
@@ -1152,6 +1153,10 @@ class Record implements RecordInterface
         if (!$this->isChangedRecursive()) {
             return false;
         }
+        if ($this->isPublishing()) {
+            return false;
+        }
+
         $permissionService = GeneralUtility::makeInstance(PermissionService::class);
         if (!$permissionService->isUserAllowedToPublish()) {
             return false;
@@ -1160,6 +1165,14 @@ class Record implements RecordInterface
         $event = new VoteIfRecordIsPublishable($this->tableName, $this->getIdentifier());
         $eventDispatcher->dispatch($event);
         return $event->getVotingResult();
+    }
+
+    public function isPublishing(): bool
+    {
+        $eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
+        $event = new DetermineIfRecordIsPublishing($this->tableName, $this->getIdentifier());
+        $eventDispatcher->dispatch($event);
+        return $event->isPublishing();
     }
 
     public function isRemovedFromLocalDatabase(): bool

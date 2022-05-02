@@ -93,6 +93,14 @@
 				<source>Publish this page</source>
 				<target state="translated">Diese Seite publizieren</target>
 			</trans-unit>
+			<trans-unit id="publishing_page">
+				<source>This page is currently being published</source>
+				<target state="translated">Diese Seite wird gerade veröffentlicht</target>
+			</trans-unit>
+			<trans-unit id="publishing_file">
+				<source>This file is currently being published</source>
+				<target state="translated">Diese Datei wird gerade veröffentlicht</target>
+			</trans-unit>
 			<trans-unit id="label_publish_all_files">
 				<source>Publish all files within folder "%s".</source>
 				<target state="translated">Veröffentlichen aller Dateien innerhalb von "%s"</target>
