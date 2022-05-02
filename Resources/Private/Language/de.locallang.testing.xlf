@@ -174,6 +174,17 @@
 				<target state="translated">Die Funktion "ssh2_sftp_chmod" steht ab der Version 0.12 von php_ssh2 zu Verfügung. Upgraden Sie php_ssh2 oder ignorieren Sie diese Meldung.</target>
 			</trans-unit>
 
+			<!-- \In2code\In2publishCore\Testing\Tests\Database\TableGarbageCollectorTest -->
+			<trans-unit id="garbage_collector_task_missing">
+				<source>A table garbage collector task for table tx_in2publishcore_running_request is missing</source>
+				<target state="translated">Es muss ein Table Garbage Collector Task für die Tabelle tx_in2publishcore_running_request angelegt werden</target>
+			</trans-unit>
+
+			<trans-unit id="database.garbage_collector_task_exists">
+				<source>A table garbage collector task for table tx_in2publishcore_running_request exists</source>
+				<target state="translated">Ein Table Garbage Collector Task für die Tabelle tx_in2publishcore_running_request ist vorhanden</target>
+			</trans-unit>
+
 			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest -->
 
 			<trans-unit id="sftp_requirements.all_known_dependencies_okay">
