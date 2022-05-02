@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Event;
 /*
  * Copyright notice
  *
- * (c) 2021 in2code.de and the following authors:
+ * (c) 2022 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
