@@ -31,8 +31,8 @@ namespace In2code\In2publishCore\Tests\Unit\Log\Processor;
 
 use In2code\In2publishCore\Log\Processor\BackendUserProcessor;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use Psr\Log\LogLevel;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
-use TYPO3\CMS\Core\Log\LogLevel;
 use TYPO3\CMS\Core\Log\LogRecord;
 
 /**
