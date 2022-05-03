@@ -63,7 +63,8 @@ class TableGarbageCollectorTest implements TestCaseInterface
         if (0 === $statement->fetchColumn()) {
             return new TestResult(
                 'database.garbage_collector_task_missing',
-                TestResult::ERROR
+                TestResult::ERROR,
+                ['database.garbage_collector_task_missing.explanation']
             );
         }
 
