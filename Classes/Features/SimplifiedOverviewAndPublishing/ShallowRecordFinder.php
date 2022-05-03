@@ -274,7 +274,8 @@ class ShallowRecordFinder implements RecordFinder
                 if ($language > 0) {
                     $transOrigPointerField = $GLOBALS['TCA']['pages']['ctrl']['transOrigPointerField'] ?? null;
                     if (null !== $transOrigPointerField) {
-                        $pid = $record->getLocalProperty($transOrigPointerField) ?? $record->getForeignProperty($transOrigPointerField);
+                        $pid = $record->getLocalProperty($transOrigPointerField)
+                               ?? $record->getForeignProperty($transOrigPointerField);
                     }
                 }
             }

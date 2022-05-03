@@ -92,9 +92,12 @@ class CompareDatabaseToolController extends ActionController
 
         foreach ($tables as $table) {
             $tableIdentifier = $this->localDatabase->quoteIdentifier($table);
-            $localResult = $this->localDatabase->executeQuery("SELECT MAX(uid) from $tableIdentifier")->fetchColumn();
+            $localResult = $this->localDatabase->executeQuery("SELECT MAX(uid) from $tableIdentifier")
+                                               ->fetchColumn();
+
             $tableIdentifier = $this->foreignDatabase->quoteIdentifier($table);
-            $foreignResult = $this->foreignDatabase->executeQuery("SELECT MAX(uid) from $tableIdentifier")->fetchColumn();
+            $foreignResult = $this->foreignDatabase->executeQuery("SELECT MAX(uid) from $tableIdentifier")
+                                                   ->fetchColumn();
 
             if (null === $localResult && null === $foreignResult) {
                 continue;
@@ -236,7 +239,11 @@ class CompareDatabaseToolController extends ActionController
             $foreignResult = $foreignQuery->execute();
             if (1 === $foreignResult) {
                 $this->addFlashMessage(
-                    LocalizationUtility::translate('compare_database.transfer.deleted_from_foreign', 'in2publish_core', [$table, $uid]),
+                    LocalizationUtility::translate(
+                        'compare_database.transfer.deleted_from_foreign',
+                        'in2publish_core',
+                        [$table, $uid]
+                    ),
                     LocalizationUtility::translate('compare_database.transfer.success', 'in2publish_core')
                 );
             }

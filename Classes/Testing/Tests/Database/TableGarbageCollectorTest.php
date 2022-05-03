@@ -51,13 +51,13 @@ class TableGarbageCollectorTest implements TestCaseInterface
 
         $query = $localDatabase->createQueryBuilder();
         $query->count('*')
-            ->from('tx_scheduler_task')
-            ->where(
-                $query->expr()->like(
-                    'serialized_task_object',
-                    $query->createNamedParameter('%tx_in2publishcore_running_request%')
-                )
-            );
+              ->from('tx_scheduler_task')
+              ->where(
+                  $query->expr()->like(
+                      'serialized_task_object',
+                      $query->createNamedParameter('%tx_in2publishcore_running_request%')
+                  )
+              );
         $statement = $query->execute();
 
         if (0 === $statement->fetchColumn()) {
