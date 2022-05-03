@@ -115,7 +115,7 @@ class BackendUtilityTest extends UnitTestCase
 
         $this->rows = ['uid' => $uid, 'pid' => $expectedPid];
 
-        $_POST['element'] = '' . $table . ':' . $uid . '';
+        $_POST['element'] = $table . ':' . $uid;
 
         $this->assertSame($expectedPid, BackendUtility::getPageIdentifier());
     }
