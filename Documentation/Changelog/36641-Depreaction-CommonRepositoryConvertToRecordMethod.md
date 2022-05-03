@@ -12,6 +12,7 @@ This method is therefore only an anemic wrapper around `RecordFactory::makeInsta
 ## Impact
 
 Deprecated Methods:
+
 1. Calling the method `\In2code\In2publishCore\Domain\Repository\CommonRepository::convertToRecord` is deprecated.
 
 ## Affected Installations
@@ -29,5 +30,7 @@ $this->recordFactory->makeInstance($this, $localProperties, $foreignProperties, 
 
 Do not instantiate the `CommonRepository` with an `identifierFieldName`.
 
-If you extended the `BaseRepository` or `CommonRepository` you should consider using public methods provided by these classes.
-If that is not possible for your use case feel free to provide a pull request with a new signal or added optional arguments.
+If you extended the `BaseRepository` or `CommonRepository` you should consider using public methods provided by these
+classes.
+If that is not possible for your use case feel free to provide a pull request with a new signal or added optional
+arguments.

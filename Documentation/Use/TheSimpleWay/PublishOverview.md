@@ -1,9 +1,10 @@
 # Publish Overview Module
 
-Opening the **Publish Overview** module allows editors and administrators see live changes between the stage and production system.
+Opening the **Publish Overview** module allows editors and administrators see live changes between the stage and
+production system.
 There is a single page tree that compares records on both servers.
 
-![Module Overview details](_img/module_detail_overview.png) 
+![Module Overview details](_img/module_detail_overview.png)
 
 ## Color Coding
 
@@ -53,4 +54,5 @@ Note:
 
 Note:
 
-> If there is a relation from one record to another record on another page, it gets also published. E.g. a news record that has a relation to a content record on another page.
+> If there is a relation from one record to another record on another page, it gets also published. E.g. a news record
+> that has a relation to a content record on another page.

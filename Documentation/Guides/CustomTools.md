@@ -9,15 +9,18 @@ The tag has the following properties:
   title or a splitLabel.
 * `description`: The description that identifies the tool and is shown in the Publish Tools Module. The value is either
   the title or a splitLabel.
-* `actions`: An comma separated list of controller action names (The methods of your controller which should be callable). The first
+* `actions`: An comma separated list of controller action names (The methods of your controller which should be
+  callable). The first
   action is the default action which will be called when the Tool was selected.
 * (optional) `condition`: A condition that has to evaluate to true. The condition parts are delimited by `:` (colons)
-  * `CONF`: A dot-path to the configuration value e.g. `CONF:features.remoteCacheControl.enableTool`
-  * `EXTCONF`: This condition has three parts. `EXTCONF`, an extension key and a path to the extension's config e.g. `EXTCONF:in2publish:managedSettings`
+    * `CONF`: A dot-path to the configuration value e.g. `CONF:features.remoteCacheControl.enableTool`
+    * `EXTCONF`: This condition has three parts. `EXTCONF`, an extension key and a path to the extension's config
+      e.g. `EXTCONF:in2publish:managedSettings`
 * (optional) `before`: A comma separated list of services which must appear after this service.
 * (optional) `after`: A comma separated list of services which must appear before this service.
 
 Example `Services.yaml` (taken from the Enterprise Edition):
+
 ```yaml
 services:
   In2code\In2publish\Features\RemoteCacheControl\Controller\RemoteCacheController:

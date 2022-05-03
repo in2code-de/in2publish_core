@@ -18,10 +18,12 @@ Example: `%env(TYPO3_CONTEXT)%`\
 * The percentage signs (`%`) at the beginning and end of the string indicate, that this value is dynamic.
 * The part `env` before the opening round bracket (`)`) is the provider key.
 * The contents between the round brackets will be passed to the actual provider and is therefore provider specific.
-  * The value between the round brackets can contain any character expect a closing round bracket.
-  * In this example the provider is `env`, which will return the value of the env var `TYPO3_CONTEXT`, e.g. "`Production/Stage`"
+    * The value between the round brackets can contain any character expect a closing round bracket.
+    * In this example the provider is `env`, which will return the value of the env var `TYPO3_CONTEXT`,
+      e.g. "`Production/Stage`"
 
-You can check if your syntax is correct with the regular expression from `DynamicValuesPostProcessor::DYNAMIC_REFERENCE_PATTERN`.
+You can check if your syntax is correct with the regular expression
+from `DynamicValuesPostProcessor::DYNAMIC_REFERENCE_PATTERN`.
 (Or visit https://www.phpliveregex.com/p/wzP)
 
 ## Custom Provider
