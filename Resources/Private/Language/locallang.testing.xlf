@@ -126,9 +126,11 @@
 
 			<!-- \In2code\In2publishCore\Testing\Tests\Database\TableGarbageCollectorTest -->
 			<trans-unit id="database.garbage_collector_task_missing">
-				<source>A table garbage collector task for table tx_in2publishcore_running_request is missing</source>
+				<source>A table garbage collector task for table tx_in2publishcore_running_request is missing.</source>
 			</trans-unit>
-
+			<trans-unit id="database.garbage_collector_task_missing.explanation">
+				<source>Since there is no "Table garbage collection" task for the "tx_in2publishcore_running_request" table, the table may keep growing when unforeseen errors occur. This could block the publishing of some records.</source>
+			</trans-unit>
 			<trans-unit id="database.garbage_collector_task_exists">
 				<source>A table garbage collector task for table tx_in2publishcore_running_request exists</source>
 			</trans-unit>
@@ -147,7 +149,6 @@
 			</trans-unit>
 			<trans-unit id="ssh_connection.chmod_description">
 				<source>The function "ssh2_sftp_chmod" is available since php_ssh2 0.12. Either upgrade or ignore this message.</source>
-				<target state="translated">Die Funktion "ssh2_sftp_chmod" steht ab der Version 0.12 von php_ssh2 zu Verfügung. Upgraden Sie php_ssh2 oder ignorieren Sie diese Meldung.</target>
 			</trans-unit>
 
 			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SftpRequirementsTest -->
@@ -470,7 +471,6 @@
 
 			<trans-unit id="performance.rce_init.init_time">
 				<source>The Remote Command Dispatcher initialization took %f seconds on average</source>
-				<target state="translated">Die Initialisierung des Remote Command Dispatcher benötigt im Schnitt %f Sekunden</target>
 			</trans-unit>
 			<trans-unit id="performance.rce_init.slow_help">
 				<source>
