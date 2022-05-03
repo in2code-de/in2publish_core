@@ -3,7 +3,8 @@
 ## Software Requirements
 
 **Preface**:
-If you do not use `adapter.remote: 'ssh'` or `adapter.transmission: 'ssh'` you can safely ignore any reference to SSH/libssh/php-ssh(2).
+If you do not use `adapter.remote: 'ssh'` or `adapter.transmission: 'ssh'` you can safely ignore any reference to
+SSH/libssh/php-ssh(2).
 SSH-Adapters are used by default and they are the only ones shipped with in2publish.
 If you can't or don't want to use SSH you can ask us for alternatives.
 
@@ -36,16 +37,17 @@ PHP configuration values:
 |-----------------|---------|
 | allow_url_fopen | On      |
 
-
 Hint:
 
-> php_ssh2 0.11 does not include the function ssh2_sftp_chmod. You can download a newer version here: [PECL SSH2 Download](https://pecl.php.net/package/ssh2)
+> php_ssh2 0.11 does not include the function ssh2_sftp_chmod. You can download a newer version
+> here: [PECL SSH2 Download](https://pecl.php.net/package/ssh2)
 > Most versions on package based server software are below 0.12, so the function has been made optional in in2publish.
 > In this case you have to take care of file permissions yourself.
 
 Hint:
 
-> If you are using xdebug for local development, be sure you set max_nesting_level to at least 5 times of the configuration value factory.maximumOverallRecursion to prevent malfunction of in2publish.
+> If you are using xdebug for local development, be sure you set max_nesting_level to at least 5 times of the
+> configuration value factory.maximumOverallRecursion to prevent malfunction of in2publish.
 
 ## OS Requirements
 
@@ -59,7 +61,8 @@ These requirements are on top of the basic requirements of TYPO3 CMS 7.6 - 8.7
 | Keypair               | A public and private RSA key pair to authenticate the Webprocess User on Foreign (PW-protected key is supported) |
 | Environment variable  | in2publish requires `SetEnv IN2PUBLISH_CONTEXT Local` to be set in the virtual host or (if allowed) .htaccess    |
 
-If Foreign's database is not on the same server (which is not recommended!) you will need a Static port forwarding (from any port on Local to 3306 on Foreign)
+If Foreign's database is not on the same server (which is not recommended!) you will need a Static port forwarding (from
+any port on Local to 3306 on Foreign)
 
 Hint:
 

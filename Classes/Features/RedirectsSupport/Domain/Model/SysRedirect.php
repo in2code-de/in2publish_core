@@ -31,7 +31,6 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Model;
 
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Service\Publishing\RunningRequestService;
 use In2code\In2publishCore\Event\DetermineIfRecordIsPublishing;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Database\RawRecordService;

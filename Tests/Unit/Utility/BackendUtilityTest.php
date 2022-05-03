@@ -269,7 +269,7 @@ class BackendUtilityTest extends UnitTestCase
     public function testGetPageIdentifierReturnsZeroIfAnyMethodFails()
     {
         $this->rows = [
-            ['uid' => 321]
+            ['uid' => 321],
         ];
 
         $this->assertSame(0, BackendUtility::getPageIdentifier(321, 'tt_content'));

@@ -75,8 +75,8 @@ class RunningRequestRepository
         if (!isset($this->rtc['content'])) {
             $query = $this->connection->createQueryBuilder();
             $query->select('*')
-                ->from(self::RUNNING_REQUEST_TABLE_NAME)
-                ->where($query->expr()->neq('request_token', $query->createNamedParameter($token)));
+                  ->from(self::RUNNING_REQUEST_TABLE_NAME)
+                  ->where($query->expr()->neq('request_token', $query->createNamedParameter($token)));
             $result = $query->execute();
             foreach ($result->fetchAll() as $row) {
                 $this->rtc['content'][$row['table_name']][$row['record_id']] = true;
@@ -89,7 +89,7 @@ class RunningRequestRepository
     {
         $query = $this->connection->createQueryBuilder();
         $query->delete(self::RUNNING_REQUEST_TABLE_NAME)
-            ->where($query->expr()->eq('request_token', $query->createNamedParameter($token)))
-            ->execute();
+              ->where($query->expr()->eq('request_token', $query->createNamedParameter($token)))
+              ->execute();
     }
 }

@@ -4,21 +4,16 @@ The installation requires the following steps on both the »Local« and
 »Foreign« system:
 
 1. Install the extension in TYPO3
-
-  - Use the Extension Manager, Composer or a copy of the Git repository
-  - Please take a look at the "in2code GitHub tutorial" if you need more details
-
+   * Use the Extension Manager, Composer or a copy of the Git repository
+   * Please take a look at the "in2code GitHub tutorial" if you need more details
 2. Activate the Extension
 3. Set the path to the configuration files of the extension
-  - The configuration files are created next in the chapter "configuration"
-  - TYPO3 < 9: Extensions > "in2publish_core" > Button Configure
-  - TYPO3 >= 9: Settings > Extension Configuration > Button Configure
-    Extensions > "in2publish_core"
-  - Change the value `pathToConfiguration` pointing to the configuration file
-    folder, yet to be created
-4. Make sure the environment variable `IN2PUBLISH_CONTEXT` is set,
-   otherwise the extension modules are not visible
-  - See [Preparation](1_Preparation.md)
+   * The configuration files are created next in the chapter "configuration"
+   * TYPO3 < 9: Extensions > "in2publish_core" > Button Configure
+   * TYPO3 >= 9: Settings > Extension Configuration > Button Configure Extensions > "in2publish_core"
+   * Change the value `pathToConfiguration` pointing to the configuration file folder, yet to be created
+4. Make sure the environment variable `IN2PUBLISH_CONTEXT` is set, otherwise the extension modules are not visible
+   * See [Preparation](1_Preparation.md)
 
 ## New modules on Local
 

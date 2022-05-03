@@ -99,9 +99,11 @@ class CompareDatabaseToolController extends ActionController
 
         foreach ($tables as $table) {
             $tableIdentifier = $this->localDatabase->quoteIdentifier($table);
-            $localResult = $this->localDatabase->executeQuery("SELECT MAX(uid) from $tableIdentifier")->fetchOne();
+            $localResult = $this->localDatabase->executeQuery("SELECT MAX(uid) from $tableIdentifier")
+                                               ->fetchOne();
             $tableIdentifier = $this->foreignDatabase->quoteIdentifier($table);
-            $foreignResult = $this->foreignDatabase->executeQuery("SELECT MAX(uid) from $tableIdentifier")->fetchOne();
+            $foreignResult = $this->foreignDatabase->executeQuery("SELECT MAX(uid) from $tableIdentifier")
+                                                   ->fetchOne();
 
             if (null === $localResult && null === $foreignResult) {
                 continue;

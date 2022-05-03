@@ -26,9 +26,9 @@ class RecordTest extends UnitTestCase
     protected function getRecordStub($getIgnoreFields, bool $isParentRecordDisabled = false): Record
     {
         $stub = $this->getMockBuilder(Record::class)
-                     ->setMethods(['getIgnoreFields', 'isParentDisabled'])
-                     ->disableOriginalConstructor()
-                     ->getMock();
+            ->setMethods(['getIgnoreFields', 'isParentDisabled'])
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $stub->method('getIgnoreFields')->will($this->returnValue($getIgnoreFields));
         $stub->method('isParentDisabled')->will($this->returnValue($isParentRecordDisabled));
@@ -1015,9 +1015,9 @@ class RecordTest extends UnitTestCase
 
         /** @var Record|MockObject $stub1 */
         $stub1 = $this->getMockBuilder(Record::class)
-                      ->setMethods(['getIgnoreFields', 'isParentDisabled', 'isChanged'])
-                      ->disableOriginalConstructor()
-                      ->getMock();
+            ->setMethods(['getIgnoreFields', 'isParentDisabled', 'isChanged'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $stub1->method('getIgnoreFields')->will($this->returnValue([]));
         $stub1->method('isParentDisabled')->will($this->returnValue(false));
         $stub1->__construct('tt_content', ['uid' => 1], ['uid' => 1], [], []);
@@ -1026,9 +1026,9 @@ class RecordTest extends UnitTestCase
 
         /** @var Record|MockObject $stub2 */
         $stub2 = $this->getMockBuilder(Record::class)
-                      ->setMethods(['getIgnoreFields', 'isParentDisabled', 'isChanged'])
-                      ->disableOriginalConstructor()
-                      ->getMock();
+            ->setMethods(['getIgnoreFields', 'isParentDisabled', 'isChanged'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $stub2->method('getIgnoreFields')->will($this->returnValue([]));
         $stub2->method('isParentDisabled')->will($this->returnValue(false));
         $stub2->__construct('tt_content', ['uid' => 2], ['uid' => 2], [], []);

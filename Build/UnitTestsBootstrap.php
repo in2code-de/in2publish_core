@@ -126,7 +126,11 @@ call_user_func(function () {
         'boot.state' => $bootState,
     ]);
 
-    $container = $builder->createDependencyInjectionContainer($packageManager, $dependencyInjectionContainerCache, false);
+    $container = $builder->createDependencyInjectionContainer(
+        $packageManager,
+        $dependencyInjectionContainerCache,
+        false
+    );
 
     // Push the container to GeneralUtility as we want to make sure its
     // makeInstance() method creates classes using the container from now on.
