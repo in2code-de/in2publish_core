@@ -116,7 +116,11 @@ call_user_func(function () {
         'boot.state' => $bootState,
     ]);
 
-    $container = $builder->createDependencyInjectionContainer($packageManager, $dependencyInjectionContainerCache, false);
+    $container = $builder->createDependencyInjectionContainer(
+        $packageManager,
+        $dependencyInjectionContainerCache,
+        false
+    );
 
     GeneralUtility::setContainer($container);
 });

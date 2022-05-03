@@ -15,6 +15,7 @@ use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Container\ContainerInterface;
 use ReflectionProperty;
+use RuntimeException;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Cache\Backend\NullBackend;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -60,7 +61,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
      * This method should be called with parent::setUp() in your test cases!
      *
      * @return void
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     protected function setUp(): void
     {
@@ -87,9 +88,9 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
         // sqlite db path preparation
         $dbPathSqlite = dirname($this->instancePath) . '/functional-sqlite-dbs/test_' . $this->identifier . '.sqlite';
         $dbPathSqliteEmpty = dirname($this->instancePath)
-                             . '/functional-sqlite-dbs/test_'
-                             . $this->identifier
-                             . '.empty.sqlite';
+            . '/functional-sqlite-dbs/test_'
+            . $this->identifier
+            . '.empty.sqlite';
 
         $localConfiguration = ['DB' => ['Connections' => []]];
         $connections = &$localConfiguration['DB']['Connections'];
@@ -248,7 +249,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
     protected function getContainer(): ContainerInterface
     {
         if (!$this->container instanceof ContainerInterface) {
-            throw new \RuntimeException('Please invoke parent::setUp() before calling getContainer().', 1589221777);
+            throw new RuntimeException('Please invoke parent::setUp() before calling getContainer().', 1589221777);
         }
         return $this->container;
     }
