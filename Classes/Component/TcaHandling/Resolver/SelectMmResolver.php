@@ -24,15 +24,19 @@ class SelectMmResolver implements Resolver
 
     public function __construct(
         DatabaseIdentifierQuotingService $databaseIdentifierQuotingService,
-        ReplaceMarkersService $replaceMarkersService,
+        ReplaceMarkersService $replaceMarkersService
+    ) {
+        $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
+        $this->replaceMarkersService = $replaceMarkersService;
+    }
+
+    public function configure(
         string $foreignTableWhere,
         string $column,
         string $mmTable,
         string $foreignTable,
         string $selectField
-    ) {
-        $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
-        $this->replaceMarkersService = $replaceMarkersService;
+    ): void {
         $this->foreignTableWhere = $foreignTableWhere;
         $this->column = $column;
         $this->mmTable = $mmTable;
@@ -56,5 +60,4 @@ class SelectMmResolver implements Resolver
 
         $demands->addJoin($this->mmTable, $this->foreignTable, $additionalWhere, $this->selectField, $value, $record);
     }
-
 }

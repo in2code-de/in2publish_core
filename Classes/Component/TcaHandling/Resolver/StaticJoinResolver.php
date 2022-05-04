@@ -14,7 +14,7 @@ class StaticJoinResolver implements Resolver
     protected string $additionalWhere;
     protected string $property;
 
-    public function __construct(string $mmTable, string $joinTable, string $additionalWhere, string $property)
+    public function configure(string $mmTable, string $joinTable, string $additionalWhere, string $property): void
     {
         $this->mmTable = $mmTable;
         $this->joinTable = $joinTable;
@@ -33,5 +33,4 @@ class StaticJoinResolver implements Resolver
             $record
         );
     }
-
 }

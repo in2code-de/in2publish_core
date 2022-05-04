@@ -10,7 +10,13 @@ use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 
 class ExtNewsRelatedFromProcessor extends AbstractProcessor
 {
+    protected NoOpResolver $noOpResolver;
     protected string $type = 'group';
+
+    public function injectNoOpResolver(NoOpResolver $noOpResolver): void
+    {
+        $this->noOpResolver = $noOpResolver;
+    }
 
     public function getTable(): string
     {
@@ -32,6 +38,6 @@ class ExtNewsRelatedFromProcessor extends AbstractProcessor
 
     protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
-        return new NoOpResolver();
+        return clone $this->noOpResolver;
     }
 }

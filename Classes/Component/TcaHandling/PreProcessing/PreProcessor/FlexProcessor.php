@@ -68,22 +68,25 @@ use const JSON_THROW_ON_ERROR;
 
 class FlexProcessor extends AbstractProcessor
 {
-    protected string $type = 'flex';
-
     protected FlexFormTools $flexFormTools;
-
-    protected FlexFormService $flexFormService;
-
     protected FlexFormFlatteningService $flexFormFlatteningService;
+    protected FlexResolver $resolver;
+    protected string $type = 'flex';
+    protected array $forbidden = [
+        'ds_pointerField_searchParent' => 'ds_pointerField_searchParent is not supported',
+        'ds_pointerField_searchParent_subField' => 'ds_pointerField_searchParent_subField is not supported',
+    ];
+    protected array $required = [
+        'ds' => 'can not resolve flexform values without "ds"',
+    ];
+    protected array $allowed = [
+        'search',
+        'ds_pointerField',
+    ];
 
     public function injectFlexFormTools(FlexFormTools $flexFormTools): void
     {
         $this->flexFormTools = $flexFormTools;
-    }
-
-    public function injectFlexFormService(FlexFormService $flexFormService): void
-    {
-        $this->flexFormService = $flexFormService;
     }
 
     public function injectFlexFormFlatteningService(FlexFormFlatteningService $flexFormFlatteningService): void
@@ -91,19 +94,10 @@ class FlexProcessor extends AbstractProcessor
         $this->flexFormFlatteningService = $flexFormFlatteningService;
     }
 
-    protected array $forbidden = [
-        'ds_pointerField_searchParent' => 'ds_pointerField_searchParent is not supported',
-        'ds_pointerField_searchParent_subField' => 'ds_pointerField_searchParent_subField is not supported',
-    ];
-
-    protected array $required = [
-        'ds' => 'can not resolve flexform values without "ds"',
-    ];
-
-    protected array $allowed = [
-        'search',
-        'ds_pointerField',
-    ];
+    public function injectResolver(FlexResolver $resolver): void
+    {
+        $this->resolver = $resolver;
+    }
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
@@ -138,14 +132,8 @@ class FlexProcessor extends AbstractProcessor
             );
         }
 
-        return new FlexResolver(
-            $this->flexFormTools,
-            $this->flexFormService,
-            $this->flexFormFlatteningService,
-            $this->tcaPreProcessingService,
-            $table,
-            $column,
-            $processedTca
-        );
+        $resolver = clone $this->resolver;
+        $resolver->configure($table, $column, $processedTca);
+        return $resolver;
     }
 }

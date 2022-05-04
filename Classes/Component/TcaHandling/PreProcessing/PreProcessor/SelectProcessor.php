@@ -44,8 +44,9 @@ use function trim;
 
 class SelectProcessor extends AbstractProcessor
 {
+    protected SelectMmResolver $selectMmResolver;
+    protected SelectResolver $selectResolver;
     protected string $type = 'select';
-
     protected array $forbidden = [
         'itemsProcFunc' => 'itemsProcFunc is not supported',
         'fileFolder' => 'fileFolder is not supported',
@@ -53,11 +54,9 @@ class SelectProcessor extends AbstractProcessor
         'MM_oppositeUsage' => 'MM_oppositeUsage is not supported',
         'special' => 'special is not supported',
     ];
-
     protected array $required = [
         'foreign_table' => 'Can not select without another table',
     ];
-
     protected array $allowed = [
         'foreign_table_where',
         'MM',
@@ -68,19 +67,14 @@ class SelectProcessor extends AbstractProcessor
         'MM_opposite_field',
     ];
 
-    protected ReplaceMarkersService $replaceMarkersService;
-
-    protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
-
-    public function injectDatabaseIdentifierQuotingService(
-        DatabaseIdentifierQuotingService $databaseIdentifierQuotingService
-    ): void {
-        $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
+    public function injectSelectMmResolver(SelectMmResolver $selectMmResolver): void
+    {
+        $this->selectMmResolver = $selectMmResolver;
     }
 
-    public function injectReplaceMarkersService(ReplaceMarkersService $replaceMarkersService): void
+    public function injectSelectResolver(SelectResolver $selectResolver): void
     {
-        $this->replaceMarkersService = $replaceMarkersService;
+        $this->selectResolver = $selectResolver;
     }
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
@@ -117,24 +111,14 @@ class SelectProcessor extends AbstractProcessor
                 $foreignTableWhere = trim(substr($foreignTableWhere, 4));
             }
 
-            return new SelectMmResolver(
-                $this->databaseIdentifierQuotingService,
-                $this->replaceMarkersService,
-                $foreignTableWhere,
-                $column,
-                $mmTable,
-                $foreignTable,
-                $selectField
-            );
+            $resolver = clone $this->selectMmResolver;
+            $resolver->configure($foreignTableWhere, $column, $mmTable, $foreignTable, $selectField);
+            return $resolver;
         }
 
-        return new SelectResolver(
-            $this->databaseIdentifierQuotingService,
-            $this->replaceMarkersService,
-            $column,
-            $foreignTable,
-            $foreignTableWhere
-        );
+        $resolver = clone $this->selectResolver;
+        $resolver->configure($column, $foreignTable, $foreignTableWhere);
+        return $resolver;
     }
 
     /**
@@ -148,8 +132,8 @@ class SelectProcessor extends AbstractProcessor
     protected function isSysCategoryField(array $config): bool
     {
         return isset($config['foreign_table'], $config['MM_opposite_field'], $config['MM'])
-            && 'sys_category' === $config['foreign_table']
-            && 'items' === $config['MM_opposite_field']
-            && 'sys_category_record_mm' === $config['MM'];
+               && 'sys_category' === $config['foreign_table']
+               && 'items' === $config['MM_opposite_field']
+               && 'sys_category_record_mm' === $config['MM'];
     }
 }

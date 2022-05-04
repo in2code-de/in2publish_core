@@ -21,14 +21,17 @@ class InlineSelectResolver implements Resolver
     protected ?string $foreignTableField;
     protected string $additionalWhere;
 
-    public function __construct(
-        DatabaseIdentifierQuotingService $databaseIdentifierQuotingService,
+    public function __construct(DatabaseIdentifierQuotingService $databaseIdentifierQuotingService)
+    {
+        $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
+    }
+
+    public function configure(
         string $foreignTable,
         string $foreignField,
         ?string $foreignTableField,
         string $additionalWhere
-    ) {
-        $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
+    ): void {
         $this->foreignTable = $foreignTable;
         $this->foreignField = $foreignField;
         $this->foreignTableField = $foreignTableField;
@@ -52,5 +55,4 @@ class InlineSelectResolver implements Resolver
 
         $demands->addSelect($this->foreignTable, $additionalWhere, $this->foreignField, $record->getId(), $record);
     }
-
 }

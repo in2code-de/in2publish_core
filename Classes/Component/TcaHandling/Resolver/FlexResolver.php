@@ -37,15 +37,16 @@ class FlexResolver implements Resolver
         FlexFormTools $flexFormTools,
         FlexFormService $flexFormService,
         FlexFormFlatteningService $flexFormFlatteningService,
-        TcaPreProcessingService $tcaPreProcessingService,
-        string $table,
-        string $column,
-        array $processedTca
+        TcaPreProcessingService $tcaPreProcessingService
     ) {
         $this->flexFormTools = $flexFormTools;
         $this->flexFormService = $flexFormService;
         $this->flexFormFlatteningService = $flexFormFlatteningService;
         $this->tcaPreProcessingService = $tcaPreProcessingService;
+    }
+
+    public function configure(string $table, string $column, array $processedTca): void
+    {
         $this->table = $table;
         $this->column = $column;
         $this->processedTca = $processedTca;
@@ -114,5 +115,4 @@ class FlexResolver implements Resolver
         }
         return $newData;
     }
-
 }

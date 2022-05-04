@@ -13,11 +13,10 @@ use function array_merge;
 
 class GroupSingleTableResolver implements Resolver
 {
-
     protected string $column;
     protected string $foreignTable;
 
-    public function __construct(string $column, string $foreignTable)
+    public function configure(string $column, string $foreignTable): void
     {
         $this->column = $column;
         $this->foreignTable = $foreignTable;
@@ -36,5 +35,4 @@ class GroupSingleTableResolver implements Resolver
             $demands->addSelect($this->foreignTable, '', 'uid', $value, $record);
         }
     }
-
 }

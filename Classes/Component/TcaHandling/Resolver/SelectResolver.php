@@ -25,13 +25,14 @@ class SelectResolver implements Resolver
 
     public function __construct(
         DatabaseIdentifierQuotingService $databaseIdentifierQuotingService,
-        ReplaceMarkersService $replaceMarkersService,
-        string $column,
-        string $foreignTable,
-        string $foreignTableWhere
+        ReplaceMarkersService $replaceMarkersService
     ) {
         $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
         $this->replaceMarkersService = $replaceMarkersService;
+    }
+
+    public function configure(string $column, string $foreignTable, string $foreignTableWhere): void
+    {
         $this->column = $column;
         $this->foreignTable = $foreignTable;
         $this->foreignTableWhere = $foreignTableWhere;
@@ -63,5 +64,4 @@ class SelectResolver implements Resolver
             $demands->addSelect($this->foreignTable, $additionalWhere, 'uid', $splittedValue, $record);
         }
     }
-
 }

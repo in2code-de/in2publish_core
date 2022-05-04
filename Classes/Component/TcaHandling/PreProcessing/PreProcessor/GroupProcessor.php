@@ -46,16 +46,18 @@ use function trim;
 
 class GroupProcessor extends AbstractProcessor
 {
+    protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
+    protected GroupMmMultiTableResolver $groupMmMultiTableResolver;
+    protected StaticJoinResolver $staticJoinResolver;
+    protected GroupMultiTableResolver $groupMultiTableResolver;
+    protected GroupSingleTableResolver $groupSingleTableResolver;
     protected string $type = 'group';
-
     protected array $required = [
         'allowed' => 'The field "allowed" is required',
     ];
-
     protected array $forbidden = [
         'MM_opposite_field' => 'MM_opposite_field is set for the foreign side of relations, which must not be resolved',
     ];
-
     protected array $allowed = [
         'internal_type',
         'MM',
@@ -65,12 +67,30 @@ class GroupProcessor extends AbstractProcessor
         'uploadfolder',
     ];
 
-    protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
-
     public function injectDatabaseIdentifierQuotingService(
         DatabaseIdentifierQuotingService $databaseIdentifierQuotingService
     ): void {
         $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
+    }
+
+    public function injectGroupMmMultiTableResolver(GroupMmMultiTableResolver $groupMmMultiTableResolver): void
+    {
+        $this->groupMmMultiTableResolver = $groupMmMultiTableResolver;
+    }
+
+    public function injectStaticJoinResolver(StaticJoinResolver $staticJoinResolver): void
+    {
+        $this->staticJoinResolver = $staticJoinResolver;
+    }
+
+    public function injectGroupMultiTableResolver(GroupMultiTableResolver $groupMultiTableResolver): void
+    {
+        $this->groupMultiTableResolver = $groupMultiTableResolver;
+    }
+
+    public function injectGroupSingleTableResolver(GroupSingleTableResolver $groupSingleTableResolver): void
+    {
+        $this->groupSingleTableResolver = $groupSingleTableResolver;
     }
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
@@ -95,7 +115,7 @@ class GroupProcessor extends AbstractProcessor
         foreach ($allowedTables as $allowedTable) {
             if (!array_key_exists($allowedTable, $GLOBALS['TCA'])) {
                 $reasons[] = 'Can not reference the table "' . $allowedTable
-                    . '" from "allowed. It is not present in the TCA';
+                             . '" from "allowed. It is not present in the TCA';
             }
         }
         return $reasons;
@@ -129,17 +149,25 @@ class GroupProcessor extends AbstractProcessor
             }
 
             if (!$isSingleTable) {
-                return new GroupMmMultiTableResolver($mmTable, $column, $selectField, $additionalWhere);
+                $resolver = clone $this->groupMmMultiTableResolver;
+                $resolver->configure($mmTable, $column, $selectField, $additionalWhere);
+                return $resolver;
             }
 
-            return new StaticJoinResolver($mmTable, $foreignTable, $additionalWhere, $selectField);
+            $resolver = clone $this->staticJoinResolver;
+            $resolver->configure($mmTable, $foreignTable, $additionalWhere, $selectField);
+            return $resolver;
         }
 
         if (!$isSingleTable) {
-            return new GroupMultiTableResolver($column);
+            $resolver = clone $this->groupMultiTableResolver;
+            $resolver->configure($column);
+            return $resolver;
         }
 
-        return new GroupSingleTableResolver($column, $foreignTable);
+        $resolver = clone $this->groupSingleTableResolver;
+        $resolver->configure($column, $foreignTable);
+        return $resolver;
     }
 
     protected function isSingleTable($allowed): bool

@@ -19,7 +19,7 @@ class TextResolver implements Resolver
 
     protected string $column;
 
-    public function __construct(string $column)
+    public function configure(string $column): void
     {
         $this->column = $column;
     }

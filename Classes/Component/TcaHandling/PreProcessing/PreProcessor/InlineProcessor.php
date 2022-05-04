@@ -41,16 +41,16 @@ use function trim;
 
 class InlineProcessor extends AbstractProcessor
 {
+    protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
+    protected StaticJoinResolver $staticJoinResolver;
+    protected InlineSelectResolver $inlineSelectResolver;
     protected string $type = 'inline';
-
     protected array $forbidden = [
         'symmetric_field' => 'symmetric_field is set on the foreign side of relations, which must not be resolved',
     ];
-
     protected array $required = [
         'foreign_table' => 'Must be set, there is no type "inline" without a foreign table',
     ];
-
     protected array $allowed = [
         'foreign_field',
         'foreign_match_fields',
@@ -60,12 +60,20 @@ class InlineProcessor extends AbstractProcessor
         'MM_opposite_field',
     ];
 
-    protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
-
     public function injectDatabaseIdentifierQuotingService(
         DatabaseIdentifierQuotingService $databaseIdentifierQuotingService
     ): void {
         $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
+    }
+
+    public function injectStaticJoinResolver(StaticJoinResolver $staticJoinResolver): void
+    {
+        $this->staticJoinResolver = $staticJoinResolver;
+    }
+
+    public function injectInlineSelectResolver(InlineSelectResolver $inlineSelectResolver): void
+    {
+        $this->inlineSelectResolver = $inlineSelectResolver;
     }
 
     protected function buildResolver(string $table, string $column, array $processedTca): Resolver
@@ -95,7 +103,9 @@ class InlineProcessor extends AbstractProcessor
                 $additionalWhere = $matches['where'];
             }
 
-            return new StaticJoinResolver($mmTable, $foreignTable, $selectField, $additionalWhere);
+            $resolver = clone $this->staticJoinResolver;
+            $resolver->configure($mmTable, $foreignTable, $selectField, $additionalWhere);
+            return $resolver;
         }
 
         $foreignTableField = $processedTca['foreign_table_field'] ?? null;
@@ -110,12 +120,13 @@ class InlineProcessor extends AbstractProcessor
         }
         $additionalWhere = implode(' AND ', $foreignMatchFields);
 
-        return new InlineSelectResolver(
-            $this->databaseIdentifierQuotingService,
+        $resolver = clone $this->inlineSelectResolver;
+        $resolver->configure(
             $foreignTable,
             $foreignField,
             $foreignTableField,
             $additionalWhere
         );
+        return $resolver;
     }
 }

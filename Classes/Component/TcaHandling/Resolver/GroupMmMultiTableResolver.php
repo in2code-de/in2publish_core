@@ -21,7 +21,7 @@ class GroupMmMultiTableResolver implements Resolver
     protected string $selectField;
     protected string $additionalWhere;
 
-    public function __construct(string $mmTable, string $column, string $selectField, string $additionalWhere)
+    public function configure(string $mmTable, string $column, string $selectField, string $additionalWhere): void
     {
         $this->mmTable = $mmTable;
         $this->column = $column;
