@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing\Domain\Repository;
+namespace In2code\In2publishCore\Component\TcaHandling\Repository;
 
 use function array_keys;
 use function array_merge;

@@ -7,10 +7,10 @@ namespace In2code\In2publishCore\Component\TcaHandling\Query;
 use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Component\TcaHandling\RecordIndex;
+use In2code\In2publishCore\Component\TcaHandling\Repository\DualDatabaseRepository;
+use In2code\In2publishCore\Component\TcaHandling\Repository\SingleDatabaseRepository;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing\Domain\Repository\DualDatabaseRepository;
-use In2code\In2publishCore\Features\SimplifiedOverviewAndPublishing\Domain\Repository\SingleDatabaseRepository;
 
 use function array_key_exists;
 use function array_keys;

@@ -4,9 +4,10 @@ services:
     autoconfigure: true
     public: false
     bind:
+      $cache: '@cache.in2publish_core'
       $localDatabase: '@In2code.In2publishCore.Database.Local'
-      $localRepository: '@In2code.In2publishCore.Features.SimplifiedOverviewAndPublishing.LocalDatabaseRepository'
-      $foreignRepository: '@In2code.In2publishCore.Features.SimplifiedOverviewAndPublishing.ForeignDatabaseRepository'
+      $localRepository: '@In2code.In2publishCore.Component.TcaHandling.LocalDatabaseRepository'
+      $foreignRepository: '@In2code.In2publishCore.Component.TcaHandling.ForeignDatabaseRepository'
 
   In2code\In2publishCore\Component\TcaHandling\:
     resource: '../../../Classes/Component/TcaHandling/*'
@@ -17,3 +18,13 @@ services:
   In2code\In2publishCore\Component\TcaHandling\RecordIndex:
     shared: true
     public: true
+
+  'In2code.In2publishCore.Component.TcaHandling.LocalDatabaseRepository':
+    class: 'In2code\In2publishCore\Component\TcaHandling\Repository\SingleDatabaseRepository'
+    arguments:
+      $connection: '@In2code.In2publishCore.Database.Local'
+
+  'In2code.In2publishCore.Component.TcaHandling.ForeignDatabaseRepository':
+    class: 'In2code\In2publishCore\Component\TcaHandling\Repository\SingleDatabaseRepository'
+    arguments:
+      $connection: '@In2code.In2publishCore.Database.Foreign'
