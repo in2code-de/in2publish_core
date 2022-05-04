@@ -9,6 +9,7 @@ use LogicException;
 use function array_diff_assoc;
 use function array_flip;
 use function array_keys;
+use function in_array;
 
 abstract class AbstractRecord implements Record
 {
@@ -17,6 +18,8 @@ abstract class AbstractRecord implements Record
 
     // Initialize this in your constructor
     protected array $foreignProps;
+
+    protected bool $hasBeenAskedForRecursiveState = false;
 
     /**
      * @var array<Record>
@@ -181,9 +184,10 @@ abstract class AbstractRecord implements Record
     public function getStateRecursive(): string
     {
         $state = $this->getState();
-        if ($state !== Record::S_UNCHANGED) {
+        if ($state !== Record::S_UNCHANGED || $this->hasBeenAskedForRecursiveState) {
             return $state;
         }
+        $this->hasBeenAskedForRecursiveState = true;
         foreach ($this->children as $records) {
             foreach ($records as $record) {
                 $state = $record->getStateRecursive();
@@ -192,6 +196,7 @@ abstract class AbstractRecord implements Record
                 }
             }
         }
+        $this->hasBeenAskedForRecursiveState = false;
         return Record::S_UNCHANGED;
     }
 
