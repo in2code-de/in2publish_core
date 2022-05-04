@@ -58,48 +58,4 @@ class DualDatabaseRepository
         }
         return $rows;
     }
-
-    public function findMissingRows(string $table, array $rows): array
-    {
-        $missingIdentifiers = $this->identifyMissingIdentifiersOnEachSide($rows);
-        return $this->amendMissingRows($table, $rows, $missingIdentifiers);
-    }
-
-    protected function identifyMissingIdentifiersOnEachSide(array $rows): array
-    {
-        $missingRecords = [];
-        foreach ($rows as $identifier => $rowSet) {
-            if ([] === $rowSet['local']) {
-                $missingRecords['local'][$identifier] = $identifier;
-            } elseif ([] === $rowSet['foreign']) {
-                $missingRecords['foreign'][$identifier] = $identifier;
-            }
-        }
-        return $missingRecords;
-    }
-
-    protected function amendMissingRows(string $table, array $rows, array $missingRows): array
-    {
-        if (!empty($missingRows['local'])) {
-            $foundRows = $this->localRepository->findByProperty($table, 'uid', $missingRows['local']);
-            foreach ($foundRows as $foundRow) {
-                $rows[$foundRow['uid']]['local'] = $foundRow;
-            }
-        }
-        if (!empty($missingRows['foreign'])) {
-            $foundRows = $this->foreignRepository->findByProperty($table, 'uid', $missingRows['foreign']);
-            foreach ($foundRows as $foundRow) {
-                $rows[$foundRow['uid']]['foreign'] = $foundRow;
-            }
-        }
-        return $rows;
-    }
-
-    public function findMm(string $table, string $property, array $values, string $where): array
-    {
-        $localRows = $this->localRepository->findMm($table, $property, $values, $where);
-        $foreignRows = $this->foreignRepository->findMm($table, $property, $values, $where);
-
-        return $this->mergeRowsByIdentifier($localRows, $foreignRows);
-    }
 }
