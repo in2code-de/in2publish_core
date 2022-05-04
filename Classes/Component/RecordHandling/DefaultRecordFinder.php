@@ -37,7 +37,6 @@ use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
-use In2code\In2publishCore\Event\RecordWasEnriched;
 use In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
@@ -605,9 +604,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
             }
         }
 
-        $event = new RecordWasEnriched($record);
-        $this->eventDispatcher->dispatch($event);
-        return $event->getRecord();
+        return $record;
     }
 
     /**

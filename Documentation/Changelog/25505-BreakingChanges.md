@@ -11,6 +11,9 @@ TODO:
 Removed features:
 * SimplifiedOverviewAndPublishing
 
+Removed Events:
+* RecordWasEnriched
+
 ## Affected Installations
 
 All.
