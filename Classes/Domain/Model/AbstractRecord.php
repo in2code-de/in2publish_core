@@ -163,18 +163,21 @@ abstract class AbstractRecord implements Record
         }
         $changedProps = $this->getChangedProps();
         if (empty($changedProps)) {
+            $movedIndicatorFields = ['pid'];
+
+            $sortByField = $GLOBALS['TCA'][$this->getClassification()]['ctrl']['sortby'] ?? null;
+            if (null !== $sortByField) {
+                $movedIndicatorFields[] = $sortByField;
+            }
+
+            foreach ($movedIndicatorFields as $movedIndicatorField) {
+                if ($this->localProps[$movedIndicatorField] !== $this->foreignProps[$movedIndicatorField]) {
+                    return Record::S_MOVED;
+                }
+            }
             return Record::S_UNCHANGED;
         }
 
-        $changedPropsAsKeys = array_flip($changedProps);
-        unset($changedPropsAsKeys['pid']);
-        $sortbyField = $GLOBALS['TCA'][$this->getClassification()]['ctrl']['sortby'] ?? null;
-        if (null !== $sortbyField) {
-            unset($changedPropsAsKeys[$sortbyField]);
-        }
-        if (empty($changedPropsAsKeys)) {
-            return Record::S_MOVED;
-        }
         return Record::S_CHANGED;
     }
 
