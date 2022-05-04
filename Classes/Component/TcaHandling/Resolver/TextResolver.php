@@ -6,6 +6,8 @@ namespace In2code\In2publishCore\Component\TcaHandling\Resolver;
 
 use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Event\DemandsForTextWereCollected;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use function htmlspecialchars_decode;
 use function parse_str;
@@ -17,7 +19,13 @@ class TextResolver implements Resolver
 {
     private const REGEX_T3URN = '~[\"\'\s](?P<URN>t3\://(?:file|page)\?uid=\d+)[\"\'\s]~';
 
+    protected EventDispatcher $eventDispatcher;
     protected string $column;
+
+    public function __construct(EventDispatcher $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
 
     public function configure(string $column): void
     {
@@ -57,5 +65,7 @@ class TextResolver implements Resolver
                 $demands->addSelect('pages', '', 'uid', $data['uid'], $record);
             }
         }
+
+        $this->eventDispatcher->dispatch(new DemandsForTextWereCollected($demands, $record, $text));
     }
 }

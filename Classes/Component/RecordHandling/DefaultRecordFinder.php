@@ -33,8 +33,6 @@ use Exception;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
-use In2code\In2publishCore\Domain\Model\NullRecord;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
