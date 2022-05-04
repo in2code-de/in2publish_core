@@ -13,6 +13,7 @@ Removed features:
 
 Removed Events:
 * RecordWasEnriched
+* RelatedRecordsByRteWereFetched -> DemandsForTextWereCollected
 
 ## Affected Installations
 

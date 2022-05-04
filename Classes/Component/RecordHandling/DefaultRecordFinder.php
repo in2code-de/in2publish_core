@@ -37,7 +37,6 @@ use In2code\In2publishCore\Domain\Model\NullRecord;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
-use In2code\In2publishCore\Event\RelatedRecordsByRteWereFetched;
 use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
@@ -684,9 +683,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                 }
             }
         }
-        $event = new RelatedRecordsByRteWereFetched($this, $bodyText, $excludedTableNames, $relatedRecords);
-        $this->eventDispatcher->dispatch($event);
-        $relatedRecords = $event->getRelatedRecords();
 
         // Filter probable null values (e.g. the page linked in the TYPO3 URN is the page currently in enrichment mode)
         return array_filter($relatedRecords);
