@@ -5,6 +5,8 @@ services:
     public: false
     bind:
       $localDatabase: '@In2code.In2publishCore.Database.Local'
+      $localRepository: '@In2code.In2publishCore.Features.SimplifiedOverviewAndPublishing.LocalDatabaseRepository'
+      $foreignRepository: '@In2code.In2publishCore.Features.SimplifiedOverviewAndPublishing.ForeignDatabaseRepository'
 
   In2code\In2publishCore\Component\TcaHandling\:
     resource: '../../../Classes/Component/TcaHandling/*'

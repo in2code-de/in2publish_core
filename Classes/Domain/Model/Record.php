@@ -51,6 +51,8 @@ interface Record extends Node
 
     public function getTranslationParent(): ?Record;
 
+    public function addTranslation(Record $childRecord): void;
+
     /**
      * @return array<int, array<array-key, Record>>
      */
