@@ -35,7 +35,6 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
-use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\FileUtility;
@@ -959,17 +958,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
             return $records;
         }
 
-        $shouldSkip = $this->shouldSkipSearchingForRelatedRecordsByFlexForm(
-            $record,
-            $column,
-            $columnConfiguration,
-            $flexFormDefinition,
-            $flexFormData
-        );
-        if ($shouldSkip) {
-            return $records;
-        }
-
         foreach ($flexFormDefinition as $key => $config) {
             if (!empty($flexFormData[$key])) {
                 if (false === strpos($key, '[ANY]')) {
@@ -1868,25 +1856,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
     protected function shouldSkipSearchingForRelatedRecords(RecordInterface $record): bool
     {
         $event = new VoteIfSearchingForRelatedRecordsShouldBeSkipped($this, $record);
-        $this->eventDispatcher->dispatch($event);
-        return $event->getVotingResult();
-    }
-
-    protected function shouldSkipSearchingForRelatedRecordsByFlexForm(
-        RecordInterface $record,
-        string $column,
-        array $columnConfiguration,
-        array $flexFormDefinition,
-        array $flexFormData
-    ): bool {
-        $event = new VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped(
-            $this,
-            $record,
-            $column,
-            $columnConfiguration,
-            $flexFormDefinition,
-            $flexFormData
-        );
         $this->eventDispatcher->dispatch($event);
         return $event->getVotingResult();
     }

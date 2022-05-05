@@ -21,6 +21,7 @@ Removed Events:
 * VoteIfPageRecordEnrichingShouldBeSkipped
 * VoteIfRecordShouldBeIgnored -> DecideIfRecordShouldBeIgnored
 * VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped -> DemandsWereCollected
+* VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped
 
 ## Affected Installations
 
