@@ -22,8 +22,7 @@ FlexForm configuration and data, but before the related records are going to be 
 
 ## Possibilities
 
-You can skip the whole FlexForm relation resolving by voting "Yes" in your EventListener. If you want to skip a single
-property from the FlexForm, you should use `VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped` instead.
+You can skip the whole FlexForm relation resolving by voting "Yes" in your EventListener.
 
 ### Example
 

@@ -20,6 +20,7 @@ Removed Events:
 * RelatedRecordsByRteWereFetched -> DemandsForTextWereCollected
 * VoteIfPageRecordEnrichingShouldBeSkipped
 * VoteIfRecordShouldBeIgnored -> DecideIfRecordShouldBeIgnored
+* VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped -> DemandsWereCollected
 
 ## Affected Installations
 

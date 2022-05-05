@@ -35,7 +35,6 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
-use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
 use In2code\In2publishCore\Service\Configuration\TcaService;
@@ -1013,18 +1012,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
         $flexFormData,
         string $key
     ): array {
-        if (
-            $this->shouldSkipSearchingForRelatedRecordsByFlexFormProperty(
-                $record,
-                $column,
-                $key,
-                $config,
-                $flexFormData
-            )
-        ) {
-            return [];
-        }
-
         $records = [];
         $recTable = $record->getTableName();
         $recordId = $record->getIdentifier();
@@ -1898,25 +1885,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
             $column,
             $columnConfiguration,
             $flexFormDefinition,
-            $flexFormData
-        );
-        $this->eventDispatcher->dispatch($event);
-        return $event->getVotingResult();
-    }
-
-    protected function shouldSkipSearchingForRelatedRecordsByFlexFormProperty(
-        RecordInterface $record,
-        string $column,
-        string $key,
-        array $config,
-        $flexFormData
-    ): bool {
-        $event = new VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped(
-            $this,
-            $record,
-            $column,
-            $key,
-            $config,
             $flexFormData
         );
         $this->eventDispatcher->dispatch($event);
