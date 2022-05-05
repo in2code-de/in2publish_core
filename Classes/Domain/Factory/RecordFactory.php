@@ -43,9 +43,7 @@ class RecordFactory
 {
     protected ConfigContainer $configContainer;
     protected RecordIndex $recordIndex;
-
     protected array $ignoredFields;
-
     protected array $rtc = [];
 
     public function injectConfigContainer(ConfigContainer $configContainer): void
