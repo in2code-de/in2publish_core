@@ -22,6 +22,7 @@ Removed Events:
 * VoteIfRecordShouldBeIgnored -> DecideIfRecordShouldBeIgnored
 * VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped -> DemandsWereCollected
 * VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped
+* VoteIfSearchingForRelatedRecordsShouldBeSkipped
 
 ## Affected Installations
 

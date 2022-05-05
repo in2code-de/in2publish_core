@@ -35,7 +35,6 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
-use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\FileUtility;
 use Psr\Log\LoggerAwareInterface;
@@ -51,7 +50,6 @@ use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidTcaException;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryHelper;
-use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -134,8 +132,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
 
     protected ConfigContainer $configContainer;
 
-    protected EventDispatcher $eventDispatcher;
-
     protected ReplaceMarkersService $replaceMarkersService;
 
     protected FlexFormTools $flexFormTools;
@@ -152,7 +148,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
         RecordFactory $recordFactory,
         ResourceFactory $resourceFactory,
         ConfigContainer $configContainer,
-        EventDispatcher $eventDispatcher,
         ReplaceMarkersService $replaceMarkersService,
         FlexFormTools $flexFormTools,
         FlexFormService $flexFormService,
@@ -164,7 +159,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
         $this->recordFactory = $recordFactory;
         $this->resourceFactory = $resourceFactory;
         $this->configContainer = $configContainer;
-        $this->eventDispatcher = $eventDispatcher;
         $this->replaceMarkersService = $replaceMarkersService;
         $this->flexFormTools = $flexFormTools;
         $this->flexFormService = $flexFormService;
@@ -463,9 +457,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
      */
     public function enrichRecordWithRelatedRecords(RecordInterface $record, array $excludedTableNames): RecordInterface
     {
-        if ($this->shouldSkipSearchingForRelatedRecords($record)) {
-            return $record;
-        }
         $recordTableName = $record->getTableName();
         // keep the following extra line for debugging issues
         $columns = $this->tcaPreProcessingService->getCompatibleTcaColumns($recordTableName);
@@ -1851,13 +1842,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
     public function disablePageRecursion(): void
     {
         $this->recordFactory->disablePageRecursion();
-    }
-
-    protected function shouldSkipSearchingForRelatedRecords(RecordInterface $record): bool
-    {
-        $event = new VoteIfSearchingForRelatedRecordsShouldBeSkipped($this, $record);
-        $this->eventDispatcher->dispatch($event);
-        return $event->getVotingResult();
     }
 
     /**
