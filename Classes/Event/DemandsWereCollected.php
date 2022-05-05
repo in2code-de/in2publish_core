@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Event;
 /*
  * Copyright notice
  *
- * (c) 2021 in2code.de and the following authors:
+ * (c) 2022 in2code.de and the following authors:
  * Oliver Eglseder <oliver.eglseder@in2code.de>
  *
  * All rights reserved
@@ -29,35 +29,19 @@ namespace In2code\In2publishCore\Event;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
+use In2code\In2publishCore\Component\TcaHandling\Demands;
 
-final class VoteIfFindingByIdentifierShouldBeSkipped extends AbstractVotingEvent
+final class DemandsWereCollected
 {
-    private RecordFinder $recordFinder;
+    private Demands $demands;
 
-    private int $identifier;
-
-    private string $tableName;
-
-    public function __construct(RecordFinder $recordFinder, int $identifier, string $tableName)
+    public function __construct(Demands $demands)
     {
-        $this->recordFinder = $recordFinder;
-        $this->identifier = $identifier;
-        $this->tableName = $tableName;
+        $this->demands = $demands;
     }
 
-    public function getRecordFinder(): RecordFinder
+    public function getDemands(): Demands
     {
-        return $this->recordFinder;
-    }
-
-    public function getIdentifier(): int
-    {
-        return $this->identifier;
-    }
-
-    public function getTableName(): string
-    {
-        return $this->tableName;
+        return $this->demands;
     }
 }

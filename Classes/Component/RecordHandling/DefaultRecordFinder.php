@@ -35,7 +35,6 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
-use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
@@ -209,9 +208,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
      */
     public function findByIdentifier(int $identifier, string $tableName, string $idFieldName = 'uid'): ?RecordInterface
     {
-        if ($this->shouldSkipFindByIdentifier($identifier, $tableName)) {
-            return GeneralUtility::makeInstance(NullRecord::class, $tableName);
-        }
         $record = $this->recordFactory->getCachedRecord($tableName, $identifier);
         if (null !== $record) {
             return $record;
@@ -1906,13 +1902,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
     public function disablePageRecursion(): void
     {
         $this->recordFactory->disablePageRecursion();
-    }
-
-    protected function shouldSkipFindByIdentifier(int $identifier, string $tableName): bool
-    {
-        $event = new VoteIfFindingByIdentifierShouldBeSkipped($this, $identifier, $tableName);
-        $this->eventDispatcher->dispatch($event);
-        return $event->getVotingResult();
     }
 
     protected function shouldSkipFindByProperty(string $propertyName, $propertyValue, string $tableName): bool

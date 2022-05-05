@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Features\SkipEmptyTable;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
@@ -107,16 +106,6 @@ class SkipTableVoter
             return true;
         }
         return false;
-    }
-
-    /**
-     * Skip searching for related records by identifier, if the table to search in is empty
-     */
-    public function shouldSkipFindByIdentifier(VoteIfFindingByIdentifierShouldBeSkipped $event): void
-    {
-        if ($this->tis->isEmptyTable($event->getTableName())) {
-            $event->voteYes();
-        }
     }
 
     /**

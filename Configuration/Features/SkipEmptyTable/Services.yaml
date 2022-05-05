@@ -14,10 +14,6 @@ services:
         method: 'shouldSkipSearchingForRelatedRecordsByProperty'
         event: In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped
       - name: event.listener
-        identifier: 'in2publishcore-SkipTableVoter-VoteIfFindingByIdentifierShouldBeSkipped'
-        method: 'shouldSkipFindByIdentifier'
-        event: In2code\In2publishCore\Event\VoteIfFindingByIdentifierShouldBeSkipped
-      - name: event.listener
         identifier: 'in2publishcore-SkipTableVoter-VoteIfFindingByPropertyShouldBeSkipped'
         method: 'shouldSkipFindByProperty'
         event: In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped

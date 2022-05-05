@@ -85,7 +85,7 @@ class DerServiceUmbenennen
             $demands->addSelect($table, '', $transOrigPointerField, $id, $recordTree);
         }
 
-        return $this->queryService->resolveDemand($demands);
+        return $this->queryService->resolveDemands($demands);
     }
 
     /**
@@ -102,7 +102,7 @@ class DerServiceUmbenennen
             foreach ($recordsArray as $record) {
                 $demands->addSelect('pages', '', 'pid', $record->getId(), $record);
             }
-            $records = $this->queryService->resolveDemand($demands);
+            $records = $this->queryService->resolveDemands($demands);
         }
     }
 
@@ -123,7 +123,7 @@ class DerServiceUmbenennen
                 $demands->addSelect($table, '', 'pid', $page->getId(), $page);
             }
         }
-        $resolvedRecords = $this->queryService->resolveDemand($demands);
+        $resolvedRecords = $this->queryService->resolveDemands($demands);
         $recordCollection->addRecordCollection($resolvedRecords);
         return $recordCollection;
     }
@@ -139,7 +139,7 @@ class DerServiceUmbenennen
         while ($recursionLimit > $currentRecursion++ && !empty($records)) {
             $demand = $this->demandService->buildDemandForRecords($records);
 
-            $records = $this->queryService->resolveDemand($demand);
+            $records = $this->queryService->resolveDemands($demand);
         }
     }
 

@@ -11,6 +11,8 @@ use In2code\In2publishCore\Component\TcaHandling\Repository\DualDatabaseReposito
 use In2code\In2publishCore\Component\TcaHandling\Repository\SingleDatabaseRepository;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Event\DemandsWereCollected;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 use function array_key_exists;
 use function array_keys;
@@ -23,6 +25,7 @@ class QueryService
     protected SingleDatabaseRepository $foreignRepository;
     protected RecordFactory $recordFactory;
     protected RecordIndex $recordIndex;
+    protected EventDispatcher $eventDispatcher;
 
     public function injectDualDatabaseRepository(DualDatabaseRepository $dualDatabaseRepository): void
     {
@@ -49,12 +52,19 @@ class QueryService
         $this->recordIndex = $recordIndex;
     }
 
+    public function injectEventDispatcher(EventDispatcher $eventDispatcher): void
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     /**
      * @param Demands $demands
      * @return RecordCollection<int, Record>
      */
-    public function resolveDemand(Demands $demands): RecordCollection
+    public function resolveDemands(Demands $demands): RecordCollection
     {
+        $this->eventDispatcher->dispatch(new DemandsWereCollected($demands));
+
         $recordCollection = new RecordCollection();
         $this->resolveSelectDemand($demands, $recordCollection);
         $this->resolveJoinDemand($demands, $recordCollection);
