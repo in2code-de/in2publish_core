@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Component\TcaHandling\Resolver;
 use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Event\DemandsForTextWereCollected;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 use function htmlspecialchars_decode;
 use function parse_str;
