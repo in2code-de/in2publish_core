@@ -34,7 +34,10 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Domain\Model\MmDatabaseRecord;
 use In2code\In2publishCore\Domain\Model\PageTreeRootRecord;
-use In2code\In2publishCore\Domain\Model\RecordTree;
+
+use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 use function array_unique;
 use function preg_match;
@@ -43,6 +46,7 @@ class RecordFactory
 {
     protected ConfigContainer $configContainer;
     protected RecordIndex $recordIndex;
+    protected EventDispatcher $eventDispatcher;
     protected array $ignoredFields;
     protected array $rtc = [];
 
@@ -57,11 +61,25 @@ class RecordFactory
         $this->recordIndex = $recordIndex;
     }
 
-    public function createDatabaseRecord(string $table, int $id, array $localProps, array $foreignProps): DatabaseRecord
+    public function injectEventDispatcher(EventDispatcher $eventDispatcher): void
     {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    public function createDatabaseRecord(
+        string $table,
+        int $id,
+        array $localProps,
+        array $foreignProps
+    ): ?DatabaseRecord {
         $tableIgnoredFields = $this->getIgnoredFields($table);
         $record = new DatabaseRecord($table, $id, $localProps, $foreignProps, $tableIgnoredFields);
         $this->recordIndex->addRecord($record);
+
+        if ($this->shouldIgnoreRecord($record)) {
+            return null;
+        }
+
         return $record;
     }
 
@@ -70,10 +88,22 @@ class RecordFactory
         string $propertyHash,
         array $localProps,
         array $foreignProps
-    ): MmDatabaseRecord {
+    ): ?MmDatabaseRecord {
         $record = new MmDatabaseRecord($table, $propertyHash, $localProps, $foreignProps);
         $this->recordIndex->addRecord($record);
+
+        if ($this->shouldIgnoreRecord($record)) {
+            return null;
+        }
+
         return $record;
+    }
+
+    protected function shouldIgnoreRecord(Record $record): bool
+    {
+        $event = new DecideIfRecordShouldBeIgnored($record);
+        $this->eventDispatcher->dispatch($event);
+        return $event->shouldBeIgnored();
     }
 
     protected function getIgnoredFields(string $table): array

@@ -19,6 +19,7 @@ Removed Events:
 * VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped -> DemandsWereCollected
 * RelatedRecordsByRteWereFetched -> DemandsForTextWereCollected
 * VoteIfPageRecordEnrichingShouldBeSkipped
+* VoteIfRecordShouldBeIgnored -> DecideIfRecordShouldBeIgnored
 
 ## Affected Installations
 

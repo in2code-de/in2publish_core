@@ -147,6 +147,9 @@ class QueryService
                     $row['local'],
                     $row['foreign']
                 );
+                if (null === $record) {
+                    continue;
+                }
                 $recordCollection->addRecord($record);
             }
             $localMapValue = $record->getLocalProps()[$property] ?? null;
@@ -185,6 +188,9 @@ class QueryService
                                     $row['local']['mmtbl'] ?? [],
                                     $row['foreign']['mmtbl'] ?? []
                                 );
+                                if (null === $mmRecord) {
+                                    continue;
+                                }
                                 if (!empty($row['local']['table']) || !empty($row['foreign']['table'])) {
                                     $uid = $row['local']['table']['uid'] ?? $row['foreign']['table']['uid'];
                                     $tableRecord = $this->recordIndex->getRecord($table, $uid);
@@ -195,9 +201,13 @@ class QueryService
                                             $row['local']['table'] ?? [],
                                             $row['foreign']['table'] ?? []
                                         );
-                                        $recordCollection->addRecord($tableRecord);
+                                        if (null !== $tableRecord) {
+                                            $recordCollection->addRecord($tableRecord);
+                                        }
                                     }
-                                    $mmRecord->addChild($tableRecord);
+                                    if (null !== $tableRecord) {
+                                        $mmRecord->addChild($tableRecord);
+                                    }
                                 }
                             }
                             $mapValue = $mmRecord->getProp($property);

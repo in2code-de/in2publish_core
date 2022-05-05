@@ -35,7 +35,6 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
-use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
@@ -1788,10 +1787,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
             return true;
         }
 
-        if ($this->shouldIgnoreRecord($localProperties, $foreignProperties, $tableName)) {
-            return true;
-        }
-
         return false;
     }
 
@@ -1924,16 +1919,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
             $config,
             $flexFormData
         );
-        $this->eventDispatcher->dispatch($event);
-        return $event->getVotingResult();
-    }
-
-    protected function shouldIgnoreRecord(
-        array $localProperties,
-        array $foreignProperties,
-        string $tableName
-    ): bool {
-        $event = new VoteIfRecordShouldBeIgnored($this, $localProperties, $foreignProperties, $tableName);
         $this->eventDispatcher->dispatch($event);
         return $event->getVotingResult();
     }

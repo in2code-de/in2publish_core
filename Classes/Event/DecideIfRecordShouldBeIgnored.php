@@ -29,47 +29,36 @@ namespace In2code\In2publishCore\Event;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
+use In2code\In2publishCore\Domain\Model\Record;
+use Psr\EventDispatcher\StoppableEventInterface;
 
-final class VoteIfRecordShouldBeIgnored extends AbstractVotingEvent
+final class DecideIfRecordShouldBeIgnored implements StoppableEventInterface
 {
-    private RecordFinder $recordFinder;
+    private Record $record;
+    private bool $shouldBeIgnored = false;
 
-    private array $localProperties;
-
-    private array $foreignProperties;
-
-    private string $tableName;
-
-    public function __construct(
-        RecordFinder $recordFinder,
-        array $localProperties,
-        array $foreignProperties,
-        string $tableName
-    ) {
-        $this->recordFinder = $recordFinder;
-        $this->localProperties = $localProperties;
-        $this->foreignProperties = $foreignProperties;
-        $this->tableName = $tableName;
+    public function __construct(Record $record)
+    {
+        $this->record = $record;
     }
 
-    public function getRecordFinder(): RecordFinder
+    public function getRecord(): Record
     {
-        return $this->recordFinder;
+        return $this->record;
     }
 
-    public function getLocalProperties(): array
+    public function shouldIgnore(): void
     {
-        return $this->localProperties;
+        $this->shouldBeIgnored = true;
     }
 
-    public function getForeignProperties(): array
+    public function shouldBeIgnored(): bool
     {
-        return $this->foreignProperties;
+        return $this->shouldBeIgnored;
     }
 
-    public function getTableName(): string
+    public function isPropagationStopped(): bool
     {
-        return $this->tableName;
+        return $this->shouldBeIgnored;
     }
 }
