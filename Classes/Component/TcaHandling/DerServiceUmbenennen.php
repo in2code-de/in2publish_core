@@ -6,24 +6,27 @@ namespace In2code\In2publishCore\Component\TcaHandling;
 
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandService;
 use In2code\In2publishCore\Component\TcaHandling\Query\QueryService;
+use In2code\In2publishCore\Component\TcaHandling\Service\RelevantTablesService;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordTree;
 
-use function array_diff;
-use function array_keys;
-use function array_merge;
-use function implode;
-use function preg_match_all;
+use function array_search;
 
 class DerServiceUmbenennen
 {
+    protected RelevantTablesService $relevantTablesService;
     protected QueryService $queryService;
     protected ConfigContainer $configContainer;
     protected DemandService $demandService;
     protected RecordFactory $recordFactory;
     protected RecordIndex $recordIndex;
+
+    public function injectRelevantTablesService(RelevantTablesService $relevantTablesService): void
+    {
+        $this->relevantTablesService = $relevantTablesService;
+    }
 
     public function injectQueryService(QueryService $queryService): void
     {
@@ -116,9 +119,12 @@ class DerServiceUmbenennen
         }
         $demands = new Demands();
 
-        $nonExcludedTables = $this->getAllTablesWhichAreNotExcluded();
+        $tables = $this->relevantTablesService->getAllNonEmptyNonExcludedTcaTables();
 
-        foreach ($nonExcludedTables as $table) {
+        // Do not build demand for pages ("Don't find pages by pid"), because that has been done in findPagesRecursively
+        unset($tables[array_search('pages', $tables)]);
+
+        foreach ($tables as $table) {
             foreach ($pages as $page) {
                 $demands->addSelect($table, '', 'pid', $page->getId(), $page);
             }
@@ -141,31 +147,5 @@ class DerServiceUmbenennen
 
             $records = $this->queryService->resolveDemands($demand);
         }
-    }
-
-    /**
-     * @return array<string>
-     */
-    public function getAllTablesWhichAreNotExcluded(): array
-    {
-        // This array contains regular expressions which every table name has to be tested against.
-        $excludeRelatedTables = $this->configContainer->get('excludeRelatedTables');
-
-        // Compose a RegEx which matches all excluded tables.
-        $regex = '/,(' . implode('|', array_merge(['pages'], $excludeRelatedTables)) . '),/iU';
-
-        // Combine all existing tables into a single string, where each table is delimited by ",,", so preg_match will
-        // match two consecutive table names when searching for ",table1, OR ,table2," in ",table1,,table2,".
-        // Otherwise, the leading comma of the first table will be consumed by the expression, and it will not match the
-        // second table.
-        $tables = array_keys($GLOBALS['TCA']);
-        $tablesString = ',' . implode(',,', $tables) . ',';
-        $matches = [];
-
-        // $matches[1] contains all table names which match all the expressions from excludeRelatedTables.
-        preg_match_all($regex, $tablesString, $matches);
-
-        // Remove all excluded tables from the list of existing tables.
-        return array_diff($tables, $matches[1]);
     }
 }

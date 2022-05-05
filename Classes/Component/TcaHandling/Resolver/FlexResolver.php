@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Component\TcaHandling\Resolver;
 use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\FlexFormFlatteningService;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Component\TcaHandling\Service\ResolverService;
 use In2code\In2publishCore\Domain\Model\DatabaseEntityRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\VirtualFlexFormRecord;
@@ -28,7 +29,7 @@ class FlexResolver implements Resolver
     protected FlexFormTools $flexFormTools;
     protected FlexFormService $flexFormService;
     protected FlexFormFlatteningService $flexFormFlatteningService;
-    protected TcaPreProcessingService $tcaPreProcessingService;
+    protected ResolverService $resolverService;
     protected string $table;
     protected string $column;
     protected array $processedTca;
@@ -37,12 +38,12 @@ class FlexResolver implements Resolver
         FlexFormTools $flexFormTools,
         FlexFormService $flexFormService,
         FlexFormFlatteningService $flexFormFlatteningService,
-        TcaPreProcessingService $tcaPreProcessingService
+        ResolverService $resolverService
     ) {
         $this->flexFormTools = $flexFormTools;
         $this->flexFormService = $flexFormService;
         $this->flexFormFlatteningService = $flexFormFlatteningService;
-        $this->tcaPreProcessingService = $tcaPreProcessingService;
+        $this->resolverService = $resolverService;
     }
 
     public function configure(string $table, string $column, array $processedTca): void
@@ -50,6 +51,11 @@ class FlexResolver implements Resolver
         $this->table = $table;
         $this->column = $column;
         $this->processedTca = $processedTca;
+    }
+
+    public function getTargetTables(): array
+    {
+        return array_keys($GLOBALS['TCA']);
     }
 
     public function resolve(Demands $demands, Record $record): void
@@ -88,11 +94,11 @@ class FlexResolver implements Resolver
         $flexFormTableName = $this->table . '/' . $this->column . '/' . $dataStructureKey;
         $virtualRecord = new VirtualFlexFormRecord($record, $flexFormTableName, $localValues, $foreignValues);
 
-        $compatibleTcaParts = $this->tcaPreProcessingService->getCompatibleTcaParts();
+        $resolvers = $this->resolverService->getResolversForTable($flexFormTableName);
 
         foreach ($flexFormFields as $flexFormField) {
             /** @var Resolver $resolver */
-            $resolver = $compatibleTcaParts[$flexFormTableName][$flexFormField]['resolver'] ?? null;
+            $resolver = $resolvers[$flexFormField] ?? null;
             if (null !== $resolver) {
                 $resolver->resolve($demands, $virtualRecord);
             }

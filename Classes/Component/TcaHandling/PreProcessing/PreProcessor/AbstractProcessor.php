@@ -34,6 +34,7 @@ use In2code\In2publishCore\Component\TcaHandling\PreProcessing\ProcessingResult;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessor;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
+use Psr\Container\ContainerInterface;
 
 use function array_key_exists;
 use function array_keys;
@@ -44,6 +45,7 @@ abstract class AbstractProcessor implements TcaPreProcessor
     public const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
 
     protected TcaPreProcessingService $tcaPreProcessingService;
+    protected ContainerInterface $container;
 
     /**
      * Injected when PreProcessor are registered
@@ -51,6 +53,11 @@ abstract class AbstractProcessor implements TcaPreProcessor
     public function setTcaPreProcessingService(TcaPreProcessingService $tcaPreProcessingService): void
     {
         $this->tcaPreProcessingService = $tcaPreProcessingService;
+    }
+
+    public function injectContainer(ContainerInterface $container): void
+    {
+        $this->container = $container;
     }
 
     /**
@@ -128,6 +135,12 @@ abstract class AbstractProcessor implements TcaPreProcessor
             }
         }
         $resolver = $this->buildResolver($table, $column, $processedTca);
+        if (null === $resolver) {
+            return new ProcessingResult(
+                ProcessingResult::INCOMPATIBLE,
+                ['The processor did not return a valid resolver']
+            );
+        }
         return new ProcessingResult(
             ProcessingResult::COMPATIBLE,
             ['tca' => $processedTca, 'resolver' => $resolver]
@@ -144,5 +157,5 @@ abstract class AbstractProcessor implements TcaPreProcessor
         return [];
     }
 
-    abstract protected function buildResolver(string $table, string $column, array $processedTca): Resolver;
+    abstract protected function buildResolver(string $table, string $column, array $processedTca): ?Resolver;
 }

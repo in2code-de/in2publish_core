@@ -32,6 +32,11 @@ class TextResolver implements Resolver
         $this->column = $column;
     }
 
+    public function getTargetTables(): array
+    {
+        return ['sys_file', 'pages'];
+    }
+
     public function resolve(Demands $demands, Record $record): void
     {
         $localValue = $record->getLocalProps()[$this->column] ?? '';

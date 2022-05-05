@@ -5,28 +5,24 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\TcaHandling\Demand;
 
 use In2code\In2publishCore\Component\TcaHandling\Demands;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
-use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
-
-use function array_column;
+use In2code\In2publishCore\Component\TcaHandling\Service\ResolverService;
 
 class DemandService
 {
-    protected array $preProcessedTca;
+    protected ResolverService $resolverService;
 
-    public function injectTcaPreProcessingService(TcaPreProcessingService $tcaPreProcessingService): void
+    public function injectResolverService(ResolverService $resolverService): void
     {
-        $this->preProcessedTca = $tcaPreProcessingService->getCompatibleTcaParts();
+        $this->resolverService = $resolverService;
     }
 
     public function buildDemandForRecords(RecordCollection $records): Demands
     {
         $demand = new Demands();
         foreach ($records->getRecordsFlat() as $record) {
-            $preProcessedTca = $this->preProcessedTca[$record->getClassification()] ?? [];
-            /** @var Resolver $resolver */
-            $resolvers = array_column($preProcessedTca, 'resolver');
+            $classification = $record->getClassification();
+            $resolvers = $this->resolverService->getResolversForTable($classification);
             foreach ($resolvers as $resolver) {
                 $resolver->resolve($demand, $record);
             }

@@ -4,34 +4,39 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing;
 
+use In2code\In2publishCore\Component\TcaHandling\Service\Config\ExcludedTablesService;
 use TYPO3\CMS\Core\SingletonInterface;
 
+use function array_flip;
+use function array_intersect_key;
 use function is_array;
 use function ksort;
 
 class TcaPreProcessingService implements SingletonInterface
 {
-
+    protected ExcludedTablesService $excludedTablesService;
+    protected bool $initialized = false;
     /**
      * @var array<TcaPreProcessor>
      */
-    protected array $processors;
-
-    protected $initialized = false;
-
+    protected array $processors = [];
     /**
      * Stores the part of the TCA that can be used for relation resolving
      *
      * @var array<array|null>
      */
-    protected $compatibleTca = [];
-
+    protected array $compatibleTca = [];
     /**
      * Stores the part of the TCA that can not be used for relation resolving including reasons
      *
      * @var array[]
      */
-    protected $incompatibleTca = [];
+    protected array $incompatibleTca = [];
+
+    public function injectExcludedTablesService(ExcludedTablesService $excludedTablesService): void
+    {
+        $this->excludedTablesService = $excludedTablesService;
+    }
 
     public function register(TcaPreProcessor $processor): void
     {
@@ -70,17 +75,19 @@ class TcaPreProcessingService implements SingletonInterface
         return $this->compatibleTca;
     }
 
-    protected function initialize(): void
+    public function initialize(): void
     {
         $this->initialized = true;
+
+        $tables = $this->excludedTablesService->getAllNonExcludedTcaTables();
+        $tca = array_intersect_key($GLOBALS['TCA'], array_flip($tables));
+        ksort($tca);
 
         /*
          * If any TCA type adds enableRichtext to a column, we must process the column by setting a resolver.
          * We add enableRichtext to the TCA column if at least one type adds it via override.
          * If we didn't do that we wouldn't have a resolver for e.g. tt_content bodytext.
          */
-        $tca = $GLOBALS['TCA'];
-        ksort($tca);
         foreach ($tca as $table => $tableConfig) {
             if (isset($tableConfig['types']) && is_array($tableConfig['types'])) {
                 foreach ($tableConfig['types'] as $typeConfig) {

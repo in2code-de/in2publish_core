@@ -8,9 +8,14 @@ use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\SelectProcessor;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\SelectMmResolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\SelectResolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\TextResolver;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Tests\UnitTestCase;
+
+use Symfony\Component\DependencyInjection\Container;
 
 use function array_merge;
 
@@ -18,12 +23,12 @@ class SelectProcessorTest extends UnitTestCase
 {
     public function testSelectProcessorReturnsCompatibleResultForCompatibleColumn(): void
     {
-        $quotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
-        $replaceMarkersService = $this->createMock(ReplaceMarkersService::class);
+        $resolver = $this->createMock(SelectResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($resolver);
 
         $selectProcessor = new SelectProcessor();
-        $selectProcessor->injectDatabaseIdentifierQuotingService($quotingService);
-        $selectProcessor->injectReplaceMarkersService($replaceMarkersService);
+        $selectProcessor->injectContainer($container);
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'select',
             'foreign_table' => 'tableNameBeng',
@@ -82,12 +87,13 @@ class SelectProcessorTest extends UnitTestCase
             'MM_table_where' => '',
             'rootLevel' => '',
         ];
-        $quotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
-        $replaceMarkersService = $this->createMock(ReplaceMarkersService::class);
+
+        $resolver = $this->createMock(SelectMmResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($resolver);
 
         $selectProcessor = new SelectProcessor();
-        $selectProcessor->injectDatabaseIdentifierQuotingService($quotingService);
-        $selectProcessor->injectReplaceMarkersService($replaceMarkersService);
+        $selectProcessor->injectContainer($container);
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $bigTca);
         $this->assertSame($expectedTca, $processingResult->getValue()['tca']);
     }
@@ -108,31 +114,19 @@ class SelectProcessorTest extends UnitTestCase
         $diqs = $this->createMock(DatabaseIdentifierQuotingService::class);
         $diqs->method('dododo')->willReturnArgument(0);
 
-        $quotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
+        $resolver = $this->createMock(SelectResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($resolver);
 
         $selectProcessor = new SelectProcessor();
-        $selectProcessor->injectDatabaseIdentifierQuotingService($quotingService);
-        $selectProcessor->injectReplaceMarkersService($replaceMarkerService);
-        $selectProcessor->injectDatabaseIdentifierQuotingService($diqs);
+        $selectProcessor->injectContainer($container);
 
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
 
         /** @var Resolver $resolver */
         $resolver = $processingResult->getValue()['resolver'];
 
-        $databaseRecord = $this->createMock(DatabaseRecord::class);
-        $databaseRecord->method('getClassification')->willReturn('tableNameFoo');
-        $databaseRecord->method('getId')->willReturn(4);
-        $databaseRecord->method('getProp')->willReturn('15, 56');
-
-        $demands = new Demands();
-        $resolver->resolve($demands, $databaseRecord);
-
-        $expectedDemand = [];
-        $expectedDemand['tableNameBeng']['fieldname = "fieldvalue"']['uid'][15]['tableNameFoo' . "\0" . 4] = $databaseRecord;
-        $expectedDemand['tableNameBeng']['fieldname = "fieldvalue"']['uid'][56]['tableNameFoo' . "\0" . 4] = $databaseRecord;
-
-        $this->assertSame($expectedDemand, $demands->getSelect());
+        $this->assertInstanceOf(SelectResolver::class, $resolver);
     }
 
     /**
@@ -155,25 +149,18 @@ class SelectProcessorTest extends UnitTestCase
         $diqs = $this->createMock(DatabaseIdentifierQuotingService::class);
         $diqs->method('dododo')->willReturnArgument(0);
 
+        $resolver = $this->createMock(SelectMmResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($resolver);
+
         $selectProcessor = new SelectProcessor();
-        $selectProcessor->injectReplaceMarkersService($replaceMarkerService);
-        $selectProcessor->injectDatabaseIdentifierQuotingService($diqs);
+        $selectProcessor->injectContainer($container);
 
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
 
         /** @var Resolver $resolver */
         $resolver = $processingResult->getValue()['resolver'];
 
-        $databaseRecord = $this->createMock(DatabaseRecord::class);
-        $databaseRecord->method('getId')->willReturn(4);
-        $databaseRecord->method('getClassification')->willReturn('tableNameFoo');
-
-        $demands = new Demands();
-        $resolver->resolve($demands, $databaseRecord);
-
-        $expectedDemand = [];
-        $expectedDemand['tableNameFoo_tableNameBeng_MM']['tableNameBeng']['fieldname = "fieldvalue" AND fieldName2 = "fieldValue2"']['uid_local'][4]['tableNameFoo' . "\0" . 4] = $databaseRecord;
-
-        $this->assertSame($expectedDemand, $demands->getJoin());
+        $this->assertInstanceOf(SelectMmResolver::class, $resolver);
     }
 }

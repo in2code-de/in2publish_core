@@ -38,6 +38,11 @@ class InlineSelectResolver implements Resolver
         $this->additionalWhere = $additionalWhere;
     }
 
+    public function getTargetTables(): array
+    {
+        return [$this->foreignTable];
+    }
+
     public function resolve(Demands $demands, Record $record): void
     {
         $additionalWhere = $this->additionalWhere;

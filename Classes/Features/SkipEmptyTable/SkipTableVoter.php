@@ -29,10 +29,10 @@ namespace In2code\In2publishCore\Features\SkipEmptyTable;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\TcaHandling\Service\Database\TableContentService as TIS;
 use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
-use In2code\In2publishCore\Features\SkipEmptyTable\Service\TableInfoService as TIS;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;

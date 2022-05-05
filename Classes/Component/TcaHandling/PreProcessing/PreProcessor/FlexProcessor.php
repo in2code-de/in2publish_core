@@ -70,7 +70,6 @@ class FlexProcessor extends AbstractProcessor
 {
     protected FlexFormTools $flexFormTools;
     protected FlexFormFlatteningService $flexFormFlatteningService;
-    protected FlexResolver $resolver;
     protected string $type = 'flex';
     protected array $forbidden = [
         'ds_pointerField_searchParent' => 'ds_pointerField_searchParent is not supported',
@@ -92,11 +91,6 @@ class FlexProcessor extends AbstractProcessor
     public function injectFlexFormFlatteningService(FlexFormFlatteningService $flexFormFlatteningService): void
     {
         $this->flexFormFlatteningService = $flexFormFlatteningService;
-    }
-
-    public function injectResolver(FlexResolver $resolver): void
-    {
-        $this->resolver = $resolver;
     }
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
@@ -132,7 +126,7 @@ class FlexProcessor extends AbstractProcessor
             );
         }
 
-        $resolver = clone $this->resolver;
+        $resolver = $this->container->get(FlexResolver::class);
         $resolver->configure($table, $column, $processedTca);
         return $resolver;
     }

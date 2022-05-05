@@ -6,6 +6,7 @@ services:
     bind:
       $cache: '@cache.in2publish_core'
       $localDatabase: '@In2code.In2publishCore.Database.Local'
+      $foreignDatabase: '@In2code.In2publishCore.Database.Foreign'
       $localRepository: '@In2code.In2publishCore.Component.TcaHandling.LocalDatabaseRepository'
       $foreignRepository: '@In2code.In2publishCore.Component.TcaHandling.ForeignDatabaseRepository'
 

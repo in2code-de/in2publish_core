@@ -11,16 +11,24 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_filter;
 use function array_merge;
 use function array_unique;
+use function in_array;
 use function strrpos;
 use function substr;
 
 class GroupMultiTableResolver implements Resolver
 {
     protected string $column;
+    protected array $tables;
 
-    public function configure(string $column): void
+    public function configure(array $tables, string $column): void
     {
+        $this->tables = $tables;
         $this->column = $column;
+    }
+
+    public function getTargetTables(): array
+    {
+        return $this->tables;
     }
 
     public function resolve(Demands $demands, Record $record): void
@@ -38,9 +46,11 @@ class GroupMultiTableResolver implements Resolver
                 continue;
             }
             $table = substr($value, 0, $position);
-            $id = substr($value, $position + 1);
+            if (in_array($table, $this->tables)) {
+                $id = substr($value, $position + 1);
 
-            $demands->addSelect($table, '', 'uid', $id, $record);
+                $demands->addSelect($table, '', 'uid', $id, $record);
+            }
         }
     }
 }

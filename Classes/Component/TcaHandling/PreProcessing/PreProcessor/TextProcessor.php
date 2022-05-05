@@ -34,13 +34,7 @@ use In2code\In2publishCore\Component\TcaHandling\Resolver\TextResolver;
 
 class TextProcessor extends AbstractProcessor
 {
-    protected TextResolver $textResolver;
     protected string $type = 'text';
-
-    public function injectTextResolver(TextResolver $textResolver): void
-    {
-        $this->textResolver = $textResolver;
-    }
 
     protected array $required = [
         'enableRichtext' => 'Text which is not rich text does not contain relations as t3 URNs',
@@ -59,7 +53,7 @@ class TextProcessor extends AbstractProcessor
 
     protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
-        $resolver = clone $this->textResolver;
+        $resolver = $this->container->get(TextResolver::class);
         $resolver->configure($column);
         return $resolver;
     }

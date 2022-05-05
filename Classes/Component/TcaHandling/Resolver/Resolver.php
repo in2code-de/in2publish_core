@@ -9,5 +9,10 @@ use In2code\In2publishCore\Domain\Model\Record;
 
 interface Resolver
 {
+    /**
+     * @return array<string>
+     */
+    public function getTargetTables(): array;
+
     public function resolve(Demands $demands, Record $record): void;
 }

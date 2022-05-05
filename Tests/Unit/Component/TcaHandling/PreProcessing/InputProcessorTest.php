@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing;
 
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\InputProcessor;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\TextResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\Container;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\InputProcessor
@@ -17,7 +19,12 @@ class InputProcessorTest extends UnitTestCase
      */
     public function testInputProcessorProcessesFieldsWithTypolinkSoftref(): void
     {
+        $resolver = $this->createMock(TextResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($resolver);
+
         $inputProcessor = new InputProcessor();
+        $inputProcessor->injectContainer($container);
         $processingResult = $inputProcessor->process('tableNameFoo', 'fieldNameBar', ['softref' => 'typolink']);
         $this->assertTrue($processingResult->isCompatible());
     }

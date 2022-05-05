@@ -22,6 +22,11 @@ class GroupSingleTableResolver implements Resolver
         $this->foreignTable = $foreignTable;
     }
 
+    public function getTargetTables(): array
+    {
+        return [$this->foreignTable];
+    }
+
     public function resolve(Demands $demands, Record $record): void
     {
         $localValue = $record->getLocalProps()[$this->column] ?? '';

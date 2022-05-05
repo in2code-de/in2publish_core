@@ -42,8 +42,6 @@ use function trim;
 class InlineProcessor extends AbstractProcessor
 {
     protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
-    protected StaticJoinResolver $staticJoinResolver;
-    protected InlineSelectResolver $inlineSelectResolver;
     protected string $type = 'inline';
     protected array $forbidden = [
         'symmetric_field' => 'symmetric_field is set on the foreign side of relations, which must not be resolved',
@@ -64,16 +62,6 @@ class InlineProcessor extends AbstractProcessor
         DatabaseIdentifierQuotingService $databaseIdentifierQuotingService
     ): void {
         $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
-    }
-
-    public function injectStaticJoinResolver(StaticJoinResolver $staticJoinResolver): void
-    {
-        $this->staticJoinResolver = $staticJoinResolver;
-    }
-
-    public function injectInlineSelectResolver(InlineSelectResolver $inlineSelectResolver): void
-    {
-        $this->inlineSelectResolver = $inlineSelectResolver;
     }
 
     protected function buildResolver(string $table, string $column, array $processedTca): Resolver
@@ -103,7 +91,7 @@ class InlineProcessor extends AbstractProcessor
                 $additionalWhere = $matches['where'];
             }
 
-            $resolver = clone $this->staticJoinResolver;
+            $resolver = $this->container->get(StaticJoinResolver::class);
             $resolver->configure($mmTable, $foreignTable, $selectField, $additionalWhere);
             return $resolver;
         }
@@ -120,7 +108,7 @@ class InlineProcessor extends AbstractProcessor
         }
         $additionalWhere = implode(' AND ', $foreignMatchFields);
 
-        $resolver = clone $this->inlineSelectResolver;
+        $resolver = $this->container->get(InlineSelectResolver::class);
         $resolver->configure(
             $foreignTable,
             $foreignField,

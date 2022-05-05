@@ -8,11 +8,12 @@ use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\FlexProcessor;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\FlexFormFlatteningService;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\FlexResolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
-use In2code\In2publishCore\Domain\Model\AbstractDatabaseRecord;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\Container;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Service\FlexFormService;
 
@@ -37,13 +38,15 @@ class FlexProcessorTest extends UnitTestCase
         $flexProcessor = new FlexProcessor();
 
         // mock dependencies
+        $flexResolver = $this->createMock(FlexResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($flexResolver);
         $flexFormTools = $this->createMock(FlexFormTools::class);
-        $flexFormService = $this->createMock(FlexFormService::class);
         $flexFormFlatteningService = $this->createMock(FlexFormFlatteningService::class);
         $tcaPreProcessingService = $this->createMock(TcaPreProcessingService::class);
 
+        $flexProcessor->injectContainer($container);
         $flexProcessor->injectFlexFormTools($flexFormTools);
-        $flexProcessor->injectFlexFormService($flexFormService);
         $flexProcessor->injectFlexFormFlatteningService($flexFormFlatteningService);
         $flexProcessor->setTcaPreProcessingService($tcaPreProcessingService);
 
@@ -76,27 +79,29 @@ class FlexProcessorTest extends UnitTestCase
 
         $flexProcessor = new FlexProcessor();
 
+        $flexResolver = $this->createMock(FlexResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($flexResolver);
         $flexFormTools = $this->createMock(FlexFormTools::class);
         $flexFormTools->expects($this->exactly(2))->method('parseDataStructureByIdentifier')->withConsecutive(
             [$json1],
             [$json2]
         );
-        $flexFormService = $this->createMock(FlexFormService::class);
         $flexFormFlatteningService = $this->createMock(FlexFormFlatteningService::class);
         $flexFormFlatteningService->expects($this->exactly(2))
-            ->method('flattenFlexFormDefinition')
-            ->willReturnOnConsecutiveCalls(
-                ['foo' => 'bar'],
-                ['bar' => 'baz']
-            );
+                                  ->method('flattenFlexFormDefinition')
+                                  ->willReturnOnConsecutiveCalls(
+                                      ['foo' => 'bar'],
+                                      ['bar' => 'baz']
+                                  );
         $tcaPreProcessingService = $this->createMock(TcaPreProcessingService::class);
         $tcaPreProcessingService->expects($this->exactly(2))->method('preProcessTcaColumns')->withConsecutive(
             ['tableNameFoo/fieldNameBar/foo_pi1,bar', ['foo' => 'bar']],
             ['tableNameFoo/fieldNameBar/foo_pi2,baz', ['bar' => 'baz']],
         );
 
+        $flexProcessor->injectContainer($container);
         $flexProcessor->injectFlexFormTools($flexFormTools);
-        $flexProcessor->injectFlexFormService($flexFormService);
         $flexProcessor->injectFlexFormFlatteningService($flexFormFlatteningService);
         $flexProcessor->setTcaPreProcessingService($tcaPreProcessingService);
 
@@ -153,6 +158,11 @@ class FlexProcessorTest extends UnitTestCase
                     $this->databaseRecord = $databaseRecord;
                 }
 
+                public function getTargetTables(): array
+                {
+                    return [];
+                }
+
                 public function resolve(Demands $demands, Record $record): void
                 {
                     $this->called['select.fooBar']++;
@@ -171,6 +181,11 @@ class FlexProcessorTest extends UnitTestCase
                     $this->databaseRecord = $databaseRecord;
                 }
 
+                public function getTargetTables(): array
+                {
+                    return [];
+                }
+
                 public function resolve(Demands $demands, Record $record): void
                 {
                     $this->called['inline.barFoo']++;
@@ -178,14 +193,18 @@ class FlexProcessorTest extends UnitTestCase
                 }
             };
 
+
+        $flexResolver = $this->createMock(FlexResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($flexResolver);
         $flexFormService = $this->createMock(FlexFormService::class);
         $flexFormService->method('convertFlexFormContentToArray')->willReturn($flexFormContent);
         $flexFormFlatteningService = $this->createMock(FlexFormFlatteningService::class);
         $tcaPreProcessingService = $this->createMock(TcaPreProcessingService::class);
         $tcaPreProcessingService->method('getCompatibleTcaParts')->willReturn($compatibleTcaParts);
 
+        $flexProcessor->injectContainer($container);
         $flexProcessor->injectFlexFormTools($flexFormTools);
-        $flexProcessor->injectFlexFormService($flexFormService);
         $flexProcessor->injectFlexFormFlatteningService($flexFormFlatteningService);
         $flexProcessor->setTcaPreProcessingService($tcaPreProcessingService);
 
@@ -202,15 +221,6 @@ class FlexProcessorTest extends UnitTestCase
         /** @var Resolver $resolver */
         $resolver = $processingResult->getValue()['resolver'];
 
-        $demands = new Demands();
-        $resolver->resolve($demands, $databaseRecord);
-
-        $expectedDemand = [];
-        $expectedDemand['tableNameBar']['']['columnNameFoo'][3]['tableNameFoo' . "\0" . 1] = $databaseRecord;
-        $expectedDemand['tableNameFoo']['']['columnNameBar'][5]['tableNameFoo' . "\0" . 1] = $databaseRecord;
-
-        $this->assertSame($expectedDemand, $demands->getSelect());
-        $this->assertSame(1, $called['select.fooBar']);
-        $this->assertSame(1, $called['inline.barFoo']);
+        $this->assertInstanceOf(FlexResolver::class, $resolver);
     }
 }

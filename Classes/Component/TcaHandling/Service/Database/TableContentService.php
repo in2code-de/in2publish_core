@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Features\SkipEmptyTable\Service;
+namespace In2code\In2publishCore\Component\TcaHandling\Service\Database;
 
 /*
  * Copyright notice
@@ -38,19 +38,39 @@ use function array_flip;
 use function array_merge;
 use function array_unique;
 
-class TableInfoService implements SingletonInterface
+class TableContentService implements SingletonInterface
 {
+    protected DatabaseSchemaService $databaseSchemaService;
     protected Connection $localDatabase;
-
     protected Connection $foreignDatabase;
-
     /** @var array<string, array<string, array<int|bool>>> */
     protected array $tableInfo = [];
 
-    public function __construct(Connection $localDatabase, Connection $foreignDatabase)
+    public function injectDatabaseSchemaService(DatabaseSchemaService $databaseSchemaService): void
+    {
+        $this->databaseSchemaService = $databaseSchemaService;
+    }
+
+    public function injectLocalDatabase(Connection $localDatabase): void
     {
         $this->localDatabase = $localDatabase;
+    }
+
+    public function injectForeignDatabase(Connection $foreignDatabase): void
+    {
         $this->foreignDatabase = $foreignDatabase;
+    }
+
+    public function getAllEmptyTables(): array
+    {
+        $allTables = $this->databaseSchemaService->getTableNames();
+        $emptyTables = [];
+        foreach ($allTables as $table) {
+            if ($this->isEmptyTable($table)) {
+                $emptyTables[] = $table;
+            }
+        }
+        return $emptyTables;
     }
 
     public function isEmptyTable(string $table): bool
@@ -67,7 +87,13 @@ class TableInfoService implements SingletonInterface
         if (!isset($this->tableInfo[$table])) {
             $this->tableInfo[$table] = $this->queryTableInfo($table);
         }
-        return $this->tableInfo[$table]['hasPid'] && isset($this->tableInfo[$table]['uniquePidsIndex'][$pid]);
+        if (
+            $this->tableInfo[$table]['isEmpty']
+            || !$this->tableInfo[$table]['hasPid']
+        ) {
+            return false;
+        }
+        return isset($this->tableInfo[$table]['uniquePidsIndex'][$pid]);
     }
 
     protected function queryTableInfo(string $table): array
@@ -93,7 +119,8 @@ class TableInfoService implements SingletonInterface
     protected function isEmpty(Connection $connection, string $table): bool
     {
         try {
-            $query = 'SELECT 1 FROM ' . $connection->quoteIdentifier($table) . ';';
+            $quotedTable = $connection->quoteIdentifier($table);
+            $query = "SELECT EXISTS (SELECT 1 FROM $quotedTable);";
             $atLeastOneRowExists = $connection->executeQuery($query)->fetchOne();
             return !$atLeastOneRowExists;
         } catch (Throwable $exception) {
@@ -105,8 +132,22 @@ class TableInfoService implements SingletonInterface
 
     protected function queryTableFromDatabase(Connection $connection, string $table): array
     {
-        $quotedQuery = $connection->quoteIdentifier($table);
-        $rows = $connection->executeQuery('SELECT DISTINCT `pid` FROM ' . $quotedQuery)->fetchAllAssociative();
+        $quotedTable = $connection->quoteIdentifier($table);
+        $rows = $connection->executeQuery("SELECT DISTINCT `pid` FROM $quotedTable;")->fetchAllAssociative();
         return array_column($rows, 'pid');
+    }
+
+    /**
+     * @param array<string> $tables
+     * @return array<string>
+     */
+    public function removeEmptyTables(array $tables): array
+    {
+        foreach ($tables as $idx => $table) {
+            if ($this->isEmptyTable($table)) {
+                unset($tables[$idx]);
+            }
+        }
+        return $tables;
     }
 }

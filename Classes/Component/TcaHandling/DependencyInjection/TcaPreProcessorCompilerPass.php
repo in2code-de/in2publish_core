@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\DependencyInjection;
+namespace In2code\In2publishCore\Component\TcaHandling\DependencyInjection;
 
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;

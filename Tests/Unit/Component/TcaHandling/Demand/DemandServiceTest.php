@@ -6,9 +6,9 @@ namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\Demand;
 
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandService;
 use In2code\In2publishCore\Component\TcaHandling\Demands;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
+use In2code\In2publishCore\Component\TcaHandling\Service\ResolverService;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
@@ -22,22 +22,23 @@ class DemandServiceTest extends UnitTestCase
     {
         $demandService = new DemandService();
         $record = new DatabaseRecord('table_foo', 1234, ['column_foo' => 1], [], []);
-        $compatibleTcaParts = [
-            'table_foo' => [
-                'column_foo' => [
-                    'resolver' => new class implements Resolver {
-                        public function resolve(Demands $demands, Record $record): void
-                        {
-                            $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
-                        }
-                    },
-                ],
-            ],
+        $resolversForTable = [
+            'column_foo' => new class implements Resolver {
+                public function getTargetTables(): array
+                {
+                    return [];
+                }
+
+                public function resolve(Demands $demands, Record $record): void
+                {
+                    $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
+                }
+            }
         ];
 
-        $tcaProcessingService = $this->createMock(TcaPreProcessingService::class);
-        $tcaProcessingService->method('getCompatibleTcaParts')->willReturn($compatibleTcaParts);
-        $demandService->injectTcaPreProcessingService($tcaProcessingService);
+        $resolverService = $this->createMock(ResolverService::class);
+        $resolverService->method('getResolversForTable')->willReturn($resolversForTable);
+        $demandService->injectResolverService($resolverService);
 
         $demand = $demandService->buildDemandForRecords(new RecordCollection([$record]));
         $this->assertInstanceOf(Demands::class, $demand);
@@ -51,32 +52,39 @@ class DemandServiceTest extends UnitTestCase
         $demandService = new DemandService();
         $record1 = new DatabaseRecord('table_foo', 1234, ['column_foo' => 1], [], []);
         $record2 = new DatabaseRecord('table_bar', 1234, ['column_bar' => 1], [], []);
-        $compatibleTcaParts = [
-            'table_foo' => [
-                'column_foo' => [
-                    'resolver' => new class implements Resolver {
-                        public function resolve(Demands $demands, Record $record): void
-                        {
-                            $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
-                        }
-                    },
-                ],
-            ],
-            'table_bar' => [
-                'column_bar' => [
-                    'resolver' => new class implements Resolver {
-                        public function resolve(Demands $demands, Record $record): void
-                        {
-                            $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
-                        }
-                    },
-                ],
-            ],
+        $resolversForTableFoo = [
+            'column_foo' => new class implements Resolver {
+                public function getTargetTables(): array
+                {
+                    return [];
+                }
+
+                public function resolve(Demands $demands, Record $record): void
+                {
+                    $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
+                }
+            },
+        ];
+        $resolversForTableBar = [
+            'column_bar' => new class implements Resolver {
+                public function getTargetTables(): array
+                {
+                    return [];
+                }
+
+                public function resolve(Demands $demands, Record $record): void
+                {
+                    $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
+                }
+            },
         ];
 
-        $tcaProcessingService = $this->createMock(TcaPreProcessingService::class);
-        $tcaProcessingService->method('getCompatibleTcaParts')->willReturn($compatibleTcaParts);
-        $demandService->injectTcaPreProcessingService($tcaProcessingService);
+        $resolverService = $this->createMock(ResolverService::class);
+        $resolverService->method('getResolversForTable')->willReturnOnConsecutiveCalls(
+            $resolversForTableFoo,
+            $resolversForTableBar
+        );
+        $demandService->injectResolverService($resolverService);
 
         $demand = $demandService->buildDemandForRecords(new RecordCollection([$record1, $record2]));
         $this->assertInstanceOf(Demands::class, $demand);

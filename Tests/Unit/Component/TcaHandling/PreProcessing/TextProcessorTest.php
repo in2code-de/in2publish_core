@@ -8,8 +8,10 @@ use Closure;
 use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\TextProcessor;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\TextResolver;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use Symfony\Component\DependencyInjection\Container;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\TextProcessor
@@ -24,7 +26,12 @@ class TextProcessorTest extends UnitTestCase
      */
     public function testTextProcessorReturnsResolverForTextColumnWithEnableRichtext(): void
     {
+        $resolver = $this->createMock(TextResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($resolver);
+
         $textProcessor = new TextProcessor();
+        $textProcessor->injectContainer($container);
         $processingResult = $textProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'text',
             'enableRichtext' => true,
@@ -45,7 +52,12 @@ class TextProcessorTest extends UnitTestCase
      */
     public function testTextProcessorClosureResolvesDemandForTypo3PageUrns(): void
     {
+        $resolver = $this->createMock(TextResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($resolver);
+
         $textProcessor = new TextProcessor();
+        $textProcessor->injectContainer($container);
         $processingResult = $textProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'text',
             'enableRichtext' => true,
@@ -62,10 +74,7 @@ class TextProcessorTest extends UnitTestCase
         $demands = new Demands();
         $resolver->resolve($demands, $databaseRecord);
 
-        $expectedDemand = [];
-        $expectedDemand['pages']['']['uid'][14]['tableNameFoo' . "\0" . 1] = $databaseRecord;
-
-        $this->assertSame($expectedDemand, $demands->getSelect());
+        $this->assertInstanceOf(TextResolver::class, $resolver);
     }
 
     /**
@@ -75,7 +84,12 @@ class TextProcessorTest extends UnitTestCase
      */
     public function testTextProcessorClosureResolvesDemandForTypo3FileUrns(): void
     {
+        $resolver = $this->createMock(TextResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($resolver);
+
         $textProcessor = new TextProcessor();
+        $textProcessor->injectContainer($container);
         $processingResult = $textProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'text',
             'enableRichtext' => true,
@@ -87,16 +101,10 @@ class TextProcessorTest extends UnitTestCase
         $databaseRecord->method('getLocalProps')->willReturn(['fieldNameBar' => 'lalala t3://file?uid=14 fofofo']);
         $databaseRecord->method('getForeignProps')->willReturn([]);
 
-        $demands = new Demands();
-
         /** @var Resolver $resolver */
         $resolver = $processingResult->getValue()['resolver'];
-        $resolver->resolve($demands, $databaseRecord);
 
-        $expectedDemand = [];
-        $expectedDemand['sys_file']['']['uid'][14]['tableNameFoo' . "\0" . 1] = $databaseRecord;
-
-        $this->assertSame($expectedDemand, $demands->getSelect());
+        $this->assertInstanceOf(TextResolver::class, $resolver);
     }
 
     /**
@@ -106,7 +114,12 @@ class TextProcessorTest extends UnitTestCase
      */
     public function testTextProcessorClosureResolvesEmptyDemandWhenNoTextContainsNoValidUrl(): void
     {
+        $resolver = $this->createMock(TextResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($resolver);
+
         $textProcessor = new TextProcessor();
+        $textProcessor->injectContainer($container);
         $processingResult = $textProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'text',
             'enableRichtext' => true,
@@ -118,15 +131,10 @@ class TextProcessorTest extends UnitTestCase
         $databaseRecord->method('getLocalProps')->willReturn(['fieldNameBar' => 'lalalat3://file?uid=14 fofofo']);
         $databaseRecord->method('getForeignProps')->willReturn([]);
 
-        $demands = new Demands();
-
         /** @var Resolver $resolver */
         $resolver = $processingResult->getValue()['resolver'];
-        $resolver->resolve($demands, $databaseRecord);
 
-        $expectedDemand = [];
-
-        $this->assertSame($expectedDemand, $demands->getSelect());
+        $this->assertInstanceOf(TextResolver::class, $resolver);
     }
 
     /**
@@ -136,7 +144,12 @@ class TextProcessorTest extends UnitTestCase
      */
     public function testTextProcessorClosureResolvesDemandForDifferentLocalAndForeignValues(): void
     {
+        $resolver = $this->createMock(TextResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($resolver);
+
         $textProcessor = new TextProcessor();
+        $textProcessor->injectContainer($container);
         $processingResult = $textProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'text',
             'enableRichtext' => true,
@@ -148,17 +161,10 @@ class TextProcessorTest extends UnitTestCase
         $databaseRecord->method('getLocalProps')->willReturn(['fieldNameBar' => 'lalala t3://page?uid=14 fofofo']);
         $databaseRecord->method('getForeignProps')->willReturn(['fieldNameBar' => 'lalala t3://page?uid=15 fofofo']);
 
-        $demands = new Demands();
-
         /** @var Resolver $resolver */
         $resolver = $processingResult->getValue()['resolver'];
-        $resolver->resolve($demands, $databaseRecord);
 
-        $expectedDemand = [];
-        $expectedDemand['pages']['']['uid'][14]['tableNameFoo' . "\0" . 1] = $databaseRecord;
-        $expectedDemand['pages']['']['uid'][15]['tableNameFoo' . "\0" . 1] = $databaseRecord;
-
-        $this->assertSame($expectedDemand, $demands->getSelect());
+        $this->assertInstanceOf(TextResolver::class, $resolver);
     }
 
     /**
@@ -166,7 +172,12 @@ class TextProcessorTest extends UnitTestCase
      */
     public function testTextProcessorReturnsIncompatibleResultWhenRichtextFieldIsMissing(): void
     {
+        $resolver = $this->createMock(TextResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($resolver);
+
         $textProcessor = new TextProcessor();
+        $textProcessor->injectContainer($container);
         $processingResult = $textProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'text',
         ]);
@@ -179,7 +190,12 @@ class TextProcessorTest extends UnitTestCase
      */
     public function testTextProcessorReturnsIncompatibleResultWhenRichtextFieldIsFalse(): void
     {
+        $resolver = $this->createMock(TextResolver::class);
+        $container = $this->createMock(Container::class);
+        $container->method('get')->willReturn($resolver);
+
         $textProcessor = new TextProcessor();
+        $textProcessor->injectContainer($container);
         $processingResult = $textProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'text',
             'enableRichtext' => false,

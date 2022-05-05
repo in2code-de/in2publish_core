@@ -11,6 +11,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use function array_filter;
 use function array_merge;
 use function array_unique;
+use function in_array;
 use function strrpos;
 use function substr;
 
@@ -20,13 +21,25 @@ class GroupMmMultiTableResolver implements Resolver
     protected string $column;
     protected string $selectField;
     protected string $additionalWhere;
+    protected array $tables;
 
-    public function configure(string $mmTable, string $column, string $selectField, string $additionalWhere): void
-    {
+    public function configure(
+        array $tables,
+        string $mmTable,
+        string $column,
+        string $selectField,
+        string $additionalWhere
+    ): void {
+        $this->tables = $tables;
         $this->mmTable = $mmTable;
         $this->column = $column;
         $this->selectField = $selectField;
         $this->additionalWhere = $additionalWhere;
+    }
+
+    public function getTargetTables(): array
+    {
+        return $this->tables;
     }
 
     public function resolve(Demands $demands, Record $record): void
@@ -45,9 +58,11 @@ class GroupMmMultiTableResolver implements Resolver
                 continue;
             }
             $table = substr($value, 0, $position);
-            $id = substr($value, $position + 1);
+            if (in_array($table, $this->tables)) {
+                $id = substr($value, $position + 1);
 
-            $demands->addJoin($this->mmTable, $table, $this->additionalWhere, $this->selectField, $id, $record);
+                $demands->addJoin($this->mmTable, $table, $this->additionalWhere, $this->selectField, $id, $record);
+            }
         }
     }
 }

@@ -29,11 +29,9 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\SelectMmResolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\SelectResolver;
-use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 
 use function array_filter;
 use function array_key_exists;
@@ -44,8 +42,6 @@ use function trim;
 
 class SelectProcessor extends AbstractProcessor
 {
-    protected SelectMmResolver $selectMmResolver;
-    protected SelectResolver $selectResolver;
     protected string $type = 'select';
     protected array $forbidden = [
         'itemsProcFunc' => 'itemsProcFunc is not supported',
@@ -66,16 +62,6 @@ class SelectProcessor extends AbstractProcessor
         'rootLevel',
         'MM_opposite_field',
     ];
-
-    public function injectSelectMmResolver(SelectMmResolver $selectMmResolver): void
-    {
-        $this->selectMmResolver = $selectMmResolver;
-    }
-
-    public function injectSelectResolver(SelectResolver $selectResolver): void
-    {
-        $this->selectResolver = $selectResolver;
-    }
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
@@ -111,12 +97,12 @@ class SelectProcessor extends AbstractProcessor
                 $foreignTableWhere = trim(substr($foreignTableWhere, 4));
             }
 
-            $resolver = clone $this->selectMmResolver;
+            $resolver = $this->container->get(SelectMmResolver::class);
             $resolver->configure($foreignTableWhere, $column, $mmTable, $foreignTable, $selectField);
             return $resolver;
         }
 
-        $resolver = clone $this->selectResolver;
+        $resolver = $this->container->get(SelectResolver::class);
         $resolver->configure($column, $foreignTable, $foreignTableWhere);
         return $resolver;
     }

@@ -22,6 +22,11 @@ class StaticJoinResolver implements Resolver
         $this->property = $property;
     }
 
+    public function getTargetTables(): array
+    {
+        return [$this->joinTable];
+    }
+
     public function resolve(Demands $demands, Record $record): void
     {
         $demands->addJoin(

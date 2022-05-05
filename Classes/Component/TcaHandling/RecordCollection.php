@@ -54,6 +54,9 @@ class RecordCollection implements IteratorAggregate, ArrayAccess
         return $this->records;
     }
 
+    /**
+     * @return array<Record>
+     */
     public function getRecordsFlat(): array
     {
         $records = array_values($this->records);

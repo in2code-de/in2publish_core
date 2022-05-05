@@ -5,18 +5,11 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor;
 
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\ProcessingResult;
-use In2code\In2publishCore\Component\TcaHandling\Resolver\NoOpResolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 
 class ExtNewsRelatedFromProcessor extends AbstractProcessor
 {
-    protected NoOpResolver $noOpResolver;
     protected string $type = 'group';
-
-    public function injectNoOpResolver(NoOpResolver $noOpResolver): void
-    {
-        $this->noOpResolver = $noOpResolver;
-    }
 
     public function getTable(): string
     {
@@ -36,8 +29,8 @@ class ExtNewsRelatedFromProcessor extends AbstractProcessor
         );
     }
 
-    protected function buildResolver(string $table, string $column, array $processedTca): Resolver
+    protected function buildResolver(string $table, string $column, array $processedTca): ?Resolver
     {
-        return clone $this->noOpResolver;
+        return null;
     }
 }

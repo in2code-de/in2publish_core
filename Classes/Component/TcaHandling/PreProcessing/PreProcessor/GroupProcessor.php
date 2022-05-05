@@ -47,10 +47,6 @@ use function trim;
 class GroupProcessor extends AbstractProcessor
 {
     protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
-    protected GroupMmMultiTableResolver $groupMmMultiTableResolver;
-    protected StaticJoinResolver $staticJoinResolver;
-    protected GroupMultiTableResolver $groupMultiTableResolver;
-    protected GroupSingleTableResolver $groupSingleTableResolver;
     protected string $type = 'group';
     protected array $required = [
         'allowed' => 'The field "allowed" is required',
@@ -71,26 +67,6 @@ class GroupProcessor extends AbstractProcessor
         DatabaseIdentifierQuotingService $databaseIdentifierQuotingService
     ): void {
         $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
-    }
-
-    public function injectGroupMmMultiTableResolver(GroupMmMultiTableResolver $groupMmMultiTableResolver): void
-    {
-        $this->groupMmMultiTableResolver = $groupMmMultiTableResolver;
-    }
-
-    public function injectStaticJoinResolver(StaticJoinResolver $staticJoinResolver): void
-    {
-        $this->staticJoinResolver = $staticJoinResolver;
-    }
-
-    public function injectGroupMultiTableResolver(GroupMultiTableResolver $groupMultiTableResolver): void
-    {
-        $this->groupMultiTableResolver = $groupMultiTableResolver;
-    }
-
-    public function injectGroupSingleTableResolver(GroupSingleTableResolver $groupSingleTableResolver): void
-    {
-        $this->groupSingleTableResolver = $groupSingleTableResolver;
     }
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
@@ -124,6 +100,7 @@ class GroupProcessor extends AbstractProcessor
     protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
         $foreignTable = $processedTca['allowed'];
+        $tables = GeneralUtility::trimExplode(',', $foreignTable);
         $isSingleTable = $this->isSingleTable($foreignTable);
 
         if (isset($processedTca['MM'])) {
@@ -149,23 +126,23 @@ class GroupProcessor extends AbstractProcessor
             }
 
             if (!$isSingleTable) {
-                $resolver = clone $this->groupMmMultiTableResolver;
-                $resolver->configure($mmTable, $column, $selectField, $additionalWhere);
+                $resolver = $this->container->get(GroupMmMultiTableResolver::class);
+                $resolver->configure($tables, $mmTable, $column, $selectField, $additionalWhere);
                 return $resolver;
             }
 
-            $resolver = clone $this->staticJoinResolver;
+            $resolver = $this->container->get(StaticJoinResolver::class);
             $resolver->configure($mmTable, $foreignTable, $additionalWhere, $selectField);
             return $resolver;
         }
 
         if (!$isSingleTable) {
-            $resolver = clone $this->groupMultiTableResolver;
-            $resolver->configure($column);
+            $resolver = $this->container->get(GroupMultiTableResolver::class);
+            $resolver->configure($tables, $column);
             return $resolver;
         }
 
-        $resolver = clone $this->groupSingleTableResolver;
+        $resolver = $this->container->get(GroupSingleTableResolver::class);
         $resolver->configure($column, $foreignTable);
         return $resolver;
     }

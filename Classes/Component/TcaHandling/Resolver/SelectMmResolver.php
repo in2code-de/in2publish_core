@@ -44,6 +44,11 @@ class SelectMmResolver implements Resolver
         $this->selectField = $selectField;
     }
 
+    public function getTargetTables(): array
+    {
+        return [$this->foreignTable];
+    }
+
     public function resolve(Demands $demands, Record $record): void
     {
         $additionalWhere = $this->replaceMarkersService->replaceMarkers(
