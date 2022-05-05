@@ -35,7 +35,6 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
-use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped;
@@ -679,9 +678,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
      */
     public function enrichPageRecord(RecordInterface $record, array $excludedTableNames): RecordInterface
     {
-        if ($this->shouldSkipEnrichingPageRecord($record)) {
-            return $record;
-        }
         $recordIdentifier = $record->getIdentifier();
         $doktype = $record->getLocalProperty('doktype') ?? $record->getForeignProperty('doktpye');
         if (null !== $doktype) {
@@ -1928,13 +1924,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
             $config,
             $flexFormData
         );
-        $this->eventDispatcher->dispatch($event);
-        return $event->getVotingResult();
-    }
-
-    protected function shouldSkipEnrichingPageRecord(RecordInterface $record): bool
-    {
-        $event = new VoteIfPageRecordEnrichingShouldBeSkipped($this, $record);
         $this->eventDispatcher->dispatch($event);
         return $event->getVotingResult();
     }

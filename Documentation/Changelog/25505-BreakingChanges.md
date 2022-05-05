@@ -18,6 +18,7 @@ Removed Events:
 * VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped -> DemandsWereCollected
 * VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped -> DemandsWereCollected
 * RelatedRecordsByRteWereFetched -> DemandsForTextWereCollected
+* VoteIfPageRecordEnrichingShouldBeSkipped
 
 ## Affected Installations
 
