@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Repository;
 
-use In2code\In2publishCore\Component\TcaHandling\ColumnNameService;
+use In2code\In2publishCore\Component\TcaHandling\Service\ColumnNameService;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryHelper;
 

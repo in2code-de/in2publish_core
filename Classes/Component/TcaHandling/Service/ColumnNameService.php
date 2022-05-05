@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\TcaHandling;
+namespace In2code\In2publishCore\Component\TcaHandling\Service;
 
 use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Database\Connection;
