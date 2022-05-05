@@ -14,6 +14,7 @@ Removed features:
 Removed Events:
 * RecordWasEnriched
 * VoteIfFindingByIdentifierShouldBeSkipped -> DemandsWereCollected
+* VoteIfFindingByPropertyShouldBeSkipped -> DemandsWereCollected
 * RelatedRecordsByRteWereFetched -> DemandsForTextWereCollected
 
 ## Affected Installations

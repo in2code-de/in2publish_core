@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Features\SkipEmptyTable;
  */
 
 use In2code\In2publishCore\Component\TcaHandling\Service\Database\TableContentService as TIS;
-use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -106,15 +105,5 @@ class SkipTableVoter
             return true;
         }
         return false;
-    }
-
-    /**
-     * Skip searching for related records by TCA, if the table to search in is empty
-     */
-    public function shouldSkipFindByProperty(VoteIfFindingByPropertyShouldBeSkipped $event): void
-    {
-        if ($this->tis->isEmptyTable($event->getTableName())) {
-            $event->voteYes();
-        }
     }
 }

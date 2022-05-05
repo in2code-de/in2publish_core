@@ -35,7 +35,6 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Repository\Exception\MissingArgumentException;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
-use In2code\In2publishCore\Event\VoteIfFindingByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped;
@@ -251,9 +250,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
      */
     public function findByProperty(string $propertyName, $propertyValue, string $tableName): array
     {
-        if ($this->shouldSkipFindByProperty($propertyName, $propertyValue, $tableName)) {
-            return [];
-        }
         if (
             $propertyName === 'uid'
             && $record = $this->recordFactory->getCachedRecord($tableName, $propertyValue)
@@ -317,11 +313,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
         }
         if ($simulateRoot) {
             $this->recordFactory->simulateRootRecord();
-        }
-        foreach ($properties as $propertyName => $propertyValue) {
-            if ($this->shouldSkipFindByProperty((string)$propertyName, $propertyValue, $tableName)) {
-                return [];
-            }
         }
         if (
             isset($properties['uid'])
@@ -1902,13 +1893,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
     public function disablePageRecursion(): void
     {
         $this->recordFactory->disablePageRecursion();
-    }
-
-    protected function shouldSkipFindByProperty(string $propertyName, $propertyValue, string $tableName): bool
-    {
-        $event = new VoteIfFindingByPropertyShouldBeSkipped($this, $propertyName, $propertyValue, $tableName);
-        $this->eventDispatcher->dispatch($event);
-        return $event->getVotingResult();
     }
 
     protected function shouldSkipSearchingForRelatedRecords(RecordInterface $record): bool
