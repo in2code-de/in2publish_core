@@ -11,10 +11,6 @@ Refer to [Voting Events](Voting-Events.md) for general information about this ki
 This event will be triggered each time the Content Publisher identified a TCA type `flex` field and resolved the
 FlexForm configuration and data, but before the related records are going to be searched.
 
-FlexForms define TCA which is dynamically embedded into a record based on the records properties, which makes it a
-dynamic version of the TCA. Hence, the Content Publisher can not pre-process the FlexForms and trigger the
-event `VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped` which would be used for "normal" TCA relations.
-
 ## What
 
 * `recordFinder`: The instance of the `RecordFinder` which is going to be used to search for records.

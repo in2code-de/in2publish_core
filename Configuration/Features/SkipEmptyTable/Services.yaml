@@ -10,10 +10,6 @@ services:
   In2code\In2publishCore\Features\SkipEmptyTable\SkipTableVoter:
     tags:
       - name: event.listener
-        identifier: 'in2publishcore-SkipTableVoter-VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped'
-        method: 'shouldSkipSearchingForRelatedRecordsByProperty'
-        event: In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped
-      - name: event.listener
         identifier: 'in2publishcore-SkipTableVoter-VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped'
         method: 'shouldSkipSearchingForRelatedRecordByTable'
         event: In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped

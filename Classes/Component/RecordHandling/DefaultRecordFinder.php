@@ -39,7 +39,6 @@ use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped;
-use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
 use In2code\In2publishCore\Service\Configuration\TcaService;
@@ -476,9 +475,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
         // keep the following extra line for debugging issues
         $columns = $this->tcaPreProcessingService->getCompatibleTcaColumns($recordTableName);
         foreach ($columns as $propertyName => $columnConfiguration) {
-            if ($this->shouldSkipSearchingForRelatedRecordsByProperty($record, $propertyName, $columnConfiguration)) {
-                continue;
-            }
             switch ($columnConfiguration['type']) {
                 /** @noinspection PhpMissingBreakStatementInspection */
                 case 'category':
@@ -1898,21 +1894,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
     protected function shouldSkipSearchingForRelatedRecords(RecordInterface $record): bool
     {
         $event = new VoteIfSearchingForRelatedRecordsShouldBeSkipped($this, $record);
-        $this->eventDispatcher->dispatch($event);
-        return $event->getVotingResult();
-    }
-
-    protected function shouldSkipSearchingForRelatedRecordsByProperty(
-        RecordInterface $record,
-        string $propertyName,
-        array $columnConfiguration
-    ): bool {
-        $event = new VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped(
-            $this,
-            $record,
-            $propertyName,
-            $columnConfiguration
-        );
         $this->eventDispatcher->dispatch($event);
         return $event->getVotingResult();
     }

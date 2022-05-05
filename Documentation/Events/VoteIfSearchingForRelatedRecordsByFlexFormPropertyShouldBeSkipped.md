@@ -31,10 +31,6 @@ by the `config`, which is a relation defined in TCA-style).
 You do not need to ignore FlexForm fields which do not define a relation. The Content Publisher will not try to resolve
 relations where none exist.
 
-This event can be compared to
-[`VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped`](VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped.md)
-as this is fired for FlexForm field defined relations , and the other for TCA column defined relations.
-
 ### Example
 
 This example shows you how to ignore a FlexForm field named `cdnImages` from the FlexForm configuration of

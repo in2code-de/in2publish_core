@@ -30,12 +30,7 @@ namespace In2code\In2publishCore\Features\SkipEmptyTable;
  */
 
 use In2code\In2publishCore\Component\TcaHandling\Service\Database\TableContentService as TIS;
-use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-
-use function array_key_exists;
-use function in_array;
 
 class SkipTableVoter
 {
@@ -64,46 +59,5 @@ class SkipTableVoter
                 $event->voteYes();
             }
         }
-    }
-
-    /**
-     * Skip searching for related records by TCA, if the table to search in is empty
-     */
-    public function shouldSkipSearchingForRelatedRecordsByProperty(
-        VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped $event
-    ): void {
-        $config = $event->getColumnConfiguration();
-        if (empty($config['type']) || !in_array($config['type'], ['select', 'group', 'inline'])) {
-            return;
-        }
-
-        if (array_key_exists('MM', $config) && $this->tis->isEmptyTable($config['MM'])) {
-            $event->voteYes();
-        } elseif (array_key_exists('foreign_table', $config) && $this->tis->isEmptyTable($config['foreign_table'])) {
-            $event->voteYes();
-        } elseif ($this->isGroupDbWhereAllAllowedTablesAreEmpty($config)) {
-            $event->voteYes();
-        }
-    }
-
-    protected function isGroupDbWhereAllAllowedTablesAreEmpty(array $config): bool
-    {
-        if (
-            'group' === $config['type']
-            && 'db' === ($config['internal_type'] ?? 'db')
-            && array_key_exists('allowed', $config)
-        ) {
-            $tables = GeneralUtility::trimExplode(',', $config['allowed']);
-            foreach ($tables as $table) {
-                if ('*' === $table) {
-                    return false;
-                }
-                if (!$this->tis->isEmptyTable($table)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
     }
 }
