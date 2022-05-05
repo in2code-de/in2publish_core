@@ -14,5 +14,5 @@ return static function (ContainerConfigurator $configurator, ContainerBuilder $b
     $builder->registerForAutoconfiguration(Resolver::class)->addTag('in2publish_core.tca.resolver');
 
     $builder->addCompilerPass(new TcaPreProcessorCompilerPass('in2publish_core.tca.preprocessor'));
-    $builder->addCompilerPass(new PublicServicePass('in2publish_core.tca.resolver'));
+    $builder->addCompilerPass(new PublicServicePass('in2publish_core.tca.resolver', true));
 };

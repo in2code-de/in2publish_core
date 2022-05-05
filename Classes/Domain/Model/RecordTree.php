@@ -31,4 +31,9 @@ class RecordTree implements Node
     {
         return -1;
     }
+
+    public function getChild(string $table, int $id): Record
+    {
+        return $this->children[$table][$id];
+    }
 }

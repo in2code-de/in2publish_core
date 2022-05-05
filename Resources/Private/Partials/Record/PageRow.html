@@ -10,15 +10,13 @@
 			</f:if>
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{config.view.titleField}" stagingLevel="local" fallbackProperty="title"/>
 			<i class="in2publish-icon-info" data-action="opendirtypropertieslistcontainer"></i>
-			<f:if condition="{record.publishable}">
-				<f:link.action
-					action="publishRecord"
-					arguments="{identifier:record.identifier}"
-					title="{f:translate(key:'publish_pages', default:'Publish this page')}"
-					additionalAttributes="{publish:Attribute.PublishingDataAttributes()}">
-					<i class="in2publish-icon-publish"></i>
-				</f:link.action>
-			</f:if>
+			<f:link.action
+				action="publishRecord"
+				arguments="{identifier:record.id}"
+				title="{f:translate(key:'publish_pages', default:'Publish this page')}"
+			>
+				PUBLISH
+			</f:link.action>
 		</div>
 
 		<f:comment>

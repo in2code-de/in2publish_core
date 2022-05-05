@@ -31,10 +31,9 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
-use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
 use In2code\In2publishCore\Component\TcaHandling\DerServiceUmbenennen;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Component\TcaHandling\Publisher\RecordPublisher as NewRecordPublisher;
+use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
@@ -49,7 +48,6 @@ use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -70,11 +68,9 @@ class RecordController extends AbstractController
     use ControllerModuleTemplate;
 
     protected FailureCollector $failureCollector;
-
     protected PermissionService $permissionService;
-
-
     protected DerServiceUmbenennen $derService;
+    protected NewRecordPublisher $publisher;
 
     public function __construct(
         ConfigContainer $configContainer,
@@ -159,15 +155,9 @@ class RecordController extends AbstractController
      */
     public function publishRecordAction(int $identifier, string $returnUrl = null): void
     {
-        $this->logger->info('publishing record in ' . $this->request->getPluginName(), ['identifier' => $identifier]);
-        $this->publishRecord($identifier, ['pages']);
-        if ($returnUrl !== null) {
-            while (strpos($returnUrl, '/') === false || strpos($returnUrl, 'typo3') === false) {
-                $returnUrl = rawurldecode($returnUrl);
-            }
-            $this->redirectToUri($returnUrl);
-        }
-        $this->addFlashMessagesAndRedirectToIndex();
+        $recordTree = $this->derService->buildRecordTree('pages', $identifier);
+        $record = $recordTree->getChild('pages', $identifier);
+        $this->publisher->publishRecord($record);
     }
 
     /**
@@ -222,5 +212,10 @@ class RecordController extends AbstractController
         $this->addFlashMessage($message, $title, $severity);
 
         $this->redirect('index', 'Record');
+    }
+
+    public function injectPublisher(NewRecordPublisher $publisher): void
+    {
+        $this->publisher = $publisher;
     }
 }
