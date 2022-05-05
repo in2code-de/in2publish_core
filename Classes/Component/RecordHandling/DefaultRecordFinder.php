@@ -39,7 +39,6 @@ use In2code\In2publishCore\Event\VoteIfPageRecordEnrichingShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped;
-use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped;
 use In2code\In2publishCore\Event\VoteIfSearchingForRelatedRecordsShouldBeSkipped;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Utility\FileUtility;
@@ -696,9 +695,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
         foreach ($tablesToSearchIn as $tableName) {
             // Never search for redirects by their pid!
             if ('sys_redirect' === $tableName) {
-                continue;
-            }
-            if ($this->shouldSkipSearchingForRelatedRecordByTable($record, $tableName)) {
                 continue;
             }
             $relatedRecords = $this->findByProperty('pid', $recordIdentifier, $tableName);
@@ -1939,13 +1935,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
     protected function shouldSkipEnrichingPageRecord(RecordInterface $record): bool
     {
         $event = new VoteIfPageRecordEnrichingShouldBeSkipped($this, $record);
-        $this->eventDispatcher->dispatch($event);
-        return $event->getVotingResult();
-    }
-
-    protected function shouldSkipSearchingForRelatedRecordByTable(RecordInterface $record, string $tableName): bool
-    {
-        $event = new VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped($this, $record, $tableName);
         $this->eventDispatcher->dispatch($event);
         return $event->getVotingResult();
     }

@@ -16,6 +16,7 @@ Removed Events:
 * VoteIfFindingByIdentifierShouldBeSkipped -> DemandsWereCollected
 * VoteIfFindingByPropertyShouldBeSkipped -> DemandsWereCollected
 * VoteIfSearchingForRelatedRecordsByPropertyShouldBeSkipped -> DemandsWereCollected
+* VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped -> DemandsWereCollected
 * RelatedRecordsByRteWereFetched -> DemandsForTextWereCollected
 
 ## Affected Installations

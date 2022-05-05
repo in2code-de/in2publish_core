@@ -13,7 +13,6 @@ imports:
   - { resource: Features/PublishSorting/Services.yaml }
   - { resource: Features/RedirectsSupport/Services.yaml }
   - { resource: Features/RefIndexUpdate/Services.yaml }
-  - { resource: Features/SkipEmptyTable/Services.yaml }
   - { resource: Features/SysLogPublisher/Services.yaml }
   - { resource: Features/SystemInformationExport/Services.yaml }
   - { resource: Features/WarningOnForeign/Services.yaml }

@@ -16,9 +16,8 @@ that are stored on that page. This event is created right in between the instant
 
 ## Possibilities
 
-Voting for yes will skip searching for records in **all tables** _based on their pid_. In case you only want to skip
-specific tables you can use the `VoteIfSearchingForRelatedRecordsByTableShouldBeSkipped` event. The normal record
-relation resolving based on TCA will not be skipped.
+Voting for yes will skip searching for records in **all tables** _based on their pid_. The normal record relation
+resolving based on TCA will not be skipped.
 
 ### Example
 
