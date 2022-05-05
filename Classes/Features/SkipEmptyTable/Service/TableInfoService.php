@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Features\SkipEmptyTable\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -41,17 +40,17 @@ use function array_unique;
 
 class TableInfoService implements SingletonInterface
 {
-    protected ?Connection $localConnection;
+    protected Connection $localDatabase;
 
-    protected ?Connection $foreignConnection;
+    protected Connection $foreignDatabase;
 
     /** @var array<string, array<string, array<int|bool>>> */
     protected array $tableInfo = [];
 
-    public function __construct()
+    public function __construct(Connection $localDatabase, Connection $foreignDatabase)
     {
-        $this->localConnection = DatabaseUtility::buildLocalDatabaseConnection();
-        $this->foreignConnection = DatabaseUtility::buildForeignDatabaseConnection();
+        $this->localDatabase = $localDatabase;
+        $this->foreignDatabase = $foreignDatabase;
     }
 
     public function isEmptyTable(string $table): bool
@@ -75,14 +74,14 @@ class TableInfoService implements SingletonInterface
     {
         $hasPid = isset($GLOBALS['TCA'][$table]);
         if ($hasPid) {
-            $localPids = $this->queryTableFromDatabase($this->localConnection, $table);
-            $foreignPids = $this->queryTableFromDatabase($this->foreignConnection, $table);
+            $localPids = $this->queryTableFromDatabase($this->localDatabase, $table);
+            $foreignPids = $this->queryTableFromDatabase($this->foreignDatabase, $table);
             $uniquePids = array_unique(array_merge($localPids, $foreignPids));
             $isEmpty = empty($uniquePids);
         } else {
             $uniquePids = [];
-            $isEmpty = $this->isEmpty($this->localConnection, $table)
-                       && $this->isEmpty($this->foreignConnection, $table);
+            $isEmpty = $this->isEmpty($this->localDatabase, $table)
+                       && $this->isEmpty($this->foreignDatabase, $table);
         }
         return [
             'isEmpty' => $isEmpty,
