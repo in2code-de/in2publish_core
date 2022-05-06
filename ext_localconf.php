@@ -101,9 +101,16 @@
         [\In2code\In2publishCore\Controller\FrontendController::class => 'preview']
     );
 
+    /******************************************** Configure Garbage Collector  ****************************************/
+    // Register table tx_in2publishcore_running_request  in table garbage collector
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks'][\TYPO3\CMS\Scheduler\Task\TableGarbageCollectionTask::class]['options']['tables']['tx_in2publishcore_running_request'] = [
+        'dateField' => 'timestamp_begin',
+        'expirePeriod' => 1,
+    ];
+
     /***************************************** Register Communication Adapter *****************************************/
     $adapterRegistry->registerAdapter(
-        \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter::ADAPTER_TYPE,
+        \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface::ADAPTER_TYPE,
         \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter::ADAPTER_KEY,
         \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter::class,
         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.remote.ssh',
@@ -113,7 +120,7 @@
         ]
     );
     $adapterRegistry->registerAdapter(
-        \In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::ADAPTER_TYPE,
+        \In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface::ADAPTER_TYPE,
         \In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::ADAPTER_KEY,
         \In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::class,
         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.transmission.ssh',

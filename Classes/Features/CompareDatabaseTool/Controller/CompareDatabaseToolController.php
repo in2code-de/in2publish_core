@@ -92,9 +92,12 @@ class CompareDatabaseToolController extends ActionController
 
         foreach ($tables as $table) {
             $tableIdentifier = $this->localDatabase->quoteIdentifier($table);
-            $localResult = $this->localDatabase->executeQuery("SELECT MAX(uid) from $tableIdentifier")->fetchOne();
+            $localResult = $this->localDatabase->executeQuery("SELECT MAX(uid) from $tableIdentifier")
+                                               ->fetchColumn();
+
             $tableIdentifier = $this->foreignDatabase->quoteIdentifier($table);
-            $foreignResult = $this->foreignDatabase->executeQuery("SELECT MAX(uid) from $tableIdentifier")->fetchOne();
+            $foreignResult = $this->foreignDatabase->executeQuery("SELECT MAX(uid) from $tableIdentifier")
+                                                   ->fetchColumn();
 
             if (null === $localResult && null === $foreignResult) {
                 continue;
@@ -130,7 +133,7 @@ class CompareDatabaseToolController extends ActionController
                                               )
                                           )
                                           ->execute();
-                $localRows = array_column($localResult->fetchAllAssociative(), null, 'uid');
+                $localRows = array_column($localResult->fetchAll(), null, 'uid');
                 $foreignQuery = $this->foreignDatabase->createQueryBuilder();
                 $foreignResult = $foreignQuery->select('*')
                                               ->from($table)
@@ -141,7 +144,7 @@ class CompareDatabaseToolController extends ActionController
                                                   )
                                               )
                                               ->execute();
-                $foreignRows = array_column($foreignResult->fetchAllAssociative(), null, 'uid');
+                $foreignRows = array_column($foreignResult->fetchAll(), null, 'uid');
 
                 $uidList = array_unique(array_merge(array_keys($localRows), array_keys($foreignRows)));
 
@@ -201,7 +204,7 @@ class CompareDatabaseToolController extends ActionController
                    ->where($localQuery->expr()->eq('uid', $localQuery->createNamedParameter($uid)))
                    ->setMaxResults(1);
         $localResult = $localQuery->execute();
-        $localRow = $localResult->fetchAssociative();
+        $localRow = $localResult->fetch();
 
         $foreignQuery = $foreignDatabase->createQueryBuilder();
         $foreignQuery->getRestrictions()->removeAll();
@@ -210,7 +213,7 @@ class CompareDatabaseToolController extends ActionController
                      ->where($foreignQuery->expr()->eq('uid', $foreignQuery->createNamedParameter($uid)))
                      ->setMaxResults(1);
         $foreignResult = $foreignQuery->execute();
-        $foreignRow = $foreignResult->fetchAssociative();
+        $foreignRow = $foreignResult->fetch();
 
         if (empty($localRow) && empty($foreignRow)) {
             $this->addFlashMessage(
@@ -236,7 +239,11 @@ class CompareDatabaseToolController extends ActionController
             $foreignResult = $foreignQuery->execute();
             if (1 === $foreignResult) {
                 $this->addFlashMessage(
-                    LocalizationUtility::translate('compare_database.transfer.deleted_from_foreign', 'in2publish_core', [$table, $uid]),
+                    LocalizationUtility::translate(
+                        'compare_database.transfer.deleted_from_foreign',
+                        'in2publish_core',
+                        [$table, $uid]
+                    ),
                     LocalizationUtility::translate('compare_database.transfer.success', 'in2publish_core')
                 );
             }

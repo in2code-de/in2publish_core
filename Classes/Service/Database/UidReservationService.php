@@ -110,7 +110,7 @@ class UidReservationService
                 ->from('sys_file')
                 ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid)))
                 ->execute()
-                ->fetchOne();
+                ->fetchColumn();
 
             if (0 !== $numberOfRows) {
                 return false;
@@ -128,7 +128,7 @@ class UidReservationService
         );
 
         try {
-            $tableStatus = $databaseConnection->executeQuery($statement)->fetchAssociative();
+            $tableStatus = $databaseConnection->executeQuery($statement)->fetch();
         } catch (Throwable $exception) {
             throw new RuntimeException('Could not select table status from database', 1475242494, $exception);
         }

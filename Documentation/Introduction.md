@@ -45,9 +45,12 @@ for easy, intuitive and daily usage focused on editors' daily business.
 ## Features
 
 * Default
-    * Minimal configuration, maximum gain. in2publish is based on the lowest common denominator of TYPO3 CMS and its extensions, the TCA (Table Configuration Array).
+    * Minimal configuration, maximum gain. in2publish is based on the lowest common denominator of TYPO3 CMS and its
+      extensions, the TCA (Table Configuration Array).
     * Page based publishing of pages, content elements and other structures
-    * TCA based relation resolving. Any extension which will be installed should work out-of-the-box, as long as it uses common TCA features. Therefore no additional Configuration is neccessary. Configuration options are still provided, described in the Chapter "Configuration". Userfunc in TCA is currently NOT supported.
+    * TCA based relation resolving. Any extension which will be installed should work out-of-the-box, as long as it uses
+      common TCA features. Therefore no additional Configuration is neccessary. Configuration options are still
+      provided, described in the Chapter "Configuration". Userfunc in TCA is currently NOT supported.
 
 * Workflow
     * Define as many workflow states as you need.
@@ -55,7 +58,9 @@ for easy, intuitive and daily usage focused on editors' daily business.
     * Colors in page tree help to identify pages that are in a workflow.
 
 * Security
-    * Any connection between servers and databases is secured by SSH2. All internal methods to create such a connection are based on Private/Public keys. Password authentication is not supported intentionally, but the Private Key may be encrypted using a password.
+    * Any connection between servers and databases is secured by SSH2. All internal methods to create such a connection
+      are based on Private/Public keys. Password authentication is not supported intentionally, but the Private Key may
+      be encrypted using a password.
     * Eliminates the need for backend users on the production server.
     * The *production* server is not able to connect to *stage* server.
     * The configuration file can be stored outside of the webroot.

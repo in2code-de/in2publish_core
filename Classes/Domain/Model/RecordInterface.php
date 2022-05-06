@@ -260,5 +260,7 @@ interface RecordInterface
 
     public function isPublishable(): bool;
 
+    public function isPublishing(): bool;
+
     public function isRemovedFromLocalDatabase(): bool;
 }

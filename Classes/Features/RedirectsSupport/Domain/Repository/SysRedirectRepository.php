@@ -79,7 +79,7 @@ class SysRedirectRepository extends Repository
 
         $query->select('*')->from('sys_redirect')->where(...$predicates);
         $result = $query->execute();
-        return $result->fetchAllAssociative();
+        return $result->fetchAll();
     }
 
     public function findRawByUids(Connection $connection, array $uids): array
@@ -94,7 +94,7 @@ class SysRedirectRepository extends Repository
               ->from('sys_redirect')
               ->where($query->expr()->in('uid', $uids));
         $result = $query->execute();
-        return $result->fetchAllAssociative();
+        return $result->fetchAll();
     }
 
     public function findByRawTarget(Connection $connection, string $target, array $except): array
@@ -107,7 +107,7 @@ class SysRedirectRepository extends Repository
         if (!empty($except)) {
             $query->andWhere($query->expr()->notIn('uid', $except));
         }
-        return $query->execute()->fetchAllAssociative();
+        return $query->execute()->fetchAll();
     }
 
     /** @return QueryResultInterface<SysRedirect> */
@@ -137,7 +137,7 @@ class SysRedirectRepository extends Repository
                     ->orderBy('source_host')
                     ->groupBy('source_host')
                     ->execute()
-                    ->fetchAllAssociative();
+                    ->fetchAll();
     }
 
     public function findStatusCodesOfRedirects(): array
@@ -148,7 +148,7 @@ class SysRedirectRepository extends Repository
                     ->orderBy('target_statuscode')
                     ->groupBy('target_statuscode')
                     ->execute()
-                    ->fetchAllAssociative();
+                    ->fetchAll();
     }
 
     protected function getQueryForRedirectsToBePublished(array $uidList): QueryInterface

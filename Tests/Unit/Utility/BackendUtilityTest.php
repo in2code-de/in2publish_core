@@ -60,7 +60,7 @@ class BackendUtilityTest extends UnitTestCase
         $connection->method('getSchemaManager')->willReturn($schemaManager);
 
         $result = $this->createMock(MysqliStatement::class);
-        $result->method('fetchAssociative')->willReturnCallback(
+        $result->method('fetch')->willReturnCallback(
             function () {
                 return $this->rows;
             }
@@ -115,7 +115,7 @@ class BackendUtilityTest extends UnitTestCase
 
         $this->rows = ['uid' => $uid, 'pid' => $expectedPid];
 
-        $_POST['element'] = '' . $table . ':' . $uid . '';
+        $_POST['element'] = $table . ':' . $uid;
 
         $this->assertSame($expectedPid, BackendUtility::getPageIdentifier());
     }
@@ -319,7 +319,7 @@ class BackendUtilityTest extends UnitTestCase
     public function testGetPageIdentifierReturnsZeroIfAnyMethodFails()
     {
         $this->rows = [
-            ['uid' => 321]
+            ['uid' => 321],
         ];
 
         $this->assertSame(0, BackendUtility::getPageIdentifier(321, 'tt_content'));

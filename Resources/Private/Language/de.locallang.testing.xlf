@@ -154,6 +154,20 @@
 				<target state="translated">Diese Tabellen haben Unterschiede:</target>
 			</trans-unit>
 
+			<!-- \In2code\In2publishCore\Testing\Tests\Database\TableGarbageCollectorTest -->
+			<trans-unit id="database.garbage_collector_task_missing">
+				<source>A table garbage collector task for table tx_in2publishcore_running_request is missing.</source>
+				<target state="translated">Ein "Tabellen-Müllsammlung" Scheduler Task für die Tabelle "tx_in2publishcore_running_request" muss angelegt werden.</target>
+			</trans-unit>
+			<trans-unit id="database.garbage_collector_task_missing.explanation">
+				<source>Since there is no "Table garbage collection" task for the "tx_in2publishcore_running_request" table, the table may keep growing when unforeseen errors occur. This could block the publishing of some records.</source>
+				<target state="translated">Da kein Task "Tabellen-Müllsammlung" für die Tabelle "tx_in2publishcore_running_request" existiert, kann es sein, dass die Tabelle immer weiter anwächst wenn unvorhergesehen Fehler auftreten. Dadurch könnte das veröffentlichen von Datensätzen blockiert werden.</target>
+			</trans-unit>
+			<trans-unit id="database.garbage_collector_task_exists">
+				<source>A table garbage collector task for table tx_in2publishcore_running_request exists</source>
+				<target state="translated">Ein Table Garbage Collector Task für die Tabelle tx_in2publishcore_running_request ist vorhanden</target>
+			</trans-unit>
+
 			<!-- \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest -->
 
 			<trans-unit id="ssh_connection.full_availability">

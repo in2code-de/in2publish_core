@@ -124,23 +124,35 @@ define([
 	};
 
 	In2publishModule.overlayListener = function () {
-		$('[data-in2publish-confirm]').each(function () {
-			var element = $(this);
-			element.on('click', function (event) {
-				if (element.data('in2publish-confirm')) {
-					if (element.hasClass('in2publish-stagelisting__item__publish--blocked') || !confirm(element.data('in2publish-confirm'))) {
-						event.preventDefault();
-						event.stopPropagation();
-						event.stopImmediatePropagation();
-						return;
-					}
-				}
-				if ('TRUE' === element.data('in2publish-overlay')) {
-					In2publishModule.showPreloader();
-				}
-			});
-		});
+		document.querySelectorAll('[data-in2publish-confirm]').forEach(element => {
+			element.addEventListener('click', In2publishModule.overlayHandler, true)
+		})
 	};
+
+	/**
+	 * @param {Event} event
+	 */
+	In2publishModule.overlayHandler = function (event) {
+		/**
+		 * @type {HTMLAnchorElement}
+		 */
+		const target = event.currentTarget
+		if (
+			target.dataset['in2publishConfirm']
+			&& (
+				target.classList.contains('in2publish-stagelisting__item__publish--blocked')
+				|| !confirm(target.dataset['in2publishConfirm'])
+			)
+		) {
+			event.preventDefault();
+			event.stopPropagation();
+			event.stopImmediatePropagation();
+			return;
+		}
+		if ('TRUE' === target.dataset['in2publishOverlay']) {
+			In2publishModule.showPreloader();
+		}
+	}
 
 	In2publishModule.showPreloader = function () {
 		In2publishModule.objects.preLoader.removeClass('in2publish-preloader--hidden');

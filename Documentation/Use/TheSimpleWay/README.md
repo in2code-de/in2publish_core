@@ -6,5 +6,5 @@ Just make your changes on the stage system, check the output and if you're fine,
 
 Following pages describe how modules can be used from backend users.
 
-* [Publish Overview](PublishOverview.md) 
-* [Publish Files](PublishFiles.md) 
+* [Publish Overview](PublishOverview.md)
+* [Publish Files](PublishFiles.md)

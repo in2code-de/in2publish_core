@@ -175,6 +175,7 @@ a.in2publish-notextdecoration {
     .in2publish-icon-file {
       @extend .icon-file-broken;
     }
+
   }
 
   .in2publish-stagelisting__item--removed & {
@@ -202,7 +203,7 @@ a.in2publish-notextdecoration {
       @extend .icon-file-settings;
     }
 
-    .in2publish-icon-publish {
+    a {
       color: $scorpion;
     }
   }
@@ -225,7 +226,7 @@ a.in2publish-notextdecoration {
       right: 25px + (12 * $n);
     }
 
-    .in2publish-icon-publish {
+    .in2publish-link-publish {
       right: 12px * $n;
     }
 
@@ -282,6 +283,7 @@ a.in2publish-notextdecoration {
     word-break: break-all;
   }
 
+  span.in2publish-link-publish,
   [class^="in2publish-icon-"],
   [class*=" in2publish-icon-"] {
     padding: 0 10px 0 0;

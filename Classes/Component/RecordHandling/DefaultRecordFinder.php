@@ -455,11 +455,15 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                     }
                 }
             }
-            if (!$this->isIgnoredRecord((array)$localProperties[$key], (array)$foreignProperties[$key], $tableName)) {
+
+            $localPropertiesArray = (array)($localProperties[$key] ?? []);
+            $foreignPropertiesArray = (array)($foreignProperties[$key] ?? []);
+
+            if (!$this->isIgnoredRecord($localPropertiesArray, $foreignPropertiesArray, $tableName)) {
                 $foundRecords[$key] = $this->recordFactory->makeInstance(
                     $this,
-                    (array)$localProperties[$key],
-                    (array)$foreignProperties[$key],
+                    $localPropertiesArray,
+                    $foreignPropertiesArray,
                     [],
                     $tableName,
                     'uid',
@@ -1050,6 +1054,9 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
         $recordId = $record->getIdentifier();
         switch ($config['type']) {
             case 'select':
+                if (empty($config['foreign_table'])) {
+                    break;
+                }
                 $whereClause = '';
                 if (!empty($config['foreign_table_where'])) {
                     $whereClause = $config['foreign_table_where'];
@@ -1159,7 +1166,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                     }
                 }
                 foreach ($identifierToTableMap as $tableName => $identifiers) {
-                    if ($columnConfiguration['MM']) {
+                    if (!empty($columnConfiguration['MM'])) {
                         $this->logger->alert(
                             'Missing implementation: GROUP MM',
                             [
@@ -2081,7 +2088,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
         if (!empty($limit)) {
             $query->setMaxResults((int)$limit);
         }
-        $rows = $query->execute()->fetchAllAssociative();
+        $rows = $query->execute()->fetchAll();
 
         return $this->indexRowsByField($indexField, $rows);
     }
@@ -2183,7 +2190,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
         if (!empty($limit)) {
             $query->setMaxResults((int)$limit);
         }
-        $rows = $query->execute()->fetchAllAssociative();
+        $rows = $query->execute()->fetchAll();
 
         return $this->indexRowsByField($indexField, $rows);
     }

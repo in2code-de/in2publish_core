@@ -149,7 +149,7 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
                                                 ->where($query->expr()->eq('uid', $this->storageUid))
                                                 ->setMaxResults(1)
                                                 ->execute()
-                                                ->fetchAssociative();
+                                                ->fetch();
             $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
             $driverConfiguration = $flexFormService->convertFlexFormContentToArray(
                 $this->remoteDriverSettings['configuration']
@@ -670,9 +670,9 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
                     EnvelopeDispatcher::CMD_CREATE_FOLDER,
                     [
                         'storage' => $this->storageUid,
-                        '$newFolderName' => $newFolderName,
-                        '$parentFolderIdentifier' => $parentFolderIdentifier,
-                        '$recursive' => $recursive,
+                        'newFolderName' => $newFolderName,
+                        'parentFolderIdentifier' => $parentFolderIdentifier,
+                        'recursive' => $recursive,
                     ]
                 )
             );

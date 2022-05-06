@@ -31,8 +31,10 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Model;
 
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Event\DetermineIfRecordIsPublishing;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Database\RawRecordService;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
@@ -157,6 +159,12 @@ class SysRedirect extends AbstractEntity
 
     public function getPublishingState(): string
     {
+        $event = new DetermineIfRecordIsPublishing('sys_redirect', $this->uid);
+        $eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
+        $eventDispatcher->dispatch($event);
+        if ($event->isPublishing()) {
+            return 'publishing';
+        }
         $record = $this->getRecord();
         if (!$record->isChanged()) {
             // Nothing to publish

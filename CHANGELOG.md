@@ -1,5 +1,53 @@
 # In2publish Core Change Log
 
+10.2.3:
+
+- [META] Set the EM conf version number to 10.2.3
+- [BUGFIX] Correctly indent other icons in the changed content area
+- [CODESTYLE] Fix indent and line length issues
+- [DOCS] Add missing Event descriptions, reformat all files
+- [CODESTYLE] Fix all CS issues in the Tests folder
+- [BUGFIX] Add explanation to the failing TableGarbageCollectorTest result
+- [CLEANUP] Remove unnecessary string concatenation from BackendUtilityTest
+- [REFACTOR] Replace classes for constant access with the class that defines the constant
+- [COMMENT] Add copyright blocks to new RunningRequest classes
+- [BUGFIX] Deny publishing of a record that is being published, show the process in the View
+- [BUGFIX] Mark all records as being published when bulk-publishing
+- [BUGFIX] Write all records recursively to the running requests table
+- [BUGFIX] Ensure all links in the publish overview mod in yellow rows are black
+- [BUGFIX] Use a static property, because ViewHelper Singletons don't work
+- [BUGFIX] Only check for publishing processes running in other processes
+- [BUGFIX] Remove condition around garbage collector configuration
+- [BUGFIX] Use count instead of select to count scheduler task rowsrows
+- [FEATURE] Add RegisterViewHelper to set variables in templates that survive scope popping
+- [BUGFIX] Move closing quote to the line it belongs
+- [BUGFIX] Show the publish loader if redirects are publishing
+- [BUGFIX] Use a random token to identify a request instead of the BE user token
+- [BUGFIX] Set Records as not publishable if they are already publishing
+- [BUGFIX] Replace publishing finished event with shutdown function
+- [BUGFIX] Position the publish link instead of just the icon, show publishing records
+- [FEATURE] Add Record::isPublishing to determine if a record is currently being published
+- [CODESTYLE] Remove blank lines
+- [BUGFIX] Fix label for missing garbage collector task
+- [TASK] Add a publish tools test checking the existence of a garbage collector task for table tx_in2publishcore_running_request
+- [REFACTOR] Move denial of publishing of running request from record to PublishingRequestIsRunningVoter
+- [TASK] Do not show publish button if a request is running for publishing of record
+- [BUGFIX] Fallback to the foreign property when identifying files
+- [BUGFIX] Support doctrine/dbal < 2.11 again
+- [BUGFIX] Replace what used to be fetchOne with fetchColumn
+- [BUGFIX] Fix non-existing statement method calls in non-composer mode setups
+- [BUGFIX] Fix array keys that are used in PHP 8 when using call_user_func_array
+- [BUGFIX] Check if a TCA column MM key is set before accessing it
+- [BUGFIX] Respect the actual sortby field from the TCA to detect if records were moved
+- [BUGFIX] Skip FlexForm select fields without a foreign table
+- [BUGFIX] Check if a key exists in the TCA instead of relying on unset key behavior
+- [BUGFIX] Prevent undefined index access in DefaultRecordFinder
+- [META] Replace extension/module icons
+- [BUGFIX] Always preprend the eventListener for the publishing confirmation
+- [BUGFIX] Set start depth to 1 for the SimplifiedOverviewAndPublishing root record
+- [BUGFIX] Respect record language when attaching pages to parents
+- [RELEASE] Version 10.2.2 with minor bug fixes
+
 10.2.2:
 
 - [META] Set the EM conf version number to 10.2.2

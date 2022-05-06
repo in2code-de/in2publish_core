@@ -1,22 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-    <!-- Generator: Sketch 3.2.2 (9983) - http://www.bohemiancoding.com/sketch -->
-    <title>in2publish</title>
-    <desc>Created with Sketch.</desc>
-    <defs>
-        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-1">
-            <feOffset dx="-1" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
-            <feGaussianBlur stdDeviation="0" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
-            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.35 0" in="shadowBlurOuter1" type="matrix" result="shadowMatrixOuter1"></feColorMatrix>
-            <feMerge>
-                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
-                <feMergeNode in="SourceGraphic"></feMergeNode>
-            </feMerge>
-        </filter>
-    </defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <rect id="Background" stroke="#979797" fill="#5D9A46" sketch:type="MSShapeGroup" x="1" y="1" width="30" height="30"></rect>
-        <path d="M4,7 L4,26 L19,26 L19,7 L4,7 L4,7 Z M18,25 L5,25 L5,8 L18,8 L18,25 L18,25 Z M16,12 L7,12 L7,13 L16,13 L16,12 L16,12 Z M16,14 L7,14 L7,15 L16,15 L16,14 L16,14 Z M16,16 L7,16 L7,17 L16,17 L16,16 L16,16 Z M16,18 L7,18 L7,19 L16,19 L16,18 L16,18 Z M16,20 L7,20 L7,21 L16,21 L16,20 L16,20 Z" id="File" fill="#FFFFFF" sketch:type="MSShapeGroup"></path>
-        <path d="M29,19.5 L21.7419355,12 L21.7419355,16.5 L14,16.5 L14,22.5 L21.7419355,22.5 L21.7419355,27 L29,19.5 Z" id="Arrow" fill="#FFFFFF" filter="url(#filter-1)" sketch:type="MSShapeGroup"></path>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 150 150" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(3,0,0,3,0,0)">
+        <rect x="0" y="0" width="50" height="50" style="fill:rgb(165,200,90);"/>
+    </g>
+    <g transform="matrix(1.01603,0,0,1.01603,-0.027709,0.0785279)">
+        <path d="M52.148,28.469C46.299,27.755 40.579,31.222 40.025,38.971L40.53,110.232C40.77,116.578 44.575,119.061 50.524,119.22L97.924,118.721C104.641,118.885 107.479,115.561 107.663,109.851C107.663,109.851 107.618,66.116 107.609,57.483C107.609,56.541 107.238,55.637 106.576,54.965C102.265,50.588 85.709,33.777 81.331,29.331C80.649,28.638 79.715,28.251 78.743,28.259C72.89,28.305 52.148,28.469 52.148,28.469Z" style="fill:white;"/>
+    </g>
+    <g transform="matrix(1.12987,0,0,1.14366,-12.64,-3.49475)">
+        <path d="M80.475,29.829C80.476,29.568 80.637,29.335 80.881,29.238C81.126,29.142 81.406,29.201 81.588,29.389C85.997,33.938 102.273,50.732 106.6,55.197C106.78,55.383 106.83,55.657 106.727,55.893C106.623,56.129 106.387,56.28 106.126,56.277C101.214,56.225 85.957,56.063 81.568,56.016C80.908,56.009 80.378,55.477 80.38,54.825C80.397,50.412 80.456,34.858 80.475,29.829Z" style="fill:rgb(166,201,87);"/>
+    </g>
+    <g transform="matrix(2.00287e-17,-0.226015,0.292754,2.73384e-17,-485.269,145.601)">
+        <path d="M190.918,1850.22C190.925,1846.58 194.749,1843.63 199.464,1843.63L289.022,1843.63C291.291,1843.63 293.466,1844.33 295.069,1845.57C296.672,1846.81 297.571,1848.49 297.568,1850.24C297.526,1871.47 297.399,1936.6 297.399,1936.6L336.273,1936.6C337.918,1936.6 339.396,1937.38 339.999,1938.56C340.603,1939.74 340.208,1941.09 339.005,1941.95C320.528,1955.26 272.543,1989.82 252.162,2004.5C246.89,2008.3 238.703,2008.28 233.461,2004.46C213.293,1989.75 165.964,1955.22 147.75,1941.94C146.557,1941.07 146.172,1939.73 146.779,1938.55C147.385,1937.37 148.86,1936.6 150.501,1936.6L190.75,1936.6C190.75,1936.6 190.877,1871.43 190.918,1850.22Z" style="fill:rgb(165,200,90);"/>
     </g>
 </svg>

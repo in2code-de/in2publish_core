@@ -36,6 +36,7 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Controller\AbstractController;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
+use In2code\In2publishCore\Event\RecordsWereSelectedForPublishing;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
@@ -113,7 +114,7 @@ class RedirectController extends AbstractController
             $query = $foreignConnection->createQueryBuilder();
             $query->getRestrictions()->removeAll();
             $query->select('uid')->from('sys_redirect')->where($query->expr()->eq('deleted', 1));
-            $uidList = array_column($query->execute()->fetchAllAssociative(), 'uid');
+            $uidList = array_column($query->execute()->fetchAll(), 'uid');
         }
         $this->view->assignMultiple(
             [
@@ -142,11 +143,18 @@ class RedirectController extends AbstractController
         }
         unset($redirect);
 
+        $records = [];
         foreach ($redirects as $redirect) {
             $record = $this->recordFinder->findRecordByUidForPublishing($redirect, 'sys_redirect');
             if (null !== $record) {
-                $this->recordPublisher->publishRecordRecursive($record);
+                $records[] = $record;
             }
+        }
+
+        $this->eventDispatcher->dispatch(new RecordsWereSelectedForPublishing($records));
+
+        foreach ($records as $record) {
+            $this->recordPublisher->publishRecordRecursive($record);
         }
 
         $this->runTasks();

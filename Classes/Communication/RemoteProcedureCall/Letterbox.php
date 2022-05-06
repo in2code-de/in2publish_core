@@ -129,7 +129,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
               ->setMaxResults(1);
         try {
             $result = $query->execute();
-            $envelopeData = $result->fetchAssociative();
+            $envelopeData = $result->fetch();
         } catch (Throwable $exception) {
             $this->logger->error(
                 'Failed to receive envelope [' . $uid . '] "' . $exception . '"',
@@ -156,7 +156,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
             $query = $database->createQueryBuilder();
             $query->getRestrictions()->removeAll();
             $query->count('uid')->from(static::TABLE)->where($query->expr()->isNotNull('response'));
-            return $query->execute()->fetchOne() > 0;
+            return $query->execute()->fetchColumn() > 0;
         }
         return false;
     }

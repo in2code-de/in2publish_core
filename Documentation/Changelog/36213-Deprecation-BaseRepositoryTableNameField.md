@@ -14,11 +14,15 @@ Deprecated Methods:
 
 1. Access to the field is deprecated. (`\In2code\In2publishCore\Domain\Repository\BaseRepository::getTableName`)
 1. Changing the field value is deprecated. (`\In2code\In2publishCore\Domain\Repository\BaseRepository::setTableName`)
-1. Replacing the field value is deprecated. (`\In2code\In2publishCore\Domain\Repository\BaseRepository::replaceTableName`)
-1. Instantiation of `CommonRepository` with a `tableName` is deprecated. (`\In2code\In2publishCore\Domain\Repository\CommonRepository::__construct`)
-1. Calling `CommonRepository::getDefaultInstance` with a `tableName` is deprecated. (`\In2code\In2publishCore\Domain\Repository\CommonRepository::getDefaultInstance`)
+1. Replacing the field value is
+   deprecated. (`\In2code\In2publishCore\Domain\Repository\BaseRepository::replaceTableName`)
+1. Instantiation of `CommonRepository` with a `tableName` is
+   deprecated. (`\In2code\In2publishCore\Domain\Repository\CommonRepository::__construct`)
+1. Calling `CommonRepository::getDefaultInstance` with a `tableName` is
+   deprecated. (`\In2code\In2publishCore\Domain\Repository\CommonRepository::getDefaultInstance`)
 
 Other changes:
+
 1. The signal `shouldSkipFindByIdentifier` now passes the `tableName` as part of the signal arguments.
 
 ## Affected Installations
@@ -27,5 +31,6 @@ All.
 
 ## Migration
 
-Remove any call to `replaceTableName`, `setTableName` and `getTableName`, remove the `tableName` from any `CommonRepository` constructor or factory method.
-Add the `tableName` to any method that requires it optionally. You will find these method names in the deprecation log.  
+Remove any call to `replaceTableName`, `setTableName` and `getTableName`, remove the `tableName` from
+any `CommonRepository` constructor or factory method.
+Add the `tableName` to any method that requires it optionally. You will find these method names in the deprecation log.
