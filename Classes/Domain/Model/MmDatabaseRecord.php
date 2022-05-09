@@ -23,4 +23,9 @@ class MmDatabaseRecord extends AbstractDatabaseRecord
     {
         return $this->propertyHash;
     }
+
+    public function getForeignIdentificationProps(): array
+    {
+        return $this->foreignProps;
+    }
 }

@@ -166,7 +166,8 @@ abstract class AbstractRecord implements Record
             }
 
             $sortByField = $GLOBALS['TCA'][$this->getClassification()]['ctrl']['sortby'] ?? null;
-            if (null !== $sortByField) {
+            // tx_news sets sortby to an empty string
+            if (!empty($sortByField)) {
                 $movedIndicatorFields[] = $sortByField;
             }
 

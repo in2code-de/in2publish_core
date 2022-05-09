@@ -33,7 +33,6 @@ namespace In2code\In2publishCore\Controller;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\TcaHandling\DerServiceUmbenennen;
 use In2code\In2publishCore\Component\TcaHandling\Publisher\RecordPublisher as NewRecordPublisher;
-use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
@@ -55,8 +54,6 @@ use function array_keys;
 use function array_merge;
 use function implode;
 use function json_encode;
-use function rawurldecode;
-use function strpos;
 
 /**
  * Content publishing Controller. Any action is for the "Publish Records" Backend module "m1"
@@ -158,6 +155,7 @@ class RecordController extends AbstractController
         $recordTree = $this->derService->buildRecordTree('pages', $identifier);
         $record = $recordTree->getChild('pages', $identifier);
         $this->publisher->publishRecord($record);
+        $this->redirect('index');
     }
 
     /**

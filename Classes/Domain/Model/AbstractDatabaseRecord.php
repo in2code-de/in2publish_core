@@ -20,6 +20,13 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
         return $this->table;
     }
 
+    public function getForeignIdentificationProps(): array
+    {
+        return [
+            'uid' => $this->getId()
+        ];
+    }
+
     public function getLanguage(): int
     {
         return $this->getCtrlProp('languageField');

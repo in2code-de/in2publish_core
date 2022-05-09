@@ -20,6 +20,13 @@ interface Record extends Node
     public function getForeignProps(): array;
 
     /**
+     * Return an associative array which contains field names and values to identify
+     * the record in the foreign data source (e.g. database or file system)
+     * @return array<string, scalar>
+     */
+    public function getForeignIdentificationProps(): array;
+
+    /**
      * @return scalar
      */
     public function getProp(string $prop);

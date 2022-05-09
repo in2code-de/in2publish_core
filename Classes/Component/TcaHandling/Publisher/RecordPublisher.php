@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Publisher;
 
+use In2code\In2publishCore\Component\TcaHandling\Repository\SingleDatabaseRepository;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 
-use function array_diff_assoc;
-
 class RecordPublisher
 {
+    protected SingleDatabaseRepository $foreignRepository;
+
+    public function injectForeignDatabase(SingleDatabaseRepository $foreignRepository): void
+    {
+        $this->foreignRepository = $foreignRepository;
+    }
+
     public function publishRecord(Record $record): void
     {
         /** @var array<string, array<int, Record>> $records */
@@ -26,43 +32,7 @@ class RecordPublisher
             }
         }
 
-        $updates = [];
-        $inserts = [];
-        $deletes = [];
-
-        foreach ($flatFlatRecords as $flatRecord) {
-            $id = $flatRecord->getId();
-            $table = $flatRecord->getClassification();
-            $localProps = $flatRecord->getLocalProps();
-            $foreignProps = $flatRecord->getForeignProps();
-
-            if ($flatRecord->getState() === Record::S_ADDED) {
-                $inserts[$table][] = $localProps;
-                continue;
-            }
-
-            if ($flatRecord->getState() === Record::S_DELETED) {
-                $deletes[$table][] = $id;
-                continue;
-            }
-
-            $newValues = array_diff_assoc($localProps, $foreignProps);
-            if (empty($newValues)) {
-                $a = 'v';
-            }
-
-            $updates[$table][$id] = $newValues;
-        }
-
-        \TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump([$updates, $inserts, $deletes],
-            __FILE__ . '@' . __LINE__,
-            20,
-            false,
-            true,
-            false,
-            [],
-            []);
-        die();
+        $this->foreignRepository->publishRecordsToForeign($flatFlatRecords);
     }
 
     /**
@@ -76,7 +46,10 @@ class RecordPublisher
             return;
         }
         $records[$table][$id] = $record;
-        foreach ($record->getChildren() as $children) {
+        foreach ($record->getChildren() as $table => $children) {
+            if ('pages' === $table) {
+                continue;
+            }
             foreach ($children as $child) {
                 $this->recursiveRecordsToFlatArray($child, $records);
             }
