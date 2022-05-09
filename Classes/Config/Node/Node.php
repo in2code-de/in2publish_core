@@ -36,6 +36,7 @@ interface Node
     public const T_ARRAY = 'array';
     public const T_STRICT_ARRAY = 'strict_array';
     public const T_STRING = 'string';
+    public const T_OPTIONAL_ARRAY = 'optional_array';
     public const T_OPTIONAL_STRING = 'optional_string';
     public const T_INTEGER = 'integer';
     public const T_BOOLEAN = 'boolean';

@@ -72,6 +72,12 @@ class Builder
         return $this;
     }
 
+    public function addOptionalArray(string $name, Builder $nodes, array $default = null, array $validators = [])
+    {
+        $this->addNode(Node::T_OPTIONAL_ARRAY, $name, $default, $validators, $nodes);
+        return $this;
+    }
+
     public function addOptionalString(string $key, string $default, array $validators = []): self
     {
         $this->addNode(Node::T_OPTIONAL_STRING, $key, $default, $validators);

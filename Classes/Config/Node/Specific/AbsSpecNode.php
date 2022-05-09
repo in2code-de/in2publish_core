@@ -40,6 +40,7 @@ abstract class AbsSpecNode extends AbstractNode
 {
     protected static array $types = [
         Node::T_STRING => SpecString::class,
+        Node::T_OPTIONAL_ARRAY => SpecOptionalArray::class,
         Node::T_OPTIONAL_STRING => SpecOptionalString::class,
         Node::T_INTEGER => SpecInteger::class,
         Node::T_ARRAY => SpecArray::class,
