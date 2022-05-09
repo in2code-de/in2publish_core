@@ -31,10 +31,12 @@ namespace In2code\In2publishCore\Domain\Factory;
 
 use In2code\In2publishCore\Component\TcaHandling\RecordIndex;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
+use In2code\In2publishCore\Domain\Model\FileRecord;
 use In2code\In2publishCore\Domain\Model\MmDatabaseRecord;
 use In2code\In2publishCore\Domain\Model\PageTreeRootRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored;
+use In2code\In2publishCore\Event\RecordWasCreated;
 use In2code\In2publishCore\Service\Configuration\IgnoredFieldsService;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
@@ -67,12 +69,10 @@ class RecordFactory
     ): ?DatabaseRecord {
         $tableIgnoredFields = $this->ignoredFieldsService->getIgnoredFields($table);
         $record = new DatabaseRecord($table, $id, $localProps, $foreignProps, $tableIgnoredFields);
-        $this->recordIndex->addRecord($record);
-
         if ($this->shouldIgnoreRecord($record)) {
             return null;
         }
-
+        $this->finishRecord($record);
         return $record;
     }
 
@@ -83,12 +83,24 @@ class RecordFactory
         array $foreignProps
     ): ?MmDatabaseRecord {
         $record = new MmDatabaseRecord($table, $propertyHash, $localProps, $foreignProps);
-        $this->recordIndex->addRecord($record);
-
         if ($this->shouldIgnoreRecord($record)) {
             return null;
         }
+        $this->finishRecord($record);
+        return $record;
+    }
 
+    public function createPageTreeRootRecord(): PageTreeRootRecord
+    {
+        $record = new PageTreeRootRecord();
+        $this->finishRecord($record);
+        return $record;
+    }
+
+    public function createFileRecord($localProps, $foreignProps): FileRecord
+    {
+        $record = new FileRecord($localProps, $foreignProps);
+        $this->finishRecord($record);
         return $record;
     }
 
@@ -99,10 +111,10 @@ class RecordFactory
         return $event->shouldBeIgnored();
     }
 
-    public function createPageTreeRootRecord(): PageTreeRootRecord
+    protected function finishRecord(Record $record): void
     {
-        $record = new PageTreeRootRecord();
         $this->recordIndex->addRecord($record);
-        return $record;
+
+        $this->eventDispatcher->dispatch(new RecordWasCreated($record));
     }
 }

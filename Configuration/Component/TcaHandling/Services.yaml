@@ -29,3 +29,14 @@ services:
     class: 'In2code\In2publishCore\Component\TcaHandling\Repository\SingleDatabaseRepository'
     arguments:
       $connection: '@In2code.In2publishCore.Database.Foreign'
+
+  In2code\In2publishCore\Component\TcaHandling\FileHandling\FileRecordListener:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-FileRecordListener-RecordWasCreated'
+        method: 'onRecordWasCreated'
+        event: In2code\In2publishCore\Event\RecordWasCreated
+      - name: event.listener
+        identifier: 'in2publishcore-FileRecordListener-RecordRelationsWereResolved'
+        method: 'onRecordRelationsWereResolved'
+        event: In2code\In2publishCore\Event\RecordRelationsWereResolved

@@ -3,6 +3,7 @@
 namespace In2code\In2publishCore\Component\TcaHandling;
 
 use In2code\In2publishCore\Domain\Model\Node;
+use In2code\In2publishCore\Domain\Model\Record;
 
 class Demands
 {
@@ -10,6 +11,7 @@ class Demands
     private array $demand = [
         'select' => [],
         'join' => [],
+        'files' => [],
     ];
 
     /**
@@ -73,7 +75,7 @@ class Demands
      * @param int|string $search e.g. 25
      * @return void
      */
-    public function unsetJoin(string $mmTable,string $joinTable, string $field, $search): void
+    public function unsetJoin(string $mmTable, string $joinTable, string $field, $search): void
     {
         foreach ($this->demand['join'][$mmTable][$joinTable] ?? [] as $additionalWhere => $properties) {
             foreach ($properties as $property => $values) {
@@ -96,6 +98,16 @@ class Demands
         }
     }
 
+    public function addFile(int $storage, string $identifier, Record $record): void
+    {
+        $this->demand['files'][$storage][$identifier][$this->uniqueRecordKey($record)] = $record;
+    }
+
+    public function getFiles(): array
+    {
+        return $this->demand['files'];
+    }
+
     public function uniqueRecordKey(Node $record): string
     {
         return $record->getClassification() . self::RECORD_KEY_DELIMITER . $record->getId();
@@ -116,5 +128,4 @@ class Demands
     {
         return $this->demand['join'];
     }
-
 }

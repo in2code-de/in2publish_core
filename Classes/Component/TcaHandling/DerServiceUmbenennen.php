@@ -12,6 +12,10 @@ use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordTree;
 
+use In2code\In2publishCore\Event\RecordRelationsWereResolved;
+
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
+
 use function array_search;
 
 class DerServiceUmbenennen
@@ -22,6 +26,7 @@ class DerServiceUmbenennen
     protected DemandService $demandService;
     protected RecordFactory $recordFactory;
     protected RecordIndex $recordIndex;
+    protected EventDispatcher $eventDispatcher;
 
     public function injectRelevantTablesService(RelevantTablesService $relevantTablesService): void
     {
@@ -53,6 +58,11 @@ class DerServiceUmbenennen
         $this->recordIndex = $recordIndex;
     }
 
+    public function injectEventDispatcher(EventDispatcher $eventDispatcher): void
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     public function buildRecordTree(string $table, int $id): RecordTree
     {
         $recordTree = new RecordTree();
@@ -66,6 +76,8 @@ class DerServiceUmbenennen
         $this->findRecordsByTca($records);
 
         $this->recordIndex->connectTranslations();
+
+        $this->eventDispatcher->dispatch(new RecordRelationsWereResolved());
 
         return $recordTree;
     }
