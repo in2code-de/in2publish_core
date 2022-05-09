@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Component\RecordHandling;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use Exception;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Config\ConfigContainer;
