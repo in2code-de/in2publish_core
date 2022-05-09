@@ -20,6 +20,8 @@ class VirtualFlexFormRecord extends AbstractDatabaseRecord implements DatabaseEn
         $this->localProps = $localProps;
         $this->foreignProps = $foreignProps;
         $this->record = $record;
+
+        $this->state = $this->calculateState();
     }
 
     public function getClassification(): string

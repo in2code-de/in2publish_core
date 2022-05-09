@@ -9,7 +9,7 @@ class PageTreeRootRecord extends DatabaseRecord
         parent::__construct('pages', 0, [], [], []);
     }
 
-    public function getState(): string
+    protected function calculateState(): string
     {
         return Record::S_UNCHANGED;
     }

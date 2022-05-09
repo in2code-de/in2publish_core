@@ -15,6 +15,8 @@ class MmDatabaseRecord extends AbstractDatabaseRecord
 
         $this->localProps = $localFields;
         $this->foreignProps = $foreignFields;
+
+        $this->state = $this->calculateState();
     }
 
     public function getId(): string

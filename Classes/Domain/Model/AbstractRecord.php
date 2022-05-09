@@ -7,9 +7,7 @@ namespace In2code\In2publishCore\Domain\Model;
 use LogicException;
 
 use function array_diff_assoc;
-use function array_flip;
 use function array_keys;
-use function in_array;
 
 abstract class AbstractRecord implements Record
 {
@@ -18,6 +16,8 @@ abstract class AbstractRecord implements Record
 
     // Initialize this in your constructor
     protected array $foreignProps;
+
+    protected string $state;
 
     protected bool $hasBeenAskedForRecursiveState = false;
 
@@ -135,10 +135,7 @@ abstract class AbstractRecord implements Record
         return $this->localProps !== $this->foreignProps;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getState(): string
+    protected function calculateState(): string
     {
         $localRecordExists = [] !== $this->localProps;
         $foreignRecordExists = [] !== $this->foreignProps;
@@ -163,7 +160,10 @@ abstract class AbstractRecord implements Record
         }
         $changedProps = $this->getChangedProps();
         if (empty($changedProps)) {
-            $movedIndicatorFields = ['pid'];
+            $movedIndicatorFields = [];
+            if (isset($GLOBALS['TCA'][$this->getClassification()])) {
+                $movedIndicatorFields[] = 'pid';
+            }
 
             $sortByField = $GLOBALS['TCA'][$this->getClassification()]['ctrl']['sortby'] ?? null;
             if (null !== $sortByField) {
@@ -181,6 +181,11 @@ abstract class AbstractRecord implements Record
         return Record::S_CHANGED;
     }
 
+    public function getState(): string
+    {
+        return $this->state;
+    }
+
     /**
      * @inheritDoc
      */
@@ -191,10 +196,14 @@ abstract class AbstractRecord implements Record
             return $state;
         }
         $this->hasBeenAskedForRecursiveState = true;
-        foreach ($this->children as $records) {
+        foreach ($this->children as $table => $records) {
+            if ('pages' === $table) {
+                continue;
+            }
             foreach ($records as $record) {
                 $state = $record->getStateRecursive();
                 if ($state !== Record::S_UNCHANGED) {
+                    $this->hasBeenAskedForRecursiveState = false;
                     return Record::S_CHANGED;
                 }
             }
