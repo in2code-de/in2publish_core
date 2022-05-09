@@ -10,6 +10,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_filter;
 use function array_merge;
+use function in_array;
+use function strrpos;
+use function substr;
 
 class GroupSingleTableResolver implements Resolver
 {
@@ -37,6 +40,14 @@ class GroupSingleTableResolver implements Resolver
 
         $values = array_filter(array_merge($localEntries, $foreignEntries));
         foreach ($values as $value) {
+            if ((string)$value !== (string)(int)$value) {
+                $position = strrpos($value, '_');
+                $table = substr($value, 0, $position);
+                if ($table !== $this->foreignTable) {
+                    continue;
+                }
+                $value = substr($value, $position + 1);
+            }
             $demands->addSelect($this->foreignTable, '', 'uid', $value, $record);
         }
     }
