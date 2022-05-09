@@ -33,19 +33,6 @@ use In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder;
 use In2code\In2publishCore\Component\RecordHandling\DefaultRecordPublisher;
 use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
 use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\CheckProcessor;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\FlexProcessor;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\GroupProcessor;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\ImageManipulationProcessor;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\InlineProcessor;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\InputProcessor;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\NoneProcessor;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\PassthroughProcessor;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\RadioProcessor;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\SelectProcessor;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\SlugProcessor;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\TextProcessor;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\UserProcessor;
 use In2code\In2publishCore\Config\Builder;
 use In2code\In2publishCore\Config\Node\Node;
 use In2code\In2publishCore\Config\Node\NodeCollection;
@@ -53,7 +40,6 @@ use In2code\In2publishCore\Config\Validator\ClassImplementsValidator;
 use In2code\In2publishCore\Config\Validator\DirectoryExistsValidator;
 use In2code\In2publishCore\Config\Validator\IntegerInRangeValidator;
 use In2code\In2publishCore\Config\Validator\IPv4PortValidator;
-use In2code\In2publishCore\Config\Validator\IterativeTcaProcessorValidator;
 use In2code\In2publishCore\Config\Validator\ZipExtensionInstalledValidator;
 
 /**
@@ -241,29 +227,6 @@ class In2publishCoreDefiner implements DefinerInterface
                                             )
                                             ->addBoolean('addDropTable', true)
                                             ->addBoolean('zipBackup', true, [ZipExtensionInstalledValidator::class])
-                                 )
-                      )
-                      ->addArray(
-                          'tca',
-                          Builder::start()
-                                 ->addArray(
-                                     'processor',
-                                     Builder::start()
-                                            ->addString('check', CheckProcessor::class)
-                                            ->addString('flex', FlexProcessor::class)
-                                            ->addString('group', GroupProcessor::class)
-                                            ->addString('inline', InlineProcessor::class)
-                                            ->addString('input', InputProcessor::class)
-                                            ->addString('none', NoneProcessor::class)
-                                            ->addString('passthrough', PassthroughProcessor::class)
-                                            ->addString('radio', RadioProcessor::class)
-                                            ->addString('select', SelectProcessor::class)
-                                            ->addString('text', TextProcessor::class)
-                                            ->addString('user', UserProcessor::class)
-                                            ->addString('imageManipulation', ImageManipulationProcessor::class)
-                                            ->addString('slug', SlugProcessor::class),
-                                     null,
-                                     [IterativeTcaProcessorValidator::class]
                                  )
                       )
                       ->addArray(
