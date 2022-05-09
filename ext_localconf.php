@@ -92,6 +92,9 @@
         \In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\EnvVarProvider::class
     );
 
+    $configContainer->registerMigration(\In2code\In2publishCore\Config\Migration\IngoredFieldsMigration::class);
+
+
     /******************************************** Configure Compare Plugin ********************************************/
     \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
         'in2publish_core',

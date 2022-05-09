@@ -8,24 +8,19 @@ use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 
 use function array_diff_assoc;
-use function array_values;
 
 class RecordPublisher
 {
     public function publishRecord(Record $record): void
     {
+        /** @var array<string, array<int, Record>> $records */
         $records = [];
-        $this->getRecordsFlat($record, $records);
-        $flatFlatRecords = [];
-        foreach ($records as $ids) {
-            foreach ($ids as $record) {
-                $flatFlatRecords[] = $record;
-            }
-        }
-        foreach ($flatFlatRecords as $idx => $record) {
+        $this->recursiveRecordsToFlatArray($record, $records);
+        $flatFlatRecords = $this->flatArrayToRecordList($records);
+        foreach ($flatFlatRecords as $idx => $flatRecord) {
             if (
-                $record->getState() === Record::S_UNCHANGED
-                || !($record instanceof DatabaseRecord)
+                $flatRecord->getState() === Record::S_UNCHANGED
+                || !($flatRecord instanceof DatabaseRecord)
             ) {
                 unset($flatFlatRecords[$idx]);
             }
@@ -35,18 +30,18 @@ class RecordPublisher
         $inserts = [];
         $deletes = [];
 
-        foreach ($flatFlatRecords as $record) {
-            $id = $record->getId();
-            $table = $record->getClassification();
-            $localProps = $record->getLocalProps();
-            $foreignProps = $record->getForeignProps();
+        foreach ($flatFlatRecords as $flatRecord) {
+            $id = $flatRecord->getId();
+            $table = $flatRecord->getClassification();
+            $localProps = $flatRecord->getLocalProps();
+            $foreignProps = $flatRecord->getForeignProps();
 
-            if ($record->getState() === Record::S_ADDED) {
+            if ($flatRecord->getState() === Record::S_ADDED) {
                 $inserts[$table][] = $localProps;
                 continue;
             }
 
-            if ($record->getState() === Record::S_DELETED) {
+            if ($flatRecord->getState() === Record::S_DELETED) {
                 $deletes[$table][] = $id;
                 continue;
             }
@@ -70,7 +65,10 @@ class RecordPublisher
         die();
     }
 
-    protected function getRecordsFlat(Record $record, array &$records = []): void
+    /**
+     * @param array<string, array<int, Record>> $records
+     */
+    protected function recursiveRecordsToFlatArray(Record $record, array &$records = []): void
     {
         $table = $record->getClassification();
         $id = $record->getId();
@@ -80,8 +78,23 @@ class RecordPublisher
         $records[$table][$id] = $record;
         foreach ($record->getChildren() as $children) {
             foreach ($children as $child) {
-                $this->getRecordsFlat($child, $records);
+                $this->recursiveRecordsToFlatArray($child, $records);
             }
         }
+    }
+
+    /**
+     * @param array<string, array<int, Record>>
+     * @return list<Record>
+     */
+    protected function flatArrayToRecordList(array $records): array
+    {
+        $flatFlatRecords = [];
+        foreach ($records as $ids) {
+            foreach ($ids as $record) {
+                $flatFlatRecords[] = $record;
+            }
+        }
+        return $flatFlatRecords;
     }
 }

@@ -175,7 +175,7 @@ tx_in2publish {
 * Foreign Instance Settings (foreign.*)
 * Enabled Modules (module.*)
 * SSH Connection (sshConnection.*)
-* ignoreFieldsForDifferenceView
+* ignoredFields
 * TCA Processors (tca.*)
 * Tasks (tasks.*)
 * Backup settings (backup.*)

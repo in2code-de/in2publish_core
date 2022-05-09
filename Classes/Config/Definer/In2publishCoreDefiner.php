@@ -61,64 +61,6 @@ use In2code\In2publishCore\Config\Validator\ZipExtensionInstalledValidator;
  */
 class In2publishCoreDefiner implements DefinerInterface
 {
-    protected $defaultIgnoredFields = [
-        'pages' => [
-            'pid',
-            'uid',
-            't3ver_oid',
-            't3ver_id',
-            't3ver_wsid',
-            't3ver_label',
-            't3ver_state',
-            't3ver_stage',
-            't3ver_count',
-            't3ver_tstamp',
-            't3ver_move_id',
-            't3_origuid',
-            'tstamp',
-            'sorting',
-            'perms_userid',
-            'perms_groupid',
-            'perms_user',
-            'perms_group',
-            'perms_everybody',
-            'crdate',
-            'cruser_id',
-            'SYS_LASTCHANGED',
-        ],
-        'physical_folder' => [
-            'absolutePath',
-            'ino',
-            'mode',
-            'nlink',
-            'uid',
-            'gid',
-            'rdev',
-            'size',
-            'atime',
-            'mtime',
-            'ctime',
-            'blksize',
-            'blocks',
-        ],
-        'sys_file' => [
-            'modification_date',
-            'creation_date',
-            'tstamp',
-            'last_indexed',
-        ],
-        'sys_file_metadata' => [
-            'tstamp',
-            'crdate',
-        ],
-        'sys_redirect' => [
-            'updatedon',
-            'source_host',
-            'hitcount',
-            'lasthiton',
-        ],
-    ];
-
     protected $defaultIgnoredTables = [
         'be_groups',
         'be_users',
@@ -162,7 +104,7 @@ class In2publishCoreDefiner implements DefinerInterface
                           Builder::start()->addGenericScalar(Node::T_INTEGER),
                           $this->defaultIgnoredTables
                       )
-                      ->addArray(
+                      ->addOptionalArray(
                           'ignoreFieldsForDifferenceView',
                           Builder::start()
                                  ->addGenericArray(
@@ -170,7 +112,50 @@ class In2publishCoreDefiner implements DefinerInterface
                                      Builder::start()
                                             ->addGenericScalar(Node::T_INTEGER)
                                  ),
-                          $this->defaultIgnoredFields
+                      )
+                      ->addArray(
+                          'ignoredFields',
+                          Builder::start()
+                                 ->addGenericArray(
+                                     Node::T_STRING,
+                                     Builder::start()
+                                            ->addGenericArray(
+                                                Node::T_STRING,
+                                                Builder::start()
+                                                       ->addGenericScalar(Node::T_INTEGER)
+                                            )
+                                 ),
+                          [
+                              '.*' => [
+                                  'ctrl' => [
+                                      'tstamp',
+                                      'versioningWS',
+                                      'transOrigDiffSourceField',
+                                  ],
+                              ],
+                              'pages' => [
+                                  'fields' => [
+                                      'perms_userid',
+                                      'perms_groupid',
+                                      'perms_user',
+                                      'perms_group',
+                                      'perms_everybody',
+                                      'SYS_LASTCHANGED',
+                                  ],
+                              ],
+                              'sys_redirect' => [
+                                  'fields' => [
+                                      'source_host',
+                                      'hitcount',
+                                      'lasthiton',
+                                  ],
+                              ],
+                              'sys_file' => [
+                                  'fields' => [
+                                      'last_indexed',
+                                  ],
+                              ],
+                          ]
                       )
                       ->addArray(
                           'factory',

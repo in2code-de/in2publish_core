@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Features\CompareDatabaseTool\Controller;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use In2code\In2publishCore\Features\CompareDatabaseTool\Domain\DTO\ComparisonRequest;
+use In2code\In2publishCore\Service\Configuration\IgnoredFieldsService;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Http\Message\ResponseInterface;
@@ -55,17 +56,18 @@ class CompareDatabaseToolController extends ActionController
     use AdminToolsModuleTemplate;
 
     protected ConfigContainer $configContainer;
-
+    protected IgnoredFieldsService $ignoredFieldsService;
     protected Connection $localDatabase;
-
     protected Connection $foreignDatabase;
 
     public function __construct(
         ConfigContainer $configContainer,
+        IgnoredFieldsService $ignoredFieldsService,
         Connection $localDatabase,
         Connection $foreignDatabase
     ) {
         $this->configContainer = $configContainer;
+        $this->ignoredFieldsService = $ignoredFieldsService;
         $this->localDatabase = $localDatabase;
         $this->foreignDatabase = $foreignDatabase;
     }
@@ -92,8 +94,6 @@ class CompareDatabaseToolController extends ActionController
         $requestedTables = $comparisonRequest->getTables();
 
         $tables = array_intersect($allowedTables, $requestedTables, array_keys($GLOBALS['TCA']));
-
-        $ignoreFieldsForDiff = $this->configContainer->get('ignoreFieldsForDifferenceView');
 
         $differences = [];
 
@@ -158,7 +158,7 @@ class CompareDatabaseToolController extends ActionController
                     $localRowExists = array_key_exists($uid, $localRows);
                     $foreignRowExists = array_key_exists($uid, $foreignRows);
                     if ($localRowExists && $foreignRowExists) {
-                        $ignoredFields = $ignoreFieldsForDiff[$table] ?? [];
+                        $ignoredFields = $this->ignoredFieldsService->getIgnoredFields($table);
 
                         $localRow = $localRows[$uid];
                         $foreignRow = $foreignRows[$uid];

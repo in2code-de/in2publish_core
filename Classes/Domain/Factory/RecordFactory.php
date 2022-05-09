@@ -30,30 +30,23 @@ namespace In2code\In2publishCore\Domain\Factory;
  */
 
 use In2code\In2publishCore\Component\TcaHandling\RecordIndex;
-use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Domain\Model\MmDatabaseRecord;
 use In2code\In2publishCore\Domain\Model\PageTreeRootRecord;
-
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored;
+use In2code\In2publishCore\Service\Configuration\IgnoredFieldsService;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
-
-use function array_unique;
-use function preg_match;
 
 class RecordFactory
 {
-    protected ConfigContainer $configContainer;
+    protected IgnoredFieldsService $ignoredFieldsService;
     protected RecordIndex $recordIndex;
     protected EventDispatcher $eventDispatcher;
-    protected array $ignoredFields;
-    protected array $rtc = [];
 
-    public function injectConfigContainer(ConfigContainer $configContainer): void
+    public function injectIgnoredFieldsService(IgnoredFieldsService $ignoredFieldsService): void
     {
-        $this->configContainer = $configContainer;
-        $this->ignoredFields = $configContainer->get('ignoreFieldsForDifferenceView');
+        $this->ignoredFieldsService = $ignoredFieldsService;
     }
 
     public function injectRecordIndex(RecordIndex $recordIndex): void
@@ -72,7 +65,7 @@ class RecordFactory
         array $localProps,
         array $foreignProps
     ): ?DatabaseRecord {
-        $tableIgnoredFields = $this->getIgnoredFields($table);
+        $tableIgnoredFields = $this->ignoredFieldsService->getIgnoredFields($table);
         $record = new DatabaseRecord($table, $id, $localProps, $foreignProps, $tableIgnoredFields);
         $this->recordIndex->addRecord($record);
 
@@ -104,24 +97,6 @@ class RecordFactory
         $event = new DecideIfRecordShouldBeIgnored($record);
         $this->eventDispatcher->dispatch($event);
         return $event->shouldBeIgnored();
-    }
-
-    protected function getIgnoredFields(string $table): array
-    {
-        if (!isset($this->rtc[$table])) {
-            $tableIgnoredFields = [];
-
-            foreach ($this->ignoredFields as $regEx => $ignoredFields) {
-                if (1 === preg_match('/' . $regEx . '/', $table)) {
-                    foreach ($ignoredFields as $ignoredField) {
-                        $tableIgnoredFields[] = $ignoredField;
-                    }
-                }
-            }
-
-            $this->rtc[$table] = array_unique($tableIgnoredFields);
-        }
-        return $this->rtc[$table];
     }
 
     public function createPageTreeRootRecord(): PageTreeRootRecord

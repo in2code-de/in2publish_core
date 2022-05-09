@@ -8,6 +8,8 @@ TODO:
 
 ## Impact
 
+Replaced ignoreFieldsForDifferenceView with ignoredFields
+
 Removed features:
 * SimplifiedOverviewAndPublishing
 
