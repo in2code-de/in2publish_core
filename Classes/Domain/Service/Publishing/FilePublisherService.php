@@ -82,7 +82,7 @@ class FilePublisherService implements LoggerAwareInterface
             return false;
         }
 
-        $folderIdentifier = dirname($fileIdentifier);
+        $folderIdentifier = trim(dirname($fileIdentifier), '/') . '/';
         if (!$this->remoteFalDriver->folderExists($folderIdentifier)) {
             $this->remoteFalDriver->createFolder(basename($folderIdentifier), dirname($folderIdentifier), true);
         }

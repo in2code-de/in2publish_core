@@ -497,6 +497,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
     {
         if ($driver->folderExists($identifier)) {
             $info = $driver->getFolderInfoByIdentifier($identifier);
+            $info['identifier'] = trim($info['identifier'], '/') . '/';
             $info['uid'] = sprintf('%d:%s', $info['storage'], $info['identifier']);
         } else {
             $info = [];

@@ -486,8 +486,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
              * @psalm-return array{identifier: string, name: string, storage: int}
              */
             function () use ($folderIdentifier): array {
-                $folderIdentifier = $this->canonicalizeAndCheckFolderIdentifier($folderIdentifier);
-
                 if (!$this->folderExists($folderIdentifier)) {
                     throw new FolderDoesNotExistException(
                         'Folder "' . $folderIdentifier . '" does not exist.',
