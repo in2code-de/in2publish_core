@@ -247,7 +247,7 @@ class FileIndexFactory
      */
     protected function determineFileType(array $fileInfo): int
     {
-        [$fileType] = explode('/', $fileInfo['mime_type']);
+        [$fileType] = explode('/', $fileInfo['mime_type'] ?? '');
         switch (strtolower($fileType)) {
             case 'text':
                 $type = AbstractFile::FILETYPE_TEXT;

@@ -53,6 +53,7 @@ use function array_column;
 use function array_combine;
 use function array_keys;
 use function is_array;
+use function ltrim;
 use function sprintf;
 
 /**
@@ -497,8 +498,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
     public function getFolderInfoByIdentifier($folderIdentifier): array
     {
         $callback = function () use ($folderIdentifier) {
-            $folderIdentifier = $this->canonicalizeAndCheckFolderIdentifier($folderIdentifier);
-
             if (!$this->folderExists($folderIdentifier)) {
                 throw new FolderDoesNotExistException(
                     'Folder "' . $folderIdentifier . '" does not exist.',
