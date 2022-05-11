@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Resolver;
 
-use In2code\In2publishCore\Component\TcaHandling\Demands;
+use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
 use In2code\In2publishCore\Domain\Model\Record;
 
 class StaticJoinResolver implements Resolver

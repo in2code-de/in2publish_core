@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Resolver;
 
-use In2code\In2publishCore\Component\TcaHandling\Demands;
+use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\FlexFormFlatteningService;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\TcaHandling\Service\ResolverService;
 use In2code\In2publishCore\Domain\Model\DatabaseEntityRecord;
 use In2code\In2publishCore\Domain\Model\Record;

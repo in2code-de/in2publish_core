@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\Demand;
 
+use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandService;
-use In2code\In2publishCore\Component\TcaHandling\Demands;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use In2code\In2publishCore\Component\TcaHandling\Service\ResolverService;

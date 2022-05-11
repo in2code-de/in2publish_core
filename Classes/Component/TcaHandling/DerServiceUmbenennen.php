@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling;
 
+use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandService;
 use In2code\In2publishCore\Component\TcaHandling\Query\QueryService;
 use In2code\In2publishCore\Component\TcaHandling\Service\RelevantTablesService;
@@ -11,9 +12,7 @@ use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordTree;
-
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
-
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 use function array_search;

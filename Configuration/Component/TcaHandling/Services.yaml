@@ -40,3 +40,10 @@ services:
         identifier: 'in2publishcore-FileRecordListener-RecordRelationsWereResolved'
         method: 'onRecordRelationsWereResolved'
         event: In2code\In2publishCore\Event\RecordRelationsWereResolved
+
+  In2code\In2publishCore\Component\TcaHandling\FileHandling\Command\ForeignFileInfoCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:tcahandling:foreignfileinfo'
+        hidden: TRUE
+        schedulable: FALSE

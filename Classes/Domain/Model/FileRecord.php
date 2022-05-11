@@ -10,6 +10,7 @@ class FileRecord extends AbstractRecord
 
     public function __construct(array $localProps, array $foreignProps)
     {
+        unset($localProps['atime'], $localProps['mtime'], $localProps['ctime'], $foreignProps['atime'], $foreignProps['mtime'], $foreignProps['ctime']);
         $this->localProps = $localProps;
         $this->foreignProps = $foreignProps;
 

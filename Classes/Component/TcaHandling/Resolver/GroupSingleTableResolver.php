@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Resolver;
 
-use In2code\In2publishCore\Component\TcaHandling\Demands;
+use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
 use In2code\In2publishCore\Domain\Model\Record;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_filter;
 use function array_merge;
-use function in_array;
 use function strrpos;
 use function substr;
 
