@@ -19,6 +19,7 @@ class FalDriverService
     protected DriverRegistry $driverRegistry;
     protected FlexFormService $flexFormService;
     protected Connection $localDatabase;
+    protected array $rtc = [];
 
     public function injectDriverRegistry(DriverRegistry $driverRegistry): void
     {
@@ -33,6 +34,26 @@ class FalDriverService
     public function injectLocalDatabase(Connection $localDatabase): void
     {
         $this->localDatabase = $localDatabase;
+    }
+
+    public function getDriver(int $storage): DriverInterface
+    {
+        if (!isset($this->rtc[$storage])) {
+            if (0 === $storage) {
+                $driver = $this->createFallbackDriver();
+            } else {
+                $query = $this->localDatabase->createQueryBuilder();
+                $query->getRestrictions()->removeAll();
+                $query->select('*')
+                      ->from('sys_file_storage')
+                      ->where($query->expr()->eq('uid', $query->createNamedParameter($storage)));
+                $result = $query->execute();
+                $storage = $result->fetchAssociative();
+                $driver = $this->createFalDriver($storage);
+            }
+            $this->rtc[$storage] = $driver;
+        }
+        return $this->rtc[$storage];
     }
 
     /**
@@ -50,11 +71,18 @@ class FalDriverService
 
         $drivers = [];
         foreach ($storages as $storage) {
-            $drivers[$storage['uid']] = $this->createFalDriver($storage);
+            $storageUid = $storage['uid'];
+            if (!isset($this->rtc[$storageUid])) {
+                $this->rtc[$storageUid] = $this->createFalDriver($storage);
+            }
+            $drivers[$storageUid] = $this->rtc[$storageUid];
         }
 
         if (in_array(0, $storagesUids)) {
-            $drivers[0] = $this->createFallbackDriver();
+            if (!isset($this->rtc[0])) {
+                $this->rtc[0] = $this->createFallbackDriver();
+            }
+            $drivers[0] = $this->rtc[0];
         }
 
         return $drivers;

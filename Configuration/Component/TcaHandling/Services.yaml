@@ -41,6 +41,13 @@ services:
         method: 'onRecordRelationsWereResolved'
         event: In2code\In2publishCore\Event\RecordRelationsWereResolved
 
+  In2code\In2publishCore\Component\TcaHandling\Publisher\Command\FilePublisherCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:tcahandling:filepublisher'
+        hidden: TRUE
+        schedulable: FALSE
+
   In2code\In2publishCore\Component\TcaHandling\FileHandling\Command\ForeignFileInfoCommand:
     tags:
       - name: 'console.command'

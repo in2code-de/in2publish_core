@@ -74,16 +74,18 @@ class ForeignFileInfoService
             $storage = $row['storage_uid'];
             $identifier = $row['identifier'];
 
-            $files[$storage][$identifier]['props'] = [
-                'storage' => $storage,
-                'identifier' => $row['identifier'],
-                'identifier_hash' => $row['identifier_hash'],
-                'size' => $row['attr_size'],
-                'mimetype' => $row['attr_mimetype'],
-                'name' => $row['attr_name'],
-                'extension' => $row['attr_extension'],
-                'folder_hash' => $row['attr_folder_hash'],
-            ];
+            if (null !== $row['attr_name']) {
+                $files[$storage][$identifier]['props'] = [
+                    'storage' => $storage,
+                    'identifier' => $row['identifier'],
+                    'identifier_hash' => $row['identifier_hash'],
+                    'size' => $row['attr_size'],
+                    'mimetype' => $row['attr_mimetype'],
+                    'name' => $row['attr_name'],
+                    'extension' => $row['attr_extension'],
+                    'folder_hash' => $row['attr_folder_hash'],
+                ];
+            }
         }
         return $files;
     }

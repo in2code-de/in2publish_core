@@ -66,6 +66,9 @@ class ForeignFileInfoCommand extends Command
 
         foreach ($files as $storage => $identifiers) {
             foreach ($identifiers as $file) {
+                if (!isset($file['props'])) {
+                    continue;
+                }
                 $props = $file['props'];
                 $this->localDatabase->update(
                     'tx_in2publishcore_remotefaldriver_file',

@@ -40,22 +40,20 @@ use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function file_exists;
+use function hash;
 use function rtrim;
-use function uniqid;
 
 class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected ?AdapterInterface $adapter = null;
-
+    protected string $foreignVarPath;
     protected AdapterRegistry $adapterRegistry;
-
-    protected string $foreignRootPath;
+    protected ?AdapterInterface $adapter = null;
 
     public function __construct(ConfigContainer $configContainer, AdapterRegistry $adapterRegistry)
     {
-        $this->foreignRootPath = rtrim($configContainer->get('foreign.rootPath'), '/');
+        $this->foreignVarPath = rtrim($configContainer->get('foreign.varPath'), '/');
         $this->adapterRegistry = $adapterRegistry;
     }
 
@@ -63,7 +61,7 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
      * @param string $source Absolute local path to file => return value of
      *     \TYPO3\CMS\Core\Resource\Driver\DriverInterface::getFileForLocalProcessing
      *
-     * @return string Absolute path of the transmitted file on foreign
+     * @return string The name of the file on foreign, which is a sha1 hash of $source
      *
      * @throws FileMissingException
      */
@@ -86,16 +84,23 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
             }
         }
 
-        $target = $this->foreignRootPath . '/typo3temp/tx_in2publishcore/' . uniqid('tx_in2publishcore_temp_', false);
+        $identifierHash = hash('sha1', $source);
+        $target = $this->foreignVarPath . '/tx_in2publishcore/' . $identifierHash;
 
         $success = $this->adapter->copyFileToRemote($source, $target);
 
         if (true === $success) {
-            $this->logger->debug('Successfully transferred file to foreign', ['target' => $target]);
+            $this->logger->debug(
+                'Successfully transferred file to foreign',
+                ['target' => $target, 'identifierHash' => $identifierHash]
+            );
         } else {
-            $this->logger->error('Failed to transfer file to foreign', ['target' => $target]);
+            $this->logger->error(
+                'Failed to transfer file to foreign',
+                ['target' => $target, 'identifierHash' => $identifierHash]
+            );
         }
 
-        return $target;
+        return $identifierHash;
     }
 }

@@ -32,7 +32,7 @@ namespace In2code\In2publishCore\Controller;
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\TcaHandling\DerServiceUmbenennen;
-use In2code\In2publishCore\Component\TcaHandling\Publisher\RecordPublisher as NewRecordPublisher;
+use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
@@ -67,7 +67,7 @@ class RecordController extends AbstractController
     protected FailureCollector $failureCollector;
     protected PermissionService $permissionService;
     protected DerServiceUmbenennen $derService;
-    protected NewRecordPublisher $publisher;
+    protected PublisherService $publisherService;
 
     public function __construct(
         ConfigContainer $configContainer,
@@ -153,8 +153,7 @@ class RecordController extends AbstractController
     public function publishRecordAction(int $identifier, string $returnUrl = null): void
     {
         $recordTree = $this->derService->buildRecordTree('pages', $identifier);
-        $record = $recordTree->getChild('pages', $identifier);
-        $this->publisher->publishRecord($record);
+        $this->publisherService->publishRecordTree($recordTree);
         $this->redirect('index');
     }
 
@@ -212,8 +211,8 @@ class RecordController extends AbstractController
         $this->redirect('index', 'Record');
     }
 
-    public function injectPublisher(NewRecordPublisher $publisher): void
+    public function injectPublisherService(PublisherService $publisherService): void
     {
-        $this->publisher = $publisher;
+        $this->publisherService = $publisherService;
     }
 }

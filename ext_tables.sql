@@ -74,8 +74,8 @@ CREATE TABLE tx_in2publishcore_remotefaldriver_file
 (
     -- Properties for data management
     request_token    char(32)                        NOT NULL,
-    tstamp           int(11) UNSIGNED    DEFAULT '0' NOT NULL,
     crdate           int(11) UNSIGNED                NOT NULL,
+    tstamp           int(11) UNSIGNED    DEFAULT '0' NOT NULL,
 
     -- Values from Local
     storage_uid      int(11)                         NOT NULL,
@@ -88,5 +88,22 @@ CREATE TABLE tx_in2publishcore_remotefaldriver_file
     attr_name        tinytext,
     attr_extension   varchar(255)        DEFAULT ''  NOT NULL,
     attr_folder_hash char(40)            DEFAULT ''  NOT NULL,
+    UNIQUE INDEX id (request_token, storage_uid, identifier_hash)
+) ENGINE = InnoDB;
+
+CREATE TABLE tx_in2publishcore_filepublisher_task
+(
+    -- Properties for data management
+    request_token        char(32)                     NOT NULL,
+    crdate               int(11) UNSIGNED             NOT NULL,
+    tstamp               int(11) UNSIGNED DEFAULT '0' NOT NULL,
+
+    -- Values from Local
+    storage_uid          int(11)                      NOT NULL,
+    identifier           text,
+    identifier_hash      char(40)                     NOT NULL,
+    -- One of "insert", "delete", "update"
+    temp_identifier_hash char(40)                     NOT NULL,
+    file_action          char(6)          DEFAULT NULL,
     UNIQUE INDEX id (request_token, storage_uid, identifier_hash)
 ) ENGINE = InnoDB;

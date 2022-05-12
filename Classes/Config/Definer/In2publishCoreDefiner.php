@@ -66,7 +66,8 @@ class In2publishCoreDefiner implements DefinerInterface
                       ->addArray(
                           'foreign',
                           Builder::start()
-                                 ->addString('rootPath', '/var/www/html')
+                                 ->addString('rootPath', '/var/www/html/public')
+                                 ->addString('varPath', '/var/www/html/var')
                                  ->addString('pathToPhp', '/usr/bin/env php')
                                  ->addString('context', 'Production/Live')
                                  ->addOptionalString('dispatcher', '')

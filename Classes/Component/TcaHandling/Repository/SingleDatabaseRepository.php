@@ -5,20 +5,19 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\TcaHandling\Repository;
 
 use In2code\In2publishCore\Component\TcaHandling\Service\Database\DatabaseSchemaService;
-use In2code\In2publishCore\Domain\Model\Record;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryHelper;
 
 use function array_column;
-use function array_diff_assoc;
 use function hash;
 use function json_encode;
 use function substr;
 
+use const JSON_THROW_ON_ERROR;
+
 class SingleDatabaseRepository
 {
     private Connection $connection;
-
     private DatabaseSchemaService $columnNameService;
 
     public function __construct(Connection $connection)
@@ -85,7 +84,12 @@ class SingleDatabaseRepository
         }
 
         $query->from($mmTable)
-              ->leftJoin($mmTable, $table, $table, $mmTable . '.' . ($property === 'uid_foreign' ? 'uid_local' : 'uid_foreign') . ' = ' . $table . '.uid')
+              ->leftJoin(
+                  $mmTable,
+                  $table,
+                  $table,
+                  $mmTable . '.' . ($property === 'uid_foreign' ? 'uid_local' : 'uid_foreign') . ' = ' . $table . '.uid'
+              )
               ->where($query->expr()->in($property, $values));
         if (!empty($additionalWhere)) {
             $query->andWhere($additionalWhere);
@@ -190,34 +194,28 @@ class SingleDatabaseRepository
         return (string)$row['uid'];
     }
 
-    public function publishRecordsToForeign(array $records)
+    public function beginTransaction(): void
     {
         $this->connection->beginTransaction();
-        foreach ($records as $record) {
-            $id = $record->getId();
-            $table = $record->getClassification();
-            $localProps = $record->getLocalProps();
-            $foreignProps = $record->getForeignProps();
+    }
 
-            if ($record->getState() === Record::S_ADDED) {
-                $this->connection->insert($table, $localProps);
-                continue;
-            }
+    public function insert(string $table, array $localProps): void
+    {
+        $this->connection->insert($table, $localProps);
+    }
 
-            if ($record->getState() === Record::S_DELETED) {
-                $this->connection->delete($table, $record->getForeignIdentificationProps());
-                continue;
-            }
+    public function delete(string $table, array $identifiers): void
+    {
+        $this->connection->delete($table, $identifiers);
+    }
 
-            $newValues = array_diff_assoc($localProps, $foreignProps);
-            $updates[$table][$id] = $newValues;
+    public function update(string $table, array $identifiers, array $newValues): void
+    {
+        $this->connection->update($table, $newValues, $identifiers);
+    }
 
-            $this->connection->update(
-                $table,
-                $newValues,
-                $record->getForeignIdentificationProps()
-            );
-        }
-        $result = $this->connection->commit();
+    public function commit(): void
+    {
+        $this->connection->commit();
     }
 }

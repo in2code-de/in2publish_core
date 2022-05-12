@@ -10,7 +10,10 @@
 foreign:
 
   # root path of the foreign TYPO3 CMS instance
-  rootPath: /Users/simpleAccount/Projects/Websites/foreign.publishing.dev
+  rootPath: /var/www/html/public
+
+  # path of the var folder of the foreign TYPO3 CMS instance
+  varPath: /var/www/html/var
 
   # path to php binary
   pathToPhp: /usr/bin/env php

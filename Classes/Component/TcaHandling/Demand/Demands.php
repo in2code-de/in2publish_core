@@ -7,7 +7,7 @@ use In2code\In2publishCore\Domain\Model\Record;
 
 class Demands
 {
-    const RECORD_KEY_DELIMITER = "\0";
+    private const RECORD_KEY_DELIMITER = '\\';
 
     private array $select = [];
     private array $join = [];
