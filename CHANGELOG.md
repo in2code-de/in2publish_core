@@ -1,5 +1,22 @@
 # In2publish Core Change Log
 
+11.0.2:
+
+- **Everything included in the 10.2.3 release**
+- [BUGFIX] Modify FAL folder identifier to work with most 3rd party drivers
+- [BUGFIX] Replace deprecated FILTER_SANITIZE_STRING option from filter_var with htmlspecialchars
+- [BUGFIX] Hide publish file/redirect button if the record is being published
+- [BUGFIX] Resolve doctrine/dbal deprecations
+- [BUGFIX] Implement missing replacement for SITE markers in TCA
+- [REFACTOR] Inject a DB connection in ReplaceMarkersService to get rid of static calls
+- [TASK] Apply review feedback
+- [BUGFIX] Add missing SiteFinder use statement
+- [TASK] Also replace SITE: markers in FlexForms
+- [TASK] Add test for replaceSiteMarker functionality
+- [BUGFIX] Adjust test cases for ReplaceMarkersService to match new constructor
+- [FEATURE] Implement replacement of SITE: markers in TCA
+- [RELEASE] Version 11.0.1 with minor bug fixes
+
 11.0.1:
 
 - [META] Set the EM conf version number to 11.0.1
