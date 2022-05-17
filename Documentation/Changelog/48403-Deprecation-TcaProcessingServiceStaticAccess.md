@@ -11,6 +11,7 @@ deprecates all static methods of the class and introduces non-static methods for
 ## Impact
 
 Following methods are deprecated:
+
 * `\In2code\In2publishCore\Domain\Service\TcaProcessingService::getIncompatibleTca`
 * `\In2code\In2publishCore\Domain\Service\TcaProcessingService::getCompatibleTca`
 * `\In2code\In2publishCore\Domain\Service\TcaProcessingService::getControls`

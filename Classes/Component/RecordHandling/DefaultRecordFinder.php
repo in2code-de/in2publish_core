@@ -450,11 +450,15 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                     }
                 }
             }
-            if (!$this->isIgnoredRecord((array)$localProperties[$key], (array)$foreignProperties[$key], $tableName)) {
+
+            $localPropertiesArray = (array)($localProperties[$key] ?? []);
+            $foreignPropertiesArray = (array)($foreignProperties[$key] ?? []);
+
+            if (!$this->isIgnoredRecord($localPropertiesArray, $foreignPropertiesArray, $tableName)) {
                 $foundRecords[$key] = $this->recordFactory->makeInstance(
                     $this,
-                    (array)$localProperties[$key],
-                    (array)$foreignProperties[$key],
+                    $localPropertiesArray,
+                    $foreignPropertiesArray,
                     [],
                     $tableName,
                     'uid',
@@ -1061,6 +1065,9 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
         $recordId = $record->getIdentifier();
         switch ($config['type']) {
             case 'select':
+                if (empty($config['foreign_table'])) {
+                    break;
+                }
                 $whereClause = '';
                 if (!empty($config['foreign_table_where'])) {
                     $whereClause = $config['foreign_table_where'];
@@ -1170,7 +1177,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                     }
                 }
                 foreach ($identifierToTableMap as $tableName => $identifiers) {
-                    if ($columnConfiguration['MM']) {
+                    if (!empty($columnConfiguration['MM'])) {
                         $this->logger->alert(
                             'Missing implementation: GROUP MM',
                             [

@@ -128,7 +128,7 @@ class ShallowRecordFinder implements RecordFinder
             $rows = $this->dualDatabaseRepository->findByProperty('pages', 'uid', [$identifier]);
             $rowSet = $rows[$identifier];
         }
-        $rowSet['additional'] = ['depth' => 0, 'isRoot' => true];
+        $rowSet['additional'] = ['depth' => 1, 'isRoot' => true];
         $this->createRecord(
             'pages',
             $rowSet,
@@ -269,7 +269,20 @@ class ShallowRecordFinder implements RecordFinder
         $rows = $this->dualDatabaseRepository->findMissingRows('pages', $rows);
 
         $setParentRecord = static function (RecordInterface $record) use (&$pageRecords): void {
-            $pid = $record->getLocalProperty('pid') ?? $record->getForeignProperty('pid');
+            $languageField = $GLOBALS['TCA']['pages']['ctrl']['languageField'] ?? null;
+            if (null !== $languageField) {
+                $language = $record->getLocalProperty($languageField) ?? $record->getForeignProperty($languageField);
+                if ($language > 0) {
+                    $transOrigPointerField = $GLOBALS['TCA']['pages']['ctrl']['transOrigPointerField'] ?? null;
+                    if (null !== $transOrigPointerField) {
+                        $pid = $record->getLocalProperty($transOrigPointerField)
+                               ?? $record->getForeignProperty($transOrigPointerField);
+                    }
+                }
+            }
+            if (empty($pid)) {
+                $pid = $record->getLocalProperty('pid') ?? $record->getForeignProperty('pid');
+            }
             $pageRecords[$record->getIdentifier()] = $record;
             $pageRecords[$pid]->addRelatedRecord($record);
         };

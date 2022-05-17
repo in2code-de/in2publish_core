@@ -82,3 +82,22 @@ services:
         identifier: 'in2publishcore-PageTsProvider-bootCompleted'
         method: 'processData'
         event: In2code\In2publishCore\Event\ExtTablesPostProcessingEvent
+
+  In2code\In2publishCore\Domain\Service\Publishing\RunningRequestService:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-RunningRequestService-RecursiveRecordPublishingBegan'
+        method: 'onRecursiveRecordPublishingBegan'
+        event: In2code\In2publishCore\Event\RecursiveRecordPublishingBegan
+      - name: event.listener
+        identifier: 'in2publishcore-RunningRequestService-RecordsWereSelectedForPublishing'
+        method: 'onRecordsWereSelectedForPublishing'
+        event: In2code\In2publishCore\Event\RecordsWereSelectedForPublishing
+      - name: event.listener
+        identifier: 'in2publishcore-RunningRequestService-VoteIfRecordIsPublishable'
+        method: 'isPublishable'
+        event: In2code\In2publishCore\Event\VoteIfRecordIsPublishable
+      - name: event.listener
+        identifier: 'in2publishcore-RunningRequestService-DetermineIfRecordIsPublishing'
+        method: 'isPublishing'
+        event: In2code\In2publishCore\Event\DetermineIfRecordIsPublishing

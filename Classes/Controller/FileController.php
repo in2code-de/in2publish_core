@@ -52,9 +52,12 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use function count;
 use function dirname;
 use function json_encode;
-use function ltrim;
+use function explode;
+use function is_string;
 use function reset;
+use function strlen;
 use function strpos;
+use function trim;
 
 /**
  * The FileController is responsible for the "Publish Files" Backend module "m2"
@@ -172,7 +175,7 @@ class FileController extends AbstractController
             [$identifier] = GeneralUtility::trimExplode(',', $identifier);
         }
 
-        $record = $this->tryToGetFolderInstance($storage . ':/' . ltrim(dirname($identifier), '/'));
+        $record = $this->tryToGetFolderInstance($storage . ':' . dirname($identifier));
 
         if (null !== $record) {
             $relatedRecords = $record->getRelatedRecordByTableAndProperty('sys_file', 'identifier', $identifier);
@@ -233,6 +236,10 @@ class FileController extends AbstractController
      */
     protected function tryToGetFolderInstance(?string $identifier): ?RecordInterface
     {
+        if (is_string($identifier) && strpos($identifier, ':') < strlen($identifier)) {
+            [$storage, $name] = explode(':', $identifier);
+            $identifier = $storage . ':' . trim($name, '/') . '/';
+        }
         try {
             $record = $this->falFinder->findFalRecord($identifier);
         } catch (TooManyFilesException $exception) {

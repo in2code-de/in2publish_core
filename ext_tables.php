@@ -50,7 +50,7 @@
             ],
             [
                 'access' => 'user,group',
-                'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Record.svg',
+                'icon' => 'EXT:in2publish_core/Resources/Public/Icons/Overview.svg',
                 'labels' => 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang_mod1.xlf',
             ]
         );
@@ -107,6 +107,7 @@
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Performance\ForeignDbInitializationPerformanceTest::class;
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Performance\DiskSpeedPerformanceTest::class;
     $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Application\SiteConfigurationTest::class;
+    $GLOBALS['in2publish_core']['tests'][] = \In2code\In2publishCore\Testing\Tests\Database\TableGarbageCollectorTest::class;
 
     /************************************************ Redirect Support ************************************************/
     if (

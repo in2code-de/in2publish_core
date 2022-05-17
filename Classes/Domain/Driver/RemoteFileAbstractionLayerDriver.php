@@ -486,8 +486,6 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
              * @psalm-return array{identifier: string, name: string, storage: int}
              */
             function () use ($folderIdentifier): array {
-                $folderIdentifier = $this->canonicalizeAndCheckFolderIdentifier($folderIdentifier);
-
                 if (!$this->folderExists($folderIdentifier)) {
                     throw new FolderDoesNotExistException(
                         'Folder "' . $folderIdentifier . '" does not exist.',
@@ -664,9 +662,9 @@ class RemoteFileAbstractionLayerDriver extends AbstractLimitedFilesystemDriver
                     EnvelopeDispatcher::CMD_CREATE_FOLDER,
                     [
                         'storage' => $this->storageUid,
-                        '$newFolderName' => $newFolderName,
-                        '$parentFolderIdentifier' => $parentFolderIdentifier,
-                        '$recursive' => $recursive,
+                        'newFolderName' => $newFolderName,
+                        'parentFolderIdentifier' => $parentFolderIdentifier,
+                        'recursive' => $recursive,
                     ]
                 )
             );

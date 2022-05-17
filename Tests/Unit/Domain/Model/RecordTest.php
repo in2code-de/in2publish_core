@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Domain\Model;
 
 use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use LogicException;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -25,9 +26,9 @@ class RecordTest extends UnitTestCase
     protected function getRecordStub($getIgnoreFields, bool $isParentRecordDisabled = false): Record
     {
         $stub = $this->getMockBuilder(Record::class)
-                     ->setMethods(['getIgnoreFields', 'isParentDisabled'])
-                     ->disableOriginalConstructor()
-                     ->getMock();
+            ->setMethods(['getIgnoreFields', 'isParentDisabled'])
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $stub->method('getIgnoreFields')->will($this->returnValue($getIgnoreFields));
         $stub->method('isParentDisabled')->will($this->returnValue($isParentRecordDisabled));
@@ -150,7 +151,7 @@ class RecordTest extends UnitTestCase
 
         $stub->__construct('tt_content', ['uid' => 1], [], [], []);
 
-        $this->assertSame(Record::RECORD_STATE_ADDED, $stub->getState());
+        $this->assertSame(RecordInterface::RECORD_STATE_ADDED, $stub->getState());
     }
 
     /**
@@ -167,7 +168,7 @@ class RecordTest extends UnitTestCase
         $stub = $this->getRecordStub([]);
         $stub->__construct('tt_content', [], ['uid' => 1], [], []);
 
-        $this->assertSame(Record::RECORD_STATE_DELETED, $stub->getState());
+        $this->assertSame(RecordInterface::RECORD_STATE_DELETED, $stub->getState());
     }
 
     /**
@@ -181,22 +182,22 @@ class RecordTest extends UnitTestCase
         // no uid or uid_local/uid_foreign. this is not a valid record
         $stub = $this->getRecordStub([]);
         $stub->__construct('tt_content', ['foo' => 'bar'], [], [], []);
-        $this->assertSame(Record::RECORD_STATE_UNCHANGED, $stub->getState());
+        $this->assertSame(RecordInterface::RECORD_STATE_UNCHANGED, $stub->getState());
 
         // uid_local + uid_foreign = valid
         $stub = $this->getRecordStub([]);
         $stub->__construct('tt_content', ['uid_local' => 'bar', 'uid_foreign' => 'baz'], [], [], []);
-        $this->assertSame(Record::RECORD_STATE_ADDED, $stub->getState());
+        $this->assertSame(RecordInterface::RECORD_STATE_ADDED, $stub->getState());
 
         // only uid_local not valid
         $stub = $this->getRecordStub([]);
         $stub->__construct('tt_content', ['uid_local' => 'bar'], [], [], []);
-        $this->assertSame(Record::RECORD_STATE_UNCHANGED, $stub->getState());
+        $this->assertSame(RecordInterface::RECORD_STATE_UNCHANGED, $stub->getState());
 
         // only uid_foreign not valid
         $stub = $this->getRecordStub([]);
         $stub->__construct('tt_content', ['uid_foreign' => 'bar'], [], [], []);
-        $this->assertSame(Record::RECORD_STATE_UNCHANGED, $stub->getState());
+        $this->assertSame(RecordInterface::RECORD_STATE_UNCHANGED, $stub->getState());
     }
 
     /**
@@ -218,7 +219,7 @@ class RecordTest extends UnitTestCase
             ['ctrl' => ['delete' => 'foo']],
             []
         );
-        $this->assertSame(Record::RECORD_STATE_DELETED, $stub->getState());
+        $this->assertSame(RecordInterface::RECORD_STATE_DELETED, $stub->getState());
     }
 
     /**
@@ -228,7 +229,7 @@ class RecordTest extends UnitTestCase
     {
         $stub = $this->getRecordStub([]);
         $stub->__construct('tt_content', ['uid' => 1, 'foo' => 'bar'], ['uid' => 1, 'foo' => 'baz'], [], []);
-        $this->assertSame(Record::RECORD_STATE_CHANGED, $stub->getState());
+        $this->assertSame(RecordInterface::RECORD_STATE_CHANGED, $stub->getState());
     }
 
     /**
@@ -238,7 +239,7 @@ class RecordTest extends UnitTestCase
     {
         $stub = $this->getRecordStub([]);
         $stub->__construct('sys_file', ['identifier' => 'bar'], ['identifier' => 'baz'], [], []);
-        $this->assertSame(Record::RECORD_STATE_MOVED, $stub->getState());
+        $this->assertSame(RecordInterface::RECORD_STATE_MOVED, $stub->getState());
     }
 
     /**
@@ -248,7 +249,7 @@ class RecordTest extends UnitTestCase
     {
         $stub = $this->getRecordStub([]);
         $stub->__construct('sys_file', ['identifier' => 'bar'], ['identifier' => 'bar'], [], []);
-        $this->assertSame(Record::RECORD_STATE_UNCHANGED, $stub->getState());
+        $this->assertSame(RecordInterface::RECORD_STATE_UNCHANGED, $stub->getState());
     }
 
     /**
@@ -259,7 +260,7 @@ class RecordTest extends UnitTestCase
         // no uid or uid_local/uid_foreign. this is not a valid record
         $stub = $this->getRecordStub([]);
         $stub->__construct('folders', ['name' => 'bar'], ['name' => 'baz'], [], []);
-        $this->assertSame(Record::RECORD_STATE_CHANGED, $stub->getState());
+        $this->assertSame(RecordInterface::RECORD_STATE_CHANGED, $stub->getState());
     }
 
     /**
@@ -270,7 +271,7 @@ class RecordTest extends UnitTestCase
         // no uid or uid_local/uid_foreign. this is not a valid record
         $stub = $this->getRecordStub([]);
         $stub->__construct('folders', ['name' => 'bar'], [], [], []);
-        $this->assertSame(Record::RECORD_STATE_ADDED, $stub->getState());
+        $this->assertSame(RecordInterface::RECORD_STATE_ADDED, $stub->getState());
     }
 
     /**
@@ -978,7 +979,7 @@ class RecordTest extends UnitTestCase
 
         $root->addRelatedRecord($sub);
 
-        $this->assertSame(Record::RECORD_STATE_CHANGED, $root->getStateRecursive());
+        $this->assertSame(RecordInterface::RECORD_STATE_CHANGED, $root->getStateRecursive());
     }
 
     /**
@@ -997,7 +998,7 @@ class RecordTest extends UnitTestCase
 
         $root->addRelatedRecord($sub);
 
-        $this->assertSame(Record::RECORD_STATE_CHANGED, $root->getStateRecursive());
+        $this->assertSame(RecordInterface::RECORD_STATE_CHANGED, $root->getStateRecursive());
     }
 
     /**
@@ -1014,9 +1015,9 @@ class RecordTest extends UnitTestCase
 
         /** @var Record|MockObject $stub1 */
         $stub1 = $this->getMockBuilder(Record::class)
-                      ->setMethods(['getIgnoreFields', 'isParentDisabled', 'isChanged'])
-                      ->disableOriginalConstructor()
-                      ->getMock();
+            ->setMethods(['getIgnoreFields', 'isParentDisabled', 'isChanged'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $stub1->method('getIgnoreFields')->will($this->returnValue([]));
         $stub1->method('isParentDisabled')->will($this->returnValue(false));
         $stub1->__construct('tt_content', ['uid' => 1], ['uid' => 1], [], []);
@@ -1025,9 +1026,9 @@ class RecordTest extends UnitTestCase
 
         /** @var Record|MockObject $stub2 */
         $stub2 = $this->getMockBuilder(Record::class)
-                      ->setMethods(['getIgnoreFields', 'isParentDisabled', 'isChanged'])
-                      ->disableOriginalConstructor()
-                      ->getMock();
+            ->setMethods(['getIgnoreFields', 'isParentDisabled', 'isChanged'])
+            ->disableOriginalConstructor()
+            ->getMock();
         $stub2->method('getIgnoreFields')->will($this->returnValue([]));
         $stub2->method('isParentDisabled')->will($this->returnValue(false));
         $stub2->__construct('tt_content', ['uid' => 2], ['uid' => 2], [], []);
@@ -1059,7 +1060,7 @@ class RecordTest extends UnitTestCase
 
         $root->addRelatedRecord($sub);
 
-        $this->assertSame(Record::RECORD_STATE_UNCHANGED, $root->getStateRecursive());
+        $this->assertSame(RecordInterface::RECORD_STATE_UNCHANGED, $root->getStateRecursive());
     }
 
     /**

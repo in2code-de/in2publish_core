@@ -31,20 +31,32 @@ namespace In2code\In2publishCore\Domain\Service;
  */
 
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Utility\DatabaseUtility;
+use InvalidArgumentException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
+use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Exception\SiteNotFoundException;
+use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Utility\Exception\MissingArrayPathException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function explode;
+use function gettype;
 use function implode;
+use function is_array;
+use function is_bool;
 use function is_int;
+use function is_string;
 use function json_decode;
 use function preg_replace_callback;
+use function sprintf;
 use function str_replace;
 use function strpos;
+
+use const JSON_THROW_ON_ERROR;
 
 /**
  * Replace markers in TCA definition
@@ -55,15 +67,26 @@ class ReplaceMarkersService implements LoggerAwareInterface
 
     // Also replace optional quotes around the REC_FIELD_ because we will quote the actual value
     protected const REC_FIELD_REGEX = '~\'?###REC_FIELD_(.*?)###\'?~';
+    protected const SITE_FIELD_REGEX = '(###SITE:([^#]+)###)';
 
     protected FlexFormTools $flexFormTools;
 
     protected TcaProcessingService $tcaProcessingService;
 
-    public function __construct(FlexFormTools $flexFormTools, TcaProcessingService $tcaProcessingService)
-    {
+    protected SiteFinder $siteFinder;
+
+    protected Connection $localDatabase;
+
+    public function __construct(
+        FlexFormTools $flexFormTools,
+        TcaProcessingService $tcaProcessingService,
+        SiteFinder $siteFinder,
+        Connection $localDatabase
+    ) {
         $this->flexFormTools = $flexFormTools;
         $this->tcaProcessingService = $tcaProcessingService;
+        $this->siteFinder = $siteFinder;
+        $this->localDatabase = $localDatabase;
     }
 
     /**
@@ -85,6 +108,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
             $string = $this->replacePageMarker($string, $record);
             $string = $this->replacePageTsConfigMarkers($record, $string, $propertyName);
             $string = $this->replaceStaticMarker($string);
+            $string = $this->replaceSiteMarker($string, $record);
             $this->checkForMarkersAndErrors($string);
         }
         return $string;
@@ -113,6 +137,7 @@ class ReplaceMarkersService implements LoggerAwareInterface
             $string = $this->replacePageMarker($string, $record);
             $string = $this->replaceFlexFormFieldMarkers($record, $string, $propertyName, $key);
             $string = $this->replaceStaticMarker($string);
+            $string = $this->replaceSiteMarker($string, $record);
             $this->checkForMarkersAndErrors($string);
         }
         return $string;
@@ -131,13 +156,13 @@ class ReplaceMarkersService implements LoggerAwareInterface
         if (strpos($string, '###REC_FIELD_') !== false) {
             $string = preg_replace_callback(
                 self::REC_FIELD_REGEX,
-                static function ($matches) use ($record) {
+                function ($matches) use ($record) {
                     $propertyName = $matches[1];
                     $propertyValue = $record->getLocalProperty($propertyName);
                     if ($propertyValue === null) {
                         $propertyValue = $record->getForeignProperty($propertyName);
                     }
-                    return DatabaseUtility::quoteString((string)$propertyValue);
+                    return $this->localDatabase->quote((string)$propertyValue);
                 },
                 $string
             );
@@ -165,9 +190,9 @@ class ReplaceMarkersService implements LoggerAwareInterface
     {
         if (false !== strpos($string, '###PAGE_TSCONFIG')) {
             $marker = [
-                'PAGE_TSCONFIG_ID' => fn ($input): int => (int)$input,
-                'PAGE_TSCONFIG_IDLIST' => fn ($input): string => implode(',', GeneralUtility::intExplode(',', $input)),
-                'PAGE_TSCONFIG_STR' => fn ($input): string => DatabaseUtility::quoteString($input),
+                'PAGE_TSCONFIG_ID' => fn($input): int => (int)$input,
+                'PAGE_TSCONFIG_IDLIST' => fn($input): string => implode(',', GeneralUtility::intExplode(',', $input)),
+                'PAGE_TSCONFIG_STR' => fn($input): string => $this->localDatabase->quote($input),
             ];
 
             $pageTsConfig = $this->getPagesTsConfig($record->getPageIdentifier());
@@ -209,9 +234,9 @@ class ReplaceMarkersService implements LoggerAwareInterface
             $tableName = $record->getTableName();
 
             $marker = [
-                'PAGE_TSCONFIG_ID' => fn ($input): int => (int)$input,
-                'PAGE_TSCONFIG_IDLIST' => fn ($input): string => implode(',', GeneralUtility::intExplode(',', $input)),
-                'PAGE_TSCONFIG_STR' => fn ($input): string => DatabaseUtility::quoteString($input),
+                'PAGE_TSCONFIG_ID' => fn($input): int => (int)$input,
+                'PAGE_TSCONFIG_IDLIST' => fn($input): string => implode(',', GeneralUtility::intExplode(',', $input)),
+                'PAGE_TSCONFIG_STR' => fn($input): string => $this->localDatabase->quote($input),
             ];
 
             $pageTs = BackendUtility::getPagesTSconfig($record->getPageIdentifier());
@@ -246,6 +271,68 @@ class ReplaceMarkersService implements LoggerAwareInterface
             }
         }
         return $string;
+    }
+
+    /**
+     * Replaces ###SITE:siteConfigKey### markers in TCA with their respective values
+     */
+    protected function replaceSiteMarker(string $string, RecordInterface $record): string
+    {
+        if (false === strpos($string, '###SITE:')) {
+            return $string;
+        }
+
+        try {
+            $site = $this->siteFinder->getSiteByPageId($record->getPageIdentifier());
+        } catch (SiteNotFoundException $exception) {
+            return $string;
+        }
+
+        $configuration = $site->getConfiguration();
+        return preg_replace_callback(self::SITE_FIELD_REGEX, function (array $match) use ($configuration): string {
+            try {
+                $value = ArrayUtility::getValueByPath($configuration, $match[1], '.');
+            } catch (MissingArrayPathException $exception) {
+                $value = '';
+            }
+            $key = $match[0];
+            return (string)$this->quoteParsedSiteConfiguration([$key => $value])[$key];
+        }, $string);
+    }
+
+    /**
+     * @see \TYPO3\CMS\Backend\Form\FormDataProvider\AbstractItemProvider::quoteParsedSiteConfiguration
+     */
+    protected function quoteParsedSiteConfiguration(array $parsedSiteConfiguration): array
+    {
+        foreach ($parsedSiteConfiguration as $key => $value) {
+            if (is_int($value)) {
+                // int values are safe, nothing to do here
+                continue;
+            }
+            if (is_string($value)) {
+                $parsedSiteConfiguration[$key] = $this->localDatabase->quote($value);
+                continue;
+            }
+            if (is_array($value)) {
+                $parsedSiteConfiguration[$key] = implode(',', $this->quoteParsedSiteConfiguration($value));
+                continue;
+            }
+            if (is_bool($value)) {
+                $parsedSiteConfiguration[$key] = (int)$value;
+                continue;
+            }
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Cannot quote site configuration setting "%s" of type "%s", only "int", "bool", "string" and "array" are supported',
+                    $key,
+                    gettype($value)
+                ),
+                1630324435
+            );
+        }
+
+        return $parsedSiteConfiguration;
     }
 
     /**

@@ -73,8 +73,8 @@ class TableInfoService implements SingletonInterface
 
     protected function queryTableInfo(string $table): array
     {
-        $hasPid = $GLOBALS['TCA'][$table];
-        if (isset($hasPid)) {
+        $hasPid = isset($GLOBALS['TCA'][$table]);
+        if ($hasPid) {
             $localPids = $this->queryTableFromDatabase($this->localConnection, $table);
             $foreignPids = $this->queryTableFromDatabase($this->foreignConnection, $table);
             $uniquePids = array_unique(array_merge($localPids, $foreignPids));

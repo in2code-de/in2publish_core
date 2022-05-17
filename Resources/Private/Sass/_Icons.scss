@@ -110,27 +110,32 @@
   @extend .in2publish-icon-small;
 }
 
-.in2publish-icon-publish {
+.in2publish-link-publish {
   position: absolute;
   right: 0;
   top: 1px;
 
-  @extend .icon-arrow-right;
-  @extend .in2publish-icon-small;
-
-  .in2publish-stagelisting__item__publish--blocked & {
-    right: 1px;
-    cursor: not-allowed;
-
-    &:before {
-      content: "\e60a";
-    }
+  &:hover {
+    text-decoration: none;
   }
 
-  .in2publish-stagelisting__item--removed & {
+  .in2publish-icon-publish {
+    @extend .icon-arrow-right;
+    @extend .in2publish-icon-small;
 
-    &:hover {
-      color: $apple;
+    .in2publish-stagelisting__item__publish--blocked & {
+      right: 1px;
+      cursor: not-allowed;
+
+      &:before {
+        content: "\e60a";
+      }
+    }
+
+    .in2publish-stagelisting__item--removed & {
+      &:hover {
+        color: $apple;
+      }
     }
   }
 }

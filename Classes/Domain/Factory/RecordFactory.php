@@ -425,7 +425,10 @@ class RecordFactory implements SingletonInterface, LoggerAwareInterface
         } elseif (!empty($localProperties['pid']) && !empty($foreignProperties['pid'])) {
             if ($localProperties['pid'] !== $foreignProperties['pid']) {
                 $hasBeenMoved = true;
-            } elseif ($localProperties['sorting'] !== $foreignProperties['sorting']) {
+            } elseif (
+                ($sortField = ($GLOBALS['TCA'][$tableName]['ctrl']['sortby'] ?? null))
+                && ($localProperties[$sortField] ?? null) !== ($foreignProperties[$sortField] ?? null)
+            ) {
                 $hasBeenMoved = true;
             }
         }

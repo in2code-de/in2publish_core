@@ -37,6 +37,7 @@ use In2code\In2publishCore\Controller\AbstractController;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
+use In2code\In2publishCore\Event\RecordsWereSelectedForPublishing;
 use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\SaveAndPublishButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
@@ -174,11 +175,18 @@ class RedirectController extends AbstractController
         }
         unset($redirect);
 
+        $records = [];
         foreach ($redirects as $redirect) {
             $record = $this->recordFinder->findRecordByUidForPublishing($redirect, 'sys_redirect');
             if (null !== $record) {
-                $this->recordPublisher->publishRecordRecursive($record);
+                $records[] = $record;
             }
+        }
+
+        $this->eventDispatcher->dispatch(new RecordsWereSelectedForPublishing($records));
+
+        foreach ($records as $record) {
+            $this->recordPublisher->publishRecordRecursive($record);
         }
 
         $this->runTasks();

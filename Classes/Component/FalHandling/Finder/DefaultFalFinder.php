@@ -497,6 +497,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
     {
         if ($driver->folderExists($identifier)) {
             $info = $driver->getFolderInfoByIdentifier($identifier);
+            $info['identifier'] = trim($info['identifier'], '/') . '/';
             $info['uid'] = sprintf('%d:%s', $info['storage'], $info['identifier']);
         } else {
             $info = [];
@@ -811,7 +812,7 @@ class DefaultFalFinder implements LoggerAwareInterface, FalFinder
         /** @var RecordInterface[] $fileRecords */
         $fileRecords = [];
         foreach ($files as $idx => $file) {
-            $localIdentifier = $file->getLocalProperty('identifier');
+            $localIdentifier = $file->getLocalProperty('identifier') ?? $file->getForeignProperty('identifier');
             if (isset($fileRecords[$localIdentifier])) {
                 $fileRecords[$localIdentifier]->addRelatedRecord($file);
                 unset($files[$idx]);
