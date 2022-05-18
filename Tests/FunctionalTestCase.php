@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests;
 
-use RuntimeException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\DriverManager;
 use Exception;
@@ -21,6 +20,7 @@ use TYPO3\CMS\Core\Cache\Backend\NullBackend;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\DatabaseConnectionWrapper;
+
 use TYPO3\TestingFramework\Core\Testbase;
 
 use function copy;
@@ -41,9 +41,7 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
         'typo3/sysext/extensionmanager',
         'typo3conf/ext/in2publish_core',
     ];
-
     private ContainerInterface $container;
-
     /**
      * This internal variable tracks if the given test is the first test of
      * that test case. This variable is set to current calling test case class.
@@ -88,9 +86,9 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
         // sqlite db path preparation
         $dbPathSqlite = dirname($this->instancePath) . '/functional-sqlite-dbs/test_' . $this->identifier . '.sqlite';
         $dbPathSqliteEmpty = dirname($this->instancePath)
-            . '/functional-sqlite-dbs/test_'
-            . $this->identifier
-            . '.empty.sqlite';
+                             . '/functional-sqlite-dbs/test_'
+                             . $this->identifier
+                             . '.empty.sqlite';
 
         $localConfiguration = ['DB' => ['Connections' => []]];
         $connections = &$localConfiguration['DB']['Connections'];
