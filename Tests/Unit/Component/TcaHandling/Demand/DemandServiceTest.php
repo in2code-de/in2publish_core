@@ -18,6 +18,9 @@ use In2code\In2publishCore\Tests\UnitTestCase;
  */
 class DemandServiceTest extends UnitTestCase
 {
+    /**
+     * @covers ::buildDemandForRecords
+     */
     public function testBuildDemandForRecordsReturnsContentOfResolverArray(): void
     {
         $demandService = new DemandService();
@@ -47,6 +50,9 @@ class DemandServiceTest extends UnitTestCase
         $this->assertSame($expected, $demand->getSelect());
     }
 
+    /**
+     * @covers ::buildDemandForRecords
+     */
     public function testBuildDemandForRecordsReturnsResolversOfAllRecords(): void
     {
         $demandService = new DemandService();
