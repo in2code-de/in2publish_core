@@ -43,7 +43,7 @@ class DemandServiceTest extends UnitTestCase
         $demand = $demandService->buildDemandForRecords(new RecordCollection([$record]));
         $this->assertInstanceOf(Demands::class, $demand);
         $expected = [];
-        $expected['foo']['bar']['baz']['beng']['table_foo' . "\0" . 1234] = $record;
+        $expected['foo']['bar']['baz']['beng']['table_foo\\1234'] = $record;
         $this->assertSame($expected, $demand->getSelect());
     }
 
@@ -90,8 +90,8 @@ class DemandServiceTest extends UnitTestCase
         $this->assertInstanceOf(Demands::class, $demand);
 
         $expected = [];
-        $expected['foo']['bar']['baz']['beng']['table_foo' . "\0" . 1234] = $record1;
-        $expected['foo']['bar']['baz']['beng']['table_bar' . "\0" . 1234] = $record2;
+        $expected['foo']['bar']['baz']['beng']['table_foo\\1234'] = $record1;
+        $expected['foo']['bar']['baz']['beng']['table_bar\\1234'] = $record2;
 
         $this->assertEquals($expected, $demand->getSelect());
     }

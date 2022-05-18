@@ -44,18 +44,16 @@ class SelectProcessorTest extends UnitTestCase
     }
 
     /**
-     * @depends      testSelectProcessorReturnsDemand
+     * @depends      testSelectProcessorReturnsCompatibleResultForCompatibleColumn
      * @dataProvider forbiddenTcaDataProvider
      */
     public function testSelectProcessorFlagsColumnsWithForbiddenTcaAsIncompatible(array $tca): void
     {
         $tca = array_merge($tca, ['type' => 'select', 'foreign_table' => 'tableNameBeng']);
-        $quotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
-        $replaceMarkersService = $this->createMock(ReplaceMarkersService::class);
+        $container = $this->createMock(Container::class);
 
         $selectProcessor = new SelectProcessor();
-        $selectProcessor->injectDatabaseIdentifierQuotingService($quotingService);
-        $selectProcessor->injectReplaceMarkersService($replaceMarkersService);
+        $selectProcessor->injectContainer($container);
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
         $this->assertFalse($processingResult->isCompatible());
     }

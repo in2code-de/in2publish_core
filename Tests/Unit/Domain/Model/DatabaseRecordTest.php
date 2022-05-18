@@ -100,12 +100,14 @@ class DatabaseRecordTest extends UnitTestCase
             'pages',
             1,
             [
+                'pid' => 1,
                 'language' => 1,
-                'trans_parent' => 5
+                'trans_parent' => 5,
             ],
             [
+                'pid' => 1,
                 'language' => 1,
-                'trans_parent' => 5
+                'trans_parent' => 5,
             ],
             []
         );
