@@ -138,7 +138,7 @@ abstract class AbstractProcessor implements TcaPreProcessor
         if (null === $resolver) {
             return new ProcessingResult(
                 ProcessingResult::INCOMPATIBLE,
-                ['The processor did not return a valid resolver']
+                ['The processor did not return a valid resolver. The target table might be excluded or empty.']
             );
         }
         return new ProcessingResult(

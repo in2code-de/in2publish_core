@@ -54,4 +54,10 @@ class RelevantTablesService
         $tables = $this->excludedTablesService->removeExcludedTables($tables);
         return $this->tableContentService->removeEmptyTables($tables);
     }
+
+    public function isEmptyOrExcludedTable(string $table): bool
+    {
+        return $this->excludedTablesService->isExcludedTable($table)
+            || $this->tableContentService->isEmptyTable($table);
+    }
 }
