@@ -22,9 +22,7 @@ class DatabaseIdentifierQuotingService
         if (str_contains($sql, '{#')) {
             $sql = preg_replace_callback(
                 '/{#(?P<identifier>[^}]+)}/',
-                function (array $matches) {
-                    return $this->localDatabase->quoteIdentifier($matches['identifier']);
-                },
+                fn(array $matches) => $this->localDatabase->quoteIdentifier($matches['identifier']),
                 $sql
             );
         }

@@ -6,7 +6,6 @@ namespace In2code\In2publishCore\Component\TcaHandling\Resolver;
 
 use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\AbstractProcessor;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 
@@ -14,7 +13,6 @@ use function preg_match;
 
 class SelectMmResolver implements Resolver
 {
-    protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
     protected ReplaceMarkersService $replaceMarkersService;
     protected string $foreignTableWhere;
     protected string $column;
@@ -22,11 +20,8 @@ class SelectMmResolver implements Resolver
     protected string $foreignTable;
     protected string $selectField;
 
-    public function __construct(
-        DatabaseIdentifierQuotingService $databaseIdentifierQuotingService,
-        ReplaceMarkersService $replaceMarkersService
-    ) {
-        $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
+    public function __construct(ReplaceMarkersService $replaceMarkersService)
+    {
         $this->replaceMarkersService = $replaceMarkersService;
     }
 
@@ -56,7 +51,6 @@ class SelectMmResolver implements Resolver
             $this->foreignTableWhere,
             $this->column
         );
-        $additionalWhere = $this->databaseIdentifierQuotingService->dododo($additionalWhere);
         if (1 === preg_match(AbstractProcessor::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
             $additionalWhere = $matches['where'];
         }

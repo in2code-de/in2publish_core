@@ -107,6 +107,7 @@ class InlineProcessor extends AbstractProcessor
             }
         }
         $additionalWhere = implode(' AND ', $foreignMatchFields);
+        $additionalWhere = $this->databaseIdentifierQuotingService->dododo($additionalWhere);
 
         $resolver = $this->container->get(InlineSelectResolver::class);
         $resolver->configure(
