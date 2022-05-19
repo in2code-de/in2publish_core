@@ -17,7 +17,7 @@ use function strpos;
 
 class TextResolver extends AbstractResolver
 {
-    private const REGEX_T3URN = '~[\"\'\s](?P<URN>t3\://(?:file|page)\?uid=\d+)[\"\'\s]~';
+    private const REGEX_T3URN = '~(?P<URN>t3\://(?:file|page)\?uid=\d+)(?:#[\w\d\-\_\!]+)?~';
 
     protected EventDispatcher $eventDispatcher;
     protected string $column;

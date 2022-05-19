@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor;
 
+use In2code\In2publishCore\Component\TcaHandling\Resolver\MultiSectionTextResolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\TextResolver;
+
+use function str_contains;
 
 class TextProcessor extends AbstractProcessor
 {
@@ -28,6 +31,11 @@ class TextProcessor extends AbstractProcessor
 
     protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
+        if (str_contains($column, '[ANY]')) {
+            $resolver = $this->container->get(MultiSectionTextResolver::class);
+            $resolver->configure($column);
+            return $resolver;
+        }
         $resolver = $this->container->get(TextResolver::class);
         $resolver->configure($column);
         return $resolver;

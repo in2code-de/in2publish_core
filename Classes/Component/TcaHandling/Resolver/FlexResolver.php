@@ -20,6 +20,10 @@ use function array_unique;
 use function implode;
 use function is_array;
 use function json_decode;
+use function preg_match;
+use function preg_quote;
+use function str_contains;
+use function str_replace;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -103,11 +107,25 @@ class FlexResolver extends AbstractResolver
 
         $resolvers = $this->resolverService->getResolversForTable($flexFormTableName);
 
+        $expressions = [];
+        foreach ($resolvers as $field => $resolver) {
+            if (str_contains($field, '[ANY]')) {
+                $regEx = '/' . str_replace('\[ANY\]', '[\w\d]+', preg_quote($field)) . '/';
+                $expressions[$regEx] = $resolver;
+            }
+        }
+
         foreach ($flexFormFields as $flexFormField) {
-            /** @var Resolver $resolver */
-            $resolver = $resolvers[$flexFormField] ?? null;
-            if (null !== $resolver) {
+            if (isset($resolvers[$flexFormField])) {
+                /** @var Resolver $resolver */
+                $resolver = $resolvers[$flexFormField];
                 $resolver->resolve($demands, $virtualRecord);
+            } else {
+                foreach ($expressions as $regEx => $resolver) {
+                    if (1 === preg_match($regEx, $flexFormField)) {
+                        $resolver->resolve($demands, $virtualRecord);
+                    }
+                }
             }
         }
     }
