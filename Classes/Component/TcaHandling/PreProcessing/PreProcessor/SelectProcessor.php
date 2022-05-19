@@ -8,7 +8,6 @@ use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseI
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\SelectMmResolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\SelectResolver;
-use In2code\In2publishCore\Component\TcaHandling\Service\RelevantTablesService;
 
 use function array_filter;
 use function array_key_exists;
@@ -20,7 +19,6 @@ use function trim;
 class SelectProcessor extends AbstractProcessor
 {
     protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
-    protected RelevantTablesService $relevantTablesService;
     protected string $type = 'select';
     protected array $forbidden = [
         'itemsProcFunc' => 'itemsProcFunc is not supported',
@@ -48,11 +46,6 @@ class SelectProcessor extends AbstractProcessor
         $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
     }
 
-    public function injectRelevantTablesService(RelevantTablesService $relevantTablesService): void
-    {
-        $this->relevantTablesService = $relevantTablesService;
-    }
-
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
         if (array_key_exists('MM_opposite_field', $tca) && !$this->isSysCategoryField($tca)) {
@@ -63,13 +56,9 @@ class SelectProcessor extends AbstractProcessor
         return [];
     }
 
-    protected function buildResolver(string $table, string $column, array $processedTca): ?Resolver
+    protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
         $foreignTable = $processedTca['foreign_table'];
-        if ($this->relevantTablesService->isEmptyOrExcludedTable($foreignTable)) {
-            return null;
-        }
-
         $foreignTableWhere = $processedTca['foreign_table_where'] ?? '';
 
         if (isset($processedTca['MM'])) {

@@ -7,14 +7,12 @@ namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcesso
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\SelectMmResolver;
-use In2code\In2publishCore\Component\TcaHandling\Service\RelevantTablesService;
 use TYPO3\CMS\Core\Database\Connection;
 
 class CategoryProcessor extends AbstractProcessor
 {
     protected Connection $localDatabase;
     protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
-    protected RelevantTablesService $relevantTablesService;
     protected string $type = 'category';
 
     public function injectLocalDatabase(Connection $localDatabase): void
@@ -28,16 +26,8 @@ class CategoryProcessor extends AbstractProcessor
         $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
     }
 
-    public function injectRelevantTablesService(RelevantTablesService $relevantTablesService): void
+    protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
-        $this->relevantTablesService = $relevantTablesService;
-    }
-
-    protected function buildResolver(string $table, string $column, array $processedTca): ?Resolver
-    {
-        if ($this->relevantTablesService->isEmptyOrExcludedTable('sys_category')) {
-            return null;
-        }
         $quotedTable = $this->localDatabase->quote($table);
 
         $additionalWhere = '{#sys_category}.{#sys_language_uid} IN (-1, 0)

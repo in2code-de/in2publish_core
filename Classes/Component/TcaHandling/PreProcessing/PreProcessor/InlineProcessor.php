@@ -9,7 +9,6 @@ use In2code\In2publishCore\Component\TcaHandling\Resolver\InlineMultiValueResolv
 use In2code\In2publishCore\Component\TcaHandling\Resolver\InlineSelectResolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\StaticJoinResolver;
-use In2code\In2publishCore\Component\TcaHandling\Service\RelevantTablesService;
 
 use function implode;
 use function preg_match;
@@ -19,7 +18,6 @@ use function trim;
 class InlineProcessor extends AbstractProcessor
 {
     protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
-    protected RelevantTablesService $relevantTablesService;
     protected string $type = 'inline';
     protected array $forbidden = [
         'symmetric_field' => 'symmetric_field is set on the foreign side of relations, which must not be resolved',
@@ -42,17 +40,9 @@ class InlineProcessor extends AbstractProcessor
         $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
     }
 
-    public function injectRelevantTablesService(RelevantTablesService $relevantTablesService): void
-    {
-        $this->relevantTablesService = $relevantTablesService;
-    }
-
-    protected function buildResolver(string $table, string $column, array $processedTca): ?Resolver
+    protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {
         $foreignTable = $processedTca['foreign_table'];
-        if ($this->relevantTablesService->isEmptyOrExcludedTable($foreignTable)) {
-            return null;
-        }
         $foreignField = $processedTca['foreign_field'] ?? null;
         $foreignTableField = $processedTca['foreign_table_field'] ?? null;
 

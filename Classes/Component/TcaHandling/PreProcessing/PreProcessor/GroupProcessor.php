@@ -10,7 +10,6 @@ use In2code\In2publishCore\Component\TcaHandling\Resolver\GroupMultiTableResolve
 use In2code\In2publishCore\Component\TcaHandling\Resolver\GroupSingleTableResolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\StaticJoinResolver;
-use In2code\In2publishCore\Component\TcaHandling\Service\RelevantTablesService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_key_exists;
@@ -23,7 +22,6 @@ use function trim;
 class GroupProcessor extends AbstractProcessor
 {
     protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
-    protected RelevantTablesService $relevantTablesService;
     protected string $type = 'group';
     protected array $required = [
         'allowed' => 'The field "allowed" is required',
@@ -44,11 +42,6 @@ class GroupProcessor extends AbstractProcessor
         DatabaseIdentifierQuotingService $databaseIdentifierQuotingService
     ): void {
         $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
-    }
-
-    public function injectRelevantTablesService(RelevantTablesService $relevantTablesService): void
-    {
-        $this->relevantTablesService = $relevantTablesService;
     }
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
@@ -84,15 +77,6 @@ class GroupProcessor extends AbstractProcessor
         $foreignTable = $processedTca['allowed'];
         $tables = GeneralUtility::trimExplode(',', $foreignTable);
         $isSingleTable = $this->isSingleTable($foreignTable);
-
-        foreach ($tables as $idx => $table) {
-            if ($this->relevantTablesService->isEmptyOrExcludedTable($table)) {
-                unset($tables[$idx]);
-            }
-        }
-        if (empty($tables)) {
-            return null;
-        }
 
         if (isset($processedTca['MM'])) {
             $selectField = ($processedTca['MM_opposite_field'] ?? '') ? 'uid_foreign' : 'uid_local';
