@@ -15,7 +15,10 @@ use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
+use function array_flip;
 use function array_search;
+use function array_values;
+use function in_array;
 
 class DerServiceUmbenennen
 {
@@ -132,8 +135,12 @@ class DerServiceUmbenennen
 
         $tables = $this->relevantTablesService->getAllNonEmptyNonExcludedTcaTables();
 
+        $tablesAsKeys = array_flip(array_values($tables));
         // Do not build demand for pages ("Don't find pages by pid"), because that has been done in findPagesRecursively
-        unset($tables[array_search('pages', $tables)]);
+        // Skip sys_file and sys_file_metadata because they are not connected to the ID=0, they just don't have a PID.
+        unset($tablesAsKeys['pages'], $tablesAsKeys['sys_file'], $tablesAsKeys['sys_file_metadata']);
+
+        $tables = array_flip($tablesAsKeys);
 
         foreach ($tables as $table) {
             foreach ($pages as $page) {
