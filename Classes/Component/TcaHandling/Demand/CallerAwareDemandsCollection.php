@@ -110,7 +110,7 @@ class CallerAwareDemandsCollection implements Demands
      */
     public function getFiles(): array
     {
-        $this->demand->getFiles();
+        return $this->demand->getFiles();
     }
 
     /**
