@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor;
 
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
+use In2code\In2publishCore\Component\TcaHandling\Resolver\InlineMultiValueResolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\InlineSelectResolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\StaticJoinResolver;
@@ -52,7 +53,8 @@ class InlineProcessor extends AbstractProcessor
         if ($this->relevantTablesService->isEmptyOrExcludedTable($foreignTable)) {
             return null;
         }
-        $foreignField = $processedTca['foreign_field'];
+        $foreignField = $processedTca['foreign_field'] ?? null;
+        $foreignTableField = $processedTca['foreign_table_field'] ?? null;
 
         if (isset($processedTca['MM'])) {
             $selectField = ($processedTca['MM_opposite_field'] ?? '') ? 'uid_foreign' : 'uid_local';
@@ -81,8 +83,6 @@ class InlineProcessor extends AbstractProcessor
             return $resolver;
         }
 
-        $foreignTableField = $processedTca['foreign_table_field'] ?? null;
-
         $foreignMatchFields = [];
         foreach ($processedTca['foreign_match_fields'] ?? [] as $matchField => $matchValue) {
             if ((string)(int)$matchValue === (string)$matchValue) {
@@ -93,6 +93,18 @@ class InlineProcessor extends AbstractProcessor
         }
         $additionalWhere = implode(' AND ', $foreignMatchFields);
         $additionalWhere = $this->databaseIdentifierQuotingService->dododo($additionalWhere);
+
+        if (null === $foreignField) {
+            /** @var InlineMultiValueResolver $resolver */
+            $resolver = $this->container->get(InlineMultiValueResolver::class);
+            $resolver->configure(
+                $foreignTable,
+                $column,
+                $foreignTableField,
+                $additionalWhere
+            );
+            return $resolver;
+        }
 
         $resolver = $this->container->get(InlineSelectResolver::class);
         $resolver->configure(
