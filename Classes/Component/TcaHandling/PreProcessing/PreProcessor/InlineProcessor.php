@@ -78,8 +78,9 @@ class InlineProcessor extends AbstractProcessor
                 $additionalWhere = $matches['where'];
             }
 
+            /** @var StaticJoinResolver $resolver */
             $resolver = $this->container->get(StaticJoinResolver::class);
-            $resolver->configure($mmTable, $foreignTable, $selectField, $additionalWhere);
+            $resolver->configure($mmTable, $foreignTable, $additionalWhere, $selectField);
             return $resolver;
         }
 
