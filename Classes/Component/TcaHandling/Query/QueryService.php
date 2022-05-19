@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Query;
 
+use Doctrine\DBAL\Exception;
+use In2code\In2publishCore\Component\TcaHandling\Demand\CallerAwareDemandsCollection;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
+use In2code\In2publishCore\Component\TcaHandling\Query\Exception\InvalidDemandException;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Component\TcaHandling\RecordIndex;
 use In2code\In2publishCore\Component\TcaHandling\Repository\DualDatabaseRepository;
@@ -77,12 +80,24 @@ class QueryService
             $allRows = [];
             foreach ($tableSelect as $additionalWhere => $properties) {
                 foreach ($properties as $property => $valueMaps) {
-                    $rows = $this->dualDatabaseRepository->findByProperty(
-                        $table,
-                        $property,
-                        array_keys($valueMaps),
-                        $additionalWhere
-                    );
+                    try {
+                        $rows = $this->dualDatabaseRepository->findByProperty(
+                            $table,
+                            $property,
+                            array_keys($valueMaps),
+                            $additionalWhere
+                        );
+                    } catch (Exception $exception) {
+                        if ($demands instanceof CallerAwareDemandsCollection) {
+                            $callers = [];
+                            $meta = $demands->getMeta();
+                            if (isset($meta['select'][$table][$additionalWhere][$property])) {
+                                $callers = $meta['select'][$table][$additionalWhere][$property];
+                            }
+                            $exception = new InvalidDemandException($callers, $exception);
+                        }
+                        throw $exception;
+                    }
                     foreach ($rows as $uid => $row) {
                         $allRows[$uid] = [
                             'row' => $row,
@@ -172,13 +187,25 @@ class QueryService
             foreach ($JoinSelect as $table => $tableSelect) {
                 foreach ($tableSelect as $additionalWhere => $properties) {
                     foreach ($properties as $property => $valueMaps) {
-                        $rows = $this->dualDatabaseRepository->findByPropertyWithJoin(
-                            $joinTable,
-                            $table,
-                            $property,
-                            array_keys($valueMaps),
-                            $additionalWhere
-                        );
+                        try {
+                            $rows = $this->dualDatabaseRepository->findByPropertyWithJoin(
+                                $joinTable,
+                                $table,
+                                $property,
+                                array_keys($valueMaps),
+                                $additionalWhere
+                            );
+                        } catch (Exception $exception) {
+                            if ($demands instanceof CallerAwareDemandsCollection) {
+                                $callers = [];
+                                $meta = $demands->getMeta();
+                                if (isset($meta['join'][$joinTable][$table][$additionalWhere][$property])) {
+                                    $callers = $meta['join'][$joinTable][$table][$additionalWhere][$property];
+                                }
+                                $exception = new InvalidDemandException($callers, $exception);
+                            }
+                            throw $exception;
+                        }
                         foreach ($rows as $mmId => $row) {
                             $mmRecord = $this->recordIndex->getRecord($table, $mmId);
                             if (null === $mmRecord) {

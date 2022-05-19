@@ -15,14 +15,14 @@ use function parse_url;
 use function preg_match_all;
 use function strpos;
 
-class TextResolver implements Resolver
+class TextResolver extends AbstractResolver
 {
     private const REGEX_T3URN = '~[\"\'\s](?P<URN>t3\://(?:file|page)\?uid=\d+)[\"\'\s]~';
 
     protected EventDispatcher $eventDispatcher;
     protected string $column;
 
-    public function __construct(EventDispatcher $eventDispatcher)
+    public function injectEventDispatcher(EventDispatcher $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
     }

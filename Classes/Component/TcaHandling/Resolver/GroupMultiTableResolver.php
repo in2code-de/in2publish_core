@@ -15,7 +15,7 @@ use function in_array;
 use function strrpos;
 use function substr;
 
-class GroupMultiTableResolver implements Resolver
+class GroupMultiTableResolver extends AbstractResolver
 {
     protected string $column;
     protected array $tables;

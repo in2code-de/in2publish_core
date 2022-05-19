@@ -11,7 +11,7 @@ use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 
 use function preg_match;
 
-class SelectMmResolver implements Resolver
+class SelectMmResolver extends AbstractResolver
 {
     protected ReplaceMarkersService $replaceMarkersService;
     protected string $foreignTableWhere;
@@ -20,7 +20,7 @@ class SelectMmResolver implements Resolver
     protected string $foreignTable;
     protected string $selectField;
 
-    public function __construct(ReplaceMarkersService $replaceMarkersService)
+    public function injectReplaceMarkersService(ReplaceMarkersService $replaceMarkersService): void
     {
         $this->replaceMarkersService = $replaceMarkersService;
     }

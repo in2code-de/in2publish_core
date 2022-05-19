@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\TcaHandling\FileHandling;
 
 use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
+use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Event\RecordWasCreated;
 
 class FileRecordListener
 {
     protected FileDemandResolver $fileDemandResolver;
+    protected DemandsFactory $demandsFactory;
     /**
      * @var list<Record>
      */
@@ -19,6 +21,11 @@ class FileRecordListener
     public function injectFileDemandResolver(FileDemandResolver $fileDemandResolver): void
     {
         $this->fileDemandResolver = $fileDemandResolver;
+    }
+
+    public function injectDemandsFactory(DemandsFactory $demandsFactory): void
+    {
+        $this->demandsFactory = $demandsFactory;
     }
 
     public function onRecordWasCreated(RecordWasCreated $event): void
@@ -35,7 +42,7 @@ class FileRecordListener
         if (empty($this->fileRecords)) {
             return;
         }
-        $demands = new Demands();
+        $demands = $this->demandsFactory->buildDemand();
 
         $files = $this->fileRecords;
         $this->fileRecords = [];

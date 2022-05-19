@@ -13,7 +13,7 @@ use function array_merge;
 use function strrpos;
 use function substr;
 
-class GroupSingleTableResolver implements Resolver
+class GroupSingleTableResolver extends AbstractResolver
 {
     protected string $column;
     protected string $foreignTable;

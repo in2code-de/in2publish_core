@@ -15,7 +15,7 @@ use function preg_match;
 use function substr;
 use function trim;
 
-class InlineMultiValueResolver implements Resolver
+class InlineMultiValueResolver extends AbstractResolver
 {
     protected string $foreignTable;
     protected string $column;

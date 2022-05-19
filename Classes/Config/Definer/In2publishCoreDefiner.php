@@ -213,6 +213,7 @@ class In2publishCoreDefiner implements DefinerInterface
                                  ->addBoolean('disableParentRecords', false)
                                  ->addBoolean('showExecutionTime', true)
                                  ->addBoolean('keepEnvelopes', false)
+                                 ->addBoolean('traceDemand', false)
                       )
                       ->addArray(
                           'backup',

@@ -12,7 +12,7 @@ use function preg_match;
 use function substr;
 use function trim;
 
-class InlineSelectResolver implements Resolver
+class InlineSelectResolver extends AbstractResolver
 {
     protected string $foreignTable;
     protected string $foreignField;

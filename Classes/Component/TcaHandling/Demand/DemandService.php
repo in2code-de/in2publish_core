@@ -10,15 +10,21 @@ use In2code\In2publishCore\Component\TcaHandling\Service\ResolverService;
 class DemandService
 {
     protected ResolverService $resolverService;
+    protected DemandsFactory $demandsFactory;
 
     public function injectResolverService(ResolverService $resolverService): void
     {
         $this->resolverService = $resolverService;
     }
 
+    public function injectDemandsFactory(DemandsFactory $demandsFactory): void
+    {
+        $this->demandsFactory = $demandsFactory;
+    }
+
     public function buildDemandForRecords(RecordCollection $records): Demands
     {
-        $demand = new Demands();
+        $demand = $this->demandsFactory->buildDemand();
         foreach ($records->getRecordsFlat() as $record) {
             $classification = $record->getClassification();
             $resolvers = $this->resolverService->getResolversForTable($classification);

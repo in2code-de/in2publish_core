@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Component\TcaHandling\Resolver;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
 use In2code\In2publishCore\Domain\Model\Record;
 
-class StaticJoinResolver implements Resolver
+class StaticJoinResolver extends AbstractResolver
 {
     protected string $mmTable;
     protected string $joinTable;

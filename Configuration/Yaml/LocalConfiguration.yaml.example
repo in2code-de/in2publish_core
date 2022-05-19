@@ -309,6 +309,10 @@ debug:
   # Do not delete Envelope entries after they fulfilled their purpose
   keepEnvelopes: FALSE
 
+  # This helps debugging demands which cause exceptions. Disabled to reduce overhead in production environments.
+  # Enable this to see which resolver and processor of which table and column is responsible for the demand.
+  traceDemand: FALSE
+
 
 # Configuration for tasks
 tasks:

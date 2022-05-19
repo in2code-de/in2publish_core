@@ -20,6 +20,10 @@ class DualDatabaseRepository
         $this->foreignRepository = $foreignRepository;
     }
 
+    /**
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Driver\Exception
+     */
     public function findByProperty(
         string $table,
         string $property,
@@ -32,6 +36,10 @@ class DualDatabaseRepository
         return $this->mergeRowsByIdentifier($localRows, $foreignRows);
     }
 
+    /**
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Driver\Exception
+     */
     public function findByPropertyWithJoin(
         string $mmTable,
         string $table,

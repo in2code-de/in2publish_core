@@ -23,7 +23,7 @@ use function json_decode;
 
 use const JSON_THROW_ON_ERROR;
 
-class FlexResolver implements Resolver
+class FlexResolver extends AbstractResolver
 {
     protected FlexFormTools $flexFormTools;
     protected FlexFormService $flexFormService;
@@ -33,15 +33,23 @@ class FlexResolver implements Resolver
     protected string $column;
     protected array $processedTca;
 
-    public function __construct(
-        FlexFormTools $flexFormTools,
-        FlexFormService $flexFormService,
-        FlexFormFlatteningService $flexFormFlatteningService,
-        ResolverService $resolverService
-    ) {
+    public function injectFlexFormTools(FlexFormTools $flexFormTools): void
+    {
         $this->flexFormTools = $flexFormTools;
+    }
+
+    public function injectFlexFormService(FlexFormService $flexFormService): void
+    {
         $this->flexFormService = $flexFormService;
+    }
+
+    public function injectFlexFormFlatteningService(FlexFormFlatteningService $flexFormFlatteningService): void
+    {
         $this->flexFormFlatteningService = $flexFormFlatteningService;
+    }
+
+    public function injectResolverService(ResolverService $resolverService): void
+    {
         $this->resolverService = $resolverService;
     }
 

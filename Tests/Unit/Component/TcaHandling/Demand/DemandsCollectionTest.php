@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\Demand;
 
-use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
+use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsCollection;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversDefaultClass \In2code\In2publishCore\Component\TcaHandling\Demand\Demands
+ * @coversDefaultClass \In2code\In2publishCore\Component\TcaHandling\Demand\DemandsCollection
  */
-class DemandsTest extends TestCase
+class DemandsCollectionTest extends TestCase
 {
     /**
      * @covers ::addSelect
@@ -27,7 +27,7 @@ class DemandsTest extends TestCase
         $record2->method('getClassification')->willReturn('table_bar');
         $record2->method('getId')->willReturn(5);
 
-        $demands = new Demands();
+        $demands = new DemandsCollection();
         $demands->addSelect('foo', 'bar', 'baz', 14, $record1);
         $demands->addSelect('foo', 'bar', 'baz', 14, $record1);
         $demands->addSelect('foo', 'bar', 'baz', 14, $record2);
@@ -53,7 +53,7 @@ class DemandsTest extends TestCase
         $record2->method('getClassification')->willReturn('table_bar');
         $record2->method('getId')->willReturn(5);
 
-        $demands = new Demands();
+        $demands = new DemandsCollection();
         $demands->addJoin('foo_bar_mm', 'foo', 'bar', 'baz', 14, $record1);
         $demands->addJoin('foo_bar_mm', 'foo', 'bar', 'baz', 14, $record1);
         $demands->addJoin('foo_bar_mm', 'foo', 'bar', 'baz', 14, $record2);
@@ -79,7 +79,7 @@ class DemandsTest extends TestCase
         $record2->method('getClassification')->willReturn('table_bar');
         $record2->method('getId')->willReturn(5);
 
-        $demands = new Demands();
+        $demands = new DemandsCollection();
         $demands->addFile(1, '/file/a', $record1);
         $demands->addFile(1, '/file/a', $record1);
         $demands->addFile(1, '/file/b', $record2);
@@ -102,7 +102,7 @@ class DemandsTest extends TestCase
         $record1->method('getClassification')->willReturn('table_foo');
         $record1->method('getId')->willReturn(4);
 
-        $demands = new Demands();
+        $demands = new DemandsCollection();
         $demands->addSelect('foo', 'bar', 'baz', 14, $record1);
 
         $demands->unsetSelect('foo', 'baz', 14);
@@ -121,7 +121,7 @@ class DemandsTest extends TestCase
         $record1->method('getClassification')->willReturn('table_foo');
         $record1->method('getId')->willReturn(4);
 
-        $demands = new Demands();
+        $demands = new DemandsCollection();
         $demands->addJoin('foo_bar_mm', 'foo', 'bar', 'baz', 14, $record1);
 
         $demands->unsetJoin('foo_bar_mm', 'foo', 'baz', 14);
@@ -129,6 +129,9 @@ class DemandsTest extends TestCase
         $this->assertSame([], $demands->getJoin());
     }
 
+    /**
+     * @covers ::uniqueRecordKey
+     */
     public function testUniqueRecordKeyReturnsUniqueIdentifier(): void
     {
         $record1 = $this->createMock(DatabaseRecord::class);
@@ -139,7 +142,7 @@ class DemandsTest extends TestCase
         $record2->method('getClassification')->willReturn('table_4');
         $record2->method('getId')->willReturn(1);
 
-        $demands = new Demands();
+        $demands = new DemandsCollection();
         $record1Key = $demands->uniqueRecordKey($record1);
         $record2Key = $demands->uniqueRecordKey($record2);
 

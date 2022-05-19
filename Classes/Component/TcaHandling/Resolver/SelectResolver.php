@@ -14,14 +14,14 @@ use function preg_match;
 use function substr;
 use function trim;
 
-class SelectResolver implements Resolver
+class SelectResolver extends AbstractResolver
 {
     protected ReplaceMarkersService $replaceMarkersService;
     protected string $column;
     protected string $foreignTable;
     protected string $foreignTableWhere;
 
-    public function __construct(ReplaceMarkersService $replaceMarkersService)
+    public function injectReplaceMarkersService(ReplaceMarkersService $replaceMarkersService)
     {
         $this->replaceMarkersService = $replaceMarkersService;
     }

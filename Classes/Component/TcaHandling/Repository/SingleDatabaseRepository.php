@@ -30,6 +30,10 @@ class SingleDatabaseRepository
         $this->columnNameService = $columnNameService;
     }
 
+    /**
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Driver\Exception
+     */
     public function findByProperty(
         string $table,
         string $property,
@@ -62,6 +66,10 @@ class SingleDatabaseRepository
         return array_column($result->fetchAllAssociative(), null, 'uid');
     }
 
+    /**
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Driver\Exception
+     */
     public function findByPropertyWithJoin(
         string $mmTable,
         string $table,

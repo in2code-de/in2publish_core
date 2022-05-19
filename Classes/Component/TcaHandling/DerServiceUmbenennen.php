@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling;
 
-use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandService;
+use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\TcaHandling\Query\QueryService;
 use In2code\In2publishCore\Component\TcaHandling\Service\RelevantTablesService;
 use In2code\In2publishCore\Config\ConfigContainer;
@@ -16,9 +16,7 @@ use In2code\In2publishCore\Event\RecordRelationsWereResolved;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 use function array_flip;
-use function array_search;
 use function array_values;
-use function in_array;
 
 class DerServiceUmbenennen
 {
@@ -29,6 +27,7 @@ class DerServiceUmbenennen
     protected RecordFactory $recordFactory;
     protected RecordIndex $recordIndex;
     protected EventDispatcher $eventDispatcher;
+    protected DemandsFactory $demandsFactory;
 
     public function injectRelevantTablesService(RelevantTablesService $relevantTablesService): void
     {
@@ -65,6 +64,11 @@ class DerServiceUmbenennen
         $this->eventDispatcher = $eventDispatcher;
     }
 
+    public function injectDemandsFactory(DemandsFactory $demandsFactory): void
+    {
+        $this->demandsFactory = $demandsFactory;
+    }
+
     public function buildRecordTree(string $table, int $id): RecordTree
     {
         $recordTree = new RecordTree();
@@ -94,7 +98,7 @@ class DerServiceUmbenennen
             $recordTree->addChild($pageTreeRootRecord);
             return new RecordCollection([$pageTreeRootRecord]);
         }
-        $demands = new Demands();
+        $demands = $this->demandsFactory->buildDemand();
         $demands->addSelect($table, '', 'uid', $id, $recordTree);
 
         $transOrigPointerField = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] ?? null;
@@ -114,7 +118,7 @@ class DerServiceUmbenennen
         $recursionLimit = 5;
 
         while ($recursionLimit > $currentRecursion++ && !empty($records)) {
-            $demands = new Demands();
+            $demands = $this->demandsFactory->buildDemand();
             $recordsArray = $records['pages'] ?? [];
             foreach ($recordsArray as $record) {
                 $demands->addSelect('pages', '', 'pid', $record->getId(), $record);
@@ -131,7 +135,7 @@ class DerServiceUmbenennen
         if (empty($pages)) {
             return $recordCollection;
         }
-        $demands = new Demands();
+        $demands = $this->demandsFactory->buildDemand();
 
         $tables = $this->relevantTablesService->getAllNonEmptyNonExcludedTcaTables();
 
