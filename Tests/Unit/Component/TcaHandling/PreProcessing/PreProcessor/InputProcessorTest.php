@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing;
+namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing\PreProcessor;
 
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\InputProcessor;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\TextResolver;

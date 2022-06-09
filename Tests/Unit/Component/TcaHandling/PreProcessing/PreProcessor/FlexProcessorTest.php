@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing;
+namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing\PreProcessor;
 
 use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\FlexProcessor;
@@ -16,7 +16,6 @@ use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\Container;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Service\FlexFormService;
-
 use function json_encode;
 
 /**
@@ -24,6 +23,9 @@ use function json_encode;
  */
 class FlexProcessorTest extends UnitTestCase
 {
+    /**
+     * @covers ::additionalPreProcess
+     */
     public function testFlexProcessorRejectsTcaWithoutDefaultValueOrDsPointerField(): void
     {
         $flexProcessor = new FlexProcessor();
@@ -33,6 +35,9 @@ class FlexProcessorTest extends UnitTestCase
         $this->assertFalse($processingResult->isCompatible());
     }
 
+    /**
+     * @covers ::process
+     */
     public function testTcaWithTwoSheetsIsResolved(): void
     {
         $flexProcessor = new FlexProcessor();
@@ -61,7 +66,10 @@ class FlexProcessorTest extends UnitTestCase
         $this->assertTrue($processingResult->isCompatible());
     }
 
-    /** @noinspection JsonEncodingApiUsageInspection */
+    /**
+     * @noinspection JsonEncodingApiUsageInspection
+     * @covers ::process
+     */
     public function testFlexProcessorDelegatesFlexFormResolvingToTcaPreProcessingService(): void
     {
         $json1 = json_encode([
@@ -117,7 +125,10 @@ class FlexProcessorTest extends UnitTestCase
         $flexProcessor->process('tableNameFoo', 'fieldNameBar', $flexFieldTca);
     }
 
-    /** @noinspection JsonEncodingApiUsageInspection */
+    /**
+     * @noinspection JsonEncodingApiUsageInspection
+     * @covers ::process
+     */
     public function testFlexProcessorResolvesDemandForFlexFormFields(): void
     {
         $databaseRecord = new DatabaseRecord('tableNameFoo', 1, ['fieldNameBar' => 1], [], []);

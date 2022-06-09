@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing;
+namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing\PreProcessor;
 
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\SelectProcessor;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
@@ -12,11 +12,16 @@ use In2code\In2publishCore\Component\TcaHandling\Resolver\SelectResolver;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\Container;
-
 use function array_merge;
 
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\SelectProcessor
+ */
 class SelectProcessorTest extends UnitTestCase
 {
+    /**
+     * @covers ::process
+     */
     public function testSelectProcessorReturnsCompatibleResultForCompatibleColumn(): void
     {
         $resolver = $this->createMock(SelectResolver::class);
@@ -48,6 +53,7 @@ class SelectProcessorTest extends UnitTestCase
     /**
      * @depends      testSelectProcessorReturnsCompatibleResultForCompatibleColumn
      * @dataProvider forbiddenTcaDataProvider
+     * @covers ::process
      */
     public function testSelectProcessorFlagsColumnsWithForbiddenTcaAsIncompatible(array $tca): void
     {
@@ -60,6 +66,9 @@ class SelectProcessorTest extends UnitTestCase
         $this->assertFalse($processingResult->isCompatible());
     }
 
+    /**
+     * @covers ::process
+     */
     public function testSelectProcessorFiltersTca(): void
     {
         $bigTca = [
@@ -98,6 +107,7 @@ class SelectProcessorTest extends UnitTestCase
 
     /**
      * @depends testSelectProcessorReturnsCompatibleResultForCompatibleColumn
+     * @covers ::process
      */
     public function testSelectProcessorCreatesDemandForSimpleRelation(): void
     {
@@ -109,8 +119,8 @@ class SelectProcessorTest extends UnitTestCase
         $replaceMarkerService = $this->createMock(ReplaceMarkersService::class);
         $replaceMarkerService->method('replaceMarkers')->willReturnArgument(1);
 
-        $diqs = $this->createMock(DatabaseIdentifierQuotingService::class);
-        $diqs->method('dododo')->willReturnArgument(0);
+        $databaseIdentifierQuotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
+        $databaseIdentifierQuotingService->method('dododo')->willReturnArgument(0);
 
         $resolver = $this->createMock(SelectResolver::class);
         $container = $this->createMock(Container::class);
@@ -118,6 +128,7 @@ class SelectProcessorTest extends UnitTestCase
 
         $selectProcessor = new SelectProcessor();
         $selectProcessor->injectContainer($container);
+        $selectProcessor->injectDatabaseIdentifierQuotingService($databaseIdentifierQuotingService);
 
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
 
@@ -129,6 +140,7 @@ class SelectProcessorTest extends UnitTestCase
 
     /**
      * @depends testSelectProcessorReturnsCompatibleResultForCompatibleColumn
+     * @covers ::process
      */
     public function testSelectProcessorCreatesDemandForMMRelation(): void
     {
@@ -144,8 +156,8 @@ class SelectProcessorTest extends UnitTestCase
         $replaceMarkerService = $this->createMock(ReplaceMarkersService::class);
         $replaceMarkerService->method('replaceMarkers')->willReturnArgument(1);
 
-        $diqs = $this->createMock(DatabaseIdentifierQuotingService::class);
-        $diqs->method('dododo')->willReturnArgument(0);
+        $databaseIdentifierQuotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
+        $databaseIdentifierQuotingService->method('dododo')->willReturnArgument(0);
 
         $resolver = $this->createMock(SelectMmResolver::class);
         $container = $this->createMock(Container::class);
@@ -153,6 +165,7 @@ class SelectProcessorTest extends UnitTestCase
 
         $selectProcessor = new SelectProcessor();
         $selectProcessor->injectContainer($container);
+        $selectProcessor->injectDatabaseIdentifierQuotingService($databaseIdentifierQuotingService);
 
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
 

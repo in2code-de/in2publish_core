@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing;
+namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing\PreProcessor;
 
-use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsCollection;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\TextProcessor;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
