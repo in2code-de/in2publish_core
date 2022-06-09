@@ -20,11 +20,13 @@ class SelectProcessorTest extends UnitTestCase
     public function testSelectProcessorReturnsCompatibleResultForCompatibleColumn(): void
     {
         $resolver = $this->createMock(SelectResolver::class);
+        $databaseIdentifierQuotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
         $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $selectProcessor = new SelectProcessor();
         $selectProcessor->injectContainer($container);
+        $selectProcessor->injectDatabaseIdentifierQuotingService($databaseIdentifierQuotingService);
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'select',
             'foreign_table' => 'tableNameBeng',
@@ -83,11 +85,13 @@ class SelectProcessorTest extends UnitTestCase
         ];
 
         $resolver = $this->createMock(SelectMmResolver::class);
+        $databaseIdentifierQuotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
         $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $selectProcessor = new SelectProcessor();
         $selectProcessor->injectContainer($container);
+        $selectProcessor->injectDatabaseIdentifierQuotingService($databaseIdentifierQuotingService);
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $bigTca);
         $this->assertSame($expectedTca, $processingResult->getValue()['tca']);
     }

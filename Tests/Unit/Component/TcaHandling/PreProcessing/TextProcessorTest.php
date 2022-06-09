@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing;
 
 use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
+use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsCollection;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\TextProcessor;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\TextResolver;
@@ -70,7 +71,7 @@ class TextProcessorTest extends UnitTestCase
 
         /** @var Resolver $resolver */
         $resolver = $processingResult->getValue()['resolver'];
-        $demands = new Demands();
+        $demands = new DemandsCollection();
         $resolver->resolve($demands, $databaseRecord);
 
         $this->assertInstanceOf(TextResolver::class, $resolver);
