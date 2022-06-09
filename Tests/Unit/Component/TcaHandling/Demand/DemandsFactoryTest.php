@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\Demand;
 
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsCollection;
