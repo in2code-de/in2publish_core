@@ -11,6 +11,9 @@ use In2code\In2publishCore\Tests\UnitTestCase;
  */
 class PageTreeRootRecordTest extends UnitTestCase
 {
+    /**
+     * @covers ::__construct
+     */
     public function testAssumptionsAboutPageTreeRootRecord(): void
     {
         $record = new PageTreeRootRecord();

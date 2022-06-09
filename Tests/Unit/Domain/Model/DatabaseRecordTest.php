@@ -70,7 +70,6 @@ class DatabaseRecordTest extends UnitTestCase
     }
 
     /**
-     * @return void
      * @covers ::getField
      */
     public function testGetFieldReturnsValueWithFallback(): void
@@ -82,6 +81,9 @@ class DatabaseRecordTest extends UnitTestCase
         $this->assertNull($record->getProp('foo'));
     }
 
+    /**
+     * @covers ::getPageId
+     */
     public function testGetPageIdReturnsIdOfPage(): void
     {
         $record = new DatabaseRecord('pages', 1, [], [], []);
@@ -91,6 +93,9 @@ class DatabaseRecordTest extends UnitTestCase
         $this->assertSame(1, $actual);
     }
 
+    /**
+     * @covers ::getPageId
+     */
     public function testGetPageIdReturnsUidOfDefaultLanguageIfTranslated(): void
     {
         $GLOBALS['TCA']['pages']['ctrl']['languageField'] = 'language';
@@ -117,6 +122,9 @@ class DatabaseRecordTest extends UnitTestCase
         $this->assertSame(5, $actual);
     }
 
+    /**
+     * @covers ::getPageId
+     */
     public function testGetPageIdOnOtherTableThanPagesReturnsPid(): void
     {
         $record = new DatabaseRecord('foo', 1, ['pid' => 2], ['pid' => 2], []);

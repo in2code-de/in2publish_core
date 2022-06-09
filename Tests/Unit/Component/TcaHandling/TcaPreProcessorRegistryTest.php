@@ -70,7 +70,6 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
     }
 
     /**
-     * @return void
      * @covers ::getProp
      */
     public function testGetPropReturnsValueWithFallback(): void
@@ -82,6 +81,10 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
         $this->assertNull($record->getProp('foo'));
     }
 
+    /**
+     * @return void
+     * @covers ::getPageId
+     */
     public function testGetPageIdReturnsIdOfPage(): void
     {
         $record = new DatabaseRecord('pages', 1, [], [], []);
@@ -91,6 +94,10 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
         $this->assertSame(1, $actual);
     }
 
+    /**
+     * @return void
+     * @covers ::getPageId
+     */
     public function testGetPageIdReturnsUidOfDefaultLanguageIfTranslated(): void
     {
         $GLOBALS['TCA']['pages']['ctrl']['languageField'] = 'language';
@@ -117,6 +124,10 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
         $this->assertSame(5, $actual);
     }
 
+    /**
+     * @return void
+     * @covers ::getPageId
+     */
     public function testGetPageIdOnOtherTableThanPagesReturnsPid(): void
     {
         $record = new DatabaseRecord('foo', 1, ['pid' => 2], ['pid' => 2], []);
