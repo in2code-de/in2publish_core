@@ -26,8 +26,7 @@ class DemandServiceTest extends UnitTestCase
     public function testBuildDemandForRecordsReturnsContentOfResolverArray(): void
     {
         $demandsFactory = $this->createMock(DemandsFactory::class);
-        $demandsCollection = $this->createMock(DemandsCollection::class);
-        $demandsFactory->method('buildDemand')->willReturn($demandsCollection);
+        $demandsFactory->method('buildDemand')->willReturn(new DemandsCollection());
 
         $demandService = new DemandService();
         $demandService->injectDemandsFactory($demandsFactory);
@@ -63,8 +62,7 @@ class DemandServiceTest extends UnitTestCase
     public function testBuildDemandForRecordsReturnsResolversOfAllRecords(): void
     {
         $demandsFactory = $this->createMock(DemandsFactory::class);
-        $demandsCollection = $this->createMock(DemandsCollection::class);
-        $demandsFactory->method('buildDemand')->willReturn($demandsCollection);
+        $demandsFactory->method('buildDemand')->willReturn(new DemandsCollection());
 
         $demandService = new DemandService();
         $demandService->injectDemandsFactory($demandsFactory);
