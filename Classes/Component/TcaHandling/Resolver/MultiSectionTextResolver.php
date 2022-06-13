@@ -47,5 +47,4 @@ class MultiSectionTextResolver extends TextResolver
             }
         }
     }
-
 }

@@ -34,5 +34,4 @@ class DemandService
         }
         return $demand;
     }
-
 }

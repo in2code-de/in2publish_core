@@ -13,7 +13,6 @@ use function str_contains;
 class TextProcessor extends AbstractProcessor
 {
     protected string $type = 'text';
-
     protected array $required = [
         'enableRichtext' => 'Text which is not rich text does not contain relations as t3 URNs',
     ];

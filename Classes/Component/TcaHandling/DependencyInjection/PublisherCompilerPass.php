@@ -7,7 +7,6 @@ namespace In2code\In2publishCore\Component\TcaHandling\DependencyInjection;
 use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-
 use Symfony\Component\DependencyInjection\Reference;
 
 use function interface_exists;

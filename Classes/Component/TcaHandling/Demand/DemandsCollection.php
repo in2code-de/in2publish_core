@@ -10,7 +10,6 @@ use In2code\In2publishCore\Domain\Model\Record;
 class DemandsCollection implements Demands
 {
     private const RECORD_KEY_DELIMITER = '\\';
-
     private array $select = [];
     private array $join = [];
     private array $files = [];

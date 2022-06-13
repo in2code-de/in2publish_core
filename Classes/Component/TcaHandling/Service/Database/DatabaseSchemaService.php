@@ -11,7 +11,6 @@ use TYPO3\CMS\Core\SingletonInterface;
 class DatabaseSchemaService implements SingletonInterface
 {
     protected const CACHE_ID = 'component_database_info';
-
     protected Connection $localDatabase;
     protected FrontendInterface $cache;
     protected $columns = [];

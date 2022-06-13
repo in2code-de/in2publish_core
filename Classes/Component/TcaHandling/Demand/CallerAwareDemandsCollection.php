@@ -14,7 +14,6 @@ use const DEBUG_BACKTRACE_PROVIDE_OBJECT;
 class CallerAwareDemandsCollection implements Demands
 {
     private Demands $demand;
-
     private array $meta = [];
 
     public function __construct(Demands $demand)

@@ -18,7 +18,6 @@ use function array_merge;
 abstract class AbstractProcessor implements TcaPreProcessor
 {
     public const ADDITIONAL_ORDER_BY_PATTERN = '/(?P<where>.*)ORDER[\s\n]+BY[\s\n]+(?P<col>\w+(\.\w+)?)(?P<dir>\s(DESC|ASC))?/is';
-
     protected TcaPreProcessingService $tcaPreProcessingService;
     protected ContainerInterface $container;
 
@@ -41,7 +40,6 @@ abstract class AbstractProcessor implements TcaPreProcessor
      * @api
      */
     protected string $type;
-
     /**
      * Overwrite this in your processor!
      * Fields that are forbidden for the processor type, indexed by the reason
@@ -49,7 +47,6 @@ abstract class AbstractProcessor implements TcaPreProcessor
      * @api
      */
     protected array $forbidden = [];
-
     /**
      * Overwrite this in your Processor!
      * Field names that must be contained in the configuration, indexed by their reason why
@@ -57,7 +54,6 @@ abstract class AbstractProcessor implements TcaPreProcessor
      * @api
      */
     protected array $required = [];
-
     /**
      * Overwrite this in your processor if these are needed!
      * Fields that are optional and are which taken into account for relations solving. Has no specific index

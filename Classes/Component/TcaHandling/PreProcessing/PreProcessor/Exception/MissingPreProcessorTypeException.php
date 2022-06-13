@@ -15,7 +15,6 @@ class MissingPreProcessorTypeException extends In2publishCoreException
 {
     public const CODE = 1649243375;
     private const MESSAGE = 'You must set $this->type in your PreProcessor %s';
-
     protected TcaPreProcessor $tcaPreProcessor;
 
     public function __construct(TcaPreProcessor $tcaPreProcessor, Throwable $previous = null)
