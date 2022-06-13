@@ -15,7 +15,7 @@ class DemandsFactory
         $this->configContainer = $configContainer;
     }
 
-    public function buildDemand(): Demands
+    public function createDemand(): Demands
     {
         $demand = new DemandsCollection();
         if ($this->configContainer->get('debug.traceDemand')) {

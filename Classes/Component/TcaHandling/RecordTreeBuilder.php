@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling;
 
-use In2code\In2publishCore\Component\TcaHandling\Demand\DemandService;
+use In2code\In2publishCore\Component\TcaHandling\Demand\DemandBuilder;
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
-use In2code\In2publishCore\Component\TcaHandling\Query\QueryService;
+use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\DemandResolverCollection;
+use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\JoinDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\Service\RelevantTablesService;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
@@ -21,9 +23,11 @@ use function array_values;
 class RecordTreeBuilder
 {
     protected RelevantTablesService $relevantTablesService;
-    protected QueryService $queryService;
+    protected SelectDemandResolver $selectDemandResolver;
+    protected JoinDemandResolver $joinDemandResolver;
+    protected DemandResolverCollection $demandResolverCollection;
     protected ConfigContainer $configContainer;
-    protected DemandService $demandService;
+    protected DemandBuilder $demandBuilder;
     protected RecordFactory $recordFactory;
     protected RecordIndex $recordIndex;
     protected EventDispatcher $eventDispatcher;
@@ -34,9 +38,19 @@ class RecordTreeBuilder
         $this->relevantTablesService = $relevantTablesService;
     }
 
-    public function injectQueryService(QueryService $queryService): void
+    public function injectSelectDemandResolver(SelectDemandResolver $selectDemandResolver): void
     {
-        $this->queryService = $queryService;
+        $this->selectDemandResolver = $selectDemandResolver;
+    }
+
+    public function injectJoinDemandResolver(JoinDemandResolver $joinDemandResolver): void
+    {
+        $this->joinDemandResolver = $joinDemandResolver;
+    }
+
+    public function injectDemandResolverCollection(DemandResolverCollection $demandResolverCollection): void
+    {
+        $this->demandResolverCollection = $demandResolverCollection;
     }
 
     public function injectConfigContainer(ConfigContainer $configContainer): void
@@ -44,9 +58,9 @@ class RecordTreeBuilder
         $this->configContainer = $configContainer;
     }
 
-    public function injectDemandService(DemandService $demandService): void
+    public function injectDemandBuilder(DemandBuilder $demandBuilder): void
     {
-        $this->demandService = $demandService;
+        $this->demandBuilder = $demandBuilder;
     }
 
     public function injectRecordFactory(RecordFactory $recordFactory): void
@@ -71,15 +85,20 @@ class RecordTreeBuilder
 
     public function buildRecordTree(string $table, int $id): RecordTree
     {
+        $this->demandResolverCollection->addDemandResolver($this->selectDemandResolver);
+        $this->demandResolverCollection->addDemandResolver($this->joinDemandResolver);
+
         $recordTree = new RecordTree();
 
-        $records = $this->findRequestedRecordWithTranslations($table, $id, $recordTree);
+        $recordCollection = new RecordCollection();
 
-        $this->findPagesRecursively($records);
+        $this->findRequestedRecordWithTranslations($table, $id, $recordTree, $recordCollection);
 
-        $records = $this->findAllRecordsOnPages();
+        $this->findPagesRecursively($recordCollection, $recordCollection);
 
-        $this->findRecordsByTca($records);
+        $recordCollection = $this->findAllRecordsOnPages();
+
+        $this->findRecordsByTca($recordCollection);
 
         $this->recordIndex->connectTranslations();
 
@@ -91,14 +110,16 @@ class RecordTreeBuilder
     private function findRequestedRecordWithTranslations(
         string $table,
         int $id,
-        RecordTree $recordTree
-    ): RecordCollection {
+        RecordTree $recordTree,
+        RecordCollection $recordCollection
+    ): void {
         if ('pages' === $table && 0 === $id) {
             $pageTreeRootRecord = $this->recordFactory->createPageTreeRootRecord();
             $recordTree->addChild($pageTreeRootRecord);
-            return new RecordCollection([$pageTreeRootRecord]);
+            $recordCollection->addRecord($pageTreeRootRecord);
+            return;
         }
-        $demands = $this->demandsFactory->buildDemand();
+        $demands = $this->demandsFactory->createDemand();
         $demands->addSelect($table, '', 'uid', $id, $recordTree);
 
         $transOrigPointerField = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] ?? null;
@@ -106,24 +127,25 @@ class RecordTreeBuilder
             $demands->addSelect($table, '', $transOrigPointerField, $id, $recordTree);
         }
 
-        return $this->queryService->resolveDemands($demands);
+        $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
     }
 
     /**
      * @param RecordCollection<int, Record> $records
      */
-    private function findPagesRecursively(RecordCollection $records): void
+    private function findPagesRecursively(RecordCollection $records, RecordCollection $recordCollection): void
     {
         $currentRecursion = 0;
         $recursionLimit = 5;
 
-        while ($recursionLimit > $currentRecursion++ && !empty($records)) {
-            $demands = $this->demandsFactory->buildDemand();
+        while ($recursionLimit > $currentRecursion++ && !$recordCollection->isEmpty()) {
+            $demands = $this->demandsFactory->createDemand();
             $recordsArray = $records['pages'] ?? [];
             foreach ($recordsArray as $record) {
                 $demands->addSelect('pages', '', 'pid', $record->getId(), $record);
             }
-            $records = $this->queryService->resolveDemands($demands);
+            $recordCollection = new RecordCollection();
+            $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
         }
     }
 
@@ -135,7 +157,7 @@ class RecordTreeBuilder
         if (empty($pages)) {
             return $recordCollection;
         }
-        $demands = $this->demandsFactory->buildDemand();
+        $demands = $this->demandsFactory->createDemand();
 
         $tables = $this->relevantTablesService->getAllNonEmptyNonExcludedTcaTables();
 
@@ -151,8 +173,7 @@ class RecordTreeBuilder
                 $demands->addSelect($table, '', 'pid', $page->getId(), $page);
             }
         }
-        $resolvedRecords = $this->queryService->resolveDemands($demands);
-        $recordCollection->addRecordCollection($resolvedRecords);
+        $this->selectDemandResolver->resolveDemand($demands, $recordCollection);
         return $recordCollection;
     }
 
@@ -165,9 +186,10 @@ class RecordTreeBuilder
         $recursionLimit = 8;
 
         while ($recursionLimit > $currentRecursion++ && !$recordCollection->isEmpty()) {
-            $demand = $this->demandService->buildDemandForRecords($recordCollection);
+            $demand = $this->demandBuilder->buildDemandForRecords($recordCollection);
 
-            $recordCollection = $this->queryService->resolveDemands($demand);
+            $recordCollection = new RecordCollection();
+            $this->selectDemandResolver->resolveDemand($demand, $recordCollection);
         }
     }
 }

@@ -41,7 +41,7 @@ class FileRecordListener
         if (empty($this->fileRecords)) {
             return;
         }
-        $demands = $this->demandsFactory->buildDemand();
+        $demands = $this->demandsFactory->createDemand();
 
         $files = $this->fileRecords;
         $this->fileRecords = [];

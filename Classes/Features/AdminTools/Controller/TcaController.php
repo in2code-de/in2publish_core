@@ -29,9 +29,9 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\TcaHandling\Demand\DemandService;
+use In2code\In2publishCore\Component\TcaHandling\Demand\DemandBuilder;
+use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
-use In2code\In2publishCore\Component\TcaHandling\Query\QueryService;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
@@ -43,9 +43,9 @@ class TcaController extends ActionController
 
     protected TcaPreProcessingService $tcaPreProcessingService;
 
-    protected DemandService $demandService;
+    protected DemandBuilder $demandBuilder;
 
-    protected QueryService $queryService;
+    protected SelectDemandResolver $queryService;
 
     protected ConfigContainer $configContainer;
 
@@ -54,12 +54,12 @@ class TcaController extends ActionController
         $this->tcaPreProcessingService = $tcaPreProcessingService;
     }
 
-    public function injectDemandService(DemandService $demandService): void
+    public function injectDemandBuilder(DemandBuilder $demandBuilder): void
     {
-        $this->demandService = $demandService;
+        $this->demandBuilder = $demandBuilder;
     }
 
-    public function injectQueryService(QueryService $queryService): void
+    public function injectQueryService(SelectDemandResolver $queryService): void
     {
         $this->queryService = $queryService;
     }

@@ -15,13 +15,13 @@ use In2code\In2publishCore\Config\ConfigContainer;
 class DemandsFactoryTest extends TestCase
 {
     /**
-     * @covers ::buildDemand
+     * @covers ::createDemand
      */
     public function testBuildDemandReturnsDemandCollection(): void
     {
         $configContainer = $this->createMock(ConfigContainer::class);
         $demandFactory = new DemandsFactory();
         $demandFactory->injectConfigContainer($configContainer);
-        $this->assertInstanceOf(DemandsCollection::class, $demandFactory->buildDemand());
+        $this->assertInstanceOf(DemandsCollection::class, $demandFactory->createDemand());
     }
 }

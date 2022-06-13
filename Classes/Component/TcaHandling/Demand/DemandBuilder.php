@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Component\TcaHandling\Demand;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Component\TcaHandling\Service\ResolverService;
 
-class DemandService
+class DemandBuilder
 {
     protected ResolverService $resolverService;
     protected DemandsFactory $demandsFactory;
@@ -24,7 +24,7 @@ class DemandService
 
     public function buildDemandForRecords(RecordCollection $records): Demands
     {
-        $demand = $this->demandsFactory->buildDemand();
+        $demand = $this->demandsFactory->createDemand();
         foreach ($records->getRecordsFlat() as $record) {
             $classification = $record->getClassification();
             $resolvers = $this->resolverService->getResolversForTable($classification);

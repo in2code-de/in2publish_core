@@ -31,10 +31,8 @@ class FileDemandResolver
         $this->recordFactory = $recordFactory;
     }
 
-    public function resolveDemand(Demands $demands): RecordCollection
+    public function resolveDemand(Demands $demands, RecordCollection $recordCollection): void
     {
-        $recordCollection = new RecordCollection();
-
         $files = $demands->getFiles();
 
         $localFileInfo = $this->localFileInfoService->addFileInfoToFiles($files);
@@ -53,6 +51,5 @@ class FileDemandResolver
                 }
             }
         }
-        return $recordCollection;
     }
 }
