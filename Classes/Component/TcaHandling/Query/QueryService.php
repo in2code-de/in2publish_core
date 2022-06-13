@@ -118,36 +118,34 @@ class QueryService
      */
     protected function findMissingRecordsByUid(array &$allRows, string $table): void
     {
-        $missingUids = [
-            'local' => [],
-            'foreign' => [],
-        ];
+        $missingFromLocal = [];
+        $missingFromForeign = [];
 
         foreach ($allRows as $recordInfo) {
             $row = $recordInfo['row'];
             if (empty($row['local'])) {
-                $missingUids['local'][] = $row['foreign']['uid'];
+                $missingFromLocal[] = $row['foreign']['uid'];
             }
             if (empty($row['foreign'])) {
-                $missingUids['foreign'][] = $row['local']['uid'];
+                $missingFromForeign[] = $row['local']['uid'];
             }
         }
 
-        if (!empty($missingUids['local'])) {
-            $localRows = $this->localRepository->findByProperty($table, 'uid', $missingUids['local']);
+        if (!empty($missingFromLocal)) {
+            $localRows = $this->localRepository->findByProperty($table, 'uid', $missingFromLocal);
             foreach ($localRows as $uid => $row) {
                 $allRows[$uid]['row']['local'] = $row;
             }
         }
-        if (!empty($missingUids['foreign'])) {
-            $foreignRows = $this->foreignRepository->findByProperty($table, 'uid', $missingUids['foreign']);
+        if (!empty($missingFromForeign)) {
+            $foreignRows = $this->foreignRepository->findByProperty($table, 'uid', $missingFromForeign);
             foreach ($foreignRows as $uid => $row) {
                 $allRows[$uid]['row']['foreign'] = $row;
             }
         }
     }
 
-    protected function createAndMapRecords(array $allRows, string $table, RecordCollection $recordCollection): void
+    protected function createAndMapRecords(array &$allRows, string $table, RecordCollection $recordCollection): void
     {
         foreach ($allRows as $uid => $recordInfo) {
             $row = $recordInfo['row'];
@@ -185,6 +183,7 @@ class QueryService
     {
         foreach ($demands->getJoin() as $joinTable => $JoinSelect) {
             foreach ($JoinSelect as $table => $tableSelect) {
+                $allRows = [];
                 foreach ($tableSelect as $additionalWhere => $properties) {
                     foreach ($properties as $property => $valueMaps) {
                         try {
@@ -207,43 +206,104 @@ class QueryService
                             throw $exception;
                         }
                         foreach ($rows as $mmId => $row) {
-                            $mmRecord = $this->recordIndex->getRecord($table, $mmId);
-                            if (null === $mmRecord) {
-                                $mmRecord = $this->recordFactory->createMmRecord(
-                                    $joinTable,
-                                    $mmId,
-                                    $row['local']['mmtbl'] ?? [],
-                                    $row['foreign']['mmtbl'] ?? []
-                                );
-                                if (null === $mmRecord) {
-                                    continue;
-                                }
-                                if (!empty($row['local']['table']) || !empty($row['foreign']['table'])) {
-                                    $uid = $row['local']['table']['uid'] ?? $row['foreign']['table']['uid'];
-                                    $tableRecord = $this->recordIndex->getRecord($table, $uid);
-                                    if (null === $tableRecord) {
-                                        $tableRecord = $this->recordFactory->createDatabaseRecord(
-                                            $table,
-                                            $uid,
-                                            $row['local']['table'] ?? [],
-                                            $row['foreign']['table'] ?? []
-                                        );
-                                        if (null !== $tableRecord) {
-                                            $recordCollection->addRecord($tableRecord);
-                                        }
-                                    }
-                                    if (null !== $tableRecord) {
-                                        $mmRecord->addChild($tableRecord);
-                                    }
-                                }
-                            }
-                            $mapValue = $mmRecord->getProp($property);
-                            foreach ($valueMaps[$mapValue] as $parent) {
-                                $parent->addChild($mmRecord);
-                            }
+                            $allRows[$mmId] = [
+                                'row' => $row,
+                                'property' => $property,
+                                'valueMaps' => $valueMaps,
+                            ];
                         }
                     }
                 }
+                $this->findMissingTableRecords($allRows, $table);
+                $this->createAndMapMmRecords($allRows, $table, $joinTable, $recordCollection);
+            }
+        }
+    }
+
+    /**
+     * $allRows must be a reference to save RAM by preventing copy on write through PHP.
+     */
+    protected function findMissingTableRecords(array &$allRows, string $table): void
+    {
+        $missingFromLocal = [];
+        $missingFromForeign = [];
+
+        foreach ($allRows as $mmId => $entry) {
+            $row = $entry['row'];
+            if (!empty($row['foreign']['table']['uid']) && empty($row['local']['table']['uid'])) {
+                $uid = $row['foreign']['table']['uid'];
+                $missingFromLocal[$uid][] = $mmId;
+            }
+            if (!empty($row['local']['table']['uid']) && empty($row['foreign']['table']['uid'])) {
+                $uid = $row['local']['table']['uid'];
+                $missingFromForeign[$uid][] = $mmId;
+            }
+        }
+
+        if (!empty($missingFromLocal)) {
+            $localRows = $this->localRepository->findByProperty($table, 'uid', array_keys($missingFromLocal));
+            foreach ($localRows as $row) {
+                $mmIds = $missingFromLocal[$row['uid']];
+                foreach ($mmIds as $mmId) {
+                    $allRows[$mmId]['row']['local']['table'] = $row;
+                }
+            }
+        }
+        if (!empty($missingFromForeign)) {
+            $foreignRows = $this->foreignRepository->findByProperty($table, 'uid', array_keys($missingFromForeign));
+            foreach ($foreignRows as $row) {
+                $mmIds = $missingFromForeign[$row['uid']];
+                foreach ($mmIds as $mmId) {
+                    $allRows[$mmId]['row']['foreign']['table'] = $row;
+                }
+            }
+        }
+    }
+
+    protected function createAndMapMmRecords(
+        array $allRows,
+        string $table,
+        string $joinTable,
+        RecordCollection $recordCollection
+    ): void {
+        foreach ($allRows as $mmId => $recordInfo) {
+            $row = $recordInfo['row'];
+            $valueMaps = $recordInfo['valueMaps'];
+            $property = $recordInfo['property'];
+
+            $mmRecord = $this->recordIndex->getRecord($table, $mmId);
+            if (null === $mmRecord) {
+                $mmRecord = $this->recordFactory->createMmRecord(
+                    $joinTable,
+                    $mmId,
+                    $row['local']['mmtbl'] ?? [],
+                    $row['foreign']['mmtbl'] ?? []
+                );
+                if (null === $mmRecord) {
+                    continue;
+                }
+                if (!empty($row['local']['table']) || !empty($row['foreign']['table'])) {
+                    $uid = $row['local']['table']['uid'] ?? $row['foreign']['table']['uid'];
+                    $tableRecord = $this->recordIndex->getRecord($table, $uid);
+                    if (null === $tableRecord) {
+                        $tableRecord = $this->recordFactory->createDatabaseRecord(
+                            $table,
+                            $uid,
+                            $row['local']['table'] ?? [],
+                            $row['foreign']['table'] ?? []
+                        );
+                        if (null !== $tableRecord) {
+                            $recordCollection->addRecord($tableRecord);
+                        }
+                    }
+                    if (null !== $tableRecord) {
+                        $mmRecord->addChild($tableRecord);
+                    }
+                }
+            }
+            $mapValue = $mmRecord->getProp($property);
+            foreach ($valueMaps[$mapValue] as $parent) {
+                $parent->addChild($mmRecord);
             }
         }
     }
