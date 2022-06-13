@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Repository;
 
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception;
 use In2code\In2publishCore\Component\TcaHandling\Service\Database\DatabaseSchemaService;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryHelper;
@@ -29,8 +31,8 @@ class SingleDatabaseRepository
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws DBALException
+     * @throws Exception
      */
     public function findByProperty(
         string $table,
@@ -65,8 +67,8 @@ class SingleDatabaseRepository
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws DBALException
+     * @throws Exception
      */
     public function findByPropertyWithJoin(
         string $mmTable,

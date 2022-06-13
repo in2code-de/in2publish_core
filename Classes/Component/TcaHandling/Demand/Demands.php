@@ -11,7 +11,14 @@ interface Demands
 
     public function unsetSelect(string $table, string $field, $search): void;
 
-    public function addJoin(string $mmTable, string $joinTable, string $additionalWhere, string $property, $value, Node $record): void;
+    public function addJoin(
+        string $mmTable,
+        string $joinTable,
+        string $additionalWhere,
+        string $property,
+        $value,
+        Node $record
+    ): void;
 
     public function unsetJoin(string $mmTable, string $joinTable, string $field, $search): void;
 

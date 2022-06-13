@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Repository;
 
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception;
+
 use function array_keys;
 use function array_merge;
 use function array_unique;
@@ -20,8 +23,8 @@ class DualDatabaseRepository
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws DBALException
+     * @throws Exception
      */
     public function findByProperty(
         string $table,
@@ -36,8 +39,8 @@ class DualDatabaseRepository
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws DBALException
+     * @throws Exception
      */
     public function findByPropertyWithJoin(
         string $mmTable,
@@ -47,7 +50,13 @@ class DualDatabaseRepository
         string $andWhere = null
     ): array {
         $localRows = $this->localRepository->findByPropertyWithJoin($mmTable, $table, $property, $values, $andWhere);
-        $foreignRows = $this->foreignRepository->findByPropertyWithJoin($mmTable, $table, $property, $values, $andWhere);
+        $foreignRows = $this->foreignRepository->findByPropertyWithJoin(
+            $mmTable,
+            $table,
+            $property,
+            $values,
+            $andWhere
+        );
 
         return $this->mergeRowsByIdentifier($localRows, $foreignRows);
     }
