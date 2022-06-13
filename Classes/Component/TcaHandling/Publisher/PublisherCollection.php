@@ -21,7 +21,7 @@ class PublisherCollection implements ReversiblePublisher, TransactionalPublisher
      */
     protected $publishers = [];
 
-    public function addPublisher(Publisher $publisher)
+    public function addPublisher(Publisher $publisher): void
     {
         $reversible = (int)($publisher instanceof ReversiblePublisher);
         $transactional = (int)($publisher instanceof TransactionalPublisher);
