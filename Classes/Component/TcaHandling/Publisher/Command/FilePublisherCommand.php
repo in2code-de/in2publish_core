@@ -15,7 +15,6 @@ use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
-use function array_flip;
 use function array_keys;
 
 class FilePublisherCommand extends Command

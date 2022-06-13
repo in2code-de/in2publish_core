@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\FileHandling;
 
-use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Event\RecordWasCreated;

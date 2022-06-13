@@ -9,7 +9,6 @@ use In2code\In2publishCore\Domain\Model\Record;
 
 use function bindec;
 use function decbin;
-use function sort;
 use function str_pad;
 
 use const STR_PAD_LEFT;

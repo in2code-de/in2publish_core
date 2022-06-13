@@ -8,8 +8,6 @@ use TYPO3\CMS\Core\Cache\Frontend\FrontendInterface;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\SingletonInterface;
 
-use function array_keys;
-
 class DatabaseSchemaService implements SingletonInterface
 {
     protected const CACHE_ID = 'component_database_info';

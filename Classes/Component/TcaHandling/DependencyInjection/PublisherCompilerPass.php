@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\DependencyInjection;
 
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
-
-use In2code\In2publishCore\Component\TcaHandling\Publisher\Publisher;
 use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
