@@ -157,17 +157,17 @@ class DerServiceUmbenennen
     }
 
     /**
-     * @param RecordCollection<string, array<int|string, Record>> $records
+     * @param RecordCollection<string, array<int|string, Record>> $recordCollection
      */
-    public function findRecordsByTca(RecordCollection $records): void
+    public function findRecordsByTca(RecordCollection $recordCollection): void
     {
         $currentRecursion = 0;
         $recursionLimit = 8;
 
-        while ($recursionLimit > $currentRecursion++ && !empty($records)) {
-            $demand = $this->demandService->buildDemandForRecords($records);
+        while ($recursionLimit > $currentRecursion++ && !$recordCollection->isEmpty()) {
+            $demand = $this->demandService->buildDemandForRecords($recordCollection);
 
-            $records = $this->queryService->resolveDemands($demand);
+            $recordCollection = $this->queryService->resolveDemands($demand);
         }
     }
 }

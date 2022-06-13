@@ -104,4 +104,9 @@ class RecordCollection implements IteratorAggregate, ArrayAccess
     {
         return array_keys($this->records);
     }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->records);
+    }
 }
