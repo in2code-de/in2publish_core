@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Component\TcaHandling\DerServiceUmbenennen;
+use In2code\In2publishCore\Component\TcaHandling\RecordTreeBuilder;
 use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
@@ -66,7 +66,7 @@ class RecordController extends AbstractController
 
     protected FailureCollector $failureCollector;
     protected PermissionService $permissionService;
-    protected DerServiceUmbenennen $derService;
+    protected RecordTreeBuilder $recordTreeBuilder;
     protected PublisherService $publisherService;
 
     public function __construct(
@@ -96,9 +96,9 @@ class RecordController extends AbstractController
         );
     }
 
-    public function injectDerService(DerServiceUmbenennen $derService): void
+    public function injectRecordTreeBuilder(RecordTreeBuilder $recordTreeBuilder): void
     {
-        $this->derService = $derService;
+        $this->recordTreeBuilder = $recordTreeBuilder;
     }
 
     /**
@@ -108,7 +108,7 @@ class RecordController extends AbstractController
      */
     public function indexAction(): ResponseInterface
     {
-        $recordTree = $this->derService->buildRecordTree('pages', $this->pid);
+        $recordTree = $this->recordTreeBuilder->buildRecordTree('pages', $this->pid);
 
         $this->view->assign('recordTree', $recordTree);
         return $this->htmlResponse();
@@ -152,7 +152,7 @@ class RecordController extends AbstractController
      */
     public function publishRecordAction(int $identifier, string $returnUrl = null): void
     {
-        $recordTree = $this->derService->buildRecordTree('pages', $identifier);
+        $recordTree = $this->recordTreeBuilder->buildRecordTree('pages', $identifier);
         $this->publisherService->publishRecordTree($recordTree);
         $this->redirect('index');
     }

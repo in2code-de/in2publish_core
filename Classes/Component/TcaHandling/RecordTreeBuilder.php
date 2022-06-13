@@ -18,7 +18,7 @@ use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 use function array_flip;
 use function array_values;
 
-class DerServiceUmbenennen
+class RecordTreeBuilder
 {
     protected RelevantTablesService $relevantTablesService;
     protected QueryService $queryService;
