@@ -19,7 +19,7 @@ class MultiSectionTextResolver extends TextResolver
 {
     public function resolve(Demands $demands, Record $record): void
     {
-        $regEx = '/' . str_replace('\[ANY\]', '[\w\d]+', preg_quote($this->column)) . '/';
+        $regEx = '/' . str_replace('\[ANY\]', '[\w\d]+', preg_quote($this->column, '/')) . '/';
 
         // Find all local and foreign properties which match the column field
         $localValues = [];
