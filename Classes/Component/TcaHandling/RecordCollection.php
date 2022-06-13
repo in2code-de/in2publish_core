@@ -14,6 +14,9 @@ use function is_array;
 
 class RecordCollection implements IteratorAggregate, ArrayAccess
 {
+    /**
+     * @var array<string, array<array-key, Record>>
+     */
     private array $records = [];
 
     /**
