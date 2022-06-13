@@ -12,6 +12,10 @@ use In2code\In2publishCore\Tests\UnitTestCase;
  */
 class FlexFormFlatteningServiceTest extends UnitTestCase
 {
+    /**
+     * @covers ::flattenFlexFormDefinition
+     * @covers ::flattenFieldFlexForm
+     */
     public function testFlattenFieldFlexFormDefinitionFlattensDefaultFlexForm(): void
     {
         $flexFormDefinition = [
@@ -40,7 +44,11 @@ class FlexFormFlatteningServiceTest extends UnitTestCase
 
         $flexFormFieldAfter = [
             'settings.pid' => [
-                'type' => 'group'
+                'exclude' => '1',
+                'label' => 'test',
+                'config' => [
+                    'type' => 'group'
+                ]
             ]
         ];
 

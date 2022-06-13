@@ -13,19 +13,21 @@ class FlexFormFlatteningService
     /**
      * Simplify flexform definition
      *
-     *      'sDEF' => array(
-     *          'ROOT' => array(
-     *              'TCEforms' => array(
-     *                  'sheetTitle' => 'Common'
-     *              ),
-     *              'type' => 'array',
-     *              'el' => array(
-     *                  'settings.pid' => array(
-     *                      'TCEforms' => array(
-     *                          'exclude' => '1',
-     *                          'label' => 'test',
-     *                          'config' => array(
-     *                              'type' => 'group'
+     *      'sheets' => array(
+     *          'sDEF' => array(
+     *              'ROOT' => array(
+     *                  'TCEforms' => array(
+     *                      'sheetTitle' => 'Common'
+     *                  ),
+     *                  'type' => 'array',
+     *                  'el' => array(
+     *                      'settings.pid' => array(
+     *                          'TCEforms' => array(
+     *                              'exclude' => '1',
+     *                              'label' => 'test',
+     *                              'config' => array(
+     *                                  'type' => 'group'
+     *                              )
      *                          )
      *                      )
      *                  )
@@ -36,7 +38,11 @@ class FlexFormFlatteningService
      *      =>
      *
      *      'settings.pid' => array(
-     *          'type' => 'group'
+     *          'exclude' => '1',
+     *          'label' => 'test',
+     *          'config' => array(
+     *              'type' => 'group'
+     *          )
      *      )
      *
      * @param array $flexFormDefinition
@@ -78,7 +84,11 @@ class FlexFormFlatteningService
      *      =>
      *
      *      'key' => array(
-     *          'type' => 'group'
+     *          'exclude' => '1',
+     *          'label' => 'test',
+     *          'config' => array(
+     *              'type' => 'group'
+     *          )
      *      )
      *
      * @param array $flattenedDefinition
