@@ -8,7 +8,7 @@ use TYPO3\CMS\Core\Database\Connection;
 
 use function preg_replace_callback;
 
-class DatabaseIdentifierQuotingService
+class TcaEscapingMarkerService
 {
     protected Connection $localDatabase;
 
@@ -17,7 +17,7 @@ class DatabaseIdentifierQuotingService
         $this->localDatabase = $localDatabase;
     }
 
-    public function dododo(string $sql): string
+    public function escapeMarkedIdentifier(string $sql): string
     {
         if (str_contains($sql, '{#')) {
             $sql = preg_replace_callback(

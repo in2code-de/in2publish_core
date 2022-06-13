@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\PreProcessing\PreProcessor;
 
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor\SelectProcessor;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
+use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\TcaEscapingMarkerService;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\SelectMmResolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\SelectResolver;
@@ -25,13 +25,13 @@ class SelectProcessorTest extends UnitTestCase
     public function testSelectProcessorReturnsCompatibleResultForCompatibleColumn(): void
     {
         $resolver = $this->createMock(SelectResolver::class);
-        $databaseIdentifierQuotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
+        $tcaEscapingMarkerService = $this->createMock(TcaEscapingMarkerService::class);
         $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $selectProcessor = new SelectProcessor();
         $selectProcessor->injectContainer($container);
-        $selectProcessor->injectDatabaseIdentifierQuotingService($databaseIdentifierQuotingService);
+        $selectProcessor->injectTcaEscapingMarkerService($tcaEscapingMarkerService);
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', [
             'type' => 'select',
             'foreign_table' => 'tableNameBeng',
@@ -94,13 +94,13 @@ class SelectProcessorTest extends UnitTestCase
         ];
 
         $resolver = $this->createMock(SelectMmResolver::class);
-        $databaseIdentifierQuotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
+        $tcaEscapingMarkerService = $this->createMock(TcaEscapingMarkerService::class);
         $container = $this->createMock(Container::class);
         $container->method('get')->willReturn($resolver);
 
         $selectProcessor = new SelectProcessor();
         $selectProcessor->injectContainer($container);
-        $selectProcessor->injectDatabaseIdentifierQuotingService($databaseIdentifierQuotingService);
+        $selectProcessor->injectTcaEscapingMarkerService($tcaEscapingMarkerService);
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $bigTca);
         $this->assertSame($expectedTca, $processingResult->getValue()['tca']);
     }
@@ -119,8 +119,8 @@ class SelectProcessorTest extends UnitTestCase
         $replaceMarkerService = $this->createMock(ReplaceMarkersService::class);
         $replaceMarkerService->method('replaceMarkers')->willReturnArgument(1);
 
-        $databaseIdentifierQuotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
-        $databaseIdentifierQuotingService->method('dododo')->willReturnArgument(0);
+        $tcaEscapingMarkerService = $this->createMock(TcaEscapingMarkerService::class);
+        $tcaEscapingMarkerService->method('escapeMarkedIdentifier')->willReturnArgument(0);
 
         $resolver = $this->createMock(SelectResolver::class);
         $container = $this->createMock(Container::class);
@@ -128,7 +128,7 @@ class SelectProcessorTest extends UnitTestCase
 
         $selectProcessor = new SelectProcessor();
         $selectProcessor->injectContainer($container);
-        $selectProcessor->injectDatabaseIdentifierQuotingService($databaseIdentifierQuotingService);
+        $selectProcessor->injectTcaEscapingMarkerService($tcaEscapingMarkerService);
 
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
 
@@ -156,8 +156,8 @@ class SelectProcessorTest extends UnitTestCase
         $replaceMarkerService = $this->createMock(ReplaceMarkersService::class);
         $replaceMarkerService->method('replaceMarkers')->willReturnArgument(1);
 
-        $databaseIdentifierQuotingService = $this->createMock(DatabaseIdentifierQuotingService::class);
-        $databaseIdentifierQuotingService->method('dododo')->willReturnArgument(0);
+        $tcaEscapingMarkerService = $this->createMock(TcaEscapingMarkerService::class);
+        $tcaEscapingMarkerService->method('escapeMarkedIdentifier')->willReturnArgument(0);
 
         $resolver = $this->createMock(SelectMmResolver::class);
         $container = $this->createMock(Container::class);
@@ -165,7 +165,7 @@ class SelectProcessorTest extends UnitTestCase
 
         $selectProcessor = new SelectProcessor();
         $selectProcessor->injectContainer($container);
-        $selectProcessor->injectDatabaseIdentifierQuotingService($databaseIdentifierQuotingService);
+        $selectProcessor->injectTcaEscapingMarkerService($tcaEscapingMarkerService);
 
         $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
 

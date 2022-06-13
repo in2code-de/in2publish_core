@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor;
 
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
+use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\TcaEscapingMarkerService;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\InlineMultiValueResolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\InlineSelectResolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
@@ -17,7 +17,7 @@ use function trim;
 
 class InlineProcessor extends AbstractProcessor
 {
-    protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
+    protected TcaEscapingMarkerService $tcaEscapingMarkerService;
     protected string $type = 'inline';
     protected array $forbidden = [
         'symmetric_field' => 'symmetric_field is set on the foreign side of relations, which must not be resolved',
@@ -34,10 +34,9 @@ class InlineProcessor extends AbstractProcessor
         'MM_opposite_field',
     ];
 
-    public function injectDatabaseIdentifierQuotingService(
-        DatabaseIdentifierQuotingService $databaseIdentifierQuotingService
-    ): void {
-        $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
+    public function injectTcaEscapingMarkerService(TcaEscapingMarkerService $tcaEscapingMarkerService): void
+    {
+        $this->tcaEscapingMarkerService = $tcaEscapingMarkerService;
     }
 
     protected function buildResolver(string $table, string $column, array $processedTca): Resolver
@@ -63,7 +62,7 @@ class InlineProcessor extends AbstractProcessor
             if (str_starts_with($additionalWhere, 'AND ')) {
                 $additionalWhere = trim(substr($additionalWhere, 4));
             }
-            $additionalWhere = $this->databaseIdentifierQuotingService->dododo($additionalWhere);
+            $additionalWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($additionalWhere);
             if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
                 $additionalWhere = $matches['where'];
             }
@@ -83,7 +82,7 @@ class InlineProcessor extends AbstractProcessor
             }
         }
         $additionalWhere = implode(' AND ', $foreignMatchFields);
-        $additionalWhere = $this->databaseIdentifierQuotingService->dododo($additionalWhere);
+        $additionalWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($additionalWhere);
 
         if (null === $foreignField) {
             /** @var InlineMultiValueResolver $resolver */

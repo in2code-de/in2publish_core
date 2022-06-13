@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor;
 
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
+use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\TcaEscapingMarkerService;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\SelectMmResolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\SelectResolver;
@@ -18,7 +18,7 @@ use function trim;
 
 class SelectProcessor extends AbstractProcessor
 {
-    protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
+    protected TcaEscapingMarkerService $tcaEscapingMarkerService;
     protected string $type = 'select';
     protected array $forbidden = [
         'itemsProcFunc' => 'itemsProcFunc is not supported',
@@ -40,10 +40,9 @@ class SelectProcessor extends AbstractProcessor
         'MM_opposite_field',
     ];
 
-    public function injectDatabaseIdentifierQuotingService(
-        DatabaseIdentifierQuotingService $databaseIdentifierQuotingService
-    ): void {
-        $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
+    public function injectTcaEscapingMarkerService(TcaEscapingMarkerService $tcaEscapingMarkerService): void
+    {
+        $this->tcaEscapingMarkerService = $tcaEscapingMarkerService;
     }
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
@@ -80,7 +79,7 @@ class SelectProcessor extends AbstractProcessor
                 $foreignTableWhere = trim(substr($foreignTableWhere, 4));
             }
 
-            $foreignTableWhere = $this->databaseIdentifierQuotingService->dododo($foreignTableWhere);
+            $foreignTableWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($foreignTableWhere);
 
             /** @var SelectMmResolver $resolver */
             $resolver = $this->container->get(SelectMmResolver::class);
@@ -88,7 +87,7 @@ class SelectProcessor extends AbstractProcessor
             return $resolver;
         }
 
-        $foreignTableWhere = $this->databaseIdentifierQuotingService->dododo($foreignTableWhere);
+        $foreignTableWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($foreignTableWhere);
 
         /** @var SelectResolver $resolver */
         $resolver = $this->container->get(SelectResolver::class);
@@ -107,8 +106,8 @@ class SelectProcessor extends AbstractProcessor
     protected function isSysCategoryField(array $config): bool
     {
         return isset($config['foreign_table'], $config['MM_opposite_field'], $config['MM'])
-            && 'sys_category' === $config['foreign_table']
-            && 'items' === $config['MM_opposite_field']
-            && 'sys_category_record_mm' === $config['MM'];
+               && 'sys_category' === $config['foreign_table']
+               && 'items' === $config['MM_opposite_field']
+               && 'sys_category_record_mm' === $config['MM'];
     }
 }

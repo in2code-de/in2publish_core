@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\PreProcessing\PreProcessor;
 
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\DatabaseIdentifierQuotingService;
+use In2code\In2publishCore\Component\TcaHandling\PreProcessing\Service\TcaEscapingMarkerService;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\GroupMmMultiTableResolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\GroupMultiTableResolver;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\GroupSingleTableResolver;
@@ -21,7 +21,7 @@ use function trim;
 
 class GroupProcessor extends AbstractProcessor
 {
-    protected DatabaseIdentifierQuotingService $databaseIdentifierQuotingService;
+    protected TcaEscapingMarkerService $tcaEscapingMarkerService;
     protected string $type = 'group';
     protected array $required = [
         'allowed' => 'The field "allowed" is required',
@@ -38,10 +38,9 @@ class GroupProcessor extends AbstractProcessor
         'uploadfolder',
     ];
 
-    public function injectDatabaseIdentifierQuotingService(
-        DatabaseIdentifierQuotingService $databaseIdentifierQuotingService
-    ): void {
-        $this->databaseIdentifierQuotingService = $databaseIdentifierQuotingService;
+    public function injectTcaEscapingMarkerService(TcaEscapingMarkerService $tcaEscapingMarkerService): void
+    {
+        $this->tcaEscapingMarkerService = $tcaEscapingMarkerService;
     }
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
@@ -66,7 +65,7 @@ class GroupProcessor extends AbstractProcessor
         foreach ($allowedTables as $allowedTable) {
             if (!array_key_exists($allowedTable, $GLOBALS['TCA'])) {
                 $reasons[] = 'Can not reference the table "' . $allowedTable
-                    . '" from "allowed. It is not present in the TCA';
+                             . '" from "allowed. It is not present in the TCA';
             }
         }
         return $reasons;
@@ -95,7 +94,7 @@ class GroupProcessor extends AbstractProcessor
             if (str_starts_with($additionalWhere, 'AND ')) {
                 $additionalWhere = trim(substr($additionalWhere, 4));
             }
-            $additionalWhere = $this->databaseIdentifierQuotingService->dododo($additionalWhere);
+            $additionalWhere = $this->tcaEscapingMarkerService->escapeMarkedIdentifier($additionalWhere);
             if (1 === preg_match(self::ADDITIONAL_ORDER_BY_PATTERN, $additionalWhere, $matches)) {
                 $additionalWhere = $matches['where'];
             }
