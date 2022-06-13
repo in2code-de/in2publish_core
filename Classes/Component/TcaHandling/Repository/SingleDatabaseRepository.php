@@ -13,8 +13,6 @@ use function hash;
 use function json_encode;
 use function substr;
 
-use const JSON_THROW_ON_ERROR;
-
 class SingleDatabaseRepository
 {
     private Connection $connection;
@@ -38,15 +36,15 @@ class SingleDatabaseRepository
         string $table,
         string $property,
         array $values,
-        string $additionalWhere = null
+        string $andWhere = null
     ): array {
         $query = $this->connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();
         $query->select('*')
               ->from($table)
               ->where($query->expr()->in($property, $values));
-        if (!empty($additionalWhere)) {
-            $query->andWhere($additionalWhere);
+        if (!empty($andWhere)) {
+            $query->andWhere($andWhere);
         }
 
         if (!empty($GLOBALS['TCA'][$table]['ctrl']['sortby'])) {
@@ -75,7 +73,7 @@ class SingleDatabaseRepository
         string $table,
         string $property,
         array $values,
-        string $additionalWhere = null
+        string $andWhere = null
     ): array {
         $mmColumns = $this->columnNameService->getColumnNames($mmTable);
         $tableColumns = $this->columnNameService->getColumnNames($table);
@@ -99,8 +97,8 @@ class SingleDatabaseRepository
                   $mmTable . '.' . ($property === 'uid_foreign' ? 'uid_local' : 'uid_foreign') . ' = ' . $table . '.uid'
               )
               ->where($query->expr()->in($property, $values));
-        if (!empty($additionalWhere)) {
-            $query->andWhere($additionalWhere);
+        if (!empty($andWhere)) {
+            $query->andWhere($andWhere);
         }
 
         if (!empty($GLOBALS['TCA'][$table]['ctrl']['sortby'])) {
@@ -162,68 +160,5 @@ class SingleDatabaseRepository
          *  ]
          */
         return $splittedRows;
-    }
-
-    public function findMm(string $table, string $property, array $values, string $where): array
-    {
-        $query = $this->connection->createQueryBuilder();
-        $query->getRestrictions()->removeAll();
-        $query->select('*')
-              ->from($table)
-              ->where($where)
-              ->andWhere($query->expr()->in($property, $values));
-        $result = $query->execute();
-
-        $rows = [];
-        while ($row = $result->fetchAssociative()) {
-            $rows[$this->buildRecordIndexIdentifier($row)] = $row;
-        }
-        return $rows;
-    }
-
-    protected function buildRecordIndexIdentifier(array $row): string
-    {
-        if (!isset($row['uid'])) {
-            $parts = [
-                'uid_local' => $row['uid_local'],
-                'uid_foreign' => $row['uid_foreign'],
-            ];
-            if (isset($row['sorting'])) {
-                $parts['sorting'] = $row['sorting'];
-            }
-            if (isset($row['tablenames'])) {
-                $parts['tablenames'] = $row['tablenames'];
-            }
-            if (isset($row['fieldname'])) {
-                $parts['fieldname'] = $row['fieldname'];
-            }
-            return json_encode($parts, JSON_THROW_ON_ERROR);
-        }
-        return (string)$row['uid'];
-    }
-
-    public function beginTransaction(): void
-    {
-        $this->connection->beginTransaction();
-    }
-
-    public function insert(string $table, array $localProps): void
-    {
-        $this->connection->insert($table, $localProps);
-    }
-
-    public function delete(string $table, array $identifiers): void
-    {
-        $this->connection->delete($table, $identifiers);
-    }
-
-    public function update(string $table, array $identifiers, array $newValues): void
-    {
-        $this->connection->update($table, $newValues, $identifiers);
-    }
-
-    public function commit(): void
-    {
-        $this->connection->commit();
     }
 }

@@ -11,7 +11,6 @@ use function array_unique;
 class DualDatabaseRepository
 {
     private SingleDatabaseRepository $localRepository;
-
     private SingleDatabaseRepository $foreignRepository;
 
     public function __construct(SingleDatabaseRepository $localRepository, SingleDatabaseRepository $foreignRepository)
@@ -28,10 +27,10 @@ class DualDatabaseRepository
         string $table,
         string $property,
         array $values,
-        string $additionalWhere = null
+        string $andWhere = null
     ): array {
-        $localRows = $this->localRepository->findByProperty($table, $property, $values, $additionalWhere);
-        $foreignRows = $this->foreignRepository->findByProperty($table, $property, $values, $additionalWhere);
+        $localRows = $this->localRepository->findByProperty($table, $property, $values, $andWhere);
+        $foreignRows = $this->foreignRepository->findByProperty($table, $property, $values, $andWhere);
 
         return $this->mergeRowsByIdentifier($localRows, $foreignRows);
     }
@@ -45,10 +44,10 @@ class DualDatabaseRepository
         string $table,
         string $property,
         array $values,
-        string $additionalWhere = null
+        string $andWhere = null
     ): array {
-        $localRows = $this->localRepository->findByPropertyWithJoin($mmTable, $table, $property, $values, $additionalWhere);
-        $foreignRows = $this->foreignRepository->findByPropertyWithJoin($mmTable, $table, $property, $values, $additionalWhere);
+        $localRows = $this->localRepository->findByPropertyWithJoin($mmTable, $table, $property, $values, $andWhere);
+        $foreignRows = $this->foreignRepository->findByPropertyWithJoin($mmTable, $table, $property, $values, $andWhere);
 
         return $this->mergeRowsByIdentifier($localRows, $foreignRows);
     }
