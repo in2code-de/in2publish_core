@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Command\Foreign\Status;
 
+use Doctrine\DBAL\Result;
 use In2code\In2publishCore\Command\Foreign\Status\DbConfigTestCommand;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -17,7 +18,7 @@ class DbConfigTestCommandTest extends UnitTestCase
 {
     public function testCommandCanBeExecuted(): void
     {
-        $query = $this->createMock(\Doctrine\DBAL\ForwardCompatibility\Result::class);
+        $query = $this->createMock(Result::class);
         $query->method('fetchAll')->willReturn([
             [
                 'configuration' => 'fii',
