@@ -18,7 +18,7 @@ class DbConfigTestCommandTest extends UnitTestCase
     public function testCommandCanBeExecuted(): void
     {
         $query = $this->createMock(\Doctrine\DBAL\ForwardCompatibility\Result::class);
-        $query->method('fetchAllAssociative')->willReturn([
+        $query->method('fetchAll')->willReturn([
             [
                 'configuration' => 'fii',
             ],
