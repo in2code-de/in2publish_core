@@ -65,6 +65,6 @@ class BackupCommand extends Command implements LoggerAwareInterface
         $tableName = $input->getArgument(self::ARG_TABLE_NAME);
         $this->logger->notice('Called Backup Table Command for table "' . $tableName . '"');
         DatabaseUtility::backupTable($this->localDatabase, $tableName);
-        return Command::SUCCESS;
+        return 0;
     }
 }

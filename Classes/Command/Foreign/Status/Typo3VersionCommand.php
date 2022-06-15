@@ -50,6 +50,6 @@ class Typo3VersionCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('TYPO3: ' . $this->typo3Version->getVersion());
-        return Command::SUCCESS;
+        return 0;
     }
 }

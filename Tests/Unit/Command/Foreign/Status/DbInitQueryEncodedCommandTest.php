@@ -29,18 +29,26 @@ namespace In2code\In2publishCore\Command\Foreign\Status;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Utility\ExtensionUtility;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use In2code\In2publishCore\Tests\UnitTestCase;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
-class VersionCommand extends Command
+use const PHP_EOL;
+
+class DbInitQueryEncodedCommandTest extends UnitTestCase
 {
-    public const IDENTIFIER = 'in2publish_core:status:version';
-
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function testCommandCanBeExecuted(): void
     {
-        $output->writeln('Version: ' . ExtensionUtility::getExtensionVersion('in2publish_core'));
-        return 0;
+        $input = new ArrayInput([]);
+        $output = new BufferedOutput();
+
+        $command = new DbInitQueryEncodedCommand();
+
+        $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['initCommands'] = 'foo foo bar bar';
+
+        $code = $command->run($input, $output);
+
+        $this->assertSame(0, $code);
+        $this->assertSame('DBinit: ImZvbyBmb28gYmFyIGJhciI=' . PHP_EOL, $output->fetch());
     }
 }

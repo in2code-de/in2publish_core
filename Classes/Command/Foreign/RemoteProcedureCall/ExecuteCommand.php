@@ -112,6 +112,6 @@ class ExecuteCommand extends Command implements LoggerAwareInterface
             return static::EXIT_EXECUTION_FAILED;
         }
 
-        return Command::SUCCESS;
+        return 0;
     }
 }
