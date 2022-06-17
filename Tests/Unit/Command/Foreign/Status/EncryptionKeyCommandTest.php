@@ -13,6 +13,9 @@ use const PHP_EOL;
 
 class EncryptionKeyCommandTest extends UnitTestCase
 {
+    /**
+     * @ticket https://projekte.in2code.de/issues/51213
+     */
     public function testCommandCanBeExecuted(): void
     {
         $input = new ArrayInput([]);

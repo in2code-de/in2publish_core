@@ -12,13 +12,13 @@ use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-use function base64_encode;
-use function serialize;
-
 use const PHP_EOL;
 
 class ConfigFormatTestCommandTest extends UnitTestCase
 {
+    /**
+     * @ticket https://projekte.in2code.de/issues/51213
+     */
     public function testCommandCanBeExecuted(): void
     {
         $validationContainer = $this->createMock(ValidationContainer::class);

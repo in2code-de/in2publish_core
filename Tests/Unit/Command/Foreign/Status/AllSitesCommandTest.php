@@ -18,6 +18,9 @@ use const PHP_EOL;
 
 class AllSitesCommandTest extends UnitTestCase
 {
+    /**
+     * @ticket https://projekte.in2code.de/issues/51213
+     */
     public function testCommandCanBeExecuted(): void
     {
         $siteFinder = $this->createMock(SiteFinder::class);

@@ -15,6 +15,9 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class ExecuteCommandTest extends UnitTestCase
 {
+    /**
+     * @ticket https://projekte.in2code.de/issues/51213
+     */
     public function testCommandCanBeExecuted(): void
     {
         $contextService = $this->createMock(ContextService::class);

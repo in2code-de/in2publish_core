@@ -37,6 +37,9 @@ use const PHP_EOL;
 
 class DbInitQueryEncodedCommandTest extends UnitTestCase
 {
+    /**
+     * @ticket https://projekte.in2code.de/issues/51213
+     */
     public function testCommandCanBeExecuted(): void
     {
         $input = new ArrayInput([]);

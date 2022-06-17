@@ -15,15 +15,20 @@ use TYPO3\CMS\Core\Console\CommandRegistry;
 
 class AllCommandTest extends UnitTestCase
 {
+    /**
+     * @ticket https://projekte.in2code.de/issues/51213
+     */
     public function testCommandCanBeExecuted(): void
     {
         $commandRegistry = $this->createMock(CommandRegistry::class);
-        $commandRegistry->method('getCommandByIdentifier')->willReturn(new class() extends Command {
-            public function execute(InputInterface $input, OutputInterface $output)
-            {
-                return 0;
+        $commandRegistry->method('getCommandByIdentifier')->willReturn(
+            new class() extends Command {
+                public function execute(InputInterface $input, OutputInterface $output)
+                {
+                    return 0;
+                }
             }
-        });
+        );
 
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
