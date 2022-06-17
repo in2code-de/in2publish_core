@@ -81,7 +81,7 @@ class RunningRequestService implements SingletonInterface
 
     protected function writeToRunningRequestsTable(RecordInterface $record): void
     {
-        $recordId = $record->getIdentifier();
+        $recordId = (string)$record->getIdentifier();
         $tableName = $record->getTableName();
 
         $this->runningRequestRepository->add($recordId, $tableName, $this->requestToken);

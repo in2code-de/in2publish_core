@@ -33,7 +33,7 @@ CREATE TABLE tx_in2publishcore_running_request
 (
     uid              int(11) unsigned   NOT NULL auto_increment,
 
-    record_id        int(11) unsigned   NOT NULL,
+    record_id        varchar(255)       DEFAULT '' NOT NULL,
     table_name       varchar(255)       DEFAULT '' NOT NULL,
     request_token    char(32)           DEFAULT '' NOT NULL,
     timestamp_begin  int(11)            unsigned DEFAULT '0' NOT NULL,
