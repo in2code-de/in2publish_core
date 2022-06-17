@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Command\Foreign\Status;
 
-use Doctrine\DBAL\Result;
+use Doctrine\DBAL\Driver\Statement;
+use Doctrine\DBAL\ForwardCompatibility\Result as ForwardResult;
 use In2code\In2publishCore\Command\Foreign\Status\DbConfigTestCommand;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -12,13 +13,19 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 
+use function class_exists;
+
 use const PHP_EOL;
 
 class DbConfigTestCommandTest extends UnitTestCase
 {
     public function testCommandCanBeExecuted(): void
     {
-        $query = $this->createMock(Result::class);
+        if (class_exists(ForwardResult::class)) {
+            $query = $this->createMock(ForwardResult::class);
+        } else {
+            $query = $this->createMock(Statement::class);
+        }
         $query->method('fetchAll')->willReturn([
             [
                 'configuration' => 'fii',
