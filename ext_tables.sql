@@ -41,15 +41,23 @@ CREATE TABLE tx_in2publishcore_running_request
     PRIMARY KEY (uid)
 ) ENGINE = InnoDB;
 
-CREATE TABLE tx_in2code_in2publish_envelope
+CREATE TABLE tx_in2code_rpc_request
 (
-    uid      int(11) unsigned        NOT NULL auto_increment,
+    uid     int(11) unsigned        NOT NULL auto_increment,
 
-    command  varchar(255) DEFAULT '' NOT NULL,
-    request  text,
-    response longtext,
+    command varchar(255) DEFAULT '' NOT NULL,
 
     PRIMARY KEY (uid)
+) ENGINE = InnoDB;
+
+CREATE TABLE tx_in2code_rpc_data
+(
+    request   int(11) unsigned NOT NULL,
+    data_type varchar(10)      NOT NULL,
+    payload   text,
+    sorting   int(11) unsigned NOT NULL,
+
+    KEY request_and_type (request, data_type)
 ) ENGINE = InnoDB;
 
 CREATE TABLE tx_in2publishcore_pages_slug_data

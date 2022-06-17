@@ -32,8 +32,6 @@ namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
 use LogicException;
 
 use function array_filter;
-use function serialize;
-use function unserialize;
 
 class Envelope
 {
@@ -94,7 +92,7 @@ class Envelope
      */
     public function getRequest()
     {
-        return unserialize($this->request);
+        return $this->request;
     }
 
     /**
@@ -105,7 +103,7 @@ class Envelope
         if ('' !== $this->request) {
             throw new LogicException('Can not overrule an envelope\'s request', 1474386975);
         }
-        $this->request = serialize($request);
+        $this->request = $request;
     }
 
     /**
@@ -113,7 +111,7 @@ class Envelope
      */
     public function getResponse()
     {
-        return unserialize($this->response);
+        return $this->response;
     }
 
     /**
@@ -124,7 +122,7 @@ class Envelope
         if ('' !== $this->response) {
             throw new LogicException('Can not overrule an envelope\'s response', 1474386986);
         }
-        $this->response = serialize($response);
+        $this->response = $response;
     }
 
     public function toArray(): array
