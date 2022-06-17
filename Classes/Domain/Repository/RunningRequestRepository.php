@@ -49,7 +49,7 @@ class RunningRequestRepository
         $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
     }
 
-    public function add($recordId, $tableName, $token): void
+    public function add(string $recordId, string $tableName, string $token): void
     {
         $uniqueKey = $tableName . '/' . $recordId;
         $this->inserts[$uniqueKey] = [
