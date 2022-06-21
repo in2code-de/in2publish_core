@@ -161,7 +161,7 @@ class Letterbox implements LoggerAwareInterface, SingletonInterface
               ->orderBy('data.sorting');
         try {
             $result = $query->execute();
-            $rows = $result->fetchAssociative();
+            $rows = $result->fetchAllAssociative();
         } catch (Throwable $exception) {
             $this->logger->error(
                 'Failed to receive envelope [' . $uid . '] "' . $exception . '"',
