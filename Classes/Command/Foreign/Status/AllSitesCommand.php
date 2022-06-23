@@ -40,12 +40,10 @@ use function serialize;
 class AllSitesCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:allsites';
-
     protected SiteFinder $siteFinder;
 
-    public function __construct(SiteFinder $siteFinder, string $name = null)
+    public function injectSiteFinder(SiteFinder $siteFinder): void
     {
-        parent::__construct($name);
         $this->siteFinder = $siteFinder;
     }
 

@@ -40,7 +40,8 @@ class DbConfigTestCommandTest extends UnitTestCase
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new DbConfigTestCommand($connection);
+        $command = new DbConfigTestCommand();
+        $command->injectConnection($connection);
 
         $code = $command->run($input, $output);
 

@@ -30,7 +30,8 @@ class SiteConfigurationCommandTest extends UnitTestCase
         $input = new ArrayInput(['pageId' => '3']);
         $output = new BufferedOutput();
 
-        $command = new SiteConfigurationCommand($siteFinder);
+        $command = new SiteConfigurationCommand();
+        $command->injectSiteFinder($siteFinder);
 
         $code = $command->run($input, $output);
 

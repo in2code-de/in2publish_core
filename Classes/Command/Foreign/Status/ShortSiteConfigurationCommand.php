@@ -40,12 +40,10 @@ use function json_encode;
 class ShortSiteConfigurationCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:shortsiteconfiguration';
-
     protected SiteFinder $siteFinder;
 
-    public function __construct(SiteFinder $siteFinder, string $name = null)
+    public function injectSiteFinder(SiteFinder $siteFinder): void
     {
-        parent::__construct($name);
         $this->siteFinder = $siteFinder;
     }
 

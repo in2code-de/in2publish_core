@@ -50,12 +50,10 @@ class SiteConfigurationCommand extends Command
     public const EXIT_NO_SITE = 250;
     public const EXIT_PAGE_HIDDEN_OR_DISCONNECTED = 251;
     public const IDENTIFIER = 'in2publish_core:status:siteconfiguration';
-
     protected SiteFinder $siteFinder;
 
-    public function __construct(SiteFinder $siteFinder, string $name = null)
+    public function injectSiteFinder(SiteFinder $siteFinder): void
     {
-        parent::__construct($name);
         $this->siteFinder = $siteFinder;
     }
 

@@ -34,7 +34,10 @@ class ExecuteCommandTest extends UnitTestCase
         $input = new ArrayInput(['uid' => '16']);
         $output = new BufferedOutput();
 
-        $command = new ExecuteCommand($contextService, $letterbox, $envelopeDispatcher);
+        $command = new ExecuteCommand();
+        $command->injectContextService($contextService);
+        $command->injectLetterbox($letterbox);
+        $command->injectEnvelopeDispatcher($envelopeDispatcher);
 
         $code = $command->run($input, $output);
 

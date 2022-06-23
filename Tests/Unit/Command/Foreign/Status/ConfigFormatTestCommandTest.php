@@ -38,7 +38,9 @@ class ConfigFormatTestCommandTest extends UnitTestCase
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new ConfigFormatTestCommand($validationContainer, $configContainer);
+        $command = new ConfigFormatTestCommand();
+        $command->injectValidationContainer($validationContainer);
+        $command->injectConfigContainer($configContainer);
 
         $code = $command->run($input, $output);
 

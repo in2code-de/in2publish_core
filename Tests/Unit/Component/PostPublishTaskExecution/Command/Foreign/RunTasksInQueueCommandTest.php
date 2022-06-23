@@ -27,7 +27,9 @@ class RunTasksInQueueCommandTest extends UnitTestCase
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new RunTasksInQueueCommand($contextService, $taskRepository);
+        $command = new RunTasksInQueueCommand();
+        $command->injectContextService($contextService);
+        $command->injectTaskRepository($taskRepository);
 
         $code = $command->run($input, $output);
 

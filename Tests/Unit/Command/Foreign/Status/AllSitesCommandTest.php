@@ -30,7 +30,8 @@ class AllSitesCommandTest extends UnitTestCase
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new AllSitesCommand($siteFinder);
+        $command = new AllSitesCommand();
+        $command->injectSiteFinder($siteFinder);
 
         $code = $command->run($input, $output);
 

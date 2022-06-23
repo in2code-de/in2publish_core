@@ -37,12 +37,10 @@ use TYPO3\CMS\Core\Information\Typo3Version;
 class Typo3VersionCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:typo3version';
-
     private Typo3Version $typo3Version;
 
-    public function __construct(Typo3Version $typo3Version, string $name = null)
+    public function injectTypo3Version(Typo3Version $typo3Version): void
     {
-        parent::__construct($name);
         $this->typo3Version = $typo3Version;
     }
 

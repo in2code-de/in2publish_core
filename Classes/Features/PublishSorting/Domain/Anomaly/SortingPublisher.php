@@ -33,23 +33,26 @@ use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use TYPO3\CMS\Core\Database\Connection;
 
-use function array_keys;
-
 class SortingPublisher
 {
     protected Connection $localDatabase;
-
     protected Connection $foreignDatabase;
-
     protected TcaService $tcaService;
-
     /** @var array<string, array<int, int>> */
     protected array $sortingsToBePublished = [];
 
-    public function __construct(Connection $localDatabase, Connection $foreignDatabase, TcaService $tcaService)
+    public function injectLocalDatabase(Connection $localDatabase): void
     {
         $this->localDatabase = $localDatabase;
+    }
+
+    public function injectForeignDatabase(Connection $foreignDatabase): void
+    {
         $this->foreignDatabase = $foreignDatabase;
+    }
+
+    public function injectTcaService(TcaService $tcaService): void
+    {
         $this->tcaService = $tcaService;
     }
 

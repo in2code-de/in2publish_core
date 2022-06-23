@@ -41,15 +41,16 @@ use function json_encode;
 class RunTasksInQueueCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:publishtasksrunner:runtasksinqueue';
-
     protected ContextService $contextService;
-
     protected TaskRepository $taskRepository;
 
-    public function __construct(ContextService $contextService, TaskRepository $taskRepository, string $name = null)
+    public function injectContextService(ContextService $contextService): void
     {
-        parent::__construct($name);
         $this->contextService = $contextService;
+    }
+
+    public function injectTaskRepository(TaskRepository $taskRepository): void
+    {
         $this->taskRepository = $taskRepository;
     }
 

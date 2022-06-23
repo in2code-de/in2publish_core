@@ -45,22 +45,22 @@ class TestCommand extends Command
 {
     public const EXIT_TESTS_FAILED = 240;
     public const IDENTIFIER = 'in2publish_core:tools:test';
-
     private ContextService $contextService;
-
     private TestingService $testingService;
-
     private EnvironmentService $environmentService;
 
-    public function __construct(
-        ContextService $contextService,
-        TestingService $testingService,
-        EnvironmentService $environmentService,
-        string $name = null
-    ) {
-        parent::__construct($name);
+    public function injectContextService(ContextService $contextService): void
+    {
         $this->contextService = $contextService;
+    }
+
+    public function injectTestingService(TestingService $testingService): void
+    {
         $this->testingService = $testingService;
+    }
+
+    public function injectEnvironmentService(EnvironmentService $environmentService): void
+    {
         $this->environmentService = $environmentService;
     }
 

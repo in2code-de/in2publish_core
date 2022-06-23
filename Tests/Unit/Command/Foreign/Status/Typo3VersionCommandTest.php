@@ -25,7 +25,8 @@ class Typo3VersionCommandTest extends UnitTestCase
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new Typo3VersionCommand($typo3Version);
+        $command = new Typo3VersionCommand();
+        $command->injectTypo3Version($typo3Version);
 
         $code = $command->run($input, $output);
 

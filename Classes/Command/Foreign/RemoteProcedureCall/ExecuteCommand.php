@@ -50,22 +50,22 @@ class ExecuteCommand extends Command implements LoggerAwareInterface
     public const EXIT_UID_MISSING = 231;
     public const EXIT_EXECUTION_FAILED = 232;
     public const IDENTIFIER = 'in2publish_core:rpc:execute';
-
     protected ContextService $contextService;
-
     protected Letterbox $letterbox;
-
     protected EnvelopeDispatcher $envelopeDispatcher;
 
-    public function __construct(
-        ContextService $contextService,
-        Letterbox $letterbox,
-        EnvelopeDispatcher $envelopeDispatcher,
-        string $name = null
-    ) {
-        parent::__construct($name);
+    public function injectContextService(ContextService $contextService): void
+    {
         $this->contextService = $contextService;
+    }
+
+    public function injectLetterbox(Letterbox $letterbox): void
+    {
         $this->letterbox = $letterbox;
+    }
+
+    public function injectEnvelopeDispatcher(EnvelopeDispatcher $envelopeDispatcher): void
+    {
         $this->envelopeDispatcher = $envelopeDispatcher;
     }
 

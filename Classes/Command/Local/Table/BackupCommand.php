@@ -45,12 +45,10 @@ class BackupCommand extends Command implements LoggerAwareInterface
     public const ARG_TABLE_NAME = 'tableName';
     public const ARG_TABLE_NAME_DESCRIPTION = 'The table to back up';
     public const IDENTIFIER = 'in2publish_core:table:backup';
-
     protected Connection $localDatabase;
 
-    public function __construct(Connection $localDatabase, string $name = null)
+    public function injectConnection(Connection $localDatabase): void
     {
-        parent::__construct($name);
         $this->localDatabase = $localDatabase;
     }
 

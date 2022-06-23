@@ -42,12 +42,10 @@ use function json_encode;
 class DbConfigTestCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:dbconfigtest';
-
     protected Connection $localDatabase;
 
-    public function __construct(Connection $localDatabase, string $name = null)
+    public function injectConnection(Connection $localDatabase): void
     {
-        parent::__construct($name);
         $this->localDatabase = $localDatabase;
     }
 

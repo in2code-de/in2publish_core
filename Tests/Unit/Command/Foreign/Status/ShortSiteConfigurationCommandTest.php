@@ -27,7 +27,8 @@ class ShortSiteConfigurationCommandTest extends UnitTestCase
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new ShortSiteConfigurationCommand($siteFinder);
+        $command = new ShortSiteConfigurationCommand();
+        $command->injectSiteFinder($siteFinder);
 
         $code = $command->run($input, $output);
 

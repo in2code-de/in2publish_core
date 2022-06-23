@@ -33,7 +33,8 @@ class AllCommandTest extends UnitTestCase
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new AllCommand($commandRegistry);
+        $command = new AllCommand();
+        $command->injectCommandRegistry($commandRegistry);
 
         $code = $command->run($input, $output);
 

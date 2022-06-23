@@ -42,18 +42,16 @@ use function json_encode;
 class ConfigFormatTestCommand extends Command
 {
     public const IDENTIFIER = 'in2publish_core:status:configformattest';
-
     protected ValidationContainer $validationContainer;
-
     protected ConfigContainer $configContainer;
 
-    public function __construct(
-        ValidationContainer $validationContainer,
-        ConfigContainer $configContainer,
-        string $name = null
-    ) {
-        parent::__construct($name);
+    public function injectValidationContainer(ValidationContainer $validationContainer): void
+    {
         $this->validationContainer = $validationContainer;
+    }
+
+    public function injectConfigContainer(ConfigContainer $configContainer): void
+    {
         $this->configContainer = $configContainer;
     }
 

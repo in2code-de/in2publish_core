@@ -52,26 +52,28 @@ class ImportCommand extends Command implements LoggerAwareInterface
     public const ARG_TABLE_NAME_DESCRIPTION = 'The table to back up';
     public const EXIT_INVALID_TABLE = 220;
     public const IDENTIFIER = 'in2publish_core:table:import';
-
     protected Connection $localDatabase;
-
     private Connection $foreignDatabase;
-
     private ContextService $contextService;
-
     private DatabaseSchemaService $databaseSchemaService;
 
-    public function __construct(
-        Connection $localDatabase,
-        Connection $foreignDatabase,
-        ContextService $contextService,
-        DatabaseSchemaService $databaseSchemaService,
-        string $name = null
-    ) {
-        parent::__construct($name);
+    public function injectLocalDatabase(Connection $localDatabase): void
+    {
         $this->localDatabase = $localDatabase;
+    }
+
+    public function injectForeignDatabase(Connection $foreignDatabase): void
+    {
         $this->foreignDatabase = $foreignDatabase;
+    }
+
+    public function injectContextService(ContextService $contextService): void
+    {
         $this->contextService = $contextService;
+    }
+
+    public function injectDatabaseSchemaService(DatabaseSchemaService $databaseSchemaService): void
+    {
         $this->databaseSchemaService = $databaseSchemaService;
     }
 
