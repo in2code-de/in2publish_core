@@ -51,11 +51,11 @@ class RefIndexUpdater
     public function registerRefIndexUpdate(PublishingOfOneRecordEnded $event): void
     {
         $record = $event->getRecord();
-        $uid = $record->getIdentifier();
+        $uid = $record->getId();
 
         // MM records and physical folders have string identifiers. They can not have a refIndex.
         if (is_int($uid)) {
-            $table = $record->getTableName();
+            $table = $record->getClassification();
             $this->configuration[$table][$uid] = $uid;
         }
     }

@@ -47,7 +47,7 @@ class RedirectCacheUpdater
     public function publishRecordRecursiveAfterPublishing(PublishingOfOneRecordEnded $event): void
     {
         $record = $event->getRecord();
-        if ('sys_redirect' !== $record->getTableName()) {
+        if ('sys_redirect' !== $record->getClassification()) {
             return;
         }
         $this->redirectWasPublished = true;

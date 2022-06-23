@@ -6,15 +6,27 @@ namespace In2code\In2publishCore\Component\TcaHandling\Publisher;
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordTree;
+use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
+use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
+use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
+use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
+use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
 use Throwable;
+use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 class PublisherService
 {
     protected PublisherCollection $publisherCollection;
+    protected EventDispatcher $eventDispatcher;
 
     public function __construct()
     {
         $this->publisherCollection = new PublisherCollection();
+    }
+
+    public function injectEventDispatcher(EventDispatcher $eventDispatcher): void
+    {
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function addPublisher(Publisher $publisher): void
@@ -24,6 +36,8 @@ class PublisherService
 
     public function publishRecordTree(RecordTree $recordTree): void
     {
+        $this->eventDispatcher->dispatch(new RecursiveRecordPublishingBegan($recordTree));
+
         $this->publisherCollection->start();
 
         try {
@@ -45,6 +59,8 @@ class PublisherService
             $this->publisherCollection->reverse();
             throw $exception;
         }
+
+        $this->eventDispatcher->dispatch(new RecursiveRecordPublishingEnded($recordTree));
     }
 
     protected function publishRecord(Record $record, &$visitedRecords = []): void
@@ -58,7 +74,13 @@ class PublisherService
         $visitedRecords[$classification][$id] = true;
 
         if ($record->getState() !== Record::S_UNCHANGED) {
-            $this->publisherCollection->publish($record);
+            $event = new VoteIfRecordShouldBeSkipped($record);
+            $this->eventDispatcher->dispatch($event);
+            if (!$event->getVotingResult()) {
+                $this->eventDispatcher->dispatch(new PublishingOfOneRecordBegan($record));
+                $this->publisherCollection->publish($record);
+                $this->eventDispatcher->dispatch(new PublishingOfOneRecordEnded($record));
+            }
         }
 
         foreach ($record->getChildren() as $table => $children) {

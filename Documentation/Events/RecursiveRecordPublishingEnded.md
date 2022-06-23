@@ -10,8 +10,7 @@ dispatched once. The start of the publishing process has been identified by the
 
 ## What
 
-* `record`: The root record which contains all related records which are going to be published.
-* `recordPublisher`: The instance of the `RecordPublisher` which will be used to publish the records.
+* `recordTree`: The root record which contains all related records which were published.
 
 ## Possibilities
 

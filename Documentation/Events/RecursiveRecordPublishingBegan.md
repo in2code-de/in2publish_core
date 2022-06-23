@@ -11,8 +11,7 @@ thrown.
 
 ## What
 
-* `record`: The root record which contains all related records which are going to be published.
-* `recordPublisher`: The instance of the `RecordPublisher` which will be used to publish the records.
+* `recordTree`: The `RecordTree` which contains all related records which are going to be published.
 
 ## Possibilities
 
@@ -30,22 +29,37 @@ This (bad) example shows how to stop the publishing process when there are more 
 ```php
 <?php
 
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 
 class SomeFieldNamePublishingBlocker
 {
     public function onPhysicalFileWasPublished(RecursiveRecordPublishingBegan $event): void
     {
-        $rootRecord = $event->getRecord();
-        $records = $rootRecord->getRelatedRecordByTableAndProperty(
-            'tx_myext_domain_model_something',
-            'somefieldname',
-            'somefieldvalue'
-        );
-        if (count($records) > 18) {
+        $count = 0;
+        $recordTree = $event->getRecordTree();
+        foreach ($recordTree->getChildren() as $records) {
+            foreach ($records as $record) {
+                $count += $this->countRecordsRecursiveWhichHaveSomeValue($record)
+            }
+        }
+        if ($count > 18) {
             throw new Exception('You must not publish more than 18 records which have "somefieldvalue"');
         }
     }
-}
 
+    protected function countRecordsRecursiveWhichHaveSomeValue(Record $record): int
+    {
+        $count = 0;
+        if ($record->getProp('somefieldname') === 'somefieldvalue') {
+            $count++;
+        }
+        foreach ($record->getChildren() as $records) {
+            foreach ($records as $childRecord) {
+                $count += $this->countRecordsRecursiveWhichHaveSomeValue($childRecord);
+            }
+        }
+        return $count;
+    }
+}
 ```

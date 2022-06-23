@@ -33,6 +33,8 @@ use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use TYPO3\CMS\Core\Database\Connection;
 
+use function array_keys;
+
 class SortingPublisher
 {
     protected Connection $localDatabase;
@@ -54,11 +56,12 @@ class SortingPublisher
     public function collectSortingsToBePublished(PublishingOfOneRecordBegan $event): void
     {
         $record = $event->getRecord();
-        if (!$record->hasLocalProperty('pid')) {
+        $localProps = $record->getLocalProps();
+        if (!array_key_exists('pid', $localProps)) {
             return;
         }
-        $pid = $record->getLocalProperty('pid');
-        $tableName = $record->getTableName();
+        $pid = $localProps['pid'];
+        $tableName = $record->getClassification();
         if (isset($this->sortingsToBePublished[$tableName][$pid])) {
             return;
         }
@@ -70,7 +73,8 @@ class SortingPublisher
         }
 
         // check if field sorting has changed
-        if ($record->getLocalProperty($sortingField) !== $record->getForeignProperty($sortingField)) {
+        $foreignProps = $record->getForeignProps();
+        if (($localProps[$sortingField] ?? null) !== ($foreignProps[$sortingField] ?? null)) {
             $this->sortingsToBePublished[$tableName][$pid] = $pid;
         }
     }

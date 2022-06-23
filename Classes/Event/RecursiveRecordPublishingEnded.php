@@ -29,28 +29,19 @@ namespace In2code\In2publishCore\Event;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Model\RecordTree;
 
 final class RecursiveRecordPublishingEnded
 {
-    private RecordInterface $record;
+    private RecordTree $recordTree;
 
-    private RecordPublisher $recordPublisher;
-
-    public function __construct(RecordInterface $record, RecordPublisher $recordPublisher)
+    public function __construct(RecordTree $recordTree)
     {
-        $this->record = $record;
-        $this->recordPublisher = $recordPublisher;
+        $this->recordTree = $recordTree;
     }
 
-    public function getRecord(): RecordInterface
+    public function getRecordTree(): RecordTree
     {
-        return $this->record;
-    }
-
-    public function getRecordPublisher(): RecordPublisher
-    {
-        return $this->recordPublisher;
+        return $this->recordTree;
     }
 }

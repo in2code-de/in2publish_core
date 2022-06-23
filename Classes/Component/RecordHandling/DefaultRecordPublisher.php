@@ -31,11 +31,6 @@ namespace In2code\In2publishCore\Component\RecordHandling;
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
-use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
-use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
-use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
-use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -82,13 +77,7 @@ class DefaultRecordPublisher implements RecordPublisher, LoggerAwareInterface
     public function publishRecordRecursive(RecordInterface $record, array $excludedTables = ['pages']): void
     {
         try {
-            // Dispatch Anomaly
-            $this->eventDispatcher->dispatch(new RecursiveRecordPublishingBegan($record, $this));
-
             $this->publishRecordRecursiveInternal($record, $excludedTables);
-
-            // Dispatch Anomaly
-            $this->eventDispatcher->dispatch(new RecursiveRecordPublishingEnded($record, $this));
         } catch (Throwable $exception) {
             $this->logger->critical('Publishing single record failed', ['exception' => $exception]);
             throw $exception;
@@ -109,56 +98,47 @@ class DefaultRecordPublisher implements RecordPublisher, LoggerAwareInterface
             return;
         }
         $this->visitedRecords[$tableName][] = $record->getIdentifier();
+        /*
+         * For Records shown as moved:
+         * Since moved pages only get published explicitly, they will
+         * have the state "changed" instead of "moved".
+         * Because of this, we don't need to take care about that state
+         */
 
-        if (!$this->shouldSkipRecord($record)) {
-            // Dispatch Anomaly
-            $this->eventDispatcher->dispatch(new PublishingOfOneRecordBegan($record, $this));
-
-            /*
-             * For Records shown as moved:
-             * Since moved pages only get published explicitly, they will
-             * have the state "changed" instead of "moved".
-             * Because of this, we don't need to take care about that state
-             */
-
-            if ($record->hasAdditionalProperty('recordDatabaseState')) {
-                $state = $record->getAdditionalProperty('recordDatabaseState');
-            } else {
-                $state = $record->getState();
-            }
-
-            if (true === $record->getAdditionalProperty('isPrimaryIndex')) {
-                $this->logger->notice(
-                    'Removing duplicate index from remote',
-                    [
-                        'tableName' => $tableName,
-                        'local_uid' => $record->getLocalProperty('uid'),
-                        'foreign_uid' => $record->getForeignProperty('uid'),
-                    ]
-                );
-                // remove duplicate remote index
-                $this->deleteRecord($this->foreignDatabase, $record->getForeignProperty('uid'), $tableName);
-            }
-
-            if ($state === RecordInterface::RECORD_STATE_CHANGED || $state === RecordInterface::RECORD_STATE_MOVED) {
-                $this->updateForeignRecord($record);
-            } elseif ($state === RecordInterface::RECORD_STATE_ADDED) {
-                $this->addForeignRecord($record);
-            } elseif ($state === RecordInterface::RECORD_STATE_DELETED) {
-                if ($record->localRecordExists()) {
-                    $this->updateForeignRecord($record);
-                } elseif ($record->foreignRecordExists()) {
-                    $this->deleteForeignRecord($record);
-                }
-            }
-
-            // Dispatch Anomaly
-            $this->eventDispatcher->dispatch(new PublishingOfOneRecordEnded($record, $this));
-
-            // set the records state to published/unchanged to prevent
-            // a second INSERT or UPDATE (superfluous queries)
-            $record->setState(RecordInterface::RECORD_STATE_UNCHANGED);
+        if ($record->hasAdditionalProperty('recordDatabaseState')) {
+            $state = $record->getAdditionalProperty('recordDatabaseState');
+        } else {
+            $state = $record->getState();
         }
+
+        if (true === $record->getAdditionalProperty('isPrimaryIndex')) {
+            $this->logger->notice(
+                'Removing duplicate index from remote',
+                [
+                    'tableName' => $tableName,
+                    'local_uid' => $record->getLocalProperty('uid'),
+                    'foreign_uid' => $record->getForeignProperty('uid'),
+                ]
+            );
+            // remove duplicate remote index
+            $this->deleteRecord($this->foreignDatabase, $record->getForeignProperty('uid'), $tableName);
+        }
+
+        if ($state === RecordInterface::RECORD_STATE_CHANGED || $state === RecordInterface::RECORD_STATE_MOVED) {
+            $this->updateForeignRecord($record);
+        } elseif ($state === RecordInterface::RECORD_STATE_ADDED) {
+            $this->addForeignRecord($record);
+        } elseif ($state === RecordInterface::RECORD_STATE_DELETED) {
+            if ($record->localRecordExists()) {
+                $this->updateForeignRecord($record);
+            } elseif ($record->foreignRecordExists()) {
+                $this->deleteForeignRecord($record);
+            }
+        }
+
+        // set the records state to published/unchanged to prevent
+        // a second INSERT or UPDATE (superfluous queries)
+        $record->setState(RecordInterface::RECORD_STATE_UNCHANGED);
 
         // publish all related records
         $this->publishRelatedRecordsRecursive($record, $excludedTables);
@@ -263,13 +243,6 @@ class DefaultRecordPublisher implements RecordPublisher, LoggerAwareInterface
             ]
         );
         $this->deleteRecord($this->foreignDatabase, $identifier, $tableName);
-    }
-
-    protected function shouldSkipRecord(RecordInterface $record): bool
-    {
-        $event = new VoteIfRecordShouldBeSkipped($this, $record);
-        $this->eventDispatcher->dispatch($event);
-        return $event->getVotingResult();
     }
 
     /**

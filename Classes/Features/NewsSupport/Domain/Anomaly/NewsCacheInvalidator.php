@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly;
  */
 
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Features\NewsSupport\Domain\Model\Task\FlushNewsCacheTask;
 
@@ -51,14 +52,19 @@ class NewsCacheInvalidator
     public function registerClearCacheTasks(PublishingOfOneRecordBegan $event): void
     {
         $record = $event->getRecord();
-        if ('tx_news_domain_model_news' !== $record->getTableName() || !$record->localRecordExists()) {
+        if (
+            'tx_news_domain_model_news' !== $record->getClassification()
+            || Record::S_DELETED === $record->getState()
+        ) {
             return;
         }
 
-        $uid = $record->getLocalProperty('uid');
+        $localProps = $record->getLocalProps();
+
+        $uid = $localProps['uid'];
         $this->newsCacheUidArray[$uid] = 'tx_news_uid_' . $uid;
 
-        $pid = $record->getLocalProperty('pid');
+        $pid = $localProps['pid'];
         $this->newsCachePidArray[$pid] = 'tx_news_pid_' . $pid;
     }
 

@@ -50,11 +50,11 @@ class SysLogPublisher
     public function publishSysLog(PublishingOfOneRecordEnded $event): void
     {
         $record = $event->getRecord();
-        if ('pages' !== $record->getTableName()) {
+        if ('pages' !== $record->getClassification()) {
             return;
         }
 
-        $sysLog = $this->findLatestSysLogForPage($record->getIdentifier());
+        $sysLog = $this->findLatestSysLogForPage($record->getId());
         if (!empty($sysLog)) {
             unset($sysLog['uid']);
             $this->foreignDatabase->insert(self::TABLE_SYS_LOG, $sysLog);

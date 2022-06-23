@@ -29,27 +29,18 @@ namespace In2code\In2publishCore\Event;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Model\Record;
 
 final class VoteIfRecordShouldBeSkipped extends AbstractVotingEvent
 {
-    private RecordPublisher $recordPublisher;
+    private Record $record;
 
-    private RecordInterface $record;
-
-    public function __construct(RecordPublisher $recordPublisher, RecordInterface $record)
+    public function __construct(Record $record)
     {
-        $this->recordPublisher = $recordPublisher;
         $this->record = $record;
     }
 
-    public function getRecordPublisher(): RecordPublisher
-    {
-        return $this->recordPublisher;
-    }
-
-    public function getRecord(): RecordInterface
+    public function getRecord(): Record
     {
         return $this->record;
     }

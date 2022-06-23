@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\DataBender;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
@@ -44,10 +45,9 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
     use LoggerAwareTrait;
 
     protected const CHANGED_STATES = [
-        RecordInterface::RECORD_STATE_CHANGED,
-        RecordInterface::RECORD_STATE_ADDED,
-        RecordInterface::RECORD_STATE_MOVED,
-        RecordInterface::RECORD_STATE_MOVED_AND_CHANGED,
+        Record::S_CHANGED,
+        Record::S_ADDED,
+        Record::S_MOVED,
     ];
 
     protected ForeignSiteFinder $siteFinder;
@@ -60,39 +60,42 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
     public function replaceLocalWithForeignSourceHost(PublishingOfOneRecordBegan $event): void
     {
         $record = $event->getRecord();
-        if ('sys_redirect' !== $record->getTableName() || !in_array($record->getState(), self::CHANGED_STATES, true)) {
+        if (
+            'sys_redirect' !== $record->getClassification()
+            || !in_array($record->getState(), self::CHANGED_STATES, true)
+        ) {
             return;
         }
 
         // 1. Check wildcard
-        $properties = $record->getLocalProperties();
+        $properties = $record->getLocalProps();
         if ('*' === $properties['source_host']) {
             return;
         }
 
         // 2. Check site
-        $siteId = $record->getLocalProperty('tx_in2publishcore_foreign_site_id');
+        $siteId = $properties('tx_in2publishcore_foreign_site_id');
         if ('*' === $siteId) {
             $properties['source_host'] = '*';
-            $record->setLocalProperties($properties);
+            $record->setLocalProps($properties);
         }
         if (null !== $siteId) {
             $site = $this->siteFinder->getSiteByIdentifier($siteId);
             if (null === $site) {
                 $this->logger->alert(
                     'A redirect has an associated site, but that site does not exist',
-                    ['uid' => $record->getIdentifier()]
+                    ['uid' => $record->getId()]
                 );
                 return;
             }
 
             $properties['source_host'] = $site->getBase()->getHost();
-            $record->setLocalProperties($properties);
+            $record->setLocalProps($properties);
             return;
         }
 
         // 3. Check page
-        $associatedPage = $record->getLocalProperty('tx_in2publishcore_page_uid');
+        $associatedPage = $properties('tx_in2publishcore_page_uid');
         if (null !== $associatedPage) {
             $url = BackendUtility::buildPreviewUri('pages', $associatedPage, 'foreign');
             if (null === $url) {
@@ -101,13 +104,13 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
             $newHost = $url->getHost();
 
             $properties['source_host'] = $newHost;
-            $record->setLocalProperties($properties);
+            $record->setLocalProps($properties);
             return;
         }
 
         $this->logger->alert(
             'A redirect without an associated page or site is going to be published',
-            ['uid' => $record->getIdentifier()]
+            ['uid' => $record->getId()]
         );
     }
 }

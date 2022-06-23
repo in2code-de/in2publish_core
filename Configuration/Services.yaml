@@ -9,7 +9,6 @@ imports:
   - { resource: Features/ContextMenuPublishEntry/Services.yaml }
   - { resource: Features/FileEdgeCacheInvalidator/Services.yaml }
   - { resource: Features/NewsSupport/Services.yaml }
-  - { resource: Features/PhysicalFilePublisher/Services.yaml }
   - { resource: Features/PublishSorting/Services.yaml }
   - { resource: Features/RedirectsSupport/Services.yaml }
   - { resource: Features/RefIndexUpdate/Services.yaml }

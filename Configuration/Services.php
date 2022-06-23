@@ -22,7 +22,6 @@ use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\Ad
 use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface as TransmissionAdapter;
 use In2code\In2publishCore\Config\Definer\DefinerInterface;
 use In2code\In2publishCore\Config\PostProcessor\PostProcessorInterface as PostProcessor;
-use In2code\In2publishCore\Config\Provider\ProviderInterface;
 use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;

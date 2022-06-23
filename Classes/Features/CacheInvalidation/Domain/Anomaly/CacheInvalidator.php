@@ -38,6 +38,7 @@ use TYPO3\CMS\Core\SingletonInterface;
 
 use function array_filter;
 use function array_key_exists;
+use function array_unique;
 use function implode;
 
 class CacheInvalidator implements SingletonInterface
@@ -57,27 +58,35 @@ class CacheInvalidator implements SingletonInterface
 
     public function registerClearCacheTasks(PublishingOfOneRecordBegan $event): void
     {
+        $pids = [];
         $record = $event->getRecord();
-        if ($record->isPagesTable()) {
-            $pid = (int)$record->getIdentifier();
-        } elseif ($record->hasLocalProperty('pid')) {
-            // Hint for the condition: only check the local PID,
-            // because after publishing foreign and local PID will be the same.
-            // If the merged or foreign PID is checked then a cache which might be wrong would get flushed.
-            $pid = (int)$record->getLocalProperty('pid');
+        if ('pages' === $record->getClassification()) {
+            $pids[] = (int)$record->getId();
         } else {
-            return;
+            // Hint for the condition: check both PIDs,
+            // because before publishing foreign and local PID could be different
+            // and the page cache for the former parent page has to be cleared
+            $localProps = $record->getLocalProps();
+            if (array_key_exists('pid', $localProps)) {
+                $pids[] = (int)$localProps['pid'];
+            }
+            $foreignProps = $record->getForeignProps();
+            if (array_key_exists('pid', $foreignProps)) {
+                $pids[] = (int)$foreignProps['pid'];
+            }
         }
 
-        $this->clearCachePids[$pid] = $pid;
+        foreach (array_unique($pids) as $pid) {
+            $this->clearCachePids[$pid] = $pid;
 
-        if (!array_key_exists($pid, $this->clearCacheCommands)) {
-            $clearCacheCommand = null;
-            $pageTsConfig = BackendUtility::getPagesTSconfig($pid);
-            if (!empty($pageTsConfig['TCEMAIN.']['clearCacheCmd'])) {
-                $clearCacheCommand = (string)$pageTsConfig['TCEMAIN.']['clearCacheCmd'];
+            if (!array_key_exists($pid, $this->clearCacheCommands)) {
+                $clearCacheCommand = null;
+                $pageTsConfig = BackendUtility::getPagesTSconfig($pid);
+                if (!empty($pageTsConfig['TCEMAIN.']['clearCacheCmd'])) {
+                    $clearCacheCommand = (string)$pageTsConfig['TCEMAIN.']['clearCacheCmd'];
+                }
+                $this->clearCacheCommands[$pid] = $clearCacheCommand;
             }
-            $this->clearCacheCommands[$pid] = $clearCacheCommand;
         }
     }
 

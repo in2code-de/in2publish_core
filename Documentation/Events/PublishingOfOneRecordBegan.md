@@ -11,7 +11,6 @@ published or not.
 ## What
 
 * `record`: The record instance which will be published.
-* `recordPublisher`: The instance of the `RecordPublisher` which will be used to publish the record.
 
 ## Possibilities
 

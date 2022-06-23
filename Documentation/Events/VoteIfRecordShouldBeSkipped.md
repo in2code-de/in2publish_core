@@ -1,4 +1,4 @@
-# FolderInstanceWasCreated
+# VoteIfRecordShouldBeSkipped
 
 Replaces the `\In2code\In2publishCore\Domain\Repository\CommonRepository / shouldSkipRecord` Signal.
 

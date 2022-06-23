@@ -4,12 +4,13 @@ Replaces the `\In2code\In2publishCore\Repository\CommonRepository / publishRecor
 
 ## When
 
-This event will be seen each time a single record was published.
+This event will be seen each time a single record was published. It is not guaranteed, that the record was actually
+written to the database or file system yet, since most record publishers are transactional and will write the record to
+the target location when the publishing process ends.
 
 ## What
 
 * `record`: The record instance which was published.
-* `recordPublisher`: The instance of the `RecordPublisher ` which was used to publish the record.
 
 ## Possibilities
 
@@ -18,8 +19,8 @@ This event is intended to be used as a trigger for additional publishing actions
 
 ### Example
 
-See the `\In2code\In2publishCore\Features\PhysicalFilePublisher\Domain\Anomaly\PhysicalFilePublisher` for a real-world
-example.
+have a look at the class `In2code\In2publishCore\Features\RefIndexUpdate\Domain\Anomaly\RefIndexUpdater` for a
+real-world example.
 
 To have an event which is triggered after the complete publication of the dataset, `TaskExecutionWasFinished` should be
 used.

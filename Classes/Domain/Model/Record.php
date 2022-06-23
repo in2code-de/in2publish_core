@@ -17,7 +17,11 @@ interface Record extends Node
 
     public function getLocalProps(): array;
 
+    public function setLocalProps(array $localProps): void;
+
     public function getForeignProps(): array;
+
+    public function setForeignProps(array $foreignProps): void;
 
     /**
      * Return an associative array which contains field names and values to identify

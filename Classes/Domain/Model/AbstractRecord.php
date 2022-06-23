@@ -43,9 +43,19 @@ abstract class AbstractRecord implements Record
         return $this->localProps;
     }
 
+    public function setLocalProps(array $localProps): void
+    {
+        $this->localProps = $localProps;
+    }
+
     public function getForeignProps(): array
     {
         return $this->foreignProps;
+    }
+
+    public function setForeignProps(array $foreignProps): void
+    {
+        $this->foreignProps = $foreignProps;
     }
 
     /**
