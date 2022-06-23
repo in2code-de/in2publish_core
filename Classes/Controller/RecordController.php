@@ -30,16 +30,12 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Component\TcaHandling\RecordTreeBuilder;
 use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
-use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Component\TcaHandling\RecordTreeBuilder;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
-use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
 use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
 use In2code\In2publishCore\In2publishCoreException;
-use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Service\Error\FailureCollector;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use In2code\In2publishCore\Utility\LogUtility;
@@ -69,23 +65,18 @@ class RecordController extends AbstractController
     protected RecordTreeBuilder $recordTreeBuilder;
     protected PublisherService $publisherService;
 
-    public function __construct(
-        ConfigContainer $configContainer,
-        ExecutionTimeService $executionTimeService,
-        EnvironmentService $environmentService,
-        RemoteCommandDispatcher $remoteCommandDispatcher,
-        FailureCollector $failureCollector,
-        PermissionService $permissionService,
-        PageRenderer $pageRenderer
-    ) {
-        parent::__construct(
-            $configContainer,
-            $executionTimeService,
-            $environmentService,
-            $remoteCommandDispatcher
-        );
+    public function injectFailureCollector(FailureCollector $failureCollector): void
+    {
         $this->failureCollector = $failureCollector;
+    }
+
+    public function injectPermissionService(PermissionService $permissionService): void
+    {
         $this->permissionService = $permissionService;
+    }
+
+    public function injectPageRenderer(PageRenderer $pageRenderer): void
+    {
         $pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
         $pageRenderer->addCssFile(
             'EXT:in2publish_core/Resources/Public/Css/Modules.css',

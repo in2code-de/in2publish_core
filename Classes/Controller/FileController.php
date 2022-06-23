@@ -30,12 +30,7 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Component\FalHandling\FalFinder;
-use In2code\In2publishCore\Component\FalHandling\FalPublisher;
 use In2code\In2publishCore\Component\FalHandling\Finder\Exception\TooManyFilesException;
-use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
-use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
@@ -73,24 +68,10 @@ class FileController extends AbstractController
     protected bool $forcePidInteger = false;
     private ModuleTemplateFactory $moduleTemplateFactory;
     private PageRenderer $pageRenderer;
+    private FailureCollector $failureCollector;
 
-    public function __construct(
-        ConfigContainer $configContainer,
-        ExecutionTimeService $executionTimeService,
-        EnvironmentService $environmentService,
-        RemoteCommandDispatcher $remoteCommandDispatcher,
-        PageRenderer $pageRenderer,
-        ModuleTemplateFactory $moduleTemplateFactory,
-        FailureCollector $failureCollector
-    ) {
-        parent::__construct(
-            $configContainer,
-            $executionTimeService,
-            $environmentService,
-            $remoteCommandDispatcher
-        );
-        $this->moduleTemplateFactory = $moduleTemplateFactory;
-        $this->failureCollector = $failureCollector;
+    public function injectPageRenderer(PageRenderer $pageRenderer): void
+    {
         $this->pageRenderer = $pageRenderer;
         $this->pageRenderer->addInlineLanguageLabelFile(
             'EXT:in2publish_core/Resources/Private/Language/locallang_m3_js.xlf'
@@ -105,6 +86,15 @@ class FileController extends AbstractController
         );
     }
 
+    public function injectModuleTemplateFactory(ModuleTemplateFactory $moduleTemplateFactory): void
+    {
+        $this->moduleTemplateFactory = $moduleTemplateFactory;
+    }
+
+    public function injectFailureCollector(FailureCollector $failureCollector): void
+    {
+        $this->failureCollector = $failureCollector;
+    }
 
     public function indexAction(): ResponseInterface
     {

@@ -29,19 +29,13 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
-use In2code\In2publishCore\Component\RecordHandling\RecordPublisher;
-use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Controller\AbstractController;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
-use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Event\RecordsWereSelectedForPublishing;
 use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\SaveAndPublishButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
-use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
@@ -68,34 +62,30 @@ class RedirectController extends AbstractController
     use ControllerModuleTemplate;
 
     protected ForeignSiteFinder $foreignSiteFinder;
-
     protected SysRedirectRepository $sysRedirectRepo;
-
-
     protected IconFactory $iconFactory;
-
     protected LanguageService $languageService;
 
-    public function __construct(
-        ConfigContainer $configContainer,
-        ExecutionTimeService $executionTimeService,
-        EnvironmentService $environmentService,
-        RemoteCommandDispatcher $remoteCommandDispatcher,
-        ForeignSiteFinder $foreignSiteFinder,
-        SysRedirectRepository $sysRedirectRepo,
-        PageRenderer $pageRenderer,
-        IconFactory $iconFactory
-    ) {
-        parent::__construct(
-            $configContainer,
-            $executionTimeService,
-            $environmentService,
-            $remoteCommandDispatcher
-        );
-        $this->foreignSiteFinder = $foreignSiteFinder;
-        $this->sysRedirectRepo = $sysRedirectRepo;
+    public function __construct()
+    {
+        parent::__construct();
         $this->recordFinder = $recordFinder;
         $this->recordPublisher = $recordPublisher;
+        $this->languageService = $GLOBALS['LANG'];
+    }
+
+    public function injectForeignSiteFinder(ForeignSiteFinder $foreignSiteFinder): void
+    {
+        $this->foreignSiteFinder = $foreignSiteFinder;
+    }
+
+    public function injectSysRedirectRepo(SysRedirectRepository $sysRedirectRepo): void
+    {
+        $this->sysRedirectRepo = $sysRedirectRepo;
+    }
+
+    public function injectPageRenderer(PageRenderer $pageRenderer): void
+    {
         $pageRenderer->addCssFile(
             'EXT:in2publish_core/Resources/Public/Css/Modules.css',
             'stylesheet',
@@ -103,8 +93,11 @@ class RedirectController extends AbstractController
             '',
             false
         );
+    }
+
+    public function injectIconFactory(IconFactory $iconFactory): void
+    {
         $this->iconFactory = $iconFactory;
-        $this->languageService = $GLOBALS['LANG'];
     }
 
     /** @throws Throwable */

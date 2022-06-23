@@ -30,10 +30,7 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Controller\Traits\RunTasks;
-use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
-use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
@@ -53,19 +50,17 @@ abstract class AbstractController extends ActionController
     use RunTasks;
 
     public const BLANK_ACTION = 'blankAction';
-
     protected BackendUserAuthentication $backendUser;
-
     protected RemoteCommandDispatcher $remoteCommandDispatcher;
 
-    public function __construct(
-        ConfigContainer $configContainer,
-        ExecutionTimeService $executionTimeService,
-        EnvironmentService $environmentService,
-        RemoteCommandDispatcher $remoteCommandDispatcher
-    ) {
-        parent::__construct($configContainer, $executionTimeService, $environmentService);
+    public function __construct()
+    {
+        parent::__construct();
         $this->backendUser = $GLOBALS['BE_USER'];
+    }
+
+    public function injectRemoteCommandDispatcher(RemoteCommandDispatcher $remoteCommandDispatcher): void
+    {
         $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }
 

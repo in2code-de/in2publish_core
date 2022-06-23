@@ -50,9 +50,7 @@ abstract class ActionController extends ExtbaseActionController implements Logge
     use LoggerAwareTrait;
 
     protected ConfigContainer $configContainer;
-
     protected EnvironmentService $environmentService;
-
     /**
      * UID of the selected Page in the page tree
      * or combined folder identifier of the folder selected in the folder tree.
@@ -60,7 +58,6 @@ abstract class ActionController extends ExtbaseActionController implements Logge
      * @var int|string
      */
     protected $pid;
-
     protected bool $forcePidInteger = true;
 
     /**
@@ -68,20 +65,29 @@ abstract class ActionController extends ExtbaseActionController implements Logge
      * When extending from this class and using an own constructor don't forget
      * to call this constructor method at the end of your own implementation
      */
-    public function __construct(
-        ConfigContainer $configContainer,
-        ExecutionTimeService $executionTimeService,
-        EnvironmentService $environmentService
-    ) {
-        $this->configContainer = $configContainer;
-        $executionTimeService->start();
-        $this->environmentService = $environmentService;
+    public function __construct()
+    {
         $pid = BackendUtility::getPageIdentifier();
         if (true === $this->forcePidInteger && !is_int($pid)) {
             $this->logger->warning('Page identifier is not an int. Falling back to 0.', ['pid' => $this->pid]);
             $pid = 0;
         }
         $this->pid = $pid;
+    }
+
+    public function injectConfigContainer(ConfigContainer $configContainer): void
+    {
+        $this->configContainer = $configContainer;
+    }
+
+    public function injectExecutionTimeService(ExecutionTimeService $executionTimeService): void
+    {
+        $executionTimeService->start();
+    }
+
+    public function injectEnvironmentService(EnvironmentService $environmentService): void
+    {
+        $this->environmentService = $environmentService;
     }
 
     /**
