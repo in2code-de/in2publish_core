@@ -31,7 +31,7 @@ class FileDemandResolver
         $this->recordFactory = $recordFactory;
     }
 
-    public function resolveDemand(Demands $demands, RecordCollection $recordCollection): void
+    public function resolveDemand(Demands $demands): void
     {
         $files = $demands->getFiles();
 
