@@ -22,7 +22,6 @@
 						<th class="col-icon"></th>
 						<th class="col-filename col-filename--local col-responsive nowrap"><f:translate key="record.filename"/> <i>(Local)</i></th>
 						<th class="col-control actions"></th>
-						<th class="col-control col-selection"></th>
 						<th class="col-control col-publish">
 							<i>[<f:translate key="LLL:EXT:core/Resources/Private/Language/locallang_core.xlf:labels._CONTROL_"/>]</i>
 						</th>
@@ -36,7 +35,7 @@
 				</thead>
 				<tbody>
 					<f:render partial="File/Index/FolderList" arguments="{_all}" />
-					<f:for each="{record.children.sys_file}" as="fileRecord">
+					<f:for each="{record.children._file}" as="fileRecord">
 						<f:render partial="File/Index/FileList" arguments="{record:fileRecord, config:config}" />
 					</f:for>
 				</tbody>

@@ -38,20 +38,18 @@ class FalHandlerFactory
 {
     private ConfigContainer $configContainer;
 
-    public function __construct(ConfigContainer $configContainer)
+    public function injectConfigContainer(ConfigContainer $configContainer)
     {
         $this->configContainer = $configContainer;
     }
 
     public function createFalFinder(): FalFinder
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return GeneralUtility::makeInstance($this->configContainer->get('factory.fal.finder'));
     }
 
     public function createFalPublisher(): FalPublisher
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return GeneralUtility::makeInstance($this->configContainer->get('factory.fal.publisher'));
     }
 }

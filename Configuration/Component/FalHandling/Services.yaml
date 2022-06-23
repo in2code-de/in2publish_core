@@ -13,6 +13,9 @@ services:
     public: true
     factory: [ '@In2code\In2publishCore\Component\FalHandling\Factory\FalHandlerFactory', 'createFalFinder' ]
 
+  In2code\In2publishCore\Component\FalHandling\Finder\DefaultFalFinder:
+    public: true
+
   In2code\In2publishCore\Component\FalHandling\FalPublisher:
     public: true
     factory: [ '@In2code\In2publishCore\Component\FalHandling\Factory\FalHandlerFactory', 'createFalPublisher' ]

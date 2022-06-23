@@ -8,30 +8,30 @@
 			data-type="file"
 			data-id="{record.id}"
 			data-name="{publish:record.getMergedProperty(record:record, propertyName: 'name')}"
-			data-identifier-local="{record.localProperties.identifier}"
-			data-identifier-foreign="{record.foreignProperties.identifier}"
+			data-identifier-local="{record.localProps.identifier}"
+			data-identifier-foreign="{record.foreignProps.identifier}"
 			data-identifier="{publish:record.getMergedProperty(record:record, propertyName: 'identifier')}"
 			data-storage="{publish:record.getMergedProperty(record:record, propertyName: 'storage')}"
-			data-searchable="{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'local')}|{publish:miscellaneous.getPropertyFromStagingDefinition(propertyName: 'name', record: record, stagingLevel: 'foreign')}">
+			data-searchable="{record.localProps.name}|{record.foreignProps.name}">
 			<f:comment>Left</f:comment>
 			<td class="col-icon">
 				<publish:file.icon record="{record}" />
 			</td>
 			<td class="col-filename col-filename--local col-responsive nowrap">
 				<span class="in2publish-stagelisting__item-filename">
-					<f:if condition="{record.localProperties.name}">
+					<f:if condition="{record.localProps.name}">
 						<f:then>
-							{record.localProperties.name}
+							{record.localProps.name}
 						</f:then>
 						<f:else>
-							{record.foreignProperties.name}
+							{record.foreignProps.name}
 						</f:else>
 					</f:if>
 				</span>
 			</td>
 			<td class="col-control">
 				<div class="btn-group">
-					<a class="btn btn-default" data-bs-toggle="collapse" href="#{record.classification}-{record.localProperties.uid}">
+					<a class="btn btn-default" data-bs-toggle="collapse" href="#{record.classification}-{record.id}">
 						<core:icon identifier="actions-info" />
 					</a>
 					<f:if condition="{record.state} != 'deleted'">
@@ -61,7 +61,7 @@
 									<ul class="dropdown-menu dropdown-list" aria-labelledby="translations_{record.id}">
 										<f:for each="{record.children.sys_file_metadata}" as="metaRecord" iteration="iterator">
 											<li>
-												<a href="{publish:uri.editUri(uid: metaRecord.localProperties.uid, tableName: metaRecord.tableName)}" class="dropdown-item" title="{publish:record.getMergedProperty(record: record, propertyName: 'name')}">
+												<a href="{publish:uri.editUri(uid: metaRecord.localProps.uid, tableName: metaRecord.tableName)}" class="dropdown-item" title="{publish:record.getMergedProperty(record: record, propertyName: 'name')}">
 													<publish:record.languageFlagIcon record="{metaRecord}" side="local" /> <publish:record.getMergedProperty record="{record}" propertyName="name" />
 												</a>
 											</li>
@@ -71,7 +71,7 @@
 								<f:else>
 									<f:for each="{record.children.sys_file_metadata}" as="metaRecord" iteration="iterator">
 										<f:if condition="{iterator.isFirst}">
-											<a class="btn btn-default" href="{publish:uri.editUri(uid: metaRecord.localProperties.uid, tableName: metaRecord.tableName)}" data-bs-toggle="tooltip" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:edit')}">
+											<a class="btn btn-default" href="{publish:uri.editUri(uid: metaRecord.localProps.uid, tableName: metaRecord.tableName)}" data-bs-toggle="tooltip" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:edit')}">
 												<core:icon identifier="actions-pencil" />
 											</a>
 										</f:if>
@@ -95,14 +95,15 @@
 						</a>
 					</f:then>
 					<f:else>
-						<f:if condition="{record.changedRecursive}">
+						<f:if condition="{record.stateRecursive} !== 'unchanged'">
 							<f:link.action
 								class="js-publish-trigger js-publish-overlay btn btn-default"
 								action="publishFile"
 								arguments="{
 									uid:record.identifier,
 									identifier:'{publish:record.getMergedProperty(record:record, propertyName: \'identifier\')}',
-									storage:'{publish:record.getMergedProperty(record:record, propertyName: \'storage\')}'}"
+									storage:'{publish:record.getMergedProperty(record:record, propertyName: \'storage\')}'
+								}"
 								data="{type: 'file', name: '{publish:record.getMergedProperty(record: record, propertyName: \'identifier\')}'}"
 							>
 								<f:translate key="publish"/>
@@ -118,9 +119,9 @@
 				<publish:file.icon record="{record}" />
 			</td>
 			<td class="col-filename col-filename--foreign col-responsive nowrap">
-				<f:if condition="{record.foreignProperties.name}">
+				<f:if condition="{record.foreignProps.name}">
 					<f:then>
-						{record.foreignProperties.name}
+						{record.foreignProps.name}
 					</f:then>
 					<f:else>
 						---

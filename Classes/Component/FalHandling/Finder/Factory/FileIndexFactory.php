@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Component\FalHandling\Finder\Factory;
  */
 
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Service\Database\UidReservationService;
@@ -70,7 +69,7 @@ class FileIndexFactory
         $this->uidReservationService = GeneralUtility::makeInstance(UidReservationService::class);
     }
 
-    public function makeInstanceForSide(string $side, string $identifier): RecordInterface
+    public function makeInstanceForSide(string $side, string $identifier): Record
     {
         $foreignProperties = [];
         $localProperties = [];
@@ -96,14 +95,14 @@ class FileIndexFactory
     }
 
     /**
-     * @param RecordInterface $record
+     * @param Record $record
      * @param string $identifier
      * @param string $side
      * @param bool $clearOpposite Set to true if you want to remove all properties from the "opposite" side
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag) Will _probably_ be removed with query aggregation feature.
      */
     public function updateFileIndexInfoBySide(
-        RecordInterface $record,
+        Record $record,
         string $identifier,
         string $side,
         bool $clearOpposite = false
@@ -121,7 +120,7 @@ class FileIndexFactory
     }
 
     public function updateFileIndexInfo(
-        RecordInterface $record,
+        Record $record,
         string $localIdentifier,
         string $foreignIdentifier
     ): void {

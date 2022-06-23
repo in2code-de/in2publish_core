@@ -40,7 +40,7 @@ class GetMergedPropertyViewHelper extends AbstractViewHelper
         $this->registerArgument('propertyName', 'string', 'Property which should get merged', true);
     }
 
-    /** @return mixed */
+    /** @return scalar */
     public function render()
     {
         /** @var Record $record */
@@ -49,6 +49,6 @@ class GetMergedPropertyViewHelper extends AbstractViewHelper
         /** @var string $propertyName */
         $propertyName = $this->arguments['propertyName'];
 
-        return $record->getMergedProperty($propertyName);
+        return $record->getProp($propertyName);
     }
 }

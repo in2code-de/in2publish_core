@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Component\RecordHandling;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Model\Record;
 
 interface RecordFinder
 {
@@ -44,10 +44,10 @@ interface RecordFinder
     /**
      * Publishing: Build the record with all relations, but without any child pages.
      */
-    public function findRecordByUidForPublishing(int $uid, string $table): ?RecordInterface;
+    public function findRecordByUidForPublishing(int $uid, string $table): ?Record;
 
     /**
-     * @return array<RecordInterface>
+     * @return array<Record>
      *
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      */

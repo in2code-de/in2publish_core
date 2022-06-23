@@ -29,18 +29,18 @@ namespace In2code\In2publishCore\Event;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Model\Record;
 
 final class FolderInstanceWasCreated
 {
-    private RecordInterface $record;
+    private Record $record;
 
-    public function __construct(RecordInterface $record)
+    public function __construct(Record $record)
     {
         $this->record = $record;
     }
 
-    public function getRecord(): RecordInterface
+    public function getRecord(): Record
     {
         return $this->record;
     }

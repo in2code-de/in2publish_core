@@ -1,5 +1,5 @@
 imports:
-  #- { resource: Component/FalHandling/Services.yaml }
+  - { resource: Component/FalHandling/Services.yaml }
   - { resource: Component/PostPublishTaskExecution/Services.yaml }
   #- { resource: Component/RecordHandling/Services.yaml }
   - { resource: Component/TcaHandling/Services.yaml }

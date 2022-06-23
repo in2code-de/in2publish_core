@@ -6,7 +6,7 @@ namespace In2code\In2publishCore\Domain\Model;
 
 class FileRecord extends AbstractRecord
 {
-    public const FILE_CLASSIFICATION = '#file';
+    public const CLASSIFICATION = '_file';
 
     public function __construct(array $localProps, array $foreignProps)
     {
@@ -18,7 +18,7 @@ class FileRecord extends AbstractRecord
 
     public function getClassification(): string
     {
-        return self::FILE_CLASSIFICATION;
+        return self::CLASSIFICATION;
     }
 
     public function getId(): string

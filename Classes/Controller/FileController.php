@@ -30,7 +30,9 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\FalHandling\FalFinder;
 use In2code\In2publishCore\Component\FalHandling\Finder\Exception\TooManyFilesException;
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
@@ -68,6 +70,7 @@ class FileController extends AbstractController
     protected bool $forcePidInteger = false;
     private ModuleTemplateFactory $moduleTemplateFactory;
     private PageRenderer $pageRenderer;
+    private FalFinder $falFinder;
     private FailureCollector $failureCollector;
 
     public function injectPageRenderer(PageRenderer $pageRenderer): void
@@ -84,6 +87,11 @@ class FileController extends AbstractController
             '',
             false
         );
+    }
+
+    public function injectFalFinder(FalFinder $falFinder): void
+    {
+        $this->falFinder = $falFinder;
     }
 
     public function injectModuleTemplateFactory(ModuleTemplateFactory $moduleTemplateFactory): void
@@ -212,9 +220,9 @@ class FileController extends AbstractController
     /**
      * @param string|null $identifier CombinedIdentifier as FAL would use it
      *
-     * @return RecordInterface|null The record or null if it can not be handled
+     * @return Record|null The record or null if it can not be handled
      */
-    protected function tryToGetFolderInstance(?string $identifier): ?RecordInterface
+    protected function tryToGetFolderInstance(?string $identifier): ?Record
     {
         if (is_string($identifier) && strpos($identifier, ':') < strlen($identifier)) {
             [$storage, $name] = explode(':', $identifier);

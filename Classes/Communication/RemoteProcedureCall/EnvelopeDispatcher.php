@@ -30,9 +30,11 @@ namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
  */
 
 use In2code\In2publishCore\Component\FalHandling\Finder\Factory\FileIndexFactory;
+use In2code\In2publishCore\Component\FalHandling\Service\FileSystemInfoService;
 use In2code\In2publishCore\Domain\Driver\RemoteStorage;
 use In2code\In2publishCore\Utility\FileUtility;
 use In2code\In2publishCore\Utility\FolderUtility;
+use InvalidArgumentException;
 use ReflectionProperty;
 use Throwable;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
@@ -76,6 +78,7 @@ class EnvelopeDispatcher
     public const CMD_GET_PUBLIC_URL = 'getPublicUrl';
     public const CMD_BATCH_PREFETCH_FILES = 'batchPrefetchFiles';
     public const CMD_MOVE_FILE_WITHIN_STORAGE = 'moveFileWithinStorage';
+    public const CMD_LIST_FOLDER_CONTENTS = 'listFolderContents';
     /*
      * Indexing commands (using the storage object)
      */
@@ -88,18 +91,22 @@ class EnvelopeDispatcher
      * Others
      */
     public const CMD_GET_SET_DB_INIT = 'getSetDbInit';
-
     /**
      * Limits the amount of files in a folder for pre-fetching. If there are more than $prefetchLimit files in
      * the selected folder they will not be processed when not requested explicitly.
      */
     protected int $prefetchLimit = 51;
-
     private ResourceFactory $resourceFactory;
+    private FileSystemInfoService $fileSystemEnumerationService;
 
-    public function __construct(ResourceFactory $resourceFactory)
+    public function injectResourceFactory(ResourceFactory $resourceFactory): void
     {
         $this->resourceFactory = $resourceFactory;
+    }
+
+    public function injectFileSystemEnumerationService(FileSystemInfoService $fileSystemEnumerationService): void
+    {
+        $this->fileSystemEnumerationService = $fileSystemEnumerationService;
     }
 
     public function dispatch(Envelope $envelope): bool
@@ -471,6 +478,17 @@ class EnvelopeDispatcher
         }
 
         return $response;
+    }
+
+    public function listFolderContents(array $request): array
+    {
+        $storageUid = $request['storageUid'];
+        $identifier = $request['identifier'];
+        try {
+            return $this->fileSystemEnumerationService->listFolderContents($storageUid, $identifier);
+        } catch (InvalidArgumentException $e) {
+            return [];
+        }
     }
 
     public function getSetDbInit(): string

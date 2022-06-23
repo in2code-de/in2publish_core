@@ -27,6 +27,7 @@ namespace In2code\In2publishCore\ViewHelpers\File;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
@@ -58,19 +59,19 @@ class IconViewHelper extends AbstractViewHelper
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerArgument(self::ARG_RECORD, RecordInterface::class, 'The record to show the icon for', true);
+        $this->registerArgument(self::ARG_RECORD, Record::class, 'The record to show the icon for', true);
     }
 
     public function render(): string
     {
-        /** @var RecordInterface $record */
+        /** @var Record $record */
         $record = $this->arguments[self::ARG_RECORD];
 
-        $mimeType = explode(',', $record->getMergedProperty('mime_type'))[0];
+        $mimeType = $record->getProp('mime_type');
         $iconIdentifier = $mimeTypeIcon = $this->iconRegistry->getIconIdentifierForMimeType($mimeType);
 
         if ($mimeTypeIcon === null) {
-            $extension = explode(',', $record->getMergedProperty('extension'))[0];
+            $extension = $record->getProp('extension');
             $fileExtensionIcon = $this->iconRegistry->getIconIdentifierForFileExtension($extension);
             if ($fileExtensionIcon === 'mimetypes-other-other') {
                 $mimeTypeIcon = $this->iconRegistry->getIconIdentifierForMimeType(explode('/', $mimeType)[0] . '/*');

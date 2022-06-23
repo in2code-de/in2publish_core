@@ -48,8 +48,8 @@ class FalDriverService
                       ->from('sys_file_storage')
                       ->where($query->expr()->eq('uid', $query->createNamedParameter($storage)));
                 $result = $query->execute();
-                $storage = $result->fetchAssociative();
-                $driver = $this->createFalDriver($storage);
+                $storageRow = $result->fetchAssociative();
+                $driver = $this->createFalDriver($storageRow);
             }
             $this->rtc[$storage] = $driver;
         }

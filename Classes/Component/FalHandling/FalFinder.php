@@ -30,16 +30,16 @@ namespace In2code\In2publishCore\Component\FalHandling;
  */
 
 use In2code\In2publishCore\Component\FalHandling\Finder\Exception\TooManyFilesException;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Model\Record;
 
 interface FalFinder
 {
     /**
      * The actual FalFinder must dispatch the FolderInstanceWasCreated event before returning the Record instance.
      *
-     * @param string|null $identifier A FAL combined identifier or null for the default storage
-     * @return RecordInterface
+     * @param string|null $subFolderIdentifier A FAL combined identifier or null for the default storage
+     * @return Record
      * @throws TooManyFilesException If the folder can not be processed because it contains too many files.
      */
-    public function findFalRecord(?string $identifier): RecordInterface;
+    public function findFalRecord(?string $subFolderIdentifier): Record;
 }

@@ -85,23 +85,23 @@ class BuildResourcePathViewHelper extends AbstractViewHelper
         $stagingLevel = $this->arguments['stagingLevel'];
 
         $resourceUrl = null;
-        if ('sys_file' !== $record->getTableName()) {
+        if ('sys_file' !== $record->getClassification()) {
             // TODO: maybe throw exception
             return '';
         }
 
-        if ('local' === $stagingLevel && $record->localRecordExists()) {
-            $storage = $record->getPropertyBySideIdentifier($stagingLevel, 'storage');
-            $identifier = $record->getPropertyBySideIdentifier($stagingLevel, 'identifier');
+        if ('local' === $stagingLevel && $record->getState() !== Record::S_DELETED) {
+            $storage = $record->getPropsBySide($stagingLevel)['storage'] ?? null;
+            $identifier = $record->getPropsBySide($stagingLevel)['identifier'] ?? null;
 
             /** @var File $file Keep this annotation for the correct method return type generation */
             $file = $this->resourceFactory->getFileObjectByStorageAndIdentifier($storage, $identifier);
             $resourceUrl = $file->getPublicUrl();
         }
 
-        if ('foreign' === $stagingLevel && $record->foreignRecordExists()) {
-            $storage = $record->getPropertyBySideIdentifier($stagingLevel, 'storage');
-            $identifier = $record->getPropertyBySideIdentifier($stagingLevel, 'identifier');
+        if ('foreign' === $stagingLevel && $record->getState() === Record::S_DELETED) {
+            $storage = $record->getPropsBySide($stagingLevel)['storage'] ?? null;
+            $identifier = $record->getPropsBySide($stagingLevel)['identifier'] ?? null;
 
             $this->remoteFileAbstractionLayerDriver->setStorageUid($storage);
             $this->remoteFileAbstractionLayerDriver->initialize();

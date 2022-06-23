@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Component\FalHandling\PostProcessing\Factory;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\FalHandling\PostProcessing\FalIndexPostProcessor;
 use In2code\In2publishCore\Component\FalHandling\PostProcessing\FileIndexPostProcessor;
 use In2code\In2publishCore\Component\FalHandling\PostProcessing\PostProcessor;
 use In2code\In2publishCore\Config\ConfigContainer;
@@ -49,6 +48,5 @@ class PostProcessorFactory
         if ($this->configContainer->get('factory.fal.reserveSysFileUids')) {
             return GeneralUtility::makeInstance(FileIndexPostProcessor::class);
         }
-        return GeneralUtility::makeInstance(FalIndexPostProcessor::class);
     }
 }

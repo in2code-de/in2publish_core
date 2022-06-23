@@ -32,6 +32,7 @@ namespace In2code\In2publishCore\Domain\Factory;
 use In2code\In2publishCore\Component\TcaHandling\RecordIndex;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Domain\Model\FileRecord;
+use In2code\In2publishCore\Domain\Model\FolderRecord;
 use In2code\In2publishCore\Domain\Model\MmDatabaseRecord;
 use In2code\In2publishCore\Domain\Model\PageTreeRootRecord;
 use In2code\In2publishCore\Domain\Model\Record;
@@ -97,9 +98,16 @@ class RecordFactory
         return $record;
     }
 
-    public function createFileRecord($localProps, $foreignProps): FileRecord
+    public function createFileRecord(array $localProps, array $foreignProps): FileRecord
     {
         $record = new FileRecord($localProps, $foreignProps);
+        $this->finishRecord($record);
+        return $record;
+    }
+
+    public function createFolderRecord(string $combinedIdentifier, array $localProps, array $foreignProps): FolderRecord
+    {
+        $record = new FolderRecord($combinedIdentifier, $localProps, $foreignProps);
         $this->finishRecord($record);
         return $record;
     }
