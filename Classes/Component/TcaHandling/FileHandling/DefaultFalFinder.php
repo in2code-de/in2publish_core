@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\FalHandling\Finder;
+namespace In2code\In2publishCore\Component\TcaHandling\FileHandling;
 
 /*
  * Copyright notice
@@ -30,13 +30,13 @@ namespace In2code\In2publishCore\Component\FalHandling\Finder;
  */
 
 use In2code\In2publishCore\Component\FalHandling\FalFinder;
-use In2code\In2publishCore\Component\FalHandling\Service\FileSystemInfoService;
-use In2code\In2publishCore\Component\FalHandling\Service\ForeignFileSystemInfoService;
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\DemandResolverCollection;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\JoinDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FalDriverService;
+use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FileSystemInfoService;
+use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\ForeignFileSystemInfoService;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Component\TcaHandling\RecordTreeBuilder;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
@@ -51,7 +51,7 @@ use function explode;
 use function ltrim;
 use function sha1;
 
-class DefaultFalFinder implements FalFinder
+class DefaultFalFinder
 {
     protected ResourceFactory $resourceFactory;
     protected RecordFactory $recordFactory;

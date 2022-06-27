@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Domain\Service\TableConfiguration;
 
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Service\Configuration\TcaService;
-use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 
 use function sprintf;
 use function trim;

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Functional\Domain\Service\Publishing;
 
-use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Model\DatabaseRecord;
+use In2code\In2publishCore\Domain\Model\MmDatabaseRecord;
+use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\Domain\Repository\RunningRequestRepository;
 use In2code\In2publishCore\Domain\Service\Publishing\RunningRequestService;
-use In2code\In2publishCore\Event\RecordsWereSelectedForPublishing;
+use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Tests\FunctionalTestCase;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -23,24 +25,25 @@ class RunningRequestServiceTest extends FunctionalTestCase
     public function testRecordWithMmRecordCanBeMarkedAsPublishing(): void
     {
         $mmId = json_encode(['uid_local' => 1, 'uid_foreign' => 2, 'sorting' => 15]);
-        $mmRecord = new Record(
+        $mmRecord = new MmDatabaseRecord(
             'foo_bar_mm',
+            '{uid_local: 1, uid_foreign: 2, sorting: 15}',
             ['uid_local' => 1, 'uid_foreign' => 2, 'sorting' => 15],
-            ['uid_local' => 1, 'uid_foreign' => 2, 'sorting' => 15],
-            [],
-            [],
-            $mmId
+            ['uid_local' => 1, 'uid_foreign' => 2, 'sorting' => 15]
         );
 
-        $record = new Record('foo', ['uid' => 1], ['uid' => 1], [], [], 1);
-        $record->addRelatedRecord($mmRecord);
+        $record = new DatabaseRecord('foo', 1, ['uid' => 1], ['uid' => 1], []);
+        $record->addChild($mmRecord);
+
+        $recordTree = new RecordTree();
+        $recordTree->addChild($record);
 
         $repo = new RunningRequestRepository();
         $service = new RunningRequestService($repo);
 
-        $event = new RecordsWereSelectedForPublishing([$record]);
+        $event = new RecursiveRecordPublishingBegan($recordTree);
 
-        $service->onRecordsWereSelectedForPublishing($event);
+        $service->onRecursiveRecordPublishingBegan($event);
 
         $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
         $connection = $connectionPool->getConnectionByName('Default');

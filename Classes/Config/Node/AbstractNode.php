@@ -43,15 +43,11 @@ use function is_string;
 abstract class AbstractNode implements Node
 {
     protected string $name;
-
     /** @var string[] */
     protected array $validators;
-
     protected NodeCollection $nodes;
-
     /** @var string|int|bool|array */
     protected $default;
-
     protected bool $skipValidators = false;
 
     /**

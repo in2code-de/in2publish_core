@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
 use In2code\In2publishCore\Controller\AbstractController;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
-use In2code\In2publishCore\Event\RecordsWereSelectedForPublishing;
 use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\SaveAndPublishButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
@@ -69,8 +68,6 @@ class RedirectController extends AbstractController
     public function __construct()
     {
         parent::__construct();
-        $this->recordFinder = $recordFinder;
-        $this->recordPublisher = $recordPublisher;
         $this->languageService = $GLOBALS['LANG'];
     }
 
@@ -170,8 +167,6 @@ class RedirectController extends AbstractController
                 $records[] = $record;
             }
         }
-
-        $this->eventDispatcher->dispatch(new RecordsWereSelectedForPublishing($records));
 
         foreach ($records as $record) {
             $this->recordPublisher->publishRecordRecursive($record);

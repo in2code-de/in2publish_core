@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\FalHandling\Service;
+namespace In2code\In2publishCore\Component\TcaHandling\FileHandling\Service;
 
 use Exception;
 use In2code\In2publishCore\Command\Foreign\RemoteProcedureCall\ExecuteCommand;
@@ -38,8 +38,7 @@ class ForeignFileSystemInfoService
             EnvelopeDispatcher::CMD_FOLDER_EXISTS,
             ['storage' => $storageUid, 'folderIdentifier' => $identifier]
         );
-        $folderInfo = $this->executeEnvelope($envelope);
-        return $folderInfo['exists'];
+        return $this->executeEnvelope($envelope);
     }
 
     public function fileExists(int $storageUid, string $identifier): bool
@@ -48,8 +47,7 @@ class ForeignFileSystemInfoService
             EnvelopeDispatcher::CMD_FILE_EXISTS,
             ['storage' => $storageUid, 'fileIdentifier' => $identifier]
         );
-        $folderInfo = $this->executeEnvelope($envelope);
-        return isset($folderInfo[$identifier]);
+        return $this->executeEnvelope($envelope);
     }
 
     public function listFolderContents(int $storageUid, string $identifier): array

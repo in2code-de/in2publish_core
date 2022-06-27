@@ -90,15 +90,6 @@ ignoredFields:
 
 # factory settings (configuration about building relations in in2publish)
 factory:
-
-  # The class which is used to fetch all records from persistence.
-  # @user
-  finder: 'In2code\In2publishCore\Component\RecordHandling\DefaultRecordFinder'
-
-  # The class which is used to publish a record (recursively)
-  # @user
-  publisher: 'In2code\In2publishCore\Component\RecordHandling\DefaultRecordPublisher'
-
   # [Performance]
   # depth of pages to fetch in hierarchy
   # @user
@@ -129,92 +120,6 @@ factory:
 
   # Enable to show records which are deleted on one side and non-existent on the other
   treatRemovedAndDeletedAsDifference: FALSE
-
-  # FAL related settings
-  fal:
-
-    # FAL Finder. The class to use to find a folder as an instance of the RecordInterface, containing all files of that
-    # folder as related records.
-    # This setting determines the strategy.
-    finder: 'In2code\In2publishCore\Component\FalHandling\Finder\DefaultFalFinder'
-
-    # Set this to FALSE if you take care of the auto_increment yourself (e.g. when having FAL uploads in the
-    # foreign frontend. If set to TRUE it will enable the auto_increment synchronization whenever
-    # the publish files module was opened.
-    # This enabled by default because it will lead to problems if you did not set the auto_increment to a high value
-    # before disabling this option.
-    #
-    # It is recommended to not disable it if you are rather sure that there are no file uploads on live.
-    # If you have uploads on live (which you should not) you must enable this or you will get problems with file references.
-    reserveSysFileUids: TRUE
-
-    # Requires: reserveSysFileUids: TRUE
-    #
-    # This setting will enable a sys_file lookup based on the file identifier of files which were found in the storage
-    # but not in the database. (Database files are found by their folder hash)
-    reclaimSysFileEntries: FALSE
-
-    # Requires: reserveSysFileUids: TRUE
-    #
-    # Only in combination with factory.fal.reclaimSysFileEntries enabled.
-    # While reclaimSysFileEntries is consuming some additional performance this setting autoRepairFolderHash
-    # will automatically repair database entries and increase relation consistency
-    #
-    # WARNING: This feature changes sys_file entries on live without opt-in or asking for permission.
-    #   There is no preview of the changes which are going to be made.
-    #   Changes are persisted immediately before the publish file module is rendered.
-    autoRepairFolderHash: FALSE
-
-    # Requires: reserveSysFileUids: TRUE
-    #
-    # [BETA]
-    #
-    # It is possible for sys_file records to have different UIDs on local and foreign while referencing the same file
-    # due to the indexing behaviour of FAL. If this setting is set to FALSE you might see duplicate file entries in the
-    # publish files module. Enable this feature to merge the sys_files by identifier before showing them.
-    #
-    # WARNING: This feature will overwrite the UID of the foreign sys_file record if there are no references in the
-    #   table sys_file_reference. No other table or relation will be checked.
-    #   This feature changes sys_file_reference entries on live without opt-in or asking for permission.
-    #   There is no preview of the changes which are going to be made.
-    #   Changes are persisted immediately before the publish file module is rendered.
-    #
-    # IMPORTANT: If the UID of the foreign sys_file entry is already used in sys_file_reference this feature will not
-    #   overwrite the foreign UID to prevent severe damage or missing images on the foreign's frontend.
-    #   Hence it's mostly worth the risk and relatively stable.
-    mergeSysFileByIdentifier: FALSE
-
-    # Requires: reserveSysFileUids: TRUE
-    #
-    # [BETA]
-    #
-    # CAUTION: This feature disables the integrity check of the mergeSysFileByIdentifier feature. USE WITH CARE!
-    #
-    # DISCLAIMER:
-    #   This feature is distributed WITHOUT ANY WARRANTY;
-    #   without even the implied warranty of merchantability or fitness for a particular purpose.
-    #
-    # Disables the mergeSysFileByIdentifier integrity protection to allow you to update a sys_file's UID on foreign
-    # along with all associated sys_file_reference entries.
-    #
-    # WARNING: This feature changes sys_file_reference entries on live without opt-in or asking for permission.
-    #   There is no preview of the changes which are going to be made.
-    #   Changes are persisted immediately before the publish file module is rendered.
-    enableSysFileReferenceUpdate: FALSE
-
-    # Requires: reserveSysFileUids: FALSE
-    #
-    # Configuration for the limit on files inside a single folder.
-    #
-    # CAUTION: If set too high in2publish_core will can prevent database field overflows and crash the application!
-    #
-    # The field containing the data written on foreign is of type longtext. But it contains a lot of information like
-    # identifier (path in the storage), storage, size, name (filename) and uid. If you have more than 150 files in a
-    # folder and it is deeply nested the information will grow very quick and will eventually exceed the field length
-    # and lead to exceptions and may leave your instance in an unusable state.
-    # @user
-    folderFileLimit: 150
-
 
 # Set file preview domain. Must be at least a host name. If a scheme is not set it defaults to https.
 # You can include the scheme and also a path if your TYPO3 runs in a sub path (e.g. https://example.com/stuff/)

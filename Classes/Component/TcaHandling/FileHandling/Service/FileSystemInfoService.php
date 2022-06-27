@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\FalHandling\Service;
-
-use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FalDriverService;
+namespace In2code\In2publishCore\Component\TcaHandling\FileHandling\Service;
 
 class FileSystemInfoService
 {
@@ -32,7 +30,11 @@ class FileSystemInfoService
         $fileIdentifiers = $driver->getFilesInFolder($identifier);
         $files = [];
         foreach ($fileIdentifiers as $fileIdentifier) {
-            $files[] = $driver->getFileInfoByIdentifier($fileIdentifier, self::PROPERTIES);
+            $foundFile = $driver->getFileInfoByIdentifier($fileIdentifier, self::PROPERTIES);
+            $publicUrl = $driver->getPublicUrl($foundFile['identifier']);
+            // TODO: If the publicUrl does not contain the host we need to add it here
+            $foundFile['publicUrl'] = $publicUrl;
+            $files[] = $foundFile;
         }
         return [
             'folders' => $folders,

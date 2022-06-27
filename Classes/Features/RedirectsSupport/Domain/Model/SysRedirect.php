@@ -29,8 +29,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Model;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\RecordHandling\RecordFinder;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Event\DetermineIfRecordIsPublishing;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Database\RawRecordService;
@@ -144,7 +143,7 @@ class SysRedirect extends AbstractEntity
         return GeneralUtility::makeInstance(TcaService::class)->getRecordLabel($record, 'pages');
     }
 
-    public function getRecord(): RecordInterface
+    public function getRecord(): Record
     {
         if (!isset($this->rtc['record'])) {
             $this->rtc['record'] = GeneralUtility::makeInstance(RecordFinder::class)

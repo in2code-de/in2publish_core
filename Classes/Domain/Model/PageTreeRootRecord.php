@@ -18,5 +18,4 @@ class PageTreeRootRecord extends DatabaseRecord
     {
         return 0;
     }
-
 }

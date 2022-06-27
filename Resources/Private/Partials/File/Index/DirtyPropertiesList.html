@@ -39,7 +39,7 @@
 			<f:if condition="{record.{propertyKey}.type} == 2">
 				<f:if condition="{stagingLevel} == 'foreign'">
 					<f:then>
-						<img class="w-50 h-auto" src="{publish:File.BuildResourcePath(record:record,stagingLevel: stagingLevel)}"/>
+						<img class="w-50 h-auto" src="{record.foreignProps.publicUrl}"/>
 					</f:then>
 					<f:else>
 						<f:image class="w-50 h-auto" src="{record.{propertyKey}.uid}"/>

@@ -7,7 +7,6 @@ namespace In2code\In2publishCore\Component\TcaHandling\FileHandling;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\ForeignFileInfoService;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\LocalFileInfoService;
-use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 
 class FileDemandResolver

@@ -13,29 +13,22 @@ abstract class AbstractRecord implements Record
 {
     // Initialize this in your constructor
     protected array $localProps;
-
     // Initialize this in your constructor
     protected array $foreignProps;
-
     protected string $state;
-
     protected bool $hasBeenAskedForRecursiveState = false;
-
     /**
      * @var array<Record>
      */
     protected array $children = [];
-
     /**
      * @var array<Record>
      */
     protected array $parents = [];
-
     /**
      * @var array<Record>
      */
     protected array $translations = [];
-
     protected ?Record $translationParent = null;
 
     public function getLocalProps(): array

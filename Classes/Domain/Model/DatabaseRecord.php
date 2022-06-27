@@ -12,9 +12,7 @@ use function array_keys;
 class DatabaseRecord extends AbstractDatabaseRecord implements DatabaseEntityRecord
 {
     protected int $id;
-
     protected array $ignoredProps;
-
     protected array $changedProps;
 
     public function __construct(string $table, int $id, array $localProps, array $foreignProps, array $ignoredProps)

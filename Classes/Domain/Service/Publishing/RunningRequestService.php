@@ -34,7 +34,6 @@ use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Repository\RunningRequestRepository;
 use In2code\In2publishCore\Event\DetermineIfRecordIsPublishing;
-use In2code\In2publishCore\Event\RecordsWereSelectedForPublishing;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\VoteIfRecordIsPublishable;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -66,16 +65,6 @@ class RunningRequestService implements SingletonInterface
             foreach ($records as $record) {
                 $this->writeToRunningRequestsTable($record);
             }
-        }
-        $this->runningRequestRepository->flush();
-    }
-
-    public function onRecordsWereSelectedForPublishing(RecordsWereSelectedForPublishing $event): void
-    {
-        $this->registerShutdownFunction();
-
-        foreach ($event->getRecords() as $record) {
-            $this->writeToRunningRequestsTable($record);
         }
         $this->runningRequestRepository->flush();
     }

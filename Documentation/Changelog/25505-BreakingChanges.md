@@ -13,6 +13,10 @@ Replaced ignoreFieldsForDifferenceView with ignoredFields
 Removed features:
 * SimplifiedOverviewAndPublishing
 
+Removed components:
+* FalHandling
+* RecordHandling
+
 Removed Events:
 * RecordWasEnriched
 * VoteIfFindingByIdentifierShouldBeSkipped -> DemandsWereCollected
@@ -25,6 +29,10 @@ Removed Events:
 * VoteIfSearchingForRelatedRecordsByFlexFormPropertyShouldBeSkipped -> DemandsWereCollected
 * VoteIfSearchingForRelatedRecordsByFlexFormShouldBeSkipped
 * VoteIfSearchingForRelatedRecordsShouldBeSkipped
+* RecordInstanceWasInstantiated -> RecordWasCreated
+* RecordWasCreatedForDetailAction
+* RecordWasSelectedForPublishing
+* RecordsWereSelectedForPublishing -> RecursiveRecordPublishingBegan
 
 ## Affected Installations
 

@@ -7,7 +7,6 @@ namespace In2code\In2publishCore\Domain\Model;
 class VirtualFlexFormRecord extends AbstractDatabaseRecord implements DatabaseEntityRecord
 {
     protected string $flexFormPath;
-
     protected DatabaseEntityRecord $record;
 
     public function __construct(

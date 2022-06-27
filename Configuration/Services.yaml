@@ -1,7 +1,5 @@
 imports:
-  - { resource: Component/FalHandling/Services.yaml }
   - { resource: Component/PostPublishTaskExecution/Services.yaml }
-  #- { resource: Component/RecordHandling/Services.yaml }
   - { resource: Component/TcaHandling/Services.yaml }
   - { resource: Features/AdminTools/Services.yaml }
   - { resource: Features/CacheInvalidation/Services.yaml }
@@ -87,10 +85,6 @@ services:
         identifier: 'in2publishcore-RunningRequestService-RecursiveRecordPublishingBegan'
         method: 'onRecursiveRecordPublishingBegan'
         event: In2code\In2publishCore\Event\RecursiveRecordPublishingBegan
-      - name: event.listener
-        identifier: 'in2publishcore-RunningRequestService-RecordsWereSelectedForPublishing'
-        method: 'onRecordsWereSelectedForPublishing'
-        event: In2code\In2publishCore\Event\RecordsWereSelectedForPublishing
       - name: event.listener
         identifier: 'in2publishcore-RunningRequestService-VoteIfRecordIsPublishable'
         method: 'isPublishable'

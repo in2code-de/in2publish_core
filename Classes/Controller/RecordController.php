@@ -33,7 +33,6 @@ namespace In2code\In2publishCore\Controller;
 use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
 use In2code\In2publishCore\Component\TcaHandling\RecordTreeBuilder;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
-use In2code\In2publishCore\Event\RecordWasCreatedForDetailAction;
 use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Error\FailureCollector;
@@ -106,22 +105,6 @@ class RecordController extends AbstractController
     }
 
     /**
-     * Show record details (difference view) to a page
-     * Normally called via AJAX
-     *
-     * @param int $identifier record identifier
-     */
-    public function detailAction(int $identifier, string $tableName): ResponseInterface
-    {
-        $record = $this->recordFinder->findRecordByUidForPublishing($identifier, $tableName);
-
-        $this->eventDispatcher->dispatch(new RecordWasCreatedForDetailAction($this, $record));
-
-        $this->view->assign('record', $record);
-        return $this->htmlResponse();
-    }
-
-    /**
      * Check if user is allowed to publish
      *
      * @throws In2publishCoreException
@@ -158,24 +141,6 @@ class RecordController extends AbstractController
     {
         $return = $this->toggleFilterStatus('in2publish_filter_records_', $filter);
         return $this->jsonResponse(json_encode($return, JSON_THROW_ON_ERROR));
-    }
-
-    protected function publishRecord(int $identifier, array $exceptTableNames = []): void
-    {
-        $record = $this->recordFinder->findRecordByUidForPublishing($identifier, 'pages');
-
-        $this->eventDispatcher->dispatch(new RecordWasSelectedForPublishing($record, $this));
-
-        try {
-            $this->recordPublisher->publishRecordRecursive(
-                $record,
-                array_merge($this->configContainer->get('excludeRelatedTables'), $exceptTableNames)
-            );
-        } catch (Throwable $exception) {
-            $this->logger->error('Error while publishing', ['exception' => $exception]);
-            $this->addFlashMessage($exception->getMessage(), '', AbstractMessage::ERROR);
-        }
-        $this->runTasks();
     }
 
     /**

@@ -12,7 +12,6 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
         'transOrigPointerField' => 0,
         'delete' => false,
     ];
-
     protected string $table;
 
     public function getClassification(): string
@@ -23,7 +22,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
     public function getForeignIdentificationProps(): array
     {
         return [
-            'uid' => $this->getId()
+            'uid' => $this->getId(),
         ];
     }
 

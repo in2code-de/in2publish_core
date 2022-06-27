@@ -30,29 +30,24 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\FalHandling\FalFinder;
+use In2code\In2publishCore\Component\TcaHandling\FileHandling\DefaultFalFinder;
 use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Model\RecordTree;
+use In2code\In2publishCore\Service\Error\FailureCollector;
 use In2code\In2publishCore\Utility\LogUtility;
 use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
 use Throwable;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_keys;
-use function count;
-use function dirname;
 use function explode;
 use function implode;
 use function is_string;
 use function json_encode;
-use function reset;
 use function strlen;
 use function strpos;
 use function trim;
@@ -67,7 +62,7 @@ class FileController extends AbstractController
     protected bool $forcePidInteger = false;
     private ModuleTemplateFactory $moduleTemplateFactory;
     private PageRenderer $pageRenderer;
-    private FalFinder $falFinder;
+    private DefaultFalFinder $defaultFalFinder;
     private FailureCollector $failureCollector;
     private PublisherService $publisherService;
 
@@ -87,9 +82,9 @@ class FileController extends AbstractController
         );
     }
 
-    public function injectFalFinder(FalFinder $falFinder): void
+    public function injectDefaultFalFinder(DefaultFalFinder $defaultFalFinder): void
     {
-        $this->falFinder = $falFinder;
+        $this->defaultFalFinder = $defaultFalFinder;
     }
 
     public function injectModuleTemplateFactory(ModuleTemplateFactory $moduleTemplateFactory): void
@@ -143,7 +138,11 @@ class FileController extends AbstractController
         } catch (Throwable $exception) {
             if (!$skipNotification) {
                 $this->addFlashMessage(
-                    LocalizationUtility::translate('file_publishing.failure.folder', 'in2publish_core', [$combinedIdentifier]),
+                    LocalizationUtility::translate(
+                        'file_publishing.failure.folder',
+                        'in2publish_core',
+                        [$combinedIdentifier]
+                    ),
                     LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
                     AbstractMessage::ERROR
                 );
@@ -160,14 +159,15 @@ class FileController extends AbstractController
      */
     public function publishFileAction(string $combinedIdentifier, bool $skipNotification = false): void
     {
-        $recordTree = $this->falFinder->findFileRecord($combinedIdentifier);
+        $recordTree = $this->defaultFalFinder->findFileRecord($combinedIdentifier);
 
         if (null !== $recordTree) {
             try {
                 $this->publisherService->publishRecordTree($recordTree);
                 if (!$skipNotification) {
                     $this->addFlashMessage(
-                        LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$combinedIdentifier]),
+                        LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$combinedIdentifier]
+                        ),
                         LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
                     );
                 }
@@ -217,6 +217,6 @@ class FileController extends AbstractController
             [$storage, $name] = explode(':', $combinedIdentifier);
             $combinedIdentifier = $storage . ':/' . trim($name, '/') . '/';
         }
-        return $this->falFinder->findFalRecord($combinedIdentifier, $onlyRoot);
+        return $this->defaultFalFinder->findFalRecord($combinedIdentifier, $onlyRoot);
     }
 }

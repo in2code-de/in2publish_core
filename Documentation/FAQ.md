@@ -89,18 +89,15 @@ First of all: Ensure all tables that are affected by user generated content are 
 Some tables like `sys_file`, `sys_file_reference` and `sys_file_metadata`, however, must not be included
 in `excludeRelatedTables` or publishing content with images will not work.
 Since these tables are also affected by frontend user interaction on live (if there is an image upload or a forum or
-something like that [3rd party!]) there will be conflicts.
-These conflicts will lead to user content in published content or vice versa. **Be aware that unhandled conflicts might
-lead to data disclosure!**
+something like that [3rd party!]) there will be uid conflicts. This means that a file uploaded by an editor and another
+file uploaded by a user will get the same uid. When the file is published the file from local will be published and the
+one uploaded by the user will be deleted.
+**Be aware that unhandled conflicts might lead to data disclosure!**
 
-**There is, however an experimental feature**, which allows you to have user generated content without running into UID
-conflicts.
-First of all set `factory.fal.reserveSysFileUids` to FALSE. The you have to set the auto_increment of the
-tables `sys_file`, `sys_file_reference` and `sys_file_metadata` to a high value on foreign (and only on foreign!).
-The distance between the local and foreign auto_increment denominates the number of entries, which can be created on the
-local system. In case you set the auto_increment too low (e.g. 1000) you will run into conflicts very soon, if you set
-it too high (e.g. 2147483547) you will soon run out of possible UIDs on foreign (on 32-bit systems).
-There is still one thing you must know: When using this feature UIDs of sys_file records may be rewritten, so you might
-loose any data from the foreign instance related to that record.
-This should only happen if there are two indices for the exact same file with different UIDs, so this case is rather
-rare.
+**You can solve this by setting the AUTO_INCREMENT value of the affected tables to a high value.**
+You have to set the auto_increment of the tables `sys_file`, `sys_file_reference` and `sys_file_metadata` to a high
+value **on foreign (and only on foreign!)**. The distance between the local and foreign auto_increment denominates the
+number of entries, which can be created on the local system. In case you set the auto_increment too low (e.g. 1000) you
+will run into conflicts very soon, if you set it too high (e.g. 2147483547) you will soon run out of possible UIDs on
+foreign (on 32-bit systems). There is still one thing you must know: Conflicting UIDs will still lead to the problem of
+sys_file records getting overwritten. You should ensure there are no conflicts before starting.

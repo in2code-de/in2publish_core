@@ -37,7 +37,6 @@ class DynamicValueProviderRegistry implements SingletonInterface
 {
     /** @var string[] */
     protected array $classes = [];
-
     /** @var DynamicValueProviderInterface[] */
     protected array $objects = [];
 
