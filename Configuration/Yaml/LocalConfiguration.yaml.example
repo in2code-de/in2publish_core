@@ -138,11 +138,6 @@ factory:
     # This setting determines the strategy.
     finder: 'In2code\In2publishCore\Component\FalHandling\Finder\DefaultFalFinder'
 
-    # FAL Publisher. The class used to publish folders by identifier and files by their record instances.
-    # The default publisher should suffice for nearly all use cases. Please consider implementing your code with
-    # event listeners over changing this setting.
-    publisher: 'In2code\In2publishCore\Component\FalHandling\Publisher\DefaultFalPublisher'
-
     # Set this to FALSE if you take care of the auto_increment yourself (e.g. when having FAL uploads in the
     # foreign frontend. If set to TRUE it will enable the auto_increment synchronization whenever
     # the publish files module was opened.

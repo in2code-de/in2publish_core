@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Component\FalHandling\Factory;
  */
 
 use In2code\In2publishCore\Component\FalHandling\FalFinder;
-use In2code\In2publishCore\Component\FalHandling\FalPublisher;
 use In2code\In2publishCore\Config\ConfigContainer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -46,10 +45,5 @@ class FalHandlerFactory
     public function createFalFinder(): FalFinder
     {
         return GeneralUtility::makeInstance($this->configContainer->get('factory.fal.finder'));
-    }
-
-    public function createFalPublisher(): FalPublisher
-    {
-        return GeneralUtility::makeInstance($this->configContainer->get('factory.fal.publisher'));
     }
 }

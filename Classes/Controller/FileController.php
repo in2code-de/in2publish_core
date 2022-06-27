@@ -31,12 +31,9 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Component\FalHandling\FalFinder;
-use In2code\In2publishCore\Component\FalHandling\Finder\Exception\TooManyFilesException;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
-use In2code\In2publishCore\Service\Environment\EnvironmentService;
-use In2code\In2publishCore\Service\Error\FailureCollector;
+use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\Utility\LogUtility;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
@@ -106,10 +103,10 @@ class FileController extends AbstractController
 
     public function indexAction(): ResponseInterface
     {
-        $record = $this->tryToGetFolderInstance($this->pid === 0 ? null : $this->pid);
+        $recordTree = $this->tryToGetFolderInstance($this->pid === 0 ? null : $this->pid);
 
-        if (null !== $record) {
-            $this->view->assign('record', $record);
+        if (null !== $recordTree) {
+            $this->view->assign('recordTree', $recordTree);
         }
 
         $this->pageRenderer->loadRequireJsModule('TYPO3/CMS/Backend/Tooltip');
@@ -222,35 +219,13 @@ class FileController extends AbstractController
      *
      * @return Record|null The record or null if it can not be handled
      */
-    protected function tryToGetFolderInstance(?string $identifier): ?Record
+    protected function tryToGetFolderInstance(?string $identifier): ?RecordTree
     {
         if (is_string($identifier) && strpos($identifier, ':') < strlen($identifier)) {
             [$storage, $name] = explode(':', $identifier);
             $identifier = $storage . ':' . trim($name, '/') . '/';
         }
-        try {
-            $record = $this->falFinder->findFalRecord($identifier);
-        } catch (TooManyFilesException $exception) {
-            $this->renderTooManyFilesFlashMessage($exception);
-            return null;
-        }
-        return $record;
-    }
-
-    protected function renderTooManyFilesFlashMessage(TooManyFilesException $exception): void
-    {
-        $arguments = [
-            'folder' => $exception->getFolder(),
-            'filesCount' => $exception->getCount(),
-            'threshold' => $exception->getThreshold(),
-        ];
-        $this->addFlashMessage(
-            LocalizationUtility::translate('file_publishing.too_many_files', 'in2publish_core', $arguments),
-            LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
-            AbstractMessage::WARNING
-        );
-        $arguments['exception'] = $exception;
-        $this->logger->warning('The folder file limit has been exceeded', $arguments);
+        return $this->falFinder->findFalRecord($identifier);
     }
 
     protected function getRecordToPublish(array $relatedRecords, int $uid): RecordInterface

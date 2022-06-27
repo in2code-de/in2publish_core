@@ -21,8 +21,8 @@
 					<f:link.action
 						class="js-publish-trigger js-publish-overlay btn btn-default"
 						action="publishFolder"
-						arguments="{identifier:record.identifier}"
-						data="{type: 'folder', name: '{publish:record.getMergedProperty(record: record, propertyName: \'identifier\')}'}"
+						arguments="{identifier:record.id}"
+						data="{type: 'folder', name: '{publish:record.getMergedProperty(record: record, propertyName: \'id\')}'}"
 					>
 						<f:translate key="publish"/>
 						<core:icon identifier="actions-arrow-right" />

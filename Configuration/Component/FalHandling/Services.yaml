@@ -16,10 +16,6 @@ services:
   In2code\In2publishCore\Component\FalHandling\Finder\DefaultFalFinder:
     public: true
 
-  In2code\In2publishCore\Component\FalHandling\FalPublisher:
-    public: true
-    factory: [ '@In2code\In2publishCore\Component\FalHandling\Factory\FalHandlerFactory', 'createFalPublisher' ]
-
   In2code\In2publishCore\Component\FalHandling\PostProcessing\PostProcessor:
     factory: [ '@In2code\In2publishCore\Component\FalHandling\PostProcessing\Factory\PostProcessorFactory', 'createPostProcessor' ]
 

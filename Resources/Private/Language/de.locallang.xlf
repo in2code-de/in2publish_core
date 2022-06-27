@@ -469,10 +469,6 @@
 				<source>The selected file %s could not be fully published.</source>
 				<target state="translated">Die Datei %s konnte nicht vollständig publiziert werden.</target>
 			</trans-unit>
-			<trans-unit id="file_publishing.too_many_files">
-				<source>The folder %s contains too many files (%d) to process. The limit of files in a folder is %d files per folder.</source>
-				<target state="translated">Das Verzeichnis %s enthält zu viele Dateien (%d) um es zu verarbeiten. Das Dateilimit beträgt %d Dateien pro Verzeichnis.</target>
-			</trans-unit>
 
 			<trans-unit id="publishing.tasks_failure">
 				<source>One or more additional tasks which run after the successful publishing process failed. Caches and other non critical aspects might not behave as expected. The logs might contain more information.</source>

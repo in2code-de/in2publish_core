@@ -39,6 +39,7 @@ use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandRes
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Domain\Model\RecordTree;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
@@ -106,7 +107,7 @@ class DefaultFalFinder implements FalFinder
      *
      * I only work with drivers, so I don't "accidentally" index files...
      */
-    public function findFalRecord(?string $identifier): Record
+    public function findFalRecord(?string $identifier): RecordTree
     {
         $this->demandResolverCollection->addDemandResolver($this->selectDemandResolver);
         $this->demandResolverCollection->addDemandResolver($this->joinDemandResolver);
@@ -189,7 +190,9 @@ class DefaultFalFinder implements FalFinder
         }
         $this->demandResolverCollection->resolveDemand($demands, new RecordCollection());
 
-        return $folderRecord;
+        $recordTree = new RecordTree();
+        $recordTree->addChild($folderRecord);
+        return $recordTree;
     }
 
     protected function getFolder(?string $identifier): Folder

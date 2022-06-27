@@ -11,7 +11,7 @@
 			<f:translate key="module_m3_title">publish files</f:translate>
 		</h2>
 
-		<f:if condition="{record}">
+		<f:if condition="{recordTree}">
 			<f:render partial="File/Index/FunctionBar" arguments="{_all}" />
 		</f:if>
 
@@ -34,9 +34,11 @@
 					</tr>
 				</thead>
 				<tbody>
-					<f:render partial="File/Index/FolderList" arguments="{_all}" />
-					<f:for each="{record.children._file}" as="fileRecord">
-						<f:render partial="File/Index/FileList" arguments="{record:fileRecord, config:config}" />
+					<f:for each="{recordTree.children._folder}" as="record">
+						<f:render partial="File/Index/FolderList" arguments="{record: record, config:config}" />
+						<f:for each="{record.children._file}" as="fileRecord">
+							<f:render partial="File/Index/FileList" arguments="{record:fileRecord, config:config}" />
+						</f:for>
 					</f:for>
 				</tbody>
 			</table>
