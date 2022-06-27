@@ -67,20 +67,34 @@ class IconViewHelper extends AbstractViewHelper
         /** @var Record $record */
         $record = $this->arguments[self::ARG_RECORD];
 
-        $mimeType = $record->getProp('mime_type');
-        $iconIdentifier = $mimeTypeIcon = $this->iconRegistry->getIconIdentifierForMimeType($mimeType);
-
-        if ($mimeTypeIcon === null) {
-            $extension = $record->getProp('extension');
-            $fileExtensionIcon = $this->iconRegistry->getIconIdentifierForFileExtension($extension);
-            if ($fileExtensionIcon === 'mimetypes-other-other') {
-                $mimeTypeIcon = $this->iconRegistry->getIconIdentifierForMimeType(explode('/', $mimeType)[0] . '/*');
-                $iconIdentifier = $mimeTypeIcon ?? $fileExtensionIcon;
-            } else {
-                $iconIdentifier = $fileExtensionIcon;
-            }
-        }
+        $iconIdentifier = $this->getIconIdentifier($record);
 
         return $this->iconFactory->getIcon($iconIdentifier, Icon::SIZE_SMALL)->render();
+    }
+
+    protected function getIconIdentifier(Record $record): ?string
+    {
+        $mimeType = $record->getProp('mime_type');
+        if ($mimeType === null) {
+            return $this->getIconIdentifierForFileExtension($record);
+        }
+
+        $iconIdentifier = $this->iconRegistry->getIconIdentifierForMimeType($mimeType);
+
+        if ($iconIdentifier === null) {
+            $fileExtensionIcon = $this->getIconIdentifierForFileExtension($record);
+            if ($fileExtensionIcon === 'mimetypes-other-other') {
+                $iconIdentifier = $this->iconRegistry->getIconIdentifierForMimeType(explode('/', $mimeType)[0] . '/*');
+                return $iconIdentifier ?? $fileExtensionIcon;
+            }
+            return $fileExtensionIcon;
+        }
+        return $iconIdentifier;
+    }
+
+    protected function getIconIdentifierForFileExtension(Record $record): string
+    {
+        $extension = $record->getProp('extension');
+        return $this->iconRegistry->getIconIdentifierForFileExtension($extension);
     }
 }
