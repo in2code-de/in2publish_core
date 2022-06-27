@@ -51,33 +51,35 @@
 							</span>
 						</f:else>
 					</f:if>
-					<f:if condition="{record.state} != 'deleted' && {record.children.sys_file_metadata}">
+					<f:if condition="{record.state} != 'deleted' && {record.children.sys_file}">
 						<f:then>
-							<f:if condition="{record.children.sys_file_metadata -> f:count()} > 1">
-								<f:then>
-									<button class="btn btn-default dropdown-toggle dropdown-toggle-no-chevron" type="button" id="translations_{record.id}" data-bs-toggle="dropdown" data-bs-boundary="window" aria-expanded="false">
-										<core:icon identifier="actions-translate" />
-									</button>
-									<ul class="dropdown-menu dropdown-list" aria-labelledby="translations_{record.id}">
-										<f:for each="{record.children.sys_file_metadata}" as="metaRecord" iteration="iterator">
-											<li>
-												<a href="{publish:uri.editUri(uid: metaRecord.localProps.uid, tableName: metaRecord.tableName)}" class="dropdown-item" title="{publish:record.getMergedProperty(record: record, propertyName: 'name')}">
-													<publish:record.languageFlagIcon record="{metaRecord}" side="local" /> <publish:record.getMergedProperty record="{record}" propertyName="name" />
+							<f:for each="{record.children.sys_file}" as="sys_file">
+								<f:if condition="{sys_file.children.sys_file_metadata -> f:count()} > 1">
+									<f:then>
+										<button class="btn btn-default dropdown-toggle dropdown-toggle-no-chevron" type="button" id="translations_{record.id}" data-bs-toggle="dropdown" data-bs-boundary="window" aria-expanded="false">
+											<core:icon identifier="actions-translate" />
+										</button>
+										<ul class="dropdown-menu dropdown-list" aria-labelledby="translations_{record.id}">
+											<f:for each="{sys_file.children.sys_file_metadata}" as="metaRecord" iteration="iterator">
+												<li>
+													<a href="{publish:uri.editUri(uid: metaRecord.localProps.uid, tableName: metaRecord.classification)}" class="dropdown-item" title="{publish:record.getMergedProperty(record: record, propertyName: 'name')}">
+														<publish:record.languageFlagIcon record="{metaRecord}" side="local" /> <publish:record.getMergedProperty record="{record}" propertyName="name" />
+													</a>
+												</li>
+											</f:for>
+										</ul>
+									</f:then>
+									<f:else>
+										<f:for each="{sys_file.children.sys_file_metadata}" as="metaRecord" iteration="iterator">
+											<f:if condition="{iterator.isFirst}">
+												<a class="btn btn-default" href="{publish:uri.editUri(uid: metaRecord.localProps.uid, tableName: metaRecord.classification)}" data-bs-toggle="tooltip" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:edit')}">
+													<core:icon identifier="actions-pencil" />
 												</a>
-											</li>
+											</f:if>
 										</f:for>
-									</ul>
-								</f:then>
-								<f:else>
-									<f:for each="{record.children.sys_file_metadata}" as="metaRecord" iteration="iterator">
-										<f:if condition="{iterator.isFirst}">
-											<a class="btn btn-default" href="{publish:uri.editUri(uid: metaRecord.localProps.uid, tableName: metaRecord.tableName)}" data-bs-toggle="tooltip" title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:edit')}">
-												<core:icon identifier="actions-pencil" />
-											</a>
-										</f:if>
-									</f:for>
-								</f:else>
-							</f:if>
+									</f:else>
+								</f:if>
+							</f:for>
 						</f:then>
 						<f:else>
 							<span class="btn btn-default disabled" aria-hidden="true">

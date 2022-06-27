@@ -37,6 +37,7 @@ use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\DemandResolverC
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\JoinDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
+use In2code\In2publishCore\Component\TcaHandling\RecordTreeBuilder;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordTree;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
@@ -59,6 +60,7 @@ class DefaultFalFinder implements FalFinder
     protected DemandResolverCollection $demandResolverCollection;
     protected SelectDemandResolver $selectDemandResolver;
     protected JoinDemandResolver $joinDemandResolver;
+    protected RecordTreeBuilder $recordTreeBuilder;
 
     public function injectResourceFactory(ResourceFactory $resourceFactory)
     {
@@ -98,6 +100,11 @@ class DefaultFalFinder implements FalFinder
     public function injectJoinDemandResolver(JoinDemandResolver $joinDemandResolver): void
     {
         $this->joinDemandResolver = $joinDemandResolver;
+    }
+
+    public function injectRecordTreeBuilder(RecordTreeBuilder $recordTreeBuilder): void
+    {
+        $this->recordTreeBuilder = $recordTreeBuilder;
     }
 
     /**
@@ -210,7 +217,9 @@ class DefaultFalFinder implements FalFinder
             );
             $folderRecord->addChild($fileRecord);
         }
-        $this->demandResolverCollection->resolveDemand($demands, new RecordCollection());
+        $recordCollection = new RecordCollection();
+        $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
+        $this->recordTreeBuilder->findRecordsByTca($recordCollection);
 
         $recordTree = new RecordTree();
         $recordTree->addChild($folderRecord);
