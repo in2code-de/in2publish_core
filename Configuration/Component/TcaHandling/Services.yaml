@@ -41,10 +41,10 @@ services:
         method: 'onRecordRelationsWereResolved'
         event: In2code\In2publishCore\Event\RecordRelationsWereResolved
 
-  In2code\In2publishCore\Component\TcaHandling\Publisher\Command\FilePublisherCommand:
+  In2code\In2publishCore\Component\TcaHandling\Publisher\Command\FalPublisherCommand:
     tags:
       - name: 'console.command'
-        command: 'in2publish_core:tcahandling:filepublisher'
+        command: 'in2publish_core:tcahandling:falpublisher'
         hidden: TRUE
         schedulable: FALSE
 

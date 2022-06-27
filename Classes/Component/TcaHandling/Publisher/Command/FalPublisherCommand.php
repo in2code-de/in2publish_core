@@ -6,6 +6,7 @@ namespace In2code\In2publishCore\Component\TcaHandling\Publisher\Command;
 
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FalDriverService;
 use In2code\In2publishCore\Component\TcaHandling\Publisher\FileRecordPublisher;
+use In2code\In2publishCore\Component\TcaHandling\Publisher\FolderRecordPublisher;
 use In2code\In2publishCore\Service\Context\ContextService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,8 +17,9 @@ use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Utility\PathUtility;
 
 use function array_keys;
+use function explode;
 
-class FilePublisherCommand extends Command
+class FalPublisherCommand extends Command
 {
     protected ContextService $contextService;
     protected Connection $localDatabase;
@@ -89,6 +91,16 @@ class FilePublisherCommand extends Command
             }
             if (FileRecordPublisher::A_DELETE === $row['file_action']) {
                 $driver->deleteFile($row['identifier']);
+            }
+            if (FolderRecordPublisher::A_INSERT === $row['folder_action']) {
+                $identifier = explode(':/', $row['identifier'])[1];
+                $folderName = PathUtility::basename($identifier);
+                $parentFolder = PathUtility::dirname($identifier);
+                $driver->createFolder($folderName, $parentFolder);
+            }
+            if (FolderRecordPublisher::A_DELETE === $row['folder_action']) {
+                $identifier = explode(':', $row['identifier'])[1];
+                $driver->deleteFolder($identifier, true);
             }
         }
         return Command::SUCCESS;

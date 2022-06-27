@@ -38,15 +38,15 @@ use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\JoinDemandResol
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
-use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordTree;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-
 use TYPO3\CMS\Core\Utility\PathUtility;
 
+use function explode;
+use function ltrim;
 use function sha1;
 
 class DefaultFalFinder implements FalFinder
@@ -107,7 +107,7 @@ class DefaultFalFinder implements FalFinder
      *
      * I only work with drivers, so I don't "accidentally" index files...
      */
-    public function findFalRecord(?string $identifier): RecordTree
+    public function findFalRecord(?string $combinedIdentifier, bool $onlyRoot = false): RecordTree
     {
         $this->demandResolverCollection->addDemandResolver($this->selectDemandResolver);
         $this->demandResolverCollection->addDemandResolver($this->joinDemandResolver);
@@ -119,42 +119,64 @@ class DefaultFalFinder implements FalFinder
          *  4. Blame FAL. Always.
          *  5. Ignore sys_file entries for files which do not exist in the selected folder
          */
-        $folder = $this->getFolder($identifier);
-        $storageUid = $folder->getStorage()->getUid();
+        $folder = $this->getFolder($combinedIdentifier);
+        $storage = $folder->getStorage();
+        $folderName = PathUtility::basename($combinedIdentifier);
+        $folderIdentifier = explode(':', $combinedIdentifier)[1];
+        $storageUid = $storage->getUid();
+        $storageName = $storage->getName();
 
-        $combinedIdentifier = $folder->getCombinedIdentifier();
-        $folderRecord = $this->recordFactory->createFolderRecord(
-            $combinedIdentifier,
-            [
+        $localProps = [];
+        if (
+            trim($combinedIdentifier, '/') === trim($folder->getCombinedIdentifier(), '/')
+        ) {
+            $localProps = [
                 'combinedIdentifier' => $combinedIdentifier,
-                'name' => $folder->getName() ?: $folder->getStorage()->getName(),
-            ],
-            [
+                'name' => $folderName ?: $storageName,
+                'storage' => $storageUid,
+            ];
+        }
+
+        $foreignProps = [];
+        if ($this->foreignFileSystemInfoService->folderExists($storageUid, $folder->getIdentifier())) {
+            $foreignProps = [
                 'combinedIdentifier' => $combinedIdentifier,
-                'name' => $folder->getName() ?: $folder->getStorage()->getName(),
-            ]
-        );
+                'name' => $folderName ?: $storageName,
+                'storage' => $storageUid,
+            ];
+        }
+        $folderRecord = $this->recordFactory->createFolderRecord($combinedIdentifier, $localProps, $foreignProps);
+
+        if ($onlyRoot) {
+            $recordTree = new RecordTree();
+            $recordTree->addChild($folderRecord);
+            return $recordTree;
+        }
 
         $localFolderContents = $this->fileSystemInfoService->listFolderContents(
             $storageUid,
-            $folder->getIdentifier()
+            $folderIdentifier
         );
         $foreignFolderContents = $this->foreignFileSystemInfoService->listFolderContents(
             $storageUid,
-            $folder->getIdentifier()
+            $folderIdentifier
         );
 
         $folders = [];
         foreach ($localFolderContents['folders'] ?? [] as $folder) {
-            $folders[$folder]['local'] = [
-                'combinedIdentifier' => $folder,
+            $combinedIdentifier = $storageUid . ':/' . ltrim($folder, '/');
+            $folders[$combinedIdentifier]['local'] = [
+                'combinedIdentifier' => $combinedIdentifier,
                 'name' => PathUtility::basename($folder),
+                'storage' => $storageUid,
             ];
         }
         foreach ($foreignFolderContents['folders'] ?? [] as $folder) {
-            $folders[$folder]['foreign'] = [
-                'combinedIdentifier' => $folder,
+            $combinedIdentifier = $storageUid . ':/' . ltrim($folder, '/');
+            $folders[$combinedIdentifier]['foreign'] = [
+                'combinedIdentifier' => $combinedIdentifier,
                 'name' => PathUtility::basename($folder),
+                'storage' => $storageUid,
             ];
         }
         foreach ($folders as $subFolderIdentifier => $sides) {

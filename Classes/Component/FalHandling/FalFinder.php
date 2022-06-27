@@ -36,7 +36,7 @@ interface FalFinder
     /**
      * The actual FalFinder must dispatch the FolderInstanceWasCreated event before returning the Record instance.
      *
-     * @param string|null $identifier A FAL combined identifier or null for the default storage
+     * @param string|null $combinedIdentifier A FAL combined identifier or null for the default storage
      */
-    public function findFalRecord(?string $identifier): RecordTree;
+    public function findFalRecord(?string $combinedIdentifier, bool $onlyRoot = false): RecordTree;
 }

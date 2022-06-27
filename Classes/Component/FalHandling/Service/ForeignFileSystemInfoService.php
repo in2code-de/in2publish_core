@@ -26,9 +26,20 @@ class ForeignFileSystemInfoService
     {
         $this->letterbox = $letterbox;
     }
+
     public function injectRceDispatcher(RemoteCommandDispatcher $rceDispatcher): void
     {
         $this->rceDispatcher = $rceDispatcher;
+    }
+
+    public function folderExists(int $storageUid, string $identifier): bool
+    {
+        $envelope = new Envelope(
+            EnvelopeDispatcher::CMD_FOLDER_EXISTS,
+            ['storage' => $storageUid, 'folderIdentifier' => $identifier]
+        );
+        $folderInfo = $this->executeEnvelope($envelope);
+        return $folderInfo['exists'];
     }
 
     public function listFolderContents(int $storageUid, string $identifier): array
@@ -37,6 +48,11 @@ class ForeignFileSystemInfoService
             EnvelopeDispatcher::CMD_LIST_FOLDER_CONTENTS,
             ['storageUid' => $storageUid, 'identifier' => $identifier]
         );
+        return $this->executeEnvelope($envelope);
+    }
+
+    protected function executeEnvelope(Envelope $envelope)
+    {
         $uid = $this->letterbox->sendEnvelope($envelope);
         if (!is_int($uid)) {
             throw new Exception('Could not send envelope');
