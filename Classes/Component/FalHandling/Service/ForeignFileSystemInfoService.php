@@ -42,6 +42,16 @@ class ForeignFileSystemInfoService
         return $folderInfo['exists'];
     }
 
+    public function fileExists(int $storageUid, string $identifier): bool
+    {
+        $envelope = new Envelope(
+            EnvelopeDispatcher::CMD_FILE_EXISTS,
+            ['storage' => $storageUid, 'fileIdentifier' => $identifier]
+        );
+        $folderInfo = $this->executeEnvelope($envelope);
+        return isset($folderInfo[$identifier]);
+    }
+
     public function listFolderContents(int $storageUid, string $identifier): array
     {
         $envelope = new Envelope(

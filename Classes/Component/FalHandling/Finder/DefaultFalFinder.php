@@ -36,6 +36,7 @@ use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\DemandResolverCollection;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\JoinDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FalDriverService;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Component\TcaHandling\RecordTreeBuilder;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
@@ -61,6 +62,7 @@ class DefaultFalFinder implements FalFinder
     protected SelectDemandResolver $selectDemandResolver;
     protected JoinDemandResolver $joinDemandResolver;
     protected RecordTreeBuilder $recordTreeBuilder;
+    protected FalDriverService $falDriverService;
 
     public function injectResourceFactory(ResourceFactory $resourceFactory)
     {
@@ -105,6 +107,11 @@ class DefaultFalFinder implements FalFinder
     public function injectRecordTreeBuilder(RecordTreeBuilder $recordTreeBuilder): void
     {
         $this->recordTreeBuilder = $recordTreeBuilder;
+    }
+
+    public function injectFalDriverService(FalDriverService $falDriverService): void
+    {
+        $this->falDriverService = $falDriverService;
     }
 
     /**
@@ -247,5 +254,52 @@ class DefaultFalFinder implements FalFinder
             }
         }
         return $localFolder;
+    }
+
+    public function findFileRecord(?string $combinedIdentifier): RecordTree
+    {
+        $this->demandResolverCollection->addDemandResolver($this->selectDemandResolver);
+        $this->demandResolverCollection->addDemandResolver($this->joinDemandResolver);
+
+        [$storage, $fileIdentifier] = explode(':', $combinedIdentifier);
+        $driver = $this->falDriverService->getDriver((int)$storage);
+
+        $localProps = [];
+        if ($driver->fileExists($fileIdentifier)) {
+            $localProps = [
+                'combinedIdentifier' => $combinedIdentifier,
+                'identifier' => $fileIdentifier,
+                'identifier_hash' => sha1($fileIdentifier),
+                'name' => PathUtility::basename($fileIdentifier),
+                'storage' => (int)$storage,
+            ];
+        }
+        $foreignProps = [];
+        if ($this->foreignFileSystemInfoService->fileExists((int)$storage, $fileIdentifier)) {
+            $foreignProps = [
+                'combinedIdentifier' => $combinedIdentifier,
+                'identifier' => $fileIdentifier,
+                'identifier_hash' => sha1($fileIdentifier),
+                'name' => PathUtility::basename($fileIdentifier),
+                'storage' => (int)$storage,
+            ];
+        }
+        $fileRecord = $this->recordFactory->createFileRecord($localProps, $foreignProps);
+
+        $demands = $this->demandsFactory->createDemand();
+        $demands->addSelect(
+            'sys_file',
+            'storage = ' . $fileRecord->getProp('storage'),
+            'identifier_hash',
+            sha1($fileRecord->getProp('identifier')),
+            $fileRecord
+        );
+        $recordCollection = new RecordCollection();
+        $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
+        $this->recordTreeBuilder->findRecordsByTca($recordCollection);
+
+        $recordTree = new RecordTree();
+        $recordTree->addChild($fileRecord);
+        return $recordTree;
     }
 }

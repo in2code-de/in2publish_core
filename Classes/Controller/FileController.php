@@ -158,27 +158,16 @@ class FileController extends AbstractController
      * @throws StopActionException
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag) On purpose
      */
-    public function publishFileAction(int $uid, string $identifier, int $storage, bool $skipNotification = false): void
+    public function publishFileAction(string $combinedIdentifier, bool $skipNotification = false): void
     {
-        // Special case: The file was moved hence the identifier is a merged one
-        if (strpos($identifier, ',')) {
-            // Just take the local part of the file identifier.
-            // We need the local folder identifier to instantiate the folder record.
-            [$identifier] = GeneralUtility::trimExplode(',', $identifier);
-        }
+        $recordTree = $this->falFinder->findFileRecord($combinedIdentifier);
 
-        $record = $this->tryToGetFolderInstance($storage . ':' . dirname($identifier));
-
-        if (null !== $record) {
-            $relatedRecords = $record->getRelatedRecordByTableAndProperty('sys_file', 'identifier', $identifier);
-
-            $relatedRecord = $this->getRecordToPublish($relatedRecords, $uid);
-
+        if (null !== $recordTree) {
             try {
-                $this->falPublisher->publishFile($relatedRecord);
+                $this->publisherService->publishRecordTree($recordTree);
                 if (!$skipNotification) {
                     $this->addFlashMessage(
-                        LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$identifier]),
+                        LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$combinedIdentifier]),
                         LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
                     );
                 }
@@ -188,7 +177,7 @@ class FileController extends AbstractController
                         LocalizationUtility::translate(
                             'file_publishing.failure.file',
                             'in2publish_core',
-                            [$identifier]
+                            [$combinedIdentifier]
                         ),
                         LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
                         AbstractMessage::ERROR
@@ -229,22 +218,5 @@ class FileController extends AbstractController
             $combinedIdentifier = $storage . ':/' . trim($name, '/') . '/';
         }
         return $this->falFinder->findFalRecord($combinedIdentifier, $onlyRoot);
-    }
-
-    protected function getRecordToPublish(array $relatedRecords, int $uid): RecordInterface
-    {
-        $recordsCount = count($relatedRecords);
-
-        if (0 === $recordsCount) {
-            throw new RuntimeException('Did not find any record matching the publishing arguments', 1475656572);
-        }
-        if (1 === $recordsCount) {
-            $relatedRecord = reset($relatedRecords);
-        } elseif (isset($relatedRecords[$uid])) {
-            $relatedRecord = $relatedRecords[$uid];
-        } else {
-            throw new RuntimeException('Did not find an exact record match for the given arguments', 1475588793);
-        }
-        return $relatedRecord;
     }
 }

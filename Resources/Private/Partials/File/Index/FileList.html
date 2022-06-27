@@ -101,12 +101,8 @@
 							<f:link.action
 								class="js-publish-trigger js-publish-overlay btn btn-default"
 								action="publishFile"
-								arguments="{
-									uid:record.identifier,
-									identifier:'{publish:record.getMergedProperty(record:record, propertyName: \'identifier\')}',
-									storage:'{publish:record.getMergedProperty(record:record, propertyName: \'storage\')}'
-								}"
-								data="{type: 'file', name: '{publish:record.getMergedProperty(record: record, propertyName: \'identifier\')}'}"
+								arguments="{combinedIdentifier:record.id}"
+								data="{type: 'file', name: '{publish:record.getMergedProperty(record: record, propertyName: \'id\')}'}"
 							>
 								<f:translate key="publish"/>
 								<core:icon identifier="actions-arrow-right" />

@@ -39,4 +39,6 @@ interface FalFinder
      * @param string|null $combinedIdentifier A FAL combined identifier or null for the default storage
      */
     public function findFalRecord(?string $combinedIdentifier, bool $onlyRoot = false): RecordTree;
+
+    public function findFileRecord(?string $combinedIdentifier): RecordTree;
 }
