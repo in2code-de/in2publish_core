@@ -44,6 +44,8 @@ use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use TYPO3\CMS\Core\Utility\PathUtility;
+
 use function sha1;
 
 class DefaultFalFinder implements FalFinder
@@ -122,8 +124,14 @@ class DefaultFalFinder implements FalFinder
         $combinedIdentifier = $folder->getCombinedIdentifier();
         $folderRecord = $this->recordFactory->createFolderRecord(
             $combinedIdentifier,
-            ['combinedIdentifier' => $combinedIdentifier],
-            ['combinedIdentifier' => $combinedIdentifier]
+            [
+                'combinedIdentifier' => $combinedIdentifier,
+                'name' => $folder->getName() ?: $folder->getStorage()->getName(),
+            ],
+            [
+                'combinedIdentifier' => $combinedIdentifier,
+                'name' => $folder->getName() ?: $folder->getStorage()->getName(),
+            ]
         );
 
         $localFolderContents = $this->fileSystemInfoService->listFolderContents(
@@ -137,10 +145,16 @@ class DefaultFalFinder implements FalFinder
 
         $folders = [];
         foreach ($localFolderContents['folders'] ?? [] as $folder) {
-            $folders[$folder]['local'] = ['combinedIdentifier' => $folder];
+            $folders[$folder]['local'] = [
+                'combinedIdentifier' => $folder,
+                'name' => PathUtility::basename($folder),
+            ];
         }
         foreach ($foreignFolderContents['folders'] ?? [] as $folder) {
-            $folders[$folder]['foreign'] = ['combinedIdentifier' => $folder];
+            $folders[$folder]['foreign'] = [
+                'combinedIdentifier' => $folder,
+                'name' => PathUtility::basename($folder),
+            ];
         }
         foreach ($folders as $subFolderIdentifier => $sides) {
             $subFolderRecord = $this->recordFactory->createFolderRecord(

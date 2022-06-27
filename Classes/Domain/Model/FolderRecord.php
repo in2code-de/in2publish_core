@@ -8,7 +8,7 @@ use LogicException;
 
 class FolderRecord extends AbstractRecord
 {
-    public const CLASSIFICATION = '#folder';
+    public const CLASSIFICATION = '_folder';
     private string $combinedIdentifier;
 
     public function __construct(string $combinedIdentifier, array $localProps, array $foreignProps)
