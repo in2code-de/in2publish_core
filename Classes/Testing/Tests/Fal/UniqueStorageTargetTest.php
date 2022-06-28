@@ -74,7 +74,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
      */
     public function run(): TestResult
     {
-        return new TestResult('SKIPPED', TestResult::SKIPPED, 'Not yet implemented');
+        return new TestResult('SKIPPED', TestResult::SKIPPED, ['Not yet implemented']);
         $storages = $this->testSubjectProvider->getStoragesForUniqueTargetTest();
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
 
