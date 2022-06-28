@@ -102,8 +102,8 @@ CREATE TABLE tx_in2publishcore_filepublisher_task
     storage_uid          int(11)                      NOT NULL,
     identifier           text,
     identifier_hash      char(40)                     NOT NULL,
-    -- One of "insert", "delete", "update"
     temp_identifier_hash char(40)         DEFAULT NULL,
+    -- One of "insert", "delete", "update"
     file_action          char(6)          DEFAULT NULL,
     folder_action        char(6)          DEFAULT NULL,
     UNIQUE INDEX id (request_token, storage_uid, identifier_hash)

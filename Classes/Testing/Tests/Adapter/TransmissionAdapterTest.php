@@ -82,7 +82,7 @@ class TransmissionAdapterTest implements TestCaseInterface
         });
 
         try {
-            $foreignTmpFile = $this->assetTransmitter->transmitTemporaryFile($localTmpFile);
+            $foreignTmpFile = $this->assetTransmitter->transmitTemporaryFile($localTmpFile)['target'];
         } catch (Throwable $exception) {
             return new TestResult(
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.asset_transmitter_error',

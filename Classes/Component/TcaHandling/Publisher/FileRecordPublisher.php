@@ -92,7 +92,7 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
     {
         $driver = $this->falDriverService->getDriver($record->getLocalProps()['storage']);
         $localFile = $driver->getFileForLocalProcessing($record->getLocalProps()['identifier']);
-        $identifier = $this->assetTransmitter->transmitTemporaryFile($localFile);
+        $identifier = $this->assetTransmitter->transmitTemporaryFile($localFile)['identifierHash'];
         unlink($localFile);
         $this->foreignDatabase->insert('tx_in2publishcore_filepublisher_task', [
             'request_token' => $this->requestToken,

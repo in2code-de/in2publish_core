@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Communication\RemoteProcedureCall\Exception\StorageIsOfflineException;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FileSystemInfoService;
 use InvalidArgumentException;
 use ReflectionProperty;
@@ -97,6 +98,9 @@ class EnvelopeDispatcher
     protected function getStorageDriver(array $request): DriverInterface
     {
         $storage = $this->resourceFactory->getStorageObject($request['storage']);
+        if (!$storage->isOnline()) {
+            throw new StorageIsOfflineException((int)$request['storage']);
+        }
         $driverReflection = new ReflectionProperty(get_class($storage), 'driver');
         $driverReflection->setAccessible(true);
         /** @var DriverInterface $driver */

@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  */
 
 use Doctrine\DBAL\Driver\Exception as DriverException;
+use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\ForeignFileSystemInfoService;
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest;
@@ -37,6 +38,7 @@ use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use ReflectionException;
 use ReflectionProperty;
+use RuntimeException;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -46,6 +48,7 @@ use function array_merge;
 use function array_unique;
 use function get_class;
 use function ltrim;
+use function preg_match;
 use function uniqid;
 
 /**
@@ -53,18 +56,26 @@ use function uniqid;
  */
 class UniqueStorageTargetTest implements TestCaseInterface
 {
+    protected ForeignFileSystemInfoService $foreignFileSystemInfoService;
     protected FalStorageTestSubjectsProvider $testSubjectProvider;
-
     protected ResourceFactory $resourceFactory;
 
-    public function __construct(FalStorageTestSubjectsProvider $testSubjectProvider, ResourceFactory $resourceFactory)
+    public function injectForeignFileSystemInfoService(ForeignFileSystemInfoService $foreignFileSystemInfoService): void
+    {
+        $this->foreignFileSystemInfoService = $foreignFileSystemInfoService;
+    }
+
+    public function injectFalStorageTestSubjectProvider(FalStorageTestSubjectsProvider $testSubjectProvider): void
     {
         $this->testSubjectProvider = $testSubjectProvider;
+    }
+
+    public function injectResourceFactory(ResourceFactory $resourceFactory): void
+    {
         $this->resourceFactory = $resourceFactory;
     }
 
     /**
-     * TODO: Solve this without rFALd
      * @return TestResult
      * @throws ReflectionException
      * @throws DriverException
@@ -74,7 +85,6 @@ class UniqueStorageTargetTest implements TestCaseInterface
      */
     public function run(): TestResult
     {
-        return new TestResult('SKIPPED', TestResult::SKIPPED, ['Not yet implemented']);
         $storages = $this->testSubjectProvider->getStoragesForUniqueTargetTest();
         $keys = array_unique(array_merge(array_keys($storages['local']), array_keys($storages['foreign'])));
 
@@ -95,25 +105,26 @@ class UniqueStorageTargetTest implements TestCaseInterface
             $driverProperty->setAccessible(true);
             /** @var DriverInterface $localDriver */
             $localDriver = $driverProperty->getValue($storageObject);
-            // DO NOT USE GU::MI because rFALd must not be a singleton
-            $foreignDriver = new RemoteFileAbstractionLayerDriver();
-            $foreignDriver->setStorageUid($storages['foreign'][$key]['uid']);
-            $foreignDriver->initialize();
-            if (!$foreignDriver->isOnline()) {
-                $foreignOffline[] = $storageObject->getName();
-                continue;
-            }
 
-            do {
-                $uniqueFile = uniqid('tx_in2publish_testfile', false);
-            } while ($localDriver->fileExists($uniqueFile) || $foreignDriver->fileExists($uniqueFile));
+            try {
+                do {
+                    $uniqueFile = uniqid('tx_in2publish_testfile', false);
+                } while (
+                    $localDriver->fileExists($uniqueFile)
+                    || $this->foreignFileSystemInfoService->fileExists($storages['foreign'][$key]['uid'], $uniqueFile)
+                );
+            } catch (RuntimeException $e) {
+                if (preg_match('/The storage \d+ is offline/', $e->getMessage())) {
+                    $foreignOffline[] = $storageObject->getName();
+                    continue;
+                }
+            }
 
             $sourceFile = GeneralUtility::tempnam($uniqueFile);
 
             $addedFile = $localDriver->addFile($sourceFile, $localDriver->getRootLevelFolder(), $uniqueFile);
             if ($uniqueFile === ltrim($addedFile, '/')) {
-                $foreignDriver->clearCache();
-                if ($foreignDriver->fileExists($uniqueFile)) {
+                if ($this->foreignFileSystemInfoService->fileExists($storages['foreign'][$key]['uid'], $uniqueFile)) {
                     $affectedStorages[] = '[' . $key . '] ' . $storages['local'][$key]['name'];
                 }
             } else {

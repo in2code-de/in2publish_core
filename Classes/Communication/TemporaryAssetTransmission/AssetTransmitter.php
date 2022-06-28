@@ -65,7 +65,7 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
      *
      * @throws FileMissingException
      */
-    public function transmitTemporaryFile(string $source): string
+    public function transmitTemporaryFile(string $source): array
     {
         $this->logger->info('Transmission of file requested', ['source' => $source]);
 
@@ -101,6 +101,9 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
             );
         }
 
-        return $identifierHash;
+        return [
+            'identifierHash' => $identifierHash,
+            'target' => $target,
+        ];
     }
 }
