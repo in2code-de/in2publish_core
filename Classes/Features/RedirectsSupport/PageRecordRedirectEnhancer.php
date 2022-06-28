@@ -116,7 +116,7 @@ class PageRecordRedirectEnhancer
         ]);
 
         $except = [];
-        $relatedRedirects = $record->getRelatedRecords()['sys_redirect'] ?? [];
+        $relatedRedirects = $record->getChildren()['sys_redirect'] ?? [];
         foreach ($relatedRedirects as $relatedRedirect) {
             $except[] = $relatedRedirect->getIdentifier();
         }
@@ -162,9 +162,9 @@ class PageRecordRedirectEnhancer
         }
     }
 
-    protected function processLooseRedirects(RecordInterface $record): void
+    protected function processLooseRedirects(Record $record): void
     {
-        $pid = $record->getIdentifier();
+        $pid = $record->getId();
         if (!empty($this->looseRedirects['local'])) {
             $this->assignRedirects($this->localDatabase, $this->looseRedirects['local'], $pid);
             $this->looseRedirects['local'] = [];
@@ -219,7 +219,7 @@ class PageRecordRedirectEnhancer
     /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function findRedirectsByUri(RecordInterface $record): array
+    protected function findRedirectsByUri(Record $record): array
     {
         $basicUris = [];
 
@@ -237,8 +237,8 @@ class PageRecordRedirectEnhancer
             }
         }
 
-        $pid = $record->getIdentifier();
-        if ($record->localRecordExists()) {
+        $pid = $record->getId();
+        if ($record->getState() !== Record::S_DELETED) {
             try {
                 $uri = BackendUtility::buildPreviewUri('pages', $pid, 'local');
                 if (null !== $uri) {
@@ -251,7 +251,7 @@ class PageRecordRedirectEnhancer
             }
         }
 
-        if ($record->foreignRecordExists()) {
+        if ($record->getState() !== Record::S_ADDED) {
             try {
                 $uri = BackendUtility::buildPreviewUri('pages', $pid, 'foreign');
                 if (null !== $uri) {
@@ -266,9 +266,9 @@ class PageRecordRedirectEnhancer
         return $redirects;
     }
 
-    protected function createAndAddRecordsToRecord(RecordInterface $record, array $redirects): void
+    protected function createAndAddRecordsToRecord(Record $record, array $redirects): void
     {
-        $relatedRedirects = $record->getRelatedRecords()['sys_redirect'] ?? [];
+        $relatedRedirects = $record->getChildren()['sys_redirect'] ?? [];
         foreach ($redirects as $uid => $rowSet) {
             if (array_key_exists($uid, $relatedRedirects)) {
                 continue;
@@ -284,7 +284,7 @@ class PageRecordRedirectEnhancer
                 [],
                 []
             );
-            $record->addRelatedRecord($relatedRedirect);
+            $record->addChild($relatedRedirect);
         }
     }
 
@@ -293,10 +293,10 @@ class PageRecordRedirectEnhancer
      *
      * @psalm-return array<int|string, array{local?: array}>
      */
-    protected function getExistingRedirects(RecordInterface $record): array
+    protected function getExistingRedirects(Record $record): array
     {
         $redirects = [];
-        $existingRedirects = $record->getRelatedRecords()['sys_redirect'] ?? [];
+        $existingRedirects = $record->getChildren()['sys_redirect'] ?? [];
         foreach ($existingRedirects as $redirectRecord) {
             $row = [];
             if ($redirectRecord->localRecordExists()) {

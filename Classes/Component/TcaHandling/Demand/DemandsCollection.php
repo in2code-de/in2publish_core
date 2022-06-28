@@ -13,6 +13,7 @@ class DemandsCollection implements Demands
     private array $select = [];
     private array $join = [];
     private array $files = [];
+    private array $selectWithoutProperty = [];
 
     /**
      * @param int|string $value
@@ -109,6 +110,19 @@ class DemandsCollection implements Demands
     public function getFiles(): array
     {
         return $this->files;
+    }
+
+    public function addSysRedirectSelect(string $from, string $additionalWhere, Node $record): void
+    {
+        $this->selectWithoutProperty[$from][$additionalWhere][$this->uniqueRecordKey($record)] = $record;
+    }
+
+    /**
+     * @return array<string, array<string, array<string, Record>>>
+     */
+    public function getSysRedirectSelect(): array
+    {
+        return $this->selectWithoutProperty;
     }
 
     public function uniqueRecordKey(Node $record): string

@@ -29,8 +29,16 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
+use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\DemandResolverCollection;
+use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\JoinDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SysRedirectSelectDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
+use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Controller\AbstractController;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
+use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\SaveAndPublishButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
@@ -43,8 +51,8 @@ use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
-use TYPO3\CMS\Extbase\Pagination\QueryResultPaginator;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_column;
@@ -64,6 +72,12 @@ class RedirectController extends AbstractController
     protected SysRedirectRepository $sysRedirectRepo;
     protected IconFactory $iconFactory;
     protected LanguageService $languageService;
+    private DemandsFactory $demandsFactory;
+    protected DemandResolverCollection $demandResolverCollection;
+    protected SelectDemandResolver $selectDemandResolver;
+    protected JoinDemandResolver $joinDemandResolver;
+    protected SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver;
+    private PublisherService $publisherService;
 
     public function __construct()
     {
@@ -97,6 +111,37 @@ class RedirectController extends AbstractController
         $this->iconFactory = $iconFactory;
     }
 
+    public function injectDemandsFactory(DemandsFactory $demandsFactory): void
+    {
+        $this->demandsFactory = $demandsFactory;
+    }
+
+    public function injectDemandResolverCollection(DemandResolverCollection $demandResolverCollection): void
+    {
+        $this->demandResolverCollection = $demandResolverCollection;
+    }
+
+    public function injectSelectDemandResolver(SelectDemandResolver $selectDemandResolver): void
+    {
+        $this->selectDemandResolver = $selectDemandResolver;
+    }
+
+    public function injectJoinDemandResolver(JoinDemandResolver $joinDemandResolver): void
+    {
+        $this->joinDemandResolver = $joinDemandResolver;
+    }
+
+    public function injectSysRedirectSelectDemandResolver(
+        SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver
+    ): void {
+        $this->sysRedirectSelectDemandResolver = $sysRedirectSelectDemandResolver;
+    }
+
+    public function injectPublisherService(PublisherService $publisherService): void
+    {
+        $this->publisherService = $publisherService;
+    }
+
     /** @throws Throwable */
     public function initializeListAction(): void
     {
@@ -120,16 +165,25 @@ class RedirectController extends AbstractController
      */
     public function listAction(Filter $filter = null, int $page = 1): ResponseInterface
     {
-        $foreignConnection = DatabaseUtility::buildForeignDatabaseConnection();
-        $uidList = [];
-        if (null !== $foreignConnection) {
-            $query = $foreignConnection->createQueryBuilder();
-            $query->getRestrictions()->removeAll();
-            $query->select('uid')->from('sys_redirect')->where($query->expr()->eq('deleted', 1));
-            $uidList = array_column($query->execute()->fetchAllAssociative(), 'uid');
+        $additionalWhere = '';
+        if (null !== $filter) {
+            $additionalWhere = $filter->toAdditionWhere();
         }
-        $redirects = $this->sysRedirectRepo->findForPublishing($uidList, $filter);
-        $paginator = new QueryResultPaginator($redirects, $page, 15);
+
+        $recordTree = new RecordTree();
+
+        $demands = $this->demandsFactory->createDemand();
+        $demands->addSysRedirectSelect('sys_redirect', $additionalWhere, $recordTree);
+
+        $this->demandResolverCollection->addDemandResolver($this->selectDemandResolver);
+        $this->demandResolverCollection->addDemandResolver($this->joinDemandResolver);
+        $this->demandResolverCollection->addDemandResolver($this->sysRedirectSelectDemandResolver);
+
+        $recordCollection = new RecordCollection();
+        $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
+
+        $redirects = $recordTree->getChildren()['sys_redirect'] ?? [];
+        $paginator = new ArrayPaginator($redirects, $page, 15);
         $pagination = new SimplePagination($paginator);
         $this->view->assignMultiple(
             [
@@ -155,22 +209,21 @@ class RedirectController extends AbstractController
             $this->redirect('list');
         }
 
-        foreach ($redirects as &$redirect) {
-            $redirect = (int)$redirect;
-        }
-        unset($redirect);
+        $recordTree = new RecordTree();
 
-        $records = [];
+        $demands = $this->demandsFactory->createDemand();
         foreach ($redirects as $redirect) {
-            $record = $this->recordFinder->findRecordByUidForPublishing($redirect, 'sys_redirect');
-            if (null !== $record) {
-                $records[] = $record;
-            }
+            $demands->addSelect('sys_redirect', '', 'uid',  $redirect, $recordTree);
         }
 
-        foreach ($records as $record) {
-            $this->recordPublisher->publishRecordRecursive($record);
-        }
+        $this->demandResolverCollection->addDemandResolver($this->selectDemandResolver);
+        $this->demandResolverCollection->addDemandResolver($this->joinDemandResolver);
+        $this->demandResolverCollection->addDemandResolver($this->sysRedirectSelectDemandResolver);
+
+        $recordCollection = new RecordCollection();
+        $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
+
+        $this->publisherService->publishRecordTree($recordTree);
 
         $this->runTasks();
         if (count($redirects) === 1) {

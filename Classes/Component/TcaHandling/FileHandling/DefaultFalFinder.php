@@ -34,6 +34,7 @@ use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\DemandResolverCollection;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\JoinDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SysRedirectSelectDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FalDriverService;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FileSystemInfoService;
@@ -62,6 +63,7 @@ class DefaultFalFinder
     protected DemandResolverCollection $demandResolverCollection;
     protected SelectDemandResolver $selectDemandResolver;
     protected JoinDemandResolver $joinDemandResolver;
+    protected SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver;
     protected RecordTreeBuilder $recordTreeBuilder;
     protected FalDriverService $falDriverService;
 
@@ -105,6 +107,11 @@ class DefaultFalFinder
         $this->joinDemandResolver = $joinDemandResolver;
     }
 
+    public function injectSysRedirectSelectDemandResolver(SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver): void
+    {
+        $this->sysRedirectSelectDemandResolver = $sysRedirectSelectDemandResolver;
+    }
+
     public function injectRecordTreeBuilder(RecordTreeBuilder $recordTreeBuilder): void
     {
         $this->recordTreeBuilder = $recordTreeBuilder;
@@ -128,6 +135,7 @@ class DefaultFalFinder
     {
         $this->demandResolverCollection->addDemandResolver($this->selectDemandResolver);
         $this->demandResolverCollection->addDemandResolver($this->joinDemandResolver);
+        $this->demandResolverCollection->addDemandResolver($this->sysRedirectSelectDemandResolver);
         /*
          * IMPORTANT NOTICES (a.k.a. "never forget about this"-Notices):
          *  1. The local folder might not exist anymore, because the combinedIdentifier is persisted in the session.
@@ -269,6 +277,7 @@ class DefaultFalFinder
     {
         $this->demandResolverCollection->addDemandResolver($this->selectDemandResolver);
         $this->demandResolverCollection->addDemandResolver($this->joinDemandResolver);
+        $this->demandResolverCollection->addDemandResolver($this->sysRedirectSelectDemandResolver);
 
         [$storage, $fileIdentifier] = explode(':', $combinedIdentifier);
         $driver = $this->falDriverService->getDriver((int)$storage);

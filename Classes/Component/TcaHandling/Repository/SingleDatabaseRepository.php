@@ -166,4 +166,31 @@ class SingleDatabaseRepository
          */
         return $splittedRows;
     }
+
+    public function findByWhere($table, string $andWhere)
+    {
+        $query = $this->connection->createQueryBuilder();
+        $query->getRestrictions()->removeAll();
+        $query->select('*')
+              ->from($table);
+        if (!empty($andWhere)) {
+            $query->andWhere($andWhere);
+        }
+
+        if (!empty($GLOBALS['TCA'][$table]['ctrl']['sortby'])) {
+            $query->orderBy($GLOBALS['TCA'][$table]['ctrl']['sortby']);
+        } elseif (!empty($GLOBALS['TCA'][$table]['ctrl']['default_sortby'])) {
+            $orderByClauses = QueryHelper::parseOrderBy($GLOBALS['TCA'][$table]['ctrl']['default_sortby']);
+            foreach ($orderByClauses as $orderByClause) {
+                if (!empty($orderByClause[0])) {
+                    $query->addOrderBy($orderByClause[0], $orderByClause[1]);
+                }
+            }
+        } else {
+            $query->orderBy('uid');
+        }
+
+        $result = $query->execute();
+        return array_column($result->fetchAllAssociative(), null, 'uid');
+    }
 }

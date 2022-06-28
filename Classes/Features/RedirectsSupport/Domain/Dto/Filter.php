@@ -29,18 +29,16 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use TYPO3\CMS\Extbase\Persistence\QueryInterface;
+use In2code\In2publishCore\Utility\DatabaseUtility;
+
+use function implode;
 
 class Filter
 {
     protected ?string $domain;
-
     protected ?string $source;
-
     protected ?string $target;
-
     protected ?int $code;
-
     protected ?string $association;
 
     public function getDomain(): ?string
@@ -97,50 +95,40 @@ class Filter
      * @SuppressWarnings(PHPMD.CyclomaticComplexity) The method is pretty easy to understand
      * @SuppressWarnings(PHPMD.NPathComplexity) The method is pretty easy to understand
      */
-    public function modifyQuery(QueryInterface $query): void
+    public function toAdditionWhere(): string
     {
-        $and = [];
+        $database = DatabaseUtility::buildLocalDatabaseConnection();
+        $where = [];
 
         if (null !== $this->domain) {
-            $and[] = $query->equals('source_host', $this->domain);
+            $where[] = 'source_host = ' . $database->quote($this->domain);
         }
         if (null !== $this->source) {
-            $and[] = $query->like('source_path', '%' . $this->source . '%');
+            $where[] = 'source_path LIKE ' . $database->quote('%' . $this->source . '%');
         }
         if (null !== $this->target) {
-            $and[] = $query->like('target', '%' . $this->target . '%');
+            $where[] = 'target LIKE ' . $database->quote('%' . $this->target . '%');
         }
         if (null !== $this->code) {
-            $and[] = $query->equals('target_statuscode', $this->code);
+            $where[] = 'target_statuscode = ' . $database->quote($this->code);
         }
         if (null !== $this->association) {
             if ('present' === $this->association) {
-                $and[] = $query->logicalOr(
-                    [
-                        $query->logicalNot($query->equals('tx_in2publishcore_foreign_site_id', null)),
-                        $query->logicalNot($query->equals('tx_in2publishcore_page_uid', null)),
-                        $query->equals('source_host', '*'),
-                    ]
-                );
+                $where[] = '(
+                    tx_in2publishcore_foreign_site_id IS NOT NULL
+                    OR tx_in2publishcore_page_uid IS NOT NULL
+                    OR source_host = \'*\'
+                )';
             }
             if ('missing' === $this->association) {
-                $and[] = $query->logicalAnd(
-                    [
-                        $query->equals('tx_in2publishcore_foreign_site_id', null),
-                        $query->equals('tx_in2publishcore_page_uid', null),
-                        $query->logicalNot(
-                            $query->equals('source_host', '*')
-                        ),
-                    ]
-                );
+                $where[] = '(
+                    tx_in2publishcore_foreign_site_id IS NULL
+                    AND tx_in2publishcore_page_uid IS NULL
+                    AND source_host != \'*\'
+                )';
             }
         }
 
-        $count = count($and);
-        if ($count > 1) {
-            $query->matching($query->logicalAnd($and));
-        } elseif ($count === 1) {
-            $query->matching($and[0]);
-        }
+        return implode(' AND ', $where);
     }
 }

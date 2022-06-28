@@ -74,4 +74,12 @@ class DualDatabaseRepository
         }
         return $rows;
     }
+
+    public function findByWhere(string $table, string $andWhere): array
+    {
+        $localRows = $this->localRepository->findByWhere($table, $andWhere);
+        $foreignRows = $this->foreignRepository->findByWhere($table, $andWhere);
+
+        return $this->mergeRowsByIdentifier($localRows, $foreignRows);
+    }
 }

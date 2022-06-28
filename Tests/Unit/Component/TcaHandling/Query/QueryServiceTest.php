@@ -6,6 +6,7 @@ namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\Query;
 
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsCollection;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\Demand\SelectDemands;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Component\TcaHandling\RecordIndex;
 use In2code\In2publishCore\Component\TcaHandling\Repository\DualDatabaseRepository;
@@ -63,8 +64,11 @@ class QueryServiceTest extends TestCase
         $record = $this->createMock(DatabaseRecord::class);
 
         $demands = new DemandsCollection();
-        $demands->addSelect('foo', 'AND 1=1', 'pid', 6, $record);
-        $demands->addSelect('foo', 'AND 1=1', 'pid', 8, $record);
+        $selectDemands = new SelectDemands();
+        $selectDemands->addSelect('foo', 'AND 1=1', 'pid', 6, $record);
+        $demands->add($selectDemands);
+        $selectDemands = new SelectDemands();
+        $selectDemands->addSelect('foo', 'AND 1=1', 'pid', 8, $record);
 
         $recordCollection = new RecordCollection();
         $queryService->resolveDemand($demands, $recordCollection);

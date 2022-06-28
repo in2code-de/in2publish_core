@@ -9,6 +9,7 @@ use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\DemandResolverCollection;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\JoinDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SysRedirectSelectDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\Service\RelevantTablesService;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
@@ -25,6 +26,7 @@ class RecordTreeBuilder
     protected RelevantTablesService $relevantTablesService;
     protected SelectDemandResolver $selectDemandResolver;
     protected JoinDemandResolver $joinDemandResolver;
+    protected SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver;
     protected DemandResolverCollection $demandResolverCollection;
     protected ConfigContainer $configContainer;
     protected DemandBuilder $demandBuilder;
@@ -46,6 +48,11 @@ class RecordTreeBuilder
     public function injectJoinDemandResolver(JoinDemandResolver $joinDemandResolver): void
     {
         $this->joinDemandResolver = $joinDemandResolver;
+    }
+
+    public function injectSysRedirectSelectDemandResolver(SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver): void
+    {
+        $this->sysRedirectSelectDemandResolver = $sysRedirectSelectDemandResolver;
     }
 
     public function injectDemandResolverCollection(DemandResolverCollection $demandResolverCollection): void
@@ -87,6 +94,7 @@ class RecordTreeBuilder
     {
         $this->demandResolverCollection->addDemandResolver($this->selectDemandResolver);
         $this->demandResolverCollection->addDemandResolver($this->joinDemandResolver);
+        $this->demandResolverCollection->addDemandResolver($this->sysRedirectSelectDemandResolver);
 
         $recordTree = new RecordTree();
 

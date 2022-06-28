@@ -26,6 +26,10 @@ interface Demands
 
     public function getFiles(): array;
 
+    public function addSysRedirectSelect(string $from, string $additionalWhere, Node $record): void;
+
+    public function getSysRedirectSelect(): array;
+
     public function uniqueRecordKey(Node $record): string;
 
     public function getSelect(): array;

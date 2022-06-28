@@ -29,14 +29,10 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
-use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\SysRedirect;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Persistence\QueryInterface;
-use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
 class SysRedirectRepository extends Repository
@@ -110,29 +106,6 @@ class SysRedirectRepository extends Repository
         return $query->execute()->fetchAllAssociative();
     }
 
-    /**
-     * @psalm-suppress InvalidReturnStatement
-     * @psalm-suppress InvalidReturnType
-     */
-    public function findForPublishing(array $uidList, ?Filter $filter): QueryResultInterface
-    {
-        $query = $this->getQueryForRedirectsToBePublished($uidList);
-
-        if (null !== $filter) {
-            $filter->modifyQuery($query);
-        }
-
-        return $query->execute();
-    }
-
-    public function findUnrestrictedByIdentifier(int $redirect): ?SysRedirect
-    {
-        $query = $this->createUnrestrictedQuery();
-        $query->matching($query->equals('uid', $redirect));
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $query->execute()->getFirst();
-    }
-
     public function findHostsOfRedirects(): array
     {
         return $this->getQueryBuilder()
@@ -155,37 +128,10 @@ class SysRedirectRepository extends Repository
                     ->fetchAllAssociative();
     }
 
-    protected function getQueryForRedirectsToBePublished(array $uidList): QueryInterface
-    {
-        $query = $this->createUnrestrictedQuery();
-        if (!empty($uidList)) {
-            $query->matching(
-                $query->logicalOr(
-                    [
-                        $query->equals('deleted', 0),
-                        $query->logicalNot($query->in('uid', $uidList)),
-                    ]
-                )
-            );
-        }
-        return $query;
-    }
-
     protected function getQueryBuilder(): QueryBuilder
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_redirect');
         $queryBuilder->getRestrictions()->removeAll();
         return $queryBuilder;
-    }
-
-    protected function createUnrestrictedQuery(): QueryInterface
-    {
-        $query = $this->createQuery();
-        $querySettings = $query->getQuerySettings();
-        $querySettings->setIgnoreEnableFields(true);
-        $querySettings->setRespectSysLanguage(false);
-        $querySettings->setRespectStoragePage(false);
-        $querySettings->setIncludeDeleted(true);
-        return $query;
     }
 }

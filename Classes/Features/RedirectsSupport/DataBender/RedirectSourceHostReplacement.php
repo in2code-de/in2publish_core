@@ -74,7 +74,7 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
         }
 
         // 2. Check site
-        $siteId = $properties('tx_in2publishcore_foreign_site_id');
+        $siteId = $properties['tx_in2publishcore_foreign_site_id'];
         if ('*' === $siteId) {
             $properties['source_host'] = '*';
             $record->setLocalProps($properties);

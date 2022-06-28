@@ -46,6 +46,7 @@ class RecordFactory
     protected IgnoredFieldsService $ignoredFieldsService;
     protected RecordIndex $recordIndex;
     protected EventDispatcher $eventDispatcher;
+    protected DatabaseRecordFactoryFactory $databaseRecordFactoryFactory;
 
     public function injectIgnoredFieldsService(IgnoredFieldsService $ignoredFieldsService): void
     {
@@ -62,6 +63,11 @@ class RecordFactory
         $this->eventDispatcher = $eventDispatcher;
     }
 
+    public function injectDatabaseRecordFactoryFactory(DatabaseRecordFactoryFactory $databaseRecordFactoryFactory): void
+    {
+        $this->databaseRecordFactoryFactory = $databaseRecordFactoryFactory;
+    }
+
     public function createDatabaseRecord(
         string $table,
         int $id,
@@ -69,7 +75,8 @@ class RecordFactory
         array $foreignProps
     ): ?DatabaseRecord {
         $tableIgnoredFields = $this->ignoredFieldsService->getIgnoredFields($table);
-        $record = new DatabaseRecord($table, $id, $localProps, $foreignProps, $tableIgnoredFields);
+        $factory = $this->databaseRecordFactoryFactory->createFactoryForTable($table);
+        $record = $factory->createDatabaseRecord($table, $id, $localProps, $foreignProps, $tableIgnoredFields);
         if ($this->shouldIgnoreRecord($record)) {
             return null;
         }

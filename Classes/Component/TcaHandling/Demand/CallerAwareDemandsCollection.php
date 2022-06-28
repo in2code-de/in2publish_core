@@ -112,6 +112,25 @@ class CallerAwareDemandsCollection implements Demands
         return $this->demand->getFiles();
     }
 
+    public function addSysRedirectSelect(string $from, string $additionalWhere, Node $record): void
+    {
+        $this->demand->addSysRedirectSelect($from, $additionalWhere, $record);
+        $this->collectSysRedirectSelectMeta($from, $additionalWhere);
+    }
+
+    protected function collectSysRedirectSelectMeta(
+        string $from,
+        string $additionalWhere
+    ): void {
+        $frame = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3)[2];
+        $this->meta['sysRedirectSelect'][$from][$additionalWhere][] = $frame;
+    }
+
+    public function getSysRedirectSelect(): array
+    {
+        $this->demand->getSysRedirectSelect();
+    }
+
     /**
      * @return array<string, array<string, array<string, array<mixed, array<string, Node>>>>>
      */
