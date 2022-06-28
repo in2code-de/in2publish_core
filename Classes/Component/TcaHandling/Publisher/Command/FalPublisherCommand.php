@@ -96,7 +96,7 @@ class FalPublisherCommand extends Command
                 $identifier = explode(':/', $row['identifier'])[1];
                 $folderName = PathUtility::basename($identifier);
                 $parentFolder = PathUtility::dirname($identifier);
-                $driver->createFolder($folderName, $parentFolder);
+                $driver->createFolder($folderName, $parentFolder, true);
             }
             if (FolderRecordPublisher::A_DELETE === $row['folder_action']) {
                 $identifier = explode(':', $row['identifier'])[1];
