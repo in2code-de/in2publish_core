@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\FileHandling\Service;
 
+use InvalidArgumentException;
+use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
+
 class FileSystemInfoService
 {
     protected const PROPERTIES = [
@@ -26,8 +29,12 @@ class FileSystemInfoService
     {
         $driver = $this->falDriverService->getDriver($storageUid);
 
-        $folders = $driver->getFoldersInFolder($identifier);
-        $fileIdentifiers = $driver->getFilesInFolder($identifier);
+        try {
+            $folders = $driver->getFoldersInFolder($identifier);
+            $fileIdentifiers = $driver->getFilesInFolder($identifier);
+        } catch (InvalidArgumentException $exception) {
+            return [];
+        }
         $files = [];
         foreach ($fileIdentifiers as $fileIdentifier) {
             $foundFile = $driver->getFileInfoByIdentifier($fileIdentifier, self::PROPERTIES);

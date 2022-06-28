@@ -34,6 +34,7 @@ use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\DemandResolverCollection;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\JoinDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FalDriverService;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FileSystemInfoService;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\ForeignFileSystemInfoService;
@@ -120,6 +121,8 @@ class DefaultFalFinder
      * Also takes care of files that have not been indexed yet by FAL.
      *
      * I only work with drivers, so I don't "accidentally" index files...
+     *
+     * @throws FolderDoesNotExistOnBothSidesException
      */
     public function findFalRecord(?string $combinedIdentifier, bool $onlyRoot = false): RecordTree
     {
@@ -127,26 +130,52 @@ class DefaultFalFinder
         $this->demandResolverCollection->addDemandResolver($this->joinDemandResolver);
         /*
          * IMPORTANT NOTICES (a.k.a. "never forget about this"-Notices):
-         *  1. The local folder always exist, because it's the one which has been selected (or the default)
+         *  1. The local folder might not exist anymore, because the combinedIdentifier is persisted in the session.
          *  2. The foreign folder might not exist
          *  3. NEVER USE THE STORAGE, it might create new file index entries
          *  4. Blame FAL. Always.
-         *  5. Ignore sys_file entries for files which do not exist in the selected folder
+         *  5. Do not search for sys_file records. Only find files on disks, then attach sys_file records to them.
          */
-        $folder = $this->getFolder($combinedIdentifier);
-        $storage = $folder->getStorage();
+
+        $localFolderExists = true;
+        // Determine the current folder. If the identifier is NULL there was no folder selected.
         if (null === $combinedIdentifier) {
+            // Special case: The module was opened, but no storage/folder has been selected.
+            // Get the default storage and the default folder to show.
+            // Notice: ->getDefaultFolder does not return the default folder to show, but to upload files to.
+            // The root level folder is the "real" default and also respects mount points of the current user.
+            $folder = $this->resourceFactory->getDefaultStorage()->getRootLevelFolder();
+            // Update the combinedIdentifier to the actual folder we work with.
             $combinedIdentifier = $folder->getCombinedIdentifier();
+            $storageUid = $folder->getStorage()->getUid();
+            $identifier = $folder->getIdentifier();
+        } else {
+            try {
+                // This is the normal case. The local folder exists.
+                $folder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($combinedIdentifier);
+                $storageUid = $folder->getStorage()->getUid();
+            } /** @noinspection PhpRedundantCatchClauseInspection */ catch (FolderDoesNotExistException $exception) {
+                $localFolderExists = false;
+                [$storageUid] = GeneralUtility::trimExplode(':', $combinedIdentifier);
+                $storageUid = (int)$storageUid;
+                $localStorage = $this->resourceFactory->getStorageObject($storageUid);
+                $folder = $localStorage->getRootLevelFolder();
+            }
+            $identifier = GeneralUtility::trimExplode(':', $combinedIdentifier)[1];
         }
+        $storageName = $folder->getStorage()->getName();
+
+        $foreignFolderExists = $this->foreignFileSystemInfoService->folderExists($storageUid, $identifier);
+        if (!$localFolderExists && !$foreignFolderExists) {
+            throw new FolderDoesNotExistOnBothSidesException($combinedIdentifier, $folder->getCombinedIdentifier());
+        }
+        unset($folder);
+
         $folderName = PathUtility::basename($combinedIdentifier);
         $folderIdentifier = explode(':', $combinedIdentifier)[1];
-        $storageUid = $storage->getUid();
-        $storageName = $storage->getName();
 
         $localProps = [];
-        if (
-            trim($combinedIdentifier, '/') === trim($folder->getCombinedIdentifier(), '/')
-        ) {
+        if ($localFolderExists) {
             $localProps = [
                 'combinedIdentifier' => $combinedIdentifier,
                 'name' => $folderName ?: $storageName,
@@ -155,7 +184,7 @@ class DefaultFalFinder
         }
 
         $foreignProps = [];
-        if ($this->foreignFileSystemInfoService->folderExists($storageUid, $folder->getIdentifier())) {
+        if ($foreignFolderExists) {
             $foreignProps = [
                 'combinedIdentifier' => $combinedIdentifier,
                 'name' => $folderName ?: $storageName,
@@ -234,29 +263,6 @@ class DefaultFalFinder
         $recordTree = new RecordTree();
         $recordTree->addChild($folderRecord);
         return $recordTree;
-    }
-
-    protected function getFolder(?string $identifier): Folder
-    {
-        // Determine the current folder. If the identifier is NULL there was no folder selected.
-        if (null === $identifier) {
-            // Special case: The module was opened, but no storage/folder has been selected.
-            // Get the default storage and the default folder to show.
-            $localStorage = $this->resourceFactory->getDefaultStorage();
-            // Notice: ->getDefaultFolder does not return the default folder to show, but to upload files to.
-            // The root level folder is the "real" default and also respects mount points of the current user.
-            $localFolder = $localStorage->getRootLevelFolder();
-        } else {
-            // This is the normal case. The identifier identifies the folder including its storage.
-            try {
-                $localFolder = $this->resourceFactory->getFolderObjectFromCombinedIdentifier($identifier);
-            } /** @noinspection PhpRedundantCatchClauseInspection */ catch (FolderDoesNotExistException $exception) {
-                [$storage] = GeneralUtility::trimExplode(':', $identifier);
-                $localStorage = $this->resourceFactory->getStorageObject((int)$storage);
-                $localFolder = $localStorage->getRootLevelFolder();
-            }
-        }
-        return $localFolder;
     }
 
     public function findFileRecord(?string $combinedIdentifier): RecordTree

@@ -31,6 +31,7 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\DefaultFalFinder;
+use In2code\In2publishCore\Component\TcaHandling\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
 use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
 use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\Service\Error\FailureCollector;
@@ -45,9 +46,11 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_keys;
 use function explode;
+use function http_build_query;
 use function implode;
 use function is_string;
 use function json_encode;
+use function parse_str;
 use function strlen;
 use function strpos;
 use function trim;
@@ -102,9 +105,21 @@ class FileController extends AbstractController
         $this->publisherService = $publisherService;
     }
 
+    /**
+     * @throws StopActionException
+     */
     public function indexAction(): ResponseInterface
     {
-        $recordTree = $this->tryToGetFolderInstance($this->pid === 0 ? null : $this->pid);
+        try {
+            $recordTree = $this->tryToGetFolderInstance($this->pid === 0 ? null : $this->pid);
+        } catch (FolderDoesNotExistOnBothSidesException $e) {
+            $uri = $this->request->getUri();
+            $queryParts = [];
+            parse_str($uri->getQuery(), $queryParts);
+            $queryParts['id'] = $e->getRootLevelCombinedIdentifier();
+            $uri = $uri->withQuery(http_build_query($queryParts));
+            $this->redirectToUri($uri);
+        }
 
         if (null !== $recordTree) {
             $this->view->assign('recordTree', $recordTree);
@@ -120,6 +135,7 @@ class FileController extends AbstractController
 
     /**
      * @param bool $skipNotification Used by the Enterprise Edition. Do not remove despite unused in the CE.
+     *
      * @throws StopActionException
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag) On purpose
      */
@@ -211,11 +227,19 @@ class FileController extends AbstractController
         return $this->jsonResponse(json_encode($return, JSON_THROW_ON_ERROR));
     }
 
+    /**
+     * @throws FolderDoesNotExistOnBothSidesException
+     */
     protected function tryToGetFolderInstance(?string $combinedIdentifier, bool $onlyRoot = false): ?RecordTree
     {
         if (is_string($combinedIdentifier) && strpos($combinedIdentifier, ':') < strlen($combinedIdentifier)) {
             [$storage, $name] = explode(':', $combinedIdentifier);
-            $combinedIdentifier = $storage . ':/' . trim($name, '/') . '/';
+            $name = trim($name, '/');
+            if (!empty($name)) {
+                $combinedIdentifier = $storage . ':/' . $name . '/';
+            } else {
+                $combinedIdentifier = $storage . ':/';
+            }
         }
         return $this->defaultFalFinder->findFalRecord($combinedIdentifier, $onlyRoot);
     }
