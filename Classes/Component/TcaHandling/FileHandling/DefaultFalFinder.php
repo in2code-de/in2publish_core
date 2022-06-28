@@ -135,6 +135,9 @@ class DefaultFalFinder
          */
         $folder = $this->getFolder($combinedIdentifier);
         $storage = $folder->getStorage();
+        if (null === $combinedIdentifier) {
+            $combinedIdentifier = $folder->getCombinedIdentifier();
+        }
         $folderName = PathUtility::basename($combinedIdentifier);
         $folderIdentifier = explode(':', $combinedIdentifier)[1];
         $storageUid = $storage->getUid();
