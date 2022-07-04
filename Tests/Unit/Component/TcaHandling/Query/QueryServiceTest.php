@@ -13,7 +13,6 @@ use In2code\In2publishCore\Component\TcaHandling\Repository\SingleDatabaseReposi
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use PHPUnit\Framework\TestCase;
-use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver
@@ -44,7 +43,6 @@ class QueryServiceTest extends TestCase
                                        ],
                                    ]
                                );
-        $eventDispatcher = $this->createMock(EventDispatcher::class);
         $foreignSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $foreignSingleDatabaseRepository->expects($this->once())
                                         ->method('findByProperty')
@@ -93,7 +91,6 @@ class QueryServiceTest extends TestCase
                                        ],
                                    ]
                                );
-        $eventDispatcher = $this->createMock(EventDispatcher::class);
         $foreignSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $foreignSingleDatabaseRepository->expects($this->never())->method('findByProperty');
         $localSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
@@ -142,7 +139,6 @@ class QueryServiceTest extends TestCase
                                        ],
                                    ]
                                );
-        $eventDispatcher = $this->createMock(EventDispatcher::class);
         $foreignSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $localSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $localSingleDatabaseRepository->expects($this->once())
@@ -191,7 +187,6 @@ class QueryServiceTest extends TestCase
                                        ],
                                    ]
                                );
-        $eventDispatcher = $this->createMock(EventDispatcher::class);
         $foreignSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $localSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $localSingleDatabaseRepository->expects($this->never())->method('findByProperty');
@@ -242,7 +237,6 @@ class QueryServiceTest extends TestCase
                                        ],
                                    ]
                                );
-        $eventDispatcher = $this->createMock(EventDispatcher::class);
         $foreignSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $localSingleDatabaseRepository = $this->createMock(SingleDatabaseRepository::class);
         $localSingleDatabaseRepository->expects($this->once())
