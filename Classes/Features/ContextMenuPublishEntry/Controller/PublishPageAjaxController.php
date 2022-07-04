@@ -30,7 +30,8 @@ namespace In2code\In2publishCore\Features\ContextMenuPublishEntry\Controller;
  */
 
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\Exception\TaskExecutionFailedException;
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
+use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
+use In2code\In2publishCore\Component\TcaHandling\RecordTreeBuilder;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,17 +44,23 @@ use function json_encode;
 
 class PublishPageAjaxController
 {
-    protected PermissionService $permissionService;
+    private RecordTreeBuilder $recordTreeBuilder;
+    private PublisherService $publisherService;
+    private PermissionService $permissionService;
 
-    protected TaskExecutionService $taskExecutionService;
+    public function injectRecordTreeBuilder(RecordTreeBuilder $recordTreeBuilder): void
+    {
+        $this->recordTreeBuilder = $recordTreeBuilder;
+    }
 
+    public function injectPublisherService(PublisherService $publisherService): void
+    {
+        $this->publisherService = $publisherService;
+    }
 
-    public function __construct(
-        PermissionService $permissionService,
-        TaskExecutionService $taskExecutionService
-    ) {
+    public function injectPermissionService(PermissionService $permissionService): void
+    {
         $this->permissionService = $permissionService;
-        $this->taskExecutionService = $taskExecutionService;
     }
 
     public function publishPage(ServerRequestInterface $request): ResponseInterface
@@ -78,19 +85,19 @@ class PublishPageAjaxController
             $content['label'] = 'context_menu_publish_entry.missing_page';
         } else {
             try {
-                $record = $this->recordFinder->findRecordByUidForPublishing((int)$page, 'pages');
-
-                if (null !== $record && $record->isPublishable()) {
-                    $this->recordPublisher->publishRecordRecursive($record);
+                // TODO: reimplement isPublishable method in Record
+                if (true) {
                     try {
-                        $this->taskExecutionService->runTasks();
+                        $recordTree = $this->recordTreeBuilder->buildRecordTree('pages', (int)$page);
+                        $this->publisherService->publishRecordTree($recordTree);
                         $content['success'] = true;
                         $content['error'] = false;
                         $content['label'] = 'context_menu_publish_entry.page_published';
                     } catch (TaskExecutionFailedException $exception) {
                         $content['label'] = 'context_menu_publish_entry.publishing_error';
                     }
-                    $content['lArgs'][] = BackendUtility::getRecordTitle('pages', $record->getLocalProperties());
+                    $record = $recordTree->getChild('pages', (int)$page);
+                    $content['lArgs'][] = BackendUtility::getRecordTitle('pages', $record->getLocalProps());
                 } else {
                     $content['error'] = false;
                     $content['label'] = 'context_menu_publish_entry.not_publishable';
