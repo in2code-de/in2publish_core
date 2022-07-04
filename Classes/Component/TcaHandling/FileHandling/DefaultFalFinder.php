@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\Component\TcaHandling\FileHandling;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\FalHandling\FalFinder;
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\DemandResolverCollection;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\JoinDemandResolver;
@@ -44,7 +43,6 @@ use In2code\In2publishCore\Component\TcaHandling\RecordTreeBuilder;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\RecordTree;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
-use TYPO3\CMS\Core\Resource\Folder;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
