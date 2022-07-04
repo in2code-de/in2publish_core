@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Features\ContextMenuPublishEntry\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\Exception\TaskExecutionFailedException;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use Psr\Http\Message\ResponseInterface;
@@ -81,12 +82,12 @@ class PublishPageAjaxController
 
                 if (null !== $record && $record->isPublishable()) {
                     $this->recordPublisher->publishRecordRecursive($record);
-                    $rceResponse = $this->taskExecutionService->runTasks();
-                    if ($rceResponse->isSuccessful()) {
+                    try {
+                        $this->taskExecutionService->runTasks();
                         $content['success'] = true;
                         $content['error'] = false;
                         $content['label'] = 'context_menu_publish_entry.page_published';
-                    } else {
+                    } catch (TaskExecutionFailedException $exception) {
                         $content['label'] = 'context_menu_publish_entry.publishing_error';
                     }
                     $content['lArgs'][] = BackendUtility::getRecordTitle('pages', $record->getLocalProperties());

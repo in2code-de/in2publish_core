@@ -31,9 +31,9 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Service;
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Command\Foreign\RunTasksInQueueCommand;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\Exception\TaskExecutionFailedException;
 use In2code\In2publishCore\Event\TaskExecutionWasFinished;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -44,9 +44,7 @@ class TaskExecutionService implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     protected RemoteCommandDispatcher $remoteCommandDispatcher;
-
     protected TaskRepository $taskRepository;
-
     /** @var EventDispatcher */
     private $eventDispatcher;
 
@@ -60,7 +58,7 @@ class TaskExecutionService implements LoggerAwareInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function runTasks(): RemoteCommandResponse
+    public function runTasks(): void
     {
         $request = new RemoteCommandRequest(RunTasksInQueueCommand::IDENTIFIER);
         $response = $this->remoteCommandDispatcher->dispatch($request);
@@ -69,9 +67,7 @@ class TaskExecutionService implements LoggerAwareInterface
 
         $this->eventDispatcher->dispatch(new TaskExecutionWasFinished($response));
 
-        if ($response->isSuccessful()) {
-            $this->logger->info('Task execution results', ['output' => $response->getOutput()]);
-        } else {
+        if (!$response->isSuccessful()) {
             $this->logger->error(
                 'Task execution failed',
                 [
@@ -80,7 +76,8 @@ class TaskExecutionService implements LoggerAwareInterface
                     'exit_status' => $response->getExitStatus(),
                 ]
             );
+            throw new TaskExecutionFailedException($response);
         }
-        return $response;
+        $this->logger->info('Task execution results', ['output' => $response->getOutput()]);
     }
 }

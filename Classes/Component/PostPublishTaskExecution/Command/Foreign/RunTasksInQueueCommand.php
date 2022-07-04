@@ -64,6 +64,7 @@ class RunTasksInQueueCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $exitCode = Command::SUCCESS;
         $result = [];
         // Tasks which should get executed do not have an execution begin
         $tasksToExecute = $this->taskRepository->findByExecutionBegin();
@@ -74,6 +75,7 @@ class RunTasksInQueueCommand extends Command
                 $result[] = $task->getMessages();
             } catch (Throwable $e) {
                 $result[] = $e->getMessage();
+                $exitCode = Command::FAILURE;
             }
             $this->taskRepository->update($task);
         }
@@ -81,6 +83,6 @@ class RunTasksInQueueCommand extends Command
             $result[] = 'There was nothing to execute';
         }
         $output->write(json_encode($result, JSON_THROW_ON_ERROR));
-        return Command::SUCCESS;
+        return $exitCode;
     }
 }

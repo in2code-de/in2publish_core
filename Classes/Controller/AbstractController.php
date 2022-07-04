@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Controller\Traits\RunTasks;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
@@ -47,8 +46,6 @@ use function is_bool;
  */
 abstract class AbstractController extends ActionController
 {
-    use RunTasks;
-
     public const BLANK_ACTION = 'blankAction';
     protected BackendUserAuthentication $backendUser;
     protected RemoteCommandDispatcher $remoteCommandDispatcher;

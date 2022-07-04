@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Publisher;
 
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
@@ -13,11 +14,16 @@ use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
 use Throwable;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+
+use function implode;
 
 class PublisherService
 {
     protected PublisherCollection $publisherCollection;
     protected EventDispatcher $eventDispatcher;
+    protected TaskExecutionService $taskExecutionService;
 
     public function __construct()
     {
@@ -27,6 +33,11 @@ class PublisherService
     public function injectEventDispatcher(EventDispatcher $eventDispatcher): void
     {
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    public function injectTaskExecutionService(TaskExecutionService $taskExecutionService): void
+    {
+        $this->taskExecutionService = $taskExecutionService;
     }
 
     public function addPublisher(Publisher $publisher): void
@@ -61,6 +72,8 @@ class PublisherService
         }
 
         $this->eventDispatcher->dispatch(new RecursiveRecordPublishingEnded($recordTree));
+
+        $this->taskExecutionService->runTasks();
     }
 
     protected function publishRecord(Record $record, &$visitedRecords = []): void
