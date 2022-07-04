@@ -13,10 +13,14 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use TYPO3\CMS\Core\Console\CommandRegistry;
 
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Command\Foreign\Status\AllCommand
+ */
 class AllCommandTest extends UnitTestCase
 {
     /**
      * @ticket https://projekte.in2code.de/issues/51213
+     * @covers ::execute
      */
     public function testCommandCanBeExecuted(): void
     {

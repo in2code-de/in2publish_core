@@ -13,10 +13,14 @@ use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Command\Foreign\RemoteProcedureCall\ExecuteCommand
+ */
 class ExecuteCommandTest extends UnitTestCase
 {
     /**
      * @ticket https://projekte.in2code.de/issues/51213
+     * @covers ::execute
      */
     public function testCommandCanBeExecuted(): void
     {
