@@ -30,6 +30,11 @@ namespace In2code\In2publishCore\Features\SystemInformationExport\Exporter;
  */
 
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
+use ReflectionObject;
+
+use function get_class;
+use function is_array;
+use function is_object;
 
 class TcaExporter implements SystemInformationExporter
 {
@@ -47,10 +52,40 @@ class TcaExporter implements SystemInformationExporter
 
     public function getInformation(): array
     {
+        $compatibleTcaParts = $this->tcaPreProcessingService->getCompatibleTcaParts();
         return [
             'full' => $GLOBALS['TCA'],
-            'compatible' => $this->tcaPreProcessingService->getCompatibleTcaParts(),
+            'compatible' => $this->stripObjectsFromArray($compatibleTcaParts),
             'incompatible' => $this->tcaPreProcessingService->getIncompatibleTcaParts(),
         ];
+    }
+
+    protected function stripObjectsFromArray(array $array): array
+    {
+        foreach ($array as $key => $value) {
+            if (is_object($value)) {
+                $properties = [];
+                $reflectionObject = new ReflectionObject($value);
+                foreach ($reflectionObject->getProperties() as $property) {
+                    $property->setAccessible(true);
+                    $propertyValue = $property->getValue($value);
+                    if (is_object($propertyValue)) {
+                        $propertyValue = get_class($propertyValue);
+                    }
+                    if (is_array($propertyValue)) {
+                        $propertyValue = $this->stripObjectsFromArray($propertyValue);
+                    }
+                    $properties[$property->getName()] = $propertyValue;
+                }
+                $array[$key] = [
+                    'class' => get_class($value),
+                    'properties' => $properties,
+                ];
+            }
+            if (is_array($value)) {
+                $array[$key] = $this->stripObjectsFromArray($value);
+            }
+        }
+        return $array;
     }
 }
