@@ -33,22 +33,21 @@ namespace In2code\In2publishCore\Controller;
 use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
 use In2code\In2publishCore\Component\TcaHandling\RecordTreeBuilder;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
-use In2code\In2publishCore\Event\RecordWasSelectedForPublishing;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Error\FailureCollector;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use In2code\In2publishCore\Utility\LogUtility;
 use Psr\Http\Message\ResponseInterface;
-use Throwable;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_keys;
-use function array_merge;
 use function implode;
 use function json_encode;
+
+use const JSON_THROW_ON_ERROR;
 
 /**
  * Content publishing Controller. Any action is for the "Publish Records" Backend module "m1"
