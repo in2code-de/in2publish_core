@@ -29,14 +29,20 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\Dto\Redirect;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Persistence\Repository;
 
-class SysRedirectRepository extends Repository
+class SysRedirectRepository
 {
+    private ConnectionPool $connectionPool;
+
+    public function injectConnectionPool(ConnectionPool $connectionPool): void
+    {
+        $this->connectionPool = $connectionPool;
+    }
+
     public function findRawByUris(Connection $connection, array $uris, array $exceptUid): array
     {
         $query = $connection->createQueryBuilder();
@@ -128,10 +134,38 @@ class SysRedirectRepository extends Repository
                     ->fetchAllAssociative();
     }
 
+    public function findLocalRawByUid(int $redirect): ?Redirect
+    {
+        $row = $this->getQueryBuilder()
+                    ->select('*')
+                    ->from('sys_redirect')
+                    ->where('uid = :redirect')
+                    ->setParameter('redirect', $redirect)
+                    ->execute()
+                    ->fetchAssociative();
+        if (false === $row) {
+            return null;
+        }
+        $redirectDto = new Redirect();
+        foreach ($row as $prop => $value) {
+            $redirectDto->{$prop} = $value;
+        }
+        return $redirectDto;
+    }
+
     protected function getQueryBuilder(): QueryBuilder
     {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_redirect');
+        $queryBuilder = $this->connectionPool->getQueryBuilderForTable('sys_redirect');
         $queryBuilder->getRestrictions()->removeAll();
         return $queryBuilder;
+    }
+
+    public function update(Redirect $redirect): void
+    {
+        $this->connectionPool->getConnectionForTable('sys_redirect')->update(
+            'sys_redirect',
+            (array)$redirect,
+            ['uid' => $redirect->uid]
+        );
     }
 }

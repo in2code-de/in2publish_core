@@ -242,19 +242,19 @@ class RedirectController extends AbstractController
      */
     public function selectSiteAction(int $redirect, array $properties = null): ResponseInterface
     {
-        $redirectObj = $this->sysRedirectRepo->findUnrestrictedByIdentifier($redirect);
-        if (null === $redirectObj) {
+        $redirectDto = $this->sysRedirectRepo->findLocalRawByUid($redirect);
+        if (null === $redirectDto) {
             $this->redirect('list');
         }
 
         if ($this->request->getMethod() === 'POST') {
-            $redirectObj->setSiteId($properties['siteId']);
-            $this->sysRedirectRepo->update($redirectObj);
+            $redirectDto->tx_in2publishcore_foreign_site_id = $properties['siteId'];
+            $this->sysRedirectRepo->update($redirectDto);
             $this->addFlashMessage(
-                sprintf('Associated redirect %s with site %s', $redirectObj->__toString(), $redirectObj->getSiteId())
+                sprintf('Associated redirect %s with site %s', $redirectDto->__toString(), $redirectDto->tx_in2publishcore_foreign_site_id)
             );
             if (isset($_POST['_saveandpublish'])) {
-                $this->redirect('publish', null, null, ['redirects' => [$redirectObj->getUid()]]);
+                $this->redirect('publish', null, null, ['redirects' => [$redirectDto->uid]]);
             }
             $this->redirect('list');
         }
@@ -268,7 +268,7 @@ class RedirectController extends AbstractController
             $identifier = $site->getIdentifier();
             $siteOptions[$identifier] = $identifier . ' (' . $site->getBase() . ')';
         }
-        $this->view->assign('redirect', $redirectObj);
+        $this->view->assign('redirect', $redirectDto);
         $this->view->assign('siteOptions', $siteOptions);
 
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
