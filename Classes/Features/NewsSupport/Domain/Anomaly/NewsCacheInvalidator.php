@@ -34,14 +34,14 @@ use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Features\NewsSupport\Domain\Model\Task\FlushNewsCacheTask;
 
+use function array_keys;
+
 class NewsCacheInvalidator
 {
     protected TaskRepository $taskRepository;
-
-    /** @var array<int, string> */
+    /** @var array<int, int> */
     protected array $newsCacheUidArray = [];
-
-    /** @var array<int, string> */
+    /** @var array<int, int> */
     protected array $newsCachePidArray = [];
 
     public function __construct(TaskRepository $taskRepository)
@@ -62,10 +62,10 @@ class NewsCacheInvalidator
         $localProps = $record->getLocalProps();
 
         $uid = $localProps['uid'];
-        $this->newsCacheUidArray[$uid] = 'tx_news_uid_' . $uid;
+        $this->newsCacheUidArray[$uid] = true;
 
         $pid = $localProps['pid'];
-        $this->newsCachePidArray[$pid] = 'tx_news_pid_' . $pid;
+        $this->newsCachePidArray[$pid] = true;
     }
 
     public function writeClearCacheTask(): void
@@ -74,10 +74,15 @@ class NewsCacheInvalidator
             return;
         }
 
-        $this->taskRepository->add(new FlushNewsCacheTask(['tagsToFlush' => $this->newsCacheUidArray]));
+        $this->taskRepository->add(
+            new FlushNewsCacheTask(
+                [
+                    'uid' => array_keys($this->newsCacheUidArray),
+                    'pid' => array_keys($this->newsCachePidArray),
+                ]
+            )
+        );
         $this->newsCacheUidArray = [];
-
-        $this->taskRepository->add(new FlushNewsCacheTask(['tagsToFlush' => $this->newsCachePidArray]));
         $this->newsCachePidArray = [];
     }
 }

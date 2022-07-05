@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Features\NewsSupport\Domain\Model\Task;
 
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model\Task\AbstractTask;
 use TYPO3\CMS\Core\Cache\CacheManager;
-use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class FlushNewsCacheTask extends AbstractTask
@@ -41,17 +40,16 @@ class FlushNewsCacheTask extends AbstractTask
      * Deletes all pages and news caches the same way they will be deleted on local
      *
      * @return bool
-     *
-     * @throws NoSuchCacheException
      */
     protected function executeTask(): bool
     {
         /** @var CacheManager $cacheManager */
         $cacheManager = GeneralUtility::makeInstance(CacheManager::class);
-        foreach ($this->configuration['tagsToFlush'] as $cacheTag) {
-            $cacheManager->getCache('pages')->flushByTag($cacheTag);
-            $cacheManager->getCache('pagesection')->flushByTag($cacheTag);
-            $this->addMessage('Flushed all tx_news related caches for cache tag "' . $cacheTag . '"');
+        foreach ($this->configuration['uid'] as $cacheTag) {
+            $cacheManager->flushCachesByTag('tx_news_uid_' . $cacheTag);
+        }
+        foreach ($this->configuration['pid'] as $cacheTag) {
+            $cacheManager->flushCachesByTag('tx_news_pid_' . $cacheTag);
         }
         return true;
     }
