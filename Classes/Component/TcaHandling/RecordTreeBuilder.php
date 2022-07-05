@@ -110,7 +110,7 @@ class RecordTreeBuilder
 
         $this->recordIndex->connectTranslations();
 
-        $this->eventDispatcher->dispatch(new RecordRelationsWereResolved());
+        $this->eventDispatcher->dispatch(new RecordRelationsWereResolved($recordTree));
 
         return $recordTree;
     }

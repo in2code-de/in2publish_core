@@ -24,9 +24,9 @@ use In2code\In2publishCore\Config\Definer\DefinerInterface;
 use In2code\In2publishCore\Config\PostProcessor\PostProcessorInterface as PostProcessor;
 use In2code\In2publishCore\DependencyInjection\DatabaseRecordFactoryFactoryCompilerPass;
 use In2code\In2publishCore\Domain\Factory\DatabaseRecordFactory;
-use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
+use In2code\In2publishCore\Event\RecordRelationsWereResolved;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly\NewsCacheInvalidator;
 use In2code\In2publishCore\Features\RedirectsSupport\DataBender\RedirectSourceHostReplacement;
@@ -275,9 +275,9 @@ return static function (ContainerConfigurator $configurator, ContainerBuilder $b
                  ->tag(
                      'event.listener',
                      [
-                         'identifier' => 'in2publishcore-PageRecordRedirectEnhancer-AllRelatedRecordsWereAddedToOneRecord',
+                         'identifier' => 'in2publishcore-PageRecordRedirectEnhancer-RecordRelationsWereResolved',
                          'method' => 'addRedirectsToPageRecord',
-                         'event' => AllRelatedRecordsWereAddedToOneRecord::class,
+                         'event' => RecordRelationsWereResolved::class,
                      ]
                  );
         $services->set('tx_in2publish_redirectssupport_event_listener_replacer')
