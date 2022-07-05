@@ -30,14 +30,12 @@ namespace In2code\In2publishCore\Features\PublishSorting\Domain\Anomaly;
  */
 
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
-use In2code\In2publishCore\Service\Configuration\TcaService;
 use TYPO3\CMS\Core\Database\Connection;
 
 class SortingPublisher
 {
     protected Connection $localDatabase;
     protected Connection $foreignDatabase;
-    protected TcaService $tcaService;
     /** @var array<string, array<int, int>> */
     protected array $sortingsToBePublished = [];
 
@@ -49,11 +47,6 @@ class SortingPublisher
     public function injectForeignDatabase(Connection $foreignDatabase): void
     {
         $this->foreignDatabase = $foreignDatabase;
-    }
-
-    public function injectTcaService(TcaService $tcaService): void
-    {
-        $this->tcaService = $tcaService;
     }
 
     public function collectSortingsToBePublished(PublishingOfOneRecordBegan $event): void
@@ -69,7 +62,7 @@ class SortingPublisher
             return;
         }
 
-        $sortingField = $this->tcaService->getNameOfSortingField($tableName);
+        $sortingField = $GLOBALS['TCA'][$tableName]['ctrl']['sortby'] ?? null;
 
         if (empty($sortingField)) {
             return;
@@ -99,7 +92,7 @@ class SortingPublisher
             }
 
             foreach ($updates as $sorting => $uidList) {
-                $sortingField = $this->tcaService->getNameOfSortingField($tableName);
+                $sortingField = $GLOBALS['TCA'][$tableName]['ctrl']['sortby'];
 
                 $updateQuery = $this->foreignDatabase->createQueryBuilder();
                 $updateQuery->getRestrictions()->removeAll();
