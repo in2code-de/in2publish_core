@@ -54,7 +54,6 @@ class RequiredTablesDataProvider implements SingletonInterface
                 'tx_in2publishcore_running_request',
                 'tx_in2code_rpc_request',
                 'tx_in2code_rpc_data',
-                'tx_in2publishcore_pages_slug_data',
             ];
             $requiredTables = $this->overruleTables($requiredTables);
             $this->cache = $requiredTables;

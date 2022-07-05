@@ -60,16 +60,6 @@ CREATE TABLE tx_in2code_rpc_data
     KEY request_and_type (request, data_type)
 ) ENGINE = InnoDB;
 
-CREATE TABLE tx_in2publishcore_pages_slug_data
-(
-    page_uid      int(11) UNSIGNED        NOT NULL,
-    page_slug     varchar(255) DEFAULT '' NOT NULL,
-    page_language int(11) UNSIGNED        NOT NULL,
-    url           varchar(255) DEFAULT '' NOT NULL,
-    site_id       varchar(255) DEFAULT '' NOT NULL,
-    KEY page (page_uid, page_slug)
-) ENGINE = InnoDB;
-
 CREATE TABLE tx_in2publishcore_remotefaldriver_file
 (
     -- Properties for data management
