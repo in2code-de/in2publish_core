@@ -47,6 +47,8 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
 
     public function injectForeignDatabase(Connection $foreignDatabase): void
     {
+        // Clone the database and create a new session.
+        // Otherwise, we would interfere with transactions of other connections.
         $this->foreignDatabase = clone $foreignDatabase;
         $this->foreignDatabase->close();
         $this->foreignDatabase->connect();
