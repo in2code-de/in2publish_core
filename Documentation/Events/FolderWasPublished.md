@@ -19,19 +19,3 @@ You can listen on this event to publish additional information associated with t
 fal_securedownload)
 
 ### Example
-
-```php
-use In2code\In2publishCore\Event\AllRelatedRecordsWereAddedToOneRecord;
-
-class AdditionRelationAdder
-{
-    public function __invoke(AllRelatedRecordsWereAddedToOneRecord $event): void
-    {
-        $record = $event->getRecord();
-        if ('tx_myext_domain_model_something' === $record->getTableName()) {
-            $relatedRecords = $this->fetchRelatedRecordsByRecord($record);
-            $record->addRelatedRecord($relatedRecords);
-        }
-    }
-}
-```

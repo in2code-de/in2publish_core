@@ -34,6 +34,7 @@ Removed Events:
 * RecordWasSelectedForPublishing
 * RecordsWereSelectedForPublishing -> RecursiveRecordPublishingBegan
 * PhysicalFileWasPublished -> PublishingOfOneRecordEnded
+* AllRelatedRecordsWereAddedToOneRecord -> RecordRelationsWereResolved
 
 ## Affected Installations
 
