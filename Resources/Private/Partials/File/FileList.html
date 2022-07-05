@@ -31,7 +31,7 @@
 			</td>
 			<td class="col-control">
 				<div class="btn-group">
-					<a class="btn btn-default" data-bs-toggle="collapse" href="{record.classification}-{record.id}">
+					<a class="btn btn-default" data-bs-toggle="collapse" href="#file-{record.id -> publish:security.hash()}">
 						<core:icon identifier="actions-info" />
 					</a>
 					<f:if condition="{record.localProps.publicUrl}">

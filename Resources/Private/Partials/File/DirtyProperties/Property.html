@@ -2,7 +2,7 @@
 	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
-	<f:variable name="propertyKey">{stagingLevel}Properties</f:variable>
+	<f:variable name="propertyKey">{stagingLevel}Props</f:variable>
 	<f:variable name="recordProperties">{record.{propertyKey}}</f:variable>
 	<f:if condition="{recordProperties.{propertyName}}">
 		<li class="mb-2">

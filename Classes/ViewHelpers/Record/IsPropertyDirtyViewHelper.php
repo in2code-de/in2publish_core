@@ -27,26 +27,35 @@ namespace In2code\In2publishCore\ViewHelpers\Record;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Closure;
 use In2code\In2publishCore\Domain\Model\Record;
-use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\Compiler\TemplateCompiler;
+use TYPO3Fluid\Fluid\Core\Parser\SyntaxTree\ViewHelperNode;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+use function in_array;
 
 class IsPropertyDirtyViewHelper extends AbstractViewHelper
 {
-    /** @noinspection ReturnTypeCanBeDeclaredInspection */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
-        parent::initializeArguments();
         $this->registerArgument('record', Record::class, 'record which contains the property', true);
         $this->registerArgument('property', 'string', 'name of the property that should be checked', true);
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public static function renderStatic(array $arguments, Closure $renderChildrenClosure, RenderingContextInterface $renderingContext)
+    public function render(): bool
     {
-        return in_array($arguments['property'], $arguments['record']->getDirtyProperties(), true);
+        /** @var Record $record */
+        $record = $this->arguments['record'];
+        return in_array($this->arguments['property'], $record->getChangedProps(), true);
+    }
+
+    public function compile(
+        $argumentsName,
+        $closureName,
+        &$initializationPhpCode,
+        ViewHelperNode $node,
+        TemplateCompiler $compiler
+    ) {
+        return "in_array({$argumentsName}['property'], {$argumentsName}['record']->getChangedProps(), true)";
     }
 }

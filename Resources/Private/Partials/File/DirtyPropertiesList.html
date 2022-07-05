@@ -2,20 +2,18 @@
 	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
-	<tr class="collapse" id="{record.classification}-{record.id}">
+	<tr class="collapse" id="file-{record.id -> publish:security.hash()}">
 		<td></td>
 		<td colspan="4">
 			<f:render section="StageProperties" arguments="{ record: record, stagingLevel: 'local'}"/>
 		</td>
-		<td></td>
-		<td colspan="2">
+		<td colspan="3">
 			<f:render section="StageProperties" arguments="{ record: record, stagingLevel: 'foreign'}"/>
 		</td>
-		<td></td>
 	</tr>
 
 	<f:section name="StageProperties">
-		<f:variable name="propertyKey">{stagingLevel}Properties</f:variable>
+		<f:variable name="propertyKey">{stagingLevel}Props</f:variable>
 
 		<f:if condition="{record.{propertyKey}}">
 			<ul class="list-unstyled mb-2 ms-0">
