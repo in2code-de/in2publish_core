@@ -77,9 +77,15 @@ class FalPublisherCommand extends Command
             $storage = $row['storage_uid'];
             $driver = $drivers[$storage];
             if (FileRecordPublisher::A_INSERT === $row['file_action']) {
+                $targetDir = PathUtility::dirname($row['identifier']);
+                if (!$driver->folderExists($targetDir)) {
+                    $folderName = PathUtility::basename($targetDir);
+                    $parentFolder = PathUtility::dirname($targetDir);
+                    $driver->createFolder($folderName, $parentFolder, true);
+                }
                 $driver->addFile(
                     Environment::getVarPath() . '/tx_in2publishcore/' . $row['temp_identifier_hash'],
-                    PathUtility::dirname($row['identifier']),
+                    $targetDir,
                     PathUtility::basename($row['identifier'])
                 );
             }
