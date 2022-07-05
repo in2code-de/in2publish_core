@@ -43,7 +43,6 @@ use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\SaveAndPublishButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Core\Imaging\Icon;
@@ -55,7 +54,6 @@ use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
-use function array_column;
 use function count;
 use function implode;
 use function reset;
@@ -213,7 +211,7 @@ class RedirectController extends AbstractController
 
         $demands = $this->demandsFactory->createDemand();
         foreach ($redirects as $redirect) {
-            $demands->addSelect('sys_redirect', '', 'uid',  $redirect, $recordTree);
+            $demands->addSelect('sys_redirect', '', 'uid', $redirect, $recordTree);
         }
 
         $this->demandResolverCollection->addDemandResolver($this->selectDemandResolver);
@@ -225,7 +223,6 @@ class RedirectController extends AbstractController
 
         $this->publisherService->publishRecordTree($recordTree);
 
-        $this->runTasks();
         if (count($redirects) === 1) {
             $this->addFlashMessage(sprintf('Redirect %s published', reset($redirects)));
         } else {
@@ -251,7 +248,11 @@ class RedirectController extends AbstractController
             $redirectDto->tx_in2publishcore_foreign_site_id = $properties['siteId'];
             $this->sysRedirectRepo->update($redirectDto);
             $this->addFlashMessage(
-                sprintf('Associated redirect %s with site %s', $redirectDto->__toString(), $redirectDto->tx_in2publishcore_foreign_site_id)
+                sprintf(
+                    'Associated redirect %s with site %s',
+                    $redirectDto->__toString(),
+                    $redirectDto->tx_in2publishcore_foreign_site_id
+                )
             );
             if (isset($_POST['_saveandpublish'])) {
                 $this->redirect('publish', null, null, ['redirects' => [$redirectDto->uid]]);
