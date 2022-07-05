@@ -40,14 +40,13 @@ use In2code\In2publishCore\Controller\AbstractController;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
+use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\BackButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\SaveAndPublishButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
-use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
-use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
@@ -69,19 +68,12 @@ class RedirectController extends AbstractController
     protected ForeignSiteFinder $foreignSiteFinder;
     protected SysRedirectRepository $sysRedirectRepo;
     protected IconFactory $iconFactory;
-    protected LanguageService $languageService;
     private DemandsFactory $demandsFactory;
     protected DemandResolverCollection $demandResolverCollection;
     protected SelectDemandResolver $selectDemandResolver;
     protected JoinDemandResolver $joinDemandResolver;
     protected SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver;
     private PublisherService $publisherService;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->languageService = $GLOBALS['LANG'];
-    }
 
     public function injectForeignSiteFinder(ForeignSiteFinder $foreignSiteFinder): void
     {
@@ -273,13 +265,7 @@ class RedirectController extends AbstractController
         $this->view->assign('siteOptions', $siteOptions);
 
         $buttonBar = $this->moduleTemplate->getDocHeaderComponent()->getButtonBar();
-        $button = $buttonBar->makeLinkButton();
-        $button->setIcon($this->iconFactory->getIcon('actions-close', Icon::SIZE_SMALL));
-        $button->setClasses('btn btn-sm');
-        $button->setHref($this->uriBuilder->reset()->uriFor('list'));
-        $title = $this->languageService->sL('LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:back');
-        $button->setTitle($title);
-        $buttonBar->addButton($button);
+        $buttonBar->addButton(new BackButton($this->iconFactory, $this->uriBuilder));
         $buttonBar->addButton(new SaveAndPublishButton($this->iconFactory));
 
         return $this->htmlResponse();
