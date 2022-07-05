@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\ViewHelpers\Tca;
  */
 
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use In2code\In2publishCore\Domain\Service\TableConfiguration\LabelService;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 

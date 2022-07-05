@@ -31,7 +31,7 @@
 			</td>
 			<td class="col-control">
 				<div class="btn-group">
-					<a class="btn btn-default" data-bs-toggle="collapse" href="#{record.classification}-{record.id}">
+					<a class="btn btn-default" data-bs-toggle="collapse" href="{record.classification}-{record.id}">
 						<core:icon identifier="actions-info" />
 					</a>
 					<f:if condition="{record.localProps.publicUrl}">
@@ -58,7 +58,7 @@
 											<f:for each="{sys_file.children.sys_file_metadata}" as="metaRecord" iteration="iterator">
 												<li>
 													<a href="{publish:uri.editUri(uid: metaRecord.localProps.uid, tableName: metaRecord.classification)}" class="dropdown-item" title="{publish:record.getMergedProperty(record: record, propertyName: 'name')}">
-														<publish:record.languageFlagIcon record="{metaRecord}" side="local" /> <publish:record.getMergedProperty record="{record}" propertyName="name" />
+														<publish:record.languageFlagIcon record="{metaRecord}" overlay="overlay-edit" side="local" /> <publish:record.getMergedProperty record="{record}" propertyName="name" />
 													</a>
 												</li>
 											</f:for>
@@ -143,6 +143,6 @@
 		</tr>
 
 		<f:comment>Difference View</f:comment>
-		<f:render partial="File/Index/DirtyPropertiesList" arguments="{_all}" />
+		<f:render partial="File/DirtyPropertiesList" arguments="{_all}" />
 	</f:if>
 </html>

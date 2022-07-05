@@ -6,7 +6,7 @@
 		<div class="in2publish-stagelisting__item__column in2publish-stagelisting__item__column--left">
 			<i class="in2publish-icon-folder" title="{f:translate(key:'record.state.{record.stateRecursive}',default:record.stateRecursive)}"></i>
 			<f:if condition="{record.language} > 0">
-				<core:icon identifier="flags-{publish:miscellaneous.getIsoBySysLanguageUid(language: record.language)}" />
+				<publish:record.languageFlagIcon record="{record}" side="local" />
 			</f:if>
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{config.view.titleField}" stagingLevel="local" fallbackProperty="title"/>
 			<i class="in2publish-icon-info" data-action="opendirtypropertieslistcontainer"></i>
@@ -27,6 +27,6 @@
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{config.view.titleField}" stagingLevel="foreign" fallbackProperty="title" />
 		</div>
 
-		<f:render partial="Record/Index/DirtyPropertiesList" arguments="{_all}" />
+		<f:render partial="Record/DirtyPropertiesList" arguments="{_all}" />
 	</div>
 </html>

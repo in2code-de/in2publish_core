@@ -28,7 +28,6 @@ namespace In2code\In2publishCore\ViewHelpers\File;
  */
 
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
@@ -39,11 +38,8 @@ use function explode;
 class IconViewHelper extends AbstractViewHelper
 {
     private const ARG_RECORD = 'record';
-
     protected IconFactory $iconFactory;
-
     protected IconRegistry $iconRegistry;
-
     protected $escapeOutput = false;
 
     public function injectIconFactory(IconFactory $iconFactory): void

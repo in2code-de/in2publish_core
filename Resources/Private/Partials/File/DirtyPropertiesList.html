@@ -19,21 +19,21 @@
 
 		<f:if condition="{record.{propertyKey}}">
 			<ul class="list-unstyled mb-2 ms-0">
-				<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'name', stagingLevel: stagingLevel}"/>
+				<f:render partial="File/DirtyProperties/Property" arguments="{ record: record, propertyName: 'name', stagingLevel: stagingLevel}"/>
 				<f:if condition="{record.children.sys_file_metadata}">
 					<f:for each="{record.children.sys_file_metadata}" as="metaRecord" iteration="iterator">
 						<f:if condition="{iterator.isFirst}">
-							<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'title', stagingLevel: stagingLevel}"/>
-							<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'description', stagingLevel: stagingLevel}"/>
-							<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'alternative', stagingLevel: stagingLevel}"/>
+							<f:render partial="File/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'title', stagingLevel: stagingLevel}"/>
+							<f:render partial="File/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'description', stagingLevel: stagingLevel}"/>
+							<f:render partial="File/DirtyProperties/Property" arguments="{ record: metaRecord, propertyName: 'alternative', stagingLevel: stagingLevel}"/>
 						</f:if>
 					</f:for>
 				</f:if>
-				<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'extension', stagingLevel: stagingLevel}"/>
-				<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'size', stagingLevel: stagingLevel}" contentAs="content">
+				<f:render partial="File/DirtyProperties/Property" arguments="{ record: record, propertyName: 'extension', stagingLevel: stagingLevel}"/>
+				<f:render partial="File/DirtyProperties/Property" arguments="{ record: record, propertyName: 'size', stagingLevel: stagingLevel}" contentAs="content">
 					<f:format.bytes><publish:miscellaneous.getPropertyFromStagingDefinition propertyName="size" record="{record}" stagingLevel="{stagingLevel}" /></f:format.bytes>
 				</f:render>
-				<f:render partial="File/Index/DirtyProperties/Property" arguments="{ record: record, propertyName: 'identifier', stagingLevel: stagingLevel}"/>
+				<f:render partial="File/DirtyProperties/Property" arguments="{ record: record, propertyName: 'identifier', stagingLevel: stagingLevel}"/>
 			</ul>
 
 			<f:if condition="{record.{propertyKey}.type} == 2">

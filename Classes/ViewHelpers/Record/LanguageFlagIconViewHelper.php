@@ -41,7 +41,7 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
 {
     private const ARG_RECORD = 'record';
     private const ARG_SIDE = 'side';
-
+    private const ARG_OVERLAY = 'overlay';
     protected $escapeOutput = false;
 
     protected IconFactory $iconFactory;
@@ -62,12 +62,14 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
         parent::initializeArguments();
         $this->registerArgument(self::ARG_RECORD, Record::class, 'The record to get the flag for', true);
         $this->registerArgument(self::ARG_SIDE, 'string', '"local"/"foreign" as the language property side', true);
+        $this->registerArgument(self::ARG_OVERLAY, 'string', 'Overlay icon identifier', false, null);
     }
 
     public function render(): string
     {
         /** @var Record $record */
         $record = $this->arguments[self::ARG_RECORD];
+        $overlay = $this->arguments[self::ARG_OVERLAY];
 
         $table = $record->getClassification();
 
@@ -92,7 +94,7 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
         return $this->iconFactory->getIcon(
             $systemLanguage['flagIcon'],
             Icon::SIZE_SMALL,
-            'overlay-edit'
+            $overlay
         )->render();
     }
 }

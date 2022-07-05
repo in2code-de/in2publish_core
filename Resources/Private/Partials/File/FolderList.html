@@ -46,7 +46,7 @@
 
 		<f:if condition="{record.children}">
 			<f:for each="{record.children._folder}" as="folderRecord">
-				<f:render partial="File/Index/FolderList" arguments="{record:folderRecord, config:config}" />
+				<f:render partial="File/FolderList" arguments="{record:folderRecord, config:config}" />
 			</f:for>
 		</f:if>
 	</f:if>
