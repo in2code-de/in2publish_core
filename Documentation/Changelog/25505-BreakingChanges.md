@@ -33,6 +33,7 @@ Removed Events:
 * RecordWasCreatedForDetailAction
 * RecordWasSelectedForPublishing
 * RecordsWereSelectedForPublishing -> RecursiveRecordPublishingBegan
+* PhysicalFileWasPublished -> PublishingOfOneRecordEnded
 
 ## Affected Installations
 
