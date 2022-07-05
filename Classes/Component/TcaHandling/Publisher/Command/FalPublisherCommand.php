@@ -98,6 +98,14 @@ class FalPublisherCommand extends Command
             if (FileRecordPublisher::A_DELETE === $row['file_action']) {
                 $driver->deleteFile($row['identifier']);
             }
+            if (FileRecordPublisher::A_RENAME === $row['file_action']) {
+                $newFolderName = PathUtility::dirname($row['identifier']);
+                $newFileName = PathUtility::basename($row['identifier']);
+                if (!$driver->folderExists($newFolderName)) {
+                    $driver->createFolder($newFolderName);
+                }
+                $driver->moveFileWithinStorage($row['previous_identifier'], $newFolderName, $newFileName);
+            }
             if (FolderRecordPublisher::A_INSERT === $row['folder_action']) {
                 $identifier = explode(':/', $row['identifier'])[1];
                 $folderName = PathUtility::basename($identifier);

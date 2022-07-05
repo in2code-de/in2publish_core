@@ -23,6 +23,7 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
     public const A_DELETE = 'delete';
     public const A_INSERT = 'insert';
     public const A_UPDATE = 'update';
+    public const A_RENAME = 'rename';
     protected AssetTransmitter $assetTransmitter;
     protected FalDriverService $falDriverService;
     protected Connection $foreignDatabase;
@@ -87,6 +88,19 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
         if ($record->getState() === Record::S_CHANGED) {
             $this->hasTasks = true;
             $this->transmitFile($record, self::A_UPDATE);
+        }
+        if ($record->getState() === Record::S_MOVED) {
+            $this->foreignDatabase->insert('tx_in2publishcore_filepublisher_task', [
+                'request_token' => $this->requestToken,
+                'crdate' => $GLOBALS['EXEC_TIME'],
+                'tstamp' => $GLOBALS['EXEC_TIME'],
+                'storage_uid' => $record->getLocalProps()['storage'],
+                'identifier' => $record->getLocalProps()['identifier'],
+                'identifier_hash' => $record->getLocalProps()['identifier_hash'],
+                'previous_identifier' => $record->getForeignProps()['identifier'],
+                'file_action' => self::A_RENAME,
+            ]);
+            $this->hasTasks = true;
         }
     }
 

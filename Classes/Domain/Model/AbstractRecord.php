@@ -76,6 +76,16 @@ abstract class AbstractRecord implements Record
         $childRecord->addParent($this);
     }
 
+    public function removeChild(Record $record): void
+    {
+        $classification = $record->getClassification();
+        unset($this->children[$classification][$record->getId()]);
+        if (empty($this->children[$classification])) {
+            unset($this->children[$classification]);
+        }
+        $record->removeParent($this);
+    }
+
     public function getChildren(): array
     {
         return $this->children;
@@ -121,16 +131,6 @@ abstract class AbstractRecord implements Record
     public function getTranslations(): array
     {
         return $this->translations;
-    }
-
-    public function removeChild(Record $record): void
-    {
-        $classification = $record->getClassification();
-        unset($this->children[$classification][$record->getId()]);
-        if (empty($this->children[$classification])) {
-            unset($this->children[$classification]);
-        }
-        $record->removeParent($this);
     }
 
     public function isChanged(): bool

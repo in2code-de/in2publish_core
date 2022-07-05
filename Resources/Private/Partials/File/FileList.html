@@ -57,7 +57,7 @@
 										<ul class="dropdown-menu dropdown-list" aria-labelledby="translations_{record.id}">
 											<f:for each="{sys_file.children.sys_file_metadata}" as="metaRecord" iteration="iterator">
 												<li>
-													<a href="{publish:uri.editUri(uid: metaRecord.localProps.uid, tableName: metaRecord.classification)}" class="dropdown-item" title="{publish:record.getMergedProperty(record: record, propertyName: 'name')}">
+													<a href="{publish:uri.editUri(uid: metaRecord.id, tableName: metaRecord.classification)}" class="dropdown-item" title="{publish:record.getMergedProperty(record: record, propertyName: 'name')}">
 														<publish:record.languageFlagIcon record="{metaRecord}" overlay="overlay-edit" side="local" /> <publish:record.getMergedProperty record="{record}" propertyName="name" />
 													</a>
 												</li>

@@ -16,6 +16,15 @@ class FileRecord extends AbstractRecord
         $this->state = $this->calculateState();
     }
 
+    protected function calculateState(): string
+    {
+        $state = parent::calculateState();
+        if (Record::S_CHANGED === $state) {
+            $state = Record::S_MOVED;
+        }
+        return $state;
+    }
+
     public function getClassification(): string
     {
         return self::CLASSIFICATION;

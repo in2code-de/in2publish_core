@@ -39,8 +39,11 @@ use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FalDriverS
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FileSystemInfoService;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\ForeignFileSystemInfoService;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
+use In2code\In2publishCore\Component\TcaHandling\RecordIndex;
 use In2code\In2publishCore\Component\TcaHandling\RecordTreeBuilder;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
+use In2code\In2publishCore\Domain\Model\FileRecord;
+use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordTree;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
@@ -64,6 +67,7 @@ class DefaultFalFinder
     protected SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver;
     protected RecordTreeBuilder $recordTreeBuilder;
     protected FalDriverService $falDriverService;
+    protected RecordIndex $recordIndex;
 
     public function injectResourceFactory(ResourceFactory $resourceFactory)
     {
@@ -105,8 +109,9 @@ class DefaultFalFinder
         $this->joinDemandResolver = $joinDemandResolver;
     }
 
-    public function injectSysRedirectSelectDemandResolver(SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver): void
-    {
+    public function injectSysRedirectSelectDemandResolver(
+        SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver
+    ): void {
         $this->sysRedirectSelectDemandResolver = $sysRedirectSelectDemandResolver;
     }
 
@@ -118,6 +123,11 @@ class DefaultFalFinder
     public function injectFalDriverService(FalDriverService $falDriverService): void
     {
         $this->falDriverService = $falDriverService;
+    }
+
+    public function injectRecordIndex(RecordIndex $recordIndex): void
+    {
+        $this->recordIndex = $recordIndex;
     }
 
     /**
@@ -266,6 +276,42 @@ class DefaultFalFinder
         $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
         $this->recordTreeBuilder->findRecordsByTca($recordCollection);
 
+        foreach ($recordCollection->getRecords()['sys_file'] ?? [] as $sysFileRecord) {
+            if ($sysFileRecord->getState() === Record::S_CHANGED) {
+                $localProps = $sysFileRecord->getLocalProps();
+                $foreignProps = $sysFileRecord->getForeignProps();
+                $localIdentifier = $localProps['identifier'];
+                $foreignIdentifier = $foreignProps['identifier'];
+                if ($localIdentifier !== $foreignIdentifier) {
+                    $localCombinedIdentifier = $localProps['storage'] . ':' . $localIdentifier;
+                    $foreignCombinedIdentifier = $foreignProps['storage'] . ':' . $foreignIdentifier;
+                    if (isset($files[$foreignIdentifier])) {
+                        $files[$localIdentifier]['foreign'] = $files[$foreignIdentifier]['foreign'];
+                        unset($files[$foreignIdentifier]);
+                        $foreignRecordToRemove = $this->recordIndex->getRecord(
+                            FileRecord::CLASSIFICATION,
+                            $localCombinedIdentifier
+                        );
+                        if (null !== $foreignRecordToRemove) {
+                            $folderRecord->removeChild($foreignRecordToRemove);
+                        }
+                        $localRecordToRemove = $this->recordIndex->getRecord(
+                            FileRecord::CLASSIFICATION,
+                            $foreignCombinedIdentifier
+                        );
+                        if (null !== $localRecordToRemove) {
+                            $folderRecord->removeChild($localRecordToRemove);
+                        }
+                        $recordToAdd = $this->recordFactory->createFileRecord(
+                            $files[$localIdentifier]['local'] ?? [],
+                            $files[$localIdentifier]['foreign'] ?? [],
+                        );
+                        $folderRecord->addChild($recordToAdd);
+                    }
+                }
+            }
+        }
+
         $recordTree = new RecordTree();
         $recordTree->addChild($folderRecord);
         return $recordTree;
@@ -313,6 +359,34 @@ class DefaultFalFinder
         $recordCollection = new RecordCollection();
         $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
         $this->recordTreeBuilder->findRecordsByTca($recordCollection);
+
+        if ($foreignProps === []) {
+            foreach ($recordCollection->getRecords()['sys_file'] ?? [] as $sysFileRecord) {
+                if ($sysFileRecord->getState() === Record::S_CHANGED) {
+                    $localSysFileProps = $sysFileRecord->getLocalProps();
+                    $foreignSysFileProps = $sysFileRecord->getForeignProps();
+                    $localIdentifier = $localSysFileProps['identifier'];
+                    $foreignIdentifier = $foreignSysFileProps['identifier'];
+                    $foreignStorage = (int)$foreignSysFileProps['storage'];
+                    if (
+                        ($localIdentifier !== $foreignIdentifier)
+                        && $this->foreignFileSystemInfoService->fileExists($foreignStorage, $foreignIdentifier)
+                    ) {
+                        $foreignProps = [
+                            'combinedIdentifier' => $foreignSysFileProps['storage'] . ':' . $foreignIdentifier,
+                            'identifier' => $foreignIdentifier,
+                            'identifier_hash' => sha1($foreignIdentifier),
+                            'name' => PathUtility::basename($foreignIdentifier),
+                            'storage' => $foreignStorage,
+                        ];
+                        $fileRecord = $this->recordFactory->createFileRecord(
+                            $localProps,
+                            $foreignProps,
+                        );
+                    }
+                }
+            }
+        }
 
         $recordTree = new RecordTree();
         $recordTree->addChild($fileRecord);

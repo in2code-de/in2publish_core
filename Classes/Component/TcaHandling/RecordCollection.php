@@ -2,20 +2,21 @@
 
 namespace In2code\In2publishCore\Component\TcaHandling;
 
-use ArrayAccess;
 use ArrayIterator;
 use In2code\In2publishCore\Domain\Model\Record;
 use Iterator;
 use IteratorAggregate;
+use WeakReference;
 
-use function array_key_exists;
 use function array_keys;
+use function array_merge;
+use function array_values;
 use function is_array;
 
-class RecordCollection implements IteratorAggregate, ArrayAccess
+class RecordCollection implements IteratorAggregate
 {
     /**
-     * @var array<string, array<array-key, Record>>
+     * @var array<string, array<array-key, WeakReference>>
      */
     private array $records = [];
 
@@ -29,7 +30,7 @@ class RecordCollection implements IteratorAggregate, ArrayAccess
 
     public function addRecord(Record $record): void
     {
-        $this->records[$record->getClassification()][$record->getId()] = $record;
+        $this->records[$record->getClassification()][$record->getId()] = WeakReference::create($record);
     }
 
     /**
@@ -47,14 +48,28 @@ class RecordCollection implements IteratorAggregate, ArrayAccess
         }
     }
 
-    public function addRecordCollection(RecordCollection $recordCollection): void
+    private function filterReferences(): array
     {
-        $this->addRecords($recordCollection->records);
+        $records = [];
+        foreach ($this->records as $classification => $identifiers) {
+            foreach ($identifiers as $identifier => $weakReference) {
+                $record = $weakReference->get();
+                if (null === $record) {
+                    unset($this->records[$classification][$identifier]);
+                    if (empty($this->records[$classification])) {
+                        unset($this->records[$classification]);
+                    }
+                } else {
+                    $records[$classification][$identifier] = $record;
+                }
+            }
+        }
+        return $records;
     }
 
     public function getRecords(): array
     {
-        return $this->records;
+        return $this->filterReferences();
     }
 
     /**
@@ -62,7 +77,7 @@ class RecordCollection implements IteratorAggregate, ArrayAccess
      */
     public function getRecordsFlat(): array
     {
-        $records = array_values($this->records);
+        $records = array_values($this->getRecords());
         return array_merge([], ...$records);
     }
 
@@ -71,33 +86,21 @@ class RecordCollection implements IteratorAggregate, ArrayAccess
         return new ArrayIterator($this->getRecordsFlat());
     }
 
-    public function offsetExists($offset): bool
-    {
-        return array_key_exists($offset, $this->records);
-    }
-
     /**
-     * @param $offset
-     * @return array<int|string, Record>
+     * @param array-key $id
      */
-    public function offsetGet($offset): array
-    {
-        return $this->records[$offset];
-    }
-
-    public function offsetSet($offset, $value): void
-    {
-        $this->records[$offset] = $value;
-    }
-
-    public function offsetUnset($offset): void
-    {
-        unset($this->records[$offset]);
-    }
-
     public function getRecord(string $classification, $id): ?Record
     {
-        return $this->records[$classification][$id] ?? null;
+        $weakReference = $this->records[$classification][$id] ?? null;
+        if (null === $weakReference) {
+            return null;
+        }
+        /** @var Record $record */
+        $record = $weakReference->get();
+        if (null === $record) {
+            unset($this->records[$classification][$id]);
+        }
+        return $record;
     }
 
     /**
@@ -105,7 +108,7 @@ class RecordCollection implements IteratorAggregate, ArrayAccess
      */
     public function getClassifications(): array
     {
-        return array_keys($this->records);
+        return array_keys($this->getRecords());
     }
 
     public function isEmpty(): bool

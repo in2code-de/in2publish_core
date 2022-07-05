@@ -93,6 +93,7 @@ CREATE TABLE tx_in2publishcore_filepublisher_task
     identifier           text,
     identifier_hash      char(40)                     NOT NULL,
     temp_identifier_hash char(40)         DEFAULT NULL,
+    previous_identifier  text,
     -- One of "insert", "delete", "update"
     file_action          char(6)          DEFAULT NULL,
     folder_action        char(6)          DEFAULT NULL,
