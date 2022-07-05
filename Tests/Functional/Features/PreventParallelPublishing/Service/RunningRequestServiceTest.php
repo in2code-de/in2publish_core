@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Tests\Functional\Domain\Service\Publishing;
+namespace In2code\In2publishCore\Tests\Functional\Features\PreventParallelPublishing\Service;
 
 use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use In2code\In2publishCore\Domain\Model\MmDatabaseRecord;
 use In2code\In2publishCore\Domain\Model\RecordTree;
-use In2code\In2publishCore\Domain\Repository\RunningRequestRepository;
-use In2code\In2publishCore\Domain\Service\Publishing\RunningRequestService;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
+use In2code\In2publishCore\Features\PreventParallelPublishing\Domain\Repository\RunningRequestRepository;
+use In2code\In2publishCore\Features\PreventParallelPublishing\Service\RunningRequestService;
 use In2code\In2publishCore\Tests\FunctionalTestCase;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -24,10 +24,11 @@ class RunningRequestServiceTest extends FunctionalTestCase
      */
     public function testRecordWithMmRecordCanBeMarkedAsPublishing(): void
     {
-        $mmId = json_encode(['uid_local' => 1, 'uid_foreign' => 2, 'sorting' => 15]);
+        $mmId = '{uid_local: 1, uid_foreign: 2, sorting: 15}';
+
         $mmRecord = new MmDatabaseRecord(
             'foo_bar_mm',
-            '{uid_local: 1, uid_foreign: 2, sorting: 15}',
+            $mmId,
             ['uid_local' => 1, 'uid_foreign' => 2, 'sorting' => 15],
             ['uid_local' => 1, 'uid_foreign' => 2, 'sorting' => 15]
         );
@@ -38,15 +39,18 @@ class RunningRequestServiceTest extends FunctionalTestCase
         $recordTree = new RecordTree();
         $recordTree->addChild($record);
 
+        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
+        $connection = $connectionPool->getConnectionByName('Default');
+
         $repo = new RunningRequestRepository();
-        $service = new RunningRequestService($repo);
+        $repo->injectLocalDatabase($connection);
+        $service = new RunningRequestService();
+        $service->injectRunningRequestRepository($repo);
 
         $event = new RecursiveRecordPublishingBegan($recordTree);
 
         $service->onRecursiveRecordPublishingBegan($event);
 
-        $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
-        $connection = $connectionPool->getConnectionByName('Default');
         $query = $connection->createQueryBuilder();
         $query->select('*')
               ->from('tx_in2publishcore_running_request')
@@ -63,7 +67,7 @@ class RunningRequestServiceTest extends FunctionalTestCase
                   )
               );
         $result = $query->execute();
-        $rows = $result->fetchAll();
+        $rows = $result->fetchAllAssociative();
         $this->assertCount(2, $rows);
     }
 }

@@ -7,6 +7,7 @@ imports:
   - { resource: Features/ContextMenuPublishEntry/Services.yaml }
   - { resource: Features/FileEdgeCacheInvalidator/Services.yaml }
   - { resource: Features/NewsSupport/Services.yaml }
+  - { resource: Features/PreventParallelPublishing/Services.yaml }
   - { resource: Features/PublishSorting/Services.yaml }
   - { resource: Features/RedirectsSupport/Services.yaml }
   - { resource: Features/RefIndexUpdate/Services.yaml }
@@ -78,18 +79,3 @@ services:
         identifier: 'in2publishcore-PageTsProvider-bootCompleted'
         method: 'processData'
         event: In2code\In2publishCore\Event\ExtTablesPostProcessingEvent
-
-  In2code\In2publishCore\Domain\Service\Publishing\RunningRequestService:
-    tags:
-      - name: event.listener
-        identifier: 'in2publishcore-RunningRequestService-RecursiveRecordPublishingBegan'
-        method: 'onRecursiveRecordPublishingBegan'
-        event: In2code\In2publishCore\Event\RecursiveRecordPublishingBegan
-      - name: event.listener
-        identifier: 'in2publishcore-RunningRequestService-VoteIfRecordIsPublishable'
-        method: 'isPublishable'
-        event: In2code\In2publishCore\Event\VoteIfRecordIsPublishable
-      - name: event.listener
-        identifier: 'in2publishcore-RunningRequestService-DetermineIfRecordIsPublishing'
-        method: 'isPublishing'
-        event: In2code\In2publishCore\Event\DetermineIfRecordIsPublishing

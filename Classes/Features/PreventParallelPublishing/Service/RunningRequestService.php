@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Domain\Service\Publishing;
+namespace In2code\In2publishCore\Features\PreventParallelPublishing\Service;
 
 /*
  * Copyright notice
@@ -31,11 +31,10 @@ namespace In2code\In2publishCore\Domain\Service\Publishing;
  */
 
 use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\RecordInterface;
-use In2code\In2publishCore\Domain\Repository\RunningRequestRepository;
 use In2code\In2publishCore\Event\DetermineIfRecordIsPublishing;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\VoteIfRecordIsPublishable;
+use In2code\In2publishCore\Features\PreventParallelPublishing\Domain\Repository\RunningRequestRepository;
 use TYPO3\CMS\Core\SingletonInterface;
 
 use function bin2hex;
@@ -49,10 +48,14 @@ class RunningRequestService implements SingletonInterface
     protected array $registeredRecords = [];
     protected bool $shutdownFunctionRegistered = false;
 
-    public function __construct(RunningRequestRepository $runningRequestRepository)
+    public function __construct()
+    {
+        $this->requestToken = bin2hex(random_bytes(16));
+    }
+
+    public function injectRunningRequestRepository(RunningRequestRepository $runningRequestRepository): void
     {
         $this->runningRequestRepository = $runningRequestRepository;
-        $this->requestToken = bin2hex(random_bytes(16));
     }
 
     public function onRecursiveRecordPublishingBegan(RecursiveRecordPublishingBegan $event): void

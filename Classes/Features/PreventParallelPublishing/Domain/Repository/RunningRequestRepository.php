@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Domain\Repository;
+namespace In2code\In2publishCore\Features\PreventParallelPublishing\Domain\Repository;
 
 /*
  * Copyright notice
@@ -30,23 +30,18 @@ namespace In2code\In2publishCore\Domain\Repository;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 
 class RunningRequestRepository
 {
     public const RUNNING_REQUEST_TABLE_NAME = 'tx_in2publishcore_running_request';
+    protected Connection $localDatabase;
+    protected array $inserts = [];
+    protected array $rtc = [];
 
-    /** @var Connection */
-    protected $connection;
-
-    protected $inserts = [];
-
-    protected $rtc = [];
-
-    public function __construct()
+    public function injectLocalDatabase(Connection $localDatabase): void
     {
-        $this->connection = DatabaseUtility::buildLocalDatabaseConnection();
+        $this->localDatabase = $localDatabase;
     }
 
     public function add(string $recordId, string $tableName, string $token): void
@@ -64,7 +59,7 @@ class RunningRequestRepository
     public function flush(): void
     {
         if (!empty($this->inserts)) {
-            $this->connection->bulkInsert(self::RUNNING_REQUEST_TABLE_NAME, $this->inserts);
+            $this->localDatabase->bulkInsert(self::RUNNING_REQUEST_TABLE_NAME, $this->inserts);
             $this->inserts = [];
         }
     }
@@ -75,7 +70,7 @@ class RunningRequestRepository
     public function isPublishingInDifferentRequest($identifier, string $tableName, string $token): bool
     {
         if (!isset($this->rtc['content'])) {
-            $query = $this->connection->createQueryBuilder();
+            $query = $this->localDatabase->createQueryBuilder();
             $query->select('*')
                   ->from(self::RUNNING_REQUEST_TABLE_NAME)
                   ->where($query->expr()->neq('request_token', $query->createNamedParameter($token)));
@@ -89,7 +84,7 @@ class RunningRequestRepository
 
     public function deleteAllByToken(string $token): void
     {
-        $query = $this->connection->createQueryBuilder();
+        $query = $this->localDatabase->createQueryBuilder();
         $query->delete(self::RUNNING_REQUEST_TABLE_NAME)
               ->where($query->expr()->eq('request_token', $query->createNamedParameter($token)))
               ->execute();
