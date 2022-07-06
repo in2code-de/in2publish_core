@@ -152,7 +152,7 @@ abstract class AbstractRecord implements Record
 
         $isSoftDeleted = false;
         $deleteField = $GLOBALS['TCA'][$this->getClassification()]['ctrl']['delete'] ?? null;
-        if ($deleteField) {
+        if (null !== $deleteField) {
             $isSoftDeleted = $this->localProps[$deleteField];
             if ($isSoftDeleted && $this->foreignProps[$deleteField]) {
                 $isSoftDeleted = false;
