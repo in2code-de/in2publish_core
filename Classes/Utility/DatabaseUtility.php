@@ -129,11 +129,6 @@ class DatabaseUtility
         return static::$foreignConnection;
     }
 
-    public static function quoteString(string $string): string
-    {
-        return static::buildLocalDatabaseConnection()->quote($string);
-    }
-
     public static function buildLocalDatabaseConnection(): ?Connection
     {
         try {
