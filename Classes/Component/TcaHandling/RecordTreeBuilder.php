@@ -148,7 +148,7 @@ class RecordTreeBuilder
 
         while ($recursionLimit > $currentRecursion++ && !$recordCollection->isEmpty()) {
             $demands = $this->demandsFactory->createDemand();
-            $recordsArray = $records['pages'] ?? [];
+            $recordsArray = $records->getRecords()['pages'] ?? [];
             foreach ($recordsArray as $record) {
                 $demands->addSelect('pages', '', 'pid', $record->getId(), $record);
             }

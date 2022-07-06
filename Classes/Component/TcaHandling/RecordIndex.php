@@ -48,7 +48,7 @@ class RecordIndex
 
     public function getRecordByClassification(string $classification): array
     {
-        return $this->records[$classification] ?? [];
+        return $this->records->getRecords()[$classification] ?? [];
     }
 
     public function connectTranslations(): void
@@ -64,17 +64,18 @@ class RecordIndex
             }
         }
 
+        $records = $this->records->getRecords();
         // Connect all translated records to their language parent
         foreach ($classifications as $classification) {
             $transOrigPointerField = $GLOBALS['TCA'][$classification]['ctrl']['transOrigPointerField'];
-            foreach ($this->records[$classification] as $record) {
+            foreach ($records[$classification] as $record) {
                 if (
                     $record->getLanguage() > 0
                     && null === $record->getTranslationParent()
                 ) {
                     $transOrigPointer = $record->getProp($transOrigPointerField);
                     if ($transOrigPointer > 0) {
-                        $translationParent = $this->records[$classification][$transOrigPointer] ?? null;
+                        $translationParent = $records[$classification][$transOrigPointer] ?? null;
                         if (null !== $translationParent) {
                             $translationParent->addTranslation($record);
                             $record->removeChild($translationParent);
@@ -89,7 +90,7 @@ class RecordIndex
             unset($classifications[$pagesKey]);
         }
         // Move translated records from the default-language-page children to the translated-page children
-        foreach ($this->records['pages'] ?? [] as $page) {
+        foreach ($records['pages'] ?? [] as $page) {
             /** @var Record[][] $children */
             $children = $page->getChildren();
             foreach ($classifications as $classification) {
