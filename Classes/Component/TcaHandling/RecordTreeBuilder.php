@@ -16,10 +16,12 @@ use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
+use In2code\In2publishCore\Service\Configuration\TcaService;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 use function array_flip;
 use function array_values;
+use function in_array;
 
 class RecordTreeBuilder
 {
@@ -34,6 +36,7 @@ class RecordTreeBuilder
     protected RecordIndex $recordIndex;
     protected EventDispatcher $eventDispatcher;
     protected DemandsFactory $demandsFactory;
+    protected TcaService $tcaService;
 
     public function injectRelevantTablesService(RelevantTablesService $relevantTablesService): void
     {
@@ -50,8 +53,9 @@ class RecordTreeBuilder
         $this->joinDemandResolver = $joinDemandResolver;
     }
 
-    public function injectSysRedirectSelectDemandResolver(SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver): void
-    {
+    public function injectSysRedirectSelectDemandResolver(
+        SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver
+    ): void {
         $this->sysRedirectSelectDemandResolver = $sysRedirectSelectDemandResolver;
     }
 
@@ -88,6 +92,11 @@ class RecordTreeBuilder
     public function injectDemandsFactory(DemandsFactory $demandsFactory): void
     {
         $this->demandsFactory = $demandsFactory;
+    }
+
+    public function injectTcaService(TcaService $tcaService): void
+    {
+        $this->tcaService = $tcaService;
     }
 
     public function buildRecordTree(string $table, int $id): RecordTree
@@ -159,6 +168,7 @@ class RecordTreeBuilder
 
     public function findAllRecordsOnPages(): RecordCollection
     {
+        /** @var array<Record> $pages */
         $pages = $this->recordIndex->getRecordByClassification('pages');
         $recordCollection = new RecordCollection($pages);
 
@@ -176,12 +186,18 @@ class RecordTreeBuilder
 
         $tables = array_flip($tablesAsKeys);
 
-        foreach ($tables as $table) {
-            foreach ($pages as $page) {
-                $demands->addSelect($table, '', 'pid', $page->getId(), $page);
+        foreach ($pages as $page) {
+            $tablesAllowedOnPage = $this->tcaService->getTablesAllowedOnPage(
+                $page->getId(),
+                $page->getProp('doktype')
+            );
+            foreach ($tables as $table) {
+                if (in_array($table, $tablesAllowedOnPage)) {
+                    $demands->addSelect($table, '', 'pid', $page->getId(), $page);
+                }
             }
         }
-        $this->selectDemandResolver->resolveDemand($demands, $recordCollection);
+        $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
         return $recordCollection;
     }
 
@@ -197,7 +213,7 @@ class RecordTreeBuilder
             $demand = $this->demandBuilder->buildDemandForRecords($recordCollection);
 
             $recordCollection = new RecordCollection();
-            $this->selectDemandResolver->resolveDemand($demand, $recordCollection);
+            $this->demandResolverCollection->resolveDemand($demand, $recordCollection);
         }
     }
 }
