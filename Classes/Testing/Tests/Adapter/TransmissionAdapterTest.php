@@ -75,11 +75,7 @@ class TransmissionAdapterTest implements TestCaseInterface
         }
         $localTmpFile = GeneralUtility::tempnam('tx_in2publishlocal_test_', '.txt');
         file_put_contents($localTmpFile, $canary);
-        register_shutdown_function(static function () use ($localTmpFile) {
-            if (is_file($localTmpFile)) {
-                unlink($localTmpFile);
-            }
-        });
+        register_shutdown_function(static fn () => is_file($localTmpFile) && unlink($localTmpFile));
 
         try {
             $foreignTmpFile = $this->assetTransmitter->transmitTemporaryFile($localTmpFile)['target'];

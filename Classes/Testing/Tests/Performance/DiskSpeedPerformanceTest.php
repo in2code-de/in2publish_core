@@ -61,17 +61,9 @@ class DiskSpeedPerformanceTest implements TestCaseInterface
     public function run(): TestResult
     {
         $canaryFile = GeneralUtility::tempnam('tx_contentpublisher_test_');
-        register_shutdown_function(
-            static function () use ($canaryFile) {
-                unlink($canaryFile);
-            }
-        );
+        register_shutdown_function(static fn() => unlink($canaryFile));
         $targetFile = GeneralUtility::tempnam('tx_contentpublisher_test_');
-        register_shutdown_function(
-            static function () use ($targetFile) {
-                unlink($targetFile);
-            }
-        );
+        register_shutdown_function(static fn() => unlink($targetFile));
 
         $canaryTarget = fopen($canaryFile, 'wb');
         for ($i = 0; $i < 10; $i++) {

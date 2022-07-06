@@ -119,9 +119,7 @@ class RunningRequestService implements SingletonInterface
         if (!$this->shutdownFunctionRegistered) {
             $repository = $this->runningRequestRepository;
             $token = $this->requestToken;
-            register_shutdown_function(static function () use ($repository, $token) {
-                $repository->deleteAllByToken($token);
-            });
+            register_shutdown_function(static fn () => $repository->deleteAllByToken($token));
             $this->shutdownFunctionRegistered = true;
         }
     }
