@@ -95,7 +95,7 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
         }
 
         // 3. Check page
-        $associatedPage = $properties('tx_in2publishcore_page_uid');
+        $associatedPage = $properties['tx_in2publishcore_page_uid'];
         if (null !== $associatedPage) {
             $url = BackendUtility::buildPreviewUri('pages', $associatedPage, 'foreign');
             if (null === $url) {
