@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Service\Configuration;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -44,31 +45,6 @@ class TcaService implements SingletonInterface
     protected const TYPE_PAGE = 'page';
     /** @var array RunTime Cache */
     protected array $rtc = [];
-
-    /**
-     * @param string[] $exceptTableNames
-     *
-     * @return string[]
-     */
-    public function getAllTableNamesAllowedOnRootLevel(array $exceptTableNames = []): array
-    {
-        $rootLevelTables = [];
-        foreach ($GLOBALS['TCA'] ?? [] as $tableName => $tableConfiguration) {
-            if (
-                !empty($tableConfiguration['ctrl']['rootLevel'])
-                && !in_array($tableName, $exceptTableNames, true)
-                && in_array($tableConfiguration['ctrl']['rootLevel'], [1, -1, true], true)
-            ) {
-                $rootLevelTables[] = $tableName;
-            }
-        }
-
-        // always add pages, even if they are excluded
-        if (!in_array('pages', $rootLevelTables, true)) {
-            $rootLevelTables[] = 'pages';
-        }
-        return $rootLevelTables;
-    }
 
     public function getRecordLabel(array $row, string $table): string
     {

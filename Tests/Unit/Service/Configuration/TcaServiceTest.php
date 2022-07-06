@@ -31,80 +31,12 @@ namespace In2code\In2publishCore\Tests\Unit\Service\Configuration;
 
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Tests\UnitTestCase;
-use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Service\Configuration\TcaService
  */
 class TcaServiceTest extends UnitTestCase
 {
-    /**
-     * @covers ::getAllTableNamesAllowedOnRootLevel
-     */
-    public function testGetAllTableNamesAllowedOnRootLevelReturnsAllConfiguredTables(): void
-    {
-        $this->setTca(
-            [
-                'pages' => [
-                    'ctrl' => [
-                        'rootLevel' => true,
-                    ],
-                ],
-                'fe_users' => [
-                    'ctrl' => [
-                        'rootLevel' => false,
-                    ],
-                ],
-                'be_users' => [
-                    'ctrl' => [
-                        'rootLevel' => 1,
-                    ],
-                ],
-                'tt_content' => [
-                    'ctrl' => [
-                        'rootLevel' => -1,
-                    ],
-                ],
-            ]
-        );
-        $tcaService = new TcaService();
-        $this->assertSame(
-            ['pages', 'be_users', 'tt_content'],
-            // Get array_values, because we don't want to test the array keys!
-            array_values($tcaService->getAllTableNamesAllowedOnRootLevel())
-        );
-    }
-
-    /**
-     * @covers ::getAllTableNamesAllowedOnRootLevel
-     */
-    public function testPagesTableIsAlwaysAddedToRootLevelTables(): void
-    {
-        $this->setTca(['fe_users' => ['ctrl' => ['rootLevel' => true]]]);
-
-        $tcaService = new TcaService();
-        $this->assertSame(
-            ['fe_users', 'pages'],
-            // Get array_values, because we don't want to test the array keys!
-            array_values($tcaService->getAllTableNamesAllowedOnRootLevel(['pages']))
-        );
-    }
-
-    /**
-     * @covers ::getAllTableNamesAllowedOnRootLevel
-     */
-    public function testGetAllTableNamesAllowedOnRootLevelReturnesAllRootLevelTablesExceptExcludedTables(): void
-    {
-        $this->setTca(['fe_users' => ['ctrl' => ['rootLevel' => true]]]);
-
-        $tcaService = new TcaService();
-        $this->assertSame(
-            ['fe_users', 'pages'],
-            // Get array_values, because we don't want to test the array keys!
-            array_values($tcaService->getAllTableNamesAllowedOnRootLevel())
-        );
-    }
-
     /**
      * @covers ::getTableLabel
      */
