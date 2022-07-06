@@ -11,22 +11,22 @@ class JoinRowCollection
      */
     private array $rows = [];
 
-    public function addRows(string $table, string $joinTable, array $rows, array $valueMaps, string $property): void
+    public function addRows(string $joinTable, string $table, array $rows, array $valueMaps, string $property): void
     {
         foreach ($rows as $mmId => $row) {
-            $this->addRow($table, $joinTable, $mmId, $row, $valueMaps, $property);
+            $this->addRow($joinTable, $table, $mmId, $row, $valueMaps, $property);
         }
     }
 
     public function addRow(
-        string $table,
         string $joinTable,
+        string $table,
         string $mmId,
         array $row,
         array $valueMaps,
         string $property
     ): void {
-        $this->rows[$table][$joinTable][$mmId] = [
+        $this->rows[$joinTable][$table][$mmId] = [
             'row' => $row,
             'valueMaps' => $valueMaps,
             'property' => $property,
@@ -37,8 +37,8 @@ class JoinRowCollection
     {
         $missing = [];
 
-        foreach ($this->rows as $table => $joinTables) {
-            foreach ($joinTables as $joinTable => $rows) {
+        foreach ($this->rows as $joinTable => $tables) {
+            foreach ($tables as $table => $rows) {
                 foreach ($rows as $mmId => $rowInfo) {
                     $row = $rowInfo['row'];
 
@@ -57,9 +57,9 @@ class JoinRowCollection
         return $missing;
     }
 
-    public function amendRow(string $table, string $joinTable, string $mmId, string $side, array $row): void
+    public function amendRow(string $joinTable, string $table, string $mmId, string $side, array $row): void
     {
-        $this->rows[$table][$joinTable][$mmId]['row'][$side] = $row;
+        $this->rows[$joinTable][$table][$mmId]['row'][$side] = $row;
     }
 
     public function getRows(): array

@@ -82,7 +82,7 @@ class JoinDemandResolver implements DemandResolver
                             }
                             throw $exception;
                         }
-                        $joinRowCollection->addRows($table, $joinTable, $rows, $valueMaps, $property);
+                        $joinRowCollection->addRows($joinTable, $table, $rows, $valueMaps, $property);
                     }
                 }
             }
@@ -105,7 +105,7 @@ class JoinDemandResolver implements DemandResolver
                 $rows = $this->localRepository->findByProperty($table, 'uid', array_keys($identifiers));
                 foreach ($rows as $uid => $row) {
                     foreach ($identifiers[$uid] as $joinTable => $mmIds) {
-                        $joinRowCollection->amendRow($table, $joinTable, $uid, 'local', $row);
+                        $joinRowCollection->amendRow($joinTable, $table, $uid, 'local', $row);
                     }
                 }
             }
@@ -122,7 +122,7 @@ class JoinDemandResolver implements DemandResolver
                 $rows = $this->localRepository->findByProperty($table, 'uid', array_keys($identifiers));
                 foreach ($rows as $uid => $row) {
                     foreach ($identifiers[$uid] as $joinTable => $mmIds) {
-                        $joinRowCollection->amendRow($table, $joinTable, $uid, 'foreign', $row);
+                        $joinRowCollection->amendRow($joinTable, $table, $uid, 'foreign', $row);
                     }
                 }
             }
