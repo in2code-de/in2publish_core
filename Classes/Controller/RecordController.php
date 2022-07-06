@@ -32,19 +32,25 @@ namespace In2code\In2publishCore\Controller;
 
 use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
 use In2code\In2publishCore\Component\TcaHandling\RecordTreeBuilder;
+use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
+use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
+use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Error\FailureCollector;
 use In2code\In2publishCore\Service\Permission\PermissionService;
+use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\LogUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_keys;
 use function implode;
+use function is_int;
 use function json_encode;
 
 use const JSON_THROW_ON_ERROR;
@@ -54,9 +60,12 @@ use const JSON_THROW_ON_ERROR;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class RecordController extends AbstractController
+class RecordController extends ActionController
 {
+    use ControllerFilterStatus;
     use ControllerModuleTemplate;
+    use DeactivateErrorFlashMessage;
+    use CommonViewVariables;
 
     protected FailureCollector $failureCollector;
     protected PermissionService $permissionService;
@@ -73,6 +82,16 @@ class RecordController extends AbstractController
         $this->permissionService = $permissionService;
     }
 
+    public function injectRecordTreeBuilder(RecordTreeBuilder $recordTreeBuilder): void
+    {
+        $this->recordTreeBuilder = $recordTreeBuilder;
+    }
+
+    public function injectPublisherService(PublisherService $publisherService): void
+    {
+        $this->publisherService = $publisherService;
+    }
+
     public function injectPageRenderer(PageRenderer $pageRenderer): void
     {
         $pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
@@ -85,11 +104,6 @@ class RecordController extends AbstractController
         );
     }
 
-    public function injectRecordTreeBuilder(RecordTreeBuilder $recordTreeBuilder): void
-    {
-        $this->recordTreeBuilder = $recordTreeBuilder;
-    }
-
     /**
      * Create a Record instance of the current selected page
      * If none is chosen, a Record with uid = 0 is created which
@@ -97,7 +111,11 @@ class RecordController extends AbstractController
      */
     public function indexAction(): ResponseInterface
     {
-        $recordTree = $this->recordTreeBuilder->buildRecordTree('pages', $this->pid);
+        $pid = BackendUtility::getPageIdentifier();
+        if (!is_int($pid)) {
+            $pid = 0;
+        }
+        $recordTree = $this->recordTreeBuilder->buildRecordTree('pages', $pid);
 
         $this->view->assign('recordTree', $recordTree);
         return $this->htmlResponse();
@@ -127,7 +145,7 @@ class RecordController extends AbstractController
     {
         $recordTree = $this->recordTreeBuilder->buildRecordTree('pages', $identifier);
         $this->publisherService->publishRecordTree($recordTree);
-        $this->redirect('index');
+        $this->addFlashMessagesAndRedirectToIndex();
     }
 
     /**
@@ -164,10 +182,5 @@ class RecordController extends AbstractController
         $this->addFlashMessage($message, $title, $severity);
 
         $this->redirect('index', 'Record');
-    }
-
-    public function injectPublisherService(PublisherService $publisherService): void
-    {
-        $this->publisherService = $publisherService;
     }
 }

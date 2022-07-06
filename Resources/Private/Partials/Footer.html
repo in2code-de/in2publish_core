@@ -7,7 +7,5 @@
 
 	<br />Copyright 2016-2021 in2code GmbH - Version {extensionVersion}
 
-	<f:if condition="{config.debug.showExecutionTime}">
-		<div>Execution time: {publish:Miscellaneous.ExecutionTime()}</div>
-	</f:if>
+	<div>Execution time: {executionTimeService.executionTime }</div>
 </div>

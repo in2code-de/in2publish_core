@@ -182,7 +182,6 @@ class In2publishCoreDefiner implements DefinerInterface
                           'debug',
                           Builder::start()
                                  ->addBoolean('disableParentRecords', false)
-                                 ->addBoolean('showExecutionTime', true)
                                  ->addBoolean('keepEnvelopes', false)
                                  ->addBoolean('traceDemand', false)
                       )

@@ -34,6 +34,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\SingletonInterface;
 
+use function explode;
 use function microtime;
 
 class ExecutionTimeService implements SingletonInterface, LoggerAwareInterface
@@ -49,12 +50,13 @@ class ExecutionTimeService implements SingletonInterface, LoggerAwareInterface
         }
     }
 
-    public function getExecutionTime(): float
+    public function getExecutionTime(): string
     {
         if (null === $this->startTime) {
-            $this->logger->notice('Execution time requested before timer was started');
-            return 0.0;
+            return 'Timer was never started';
         }
-        return $this->startTime + microtime(true);
+        $duration = $this->startTime + microtime(true);
+        [$sec, $msec] = explode('.', (string)$duration);
+        return date("i:s" , (int)$sec) . '.' . $msec;
     }
 }

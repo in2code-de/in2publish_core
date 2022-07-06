@@ -26,12 +26,6 @@
 			<trans-unit id="label_production">
 				<source>Production System</source>
 			</trans-unit>
-			<trans-unit id="error_not_connected">
-				<source>Error: Could not connect to production database!</source>
-			</trans-unit>
-			<trans-unit id="error_connecting">
-				<source>Error: Could not establish a connection!</source>
-			</trans-unit>
 			<trans-unit id="record_published">
 				<source>The selected record has been published successfully.</source>
 			</trans-unit>

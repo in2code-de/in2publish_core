@@ -32,9 +32,9 @@ namespace In2code\In2publishCore\Controller;
 
 use In2code\In2publishCore\Utility\BackendUtility;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController as ExtbaseActionController;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
-class FrontendController extends ExtbaseActionController
+class FrontendController extends ActionController
 {
     /** Preview action for vertical or horizontal view */
     public function previewAction(int $identifier = 1): ResponseInterface

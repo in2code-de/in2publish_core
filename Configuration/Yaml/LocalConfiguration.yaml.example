@@ -203,9 +203,6 @@ debug:
   # Show foreign key fingerprint instead of throwing an exception.
   showForeignKeyFingerprint: FALSE
 
-  # show execution time in backend modules in footer
-  showExecutionTime: TRUE
-
   # Do not delete Envelope entries after they fulfilled their purpose
   keepEnvelopes: FALSE
 

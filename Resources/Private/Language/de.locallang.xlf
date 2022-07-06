@@ -33,14 +33,6 @@
 				<source>Production System</source>
 				<target state="translated">Produktivsystem</target>
 			</trans-unit>
-			<trans-unit id="error_not_connected">
-				<source>Error: Could not connect to production database!</source>
-				<target state="translated">Fehler: Konnte nicht mit Datenbank auf Produktionssystem verbinden!</target>
-			</trans-unit>
-			<trans-unit id="error_connecting">
-				<source>Error: Could not establish a connection!</source>
-				<target state="translated">Fehler: Verbindung konnte nicht aufgebaut werden!</target>
-			</trans-unit>
 			<trans-unit id="record_published">
 				<source>The selected record has been published successfully.</source>
 				<target state="translated">Der ausgewählte Datensatz wurde erfolgreich veröffentlicht.</target>

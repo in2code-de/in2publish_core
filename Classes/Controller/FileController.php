@@ -33,14 +33,19 @@ namespace In2code\In2publishCore\Controller;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\DefaultFalFinder;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
 use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
+use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
+use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
+use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
 use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\Service\Error\FailureCollector;
+use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\LogUtility;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
@@ -48,6 +53,7 @@ use function array_keys;
 use function explode;
 use function http_build_query;
 use function implode;
+use function is_int;
 use function is_string;
 use function json_encode;
 use function parse_str;
@@ -60,9 +66,12 @@ use function trim;
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class FileController extends AbstractController
+class FileController extends ActionController
 {
-    protected bool $forcePidInteger = false;
+    use ControllerFilterStatus;
+    use DeactivateErrorFlashMessage;
+    use CommonViewVariables;
+
     private ModuleTemplateFactory $moduleTemplateFactory;
     private PageRenderer $pageRenderer;
     private DefaultFalFinder $defaultFalFinder;
@@ -110,8 +119,9 @@ class FileController extends AbstractController
      */
     public function indexAction(): ResponseInterface
     {
+        $pid = BackendUtility::getPageIdentifier();
         try {
-            $recordTree = $this->tryToGetFolderInstance($this->pid === 0 ? null : $this->pid);
+            $recordTree = $this->tryToGetFolderInstance($pid === 0 ? null : $pid);
         } catch (FolderDoesNotExistOnBothSidesException $e) {
             $uri = $this->request->getUri();
             $queryParts = [];

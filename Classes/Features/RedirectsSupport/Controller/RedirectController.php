@@ -37,6 +37,7 @@ use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SysRedirectSele
 use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Controller\AbstractController;
+use In2code\In2publishCore\Controller\ActionController;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
@@ -61,7 +62,7 @@ use function sprintf;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) I probably really need all these classes.
  */
-class RedirectController extends AbstractController
+class RedirectController extends ActionController
 {
     use ControllerModuleTemplate;
 
