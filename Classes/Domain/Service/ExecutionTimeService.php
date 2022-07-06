@@ -36,6 +36,7 @@ use TYPO3\CMS\Core\SingletonInterface;
 
 use function explode;
 use function microtime;
+use function substr;
 
 class ExecutionTimeService implements SingletonInterface, LoggerAwareInterface
 {
@@ -57,6 +58,6 @@ class ExecutionTimeService implements SingletonInterface, LoggerAwareInterface
         }
         $duration = $this->startTime + microtime(true);
         [$sec, $msec] = explode('.', (string)$duration);
-        return date("i:s" , (int)$sec) . '.' . $msec;
+        return date("i:s", (int)$sec) . '.' . substr($msec, 0, 4);
     }
 }
