@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\TcaHandling\Demand\Resolver;
+namespace In2code\In2publishCore\Component\TcaHandling\DemandResolver;
 
 use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;

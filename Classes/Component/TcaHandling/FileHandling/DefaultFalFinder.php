@@ -30,10 +30,7 @@ namespace In2code\In2publishCore\Component\TcaHandling\FileHandling;
  */
 
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\DemandResolverCollection;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\JoinDemandResolver;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SysRedirectSelectDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FalDriverService;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FileSystemInfoService;
@@ -61,10 +58,7 @@ class DefaultFalFinder
     protected FileSystemInfoService $fileSystemInfoService;
     protected ForeignFileSystemInfoService $foreignFileSystemInfoService;
     protected DemandsFactory $demandsFactory;
-    protected DemandResolverCollection $demandResolverCollection;
-    protected SelectDemandResolver $selectDemandResolver;
-    protected JoinDemandResolver $joinDemandResolver;
-    protected SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver;
+    protected DemandResolver $demandResolver;
     protected RecordTreeBuilder $recordTreeBuilder;
     protected FalDriverService $falDriverService;
     protected RecordIndex $recordIndex;
@@ -94,25 +88,9 @@ class DefaultFalFinder
         $this->demandsFactory = $demandsFactory;
     }
 
-    public function injectDemandResolverCollection(DemandResolverCollection $demandResolverCollection): void
+    public function injectDemandResolver(DemandResolver $demandResolver): void
     {
-        $this->demandResolverCollection = $demandResolverCollection;
-    }
-
-    public function injectSelectDemandResolver(SelectDemandResolver $selectDemandResolver): void
-    {
-        $this->selectDemandResolver = $selectDemandResolver;
-    }
-
-    public function injectJoinDemandResolver(JoinDemandResolver $joinDemandResolver): void
-    {
-        $this->joinDemandResolver = $joinDemandResolver;
-    }
-
-    public function injectSysRedirectSelectDemandResolver(
-        SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver
-    ): void {
-        $this->sysRedirectSelectDemandResolver = $sysRedirectSelectDemandResolver;
+        $this->demandResolver = $demandResolver;
     }
 
     public function injectRecordTreeBuilder(RecordTreeBuilder $recordTreeBuilder): void
@@ -141,9 +119,6 @@ class DefaultFalFinder
      */
     public function findFalRecord(?string $combinedIdentifier, bool $onlyRoot = false): RecordTree
     {
-        $this->demandResolverCollection->addDemandResolver($this->selectDemandResolver);
-        $this->demandResolverCollection->addDemandResolver($this->joinDemandResolver);
-        $this->demandResolverCollection->addDemandResolver($this->sysRedirectSelectDemandResolver);
         /*
          * IMPORTANT NOTICES (a.k.a. "never forget about this"-Notices):
          *  1. The local folder might not exist anymore, because the combinedIdentifier is persisted in the session.
@@ -273,7 +248,8 @@ class DefaultFalFinder
             $folderRecord->addChild($fileRecord);
         }
         $recordCollection = new RecordCollection();
-        $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
+
+        $this->demandResolver->resolveDemand($demands, $recordCollection);
         $this->recordTreeBuilder->findRecordsByTca($recordCollection);
 
         foreach ($recordCollection->getRecords()['sys_file'] ?? [] as $sysFileRecord) {
@@ -319,10 +295,6 @@ class DefaultFalFinder
 
     public function findFileRecord(?string $combinedIdentifier): RecordTree
     {
-        $this->demandResolverCollection->addDemandResolver($this->selectDemandResolver);
-        $this->demandResolverCollection->addDemandResolver($this->joinDemandResolver);
-        $this->demandResolverCollection->addDemandResolver($this->sysRedirectSelectDemandResolver);
-
         [$storage, $fileIdentifier] = explode(':', $combinedIdentifier);
         $driver = $this->falDriverService->getDriver((int)$storage);
 
@@ -357,7 +329,7 @@ class DefaultFalFinder
             $fileRecord
         );
         $recordCollection = new RecordCollection();
-        $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
+        $this->demandResolver->resolveDemand($demands, $recordCollection);
         $this->recordTreeBuilder->findRecordsByTca($recordCollection);
 
         if ($foreignProps === []) {

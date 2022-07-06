@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\DependencyInjection;
 
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 use function interface_exists;
 
-class TcaPreProcessorCompilerPass implements CompilerPassInterface
+class PublisherPass implements CompilerPassInterface
 {
     /** @var string */
     private $tagName;
@@ -23,7 +23,7 @@ class TcaPreProcessorCompilerPass implements CompilerPassInterface
 
     public function process(ContainerBuilder $container): void
     {
-        $registryDefinition = $container->findDefinition(TcaPreProcessingService::class);
+        $registryDefinition = $container->findDefinition(PublisherService::class);
         if (!$registryDefinition) {
             return;
         }
@@ -35,7 +35,7 @@ class TcaPreProcessorCompilerPass implements CompilerPassInterface
             }
             $definition->setPublic(true);
 
-            $registryDefinition->addMethodCall('register', [
+            $registryDefinition->addMethodCall('addPublisher', [
                 new Reference($serviceName),
             ]);
         }

@@ -30,10 +30,10 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
  */
 
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\DemandResolverCollection;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\JoinDemandResolver;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SysRedirectSelectDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\DemandResolver\DemandResolverCollection;
+use In2code\In2publishCore\Component\TcaHandling\DemandResolver\Join\JoinDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\DemandResolver\Select\SelectDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\DemandResolver\SysRedirect\SysRedirectSelectDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Controller\AbstractController;

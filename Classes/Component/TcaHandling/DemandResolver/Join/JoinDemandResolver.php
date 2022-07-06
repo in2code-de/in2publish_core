@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\TcaHandling\Demand\Resolver;
+namespace In2code\In2publishCore\Component\TcaHandling\DemandResolver\Join;
 
 use Doctrine\DBAL\Exception;
 use In2code\In2publishCore\Component\TcaHandling\Demand\CallerAwareDemandsCollection;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\Exception\InvalidDemandException;
+use In2code\In2publishCore\Component\TcaHandling\DemandResolver\DemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\DemandResolver\Exception\InvalidDemandException;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Component\TcaHandling\RecordIndex;
 use In2code\In2publishCore\Component\TcaHandling\Repository\DualDatabaseRepository;

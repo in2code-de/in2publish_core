@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\Query;
 
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsCollection;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\DemandResolver\Select\SelectDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Component\TcaHandling\RecordIndex;
 use In2code\In2publishCore\Component\TcaHandling\Repository\DualDatabaseRepository;
@@ -15,7 +15,7 @@ use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversDefaultClass \In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver
+ * @coversDefaultClass \In2code\In2publishCore\Component\TcaHandling\DemandResolver\Select\SelectDemandResolver
  */
 class QueryServiceTest extends TestCase
 {

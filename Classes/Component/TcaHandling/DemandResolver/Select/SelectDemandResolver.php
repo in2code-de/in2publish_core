@@ -2,21 +2,26 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\TcaHandling\Demand\Resolver;
+namespace In2code\In2publishCore\Component\TcaHandling\DemandResolver\Select;
 
-use Exception;
+use Doctrine\DBAL\Exception;
 use In2code\In2publishCore\Component\TcaHandling\Demand\CallerAwareDemandsCollection;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\Exception\InvalidDemandException;
+use In2code\In2publishCore\Component\TcaHandling\DemandResolver\DemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\DemandResolver\Exception\InvalidDemandException;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Component\TcaHandling\RecordIndex;
 use In2code\In2publishCore\Component\TcaHandling\Repository\DualDatabaseRepository;
 use In2code\In2publishCore\Component\TcaHandling\Repository\SingleDatabaseRepository;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 
-class SysRedirectSelectDemandResolver implements DemandResolver
+use function array_key_exists;
+use function array_keys;
+use function array_unique;
+
+class SelectDemandResolver implements DemandResolver
 {
-    private DualDatabaseRepository $dualDatabaseRepository;
+    protected DualDatabaseRepository $dualDatabaseRepository;
     protected SingleDatabaseRepository $localRepository;
     protected SingleDatabaseRepository $foreignRepository;
     protected RecordFactory $recordFactory;
@@ -49,59 +54,67 @@ class SysRedirectSelectDemandResolver implements DemandResolver
 
     public function resolveDemand(Demands $demands, RecordCollection $recordCollection): void
     {
-        $selectRowCollection = $this->resolveSelectWithoutPropertyDemand($demands);
+        $selectRowCollection = $this->resolveSelectDemand($demands);
         $this->findMissingRecordsByUid($selectRowCollection);
 
         $this->createAndMapRecords($selectRowCollection, $recordCollection);
     }
 
-    protected function resolveSelectWithoutPropertyDemand(Demands $demands): SysRedirectRowCollection
+    protected function resolveSelectDemand(Demands $demands): SelectRowCollection
     {
-        $rowCollection = new SysRedirectRowCollection();
-        foreach ($demands->getSysRedirectSelect() as $table => $wheres) {
-            foreach ($wheres as $where => $parentRecords) {
-                try {
-                    $rows = $this->dualDatabaseRepository->findByWhere($table, $where);
-                } catch (Exception $exception) {
-                    if ($demands instanceof CallerAwareDemandsCollection) {
-                        $callers = [];
-                        $meta = $demands->getMeta();
-                        if (isset($meta['sysRedirectSelect'][$table][$where])) {
-                            $callers = $meta['sysRedirectSelect'][$table][$where];
+        $rowCollection = new SelectRowCollection();
+        foreach ($demands->getSelect() as $table => $tableSelect) {
+            foreach ($tableSelect as $additionalWhere => $properties) {
+                foreach ($properties as $property => $valueMaps) {
+                    try {
+                        $rows = $this->dualDatabaseRepository->findByProperty(
+                            $table,
+                            $property,
+                            array_keys($valueMaps),
+                            $additionalWhere
+                        );
+                    } catch (Exception $exception) {
+                        if ($demands instanceof CallerAwareDemandsCollection) {
+                            $callers = [];
+                            $meta = $demands->getMeta();
+                            if (isset($meta['select'][$table][$additionalWhere][$property])) {
+                                $callers = $meta['select'][$table][$additionalWhere][$property];
+                            }
+                            $exception = new InvalidDemandException($callers, $exception);
                         }
-                        $exception = new InvalidDemandException($callers, $exception);
+                        throw $exception;
                     }
-                    throw $exception;
+                    $rowCollection->addRows($table, $rows, $valueMaps, $property);
                 }
-                $rowCollection->addRows($table, $rows, $parentRecords);
             }
         }
         return $rowCollection;
     }
 
-    protected function findMissingRecordsByUid(SysRedirectRowCollection $rowCollection): void
+    protected function findMissingRecordsByUid(SelectRowCollection $selectRowCollection): void
     {
-        $missingIdentifiers = $rowCollection->getMissingIdentifiers();
+        $missingIdentifiers = $selectRowCollection->getMissingIdentifiers();
 
         foreach ($missingIdentifiers['local'] ?? [] as $table => $missingIdentifier) {
             $rows = $this->localRepository->findByProperty($table, 'uid', $missingIdentifier);
-            $rowCollection->amendRows($table, 'local', $rows);
+            $selectRowCollection->amendRows($table, 'local', $rows);
         }
 
         foreach ($missingIdentifiers['foreign'] ?? [] as $table => $missingIdentifier) {
             $rows = $this->foreignRepository->findByProperty($table, 'uid', $missingIdentifier);
-            $rowCollection->amendRows($table, 'foreign', $rows);
+            $selectRowCollection->amendRows($table, 'foreign', $rows);
         }
     }
 
     protected function createAndMapRecords(
-        SysRedirectRowCollection $rowCollection,
+        SelectRowCollection $selectRowCollection,
         RecordCollection $recordCollection
-    ) {
-        foreach ($rowCollection->getRows() as $table => $records) {
+    ): void {
+        foreach ($selectRowCollection->getRows() as $table => $records) {
             foreach ($records as $uid => $recordInfo) {
                 $row = $recordInfo['row'];
-                $parentRecords = $recordInfo['parentRecords'];
+                $valueMaps = $recordInfo['valueMaps'];
+                $property = $recordInfo['property'];
 
                 $record = $this->recordIndex->getRecord($table, $uid);
                 if (null === $record) {
@@ -116,9 +129,16 @@ class SysRedirectSelectDemandResolver implements DemandResolver
                     }
                     $recordCollection->addRecord($record);
                 }
+                $localMapValue = $record->getLocalProps()[$property] ?? null;
+                $foreignMapValue = $record->getForeignProps()[$property] ?? null;
+                $mapValues = array_unique([$localMapValue, $foreignMapValue]);
 
-                foreach ($parentRecords as $parentRecord) {
-                    $parentRecord->addChild($record);
+                foreach ($mapValues as $mapValue) {
+                    if (array_key_exists($mapValue, $valueMaps)) {
+                        foreach ($valueMaps[$mapValue] as $parent) {
+                            $parent->addChild($record);
+                        }
+                    }
                 }
             }
         }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\Exception;
+namespace In2code\In2publishCore\Component\TcaHandling\DemandResolver\Exception;
 
 use In2code\In2publishCore\Component\TcaHandling\Resolver\AbstractResolver;
 use In2code\In2publishCore\In2publishCoreException;

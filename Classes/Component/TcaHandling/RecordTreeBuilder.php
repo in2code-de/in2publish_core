@@ -6,10 +6,7 @@ namespace In2code\In2publishCore\Component\TcaHandling;
 
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandBuilder;
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\DemandResolverCollection;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\JoinDemandResolver;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SysRedirectSelectDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\Service\RelevantTablesService;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
@@ -26,10 +23,7 @@ use function in_array;
 class RecordTreeBuilder
 {
     protected RelevantTablesService $relevantTablesService;
-    protected SelectDemandResolver $selectDemandResolver;
-    protected JoinDemandResolver $joinDemandResolver;
-    protected SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver;
-    protected DemandResolverCollection $demandResolverCollection;
+    protected DemandResolver $demandResolver;
     protected ConfigContainer $configContainer;
     protected DemandBuilder $demandBuilder;
     protected RecordFactory $recordFactory;
@@ -43,25 +37,9 @@ class RecordTreeBuilder
         $this->relevantTablesService = $relevantTablesService;
     }
 
-    public function injectSelectDemandResolver(SelectDemandResolver $selectDemandResolver): void
+    public function injectDemandResolverFactory(DemandResolver $demandResolver): void
     {
-        $this->selectDemandResolver = $selectDemandResolver;
-    }
-
-    public function injectJoinDemandResolver(JoinDemandResolver $joinDemandResolver): void
-    {
-        $this->joinDemandResolver = $joinDemandResolver;
-    }
-
-    public function injectSysRedirectSelectDemandResolver(
-        SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver
-    ): void {
-        $this->sysRedirectSelectDemandResolver = $sysRedirectSelectDemandResolver;
-    }
-
-    public function injectDemandResolverCollection(DemandResolverCollection $demandResolverCollection): void
-    {
-        $this->demandResolverCollection = $demandResolverCollection;
+        $this->demandResolver = $demandResolver;
     }
 
     public function injectConfigContainer(ConfigContainer $configContainer): void
@@ -101,10 +79,6 @@ class RecordTreeBuilder
 
     public function buildRecordTree(string $table, int $id): RecordTree
     {
-        $this->demandResolverCollection->addDemandResolver($this->selectDemandResolver);
-        $this->demandResolverCollection->addDemandResolver($this->joinDemandResolver);
-        $this->demandResolverCollection->addDemandResolver($this->sysRedirectSelectDemandResolver);
-
         $recordTree = new RecordTree();
 
         $recordCollection = new RecordCollection();
@@ -144,7 +118,7 @@ class RecordTreeBuilder
             $demands->addSelect($table, '', $transOrigPointerField, $id, $recordTree);
         }
 
-        $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
+        $this->demandResolver->resolveDemand($demands, $recordCollection);
     }
 
     /**
@@ -162,7 +136,7 @@ class RecordTreeBuilder
                 $demands->addSelect('pages', '', 'pid', $record->getId(), $record);
             }
             $recordCollection = new RecordCollection();
-            $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
+            $this->demandResolver->resolveDemand($demands, $recordCollection);
         }
     }
 
@@ -197,7 +171,7 @@ class RecordTreeBuilder
                 }
             }
         }
-        $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
+        $this->demandResolver->resolveDemand($demands, $recordCollection);
         return $recordCollection;
     }
 
@@ -213,7 +187,7 @@ class RecordTreeBuilder
             $demand = $this->demandBuilder->buildDemandForRecords($recordCollection);
 
             $recordCollection = new RecordCollection();
-            $this->demandResolverCollection->resolveDemand($demand, $recordCollection);
+            $this->demandResolver->resolveDemand($demand, $recordCollection);
         }
     }
 }

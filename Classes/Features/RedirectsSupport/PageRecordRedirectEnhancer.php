@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport;
  */
 
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsCollection;
-use In2code\In2publishCore\Component\TcaHandling\Demand\Resolver\SelectDemandResolver;
+use In2code\In2publishCore\Component\TcaHandling\DemandResolver\Select\SelectDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Domain\Model\Node;
 use In2code\In2publishCore\Domain\Model\Record;

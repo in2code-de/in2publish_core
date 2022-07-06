@@ -54,3 +54,6 @@ services:
         command: 'in2publish_core:tcahandling:foreignfileinfo'
         hidden: TRUE
         schedulable: FALSE
+
+  In2code\In2publishCore\Component\TcaHandling\DemandResolver\DemandResolver:
+    factory: [ '@In2code\In2publishCore\Component\TcaHandling\DemandResolver\DemandResolverFactory', 'createDemandResolver' ]
