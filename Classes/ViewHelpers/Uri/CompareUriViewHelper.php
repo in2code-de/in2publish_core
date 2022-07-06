@@ -29,7 +29,6 @@ namespace In2code\In2publishCore\ViewHelpers\Uri;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Database\RawRecordService;
 use In2code\In2publishCore\Service\Routing\SiteService;
 use Throwable;
@@ -40,20 +39,14 @@ use function array_key_exists;
 class CompareUriViewHelper extends AbstractTagBasedViewHelper
 {
     protected const ARG_IDENTIFIER = 'identifier';
-
     protected RawRecordService $rawRecordService;
-
-    protected TcaService $tcaService;
-
     protected SiteService $siteService;
-
     protected $tagName = 'a';
 
-    public function __construct(RawRecordService $rawRecordService, TcaService $tcaService, SiteService $siteService)
+    public function __construct(RawRecordService $rawRecordService, SiteService $siteService)
     {
         parent::__construct();
         $this->rawRecordService = $rawRecordService;
-        $this->tcaService = $tcaService;
         $this->siteService = $siteService;
     }
 
@@ -71,13 +64,18 @@ class CompareUriViewHelper extends AbstractTagBasedViewHelper
             return '';
         }
 
-        $languageField = $this->tcaService->getLanguageField('pages');
-        $transOrigPointerField = $this->tcaService->getTransOrigPointerField('pages');
+        $languageField = $GLOBALS['TCA']['pages']['ctrl']['languageField'] ?? null;
+        $transOrigPointerField = $GLOBALS['TCA']['pages']['ctrl']['transOrigPointerField'] ?? null;
 
         $language = 0;
         $route = $identifier;
         $page = $this->rawRecordService->getRawRecord('pages', $identifier, 'local');
-        if (array_key_exists($languageField, $page) && $page[$languageField] > 0) {
+        if (
+            null !== $languageField
+            && null !== $transOrigPointerField
+            && array_key_exists($languageField, $page)
+            && $page[$languageField] > 0
+        ) {
             $language = $page[$languageField];
             if (!empty($page[$transOrigPointerField])) {
                 $route = $page[$transOrigPointerField];

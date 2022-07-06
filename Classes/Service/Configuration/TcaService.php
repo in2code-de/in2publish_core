@@ -29,13 +29,9 @@ namespace In2code\In2publishCore\Service\Configuration;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use Doctrine\DBAL\Schema\Table;
-use In2code\In2publishCore\Utility\DatabaseUtility;
-use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-use function array_diff;
 use function array_keys;
 use function implode;
 use function in_array;
@@ -46,16 +42,8 @@ class TcaService implements SingletonInterface
 {
     protected const TYPE_ROOT = 'root';
     protected const TYPE_PAGE = 'page';
-
-    protected array $tableNames;
-
     /** @var array RunTime Cache */
     protected array $rtc = [];
-
-    public function __construct()
-    {
-        $this->tableNames = array_keys($GLOBALS['TCA'] ?? []);
-    }
 
     /**
      * @param string[] $exceptTableNames
@@ -82,47 +70,18 @@ class TcaService implements SingletonInterface
         return $rootLevelTables;
     }
 
-    /**
-     * Get label field name from table
-     *
-     * @return string Field name of the configured label field or empty string if not set
-     */
-    public function getLabelFieldFromTable(string $tableName): string
-    {
-        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['label'])) {
-            return $GLOBALS['TCA'][$tableName]['ctrl']['label'];
-        }
-        return '';
-    }
-
-    /**
-     * @return string Field name of the configured label_alt field or empty string if not set
-     */
-    public function getLabelAltFieldFromTable(string $tableName): string
-    {
-        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['label_alt'])) {
-            return $GLOBALS['TCA'][$tableName]['ctrl']['label_alt'];
-        }
-        return '';
-    }
-
-    public function getLabelAltForceFromTable(string $tableName): bool
-    {
-        if (isset($GLOBALS['TCA'][$tableName]['ctrl']['label_alt_force'])) {
-            return (bool)$GLOBALS['TCA'][$tableName]['ctrl']['label_alt_force'];
-        }
-        return false;
-    }
-
     public function getRecordLabel(array $row, string $table): string
     {
-        $labelField = $this->getLabelFieldFromTable($table);
-        $labelAltField = $this->getLabelAltFieldFromTable($table);
-        $labelAltFields = GeneralUtility::trimExplode(',', $labelAltField, true);
-        $labelAltForce = $this->getLabelAltForceFromTable($table);
+        $labelField = $GLOBALS['TCA'][$table]['ctrl']['label'] ?? null;
+        $labelAltField = $GLOBALS['TCA'][$table]['ctrl']['label_alt'] ?? null;
+        $labelAltFields = [];
+        if (null !== $labelAltField) {
+            $labelAltFields = GeneralUtility::trimExplode(',', $labelAltField, true);
+        }
+        $labelAltForce = $GLOBALS['TCA'][$table]['ctrl']['label_alt_force'] ?? false;
 
         $labels = [];
-        if (!empty($row[$labelField])) {
+        if (null !== $labelField && !empty($row[$labelField])) {
             $labels[] = $row[$labelField];
         }
         if (empty($labels) || true === $labelAltForce) {
@@ -136,125 +95,16 @@ class TcaService implements SingletonInterface
     }
 
     /**
-     * @return string Field name of the configured title field or empty string if not set
-     */
-    public function getTitleFieldFromTable(string $tableName): string
-    {
-        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['title'])) {
-            return $GLOBALS['TCA'][$tableName]['ctrl']['title'];
-        }
-        return '';
-    }
-
-    public function getSortingField(string $tableName): string
-    {
-        $sortingField = '';
-        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['sortby'])) {
-            $sortingField = $GLOBALS['TCA'][$tableName]['ctrl']['sortby'];
-        } elseif (!empty($GLOBALS['TCA'][$tableName]['ctrl']['crdate'])) {
-            $sortingField = $GLOBALS['TCA'][$tableName]['ctrl']['crdate'];
-        }
-        return $sortingField;
-    }
-
-    public function getDeletedField(string $tableName): string
-    {
-        $deleteField = '';
-        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['delete'])) {
-            $deleteField = $GLOBALS['TCA'][$tableName]['ctrl']['delete'];
-        }
-        return $deleteField;
-    }
-
-    /**
-     * Records whose deleted field evaluate to true will not be shown in the frontend.
-     */
-    public function getDisableField(string $tableName): string
-    {
-        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns']['disabled'])) {
-            return $GLOBALS['TCA'][$tableName]['ctrl']['enablecolumns']['disabled'];
-        }
-        return '';
-    }
-
-    public function getLanguageField(string $tableName): string
-    {
-        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['languageField'])) {
-            return $GLOBALS['TCA'][$tableName]['ctrl']['languageField'];
-        }
-        return '';
-    }
-
-    public function getTransOrigPointerField(string $tableName): string
-    {
-        if (!empty($GLOBALS['TCA'][$tableName]['ctrl']['transOrigPointerField'])) {
-            return $GLOBALS['TCA'][$tableName]['ctrl']['transOrigPointerField'];
-        }
-        return '';
-    }
-
-    /**
-     * Returns all table names that are not in the exclusion list and that have
-     * a pid and uid field
-     * TODO: Cache the result because `$database->getSchemaManager()->listTables()` is expensive
-     *
-     * @param string[] $exceptTableNames
-     *
-     * @return string[]
-     */
-    public function getAllTableNamesWithPidAndUidField(array $exceptTableNames = []): array
-    {
-        $result = [];
-
-        $tables = $this->getDatabaseSchemaTables();
-
-        foreach ($tables as $table) {
-            if (
-                $table->hasColumn('uid')
-                && $table->hasColumn('pid')
-                && !in_array($table->getName(), $exceptTableNames, true)
-            ) {
-                $result[] = $table->getName();
-            }
-        }
-
-        return $result;
-    }
-
-    public function getConfigurationArrayForTable(string $table): ?array
-    {
-        return $GLOBALS['TCA'][$table] ?? null;
-    }
-
-    public function getColumnConfigurationForTableColumn(string $table, string $column): ?array
-    {
-        return $GLOBALS['TCA'][$table]['columns'][$column] ?? null;
-    }
-
-    /**
-     * Returns all table names that are not in the exclusion list
-     *
-     * @param string[] $exceptTableNames
-     */
-    public function getAllTableNames(array $exceptTableNames = []): array
-    {
-        if (!empty($exceptTableNames)) {
-            return array_diff($this->tableNames, $exceptTableNames);
-        }
-        return $this->tableNames;
-    }
-
-    /**
      * Get table name from locallang and TCA definition
      */
     public function getTableLabel(string $tableName): string
     {
         $label = ucfirst($tableName);
 
-        $titleField = $this->getTitleFieldFromTable($tableName);
+        $titleField = $GLOBALS['TCA'][$tableName]['ctrl']['title'] ?? null;
 
-        if ('' !== $titleField) {
-            $localizedLabel = $this->localizeLabel($titleField);
+        if (null !== $titleField) {
+            $localizedLabel = $GLOBALS['LANG']->sL($titleField);
             if (!empty($localizedLabel)) {
                 $label = $localizedLabel;
             }
@@ -266,32 +116,8 @@ class TcaService implements SingletonInterface
     public function isHiddenRootTable(string $tableName): bool
     {
         return isset($GLOBALS['TCA'][$tableName]['ctrl']['hideTable'], $GLOBALS['TCA'][$tableName]['ctrl']['rootLevel'])
-               && true === (bool)$GLOBALS['TCA'][$tableName]['ctrl']['hideTable']
-               && in_array($GLOBALS['TCA'][$tableName]['ctrl']['rootLevel'], [1, -1], true);
-    }
-
-    /**
-     * @codeCoverageIgnore
-     */
-    protected function localizeLabel(string $label): string
-    {
-        if ($GLOBALS['LANG'] instanceof LanguageService) {
-            return $GLOBALS['LANG']->sL($label);
-        }
-        return '';
-    }
-
-    /**
-     * @return Table[]
-     */
-    public function getDatabaseSchemaTables(): array
-    {
-        $tables = [];
-        $database = DatabaseUtility::buildLocalDatabaseConnection();
-        if ($database) {
-            $tables = $database->getSchemaManager()->listTables();
-        }
-        return $tables;
+            && true === (bool)$GLOBALS['TCA'][$tableName]['ctrl']['hideTable']
+            && in_array($GLOBALS['TCA'][$tableName]['ctrl']['rootLevel'], [1, -1], true);
     }
 
     public function getTablesAllowedOnPage(int $pid, ?int $doktype): array
