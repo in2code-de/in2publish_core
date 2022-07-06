@@ -7,7 +7,7 @@ services:
   In2code\In2publishCore\Component\PostPublishTaskExecution\:
     resource: '../../../Classes/Component/PostPublishTaskExecution/*'
     exclude:
-      - '../../../Classes/Component/PostPublishTaskExecution/Command/Foreign*'
+      - '../../../Classes/Component/PostPublishTaskExecution/Command/Foreign/*'
 
   In2code\In2publishCore\Component\PostPublishTaskExecution\Service\TaskExecutionService:
     public: true

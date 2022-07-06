@@ -7,7 +7,7 @@ use In2code\In2publishCore\Features\SystemInformationExport\Exporter\SystemInfor
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
-return static function (ContainerConfigurator $configurator, ContainerBuilder $builder) {
+return static function (ContainerConfigurator $configurator, ContainerBuilder $builder): void {
     $builder->registerForAutoconfiguration(SystemInformationExporter::class)
             ->addTag('in2publish_core.system_information_exporter');
 

@@ -1,19 +1,6 @@
 imports:
-  - { resource: Component/PostPublishTaskExecution/Services.yaml }
-  - { resource: Component/TcaHandling/Services.yaml }
-  - { resource: Features/AdminTools/Services.yaml }
-  - { resource: Features/CacheInvalidation/Services.yaml }
-  - { resource: Features/CompareDatabaseTool/Services.yaml }
-  - { resource: Features/ContextMenuPublishEntry/Services.yaml }
-  - { resource: Features/FileEdgeCacheInvalidator/Services.yaml }
-  - { resource: Features/NewsSupport/Services.yaml }
-  - { resource: Features/PreventParallelPublishing/Services.yaml }
-  - { resource: Features/PublishSorting/Services.yaml }
-  - { resource: Features/RedirectsSupport/Services.yaml }
-  - { resource: Features/RefIndexUpdate/Services.yaml }
-  - { resource: Features/SysLogPublisher/Services.yaml }
-  - { resource: Features/SystemInformationExport/Services.yaml }
-  - { resource: Features/WarningOnForeign/Services.yaml }
+  - { resource: Component/*/Services.yaml }
+  - { resource: Features/*/Services.yaml }
 
 services:
   _defaults:
