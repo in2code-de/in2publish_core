@@ -312,7 +312,7 @@
 				<source>In2publish might not work as expected.</source>
 			</trans-unit>
 			<trans-unit id="test_state_error.tests_never_ran">
-				<source>The In2publish tests were never executed.</source>
+				<source>Unknown test state. Please execute the tests in the Publish Tools Module.</source>
 			</trans-unit>
 			<trans-unit id="test_state_error.tests_failing">
 				<source>Some In2publish tests are failing.</source>

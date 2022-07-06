@@ -412,8 +412,8 @@
 				<target state="translated">In2publish könnte vom erwarteten Verhalten abweichen.</target>
 			</trans-unit>
 			<trans-unit id="test_state_error.tests_never_ran">
-				<source>The In2publish tests were never executed.</source>
-				<target state="translated">Die In2publish Tests wurde noch nie ausgeführt.</target>
+				<source>Unknown test state. Please execute the tests in the Publish Tools Module.</source>
+				<target state="translated">Unbekannter Teststatus. Bitte führen sie die Tests im Publish Tools Modul aus.</target>
 			</trans-unit>
 			<trans-unit id="test_state_error.tests_failing">
 				<source>Some In2publish tests are failing.</source>
