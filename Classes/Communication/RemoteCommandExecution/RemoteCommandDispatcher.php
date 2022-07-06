@@ -44,7 +44,6 @@ class RemoteCommandDispatcher implements SingletonInterface, LoggerAwareInterfac
     use LoggerAwareTrait;
 
     protected ?AdapterInterface $adapter = null;
-
     protected AdapterRegistry $adapterRegistry;
 
     public function __construct(AdapterRegistry $adapterRegistry)

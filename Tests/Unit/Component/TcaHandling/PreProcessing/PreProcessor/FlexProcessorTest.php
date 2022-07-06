@@ -16,6 +16,7 @@ use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\Container;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Service\FlexFormService;
+
 use function json_encode;
 
 /**
@@ -159,7 +160,6 @@ class FlexProcessorTest extends UnitTestCase
         $compatibleTcaParts = [];
         $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['select.fooBar']['resolver'] =
             new class($called, $databaseRecord) implements Resolver {
-
                 protected array $called;
                 protected DatabaseRecord $databaseRecord;
 
@@ -182,7 +182,6 @@ class FlexProcessorTest extends UnitTestCase
             };
         $compatibleTcaParts['tableNameFoo/fieldNameBar/foo_pi2,baz']['inline.barFoo']['resolver'] =
             new class($called, $databaseRecord) implements Resolver {
-
                 protected array $called;
                 protected DatabaseRecord $databaseRecord;
 
@@ -203,7 +202,6 @@ class FlexProcessorTest extends UnitTestCase
                     $demands->addSelect('tableNameFoo', '', 'columnNameBar', 5, $this->databaseRecord);
                 }
             };
-
 
         $flexResolver = $this->createMock(FlexResolver::class);
         $container = $this->createMock(Container::class);

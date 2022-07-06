@@ -41,8 +41,8 @@ class AdminToolButton extends LinkButton
     public function isValid(): bool
     {
         return trim($this->getHref()) !== ''
-               && trim($this->getTitle()) !== ''
-               && $this->getType() === self::class;
+            && trim($this->getTitle()) !== ''
+            && $this->getType() === self::class;
     }
 
     public function render(): string

@@ -55,7 +55,9 @@ return static function (ContainerConfigurator $configurator, ContainerBuilder $b
     $builder->registerForAutoconfiguration(DefinerInterface::class)->addTag('in2publish_core.config.definer');
     $builder->registerForAutoconfiguration(PostProcessor::class)->addTag('in2publish_core.config.post_processor');
     $builder->registerForAutoconfiguration(TestCaseInterface::class)->addTag('in2publish_core.testing.test');
-    $builder->registerForAutoconfiguration(DatabaseRecordFactory::class)->addTag('in2publish_core.factory.database_record');
+    $builder->registerForAutoconfiguration(DatabaseRecordFactory::class)->addTag(
+        'in2publish_core.factory.database_record'
+    );
 
     $builder->addCompilerPass(new PublicServicePass('in2publish_core.adapter.remote'));
     $builder->addCompilerPass(new PublicServicePass('in2publish_core.adapter.transmission'));

@@ -38,7 +38,6 @@ class ValidationContainer
 {
     /** @var string[] */
     protected array $path = [];
-
     /** @var string[] */
     protected array $errors = [];
 

@@ -49,7 +49,6 @@ class RedirectSourceHostReplacement implements SingletonInterface, LoggerAwareIn
         Record::S_ADDED,
         Record::S_MOVED,
     ];
-
     protected ForeignSiteFinder $siteFinder;
 
     public function __construct(ForeignSiteFinder $siteFinder)

@@ -31,17 +31,12 @@ namespace In2code\In2publishCore\Utility;
 use Throwable;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
-use TYPO3\CMS\Core\Resource\AbstractFile;
-use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-use function array_pop;
 use function array_shift;
 use function count;
 use function glob;
 use function is_array;
-use function sprintf;
-use function trim;
 use function unlink;
 
 class FileUtility

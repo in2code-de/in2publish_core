@@ -46,7 +46,6 @@ class AdminToolCompilerPass implements CompilerPassInterface
         'description',
         'actions',
     ];
-
     private string $tagName;
 
     public function __construct(string $tagName)

@@ -39,7 +39,6 @@ use function is_int;
 class RefIndexUpdater
 {
     protected TaskRepository $taskRepository;
-
     /** @var array<string, array<int, int>> */
     protected array $configuration = [];
 

@@ -45,19 +45,12 @@ use const TYPO3_COMPOSER_MODE;
 class RemoteCommandRequest
 {
     protected bool $usePhp = true;
-
     protected string $pathToPhp = '';
-
     protected string $workingDirectory = '';
-
     protected array $environmentVariables;
-
     protected string $dispatcher;
-
     protected string $command = '';
-
     protected array $arguments = [];
-
     protected array $options = [];
 
     /**

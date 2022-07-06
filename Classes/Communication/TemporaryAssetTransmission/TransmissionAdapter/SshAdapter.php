@@ -57,17 +57,12 @@ use const PHP_MAJOR_VERSION;
 class SshAdapter extends SshBaseAdapter implements AdapterInterface
 {
     public const ADAPTER_KEY = 'ssh';
-
     private ForeignEnvironmentService $foreignEnvironmentService;
-
     private RemoteCommandDispatcher $remoteCommandDispatcher;
-
     /** @var resource|null */
     protected $sshSession;
-
     /** @var resource|null */
     protected $sftSession;
-
     protected array $createMasks = [
         'decimalFileMask' => 0000,
         'decimalFolderMask' => 0000,

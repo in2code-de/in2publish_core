@@ -53,7 +53,6 @@ use function array_keys;
 use function explode;
 use function http_build_query;
 use function implode;
-use function is_int;
 use function is_string;
 use function json_encode;
 use function parse_str;

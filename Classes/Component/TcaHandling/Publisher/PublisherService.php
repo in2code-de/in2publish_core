@@ -14,10 +14,6 @@ use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
 use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
 use Throwable;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
-use TYPO3\CMS\Core\Messaging\AbstractMessage;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-
-use function implode;
 
 class PublisherService
 {

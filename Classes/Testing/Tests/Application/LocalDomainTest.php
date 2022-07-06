@@ -38,9 +38,7 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 class LocalDomainTest extends AbstractDomainTest implements TestCaseInterface
 {
     protected Connection $localConnection;
-
     protected SiteFinder $siteFinder;
-
     protected string $prefix = 'local';
 
     public function __construct(SiteFinder $siteFinder)

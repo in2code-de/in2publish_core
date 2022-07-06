@@ -46,7 +46,6 @@ class PublishItemProvider extends AbstractProvider
             'callbackAction' => 'publishRecord',
         ],
     ];
-
     protected PermissionService $permissionService;
 
     public function __construct(string $table, string $identifier, string $context = '')

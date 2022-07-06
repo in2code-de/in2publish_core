@@ -43,11 +43,8 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
     private const ARG_SIDE = 'side';
     private const ARG_OVERLAY = 'overlay';
     protected $escapeOutput = false;
-
     protected IconFactory $iconFactory;
-
     protected TranslationConfigurationProvider $translateTools;
-
     protected BackendUserAuthentication $backendUser;
 
     public function __construct(IconFactory $iconFactory, TranslationConfigurationProvider $translateTools)
@@ -80,7 +77,7 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
 
         $systemLanguages = array_filter(
             $this->translateTools->getSystemLanguages(),
-            fn (array $languageRecord): bool => $this->backendUser->checkLanguageAccess($languageRecord['uid'])
+            fn(array $languageRecord): bool => $this->backendUser->checkLanguageAccess($languageRecord['uid'])
         );
 
         $propsBySide = $record->getPropsBySide($this->arguments['side']);

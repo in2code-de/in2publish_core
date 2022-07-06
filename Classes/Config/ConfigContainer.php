@@ -52,20 +52,14 @@ use function count;
 class ConfigContainer implements SingletonInterface
 {
     protected ContextService $contextService;
-
     protected array $providers = [];
-
     /** @var array<class-string<DefinerInterface>, DefinerInterface|null> */
     protected array $definers = [];
-
     /** @var array<class-string<PostProcessorInterface>, PostProcessorInterface|null> */
     protected array $postProcessors = [];
-
     /** @var array<class-string<MigrationInterface>, MigrationInterface|null> */
     protected array $migrations = [];
-
     protected ?array $config = null;
-
     /** @var NodeCollection[]|null[] */
     protected array $definition = [
         'local' => null,

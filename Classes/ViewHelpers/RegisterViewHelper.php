@@ -45,7 +45,6 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 class RegisterViewHelper extends AbstractViewHelper
 {
     protected const VALUE_NONE = "\0";
-
     /** @var array */
     protected static $register = [];
 

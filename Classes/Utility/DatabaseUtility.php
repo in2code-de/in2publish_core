@@ -67,7 +67,6 @@ use const PHP_EOL;
 class DatabaseUtility
 {
     protected static ?Logger $logger = null;
-
     protected static ?Connection $foreignConnection = null;
 
     /**

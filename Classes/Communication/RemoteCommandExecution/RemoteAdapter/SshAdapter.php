@@ -51,7 +51,6 @@ use const SSH2_STREAM_STDIO;
 class SshAdapter extends SshBaseAdapter implements AdapterInterface
 {
     public const ADAPTER_KEY = 'ssh';
-
     /** @var resource */
     protected $session;
 

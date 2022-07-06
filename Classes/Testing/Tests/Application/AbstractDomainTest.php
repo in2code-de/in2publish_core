@@ -46,7 +46,6 @@ abstract class AbstractDomainTest
     public const DOMAIN_TYPE_NONE = 'none';
     public const DOMAIN_TYPE_SITE = 'site';
     public const DOMAIN_TYPE_SLASH_BASE = 'base';
-
     /**
      * @api Set this in the inheriting test class
      */
@@ -114,8 +113,8 @@ abstract class AbstractDomainTest
         if (!empty($results[self::DOMAIN_TYPE_SLASH_BASE])) {
             foreach ($results[self::DOMAIN_TYPE_SLASH_BASE] as $pageId) {
                 $messages[] = 'ERROR: The ' . $this->prefix . ' root page ' . $pageId
-                              . ' has a site configuration without scheme and host. '
-                              . 'These are required for the content publisher to generate preview and compare URLs.';
+                    . ' has a site configuration without scheme and host. '
+                    . 'These are required for the content publisher to generate preview and compare URLs.';
             }
         }
         return $messages;
@@ -127,7 +126,7 @@ abstract class AbstractDomainTest
         if (!empty($results[self::DOMAIN_TYPE_NONE])) {
             foreach ($results[self::DOMAIN_TYPE_NONE] as $pageId) {
                 $messages[] = 'ERROR: The ' . $this->prefix . ' root page ' . $pageId
-                              . ' is missing a site configuration.';
+                    . ' is missing a site configuration.';
             }
         }
         return $messages;

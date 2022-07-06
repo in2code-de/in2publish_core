@@ -20,7 +20,6 @@ use TYPO3\CMS\Core\Cache\Backend\NullBackend;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\TestingFramework\Core\DatabaseConnectionWrapper;
-
 use TYPO3\TestingFramework\Core\Testbase;
 
 use function copy;
@@ -86,9 +85,9 @@ abstract class FunctionalTestCase extends \TYPO3\TestingFramework\Core\Functiona
         // sqlite db path preparation
         $dbPathSqlite = dirname($this->instancePath) . '/functional-sqlite-dbs/test_' . $this->identifier . '.sqlite';
         $dbPathSqliteEmpty = dirname($this->instancePath)
-                             . '/functional-sqlite-dbs/test_'
-                             . $this->identifier
-                             . '.empty.sqlite';
+            . '/functional-sqlite-dbs/test_'
+            . $this->identifier
+            . '.empty.sqlite';
 
         $localConfiguration = ['DB' => ['Connections' => []]];
         $connections = &$localConfiguration['DB']['Connections'];

@@ -49,10 +49,10 @@ class TextResolverTest extends UnitTestCase
 
 //       $expectedDemandStructure = ['pages'][['uid' => [1 => 'tt_content\1', 2 => 'tt_content\1']]];
 
-        $this->assertArrayHasKey( 'pages', $selectDemand);
+        $this->assertArrayHasKey('pages', $selectDemand);
         $pagesArray = $selectDemand['pages'];
         foreach ($pagesArray as $subArray) {
-            $this->assertArrayHasKey( 'uid', $subArray);
+            $this->assertArrayHasKey('uid', $subArray);
             $this->assertArrayHasKey('tt_content\1', $subArray['uid'][1]);
             $this->assertArrayHasKey('tt_content\1', $subArray['uid'][2]);
         }

@@ -44,9 +44,11 @@ class SingleDatabaseRepository
         $query->getRestrictions()->removeAll();
         $query->select('*')
               ->from($table)
-              ->where($query->expr()->in(
-                  $property,
-                  $query->createNamedParameter($values, Connection::PARAM_STR_ARRAY))
+              ->where(
+                  $query->expr()->in(
+                      $property,
+                      $query->createNamedParameter($values, Connection::PARAM_STR_ARRAY)
+                  )
               );
         if (!empty($andWhere)) {
             $query->andWhere($andWhere);

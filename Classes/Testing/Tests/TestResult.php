@@ -41,14 +41,10 @@ class TestResult
     public const WARNING = 'warning';
     public const ERROR = 'error';
     public const SKIPPED = 'notice';
-
     protected string $severity;
-
     protected string $label;
-
     /** @var array<string> */
     protected array $messages;
-
     protected ?array $labelArguments;
 
     /**

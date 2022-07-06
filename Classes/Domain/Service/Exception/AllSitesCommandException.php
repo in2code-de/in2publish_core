@@ -41,9 +41,7 @@ class AllSitesCommandException extends In2publishCoreException
 {
     protected const MESSAGE = 'Exception during the fetching of all foreign sites. Code [%d]: Errors: "%s"; Output: "%s".';
     public const CODE = 1631616241;
-
     private array $errors;
-
     private array $output;
 
     public function __construct(int $code, array $errors, array $output, Throwable $previous = null)

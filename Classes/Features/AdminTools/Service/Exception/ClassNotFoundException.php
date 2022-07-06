@@ -38,7 +38,6 @@ class ClassNotFoundException extends In2publishCoreException
 {
     private const MESSAGE = 'The class "%s" registered as Content Publisher Admin Tool does not exist';
     public const CODE = 1642103517;
-
     protected string $class;
 
     public function __construct(string $class, Throwable $previous = null)

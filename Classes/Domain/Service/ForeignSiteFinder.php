@@ -56,9 +56,7 @@ class ForeignSiteFinder implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     private const UNSERIALIZE_ALLOWED_CLASS = [Site::class, Uri::class, SiteLanguage::class];
-
     protected RemoteCommandDispatcher $rceDispatcher;
-
     protected FrontendInterface $cache;
 
     public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, FrontendInterface $cache)

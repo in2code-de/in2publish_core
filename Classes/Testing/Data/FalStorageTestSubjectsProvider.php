@@ -44,13 +44,9 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
     public const PURPOSE_DRIVER = 'driver';
     public const PURPOSE_MISSING = 'missing';
     public const PURPOSE_UNIQUE_TARGET = 'uniqueTarget';
-
     protected EventDispatcher $eventDispatcher;
-
     protected array $localStorages = [];
-
     protected array $foreignStorages = [];
-
     protected bool $initialized = false;
 
     public function __construct(EventDispatcher $eventDispatcher)

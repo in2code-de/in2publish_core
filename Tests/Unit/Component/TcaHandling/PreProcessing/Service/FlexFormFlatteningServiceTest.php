@@ -23,7 +23,7 @@ class FlexFormFlatteningServiceTest extends UnitTestCase
                 'sDEF' => [
                     'ROOT' => [
                         'TCEforms' => [
-                            'sheetTitle' => 'Common'
+                            'sheetTitle' => 'Common',
                         ],
                         'type' => 'array',
                         'el' => [
@@ -32,14 +32,14 @@ class FlexFormFlatteningServiceTest extends UnitTestCase
                                     'exclude' => '1',
                                     'label' => 'test',
                                     'config' => [
-                                        'type' => 'group'
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                        'type' => 'group',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
         $flexFormFieldAfter = [
@@ -47,14 +47,13 @@ class FlexFormFlatteningServiceTest extends UnitTestCase
                 'exclude' => '1',
                 'label' => 'test',
                 'config' => [
-                    'type' => 'group'
-                ]
-            ]
+                    'type' => 'group',
+                ],
+            ],
         ];
 
         $flexFormFlatteningService = new FlexFormFlatteningService();
         $result = $flexFormFlatteningService->flattenFlexFormDefinition($flexFormDefinition);
         $this->assertEquals($flexFormFieldAfter, $result);
     }
-
 }

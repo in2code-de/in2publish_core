@@ -12,6 +12,7 @@ use In2code\In2publishCore\Component\TcaHandling\Resolver\SelectResolver;
 use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\Container;
+
 use function array_merge;
 
 /**
@@ -150,7 +151,7 @@ class SelectProcessorTest extends UnitTestCase
             'foreign_table_where' => ' AND fieldname = "fieldvalue"',
             'MM' => 'tableNameFoo_tableNameBeng_MM',
             'MM_match_fields' => [
-                'fieldName2' => 'fieldValue2'
+                'fieldName2' => 'fieldValue2',
             ],
         ];
         $replaceMarkerService = $this->createMock(ReplaceMarkersService::class);

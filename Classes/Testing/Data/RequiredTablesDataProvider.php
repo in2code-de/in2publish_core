@@ -36,7 +36,6 @@ use TYPO3\CMS\Core\SingletonInterface;
 class RequiredTablesDataProvider implements SingletonInterface
 {
     protected EventDispatcher $eventDispatcher;
-
     /** * @var array */
     protected array $cache = [];
 

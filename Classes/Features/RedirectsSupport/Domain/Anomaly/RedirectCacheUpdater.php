@@ -36,7 +36,6 @@ use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\Task\RebuildRe
 class RedirectCacheUpdater
 {
     protected TaskRepository $taskRepository;
-
     protected bool $redirectWasPublished = false;
 
     public function __construct(TaskRepository $taskRepository)

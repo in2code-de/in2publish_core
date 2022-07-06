@@ -99,8 +99,8 @@ class DatabaseDifferencesTest implements TestCaseInterface
                         if ($fieldExistsOnForeign && $fieldExistsOnLocal) {
                             foreach ($fieldProperties as $propertyType => $propertyValue) {
                                 $fieldDifferences[] = $tableName . '.' . $fieldName . '.' . $propertyType . ': Local: '
-                                                      . $propertyValue . ' Foreign: '
-                                                      . $diffOnForeign[$tableName]['fields'][$fieldName][$propertyType];
+                                    . $propertyValue . ' Foreign: '
+                                    . $diffOnForeign[$tableName]['fields'][$fieldName][$propertyType];
                             }
                         } elseif ($fieldExistsOnForeign && !$fieldExistsOnLocal) {
                             $fieldDifferences[] = $tableName . '.' . $fieldName . ': Only exists on foreign';
@@ -128,16 +128,16 @@ class DatabaseDifferencesTest implements TestCaseInterface
                                 !== $foreignTableInfo[$tableName]['table'][$propertyName]
                             ) {
                                 $tableDifferences[] = $tableName . '.' . $propertyName . ': Local: '
-                                                      . $localTableInfo[$tableName]['table'][$propertyName]
-                                                      . ' Foreign: '
-                                                      . $foreignTableInfo[$tableName]['table'][$propertyName];
+                                    . $localTableInfo[$tableName]['table'][$propertyName]
+                                    . ' Foreign: '
+                                    . $foreignTableInfo[$tableName]['table'][$propertyName];
                             }
                         } elseif ($propExistsLocal && !$propExistsForeign) {
                             $tableDifferences[] = 'Table property ' . $tableName . '.' . $propertyName
-                                                  . ': Only exists on foreign';
+                                . ': Only exists on foreign';
                         } elseif ($propExistsForeign) {
                             $tableDifferences[] = 'Table property ' . $tableName . '.' . $propertyName
-                                                  . ': Only exists on local';
+                                . ': Only exists on local';
                         } else {
                             continue;
                         }
@@ -159,7 +159,7 @@ class DatabaseDifferencesTest implements TestCaseInterface
                 if (is_array($fieldArray['fields']) && isset($fieldArray['table'])) {
                     foreach (array_keys($fieldArray['table']) as $propOnlyOnForeign) {
                         $fieldDifferences[] = 'Table property ' . $tableName . '.' . $propOnlyOnForeign
-                                              . ': Only exists on foreign';
+                            . ': Only exists on foreign';
                     }
                 }
             }

@@ -37,7 +37,6 @@ use const PHP_INT_MIN;
 class IntegerInRangeValidator implements ValidatorInterface
 {
     protected int $min;
-
     protected int $max;
 
     public function __construct(int $min = PHP_INT_MIN, int $max = PHP_INT_MAX)

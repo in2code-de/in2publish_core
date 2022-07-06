@@ -95,7 +95,6 @@ class JoinDemandResolver implements DemandResolver
     {
         $missingIdentifiers = $joinRowCollection->getMissingIdentifiers();
 
-
         foreach ($missingIdentifiers['local'] ?? [] as $table => $joinTables) {
             $identifiers = [];
             foreach ($joinTables as $joinTable => $missingUids) {

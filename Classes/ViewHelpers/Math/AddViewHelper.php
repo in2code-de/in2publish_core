@@ -11,7 +11,6 @@ use function sprintf;
 class AddViewHelper extends AbstractViewHelper
 {
     protected $escapeChildren = false;
-
     protected $escapeOutput = false;
 
     public function initializeArguments(): void
@@ -37,5 +36,4 @@ class AddViewHelper extends AbstractViewHelper
     ): string {
         return sprintf('(int)(%1$s[\'value\'] + %1$s[\'increment\'])', $argumentsName);
     }
-
 }

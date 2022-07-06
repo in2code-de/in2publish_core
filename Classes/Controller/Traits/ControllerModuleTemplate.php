@@ -66,8 +66,8 @@ trait ControllerModuleTemplate
     protected function htmlResponse(string $html = null): ResponseInterface
     {
         return $this->responseFactory->createResponse()
-            ->withHeader('Content-Type', 'text/html; charset=utf-8')
-            ->withBody($this->streamFactory->createStream($html ?? $this->render()));
+                                     ->withHeader('Content-Type', 'text/html; charset=utf-8')
+                                     ->withBody($this->streamFactory->createStream($html ?? $this->render()));
     }
 
     protected function jsonResponse(string $json = null): ResponseInterface

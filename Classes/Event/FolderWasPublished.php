@@ -32,9 +32,7 @@ namespace In2code\In2publishCore\Event;
 final class FolderWasPublished
 {
     private int $storage;
-
     private string $folderIdentifier;
-
     private bool $success;
 
     public function __construct(int $storage, string $folderIdentifier, bool $success)

@@ -65,7 +65,7 @@ class GroupProcessor extends AbstractProcessor
         foreach ($allowedTables as $allowedTable) {
             if (!array_key_exists($allowedTable, $GLOBALS['TCA'])) {
                 $reasons[] = 'Can not reference the table "' . $allowedTable
-                             . '" from "allowed. It is not present in the TCA';
+                    . '" from "allowed. It is not present in the TCA';
             }
         }
         return $reasons;

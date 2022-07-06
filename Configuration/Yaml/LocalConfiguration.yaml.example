@@ -27,7 +27,7 @@ foreign:
 
   # Additional environment variables to set before executing a remote cli command. The keys are the variable names
   envVars: [ ]
-    # MY_VAR: myValue
+  # MY_VAR: myValue
   # MY_ENV:
 
   # Set your production systems database credentials here. If you use port forwarding to

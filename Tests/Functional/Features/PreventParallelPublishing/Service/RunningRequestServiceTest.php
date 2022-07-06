@@ -14,8 +14,6 @@ use In2code\In2publishCore\Tests\FunctionalTestCase;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-use function json_encode;
-
 class RunningRequestServiceTest extends FunctionalTestCase
 {
     /**

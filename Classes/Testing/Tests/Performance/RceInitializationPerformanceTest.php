@@ -71,9 +71,7 @@ class RceInitializationPerformanceTest implements TestCaseInterface
             TestResult::OK => 0.2,
         ],
     ];
-
     private AdapterRegistry $adapterRegistry;
-
     private RemoteCommandDispatcher $remoteCommandDispatcher;
 
     public function __construct(AdapterRegistry $adapterRegistry, RemoteCommandDispatcher $remoteCommandDispatcher)

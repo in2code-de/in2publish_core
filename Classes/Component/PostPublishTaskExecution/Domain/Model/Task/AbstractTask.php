@@ -39,15 +39,10 @@ use In2code\In2publishCore\Utility\ArrayUtility;
 abstract class AbstractTask
 {
     protected int $uid;
-
     protected array $configuration;
-
     protected ?DateTime $creationDate = null;
-
     protected ?DateTime $executionBegin = null;
-
     protected ?DateTime $executionEnd = null;
-
     /** @var array<string> */
     private array $messages = [];
 

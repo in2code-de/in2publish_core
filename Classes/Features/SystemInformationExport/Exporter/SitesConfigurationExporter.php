@@ -37,7 +37,6 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 class SitesConfigurationExporter implements SystemInformationExporter
 {
     protected SiteFinder $siteFinder;
-
     protected ForeignSiteFinder $foreignSiteFinder;
 
     public function __construct(SiteFinder $siteFinder, ForeignSiteFinder $foreignSiteFinder)
@@ -69,7 +68,9 @@ class SitesConfigurationExporter implements SystemInformationExporter
                 foreach ($site->getAllLanguages() as $language) {
                     $languageId = $language->getLanguageId();
                     try {
-                        $uri = $site->getRouter()->generateUri((string)$rootPageId, ['_language' => $languageId])->__toString();
+                        $uri = $site->getRouter()
+                                    ->generateUri((string)$rootPageId, ['_language' => $languageId])
+                                    ->__toString();
                     } catch (Throwable $throwable) {
                         $uri = (string)$throwable;
                     }

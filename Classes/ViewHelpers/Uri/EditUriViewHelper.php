@@ -23,8 +23,11 @@ class EditUriViewHelper extends AbstractViewHelper
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public static function renderStatic(array $arguments, Closure $renderChildrenClosure, RenderingContextInterface $renderingContext): string
-    {
+    public static function renderStatic(
+        array $arguments,
+        Closure $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ): string {
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
 
         return (string)$uriBuilder->buildUriFromRoute('record_edit', [

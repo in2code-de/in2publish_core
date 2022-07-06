@@ -45,7 +45,6 @@ use function strpos;
 class ForeignInstanceTest implements TestCaseInterface
 {
     protected RemoteCommandDispatcher $rceDispatcher;
-
     protected Typo3Version $typo3Version;
 
     public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, Typo3Version $typo3Version)

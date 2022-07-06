@@ -67,14 +67,11 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
         'foreignKeyFingerprint' => '',
         'foreignKeyFingerprintHashingMethod' => '',
     ];
-
     protected array $supportedHashMethods = [
         'SSH2_FINGERPRINT_MD5',
         'SSH2_FINGERPRINT_SHA1',
     ];
-
     protected ConfigContainer $configContainer;
-
     protected bool $initialized = false;
 
     public function __construct(ConfigContainer $configContainer)
@@ -265,7 +262,7 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
                 );
             }
             $config['foreignKeyFingerprintHashingMethod'] = constant($config['foreignKeyFingerprintHashingMethod'])
-                                                            | SSH2_FINGERPRINT_HEX;
+                | SSH2_FINGERPRINT_HEX;
         }
         return $config;
     }

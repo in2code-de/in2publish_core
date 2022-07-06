@@ -41,7 +41,6 @@ class RawRecordService implements SingletonInterface
 {
     /** @var array<string, Connection> */
     protected array $databases;
-
     protected array $cache = [];
 
     public function __construct(Connection $localDatabase, Connection $foreignDatabase)

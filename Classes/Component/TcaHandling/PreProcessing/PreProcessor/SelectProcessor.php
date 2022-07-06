@@ -106,8 +106,8 @@ class SelectProcessor extends AbstractProcessor
     protected function isSysCategoryField(array $config): bool
     {
         return isset($config['foreign_table'], $config['MM_opposite_field'], $config['MM'])
-               && 'sys_category' === $config['foreign_table']
-               && 'items' === $config['MM_opposite_field']
-               && 'sys_category_record_mm' === $config['MM'];
+            && 'sys_category' === $config['foreign_table']
+            && 'items' === $config['MM_opposite_field']
+            && 'sys_category_record_mm' === $config['MM'];
     }
 }

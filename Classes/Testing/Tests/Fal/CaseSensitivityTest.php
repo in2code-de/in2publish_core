@@ -42,7 +42,6 @@ use function sprintf;
 class CaseSensitivityTest implements TestCaseInterface
 {
     protected FlexFormService $flexFormService;
-
     protected FalStorageTestSubjectsProvider $testSubjectProvider;
 
     public function __construct(

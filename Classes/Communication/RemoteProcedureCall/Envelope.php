@@ -36,11 +36,8 @@ use function array_filter;
 class Envelope
 {
     protected int $uid = 0;
-
     protected string $command = '';
-
     protected array $request = [];
-
     /** @var mixed */
     protected $response = '';
 

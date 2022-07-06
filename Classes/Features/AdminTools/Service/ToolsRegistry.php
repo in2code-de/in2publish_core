@@ -43,9 +43,7 @@ use function implode;
 class ToolsRegistry implements SingletonInterface
 {
     protected ConfigContainer $configContainer;
-
     protected ExtensionConfiguration $extensionConfiguration;
-
     protected array $entries = [];
 
     public function __construct(ConfigContainer $configContainer, ExtensionConfiguration $extensionConfiguration)

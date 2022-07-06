@@ -44,9 +44,7 @@ use const PHP_EOL;
 class RemoteCommandResponse
 {
     protected array $output = [];
-
     protected array $errors = [];
-
     protected int $exitStatus = 0;
 
     /**

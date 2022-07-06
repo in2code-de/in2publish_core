@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\TcaHandling\FileHandling\Service;
 
 use InvalidArgumentException;
-use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
 
 class FileSystemInfoService
 {

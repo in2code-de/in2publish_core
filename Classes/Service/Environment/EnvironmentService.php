@@ -44,11 +44,8 @@ class EnvironmentService implements SingletonInterface
     public const STATE_TESTS_NEVER_RAN = 'tests_never_ran';
     public const STATE_PACKAGES_CHANGED = 'environment_changed';
     public const STATE_CONFIGURATION_CHANGED = 'configuration_changed';
-
     protected Registry $registry;
-
     protected PackageManager $packageManager;
-
     protected ConfigContainer $configContainer;
 
     public function __construct(Registry $registry, PackageManager $packageManager, ConfigContainer $configContainer)

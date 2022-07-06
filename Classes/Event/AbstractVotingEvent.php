@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Event;
 abstract class AbstractVotingEvent
 {
     protected int $yes = 0;
-
     protected int $no = 0;
 
     public function voteYes(int $count = 1): void

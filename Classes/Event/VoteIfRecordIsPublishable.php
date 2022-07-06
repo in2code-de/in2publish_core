@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Event;
 final class VoteIfRecordIsPublishable extends AbstractVotingEvent
 {
     private string $table;
-
     private int $identifier;
 
     public function __construct(string $table, int $identifier)

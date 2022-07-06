@@ -45,13 +45,9 @@ use function json_encode;
 class TaskRepository
 {
     public const TASK_TABLE_NAME = 'tx_in2code_in2publish_task';
-
     protected ContextService $contextService;
-
     protected TaskFactory $taskFactory;
-
     protected ?Connection $connection;
-
     protected string $creationDate;
 
     public function __construct(ContextService $contextService, TaskFactory $taskFactory)

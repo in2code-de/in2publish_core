@@ -33,7 +33,6 @@ class RecordCollection
 {
     /** @var int[] */
     protected array $pages = [];
-
     /** @var array<string, int[]> */
     protected array $records = [];
 

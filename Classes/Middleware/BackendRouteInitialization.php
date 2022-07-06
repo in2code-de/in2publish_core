@@ -60,7 +60,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class BackendRouteInitialization implements MiddlewareInterface
 {
     protected Router $router;
-
     private EventDispatcher $eventDispatcher;
 
     public function __construct(Router $router, EventDispatcher $eventDispatcher)

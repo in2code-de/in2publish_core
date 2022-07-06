@@ -41,7 +41,6 @@ use In2code\In2publishCore\Testing\Tests\TestResult;
 class ConfigurationValuesTest implements TestCaseInterface
 {
     public const PROCESSOR_INTERFACE = ProcessorInterface::class;
-
     protected array $configuration = [];
 
     public function __construct(ConfigContainer $configContainer)

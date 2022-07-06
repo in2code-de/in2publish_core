@@ -36,9 +36,7 @@ use TYPO3\CMS\Core\Database\Connection;
 class SysLogPublisher
 {
     protected const TABLE_SYS_LOG = 'sys_log';
-
     protected Connection $localDatabase;
-
     protected Connection $foreignDatabase;
 
     public function __construct(Connection $localDatabase, Connection $foreignDatabase)

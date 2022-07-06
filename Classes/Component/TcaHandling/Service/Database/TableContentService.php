@@ -107,7 +107,7 @@ class TableContentService implements SingletonInterface
         } else {
             $uniquePids = [];
             $isEmpty = $this->isEmpty($this->localDatabase, $table)
-                       && $this->isEmpty($this->foreignDatabase, $table);
+                && $this->isEmpty($this->foreignDatabase, $table);
         }
         return [
             'isEmpty' => $isEmpty,

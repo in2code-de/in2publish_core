@@ -186,7 +186,6 @@ class CssColorValueValidator implements ValidatorInterface
         'yellowgreen',
         'rebeccapurple',
     ];
-
     protected const REGEX = '/
         ^
             (

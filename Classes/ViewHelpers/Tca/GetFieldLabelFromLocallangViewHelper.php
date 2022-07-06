@@ -36,7 +36,6 @@ use function ucfirst;
 class GetFieldLabelFromLocallangViewHelper extends AbstractViewHelper
 {
     protected array $tca;
-
     protected LanguageService $languageService;
 
     public function __construct()

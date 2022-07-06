@@ -47,9 +47,7 @@ use function strpos;
 class ForeignDatabaseConfigTest implements TestCaseInterface
 {
     public const DB_CONFIG_TEST_TYPE = 'DB Config Test';
-
     protected RemoteCommandDispatcher $rceDispatcher;
-
     protected Random $random;
 
     public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, Random $random)

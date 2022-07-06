@@ -141,7 +141,7 @@ class ReplaceMarkersServiceTest extends UnitTestCase
                     'string3' => [
                         'foo1',
                         'foo2',
-                    ]
+                    ],
                 ],
                 'boolOption' => false,
             ])

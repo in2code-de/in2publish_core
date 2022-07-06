@@ -42,11 +42,8 @@ class TcaController extends ActionController
     use AdminToolsModuleTemplate;
 
     protected TcaPreProcessingService $tcaPreProcessingService;
-
     protected DemandBuilder $demandBuilder;
-
     protected SelectDemandResolver $queryService;
-
     protected ConfigContainer $configContainer;
 
     public function __construct(TcaPreProcessingService $tcaPreProcessingService)

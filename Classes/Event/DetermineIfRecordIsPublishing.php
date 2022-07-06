@@ -35,9 +35,7 @@ final class DetermineIfRecordIsPublishing implements StoppableEventInterface
 {
     /** @var bool */
     protected $publishing = false;
-
     private $tableName;
-
     private $identifier;
 
     /**

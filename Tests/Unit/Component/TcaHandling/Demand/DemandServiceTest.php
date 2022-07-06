@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Unit\Component\TcaHandling\Demand;
 
+use In2code\In2publishCore\Component\TcaHandling\Demand\DemandBuilder;
 use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsCollection;
-use In2code\In2publishCore\Component\TcaHandling\Demand\DemandBuilder;
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
 use In2code\In2publishCore\Component\TcaHandling\Resolver\Resolver;
@@ -42,7 +42,7 @@ class DemandServiceTest extends UnitTestCase
                 {
                     $demands->addSelect('foo', 'bar', 'baz', 'beng', $record);
                 }
-            }
+            },
         ];
 
         $resolverService = $this->createMock(ResolverService::class);

@@ -42,7 +42,6 @@ class TestController extends ActionController
     use AdminToolsModuleTemplate;
 
     protected TestingService $testingService;
-
     protected EnvironmentService $environmentService;
 
     public function __construct(TestingService $testingService, EnvironmentService $environmentService)
