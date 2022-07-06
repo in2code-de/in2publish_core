@@ -88,17 +88,14 @@ class FlexResolver extends AbstractResolver
         )['dataStructureKey'];
 
         $localValues = $record->getLocalProps()[$this->column] ?? [];
-        if ([] !== $localValues) {
-            $localValues = $this->flexFormService->convertFlexFormContentToArray($localValues);
-            $localValues['pid'] = $record->getProp('pid');
-        }
-        $localValues = $this->flattenFlexFormData($localValues);
+        $localValues = $this->convertAndFlattenFlexFormData($localValues, $record);
+
         $foreignValues = $record->getForeignProps()[$this->column] ?? [];
-        if ([] !== $foreignValues) {
-            $foreignValues = $this->flexFormService->convertFlexFormContentToArray($foreignValues);
-            $foreignValues['pid'] = $record->getProp('pid');
+        $foreignValues = $this->convertAndFlattenFlexFormData($foreignValues, $record);
+
+        if (empty($localValues) && empty($foreignValues)) {
+            return;
         }
-        $localValues = $this->flattenFlexFormData($localValues);
 
         $flexFormFields = array_unique(array_merge(array_keys($localValues), array_keys($foreignValues)));
 
@@ -145,5 +142,15 @@ class FlexResolver extends AbstractResolver
             array_pop($path);
         }
         return $newData;
+    }
+
+    protected function convertAndFlattenFlexFormData($data, $record): array
+    {
+        if ([] !== $data) {
+            $data = $this->flexFormService->convertFlexFormContentToArray($data);
+            $data['pid'] = $record->getProp('pid');
+            $data = $this->flattenFlexFormData($data);
+        }
+        return $data;
     }
 }
