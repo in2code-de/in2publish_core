@@ -59,7 +59,7 @@ class JoinRowCollection
 
     public function amendRow(string $joinTable, string $table, string $mmId, string $side, array $row): void
     {
-        $this->rows[$joinTable][$table][$mmId]['row'][$side] = $row;
+        $this->rows[$joinTable][$table][$mmId]['row'][$side]['table'] = $row;
     }
 
     public function getRows(): array

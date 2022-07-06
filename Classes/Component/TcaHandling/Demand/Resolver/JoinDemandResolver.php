@@ -94,35 +94,36 @@ class JoinDemandResolver implements DemandResolver
     {
         $missingIdentifiers = $joinRowCollection->getMissingIdentifiers();
 
-        foreach ($missingIdentifiers['local'] ?? [] as $tables) {
-            foreach ($tables as $table => $joinTables) {
-                $identifiers = [];
-                foreach ($joinTables as $joinTable => $missingUids) {
-                    foreach ($missingUids as $identifier => $mmIds) {
-                        $identifiers[$identifier][$joinTable] = $mmIds;
-                    }
+
+        foreach ($missingIdentifiers['local'] ?? [] as $table => $joinTables) {
+            $identifiers = [];
+            foreach ($joinTables as $joinTable => $missingUids) {
+                foreach ($missingUids as $identifier => $mmIds) {
+                    $identifiers[$identifier][$joinTable] = $mmIds;
                 }
-                $rows = $this->localRepository->findByProperty($table, 'uid', array_keys($identifiers));
-                foreach ($rows as $uid => $row) {
-                    foreach ($identifiers[$uid] as $joinTable => $mmIds) {
-                        $joinRowCollection->amendRow($joinTable, $table, $uid, 'local', $row);
+            }
+            $rows = $this->localRepository->findByProperty($table, 'uid', array_keys($identifiers));
+            foreach ($rows as $uid => $row) {
+                foreach ($identifiers[$uid] as $joinTable => $mmIds) {
+                    foreach ($mmIds as $mmId) {
+                        $joinRowCollection->amendRow($joinTable, $table, $mmId, 'local', $row);
                     }
                 }
             }
         }
 
-        foreach ($missingIdentifiers['foreign'] ?? [] as $tables) {
-            foreach ($tables as $table => $joinTables) {
-                $identifiers = [];
-                foreach ($joinTables as $joinTable => $missingUids) {
-                    foreach ($missingUids as $identifier => $mmIds) {
-                        $identifiers[$identifier][$joinTable] = $mmIds;
-                    }
+        foreach ($missingIdentifiers['foreign'] ?? [] as $table => $joinTables) {
+            $identifiers = [];
+            foreach ($joinTables as $joinTable => $missingUids) {
+                foreach ($missingUids as $identifier => $mmIds) {
+                    $identifiers[$identifier][$joinTable] = $mmIds;
                 }
-                $rows = $this->localRepository->findByProperty($table, 'uid', array_keys($identifiers));
-                foreach ($rows as $uid => $row) {
-                    foreach ($identifiers[$uid] as $joinTable => $mmIds) {
-                        $joinRowCollection->amendRow($joinTable, $table, $uid, 'foreign', $row);
+            }
+            $rows = $this->foreignRepository->findByProperty($table, 'uid', array_keys($identifiers));
+            foreach ($rows as $uid => $row) {
+                foreach ($identifiers[$uid] as $joinTable => $mmIds) {
+                    foreach ($mmIds as $mmId) {
+                        $joinRowCollection->amendRow($joinTable, $table, $mmId, 'foreign', $row);
                     }
                 }
             }
