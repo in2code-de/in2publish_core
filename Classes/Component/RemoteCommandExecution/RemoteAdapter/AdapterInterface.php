@@ -42,7 +42,5 @@ use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRespons
  */
 interface AdapterInterface
 {
-    public const ADAPTER_TYPE = 'remote';
-
     public function execute(RemoteCommandRequest $request): RemoteCommandResponse;
 }
