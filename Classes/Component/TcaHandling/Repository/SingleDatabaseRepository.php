@@ -170,7 +170,7 @@ class SingleDatabaseRepository
         return $splittedRows;
     }
 
-    public function findByWhere($table, string $andWhere)
+    public function findByWhere($table, string $andWhere): array
     {
         $query = $this->connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();

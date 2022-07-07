@@ -98,7 +98,7 @@ class SysRedirectSelectDemandResolver implements DemandResolver
     protected function createAndMapRecords(
         SysRedirectRowCollection $rowCollection,
         RecordCollection $recordCollection
-    ) {
+    ): void {
         foreach ($rowCollection->getRows() as $table => $records) {
             foreach ($records as $uid => $recordInfo) {
                 $row = $recordInfo['row'];

@@ -21,7 +21,7 @@ class SelectResolver extends AbstractResolver
     protected string $foreignTable;
     protected string $foreignTableWhere;
 
-    public function injectReplaceMarkersService(ReplaceMarkersService $replaceMarkersService)
+    public function injectReplaceMarkersService(ReplaceMarkersService $replaceMarkersService): void
     {
         $this->replaceMarkersService = $replaceMarkersService;
     }

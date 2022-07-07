@@ -21,7 +21,7 @@ class TextResolver extends AbstractResolver
     protected EventDispatcher $eventDispatcher;
     protected string $column;
 
-    public function injectEventDispatcher(EventDispatcher $eventDispatcher)
+    public function injectEventDispatcher(EventDispatcher $eventDispatcher): void
     {
         $this->eventDispatcher = $eventDispatcher;
     }

@@ -98,7 +98,7 @@ class CallerAwareDemandsCollection implements Demands
         $this->collectFileMeta($storage, $identifier);
     }
 
-    protected function collectFileMeta(int $storage, string $identifier)
+    protected function collectFileMeta(int $storage, string $identifier): void
     {
         $frame = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3)[2];
         $this->meta['files'][$storage][$identifier][] = $frame;

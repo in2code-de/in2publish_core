@@ -63,7 +63,7 @@ class DefaultFalFinder
     protected FalDriverService $falDriverService;
     protected RecordIndex $recordIndex;
 
-    public function injectResourceFactory(ResourceFactory $resourceFactory)
+    public function injectResourceFactory(ResourceFactory $resourceFactory): void
     {
         $this->resourceFactory = $resourceFactory;
     }
