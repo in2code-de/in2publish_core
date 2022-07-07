@@ -11,7 +11,6 @@ services:
       $localDatabase: '@In2code.In2publishCore.Database.Local'
       $foreignDatabase: '@In2code.In2publishCore.Database.Foreign'
       $cache: '@cache.in2publish_core'
-      array $extConf: '@=service("TYPO3\\CMS\\Core\\Configuration\\ExtensionConfiguration").get("in2publish_core")'
 
   In2code\In2publishCore\:
     resource: '../Classes/*'
@@ -57,15 +56,6 @@ services:
           Executes the in2publish_core backend tests.
           Enable verbose mode if you want to see a success message.
           For scripted testing check the exit code of this command.
-
-  # EventListener
-
-  In2code\In2publishCore\Config\Provider\PageTsProvider:
-    tags:
-      - name: event.listener
-        identifier: 'in2publishcore-PageTsProvider-bootCompleted'
-        method: 'processData'
-        event: In2code\In2publishCore\Event\ExtTablesPostProcessingEvent
 
   In2code\In2publishCore\Domain\Service\ForeignSiteFinder:
     arguments: [ '@cache.in2publish_core' ]

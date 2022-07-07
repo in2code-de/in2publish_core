@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests;
 
-use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Config\Definer\In2publishCoreDefiner;
-use In2code\In2publishCore\Config\Provider\DefaultProvider;
-use In2code\In2publishCore\Config\Provider\ProviderInterface;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\Definer\In2publishCoreDefiner;
+use In2code\In2publishCore\Component\ConfigContainer\Provider\DefaultProvider;
+use In2code\In2publishCore\Component\ConfigContainer\Provider\ProviderInterface;
 use In2code\In2publishCore\Service\Context\ContextService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 

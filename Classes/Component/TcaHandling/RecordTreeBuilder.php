@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling;
 
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandBuilder;
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\TcaHandling\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\Service\RelevantTablesService;
-use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Domain\Factory\RecordFactory;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\RecordTree;

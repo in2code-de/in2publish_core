@@ -29,10 +29,10 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Component\TcaHandling\Demand\DemandBuilder;
 use In2code\In2publishCore\Component\TcaHandling\DemandResolver\Select\SelectDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
-use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;

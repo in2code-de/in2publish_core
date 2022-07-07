@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Service\Config;
 
-use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 
 use function array_diff;
 use function array_keys;

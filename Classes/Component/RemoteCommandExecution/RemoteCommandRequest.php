@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Component\RemoteCommandExecution;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 

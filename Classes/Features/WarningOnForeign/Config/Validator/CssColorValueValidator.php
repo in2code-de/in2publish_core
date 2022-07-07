@@ -29,8 +29,8 @@ namespace In2code\In2publishCore\Features\WarningOnForeign\Config\Validator;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Config\ValidationContainer;
-use In2code\In2publishCore\Config\Validator\ValidatorInterface;
+use In2code\In2publishCore\Component\ConfigContainer\ValidationContainer;
+use In2code\In2publishCore\Component\ConfigContainer\Validator\ValidatorInterface;
 
 use function in_array;
 use function preg_match;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Features\RedirectsSupport\DataProvider\ForeignSiteIdentifierItemProcFunc;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Demand;
 
-use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 
 class DemandsFactory
 {

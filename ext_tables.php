@@ -18,7 +18,7 @@
 
     /**************************************************** Instances ***************************************************/
     $configContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \In2code\In2publishCore\Config\ConfigContainer::class
+        \In2code\In2publishCore\Component\ConfigContainer\ConfigContainer::class
     );
     $contextService = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \In2code\In2publishCore\Service\Context\ContextService::class

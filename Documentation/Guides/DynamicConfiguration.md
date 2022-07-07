@@ -37,7 +37,7 @@ Your provider must implement the interface `DynamicValueProviderInterface`.
 
 namespace MyVendor\MyPackage\Config\PostProcessor\DynamicValueProvider;
 
-use In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderInterface;
+use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\DynamicValueProviderInterface;
 
 class MyProvider implements DynamicValueProviderInterface
 {
@@ -55,9 +55,7 @@ class MyProvider implements DynamicValueProviderInterface
 Register your custom provider in your `ext_localconf.php`:
 
 ```php
-use In2code\In2publishCore\Config\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;
-use MyVendor\MyPackage\Config\PostProcessor\DynamicValueProvider\MyProvider;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;use MyVendor\MyPackage\Config\PostProcessor\DynamicValueProvider\MyProvider;use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 $registry = GeneralUtility::makeInstance(DynamicValueProviderRegistry::class);
 $registry->registerDynamicValue('myKey', MyProvider::class);

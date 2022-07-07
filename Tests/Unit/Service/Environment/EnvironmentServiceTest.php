@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Tests\Unit\Service\Environment;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;

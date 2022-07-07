@@ -27,7 +27,7 @@ namespace In2code\In2publishCore\Service\Configuration;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_unique;

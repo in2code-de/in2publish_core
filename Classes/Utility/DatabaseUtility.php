@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Utility;
  */
 
 use Doctrine\DBAL\Driver\Exception;
-use In2code\In2publishCore\Config\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use LogicException;
 use PDO;

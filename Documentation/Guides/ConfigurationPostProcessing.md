@@ -11,7 +11,7 @@ A post processor must implement `PostProcessorInterface`.
 
 namespace MyVendor\MyPackage\Config\PostProcessor;
 
-use In2code\In2publishCore\Config\PostProcessor\PostProcessorInterface;
+use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\PostProcessorInterface;
 
 class MyPostProcessor implements PostProcessorInterface
 {
@@ -26,9 +26,7 @@ class MyPostProcessor implements PostProcessorInterface
 Register your post processor in your `ext_localconf.php`:
 
 ```php
-use In2code\In2publishCore\Config\ConfigContainer;
-use MyVendor\MyPackage\Config\PostProcessor\MyPostProcessor;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;use MyVendor\MyPackage\Config\PostProcessor\MyPostProcessor;use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 $configContainer = GeneralUtility::makeInstance(ConfigContainer::class);
 $configContainer->registerPostProcessor(MyPostProcessor::class);

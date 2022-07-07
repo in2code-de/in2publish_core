@@ -35,15 +35,15 @@ namespace PHPSTORM_META {
         \In2code\In2publishCore\Component\RemoteProcedureCall\EnvelopeDispatcher::CMD_LIST_FOLDER_CONTENTS
     );
     expectedArguments(
-        \In2code\In2publishCore\Config\Builder::addNode(),
+        \In2code\In2publishCore\Component\ConfigContainer\Builder::addNode(),
         0,
-        \In2code\In2publishCore\Config\Node\Node::T_ARRAY,
-        \In2code\In2publishCore\Config\Node\Node::T_STRICT_ARRAY,
-        \In2code\In2publishCore\Config\Node\Node::T_STRING,
-        \In2code\In2publishCore\Config\Node\Node::T_OPTIONAL_ARRAY,
-        \In2code\In2publishCore\Config\Node\Node::T_OPTIONAL_STRING,
-        \In2code\In2publishCore\Config\Node\Node::T_INTEGER,
-        \In2code\In2publishCore\Config\Node\Node::T_BOOLEAN
+        \In2code\In2publishCore\Component\ConfigContainer\Node\Node::T_ARRAY,
+        \In2code\In2publishCore\Component\ConfigContainer\Node\Node::T_STRICT_ARRAY,
+        \In2code\In2publishCore\Component\ConfigContainer\Node\Node::T_STRING,
+        \In2code\In2publishCore\Component\ConfigContainer\Node\Node::T_OPTIONAL_ARRAY,
+        \In2code\In2publishCore\Component\ConfigContainer\Node\Node::T_OPTIONAL_STRING,
+        \In2code\In2publishCore\Component\ConfigContainer\Node\Node::T_INTEGER,
+        \In2code\In2publishCore\Component\ConfigContainer\Node\Node::T_BOOLEAN
     );
     expectedArguments(
         \In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider::getStorages(),

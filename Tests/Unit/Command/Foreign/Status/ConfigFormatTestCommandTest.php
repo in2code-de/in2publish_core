@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Command\Foreign\Status;
 
 use In2code\In2publishCore\Command\Foreign\Status\ConfigFormatTestCommand;
-use In2code\In2publishCore\Config\ConfigContainer;
-use In2code\In2publishCore\Config\Node\NodeCollection;
-use In2code\In2publishCore\Config\ValidationContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\Node\NodeCollection;
+use In2code\In2publishCore\Component\ConfigContainer\ValidationContainer;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
