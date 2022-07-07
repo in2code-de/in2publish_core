@@ -186,28 +186,26 @@ class FileController extends ActionController
     {
         $recordTree = $this->defaultFalFinder->findFileRecord($combinedIdentifier);
 
-        if (null !== $recordTree) {
-            try {
-                $this->publisherService->publishRecordTree($recordTree);
-                if (!$skipNotification) {
-                    $this->addFlashMessage(
-                        LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$combinedIdentifier]
-                        ),
-                        LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
-                    );
-                }
-            } catch (Throwable $e) {
-                if (!$skipNotification) {
-                    $this->addFlashMessage(
-                        LocalizationUtility::translate(
-                            'file_publishing.failure.file',
-                            'in2publish_core',
-                            [$combinedIdentifier]
-                        ),
-                        LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
-                        AbstractMessage::ERROR
-                    );
-                }
+        try {
+            $this->publisherService->publishRecordTree($recordTree);
+            if (!$skipNotification) {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate('file_publishing.file', 'in2publish_core', [$combinedIdentifier]
+                    ),
+                    LocalizationUtility::translate('file_publishing.success', 'in2publish_core')
+                );
+            }
+        } catch (Throwable $e) {
+            if (!$skipNotification) {
+                $this->addFlashMessage(
+                    LocalizationUtility::translate(
+                        'file_publishing.failure.file',
+                        'in2publish_core',
+                        [$combinedIdentifier]
+                    ),
+                    LocalizationUtility::translate('file_publishing.failure', 'in2publish_core'),
+                    AbstractMessage::ERROR
+                );
             }
         }
 
