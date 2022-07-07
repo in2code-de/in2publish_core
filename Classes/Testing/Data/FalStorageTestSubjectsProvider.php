@@ -74,7 +74,7 @@ class FalStorageTestSubjectsProvider implements SingletonInterface
         return $this->getStorages(static::PURPOSE_UNIQUE_TARGET);
     }
 
-    protected function getStorages($purpose): array
+    protected function getStorages(string $purpose): array
     {
         if (false === $this->initialized) {
             $this->initialized = true;
