@@ -36,6 +36,7 @@ Removed Events:
 * PhysicalFileWasPublished -> PublishingOfOneRecordEnded
 * AllRelatedRecordsWereAddedToOneRecord -> RecordRelationsWereResolved
 * RootRecordCreationWasFinished -> RecordRelationsWereResolved
+* FolderInstanceWasCreated -> RecordWasCreated
 
 ## Affected Installations
 
