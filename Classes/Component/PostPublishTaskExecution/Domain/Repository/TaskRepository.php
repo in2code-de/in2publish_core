@@ -67,7 +67,7 @@ class TaskRepository
     {
         $this->connection->insert(
             self::TASK_TABLE_NAME,
-            array_merge($this->taskToPropertiesArray($task), ['creation_date' => $this->creationDate])
+            array_merge($task->toArray(), ['creation_date' => $this->creationDate])
         );
     }
 
@@ -75,32 +75,9 @@ class TaskRepository
     {
         $this->connection->update(
             self::TASK_TABLE_NAME,
-            $this->taskToPropertiesArray($task),
+            $task->toArray(),
             ['uid' => $task->getUid()]
         );
-    }
-
-    /**
-     * TODO: use __toArray in AbstractTask instead
-     *
-     * @param AbstractTask $task
-     *
-     * @return array
-     */
-    protected function taskToPropertiesArray(AbstractTask $task): array
-    {
-        $properties = [
-            'task_type' => get_class($task),
-            'configuration' => json_encode($task->getConfiguration(), JSON_THROW_ON_ERROR),
-            'messages' => json_encode($task->getMessages(), JSON_THROW_ON_ERROR),
-        ];
-        if ($task->getExecutionBeginForPersistence() !== 'NULL') {
-            $properties['execution_begin'] = $task->getExecutionBeginForPersistence();
-        }
-        if ($task->getExecutionEndForPersistence() !== 'NULL') {
-            $properties['execution_end'] = $task->getExecutionEndForPersistence();
-        }
-        return $properties;
     }
 
     /**

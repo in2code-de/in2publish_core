@@ -33,6 +33,11 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model
 use DateTime;
 use In2code\In2publishCore\Utility\ArrayUtility;
 
+use function get_class;
+use function json_encode;
+
+use const JSON_THROW_ON_ERROR;
+
 /**
  * Any Task must inherit from this class. This AbstractTask works like a Template for Task execution strategy
  */
@@ -95,26 +100,10 @@ abstract class AbstractTask
         return $this;
     }
 
-    final public function getExecutionBeginForPersistence(): string
-    {
-        if ($this->executionBegin instanceof DateTime) {
-            return $this->executionBegin->format('Y-m-d H:i:s');
-        }
-        return 'NULL';
-    }
-
     final public function setExecutionBegin(DateTime $executionBegin = null): AbstractTask
     {
         $this->executionBegin = $executionBegin;
         return $this;
-    }
-
-    final public function getExecutionEndForPersistence(): string
-    {
-        if ($this->executionEnd instanceof DateTime) {
-            return $this->executionEnd->format('Y-m-d H:i:s');
-        }
-        return 'NULL';
     }
 
     /**
@@ -150,5 +139,20 @@ abstract class AbstractTask
     final public function addMessage(string $string): void
     {
         $this->messages[] = $string;
+    }
+
+    final public function toArray(): array{
+        $properties = [
+            'task_type' => static::class,
+            'configuration' => json_encode($this->configuration, JSON_THROW_ON_ERROR),
+            'messages' => json_encode($this->messages, JSON_THROW_ON_ERROR),
+        ];
+        if ($this->executionBegin instanceof DateTime) {
+            $properties['execution_begin'] = $this->executionBegin->format('Y-m-d H:i:s');
+        }
+        if ($this->executionEnd instanceof DateTime) {
+            $properties['execution_end'] = $this->executionEnd->format('Y-m-d H:i:s');
+        }
+        return $properties;
     }
 }
