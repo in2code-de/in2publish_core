@@ -89,20 +89,10 @@ abstract class AbstractTask
         return $this->configuration;
     }
 
-    final public function getCreationDate(): ?DateTime
-    {
-        return $this->creationDate;
-    }
-
     final public function setCreationDate(DateTime $creationDate): AbstractTask
     {
         $this->creationDate = $creationDate;
         return $this;
-    }
-
-    final public function getExecutionBegin(): ?DateTime
-    {
-        return $this->executionBegin;
     }
 
     final public function getExecutionBeginForPersistence(): string
@@ -117,11 +107,6 @@ abstract class AbstractTask
     {
         $this->executionBegin = $executionBegin;
         return $this;
-    }
-
-    final public function getExecutionEnd(): ?DateTime
-    {
-        return $this->executionEnd;
     }
 
     final public function getExecutionEndForPersistence(): string

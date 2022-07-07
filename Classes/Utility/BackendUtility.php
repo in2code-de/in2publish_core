@@ -34,8 +34,6 @@ use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use In2code\In2publishCore\Service\Routing\SiteService;
 use Psr\Http\Message\UriInterface;
 use Throwable;
-use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
-use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Backend\Utility\BackendUtility as CoreBackendUtility;
 use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Cache\Exception\NoSuchCacheException;
@@ -207,62 +205,6 @@ class BackendUtility
         }
 
         return 0;
-    }
-
-    /**
-     * Create a URI to edit a record
-     *
-     * @param string $tableName
-     * @param int $identifier
-     *
-     * @return string
-     * @throws RouteNotFoundException
-     */
-    public static function buildEditUri(string $tableName, int $identifier): string
-    {
-        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-
-        $uriParameters = [
-            'edit' => [
-                $tableName => [
-                    $identifier => 'edit',
-                ],
-            ],
-            'returnUrl' => $uriBuilder->buildUriFromRoute('web_In2publishCoreM1')->__toString(),
-        ];
-        return $uriBuilder->buildUriFromRoute('record_edit', $uriParameters)->__toString();
-    }
-
-    /**
-     * Create an URI to undo a record
-     *
-     * @param string $table
-     * @param int $identifier
-     *
-     * @return string
-     * @throws RouteNotFoundException
-     */
-    public static function buildUndoUri(string $table, int $identifier): string
-    {
-        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-
-        $route = GeneralUtility::_GP('route') ?: GeneralUtility::_GP('M');
-
-        $returnParameters = [
-            'id' => GeneralUtility::_GP('id'),
-        ];
-        foreach (GeneralUtility::_GET() as $name => $value) {
-            if (is_array($value) && false !== stripos($name, $route)) {
-                $returnParameters[$name] = $value;
-            }
-        }
-
-        $uriParameters = [
-            'element' => $table . ':' . $identifier,
-            'returnUrl' => $uriBuilder->buildUriFromRoutePath($route, $returnParameters)->__toString(),
-        ];
-
-        return $uriBuilder->buildUriFromRoute('record_history', $uriParameters)->__toString();
     }
 
     /**
