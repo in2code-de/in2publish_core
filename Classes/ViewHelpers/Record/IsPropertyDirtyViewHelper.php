@@ -56,6 +56,7 @@ class IsPropertyDirtyViewHelper extends AbstractViewHelper
         ViewHelperNode $node,
         TemplateCompiler $compiler
     ) {
+        /** @noinspection PhpUnnecessaryCurlyVarSyntaxInspection */
         return "in_array({$argumentsName}['property'], {$argumentsName}['record']->getChangedProps(), true)";
     }
 }

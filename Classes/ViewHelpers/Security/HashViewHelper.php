@@ -35,6 +35,7 @@ class HashViewHelper extends AbstractViewHelper
         ViewHelperNode $node,
         TemplateCompiler $compiler
     ): string {
+        /** @noinspection PhpUnnecessaryCurlyVarSyntaxInspection */
         return "hash({$argumentsName}['method'] ?? 'sha1', {$argumentsName}['string'] ?? trim({$closureName}()))";
     }
 }
