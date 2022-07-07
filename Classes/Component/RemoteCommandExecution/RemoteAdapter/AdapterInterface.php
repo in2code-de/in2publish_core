@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter;
+namespace In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter;
 
 /*
  * Copyright notice
@@ -29,8 +29,8 @@ namespace In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdap
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
 
 /**
  * This adapter is responsible to execute the typo3 binary on the Foreign

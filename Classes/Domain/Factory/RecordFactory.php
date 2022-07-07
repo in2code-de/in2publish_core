@@ -115,8 +115,11 @@ class RecordFactory
         return $record;
     }
 
-    public function createFolderRecord(string $combinedIdentifier, array $localProps, array $foreignProps): ?FolderRecord
-    {
+    public function createFolderRecord(
+        string $combinedIdentifier,
+        array $localProps,
+        array $foreignProps
+    ): ?FolderRecord {
         $record = new FolderRecord($combinedIdentifier, $localProps, $foreignProps);
         if ($this->shouldIgnoreRecord($record)) {
             return null;

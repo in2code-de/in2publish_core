@@ -29,8 +29,8 @@ namespace In2code\In2publishCore\Command\Foreign\RemoteProcedureCall;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteProcedureCall\EnvelopeDispatcher;
-use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
+use In2code\In2publishCore\Component\RemoteProcedureCall\EnvelopeDispatcher;
+use In2code\In2publishCore\Component\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\Service\Context\ContextService;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

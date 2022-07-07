@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
+namespace In2code\In2publishCore\Component\RemoteProcedureCall;
 
 /*
  * Copyright notice
@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteProcedureCall\Exception\StorageIsOfflineException;
+use In2code\In2publishCore\Component\RemoteProcedureCall\Exception\StorageIsOfflineException;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FileSystemInfoService;
 use InvalidArgumentException;
 use ReflectionProperty;

@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Testing\Tests\Application;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
 use In2code\In2publishCore\In2publishCoreException;
 use Throwable;
 

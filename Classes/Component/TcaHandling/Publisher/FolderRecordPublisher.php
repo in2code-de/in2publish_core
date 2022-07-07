@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\TcaHandling\Publisher;
 
 use Exception;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Domain\Model\FolderRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use TYPO3\CMS\Core\Database\Connection;

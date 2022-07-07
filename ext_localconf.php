@@ -29,8 +29,11 @@
     $configContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
         \In2code\In2publishCore\Config\ConfigContainer::class
     );
-    $adapterRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \In2code\In2publishCore\Communication\AdapterRegistry::class
+    $remoteAdapterRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+        \In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\RemoteAdapterRegistry::class
+    );
+    $transmissionAdapterRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+        \In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\TransmissionAdapterRegistry::class
     );
 
     /************************************************** Init Caching **************************************************/
@@ -67,8 +70,8 @@
     );
     if (
         $contextService->isForeign()
-        || 'ssh' === $extConf['adapter']['remote']
-        || 'ssh' === $extConf['adapter']['transmission']
+        || 'ssh' === $remoteAdapterRegistry->getSelectedAdapter()
+        || 'ssh' === $transmissionAdapterRegistry->getSelectedAdapter()
     ) {
         $configContainer->registerDefiner(\In2code\In2publishCore\Config\Definer\SshConnectionDefiner::class);
     }
@@ -111,20 +114,18 @@
     ];
 
     /***************************************** Register Communication Adapter *****************************************/
-    $adapterRegistry->registerAdapter(
-        \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface::ADAPTER_TYPE,
-        \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter::ADAPTER_KEY,
-        \In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\SshAdapter::class,
+    $remoteAdapterRegistry->registerAdapter(
+        \In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\SshAdapter::ADAPTER_KEY,
+        \In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter\SshAdapter::class,
         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.remote.ssh',
         [
             \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,
             \In2code\In2publishCore\Testing\Tests\SshConnection\SshConnectionTest::class,
         ]
     );
-    $adapterRegistry->registerAdapter(
-        \In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface::ADAPTER_TYPE,
-        \In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::ADAPTER_KEY,
-        \In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::class,
+    $transmissionAdapterRegistry->registerAdapter(
+        \In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::ADAPTER_KEY,
+        \In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\SshAdapter::class,
         'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:adapter.transmission.ssh',
         [
             \In2code\In2publishCore\Testing\Tests\SshConnection\SshFunctionAvailabilityTest::class,

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission;
+namespace In2code\In2publishCore\Component\TemporaryAssetTransmission;
 
 /*
  * Copyright notice
@@ -29,15 +29,12 @@ namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\AdapterRegistry;
-use In2code\In2publishCore\Communication\TemporaryAssetTransmission\Exception\FileMissingException;
-use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface;
+use In2code\In2publishCore\Component\TemporaryAssetTransmission\Exception\FileMissingException;
+use In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface;
 use In2code\In2publishCore\Config\ConfigContainer;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Throwable;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function file_exists;
 use function hash;
@@ -48,24 +45,27 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
     use LoggerAwareTrait;
 
     protected string $foreignVarPath;
-    protected AdapterRegistry $adapterRegistry;
-    protected ?AdapterInterface $adapter = null;
+    protected AdapterInterface $adapter;
 
-    public function __construct(ConfigContainer $configContainer, AdapterRegistry $adapterRegistry)
+    public function __construct(ConfigContainer $configContainer)
     {
         $this->foreignVarPath = rtrim($configContainer->get('foreign.varPath'), '/');
-        $this->adapterRegistry = $adapterRegistry;
+    }
+
+    public function injectAdapter(AdapterInterface $adapter): void
+    {
+        $this->adapter = $adapter;
     }
 
     /**
      * @param string $source Absolute local path to file => return value of
      *     \TYPO3\CMS\Core\Resource\Driver\DriverInterface::getFileForLocalProcessing
      *
-     * @return string The name of the file on foreign, which is a sha1 hash of $source
+     * @return string The absolute file name on the remote server where the file was stored.
      *
      * @throws FileMissingException
      */
-    public function transmitTemporaryFile(string $source): array
+    public function transmitTemporaryFile(string $source): string
     {
         $this->logger->info('Transmission of file requested', ['source' => $source]);
 
@@ -74,18 +74,8 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
             throw new FileMissingException($source);
         }
 
-        if (null === $this->adapter) {
-            try {
-                $adapterClass = $this->adapterRegistry->getAdapter(AdapterInterface::class);
-                /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-                $this->adapter = GeneralUtility::makeInstance($adapterClass);
-            } catch (Throwable $exception) {
-                $this->logger->debug('SshAdapter initialization failed. See previous log for reason.');
-            }
-        }
-
         $identifierHash = hash('sha1', $source);
-        $target = $this->foreignVarPath . '/tx_in2publishcore/' . $identifierHash;
+        $target = $this->foreignVarPath . '/transient/' . $identifierHash;
 
         $success = $this->adapter->copyFileToRemote($source, $target);
 
@@ -101,9 +91,6 @@ class AssetTransmitter implements SingletonInterface, LoggerAwareInterface
             );
         }
 
-        return [
-            'identifierHash' => $identifierHash,
-            'target' => $target,
-        ];
+        return $target;
     }
 }

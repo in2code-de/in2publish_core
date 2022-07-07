@@ -29,12 +29,11 @@ namespace In2code\In2publishCore\Event;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
 
 final class TaskExecutionWasFinished
 {
-    /** @var RemoteCommandResponse */
-    private $remoteCommandResponse;
+    private RemoteCommandResponse $remoteCommandResponse;
 
     public function __construct(RemoteCommandResponse $remoteCommandResponse)
     {

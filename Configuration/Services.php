@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteAdapter\AdapterInterface as RemoteAdapter;
-use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface as TransmissionAdapter;
 use In2code\In2publishCore\Config\Definer\DefinerInterface;
 use In2code\In2publishCore\Config\PostProcessor\PostProcessorInterface as PostProcessor;
 use In2code\In2publishCore\DependencyInjection\DatabaseRecordFactoryFactoryCompilerPass;
@@ -25,8 +23,6 @@ return static function (ContainerConfigurator $configurator, ContainerBuilder $b
         $configurator->import('ForeignServices.php');
     }
 
-    $builder->registerForAutoconfiguration(RemoteAdapter::class)->addTag('in2publish_core.adapter.remote');
-    $builder->registerForAutoconfiguration(TransmissionAdapter::class)->addTag('in2publish_core.adapter.transmission');
     $builder->registerForAutoconfiguration(DefinerInterface::class)->addTag('in2publish_core.config.definer');
     $builder->registerForAutoconfiguration(PostProcessor::class)->addTag('in2publish_core.config.post_processor');
     $builder->registerForAutoconfiguration(TestCaseInterface::class)->addTag('in2publish_core.testing.test');
@@ -34,8 +30,6 @@ return static function (ContainerConfigurator $configurator, ContainerBuilder $b
         'in2publish_core.factory.database_record'
     );
 
-    $builder->addCompilerPass(new PublicServicePass('in2publish_core.adapter.remote'));
-    $builder->addCompilerPass(new PublicServicePass('in2publish_core.adapter.transmission'));
     $builder->addCompilerPass(new PublicServicePass('in2publish_core.config.definer'));
     $builder->addCompilerPass(new PublicServicePass('in2publish_core.config.post_processor'));
     $builder->addCompilerPass(new PublicServicePass('in2publish_core.testing.test'));

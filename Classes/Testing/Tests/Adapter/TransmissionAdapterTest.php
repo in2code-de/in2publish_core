@@ -29,11 +29,11 @@ namespace In2code\In2publishCore\Testing\Tests\Adapter;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
-use In2code\In2publishCore\Communication\TemporaryAssetTransmission\AssetTransmitter;
-use In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
+use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
+use In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter\AdapterInterface;
 use In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use In2code\In2publishCore\Testing\Tests\TestResult;
@@ -77,7 +77,7 @@ class TransmissionAdapterTest implements TestCaseInterface
         register_shutdown_function(static fn() => is_file($localTmpFile) && unlink($localTmpFile));
 
         try {
-            $foreignTmpFile = $this->assetTransmitter->transmitTemporaryFile($localTmpFile)['target'];
+            $foreignTmpFile = $this->assetTransmitter->transmitTemporaryFile($localTmpFile);
         } catch (Throwable $exception) {
             return new TestResult(
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.testing.xlf:adapter.transmission.asset_transmitter_error',

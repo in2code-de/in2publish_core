@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Communication\RemoteProcedureCall\Exception;
+namespace In2code\In2publishCore\Component\RemoteProcedureCall\Exception;
 
 use In2code\In2publishCore\In2publishCoreException;
 use Throwable;

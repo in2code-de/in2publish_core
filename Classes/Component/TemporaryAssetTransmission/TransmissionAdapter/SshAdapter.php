@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter;
+namespace In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter;
 
 /*
  * Copyright notice
@@ -29,9 +29,9 @@ namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission\Transm
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
-use In2code\In2publishCore\Communication\Shared\SshBaseAdapter;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Component\Shared\SshBaseAdapter;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;

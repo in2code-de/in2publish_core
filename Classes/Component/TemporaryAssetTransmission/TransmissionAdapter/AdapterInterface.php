@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Communication\TemporaryAssetTransmission\TransmissionAdapter;
+namespace In2code\In2publishCore\Component\TemporaryAssetTransmission\TransmissionAdapter;
 
 /*
  * Copyright notice

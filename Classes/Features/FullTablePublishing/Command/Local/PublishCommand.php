@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\FullTablePublishing\Command\Local;
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Features\FullTablePublishing\Command\BackupCommand;
-use In2code\In2publishCore\Features\FullTablePublishing\Service\TableBackupService;
 use In2code\In2publishCore\Features\FullTablePublishing\Service\TableTransferService;
 use In2code\In2publishCore\Service\Context\ContextService;
 use Symfony\Component\Console\Command\Command;

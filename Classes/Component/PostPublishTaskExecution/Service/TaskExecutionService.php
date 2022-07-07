@@ -29,11 +29,11 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Command\Foreign\RunTasksInQueueCommand;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\Exception\TaskExecutionFailedException;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Event\TaskExecutionWasFinished;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -45,16 +45,20 @@ class TaskExecutionService implements LoggerAwareInterface
 
     protected RemoteCommandDispatcher $remoteCommandDispatcher;
     protected TaskRepository $taskRepository;
-    /** @var EventDispatcher */
-    private $eventDispatcher;
+    protected EventDispatcher $eventDispatcher;
 
-    public function __construct(
-        RemoteCommandDispatcher $remoteCommandDispatcher,
-        TaskRepository $taskRepository,
-        EventDispatcher $eventDispatcher
-    ) {
+    public function injectRemoteCommandDispatcher(RemoteCommandDispatcher $remoteCommandDispatcher): void
+    {
         $this->remoteCommandDispatcher = $remoteCommandDispatcher;
+    }
+
+    public function injectTaskRepository(TaskRepository $taskRepository): void
+    {
         $this->taskRepository = $taskRepository;
+    }
+
+    public function injectEventDispatcher(EventDispatcher $eventDispatcher): void
+    {
         $this->eventDispatcher = $eventDispatcher;
     }
 

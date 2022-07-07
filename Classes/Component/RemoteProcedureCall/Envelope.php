@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Communication\RemoteProcedureCall;
+namespace In2code\In2publishCore\Component\RemoteProcedureCall;
 
 /*
  * Copyright notice

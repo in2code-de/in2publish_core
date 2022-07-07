@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Communication\Shared;
+namespace In2code\In2publishCore\Component\Shared;
 
 /*
  * Copyright notice
@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Communication\Shared;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Config\ConfigContainer;
 use In2code\In2publishCore\In2publishCoreException;
 use Psr\Log\LoggerAwareInterface;

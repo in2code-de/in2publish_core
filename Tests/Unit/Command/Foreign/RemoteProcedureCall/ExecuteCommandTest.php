@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Command\Foreign\RemoteProcedureCall;
 
 use In2code\In2publishCore\Command\Foreign\RemoteProcedureCall\ExecuteCommand;
-use In2code\In2publishCore\Communication\RemoteProcedureCall\Envelope;
-use In2code\In2publishCore\Communication\RemoteProcedureCall\EnvelopeDispatcher;
-use In2code\In2publishCore\Communication\RemoteProcedureCall\Letterbox;
+use In2code\In2publishCore\Component\RemoteProcedureCall\Envelope;
+use In2code\In2publishCore\Component\RemoteProcedureCall\EnvelopeDispatcher;
+use In2code\In2publishCore\Component\RemoteProcedureCall\Letterbox;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\Console\Input\ArrayInput;

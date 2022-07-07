@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\TcaHandling\Publisher;
 
 use Exception;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandRequest;
-use In2code\In2publishCore\Communication\TemporaryAssetTransmission\AssetTransmitter;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FalDriverService;
+use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
 use In2code\In2publishCore\Domain\Model\FileRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use TYPO3\CMS\Core\Database\Connection;
@@ -108,7 +108,7 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
     {
         $driver = $this->falDriverService->getDriver($record->getLocalProps()['storage']);
         $localFile = $driver->getFileForLocalProcessing($record->getLocalProps()['identifier']);
-        $identifier = $this->assetTransmitter->transmitTemporaryFile($localFile)['identifierHash'];
+        $identifier = $this->assetTransmitter->transmitTemporaryFile($localFile);
         unlink($localFile);
         $this->foreignDatabase->insert('tx_in2publishcore_filepublisher_task', [
             'request_token' => $this->requestToken,

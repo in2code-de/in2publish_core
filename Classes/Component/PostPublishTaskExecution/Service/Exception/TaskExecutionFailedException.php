@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Service\Exception;
 
-use In2code\In2publishCore\Communication\RemoteCommandExecution\RemoteCommandResponse;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandResponse;
 use In2code\In2publishCore\In2publishCoreException;
 use Throwable;
 
