@@ -20,6 +20,11 @@ namespace PHPSTORM_META {
         \In2code\In2publishCore\Domain\Model\Record::S_DELETED,
         \In2code\In2publishCore\Domain\Model\Record::S_UNCHANGED
     );
+    expectedReturnValues(
+        \In2code\In2publishCore\Service\Context\ContextService::getContext(),
+        \In2code\In2publishCore\Service\Context\ContextService::LOCAL,
+        \In2code\In2publishCore\Service\Context\ContextService::FOREIGN
+    );
 
     expectedArguments(
         \In2code\In2publishCore\Component\TcaHandling\PreProcessing\ProcessingResult::__construct(),
