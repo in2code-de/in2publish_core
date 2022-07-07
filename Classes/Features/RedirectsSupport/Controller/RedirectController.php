@@ -36,8 +36,6 @@ use In2code\In2publishCore\Component\TcaHandling\DemandResolver\Select\SelectDem
 use In2code\In2publishCore\Component\TcaHandling\DemandResolver\SysRedirect\SysRedirectSelectDemandResolver;
 use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
 use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
-use In2code\In2publishCore\Controller\AbstractController;
-use In2code\In2publishCore\Controller\ActionController;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
@@ -52,6 +50,7 @@ use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Pagination\ArrayPaginator;
 use TYPO3\CMS\Core\Pagination\SimplePagination;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function count;
@@ -138,9 +137,9 @@ class RedirectController extends ActionController
     {
         if ($this->request->hasArgument('filter')) {
             $filter = $this->request->getArgument('filter');
-            $this->backendUser->setAndSaveSessionData('tx_in2publishcore_redirects_filter', $filter);
+            $GLOBALS['BE_USER']->setAndSaveSessionData('tx_in2publishcore_redirects_filter', $filter);
         } else {
-            $filter = $this->backendUser->getSessionData('tx_in2publishcore_redirects_filter');
+            $filter = $GLOBALS['BE_USER']->getSessionData('tx_in2publishcore_redirects_filter');
             if (null !== $filter) {
                 $this->request->setArgument('filter', $filter);
             }
