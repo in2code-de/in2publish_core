@@ -127,7 +127,7 @@ class SshConnectionTest implements TestCaseInterface
         $request = new RemoteCommandRequest('help');
         $response = $this->rceDispatcher->dispatch($request);
         if (!$response->isSuccessful()) {
-            if (1 === preg_match('~The given context "(.*)" was not valid~ ', $response->getOutputString(), $match)) {
+            if (1 === preg_match('~The given context "(.*)" was not valid~', $response->getOutputString(), $match)) {
                 return new TestResult(
                     'ssh_connection.wrong_context',
                     TestResult::ERROR,
