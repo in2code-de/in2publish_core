@@ -18,4 +18,11 @@ namespace PHPSTORM_META {
         \In2code\In2publishCore\Domain\Model\Record::S_DELETED,
         \In2code\In2publishCore\Domain\Model\Record::S_UNCHANGED
     );
+
+    expectedArguments(
+        \In2code\In2publishCore\Component\TcaHandling\PreProcessing\ProcessingResult::__construct(),
+        0,
+        \In2code\In2publishCore\Component\TcaHandling\PreProcessing\ProcessingResult::COMPATIBLE,
+        \In2code\In2publishCore\Component\TcaHandling\PreProcessing\ProcessingResult::INCOMPATIBLE
+    );
 }
