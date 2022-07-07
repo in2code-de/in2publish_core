@@ -128,7 +128,7 @@ class CallerAwareDemandsCollection implements Demands
 
     public function getSysRedirectSelect(): array
     {
-        $this->demand->getSysRedirectSelect();
+        return $this->demand->getSysRedirectSelect();
     }
 
     /**
