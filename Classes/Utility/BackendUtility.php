@@ -235,7 +235,7 @@ class BackendUtility
         if (
             'pages' === $table
             && array_key_exists('doktype', $row)
-            && in_array($row['doktype'], $excludeDokTypes, false)
+            && in_array($row['doktype'], $excludeDokTypes)
         ) {
             return null;
         }

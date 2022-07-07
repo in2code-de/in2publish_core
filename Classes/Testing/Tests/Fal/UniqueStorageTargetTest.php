@@ -108,7 +108,7 @@ class UniqueStorageTargetTest implements TestCaseInterface
 
             try {
                 do {
-                    $uniqueFile = uniqid('tx_in2publish_testfile', false);
+                    $uniqueFile = uniqid('tx_in2publish_testfile');
                 } while (
                     $localDriver->fileExists($uniqueFile)
                     || $this->foreignFileSystemInfoService->fileExists($storages['foreign'][$key]['uid'], $uniqueFile)

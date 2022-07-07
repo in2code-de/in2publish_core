@@ -67,7 +67,7 @@ class ExtensionUtility
     private static function createPackageManager(): PackageManager
     {
         if (null === self::$packageManager) {
-            $coreCache = Bootstrap::createCache('core', false);
+            $coreCache = Bootstrap::createCache('core');
             $packageCache = Bootstrap::createPackageCache($coreCache);
             self::$packageManager = Bootstrap::createPackageManager(PackageManager::class, $packageCache);
         }

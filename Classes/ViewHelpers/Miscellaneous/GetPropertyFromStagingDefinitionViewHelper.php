@@ -45,7 +45,7 @@ class GetPropertyFromStagingDefinitionViewHelper extends AbstractViewHelper
         $this->registerArgument('record', Record::class, 'The record with the desired property value', true);
         $this->registerArgument('propertyName', 'string', 'The name of the desired property', true);
         $this->registerArgument('stagingLevel', 'string', 'Fetch the local or the foreign property', false, 'local');
-        $this->registerArgument('fallbackProperty', 'string', 'Fetch this if the primary prop is empty', false);
+        $this->registerArgument('fallbackProperty', 'string', 'Fetch this if the primary prop is empty');
     }
 
     public function render(): string

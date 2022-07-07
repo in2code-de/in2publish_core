@@ -59,7 +59,7 @@ class LanguageFlagIconViewHelper extends AbstractViewHelper
         parent::initializeArguments();
         $this->registerArgument(self::ARG_RECORD, Record::class, 'The record to get the flag for', true);
         $this->registerArgument(self::ARG_SIDE, 'string', '"local"/"foreign" as the language property side', true);
-        $this->registerArgument(self::ARG_OVERLAY, 'string', 'Overlay icon identifier', false, null);
+        $this->registerArgument(self::ARG_OVERLAY, 'string', 'Overlay icon identifier');
     }
 
     public function render(): string
