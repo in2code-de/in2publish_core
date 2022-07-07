@@ -106,7 +106,10 @@ class SiteConfigurationTest implements TestCaseInterface
                             'direction' => $localLanguage->getDirection(),
                             'typo3Language' => $localLanguage->getTypo3Language(),
                             'fallbackType' => $localLanguage->getFallbackType(),
-                            'fallbackLanguageIds' => json_encode($localLanguage->getFallbackLanguageIds()),
+                            'fallbackLanguageIds' => json_encode(
+                                $localLanguage->getFallbackLanguageIds(),
+                                JSON_THROW_ON_ERROR
+                            ),
                             'enabled' => $localLanguage->isEnabled(),
                         ];
 
@@ -119,7 +122,10 @@ class SiteConfigurationTest implements TestCaseInterface
                             'direction' => $foreignLanguage->getDirection(),
                             'typo3Language' => $foreignLanguage->getTypo3Language(),
                             'fallbackType' => $foreignLanguage->getFallbackType(),
-                            'fallbackLanguageIds' => json_encode($foreignLanguage->getFallbackLanguageIds()),
+                            'fallbackLanguageIds' => json_encode(
+                                $foreignLanguage->getFallbackLanguageIds(),
+                                JSON_THROW_ON_ERROR
+                            ),
                             'enabled' => $foreignLanguage->isEnabled(),
                         ];
 

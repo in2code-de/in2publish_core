@@ -134,7 +134,7 @@ class SingleDatabaseRepository
                 // Split the prefix into mmtbl/table (0-5) and the actual column name (6-X).
                 $splittedRow[substr($column, 0, 5)][substr($column, 6)] = $value;
             }
-            $splittedRows[hash('sha1', json_encode($splittedRow['mmtbl']))] = $splittedRow;
+            $splittedRows[hash('sha1', json_encode($splittedRow['mmtbl'], JSON_THROW_ON_ERROR))] = $splittedRow;
         }
         /*
          * Example return value:
