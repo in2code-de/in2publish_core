@@ -44,8 +44,10 @@ class FileDemandResolver
 
                 if ([] !== $localProps || [] !== $foreignProps) {
                     $record = $this->recordFactory->createFileRecord($localProps, $foreignProps);
-                    foreach ($parentRecords as $parentRecord) {
-                        $parentRecord->addChild($record);
+                    if (null !== $record) {
+                        foreach ($parentRecords as $parentRecord) {
+                            $parentRecord->addChild($record);
+                        }
                     }
                 }
             }

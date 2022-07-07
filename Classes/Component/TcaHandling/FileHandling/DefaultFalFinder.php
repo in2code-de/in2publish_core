@@ -183,6 +183,9 @@ class DefaultFalFinder
             ];
         }
         $folderRecord = $this->recordFactory->createFolderRecord($combinedIdentifier, $localProps, $foreignProps);
+        if (null === $folderRecord) {
+            return new RecordTree();
+        }
 
         if ($onlyRoot) {
             $recordTree = new RecordTree();
@@ -222,6 +225,9 @@ class DefaultFalFinder
                 $sides['local'] ?? [],
                 $sides['foreign'] ?? []
             );
+            if (null === $subFolderRecord) {
+                continue;
+            }
             $folderRecord->addChild($subFolderRecord);
         }
 
@@ -238,6 +244,9 @@ class DefaultFalFinder
                 $sides['local'] ?? [],
                 $sides['foreign'] ?? []
             );
+            if (null === $fileRecord) {
+                continue;
+            }
             $demands->addSelect(
                 'sys_file',
                 'storage = ' . $fileRecord->getProp('storage'),
@@ -282,7 +291,9 @@ class DefaultFalFinder
                             $files[$localIdentifier]['local'] ?? [],
                             $files[$localIdentifier]['foreign'] ?? [],
                         );
-                        $folderRecord->addChild($recordToAdd);
+                        if (null !== $recordToAdd) {
+                            $folderRecord->addChild($recordToAdd);
+                        }
                     }
                 }
             }
@@ -319,6 +330,9 @@ class DefaultFalFinder
             ];
         }
         $fileRecord = $this->recordFactory->createFileRecord($localProps, $foreignProps);
+        if (null === $fileRecord) {
+            return new RecordTree();
+        }
 
         $demands = $this->demandsFactory->createDemand();
         $demands->addSelect(
@@ -355,6 +369,9 @@ class DefaultFalFinder
                             $localProps,
                             $foreignProps,
                         );
+                        if (null === $fileRecord) {
+                            return new RecordTree();
+                        }
                     }
                 }
             }

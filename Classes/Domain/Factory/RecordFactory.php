@@ -68,6 +68,13 @@ class RecordFactory
         $this->databaseRecordFactoryFactory = $databaseRecordFactoryFactory;
     }
 
+    public function createPageTreeRootRecord(): PageTreeRootRecord
+    {
+        $record = new PageTreeRootRecord();
+        $this->finishRecord($record);
+        return $record;
+    }
+
     public function createDatabaseRecord(
         string $table,
         int $id,
@@ -98,23 +105,22 @@ class RecordFactory
         return $record;
     }
 
-    public function createPageTreeRootRecord(): PageTreeRootRecord
-    {
-        $record = new PageTreeRootRecord();
-        $this->finishRecord($record);
-        return $record;
-    }
-
-    public function createFileRecord(array $localProps, array $foreignProps): FileRecord
+    public function createFileRecord(array $localProps, array $foreignProps): ?FileRecord
     {
         $record = new FileRecord($localProps, $foreignProps);
+        if ($this->shouldIgnoreRecord($record)) {
+            return null;
+        }
         $this->finishRecord($record);
         return $record;
     }
 
-    public function createFolderRecord(string $combinedIdentifier, array $localProps, array $foreignProps): FolderRecord
+    public function createFolderRecord(string $combinedIdentifier, array $localProps, array $foreignProps): ?FolderRecord
     {
         $record = new FolderRecord($combinedIdentifier, $localProps, $foreignProps);
+        if ($this->shouldIgnoreRecord($record)) {
+            return null;
+        }
         $this->finishRecord($record);
         return $record;
     }
@@ -129,7 +135,6 @@ class RecordFactory
     protected function finishRecord(Record $record): void
     {
         $this->recordIndex->addRecord($record);
-
         $this->eventDispatcher->dispatch(new RecordWasCreated($record));
     }
 }
