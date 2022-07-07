@@ -107,7 +107,7 @@ class FlexResolver extends AbstractResolver
         $expressions = [];
         foreach ($resolvers as $field => $resolver) {
             if (str_contains($field, '[ANY]')) {
-                $regEx = '/' . str_replace('\[ANY\]', '[\w\d]+', preg_quote($field)) . '/';
+                $regEx = '/' . str_replace('\[ANY\]', '[\w\d]+', preg_quote($field, '/')) . '/';
                 $expressions[$regEx] = $resolver;
             }
         }
