@@ -85,10 +85,7 @@ class Envelope
         $this->command = $command;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRequest()
+    public function getRequest(): array
     {
         return $this->request;
     }
