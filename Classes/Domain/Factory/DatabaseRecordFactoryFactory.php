@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Domain\Factory;
 
-use Exception;
+use In2code\In2publishCore\Domain\Factory\Exception\MissingDatabaseRecordFactoryException;
 
 use function krsort;
 
@@ -30,6 +30,6 @@ class DatabaseRecordFactoryFactory
                 }
             }
         }
-        throw new Exception('No factory found for table ' . $table, 1656424304);
+        throw new MissingDatabaseRecordFactoryException($table);
     }
 }

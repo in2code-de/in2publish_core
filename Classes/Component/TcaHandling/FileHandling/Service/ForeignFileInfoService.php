@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\FileHandling\Service;
 
-use Exception;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\Exception\ForeignFileInfoExecutionFailedException;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function array_keys;
@@ -61,7 +61,7 @@ class ForeignFileInfoService
         $response = $this->remoteCommandDispatcher->dispatch($remoteCommand);
 
         if (!$response->isSuccessful()) {
-            throw new Exception($response->getErrorsString() . $response->getOutputString());
+            throw new ForeignFileInfoExecutionFailedException($response);
         }
 
         $rows = $this->foreignDatabase->select(

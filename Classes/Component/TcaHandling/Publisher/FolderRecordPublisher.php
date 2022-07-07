@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Publisher;
 
-use Exception;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Component\TcaHandling\Publisher\Exception\FalPublisherExecutionFailedException;
 use In2code\In2publishCore\Domain\Model\FolderRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use TYPO3\CMS\Core\Database\Connection;
@@ -81,7 +81,7 @@ class FolderRecordPublisher implements Publisher, FinishablePublisher
             $request = new RemoteCommandRequest('in2publish_core:tcahandling:falpublisher', [], [$this->requestToken]);
             $response = $this->remoteCommandDispatcher->dispatch($request);
             if (!$response->isSuccessful()) {
-                throw new Exception($response->getErrorsString() . $response->getOutputString());
+                throw new FalPublisherExecutionFailedException($response);
             }
         }
     }

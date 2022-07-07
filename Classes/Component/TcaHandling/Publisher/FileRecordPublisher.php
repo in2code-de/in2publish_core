@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Publisher;
 
-use Exception;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\FalDriverService;
+use In2code\In2publishCore\Component\TcaHandling\Publisher\Exception\FalPublisherExecutionFailedException;
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
 use In2code\In2publishCore\Domain\Model\FileRecord;
 use In2code\In2publishCore\Domain\Model\Record;
@@ -128,7 +128,7 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
             $request = new RemoteCommandRequest('in2publish_core:tcahandling:falpublisher', [], [$this->requestToken]);
             $response = $this->remoteCommandDispatcher->dispatch($request);
             if (!$response->isSuccessful()) {
-                throw new Exception($response->getErrorsString() . $response->getOutputString());
+                throw new FalPublisherExecutionFailedException($response);
             }
         }
     }
