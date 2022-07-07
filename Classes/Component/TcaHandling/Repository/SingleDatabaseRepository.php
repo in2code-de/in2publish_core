@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling\Repository;
 
+use Doctrine\DBAL\Connection as DbalConnection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver\Exception;
 use In2code\In2publishCore\Component\TcaHandling\Service\Database\DatabaseSchemaService;
@@ -47,7 +48,7 @@ class SingleDatabaseRepository
               ->where(
                   $query->expr()->in(
                       $property,
-                      $query->createNamedParameter($values, Connection::PARAM_STR_ARRAY)
+                      $query->createNamedParameter($values, DbalConnection::PARAM_STR_ARRAY)
                   )
               );
         if (!empty($andWhere)) {
