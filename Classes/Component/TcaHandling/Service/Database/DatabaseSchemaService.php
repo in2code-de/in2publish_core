@@ -13,9 +13,9 @@ class DatabaseSchemaService implements SingletonInterface
     protected const CACHE_ID = 'component_database_info';
     protected Connection $localDatabase;
     protected FrontendInterface $cache;
-    protected $columns = [];
-    protected $tables = [];
-    protected $infoChanged = false;
+    protected array $columns = [];
+    protected array $tables = [];
+    protected bool $infoChanged = false;
 
     public function injectLocalDatabase(Connection $localDatabase): void
     {

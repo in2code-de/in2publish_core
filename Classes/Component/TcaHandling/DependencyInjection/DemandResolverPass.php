@@ -14,8 +14,7 @@ use function array_keys;
 
 class DemandResolverPass implements CompilerPassInterface
 {
-    /** @var string */
-    private $tagName;
+    private string $tagName;
 
     public function __construct(string $tagName)
     {

@@ -13,8 +13,7 @@ use function interface_exists;
 
 class PublisherPass implements CompilerPassInterface
 {
-    /** @var string */
-    private $tagName;
+    private string $tagName;
 
     public function __construct(string $tagName)
     {

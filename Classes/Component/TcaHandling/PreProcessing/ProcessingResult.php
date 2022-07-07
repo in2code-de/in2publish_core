@@ -8,8 +8,7 @@ class ProcessingResult
 {
     public const COMPATIBLE = 0;
     public const INCOMPATIBLE = 1;
-    /** @var int */
-    private $result;
+    private int $result;
     /** @var mixed */
     private $value;
 

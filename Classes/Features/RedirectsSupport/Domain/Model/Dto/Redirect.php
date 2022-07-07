@@ -8,29 +8,29 @@ use function sprintf;
 
 class Redirect
 {
-    public $uid;
-    public $pid;
-    public $updatedon;
-    public $createdon;
-    public $createdby;
-    public $deleted;
-    public $disabled;
-    public $starttime;
-    public $endtime;
-    public $source_host;
-    public $source_path;
-    public $is_regexp;
-    public $protected;
-    public $force_https;
-    public $respect_query_parameters;
-    public $keep_query_parameters;
-    public $target;
-    public $target_statuscode;
-    public $hitcount;
-    public $lasthiton;
-    public $disable_hitcount;
-    public $tx_in2publishcore_page_uid;
-    public $tx_in2publishcore_foreign_site_id;
+    public int $uid;
+    public int $pid;
+    public int $updatedon;
+    public int $createdon;
+    public int $createdby;
+    public int $deleted;
+    public int $disabled;
+    public int $starttime;
+    public int $endtime;
+    public string $source_host;
+    public string $source_path;
+    public int $is_regexp;
+    public int $protected;
+    public int $force_https;
+    public int $respect_query_parameters;
+    public int $keep_query_parameters;
+    public string $target;
+    public int $target_statuscode;
+    public int $hitcount;
+    public int $lasthiton;
+    public int $disable_hitcount;
+    public ?int $tx_in2publishcore_page_uid;
+    public ?string $tx_in2publishcore_foreign_site_id;
 
     public function __toString()
     {

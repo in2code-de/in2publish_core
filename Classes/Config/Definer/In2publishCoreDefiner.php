@@ -42,7 +42,7 @@ use In2code\In2publishCore\Config\Validator\ZipExtensionInstalledValidator;
  */
 class In2publishCoreDefiner implements DefinerInterface
 {
-    protected $defaultIgnoredTables = [
+    protected array $defaultIgnoredTables = [
         'be_groups',
         'be_users',
         'sys_history',
