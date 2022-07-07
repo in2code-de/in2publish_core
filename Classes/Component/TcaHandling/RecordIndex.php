@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\TcaHandling;
 
+use Generator;
 use In2code\In2publishCore\Domain\Model\Record;
 
 use function array_search;
@@ -13,7 +14,7 @@ class RecordIndex
     /**
      * @var RecordCollection<int, Record>
      */
-    private $records;
+    private RecordCollection $records;
 
     public function __construct()
     {
@@ -46,9 +47,12 @@ class RecordIndex
         return $this->records->getRecord($classification, $id);
     }
 
-    public function getRecordByClassification(string $classification): array
+    /**
+     * @return Generator<Record>
+     */
+    public function getRecordByClassification(string $classification): Generator
     {
-        return $this->records->getRecords()[$classification] ?? [];
+        return $this->records->getRecordsByClassification($classification);
     }
 
     public function connectTranslations(): void
@@ -64,18 +68,18 @@ class RecordIndex
             }
         }
 
-        $records = $this->records->getRecords();
         // Connect all translated records to their language parent
         foreach ($classifications as $classification) {
             $transOrigPointerField = $GLOBALS['TCA'][$classification]['ctrl']['transOrigPointerField'];
-            foreach ($records[$classification] as $record) {
+            $records = $this->records->getRecordsByClassification($classification);
+            foreach ($records as $record) {
                 if (
                     $record->getLanguage() > 0
                     && null === $record->getTranslationParent()
                 ) {
                     $transOrigPointer = $record->getProp($transOrigPointerField);
                     if ($transOrigPointer > 0) {
-                        $translationParent = $records[$classification][$transOrigPointer] ?? null;
+                        $translationParent = $records[$transOrigPointer] ?? null;
                         if (null !== $translationParent) {
                             $translationParent->addTranslation($record);
                             $record->removeChild($translationParent);
@@ -90,7 +94,7 @@ class RecordIndex
             unset($classifications[$pagesKey]);
         }
         // Move translated records from the default-language-page children to the translated-page children
-        foreach ($records['pages'] ?? [] as $page) {
+        foreach ($this->records->getRecordsByClassification('pages') as $page) {
             /** @var Record[][] $children */
             $children = $page->getChildren();
             foreach ($classifications as $classification) {

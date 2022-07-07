@@ -2,18 +2,17 @@
 
 namespace In2code\In2publishCore\Component\TcaHandling;
 
-use ArrayIterator;
+use Generator;
 use In2code\In2publishCore\Domain\Model\Record;
-use Iterator;
-use IteratorAggregate;
 use WeakReference;
 
 use function array_keys;
-use function array_merge;
-use function array_values;
 use function is_array;
 
-class RecordCollection implements IteratorAggregate
+/**
+ * This should be a WeakMap but that's available only in PHP 8, but we have to support 7.4.
+ */
+class RecordCollection
 {
     /**
      * @var array<string, array<array-key, WeakReference>>
@@ -21,9 +20,9 @@ class RecordCollection implements IteratorAggregate
     private array $records = [];
 
     /**
-     * @param array<Record>|array<array<Record>> $records
+     * @param iterable<Record>|iterable<array<Record>> $records
      */
-    public function __construct(array $records = [])
+    public function __construct(iterable $records = [])
     {
         $this->addRecords($records);
     }
@@ -34,10 +33,10 @@ class RecordCollection implements IteratorAggregate
     }
 
     /**
-     * @param array<Record>|array<array<Record>> $records
+     * @param iterable<Record>|iterable<array<Record>> $records
      * @return void
      */
-    public function addRecords(array $records): void
+    public function addRecords(iterable $records): void
     {
         foreach ($records as $record) {
             if (is_array($record)) {
@@ -48,9 +47,29 @@ class RecordCollection implements IteratorAggregate
         }
     }
 
-    private function filterReferences(): array
+    /**
+     * @return Generator<Record>
+     */
+    public function getRecordsByClassification(string $classification): Generator
     {
-        $records = [];
+        foreach ($this->records[$classification] ?? [] as $identifier => $weakReference) {
+            $record = $weakReference->get();
+            if (null === $record) {
+                unset($this->records[$classification][$identifier]);
+                if (empty($this->records[$classification])) {
+                    unset($this->records[$classification]);
+                }
+            } else {
+                yield $identifier => $record;
+            }
+        }
+    }
+
+    /**
+     * @return Generator<Record>
+     */
+    public function getRecordsFlat(): Generator
+    {
         foreach ($this->records as $classification => $identifiers) {
             foreach ($identifiers as $identifier => $weakReference) {
                 $record = $weakReference->get();
@@ -60,30 +79,10 @@ class RecordCollection implements IteratorAggregate
                         unset($this->records[$classification]);
                     }
                 } else {
-                    $records[$classification][$identifier] = $record;
+                    yield $identifier => $record;
                 }
             }
         }
-        return $records;
-    }
-
-    public function getRecords(): array
-    {
-        return $this->filterReferences();
-    }
-
-    /**
-     * @return array<Record>
-     */
-    public function getRecordsFlat(): array
-    {
-        $records = array_values($this->getRecords());
-        return array_merge([], ...$records);
-    }
-
-    public function getIterator(): Iterator
-    {
-        return new ArrayIterator($this->getRecordsFlat());
     }
 
     /**
@@ -108,11 +107,28 @@ class RecordCollection implements IteratorAggregate
      */
     public function getClassifications(): array
     {
-        return array_keys($this->getRecords());
+        $this->filterRecords();
+        return array_keys($this->records);
     }
 
     public function isEmpty(): bool
     {
+        $this->filterRecords();
         return empty($this->records);
+    }
+
+    protected function filterRecords(): void
+    {
+        foreach ($this->records as $classification => $identifiers) {
+            foreach ($identifiers as $identifier => $weakReference) {
+                $record = $weakReference->get();
+                if (null === $record) {
+                    unset($this->records[$classification][$identifier]);
+                    if (empty($this->records[$classification])) {
+                        unset($this->records[$classification]);
+                    }
+                }
+            }
+        }
     }
 }

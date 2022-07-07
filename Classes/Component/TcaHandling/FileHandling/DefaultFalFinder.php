@@ -261,7 +261,7 @@ class DefaultFalFinder
         $this->demandResolver->resolveDemand($demands, $recordCollection);
         $this->recordTreeBuilder->findRecordsByTca($recordCollection);
 
-        foreach ($recordCollection->getRecords()['sys_file'] ?? [] as $sysFileRecord) {
+        foreach ($recordCollection->getRecordsByClassification('sys_file') as $sysFileRecord) {
             if ($sysFileRecord->getState() === Record::S_CHANGED) {
                 $localProps = $sysFileRecord->getLocalProps();
                 $foreignProps = $sysFileRecord->getForeignProps();
@@ -347,7 +347,7 @@ class DefaultFalFinder
         $this->recordTreeBuilder->findRecordsByTca($recordCollection);
 
         if ($foreignProps === []) {
-            foreach ($recordCollection->getRecords()['sys_file'] ?? [] as $sysFileRecord) {
+            foreach ($recordCollection->getRecordsByClassification('sys_file') as $sysFileRecord) {
                 if ($sysFileRecord->getState() === Record::S_CHANGED) {
                     $localSysFileProps = $sysFileRecord->getLocalProps();
                     $foreignSysFileProps = $sysFileRecord->getForeignProps();
