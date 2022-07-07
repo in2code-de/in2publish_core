@@ -59,10 +59,14 @@ class ForeignSiteFinder implements LoggerAwareInterface
     protected RemoteCommandDispatcher $rceDispatcher;
     protected FrontendInterface $cache;
 
-    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, FrontendInterface $cache)
+    public function __construct(FrontendInterface $cache)
     {
-        $this->rceDispatcher = $remoteCommandDispatcher;
         $this->cache = $cache;
+    }
+
+    public function injectRemoteCommandDispatcher(RemoteCommandDispatcher $rceDispatcher): void
+    {
+        $this->rceDispatcher = $rceDispatcher;
     }
 
     public function getSiteByPageId(int $pageId): Site
