@@ -41,8 +41,7 @@ class InvalidDemandException extends In2publishCoreException
                     $meta = $object->getMetaInfo();
                     if (isset($meta['builtBy'])) {
                         $class = $meta['builtBy']['class'];
-                        $table = $meta['builtBy']['args'][0];
-                        $column = $meta['builtBy']['args'][1];
+                        [$table, $column] = $meta['builtBy']['args'];
                         $signature .= " built by processor $class for table \"$table\" and column \"$column\"";
                     }
                 }

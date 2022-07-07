@@ -46,16 +46,10 @@ class TcaPreProcessingService implements SingletonInterface
 
     protected function getProcessor(string $type, string $table, string $column): ?TcaPreProcessor
     {
-        if (isset($this->processors[$type][$table][$column])) {
-            return $this->processors[$type][$table][$column];
-        }
-        if (isset($this->processors[$type][$table]['*'])) {
-            return $this->processors[$type][$table]['*'];
-        }
-        if (isset($this->processors[$type]['*']['*'])) {
-            return $this->processors[$type]['*']['*'];
-        }
-        return null;
+        return $this->processors[$type][$table][$column]
+            ?? $this->processors[$type][$table]['*']
+            ?? $this->processors[$type]['*']['*']
+            ?? null;
     }
 
     public function getIncompatibleTcaParts(): array
