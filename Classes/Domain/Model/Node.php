@@ -13,5 +13,5 @@ interface Node
      */
     public function getId();
 
-    public function addChild(Record $childRecord): void;
+    public function addChild(Record $record): void;
 }

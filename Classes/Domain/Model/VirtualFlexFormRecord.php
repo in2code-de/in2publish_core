@@ -38,8 +38,8 @@ class VirtualFlexFormRecord extends AbstractDatabaseRecord implements DatabaseEn
         return $this->record->getPageId();
     }
 
-    public function addChild(Record $childRecord): void
+    public function addChild(Record $record): void
     {
-        $this->record->addChild($childRecord);
+        $this->record->addChild($record);
     }
 }

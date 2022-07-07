@@ -70,10 +70,10 @@ abstract class AbstractRecord implements Record
         throw new LogicException("Side $side is unknown");
     }
 
-    public function addChild(Record $childRecord): void
+    public function addChild(Record $record): void
     {
-        $this->children[$childRecord->getClassification()][$childRecord->getId()] = $childRecord;
-        $childRecord->addParent($this);
+        $this->children[$record->getClassification()][$record->getId()] = $record;
+        $record->addParent($this);
     }
 
     public function removeChild(Record $record): void
