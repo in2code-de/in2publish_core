@@ -114,7 +114,6 @@ class FlexResolver extends AbstractResolver
 
         foreach ($flexFormFields as $flexFormField) {
             if (isset($resolvers[$flexFormField])) {
-                /** @var Resolver $resolver */
                 $resolver = $resolvers[$flexFormField];
                 $resolver->resolve($demands, $virtualRecord);
             } else {
