@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace In2code\In2publishCore\Command\Foreign\RemoteProcedureCall;
+namespace In2code\In2publishCore\Component\RemoteProcedureCall\Command\Foreign;
 
 /*
  * Copyright notice

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\TcaHandling\FileHandling\Service;
 
 use Exception;
-use In2code\In2publishCore\Command\Foreign\RemoteProcedureCall\ExecuteCommand;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
+use In2code\In2publishCore\Component\RemoteProcedureCall\Command\Foreign\ExecuteCommand;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Envelope;
 use In2code\In2publishCore\Component\RemoteProcedureCall\EnvelopeDispatcher;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Letterbox;

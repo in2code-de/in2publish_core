@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use In2code\In2publishCore\Command\Foreign\RemoteProcedureCall\ExecuteCommand;
 use In2code\In2publishCore\Command\Foreign\Status\AllCommand;
 use In2code\In2publishCore\Command\Foreign\Status\AllSitesCommand;
 use In2code\In2publishCore\Command\Foreign\Status\ConfigFormatTestCommand;
@@ -34,16 +33,6 @@ return static function (ContainerConfigurator $configurator): void {
         'In2code\\In2publishCore\\Command\\Foreign\\',
         __DIR__ . '/../Classes/Command/Foreign'
     );
-    $services->set(ExecuteCommand::class)
-             ->tag(
-                 'console.command',
-                 [
-                     'command' => 'in2publish_core:rpc:execute',
-                     'description' => 'Receives an envelope and executes the contained command',
-                     'hidden' => true,
-                     'schedulable' => false,
-                 ]
-             );
     $services->set(AllCommand::class)
              ->tag(
                  'console.command',

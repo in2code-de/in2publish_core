@@ -6,3 +6,5 @@ services:
 
   In2code\In2publishCore\Component\RemoteProcedureCall\:
     resource: '../../../Classes/Component/RemoteProcedureCall/*'
+    exclude:
+      - '../../../Classes/Component/RemoteProcedureCall/Command/Foreign/*'
