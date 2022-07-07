@@ -88,6 +88,7 @@ class TcaPreProcessingService implements SingletonInterface
                     if (isset($typeConfig['columnsOverrides']) && is_array($typeConfig['columnsOverrides'])) {
                         foreach ($typeConfig['columnsOverrides'] as $column => $overrideConfig) {
                             if ($overrideConfig['config']['enableRichtext'] ?? false) {
+                                /** @noinspection UnsupportedStringOffsetOperationsInspection */
                                 $tca[$table]['columns'][$column]['config']['enableRichtext'] = true;
                             }
                         }
