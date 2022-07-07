@@ -133,15 +133,7 @@ class RecordController extends ActionController
         }
     }
 
-    /**
-     * Publish the selected page record with all related content records
-     *
-     * @param int $identifier
-     * @param string|null $returnUrl
-     *
-     * @throws StopActionException
-     */
-    public function publishRecordAction(int $identifier, string $returnUrl = null): void
+    public function publishRecordAction(int $identifier): void
     {
         $recordTree = $this->recordTreeBuilder->buildRecordTree('pages', $identifier);
         $this->publisherService->publishRecordTree($recordTree);

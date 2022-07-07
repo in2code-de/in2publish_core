@@ -95,10 +95,10 @@ class CallerAwareDemandsCollection implements Demands
     public function addFile(int $storage, string $identifier, Record $record): void
     {
         $this->demand->addFile($storage, $identifier, $record);
-        $this->collectFileMeta($storage, $identifier, $record);
+        $this->collectFileMeta($storage, $identifier);
     }
 
-    protected function collectFileMeta(int $storage, string $identifier, Record $record)
+    protected function collectFileMeta(int $storage, string $identifier)
     {
         $frame = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3)[2];
         $this->meta['files'][$storage][$identifier][] = $frame;

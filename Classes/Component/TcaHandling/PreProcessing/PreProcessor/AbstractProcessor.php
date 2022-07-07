@@ -123,6 +123,7 @@ abstract class AbstractProcessor implements TcaPreProcessor
         return array_merge(['type'], array_keys($this->required), $this->allowed);
     }
 
+    /** @noinspection PhpUnusedParameterInspection */
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
         return [];
