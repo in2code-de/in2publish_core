@@ -30,8 +30,8 @@ namespace In2code\In2publishCore\Features\ContextMenuPublishEntry\Controller;
  */
 
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\Exception\TaskExecutionFailedException;
-use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
-use In2code\In2publishCore\Component\TcaHandling\RecordTreeBuilder;
+use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
+use In2code\In2publishCore\Component\Core\RecordTreeBuilder;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

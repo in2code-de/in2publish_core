@@ -30,12 +30,13 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
-use In2code\In2publishCore\Component\TcaHandling\RecordTreeBuilder;
+use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
+use In2code\In2publishCore\Component\Core\RecordTreeBuilder;
 use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
+use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Error\FailureCollector;
 use In2code\In2publishCore\Service\Permission\PermissionService;
@@ -133,9 +134,9 @@ class RecordController extends ActionController
         }
     }
 
-    public function publishRecordAction(int $identifier): void
+    public function publishRecordAction(int $id): void
     {
-        $recordTree = $this->recordTreeBuilder->buildRecordTree('pages', $identifier);
+        $recordTree = $this->recordTreeBuilder->buildRecordTree('pages', $id);
         $this->publisherService->publishRecordTree($recordTree);
         $this->addFlashMessagesAndRedirectToIndex();
     }

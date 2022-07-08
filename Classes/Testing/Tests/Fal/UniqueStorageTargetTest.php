@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Testing\Tests\Fal;
  */
 
 use Doctrine\DBAL\Driver\Exception as DriverException;
-use In2code\In2publishCore\Component\TcaHandling\FileHandling\Service\ForeignFileSystemInfoService;
+use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoService;
 use In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignDatabaseConfigTest;
 use In2code\In2publishCore\Testing\Tests\Application\ForeignInstanceTest;

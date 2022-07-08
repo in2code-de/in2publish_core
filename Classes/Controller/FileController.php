@@ -30,9 +30,9 @@ namespace In2code\In2publishCore\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\TcaHandling\FileHandling\DefaultFalFinder;
-use In2code\In2publishCore\Component\TcaHandling\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
-use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
+use In2code\In2publishCore\Component\Core\FileHandling\DefaultFalFinder;
+use In2code\In2publishCore\Component\Core\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
+use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
 use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
 use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;

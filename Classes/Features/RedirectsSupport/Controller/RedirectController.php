@@ -29,13 +29,13 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsFactory;
-use In2code\In2publishCore\Component\TcaHandling\DemandResolver\DemandResolverCollection;
-use In2code\In2publishCore\Component\TcaHandling\DemandResolver\Join\JoinDemandResolver;
-use In2code\In2publishCore\Component\TcaHandling\DemandResolver\Select\SelectDemandResolver;
-use In2code\In2publishCore\Component\TcaHandling\DemandResolver\SysRedirect\SysRedirectSelectDemandResolver;
-use In2code\In2publishCore\Component\TcaHandling\Publisher\PublisherService;
-use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
+use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
+use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverCollection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Join\JoinDemandResolver;
+use In2code\In2publishCore\Component\Core\DemandResolver\Select\SelectDemandResolver;
+use In2code\In2publishCore\Component\Core\DemandResolver\SysRedirect\SysRedirectSelectDemandResolver;
+use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
+use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;

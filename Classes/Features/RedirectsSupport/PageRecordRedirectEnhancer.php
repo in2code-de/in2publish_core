@@ -29,9 +29,9 @@ namespace In2code\In2publishCore\Features\RedirectsSupport;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\TcaHandling\Demand\DemandsCollection;
-use In2code\In2publishCore\Component\TcaHandling\DemandResolver\Select\SelectDemandResolver;
-use In2code\In2publishCore\Component\TcaHandling\RecordCollection;
+use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
+use In2code\In2publishCore\Component\Core\DemandResolver\Select\SelectDemandResolver;
+use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Domain\Model\Node;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;

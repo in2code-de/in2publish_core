@@ -1,0 +1,59 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+    bind:
+      $cache: '@cache.in2publish_core'
+      $localDatabase: '@In2code.In2publishCore.Database.Local'
+      $foreignDatabase: '@In2code.In2publishCore.Database.Foreign'
+      $localRepository: '@In2code.In2publishCore.Component.Core.LocalDatabaseRepository'
+      $foreignRepository: '@In2code.In2publishCore.Component.Core.ForeignDatabaseRepository'
+
+  In2code\In2publishCore\Component\Core\:
+    resource: '../../../Classes/Component/Core/*'
+
+  In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService:
+    public: true
+
+  In2code\In2publishCore\Component\Core\RecordIndex:
+    shared: true
+    public: true
+
+  'In2code.In2publishCore.Component.Core.LocalDatabaseRepository':
+    class: 'In2code\In2publishCore\Component\Core\Repository\SingleDatabaseRepository'
+    arguments:
+      $connection: '@In2code.In2publishCore.Database.Local'
+
+  'In2code.In2publishCore.Component.Core.ForeignDatabaseRepository':
+    class: 'In2code\In2publishCore\Component\Core\Repository\SingleDatabaseRepository'
+    arguments:
+      $connection: '@In2code.In2publishCore.Database.Foreign'
+
+  In2code\In2publishCore\Component\Core\FileHandling\FileRecordListener:
+    tags:
+      - name: event.listener
+        identifier: 'in2publishcore-FileRecordListener-RecordWasCreated'
+        method: 'onRecordWasCreated'
+        event: In2code\In2publishCore\Event\RecordWasCreated
+      - name: event.listener
+        identifier: 'in2publishcore-FileRecordListener-RecordRelationsWereResolved'
+        method: 'onRecordRelationsWereResolved'
+        event: In2code\In2publishCore\Event\RecordRelationsWereResolved
+
+  In2code\In2publishCore\Component\Core\Publisher\Command\FalPublisherCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:core:falpublisher'
+        hidden: TRUE
+        schedulable: FALSE
+
+  In2code\In2publishCore\Component\Core\FileHandling\Command\ForeignFileInfoCommand:
+    tags:
+      - name: 'console.command'
+        command: 'in2publish_core:core:foreignfileinfo'
+        hidden: TRUE
+        schedulable: FALSE
+
+  In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver:
+    factory: [ '@In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverFactory', 'createDemandResolver' ]

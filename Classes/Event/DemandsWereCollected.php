@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Event;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\TcaHandling\Demand\Demands;
+use In2code\In2publishCore\Component\Core\Demand\Demands;
 
 final class DemandsWereCollected
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\RecordInspector\Controller;
 
-use In2code\In2publishCore\Component\TcaHandling\RecordTreeBuilder;
+use In2code\In2publishCore\Component\Core\RecordTreeBuilder;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;

@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Domain\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Domain\Model\DatabaseEntityRecord;
 use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Domain\Model\VirtualFlexFormRecord;

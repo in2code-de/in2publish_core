@@ -27,10 +27,10 @@ namespace PHPSTORM_META {
     );
 
     expectedArguments(
-        \In2code\In2publishCore\Component\TcaHandling\PreProcessing\ProcessingResult::__construct(),
+        \In2code\In2publishCore\Component\Core\PreProcessing\ProcessingResult::__construct(),
         0,
-        \In2code\In2publishCore\Component\TcaHandling\PreProcessing\ProcessingResult::COMPATIBLE,
-        \In2code\In2publishCore\Component\TcaHandling\PreProcessing\ProcessingResult::INCOMPATIBLE
+        \In2code\In2publishCore\Component\Core\PreProcessing\ProcessingResult::COMPATIBLE,
+        \In2code\In2publishCore\Component\Core\PreProcessing\ProcessingResult::INCOMPATIBLE
     );
     expectedArguments(
         \In2code\In2publishCore\Component\RemoteProcedureCall\Envelope::__construct(),

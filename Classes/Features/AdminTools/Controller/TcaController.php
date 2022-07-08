@@ -30,9 +30,9 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  */
 
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
-use In2code\In2publishCore\Component\TcaHandling\Demand\DemandBuilder;
-use In2code\In2publishCore\Component\TcaHandling\DemandResolver\Select\SelectDemandResolver;
-use In2code\In2publishCore\Component\TcaHandling\PreProcessing\TcaPreProcessingService;
+use In2code\In2publishCore\Component\Core\Demand\DemandBuilder;
+use In2code\In2publishCore\Component\Core\DemandResolver\Select\SelectDemandResolver;
+use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
