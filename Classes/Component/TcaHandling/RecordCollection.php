@@ -4,7 +4,6 @@ namespace In2code\In2publishCore\Component\TcaHandling;
 
 use Generator;
 use In2code\In2publishCore\Domain\Model\Record;
-use WeakReference;
 
 use function array_keys;
 use function is_array;
@@ -15,7 +14,7 @@ use function is_array;
 class RecordCollection
 {
     /**
-     * @var array<string, array<array-key, WeakReference>>
+     * @var array<string, array<array-key, Record>>
      */
     private array $records = [];
 
@@ -29,7 +28,7 @@ class RecordCollection
 
     public function addRecord(Record $record): void
     {
-        $this->records[$record->getClassification()][$record->getId()] = WeakReference::create($record);
+        $this->records[$record->getClassification()][$record->getId()] = $record;
     }
 
     /**
@@ -48,58 +47,14 @@ class RecordCollection
     }
 
     /**
-     * @return Generator<Record>
+     * @return array<Record>
      */
-    public function getRecordsByClassification(string $classification): Generator
+    public function getRecords(string $classification = null): array
     {
-        foreach ($this->records[$classification] ?? [] as $identifier => $weakReference) {
-            $record = $weakReference->get();
-            if (null === $record) {
-                unset($this->records[$classification][$identifier]);
-                if (empty($this->records[$classification])) {
-                    unset($this->records[$classification]);
-                }
-            } else {
-                yield $identifier => $record;
-            }
+        if (null === $classification) {
+            return $this->records;
         }
-    }
-
-    public function getRecordByClassificationAndId(string $classification, $id): ?Record
-    {
-        $weakReference = $this->records[$classification][$id] ?? null;
-        if (null === $weakReference) {
-            return null;
-        }
-        /** @var Record|null $record */
-        $record = $weakReference->get();
-        if (null === $record) {
-            unset($this->records[$classification][$id]);
-            if (empty($this->records[$classification])) {
-                unset($this->records[$classification]);
-            }
-        }
-        return $record;
-    }
-
-    /**
-     * @return Generator<Record>
-     */
-    public function getRecordsFlat(): Generator
-    {
-        foreach ($this->records as $classification => $identifiers) {
-            foreach ($identifiers as $identifier => $weakReference) {
-                $record = $weakReference->get();
-                if (null === $record) {
-                    unset($this->records[$classification][$identifier]);
-                    if (empty($this->records[$classification])) {
-                        unset($this->records[$classification]);
-                    }
-                } else {
-                    yield $identifier => $record;
-                }
-            }
-        }
+        return $this->records[$classification] ?? [];
     }
 
     /**
@@ -107,16 +62,19 @@ class RecordCollection
      */
     public function getRecord(string $classification, $id): ?Record
     {
-        $weakReference = $this->records[$classification][$id] ?? null;
-        if (null === $weakReference) {
-            return null;
+        return $this->records[$classification][$id] ?? null;
+    }
+
+    /**
+     * @return Generator<Record>
+     */
+    public function getRecordsFlat(): Generator
+    {
+        foreach ($this->records as $identifiers) {
+            foreach ($identifiers as $identifier => $record) {
+                yield $identifier => $record;
+            }
         }
-        /** @var Record $record */
-        $record = $weakReference->get();
-        if (null === $record) {
-            unset($this->records[$classification][$id]);
-        }
-        return $record;
     }
 
     /**
@@ -124,28 +82,11 @@ class RecordCollection
      */
     public function getClassifications(): array
     {
-        $this->filterRecords();
         return array_keys($this->records);
     }
 
     public function isEmpty(): bool
     {
-        $this->filterRecords();
         return empty($this->records);
-    }
-
-    protected function filterRecords(): void
-    {
-        foreach ($this->records as $classification => $identifiers) {
-            foreach ($identifiers as $identifier => $weakReference) {
-                $record = $weakReference->get();
-                if (null === $record) {
-                    unset($this->records[$classification][$identifier]);
-                    if (empty($this->records[$classification])) {
-                        unset($this->records[$classification]);
-                    }
-                }
-            }
-        }
     }
 }

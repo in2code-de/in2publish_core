@@ -131,7 +131,7 @@ class RecordTreeBuilder
 
         while ($recursionLimit > $currentRecursion++ && !$recordCollection->isEmpty()) {
             $demands = $this->demandsFactory->createDemand();
-            $recordsArray = $records->getRecordsByClassification('pages');
+            $recordsArray = $records->getRecords('pages');
             foreach ($recordsArray as $record) {
                 $demands->addSelect('pages', '', 'pid', $record->getId(), $record);
             }
@@ -142,8 +142,7 @@ class RecordTreeBuilder
 
     public function findAllRecordsOnPages(): RecordCollection
     {
-        /** @var array<Record> $pages */
-        $pages = $this->recordIndex->getRecordByClassification('pages');
+        $pages = $this->recordIndex->getRecords('pages');
         $recordCollection = new RecordCollection($pages);
 
         if ($recordCollection->isEmpty()) {
@@ -160,7 +159,6 @@ class RecordTreeBuilder
 
         $tables = array_flip($tablesAsKeys);
 
-        $pages = $this->recordIndex->getRecordByClassification('pages');
         foreach ($pages as $page) {
             $tablesAllowedOnPage = $this->tcaService->getTablesAllowedOnPage(
                 $page->getId(),
