@@ -39,8 +39,6 @@ use In2code\In2publishCore\Utility\DatabaseUtility;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function array_merge;
-use function get_class;
-use function json_encode;
 
 class TaskRepository
 {

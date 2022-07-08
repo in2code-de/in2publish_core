@@ -29,8 +29,8 @@ namespace In2code\In2publishCore\Component\RemoteProcedureCall;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\RemoteProcedureCall\Exception\StorageIsOfflineException;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoService;
+use In2code\In2publishCore\Component\RemoteProcedureCall\Exception\StorageIsOfflineException;
 use InvalidArgumentException;
 use ReflectionProperty;
 use TYPO3\CMS\Core\Resource\Driver\DriverInterface;

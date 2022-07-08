@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\FileHandling\Service;
 
+use In2code\In2publishCore\Component\Core\FileHandling\Service\Exception\ForeignFileInfoExecutionFailedException;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\Exception\ForeignFileInfoExecutionFailedException;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function array_keys;

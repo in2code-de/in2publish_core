@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\FileHandling\Service;
 
+use In2code\In2publishCore\Component\Core\FileHandling\Service\Exception\EnvelopeSendingFailedException;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Command\Foreign\ExecuteCommand;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Envelope;
 use In2code\In2publishCore\Component\RemoteProcedureCall\EnvelopeDispatcher;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Letterbox;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\Exception\EnvelopeSendingFailedException;
 use In2code\In2publishCore\In2publishCoreException;
 use RuntimeException;
 

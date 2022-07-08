@@ -33,7 +33,6 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Model
 use DateTime;
 use In2code\In2publishCore\Utility\ArrayUtility;
 
-use function get_class;
 use function json_encode;
 
 use const JSON_THROW_ON_ERROR;
@@ -141,7 +140,8 @@ abstract class AbstractTask
         $this->messages[] = $string;
     }
 
-    final public function toArray(): array{
+    final public function toArray(): array
+    {
         $properties = [
             'task_type' => static::class,
             'configuration' => json_encode($this->configuration, JSON_THROW_ON_ERROR),
