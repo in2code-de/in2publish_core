@@ -79,7 +79,10 @@ class RecordIndex
                 ) {
                     $transOrigPointer = $record->getProp($transOrigPointerField);
                     if ($transOrigPointer > 0) {
-                        $translationParent = $records[$transOrigPointer] ?? null;
+                        $translationParent = $this->records->getRecordByClassificationAndId(
+                            $classification,
+                            $transOrigPointer
+                        );
                         if (null !== $translationParent) {
                             $translationParent->addTranslation($record);
                             $record->removeChild($translationParent);

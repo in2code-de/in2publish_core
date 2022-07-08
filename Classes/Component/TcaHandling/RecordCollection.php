@@ -65,6 +65,23 @@ class RecordCollection
         }
     }
 
+    public function getRecordByClassificationAndId(string $classification, $id): ?Record
+    {
+        $weakReference = $this->records[$classification][$id] ?? null;
+        if (null === $weakReference) {
+            return null;
+        }
+        /** @var Record|null $record */
+        $record = $weakReference->get();
+        if (null === $record) {
+            unset($this->records[$classification][$id]);
+            if (empty($this->records[$classification])) {
+                unset($this->records[$classification]);
+            }
+        }
+        return $record;
+    }
+
     /**
      * @return Generator<Record>
      */
