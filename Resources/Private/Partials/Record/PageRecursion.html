@@ -1,4 +1,8 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers" data-namespace-typo3-fluid="true">
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
+	  data-namespace-typo3-fluid="true"
+>
+	<f:comment><![CDATA[This comment prevents that the <publish:/> ns is removed on reformat code.]]></f:comment>
 
 	<f:if condition="{record.children.pages}">
 		<f:for each="{record.children.pages}" as="page">
