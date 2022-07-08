@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller\Traits;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Features\AdminTools\Backend\Button\AdminToolButton;
 use In2code\In2publishCore\Features\AdminTools\Service\ToolsRegistry;
@@ -43,6 +44,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
  */
 trait AdminToolsModuleTemplate
 {
+    use CommonViewVariables;
     use ControllerModuleTemplate {
         render as renderModuleTemplate;
     }
