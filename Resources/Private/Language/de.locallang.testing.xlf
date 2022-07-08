@@ -16,21 +16,6 @@
 				<target state="translated">Folgende Tests wurden übersprungen:</target>
 			</trans-unit>
 
-			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationValuesTest -->
-
-			<trans-unit id="configuration.options_valid">
-				<source>The tested configuration options are valid.</source>
-				<target state="translated">Die getesteten Konfigurationsoptionen sind gültig.</target>
-			</trans-unit>
-			<trans-unit id="configuration.options_invalid">
-				<source>Some tested configuration options are invalid.</source>
-				<target state="translated">Einige der getesteten Konfigurationsoptionen sind ungültig.</target>
-			</trans-unit>
-			<trans-unit id="configuration.breadcrumb_and_disable_parents_active">
-				<source>view.record.breadcrumb and debug.disableParentRecords are both enabled. Breadcrumbs will not be displayed correctly.</source>
-				<target state="translated">view.record.breadcrumb und debug.disableParentRecords sind beide aktiviert. Breadcrumbs werden nicht korrekt dargestellt.</target>
-			</trans-unit>
-
 			<!-- \In2code\In2publishCore\Testing\Tests\Configuration\ConfigurationFormatTest -->
 
 			<trans-unit id="configuration.format_okay">

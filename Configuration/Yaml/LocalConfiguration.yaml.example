@@ -197,9 +197,6 @@ module:
 # @user
 debug:
 
-  # if set to TRUE, parentRecord will not be set for records
-  disableParentRecords: FALSE
-
   # Show foreign key fingerprint instead of throwing an exception.
   showForeignKeyFingerprint: FALSE
 

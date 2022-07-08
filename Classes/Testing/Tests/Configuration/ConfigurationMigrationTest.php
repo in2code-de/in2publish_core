@@ -53,8 +53,6 @@ class ConfigurationMigrationTest implements TestCaseInterface
 
     public function getDependencies(): array
     {
-        return [
-            ConfigurationValuesTest::class,
-        ];
+        return [];
     }
 }

@@ -180,9 +180,6 @@ class ReplaceMarkersServiceTest extends UnitTestCase
             'ignoreFieldsForDifferenceView' => [
                 $table => $getIgnoreFields,
             ],
-            'debug' => [
-                'disableParentRecords' => $isParentRecordDisabled,
-            ],
         ];
         $this->initializeIn2publishConfig($config);
 
