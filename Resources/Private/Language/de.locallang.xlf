@@ -226,6 +226,14 @@
 				<source>The compare tool scans the whole database for differences. This tool is ought to help administrators clean up UID conflicts.</source>
 				<target state="translated">Zeigt unterschiede zwischen den Datenbanken an. Dieses Tools soll Administratoren dabei helfen UID-Konflikte zu lösen.</target>
 			</trans-unit>
+			<trans-unit id="moduleselector.record_inspector">
+				<source>Inspect a record tree</source>
+				<target state="translated">RecordTree Untersuchen</target>
+			</trans-unit>
+			<trans-unit id="moduleselector.record_inspector.description">
+				<source>You can query for a record tree by classification and identifier and inspect it with all of its properties and children.</source>
+				<target state="translated">Hier kann ein RecordTree mittels Klassifikation und Identifikation aufgebaut und untersucht werden..</target>
+			</trans-unit>
 
 			<trans-unit id="system_info.show">
 				<source>Show the system info</source>

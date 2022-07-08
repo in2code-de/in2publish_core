@@ -171,6 +171,12 @@
 			<trans-unit id="moduleselector.compare.description">
 				<source>The compare tool scans the whole database for differences. This tool is ought to help administrators clean up UID conflicts.</source>
 			</trans-unit>
+			<trans-unit id="moduleselector.record_inspector">
+				<source>Inspect a record tree</source>
+			</trans-unit>
+			<trans-unit id="moduleselector.record_inspector.description">
+				<source>You can query for a record tree by classification and identifier and inspect it with all of its properties and children.</source>
+			</trans-unit>
 
 			<trans-unit id="system_info.show">
 				<source>Show the system info</source>
