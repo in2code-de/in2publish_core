@@ -137,6 +137,9 @@ view:
     # Activate Filter buttons
     filterButtons: TRUE
 
+    # show record connection to root record as breadcrumb in overview module. Applies only when debug.allInformation = FALSE.
+    breadcrumb: TRUE
+
   # Backend module Publish files
   files:
     # Activate Filter buttons
@@ -206,7 +209,6 @@ debug:
   # This helps debugging demands which cause exceptions. Disabled to reduce overhead in production environments.
   # Enable this to see which resolver and processor of which table and column is responsible for the demand.
   traceDemand: FALSE
-
 
 # Configuration for tasks
 tasks:
