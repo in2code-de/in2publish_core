@@ -84,17 +84,18 @@ class RecordTreeBuilder
         $this->rawRecordService = $rawRecordService;
     }
 
-    public function buildRecordTree(string $table, int $id): RecordTree
+    public function buildRecordTree(RecordTreeBuildRequest $recordTreeBuildRequest): RecordTree
     {
         $recordTree = new RecordTree();
 
         $recordCollection = new RecordCollection();
 
-        $id = $this->getDefaultLanguageId($table, $id);
+        $id = $this->getDefaultLanguageId($recordTreeBuildRequest);
+        $recordTreeBuildRequest = $recordTreeBuildRequest->withId($id);
 
-        $this->findRequestedRecordWithTranslations($table, $id, $recordTree, $recordCollection);
+        $this->findRequestedRecordWithTranslations($recordTreeBuildRequest, $recordTree, $recordCollection);
 
-        $this->findPagesRecursively($recordCollection, $recordCollection);
+        $this->findPagesRecursively($recordTreeBuildRequest, $recordCollection, $recordCollection);
 
         $recordCollection = $this->findAllRecordsOnPages();
 
@@ -107,13 +108,19 @@ class RecordTreeBuilder
         return $recordTree;
     }
 
-    private function getDefaultLanguageId(string $table, int $id): int
+    private function getDefaultLanguageId(RecordTreeBuildRequest $recordTreeBuildRequest): int
     {
+        $table = $recordTreeBuildRequest->getTable();
+        $id = $recordTreeBuildRequest->getId();
+        if (0 === $id) {
+            return $id;
+        }
+
         $languageField = $GLOBALS['TCA'][$table]['ctrl']['languageField'] ?? null;
         $transOrigPointerField = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'] ?? null;
         if (null !== $languageField && null !== $transOrigPointerField) {
             $record = $this->rawRecordService->getRawRecord($table, $id, 'local');
-            if ($record[$languageField] > 0) {
+            if (null !== $record && $record[$languageField] > 0) {
                 $id = $record[$transOrigPointerField];
             }
         }
@@ -121,11 +128,13 @@ class RecordTreeBuilder
     }
 
     private function findRequestedRecordWithTranslations(
-        string $table,
-        int $id,
+        RecordTreeBuildRequest $recordTreeBuildRequest,
         RecordTree $recordTree,
         RecordCollection $recordCollection
     ): void {
+        $table = $recordTreeBuildRequest->getTable();
+        $id = $recordTreeBuildRequest->getId();
+
         if ('pages' === $table && 0 === $id) {
             $pageTreeRootRecord = $this->recordFactory->createPageTreeRootRecord();
             $recordTree->addChild($pageTreeRootRecord);
@@ -146,10 +155,13 @@ class RecordTreeBuilder
     /**
      * @param RecordCollection<int, Record> $records
      */
-    private function findPagesRecursively(RecordCollection $records, RecordCollection $recordCollection): void
-    {
+    private function findPagesRecursively(
+        RecordTreeBuildRequest $recordTreeBuildRequest,
+        RecordCollection $records,
+        RecordCollection $recordCollection
+    ): void {
         $currentRecursion = 0;
-        $recursionLimit = 5;
+        $recursionLimit = $recordTreeBuildRequest->getPageRecursionLimit();
 
         while ($recursionLimit > $currentRecursion++ && !$recordCollection->isEmpty()) {
             $demands = $this->demandsFactory->createDemand();

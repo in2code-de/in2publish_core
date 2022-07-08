@@ -142,9 +142,6 @@ class In2publishCoreDefiner implements DefinerInterface
                       ->addArray(
                           'factory',
                           Builder::start()
-                                 ->addInteger('maximumPageRecursion', 2)
-                                 ->addInteger('maximumContentRecursion', 6)
-                                 ->addInteger('maximumOverallRecursion', 8)
                                  ->addBoolean('resolvePageRelations', false)
                                  ->addBoolean('includeSysFileReference', false)
                                  ->addBoolean('treatRemovedAndDeletedAsDifference', false)

@@ -44,11 +44,6 @@ Hint:
 > Most versions on package based server software are below 0.12, so the function has been made optional in in2publish.
 > In this case you have to take care of file permissions yourself.
 
-Hint:
-
-> If you are using xdebug for local development, be sure you set max_nesting_level to at least 5 times of the
-> configuration value factory.maximumOverallRecursion to prevent malfunction of in2publish.
-
 ## OS Requirements
 
 These requirements are on top of the basic requirements of TYPO3 CMS 7.6 - 8.7

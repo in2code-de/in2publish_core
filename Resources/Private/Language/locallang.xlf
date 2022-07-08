@@ -20,6 +20,16 @@
 				<source>administration tools</source>
 			</trans-unit>
 
+			<trans-unit id="m1.page_recursion">
+				<source>Depth</source>
+			</trans-unit>
+			<trans-unit id="m1.page_recursion.depth">
+				<source>%d level</source>
+			</trans-unit>
+			<trans-unit id="m1.page_recursion.depths">
+				<source>%d levels</source>
+			</trans-unit>
+
 			<trans-unit id="label_stage">
 				<source>Stage System</source>
 			</trans-unit>

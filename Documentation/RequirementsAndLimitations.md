@@ -56,8 +56,6 @@ In fact in2publish_core resource requirements might outstrip TYPO3s by far, the 
 the more relations you have defined in your TCA.
 
 It is recommended to at least double the max_execution_time and memory_limit.
-If you are using xdebug be sure you set max_nesting_level at least 5 times of the
-setting `factory.maximumOverallRecursion`
 
 # Limitations
 

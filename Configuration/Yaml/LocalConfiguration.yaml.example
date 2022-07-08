@@ -90,20 +90,6 @@ ignoredFields:
 
 # factory settings (configuration about building relations in in2publish)
 factory:
-  # [Performance]
-  # depth of pages to fetch in hierarchy
-  # @user
-  maximumPageRecursion: 2
-
-  # maximum number of relations in one chain
-  # @user
-  maximumContentRecursion: 6
-
-  # maximum number of instance creation recursion.
-  # Minimum: maximumPageRecursion + maximumContentRecursion. Will be ignored if lower.
-  # @user
-  maximumOverallRecursion: 8
-
   # Resolve properties of records (and pages) which target records from "pages" table
   # Use with care: Related pages will be published through the relation chain, too
   resolvePageRelations: FALSE

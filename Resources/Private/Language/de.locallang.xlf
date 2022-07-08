@@ -25,6 +25,19 @@
 				<target state="translated">Tools für Administratoren</target>
 			</trans-unit>
 
+			<trans-unit id="m1.page_recursion">
+				<source>Depth</source>
+				<target state="translated">Tiefe</target>
+			</trans-unit>
+			<trans-unit id="m1.page_recursion.depth">
+				<source>%d level</source>
+				<target state="translated">%d Ebene</target>
+			</trans-unit>
+			<trans-unit id="m1.page_recursion.depths">
+				<source>%d levels</source>
+				<target state="translated">%d Ebenen</target>
+			</trans-unit>
+
 			<trans-unit id="label_stage">
 				<source>Stage System</source>
 				<target state="translated">Redaktionssystem</target>

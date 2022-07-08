@@ -32,17 +32,18 @@ namespace In2code\In2publishCore\Controller;
 
 use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
 use In2code\In2publishCore\Component\Core\RecordTreeBuilder;
+use In2code\In2publishCore\Component\Core\RecordTreeBuildRequest;
 use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
-use In2code\In2publishCore\Domain\Model\RecordTree;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Error\FailureCollector;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use In2code\In2publishCore\Utility\BackendUtility;
 use In2code\In2publishCore\Utility\LogUtility;
 use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -105,18 +106,51 @@ class RecordController extends ActionController
         );
     }
 
+    public function initializeIndexAction(): void
+    {
+        /** @var BackendUserAuthentication $BE_USER */
+        $BE_USER = $GLOBALS['BE_USER'];
+        $data = $BE_USER->getModuleData('tx_in2publishcore_m1') ?? ['pageRecursionLimit' => 1];
+        if ($this->request->hasArgument('pageRecursionLimit')) {
+            $pageRecursionLimit = (int)$this->request->getArgument('pageRecursionLimit');
+            $data['pageRecursionLimit'] = $pageRecursionLimit;
+            $BE_USER->pushModuleData('tx_in2publishcore_m1', $data);
+        } else {
+            $this->request->setArgument('pageRecursionLimit', $data['pageRecursionLimit'] ?? 1);
+        }
+
+        $menuRegistry = $this->moduleTemplate->getDocHeaderComponent()->getMenuRegistry();
+        $menu = $menuRegistry->makeMenu();
+        $menu->setIdentifier('depth');
+        $menu->setLabel(LocalizationUtility::translate('m1.page_recursion', 'in2publish_core'));
+        for ($i = 0; $i <= 10; $i++) {
+            $menuItem = $menu->makeMenuItem();
+            $menuItem->setActive($i === $data['pageRecursionLimit']);
+            if ($i > 1) {
+                $title = LocalizationUtility::translate('m1.page_recursion.depths', 'in2publish_core', [$i]);
+            } else {
+                $title = LocalizationUtility::translate('m1.page_recursion.depth', 'in2publish_core', [$i]);
+            }
+            $menuItem->setTitle($title);
+            $menuItem->setHref($this->uriBuilder->uriFor('index', ['pageRecursionLimit' => $i]));
+            $menu->addMenuItem($menuItem);
+        }
+        $menuRegistry->addMenu($menu);
+    }
+
     /**
      * Create a Record instance of the current selected page
      * If none is chosen, a Record with uid = 0 is created which
      * represents the instance root
      */
-    public function indexAction(): ResponseInterface
+    public function indexAction(int $pageRecursionLimit): ResponseInterface
     {
         $pid = BackendUtility::getPageIdentifier();
         if (!is_int($pid)) {
             $pid = 0;
         }
-        $recordTree = $this->recordTreeBuilder->buildRecordTree('pages', $pid);
+        $request = new RecordTreeBuildRequest('pages', $pid, $pageRecursionLimit);
+        $recordTree = $this->recordTreeBuilder->buildRecordTree($request);
 
         $this->view->assign('recordTree', $recordTree);
         return $this->htmlResponse();
@@ -136,7 +170,8 @@ class RecordController extends ActionController
 
     public function publishRecordAction(int $id): void
     {
-        $recordTree = $this->recordTreeBuilder->buildRecordTree('pages', $id);
+        $request = new RecordTreeBuildRequest('pages', $id, 0);
+        $recordTree = $this->recordTreeBuilder->buildRecordTree($request);
         $this->publisherService->publishRecordTree($recordTree);
         $this->addFlashMessagesAndRedirectToIndex();
     }
