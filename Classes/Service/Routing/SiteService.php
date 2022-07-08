@@ -29,8 +29,8 @@ namespace In2code\In2publishCore\Service\Routing;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Service\Database\RawRecordService;
+use In2code\In2publishCore\Service\ForeignSiteFinder;
 use LogicException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

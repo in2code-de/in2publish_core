@@ -29,9 +29,9 @@ namespace In2code\In2publishCore\Features\ContextMenuPublishEntry\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\Exception\TaskExecutionFailedException;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
-use In2code\In2publishCore\Component\Core\RecordTreeBuilder;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\Exception\TaskExecutionFailedException;
 use In2code\In2publishCore\Service\Permission\PermissionService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

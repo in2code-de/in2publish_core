@@ -31,8 +31,8 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
-use In2code\In2publishCore\Component\Core\RecordTreeBuilder;
-use In2code\In2publishCore\Component\Core\RecordTreeBuildRequest;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;

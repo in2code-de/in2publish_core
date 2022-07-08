@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Event;
  */
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
-use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
 final class DemandsForTextWereCollected
 {

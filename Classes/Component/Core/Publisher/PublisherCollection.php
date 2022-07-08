@@ -6,7 +6,7 @@ namespace In2code\In2publishCore\Component\Core\Publisher;
 
 use In2code\In2publishCore\Component\Core\Publisher\Exception\PublisherNotFoundException;
 use In2code\In2publishCore\Component\Core\Publisher\Exception\PublisherOverflowException;
-use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
 use function bindec;
 use function decbin;

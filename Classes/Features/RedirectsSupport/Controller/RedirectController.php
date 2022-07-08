@@ -36,13 +36,13 @@ use In2code\In2publishCore\Component\Core\DemandResolver\Select\SelectDemandReso
 use In2code\In2publishCore\Component\Core\DemandResolver\SysRedirect\SysRedirectSelectDemandResolver;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
 use In2code\In2publishCore\Component\Core\RecordCollection;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
-use In2code\In2publishCore\Domain\Model\RecordTree;
-use In2code\In2publishCore\Domain\Service\ForeignSiteFinder;
 use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\BackButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Backend\Button\SaveAndPublishButton;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Dto\Filter;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Repository\SysRedirectRepository;
+use In2code\In2publishCore\Service\ForeignSiteFinder;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 use TYPO3\CMS\Core\Imaging\IconFactory;

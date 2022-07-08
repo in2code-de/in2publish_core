@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\Demand;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
-use In2code\In2publishCore\Domain\Model\DatabaseRecord;
+use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use PHPUnit\Framework\TestCase;
 
 /**

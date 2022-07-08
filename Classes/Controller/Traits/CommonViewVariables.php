@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Controller\Traits;
 
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
-use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Service\Environment\EnvironmentService;
+use In2code\In2publishCore\Service\ExecutionTimeService;
 use In2code\In2publishCore\Utility\ExtensionUtility;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 

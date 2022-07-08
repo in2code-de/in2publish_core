@@ -20,7 +20,7 @@ will be asked.
 ### Example
 
 ```php
-use In2code\In2publishCore\Domain\Model\FileRecord;
+use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored;
 
 class RecordIgnoreListener

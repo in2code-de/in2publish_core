@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactory;
 use In2code\In2publishCore\DependencyInjection\DatabaseRecordFactoryFactoryCompilerPass;
-use In2code\In2publishCore\Domain\Factory\DatabaseRecordFactory;
 use In2code\In2publishCore\Service\Context\ContextService;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

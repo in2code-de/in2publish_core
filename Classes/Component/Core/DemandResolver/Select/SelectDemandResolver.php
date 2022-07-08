@@ -9,11 +9,11 @@ use In2code\In2publishCore\Component\Core\Demand\CallerAwareDemandsCollection;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\DemandResolver\Exception\InvalidDemandException;
+use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordIndex;
 use In2code\In2publishCore\Component\Core\Repository\DualDatabaseRepository;
 use In2code\In2publishCore\Component\Core\Repository\SingleDatabaseRepository;
-use In2code\In2publishCore\Domain\Factory\RecordFactory;
 
 use function array_key_exists;
 use function array_keys;

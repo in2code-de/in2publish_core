@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Tests\Functional\Features\PreventParallelPublishing\Service;
 
-use In2code\In2publishCore\Domain\Model\DatabaseRecord;
-use In2code\In2publishCore\Domain\Model\MmDatabaseRecord;
-use In2code\In2publishCore\Domain\Model\RecordTree;
+use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
+use In2code\In2publishCore\Component\Core\Record\Model\MmDatabaseRecord;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Features\PreventParallelPublishing\Domain\Repository\RunningRequestRepository;
 use In2code\In2publishCore\Features\PreventParallelPublishing\Service\RunningRequestService;

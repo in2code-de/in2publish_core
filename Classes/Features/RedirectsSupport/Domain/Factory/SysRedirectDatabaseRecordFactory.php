@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Factory;
 
-use In2code\In2publishCore\Domain\Factory\DatabaseRecordFactory;
-use In2code\In2publishCore\Domain\Model\DatabaseRecord;
+use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactory;
+use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\SysRedirectDatabaseRecord;
 
 class SysRedirectDatabaseRecordFactory implements DatabaseRecordFactory

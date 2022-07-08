@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Publisher;
 
-use In2code\In2publishCore\Domain\Model\AbstractDatabaseRecord;
-use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Component\Core\Record\Model\AbstractDatabaseRecord;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function array_diff_assoc;

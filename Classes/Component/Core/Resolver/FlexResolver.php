@@ -6,10 +6,10 @@ namespace In2code\In2publishCore\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\PreProcessing\Service\FlexFormFlatteningService;
+use In2code\In2publishCore\Component\Core\Record\Model\DatabaseEntityRecord;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
+use In2code\In2publishCore\Component\Core\Record\Model\VirtualFlexFormRecord;
 use In2code\In2publishCore\Component\Core\Service\ResolverService;
-use In2code\In2publishCore\Domain\Model\DatabaseEntityRecord;
-use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Model\VirtualFlexFormRecord;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Service\FlexFormService;
 

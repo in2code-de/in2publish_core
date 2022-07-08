@@ -30,8 +30,8 @@ namespace In2code\In2publishCore\Features\LogsIntegration\Controller;
  */
 
 use CoStack\Logs\Controller\LogController as LogsController;
-use In2code\In2publishCore\Domain\Service\ExecutionTimeService;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
+use In2code\In2publishCore\Service\ExecutionTimeService;
 use TYPO3\CMS\Fluid\View\TemplateView;
 use TYPO3Fluid\Fluid\View\ViewInterface;
 

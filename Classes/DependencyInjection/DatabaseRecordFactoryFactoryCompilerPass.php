@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\DependencyInjection;
 
-use In2code\In2publishCore\Domain\Factory\DatabaseRecordFactoryFactory;
+use In2code\In2publishCore\Component\Core\Record\Factory\DatabaseRecordFactoryFactory;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;

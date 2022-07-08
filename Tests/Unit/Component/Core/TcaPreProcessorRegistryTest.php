@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Tests\Unit\Component\Core;
 
 use Exception;
-use In2code\In2publishCore\Domain\Model\DatabaseRecord;
+use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
 use function bin2hex;
 use function random_bytes;
 
 /**
- * @coversDefaultClass \In2code\In2publishCore\Domain\Model\DatabaseRecord
+ * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord
  */
 class TcaPreProcessorRegistryTest extends UnitTestCase
 {

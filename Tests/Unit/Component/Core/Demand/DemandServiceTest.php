@@ -8,11 +8,11 @@ use In2code\In2publishCore\Component\Core\Demand\DemandBuilder;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
+use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use In2code\In2publishCore\Component\Core\Service\ResolverService;
-use In2code\In2publishCore\Domain\Model\DatabaseRecord;
-use In2code\In2publishCore\Domain\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
 /**

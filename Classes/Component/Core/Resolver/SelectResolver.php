@@ -6,8 +6,8 @@ namespace In2code\In2publishCore\Component\Core\Resolver;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor;
-use In2code\In2publishCore\Domain\Model\Record;
-use In2code\In2publishCore\Domain\Service\ReplaceMarkersService;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
+use In2code\In2publishCore\Service\ReplaceMarkersService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function preg_match;

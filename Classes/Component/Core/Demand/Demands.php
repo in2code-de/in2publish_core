@@ -2,8 +2,8 @@
 
 namespace In2code\In2publishCore\Component\Core\Demand;
 
-use In2code\In2publishCore\Domain\Model\Node;
-use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Component\Core\Record\Model\Node;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
 interface Demands
 {

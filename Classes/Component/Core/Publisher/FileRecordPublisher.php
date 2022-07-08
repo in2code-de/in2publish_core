@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Publisher;
 
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
-use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverService;
 use In2code\In2publishCore\Component\Core\Publisher\Exception\FalPublisherExecutionFailedException;
+use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
+use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
-use In2code\In2publishCore\Domain\Model\FileRecord;
-use In2code\In2publishCore\Domain\Model\Record;
 use TYPO3\CMS\Core\Database\Connection;
 
 use function bin2hex;

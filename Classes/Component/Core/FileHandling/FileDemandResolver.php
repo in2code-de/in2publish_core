@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Component\Core\FileHandling;
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileInfoService;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\LocalFileInfoService;
-use In2code\In2publishCore\Domain\Factory\RecordFactory;
+use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
 
 class FileDemandResolver
 {

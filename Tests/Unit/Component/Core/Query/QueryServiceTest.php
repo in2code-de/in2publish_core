@@ -6,12 +6,12 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Query;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
 use In2code\In2publishCore\Component\Core\DemandResolver\Select\SelectDemandResolver;
+use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
+use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordIndex;
 use In2code\In2publishCore\Component\Core\Repository\DualDatabaseRepository;
 use In2code\In2publishCore\Component\Core\Repository\SingleDatabaseRepository;
-use In2code\In2publishCore\Domain\Factory\RecordFactory;
-use In2code\In2publishCore\Domain\Model\DatabaseRecord;
 use PHPUnit\Framework\TestCase;
 
 /**

@@ -29,7 +29,7 @@ This (bad) example shows how to stop the publishing process when there are more 
 ```php
 <?php
 
-use In2code\In2publishCore\Domain\Model\Record;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 
 class SomeFieldNamePublishingBlocker

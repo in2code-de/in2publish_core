@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Event;
 
-use In2code\In2publishCore\Domain\Model\RecordTree;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 
 final class RecordRelationsWereResolved
 {
