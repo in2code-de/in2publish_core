@@ -58,10 +58,11 @@ class RunningRequestRepository
 
     public function flush(): void
     {
-        if (!empty($this->inserts)) {
-            $this->localDatabase->bulkInsert(self::RUNNING_REQUEST_TABLE_NAME, $this->inserts);
-            $this->inserts = [];
+        if (empty($this->inserts)) {
+            return;
         }
+        $this->localDatabase->bulkInsert(self::RUNNING_REQUEST_TABLE_NAME, $this->inserts);
+        $this->inserts = [];
     }
 
     /**
