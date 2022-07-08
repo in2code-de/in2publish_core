@@ -197,13 +197,14 @@ class RecordController extends ActionController
     {
         $failures = $this->failureCollector->getFailures();
 
+        $executionTime = $this->executionTimeService->getExecutionTime();
         if (empty($failures)) {
             $message = '';
-            $title = LocalizationUtility::translate('record_published', 'in2publish_core');
+            $title = LocalizationUtility::translate('record_published', 'in2publish_core', [$executionTime]);
             $severity = AbstractMessage::OK;
         } else {
             $message = '"' . implode('"; "', array_keys($failures)) . '"';
-            $title = LocalizationUtility::translate('record_publishing_failure', 'in2publish_core');
+            $title = LocalizationUtility::translate('record_publishing_failure', 'in2publish_core', [$executionTime]);
             $mostCriticalLogLevel = $this->failureCollector->getMostCriticalLogLevel();
             $severity = LogUtility::translateLogLevelToSeverity($mostCriticalLogLevel);
         }

@@ -37,10 +37,10 @@
 				<source>Production System</source>
 			</trans-unit>
 			<trans-unit id="record_published">
-				<source>The selected record has been published successfully.</source>
+				<source>The selected record has been published successfully. (Duration: %s)</source>
 			</trans-unit>
 			<trans-unit id="record_publishing_failure">
-				<source>One or more errors occurred during publishing. Please check the logs.</source>
+				<source>One or more errors occurred during publishing. Please check the logs. (Duration: %s)</source>
 			</trans-unit>
 			<trans-unit id="relation_resolving_errors">
 				<source>One or more errors occurred during relation resolving. Please check the logs.</source>

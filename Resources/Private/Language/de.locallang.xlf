@@ -47,12 +47,12 @@
 				<target state="translated">Produktivsystem</target>
 			</trans-unit>
 			<trans-unit id="record_published">
-				<source>The selected record has been published successfully.</source>
-				<target state="translated">Der ausgewählte Datensatz wurde erfolgreich veröffentlicht.</target>
+				<source>The selected record has been published successfully. (Duration: %s)</source>
+				<target state="translated">Der ausgewählte Datensatz wurde erfolgreich veröffentlicht. (Dauer: %s)</target>
 			</trans-unit>
 			<trans-unit id="record_publishing_failure">
-				<source>One or more errors occurred during publishing. Please check the logs.</source>
-				<target state="translated">Ein oder mehrere Fehler traten während des Publizierungsvorgangs auf. Bitte prüfen Sie die Fehlerlogs.</target>
+				<source>One or more errors occurred during publishing. Please check the logs. (Duration: %s)</source>
+				<target state="translated">Ein oder mehrere Fehler traten während des Publizierungsvorgangs auf. Bitte prüfen Sie die Fehlerlogs. (Dauer: %s)</target>
 			</trans-unit>
 			<trans-unit id="relation_resolving_errors">
 				<source>One or more errors occurred during relation resolving. Please check the logs.</source>
