@@ -1216,9 +1216,6 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                 }
             }
         } else {
-            if (in_array($tableName, $excludedTableNames, true)) {
-                return $records;
-            }
             if (!empty($columnConfiguration['MM'])) {
                 // skip if this record is not the owning side of the relation
                 if (!empty($columnConfiguration['MM_oppositeUsage'])) {
@@ -1241,6 +1238,9 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                     );
                 }
                 $mmTableName = $columnConfiguration['MM'];
+                if (in_array($mmTableName, $excludedTableNames)) {
+                    return $records;
+                }
                 $localProperties = $this->findPropertiesByProperty(
                     $this->localDatabase,
                     $this->getLocalField($columnConfiguration),
@@ -1266,7 +1266,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                 $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $mmTableName);
                 foreach ($records as $relatedRecord) {
                     if ($relatedRecord->hasLocalProperty('tablenames')) {
-                        $originalTableName = $relatedRecord->hasLocalProperty('tablenames');
+                        $originalTableName = $relatedRecord->getLocalProperty('tablenames');
                     } else {
                         $originalTableName = $tableName;
                     }
@@ -1292,6 +1292,9 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                     }
                 }
             } else {
+                if (in_array($tableName, $excludedTableNames)) {
+                    return $records;
+                }
                 if (!empty($overrideIdentifiers)) {
                     $identifiers = $overrideIdentifiers;
                 } else {

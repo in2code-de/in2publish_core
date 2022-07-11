@@ -40,7 +40,6 @@ class SelectProcessor extends AbstractProcessor
     public const SPECIAL = 'special';
 
     protected array $forbidden = [
-        'itemsProcFunc is not supported' => self::ITEMS_PROC_FUNC,
         'fileFolder is not supported' => self::FILE_FOLDER,
         'allowNonIdValues can not be resolved by in2publish' => self::ALLOW_NON_ID_VALUES,
         'MM_oppositeUsage is not supported' => self::MM_OPPOSITE_USAGE,
