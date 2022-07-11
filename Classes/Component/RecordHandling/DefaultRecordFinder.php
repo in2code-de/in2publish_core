@@ -1205,9 +1205,6 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                 }
             }
         } else {
-            if (in_array($tableName, $excludedTableNames)) {
-                return $records;
-            }
             if (!empty($columnConfiguration['MM'])) {
                 // skip if this record is not the owning side of the relation
                 if (!empty($columnConfiguration['MM_oppositeUsage'])) {
@@ -1230,6 +1227,9 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                     );
                 }
                 $mmTableName = $columnConfiguration['MM'];
+                if (in_array($mmTableName, $excludedTableNames)) {
+                    return $records;
+                }
                 $localProperties = $this->findPropertiesByProperty(
                     $this->localDatabase,
                     $this->getLocalField($columnConfiguration),
@@ -1281,6 +1281,9 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                     }
                 }
             } else {
+                if (in_array($tableName, $excludedTableNames)) {
+                    return $records;
+                }
                 if (!empty($overrideIdentifiers)) {
                     $identifiers = $overrideIdentifiers;
                 } else {
