@@ -5,6 +5,7 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\Publisher;
 use In2code\In2publishCore\Component\Core\Publisher\DatabaseRecordPublisher;
 use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
+use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Database\Connection;
@@ -24,6 +25,9 @@ class DatabaseRecordPublisherTest extends UnitTestCase
 
         $databaseRecord = $this->createMock(DatabaseRecord::class);
         $this->assertTrue($databaseRecordPublisher->canPublish($databaseRecord));
+
+        $folderRecord = $this->createMock(FolderRecord::class);
+        $this->assertFalse($databaseRecordPublisher->canPublish($folderRecord));
 
         $fileRecord = $this->createMock(FileRecord::class);
         $this->assertFalse($databaseRecordPublisher->canPublish($fileRecord));
