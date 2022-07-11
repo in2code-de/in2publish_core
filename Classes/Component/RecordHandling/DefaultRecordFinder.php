@@ -1285,7 +1285,7 @@ class DefaultRecordFinder implements RecordFinder, LoggerAwareInterface
                         continue;
                     }
                     if (!in_array($originalTableName, $excludedTableNames, true)) {
-                        $originalRecord = $this->findByIdentifier($localUid, $originalTableName);
+                        $originalRecord = $this->findByIdentifier($localUid ?? $foreignUid, $originalTableName);
                         if ($originalRecord !== null) {
                             $relatedRecord->addRelatedRecord($originalRecord);
                         }
