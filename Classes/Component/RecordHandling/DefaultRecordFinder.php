@@ -1274,7 +1274,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                         continue;
                     }
                     if (!in_array($originalTableName, $excludedTableNames)) {
-                        $originalRecord = $this->findByIdentifier($localUid, $originalTableName);
+                        $originalRecord = $this->findByIdentifier($localUid ?? $foreignUid, $originalTableName);
                         if ($originalRecord !== null) {
                             $relatedRecord->addRelatedRecord($originalRecord);
                         }
