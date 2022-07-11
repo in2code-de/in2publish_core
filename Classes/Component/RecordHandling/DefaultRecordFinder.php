@@ -1255,7 +1255,7 @@ class DefaultRecordFinder extends CommonRepository implements RecordFinder, Logg
                 $records = $this->convertPropertyArraysToRecords($localProperties, $foreignProperties, $mmTableName);
                 foreach ($records as $relatedRecord) {
                     if ($relatedRecord->hasLocalProperty('tablenames')) {
-                        $originalTableName = $relatedRecord->hasLocalProperty('tablenames');
+                        $originalTableName = $relatedRecord->getLocalProperty('tablenames');
                     } else {
                         $originalTableName = $tableName;
                     }
