@@ -10,6 +10,7 @@ use In2code\In2publishCore\Component\Core\Publisher\Publisher;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherCollection;
 use In2code\In2publishCore\Component\Core\Publisher\ReversiblePublisher;
 use In2code\In2publishCore\Component\Core\Publisher\TransactionalPublisher;
+use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
@@ -72,6 +73,38 @@ class PublisherCollectionTest extends UnitTestCase
         $this->assertGreaterThan($arrayKeyStandardPublisher, $arrayKeyTransactionalPublisher);
         $this->assertGreaterThan($arrayKeyStandardPublisher, $arrayKeyFinishablePublisher);
         $this->assertGreaterThan($arrayKeyFinishablePublisher, $arrayKeyTransactionalPublisher);
+    }
+
+    /**
+     * @covers ::publish
+     */
+    public function testPublishIsCalledByTheFirstPublisherThatCanPublishARecord()
+    {
+        $publisherCollection = new PublisherCollection();
+        $reflectionPropertyPublishers = new \ReflectionProperty($publisherCollection, 'publishers');
+        $reflectionPropertyPublishers->setAccessible(true);
+
+        $dbRecord = $this->createMock(DatabaseRecord::class);
+
+        $transactionalPublisher = $this->createMock(DatabaseRecordPublisher::class);
+        $transactionalPublisher->method('canPublish')->with($dbRecord)->willReturn(true);
+        $transactionalPublisher->expects($this->once())->method('publish');
+
+        $standardPublisher = $this->createMock(Publisher::class);
+        $standardPublisher->method('canPublish')->with($dbRecord)->willReturn(true);
+        $standardPublisher->expects($this->never())->method('publish');
+
+        $finishablePublisher = $this->createMock(FileRecordPublisher::class);
+        $finishablePublisher->method('canPublish')->with($dbRecord)->willReturn(false);
+        $finishablePublisher->expects($this->never())->method('publish');
+
+        $publisherCollection->addPublisher($transactionalPublisher);
+        $publisherCollection->addPublisher($standardPublisher);
+        $publisherCollection->addPublisher($finishablePublisher);
+
+        $dbRecord = $this->createMock(DatabaseRecord::class);
+
+        $publisherCollection->publish($dbRecord);
     }
 
     /**
@@ -171,6 +204,7 @@ class PublisherCollectionTest extends UnitTestCase
 
             public function publish(Record $record)
             {
+                $GLOBALS['number_of_calls_publish']++;
             }
         };
     }
@@ -206,6 +240,7 @@ class PublisherCollectionTest extends UnitTestCase
 
             public function publish(Record $record)
             {
+                $GLOBALS['number_of_calls_publish']++;
             }
         };
     }
@@ -241,6 +276,7 @@ class PublisherCollectionTest extends UnitTestCase
 
             public function publish(Record $record)
             {
+                $GLOBALS['number_of_calls_publish']++;
             }
         };
     }
