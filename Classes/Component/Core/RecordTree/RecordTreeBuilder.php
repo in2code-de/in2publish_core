@@ -103,6 +103,8 @@ class RecordTreeBuilder
 
         $this->recordIndex->connectTranslations();
 
+        $this->recordIndex->processDependencies();
+
         $this->eventDispatcher->dispatch(new RecordRelationsWereResolved($recordTree));
 
         if ($defaultIdRequest->getId() !== $request->getId()) {

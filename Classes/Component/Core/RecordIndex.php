@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core;
 
+use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
+use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
+use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
+use TYPO3\CMS\Core\Database\Connection;
 
+use function array_key_first;
 use function array_search;
+use function implode;
 
 class RecordIndex
 {
@@ -14,10 +20,27 @@ class RecordIndex
      * @var RecordCollection<int, Record>
      */
     private RecordCollection $records;
+    private DemandsFactory $demandsFactory;
+    private Connection $localDatabase;
+    private DemandResolver $demandResolver;
 
     public function __construct()
     {
         $this->records = new RecordCollection();
+    }
+
+    public function injectDemandsFactory(DemandsFactory $demandsFactory): void
+    {
+        $this->demandsFactory = $demandsFactory;
+    }
+
+    public function injectLocalDatabase(Connection $localDatabase): void
+    {
+        $this->localDatabase = $localDatabase;
+    }
+    public function injectDemandResolver(DemandResolver $demandResolver): void
+    {
+        $this->demandResolver = $demandResolver;
     }
 
     /**
@@ -52,6 +75,14 @@ class RecordIndex
     public function getRecord(string $classification, $id): ?Record
     {
         return $this->records->getRecord($classification, $id);
+    }
+
+    /**
+     * @return array<Record>
+     */
+    public function getRecordsByProperties(string $classification, array $properties): array
+    {
+        return $this->records->getRecordsByProperties($classification, $properties);
     }
 
     public function connectTranslations(): void
@@ -113,5 +144,48 @@ class RecordIndex
                 }
             }
         }
+    }
+
+    public function processDependencies(): void
+    {
+        $demands = $this->demandsFactory->createDemand();
+        $dependencyTree = new RecordTree();
+
+        $this->records->map(function (Record $record) use ($demands, $dependencyTree): void {
+            $dependencies = $record->getDependencies();
+            foreach ($dependencies as $dependency) {
+                $classification = $dependency->getClassification();
+                $properties = $dependency->getProperties();
+                if (!$this->records->getRecordsByProperties($classification, $properties)) {
+                    if (isset($properties['uid'])) {
+                        $demands->addSelect($classification, '', 'uid', $properties['uid'], $dependencyTree);
+                    } else {
+                        $property = array_key_first($properties);
+                        $value = $properties[$property];
+                        unset($properties[$property]);
+                        $where = [];
+                        foreach ($properties as $property => $value) {
+                            $quotedIdentifier = $this->localDatabase->quoteIdentifier($property);
+                            $quotedValue = $this->localDatabase->quote($value);
+                            $where[] = $quotedIdentifier . '=' . $quotedValue;
+                        }
+                        $where = implode(' AND ', $where);
+                        $demands->addSelect($classification, $where, $property, $value, $dependencyTree);
+                    }
+                }
+            }
+        });
+
+        $recordCollection = new RecordCollection();
+        $this->demandResolver->resolveDemand($demands, $recordCollection);
+
+        $recordCollection->addRecords($this->records);
+
+        $this->records->map(function (Record $record) use ($recordCollection): void {
+            $dependencies = $record->getDependencies();
+            foreach ($dependencies as $dependency) {
+                $dependency->fulfill($recordCollection);
+            }
+        });
     }
 }

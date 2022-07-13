@@ -31,8 +31,13 @@ namespace In2code\In2publishCore\Controller;
  */
 
 use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
+use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
+use In2code\In2publishCore\Component\Core\Record\Service\RecordDependencyResolver;
+use In2code\In2publishCore\Component\Core\RecordIndex;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
+use In2code\In2publishCore\Component\Core\RecordTree\Traverser\RecordTreeTraverser;
 use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
@@ -51,6 +56,7 @@ use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 use function array_keys;
+use function array_merge;
 use function implode;
 use function is_int;
 use function json_encode;
@@ -73,6 +79,8 @@ class RecordController extends ActionController
     protected PermissionService $permissionService;
     protected RecordTreeBuilder $recordTreeBuilder;
     protected PublisherService $publisherService;
+    protected RecordIndex $recordIndex;
+    protected RecordDependencyResolver $recordDependencyResolver;
 
     public function injectFailureCollector(FailureCollector $failureCollector): void
     {
@@ -104,6 +112,16 @@ class RecordController extends ActionController
             '',
             false
         );
+    }
+
+    public function injectRecordIndex(RecordIndex $recordIndex): void
+    {
+        $this->recordIndex = $recordIndex;
+    }
+
+    public function injectRecordDependencyResolver(RecordDependencyResolver $recordDependencyResolver): void
+    {
+        $this->recordDependencyResolver = $recordDependencyResolver;
     }
 
     public function initializeIndexAction(): void
@@ -152,6 +170,76 @@ class RecordController extends ActionController
         $request = new RecordTreeBuildRequest('pages', $pid, $pageRecursionLimit);
         $recordTree = $this->recordTreeBuilder->buildRecordTree($request);
 
+        //$traverser = new RecordTreeTraverser();
+        //$traverser->addVisitor(function (string $event, Record $record) {
+        //    if ($event !== RecordTreeTraverser::EVENT_ENTER) {
+        //        return;
+        //    }
+        //    $isPublishable = $record->isPublishable();
+        //});
+        //$traverser->run($recordTree);
+
+        //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($recordTree, __FILE__ . '@' . __LINE__, 20, false, true, false, [], ['temporaryCacheDirectory']);die(__FILE__ . '@' . __LINE__);
+        //
+        //$reasons = $this->recordDependencyResolver->getUnmetDependencies($recordTree);
+        //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump($reasons, __FILE__ . '@' . __LINE__, 20, false, true, false, [], ['temporaryCacheDirectory']);die(__FILE__ . '@' . __LINE__);
+
+        //foreach ($deps as &$dep) {
+        //    $toClass = $dep->getToClassifier();
+        //    $toId = $dep->getToId();
+        //    $fromRecord = $dep->getRecord();
+        //    $toRecord = $this->recordIndex->getRecord($toClass, $toId);
+        //    if (null === $toRecord) {
+        //        $toRecord = new class($toClass, $toId) {
+        //            private $toClass;
+        //            private $toId;
+        //
+        //            public function __construct($toClass, $toId)
+        //            {
+        //                $this->toClass = $toClass;
+        //                $this->toId = $toId;
+        //            }
+        //
+        //            public function __toString(): string
+        //            {
+        //                return $this->toClass . ':' . $this->toId;
+        //            }
+        //
+        //            public function getClassification(): string
+        //            {
+        //                return $this->toClass;
+        //            }
+        //        };
+        //    }
+        //    $dep = (string)$fromRecord
+        //        . '('
+        //        . $fromRecord->getClassification()
+        //        . '['
+        //        . $fromRecord->getId()
+        //        . '])'
+        //        . ' -> '
+        //        . (string)$toRecord
+        //        . '('
+        //        . $toRecord->getClassification()
+        //        . '['
+        //        . $toRecord->getId()
+        //        . '])'
+        //        . ': '
+        //        . $dep->getReason();
+        //}
+        //unset($dep);
+        //\TYPO3\CMS\Extbase\Utility\DebuggerUtility::var_dump(
+        //    $deps,
+        //    __FILE__ . '@' . __LINE__,
+        //    20,
+        //    false,
+        //    true,
+        //    false,
+        //    [],
+        //    []
+        //);
+        //die(__FILE__ . '@' . __LINE__);
+
         $this->view->assign('recordTree', $recordTree);
         return $this->htmlResponse();
     }
@@ -172,7 +260,10 @@ class RecordController extends ActionController
     {
         $request = new RecordTreeBuildRequest('pages', $id, 0);
         $recordTree = $this->recordTreeBuilder->buildRecordTree($request);
-        $this->publisherService->publishRecordTree($recordTree);
+
+        $publishingContext = new PublishingContext($recordTree);
+        $this->publisherService->publish($publishingContext);
+
         $this->addFlashMessagesAndRedirectToIndex();
     }
 

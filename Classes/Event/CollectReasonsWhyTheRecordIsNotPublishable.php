@@ -29,19 +29,43 @@ namespace In2code\In2publishCore\Event;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\Core\Reason\Reason;
+use In2code\In2publishCore\Component\Core\Reason\Reasons;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 
-final class VoteIfRecordShouldBeSkipped extends AbstractVotingEvent
+final class CollectReasonsWhyTheRecordIsNotPublishable
 {
     private Record $record;
+    private Reasons $reasons;
 
     public function __construct(Record $record)
     {
         $this->record = $record;
+        $this->reasons = new Reasons();
     }
 
     public function getRecord(): Record
     {
         return $this->record;
+    }
+
+    public function addReason(Reason $reason): void
+    {
+        $this->reasons->addReason($reason);
+    }
+
+    public function addReasons(Reasons $reasons): void
+    {
+        $this->reasons->addReasons($reasons);
+    }
+
+    public function getReasons(): Reasons
+    {
+        return $this->reasons;
+    }
+
+    public function isPublishable(): bool
+    {
+        return $this->reasons->isEmpty();
     }
 }

@@ -94,4 +94,18 @@ interface Record extends Node
      * @return int
      */
     public function getTransOrigPointer(): int;
+
+    /**
+     * @return array<Dependency>
+     */
+    public function getDependencies(): array;
+
+    /**
+     * @return array<Dependency>
+     */
+    public function getAllDependencies(): array;
+
+    public function isPublishable(): bool;
+
+    public function __toString(): string;
 }

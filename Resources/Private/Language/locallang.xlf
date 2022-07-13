@@ -594,6 +594,22 @@
 			<trans-unit id="module_m3_index_content">
 				<source>Admin tools</source>
 			</trans-unit>
+
+			<trans-unit id="record.reason.requires_translation_parent">
+				<source>The record in default language must be published for a translated record to be visible.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.requires_published_page">
+				<source>Records only exist on pages, therefore the page "%s" must exist and have the same visibility.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.missing_dependency">
+				<source>This record depends on the record "%s", which will not be published with this record.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.missing_dependency">
+				<source>The record with classification "%s" and properties "%s" does not exist.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.shortcut_record">
+				<source>The record "%s" is a target of the shortcut record "%s". The target must be published before the shortcut record can be published.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

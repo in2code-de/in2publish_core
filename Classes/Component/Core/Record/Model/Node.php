@@ -14,4 +14,9 @@ interface Node
     public function getId();
 
     public function addChild(Record $record): void;
+
+    /**
+     * @return array<string, array<int|string, Record>>
+     */
+    public function getChildren(): array;
 }

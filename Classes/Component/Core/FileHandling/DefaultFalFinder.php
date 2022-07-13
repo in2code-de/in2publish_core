@@ -188,9 +188,7 @@ class DefaultFalFinder
         }
 
         if ($onlyRoot) {
-            $recordTree = new RecordTree();
-            $recordTree->addChild($folderRecord);
-            return $recordTree;
+            return new RecordTree([$folderRecord]);
         }
 
         $localFolderContents = $this->fileSystemInfoService->listFolderContents(
@@ -300,9 +298,7 @@ class DefaultFalFinder
             }
         }
 
-        $recordTree = new RecordTree();
-        $recordTree->addChild($folderRecord);
-        return $recordTree;
+        return new RecordTree([$folderRecord]);
     }
 
     public function findFileRecord(?string $combinedIdentifier): RecordTree
@@ -379,8 +375,6 @@ class DefaultFalFinder
             }
         }
 
-        $recordTree = new RecordTree();
-        $recordTree->addChild($fileRecord);
-        return $recordTree;
+        return new RecordTree([$fileRecord]);
     }
 }

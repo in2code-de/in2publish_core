@@ -38,6 +38,7 @@ Removed Events:
 * RootRecordCreationWasFinished -> RecordRelationsWereResolved
 * FolderInstanceWasCreated -> RecordWasCreated
 * FolderWasPublished -> PublishingOfOneRecordEnded
+* VoteIfRecordShouldBeSkipped -> CollectReasonsWhyTheRecordIsNotPublishable
 
 ## Affected Installations
 

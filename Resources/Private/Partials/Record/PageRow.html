@@ -13,13 +13,27 @@
 			</f:if>
 			<publish:Miscellaneous.GetPropertyFromStagingDefinition record="{record}" propertyName="{config.view.titleField}" stagingLevel="local" fallbackProperty="title"/>
 			<i class="in2publish-icon-info" data-action="opendirtypropertieslistcontainer"></i>
-			<f:link.action
-				action="publishRecord"
-				arguments="{id:record.id}"
-				title="{f:translate(key:'publish_pages', default:'Publish this page')}"
-			>
-				PUBLISH
-			</f:link.action>
+			<f:if condition="{record.publishable}">
+				<f:then>
+					<f:link.action
+						action="publishRecord"
+						arguments="{id:record.id}"
+						title="{f:translate(key:'publish_pages', default:'Publish this page')}"
+					>
+						PUBLISH
+					</f:link.action>
+				</f:then>
+				<f:else>
+
+					<f:for each="{record.allDependencies}" as="dependency">
+						<f:if condition="!{dependency.fulfilled}">
+							<span title="{dependency}">
+								R
+							</span>
+						</f:if>
+					</f:for>
+				</f:else>
+			</f:if>
 		</div>
 
 		<f:comment>

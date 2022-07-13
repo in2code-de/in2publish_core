@@ -2,8 +2,14 @@
 
 namespace In2code\In2publishCore\Component\Core;
 
+use Closure;
 use Generator;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
+
+use Iterator;
+use IteratorAggregate;
+
+use NoRewindIterator;
 
 use function array_keys;
 use function is_array;
@@ -11,7 +17,7 @@ use function is_array;
 /**
  * This should be a WeakMap but that's available only in PHP 8, but we have to support 7.4.
  */
-class RecordCollection
+class RecordCollection implements IteratorAggregate
 {
     /**
      * @var array<string, array<array-key, Record>>
@@ -88,5 +94,62 @@ class RecordCollection
     public function isEmpty(): bool
     {
         return empty($this->records);
+    }
+
+    public function contains(string $classification, array $properties): bool
+    {
+        return null !== $this->getFirstRecordByProperties($classification, $properties);
+    }
+
+    public function getFirstRecordByProperties(string $classification, array $properties): ?Record
+    {
+        if (isset($properties['uid'])) {
+            return $this->getRecord($classification, $properties['uid']);
+        }
+        foreach ($this->records[$classification] as $record) {
+            foreach ($properties as $property => $value) {
+                if ($record->getProp($property) !== $value) {
+                    continue 2;
+                }
+            }
+            return $record;
+        }
+        return null;
+    }
+
+    /**
+     * @return array<Record>
+     */
+    public function getRecordsByProperties(string $classification, array $properties): array
+    {
+        if (isset($properties['uid'])) {
+            $record = $this->getRecord($classification, $properties['uid']);
+            if (null !== $record) {
+                return [$record];
+            }
+            return [];
+        }
+        $records = [];
+        foreach ($this->records[$classification] as $record) {
+            foreach ($properties as $property => $value) {
+                if ($record->getProp($property) !== $value) {
+                    continue 2;
+                }
+            }
+            $records[] = $record;
+        }
+        return $records;
+    }
+
+    public function map(Closure $closure): void
+    {
+        foreach ($this->getRecordsFlat() as $record) {
+            $closure($record);
+        }
+    }
+
+    public function getIterator(): Iterator
+    {
+        return new NoRewindIterator($this->getRecordsFlat());
     }
 }

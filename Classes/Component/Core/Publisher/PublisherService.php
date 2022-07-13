@@ -11,7 +11,7 @@ use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingBegan;
 use In2code\In2publishCore\Event\RecursiveRecordPublishingEnded;
-use In2code\In2publishCore\Event\VoteIfRecordShouldBeSkipped;
+use In2code\In2publishCore\Event\CollectReasonsWhyTheRecordIsNotPublishable;
 use Throwable;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
@@ -39,6 +39,12 @@ class PublisherService
     public function addPublisher(Publisher $publisher): void
     {
         $this->publisherCollection->addPublisher($publisher);
+    }
+
+    public function publish(PublishingContext $publishingContext): void
+    {
+        $recordTree = $publishingContext->getRecordTree();
+        $this->publishRecordTree($recordTree);
     }
 
     public function publishRecordTree(RecordTree $recordTree): void
@@ -72,7 +78,7 @@ class PublisherService
         $this->taskExecutionService->runTasks();
     }
 
-    protected function publishRecord(Record $record, &$visitedRecords = []): void
+    protected function publishRecord(Record $record, array &$visitedRecords = []): void
     {
         $classification = $record->getClassification();
         $id = $record->getId();
@@ -83,9 +89,9 @@ class PublisherService
         $visitedRecords[$classification][$id] = true;
 
         if ($record->getState() !== Record::S_UNCHANGED) {
-            $event = new VoteIfRecordShouldBeSkipped($record);
+            $event = new CollectReasonsWhyTheRecordIsNotPublishable($record);
             $this->eventDispatcher->dispatch($event);
-            if (!$event->getVotingResult()) {
+            if (!$event->isPublishable()) {
                 $this->eventDispatcher->dispatch(new PublishingOfOneRecordBegan($record));
                 $this->publisherCollection->publish($record);
                 $this->eventDispatcher->dispatch(new PublishingOfOneRecordEnded($record));

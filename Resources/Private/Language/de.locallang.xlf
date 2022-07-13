@@ -783,6 +783,27 @@
 				<source>Admin tools</source>
 				<target state="translated">Administrationswerkzeuge</target>
 			</trans-unit>
+
+			<trans-unit id="record.reason.requires_translation_parent">
+				<source>The record in default language must be published for a translated record to be visible.</source>
+				<target state="translated">Der Datensatz in der Standardsprache muss veröffentlicht werden, damit ein übersetzter Datensatz sichtbar ist.</target>
+			</trans-unit>
+			<trans-unit id="record.reason.requires_published_page">
+				<source>Records only exist on pages, therefore the page "%s" must exist and have the same visibility.</source>
+				<target state="translated">Datensätze existieren nur auf Seiten, daher muss die Seite "%s" existieren und die gleiche Sichtbarkeit haben.</target>
+			</trans-unit>
+			<trans-unit id="record.reason.missing_dependency">
+				<source>This record depends on the record "%s", which will not be published with this record.</source>
+				<target state="translated">Dieser Datensatz benötigt den Datensatz "%s", welcher nicht mit diesem Datensatz veröffentlich werden würde.</target>
+			</trans-unit>
+			<trans-unit id="record.reason.missing_dependency">
+				<source>The record with classification "%s" and properties "%s" does not exist.</source>
+				<target state="translated">Der Datensatz mit der klassifizierung "%s" und Eigenschaften "%s" existiert nicht.</target>
+			</trans-unit>
+			<trans-unit id="record.reason.shortcut_record">
+				<source>The record "%s" is a target of the shortcut record "%s". The target must be published before the shortcut record can be published.</source>
+				<target state="translated">Der Datensatz "%s" ist ein Ziel des Verknüpfungsdatensatzes "%s". Das Ziel muss veröffentlicht werden, bevor der Verknüpfungsdatensatz veröffentlicht werden kann.</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

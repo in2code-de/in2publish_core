@@ -29,6 +29,7 @@ class DatabaseRecord extends AbstractDatabaseRecord implements DatabaseEntityRec
         $this->changedProps = array_keys(array_diff_assoc($relevantLocalProps, $relevantForeignProps));
 
         $this->state = $this->calculateState();
+        $this->dependencies = $this->calculateDependencies();
     }
 
     public function isChanged(): bool

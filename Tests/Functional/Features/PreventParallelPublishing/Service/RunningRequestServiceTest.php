@@ -34,8 +34,7 @@ class RunningRequestServiceTest extends FunctionalTestCase
         $record = new DatabaseRecord('foo', 1, ['uid' => 1], ['uid' => 1], []);
         $record->addChild($mmRecord);
 
-        $recordTree = new RecordTree();
-        $recordTree->addChild($record);
+        $recordTree = new RecordTree([$record]);
 
         $connectionPool = GeneralUtility::makeInstance(ConnectionPool::class);
         $connection = $connectionPool->getConnectionByName('Default');

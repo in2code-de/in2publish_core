@@ -15,18 +15,6 @@ use function sprintf;
 
 class SysRedirectDatabaseRecord extends DatabaseRecord
 {
-    public function __toString()
-    {
-        $localProps = $this->getLocalProps();
-        return sprintf(
-            'Redirect [%d] (%s) %s -> %s',
-            $this->getId(),
-            $localProps['sourceHost'] ?? '',
-            $localProps['sourcePath'] ?? '',
-            $localProps['target'] ?? ''
-        );
-    }
-
     public function hasPublishedAssociatedPage(): bool
     {
         $pageUid = $this->getLocalProps()['tx_in2publishcore_page_uid'] ?? null;
@@ -82,5 +70,17 @@ class SysRedirectDatabaseRecord extends DatabaseRecord
             return 'requiresPagePublishing';
         }
         return 'publishable';
+    }
+
+    public function __toString(): string
+    {
+        $localProps = $this->getLocalProps();
+        return sprintf(
+            'Redirect [%d] (%s) %s -> %s',
+            $this->getId(),
+            $localProps['sourceHost'] ?? '',
+            $localProps['sourcePath'] ?? '',
+            $localProps['target'] ?? ''
+        );
     }
 }

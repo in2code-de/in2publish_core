@@ -16,9 +16,13 @@ abstract class AbstractRecord implements Record
     // Initialize this in your constructor
     protected array $foreignProps;
     protected string $state;
+    /**
+     * @var array<Dependency>
+     */
+    protected array $dependencies = [];
     protected bool $hasBeenAskedForRecursiveState = false;
     /**
-     * @var array<Record>
+     * @var array<string, array<Record>>
      */
     protected array $children = [];
     /**
@@ -216,6 +220,11 @@ abstract class AbstractRecord implements Record
         return Record::S_UNCHANGED;
     }
 
+    public function calculateDependencies(): array
+    {
+        return [];
+    }
+
     public function getLanguage(): int
     {
         return 0;
@@ -229,5 +238,44 @@ abstract class AbstractRecord implements Record
     public function getChangedProps(): array
     {
         return array_keys(array_diff_assoc($this->localProps, $this->foreignProps));
+    }
+
+    public function getDependencies(): array
+    {
+        return $this->dependencies;
+    }
+
+    public function getAllDependencies(array &$visited = []): array
+    {
+        if (isset($visited[$this->getClassification()][$this->getId()])) {
+            return [];
+        }
+        $visited[$this->getClassification()][$this->getId()] = true;
+        $dependencies = $this->dependencies;
+        foreach ($this->children as $classification => $children) {
+            if ('pages' !== $classification) {
+                foreach ($children as $child) {
+                    foreach ($child->getAllDependencies($visited) as $dependency) {
+                        $dependencies[] = $dependency;
+                    }
+                }
+            }
+        }
+        return $dependencies;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getClassification() . ' [' . $this->getId() . ']';
+    }
+
+    public function isPublishable(): bool
+    {
+        foreach ($this->dependencies as $dependency) {
+            if (!$dependency->isFulfilled()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
