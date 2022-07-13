@@ -11,7 +11,6 @@ use In2code\In2publishCore\Component\Core\Publisher\PublisherCollection;
 use In2code\In2publishCore\Component\Core\Publisher\ReversiblePublisher;
 use In2code\In2publishCore\Component\Core\Publisher\TransactionalPublisher;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
-use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
 /**
@@ -20,7 +19,7 @@ use In2code\In2publishCore\Tests\UnitTestCase;
 class PublisherCollectionTest extends UnitTestCase
 {
     /**
-     * @covers ::__addPublisher
+     * @covers ::addPublisher
      */
     public function testAddPublisherAddsPublisher()
     {
@@ -43,7 +42,7 @@ class PublisherCollectionTest extends UnitTestCase
     }
 
     /**
-     * @covers ::__addPublisher
+     * @covers ::addPublisher
      */
     public function testAddPublisherSortsPublishersCorrectly()
     {
@@ -76,7 +75,7 @@ class PublisherCollectionTest extends UnitTestCase
     }
 
     /**
-     * @covers ::__cancel
+     * @covers ::cancel
      */
     public function testCancelIsCalledByTransactionalPublishers()
     {
@@ -99,7 +98,7 @@ class PublisherCollectionTest extends UnitTestCase
     }
 
     /**
-     * @covers ::__reverse
+     * @covers ::reverse
      */
     public function testReverseIsCalledByReversiblePublishers()
     {
@@ -122,7 +121,7 @@ class PublisherCollectionTest extends UnitTestCase
     }
 
     /**
-     * @covers ::__reverse
+     * @covers ::finish
      */
     public function testFinishIsCalledByFinishablePublishers()
     {
