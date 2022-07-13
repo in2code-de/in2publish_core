@@ -10,6 +10,7 @@ use In2code\In2publishCore\Component\Core\Publisher\Publisher;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherCollection;
 use In2code\In2publishCore\Component\Core\Publisher\ReversiblePublisher;
 use In2code\In2publishCore\Component\Core\Publisher\TransactionalPublisher;
+use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
@@ -72,5 +73,176 @@ class PublisherCollectionTest extends UnitTestCase
         $this->assertGreaterThan($arrayKeyStandardPublisher, $arrayKeyTransactionalPublisher);
         $this->assertGreaterThan($arrayKeyStandardPublisher, $arrayKeyFinishablePublisher);
         $this->assertGreaterThan($arrayKeyFinishablePublisher, $arrayKeyTransactionalPublisher);
+    }
+
+    /**
+     * @covers ::__cancel
+     */
+    public function testCancelIsCalledByTransactionalPublishers()
+    {
+        $GLOBALS['number_of_calls_cancel'] = 0;
+        $publisherCollection = new PublisherCollection();
+        $transactionalPublisher = $this->getTransactionalPublisher();
+        $publisherCollection->addPublisher($transactionalPublisher);
+
+        $transactionalPublisher2 = $this->getTransactionalPublisher();
+        $publisherCollection->addPublisher($transactionalPublisher2);
+
+        $reversiblePublisher = $this->getReversiblePublisher();
+        $publisherCollection->addPublisher($reversiblePublisher);
+
+        $finishablePublisher = $this->getFinishablePublisher();
+        $publisherCollection->addPublisher($finishablePublisher);
+
+        $publisherCollection->cancel();
+        $this->assertEquals(2, $GLOBALS['number_of_calls_cancel']);
+    }
+
+    /**
+     * @covers ::__reverse
+     */
+    public function testReverseIsCalledByReversiblePublishers()
+    {
+        $GLOBALS['number_of_calls_reverse'] = 0;
+        $publisherCollection = new PublisherCollection();
+        $reversiblePublisher = $this->getReversiblePublisher();
+        $publisherCollection->addPublisher($reversiblePublisher);
+
+        $reversiblePublisher2 = $this->getReversiblePublisher();
+        $publisherCollection->addPublisher($reversiblePublisher2);
+
+        $transactionalPublisher = $this->getTransactionalPublisher();
+        $publisherCollection->addPublisher($transactionalPublisher);
+
+        $finishablePublisher = $this->getFinishablePublisher();
+        $publisherCollection->addPublisher($finishablePublisher);
+
+        $publisherCollection->reverse();
+        $this->assertEquals(2, $GLOBALS['number_of_calls_reverse']);
+    }
+
+    /**
+     * @covers ::__reverse
+     */
+    public function testFinishIsCalledByFinishablePublishers()
+    {
+        $GLOBALS['number_of_calls_finish'] = 0;
+        $publisherCollection = new PublisherCollection();
+        $finishablePublisher = $this->getFinishablePublisher();
+        $publisherCollection->addPublisher($finishablePublisher);
+
+        $finishablePublisher2 = $this->getFinishablePublisher();
+        $publisherCollection->addPublisher($finishablePublisher2);
+
+        $publisherCollection->finish();
+        $this->assertEquals(2, $GLOBALS['number_of_calls_finish']);
+    }
+
+    /**
+     * @return Publisher|TransactionalPublisher
+     */
+    protected function getTransactionalPublisher()
+    {
+        return new class implements Publisher, TransactionalPublisher {
+            public function start(): void
+            {
+            }
+
+            // method should not be called in test
+            public function finish(): void
+            {
+                $GLOBALS['number_of_calls_finish']++;
+            }
+
+            // method should not be called in test
+            public function reverse(): void
+            {
+                $GLOBALS['number_of_calls_reverse']++;
+            }
+
+            public function cancel(): void
+            {
+                $GLOBALS['number_of_calls_cancel']++;
+            }
+
+            public function canPublish(Record $record): bool
+            {
+                return true;
+            }
+
+            public function publish(Record $record)
+            {
+            }
+        };
+    }
+
+    protected function getReversiblePublisher()
+    {
+        return new class implements Publisher, ReversiblePublisher {
+            public function start(): void
+            {
+            }
+
+            // method should not be called in test
+            public function finish(): void
+            {
+                $GLOBALS['number_of_calls_finish']++;
+            }
+
+            public function reverse(): void
+            {
+                $GLOBALS['number_of_calls_reverse']++;
+            }
+
+            // method should not be called in test
+            public function cancel(): void
+            {
+                $GLOBALS['number_of_calls_cancel']++;
+            }
+
+            public function canPublish(Record $record): bool
+            {
+                return true;
+            }
+
+            public function publish(Record $record)
+            {
+            }
+        };
+    }
+
+    protected function getFinishablePublisher()
+    {
+        return new class implements Publisher, FinishablePublisher {
+            public function start(): void
+            {
+            }
+
+            public function finish(): void
+            {
+                $GLOBALS['number_of_calls_finish']++;
+            }
+
+            // method should not be called in test
+            public function reverse(): void
+            {
+                $GLOBALS['number_of_calls_reverse']++;
+            }
+
+            // method should not be called in test
+            public function cancel(): void
+            {
+                $GLOBALS['number_of_calls_cancel']++;
+            }
+
+            public function canPublish(Record $record): bool
+            {
+                return true;
+            }
+
+            public function publish(Record $record)
+            {
+            }
+        };
     }
 }
