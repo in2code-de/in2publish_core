@@ -112,7 +112,6 @@ class PublisherCollectionTest extends UnitTestCase
      */
     public function testCancelIsCalledByTransactionalPublishers()
     {
-        $GLOBALS['number_of_calls_cancel'] = 0;
         $publisherCollection = new PublisherCollection();
         $transactionalPublisher = $this->getTransactionalPublisher();
         $publisherCollection->addPublisher($transactionalPublisher);
@@ -126,8 +125,13 @@ class PublisherCollectionTest extends UnitTestCase
         $finishablePublisher = $this->getFinishablePublisher();
         $publisherCollection->addPublisher($finishablePublisher);
 
+        $GLOBALS['number_of_calls_cancel'] = 0;
+        try {
         $publisherCollection->cancel();
         $this->assertEquals(2, $GLOBALS['number_of_calls_cancel']);
+        } finally {
+            unset($GLOBALS['number_of_calls_cancel']);
+        }
     }
 
     /**
@@ -135,7 +139,6 @@ class PublisherCollectionTest extends UnitTestCase
      */
     public function testReverseIsCalledByReversiblePublishers()
     {
-        $GLOBALS['number_of_calls_reverse'] = 0;
         $publisherCollection = new PublisherCollection();
         $reversiblePublisher = $this->getReversiblePublisher();
         $publisherCollection->addPublisher($reversiblePublisher);
@@ -149,8 +152,13 @@ class PublisherCollectionTest extends UnitTestCase
         $finishablePublisher = $this->getFinishablePublisher();
         $publisherCollection->addPublisher($finishablePublisher);
 
+        $GLOBALS['number_of_calls_reverse'] = 0;
+        try {
         $publisherCollection->reverse();
         $this->assertEquals(2, $GLOBALS['number_of_calls_reverse']);
+        } finally {
+            unset($GLOBALS['number_of_calls_reverse']);
+        }
     }
 
     /**
@@ -158,7 +166,6 @@ class PublisherCollectionTest extends UnitTestCase
      */
     public function testFinishIsCalledByFinishablePublishers()
     {
-        $GLOBALS['number_of_calls_finish'] = 0;
         $publisherCollection = new PublisherCollection();
         $finishablePublisher = $this->getFinishablePublisher();
         $publisherCollection->addPublisher($finishablePublisher);
@@ -166,8 +173,13 @@ class PublisherCollectionTest extends UnitTestCase
         $finishablePublisher2 = $this->getFinishablePublisher();
         $publisherCollection->addPublisher($finishablePublisher2);
 
+        $GLOBALS['number_of_calls_finish'] = 0;
+        try {
         $publisherCollection->finish();
         $this->assertEquals(2, $GLOBALS['number_of_calls_finish']);
+        } finally {
+            unset($GLOBALS['number_of_calls_finish']);
+        }
     }
 
     /**
