@@ -12,6 +12,9 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 use const PHP_EOL;
 
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Command\Foreign\Status\VersionCommand
+ */
 class VersionCommandTest extends UnitTestCase
 {
     /**

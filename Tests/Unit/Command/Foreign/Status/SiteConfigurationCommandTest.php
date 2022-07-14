@@ -16,6 +16,9 @@ use function serialize;
 
 use const PHP_EOL;
 
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Command\Foreign\Status\SiteConfigurationCommand
+ */
 class SiteConfigurationCommandTest extends UnitTestCase
 {
     /**

@@ -47,7 +47,6 @@ class TextProcessorTest extends UnitTestCase
     /**
      * @depends testTextProcessorReturnsResolverForTextColumnWithEnableRichtext
      * @covers ::buildResolver
-     * @covers ::findRelationsInText
      */
     public function testTextProcessorClosureResolvesDemandForTypo3PageUrns(): void
     {
@@ -79,7 +78,6 @@ class TextProcessorTest extends UnitTestCase
     /**
      * @depends testTextProcessorReturnsResolverForTextColumnWithEnableRichtext
      * @covers ::buildResolver
-     * @covers ::findRelationsInText
      */
     public function testTextProcessorClosureResolvesDemandForTypo3FileUrns(): void
     {
@@ -109,7 +107,6 @@ class TextProcessorTest extends UnitTestCase
     /**
      * @depends testTextProcessorReturnsResolverForTextColumnWithEnableRichtext
      * @covers ::buildResolver
-     * @covers ::findRelationsInText
      */
     public function testTextProcessorClosureResolvesEmptyDemandWhenNoTextContainsNoValidUrl(): void
     {
@@ -139,7 +136,6 @@ class TextProcessorTest extends UnitTestCase
     /**
      * @depends testTextProcessorReturnsResolverForTextColumnWithEnableRichtext
      * @covers ::buildResolver
-     * @covers ::findRelationsInText
      */
     public function testTextProcessorClosureResolvesDemandForDifferentLocalAndForeignValues(): void
     {

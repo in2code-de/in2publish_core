@@ -11,6 +11,9 @@ use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Component\PostPublishTaskExecution\Command\Foreign\RunTasksInQueueCommand
+ */
 class RunTasksInQueueCommandTest extends UnitTestCase
 {
     /**

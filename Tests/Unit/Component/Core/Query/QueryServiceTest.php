@@ -20,7 +20,6 @@ use PHPUnit\Framework\TestCase;
 class QueryServiceTest extends TestCase
 {
     /**
-     * @covers ::resolveDemands
      * @covers ::resolveSelectDemand
      * @covers ::findMissingRecordsByUid
      */
@@ -69,7 +68,6 @@ class QueryServiceTest extends TestCase
     }
 
     /**
-     * @covers ::resolveDemands
      * @covers ::resolveSelectDemand
      * @covers ::findMissingRecordsByUid
      */
@@ -115,7 +113,6 @@ class QueryServiceTest extends TestCase
     }
 
     /**
-     * @covers ::resolveDemands
      * @covers ::resolveSelectDemand
      * @covers ::findMissingRecordsByUid
      */
@@ -165,7 +162,6 @@ class QueryServiceTest extends TestCase
     }
 
     /**
-     * @covers ::resolveDemands
      * @covers ::resolveSelectDemand
      * @covers ::findMissingRecordsByUid
      */
@@ -211,7 +207,6 @@ class QueryServiceTest extends TestCase
     }
 
     /**
-     * @covers ::resolveDemands
      * @covers ::resolveSelectDemand
      * @covers ::findMissingRecordsByUid
      */

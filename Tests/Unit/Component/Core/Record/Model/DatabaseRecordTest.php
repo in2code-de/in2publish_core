@@ -20,10 +20,7 @@ class DatabaseRecordTest extends UnitTestCase
      * @return void
      * @throws Exception
      * @covers ::__construct
-     * @covers ::getTable
      * @covers ::getId
-     * @covers ::getLocalFields
-     * @covers ::getForeignFields
      */
     public function testDatabaseRecordCanBeInstantiated(): void
     {
@@ -54,6 +51,8 @@ class DatabaseRecordTest extends UnitTestCase
     /**
      * @return void
      * @covers ::addChild
+     * @covers ::getClassification
+     * @covers ::getId
      * @covers ::addParent
      * @covers ::getChildren
      * @covers ::getParents
@@ -70,9 +69,9 @@ class DatabaseRecordTest extends UnitTestCase
     }
 
     /**
-     * @covers ::getField
+     * @covers ::getProp
      */
-    public function testGetFieldReturnsValueWithFallback(): void
+    public function testGetPropReturnsValueWithFallback(): void
     {
         $record = new DatabaseRecord('foo', 1, ['bar' => 'beng'], ['boo' => 'bang'], []);
 

@@ -13,6 +13,9 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 
 use const PHP_EOL;
 
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Command\Foreign\Status\ShortSiteConfigurationCommand
+ */
 class ShortSiteConfigurationCommandTest extends UnitTestCase
 {
     /**

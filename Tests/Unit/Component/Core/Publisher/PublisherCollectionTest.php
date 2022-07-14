@@ -15,7 +15,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass PublisherCollection
+ * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\PublisherCollection
  */
 class PublisherCollectionTest extends UnitTestCase
 {

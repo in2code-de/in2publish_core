@@ -11,12 +11,11 @@ use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Database\Connection;
 
 /**
- * @coversDefaultClass DatabaseRecordPublisher
+ * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\DatabaseRecordPublisher
  */
 class DatabaseRecordPublisherTest extends UnitTestCase
 {
     /**
-     * @covers ::__construct
      * @covers ::canPublish
      */
     public function testCanPublishReturnsTrueForDatabaseRecordsOnly()

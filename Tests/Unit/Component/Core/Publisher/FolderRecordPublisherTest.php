@@ -11,7 +11,7 @@ use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\Database\Connection;
 
 /**
- * @coversDefaultClass FolderRecordPublisher
+ * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\FolderRecordPublisher
  */
 class FolderRecordPublisherTest extends UnitTestCase
 {

@@ -27,7 +27,6 @@ class TextResolverTest extends UnitTestCase
 
     /**
      * @covers ::resolve
-     * @uses ::findRelationsInText
      */
     public function testResolverFindsPageRelations(): void
     {

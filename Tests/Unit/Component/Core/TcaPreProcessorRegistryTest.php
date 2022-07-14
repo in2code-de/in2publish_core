@@ -20,10 +20,9 @@ class TcaPreProcessorRegistryTest extends UnitTestCase
      * @return void
      * @throws Exception
      * @covers ::__construct
-     * @covers ::getTable
      * @covers ::getId
-     * @covers ::getLocalFields
-     * @covers ::getForeignFields
+     * @covers ::getLocalProps
+     * @covers ::getForeignProps
      */
     public function testDatabaseRecordCanBeInstantiated(): void
     {

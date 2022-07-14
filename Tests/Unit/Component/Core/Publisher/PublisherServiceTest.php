@@ -12,7 +12,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 /**
- * @coversDefaultClass PublisherService
+ * @coversDefaultClass \In2code\In2publishCore\Component\Core\Publisher\PublisherService
  */
 class PublisherServiceTest extends UnitTestCase
 {

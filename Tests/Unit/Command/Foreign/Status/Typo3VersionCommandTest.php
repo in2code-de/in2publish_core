@@ -12,6 +12,9 @@ use TYPO3\CMS\Core\Information\Typo3Version;
 
 use const PHP_EOL;
 
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Command\Foreign\Status\Typo3VersionCommand
+ */
 class Typo3VersionCommandTest extends UnitTestCase
 {
     /**
