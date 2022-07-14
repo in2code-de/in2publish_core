@@ -204,7 +204,6 @@ class PublisherCollectionTest extends UnitTestCase
 
             public function publish(Record $record)
             {
-                $GLOBALS['number_of_calls_publish']++;
             }
         };
     }
@@ -240,7 +239,6 @@ class PublisherCollectionTest extends UnitTestCase
 
             public function publish(Record $record)
             {
-                $GLOBALS['number_of_calls_publish']++;
             }
         };
     }
@@ -276,7 +274,6 @@ class PublisherCollectionTest extends UnitTestCase
 
             public function publish(Record $record)
             {
-                $GLOBALS['number_of_calls_publish']++;
             }
         };
     }
