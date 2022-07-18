@@ -38,6 +38,7 @@ class RecordIndex
     {
         $this->localDatabase = $localDatabase;
     }
+
     public function injectDemandResolver(DemandResolver $demandResolver): void
     {
         $this->demandResolver = $demandResolver;
@@ -148,43 +149,46 @@ class RecordIndex
 
     public function processDependencies(): void
     {
-        $demands = $this->demandsFactory->createDemand();
-        $dependencyTree = new RecordTree();
+        $dependencyTargets = new RecordCollection($this->records->getIterator());
 
-        $this->records->map(function (Record $record) use ($demands, $dependencyTree): void {
-            $dependencies = $record->getDependencies();
-            foreach ($dependencies as $dependency) {
-                $classification = $dependency->getClassification();
-                $properties = $dependency->getProperties();
-                if (!$this->records->getRecordsByProperties($classification, $properties)) {
-                    if (isset($properties['uid'])) {
-                        $demands->addSelect($classification, '', 'uid', $properties['uid'], $dependencyTree);
-                    } else {
-                        $property = array_key_first($properties);
-                        $value = $properties[$property];
-                        unset($properties[$property]);
-                        $where = [];
-                        foreach ($properties as $property => $value) {
-                            $quotedIdentifier = $this->localDatabase->quoteIdentifier($property);
-                            $quotedValue = $this->localDatabase->quote($value);
-                            $where[] = $quotedIdentifier . '=' . $quotedValue;
+        $levels = 3;
+        do {
+            $dependencyTree = new RecordTree();
+            $demands = $this->demandsFactory->createDemand();
+
+            $dependencyTargets->map(function (Record $record) use ($demands, $dependencyTree): void {
+                $dependencies = $record->getDependencies();
+                foreach ($dependencies as $dependency) {
+                    $classification = $dependency->getClassification();
+                    $properties = $dependency->getProperties();
+                    if (!$this->records->getRecordsByProperties($classification, $properties)) {
+                        if (isset($properties['uid'])) {
+                            $demands->addSelect($classification, '', 'uid', $properties['uid'], $dependencyTree);
+                        } else {
+                            $property = array_key_first($properties);
+                            $value = $properties[$property];
+                            unset($properties[$property]);
+                            $where = [];
+                            foreach ($properties as $property => $value) {
+                                $quotedIdentifier = $this->localDatabase->quoteIdentifier($property);
+                                $quotedValue = $this->localDatabase->quote($value);
+                                $where[] = $quotedIdentifier . '=' . $quotedValue;
+                            }
+                            $where = implode(' AND ', $where);
+                            $demands->addSelect($classification, $where, $property, $value, $dependencyTree);
                         }
-                        $where = implode(' AND ', $where);
-                        $demands->addSelect($classification, $where, $property, $value, $dependencyTree);
                     }
                 }
-            }
-        });
+            });
 
-        $recordCollection = new RecordCollection();
-        $this->demandResolver->resolveDemand($demands, $recordCollection);
+            $dependencyTargets = new RecordCollection();
+            $this->demandResolver->resolveDemand($demands, $dependencyTargets);
+        } while (--$levels > 0 && !$dependencyTargets->isEmpty());
 
-        $recordCollection->addRecords($this->records);
-
-        $this->records->map(function (Record $record) use ($recordCollection): void {
+        $this->records->map(function (Record $record): void {
             $dependencies = $record->getDependencies();
             foreach ($dependencies as $dependency) {
-                $dependency->fulfill($recordCollection);
+                $dependency->fulfill($this->records);
             }
         });
     }
