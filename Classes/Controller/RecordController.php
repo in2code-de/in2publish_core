@@ -42,6 +42,8 @@ use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
 use In2code\In2publishCore\Controller\Traits\ControllerFilterStatus;
 use In2code\In2publishCore\Controller\Traits\ControllerModuleTemplate;
 use In2code\In2publishCore\Controller\Traits\DeactivateErrorFlashMessage;
+use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\Exception\StopwatchWasNotStartedException;
+use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\SimpleStopwatch;
 use In2code\In2publishCore\In2publishCoreException;
 use In2code\In2publishCore\Service\Error\FailureCollector;
 use In2code\In2publishCore\Service\Permission\PermissionService;
@@ -81,6 +83,7 @@ class RecordController extends ActionController
     protected PublisherService $publisherService;
     protected RecordIndex $recordIndex;
     protected RecordDependencyResolver $recordDependencyResolver;
+    protected SimpleStopwatch $simpleStopwatch;
 
     public function injectFailureCollector(FailureCollector $failureCollector): void
     {
@@ -122,6 +125,11 @@ class RecordController extends ActionController
     public function injectRecordDependencyResolver(RecordDependencyResolver $recordDependencyResolver): void
     {
         $this->recordDependencyResolver = $recordDependencyResolver;
+    }
+
+    public function injectSimpleStopwatch(SimpleStopwatch $simpleStopwatch): void
+    {
+        $this->simpleStopwatch = $simpleStopwatch;
     }
 
     public function initializeIndexAction(): void
@@ -288,7 +296,11 @@ class RecordController extends ActionController
     {
         $failures = $this->failureCollector->getFailures();
 
-        $executionTime = $this->executionTimeService->getExecutionTime();
+        try {
+            $executionTime = $this->simpleStopwatch->getTime();
+        } catch (StopwatchWasNotStartedException $e) {
+            $executionTime = 'Timer was never started';
+        }
         if (empty($failures)) {
             $message = '';
             $title = LocalizationUtility::translate('record_published', 'in2publish_core', [$executionTime]);

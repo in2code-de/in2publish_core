@@ -30,10 +30,12 @@ namespace In2code\In2publishCore\Utility;
 
 use Doctrine\DBAL\Driver\Exception;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Features\MetricsAndDebug\Database\Logging\ContentPublisherSqlLogger;
 use In2code\In2publishCore\Service\Environment\ForeignEnvironmentService;
 use LogicException;
 use PDO;
 use Throwable;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
@@ -103,6 +105,10 @@ class DatabaseUtility
                 }
             }
         }
+        if (GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('in2publish_core', 'debugQueries')) {
+            $sqlLogger = new ContentPublisherSqlLogger();
+            static::$foreignConnection->getConfiguration()->setSQLLogger($sqlLogger);
+        }
 
         return static::$foreignConnection;
     }
@@ -110,7 +116,12 @@ class DatabaseUtility
     public static function buildLocalDatabaseConnection(): ?Connection
     {
         try {
-            return GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionByName('Default');
+            $connection = GeneralUtility::makeInstance(ConnectionPool::class)->getConnectionByName('Default');
+            if (GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('in2publish_core', 'debugQueries')) {
+                $sqlLogger = new ContentPublisherSqlLogger();
+                $connection->getConfiguration()->setSQLLogger($sqlLogger);
+            }
+            return $connection;
         } catch (Throwable $e) {
             return null;
         }
