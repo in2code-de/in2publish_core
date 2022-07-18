@@ -207,9 +207,10 @@ class GroupProcessorTest extends UnitTestCase
 
         $groupProcessor = new GroupProcessor();
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
+        $tcaMarkerService->expects($this->once())->method('escapeMarkedIdentifier')->with('matchFieldFoo = "matchFieldBar" AND matchFieldBaz = "matchFieldBeng"')->willReturn('matchFieldFoo = "matchFieldBar" AND matchFieldBaz = "matchFieldBeng"');
         $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
         $groupResolver = $this->createMock(GroupMmMultiTableResolver::class);
-        $groupResolver->expects($this->once())->method('configure')->with(['tableNameBar', 'tableNameFoo'], 'mmTable', 'matchFieldFoo', 'uid_foreign', '');
+        $groupResolver->expects($this->once())->method('configure')->with(['tableNameBar', 'tableNameFoo'], 'mmTable', 'fieldNameBar', 'uid_local', 'matchFieldFoo = "matchFieldBar" AND matchFieldBaz = "matchFieldBeng"');
 
         $container = $this->createMock(Container::class);
         $container->expects($this->once())->method('get')->with(GroupMmMultiTableResolver::class)->willReturn($groupResolver);
