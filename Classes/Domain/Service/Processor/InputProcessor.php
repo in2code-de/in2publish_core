@@ -35,7 +35,7 @@ class InputProcessor extends AbstractProcessor
     public const INPUT_LINK = 'inputLink';
     public const RENDER_TYPE = 'renderType';
 
-    protected $canHoldRelations = true;
+    protected bool $canHoldRelations = true;
 
     public function canPreProcess(array $config): bool
     {
