@@ -32,7 +32,6 @@ namespace In2code\In2publishCore\Controller;
 
 use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
 use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
-use In2code\In2publishCore\Component\Core\Record\Service\RecordDependencyResolver;
 use In2code\In2publishCore\Component\Core\RecordIndex;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
@@ -79,7 +78,6 @@ class RecordController extends ActionController
     protected RecordTreeBuilder $recordTreeBuilder;
     protected PublisherService $publisherService;
     protected RecordIndex $recordIndex;
-    protected RecordDependencyResolver $recordDependencyResolver;
     protected SimpleStopwatch $simpleStopwatch;
 
     public function injectFailureCollector(FailureCollector $failureCollector): void
@@ -117,11 +115,6 @@ class RecordController extends ActionController
     public function injectRecordIndex(RecordIndex $recordIndex): void
     {
         $this->recordIndex = $recordIndex;
-    }
-
-    public function injectRecordDependencyResolver(RecordDependencyResolver $recordDependencyResolver): void
-    {
-        $this->recordDependencyResolver = $recordDependencyResolver;
     }
 
     public function injectSimpleStopwatch(SimpleStopwatch $simpleStopwatch): void
