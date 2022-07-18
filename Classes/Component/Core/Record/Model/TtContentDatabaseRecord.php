@@ -6,6 +6,7 @@ namespace In2code\In2publishCore\Component\Core\Record\Model;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function array_unique;
 use function strrpos;
 use function substr;
 
@@ -14,17 +15,17 @@ class TtContentDatabaseRecord extends DatabaseRecord
     public function calculateDependencies(): array
     {
         $dependencies = parent::calculateDependencies();
+
+        $referencedRecords = '';
         if (($this->localProps['CType'] ?? null) === 'shortcut') {
-            $referencedRecords = $this->localProps['records'];
-            foreach ($this->resolveShortcutDependencies($referencedRecords) as $dependency) {
-                $dependencies[] = $dependency;
-            }
+            $referencedRecords .= $this->localProps['records'];
         }
         if (($this->foreignProps['CType'] ?? null) === 'shortcut') {
-            $referencedRecords = $this->foreignProps['records'];
-            foreach ($this->resolveShortcutDependencies($referencedRecords) as $dependency) {
-                $dependencies[] = $dependency;
-            }
+            $referencedRecords .= ',' . $this->foreignProps['records'];
+        }
+        $resolveShortcutDependencies = $this->resolveShortcutDependencies($referencedRecords);
+        foreach ($resolveShortcutDependencies as $dependency) {
+            $dependencies[] = $dependency;
         }
 
         return $dependencies;
@@ -33,11 +34,11 @@ class TtContentDatabaseRecord extends DatabaseRecord
     /**
      * @return array<Dependency>
      */
-    protected function resolveShortcutDependencies(string $records): array
+    protected function resolveShortcutDependencies(string $recordList): array
     {
         $dependencies = [];
-        $recordList = GeneralUtility::trimExplode(',', $records);
-        foreach ($recordList as $record) {
+        $records = array_unique(GeneralUtility::trimExplode(',', $recordList, true));
+        foreach ($records as $record) {
             $position = strrpos($record, '_');
             if (false === $position) {
                 continue;
@@ -51,7 +52,10 @@ class TtContentDatabaseRecord extends DatabaseRecord
                 ['uid' => $id],
                 Dependency::REQ_FULL_PUBLISHED,
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.shortcut_record',
-                static fn(Record $record): array => [$record->__toString()]
+                fn(Record $record): array => [
+                    $record->__toString() ?: "{$record->getClassification()} [{$record->getId()}]",
+                    $this->__toString() ?: "{$this->getClassification()} [{$this->getId()}]",
+                ]
             );
         }
 
