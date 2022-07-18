@@ -95,7 +95,7 @@ class RecordTreeBuilder
 
         $this->findRequestedRecordWithTranslations($defaultIdRequest, $recordTree, $recordCollection);
 
-        $this->findPagesRecursively($defaultIdRequest, $recordCollection, $recordCollection);
+        $this->findPagesRecursively($defaultIdRequest, $recordCollection);
 
         $recordCollection = $this->findAllRecordsOnPages();
 
@@ -163,20 +163,14 @@ class RecordTreeBuilder
         $this->demandResolver->resolveDemand($demands, $recordCollection);
     }
 
-    /**
-     * @param RecordCollection<int, Record> $records
-     */
-    private function findPagesRecursively(
-        RecordTreeBuildRequest $request,
-        RecordCollection $records,
-        RecordCollection $recordCollection
-    ): void {
+    private function findPagesRecursively(RecordTreeBuildRequest $request, RecordCollection $recordCollection): void
+    {
         $currentRecursion = 0;
         $recursionLimit = $request->getPageRecursionLimit();
 
         while ($recursionLimit > $currentRecursion++ && !$recordCollection->isEmpty()) {
             $demands = $this->demandsFactory->createDemand();
-            $recordsArray = $records->getRecords('pages');
+            $recordsArray = $recordCollection->getRecords('pages');
             foreach ($recordsArray as $record) {
                 $demands->addSelect('pages', '', 'pid', $record->getId(), $record);
             }
