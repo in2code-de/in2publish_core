@@ -12,15 +12,6 @@ namespace PHPSTORM_META {
         \In2code\In2publishCore\Component\Core\Record\Model\Record::S_UNCHANGED
     );
     expectedReturnValues(
-        \In2code\In2publishCore\Component\Core\Record\Model\AbstractRecord::getState(),
-        \In2code\In2publishCore\Component\Core\Record\Model\Record::S_ADDED,
-        \In2code\In2publishCore\Component\Core\Record\Model\Record::S_CHANGED,
-        \In2code\In2publishCore\Component\Core\Record\Model\Record::S_MOVED,
-        \In2code\In2publishCore\Component\Core\Record\Model\Record::S_SOFT_DELETED,
-        \In2code\In2publishCore\Component\Core\Record\Model\Record::S_DELETED,
-        \In2code\In2publishCore\Component\Core\Record\Model\Record::S_UNCHANGED
-    );
-    expectedReturnValues(
         \In2code\In2publishCore\Service\Context\ContextService::getContext(),
         \In2code\In2publishCore\Service\Context\ContextService::LOCAL,
         \In2code\In2publishCore\Service\Context\ContextService::FOREIGN
