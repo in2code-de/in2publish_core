@@ -15,6 +15,18 @@
 			</f:if>
 		</f:if>
 
+		<f:if condition="{record.publishable}">
+			<f:else>
+				<ul class="in2publish-related__list">
+				<f:for each="{record.allDependencies}" as="dependency">
+					<f:if condition="!{dependency.fulfilled}">
+						<li><f:format.nl2br>{dependency.reasonsHumanReadable}</f:format.nl2br></li>
+					</f:if>
+				</f:for>
+				</ul>
+			</f:else>
+		</f:if>
+
 		<div class="in2publish-stagelisting__dropdown__item in2publish-stagelisting__dropdown__item--left">
 			<div class="in2publish-stagelisting__dropdown__actions">
 				<f:if condition="{record.state} != 'deleted'">
