@@ -147,12 +147,11 @@ class RecordIndex
         }
     }
 
-    public function processDependencies(): void
+    public function processDependencies(int $recursionLimit): void
     {
         $dependencyTargets = new RecordCollection($this->records->getIterator());
 
-        $levels = 3;
-        do {
+        while ($recursionLimit-- > 0 && !$dependencyTargets->isEmpty()) {
             $dependencyTree = new RecordTree();
             $demands = $this->demandsFactory->createDemand();
 
@@ -183,7 +182,7 @@ class RecordIndex
 
             $dependencyTargets = new RecordCollection();
             $this->demandResolver->resolveDemand($demands, $dependencyTargets);
-        } while (--$levels > 0 && !$dependencyTargets->isEmpty());
+        }
 
         $this->records->map(function (Record $record): void {
             $dependencies = $record->getDependencies();

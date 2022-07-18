@@ -103,7 +103,7 @@ class RecordTreeBuilder
 
         $this->recordIndex->connectTranslations();
 
-        $this->recordIndex->processDependencies();
+        $this->recordIndex->processDependencies($request->getDependencyRecursionLimit());
 
         $this->eventDispatcher->dispatch(new RecordRelationsWereResolved($recordTree));
 
