@@ -91,7 +91,7 @@ class PublisherService
         if ($record->getState() !== Record::S_UNCHANGED) {
             $event = new CollectReasonsWhyTheRecordIsNotPublishable($record);
             $this->eventDispatcher->dispatch($event);
-            if (!$event->isPublishable()) {
+            if ($event->isPublishable()) {
                 $this->eventDispatcher->dispatch(new PublishingOfOneRecordBegan($record));
                 $this->publisherCollection->publish($record);
                 $this->eventDispatcher->dispatch(new PublishingOfOneRecordEnded($record));

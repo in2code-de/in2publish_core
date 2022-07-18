@@ -139,7 +139,7 @@ class RecordDependencyResolver
 
         $event = new CollectReasonsWhyTheRecordIsNotPublishable($record);
         $this->eventDispatcher->dispatch($event);
-        if (!$event->isPublishable()) {
+        if ($event->isPublishable()) {
             $publishedRecords->addRecord($record);
         }
 
