@@ -123,7 +123,7 @@ class Dependency
             $humanString .= " ({$technicalString})";
         }
         $technicalReasons = [];
-        foreach ($this->reasons->getReasons() as $reason) {
+        foreach ($this->reasons->getAll() as $reason) {
             $technicalReasons[] = $reason->getReadableLabel();
         }
         $technicalReasons = implode(', ', $technicalReasons);
