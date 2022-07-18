@@ -7,14 +7,13 @@ use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarke
 use In2code\In2publishCore\Component\Core\Resolver\GroupMmMultiTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\GroupMultiTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\GroupSingleTableResolver;
-use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
-use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
+use In2code\In2publishCore\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\Container;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\GroupProcessor
  */
-class GroupProcessorTest extends \In2code\In2publishCore\Tests\UnitTestCase
+class GroupProcessorTest extends UnitTestCase
 {
     /**
      * @covers ::process
@@ -44,7 +43,36 @@ class GroupProcessorTest extends \In2code\In2publishCore\Tests\UnitTestCase
     /**
      * @covers ::process
      */
-    public function testProcessCanResolveMultipleTables(): void
+    public function testTcaMustNotContainMmOppositeField(): void
+    {
+        $GLOBALS['TCA']['tableNameBar'] = [];
+
+        $tca = [
+            'type' => 'group',
+            'allowed' => 'tableNameBar',
+            'MM_opposite_field' => 'fieldBar',
+        ];
+        $groupProcessor = new GroupProcessor();
+        $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
+        $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
+        $container = $this->createMock(Container::class);
+        $groupProcessor->injectContainer($container);
+
+        $processingResult = $groupProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
+        $this->assertFalse($processingResult->isCompatible());
+        $reason = $processingResult->getValue()[0];
+        $this->assertSame(
+            'MM_opposite_field is set for the foreign side of relations, which must not be resolved',
+            $reason
+        );
+
+        unset($GLOBALS['TCA']['tableNameBar']);
+    }
+
+    /**
+     * @covers ::process
+     */
+    public function testProcessingForSingleTableRelations(): void
     {
         $GLOBALS['TCA']['tableNameFoo'] = [];
         $GLOBALS['TCA']['tableNameBar'] = [];
@@ -52,34 +80,107 @@ class GroupProcessorTest extends \In2code\In2publishCore\Tests\UnitTestCase
         $groupProcessor = new GroupProcessor();
         $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
         $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
+        $groupResolver = $this->createMock(GroupSingleTableResolver::class);
+        $groupResolver->expects($this->once())->method('configure')->with('fieldNameBar', 'tableNameFoo');
+
         $container = $this->createMock(Container::class);
-        $groupResolver = $this->createMock(GroupMultiTableResolver::class);
-        $container->method('get')->willReturn($groupResolver);
+        $container->expects($this->once())->method('get')->with(GroupSingleTableResolver::class)->willReturn($groupResolver);
         $groupProcessor->injectContainer($container);
 
-        $multiTableTca =  ['type' => 'group', 'allowed' => 'tableNameFoo,tableNameBar'];
-        $processingResult = $groupProcessor->process('tableNameFoo', 'fieldNameBar', $multiTableTca);
+        $singleTableTca = ['type' => 'group', 'allowed' => 'tableNameFoo'];
+        $processingResult = $groupProcessor->process('tableNameFoo', 'fieldNameBar', $singleTableTca);
+        $resolver = $processingResult->getValue()['resolver'];
         $this->assertTrue($processingResult->isCompatible());
+        $this->assertInstanceOf(GroupSingleTableResolver::class, $resolver);
+
+        unset($GLOBALS['TCA']['tableNameFoo']);
+        unset($GLOBALS['TCA']['tableNameBar']);
+    }
+
+    /**
+     * @covers ::process
+     */
+    public function testProcessingForMultipleTablesRelations(): void
+    {
+        $GLOBALS['TCA']['tableNameFoo'] = [];
+        $GLOBALS['TCA']['tableNameBar'] = [];
+
+        $multiTableTca = ['type' => 'group', 'allowed' => 'tableNameFoo,tableNameBar'];
+
+        $groupProcessor = new GroupProcessor();
+        $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
+        $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
+        $groupResolver = $this->createMock(GroupMultiTableResolver::class);
+        $groupResolver->expects($this->once())->method('configure')->with(['tableNameFoo','tableNameBar'], 'fieldNameBar');
+
+        $container = $this->createMock(Container::class);
+        $container->expects($this->once())->method('get')->with(GroupMultiTableResolver::class)->willReturn($groupResolver);
+        $groupProcessor->injectContainer($container);
+
         $processingResult = $groupProcessor->process('tableNameBar', 'fieldNameBar', $multiTableTca);
+        $resolver = $processingResult->getValue()['resolver'];
         $this->assertTrue($processingResult->isCompatible());
-        // TODO: expected this to be incompatible
-        $processingResult = $groupProcessor->process('tableNameBaz', 'fieldNameBar', $multiTableTca);
-        $this->assertTrue($processingResult->isCompatible());
+        $this->assertInstanceOf(GroupMultiTableResolver::class, $resolver);
 
-        // incompatible, because tableNameBaz is not contained in TCA
-        $incompatibleMultiTableTca =  ['type' => 'group', 'allowed' => 'tableNameFoo,tableNameBaz'];
-        $processingResult = $groupProcessor->process('tableNameFoo', 'fieldNameBar', $incompatibleMultiTableTca);
-        $this->assertFalse($processingResult->isCompatible());
+        unset($GLOBALS['TCA']['tableNameFoo']);
+        unset($GLOBALS['TCA']['tableNameBar']);
+    }
 
+    /**
+     * @covers ::process
+     */
+    public function testProcessingForAllTablesRelations(): void
+    {
+        $GLOBALS['TCA']['tableNameBar'] = [];
 
         $allTableTca = ['type' => 'group', 'allowed' => '*'];
-        $processingResult = $groupProcessor->process('tableNameFoo', 'fieldNameBar', $allTableTca);
-        $this->assertTrue($processingResult->isCompatible());
+
+        $groupProcessor = new GroupProcessor();
+        $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
+        $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
+        $groupResolver = $this->createMock(GroupMultiTableResolver::class);
+        $groupResolver->expects($this->once())->method('configure')->with(['*'], 'fieldNameBar');
+
+        $container = $this->createMock(Container::class);
+        $container->expects($this->once())->method('get')->with(GroupMultiTableResolver::class)->willReturn($groupResolver);
+        $groupProcessor->injectContainer($container);
+
         $processingResult = $groupProcessor->process('tableNameBar', 'fieldNameBar', $allTableTca);
+        $resolver = $processingResult->getValue()['resolver'];
         $this->assertTrue($processingResult->isCompatible());
-        // TODO: expected this to be incompatible
-        $processingResult = $groupProcessor->process('tableNameBaz', 'fieldNameBar', $multiTableTca);
+        $this->assertInstanceOf(GroupMultiTableResolver::class, $resolver);
+
+        unset($GLOBALS['TCA']['tableNameBar']);
+    }
+
+    /**
+     * @covers ::process
+     */
+    public function testProcessingResultForMmTableRelations(): void
+    {
+        $GLOBALS['TCA']['tableNameBar'] = [];
+        $GLOBALS['TCA']['tableNameFoo'] = [];
+
+        // Case 1: no MM_match_fields, no MM_opposite_field
+        $mmTableTca = [
+            'type' => 'group',
+            'allowed' => 'tableNameBar, tableNameFoo',
+            'MM' => 'mmTable',
+        ];
+
+        $groupProcessor = new GroupProcessor();
+        $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
+        $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
+        $groupResolver = $this->createMock(GroupMmMultiTableResolver::class);
+        $groupResolver->expects($this->once())->method('configure')->with(['tableNameBar', 'tableNameFoo'], 'mmTable', 'fieldNameBar', 'uid_local', '');
+
+        $container = $this->createMock(Container::class);
+        $container->expects($this->once())->method('get')->with(GroupMmMultiTableResolver::class)->willReturn($groupResolver);
+        $groupProcessor->injectContainer($container);
+
+        $processingResult = $groupProcessor->process('tableNameBar', 'fieldNameBar', $mmTableTca);
         $this->assertTrue($processingResult->isCompatible());
+        $this->assertInstanceOf(GroupMmMultiTableResolver::class, $groupResolver);
 
         unset($GLOBALS['TCA']['tableNameFoo']);
         unset($GLOBALS['TCA']['tableNameBar']);
@@ -103,25 +204,5 @@ class GroupProcessorTest extends \In2code\In2publishCore\Tests\UnitTestCase
 
         $allowedTables = '*';
         $this->assertFalse($reflectionMethod->invoke($groupProcessor, $allowedTables));
-    }
-
-    public function tcaDataProvider(): array
-    {
-        return [
-            [['allowed' => 'tableNameFoo,tableNameBar']],
-            [['allowed' => '*']],
-        ];
-    }
-
-    public function allowedTcaDataProvider(): array
-    {
-        return [
-            [['internal_type' => '']],
-            [['MM' => '']],
-            [['MM_hasUidField' => '']],
-            [['MM_match_fields' => '']],
-            [['MM_table_where' => '']],
-            [['uploadfolder' => '']],
-        ];
     }
 }
