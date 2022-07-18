@@ -29,6 +29,7 @@ namespace In2code\In2publishCore\Service\Database;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\Component\Core\RecordIndex;
 use In2code\In2publishCore\In2publishCoreException;
 use PDO;
 use TYPO3\CMS\Core\Database\Connection;
@@ -42,17 +43,32 @@ class RawRecordService implements SingletonInterface
     /** @var array<string, Connection> */
     protected array $databases;
     protected array $cache = [];
+    protected RecordIndex $recordIndex;
 
-    public function __construct(Connection $localDatabase, Connection $foreignDatabase)
+    public function __construct(Connection $localDatabase, Connection $foreignDatabase, RecordIndex $recordIndex)
     {
         $this->databases = [
             'local' => $localDatabase,
             'foreign' => $foreignDatabase,
         ];
+        $this->recordIndex = $recordIndex;
     }
 
     public function getRawRecord(string $table, int $uid, string $side): ?array
     {
+        if ('pages' === $table && 0 === $uid) {
+            return null;
+        }
+        $record = $this->recordIndex->getRecord($table, $uid);
+        if (null !== $record) {
+            if ('local' === $side) {
+                return $record->getLocalProps() ?: null;
+            }
+            if ('foreign' === $side) {
+                return $record->getForeignProps() ?: null;
+            }
+        }
+
         if (empty($this->cache[$side][$table][$uid])) {
             $this->cache[$side][$table][$uid] = $this->fetchRecord($table, $uid, $side);
         }
