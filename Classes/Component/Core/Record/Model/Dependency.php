@@ -11,6 +11,7 @@ use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordIndex;
 
 use function implode;
+use function in_array;
 
 class Dependency
 {
@@ -85,6 +86,13 @@ class Dependency
             return $record->getState() !== Record::S_ADDED;
         }
         if (self::REQ_ENABLEFIELDS === $this->requirement) {
+            $state = $record->getState();
+            if ($state === Record::S_UNCHANGED)  {
+                return true;
+            }
+            if ($state === Record::S_ADDED || $state === Record::S_DELETED)  {
+                return false;
+            }
             $localProps = $record->getLocalProps();
             $foreignProps = $record->getForeignProps();
             $enableFields = $GLOBALS['TCA'][$this->classification]['ctrl']['enablecolumns'];
