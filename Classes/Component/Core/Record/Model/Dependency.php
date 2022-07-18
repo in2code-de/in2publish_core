@@ -16,7 +16,7 @@ use const PHP_EOL;
 class Dependency
 {
     public const REQ_EXISTING = 'existing';
-    public const REQ_ENABLEFIELDS = 'enablefields';
+    public const REQ_ENABLECOLUMNS = 'enablecolumns';
     public const REQ_FULL_PUBLISHED = 'fully_published';
     private Record $record;
     private string $classification;
@@ -88,7 +88,7 @@ class Dependency
         if (self::REQ_EXISTING === $this->requirement) {
             return $record->getState() !== Record::S_ADDED;
         }
-        if (self::REQ_ENABLEFIELDS === $this->requirement) {
+        if (self::REQ_ENABLECOLUMNS === $this->requirement) {
             $state = $record->getState();
             if ($state === Record::S_UNCHANGED) {
                 return true;

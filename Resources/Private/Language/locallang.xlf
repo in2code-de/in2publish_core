@@ -595,14 +595,17 @@
 				<source>Admin tools</source>
 			</trans-unit>
 
-			<trans-unit id="record.reason.requires_translation_parent">
-				<source>The record in default language must be published for a translated record to be visible.</source>
+			<trans-unit id="record.reason.requires_translation_parent.existing">
+				<source>"%s" requires that the record "%s" (which is the default language version) is published first.</source>
 			</trans-unit>
-			<trans-unit id="record.reason.requires_published_page">
-				<source>Records only exist on pages, therefore the page "%s" must exist and have the same visibility.</source>
+			<trans-unit id="record.reason.requires_translation_parent.enablecolumns">
+				<source>"%s" requires that the record "%s" (which is the default language version) has all of its properties published (%s) which determine if the record is visible.</source>
 			</trans-unit>
-			<trans-unit id="record.reason.missing_dependency">
-				<source>This record depends on the record "%s", which will not be published with this record.</source>
+			<trans-unit id="record.reason.requires_published_page.existing">
+				<source>"%s" requires that the page "%s" is published first.</source>
+			</trans-unit>
+			<trans-unit id="record.reason.requires_published_page.enablecolumns">
+				<source>"%s" requires that the page "%s" has all of its properties published (%s) which determine if the record is visible.</source>
 			</trans-unit>
 			<trans-unit id="record.reason.missing_dependency">
 				<source>The record with classification "%s" and properties "%s" does not exist.</source>

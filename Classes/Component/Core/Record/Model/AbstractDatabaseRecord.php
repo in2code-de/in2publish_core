@@ -13,6 +13,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
     public const CTRL_PROP_LANGUAGE_FIELD = 'languageField';
     public const CTRL_PROP_TRANS_ORIG_POINTER_FIELD = 'transOrigPointerField';
     public const CTRL_PROP_DELETE = 'delete';
+    public const CTRL_PROP_ENABLECOLUMNS = 'enablecolumns';
     // Defaults for values if the given CTRL key does not exist in the TCA ctrl section
     protected const CTRL_DEFAULT = [
         self::CTRL_PROP_LANGUAGE_FIELD => 0,
@@ -64,10 +65,6 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
      */
     public function calculateDependencies(): array
     {
-        $labelArgumentsFactory = static fn(Record $record): array => [
-            "{$record->__toString()} ({$record->getClassification()} [{$record->getId()}])",
-        ];
-
         $dependencies = [];
         $language = $this->getCtrlProp(self::CTRL_PROP_LANGUAGE_FIELD);
         $transOrigPointer = $this->getCtrlProp(self::CTRL_PROP_TRANS_ORIG_POINTER_FIELD);
@@ -77,16 +74,29 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                 $this->getClassification(),
                 ['uid' => $transOrigPointer],
                 Dependency::REQ_EXISTING,
-                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_translation_parent',
-                $labelArgumentsFactory
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_translation_parent.existing',
+                static fn(Record $record): array => [
+                    $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
+                    $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
+                ]
             );
+
+            $enableFieldLabels = [];
+            foreach ($GLOBALS['TCA'][$this->table]['ctrl'][self::CTRL_PROP_ENABLECOLUMNS] ?? [] as $enableField) {
+                $enableFieldLabels[] = $GLOBALS['LANG']->sL($GLOBALS['TCA'][$this->table]['columns'][$enableField]['label']);
+            }
+
             $dependencies[] = new Dependency(
                 $this,
                 $this->getClassification(),
                 ['uid' => $transOrigPointer],
-                Dependency::REQ_ENABLEFIELDS,
-                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_translation_parent',
-                $labelArgumentsFactory
+                Dependency::REQ_ENABLECOLUMNS,
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_translation_parent.enablecolumns',
+                fn(Record $record): array => [
+                    $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
+                    $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
+                    implode(', ', $enableFieldLabels),
+                ]
             );
         }
         $pid = $this->getProp('pid');
@@ -96,16 +106,29 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                 'pages',
                 ['uid' => $pid],
                 Dependency::REQ_EXISTING,
-                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_published_page',
-                $labelArgumentsFactory
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_published_page.existing',
+                fn(Record $record): array => [
+                    $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
+                    $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
+                ]
             );
+
+            $enableFieldLabels = [];
+            foreach ($GLOBALS['TCA']['pages']['ctrl'][self::CTRL_PROP_ENABLECOLUMNS] ?? [] as $enableField) {
+                $enableFieldLabels[] = $GLOBALS['LANG']->sL($GLOBALS['TCA']['pages']['columns'][$enableField]['label']);
+            }
+
             $dependencies[] = new Dependency(
                 $this,
                 'pages',
                 ['uid' => $pid],
-                Dependency::REQ_ENABLEFIELDS,
-                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_published_page',
-                $labelArgumentsFactory
+                Dependency::REQ_ENABLECOLUMNS,
+                'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_published_page.enablecolumns',
+                fn(Record $record): array => [
+                    $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
+                    $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
+                    implode(', ', $enableFieldLabels),
+                ]
             );
         }
         return $dependencies;
