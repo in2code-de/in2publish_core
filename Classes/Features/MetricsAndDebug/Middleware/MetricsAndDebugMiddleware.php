@@ -68,13 +68,21 @@ class MetricsAndDebugMiddleware implements MiddlewareInterface
         return $this->replaceExecutionTimeMarker($contents, $response);
     }
 
+    /**
+     * @noinspection ForgottenDebugOutputInspection
+     */
     protected function debugSqlQueries(): void
     {
         if ($this->extensionConfiguration->get('in2publish_core', 'debugQueries')) {
             $queries = ContentPublisherSqlLogger::getQueries();
+            $queriesByCaller = [];
+            foreach ($queries as $query) {
+                $caller = $query['caller'];
+                $queriesByCaller[$caller][] = $query;
+            }
             if (!empty($queries)) {
-                /** @noinspection ForgottenDebugOutputInspection */
                 DebugUtility::debug($queries, 'Content Publisher Queries');
+                DebugUtility::debug($queriesByCaller, 'Queries By Caller');
             }
         }
     }
