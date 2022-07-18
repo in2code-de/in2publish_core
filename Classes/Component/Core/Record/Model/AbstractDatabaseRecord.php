@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Record\Model;
 
-use In2code\In2publishCore\Component\Core\Reason\Reason;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function implode;
