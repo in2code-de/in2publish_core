@@ -155,13 +155,13 @@ class GroupProcessorTest extends UnitTestCase
 
     /**
      * @covers ::process
+     * Case 1: no MM_match_fields
      */
-    public function testProcessingResultForMmTableRelations(): void
+    public function testProcessingResultForMmTableRelations1(): void
     {
         $GLOBALS['TCA']['tableNameBar'] = [];
         $GLOBALS['TCA']['tableNameFoo'] = [];
 
-        // Case 1: no MM_match_fields, no MM_opposite_field
         $mmTableTca = [
             'type' => 'group',
             'allowed' => 'tableNameBar, tableNameFoo',
@@ -185,6 +185,44 @@ class GroupProcessorTest extends UnitTestCase
         unset($GLOBALS['TCA']['tableNameFoo']);
         unset($GLOBALS['TCA']['tableNameBar']);
     }
+
+    /**
+     * @covers ::process
+     * Case 2: with MM_match_fields
+     */
+    public function testProcessingResultForMmTableRelations2(): void
+    {
+        $GLOBALS['TCA']['tableNameBar'] = [];
+        $GLOBALS['TCA']['tableNameFoo'] = [];
+
+        $mmTableTca = [
+            'type' => 'group',
+            'allowed' => 'tableNameBar, tableNameFoo',
+            'MM' => 'mmTable',
+            'MM_match_fields' => [
+                'matchFieldFoo' => 'matchFieldBar',
+                'matchFieldBaz' => 'matchFieldBeng',
+            ],
+        ];
+
+        $groupProcessor = new GroupProcessor();
+        $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
+        $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
+        $groupResolver = $this->createMock(GroupMmMultiTableResolver::class);
+        $groupResolver->expects($this->once())->method('configure')->with(['tableNameBar', 'tableNameFoo'], 'mmTable', 'matchFieldFoo', 'uid_foreign', '');
+
+        $container = $this->createMock(Container::class);
+        $container->expects($this->once())->method('get')->with(GroupMmMultiTableResolver::class)->willReturn($groupResolver);
+        $groupProcessor->injectContainer($container);
+
+        $processingResult = $groupProcessor->process('tableNameBar', 'fieldNameBar', $mmTableTca);
+        $this->assertTrue($processingResult->isCompatible());
+        $this->assertInstanceOf(GroupMmMultiTableResolver::class, $groupResolver);
+
+        unset($GLOBALS['TCA']['tableNameFoo']);
+        unset($GLOBALS['TCA']['tableNameBar']);
+    }
+
     /**
      * @covers ::isSingleTable
      */
