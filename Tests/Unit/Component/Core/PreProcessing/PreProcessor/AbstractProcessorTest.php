@@ -3,6 +3,7 @@
 namespace In2code\In2publishCore\Tests\Unit\Component\Core\PreProcessing\PreProcessor;
 
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor;
+use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\Exception\MissingPreProcessorTypeException;
 use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -64,12 +65,73 @@ class AbstractProcessorTest extends \In2code\In2publishCore\Tests\UnitTestCase
         $this->assertSame('Key 1 is required', $reason);
     }
 
+     /**
+     * @covers ::process
+     */
+    public function testExceptionIsThrownIfTypeIsMissing(): void
+    {
+        $abstractProcessor = $this->getMockAbstractProcessor();
+        // type is not set
+        $this->expectExceptionObject(new MissingPreProcessorTypeException($abstractProcessor));
+        $this->expectExceptionCode(1649243375);
+        $abstractProcessor->getType();
+
+        // type is set to 'processor_type'
+        $abstractProcessor->method('getType')->willReturn('processor_type');
+        $this->assertSame('processor_type', $abstractProcessor->getType());
+    }
+
+    /**
+     * @covers ::process
+     */
+    public function testProcessingResultIsIncompatibleIfNoResolverIsFound(): void
+    {
+        $tcaProcessingService = $this->createMock(TcaPreProcessingService::class);
+        $container = $this->createMock(ContainerInterface::class);
+        $abstractProcessor = $this->getMockForAbstractClass(AbstractProcessor::class);
+        $abstractProcessor->setTcaPreProcessingService($tcaProcessingService);
+        $abstractProcessor->injectContainer($container);
+        $abstractProcessor->method('buildResolver')->willReturn(null);
+
+        $tca = ['type' => 'inline'];
+        $result = $abstractProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
+        $reason = $result->getValue()[0];
+        $this->assertFalse($result->isCompatible());
+        $this->assertSame('The processor did not return a valid resolver. The target table might be excluded or empty.', $reason);
+    }
+
+    /**
+     * @covers ::getImportantFields
+     */
+    public function testMethodGetImportantFields(): void
+    {
+        $tcaProcessingService = $this->createMock(TcaPreProcessingService::class);
+        $container = $this->createMock(ContainerInterface::class);
+        $abstractProcessor = $this->getMockForAbstractClass(AbstractProcessor::class);
+        $abstractProcessor->setTcaPreProcessingService($tcaProcessingService);
+        $abstractProcessor->injectContainer($container);
+
+
+        $requiredFields = new \ReflectionProperty(AbstractProcessor::class, 'required');
+        $requiredFields->setAccessible(true);
+        $requiredFields->setValue($abstractProcessor, ['key_1' => 'Key 1 is required', 'key_2' => 'Key 2 is required']);
+
+        $allowedFields = new \ReflectionProperty(AbstractProcessor::class, 'allowed');
+        $allowedFields->setAccessible(true);
+        $allowedFields->setValue($abstractProcessor, ['allowed_field_1', 'allowed_field_2']);
+
+        $getImportantFields = new \ReflectionMethod(AbstractProcessor::class, 'getImportantFields');
+        $getImportantFields->setAccessible(true);
+
+        $expectedImportantFields = ['type', 'key_1', 'key_2', 'allowed_field_1', 'allowed_field_2'];
+        $this->assertSame($expectedImportantFields, $getImportantFields->invoke($abstractProcessor));
+    }
+
     protected function getMockAbstractProcessor(): MockObject
     {
         $tcaProcessingService = $this->createMock(TcaPreProcessingService::class);
         $container = $this->createMock(ContainerInterface::class);
-        $abstractProcessor = $this->getMockForAbstractClass(
-            AbstractProcessor::class);
+        $abstractProcessor = $this->getMockForAbstractClass(AbstractProcessor::class);
         $abstractProcessor->setTcaPreProcessingService($tcaProcessingService);
         $abstractProcessor->injectContainer($container);
         $abstractProcessor->method('buildResolver')->willReturn($this->createMock(StaticJoinResolver::class));
