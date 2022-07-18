@@ -64,7 +64,9 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
      */
     public function calculateDependencies(): array
     {
-        $labelArgumentsFactory = static fn(Record $record): array => ["{$record->__toString()} ({$record->getClassification()} [{$record->getId()}])"];
+        $labelArgumentsFactory = static fn(Record $record): array => [
+            "{$record->__toString()} ({$record->getClassification()} [{$record->getId()}])",
+        ];
 
         $dependencies = [];
         $language = $this->getCtrlProp(self::CTRL_PROP_LANGUAGE_FIELD);
