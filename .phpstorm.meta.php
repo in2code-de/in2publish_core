@@ -17,6 +17,10 @@ namespace PHPSTORM_META {
         \In2code\In2publishCore\Service\Context\ContextService::FOREIGN
     );
 
+    override(\Psr\Container\ContainerInterface::get(), type(0));
+    override(\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(), type(0));
+    override(\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstanceForDi(), type(0));
+
     expectedArguments(
         \In2code\In2publishCore\Component\Core\PreProcessing\ProcessingResult::__construct(),
         0,
