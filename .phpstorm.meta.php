@@ -2,6 +2,8 @@
 
 namespace PHPSTORM_META {
 
+    registerArgumentsSet('side', 'local', 'foreign');
+
     expectedReturnValues(
         \In2code\In2publishCore\Component\Core\Record\Model\Record::getState(),
         \In2code\In2publishCore\Component\Core\Record\Model\Record::S_ADDED,
@@ -52,6 +54,16 @@ namespace PHPSTORM_META {
         \In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider::PURPOSE_DRIVER,
         \In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider::PURPOSE_MISSING,
         \In2code\In2publishCore\Testing\Data\FalStorageTestSubjectsProvider::PURPOSE_UNIQUE_TARGET
+    );
+    expectedArguments(
+        \In2code\In2publishCore\Service\Database\RawRecordService::getRawRecord(),
+        2,
+        argumentsSet('side')
+    );
+    expectedArguments(
+        \In2code\In2publishCore\Service\Database\RawRecordService::fetchRecord(),
+        2,
+        argumentsSet('side')
     );
 }
 
