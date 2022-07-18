@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Record\Model;
 
+use Generator;
+
 interface Record extends Node
 {
     public const LOCAL = 'local';
@@ -101,9 +103,9 @@ interface Record extends Node
     public function getDependencies(): array;
 
     /**
-     * @return array<Dependency>
+     * @return Generator<Dependency>
      */
-    public function getAllDependencies(): array;
+    public function getAllDependencies(): Generator;
 
     public function isPublishable(): bool;
 

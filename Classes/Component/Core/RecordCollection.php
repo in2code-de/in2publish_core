@@ -5,10 +5,8 @@ namespace In2code\In2publishCore\Component\Core;
 use Closure;
 use Generator;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
-
 use Iterator;
 use IteratorAggregate;
-
 use NoRewindIterator;
 
 use function array_keys;
@@ -141,11 +139,23 @@ class RecordCollection implements IteratorAggregate
         return $records;
     }
 
-    public function map(Closure $closure): void
+    public function map(Closure $closure): array
+    {
+        $return = [];
+        foreach ($this->getRecordsFlat() as $record) {
+            $return[] = $closure($record);
+        }
+        return $return;
+    }
+
+    public function are(Closure $closure): bool
     {
         foreach ($this->getRecordsFlat() as $record) {
-            $closure($record);
+            if (!$closure($record)) {
+                return false;
+            }
         }
+        return true;
     }
 
     public function getIterator(): Iterator

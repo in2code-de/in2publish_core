@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Record\Model;
 
+use Generator;
 use LogicException;
 
 use function array_diff_assoc;
@@ -245,37 +246,36 @@ abstract class AbstractRecord implements Record
         return $this->dependencies;
     }
 
-    public function getAllDependencies(array &$visited = []): array
+    public function getAllDependencies(array &$visited = []): Generator
     {
         if (isset($visited[$this->getClassification()][$this->getId()])) {
             return [];
         }
         $visited[$this->getClassification()][$this->getId()] = true;
-        $dependencies = $this->dependencies;
+        yield from $this->dependencies;
         foreach ($this->children as $classification => $children) {
             if ('pages' !== $classification) {
                 foreach ($children as $child) {
-                    foreach ($child->getAllDependencies($visited) as $dependency) {
-                        $dependencies[] = $dependency;
-                    }
+                    yield from $child->getAllDependencies($visited);
                 }
             }
         }
-        return $dependencies;
+    }
+
+    public function isPublishable(): bool
+    {
+        /** @var array<Dependency> $allDependencies */
+        $allDependencies = $this->getAllDependencies();
+        foreach ($allDependencies as $dependency) {
+            if (!$dependency->isFulfilled() && !$dependency->canBeFulfilledBy($this)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public function __toString(): string
     {
         return $this->getClassification() . ' [' . $this->getId() . ']';
-    }
-
-    public function isPublishable(): bool
-    {
-        foreach ($this->dependencies as $dependency) {
-            if (!$dependency->isFulfilled()) {
-                return false;
-            }
-        }
-        return true;
     }
 }

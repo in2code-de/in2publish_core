@@ -8,10 +8,10 @@ use Closure;
 use In2code\In2publishCore\Component\Core\Reason\Reason;
 use In2code\In2publishCore\Component\Core\Reason\Reasons;
 use In2code\In2publishCore\Component\Core\RecordCollection;
-use In2code\In2publishCore\Component\Core\RecordIndex;
 
 use function implode;
-use function in_array;
+
+use const PHP_EOL;
 
 class Dependency
 {
@@ -25,6 +25,7 @@ class Dependency
     private Closure $labelArgumentsFactory;
     private string $requirement;
     private Reasons $reasons;
+    private RecordCollection $selectedRecords;
 
     public function __construct(
         Record $record,
@@ -41,6 +42,7 @@ class Dependency
         $this->labelArgumentsFactory = $labelArgumentsFactory;
         $this->requirement = $requirement;
         $this->reasons = new Reasons();
+        $this->selectedRecords = new RecordCollection();
     }
 
     public function getClassification(): string
@@ -71,6 +73,7 @@ class Dependency
             return;
         }
         foreach ($records as $record) {
+            $this->selectedRecords->addRecord($record);
             if (!$this->recordMatchesRequirements($record)) {
                 $this->reasons->addReason(new Reason($this->label, ($this->labelArgumentsFactory)($record)));
             }
@@ -87,10 +90,10 @@ class Dependency
         }
         if (self::REQ_ENABLEFIELDS === $this->requirement) {
             $state = $record->getState();
-            if ($state === Record::S_UNCHANGED)  {
+            if ($state === Record::S_UNCHANGED) {
                 return true;
             }
-            if ($state === Record::S_ADDED || $state === Record::S_DELETED)  {
+            if ($state === Record::S_ADDED || $state === Record::S_DELETED) {
                 return false;
             }
             $localProps = $record->getLocalProps();
@@ -107,12 +110,44 @@ class Dependency
 
     public function isFulfilled(): bool
     {
-        return $this->reasons->isEmpty();
+        return $this->reasons->isEmpty()
+            && $this->selectedRecords->are(static function (Record $record) {
+                foreach ($record->getDependencies() as $dependency) {
+                    if (!$dependency->isFulfilled()) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+    }
+
+    public function canBeFulfilledBy(Record $record): bool
+    {
+        foreach ($this->selectedRecords as $selectedRecord) {
+            if (
+                $record !== $selectedRecord
+                && !$this->recordMatchesRequirements($selectedRecord)
+            ) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public function getReasons(): Reasons
     {
-        return $this->reasons;
+        $reasons = new Reasons($this->reasons);
+        $this->selectedRecords->map(static function (Record $record) use ($reasons) {
+            foreach ($record->getDependencies() as $dependency) {
+                $reasons->addReasons($dependency->getReasons());
+            }
+        });
+        return $reasons;
+    }
+
+    public function getReasonsHumanReadable(): string
+    {
+        return implode(PHP_EOL, $this->getReasons()->map(static fn(Reason $reason) => $reason->getReadableLabel()));
     }
 
     public function __toString(): string
