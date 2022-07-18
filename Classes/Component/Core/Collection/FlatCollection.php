@@ -11,7 +11,7 @@ use IteratorAggregate;
 
 abstract class FlatCollection implements IteratorAggregate
 {
-    protected array $objects;
+    protected array $objects = [];
 
     public function getAll(): array
     {
