@@ -9,6 +9,9 @@ use Closure;
 use Iterator;
 use IteratorAggregate;
 
+use function array_map;
+use function array_reduce;
+
 abstract class FlatCollection implements IteratorAggregate
 {
     protected array $objects = [];
@@ -26,6 +29,15 @@ abstract class FlatCollection implements IteratorAggregate
     public function map(Closure $closure): array
     {
         return array_map($closure, $this->objects);
+    }
+
+    /**
+     * @param mixed $initial
+     * @return mixed
+     */
+    public function reduce(Closure $closure, $initial = null)
+    {
+        return array_reduce($this->objects, $closure, $initial);
     }
 
     public function are(Closure $closure): bool
