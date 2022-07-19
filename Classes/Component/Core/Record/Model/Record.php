@@ -102,10 +102,7 @@ interface Record extends Node
      */
     public function getDependencies(): array;
 
-    /**
-     * @return Generator<Dependency>
-     */
-    public function getAllDependencies(): Generator;
+    public function getAllDependencies(array &$visited = []): Generator;
 
     public function isPublishable(): bool;
 

@@ -26,6 +26,12 @@ class Dependency
     private string $requirement;
     private Reasons $reasons;
     private RecordCollection $selectedRecords;
+    /**
+     * Superseded dependencies must be fulfilled first.
+     *
+     * @var array<Dependency>
+     */
+    private array $supersededBy = [];
 
     public function __construct(
         Record $record,
@@ -43,6 +49,11 @@ class Dependency
         $this->requirement = $requirement;
         $this->reasons = new Reasons();
         $this->selectedRecords = new RecordCollection();
+    }
+
+    public function addSupersedingDependency(Dependency $dependency): void
+    {
+        $this->supersededBy[] = $dependency;
     }
 
     public function getClassification(): string
@@ -110,15 +121,25 @@ class Dependency
 
     public function isFulfilled(): bool
     {
-        return $this->reasons->isEmpty()
-            && $this->selectedRecords->are(static function (Record $record) {
-                foreach ($record->getDependencies() as $dependency) {
-                    if (!$dependency->isFulfilled()) {
-                        return false;
-                    }
-                }
-                return true;
-            });
+        if ($this->isSupersededByUnfulfilledDependency()) {
+            return false;
+        }
+        return $this->reasons->isEmpty();
+    }
+
+    public function isSupersededByUnfulfilledDependency(): bool
+    {
+        return !empty($this->supersededBy) && !$this->areSupersededDependenciesFulfilled();
+    }
+
+    protected function areSupersededDependenciesFulfilled(): bool
+    {
+        foreach ($this->supersededBy as $dependency) {
+            if (!$dependency->isFulfilled()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public function canBeFulfilledBy(Record $record): bool
@@ -134,43 +155,8 @@ class Dependency
         return true;
     }
 
-    public function getReasons(): Reasons
-    {
-        $reasons = new Reasons($this->reasons);
-        $this->selectedRecords->map(static function (Record $record) use ($reasons) {
-            foreach ($record->getDependencies() as $dependency) {
-                $reasons->addReasons($dependency->getReasons());
-            }
-        });
-        return $reasons;
-    }
-
     public function getReasonsHumanReadable(): string
     {
-        return implode(PHP_EOL, $this->getReasons()->map(static fn(Reason $reason) => $reason->getReadableLabel()));
-    }
-
-    public function __toString(): string
-    {
-        $humanString = $this->record->__toString();
-        $technicalString = "{$this->record->getClassification()} [{$this->record->getId()}]";
-        if ($humanString !== $technicalString) {
-            $humanString .= " ({$technicalString})";
-        }
-        $technicalReasons = [];
-        foreach ($this->reasons->getAll() as $reason) {
-            $technicalReasons[] = $reason->getReadableLabel();
-        }
-        $technicalReasons = implode(', ', $technicalReasons);
-        $properties = [];
-        foreach ($this->properties as $property => $value) {
-            $properties[] = "$property=$value";
-        }
-        $properties = implode(', ', $properties);
-        return <<<TXT
-From: "$humanString"
-To: $this->classification [$properties]
-Reason: $technicalReasons
-TXT;
+        return implode(PHP_EOL, $this->reasons->map(static fn(Reason $reason) => $reason->getReadableLabel()));
     }
 }

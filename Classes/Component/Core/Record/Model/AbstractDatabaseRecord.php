@@ -69,7 +69,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
         $language = $this->getCtrlProp(self::CTRL_PROP_LANGUAGE_FIELD);
         $transOrigPointer = $this->getCtrlProp(self::CTRL_PROP_TRANS_ORIG_POINTER_FIELD);
         if ($language > 0 && $transOrigPointer > 0) {
-            $dependencies[] = new Dependency(
+            $dependencies[] = $transOrigExisting = new Dependency(
                 $this,
                 $this->getClassification(),
                 ['uid' => $transOrigPointer],
@@ -86,7 +86,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                 $enableFieldLabels[] = $GLOBALS['LANG']->sL($GLOBALS['TCA'][$this->table]['columns'][$enableField]['label']);
             }
 
-            $dependencies[] = new Dependency(
+            $dependencies[] = $transOrigEnableColumns = new Dependency(
                 $this,
                 $this->getClassification(),
                 ['uid' => $transOrigPointer],
@@ -98,10 +98,11 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                     implode(', ', $enableFieldLabels),
                 ]
             );
+            $transOrigEnableColumns->addSupersedingDependency($transOrigExisting);
         }
         $pid = $this->getProp('pid');
         if ($pid > 0) {
-            $dependencies[] = new Dependency(
+            $dependencies[] = $pageExisting = new Dependency(
                 $this,
                 'pages',
                 ['uid' => $pid],
@@ -118,7 +119,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                 $enableFieldLabels[] = $GLOBALS['LANG']->sL($GLOBALS['TCA']['pages']['columns'][$enableField]['label']);
             }
 
-            $dependencies[] = new Dependency(
+            $dependencies[] = $pageEnableColumns = new Dependency(
                 $this,
                 'pages',
                 ['uid' => $pid],
@@ -130,6 +131,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                     implode(', ', $enableFieldLabels),
                 ]
             );
+            $pageEnableColumns->addSupersedingDependency($pageExisting);
         }
         return $dependencies;
     }

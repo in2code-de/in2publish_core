@@ -8,7 +8,16 @@ use Generator;
 use LogicException;
 
 use function array_diff_assoc;
+use function array_key_last;
 use function array_keys;
+use function array_pop;
+use function count;
+use function explode;
+use function implode;
+use function is_array;
+use function is_int;
+use function is_string;
+use function key;
 
 abstract class AbstractRecord implements Record
 {
@@ -258,6 +267,101 @@ abstract class AbstractRecord implements Record
                 foreach ($children as $child) {
                     yield from $child->getAllDependencies($visited);
                 }
+            }
+        }
+    }
+
+    public function getDependencyTree(array &$visited = []): array
+    {
+        $classification = $this->getClassification();
+        $id = $this->getId();
+
+        $deps = [];
+        if (isset($visited[$classification][$id])) {
+            return [];
+        }
+        $visited[$classification][$id] = true;
+
+        $deps[$classification][$id] = [
+            'dependencies' => $this->dependencies,
+        ];
+        foreach ($this->getChildren() as $childClassification => $children) {
+            if ('pages' !== $childClassification) {
+                foreach ($children as $child) {
+                    $deps[$classification][$id]['children'][] = $child->getDependencyTree($visited);
+                }
+            }
+        }
+        return $deps;
+    }
+
+    /**
+     * @noinspection PhpUnused (Used in View)
+     */
+    public function getUnfulfilledDependencies(): array
+    {
+        $dependencyTree = $this->getDependencyTree();
+        /** @var array<array<Dependency>> $flattened */
+        $flattened = [];
+        $this->flattenDependencyTree($dependencyTree, $flattened);
+        $string = [];
+        foreach ($flattened as $key => $dependencies) {
+            foreach ($dependencies as $dependency) {
+                if (!$dependency->isSupersededByUnfulfilledDependency() && !$dependency->isFulfilled()) {
+                    $readableKeyParts = [];
+                    foreach (explode(':', $key) as $index => $part) {
+                        if ($index % 2) {
+                            $readableKeyParts[$index - 1] .= ' [' . $part . ']';
+                        } else {
+                            $readableKeyParts[$index] = $part;
+                        }
+                    }
+
+                    $properties = $dependency->getProperties();
+                    if (count($properties) === 1 && isset($properties['uid'])) {
+                        $propertiesReadable = $properties['uid'];
+                    } else {
+                        $propertiesReadable = [];
+                        foreach ($properties as $property => $value) {
+                            $propertiesReadable[] = $property . '=' . $value;
+                        }
+                        $propertiesReadable = implode(', ', $propertiesReadable);
+                    }
+
+                    $targetReadable = $dependency->getClassification() . ' [' . $propertiesReadable . ']';
+
+                    $string[] = implode(' / ', $readableKeyParts)
+                        . ' -> '
+                        . $targetReadable
+                        . ': '
+                        . $dependency->getReasonsHumanReadable();
+                }
+            }
+        }
+        return $string;
+    }
+
+    /**
+     * @param array<Dependency> $dependencyTree
+     */
+    public function flattenDependencyTree(array $dependencyTree, array &$flattened, array &$parents = [])
+    {
+        foreach ($dependencyTree as $tableOrId => $dependency) {
+            if (is_array($dependency)) {
+                $isIndex = false;
+                $array_key_last = array_key_last($parents);
+                if ($array_key_last) {
+                    $isIndex = is_int($parents[$array_key_last]) && is_string(key($dependency));
+                }
+                if (!$isIndex && $tableOrId !== 'dependencies' && $tableOrId !== 'children') {
+                    $parents[] = $tableOrId;
+                }
+                $this->flattenDependencyTree($dependency, $flattened, $parents);
+                if (!$isIndex && $tableOrId !== 'dependencies' && $tableOrId !== 'children') {
+                    array_pop($parents);
+                }
+            } else {
+                $flattened[implode(':', $parents)][] = $dependency;
             }
         }
     }
