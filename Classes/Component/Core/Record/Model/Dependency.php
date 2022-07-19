@@ -57,6 +57,11 @@ class Dependency
         $this->supersededBy[] = $dependency;
     }
 
+    public function getRecord(): Record
+    {
+        return $this->record;
+    }
+
     public function getClassification(): string
     {
         return $this->classification;
@@ -65,6 +70,11 @@ class Dependency
     public function getProperties(): array
     {
         return $this->properties;
+    }
+
+    public function getRequirement(): string
+    {
+        return $this->requirement;
     }
 
     public function getPropertiesAsUidOrString(): string
