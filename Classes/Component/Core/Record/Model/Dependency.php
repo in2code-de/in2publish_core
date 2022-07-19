@@ -9,6 +9,7 @@ use In2code\In2publishCore\Component\Core\Reason\Reason;
 use In2code\In2publishCore\Component\Core\Reason\Reasons;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 
+use function count;
 use function implode;
 
 use const PHP_EOL;
@@ -64,6 +65,19 @@ class Dependency
     public function getProperties(): array
     {
         return $this->properties;
+    }
+
+    public function getPropertiesAsUidOrString(): string
+    {
+        if (count($this->properties) === 1 && isset($this->properties['uid'])) {
+            return (string)$this->properties['uid'];
+        }
+
+        $propertiesString = [];
+        foreach ($this->properties as $property => $value) {
+            $propertiesString[] = $property . '=' . $value;
+        }
+        return implode(', ', $propertiesString);
     }
 
     public function fulfill(RecordCollection $recordIndex): void
