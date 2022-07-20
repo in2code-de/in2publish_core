@@ -22,6 +22,7 @@ class SelectProcessorTest extends UnitTestCase
 {
     /**
      * @covers ::process
+     * @covers ::buildResolver
      */
     public function testSelectProcessorReturnsCompatibleResultForCompatibleColumn(): void
     {
@@ -174,5 +175,64 @@ class SelectProcessorTest extends UnitTestCase
         $resolver = $processingResult->getValue()['resolver'];
 
         $this->assertInstanceOf(SelectMmResolver::class, $resolver);
+    }
+
+
+    /**
+     * @covers ::isSysCategoryField
+     * @dataProvider isSysCategoryFieldDataProvider
+     */
+    public function testIsSysCategoryField($config, $expectation): void
+    {
+        $selectProcessor = new SelectProcessor();
+        // access protected method isSysCategoryField()
+        $reflectionMethod = new \ReflectionMethod(SelectProcessor::class, 'isSysCategoryField');
+        $reflectionMethod->setAccessible(true);
+        $isSysCategoryField = $reflectionMethod->invoke($selectProcessor, $config);
+
+        $this->assertEquals($expectation, $isSysCategoryField);
+    }
+
+    public function isSysCategoryFieldDataProvider(): array
+    {
+        return [
+            'isSysCategoryField' => [
+                [
+                    'foreign_table' => 'sys_category',
+                    'MM_opposite_field' => 'items',
+                    'MM' => 'sys_category_record_mm',
+                ],
+                true,
+            ],
+            'isNotSysCategoryField1' => [
+                [
+                    'foreign_table' => 'not_sys_category',
+                    'MM_opposite_field' => 'not_items',
+                    'MM' => 'not_sys_category_record_mm',
+                ],
+                false,
+            ],
+            'missingConfig1' => [
+                [
+                    'foreign_table' => 'not_sys_category',
+                    'MM_opposite_field' => 'not_items',
+                ],
+                false,
+            ],
+            'missingConfig2' => [
+                [
+                    'MM_opposite_field' => 'not_items',
+                    'MM' => 'not_sys_category_record_mm',
+                ],
+                false,
+            ],
+            'missingConfig3' => [
+                [
+                    'foreign_table' => 'not_sys_category',
+                    'MM' => 'not_sys_category_record_mm',
+                ],
+                false,
+            ],
+        ];
     }
 }
