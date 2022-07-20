@@ -38,6 +38,61 @@ class GroupProcessorTest extends UnitTestCase
         $this->expectError();
         $this->expectErrorMessage('Undefined array key "allowed"');
         $groupProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
+    /**
+     * @covers ::process
+     * @covers ::additionalPreProcess
+     */
+    public function testProcessInternalTypeMustBeDb(): void
+    {
+        $GLOBALS['TCA']['table_foo'] = [];
+        $tca =  ['type' => 'group', 'allowed' => 'table_foo', 'internal_type' => 'file'];
+
+        $groupProcessor = new GroupProcessor();
+        $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
+        $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
+        $groupResolver = $this->createMock(GroupSingleTableResolver::class);
+        $groupResolver->expects($this->once())->method('configure')->with('field_foo', 'table_foo');
+
+        $container = $this->createMock(Container::class);
+        $container->expects($this->once())->method('get')->with(GroupSingleTableResolver::class)->willReturn($groupResolver);
+        $groupProcessor->injectContainer($container);
+
+        $processingResult = $groupProcessor->process('table_foo', 'field_foo', $tca);
+        $this->assertFalse($processingResult->isCompatible());
+        $reason = $processingResult->getValue()[0];
+        $this->assertSame('The internal type "file" is not supported', $reason);
+
+        $tca =  ['type' => 'group', 'allowed' => 'table_foo', 'internal_type' => 'db'];
+        $processingResult = $groupProcessor->process('table_foo', 'field_foo', $tca);
+        $this->assertTrue($processingResult->isCompatible());
+
+        unset($GLOBALS['TCA']['table_foo']);
+    }
+
+    /**
+     * @covers ::process
+     * @covers ::additionalPreProcess
+     */
+    public function testProcessAllowedTableMustBeInTca(): void
+    {
+        $GLOBALS['TCA']['table_foo'] = [];
+        $tca =  ['type' => 'group', 'allowed' => 'table_bar'];
+
+        $groupProcessor = new GroupProcessor();
+        $tcaMarkerService = $this->createMock(TcaEscapingMarkerService::class);
+        $groupProcessor->injectTcaEscapingMarkerService($tcaMarkerService);
+
+        $container = $this->createMock(Container::class);
+        $groupProcessor->injectContainer($container);
+
+
+        $processingResult = $groupProcessor->process('table_foo', 'field_foo', $tca);
+        $this->assertFalse($processingResult->isCompatible());
+        $reason = $processingResult->getValue()[0];
+        $expectedMessage = 'Can not reference the table "table_bar" from "allowed. It is not present in the TCA';
+        $this->assertSame($expectedMessage, $reason);
+
+        unset($GLOBALS['TCA']['table_foo']);
     }
 
     /**
