@@ -27,8 +27,9 @@ class TextResolverTest extends UnitTestCase
 
     /**
      * @covers ::resolve
+     * @covers ::findRelationsInText
      */
-    public function testResolverFindsPageRelations(): void
+    public function testResolverFindsPageAndFileRelations(): void
     {
         $textResolver = new TextResolver();
         $eventDispatcher = $this->createMock(EventDispatcher::class);
@@ -38,7 +39,7 @@ class TextResolverTest extends UnitTestCase
         $databaseRecord = new DatabaseRecord(
             'tt_content',
             1,
-            ['header_link' => 't3://page?uid=1 t3://page?uid=2'],
+            ['header_link' => 't3://page?uid=1 t3://page?uid=2 t3://file?uid=3'],
             [],
             []
         );
@@ -46,14 +47,21 @@ class TextResolverTest extends UnitTestCase
 
         $selectDemand = $demands->getSelect();
 
-//       $expectedDemandStructure = ['pages'][['uid' => [1 => 'tt_content\1', 2 => 'tt_content\1']]];
-
         $this->assertArrayHasKey('pages', $selectDemand);
+
         $pagesArray = $selectDemand['pages'];
         foreach ($pagesArray as $subArray) {
             $this->assertArrayHasKey('uid', $subArray);
             $this->assertArrayHasKey('tt_content\1', $subArray['uid'][1]);
             $this->assertArrayHasKey('tt_content\1', $subArray['uid'][2]);
+        }
+
+        $this->assertArrayHasKey('sys_file', $selectDemand);
+        $fileArray = $selectDemand['sys_file'];
+
+        foreach ($fileArray as $subArray) {
+            $this->assertArrayHasKey('uid', $subArray);
+            $this->assertArrayHasKey('tt_content\1', $subArray['uid'][3]);
         }
     }
 }
