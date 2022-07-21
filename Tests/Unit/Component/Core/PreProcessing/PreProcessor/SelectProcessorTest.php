@@ -70,10 +70,11 @@ class SelectProcessorTest extends UnitTestCase
 
     /**
      * @covers ::process
+     * @covers ::buildResolver
      */
     public function testSelectProcessorFiltersTca(): void
     {
-        $bigTca = [
+        $tca = [
             'type' => 'select',
             'foreign_table' => 'tableNameBeng',
             'foreign_table_where' => '',
@@ -84,7 +85,7 @@ class SelectProcessorTest extends UnitTestCase
             'rootLevel' => '',
             'filterMe' => '',
         ];
-        $expectedTca = [
+        $processorTca = [
             'type' => 'select',
             'foreign_table' => 'tableNameBeng',
             'foreign_table_where' => '',
@@ -103,13 +104,14 @@ class SelectProcessorTest extends UnitTestCase
         $selectProcessor = new SelectProcessor();
         $selectProcessor->injectContainer($container);
         $selectProcessor->injectTcaEscapingMarkerService($tcaEscapingMarkerService);
-        $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $bigTca);
-        $this->assertSame($expectedTca, $processingResult->getValue()['tca']);
+        $processingResult = $selectProcessor->process('tableNameFoo', 'fieldNameBar', $tca);
+        $this->assertSame($processorTca, $processingResult->getValue()['tca']);
     }
 
     /**
      * @depends testSelectProcessorReturnsCompatibleResultForCompatibleColumn
      * @covers ::process
+     * @covers ::buildResolver
      */
     public function testSelectProcessorCreatesDemandForSimpleRelation(): void
     {
@@ -143,6 +145,7 @@ class SelectProcessorTest extends UnitTestCase
     /**
      * @depends testSelectProcessorReturnsCompatibleResultForCompatibleColumn
      * @covers ::process
+     * @covers ::buildResolver
      */
     public function testSelectProcessorCreatesDemandForMMRelation(): void
     {

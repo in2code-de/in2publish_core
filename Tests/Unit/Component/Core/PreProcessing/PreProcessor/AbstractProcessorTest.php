@@ -8,13 +8,19 @@ use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractPro
 use In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\Exception\MissingPreProcessorTypeException;
 use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
+use In2code\In2publishCore\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Container\ContainerInterface;
 
-class AbstractProcessorTest extends \In2code\In2publishCore\Tests\UnitTestCase
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor\AbstractProcessor
+ */
+class AbstractProcessorTest extends UnitTestCase
 {
     /**
      * @covers ::process
+     * @covers ::buildResolver
+     * @covers ::getImportantFields
      */
     public function testProcessingResultIsImcompatibleIfThereAreForbiddenKeysInTca(): void
     {

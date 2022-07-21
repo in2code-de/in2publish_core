@@ -67,7 +67,7 @@ class PublisherServiceTest extends UnitTestCase
     }
 
     /**
-     * @covers ::cancel
+     * @covers ::publishRecordTree
      */
     public function testCancelIsCalledWhenExceptionIsThrownDuringPublishing(): void
     {
@@ -87,9 +87,8 @@ class PublisherServiceTest extends UnitTestCase
     }
 
     /**
-     * @covers ::cancel
-     * @covers ::reverse
-     * @covers ::finish
+     * @covers ::addPublisher
+     * @covers ::publishRecordTree
      */
     public function testCancelAndReverseAreCalledWhenExceptionIsThrownDuringFinish(): void
     {
