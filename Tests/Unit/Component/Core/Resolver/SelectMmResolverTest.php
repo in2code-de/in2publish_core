@@ -107,7 +107,6 @@ class SelectMmResolverTest extends UnitTestCase
 
         $demands = new DemandsCollection();
 
-
         $selectMmResolver->resolve($demands, $record);
 
         $joinDemand = $demands->getJoin();

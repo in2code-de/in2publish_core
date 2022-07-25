@@ -19,7 +19,7 @@ class SelectResolverTest extends UnitTestCase
      * @uses ::configure
      * @covers ::getTargetTables
      */
-    public function testGetTables(): void
+    public function testGetTargetTables(): void
     {
         $selectResolver = new SelectResolver();
         $foreignTable = new \ReflectionProperty(SelectResolver::class, 'foreignTable');
@@ -64,7 +64,6 @@ class SelectResolverTest extends UnitTestCase
     public function testResolve(): void
     {
         $selectResolver = new SelectResolver();
-
 
         $replaceMarkersService = $this->createMock(ReplaceMarkersService::class);
         $selectResolver->injectReplaceMarkersService($replaceMarkersService);

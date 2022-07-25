@@ -13,7 +13,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \In2code\In2publishCore\Component\Core\FileHandling\FileRecordListener
+ * @coversDefaultClass \In2code\In2publishCore\Component\Core\FileHandling\FileDemandResolver
  */
 class FileDemandResolverTest extends UnitTestCase
 {
