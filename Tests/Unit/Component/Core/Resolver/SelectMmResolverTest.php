@@ -81,9 +81,16 @@ class SelectMmResolverTest extends UnitTestCase
     /**
      * @covers ::resolve
      */
-    public function testResolveWithAdditionalHwere()
+    public function testResolveWithAdditionalWhere()
     {
-        $selectMmResolver = $this->getConfiguredMmSelectResolver();
+        $selectMmResolver = new SelectMmResolver();
+        $selectMmResolver->configure(
+            'AND {#foreignTable}.{#column} LIKE \'%value%\' ORDER BY uid',
+            'column',
+            'mmTable',
+            'foreignTable',
+            'selectField'
+        );
 
         $record = new DatabaseRecord('table_foo', 42, ['value_foo' => 'value_1'],[],[]);
 
@@ -94,7 +101,8 @@ class SelectMmResolverTest extends UnitTestCase
             $this->once())
             ->method('replaceMarkers')
             ->with($record,$additionalWhere,'column')
-            ->willReturn('AND foreignTable.column LIKE \'%value%\' ORDER BY uid');
+            ->willReturn('AND foreignTable.column LIKE \'%value%\'');
+
         $selectMmResolver->injectReplaceMarkersService($replaceMarkersService);
 
         $demands = new DemandsCollection();
@@ -103,7 +111,7 @@ class SelectMmResolverTest extends UnitTestCase
         $selectMmResolver->resolve($demands, $record);
 
         $joinDemand = $demands->getJoin();
-        $resolvedRecord = $joinDemand['mmTable']['foreignTable']['foreignTableWhereClause']['selectField'][42]['table_foo\42'];
+        $resolvedRecord = $joinDemand['mmTable']['foreignTable']['AND foreignTable.column LIKE \'%value%\'']['selectField'][42]['table_foo\42'];
         $this->assertEquals($resolvedRecord, $record);
     }
 
