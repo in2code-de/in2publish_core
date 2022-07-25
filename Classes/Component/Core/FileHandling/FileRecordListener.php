@@ -30,7 +30,7 @@ class FileRecordListener
     public function onRecordWasCreated(RecordWasCreated $event): void
     {
         $record = $event->getRecord();
-        if ('sys_file' !== $record->getClassification()) {
+        if ('_file' !== $record->getClassification()) {
             return;
         }
         $this->fileRecords[] = $record;
