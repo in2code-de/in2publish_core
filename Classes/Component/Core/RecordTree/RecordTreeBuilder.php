@@ -40,7 +40,7 @@ class RecordTreeBuilder
         $this->relevantTablesService = $relevantTablesService;
     }
 
-    public function injectDemandResolverFactory(DemandResolver $demandResolver): void
+    public function injectDemandResolver(DemandResolver $demandResolver): void
     {
         $this->demandResolver = $demandResolver;
     }
