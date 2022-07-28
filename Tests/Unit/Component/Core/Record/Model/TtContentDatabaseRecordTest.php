@@ -147,15 +147,5 @@ class TtContentDatabaseRecordTest extends UnitTestCase
 
         $this->assertSame(0, count($ttContentDatabaseRecord1->calculateDependencies()));
         $this->assertSame(0, count($ttContentDatabaseRecord2->calculateDependencies()));
-
-        // TODO: it would be better to ensure that array key "record" is set in TtContentDatabaseRecord::calculateDependencies()
-        $this->expectError('Undefined array key "records"');
-        new TtContentDatabaseRecord(
-            'table_foo',
-            42,
-            ['CType' => 'shortcut'],
-            ['records' => 'table_bar,42'],
-            []
-        );
     }
 }

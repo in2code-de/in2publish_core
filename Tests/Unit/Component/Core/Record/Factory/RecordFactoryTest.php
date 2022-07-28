@@ -17,9 +17,12 @@ use In2code\In2publishCore\Component\Core\Record\Model\FolderRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\MmDatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\PageTreeRootRecord;
 use In2code\In2publishCore\Component\Core\RecordIndex;
+use In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Service\Configuration\IgnoredFieldsService;
 use In2code\In2publishCore\Tests\UnitTestCase;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
+use TYPO3\CMS\Core\EventDispatcher\ListenerProvider;
+use TYPO3\CMS\Lowlevel\ConfigurationModuleProvider\EventListenersProvider;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory
@@ -88,36 +91,42 @@ class RecordFactoryTest extends UnitTestCase
      * @covers ::createDatabaseRecord
      * @covers ::finishRecord
      * @covers ::shouldIgnoreRecord
-     * TODO: how to test ignored fields?
      */
-    public function testDatabaseRecordIsNotCreatedAndAddedToRecordIndexIfItContainsOnlyIgnoredFields(): void
+    public function testDatabaseRecordIsNotCreatedAndAddedToRecordIndexIfItShouldBeIgnored(): void
     {
         $recordFactory = new RecordFactory();
 
         $table = 'table_foo';
 
         $ignoreFieldsService = $this->createMock(IgnoredFieldsService::class);
-        $ignoreFieldsService->expects($this->once())->method('getIgnoredFields')->with($table)
-            ->willReturn(['ignored_field']);
+        $ignoreFieldsService->method('getIgnoredFields')->willReturn([]);
 
         $databaseRecordFactoryFactory = $this->createMock(DatabaseRecordFactoryFactory::class);
-        $databaseRecordFactoryFactory->expects($this->once())->method('createFactoryForTable')->with($table)
-            ->willReturn($this->createMock(DatabaseRecordFactory::class));
+        $databaseRecordFactoryFactory->method('createFactoryForTable')->willReturn(
+            $this->createMock(DatabaseRecordFactory::class)
+        );
 
-        $recordIndex = $this->createMock(RecordIndex::class);
-        $recordIndex->expects($this->once())->method('addRecord');
+        $listenerProvider = $this->createMock(ListenerProvider::class);
+        $listenerProvider->method('getListenersForEvent')->willReturnCallback(function (object $event) {
+            if ($event instanceof DecideIfRecordShouldBeIgnored) {
+                return [
+                    function (DecideIfRecordShouldBeIgnored $event) {
+                        $event->shouldIgnore();
+                    }
+                ];
+            }
+            return [];
+        });
 
-        $eventDispatcher = $this->createMock(EventDispatcher::class);
-        $eventDispatcher->expects($this->exactly(2))->method('dispatch');
+        $eventDispatcher = new EventDispatcher($listenerProvider);
 
         $recordFactory->injectIgnoredFieldsService($ignoreFieldsService);
         $recordFactory->injectDatabaseRecordFactoryFactory($databaseRecordFactoryFactory);
         $recordFactory->injectEventDispatcher($eventDispatcher);
-        $recordFactory->injectRecordIndex($recordIndex);
 
         $record = $recordFactory->createDatabaseRecord($table, 1, ['ignored_field' => 'bar'], []);
 
-        $this->assertInstanceOf(DatabaseRecord::class, $record);
+        $this->assertNull($record);
     }
 
     /**

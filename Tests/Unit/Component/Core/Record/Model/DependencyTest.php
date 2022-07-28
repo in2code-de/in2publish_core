@@ -178,9 +178,7 @@ class DependencyTest extends UnitTestCase
         $reflectionProperty->setAccessible(true);
         $reasons = $reflectionProperty->getValue($dependency);
 
-        $this->assertSame(0, count($reasons->getAll()));
-        // TODO: $reasons contains one empty reason, but it should be empty
-       // $this->assertFalse($reasons->isEmpty());
+        $this->assertTrue($reasons->isEmpty());
     }
 
     /**

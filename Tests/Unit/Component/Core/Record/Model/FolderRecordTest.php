@@ -49,7 +49,7 @@ class FolderRecordTest extends UnitTestCase
         $folderRecord = new FolderRecord('42:folder_name', ['prop_1' => 'value_1'], ['prop_1' => 'value_2']);
         $this->assertSame(Record::S_CHANGED, $folderRecord->getState());
 
-        $folderRecord = new FolderRecord('42:folder_name', ['prop_1' => 'value_2'], []);
+        $folderRecord = new FolderRecord('42:folder_name', [],['prop_1' => 'value_2']);
         $this->assertSame(Record::S_DELETED, $folderRecord->getState());
     }
 }
