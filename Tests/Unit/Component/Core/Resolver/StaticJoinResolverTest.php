@@ -9,6 +9,9 @@ use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver;
 use In2code\In2publishCore\Tests\UnitTestCase;
 
+/**
+ * @coversDefaultClass \In2code\In2publishCore\Component\Core\Resolver\StaticJoinResolver
+ */
 class StaticJoinResolverTest extends UnitTestCase
 {
     /**
@@ -39,8 +42,7 @@ class StaticJoinResolverTest extends UnitTestCase
     }
 
     /**
-     * @uses configure
-     * @covers getTargetTables
+     * @covers ::getTargetTables
      */
     public function testGetTargetTables(): void
     {
@@ -56,7 +58,6 @@ class StaticJoinResolverTest extends UnitTestCase
     }
 
     /**
-     * @uses configure
      * @covers ::resolve
      */
     public function testResolve(): void

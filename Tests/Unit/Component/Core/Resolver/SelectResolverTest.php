@@ -16,7 +16,6 @@ use In2code\In2publishCore\Tests\UnitTestCase;
 class SelectResolverTest extends UnitTestCase
 {
     /**
-     * @uses ::configure
      * @covers ::getTargetTables
      */
     public function testGetTargetTables(): void

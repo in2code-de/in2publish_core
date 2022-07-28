@@ -71,7 +71,7 @@ class DependencyTest extends UnitTestCase
     }
 
     /**
-     * @covers ::getSupersedingDependencies
+     * @covers ::getPropertiesAsUidOrString
      */
     public function testGetPropertiesAsUidOrString(): void
     {
