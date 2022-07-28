@@ -24,8 +24,8 @@ class FileDemandResolverTest extends UnitTestCase
     public function testResolveDemand(): void
     {
         $fileDemandResolver = new FileDemandResolver();
-        $file1 = new FileRecord(['identifier' => 'file1', 'storage' => 42,],[]);
-        $file2 = new FileRecord(['identifier' => 'file2', 'storage' => 42,],[]);
+        $file1 = new FileRecord(['identifier' => 'file1', 'storage' => 42],[]);
+        $file2 = new FileRecord(['identifier' => 'file2', 'storage' => 42],[]);
 
         $localFileInfoService = $this->createMock(LocalFileInfoService::class);
         $localFileInfoService->expects($this->once())->method('addFileInfoToFiles')->willReturn(
