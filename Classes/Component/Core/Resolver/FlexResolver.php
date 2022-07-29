@@ -13,6 +13,7 @@ use In2code\In2publishCore\Component\Core\Service\ResolverService;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 use TYPO3\CMS\Core\Service\FlexFormService;
 
+use function array_key_exists;
 use function array_keys;
 use function array_merge;
 use function array_pop;
@@ -80,12 +81,16 @@ class FlexResolver extends AbstractResolver
             $this->column,
             $record->getLocalProps() ?: $record->getForeignProps()
         );
-        $dataStructureKey = json_decode(
+        $dataStructureIdentifier = json_decode(
             $dataStructureIdentifierJson,
             true,
             512,
             JSON_THROW_ON_ERROR
-        )['dataStructureKey'];
+        );
+        if (empty($dataStructureIdentifier['dataStructureKey'])) {
+            return;
+        }
+        $dataStructureKey = $dataStructureIdentifier['dataStructureKey'];
 
         $localValues = $record->getLocalProps()[$this->column] ?? [];
         $localValues = $this->convertAndFlattenFlexFormData($localValues, $record);
