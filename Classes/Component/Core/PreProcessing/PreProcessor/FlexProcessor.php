@@ -7,6 +7,7 @@ namespace In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor;
 use In2code\In2publishCore\Component\Core\PreProcessing\Service\FlexFormFlatteningService;
 use In2code\In2publishCore\Component\Core\Resolver\FlexResolver;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
+use TYPO3\CMS\Core\Configuration\FlexForm\Exception\InvalidIdentifierException;
 use TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools;
 
 use function array_key_exists;
@@ -66,7 +67,11 @@ class FlexProcessor extends AbstractProcessor
                 JSON_THROW_ON_ERROR
             );
 
-            $parsedFlexForm = $this->flexFormTools->parseDataStructureByIdentifier($dataStructureIdentifier);
+            try {
+                $parsedFlexForm = $this->flexFormTools->parseDataStructureByIdentifier($dataStructureIdentifier);
+            } catch (InvalidIdentifierException $e) {
+                // Skip invalid flex form configs
+            }
             $flattenedFlexForm = $this->flexFormFlatteningService->flattenFlexFormDefinition($parsedFlexForm);
 
             $this->tcaPreProcessingService->preProcessTcaColumns(
