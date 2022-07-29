@@ -96,6 +96,7 @@ class DatabaseUtility
 
                 /** @noinspection PhpInternalEntityUsedInspection */
                 if (!in_array('in2publish_foreign', $connectionPool->getConnectionNames(), true)) {
+                    $default = $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default'];
                     $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['in2publish_foreign'] = [
                         'dbname' => $configuration['name'],
                         'driver' => 'mysqli',
@@ -103,8 +104,8 @@ class DatabaseUtility
                         'password' => $configuration['password'],
                         'port' => $configuration['port'],
                         'user' => $configuration['username'],
-                        'charset' => $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['charset'],
-                        'tableoptions' => $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['Default']['tableoptions'],
+                        'charset' => $default['charset'],
+                        'tableoptions' => $default['tableoptions'] ?? [],
                     ];
                 }
                 $GLOBALS['TYPO3_CONF_VARS']['DB']['Connections']['in2publish_foreign']['initCommands'] = $initCommands;
