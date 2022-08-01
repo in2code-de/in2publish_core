@@ -40,7 +40,8 @@ class GroupProcessorTest extends UnitTestCase
         $tca =  ['type' => 'group'];
 
         $this->expectError();
-        $this->expectErrorMessage('Undefined array key "allowed"');
+        // Error message differs depending on PHP version
+        //$this->expectErrorMessage('Undefined array key "allowed"');
         $groupProcessor->process('table_foo', 'field_bar', $tca);
     }
 

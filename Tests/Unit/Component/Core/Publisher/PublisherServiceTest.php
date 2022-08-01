@@ -142,7 +142,7 @@ class PublisherServiceTest extends UnitTestCase
     }
 
     // RT with 3 DatabaseRecords, one of them unchanged
-    protected function getRecordTree1(): RecordTree|MockObject
+    protected function getRecordTree1(): RecordTree
     {
         $recordTree = $this->createMock(RecordTree::class);
         $recordTree->method('getChildren')->willReturn([
@@ -156,7 +156,7 @@ class PublisherServiceTest extends UnitTestCase
     }
 
     // RT 1 DatabaseRecord with two child DatabaseRecords, one of them with classification 'pages'
-    protected function getRecordTree2(): RecordTree|MockObject
+    protected function getRecordTree2(): RecordTree
     {
         $recordTree = $this->createMock(RecordTree::class);
 
