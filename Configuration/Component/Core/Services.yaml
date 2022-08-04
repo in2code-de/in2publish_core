@@ -48,12 +48,5 @@ services:
         hidden: TRUE
         schedulable: FALSE
 
-  In2code\In2publishCore\Component\Core\FileHandling\Command\ForeignFileInfoCommand:
-    tags:
-      - name: 'console.command'
-        command: 'in2publish_core:core:foreignfileinfo'
-        hidden: TRUE
-        schedulable: FALSE
-
   In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver:
     factory: [ '@In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverFactory', 'createDemandResolver' ]

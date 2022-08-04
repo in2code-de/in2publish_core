@@ -6,11 +6,13 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\FileHandling;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
 use In2code\In2publishCore\Component\Core\FileHandling\FileDemandResolver;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileInfoService;
+use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoService;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\LocalFileInfoService;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
+
+use function hash;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\FileHandling\FileDemandResolver
@@ -34,20 +36,14 @@ class FileDemandResolverTest extends UnitTestCase
             ],
         ];
         $fileInfoArray = $filesArray;
-        $fileInfoArray[42]['foo/bar']['props'] = [
-            'storage' => 42,
-            'identifier' =>  'foo/bar',
-            'identifier_hash' => hash('sha1',  'foo/bar'),
+        $fileInfoArray[42]['foo/bar'] = [
             'size' => 123,
             'mimetype' => 'some_mimetype',
             'name' =>'some_name',
             'extension' => 'some_extension',
             'folder_hash' => 'some_folder_hash',
         ];
-        $fileInfoArray[42]['/file.txt']['props'] = [
-            'storage' => 42,
-            'identifier' =>  '/file.txt',
-            'identifier_hash' => hash('sha1',  '/file.txt'),
+        $fileInfoArray[42]['/file.txt'] = [
             'size' => 123,
             'mimetype' => 'some_mimetype',
             'name' =>'some_name',
@@ -56,20 +52,29 @@ class FileDemandResolverTest extends UnitTestCase
         ];
 
         $localFileInfoService = $this->createMock(LocalFileInfoService::class);
-        $localFileInfoService->expects($this->once())->method('addFileInfoToFiles')->willReturn($fileInfoArray);
+        $localFileInfoService->expects($this->once())->method('getFileInfo')->willReturn($fileInfoArray);
 
-        $foreignFileInfoService = $this->createMock(ForeignFileInfoService::class);
+        $foreignFileSystemInfoService = $this->createMock(ForeignFileSystemInfoService::class);
+
         $recordFactory = $this->createMock(RecordFactory::class);
-        $fileRecordChild1 = new FileRecord($fileInfoArray[42]['foo/bar']['props'], []);
+        $localProps = $fileInfoArray[42]['foo/bar'];
+        $localProps['storage'] = 42;
+        $localProps['identifier'] = 'foo/bar';
+        $localProps['identifier_hash'] = hash('sha1', 'foo/bar');
+        $fileRecordChild1 = new FileRecord($localProps, []);
 
-        $fileRecordChild2 = new FileRecord($fileInfoArray[42]['/file.txt']['props'], []);
+        $localProps = $fileInfoArray[42]['/file.txt'];
+        $localProps['storage'] = 42;
+        $localProps['identifier'] = '/file.txt';
+        $localProps['identifier_hash'] = hash('sha1', '/file.txt');
+        $fileRecordChild2 = new FileRecord($localProps, []);
         $recordFactory->method('createFileRecord')->willReturnOnConsecutiveCalls(
             $fileRecordChild1,
             $fileRecordChild2,
         );
 
         $fileDemandResolver->injectLocalFileInfoService($localFileInfoService);
-        $fileDemandResolver->injectForeignFileInfoService($foreignFileInfoService);
+        $fileDemandResolver->injectForeignFileSystemInfoService($foreignFileSystemInfoService);
         $fileDemandResolver->injectRecordFactory($recordFactory);
 
         $demands = $this->createMock(DemandsCollection::class);

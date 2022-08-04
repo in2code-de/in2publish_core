@@ -8,9 +8,11 @@ use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\Core\FileHandling\FileDemandResolver;
 use In2code\In2publishCore\Component\Core\FileHandling\FileRecordListener;
+use In2code\In2publishCore\Component\Core\Record\Model\DatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Event\RecordWasCreated;
 use In2code\In2publishCore\Tests\UnitTestCase;
+use ReflectionProperty;
 
 /**
  * @coversDefaultClass \In2code\In2publishCore\Component\Core\FileHandling\FileRecordListener
@@ -24,11 +26,11 @@ class FileRecordListenerTest extends UnitTestCase
     {
         $fileRecordListener = new FileRecordListener();
 
-        $fileRecords = new \ReflectionProperty($fileRecordListener, 'fileRecords');
+        $fileRecords = new ReflectionProperty($fileRecordListener, 'fileRecords');
         $fileRecords->setAccessible(true);
 
-        $file1 = new FileRecord(['identifier' => 'file1', 'storage' => 42,],[]);
-        $file2 = new FileRecord(['identifier' => 'file2', 'storage' => 42,],[]);
+        $file1 = new FileRecord(['identifier' => 'file1', 'storage' => 42,], []);
+        $file2 = new FileRecord(['identifier' => 'file2', 'storage' => 42,], []);
 
         $fileRecords->setValue($fileRecordListener, [$file1, $file2]);
 
@@ -50,19 +52,18 @@ class FileRecordListenerTest extends UnitTestCase
     /**
      * @covers ::onRecordWasCreated
      */
-    public function testOnRecordWasCreatedAddsFileRecordToFileRecords(): void
+    public function testOnRecordWasCreatedAddsSysFileRecordToFileRecords(): void
     {
         $fileRecordListener = new FileRecordListener();
 
-        $fileRecords = new \ReflectionProperty($fileRecordListener, 'fileRecords');
+        $fileRecords = new ReflectionProperty($fileRecordListener, 'fileRecords');
         $fileRecords->setAccessible(true);
 
-        $file1 = new FileRecord(['identifier' => 'file1', 'storage' => 42,],[]);
-        $recordWasCreated = new RecordWasCreated($file1);
+        $sysFileRecord = new DatabaseRecord('sys_file', 1, [], [], []);
+        $recordWasCreated = new RecordWasCreated($sysFileRecord);
 
         $fileRecordListener->onRecordWasCreated($recordWasCreated);
 
-        $this->assertEquals([$file1], $fileRecords->getValue($fileRecordListener));
+        $this->assertEquals([$sysFileRecord], $fileRecords->getValue($fileRecordListener));
     }
-
 }

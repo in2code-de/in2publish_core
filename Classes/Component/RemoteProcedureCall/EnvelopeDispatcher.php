@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Component\RemoteProcedureCall;
  */
 
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoService;
+use In2code\In2publishCore\Component\Core\FileHandling\Service\LocalFileInfoService;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Exception\StorageIsOfflineException;
 use InvalidArgumentException;
 use ReflectionProperty;
@@ -44,12 +45,14 @@ class EnvelopeDispatcher
     public const CMD_FOLDER_EXISTS = 'folderExists';
     public const CMD_FILE_EXISTS = 'fileExists';
     public const CMD_LIST_FOLDER_CONTENTS = 'listFolderContents';
+    public const CMD_GET_FILE_INFO = 'getFileInfo';
     /**
      * Limits the amount of files in a folder for pre-fetching. If there are more than $prefetchLimit files in
      * the selected folder they will not be processed when not requested explicitly.
      */
     private ResourceFactory $resourceFactory;
     private FileSystemInfoService $fileSystemEnumerationService;
+    private LocalFileInfoService $localFileInfoService;
 
     public function injectResourceFactory(ResourceFactory $resourceFactory): void
     {
@@ -59,6 +62,11 @@ class EnvelopeDispatcher
     public function injectFileSystemEnumerationService(FileSystemInfoService $fileSystemEnumerationService): void
     {
         $this->fileSystemEnumerationService = $fileSystemEnumerationService;
+    }
+
+    public function injectLocalFileInfoService(LocalFileInfoService $localFileInfoService): void
+    {
+        $this->localFileInfoService = $localFileInfoService;
     }
 
     public function dispatch(Envelope $envelope): bool
@@ -93,6 +101,11 @@ class EnvelopeDispatcher
         } catch (InvalidArgumentException $e) {
             return [];
         }
+    }
+
+    public function getFileInfo(array $request): array
+    {
+        return $this->localFileInfoService->getFileInfo($request['files']);
     }
 
     protected function getStorageDriver(array $request): DriverInterface

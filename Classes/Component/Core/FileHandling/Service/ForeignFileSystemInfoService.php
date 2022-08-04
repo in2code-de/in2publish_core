@@ -59,6 +59,15 @@ class ForeignFileSystemInfoService
         return $this->executeEnvelope($envelope);
     }
 
+    public function getFileInfo(array $files): array
+    {
+        $envelope = new Envelope(
+            EnvelopeDispatcher::CMD_GET_FILE_INFO,
+            ['files' => $files]
+        );
+        return $this->executeEnvelope($envelope);
+    }
+
     protected function executeEnvelope(Envelope $envelope)
     {
         $uid = $this->letterbox->sendEnvelope($envelope);
