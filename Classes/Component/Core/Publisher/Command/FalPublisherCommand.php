@@ -84,7 +84,7 @@ class FalPublisherCommand extends Command
                     $driver->createFolder($folderName, $parentFolder, true);
                 }
                 $driver->addFile(
-                    Environment::getVarPath() . '/tx_in2publishcore/' . $row['temp_identifier_hash'],
+                    Environment::getVarPath() . '/transient/' . $row['temp_identifier_hash'],
                     $targetDir,
                     PathUtility::basename($row['identifier'])
                 );
@@ -92,7 +92,7 @@ class FalPublisherCommand extends Command
             if (FileRecordPublisher::A_UPDATE === $row['file_action']) {
                 $driver->replaceFile(
                     $row['identifier'],
-                    Environment::getVarPath() . '/tx_in2publishcore/' . $row['temp_identifier_hash']
+                    Environment::getVarPath() . '/transient/' . $row['temp_identifier_hash']
                 );
             }
             if (FileRecordPublisher::A_DELETE === $row['file_action']) {
