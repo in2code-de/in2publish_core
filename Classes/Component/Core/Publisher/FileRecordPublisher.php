@@ -12,6 +12,7 @@ use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatc
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Component\TemporaryAssetTransmission\AssetTransmitter;
 use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Utility\PathUtility;
 
 use function bin2hex;
 use function random_bytes;
@@ -108,7 +109,7 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
     {
         $driver = $this->falDriverService->getDriver($record->getLocalProps()['storage']);
         $localFile = $driver->getFileForLocalProcessing($record->getLocalProps()['identifier']);
-        $identifier = $this->assetTransmitter->transmitTemporaryFile($localFile);
+        $identifier = PathUtility::basename($this->assetTransmitter->transmitTemporaryFile($localFile));
         unlink($localFile);
         $this->foreignDatabase->insert('tx_in2publishcore_filepublisher_task', [
             'request_token' => $this->requestToken,
