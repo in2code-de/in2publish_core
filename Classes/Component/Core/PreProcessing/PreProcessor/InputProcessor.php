@@ -14,7 +14,7 @@ class InputProcessor extends TextProcessor
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
-        if ($tca['renderType'] === 'inputLink') {
+        if (isset($tca['renderType']) && ($tca['renderType'] === 'inputLink')) {
             return [];
         }
 
