@@ -35,7 +35,7 @@ class IngoredFieldsMigration extends AbstractMigration
 
     public function migrate(array $config): array
     {
-        if (isset($config['ignoreFieldsForDifferenceView'])) {
+        if (!empty($config['ignoreFieldsForDifferenceView'])) {
             $this->addMessage(self::MIGRATION_MESSAGE);
             foreach ($config['ignoreFieldsForDifferenceView'] as $table => $fields) {
                 foreach ($fields as $field) {
