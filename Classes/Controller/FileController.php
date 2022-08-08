@@ -248,6 +248,6 @@ class FileController extends ActionController
                 $combinedIdentifier = $storage . ':/';
             }
         }
-        return $this->defaultFalFinder->findFalRecord($combinedIdentifier, $onlyRoot);
+        return $this->defaultFalFinder->findFolderRecord($combinedIdentifier, $onlyRoot);
     }
 }

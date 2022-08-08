@@ -55,7 +55,7 @@ class RecordInspectorController extends ActionController
         if ($classification === FileRecord::CLASSIFICATION) {
             $recordTree = $this->defaultFalFinder->findFileRecord($id);
         } elseif ($classification === FolderRecord::CLASSIFICATION) {
-            $recordTree = $this->defaultFalFinder->findFalRecord($id);
+            $recordTree = $this->defaultFalFinder->findFolderRecord($id);
         } else {
             $request = new RecordTreeBuildRequest($classification, (int)$id, 1);
             $recordTree = $this->recordTreeBuilder->buildRecordTree($request);

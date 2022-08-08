@@ -117,7 +117,7 @@ class DefaultFalFinder
      *
      * @throws FolderDoesNotExistOnBothSidesException
      */
-    public function findFalRecord(?string $combinedIdentifier, bool $onlyRoot = false): RecordTree
+    public function findFolderRecord(?string $combinedIdentifier, bool $onlyRoot = false): RecordTree
     {
         /*
          * IMPORTANT NOTICES (a.k.a. "never forget about this"-Notices):
@@ -274,14 +274,14 @@ class DefaultFalFinder
                         unset($files[$foreignIdentifier]);
                         $foreignRecordToRemove = $this->recordIndex->getRecord(
                             FileRecord::CLASSIFICATION,
-                            $localCombinedIdentifier
+                            $foreignCombinedIdentifier
                         );
                         if (null !== $foreignRecordToRemove) {
                             $folderRecord->removeChild($foreignRecordToRemove);
                         }
                         $localRecordToRemove = $this->recordIndex->getRecord(
                             FileRecord::CLASSIFICATION,
-                            $foreignCombinedIdentifier
+                            $localCombinedIdentifier
                         );
                         if (null !== $localRecordToRemove) {
                             $folderRecord->removeChild($localRecordToRemove);
@@ -291,6 +291,7 @@ class DefaultFalFinder
                             $files[$localIdentifier]['foreign'] ?? [],
                         );
                         if (null !== $recordToAdd) {
+                            $recordToAdd->addChild($sysFileRecord);
                             $folderRecord->addChild($recordToAdd);
                         }
                     }
@@ -370,6 +371,7 @@ class DefaultFalFinder
                         if (null === $fileRecord) {
                             return new RecordTree();
                         }
+                        $fileRecord->addChild($sysFileRecord);
                     }
                 }
             }
