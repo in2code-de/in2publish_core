@@ -8,6 +8,7 @@ use Closure;
 use In2code\In2publishCore\Component\Core\Reason\Reason;
 use In2code\In2publishCore\Component\Core\Reason\Reasons;
 use In2code\In2publishCore\Component\Core\RecordCollection;
+use TYPO3\CMS\Core\DataHandling\DataHandler;
 
 use function count;
 use function implode;
@@ -182,5 +183,57 @@ class Dependency
     public function getReasonsHumanReadable(): string
     {
         return implode(PHP_EOL, $this->reasons->map(static fn(Reason $reason) => $reason->getReadableLabel()));
+    }
+
+    public function isReachable(DataHandler $dataHandler)
+    {
+        $beUser = $dataHandler->BE_USER;
+        if ($beUser->isAdmin()) {
+            return true;
+        }
+
+        return $this->selectedRecords->are(static function (Record $record) use ($beUser, $dataHandler): bool {
+            $language = $record->getLanguage();
+            if (!$beUser->checkLanguageAccess($language)) {
+                return false;
+            }
+            if ($record instanceof AbstractDatabaseRecord) {
+                $table = $record->getClassification();
+                if ($dataHandler->tableReadOnly($table)) {
+                    return false;
+                }
+                if (!$dataHandler->checkModifyAccessList($table)) {
+                    return false;
+                }
+                if (!$beUser->isAdmin()) {
+                    $pid = $record->getProp('pid');
+                    if (
+                        (
+                            ($GLOBALS['TCA'][$table]['ctrl']['rootLevel'] ?? false)
+                            || 0 === $pid
+                        )
+                        && empty($GLOBALS['TCA'][$table]['ctrl']['security']['ignoreRootLevelRestriction'])
+                    ) {
+                        return false;
+                    }
+                    $editLockField = $GLOBALS['TCA'][$table]['ctrl']['editlock'] ?? null;
+                    if (null !== $editLockField && $record->getProp($editLockField)) {
+                        return false;
+                    }
+                    // If the PID is not null, the web mount restriction is
+                    // either ignored or the page must be within the web mount.
+                    if (
+                        null !== $pid
+                        && (
+                            !empty($GLOBALS['TCA'][$table]['ctrl']['security']['ignoreWebMountRestriction'])
+                            || !$dataHandler->isInWebMount($pid)
+                        )
+                    ) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        });
     }
 }

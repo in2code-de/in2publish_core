@@ -102,6 +102,9 @@ class RecordController extends ActionController
 
     public function injectPageRenderer(PageRenderer $pageRenderer): void
     {
+        $pageRenderer->addInlineLanguageLabelFile(
+            'EXT:in2publish_core/Resources/Private/Language/locallang_js.xlf'
+        );
         $pageRenderer->loadRequireJsModule('TYPO3/CMS/In2publishCore/BackendModule');
         $pageRenderer->addCssFile(
             'EXT:in2publish_core/Resources/Public/Css/Modules.css',

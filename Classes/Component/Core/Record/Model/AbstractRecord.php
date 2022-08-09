@@ -6,6 +6,9 @@ namespace In2code\In2publishCore\Component\Core\Record\Model;
 
 use Generator;
 use LogicException;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function array_diff_assoc;
 use function array_keys;
@@ -347,8 +350,35 @@ abstract class AbstractRecord implements Record
         return true;
     }
 
+    public function isPublishableIgnoringUnreachableDependencies(): bool
+    {
+        $beUser = $this->getBackendUser();
+        if ($beUser->isAdmin()) {
+            return $this->isPublishable();
+        }
+        $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
+        $dataHandler->BE_USER = $beUser;
+
+        $allDependencies = $this->getAllDependencies();
+        /** @var Dependency $dependency */
+        foreach ($allDependencies as $dependency) {
+            if (!$dependency->isFulfilled() && !$dependency->canBeFulfilledBy($this)) {
+                if (!$dependency->isReachable($dataHandler)) {
+                    continue;
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
     public function __toString(): string
     {
         return $this->getClassification() . ' [' . $this->getId() . ']';
+    }
+
+    protected function getBackendUser(): BackendUserAuthentication
+    {
+        return $GLOBALS['BE_USER'];
     }
 }

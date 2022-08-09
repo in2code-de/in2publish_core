@@ -1,4 +1,5 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
 	  xmlns:publish="http://typo3.org/ns/In2code/In2publishCore/ViewHelpers"
 	  data-namespace-typo3-fluid="true"
 >
@@ -35,9 +36,24 @@
 					</f:link.action>
 				</f:then>
 				<f:else>
-					<div class="in2publish-link-publish">
-						<core:icon identifier="actions-exclamation-triangle-alt"/>
-					</div>
+					<f:if condition="{record.publishableIgnoringUnreachableDependencies}">
+						<f:then>
+							<f:link.action
+								action="publishRecord"
+								class="in2publish-link-publish js-publish-trigger"
+								arguments="{id:record.id}"
+								title="{f:translate(key:'publish_pages', default:'Publish this page')}"
+								data="{type: 'page_with_dependencies', severity: '1'}"
+							>
+								<i class="in2publish-icon-publish"></i>
+							</f:link.action>
+						</f:then>
+						<f:else>
+							<div class="in2publish-link-publish">
+								<core:icon identifier="actions-exclamation-triangle-alt"/>
+							</div>
+						</f:else>
+					</f:if>
 				</f:else>
 			</f:if>
 		</div>
