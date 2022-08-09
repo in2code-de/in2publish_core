@@ -6,8 +6,8 @@ namespace In2code\In2publishCore\Tests\Unit\Component\Core\FileHandling;
 
 use In2code\In2publishCore\Component\Core\Demand\DemandsCollection;
 use In2code\In2publishCore\Component\Core\FileHandling\FileDemandResolver;
+use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoService;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoService;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\LocalFileInfoService;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Tests\UnitTestCase;
@@ -51,8 +51,8 @@ class FileDemandResolverTest extends UnitTestCase
             'folder_hash' => 'some_folder_hash',
         ];
 
-        $localFileInfoService = $this->createMock(LocalFileInfoService::class);
-        $localFileInfoService->expects($this->once())->method('getFileInfo')->willReturn($fileInfoArray);
+        $fileSystemInfoService = $this->createMock(FileSystemInfoService::class);
+        $fileSystemInfoService->expects($this->once())->method('getFileInfo')->willReturn($fileInfoArray);
 
         $foreignFileSystemInfoService = $this->createMock(ForeignFileSystemInfoService::class);
 
@@ -73,7 +73,7 @@ class FileDemandResolverTest extends UnitTestCase
             $fileRecordChild2,
         );
 
-        $fileDemandResolver->injectLocalFileInfoService($localFileInfoService);
+        $fileDemandResolver->injectFileSystemInfoService($fileSystemInfoService);
         $fileDemandResolver->injectForeignFileSystemInfoService($foreignFileSystemInfoService);
         $fileDemandResolver->injectRecordFactory($recordFactory);
 

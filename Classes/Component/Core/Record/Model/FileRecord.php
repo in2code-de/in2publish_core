@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\Record\Model;
 
+use TYPO3\CMS\Core\Utility\PathUtility;
+
 class FileRecord extends AbstractRecord
 {
     public const CLASSIFICATION = '_file';
@@ -38,5 +40,14 @@ class FileRecord extends AbstractRecord
     public function getForeignIdentificationProps(): array
     {
         return [];
+    }
+
+    public function isMovedToDifferentFolder(): bool
+    {
+        if (!isset($this->localProps['identifier'], $this->foreignProps['identifier'])) {
+            return false;
+        }
+        return PathUtility::dirname($this->localProps['identifier'])
+            !== PathUtility::dirname($this->foreignProps['identifier']);
     }
 }

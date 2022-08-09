@@ -21,7 +21,14 @@
 				<span class="in2publish-stagelisting__item-filename">
 					<f:if condition="{record.localProps.name}">
 						<f:then>
-							{record.localProps.name}
+							<f:if condition="{record.movedToDifferentFolder}">
+								<f:then>
+									{record.localProps.identifier}
+								</f:then>
+								<f:else>
+									{record.localProps.name}
+								</f:else>
+							</f:if>
 						</f:then>
 						<f:else>
 							{record.foreignProps.name}
@@ -114,7 +121,14 @@
 			<td class="col-filename col-filename--foreign col-responsive nowrap">
 				<f:if condition="{record.foreignProps.name}">
 					<f:then>
-						{record.foreignProps.name}
+						<f:if condition="{record.movedToDifferentFolder}">
+							<f:then>
+								{record.foreignProps.identifier}
+							</f:then>
+							<f:else>
+								{record.foreignProps.name}
+							</f:else>
+						</f:if>
 					</f:then>
 					<f:else>
 						---

@@ -259,7 +259,44 @@ class DefaultFalFinder
         $this->demandResolver->resolveDemand($demands, $recordCollection);
         $this->recordTreeBuilder->findRecordsByTca($recordCollection);
 
+        $filesMovedOutFromFolder = [];
+        $filesMovedIntoFolder = [];
+
         $sysFileRecords = $recordCollection->getRecords('sys_file');
+        foreach ($sysFileRecords as $sysFileRecord) {
+            if ($sysFileRecord->getState() === Record::S_CHANGED) {
+                $localProps = $sysFileRecord->getLocalProps();
+                $foreignProps = $sysFileRecord->getForeignProps();
+                $localIdentifier = $localProps['identifier'];
+                $foreignIdentifier = $foreignProps['identifier'];
+                if ($localIdentifier !== $foreignIdentifier) {
+                    if (!isset($files[$localIdentifier]['local'])) {
+                        $filesMovedOutFromFolder[$localProps['storage']][] = $localIdentifier;
+                    }
+                    if (!isset($files[$foreignIdentifier]['foreign'])) {
+                        $filesMovedIntoFolder[$foreignProps['storage']][] = $foreignIdentifier;
+                    }
+                }
+            }
+        }
+
+        if (!empty($filesMovedOutFromFolder)) {
+            $foundMovedOutFiles = $this->fileSystemInfoService->getFileInfo($filesMovedOutFromFolder);
+            foreach ($foundMovedOutFiles as $identifiers) {
+                foreach ($identifiers as $identifier => $fileInfo) {
+                    $files[$identifier]['local'] = $fileInfo;
+                }
+            }
+        }
+        if (!empty($filesMovedIntoFolder)) {
+            $foundMovedIntoFiles = $this->foreignFileSystemInfoService->getFileInfo($filesMovedIntoFolder);
+            foreach ($foundMovedIntoFiles as $identifiers) {
+                foreach ($identifiers as $identifier => $fileInfo) {
+                    $files[$identifier]['foreign'] = $fileInfo;
+                }
+            }
+        }
+
         foreach ($sysFileRecords as $sysFileRecord) {
             if ($sysFileRecord->getState() === Record::S_CHANGED) {
                 $localProps = $sysFileRecord->getLocalProps();

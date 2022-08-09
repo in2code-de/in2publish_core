@@ -30,7 +30,6 @@ namespace In2code\In2publishCore\Component\RemoteProcedureCall;
  */
 
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoService;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\LocalFileInfoService;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Exception\StorageIsOfflineException;
 use InvalidArgumentException;
 use ReflectionProperty;
@@ -52,7 +51,7 @@ class EnvelopeDispatcher
      */
     private ResourceFactory $resourceFactory;
     private FileSystemInfoService $fileSystemEnumerationService;
-    private LocalFileInfoService $localFileInfoService;
+    private FileSystemInfoService $fileSystemInfoService;
 
     public function injectResourceFactory(ResourceFactory $resourceFactory): void
     {
@@ -64,9 +63,9 @@ class EnvelopeDispatcher
         $this->fileSystemEnumerationService = $fileSystemEnumerationService;
     }
 
-    public function injectLocalFileInfoService(LocalFileInfoService $localFileInfoService): void
+    public function injectFileSystemInfoService(FileSystemInfoService $fileSystemInfoService): void
     {
-        $this->localFileInfoService = $localFileInfoService;
+        $this->fileSystemInfoService = $fileSystemInfoService;
     }
 
     public function dispatch(Envelope $envelope): bool
@@ -105,7 +104,7 @@ class EnvelopeDispatcher
 
     public function getFileInfo(array $request): array
     {
-        return $this->localFileInfoService->getFileInfo($request['files']);
+        return $this->fileSystemInfoService->getFileInfo($request['files']);
     }
 
     protected function getStorageDriver(array $request): DriverInterface

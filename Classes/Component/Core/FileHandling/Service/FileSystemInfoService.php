@@ -47,4 +47,27 @@ class FileSystemInfoService
             'files' => $files,
         ];
     }
+
+    /**
+     * @param array<int, array<string>> $files
+     */
+    public function getFileInfo(array $files): array
+    {
+        $info = [];
+
+        foreach ($files as $storage => $fileIdentifiers) {
+            $driver = $this->falDriverService->getDriver($storage);
+            foreach ($fileIdentifiers as $fileIdentifier) {
+                try {
+                    $fileInfo = $driver->getFileInfoByIdentifier($fileIdentifier, self::PROPERTIES);
+                    $fileInfo['publicUrl'] = $driver->getPublicUrl($fileInfo['identifier']);
+                    $info[$storage][$fileIdentifier] = $fileInfo;
+                } catch (InvalidArgumentException $exception) {
+                    $info[$storage][$fileIdentifier] = null;
+                }
+            }
+        }
+
+        return $info;
+    }
 }

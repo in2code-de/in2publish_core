@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\FileHandling;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
+use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoService;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoService;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\LocalFileInfoService;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactory;
 
 use function array_keys;
@@ -14,13 +14,13 @@ use function hash;
 
 class FileDemandResolver
 {
-    protected LocalFileInfoService $localFileInfoService;
+    protected FileSystemInfoService $fileSystemInfoService;
     protected RecordFactory $recordFactory;
     protected ForeignFileSystemInfoService $foreignFileSystemInfoService;
 
-    public function injectLocalFileInfoService(LocalFileInfoService $localFileInfoService): void
+    public function injectFileSystemInfoService(FileSystemInfoService $fileSystemInfoService): void
     {
-        $this->localFileInfoService = $localFileInfoService;
+        $this->fileSystemInfoService = $fileSystemInfoService;
     }
 
     public function injectRecordFactory(RecordFactory $recordFactory): void
@@ -44,7 +44,7 @@ class FileDemandResolver
             }
         }
 
-        $localDriverInfo = $this->localFileInfoService->getFileInfo($filesArray);
+        $localDriverInfo = $this->fileSystemInfoService->getFileInfo($filesArray);
         $localFileInfo = $this->addFileInfoToDriverInfo($files, $localDriverInfo);
         $foreignDriverInfo = $this->foreignFileSystemInfoService->getFileInfo($filesArray);
         $foreignFileInfo = $this->addFileInfoToDriverInfo($files, $foreignDriverInfo);
