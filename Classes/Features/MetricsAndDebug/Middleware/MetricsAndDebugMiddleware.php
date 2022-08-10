@@ -16,6 +16,9 @@ use TYPO3\CMS\Core\Http\Stream;
 use TYPO3\CMS\Core\Http\StreamFactory;
 use TYPO3\CMS\Core\Utility\DebugUtility;
 
+use function array_column;
+use function array_sum;
+use function date;
 use function str_replace;
 use function str_starts_with;
 
@@ -78,7 +81,18 @@ class MetricsAndDebugMiddleware implements MiddlewareInterface
             $queriesByCaller = [];
             foreach ($queries as $query) {
                 $caller = $query['caller'];
+                unset($query['caller']);
                 $queriesByCaller[$caller][] = $query;
+            }
+            foreach ($queriesByCaller as $caller => $callerQueries) {
+                $times = array_column($callerQueries, 'executionNS');
+                $durationNS = array_sum($times);
+                $durationMs = (int)($durationNS / 1e+6);
+                $durationS = (int)($durationMs / 1000);
+                $remainingMs = $durationMs - $durationS * 1000;
+                $duration = date("i:s", (int)$durationS) . '.' . $remainingMs;
+                unset($queriesByCaller[$caller]);
+                $queriesByCaller["$caller ($duration)"] = $callerQueries;
             }
             if (!empty($queries)) {
                 DebugUtility::debug($queries, 'Content Publisher Queries');

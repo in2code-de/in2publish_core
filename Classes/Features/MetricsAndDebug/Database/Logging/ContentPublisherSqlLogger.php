@@ -8,50 +8,133 @@ use Doctrine\DBAL\Logging\SQLLogger;
 
 use function array_key_last;
 use function array_shift;
+use function array_slice;
 use function debug_backtrace;
-use function microtime;
-
-use const DEBUG_BACKTRACE_IGNORE_ARGS;
+use function get_class;
+use function gettype;
+use function implode;
+use function in_array;
+use function is_callable;
+use function is_object;
+use function is_scalar;
+use function str_starts_with;
 
 class ContentPublisherSqlLogger implements SQLLogger
 {
+    protected const DROP_FRAME = [
+        'Doctrine\DBAL\Connection->beginTransaction',
+        'Doctrine\DBAL\Connection->commit',
+        'Doctrine\DBAL\Connection->executeQuery',
+        'Doctrine\DBAL\Connection->executeStatement',
+        'Doctrine\DBAL\Connection->delete',
+        'Doctrine\DBAL\Query\QueryBuilder->execute',
+        'TYPO3\CMS\Core\Database\Query\QueryBuilder->executeQuery',
+        'TYPO3\CMS\Core\Database\Query\QueryBuilder->execute',
+    ];
     protected static array $queries = [];
     protected float $start;
     protected int $currentQuery = 0;
 
     public function startQuery($sql, array $params = null, array $types = null)
     {
-        $this->start = microtime(true);
-        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 7);
+        $this->start = hrtime(true);
+        $backtrace = debug_backtrace(0);
         // remove this method
         array_shift($backtrace);
-        // remove doctrine execute query
-        array_shift($backtrace);
-        // remove queryBuilder execute
-        array_shift($backtrace);
 
-        $lastKey = array_key_last($backtrace);
-        $lastValue = $backtrace[$lastKey];
+        // Remove methods which lead to the query execution
+        for ($i = 0; $i < 4; $i++) {
+            $class = $backtrace[0]['class'];
+            $type = $backtrace[0]['type'];
+            $function = $backtrace[0]['function'];
 
-        $string = $lastValue['class'] . $lastValue['type'] . $lastValue['function'];
+            $signature = $class . $type . $function;
+            if (in_array($signature, self::DROP_FRAME)) {
+                array_shift($backtrace);
+            } else {
+                break;
+            }
+        }
 
-        self::$queries[++$this->currentQuery] = [
-            'caller' => $string,
-            'sql' => $sql,
-            'params' => $params,
-            'types' => $types,
-            'executionMS' => 0,
-            'backtrace' => $backtrace,
-        ];
+        $originalBacktrace = $backtrace;
+
+        $cpFrameIndex = $this->findFirstCpFrame($backtrace);
+        if (null !== $cpFrameIndex) {
+            $callerFrame = $backtrace[$cpFrameIndex];
+            $backtrace = array_slice($backtrace, 0, $cpFrameIndex + 3);
+        } else {
+            $backtrace = array_slice($backtrace, 0, 7);
+            $lastKey = array_key_last($backtrace);
+            $callerFrame = $backtrace[$lastKey];
+        }
+
+        // Remove args from non-CP methods to reduce memory footprint and "simplify" non-scalar arguments.
+        foreach ($backtrace as $index => &$frame) {
+            if (isset($frame['class']) && str_starts_with($frame['class'], 'In2code\\In2publish')) {
+                $callee = $frame['class'] . $frame['type'] . $frame['function'];
+                if (isset($originalBacktrace[$index - 1])) {
+                    $callee .= ' ' . $originalBacktrace[$index - 1]['line'];
+                }
+                if (empty($frame['args'])) {
+                    $frame = $callee;
+                } else {
+                    foreach ($frame['args'] as $argIndex => $arg) {
+                        if (!is_scalar($arg)) {
+                            if (is_object($arg)) {
+                                if (is_callable([$arg, '__toString'])) {
+                                    $frame['args'][$argIndex] = $arg->__toString();
+                                } else {
+                                    $frame['args'][$argIndex] = get_class($arg);
+                                }
+                            } else {
+                                $frame['args'][$argIndex] = gettype($arg);
+                            }
+                        }
+                    }
+                    $frame['args'] = '[' . implode(', ', $frame['args']) . ']';
+                    $frame = [
+                        'callee' => $callee,
+                        'args' => $frame['args'],
+                    ];
+                }
+            } elseif (isset($frame['class'])) {
+                $frame = $frame['class'] . $frame['type'] . $frame['function'];
+            }
+        }
+        unset($frame);
+
+        $entry = [];
+        $entry['caller'] = $callerFrame['class'] . $callerFrame['type'] . $callerFrame['function'];
+        $entry['sql'] = $sql;
+        if (!empty($params)) {
+            $entry['params'] = $params;
+        }
+        if (!empty($types)) {
+            $entry['types'] = $types;
+        }
+        $entry['executionNS'] = 0;
+        $entry['backtrace'] = $backtrace;
+
+        self::$queries[++$this->currentQuery] = $entry;
     }
 
     public function stopQuery(): void
     {
-        self::$queries[$this->currentQuery]['executionMS'] = microtime(true) - $this->start;
+        self::$queries[$this->currentQuery]['executionNS'] = (int)(hrtime(true) - $this->start);
     }
 
     public static function getQueries(): array
     {
         return self::$queries;
+    }
+
+    protected function findFirstCpFrame(array $backtrace): ?int
+    {
+        foreach ($backtrace as $index => $frame) {
+            if (isset($frame['class']) && str_starts_with($frame['class'], 'In2code\\In2publish')) {
+                return $index;
+            }
+        }
+        return null;
     }
 }

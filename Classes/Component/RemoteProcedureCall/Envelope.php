@@ -142,4 +142,9 @@ class Envelope
         }
         return $object;
     }
+
+    public function __toString(): string
+    {
+        return 'envelope:' . $this->uid;
+    }
 }
