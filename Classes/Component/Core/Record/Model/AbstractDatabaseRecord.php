@@ -75,7 +75,7 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
                 ['uid' => $transOrigPointer],
                 Dependency::REQ_EXISTING,
                 'LLL:EXT:in2publish_core/Resources/Private/Language/locallang.xlf:record.reason.requires_translation_parent.existing',
-                static fn(Record $record): array => [
+                fn(Record $record): array => [
                     $this->__toString() ?: "({$this->getClassification()} [{$this->getId()}])",
                     $record->__toString() ?: "({$record->getClassification()} [{$record->getId()}])",
                 ]
