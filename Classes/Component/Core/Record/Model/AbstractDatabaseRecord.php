@@ -83,7 +83,11 @@ abstract class AbstractDatabaseRecord extends AbstractRecord
 
             $enableFieldLabels = [];
             foreach ($GLOBALS['TCA'][$this->table]['ctrl'][self::CTRL_PROP_ENABLECOLUMNS] ?? [] as $enableField) {
-                $enableFieldLabels[] = $GLOBALS['LANG']->sL($GLOBALS['TCA'][$this->table]['columns'][$enableField]['label']);
+                $label = $enableField;
+                if (isset($GLOBALS['TCA'][$this->table]['columns'][$enableField]['label'])) {
+                    $label = $GLOBALS['LANG']->sL($GLOBALS['TCA'][$this->table]['columns'][$enableField]['label']);
+                }
+                $enableFieldLabels[] = $label;
             }
 
             $dependencies[] = $transOrigEnableColumns = new Dependency(
