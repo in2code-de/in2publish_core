@@ -280,7 +280,11 @@ abstract class AbstractRecord implements Record
 
         $dependencyTree[$classification][$id]['dependencies'] = $this->dependencies;
 
-        if (count($this->children) > 0 && !isset($this->children['pages'])) {
+        $count = count($this->children);
+        if (isset($this->children['pages'])) {
+            --$count;
+        }
+        if ($count > 0) {
             $dependencyTree[$classification][$id]['children'] = [];
         }
 
