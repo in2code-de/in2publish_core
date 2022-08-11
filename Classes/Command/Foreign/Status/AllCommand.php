@@ -39,6 +39,10 @@ class AllCommand extends Command
     public const IDENTIFIER = 'in2publish_core:status:all';
     protected CommandRegistry $cmdRegistry;
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectCommandRegistry(CommandRegistry $commandRegistry): void
     {
         $this->cmdRegistry = $commandRegistry;
