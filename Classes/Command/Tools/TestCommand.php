@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Command\Tools;
  */
 
 use In2code\In2publishCore\Service\Context\ContextService;
-use In2code\In2publishCore\Service\Environment\EnvironmentService;
+use In2code\In2publishCore\Service\Environment\EnvironmentServiceInjection;
 use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use Symfony\Component\Console\Command\Command;
@@ -43,11 +43,12 @@ use const PHP_EOL;
 
 class TestCommand extends Command
 {
+    use EnvironmentServiceInjection;
+
     public const EXIT_TESTS_FAILED = 240;
     public const IDENTIFIER = 'in2publish_core:tools:test';
     private ContextService $contextService;
     private TestingService $testingService;
-    private EnvironmentService $environmentService;
 
     public function injectContextService(ContextService $contextService): void
     {
@@ -57,11 +58,6 @@ class TestCommand extends Command
     public function injectTestingService(TestingService $testingService): void
     {
         $this->testingService = $testingService;
-    }
-
-    public function injectEnvironmentService(EnvironmentService $environmentService): void
-    {
-        $this->environmentService = $environmentService;
     }
 
     public function isEnabled(): bool

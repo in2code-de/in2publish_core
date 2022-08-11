@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
 
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use In2code\In2publishCore\In2publishCoreException;
-use In2code\In2publishCore\Service\Environment\EnvironmentService;
+use In2code\In2publishCore\Service\Environment\EnvironmentServiceInjection;
 use In2code\In2publishCore\Testing\Service\TestingService;
 use In2code\In2publishCore\Testing\Tests\TestResult;
 use Psr\Http\Message\ResponseInterface;
@@ -40,14 +40,13 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 class TestController extends ActionController
 {
     use AdminToolsModuleTemplate;
+    use EnvironmentServiceInjection;
 
     protected TestingService $testingService;
-    protected EnvironmentService $environmentService;
 
-    public function __construct(TestingService $testingService, EnvironmentService $environmentService)
+    public function injectTestingService(TestingService $testingService): void
     {
         $this->testingService = $testingService;
-        $this->environmentService = $environmentService;
     }
 
     /** @throws In2publishCoreException */
