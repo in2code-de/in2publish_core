@@ -3,8 +3,6 @@ services:
     autowire: true
     autoconfigure: true
     public: false
-    bind:
-      array $extConf: '@=service("TYPO3\\CMS\\Core\\Configuration\\ExtensionConfiguration").get("in2publish_core")'
 
   In2code\In2publishCore\Component\ConfigContainer\:
     resource: '../../../Classes/Component/ConfigContainer/*'
