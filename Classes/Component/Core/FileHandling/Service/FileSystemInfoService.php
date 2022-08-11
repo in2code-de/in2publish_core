@@ -8,6 +8,8 @@ use InvalidArgumentException;
 
 class FileSystemInfoService
 {
+    use FalDriverServiceInjection;
+
     protected const PROPERTIES = [
         'size',
         'mimetype',
@@ -17,12 +19,6 @@ class FileSystemInfoService
         'identifier',
         'storage',
     ];
-    protected FalDriverService $falDriverService;
-
-    public function injectFalDriverService(FalDriverService $falDriverService): void
-    {
-        $this->falDriverService = $falDriverService;
-    }
 
     public function listFolderContents(int $storageUid, string $identifier): array
     {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Publisher;
 
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseReconnectedInjection;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverService;
+use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverServiceInjection;
 use In2code\In2publishCore\Component\Core\Publisher\Exception\FalPublisherExecutionFailedException;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
@@ -21,6 +21,7 @@ use function unlink;
 class FileRecordPublisher implements Publisher, FinishablePublisher
 {
     use ForeignDatabaseReconnectedInjection;
+    use FalDriverServiceInjection;
 
     // All A_* constant values must be 6 chars
     public const A_DELETE = 'delete';
@@ -28,7 +29,6 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
     public const A_UPDATE = 'update';
     public const A_RENAME = 'rename';
     protected AssetTransmitter $assetTransmitter;
-    protected FalDriverService $falDriverService;
     protected RemoteCommandDispatcher $remoteCommandDispatcher;
     protected string $requestToken;
     protected bool $hasTasks = false;
@@ -41,11 +41,6 @@ class FileRecordPublisher implements Publisher, FinishablePublisher
     public function injectAssetTransmitter(AssetTransmitter $assetTransmitter): void
     {
         $this->assetTransmitter = $assetTransmitter;
-    }
-
-    public function injectFalDriverService(FalDriverService $falDriverService): void
-    {
-        $this->falDriverService = $falDriverService;
     }
 
     public function injectRemoteCommandDispatcher(RemoteCommandDispatcher $remoteCommandDispatcher): void

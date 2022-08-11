@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace In2code\In2publishCore\Component\Core\Publisher\Command;
 
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverService;
+use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverServiceInjection;
 use In2code\In2publishCore\Component\Core\Publisher\FileRecordPublisher;
 use In2code\In2publishCore\Component\Core\Publisher\FolderRecordPublisher;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
@@ -23,13 +23,7 @@ class FalPublisherCommand extends Command
 {
     use LocalDatabaseInjection;
     use ContextServiceInjection;
-
-    protected FalDriverService $falDriverService;
-
-    public function injectFalDriverService(FalDriverService $falDriverService): void
-    {
-        $this->falDriverService = $falDriverService;
-    }
+    use FalDriverServiceInjection;
 
     public function isEnabled(): bool
     {
