@@ -34,7 +34,7 @@ use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use In2code\In2publishCore\Features\CompareDatabaseTool\Domain\DTO\ComparisonRequest;
-use In2code\In2publishCore\Service\Configuration\IgnoredFieldsService;
+use In2code\In2publishCore\Service\Configuration\IgnoredFieldsServiceInjection;
 use In2code\In2publishCore\Utility\ArrayUtility;
 use In2code\In2publishCore\Utility\DatabaseUtility;
 use Psr\Http\Message\ResponseInterface;
@@ -58,13 +58,7 @@ class CompareDatabaseToolController extends ActionController
     use ConfigContainerInjection;
     use LocalDatabaseInjection;
     use ForeignDatabaseInjection;
-
-    protected IgnoredFieldsService $ignoredFieldsService;
-
-    public function injectIgnoredFieldsService(IgnoredFieldsService $ignoredFieldsService): void
-    {
-        $this->ignoredFieldsService = $ignoredFieldsService;
-    }
+    use IgnoredFieldsServiceInjection;
 
     public function indexAction(): ResponseInterface
     {

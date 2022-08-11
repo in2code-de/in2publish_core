@@ -39,20 +39,15 @@ use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\RecordWasCreated;
-use In2code\In2publishCore\Service\Configuration\IgnoredFieldsService;
+use In2code\In2publishCore\Service\Configuration\IgnoredFieldsServiceInjection;
 
 class RecordFactory
 {
     use RecordIndexInjection;
     use EventDispatcherInjection;
+    use IgnoredFieldsServiceInjection;
 
-    protected IgnoredFieldsService $ignoredFieldsService;
     protected DatabaseRecordFactoryFactory $databaseRecordFactoryFactory;
-
-    public function injectIgnoredFieldsService(IgnoredFieldsService $ignoredFieldsService): void
-    {
-        $this->ignoredFieldsService = $ignoredFieldsService;
-    }
 
     public function injectDatabaseRecordFactoryFactory(DatabaseRecordFactoryFactory $databaseRecordFactoryFactory): void
     {
