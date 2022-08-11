@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor;
 
-use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarkerService;
+use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarkerServiceInjection;
 use In2code\In2publishCore\Component\Core\Resolver\InlineMultiValueResolver;
 use In2code\In2publishCore\Component\Core\Resolver\InlineSelectResolver;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
@@ -17,7 +17,8 @@ use function trim;
 
 class InlineProcessor extends AbstractProcessor
 {
-    protected TcaEscapingMarkerService $tcaEscapingMarkerService;
+    use TcaEscapingMarkerServiceInjection;
+
     protected string $type = 'inline';
     protected array $forbidden = [
         'symmetric_field' => 'symmetric_field is set on the foreign side of relations, which must not be resolved',
@@ -33,11 +34,6 @@ class InlineProcessor extends AbstractProcessor
         'MM_match_fields',
         'MM_opposite_field',
     ];
-
-    public function injectTcaEscapingMarkerService(TcaEscapingMarkerService $tcaEscapingMarkerService): void
-    {
-        $this->tcaEscapingMarkerService = $tcaEscapingMarkerService;
-    }
 
     protected function buildResolver(string $table, string $column, array $processedTca): Resolver
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor;
 
-use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarkerService;
+use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarkerServiceInjection;
 use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectMmResolver;
 use In2code\In2publishCore\Component\Core\Resolver\SelectResolver;
@@ -18,7 +18,8 @@ use function trim;
 
 class SelectProcessor extends AbstractProcessor
 {
-    protected TcaEscapingMarkerService $tcaEscapingMarkerService;
+    use TcaEscapingMarkerServiceInjection;
+
     protected string $type = 'select';
     protected array $forbidden = [
         'itemsProcFunc' => 'itemsProcFunc is not supported',
@@ -39,11 +40,6 @@ class SelectProcessor extends AbstractProcessor
         'rootLevel',
         'MM_opposite_field',
     ];
-
-    public function injectTcaEscapingMarkerService(TcaEscapingMarkerService $tcaEscapingMarkerService): void
-    {
-        $this->tcaEscapingMarkerService = $tcaEscapingMarkerService;
-    }
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\PreProcessing\PreProcessor;
 
-use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarkerService;
+use In2code\In2publishCore\Component\Core\PreProcessing\Service\TcaEscapingMarkerServiceInjection;
 use In2code\In2publishCore\Component\Core\Resolver\GroupMmMultiTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\GroupMultiTableResolver;
 use In2code\In2publishCore\Component\Core\Resolver\GroupSingleTableResolver;
@@ -21,7 +21,8 @@ use function trim;
 
 class GroupProcessor extends AbstractProcessor
 {
-    protected TcaEscapingMarkerService $tcaEscapingMarkerService;
+    use TcaEscapingMarkerServiceInjection;
+
     protected string $type = 'group';
     protected array $required = [
         'allowed' => 'The field "allowed" is required',
@@ -37,11 +38,6 @@ class GroupProcessor extends AbstractProcessor
         'MM_table_where',
         'uploadfolder',
     ];
-
-    public function injectTcaEscapingMarkerService(TcaEscapingMarkerService $tcaEscapingMarkerService): void
-    {
-        $this->tcaEscapingMarkerService = $tcaEscapingMarkerService;
-    }
 
     protected function additionalPreProcess(string $table, string $column, array $tca): array
     {
