@@ -30,7 +30,7 @@ namespace In2code\In2publishCore\Features\NewsSupport\Domain\Anomaly;
  */
 
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepositoryInjection;
 use In2code\In2publishCore\Event\PublishingOfOneRecordBegan;
 use In2code\In2publishCore\Features\NewsSupport\Domain\Model\Task\FlushNewsCacheTask;
 
@@ -38,16 +38,12 @@ use function array_keys;
 
 class NewsCacheInvalidator
 {
-    protected TaskRepository $taskRepository;
+    use TaskRepositoryInjection;
+
     /** @var array<int, int> */
     protected array $newsCacheUidArray = [];
     /** @var array<int, int> */
     protected array $newsCachePidArray = [];
-
-    public function __construct(TaskRepository $taskRepository)
-    {
-        $this->taskRepository = $taskRepository;
-    }
 
     public function registerClearCacheTasks(PublishingOfOneRecordBegan $event): void
     {

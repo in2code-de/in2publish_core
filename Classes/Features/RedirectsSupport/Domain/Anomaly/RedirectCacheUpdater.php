@@ -29,19 +29,15 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Domain\Anomaly;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepositoryInjection;
 use In2code\In2publishCore\Event\PublishingOfOneRecordEnded;
 use In2code\In2publishCore\Features\RedirectsSupport\Domain\Model\Task\RebuildRedirectCacheTask;
 
 class RedirectCacheUpdater
 {
-    protected TaskRepository $taskRepository;
-    protected bool $redirectWasPublished = false;
+    use TaskRepositoryInjection;
 
-    public function __construct(TaskRepository $taskRepository)
-    {
-        $this->taskRepository = $taskRepository;
-    }
+    protected bool $redirectWasPublished = false;
 
     public function publishRecordRecursiveAfterPublishing(PublishingOfOneRecordEnded $event): void
     {

@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Service;
 
 use In2code\In2publishCore\CommonInjection\EventDispatcherInjection;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Command\Foreign\RunTasksInQueueCommand;
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepositoryInjection;
 use In2code\In2publishCore\Component\PostPublishTaskExecution\Service\Exception\TaskExecutionFailedException;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcherInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
@@ -44,13 +44,7 @@ class TaskExecutionService implements LoggerAwareInterface
     use LoggerAwareTrait;
     use EventDispatcherInjection;
     use RemoteCommandDispatcherInjection;
-
-    protected TaskRepository $taskRepository;
-
-    public function injectTaskRepository(TaskRepository $taskRepository): void
-    {
-        $this->taskRepository = $taskRepository;
-    }
+    use TaskRepositoryInjection;
 
     public function runTasks(): void
     {

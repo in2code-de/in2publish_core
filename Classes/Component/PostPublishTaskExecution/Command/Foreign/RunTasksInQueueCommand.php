@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Component\PostPublishTaskExecution\Command\Fore
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepository;
+use In2code\In2publishCore\Component\PostPublishTaskExecution\Domain\Repository\TaskRepositoryInjection;
 use In2code\In2publishCore\Service\Context\ContextServiceInjection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -41,14 +41,9 @@ use function json_encode;
 class RunTasksInQueueCommand extends Command
 {
     use ContextServiceInjection;
+    use TaskRepositoryInjection;
 
     public const IDENTIFIER = 'in2publish_core:publishtasksrunner:runtasksinqueue';
-    protected TaskRepository $taskRepository;
-
-    public function injectTaskRepository(TaskRepository $taskRepository): void
-    {
-        $this->taskRepository = $taskRepository;
-    }
 
     public function isEnabled(): bool
     {
