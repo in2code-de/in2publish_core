@@ -7,7 +7,7 @@ namespace In2code\In2publishCore\Component\Core\Repository;
 use Doctrine\DBAL\Connection as DbalConnection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver\Exception;
-use In2code\In2publishCore\Component\Core\Service\Database\DatabaseSchemaService;
+use In2code\In2publishCore\Component\Core\Service\Database\DatabaseSchemaServiceInjection;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\Query\QueryHelper;
 
@@ -18,17 +18,13 @@ use function substr;
 
 class SingleDatabaseRepository
 {
+    use DatabaseSchemaServiceInjection;
+
     private Connection $connection;
-    private DatabaseSchemaService $columnNameService;
 
     public function __construct(Connection $connection)
     {
         $this->connection = $connection;
-    }
-
-    public function injectColumnNameService(DatabaseSchemaService $columnNameService): void
-    {
-        $this->columnNameService = $columnNameService;
     }
 
     /**
@@ -83,8 +79,8 @@ class SingleDatabaseRepository
         array $values,
         string $andWhere = null
     ): array {
-        $mmColumns = $this->columnNameService->getColumnNames($mmTable);
-        $tableColumns = $this->columnNameService->getColumnNames($table);
+        $mmColumns = $this->databaseSchemaService->getColumnNames($mmTable);
+        $tableColumns = $this->databaseSchemaService->getColumnNames($table);
 
         $query = $this->connection->createQueryBuilder();
         $query->getRestrictions()->removeAll();

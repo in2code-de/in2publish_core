@@ -44,15 +44,10 @@ class TableContentService implements SingletonInterface
 {
     use LocalDatabaseInjection;
     use ForeignDatabaseInjection;
+    use DatabaseSchemaServiceInjection;
 
-    protected DatabaseSchemaService $databaseSchemaService;
     /** @var array<string, array<string, array<int|bool>>> */
     protected array $tableInfo = [];
-
-    public function injectDatabaseSchemaService(DatabaseSchemaService $databaseSchemaService): void
-    {
-        $this->databaseSchemaService = $databaseSchemaService;
-    }
 
     public function getAllEmptyTables(): array
     {
