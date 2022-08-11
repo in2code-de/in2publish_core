@@ -38,12 +38,12 @@ class ContentPublisherSqlLogger implements SQLLogger
     public function startQuery($sql, array $params = null, array $types = null)
     {
         $this->start = hrtime(true);
-        $backtrace = debug_backtrace(0);
+        $originalBacktrace = $backtrace = debug_backtrace(0);
         // remove this method
         array_shift($backtrace);
 
         // Remove methods which lead to the query execution
-        for ($i = 0; $i < 4; $i++) {
+        for ($removedFrames = 1; $removedFrames < 5; $removedFrames++) {
             $class = $backtrace[0]['class'];
             $type = $backtrace[0]['type'];
             $function = $backtrace[0]['function'];
@@ -55,8 +55,6 @@ class ContentPublisherSqlLogger implements SQLLogger
                 break;
             }
         }
-
-        $originalBacktrace = $backtrace;
 
         $cpFrameIndex = $this->findFirstCpFrame($backtrace);
         if (null !== $cpFrameIndex) {
@@ -72,8 +70,8 @@ class ContentPublisherSqlLogger implements SQLLogger
         foreach ($backtrace as $index => &$frame) {
             if (isset($frame['class']) && str_starts_with($frame['class'], 'In2code\\In2publish')) {
                 $callee = $frame['class'] . $frame['type'] . $frame['function'];
-                if (isset($originalBacktrace[$index - 1])) {
-                    $callee .= ' ' . $originalBacktrace[$index - 1]['line'];
+                if (isset($originalBacktrace[$index + $removedFrames - 1])) {
+                    $callee .= ' ' . $originalBacktrace[$index + $removedFrames - 1]['line'];
                 }
                 if (empty($frame['args'])) {
                     $frame = $callee;
