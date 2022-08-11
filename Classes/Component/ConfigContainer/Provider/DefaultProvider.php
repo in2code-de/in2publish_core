@@ -29,17 +29,17 @@ namespace In2code\In2publishCore\Component\ConfigContainer\Provider;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Service\Context\ContextService;
 
 class DefaultProvider implements ProviderInterface
 {
-    private ConfigContainer $configContainer;
+    use ConfigContainerInjection;
+
     private ContextService $contextService;
 
-    public function __construct(ConfigContainer $configContainer, ContextService $contextService)
+    public function __construct(ContextService $contextService)
     {
-        $this->configContainer = $configContainer;
         $this->contextService = $contextService;
     }
 

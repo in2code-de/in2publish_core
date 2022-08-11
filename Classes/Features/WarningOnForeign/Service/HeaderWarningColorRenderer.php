@@ -29,17 +29,12 @@ namespace In2code\In2publishCore\Features\WarningOnForeign\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use TYPO3\CMS\Core\Page\PageRenderer;
 
 class HeaderWarningColorRenderer
 {
-    protected ConfigContainer $configContainer;
-
-    public function __construct(ConfigContainer $configContainer)
-    {
-        $this->configContainer = $configContainer;
-    }
+    use ConfigContainerInjection;
 
     /**
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)

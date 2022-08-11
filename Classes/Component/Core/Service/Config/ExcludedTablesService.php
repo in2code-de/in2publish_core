@@ -18,7 +18,11 @@ class ExcludedTablesService
     protected array $excludeRelatedTables;
     protected array $rtc = [];
 
-    public function injectExcludeRelatedTables(ConfigContainer $configContainer): void
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectConfigContainer(ConfigContainer $configContainer): void
     {
         $this->excludeRelatedTables = $configContainer->get('excludeRelatedTables');
     }

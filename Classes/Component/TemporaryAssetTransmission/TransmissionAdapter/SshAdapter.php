@@ -69,11 +69,9 @@ class SshAdapter extends SshBaseAdapter implements AdapterInterface
     ];
 
     public function __construct(
-        ConfigContainer $configContainer,
         ForeignEnvironmentService $foreignEnvironmentService,
         RemoteCommandDispatcher $remoteCommandDispatcher
     ) {
-        parent::__construct($configContainer);
         $this->foreignEnvironmentService = $foreignEnvironmentService;
         $this->remoteCommandDispatcher = $remoteCommandDispatcher;
     }

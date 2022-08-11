@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -37,13 +37,7 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 class ShowConfigurationController extends ActionController
 {
     use AdminToolsModuleTemplate;
-
-    protected ConfigContainer $configContainer;
-
-    public function __construct(ConfigContainer $configContainer)
-    {
-        $this->configContainer = $configContainer;
-    }
+    use ConfigContainerInjection;
 
     public function indexAction(int $emulatePage = null): ResponseInterface
     {

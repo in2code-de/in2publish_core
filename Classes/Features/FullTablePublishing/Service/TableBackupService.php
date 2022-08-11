@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\FullTablePublishing\Service;
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use RuntimeException;
 use Throwable;
 use TYPO3\CMS\Core\Database\Connection;
@@ -26,12 +26,7 @@ use function unlink;
 
 class TableBackupService
 {
-    private ConfigContainer $configContainer;
-
-    public function injectConfigContainer(ConfigContainer $configContainer): void
-    {
-        $this->configContainer = $configContainer;
-    }
+    use ConfigContainerInjection;
 
     public function createBackup(Connection $connection, string $table): void
     {

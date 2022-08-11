@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Component\Shared;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\In2publishCoreException;
 use Psr\Log\LoggerAwareInterface;
@@ -54,6 +54,7 @@ use function strtoupper;
 abstract class SshBaseAdapter implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use ConfigContainerInjection;
 
     protected array $config = [
         'debug' => '',
@@ -71,13 +72,7 @@ abstract class SshBaseAdapter implements LoggerAwareInterface
         'SSH2_FINGERPRINT_MD5',
         'SSH2_FINGERPRINT_SHA1',
     ];
-    protected ConfigContainer $configContainer;
     protected bool $initialized = false;
-
-    public function __construct(ConfigContainer $configContainer)
-    {
-        $this->configContainer = $configContainer;
-    }
 
     public function init(): void
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\Core\RecordTree;
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandBuilder;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactory;
 use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolver;
@@ -24,9 +24,10 @@ use function in_array;
 
 class RecordTreeBuilder
 {
+    use ConfigContainerInjection;
+
     protected RelevantTablesService $relevantTablesService;
     protected DemandResolver $demandResolver;
-    protected ConfigContainer $configContainer;
     protected DemandBuilder $demandBuilder;
     protected RecordFactory $recordFactory;
     protected RecordIndex $recordIndex;
@@ -43,11 +44,6 @@ class RecordTreeBuilder
     public function injectDemandResolver(DemandResolver $demandResolver): void
     {
         $this->demandResolver = $demandResolver;
-    }
-
-    public function injectConfigContainer(ConfigContainer $configContainer): void
-    {
-        $this->configContainer = $configContainer;
     }
 
     public function injectDemandBuilder(DemandBuilder $demandBuilder): void

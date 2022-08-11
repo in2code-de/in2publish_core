@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandBuilder;
 use In2code\In2publishCore\Component\Core\DemandResolver\Select\SelectDemandResolver;
 use In2code\In2publishCore\Component\Core\PreProcessing\TcaPreProcessingService;
@@ -40,11 +40,11 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 class TcaController extends ActionController
 {
     use AdminToolsModuleTemplate;
+    use ConfigContainerInjection;
 
     protected TcaPreProcessingService $tcaPreProcessingService;
     protected DemandBuilder $demandBuilder;
     protected SelectDemandResolver $queryService;
-    protected ConfigContainer $configContainer;
 
     public function __construct(TcaPreProcessingService $tcaPreProcessingService)
     {
@@ -59,11 +59,6 @@ class TcaController extends ActionController
     public function injectQueryService(SelectDemandResolver $queryService): void
     {
         $this->queryService = $queryService;
-    }
-
-    public function injectConfigContainer(ConfigContainer $configContainer): void
-    {
-        $this->configContainer = $configContainer;
     }
 
     public function indexAction(): ResponseInterface

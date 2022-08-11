@@ -29,7 +29,7 @@ namespace In2code\In2publishCore\Features\AdminTools\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
-use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Features\AdminTools\Service\Exception\ClassNotFoundException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -42,13 +42,13 @@ use function implode;
 
 class ToolsRegistry implements SingletonInterface
 {
-    protected ConfigContainer $configContainer;
+    use ConfigContainerInjection;
+
     protected ExtensionConfiguration $extensionConfiguration;
     protected array $entries = [];
 
-    public function __construct(ConfigContainer $configContainer, ExtensionConfiguration $extensionConfiguration)
+    public function __construct(ExtensionConfiguration $extensionConfiguration)
     {
-        $this->configContainer = $configContainer;
         $this->extensionConfiguration = $extensionConfiguration;
     }
 

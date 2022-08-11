@@ -76,7 +76,8 @@ class EnvironmentServiceTest extends UnitTestCase
         $configContainer = $this->createMock(ConfigContainer::class);
         $configContainer->method('get')->willReturn($configurationArray);
 
-        $environmentService = new EnvironmentService($registry, $packageManager, $configContainer);
+        $environmentService = new EnvironmentService($registry, $packageManager);
+        $environmentService->injectConfigContainer($configContainer);
 
         $environmentService->setTestResult(true);
     }
@@ -191,7 +192,8 @@ class EnvironmentServiceTest extends UnitTestCase
         $configContainer = $this->createMock(ConfigContainer::class);
         $configContainer->method('get')->willReturn($configurationArray);
 
-        $environmentService = new EnvironmentService($registry, $packageManager, $configContainer);
+        $environmentService = new EnvironmentService($registry, $packageManager);
+        $environmentService->injectConfigContainer($configContainer);
 
         $this->assertSame($expected, $environmentService->getTestStatus());
     }

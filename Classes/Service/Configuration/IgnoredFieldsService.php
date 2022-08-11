@@ -41,6 +41,10 @@ class IgnoredFieldsService
     protected array $ignoredFields;
     protected array $rtc = [];
 
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
     public function injectConfigContainer(ConfigContainer $configContainer): void
     {
         $this->ignoredFields = $configContainer->get('ignoredFields');

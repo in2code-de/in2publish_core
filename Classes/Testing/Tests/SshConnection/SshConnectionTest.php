@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Testing\Tests\SshConnection;
  */
 
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainer;
+use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandDispatcher;
 use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest;
 use In2code\In2publishCore\Testing\Tests\TestCaseInterface;
@@ -42,13 +43,13 @@ use function preg_match;
 
 class SshConnectionTest implements TestCaseInterface
 {
-    protected RemoteCommandDispatcher $rceDispatcher;
-    protected ConfigContainer $configContainer;
+    use ConfigContainerInjection;
 
-    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher, ConfigContainer $configContainer)
+    protected RemoteCommandDispatcher $rceDispatcher;
+
+    public function __construct(RemoteCommandDispatcher $remoteCommandDispatcher)
     {
         $this->rceDispatcher = $remoteCommandDispatcher;
-        $this->configContainer = $configContainer;
     }
 
     public function run(): TestResult
