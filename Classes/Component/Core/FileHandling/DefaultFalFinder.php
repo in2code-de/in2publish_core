@@ -35,7 +35,7 @@ use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection
 use In2code\In2publishCore\Component\Core\FileHandling\Exception\FolderDoesNotExistOnBothSidesException;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FalDriverService;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoService;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoService;
+use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
@@ -58,20 +58,15 @@ class DefaultFalFinder
     use DemandsFactoryInjection;
     use DemandResolverInjection;
     use ResourceFactoryInjection;
+    use ForeignFileSystemInfoServiceInjection;
 
     protected FileSystemInfoService $fileSystemInfoService;
-    protected ForeignFileSystemInfoService $foreignFileSystemInfoService;
     protected RecordTreeBuilder $recordTreeBuilder;
     protected FalDriverService $falDriverService;
 
     public function injectFileSystemInfoService(FileSystemInfoService $fileSystemInfoService): void
     {
         $this->fileSystemInfoService = $fileSystemInfoService;
-    }
-
-    public function injectForeignFileSystemInfoService(ForeignFileSystemInfoService $foreignFileSystemInfoService): void
-    {
-        $this->foreignFileSystemInfoService = $foreignFileSystemInfoService;
     }
 
     public function injectRecordTreeBuilder(RecordTreeBuilder $recordTreeBuilder): void

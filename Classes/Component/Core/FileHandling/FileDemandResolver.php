@@ -6,7 +6,7 @@ namespace In2code\In2publishCore\Component\Core\FileHandling;
 
 use In2code\In2publishCore\Component\Core\Demand\Demands;
 use In2code\In2publishCore\Component\Core\FileHandling\Service\FileSystemInfoService;
-use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoService;
+use In2code\In2publishCore\Component\Core\FileHandling\Service\ForeignFileSystemInfoServiceInjection;
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 
 use function array_keys;
@@ -15,18 +15,13 @@ use function hash;
 class FileDemandResolver
 {
     use RecordFactoryInjection;
+    use ForeignFileSystemInfoServiceInjection;
 
     protected FileSystemInfoService $fileSystemInfoService;
-    protected ForeignFileSystemInfoService $foreignFileSystemInfoService;
 
     public function injectFileSystemInfoService(FileSystemInfoService $fileSystemInfoService): void
     {
         $this->fileSystemInfoService = $fileSystemInfoService;
-    }
-
-    public function injectForeignFileSystemInfoService(ForeignFileSystemInfoService $foreignFileSystemInfoService): void
-    {
-        $this->foreignFileSystemInfoService = $foreignFileSystemInfoService;
     }
 
     public function resolveDemand(Demands $demands): void
