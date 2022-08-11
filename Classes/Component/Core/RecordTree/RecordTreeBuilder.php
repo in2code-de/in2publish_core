@@ -13,6 +13,7 @@ use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordIndex;
+use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\Service\RelevantTablesService;
 use In2code\In2publishCore\Component\Core\Service\RelevantTablesServiceInjection;
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
@@ -29,10 +30,10 @@ class RecordTreeBuilder
     use ConfigContainerInjection;
     use RecordFactoryInjection;
     use RelevantTablesServiceInjection;
+    use RecordIndexInjection;
 
     protected DemandResolver $demandResolver;
     protected DemandBuilder $demandBuilder;
-    protected RecordIndex $recordIndex;
     protected EventDispatcher $eventDispatcher;
     protected DemandsFactory $demandsFactory;
     protected TcaService $tcaService;
@@ -46,11 +47,6 @@ class RecordTreeBuilder
     public function injectDemandBuilder(DemandBuilder $demandBuilder): void
     {
         $this->demandBuilder = $demandBuilder;
-    }
-
-    public function injectRecordIndex(RecordIndex $recordIndex): void
-    {
-        $this->recordIndex = $recordIndex;
     }
 
     public function injectEventDispatcher(EventDispatcher $eventDispatcher): void

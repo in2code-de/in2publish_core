@@ -39,7 +39,7 @@ use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\Record\Model\FileRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
-use In2code\In2publishCore\Component\Core\RecordIndex;
+use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder;
 use TYPO3\CMS\Core\Resource\Exception\FolderDoesNotExistException;
@@ -54,6 +54,7 @@ use function sha1;
 class DefaultFalFinder
 {
     use RecordFactoryInjection;
+    use RecordIndexInjection;
 
     protected ResourceFactory $resourceFactory;
     protected FileSystemInfoService $fileSystemInfoService;
@@ -62,7 +63,6 @@ class DefaultFalFinder
     protected DemandResolver $demandResolver;
     protected RecordTreeBuilder $recordTreeBuilder;
     protected FalDriverService $falDriverService;
-    protected RecordIndex $recordIndex;
 
     public function injectResourceFactory(ResourceFactory $resourceFactory): void
     {
@@ -97,11 +97,6 @@ class DefaultFalFinder
     public function injectFalDriverService(FalDriverService $falDriverService): void
     {
         $this->falDriverService = $falDriverService;
-    }
-
-    public function injectRecordIndex(RecordIndex $recordIndex): void
-    {
-        $this->recordIndex = $recordIndex;
     }
 
     /**

@@ -32,7 +32,7 @@ namespace In2code\In2publishCore\Controller;
 
 use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
 use In2code\In2publishCore\Component\Core\Publisher\PublishingContext;
-use In2code\In2publishCore\Component\Core\RecordIndex;
+use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuilder;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTreeBuildRequest;
 use In2code\In2publishCore\Controller\Traits\CommonViewVariables;
@@ -72,12 +72,12 @@ class RecordController extends ActionController
     use ControllerModuleTemplate;
     use DeactivateErrorFlashMessage;
     use CommonViewVariables;
+    use RecordIndexInjection;
 
     protected FailureCollector $failureCollector;
     protected PermissionService $permissionService;
     protected RecordTreeBuilder $recordTreeBuilder;
     protected PublisherService $publisherService;
-    protected RecordIndex $recordIndex;
     protected SimpleStopwatch $simpleStopwatch;
 
     public function injectFailureCollector(FailureCollector $failureCollector): void
@@ -113,11 +113,6 @@ class RecordController extends ActionController
             '',
             false
         );
-    }
-
-    public function injectRecordIndex(RecordIndex $recordIndex): void
-    {
-        $this->recordIndex = $recordIndex;
     }
 
     public function injectSimpleStopwatch(SimpleStopwatch $simpleStopwatch): void

@@ -12,6 +12,7 @@ use In2code\In2publishCore\Component\Core\DemandResolver\Exception\InvalidDemand
 use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordIndex;
+use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\Repository\DualDatabaseRepository;
 use In2code\In2publishCore\Component\Core\Repository\SingleDatabaseRepository;
 
@@ -22,11 +23,11 @@ use function array_unique;
 class SelectDemandResolver implements DemandResolver
 {
     use RecordFactoryInjection;
+    use RecordIndexInjection;
 
     protected DualDatabaseRepository $dualDatabaseRepository;
     protected SingleDatabaseRepository $localRepository;
     protected SingleDatabaseRepository $foreignRepository;
-    protected RecordIndex $recordIndex;
 
     public function injectDualDatabaseRepository(DualDatabaseRepository $dualDatabaseRepository): void
     {
@@ -41,11 +42,6 @@ class SelectDemandResolver implements DemandResolver
     public function injectForeignSingleDatabaseRepository(SingleDatabaseRepository $foreignRepository): void
     {
         $this->foreignRepository = $foreignRepository;
-    }
-
-    public function injectRecordIndex(RecordIndex $recordIndex): void
-    {
-        $this->recordIndex = $recordIndex;
     }
 
     public function resolveDemand(Demands $demands, RecordCollection $recordCollection): void

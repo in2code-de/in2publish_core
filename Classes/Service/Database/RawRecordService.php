@@ -31,7 +31,7 @@ namespace In2code\In2publishCore\Service\Database;
 
 use In2code\In2publishCore\CommonInjection\ForeignDatabaseInjection;
 use In2code\In2publishCore\CommonInjection\LocalDatabaseInjection;
-use In2code\In2publishCore\Component\Core\RecordIndex;
+use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\In2publishCoreException;
 use PDO;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -43,14 +43,9 @@ class RawRecordService implements SingletonInterface
 {
     use LocalDatabaseInjection;
     use ForeignDatabaseInjection;
+    use RecordIndexInjection;
 
     protected array $cache = [];
-    protected RecordIndex $recordIndex;
-
-    public function __construct(RecordIndex $recordIndex)
-    {
-        $this->recordIndex = $recordIndex;
-    }
 
     public function getRawRecord(string $table, int $uid, string $side): ?array
     {

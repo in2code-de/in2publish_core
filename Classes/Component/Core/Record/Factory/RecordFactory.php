@@ -36,6 +36,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\MmDatabaseRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\PageTreeRootRecord;
 use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordIndex;
+use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Event\DecideIfRecordShouldBeIgnored;
 use In2code\In2publishCore\Event\RecordWasCreated;
 use In2code\In2publishCore\Service\Configuration\IgnoredFieldsService;
@@ -43,19 +44,14 @@ use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
 
 class RecordFactory
 {
+    use RecordIndexInjection;
     protected IgnoredFieldsService $ignoredFieldsService;
-    protected RecordIndex $recordIndex;
     protected EventDispatcher $eventDispatcher;
     protected DatabaseRecordFactoryFactory $databaseRecordFactoryFactory;
 
     public function injectIgnoredFieldsService(IgnoredFieldsService $ignoredFieldsService): void
     {
         $this->ignoredFieldsService = $ignoredFieldsService;
-    }
-
-    public function injectRecordIndex(RecordIndex $recordIndex): void
-    {
-        $this->recordIndex = $recordIndex;
     }
 
     public function injectEventDispatcher(EventDispatcher $eventDispatcher): void
