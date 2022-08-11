@@ -14,6 +14,7 @@ use In2code\In2publishCore\Component\Core\Record\Model\Record;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordIndex;
 use In2code\In2publishCore\Component\Core\Service\RelevantTablesService;
+use In2code\In2publishCore\Component\Core\Service\RelevantTablesServiceInjection;
 use In2code\In2publishCore\Event\RecordRelationsWereResolved;
 use In2code\In2publishCore\Service\Configuration\TcaService;
 use In2code\In2publishCore\Service\Database\RawRecordService;
@@ -27,8 +28,8 @@ class RecordTreeBuilder
 {
     use ConfigContainerInjection;
     use RecordFactoryInjection;
+    use RelevantTablesServiceInjection;
 
-    protected RelevantTablesService $relevantTablesService;
     protected DemandResolver $demandResolver;
     protected DemandBuilder $demandBuilder;
     protected RecordIndex $recordIndex;
@@ -36,11 +37,6 @@ class RecordTreeBuilder
     protected DemandsFactory $demandsFactory;
     protected TcaService $tcaService;
     protected RawRecordService $rawRecordService;
-
-    public function injectRelevantTablesService(RelevantTablesService $relevantTablesService): void
-    {
-        $this->relevantTablesService = $relevantTablesService;
-    }
 
     public function injectDemandResolver(DemandResolver $demandResolver): void
     {

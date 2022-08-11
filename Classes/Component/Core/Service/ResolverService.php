@@ -9,17 +9,13 @@ use In2code\In2publishCore\Component\Core\Resolver\Resolver;
 
 class ResolverService
 {
-    protected RelevantTablesService $relevantTablesService;
+    use RelevantTablesServiceInjection;
+
     protected TcaPreProcessingService $tcaPreProcessingService;
     /**
      * @var array<string, array<string, Resolver>>
      */
     protected array $resolvers;
-
-    public function injectRelevantTablesService(RelevantTablesService $relevantTablesService): void
-    {
-        $this->relevantTablesService = $relevantTablesService;
-    }
 
     public function injectTcaPreProcessingService(TcaPreProcessingService $tcaPreProcessingService): void
     {
