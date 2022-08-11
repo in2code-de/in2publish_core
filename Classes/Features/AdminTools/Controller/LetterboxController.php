@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Features\AdminTools\Controller;
  */
 
 use In2code\In2publishCore\Component\RemoteProcedureCall\Letterbox;
+use In2code\In2publishCore\Component\RemoteProcedureCall\LetterboxInjection;
 use In2code\In2publishCore\Features\AdminTools\Controller\Traits\AdminToolsModuleTemplate;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -39,13 +40,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 class LetterboxController extends ActionController
 {
     use AdminToolsModuleTemplate;
-
-    protected Letterbox $letterbox;
-
-    public function __construct(Letterbox $letterbox)
-    {
-        $this->letterbox = $letterbox;
-    }
+    use LetterboxInjection;
 
     public function indexAction(): ResponseInterface
     {

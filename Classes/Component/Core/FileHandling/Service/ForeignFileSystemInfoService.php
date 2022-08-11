@@ -10,7 +10,7 @@ use In2code\In2publishCore\Component\RemoteCommandExecution\RemoteCommandRequest
 use In2code\In2publishCore\Component\RemoteProcedureCall\Command\Foreign\ExecuteCommand;
 use In2code\In2publishCore\Component\RemoteProcedureCall\Envelope;
 use In2code\In2publishCore\Component\RemoteProcedureCall\EnvelopeDispatcher;
-use In2code\In2publishCore\Component\RemoteProcedureCall\Letterbox;
+use In2code\In2publishCore\Component\RemoteProcedureCall\LetterboxInjection;
 use In2code\In2publishCore\In2publishCoreException;
 use RuntimeException;
 
@@ -19,13 +19,9 @@ use function sprintf;
 
 class ForeignFileSystemInfoService
 {
-    protected Letterbox $letterbox;
-    protected RemoteCommandDispatcher $rceDispatcher;
+    use LetterboxInjection;
 
-    public function injectLetterbox(Letterbox $letterbox): void
-    {
-        $this->letterbox = $letterbox;
-    }
+    protected RemoteCommandDispatcher $rceDispatcher;
 
     public function injectRceDispatcher(RemoteCommandDispatcher $rceDispatcher): void
     {
