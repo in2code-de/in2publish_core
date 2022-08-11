@@ -8,6 +8,9 @@ class DemandResolverFactory
 {
     protected DemandResolverCollection $demandResolverCollection;
 
+    /**
+     * Must be constructor injection to be available before "addDemandResolver"
+     */
     public function __construct(DemandResolverCollection $demandResolverCollection)
     {
         $this->demandResolverCollection = $demandResolverCollection;

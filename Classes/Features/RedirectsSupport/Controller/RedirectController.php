@@ -31,10 +31,7 @@ namespace In2code\In2publishCore\Features\RedirectsSupport\Controller;
 
 use In2code\In2publishCore\CommonInjection\IconFactoryInjection;
 use In2code\In2publishCore\Component\Core\Demand\DemandsFactoryInjection;
-use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverCollection;
-use In2code\In2publishCore\Component\Core\DemandResolver\Join\JoinDemandResolver;
-use In2code\In2publishCore\Component\Core\DemandResolver\Select\SelectDemandResolver;
-use In2code\In2publishCore\Component\Core\DemandResolver\SysRedirect\SysRedirectSelectDemandResolver;
+use In2code\In2publishCore\Component\Core\DemandResolver\DemandResolverInjection;
 use In2code\In2publishCore\Component\Core\Publisher\PublisherService;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordTree\RecordTree;
@@ -66,13 +63,10 @@ class RedirectController extends ActionController
     use ControllerModuleTemplate;
     use IconFactoryInjection;
     use DemandsFactoryInjection;
+    use DemandResolverInjection;
 
     protected ForeignSiteFinder $foreignSiteFinder;
     protected SysRedirectRepository $sysRedirectRepo;
-    protected DemandResolverCollection $demandResolverCollection;
-    protected SelectDemandResolver $selectDemandResolver;
-    protected JoinDemandResolver $joinDemandResolver;
-    protected SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver;
     private PublisherService $publisherService;
 
     public function injectForeignSiteFinder(ForeignSiteFinder $foreignSiteFinder): void
@@ -94,27 +88,6 @@ class RedirectController extends ActionController
             '',
             false
         );
-    }
-
-    public function injectDemandResolverCollection(DemandResolverCollection $demandResolverCollection): void
-    {
-        $this->demandResolverCollection = $demandResolverCollection;
-    }
-
-    public function injectSelectDemandResolver(SelectDemandResolver $selectDemandResolver): void
-    {
-        $this->selectDemandResolver = $selectDemandResolver;
-    }
-
-    public function injectJoinDemandResolver(JoinDemandResolver $joinDemandResolver): void
-    {
-        $this->joinDemandResolver = $joinDemandResolver;
-    }
-
-    public function injectSysRedirectSelectDemandResolver(
-        SysRedirectSelectDemandResolver $sysRedirectSelectDemandResolver
-    ): void {
-        $this->sysRedirectSelectDemandResolver = $sysRedirectSelectDemandResolver;
     }
 
     public function injectPublisherService(PublisherService $publisherService): void
@@ -155,12 +128,8 @@ class RedirectController extends ActionController
         $demands = $this->demandsFactory->createDemand();
         $demands->addSysRedirectSelect('sys_redirect', $additionalWhere, $recordTree);
 
-        $this->demandResolverCollection->addDemandResolver($this->selectDemandResolver);
-        $this->demandResolverCollection->addDemandResolver($this->joinDemandResolver);
-        $this->demandResolverCollection->addDemandResolver($this->sysRedirectSelectDemandResolver);
-
         $recordCollection = new RecordCollection();
-        $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
+        $this->demandResolver->resolveDemand($demands, $recordCollection);
 
         $redirects = $recordTree->getChildren()['sys_redirect'] ?? [];
         $paginator = new ArrayPaginator($redirects, $page, 15);
@@ -196,12 +165,8 @@ class RedirectController extends ActionController
             $demands->addSelect('sys_redirect', '', 'uid', $redirect, $recordTree);
         }
 
-        $this->demandResolverCollection->addDemandResolver($this->selectDemandResolver);
-        $this->demandResolverCollection->addDemandResolver($this->joinDemandResolver);
-        $this->demandResolverCollection->addDemandResolver($this->sysRedirectSelectDemandResolver);
-
         $recordCollection = new RecordCollection();
-        $this->demandResolverCollection->resolveDemand($demands, $recordCollection);
+        $this->demandResolver->resolveDemand($demands, $recordCollection);
 
         $this->publisherService->publishRecordTree($recordTree);
 
