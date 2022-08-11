@@ -52,7 +52,7 @@ class FileProvider implements ProviderInterface
     protected const DEPRECATION_CONFIG_PATH_TYPO3CONF = 'Storing the content publisher config file in typo3conf is deprecated and considered insecure. Please consider storing your config in the TYPO3\'s config folder.';
     protected array $extConf;
 
-    public function __construct(ExtensionConfiguration $extensionConfiguration)
+    public function __construct()
     {
         if (!class_exists(Spyc::class)) {
             $spyc = ExtensionManagementUtility::extPath('in2publish_core', 'Resources/Private/Libraries/Spyc/Spyc.php');
@@ -60,6 +60,14 @@ class FileProvider implements ProviderInterface
                 require_once($spyc);
             }
         }
+    }
+
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectExtensionConfiguration(ExtensionConfiguration $extensionConfiguration): void
+    {
         $this->extConf = $extensionConfiguration->get('in2publish_core');
     }
 

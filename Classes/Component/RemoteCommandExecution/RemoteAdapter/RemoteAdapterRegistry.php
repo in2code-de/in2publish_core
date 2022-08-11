@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Component\RemoteCommandExecution\RemoteAdapter;
 
+use In2code\In2publishCore\CommonInjection\ExtensionConfigurationInjection;
 use RuntimeException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -16,7 +17,11 @@ class RemoteAdapterRegistry
     private array $adapters = [];
     private string $selectedAdapter;
 
-    public function __construct(ExtensionConfiguration $extensionConfiguration)
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectExtensionConfiguration(ExtensionConfiguration $extensionConfiguration): void
     {
         $this->selectedAdapter = $extensionConfiguration->get('in2publish_core', 'adapter/remote');
     }

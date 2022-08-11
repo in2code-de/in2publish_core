@@ -16,7 +16,11 @@ class TransmissionAdapterRegistry
     private array $adapters = [];
     private string $selectedAdapter;
 
-    public function __construct(ExtensionConfiguration $extensionConfiguration)
+    /**
+     * @codeCoverageIgnore
+     * @noinspection PhpUnused
+     */
+    public function injectExtensionConfiguration(ExtensionConfiguration $extensionConfiguration)
     {
         $this->selectedAdapter = $extensionConfiguration->get('in2publish_core', 'adapter/transmission');
     }

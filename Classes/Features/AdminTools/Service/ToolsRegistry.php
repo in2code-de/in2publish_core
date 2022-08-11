@@ -29,9 +29,9 @@ namespace In2code\In2publishCore\Features\AdminTools\Service;
  * This copyright notice MUST APPEAR in all copies of the script!
  */
 
+use In2code\In2publishCore\CommonInjection\ExtensionConfigurationInjection;
 use In2code\In2publishCore\Component\ConfigContainer\ConfigContainerInjection;
 use In2code\In2publishCore\Features\AdminTools\Service\Exception\ClassNotFoundException;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
@@ -43,14 +43,9 @@ use function implode;
 class ToolsRegistry implements SingletonInterface
 {
     use ConfigContainerInjection;
+    use ExtensionConfigurationInjection;
 
-    protected ExtensionConfiguration $extensionConfiguration;
     protected array $entries = [];
-
-    public function __construct(ExtensionConfiguration $extensionConfiguration)
-    {
-        $this->extensionConfiguration = $extensionConfiguration;
-    }
 
     public function addTool(
         string $serviceName,

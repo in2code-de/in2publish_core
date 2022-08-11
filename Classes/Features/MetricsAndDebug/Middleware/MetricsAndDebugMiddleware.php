@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace In2code\In2publishCore\Features\MetricsAndDebug\Middleware;
 
+use In2code\In2publishCore\CommonInjection\ExtensionConfigurationInjection;
 use In2code\In2publishCore\Features\MetricsAndDebug\Database\Logging\ContentPublisherSqlLogger;
 use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\Exception\StopwatchWasNotStartedException;
 use In2code\In2publishCore\Features\MetricsAndDebug\Stopwatch\SimpleStopwatch;
@@ -11,7 +12,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Http\Stream;
 use TYPO3\CMS\Core\Http\StreamFactory;
 use TYPO3\CMS\Core\Utility\DebugUtility;
@@ -24,14 +24,10 @@ use function str_starts_with;
 
 class MetricsAndDebugMiddleware implements MiddlewareInterface
 {
-    protected ExtensionConfiguration $extensionConfiguration;
+    use ExtensionConfigurationInjection;
+
     protected SimpleStopwatch $simpleStopwatch;
     protected StreamFactory $streamFactory;
-
-    public function injectExtensionConfiguration(ExtensionConfiguration $extensionConfiguration): void
-    {
-        $this->extensionConfiguration = $extensionConfiguration;
-    }
 
     public function injectSimpleStopwatch(SimpleStopwatch $simpleStopwatch): void
     {
