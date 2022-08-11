@@ -13,14 +13,8 @@ use function array_unique;
 
 class DualDatabaseRepository
 {
-    private SingleDatabaseRepository $localRepository;
-    private SingleDatabaseRepository $foreignRepository;
-
-    public function __construct(SingleDatabaseRepository $localRepository, SingleDatabaseRepository $foreignRepository)
-    {
-        $this->localRepository = $localRepository;
-        $this->foreignRepository = $foreignRepository;
-    }
+    use LocalSingleDatabaseRepositoryInjection;
+    use ForeignSingleDatabaseRepositoryInjection;
 
     /**
      * @throws DBALException

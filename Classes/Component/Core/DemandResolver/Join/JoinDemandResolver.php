@@ -13,6 +13,8 @@ use In2code\In2publishCore\Component\Core\Record\Factory\RecordFactoryInjection;
 use In2code\In2publishCore\Component\Core\RecordCollection;
 use In2code\In2publishCore\Component\Core\RecordIndexInjection;
 use In2code\In2publishCore\Component\Core\Repository\DualDatabaseRepositoryInjection;
+use In2code\In2publishCore\Component\Core\Repository\ForeignSingleDatabaseRepositoryInjection;
+use In2code\In2publishCore\Component\Core\Repository\LocalSingleDatabaseRepositoryInjection;
 use In2code\In2publishCore\Component\Core\Repository\SingleDatabaseRepository;
 
 use function array_keys;
@@ -22,19 +24,8 @@ class JoinDemandResolver implements DemandResolver
     use RecordFactoryInjection;
     use RecordIndexInjection;
     use DualDatabaseRepositoryInjection;
-
-    protected SingleDatabaseRepository $localRepository;
-    protected SingleDatabaseRepository $foreignRepository;
-
-    public function injectLocalSingleDatabaseRepository(SingleDatabaseRepository $localRepository): void
-    {
-        $this->localRepository = $localRepository;
-    }
-
-    public function injectForeignSingleDatabaseRepository(SingleDatabaseRepository $foreignRepository): void
-    {
-        $this->foreignRepository = $foreignRepository;
-    }
+    use LocalSingleDatabaseRepositoryInjection;
+    use ForeignSingleDatabaseRepositoryInjection;
 
     public function resolveDemand(Demands $demands, RecordCollection $recordCollection): void
     {
