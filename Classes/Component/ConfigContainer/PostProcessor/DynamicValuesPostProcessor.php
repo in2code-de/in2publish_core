@@ -30,6 +30,7 @@ namespace In2code\In2publishCore\Component\ConfigContainer\PostProcessor;
  */
 
 use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistry;
+use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\DynamicValueProviderRegistryInjection;
 use In2code\In2publishCore\Component\ConfigContainer\PostProcessor\DynamicValueProvider\Exception\InvalidDynamicValueProviderKeyException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -47,15 +48,10 @@ use function strlen;
 class DynamicValuesPostProcessor implements PostProcessorInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use DynamicValueProviderRegistryInjection;
 
     protected const DYNAMIC_REFERENCE_PATTERN = '/^%(?P<key>[\w]+)\((?P<string>[^\)]*)\)%$/';
-    protected DynamicValueProviderRegistry $dynamicValueProviderRegistry;
     protected array $rtc = [];
-
-    public function __construct(DynamicValueProviderRegistry $dynamicValueProviderRegistry)
-    {
-        $this->dynamicValueProviderRegistry = $dynamicValueProviderRegistry;
-    }
 
     /** @throws InvalidDynamicValueProviderKeyException */
     public function process(array $config): array
